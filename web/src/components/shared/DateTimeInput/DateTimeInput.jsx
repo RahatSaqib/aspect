@@ -1,12 +1,5 @@
 import PropTypes from 'prop-types'
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useRef,
-  useCallback,
-  createRef,
-} from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback, createRef } from 'react'
 import classNames from 'classnames'
 import _fp from 'lodash/fp'
 import map from 'lodash/map'
@@ -268,8 +261,7 @@ const normalizeDateFormat = normalizeFormat
 
 const normalizeTimeFormat = _fp.pipe(_fp.replace(/s/g, ''), normalizeFormat)
 
-const getDateTimeFormat = ({ dateFormat = '', timeFormat = '' }) =>
-  dateFormat + timeFormat
+const getDateTimeFormat = ({ dateFormat = '', timeFormat = '' }) => dateFormat + timeFormat
 
 const getDisplayFormat = ({ dateFormat, timeFormat }) => {
   let displayFormat = ''
@@ -292,9 +284,7 @@ const getDisplayFormat = ({ dateFormat, timeFormat }) => {
 const getTokenFromDateTimeFormat = (formatStr, displayChar) =>
   _fp.pipe(
     cleanFormat,
-    _fp.filter(c =>
-      _fp.toArray(dateTimeReverseKeyMap[displayChar]).includes(c)
-    ),
+    _fp.filter(c => _fp.toArray(dateTimeReverseKeyMap[displayChar]).includes(c)),
     _fp.join('')
   )(formatStr)
 
@@ -306,8 +296,7 @@ const getOrderList = _fp.pipe(
 
 const normalizeText = _fp.pipe(_fp.trim, _fp.deburr, _fp.toLower)
 
-const findOptionByValue = (value, options) =>
-  options.find(option => option.value === value)
+const findOptionByValue = (value, options) => options.find(option => option.value === value)
 
 const findOptionByLabel = (label, options) =>
   options.find(option => normalizeText(option.label) === normalizeText(label))
@@ -320,21 +309,14 @@ const getSuggestionOptions = (value, options) => {
     return options
   }
 
-  const suggestions = options.filter(
-    option => normalizeText(option.label.slice(0, inputLength)) === inputValue
-  )
+  const suggestions = options.filter(option => normalizeText(option.label.slice(0, inputLength)) === inputValue)
 
   return suggestions.length > 0 ? suggestions : options
 }
 
 const useSelectRefs = displayFormat => {
   const orderList = getOrderList(displayFormat)
-  const refs = useRef(
-    orderList.reduce(
-      (acc, orderKey) => ({ ...acc, [orderKey]: createRef() }),
-      {}
-    )
-  )
+  const refs = useRef(orderList.reduce((acc, orderKey) => ({ ...acc, [orderKey]: createRef() }), {}))
   return refs
 }
 
@@ -343,13 +325,7 @@ const Option = props => {
   const isHighlighted = highlightedIndex === index
 
   return (
-    <MenuItem
-      {...itemProps}
-      key={option.value}
-      className={classesMap.option}
-      selected={isHighlighted}
-      component="div"
-    >
+    <MenuItem {...itemProps} key={option.value} className={classesMap.option} selected={isHighlighted} component="div">
       {option.label}
     </MenuItem>
   )
@@ -357,13 +333,7 @@ const Option = props => {
 
 const Options = props => {
   const { suggestions, classesMap, downshiftProps } = props
-  const {
-    getItemProps,
-    highlightedIndex,
-    selectedItem,
-    setHighlightedIndex,
-    inputValue,
-  } = downshiftProps
+  const { getItemProps, highlightedIndex, selectedItem, setHighlightedIndex, inputValue } = downshiftProps
 
   useEffect(
     () => {
@@ -438,18 +408,10 @@ export const DateTimeSelect = props => {
       initialSelectedItem={initialSelectedItem}
     >
       {downshiftProps => {
-        const {
-          getInputProps,
-          getMenuProps,
-          inputValue,
-          isOpen,
-          selectItem,
-          setState,
-        } = downshiftProps
+        const { getInputProps, getMenuProps, inputValue, isOpen, selectItem, setState } = downshiftProps
         const growId = `${baseKey}-grow`
         const suggestions = getSuggestionOptions(inputValue, options)
-        const { InputProps: baseInputProps, ...restTextFieldProps } =
-          TextFieldProps
+        const { InputProps: baseInputProps, ...restTextFieldProps } = TextFieldProps
 
         const handleBlur = () => {
           const optionFromInput = findOptionByLabel(inputValue, options)
@@ -489,43 +451,27 @@ export const DateTimeSelect = props => {
                 InputProps={getInputProps({
                   ...baseInputProps,
                   inputRef,
-                  className: classNames(
-                    classesMap.input,
-                    baseInputProps.className
-                  ),
+                  className: classNames(classesMap.input, baseInputProps.className),
                   value: inputValue,
                   onFocus: handleTextFieldFocus,
                   onBlur: handleBlur,
                 })}
               />
-              <Popper
-                open={isOpen}
-                className={classesMap.popper}
-                anchorEl={inputRef.current}
-              >
+              <Popper open={isOpen} className={classesMap.popper} anchorEl={inputRef.current}>
                 {({ TransitionProps, placement }) => (
                   <div
                     {...TransitionProps}
-                    {...(isOpen
-                      ? getMenuProps({}, { suppressRefError: true })
-                      : {})}
+                    {...(isOpen ? getMenuProps({}, { suppressRefError: true }) : {})}
                     className={classesMap.options}
                   >
                     <Paper
                       square
                       className={classesMap.paper}
                       style={{
-                        transformOrigin:
-                          placement === 'bottom'
-                            ? 'center top'
-                            : 'center bottom',
+                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
                       }}
                     >
-                      <Options
-                        classesMap={classesMap}
-                        suggestions={suggestions}
-                        downshiftProps={downshiftProps}
-                      />
+                      <Options classesMap={classesMap} suggestions={suggestions} downshiftProps={downshiftProps} />
                     </Paper>
                   </div>
                 )}
@@ -564,26 +510,18 @@ const DateTimeInput = props => {
    * In case when 'props.value' is not 'undefined' nor 'null' AND is not a valid Date - then
    * we reset it and use 'const value = undefined', i.e. getDateObject returns 'undefined'
    */
-  const value = useMemo(
-    () => (isNil(valueRaw) ? valueRaw : getDateObject(valueRaw)),
-    [valueRaw]
-  )
+  const value = useMemo(() => (isNil(valueRaw) ? valueRaw : getDateObject(valueRaw)), [valueRaw])
 
   const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat })
   const displayFormat = getDisplayFormat({ dateFormat, timeFormat })
   const { formatMessage, culture } = useI18n()
   const FieldProps = originFieldProps || getDefaultFieldsProps(formatMessage)
-  const TextFieldsProps = _fp.merge(
-    getDefaultFieldsProps(formatMessage),
-    FieldProps
-  )
+  const TextFieldsProps = _fp.merge(getDefaultFieldsProps(formatMessage), FieldProps)
   const minDate = getDateObject(min)
   const maxDate = getDateObject(max)
   const orderList = getOrderList(displayFormat)
   const isControlled = useCallback(() => !(value === undefined), [value])
-  const initialValue = isControlled()
-    ? value
-    : normalizeDate({ minDate, maxDate, date: defaultValue })
+  const initialValue = isControlled() ? value : normalizeDate({ minDate, maxDate, date: defaultValue })
 
   // hooks
   const [dateTime, setDateTime] = useState(initialValue)
@@ -630,18 +568,12 @@ const DateTimeInput = props => {
     setDateTime(changedDate)
 
     const [year, month, day] = stringDate
-    if (set.toString() === accessOptions.setDate.toString())
-      setStringDate([year, month, label])
-    else if (set.toString() === accessOptions.setMonth.toString())
-      setStringDate([year, label, day])
-    else if (set.toString() === accessOptions.setYear.toString())
-      setStringDate([label, month, day])
+    if (set.toString() === accessOptions.setDate.toString()) setStringDate([year, month, label])
+    else if (set.toString() === accessOptions.setMonth.toString()) setStringDate([year, label, day])
+    else if (set.toString() === accessOptions.setYear.toString()) setStringDate([label, month, day])
 
     if (isControlled()) {
-      onChange(
-        changedDate,
-        `${stringDate[0]}-${stringDate[1]}-${stringDate[2]}T00:00:00Z`
-      )
+      onChange(changedDate, `${stringDate[0]}-${stringDate[1]}-${stringDate[2]}T00:00:00Z`)
     }
   }
 
@@ -657,9 +589,7 @@ const DateTimeInput = props => {
     (...args) =>
       _fp.pipe(
         _fp.values,
-        _fp.filter(
-          ref => ref && ref.current && isFunction(ref.current[handlerName])
-        ),
+        _fp.filter(ref => ref && ref.current && isFunction(ref.current[handlerName])),
         _fp.map(ref => ref.current[handlerName](...args))
       )(refs)
 
@@ -685,24 +615,15 @@ const DateTimeInput = props => {
   }
 
   return (
-    <div
-      {...RootProps}
-      className={classNames(className, classesMap.selectControl)}
-      onBlur={handleBlur}
-    >
+    <div {...RootProps} className={classNames(className, classesMap.selectControl)} onBlur={handleBlur}>
       {map(normalizeFormat(displayFormat), (display, i) => {
         const baseKey = `${display}-${i}`
         const displayOption = displayOptions(culture)[dateTimeKeyMap[display]]
 
         if (displayOption) {
           const TextFieldProps = TextFieldsProps[display]
-          const formatToken = getTokenFromDateTimeFormat(
-            dateTimeFormat,
-            dateTimeKeyMap[display]
-          )
-          const currentOrderIdx = orderList.findIndex(
-            order => order === display
-          )
+          const formatToken = getTokenFromDateTimeFormat(dateTimeFormat, dateTimeKeyMap[display])
+          const currentOrderIdx = orderList.findIndex(order => order === display)
           const nextFieldKey = orderList[currentOrderIdx + 1]
           return (
             <DateTimeSelect
@@ -740,19 +661,14 @@ const DateTimeInput = props => {
           disabled={disabled}
           onClick={setNow}
         >
-          {buttonLabel ||
-            (isFunction(formatMessage) && formatMessage(messages.nowButton)) ||
-            'Now'}
+          {buttonLabel || (isFunction(formatMessage) && formatMessage(messages.nowButton)) || 'Now'}
         </AspectButton>
       )}
     </div>
   )
 }
 
-const DateType = PropTypes.oneOfType([
-  PropTypes.string,
-  PropTypes.instanceOf(Date),
-])
+const DateType = PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
 
 DateTimeInput.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

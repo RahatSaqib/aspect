@@ -11,13 +11,8 @@ async function seed(knex) {
     { module: 'patient', activity: 'edit' },
   ])
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where('name', 'Admin')
-    .first('id')
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').first('id')
 
   const modules = await getPermissionModules(knex)
-  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.patient.view,
-    modules.patient.edit,
-  ])
+  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [modules.patient.view, modules.patient.edit])
 }

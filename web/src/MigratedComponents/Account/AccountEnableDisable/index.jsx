@@ -41,9 +41,7 @@ const AccountEnableDisable = props => {
       onSuccess: ({ ok }) => {
         if (ok) {
           const searchParams = new URLSearchParams(location.search)
-          const filtersParams = new URLSearchParams(
-            searchParams.get('filters') || ''
-          )
+          const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
           const pageAt = params.get('pageAt') || 0
           const pageSize = params.get('pageSize') || 25
           const sortCol = params.get('sortCol') || 'name'
@@ -51,9 +49,7 @@ const AccountEnableDisable = props => {
           if (confirmationData?.type === 'button') {
             navigate(0)
           } else {
-            dispatch(
-              fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
-            )
+            dispatch(fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize))
           }
         }
       },
@@ -62,8 +58,7 @@ const AccountEnableDisable = props => {
 
   function handleDisablePrompt() {
     const { type, formik, person } = props
-    const personData =
-      type === 'button' ? formik?.initialValues : person?.toJS()
+    const personData = type === 'button' ? formik?.initialValues : person?.toJS()
     setConfirmationData({ ...personData, type })
     setShowConfirmation(true)
   }
@@ -91,9 +86,7 @@ const AccountEnableDisable = props => {
 
   return (
     <Fragment>
-      {props?.type === 'button' ? (
-        <FormAction {...props} action={handleDisablePrompt} />
-      ) : null}
+      {props?.type === 'button' ? <FormAction {...props} action={handleDisablePrompt} /> : null}
       {props?.type === 'icon' ? (
         <TableCell>
           <div
@@ -105,17 +98,9 @@ const AccountEnableDisable = props => {
             }}
           >
             {person.get('disabled') === 0 ? (
-              <IconContainer
-                icon={Person}
-                style={{ color: 'green' }}
-                action={handleDisablePrompt}
-              />
+              <IconContainer icon={Person} style={{ color: 'green' }} action={handleDisablePrompt} />
             ) : (
-              <IconContainer
-                icon={PersonOff}
-                style={{ color: 'red' }}
-                action={handleDisablePrompt}
-              />
+              <IconContainer icon={PersonOff} style={{ color: 'red' }} action={handleDisablePrompt} />
             )}
           </div>
         </TableCell>
@@ -125,11 +110,7 @@ const AccountEnableDisable = props => {
           <Button color="primary" onClick={() => setShowConfirmation(false)}>
             {formatMessage(messages.cancel)}
           </Button>,
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => handleEnableDisable()}
-          >
+          <Button color="primary" variant="contained" onClick={() => handleEnableDisable()}>
             {formatMessage(messages.yes)}
           </Button>,
         ]}
@@ -139,9 +120,7 @@ const AccountEnableDisable = props => {
       >
         <h3>{confirmationData?.name}</h3>
         <div style={{ marginTop: '15px' }}>
-          {confirmationData?.disabled > 0
-            ? formatMessage(messages.enableUser)
-            : formatMessage(messages.disableUser)}
+          {confirmationData?.disabled > 0 ? formatMessage(messages.enableUser) : formatMessage(messages.disableUser)}
         </div>
       </AspectDialog>
     </Fragment>

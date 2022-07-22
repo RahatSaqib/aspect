@@ -5,10 +5,8 @@ import { aspectFetch } from '../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
-  REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR:
-    'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR',
-  RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR:
-    'RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR',
+  REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR: 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR',
+  RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR: 'RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR',
   REQUEST_STATES_FOR_LOCATION_SELECTOR: 'REQUEST_STATES_FOR_LOCATION_SELECTOR',
   RECEIVE_STATES_FOR_LOCATION_SELECTOR: 'RECEIVE_STATES_FOR_LOCATION_SELECTOR',
   REQUEST_LGAS_FOR_LOCATION_SELECTOR: 'REQUEST_LGAS_FOR_LOCATION_SELECTOR',
@@ -46,10 +44,7 @@ function createReceiveStatesForLocationSelector(states, selectedCountryId) {
   }
 }
 
-function createRequestLgasForLocationSelector(
-  selectedCountryId,
-  selectedStateId
-) {
+function createRequestLgasForLocationSelector(selectedCountryId, selectedStateId) {
   return {
     type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
     selectedCountryId,
@@ -57,11 +52,7 @@ function createRequestLgasForLocationSelector(
   }
 }
 
-function createReceiveLgasForLocationSelector(
-  lgas,
-  selectedCountryId,
-  selectedStateId
-) {
+function createReceiveLgasForLocationSelector(lgas, selectedCountryId, selectedStateId) {
   return {
     type: types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR,
     lgas,
@@ -75,10 +66,7 @@ const cacheExpiryTime = 5 * 60 * 1000 // five minutes
 
 function isExpired(lastRefreshed) {
   const now = new Date()
-  return (
-    !lastRefreshed ||
-    Math.abs(now.getTime() - lastRefreshed.getTime()) > cacheExpiryTime
-  )
+  return !lastRefreshed || Math.abs(now.getTime() - lastRefreshed.getTime()) > cacheExpiryTime
 }
 
 const doFetchCountries = dispatch => {
@@ -94,36 +82,24 @@ const doFetchCountries = dispatch => {
         })
       ),
     },
-  }).then(json =>
-    dispatch(createReceiveCountriesForLocationSelector(json.data))
-  )
+  }).then(json => dispatch(createReceiveCountriesForLocationSelector(json.data)))
 }
 
 export const fetchCountries = () => dispatch => doFetchCountries(dispatch)
 
 export const fetchCountriesForLocationSelector = countriesState => dispatch => {
-  if (
-    countriesState.get('loading') ||
-    !isExpired(countriesState.get('lastRefreshed'))
-  ) {
+  if (countriesState.get('loading') || !isExpired(countriesState.get('lastRefreshed'))) {
     return
   }
   return doFetchCountries(dispatch)
 }
 
-const doFetchStatesForCountry = ({
-  countryId,
-  countryName,
-  geography,
-  forceRefresh,
-  dispatch,
-}) => {
+const doFetchStatesForCountry = ({ countryId, countryName, geography, forceRefresh, dispatch }) => {
   const selectedCountry = geography
     .getIn(['countriesForLocationSelector', 'items'])
     .find(country => +country.get('id') === +countryId)
 
-  const shouldFetch =
-    forceRefresh || !selectedCountry?.getIn(['children', 'lastRefreshed'])
+  const shouldFetch = forceRefresh || !selectedCountry?.getIn(['children', 'lastRefreshed'])
 
   if (!shouldFetch) {
     return
@@ -142,91 +118,69 @@ const doFetchStatesForCountry = ({
         { countryName }
       ),
     },
-  }).then(json =>
-    dispatch(createReceiveStatesForLocationSelector(json.data, countryId))
-  )
+  }).then(json => dispatch(createReceiveStatesForLocationSelector(json.data, countryId)))
 }
 
-export const fetchStatesForCountry =
-  (countryId, countryName, forceRefresh) => (dispatch, getState) => {
-    const { geography } = getState()
-    if (geography.getIn(['countriesForLocationSelector', 'loading'])) {
-      return
-    }
-
-    return doFetchStatesForCountry({
-      countryId,
-      countryName,
-      geography,
-      forceRefresh,
-      dispatch,
-    })
+export const fetchStatesForCountry = (countryId, countryName, forceRefresh) => (dispatch, getState) => {
+  const { geography } = getState()
+  if (geography.getIn(['countriesForLocationSelector', 'loading'])) {
+    return
   }
 
-export const fetchStatesForLocationSelector =
-  selectedCountry => (dispatch, getState) => {
-    const { geography } = getState()
-    if (geography.getIn(['countriesForLocationSelector', 'loading'])) {
-      return
-    }
+  return doFetchStatesForCountry({
+    countryId,
+    countryName,
+    geography,
+    forceRefresh,
+    dispatch,
+  })
+}
 
-    if (
-      selectedCountry.getIn(['children', 'loading']) ||
-      !isExpired(selectedCountry.getIn(['children', 'lastRefreshed']))
-    ) {
-      return
-    }
-
-    const countryId = selectedCountry.get('id')
-    const countryName = selectedCountry.get('name')
-
-    return doFetchStatesForCountry({
-      countryId,
-      countryName,
-      geography,
-      dispatch,
-    })
+export const fetchStatesForLocationSelector = selectedCountry => (dispatch, getState) => {
+  const { geography } = getState()
+  if (geography.getIn(['countriesForLocationSelector', 'loading'])) {
+    return
   }
 
-export const fetchLgasForLocationSelector =
-  (selectedCountry, selectedState) => dispatch => {
-    if (
-      selectedState.getIn(['children', 'loading']) ||
-      !isExpired(selectedState.getIn(['children', 'lastRefreshed']))
-    ) {
-      return
-    }
-    dispatch(
-      createRequestLgasForLocationSelector(
-        selectedCountry.get('id'),
-        selectedState.get('id')
-      )
-    )
-    return aspectFetch(
-      `/geography/lga-select-list/${selectedState.get('id')}`,
-      {
-        errorNotifications: {
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
-                defaultMessage: 'Error Loading Areas for {stateName}',
-              },
-            }),
-            { stateName: selectedCountry.get('selectedState') }
-          ),
-        },
-      }
-    ).then(json =>
-      dispatch(
-        createReceiveLgasForLocationSelector(
-          json.data,
-          selectedCountry.get('id'),
-          selectedState.get('id')
-        )
-      )
-    )
+  if (
+    selectedCountry.getIn(['children', 'loading']) ||
+    !isExpired(selectedCountry.getIn(['children', 'lastRefreshed']))
+  ) {
+    return
   }
+
+  const countryId = selectedCountry.get('id')
+  const countryName = selectedCountry.get('name')
+
+  return doFetchStatesForCountry({
+    countryId,
+    countryName,
+    geography,
+    dispatch,
+  })
+}
+
+export const fetchLgasForLocationSelector = (selectedCountry, selectedState) => dispatch => {
+  if (selectedState.getIn(['children', 'loading']) || !isExpired(selectedState.getIn(['children', 'lastRefreshed']))) {
+    return
+  }
+  dispatch(createRequestLgasForLocationSelector(selectedCountry.get('id'), selectedState.get('id')))
+  return aspectFetch(`/geography/lga-select-list/${selectedState.get('id')}`, {
+    errorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes(
+        defineMessages({
+          title: {
+            id: 'errorResponseMessages.fetchLgasForLocationSelector.GET.default.title',
+            defaultMessage: 'Error Loading Areas for {stateName}',
+          },
+        }),
+        { stateName: selectedCountry.get('selectedState') }
+      ),
+    },
+  }).then(json =>
+    dispatch(createReceiveLgasForLocationSelector(json.data, selectedCountry.get('id'), selectedState.get('id')))
+  )
+}
 
 /*
  * ---------------- Reducers -----------------
@@ -290,16 +244,9 @@ function receiveCountriesForLocationSelector(state, countries, lastRefreshed) {
                             name: state.name,
                             children: new LazyLoadItems({
                               loading: false,
-                              lastRefreshed: state.lgas
-                                ? lastRefreshed
-                                : undefined,
+                              lastRefreshed: state.lgas ? lastRefreshed : undefined,
                               items: state.lgas
-                                ? Immutable.List(
-                                    map(
-                                      state.lgas,
-                                      lga => new LazyLoadChild(lga)
-                                    )
-                                  )
+                                ? Immutable.List(map(state.lgas, lga => new LazyLoadChild(lga)))
                                 : EMPTY_LIST,
                             }),
                           })
@@ -324,9 +271,7 @@ function requestStatesForLocationSelector(state, selectedCountryId) {
         [
           'countriesForLocationSelector',
           'items',
-          state
-            .getIn(['countriesForLocationSelector', 'items'])
-            .indexOf(selectedCountry),
+          state.getIn(['countriesForLocationSelector', 'items']).indexOf(selectedCountry),
           'children',
           'loading',
         ],
@@ -337,12 +282,7 @@ function requestStatesForLocationSelector(state, selectedCountryId) {
   return state
 }
 
-function receiveStatesForLocationSelector(
-  state,
-  states,
-  selectedCountryId,
-  lastRefreshed
-) {
+function receiveStatesForLocationSelector(state, states, selectedCountryId, lastRefreshed) {
   if (state.getIn(['countriesForLocationSelector', 'items'])) {
     const selectedCountry = state
       .getIn(['countriesForLocationSelector', 'items'])
@@ -352,9 +292,7 @@ function receiveStatesForLocationSelector(
         [
           'countriesForLocationSelector',
           'items',
-          state
-            .getIn(['countriesForLocationSelector', 'items'])
-            .indexOf(selectedCountry),
+          state.getIn(['countriesForLocationSelector', 'items']).indexOf(selectedCountry),
           'children',
         ],
         {
@@ -370,11 +308,7 @@ function receiveStatesForLocationSelector(
                   children: new LazyLoadItems({
                     loading: false,
                     lastRefreshed: state.lgas ? lastRefreshed : undefined,
-                    items: state.lgas
-                      ? Immutable.List(
-                          map(state.lgas, lga => new LazyLoadChild(lga))
-                        )
-                      : EMPTY_LIST,
+                    items: state.lgas ? Immutable.List(map(state.lgas, lga => new LazyLoadChild(lga))) : EMPTY_LIST,
                   }),
                 })
             )
@@ -386,11 +320,7 @@ function receiveStatesForLocationSelector(
   return state
 }
 
-function requestLgasForLocationSelector(
-  state,
-  selectedCountryId,
-  selectedStateId
-) {
+function requestLgasForLocationSelector(state, selectedCountryId, selectedStateId) {
   if (state.getIn(['countriesForLocationSelector', 'items'])) {
     const selectedCountry = state
       .getIn(['countriesForLocationSelector', 'items'])
@@ -404,9 +334,7 @@ function requestLgasForLocationSelector(
           [
             'countriesForLocationSelector',
             'items',
-            state
-              .getIn(['countriesForLocationSelector', 'items'])
-              .indexOf(selectedCountry),
+            state.getIn(['countriesForLocationSelector', 'items']).indexOf(selectedCountry),
             'children',
             'items',
             selectedCountry.getIn(['children', 'items']).indexOf(selectedState),
@@ -421,13 +349,7 @@ function requestLgasForLocationSelector(
   return state
 }
 
-function receiveLgasForLocationSelector(
-  state,
-  lgas,
-  selectedCountryId,
-  selectedStateId,
-  lastRefreshed
-) {
+function receiveLgasForLocationSelector(state, lgas, selectedCountryId, selectedStateId, lastRefreshed) {
   if (state.getIn(['countriesForLocationSelector', 'items'])) {
     const selectedCountry = state
       .getIn(['countriesForLocationSelector', 'items'])
@@ -441,9 +363,7 @@ function receiveLgasForLocationSelector(
           [
             'countriesForLocationSelector',
             'items',
-            state
-              .getIn(['countriesForLocationSelector', 'items'])
-              .indexOf(selectedCountry),
+            state.getIn(['countriesForLocationSelector', 'items']).indexOf(selectedCountry),
             'children',
             'items',
             selectedCountry.getIn(['children', 'items']).indexOf(selectedState),
@@ -466,26 +386,13 @@ export default function geographyReducer(state = initialState, action) {
     case types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR:
       return requestCountriesForLocationSelector(state)
     case types.RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR:
-      return receiveCountriesForLocationSelector(
-        state,
-        action.countries,
-        action.lastRefreshed
-      )
+      return receiveCountriesForLocationSelector(state, action.countries, action.lastRefreshed)
     case types.REQUEST_STATES_FOR_LOCATION_SELECTOR:
       return requestStatesForLocationSelector(state, action.selectedCountryId)
     case types.RECEIVE_STATES_FOR_LOCATION_SELECTOR:
-      return receiveStatesForLocationSelector(
-        state,
-        action.states,
-        action.selectedCountryId,
-        action.lastRefreshed
-      )
+      return receiveStatesForLocationSelector(state, action.states, action.selectedCountryId, action.lastRefreshed)
     case types.REQUEST_LGAS_FOR_LOCATION_SELECTOR:
-      return requestLgasForLocationSelector(
-        state,
-        action.selectedCountryId,
-        action.selectedStateId
-      )
+      return requestLgasForLocationSelector(state, action.selectedCountryId, action.selectedStateId)
     case types.RECEIVE_LGAS_FOR_LOCATION_SELECTOR:
       return receiveLgasForLocationSelector(
         state,

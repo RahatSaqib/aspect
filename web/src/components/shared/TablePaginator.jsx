@@ -4,12 +4,7 @@ import React from 'react'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
-import {
-  FaAngleDoubleLeft,
-  FaAngleDoubleRight,
-  FaAngleLeft,
-  FaAngleRight,
-} from 'react-icons/fa'
+import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './TablePaginator.css'
@@ -82,8 +77,7 @@ const enhance = compose(
     onLastClick:
       ({ total, pageSize, onPageChange }) =>
       () => {
-        const lastPage =
-          total % pageSize === 0 ? total / pageSize - 1 : total / pageSize
+        const lastPage = total % pageSize === 0 ? total / pageSize - 1 : total / pageSize
         onPageChange(Math.floor(lastPage))
       },
 

@@ -15,25 +15,19 @@ it('renders buttons in correct states', () => {
 
 it('renders correct "Now Showing" counts', () => {
   const { getByTestId } = render(<Default {...Default.args} />)
-  expect(getByTestId('now-showing')).toHaveTextContent(
-    'Showing 1-10 of 90 notifications'
-  )
+  expect(getByTestId('now-showing')).toHaveTextContent('Showing 1-10 of 90 notifications')
 })
 
 it('update row count and verify correct values', () => {
   const { getByRole, getByTestId } = render(<Default {...Default.args} />)
   userEvent.click(getByRole('button', { name: /25/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent(
-    'Showing 1-25 of 90 notifications'
-  )
+  expect(getByTestId('now-showing')).toHaveTextContent('Showing 1-25 of 90 notifications')
 })
 
 it('update page selector and verify correct values', () => {
   const { getByRole, getByTestId } = render(<Default {...Default.args} />)
   userEvent.click(getByRole('button', { name: /next/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent(
-    'Showing 11-20 of 90 notifications'
-  )
+  expect(getByTestId('now-showing')).toHaveTextContent('Showing 11-20 of 90 notifications')
   expect(getByRole('button', { name: /first/i })).toBeEnabled()
   expect(getByRole('button', { name: /previous/i })).toBeEnabled()
 })
@@ -41,9 +35,7 @@ it('update page selector and verify correct values', () => {
 it('go to last page and verify correct values and states', () => {
   const { getByRole, getByTestId } = render(<Default {...Default.args} />)
   userEvent.click(getByRole('button', { name: /last/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent(
-    'Showing 81-90 of 90 notifications'
-  )
+  expect(getByTestId('now-showing')).toHaveTextContent('Showing 81-90 of 90 notifications')
   expect(getByRole('button', { name: /next/i })).toBeDisabled()
   expect(getByRole('button', { name: /last/i })).toBeDisabled()
 })

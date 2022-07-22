@@ -1,14 +1,5 @@
 import React from 'react'
-import {
-  array,
-  bool,
-  func,
-  number,
-  object,
-  oneOfType,
-  shape,
-  string,
-} from 'prop-types'
+import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
@@ -41,11 +32,7 @@ const GroupedCell = ({
         className={cssClasses('tablecell__expandbutton')}
         title={formatMessage(messages.expandRow)}
       >
-        {isExpanded ? (
-          <IconProvider icon="MdUnfoldLess" />
-        ) : (
-          <IconProvider icon="MdUnfoldMore" />
-        )}
+        {isExpanded ? <IconProvider icon="MdUnfoldLess" /> : <IconProvider icon="MdUnfoldMore" />}
       </IconButton>
       <Cell render={render} format={format} value={value} /> ({subRowsLength})
     </div>

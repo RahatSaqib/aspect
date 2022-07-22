@@ -7,9 +7,7 @@ const emailAddress = value => {
       validateChain.isOptional = true
       return validateChain
     },
-    isValid: () =>
-      (!validateChain.email && validateChain.isOptional) ||
-      validateEmail(value),
+    isValid: () => (!validateChain.email && validateChain.isOptional) || validateEmail(value),
   }
   return validateChain
 }

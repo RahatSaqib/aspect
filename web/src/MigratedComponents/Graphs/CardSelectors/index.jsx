@@ -12,23 +12,14 @@ const CardSelectors = ({ props: { actionComponentProps, action } }) =>
     <Grid container className={cssClasses('selectors__container')}>
       {actionComponentProps.map(acProps => {
         const { component: Component, identifier, state } = acProps
-        return (
-          <Component
-            props={acProps}
-            action={action}
-            key={`${identifier}-${state}`}
-          />
-        )
+        return <Component props={acProps} action={action} key={`${identifier}-${state}`} />
       })}
     </Grid>
   ) : null
 
 CardSelectors.propTypes = {
   props: PropTypes.shape({
-    actionComponentProps: PropTypes.oneOfType([
-      PropTypes.arrayOf(PropTypes.object).isRequired,
-      PropTypes.bool,
-    ]),
+    actionComponentProps: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.object).isRequired, PropTypes.bool]),
     action: PropTypes.func.isRequired,
   }).isRequired,
 }

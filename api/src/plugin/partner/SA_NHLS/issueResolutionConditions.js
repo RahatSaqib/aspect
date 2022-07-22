@@ -21,10 +21,7 @@ async function shouldResolveNewResultAlert(knex, issue) {
           !_.isEmpty(formDataObject) ||
           !_.every(
             _.values(formDataObject),
-            formDataValue =>
-              _.isEmpty(formDataValue) ||
-              _.isNil(formDataValue) ||
-              formDataValue === ''
+            formDataValue => _.isEmpty(formDataValue) || _.isNil(formDataValue) || formDataValue === ''
           )
         ) {
           return true
@@ -54,21 +51,11 @@ async function shouldResolveResultDataEnteredIssue(knex, issue) {
     .andWhere('nt.partnerId', partnerId)
     .andWhere('wt.externalId', 'redCapAlereQ')
     .andWhere('ms.externalId', 'Sent')
-    .first(
-      'rc1.externalId as resultCategory1',
-      'rc2.externalId as resultCategory2'
-    )
+    .first('rc1.externalId as resultCategory1', 'rc2.externalId as resultCategory2')
   if (!_.isNil(sentRedCAPNotification)) {
-    const positiveResultCategories = [
-      'Detected',
-      'Trace Detected',
-      'LessThan1000',
-      'MoreThan1000',
-    ]
+    const positiveResultCategories = ['Detected', 'Trace Detected', 'LessThan1000', 'MoreThan1000']
     const resultNegative =
-      !positiveResultCategories.includes(
-        sentRedCAPNotification.resultCategory1
-      ) &&
+      !positiveResultCategories.includes(sentRedCAPNotification.resultCategory1) &&
       !positiveResultCategories.includes(sentRedCAPNotification.resultCategory2)
     if (resultNegative) {
       return true

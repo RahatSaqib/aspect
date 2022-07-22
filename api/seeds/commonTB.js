@@ -1,21 +1,11 @@
 const _ = require('lodash')
 const { format } = require('date-fns')
 const Promise = require('bluebird')
-const {
-  assayTypeToId,
-  assayToId,
-  resultSourceToId,
-  resultCategoryToId,
-} = require('../src/shared/dictionary')
+const { assayTypeToId, assayToId, resultSourceToId, resultCategoryToId } = require('../src/shared/dictionary')
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGndResultDataSchema.json')
 const MGITPatientDataSchema = require('./fixtures/MGITPatientDataSchema.json')
-const {
-  seedPartnerAssay,
-  seedPartnerDisease,
-  getLinkedResultDate,
-  getDateFields,
-} = require('./utils')
+const { seedPartnerAssay, seedPartnerDisease, getLinkedResultDate, getDateFields } = require('./utils')
 const { deviceTypeCategoryToId } = require('../src/shared/dictionary')
 
 async function getMGITResultFromTBPositive(result, assaysMGIT, devicesMGIT) {
@@ -45,8 +35,7 @@ async function upsertMGITDeviceTypeAndAssays(
 ) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
 
-  let { id: deviceTypeBDMGITId } =
-    (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
+  let { id: deviceTypeBDMGITId } = (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
 
   if (!deviceTypeBDMGITId) {
     ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
@@ -69,9 +58,7 @@ async function upsertMGITDeviceTypeAndAssays(
     resultDataSchema: JSON.stringify(assayBdMgitAstResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayBdMgitAstId } =
-    (await knex('Assay').where('externalId', 'assayBdMgitAst').first('id')) ||
-    {}
+  let { id: assayBdMgitAstId } = (await knex('Assay').where('externalId', 'assayBdMgitAst').first('id')) || {}
 
   if (!assayBdMgitAstId) {
     ;[assayBdMgitAstId] = await knex('Assay').insert({
@@ -124,9 +111,7 @@ async function upsertMGITDeviceTypeAndAssays(
     resultDataSchema: JSON.stringify(assayBdMgitGndResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayBdMgitGndId } =
-    (await knex('Assay').where('externalId', 'assayBdMgitGnd').first('id')) ||
-    {}
+  let { id: assayBdMgitGndId } = (await knex('Assay').where('externalId', 'assayBdMgitGnd').first('id')) || {}
   if (!assayBdMgitGndId) {
     ;[assayBdMgitGndId] = await knex('Assay').insert({
       ...assayBdMgitGnd,
@@ -231,9 +216,7 @@ async function upsertCultureAssays(
     resultDataSchema: JSON.stringify(dstResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayGenericDstId } =
-    (await knex('Assay').where('externalId', 'assayGenericDst').first('id')) ||
-    {}
+  let { id: assayGenericDstId } = (await knex('Assay').where('externalId', 'assayGenericDst').first('id')) || {}
   if (!assayGenericDstId) {
     ;[assayGenericDstId] = await knex('Assay').insert({
       ...assayGenericDst,
@@ -292,19 +275,14 @@ async function upsertCultureAssays(
     resultDataSchema: JSON.stringify(cultureResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayGenericCultureId } =
-    (await knex('Assay')
-      .where('externalId', 'assayGenericCulture')
-      .first('id')) || {}
+  let { id: assayGenericCultureId } = (await knex('Assay').where('externalId', 'assayGenericCulture').first('id')) || {}
   if (!assayGenericCultureId) {
     ;[assayGenericCultureId] = await knex('Assay').insert({
       ...assayGenericCulture,
       externalId: 'assayGenericCulture',
     })
   } else {
-    await knex('Assay')
-      .where('id', assayGenericCultureId)
-      .update(assayGenericCulture)
+    await knex('Assay').where('id', assayGenericCultureId).update(assayGenericCulture)
   }
   values.splice(-2, 2)
   const resultCategoryCultureId = await knex('ResultCategoryAssay')

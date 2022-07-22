@@ -2,10 +2,7 @@ import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_DISEASES: 'REQUEST_DISEASES',
@@ -34,10 +31,7 @@ export function fetchDiseases(forceRefresh) {
     const shouldFetch =
       forceRefresh ||
       !disease.getIn(['diseases', 'lastRefreshed']) ||
-      differenceInMinutes(
-        new Date(),
-        disease.getIn(['diseases', 'lastRefreshed'])
-      ) > 5 // five minutes
+      differenceInMinutes(new Date(), disease.getIn(['diseases', 'lastRefreshed'])) > 5 // five minutes
     if (!shouldFetch) {
       return
     }

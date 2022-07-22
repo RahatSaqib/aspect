@@ -14,11 +14,7 @@ async function shouldSendResultPositiveSms(knex, issue) {
         'i.level': 1,
         'it.externalId': 'ResultDataEntered',
       })
-      .first(
-        'r.formData',
-        'rc1.externalId as resultCategory1Id',
-        'rc2.externalId as resultCategory2Id'
-      )
+      .first('r.formData', 'rc1.externalId as resultCategory1Id', 'rc2.externalId as resultCategory2Id')
 
     if (result) {
       const { formData, resultCategory1Id, resultCategory2Id } = result
@@ -28,10 +24,7 @@ async function shouldSendResultPositiveSms(knex, issue) {
           !_.isEmpty(formDataObject) &&
           !_.every(
             _.values(formDataObject),
-            formDataValue =>
-              _.isEmpty(formDataValue) ||
-              _.isNil(formDataValue) ||
-              formDataValue === ''
+            formDataValue => _.isEmpty(formDataValue) || _.isNil(formDataValue) || formDataValue === ''
           )
         ) {
           return [resultCategory1Id, resultCategory2Id].includes('Detected')

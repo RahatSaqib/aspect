@@ -1,9 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import useI18n from '../../Hooks/i18n/useI18n'
 import { formatDateTime } from '../../shared/utils/dateFormat'
 import messages from './messages'
@@ -16,16 +13,10 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
   return (
     <TableRow className={cssClasses('TableRow')}>
       <TableCell className={cssClasses('TableCell')}>
-        {inventoryLogItem.createdOn
-          ? formatDateTime(inventoryLogItem.createdOn)
-          : 'N/A'}
+        {inventoryLogItem.createdOn ? formatDateTime(inventoryLogItem.createdOn) : 'N/A'}
       </TableCell>
-      <TableCell className={cssClasses('TableCell')}>
-        {inventoryLogItem.siteName}
-      </TableCell>
-      <TableCell className={cssClasses('TableCell')}>
-        {inventoryLogItem.consumableName}
-      </TableCell>
+      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.siteName}</TableCell>
+      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.consumableName}</TableCell>
 
       {inventoryLogItem.lotNumber !== undefined ? (
         <TableCell className={cssClasses('TableCell')}>
@@ -36,21 +27,16 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
       <TableCell className={cssClasses('TableCell')}>
         <span
           className={
-            inventoryLogItem.expirationDate !== null &&
-            new Date(inventoryLogItem.expirationDate) < new Date()
+            inventoryLogItem.expirationDate !== null && new Date(inventoryLogItem.expirationDate) < new Date()
               ? cssClasses('alert')
               : null
           }
         >
-          {inventoryLogItem.expirationDate
-            ? inventoryLogItem.expirationDate.split('T')[0]
-            : 'N/A'}
+          {inventoryLogItem.expirationDate ? inventoryLogItem.expirationDate.split('T')[0] : 'N/A'}
         </span>
       </TableCell>
 
-      <TableCell className={cssClasses('TableCell')}>
-        {inventoryLogItem.quantity}
-      </TableCell>
+      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.quantity}</TableCell>
       <TableCell className={cssClasses('TableCell')}>
         {messages[inventoryLogItem.consumableReasonI18nKey]
           ? formatMessage(messages[inventoryLogItem.consumableReasonI18nKey], {
@@ -58,9 +44,7 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
             })
           : ''}
       </TableCell>
-      <TableCell className={cssClasses('TableCell')}>
-        {inventoryLogItem.notes}
-      </TableCell>
+      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.notes}</TableCell>
     </TableRow>
   )
 }

@@ -24,21 +24,12 @@ export class NotFound extends PureComponent {
       <div className={cssClasses('Container')}>
         <Helmet title="Not Found" />
         <h1 className={cssClasses('Container__Title')}>
-          <FormattedMessage
-            id="pages.NotFound.title"
-            defaultMessage="Not Found"
-          />
+          <FormattedMessage id="pages.NotFound.title" defaultMessage="Not Found" />
         </h1>
         <h2 className={cssClasses('Container__HelpBlock')}>
-          <FormattedMessage
-            id="pages.NotFound.help"
-            defaultMessage="The page you're looking for doesn't exist."
-          />
+          <FormattedMessage id="pages.NotFound.help" defaultMessage="The page you're looking for doesn't exist." />
         </h2>
-        <IconButton
-          className={cssClasses('Container__Button')}
-          onClick={() => this.props.navigate(-1)}
-        >
+        <IconButton className={cssClasses('Container__Button')} onClick={() => this.props.navigate(-1)}>
           <ActionBack fontSize="large" />
         </IconButton>
         <Link to="/">

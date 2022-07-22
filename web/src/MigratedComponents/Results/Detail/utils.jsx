@@ -1,7 +1,4 @@
-import {
-  getInitialValuesFromFormConfig,
-  mergeFormConfigWithData,
-} from '../../Form/Formik/Helpers'
+import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../Form/Formik/Helpers'
 
 import getFormConfig from '../Forms/editConfig'
 import getValidationSchema from '../Forms/validation'

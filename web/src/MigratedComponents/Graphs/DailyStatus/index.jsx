@@ -27,31 +27,13 @@ const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 
 const DailyStatus = () => {
   const [dialogState, setDialogState] = useState({ isOpen: false })
-  const minDate = getPreviousPeriod(
-    'months',
-    "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-  ).start
-  const maxDate = getPreviousPeriod(
-    'months',
-    "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-  ).end
+  const minDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").start
+  const maxDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").end
   const { formatMessage } = useI18n()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
-    statuses: {
-      allStatuses,
-      visibleStatuses,
-      deviceStatusesIsLoading,
-      deviceStatusesIsError,
-      deviceStatusesError,
-    },
-    actions: {
-      changeDeviceStatus,
-      getDeviceDayDetails,
-      toggleAll,
-      toggleStatusVisibility,
-      updateFromActionComponent,
-    },
+    statuses: { allStatuses, visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },
+    actions: { changeDeviceStatus, getDeviceDayDetails, toggleAll, toggleStatusVisibility, updateFromActionComponent },
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
 
@@ -120,33 +102,21 @@ const DailyStatus = () => {
     >
       {!devicesIsLoading && !deviceStatusesIsLoading ? (
         <div className={cssClasses('dailystatus__container')}>
-          <DailyStatusFilters
-            toggleAll={toggleAll}
-            statuses={visibleStatuses}
-            action={toggleStatusVisibility}
-          />
+          <DailyStatusFilters toggleAll={toggleAll} statuses={visibleStatuses} action={toggleStatusVisibility} />
           <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
-          {devicesDaily.map(
-            ({
-              id: deviceId,
-              name,
-              shortName,
-              maintenanceStatusHistory,
-              totalResults,
-            }) => (
-              <DailyStatusClinic
-                key={deviceId}
-                name={shortName || name}
-                data={maintenanceStatusHistory}
-                total={totalResults}
-                statuses={visibleStatuses}
-                consts={GRAPH_CONSTS}
-                totalDays={totalDays}
-                onClickDay={onClickDay}
-                deviceId={deviceId}
-              />
-            )
-          )}
+          {devicesDaily.map(({ id: deviceId, name, shortName, maintenanceStatusHistory, totalResults }) => (
+            <DailyStatusClinic
+              key={deviceId}
+              name={shortName || name}
+              data={maintenanceStatusHistory}
+              total={totalResults}
+              statuses={visibleStatuses}
+              consts={GRAPH_CONSTS}
+              totalDays={totalDays}
+              onClickDay={onClickDay}
+              deviceId={deviceId}
+            />
+          ))}
 
           <DailyStatusDialog
             data={dialogState.data}

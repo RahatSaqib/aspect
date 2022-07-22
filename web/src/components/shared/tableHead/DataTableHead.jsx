@@ -55,53 +55,27 @@ const styles = theme => {
   }, style)
 }
 
-const DataTableHead = ({
-  classes,
-  compact,
-  sortColumnKey,
-  sortColumnDir,
-  columns,
-  onHeadColumnClick = noop,
-}) => (
+const DataTableHead = ({ classes, compact, sortColumnKey, sortColumnDir, columns, onHeadColumnClick = noop }) => (
   <TableHead>
     <TableRow className={classNames({ [classes.compact]: compact })}>
       {columns.map(
         (
-          {
-            key = index,
-            colSpan,
-            label,
-            onClick,
-            sortable = false,
-            tooltip,
-            isHidden,
-            hiddenOn,
-            auth,
-            ...restProps
-          },
+          { key = index, colSpan, label, onClick, sortable = false, tooltip, isHidden, hiddenOn, auth, ...restProps },
           index
         ) =>
           !isHidden ? (
-            <PermissionsProvider
-              key={`PermissionProvider--${key}`}
-              permissions={auth || []}
-            >
+            <PermissionsProvider key={`PermissionProvider--${key}`} permissions={auth || []}>
               <TableCell
                 data-column={key}
                 colSpan={colSpan}
                 sortDirection={sortColumnKey === key ? sortColumnDir : false}
                 onClick={onClick}
                 {...restProps}
-                className={classNames(
-                  restProps.className,
-                  classes.cell,
-                  classes[`hidden${hiddenOn}Down`],
-                  {
-                    [classes.centerAlignedCell]: !!colSpan,
-                    [classes.clickable]: isFunction(onClick) || sortable,
-                    [classes.compact]: compact,
-                  }
-                )}
+                className={classNames(restProps.className, classes.cell, classes[`hidden${hiddenOn}Down`], {
+                  [classes.centerAlignedCell]: !!colSpan,
+                  [classes.clickable]: isFunction(onClick) || sortable,
+                  [classes.compact]: compact,
+                })}
               >
                 {!sortable ? (
                   <span className={classes.columnLabel}>{label}</span>
@@ -119,13 +93,7 @@ const DataTableHead = ({
                     {label}
                   </TableSortLabel>
                 )}
-                {tooltip && (
-                  <AspectTooltip
-                    title={tooltip}
-                    showHelpIcon
-                    toolTipContainerClass={classes.tooltipIcon}
-                  />
-                )}
+                {tooltip && <AspectTooltip title={tooltip} showHelpIcon toolTipContainerClass={classes.tooltipIcon} />}
               </TableCell>
             </PermissionsProvider>
           ) : null

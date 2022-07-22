@@ -5,14 +5,9 @@ const _ = require('lodash')
 const trainingSites = require('./fixtures/trainingSites')
 
 async function seed(knex) {
-  const { id: reportableSiteTagId } = await knex('Tag')
-    .where('title', 'Reportable Site')
-    .first('id')
+  const { id: reportableSiteTagId } = await knex('Tag').where('title', 'Reportable Site').first('id')
 
-  const sitesWithTag = await knex('SiteTag')
-    .where('tagId', reportableSiteTagId)
-    .whereNotNull('siteId')
-    .select('siteId')
+  const sitesWithTag = await knex('SiteTag').where('tagId', reportableSiteTagId).whereNotNull('siteId').select('siteId')
 
   // get training sites in rivers that don't have the tag yet
   const trainingSitesKano = await knex('Site as s')

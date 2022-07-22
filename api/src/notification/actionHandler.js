@@ -42,11 +42,7 @@ function resultBased(methodsToExecute) {
     context.run(async knex => {
       await Promise.each(
         methodsToExecute,
-        async ({
-          filterCondition,
-          notificationTypeCategoryId,
-          notificationTypeId,
-        }) => {
+        async ({ filterCondition, notificationTypeCategoryId, notificationTypeId }) => {
           return createNotifications(
             knex,
             {

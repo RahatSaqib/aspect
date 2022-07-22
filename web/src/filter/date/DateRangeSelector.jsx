@@ -74,9 +74,7 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(messages.yesterday)} (${formatDayMonthFunc(
-          yesterday
-        )})`,
+        label: `${formatMessage(messages.yesterday)} (${formatDayMonthFunc(yesterday)})`,
         minDate: startOfDay(yesterday),
         maxDate: endOfDay(yesterday),
       },
@@ -117,16 +115,16 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(messages.thisWeek)} (${formatDayMonthFunc(
-          thisWeekStart
-        )} - ${formatDayMonthFunc(thisWeekEnd)})`,
+        label: `${formatMessage(messages.thisWeek)} (${formatDayMonthFunc(thisWeekStart)} - ${formatDayMonthFunc(
+          thisWeekEnd
+        )})`,
         minDate: thisWeekStart,
         maxDate: thisWeekEnd,
       },
       {
-        label: `${formatMessage(messages.lastWeek)} (${formatDayMonthFunc(
-          lastWeekStart
-        )} - ${formatDayMonthFunc(lastWeekEnd)})`,
+        label: `${formatMessage(messages.lastWeek)} (${formatDayMonthFunc(lastWeekStart)} - ${formatDayMonthFunc(
+          lastWeekEnd
+        )})`,
         minDate: lastWeekStart,
         maxDate: lastWeekEnd,
       },
@@ -134,9 +132,7 @@ export class DateRangeSelector extends PureComponent {
         const weekStart = startOfWeek(dayInWeek)
         const weekEnd = endOfWeek(dayInWeek)
         return {
-          label: `${formatDayMonthFunc(weekStart)} - ${formatDayMonthFunc(
-            weekEnd
-          )}`,
+          label: `${formatDayMonthFunc(weekStart)} - ${formatDayMonthFunc(weekEnd)}`,
           minDate: startOfDay(weekStart),
           maxDate: endOfDay(weekEnd),
         }
@@ -166,16 +162,16 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(messages.thisMonth)} (${formatDayMonthFunc(
-          thisMonthStart
-        )} - ${formatDayMonthFunc(thisMonthEnd)})`,
+        label: `${formatMessage(messages.thisMonth)} (${formatDayMonthFunc(thisMonthStart)} - ${formatDayMonthFunc(
+          thisMonthEnd
+        )})`,
         minDate: thisMonthStart,
         maxDate: thisMonthEnd,
       },
       {
-        label: `${formatMessage(messages.lastMonth)} (${formatDayMonthFunc(
-          lastMonthStart
-        )} - ${formatDayMonthFunc(lastMonthEnd)})`,
+        label: `${formatMessage(messages.lastMonth)} (${formatDayMonthFunc(lastMonthStart)} - ${formatDayMonthFunc(
+          lastMonthEnd
+        )})`,
         minDate: lastMonthStart,
         maxDate: lastMonthEnd,
       },
@@ -212,9 +208,9 @@ export class DateRangeSelector extends PureComponent {
         const quarterStart = startOfQuarter(dayInQuarter)
         const quarterEnd = endOfQuarter(dayInQuarter)
         return {
-          label: `${formatMessage(messages.quarter)} ${getQuarter(
-            dayInQuarter
-          )} ${formatDate(dayInQuarter, { year: 'numeric' })}`,
+          label: `${formatMessage(messages.quarter)} ${getQuarter(dayInQuarter)} ${formatDate(dayInQuarter, {
+            year: 'numeric',
+          })}`,
           minDate: startOfDay(quarterStart),
           maxDate: endOfDay(quarterEnd),
         }
@@ -238,18 +234,12 @@ export class DateRangeSelector extends PureComponent {
     }
     return [
       {
-        label: `${formatMessage(messages.thisYear)} (${formatDate(
-          thisYearStart,
-          { year: 'numeric' }
-        )})`,
+        label: `${formatMessage(messages.thisYear)} (${formatDate(thisYearStart, { year: 'numeric' })})`,
         minDate: thisYearStart,
         maxDate: thisYearEnd,
       },
       {
-        label: `${formatMessage(messages.lastYear)} (${formatDate(
-          lastYearStart,
-          { year: 'numeric' }
-        )})`,
+        label: `${formatMessage(messages.lastYear)} (${formatDate(lastYearStart, { year: 'numeric' })})`,
         minDate: lastYearStart,
         maxDate: lastYearEnd,
       },
@@ -285,9 +275,7 @@ export class DateRangeSelector extends PureComponent {
 
   handleDateRangeChange = ({ target: { value } }) => {
     this.props.onChangeDate(
-      value
-        ? { minDate: value.minDate.toJSON(), maxDate: value.maxDate.toJSON() }
-        : { minDate: null, maxDate: null }
+      value ? { minDate: value.minDate.toJSON(), maxDate: value.maxDate.toJSON() } : { minDate: null, maxDate: null }
     )
   }
 
@@ -354,14 +342,10 @@ export class DateRangeSelector extends PureComponent {
             <MenuItem value="day">{formatMessage(messages.day)}</MenuItem>
             <MenuItem value="week">{formatMessage(messages.week)}</MenuItem>
             <MenuItem value="month">{formatMessage(messages.month)} </MenuItem>
-            <MenuItem value="quarter">
-              {formatMessage(messages.quarter)}{' '}
-            </MenuItem>
+            <MenuItem value="quarter">{formatMessage(messages.quarter)} </MenuItem>
             <MenuItem value="year">{formatMessage(messages.year)}</MenuItem>
             <Divider />
-            <MenuItem value="custom">
-              {formatMessage(messages.custom)}{' '}
-            </MenuItem>
+            <MenuItem value="custom">{formatMessage(messages.custom)} </MenuItem>
           </SelectField>
         </div>
         {(() => {
@@ -371,10 +355,7 @@ export class DateRangeSelector extends PureComponent {
             case 'custom':
               return (
                 <div className={styles.DateRangeSelector__DatePickerContainer}>
-                  <FormGroup
-                    className={controlClassName}
-                    label={formatMessage(messages.fromDate)}
-                  >
+                  <FormGroup className={controlClassName} label={formatMessage(messages.fromDate)}>
                     <DateTimeInput
                       {...restProps}
                       intl={intl}
@@ -383,10 +364,7 @@ export class DateRangeSelector extends PureComponent {
                       onChange={this.handleMinDateChange}
                     />
                   </FormGroup>
-                  <FormGroup
-                    className={controlClassName}
-                    label={formatMessage(messages.toDate)}
-                  >
+                  <FormGroup className={controlClassName} label={formatMessage(messages.toDate)}>
                     <DateTimeInput
                       {...restProps}
                       intl={intl}

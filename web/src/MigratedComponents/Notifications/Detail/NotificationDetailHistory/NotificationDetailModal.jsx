@@ -12,14 +12,7 @@ import PropTypes from 'prop-types'
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import messages from './messages'
 
-const NotificationDetailModal = ({
-  sent,
-  withErrors,
-  pending,
-  showDialog,
-  onClose,
-  recipients = [],
-}) => {
+const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClose, recipients = [] }) => {
   const [notificationData] = useState(recipients)
   const { formatMessage } = useIntl()
 
@@ -117,12 +110,8 @@ const NotificationDetailModal = ({
           </Grid>
         </Grid>
         <Grid item xs={12} md={6} style={{ margin: 10 }}>
-          <Typography variant="h7">
-            {formatMessage(messages.contactDetails)}
-          </Typography>
-          <List
-            sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-          >
+          <Typography variant="h7">{formatMessage(messages.contactDetails)}</Typography>
+          <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
             {notificationData &&
               notificationData.length &&
               notificationData.map((recipient, index) => (

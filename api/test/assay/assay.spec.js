@@ -17,9 +17,7 @@ describe('Assay routes', () => {
 
   describe('GET', () => {
     it('should return a list of assays when using valid token', async () => {
-      const assayResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const assayResponse = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
       assert.equal(assayResponse.status, 200)
       assert.typeOf(assayResponse.body, 'Object')
       assert.property(assayResponse.body, 'data')
@@ -51,25 +49,12 @@ describe('Assay routes', () => {
         },
       ])
 
-      const assertAbilities = (
-        assayTypeName,
-        canCreate,
-        canDelete,
-        canEdit
-      ) => {
-        const assay = data.find(
-          a =>
-            a.assayTypeName === assayTypeName &&
-            a.abilities &&
-            a.abilities.length
-        )
+      const assertAbilities = (assayTypeName, canCreate, canDelete, canEdit) => {
+        const assay = data.find(a => a.assayTypeName === assayTypeName && a.abilities && a.abilities.length)
         assert.isObject(assay)
         assert.isNotEmpty(assay)
         const ability = assay.abilities.find(
-          a =>
-            a.canCreate === canCreate &&
-            a.canDelete === canDelete &&
-            a.canEdit === canEdit
+          a => a.canCreate === canCreate && a.canDelete === canDelete && a.canEdit === canEdit
         )
         assert.isObject(ability)
         assert.isNotEmpty(ability)
@@ -100,10 +85,7 @@ describe('Assay routes', () => {
           },
         ]
       )
-      tbDiseaseManagerAuthAccessToken = await getAccessToken(
-        tbDiseaseManagerUsername,
-        tbDiseaseManagerPassword
-      )
+      tbDiseaseManagerAuthAccessToken = await getAccessToken(tbDiseaseManagerUsername, tbDiseaseManagerPassword)
 
       hivAssaysManagerUserId = await createUser(
         'Partner One',
@@ -125,10 +107,7 @@ describe('Assay routes', () => {
           },
         ]
       )
-      hivAssaysManagerAuthAccessToken = await getAccessToken(
-        hivAssaysManagerUsername,
-        hivAssaysManagerPassword
-      )
+      hivAssaysManagerAuthAccessToken = await getAccessToken(hivAssaysManagerUsername, hivAssaysManagerPassword)
     })
 
     after(async () => {
@@ -137,9 +116,7 @@ describe('Assay routes', () => {
     })
 
     it("should constrain assays returned based on the assays specified in the user's job context", async () => {
-      const assayResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${hivAssaysManagerAuthAccessToken}`)
+      const assayResponse = await server.get(path).set('Authorization', `Bearer ${hivAssaysManagerAuthAccessToken}`)
       expect(assayResponse.body.data).to.containSubset([
         {
           assayTypeName: 'HIV VL',
@@ -153,9 +130,7 @@ describe('Assay routes', () => {
     })
 
     it("should constrain assays returned based on the diseases specified in the user's job context", async () => {
-      const assayResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${tbDiseaseManagerAuthAccessToken}`)
+      const assayResponse = await server.get(path).set('Authorization', `Bearer ${tbDiseaseManagerAuthAccessToken}`)
       expect(assayResponse.body.data).to.containSubset([
         {
           assayTypeName: 'MTB/Rif',
@@ -172,12 +147,8 @@ describe('Assay routes', () => {
       it('should return a list of assays patient and result and schema data', () =>
         runTestWithKnex(async knex => {
           // get an assay with no result/device to make sure it's returned regardless:
-          const assayIdsWithDevice = await knex('Result')
-            .distinct('assayId')
-            .pluck('assayId')
-          const { id: assayIdWithoutDevice } = await knex('Assay')
-            .whereNotIn('id', assayIdsWithDevice)
-            .first('id')
+          const assayIdsWithDevice = await knex('Result').distinct('assayId').pluck('assayId')
+          const { id: assayIdWithoutDevice } = await knex('Assay').whereNotIn('id', assayIdsWithDevice).first('id')
 
           await server
             .get(`${path}/resultandpatientschema`)
@@ -198,16 +169,9 @@ describe('Assay routes', () => {
               assert.property(res.body[0], 'resultCategory2i18nKey')
               assert.property(res.body[0], 'deviceTypeExternalId')
               assert.property(res.body[0], 'resultDataSchema')
-              assert.typeOf(
-                res.body.find(assay => assay.resultDataSchema).resultDataSchema,
-                'object'
-              )
+              assert.typeOf(res.body.find(assay => assay.resultDataSchema).resultDataSchema, 'object')
               assert.property(res.body[0], 'patientDataSchema')
-              assert.typeOf(
-                res.body.find(assay => assay.patientDataSchema)
-                  .patientDataSchema,
-                'object'
-              )
+              assert.typeOf(res.body.find(assay => assay.patientDataSchema).patientDataSchema, 'object')
               assert.property(res.body[0], 'assayTypeAbbreviation')
               assert.property(res.body[0], 'abbreviation')
               assert.property(res.body[0], 'resultCategories')

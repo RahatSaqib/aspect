@@ -25,9 +25,7 @@ describe('Tag routes', () => {
     beforeEach(async () => {
       await context.createDeviceWithResult()
       const { deviceId } = context
-      const { id: resultId } = await knex('Result as r')
-        .where({ deviceId })
-        .first('id')
+      const { id: resultId } = await knex('Result as r').where({ deviceId }).first('id')
       const res = await server
         .put(`${path}/result/${resultId}`)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -46,9 +44,7 @@ describe('Tag routes', () => {
       await context.afterEach()
     })
     it('should return a list of tags when using valid token', async () => {
-      const res = await server
-        .get(`${path}/result`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}/result`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')

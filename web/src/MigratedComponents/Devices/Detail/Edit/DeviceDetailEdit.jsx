@@ -49,10 +49,7 @@ const enhance = compose(
   injectIntl,
   connect(
     (state, props) => {
-      const deviceTags = state.tag.tags.getIn(
-        ['device', props.device.get('id')],
-        Immutable.List()
-      )
+      const deviceTags = state.tag.tags.getIn(['device', props.device.get('id')], Immutable.List())
 
       return {
         deviceTags,

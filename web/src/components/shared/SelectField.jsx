@@ -64,9 +64,7 @@ const SelectField = ({
   multiple,
   ...restProps
 }) => {
-  const [selectedValue, setSelectedValue] = useState(
-    getSelectedValue(value, children, multiple)
-  )
+  const [selectedValue, setSelectedValue] = useState(getSelectedValue(value, children, multiple))
 
   useEffect(() => {
     const newValue = getSelectedValue(value, children, multiple)

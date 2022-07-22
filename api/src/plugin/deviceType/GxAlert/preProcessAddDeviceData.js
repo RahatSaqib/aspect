@@ -25,15 +25,9 @@ async function preProcessAddDeviceData(context) {
 
 async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
   const { id: gxAlertDeviceId, partnerId } = gxAlertDevice
-  const deviceIdFromGxAlertSource = _.get(
-    payload,
-    'configuration.data.gxAlertDeviceId',
-    null
-  )
+  const deviceIdFromGxAlertSource = _.get(payload, 'configuration.data.gxAlertDeviceId', null)
   if (!deviceIdFromGxAlertSource) {
-    throw Boom.badRequest(
-      'Must specify GxAlert device ID for data from GxAlert'
-    )
+    throw Boom.badRequest('Must specify GxAlert device ID for data from GxAlert')
   }
 
   const deviceTypeExternalId = _.get(payload, 'type.id', null)
@@ -42,11 +36,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
   }
   const macAddress = _.get(payload, 'configuration.data.macAddress', null)
   const hostId = _.get(payload, 'configuration.data.hostId', null)
-  const deviceSerialNumber = _.get(
-    payload,
-    'configuration.data.deviceSerialNumber',
-    null
-  )
+  const deviceSerialNumber = _.get(payload, 'configuration.data.deviceSerialNumber', null)
   let countryCode = _.get(payload, 'configuration.data.country', null)
   if (!countryCode) {
     ;[countryCode] = await knex('Device as d')
@@ -59,11 +49,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       .pluck('c.abbreviation')
   }
   const deviceName = _.get(payload, 'name', null)
-  let deviceShortName = _.get(
-    payload,
-    'configuration.data.shortName',
-    deviceName
-  )
+  let deviceShortName = _.get(payload, 'configuration.data.shortName', deviceName)
   if (deviceShortName && deviceShortName.length > 45) {
     deviceShortName = deviceShortName.substr(0, 45)
   }
@@ -86,16 +72,8 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       deviceShortName,
       true
     )
-    const lastPingOn = getDateOrDefault(
-      payload,
-      'configuration.data.lastPingOn',
-      now
-    )
-    const putInService = getDateOrDefault(
-      payload,
-      'configuration.data.putInService',
-      now
-    )
+    const lastPingOn = getDateOrDefault(payload, 'configuration.data.lastPingOn', now)
+    const putInService = getDateOrDefault(payload, 'configuration.data.putInService', now)
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: deviceName,
@@ -109,9 +87,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       hostId: _.get(payload, 'configuration.data.hostId', null),
       culture: _.get(payload, 'configuration.data.culture', null),
       timezone: _.get(payload, 'configuration.data.timezone', null),
-      configurationData: JSON.stringify(
-        _.get(payload, 'configuration.data', '{}')
-      ),
+      configurationData: JSON.stringify(_.get(payload, 'configuration.data', '{}')),
       putInService,
       lastSeenOn: lastPingOn,
       lastPingOn,

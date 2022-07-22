@@ -12,11 +12,7 @@ import {
 } from '../error/CommonErrorNotifications'
 
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 
 export const types = {
@@ -58,14 +54,7 @@ function rejectRouters() {
   }
 }
 
-export function fetchRouters(
-  rawFiltersParams,
-  extraFilters = {},
-  sortCol,
-  sortDir,
-  page,
-  pageSize
-) {
+export function fetchRouters(rawFiltersParams, extraFilters = {}, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = getFilters(filtersParams)
@@ -238,8 +227,7 @@ export function updateSingleRouter(routerId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleRouter.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the Router',
+              defaultMessage: 'An Error Occurred When Trying to Save the Router',
             },
           })
         ),

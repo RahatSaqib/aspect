@@ -1,12 +1,7 @@
 import React from 'react'
 import { string } from 'yup'
 import isEmpty from 'lodash/isEmpty'
-import {
-  PureTextInput,
-  PureCheckboxInput,
-  PureChip,
-  PurePhoneNumber,
-} from '../../Form/PureFormik/Inputs'
+import { PureTextInput, PureCheckboxInput, PureChip, PurePhoneNumber } from '../../Form/PureFormik/Inputs'
 import CountrySelect from './CountrySelect'
 import StateSelect from './StateSelect'
 import LGASelect from './LGASelect'

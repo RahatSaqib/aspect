@@ -9,12 +9,7 @@ const DEVICE_TYPE_NAME = 'Vodafone Router'
 const DEVICE_TYPE_MANUFACTURER = 'Vodafone'
 
 async function seed(knex) {
-  const deviceTypeId = await getDeviceTypeId(
-    knex,
-    DEVICE_TYPE_EXTERNAL_ID,
-    DEVICE_TYPE_NAME,
-    DEVICE_TYPE_MANUFACTURER
-  )
+  const deviceTypeId = await getDeviceTypeId(knex, DEVICE_TYPE_EXTERNAL_ID, DEVICE_TYPE_NAME, DEVICE_TYPE_MANUFACTURER)
   const partnerId = await getPartnerId(knex)
   const deviceApprovalId = await getDeviceApprovalId(knex)
   const adminUserId = await getAdminUserId(knex)
@@ -24,16 +19,9 @@ async function seed(knex) {
     // temporary skip devices without Deployment Name (Site) provided!
     _.filter(devices, device => device.deploymentName),
     async device => {
-      const { siteId, geographyId } = await getSiteAndGeography(
-        knex,
-        device,
-        defaultGeographyId,
-        partnerId
-      )
+      const { siteId, geographyId } = await getSiteAndGeography(knex, device, defaultGeographyId, partnerId)
       const device4save = {
-        name: device.deploymentName
-          ? `${device.deploymentName} - ${device.router}`
-          : device.router,
+        name: device.deploymentName ? `${device.deploymentName} - ${device.router}` : device.router,
         shortName: device.deploymentName,
         deviceTypeId,
         deviceApprovalId,
@@ -59,9 +47,7 @@ async function seed(knex) {
 }
 
 const getDeviceTypeId = async (knex, externalId, name, manufacturer) => {
-  const { id: deviceTypeCategoryId } = await knex('DeviceTypeCategory')
-    .where('name', 'Router')
-    .first('id')
+  const { id: deviceTypeCategoryId } = await knex('DeviceTypeCategory').where('name', 'Router').first('id')
 
   const [deviceTypeId] = await knex('DeviceType').insert({
     externalId,
@@ -98,12 +84,7 @@ const insertSite = async (knex, device, defaultGeographyId, partnerId) => {
   return siteId
 }
 
-const getSiteAndGeography = async (
-  knex,
-  device,
-  defaultGeographyId,
-  partnerId
-) => {
+const getSiteAndGeography = async (knex, device, defaultGeographyId, partnerId) => {
   const row = await knex('Site').where('name', device.deploymentName).first()
   if (!row) {
     const siteId = await insertSite(knex, device, defaultGeographyId, partnerId)
@@ -113,16 +94,12 @@ const getSiteAndGeography = async (
 }
 
 const getPartnerId = async knex => {
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Malawi')
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where('name', 'Malawi').first('id')
   return partnerId
 }
 
 const getDeviceApprovalId = async knex => {
-  const { id: deviceApprovalId } = await knex('DeviceApproval')
-    .where('name', 'Approved')
-    .first('id')
+  const { id: deviceApprovalId } = await knex('DeviceApproval').where('name', 'Approved').first('id')
   return deviceApprovalId
 }
 

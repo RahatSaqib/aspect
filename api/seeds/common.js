@@ -116,12 +116,7 @@ async function commonUpserts(
 
   const countries = await upsertGeography(knex, geography)
 
-  const {
-    culture,
-    timezone,
-    id: countryId,
-    geographyId,
-  } = countries[countryAbbreviation]
+  const { culture, timezone, id: countryId, geographyId } = countries[countryAbbreviation]
 
   let { id: adminPersonId } =
     (await knex('Person')
@@ -146,15 +141,9 @@ async function commonUpserts(
 
   const { fixtures = {} } = partnerData
   // upsertJobFunctionFixture by using the job functions set at
-  await upsertJobFunctionFixture(
-    knex,
-    _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture,
-    partnerId
-  )
+  await upsertJobFunctionFixture(knex, _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture, partnerId)
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where({ externalId: 'admin', partnerId })
-    .first()
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId }).first()
   let { id: jobIdAdmin } =
     (await knex('Job')
       .where({
@@ -183,13 +172,7 @@ async function commonUpserts(
   }
 
   if (deviceApiToken) {
-    await upsertGxAlertDevice(
-      knex,
-      countryId,
-      partnerId,
-      auditFields,
-      deviceApiToken
-    )
+    await upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
   }
   await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
   await ensureResultTreatmentStatuses(knex)
@@ -217,8 +200,7 @@ async function upsertDemoUsersPerJobFunction(
   auditFields,
   { password, excludedJobFunctions }
 ) {
-  if (!password)
-    throw new Error('You must provide a password for upserting users')
+  if (!password) throw new Error('You must provide a password for upserting users')
 
   if (!excludedJobFunctions) excludedJobFunctions = []
 
@@ -268,13 +250,7 @@ async function upsertDemoUsersPerJobFunction(
   await Promise.all(insertUsers)
 }
 
-async function upsertJobFunction(
-  knex,
-  jobFunctionName,
-  partnerId,
-  permissions = [],
-  options = {}
-) {
+async function upsertJobFunction(knex, jobFunctionName, partnerId, permissions = [], options = {}) {
   const { reports = [], removeMissingPermissions = false } = options
 
   let { id: jobFunctionId } =
@@ -291,22 +267,14 @@ async function upsertJobFunction(
       partnerId,
     })
   }
-  if (!_.isEmpty(reports))
-    await upsertJobFunctionReport(knex, jobFunctionId, reports)
+  if (!_.isEmpty(reports)) await upsertJobFunctionReport(knex, jobFunctionId, reports)
   if (!_.isEmpty(permissions))
-    await upsertJobFunctionPermission(
-      knex,
-      jobFunctionId,
-      _.uniq(permissions),
-      removeMissingPermissions
-    )
+    await upsertJobFunctionPermission(knex, jobFunctionId, _.uniq(permissions), removeMissingPermissions)
   return jobFunctionId
 }
 
 async function clonePermissions(knex, fromModule, toModule) {
-  const jobFunctionWithExistingPermission = await knex(
-    'JobFunctionPermission as jf'
-  )
+  const jobFunctionWithExistingPermission = await knex('JobFunctionPermission as jf')
     .join('Permission as p', 'p.id', 'jf.permissionId')
     .where('p.module', toModule)
     .pluck('jf.jobFunctionId')
@@ -316,17 +284,10 @@ async function clonePermissions(knex, fromModule, toModule) {
       .transacting(trx)
       .insert(function () {
         this.from('JobFunction as jf')
-          .innerJoin(
-            'JobFunctionPermission as jfp',
-            'jf.id',
-            'jfp.jobFunctionId'
-          )
+          .innerJoin('JobFunctionPermission as jfp', 'jf.id', 'jfp.jobFunctionId')
           .innerJoin('Permission as p', 'jfp.permissionId', 'p.id')
           .innerJoin('Permission as pCase', function () {
-            this.on('pCase.module', knex.raw('?', [toModule])).on(
-              'p.activity',
-              'pCase.activity'
-            )
+            this.on('pCase.module', knex.raw('?', [toModule])).on('p.activity', 'pCase.activity')
           })
           .whereNotIn('jf.id', jobFunctionWithExistingPermission)
           .where('p.module', knex.raw('?', [fromModule]))
@@ -341,37 +302,17 @@ async function copyPermissionsAndDashboardWidgetsFromJobFunction(
   externalIdTo,
   modulesToExclude = []
 ) {
-  const { id: jobFunctionIdFrom } = await knex('JobFunction')
-    .where({ externalId: externalIdFrom })
-    .first('id')
+  const { id: jobFunctionIdFrom } = await knex('JobFunction').where({ externalId: externalIdFrom }).first('id')
 
-  const { id: jobFunctionIdTo } = await knex('JobFunction')
-    .where({ externalId: externalIdTo })
-    .first('id')
+  const { id: jobFunctionIdTo } = await knex('JobFunction').where({ externalId: externalIdTo }).first('id')
 
-  await copyPermissionsFromJobFunction(
-    knex,
-    jobFunctionIdFrom,
-    jobFunctionIdTo,
-    modulesToExclude
-  )
+  await copyPermissionsFromJobFunction(knex, jobFunctionIdFrom, jobFunctionIdTo, modulesToExclude)
 
-  await copyDashboardWidgetsFromJobFunction(
-    knex,
-    jobFunctionIdFrom,
-    jobFunctionIdTo
-  )
+  await copyDashboardWidgetsFromJobFunction(knex, jobFunctionIdFrom, jobFunctionIdTo)
 }
 
-async function copyPermissionsFromJobFunction(
-  knex,
-  jobFunctionIdFrom,
-  jobFunctionIdTo,
-  modulesToExclude = []
-) {
-  await knex('JobFunctionPermission')
-    .where({ jobFunctionId: jobFunctionIdTo })
-    .del()
+async function copyPermissionsFromJobFunction(knex, jobFunctionIdFrom, jobFunctionIdTo, modulesToExclude = []) {
+  await knex('JobFunctionPermission').where({ jobFunctionId: jobFunctionIdTo }).del()
 
   const permissions = _.map(
     await knex('JobFunctionPermission as jfp')
@@ -388,14 +329,8 @@ async function copyPermissionsFromJobFunction(
   await knex('JobFunctionPermission').insert(permissions)
 }
 
-async function copyDashboardWidgetsFromJobFunction(
-  knex,
-  jobFunctionIdFrom,
-  jobFunctionIdTo
-) {
-  await knex('JobFunctionDashboardWidget')
-    .where({ jobFunctionId: jobFunctionIdTo })
-    .del()
+async function copyDashboardWidgetsFromJobFunction(knex, jobFunctionIdFrom, jobFunctionIdTo) {
+  await knex('JobFunctionDashboardWidget').where({ jobFunctionId: jobFunctionIdTo }).del()
 
   const permissions = _.map(
     await knex('JobFunctionDashboardWidget as jfd')
@@ -413,71 +348,43 @@ async function copyDashboardWidgetsFromJobFunction(
 
 async function upsertJobFunctionReport(knex, jobFunctionId, reports) {
   if (_.isEmpty(reports)) throw new Error('Attemp to insert empty reports')
-  const reportsIds = await knex('Report')
-    .whereIn('externalId', reports)
-    .pluck('id')
+  const reportsIds = await knex('Report').whereIn('externalId', reports).pluck('id')
 
-  const existingJobFunctionReports = await knex('JobFunctionReport')
-    .where({ jobFunctionId })
-    .pluck('reportId')
+  const existingJobFunctionReports = await knex('JobFunctionReport').where({ jobFunctionId }).pluck('reportId')
 
-  await knex('JobFunctionReport')
-    .where({ jobFunctionId })
-    .whereNotIn('reportId', reportsIds)
-    .delete()
+  await knex('JobFunctionReport').where({ jobFunctionId }).whereNotIn('reportId', reportsIds).delete()
 
   const JobFunctionReport = _.map(
-    reportsIds.filter(
-      reportId => !existingJobFunctionReports.includes(reportId)
-    ),
+    reportsIds.filter(reportId => !existingJobFunctionReports.includes(reportId)),
     reportId => ({
       jobFunctionId,
       reportId,
     })
   )
-  if (!_.isEmpty(JobFunctionReport))
-    await knex('JobFunctionReport').insert(JobFunctionReport)
+  if (!_.isEmpty(JobFunctionReport)) await knex('JobFunctionReport').insert(JobFunctionReport)
 }
 
-async function upsertJobFunctionPermission(
-  knex,
-  jobFunctionId,
-  jobPermissions,
-  removeMissing = false
-) {
-  if (_.isEmpty(jobPermissions))
-    throw new Error('Attemp to upsert empty permissions')
+async function upsertJobFunctionPermission(knex, jobFunctionId, jobPermissions, removeMissing = false) {
+  if (_.isEmpty(jobPermissions)) throw new Error('Attemp to upsert empty permissions')
   const existingJobFunctionPermissions = await knex('JobFunctionPermission')
     .where({ jobFunctionId })
     .pluck('permissionId')
 
   if (removeMissing) {
-    await knex('JobFunctionPermission')
-      .where({ jobFunctionId })
-      .whereNotIn('permissionId', jobPermissions)
-      .delete()
+    await knex('JobFunctionPermission').where({ jobFunctionId }).whereNotIn('permissionId', jobPermissions).delete()
   }
 
   const JobFunctionPermission = _.map(
-    jobPermissions.filter(
-      permissionId => !existingJobFunctionPermissions.includes(permissionId)
-    ),
+    jobPermissions.filter(permissionId => !existingJobFunctionPermissions.includes(permissionId)),
     permissionId => ({
       jobFunctionId,
       permissionId,
     })
   )
-  if (!_.isEmpty(JobFunctionPermission))
-    await knex('JobFunctionPermission').insert(JobFunctionPermission)
+  if (!_.isEmpty(JobFunctionPermission)) await knex('JobFunctionPermission').insert(JobFunctionPermission)
 }
 
-async function upsertGxAlertDevice(
-  knex,
-  countryId,
-  partnerId,
-  auditFields,
-  deviceApiToken
-) {
+async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken) {
   const device = await ensureCountryLevelInformationSystemExists(
     knex,
     countryId,
@@ -498,10 +405,7 @@ async function upsertGxAlertDevice(
     deviceId: device.id,
   }
   const { id: gxAlertDeviceApiKeyId } =
-    (await knex('DeviceApiKey')
-      .where('token', deviceApiToken)
-      .orWhere('deviceId', device.id)
-      .first('id')) || {}
+    (await knex('DeviceApiKey').where('token', deviceApiToken).orWhere('deviceId', device.id).first('id')) || {}
   if (!gxAlertDeviceApiKeyId) {
     await knex('DeviceApiKey').insert({
       ...deviceApiKey,
@@ -518,12 +422,7 @@ async function upsertGxAlertDevice(
   }
 }
 
-async function ensureAspectDeviceExists(
-  knex,
-  countryId,
-  partnerId,
-  auditFields
-) {
+async function ensureAspectDeviceExists(knex, countryId, partnerId, auditFields) {
   return ensureCountryLevelInformationSystemExists(
     knex,
     countryId,
@@ -538,20 +437,11 @@ async function ensureAspectDeviceExists(
   )
 }
 
-async function ensureCountryLevelInformationSystemExists(
-  knex,
-  countryId,
-  partnerId,
-  deviceType,
-  auditFields
-) {
+async function ensureCountryLevelInformationSystemExists(knex, countryId, partnerId, deviceType, auditFields) {
   const { externalId, name, manufacturer, plugin } = deviceType
-  let { id: deviceTypeId } =
-    (await knex('DeviceType').where('externalId', externalId).first('id')) || {}
+  let { id: deviceTypeId } = (await knex('DeviceType').where('externalId', externalId).first('id')) || {}
   if (!deviceTypeId) {
-    const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId(
-      'Information System'
-    )
+    const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId('Information System')
     ;[deviceTypeId] = await knex('DeviceType').insert({
       externalId,
       name,
@@ -609,17 +499,13 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   overrideResultDataSchema
 ) {
   let geneXpertPatientDataSchema
-  if (overridePatientDataSchema)
-    geneXpertPatientDataSchema = overridePatientDataSchema
+  if (overridePatientDataSchema) geneXpertPatientDataSchema = overridePatientDataSchema
   else geneXpertPatientDataSchema = gxPatientDataSchema
 
   // Add device types
   const { Lab: deviceTypeCategoryLab } = await allDeviceTypeCategoryToId()
 
-  let { id: deviceTypeGeneXpertId } =
-    (await knex('DeviceType')
-      .where('externalId', 'CepheidGeneXpert')
-      .first()) || {}
+  let { id: deviceTypeGeneXpertId } = (await knex('DeviceType').where('externalId', 'CepheidGeneXpert').first()) || {}
   if (!deviceTypeGeneXpertId) {
     ;[deviceTypeGeneXpertId] = await knex('DeviceType').insert({
       externalId: 'CepheidGeneXpert',
@@ -631,8 +517,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   }
 
   // Add assays
-  const { DiagnosticDevice: resultSourceDiagnosticId } =
-    await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
 
   const {
     'MTB/Rif': assayTypeMTBRifId,
@@ -690,14 +575,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GX MTB/Rif',
       geneXpertPatientDataSchema,
       overrideResultDataSchema || geneXpertResultDataSchemaMTBRif,
-      [
-        'Detected',
-        'NotDetected',
-        'Indeterminate',
-        'Invalid',
-        'NoResult',
-        'Error',
-      ],
+      ['Detected', 'NotDetected', 'Indeterminate', 'Invalid', 'NoResult', 'Error'],
       'MTB',
       'resultCategoryMtb',
       'Rif',
@@ -717,14 +595,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'XDR',
       geneXpertPatientDataSchema,
       overrideResultDataSchema || geneXpertResultDataSchemaMTBXdr,
-      [
-        'Detected',
-        'NotDetected',
-        'Indeterminate',
-        'Invalid',
-        'NoResult',
-        'Error',
-      ],
+      ['Detected', 'NotDetected', 'Indeterminate', 'Invalid', 'NoResult', 'Error'],
       'MTB',
       'resultCategoryMtb',
       'Drug Resistance',
@@ -744,15 +615,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GX MTB/ULTRA',
       geneXpertPatientDataSchema,
       overrideResultDataSchema || geneXpertResultDataSchemaMTBRifUltra,
-      [
-        'Detected',
-        'Trace Detected',
-        'NotDetected',
-        'Indeterminate',
-        'Invalid',
-        'NoResult',
-        'Error',
-      ],
+      ['Detected', 'Trace Detected', 'NotDetected', 'Indeterminate', 'Invalid', 'NoResult', 'Error'],
       'MTB',
       'resultCategoryMtb',
       'Rif',
@@ -772,15 +635,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GX HIV VL',
       geneXpertPatientDataSchema,
       overrideResultDataSchema || geneXpertResultDataSchemaHivVl,
-      [
-        'LessThan1000',
-        'MoreThan1000',
-        'NotDetected',
-        'Invalid',
-        'NoResult',
-        'Error',
-        'LessThan40',
-      ],
+      ['LessThan1000', 'MoreThan1000', 'NotDetected', 'Invalid', 'NoResult', 'Error', 'LessThan40'],
       'HIV',
       'resultCategoryHiv'
     )
@@ -834,16 +689,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GX COVID-19',
       geneXpertPatientDataSchema,
       overrideResultDataSchema || geneXpertResultDataSchemaSarsCoV2,
-      [
-        'Positive',
-        'Negative',
-        'Inconclusive',
-        'Unknown',
-        'Invalid',
-        'NoResult',
-        'Error',
-        'PresumptivePositive',
-      ],
+      ['Positive', 'Negative', 'Inconclusive', 'Unknown', 'Invalid', 'NoResult', 'Error', 'PresumptivePositive'],
       'COVID-19',
       'resultCategoryCovid19'
     )
@@ -856,14 +702,8 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   await utils.seedPartnerDisease(knex)
   await utils.addFollowUps(knex, followUpFixture, null, assayExternalIds)
 
-  const existingAssayExternalIds = await knex('Assay')
-    .whereIn('externalId', assayExternalIds)
-    .pluck('externalId')
-  await upsertResultCategoryGroup(
-    knex,
-    gxResultCategoryGroups,
-    existingAssayExternalIds
-  )
+  const existingAssayExternalIds = await knex('Assay').whereIn('externalId', assayExternalIds).pluck('externalId')
+  await upsertResultCategoryGroup(knex, gxResultCategoryGroups, existingAssayExternalIds)
 }
 
 async function createAssay(
@@ -899,14 +739,11 @@ async function createAssay(
     abbreviation,
   }
   const assayId = await upsertAssay(knex, assay)
-  if (categories && categories.length > 0)
-    await upsertAssayResultCategories(knex, assayId, categories)
+  if (categories && categories.length > 0) await upsertAssayResultCategories(knex, assayId, categories)
 }
 
 async function upsertAssay(knex, assay) {
-  let { id: assayId } =
-    (await knex('Assay').where({ externalId: assay.externalId }).first('id')) ||
-    {}
+  let { id: assayId } = (await knex('Assay').where({ externalId: assay.externalId }).first('id')) || {}
   if (!assayId) {
     ;[assayId] = await knex('Assay').insert(assay)
   } else {
@@ -1108,30 +945,20 @@ async function getStatesByName(knex, countryId) {
       stateName: state.name,
     })
     if (stateLgas) {
-      stateMemo[state.name.toLowerCase()].lgas = stateLgas.reduce(
-        (lgaMemo, lga) => {
-          lgaMemo[lga.name.toLowerCase()] = lga
-          return lgaMemo
-        },
-        {}
-      )
+      stateMemo[state.name.toLowerCase()].lgas = stateLgas.reduce((lgaMemo, lga) => {
+        lgaMemo[lga.name.toLowerCase()] = lga
+        return lgaMemo
+      }, {})
     }
     return stateMemo
   }, {})
 }
 
-async function baseGxAlertMigration(
-  variables = defaultGxAlertMigrationVariables,
-  knex,
-  partnerData = {}
-) {
+async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables, knex, partnerData = {}) {
   // -----------------------------------------------
   // Supplement passed variables with default values
   // -----------------------------------------------
-  const variablesWithDefaults = _.merge(
-    { ...defaultGxAlertMigrationVariables },
-    variables
-  )
+  const variablesWithDefaults = _.merge({ ...defaultGxAlertMigrationVariables }, variables)
   const {
     admin,
     partner,
@@ -1143,8 +970,7 @@ async function baseGxAlertMigration(
     geneXpertAssayExternalIds,
     customFieldsFromGxAlert,
   } = variablesWithDefaults
-  const gxAlertAdmin =
-    contactsFromGxAlert.find(contact => contact.username === admin.name) || {}
+  const gxAlertAdmin = contactsFromGxAlert.find(contact => contact.username === admin.name) || {}
   if (gxAlertAdmin.getPasswordFromGxAlert) {
     admin.legacyPassword = 1
   }
@@ -1154,8 +980,7 @@ async function baseGxAlertMigration(
   // Validate passed variables
   // -------------------------
   const missingVariables = []
-  let { id: adminId } =
-    (await knex('User').where('name', admin.name).first('id')) || {}
+  let { id: adminId } = (await knex('User').where('name', admin.name).first('id')) || {}
   if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert && !adminId) {
     missingVariables.push('admin.password')
   }
@@ -1190,11 +1015,7 @@ async function baseGxAlertMigration(
     missingVariables.push('gxAlertDevice.deviceApiKeyToken')
   }
   if (!_.isEmpty(missingVariables)) {
-    throw new Error(
-      `The following required variables were not passed: ${missingVariables.join(
-        ','
-      )}`
-    )
+    throw new Error(`The following required variables were not passed: ${missingVariables.join(',')}`)
   }
 
   // ---------------------------
@@ -1287,11 +1108,7 @@ async function baseGxAlertMigration(
     }
   })
 
-  await upsertGeneXpertDeviceTypeAndAssays(
-    knex,
-    geneXpertAssayExternalIds,
-    patientDataSchema
-  )
+  await upsertGeneXpertDeviceTypeAndAssays(knex, geneXpertAssayExternalIds, patientDataSchema)
   returnValue.patientDataSchema = patientDataSchema
   const gxAlertAssayDataMappings = {
     GxMtbRif: 'GeneXpert TB/RIF Result',
@@ -1302,75 +1119,58 @@ async function baseGxAlertMigration(
     GxHcv: 'GeneXpert HCV Viral Load',
     assayGXCovid19: 'GeneXpert SARS-CoV-2',
   }
-  await Promise.each(
-    geneXpertAssayExternalIds,
-    async geneXpertAssayExternalId => {
-      if (
-        !gxAlertAssayDataMappings[geneXpertAssayExternalId] &&
-        geneXpertAssayExternalId !== 'GxUnknown'
-      ) {
-        return Promise.resolve()
-      }
-      const resultDataCustomFieldsForAssay = _.sortBy(
-        _.uniqBy(
-          customFieldsFromGxAlert
-            .filter(
-              cf =>
-                (geneXpertAssayExternalId === 'GxUnknown' ||
-                  cf.testType ===
-                    gxAlertAssayDataMappings[geneXpertAssayExternalId] ||
-                  cf.testType === null) &&
-                !patientDbColumns.includes(cf.dbColumn)
-            )
-            .map(cf => _.pick(cf, ['title', 'order', 'type', 'dbColumn'])),
-          'dbColumn'
-        ),
-        'order'
-      )
-      if (resultDataCustomFieldsForAssay.length === 0) {
-        return Promise.resolve()
-      }
-      const existingAssay = await knex('Assay')
-        .where('externalId', geneXpertAssayExternalId)
-        .first()
-      if (existingAssay) {
-        const resultDataSchema = JSON.parse(
-          existingAssay.resultDataSchema || '{}'
-        )
-        if (!resultDataSchema.gxAlertCustomFields) {
-          resultDataSchema.gxAlertCustomFields = {
-            list: false,
-            order:
-              (_.max(Object.values(resultDataSchema).map(val => val.order)) ||
-                -1) + 1,
-            type: 'object',
-            title: 'GxAlert Custom Fields',
-            properties: {},
-          }
-        }
-        resultDataCustomFieldsForAssay.forEach(cf => {
-          const resultDataSchemaProperty = _.camelCase(cf.dbColumn || cf.title)
-          const existingCustomFieldProperty =
-            resultDataSchema.gxAlertCustomFields.properties[
-              resultDataSchemaProperty
-            ] || {}
-          resultDataSchema.gxAlertCustomFields.properties[
-            resultDataSchemaProperty
-          ] = {
-            ...existingCustomFieldProperty,
-            title: cf.title,
-            type: cf.type === 'DateTime' ? 'date' : cf.type.toLowerCase(),
-            order: cf.order,
-          }
-        })
-        await knex('Assay')
-          .where('id', existingAssay.id)
-          .update({
-            resultDataSchema: JSON.stringify(resultDataSchema),
-          })
-      }
+  await Promise.each(geneXpertAssayExternalIds, async geneXpertAssayExternalId => {
+    if (!gxAlertAssayDataMappings[geneXpertAssayExternalId] && geneXpertAssayExternalId !== 'GxUnknown') {
+      return Promise.resolve()
     }
-  )
+    const resultDataCustomFieldsForAssay = _.sortBy(
+      _.uniqBy(
+        customFieldsFromGxAlert
+          .filter(
+            cf =>
+              (geneXpertAssayExternalId === 'GxUnknown' ||
+                cf.testType === gxAlertAssayDataMappings[geneXpertAssayExternalId] ||
+                cf.testType === null) &&
+              !patientDbColumns.includes(cf.dbColumn)
+          )
+          .map(cf => _.pick(cf, ['title', 'order', 'type', 'dbColumn'])),
+        'dbColumn'
+      ),
+      'order'
+    )
+    if (resultDataCustomFieldsForAssay.length === 0) {
+      return Promise.resolve()
+    }
+    const existingAssay = await knex('Assay').where('externalId', geneXpertAssayExternalId).first()
+    if (existingAssay) {
+      const resultDataSchema = JSON.parse(existingAssay.resultDataSchema || '{}')
+      if (!resultDataSchema.gxAlertCustomFields) {
+        resultDataSchema.gxAlertCustomFields = {
+          list: false,
+          order: (_.max(Object.values(resultDataSchema).map(val => val.order)) || -1) + 1,
+          type: 'object',
+          title: 'GxAlert Custom Fields',
+          properties: {},
+        }
+      }
+      resultDataCustomFieldsForAssay.forEach(cf => {
+        const resultDataSchemaProperty = _.camelCase(cf.dbColumn || cf.title)
+        const existingCustomFieldProperty =
+          resultDataSchema.gxAlertCustomFields.properties[resultDataSchemaProperty] || {}
+        resultDataSchema.gxAlertCustomFields.properties[resultDataSchemaProperty] = {
+          ...existingCustomFieldProperty,
+          title: cf.title,
+          type: cf.type === 'DateTime' ? 'date' : cf.type.toLowerCase(),
+          order: cf.order,
+        }
+      })
+      await knex('Assay')
+        .where('id', existingAssay.id)
+        .update({
+          resultDataSchema: JSON.stringify(resultDataSchema),
+        })
+    }
+  })
 
   // -----------------------------------
   // Seed Sites from GxAlert Deployments
@@ -1419,10 +1219,7 @@ async function baseGxAlertMigration(
       timezoneId: country.timezone,
       ...auditFields,
     }
-    const existingSite = await knex('Site')
-      .where('externalId', site.externalId)
-      .orWhere('name', site.name)
-      .first('id')
+    const existingSite = await knex('Site').where('externalId', site.externalId).orWhere('name', site.name).first('id')
     let siteId = 0
     if (existingSite) {
       siteId = existingSite.id
@@ -1465,20 +1262,14 @@ async function baseGxAlertMigration(
               hostId: device.hostId,
               culture: country.culture,
               timezone: siteData.timezoneId,
-              configurationData: device.gxAlertDeviceId
-                ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}`
-                : '{}',
+              configurationData: device.gxAlertDeviceId ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}` : '{}',
               ...auditFields,
             })
           } else {
             const deviceConfigurationData = JSON.parse(
-              existingDevice.configurationData
-                ? existingDevice.configurationData
-                : '{}'
+              existingDevice.configurationData ? existingDevice.configurationData : '{}'
             )
-            if (
-              deviceConfigurationData.gxAlertDeviceId !== device.gxAlertDeviceId
-            ) {
+            if (deviceConfigurationData.gxAlertDeviceId !== device.gxAlertDeviceId) {
               deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
             }
             if (
@@ -1490,8 +1281,7 @@ async function baseGxAlertMigration(
               existingDevice.macAddress !== device.macAddress ||
               existingDevice.hostId !== device.hostId ||
               existingDevice.timezone !== siteData.timezoneId ||
-              existingDevice.configurationData !==
-                JSON.stringify(deviceConfigurationData)
+              existingDevice.configurationData !== JSON.stringify(deviceConfigurationData)
             ) {
               await knex('Device')
                 .where('id', existingDevice.id)
@@ -1547,16 +1337,11 @@ async function baseGxAlertMigration(
   await Promise.each(contactsFromGxAlert, async person => {
     let userId = null
     if (person.username) {
-      const existingUser = await knex('User')
-        .where('name', person.username)
-        .first('id')
+      const existingUser = await knex('User').where('name', person.username).first('id')
       if (existingUser) {
         userId = existingUser.id
       } else if (!_.isEmpty(person.jobFunctions)) {
-        const pw = bcrypt.hashSync(
-          person.password || 'WelcomeToAspect',
-          saltRounds
-        )
+        const pw = bcrypt.hashSync(person.password || 'WelcomeToAspect', saltRounds)
         const baseUserData = {
           password: pw,
           failedPasswordAttempts: 0,
@@ -1582,9 +1367,7 @@ async function baseGxAlertMigration(
             lgas: {},
           }
     const lga =
-      state.lgas &&
-      !_.isEmpty(person.geographies) &&
-      person.geographies[0].lgaName
+      state.lgas && !_.isEmpty(person.geographies) && person.geographies[0].lgaName
         ? state.lgas[person.geographies[0].lgaName.toLowerCase()] || {
             id: null,
           }
@@ -1674,9 +1457,7 @@ async function baseGxAlertMigration(
     }
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
-        const existingJob = await knex('Job')
-          .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
-          .first()
+        const existingJob = await knex('Job').where({ personId, jobFunctionId: jobFunctions[jobFunctionName] }).first()
         if (!existingJob) {
           const [jobId] = await knex('Job').insert({
             personId,
@@ -1755,51 +1536,32 @@ async function removeJobFunctions(knex, jobFunctionsToDelete) {
  * @param {Array} jobFunctionFixture
  * @param {number} partnerId
  */
-async function upsertJobFunctionFixture(
-  knex,
-  jobFunctionFixture = jobFunctionsFixtureDefault,
-  partnerId
-) {
+async function upsertJobFunctionFixture(knex, jobFunctionFixture = jobFunctionsFixtureDefault, partnerId) {
   const { getPermissonByModuleAndActivity } = utils
 
   const externalIds = jobFunctionFixture.map(jf => _.camelCase(jf.name))
-  const jobFunctionsToDelete = await knex('JobFunction')
-    .where({ partnerId })
-    .whereNotIn('externalId', externalIds)
+  const jobFunctionsToDelete = await knex('JobFunction').where({ partnerId }).whereNotIn('externalId', externalIds)
   await removeJobFunctions(knex, jobFunctionsToDelete, partnerId)
 
   await Promise.each(jobFunctionFixture, async jf => {
     const jobFunction = _.omit(jf, ['permissions', 'reports'])
 
-    const permissionIds = await Promise.map(
-      jf.permissions || [],
-      async permission => {
-        const { id: permissionId } =
-          (await getPermissonByModuleAndActivity(
-            knex,
-            permission.module,
-            permission.activity
-          )) || {}
+    const permissionIds = await Promise.map(jf.permissions || [], async permission => {
+      const { id: permissionId } =
+        (await getPermissonByModuleAndActivity(knex, permission.module, permission.activity)) || {}
 
-        if (!permissionId)
-          throw new Error(
-            `Permission ${permission.module}:${permission.activity} doesn't exist and therefore cannot be assigned to a job function.`
-          )
+      if (!permissionId)
+        throw new Error(
+          `Permission ${permission.module}:${permission.activity} doesn't exist and therefore cannot be assigned to a job function.`
+        )
 
-        return permissionId
-      }
-    )
+      return permissionId
+    })
 
-    await upsertJobFunction(
-      knex,
-      jobFunction.name,
-      partnerId,
-      _.uniq(permissionIds),
-      {
-        reports: jf.reports,
-        removeMissingPermissions: true,
-      }
-    )
+    await upsertJobFunction(knex, jobFunction.name, partnerId, _.uniq(permissionIds), {
+      reports: jf.reports,
+      removeMissingPermissions: true,
+    })
   })
 }
 
@@ -1819,11 +1581,7 @@ async function seedLabClinicFixture(
     missingSeededData.push('seededData.countryId')
   }
   if (!_.isEmpty(missingSeededData)) {
-    throw new Error(
-      `The following required seeded values were not passed: ${missingSeededData.join(
-        ','
-      )}`
-    )
+    throw new Error(`The following required seeded values were not passed: ${missingSeededData.join(',')}`)
   }
   const now = new Date()
   const { adminId, partnerId, countryId, statesByName = {} } = seededData
@@ -1997,10 +1755,7 @@ async function seedLabClinicFixture(
   )
 }
 
-async function ensureResultTreatmentStatuses(
-  knex,
-  treatmentStatuses = resultTreatmentStatuses
-) {
+async function ensureResultTreatmentStatuses(knex, treatmentStatuses = resultTreatmentStatuses) {
   await Promise.each(treatmentStatuses, async resultTreatmentStatus => {
     const existingResultTreatmentStatus = await knex('ResultTreatmentStatus')
       .where('externalId', resultTreatmentStatus.externalId)
@@ -2021,11 +1776,7 @@ async function upsertDashboardWidgets(
 
   let widgets = dashboardWidgetJson.stat
 
-  if (whitelist)
-    widgets = _.filter(
-      dashboardWidgetJson.stat,
-      widget => _.indexOf(whitelist, widget.externalId) > -1
-    )
+  if (whitelist) widgets = _.filter(dashboardWidgetJson.stat, widget => _.indexOf(whitelist, widget.externalId) > -1)
 
   await Promise.all(
     _.map(widgets, async widget => {
@@ -2045,16 +1796,12 @@ async function upsertDashboardWidgets(
         'dashboards',
         'options',
       ])
-      widgetData.dashboards = JSON.stringify(
-        widgetData.dashboards || { home: {} }
-      )
+      widgetData.dashboards = JSON.stringify(widgetData.dashboards || { home: {} })
       widgetData.linkParams = JSON.stringify(widgetData.linkParams || {})
       widgetData.options = JSON.stringify(widgetData.options || {})
 
       let { id: widgetId } =
-        (await knex('DashboardWidget')
-          .where('externalId', widgetData.externalId)
-          .first('id')) || {}
+        (await knex('DashboardWidget').where('externalId', widgetData.externalId).first('id')) || {}
 
       if (!widgetId) {
         ;[widgetId] = await knex('DashboardWidget').insert(widgetData)
@@ -2078,9 +1825,7 @@ async function upsertDashboardWidgets(
       ])
 
       const { id: widgetStatId } =
-        (await knex('DashboardWidgetStat')
-          .where('dashboardWidgetId', widgetId)
-          .first('id')) || {}
+        (await knex('DashboardWidgetStat').where('dashboardWidgetId', widgetId).first('id')) || {}
 
       if (!widgetStatId) {
         await knex('DashboardWidgetStat').insert({
@@ -2088,20 +1833,14 @@ async function upsertDashboardWidgets(
           ...statWidgetData,
         })
       } else {
-        await knex('DashboardWidgetStat')
-          .update(statWidgetData)
-          .where('id', widgetStatId)
+        await knex('DashboardWidgetStat').update(statWidgetData).where('id', widgetStatId)
       }
 
       // add widget to configured job functions here
       const jobFunctionsDb = await knex('JobFunction')
         .where({ partnerId })
         .where(function () {
-          if (
-            widget.jobFunctions &&
-            widget.jobFunctions !== 'all' &&
-            widget.jobFunctions[0] !== 'all'
-          ) {
+          if (widget.jobFunctions && widget.jobFunctions !== 'all' && widget.jobFunctions[0] !== 'all') {
             this.whereIn('externalId', widget.jobFunctions)
           }
         })
@@ -2130,10 +1869,7 @@ async function upsertPermissionFixture(knex) {
 
   // Remove deprecated permissions
   await Promise.each(currentPermissions, async ({ module, activity, id }) => {
-    const shouldRemovePermission =
-      permissionsFixture.find(
-        p => p.module === module && p.activity === activity
-      ) === null
+    const shouldRemovePermission = permissionsFixture.find(p => p.module === module && p.activity === activity) === null
     if (shouldRemovePermission) {
       await knex('JobFunctionPermission').where({ permissionId: id }).delete()
       await knex('Permission').where({ id }).delete()
@@ -2141,21 +1877,14 @@ async function upsertPermissionFixture(knex) {
   })
 
   // Add or update permissions
-  await Promise.each(
-    permissionsFixture,
-    async ({ module, activity, description }) => {
-      const currentPermission = currentPermissions.find(
-        up => up.module === module && up.activity === activity
-      )
-      if (currentPermission) {
-        await knex('Permission')
-          .where({ module, activity })
-          .update({ description })
-      } else {
-        await knex('Permission').insert({ module, activity, description })
-      }
+  await Promise.each(permissionsFixture, async ({ module, activity, description }) => {
+    const currentPermission = currentPermissions.find(up => up.module === module && up.activity === activity)
+    if (currentPermission) {
+      await knex('Permission').where({ module, activity }).update({ description })
+    } else {
+      await knex('Permission').insert({ module, activity, description })
     }
-  )
+  })
 }
 
 module.exports = {

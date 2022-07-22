@@ -20,11 +20,7 @@ const EmptyBarGraph = ({ title }) => {
       <div className={cssClasses('placeholder__text')}>{title}</div>
       <div className={cssClasses('placeholder__graphBar')}>
         {[30, 50, 60, 40, 80, 20].map(item => (
-          <div
-            className={cssClasses('placeholder__graphItem')}
-            key={item}
-            style={{ height: `${item}%` }}
-          />
+          <div className={cssClasses('placeholder__graphItem')} key={item} style={{ height: `${item}%` }} />
         ))}
       </div>
     </div>
@@ -48,16 +44,10 @@ const EmptyRowPieGraph = ({ title }) => {
       <div className={cssClasses('placeholder__text')}>{title}</div>
       <div className={cssClasses('placeholder__graphRowPie')}>
         {[0, 1].map(key => (
-          <div
-            className={cssClasses('placeholder__pieRowItemSolid')}
-            key={key}
-          />
+          <div className={cssClasses('placeholder__pieRowItemSolid')} key={key} />
         ))}
         {[0, 1, 2, 3, 4].map(key => (
-          <div
-            className={cssClasses('placeholder__pieRowItemDoughNut')}
-            key={key}
-          />
+          <div className={cssClasses('placeholder__pieRowItemDoughNut')} key={key} />
         ))}
       </div>
     </div>
@@ -65,34 +55,17 @@ const EmptyRowPieGraph = ({ title }) => {
 }
 
 const EmptyGraph = ({ type }) => {
-  const barGraphs = [
-    'bar',
-    'stacked',
-    'divergent',
-    'calendar',
-    'barLegacyTreatment',
-    'stackedDeviceActivity',
-  ]
+  const barGraphs = ['bar', 'stacked', 'divergent', 'calendar', 'barLegacyTreatment', 'stackedDeviceActivity']
   const pieGraphs = ['pie', 'pieLegacyTreatment']
   const pieRowGraphs = ['pieRow']
   const { formatMessage: intlFormatMessage } = useIntl()
 
   return (
     <Fragment>
-      {barGraphs.includes(type) && (
-        <EmptyBarGraph
-          title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)}
-        />
-      )}
-      {pieGraphs.includes(type) && (
-        <EmptyPieGraph
-          title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)}
-        />
-      )}
+      {barGraphs.includes(type) && <EmptyBarGraph title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)} />}
+      {pieGraphs.includes(type) && <EmptyPieGraph title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)} />}
       {pieRowGraphs.includes(type) && (
-        <EmptyRowPieGraph
-          title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)}
-        />
+        <EmptyRowPieGraph title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)} />
       )}
     </Fragment>
   )

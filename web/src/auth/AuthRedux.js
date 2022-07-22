@@ -7,11 +7,7 @@ import jwtDecode from 'jwt-decode'
 import { SubmissionError } from 'redux-form/immutable'
 
 import config from '../config'
-import {
-  getClientId,
-  getClientName,
-  getClientType as clientType,
-} from '../shared/utils/browser'
+import { getClientId, getClientName, getClientType as clientType } from '../shared/utils/browser'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
   errorPleaseTryAgainInAFewMinutes,
@@ -35,8 +31,7 @@ export const types = {
   TOGGLE_DRAWER: 'TOGGLE_DRAWER',
   CLOSE_DRAWER: 'CLOSE_DRAWER',
 
-  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
-    'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
+  RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
 
   REQUEST_LICENSE: 'REQUEST_LICENSE',
   RECEIVE_LICENSE: 'RECEIVE_LICENSE',
@@ -140,8 +135,7 @@ export function loginStart({ user, password }) {
               },
               resolution: {
                 id: 'errorResponseMessages.loginStart.POST.401.authenticationFailed.resolution',
-                defaultMessage:
-                  'Please, correct the credentials your entered and try again.',
+                defaultMessage: 'Please, correct the credentials your entered and try again.',
               },
             }),
           },
@@ -207,8 +201,7 @@ export function loginStart({ user, password }) {
               },
               resolution: {
                 id: 'errorResponseMessages.loginStart.POST.403.accountLocked.resolution',
-                defaultMessage:
-                  'You can contact us to unlock your account for you by email ({supportEmail})',
+                defaultMessage: 'You can contact us to unlock your account for you by email ({supportEmail})',
               },
             }),
             messageValues: {
@@ -396,9 +389,7 @@ export function fetchLicense(licenseId) {
   return dispatch => {
     dispatch(requestLicense())
 
-    return aspectFetch(`/auth/license?licenseId=${licenseId}`).then(json =>
-      dispatch(receiveLicense(json.data))
-    )
+    return aspectFetch(`/auth/license?licenseId=${licenseId}`).then(json => dispatch(receiveLicense(json.data)))
   }
 }
 
@@ -526,14 +517,7 @@ export default function authReducer(state = initialState, action) {
         })
         mutState.mergeDeepIn(
           ['jwt'],
-          pick(jwtDecode(action.data.access), [
-            'name',
-            'permissions',
-            'hasToAcceptLicenseId',
-            'iat',
-            'exp',
-            'iss',
-          ])
+          pick(jwtDecode(action.data.access), ['name', 'permissions', 'hasToAcceptLicenseId', 'iat', 'exp', 'iss'])
         )
       })
     case types.LOGIN_FAILURE:

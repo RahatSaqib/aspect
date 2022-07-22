@@ -2,9 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 
 // eslint-disable-next-line import/no-dynamic-require
-const geography = require(`../${process.env['seeds.directory'].substring(
-  1
-)}/fixtures/geography.json`)
+const geography = require(`../${process.env['seeds.directory'].substring(1)}/fixtures/geography.json`)
 
 module.exports = require('../src/db').migration(up, down)
 
@@ -53,13 +51,7 @@ async function up(knex) {
     COLLATE utf8mb4_unicode_ci;`)
 
   await knex.schema.alterTable('Device', devices => {
-    devices
-      .string('timezone', 100)
-      .defaultTo(null)
-      .references('id')
-      .inTable('TimeZone')
-      .onDelete('SET NULL')
-      .alter()
+    devices.string('timezone', 100).defaultTo(null).references('id').inTable('TimeZone').onDelete('SET NULL').alter()
   })
 
   await knex.schema.alterTable('Person', person => {
@@ -70,13 +62,7 @@ async function up(knex) {
     country.string('timezone', 100).references('id').inTable('TimeZone').alter()
   })
   await knex.schema.alterTable('Site', site => {
-    site
-      .string('timezoneid', 100)
-      .defaultTo(null)
-      .references('id')
-      .inTable('TimeZone')
-      .onDelete('SET NULL')
-      .alter()
+    site.string('timezoneid', 100).defaultTo(null).references('id').inTable('TimeZone').onDelete('SET NULL').alter()
   })
 }
 

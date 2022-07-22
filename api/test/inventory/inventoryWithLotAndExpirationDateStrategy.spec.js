@@ -67,10 +67,7 @@ describe('Inventory Routes', () => {
         externalId: 'testSite2',
       },
     ])
-    const newSites = await knex('Site').whereIn('externalId', [
-      'testSite1',
-      'testSite2',
-    ])
+    const newSites = await knex('Site').whereIn('externalId', ['testSite1', 'testSite2'])
 
     return newSites
   }
@@ -94,9 +91,7 @@ describe('Inventory Routes', () => {
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
-        const { id } = await knex('Consumable')
-          .where('name', 'GeneXpert TB Cartridge')
-          .first('id')
+        const { id } = await knex('Consumable').where('name', 'GeneXpert TB Cartridge').first('id')
         consumableId = id
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,
@@ -168,9 +163,7 @@ describe('Inventory Routes', () => {
             negativeQoHInventoryItemId,
           ])
           .delete()
-        await knex('FactInventoryConsumptionRate')
-          .whereIn('siteId', [site1Id, site2Id])
-          .delete()
+        await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id, site2Id]).delete()
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
       })
 
@@ -242,13 +235,8 @@ describe('Inventory Routes', () => {
           assert.equal(inventoryItemInTransit.quantityOnHand, 500)
 
           // We should filter empty inventories
-          const emptyInventoryItems = res.body.data.filter(
-            ii => ii.quantityOnHand === 0
-          )
-          assert.isFalse(
-            emptyInventoryItems.length > 0,
-            'There should be no empty inventories'
-          )
+          const emptyInventoryItems = res.body.data.filter(ii => ii.quantityOnHand === 0)
+          assert.isFalse(emptyInventoryItems.length > 0, 'There should be no empty inventories')
 
           assert.property(res.body, 'total')
         })
@@ -265,27 +253,18 @@ describe('Inventory Routes', () => {
           assert.isAtLeast(res.body.data.length, 2)
 
           // We should filter empty inventories
-          const emptyInventoryItems = res.body.data.filter(
-            ii => ii.quantityOnHand === 0
-          )
-          assert.isTrue(
-            emptyInventoryItems.length === 0,
-            'There should be no empty inventories'
-          )
+          const emptyInventoryItems = res.body.data.filter(ii => ii.quantityOnHand === 0)
+          assert.isTrue(emptyInventoryItems.length === 0, 'There should be no empty inventories')
         })
 
         it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 1', async () => {
-          const res = await server
-            .get(`${path}?size=500`)
-            .set('Authorization', `Bearer ${shared.token}`)
+          const res = await server.get(`${path}?size=500`).set('Authorization', `Bearer ${shared.token}`)
 
           assertBodyAndInventoryItems(res)
 
           assert.equal(res.status, 200)
 
-          const inventoryItems = res.body.data.filter(
-            ii => ii.siteId === site1Id && ii.consumableId === consumableId
-          )
+          const inventoryItems = res.body.data.filter(ii => ii.siteId === site1Id && ii.consumableId === consumableId)
 
           // Only one row per site and consumable
           assert.equal(inventoryItems.length, 1)
@@ -313,18 +292,10 @@ describe('Inventory Routes', () => {
         })
 
         it('should return a list of inventory items, apply in-query ordering by consumable name', async () => {
-          const res = await server
-            .get(`${path}?sortCol=consumableName`)
-            .set('Authorization', `Bearer ${shared.token}`)
+          const res = await server.get(`${path}?sortCol=consumableName`).set('Authorization', `Bearer ${shared.token}`)
 
-          assert.equal(
-            res.body.data[0].consumableName,
-            res.body.data[1].consumableName
-          )
-          assert.isTrue(
-            res.body.data[0].consumableName <
-              res.body.data[res.body.data.length - 1].consumableName
-          )
+          assert.equal(res.body.data[0].consumableName, res.body.data[1].consumableName)
+          assert.isTrue(res.body.data[0].consumableName < res.body.data[res.body.data.length - 1].consumableName)
         })
 
         it('should return a list of inventory items, apply post-processing ordering by days stock left', async () => {
@@ -351,9 +322,7 @@ describe('Inventory Routes', () => {
         })
 
         it('should return a list of inventory items, apply post-processing filtering by a range of days stock left', async () => {
-          const res = await server
-            .get(`${path}?daysStockLeft=upTo14`)
-            .set('Authorization', `Bearer ${shared.token}`)
+          const res = await server.get(`${path}?daysStockLeft=upTo14`).set('Authorization', `Bearer ${shared.token}`)
 
           assert.equal(res.body.data.length, 1)
           // Site 1 has 3.5 days stock left, so it's between 1 and 14
@@ -365,9 +334,7 @@ describe('Inventory Routes', () => {
             .get(`${path}?daysStockLeft=noConsumption`)
             .set('Authorization', `Bearer ${shared.token}`)
 
-          res.body.data.forEach(d =>
-            assert.equal(d.dailyConsumptionRate ?? 0, 0)
-          )
+          res.body.data.forEach(d => assert.equal(d.dailyConsumptionRate ?? 0, 0))
         })
 
         it('should return a list of inventory items, apply in-query filtering by never recorded inventory', async () => {
@@ -382,18 +349,13 @@ describe('Inventory Routes', () => {
           const consumableId = 2
           const siteNameFilter = 'clinic'
           const res = await server
-            .get(
-              `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
-            )
+            .get(`${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`)
             .set('Authorization', `Bearer ${shared.token}`)
 
           assert.equal(res.status, 200)
           res.body.data.forEach(inventoryItem => {
             assert.equal(inventoryItem.consumableId, consumableId)
-            assert.includes(
-              inventoryItem.siteName.toLowerCase(),
-              siteNameFilter.toLowerCase()
-            )
+            assert.includes(inventoryItem.siteName.toLowerCase(), siteNameFilter.toLowerCase())
           })
         })
       })
@@ -414,9 +376,7 @@ describe('Inventory Routes', () => {
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
-        ;({ id: consumableId } = await knex('Consumable')
-          .where('name', 'GeneXpert TB Cartridge')
-          .first('id'))
+        ;({ id: consumableId } = await knex('Consumable').where('name', 'GeneXpert TB Cartridge').first('id'))
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,
           siteId: site1Id,
@@ -448,23 +408,15 @@ describe('Inventory Routes', () => {
       })
 
       after(async () => {
-        await knex('InventoryItem')
-          .whereIn('id', [inventoryItem1Id, inventoryItem2Id, inventoryItem3Id])
-          .delete()
-        await knex('FactInventoryConsumptionRate')
-          .whereIn('siteId', [site1Id])
-          .delete()
+        await knex('InventoryItem').whereIn('id', [inventoryItem1Id, inventoryItem2Id, inventoryItem3Id]).delete()
+        await knex('FactInventoryConsumptionRate').whereIn('siteId', [site1Id]).delete()
         await knex('Site').whereIn('id', [site1Id, site2Id]).delete()
       })
 
       it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 2', async () => {
-        const res = await server
-          .get(`${path}`)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(`${path}`).set('Authorization', `Bearer ${shared.token}`)
         assertBodyAndInventoryItems(res)
-        const inventoryItems = res.body.data.filter(
-          ii => ii.siteId === site1Id && ii.consumableId === consumableId
-        )
+        const inventoryItems = res.body.data.filter(ii => ii.siteId === site1Id && ii.consumableId === consumableId)
         // Only one row per site and consumable
         assert.equal(inventoryItems.length, 1)
         assert.isNotNull(inventoryItems[0])
@@ -508,9 +460,7 @@ describe('Inventory Routes', () => {
         }
 
         it('should return a list of sites with inventories counts, when using valid token', async () => {
-          const res = await server
-            .get(path)
-            .set('Authorization', `Bearer ${shared.token}`)
+          const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
@@ -523,9 +473,7 @@ describe('Inventory Routes', () => {
           const consumableId = 1
           const siteNameFilter = 'lab'
           const res = await server
-            .get(
-              `${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`
-            )
+            .get(`${path}?consumableId=${consumableId}&siteName=${siteNameFilter}`)
             .set('Authorization', `Bearer ${shared.token}`)
           assert.equal(res.status, 200)
           res.body.data.forEach(item => assertAggregatedItem(item))
@@ -551,9 +499,7 @@ describe('Inventory Routes', () => {
     const inventoryItemsToRemove = []
 
     beforeEach(async () => {
-      const { id: consumableId } = await knex('Consumable')
-        .where('name', consumableName)
-        .first('id')
+      const { id: consumableId } = await knex('Consumable').where('name', consumableName).first('id')
       const dataConstraints = await getConstraints({ name: 'admin' })
       ;[{ id: siteId }, destinationSite] = await knex('Site as s')
         .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -575,9 +521,7 @@ describe('Inventory Routes', () => {
         quantityOnHand: initialQuantityOnHand,
       })
       inventoryItemsToRemove.push(inventoryItemId)
-      inventoryItem = await knex('InventoryItem')
-        .where({ id: inventoryItemId })
-        .first()
+      inventoryItem = await knex('InventoryItem').where({ id: inventoryItemId }).first()
       assert.isOk(destinationSite, `Cannot find destinationSite`)
     })
 
@@ -619,10 +563,7 @@ describe('Inventory Routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
-          assert.equal(
-            res.body.data.quantityOnHand,
-            inventoryItem.quantityOnHand + quantityToAdjust
-          )
+          assert.equal(res.body.data.quantityOnHand, inventoryItem.quantityOnHand + quantityToAdjust)
         })
         it('should update the quantity of an inventory item only with expiration date matching', async () => {
           const res = await server
@@ -641,10 +582,7 @@ describe('Inventory Routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
-          assert.equal(
-            res.body.data.quantityOnHand,
-            inventoryItem.quantityOnHand + quantityToAdjust
-          )
+          assert.equal(res.body.data.quantityOnHand, inventoryItem.quantityOnHand + quantityToAdjust)
         })
       })
     })
@@ -669,10 +607,7 @@ describe('Inventory Routes', () => {
           assert.typeOf(res.body, 'Object')
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
-          assert.equal(
-            res.body.data.quantityOnHand,
-            inventoryItem.quantityOnHand - 510
-          )
+          assert.equal(res.body.data.quantityOnHand, inventoryItem.quantityOnHand - 510)
         })
 
         it('should create a new inventory item and set the quantity if the lot does not exist', async () => {
@@ -725,9 +660,7 @@ describe('Inventory Routes', () => {
             inventoryItem.quantityOnHand - quantityToAdjust
           )
           transitItem = firstTransferResult.body.data.newInventoryItem
-          inventoryItemsToRemove.push(
-            firstTransferResult.body.data.newInventoryItem.id
-          )
+          inventoryItemsToRemove.push(firstTransferResult.body.data.newInventoryItem.id)
           assert.deepEqual(transitItem, {
             ...transitItem,
             quantityOnHand: quantityToAdjust,
@@ -756,12 +689,10 @@ describe('Inventory Routes', () => {
           assert.property(secondTransfertResult.body, 'data')
           assert.typeOf(secondTransfertResult.body.data, 'Object')
           assert.equal(
-            secondTransfertResult.body.data.existingInventoryItem
-              .quantityOnHand,
+            secondTransfertResult.body.data.existingInventoryItem.quantityOnHand,
             inventoryItem.quantityOnHand - quantityToAdjust * 2
           )
-          const updatedTransitItem =
-            secondTransfertResult.body.data.newInventoryItem
+          const updatedTransitItem = secondTransfertResult.body.data.newInventoryItem
           assert.deepEqual(updatedTransitItem, {
             ...updatedTransitItem,
             quantityOnHand: transitItem.quantityOnHand + quantityToAdjust,
@@ -823,9 +754,7 @@ describe('Inventory Routes', () => {
         let receivedItem
         afterEach(async () =>
           run(async knex => {
-            await knex('InventoryLog')
-              .where({ inventoryItemId: receivedItem.id })
-              .delete()
+            await knex('InventoryLog').where({ inventoryItemId: receivedItem.id }).delete()
             await knex('InventoryItem').where({ id: receivedItem.id }).delete()
           })
         )

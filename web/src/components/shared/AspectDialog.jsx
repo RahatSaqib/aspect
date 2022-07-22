@@ -31,12 +31,7 @@ const AspectDialog = ({
       <DialogTitle id="dialog-title">
         {title}
         {showCrossIcon && onRequestClose ? (
-          <IconButton
-            aria-label="close"
-            className={cssClasses('button-close')}
-            onClick={onRequestClose}
-            size="medium"
-          >
+          <IconButton aria-label="close" className={cssClasses('button-close')} onClick={onRequestClose} size="medium">
             <IconProvider icon="MdClose" />
           </IconButton>
         ) : null}
@@ -65,9 +60,7 @@ const AspectDialog = ({
         {children}
       </DialogContent>
 
-      {React.Children.count(actions) > 0 && (
-        <DialogActions>{React.Children.toArray(actions)}</DialogActions>
-      )}
+      {React.Children.count(actions) > 0 && <DialogActions>{React.Children.toArray(actions)}</DialogActions>}
     </Dialog>
   )
 }

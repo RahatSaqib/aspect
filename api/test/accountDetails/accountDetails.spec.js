@@ -40,12 +40,7 @@ describe('/account-details', () => {
           newJobTitle,
           `The title of this person is already set to 'New Job Title'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the title of person (id=${accountDetails.id}) to something other than '${newJobTitle}'`
         )
-        let contactDetails = _.omit(accountDetails, [
-          'userId',
-          'username',
-          'timezone',
-          'culture',
-        ])
+        let contactDetails = _.omit(accountDetails, ['userId', 'username', 'timezone', 'culture'])
         let res = await server
           .put(path)
           .send({ ...contactDetails, title: newJobTitle })
@@ -77,19 +72,12 @@ describe('/account-details', () => {
         assert.equal(res.body.data.title, newJobTitle)
 
         // Make sure the data has been persisted
-        res = await server
-          .get(pathGlobal)
-          .set('Authorization', `Bearer ${shared.token}`)
+        res = await server.get(pathGlobal).set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.body.data.title, newJobTitle)
 
         // Clean Up: Update the user with their old title again
-        contactDetails = _.omit(accountDetails, [
-          'userId',
-          'username',
-          'timezone',
-          'culture',
-        ])
+        contactDetails = _.omit(accountDetails, ['userId', 'username', 'timezone', 'culture'])
 
         res = await server
           .put(path)
@@ -163,9 +151,7 @@ describe('/account-details', () => {
         assert.equal(res.body.data.timezone, newTimezone)
 
         // Make sure the data has been persisted
-        res = await server
-          .get(pathGlobal)
-          .set('Authorization', `Bearer ${shared.token}`)
+        res = await server.get(pathGlobal).set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.body.data.timezone, newTimezone)
 

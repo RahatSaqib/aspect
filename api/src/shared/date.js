@@ -22,12 +22,7 @@ function getDateOrDefault(object, propertyPath, defaultValue) {
   return parseDateOrDefault(date, defaultValue)
 }
 
-const getMonthYearUserTimeZoneField = (
-  knex,
-  field,
-  alias = 'monthYear',
-  offset = '+00:00'
-) =>
+const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') =>
   knex.raw(`CONCAT_WS(
     '-',
     CAST(YEAR(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),
@@ -54,24 +49,14 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
  * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
  */
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
-  knex.raw(
-    `CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`
-  )
+  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`)
 
-const getISODateUserTimeZoneField = (
-  knex,
-  field,
-  alias = 'isoDate',
-  offset = '+00:00'
-) =>
+const getISODateUserTimeZoneField = (knex, field, alias = 'isoDate', offset = '+00:00') =>
   knex.raw(
     `CONCAT(DATE_FORMAT(CONVERT_TZ(${field}, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as ${alias}`
   )
 
-function parseDateOrDefault(
-  date,
-  options = { formatString: null, backupDate: null, defaultDate: null }
-) {
+function parseDateOrDefault(date, options = { formatString: null, backupDate: null, defaultDate: null }) {
   const defaultValue = _.isPlainObject(options) ? options.defaultDate : options
   if (date == null || date === '') {
     return defaultValue
@@ -80,22 +65,14 @@ function parseDateOrDefault(
   if (date instanceof Date) {
     parsedDate = date
   } else if (options && options.formatString) {
-    parsedDate = parse(
-      date,
-      options.formatString,
-      options.backupDate || new Date()
-    )
+    parsedDate = parse(date, options.formatString, options.backupDate || new Date())
   } else {
     parsedDate = toDate(parseISO(date))
   }
   return isValid(parsedDate) ? parsedDate : defaultValue
 }
 
-function formatDateOrDefault(
-  date,
-  dateFormat = 'yyyy-MM-dd',
-  defaultValue = null
-) {
+function formatDateOrDefault(date, dateFormat = 'yyyy-MM-dd', defaultValue = null) {
   date = parseDateOrDefault(date)
   if (date == null) {
     return defaultValue
@@ -130,12 +107,7 @@ function dateEqual(date1, date2) {
  * @param {*} excludeWeekends - optional. boolean to exclude weekends from the returned array
  * @returns {Array} - array of dates formatted as "yyyy-MM-dd" or array ob objects with "date" property and specified initial properties if such parameter exists
  */
-function getArrayOfDaysInRange(
-  start,
-  end,
-  initialProperties = null,
-  excludeWeekends = false
-) {
+function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeekends = false) {
   if (typeof start === 'string') start = parseISO(start)
 
   if (typeof end === 'string') end = parseISO(end)
@@ -144,9 +116,7 @@ function getArrayOfDaysInRange(
   const allDates = eachDayOfInterval({ start, end }).map(d => d.toISOString())
 
   if (excludeWeekends) {
-    const allWeekends = eachWeekendOfInterval({ start, end }).map(d =>
-      d.toISOString()
-    )
+    const allWeekends = eachWeekendOfInterval({ start, end }).map(d => d.toISOString())
     dates = _.difference(allDates, allWeekends)
   } else dates = allDates
   return initialProperties
@@ -190,9 +160,7 @@ const REGEX_ISODATESTRING =
 const endOfMonthUTC = dateString => {
   const [datepart, time] = dateString.split('T')
 
-  const offset = time.split(
-    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
-  )[1]
+  const offset = time.split(/[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/)[1]
   return new Date(
     endOfMonth(new Date(`${datepart}T23:59:59.999Z`))
       .toISOString()
@@ -203,9 +171,7 @@ const endOfMonthUTC = dateString => {
 const startOfMonthUTC = dateString => {
   const [datepart, time] = dateString.split('T')
 
-  const offset = time.split(
-    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
-  )[1]
+  const offset = time.split(/[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/)[1]
   return new Date(
     startOfMonth(new Date(`${datepart}T00:00:00.000Z`))
       .toISOString()
@@ -296,13 +262,8 @@ function getOffsetFromTimeZone(timeZone) {
  * @returns Number - Timezone offset in minutos (i.e. -180)
  */
 function getOffsetFromIsoDateStringInMinutes(isoDateTime) {
-  if (!REGEX_ISODATESTRING.test(isoDateTime))
-    throw new Error('Parameter is not an ISO date string')
-  return (
-    (-1 * (new Date(isoDateTime) - new Date(isoDateTime.slice(0, 10)))) /
-    1000 /
-    60
-  )
+  if (!REGEX_ISODATESTRING.test(isoDateTime)) throw new Error('Parameter is not an ISO date string')
+  return (-1 * (new Date(isoDateTime) - new Date(isoDateTime.slice(0, 10)))) / 1000 / 60
 }
 
 /**
@@ -311,9 +272,7 @@ function getOffsetFromIsoDateStringInMinutes(isoDateTime) {
  * @returns String containing the timezone offset in '[+/-]hh:mm' format, (i.e. '-03:00')
  */
 function getOffsetFromIsoDateString(isoDateTime) {
-  return typeof isoDateTime === 'string' &&
-    REGEX_ISODATESTRING.test(isoDateTime) &&
-    isoDateTime.slice(-1) !== 'Z'
+  return typeof isoDateTime === 'string' && REGEX_ISODATESTRING.test(isoDateTime) && isoDateTime.slice(-1) !== 'Z'
     ? isoDateTime.slice(-6)
     : '+00:00'
 }

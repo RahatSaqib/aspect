@@ -18,8 +18,7 @@ export const makeSortPageSelector =
     const pageParamName = searchParams.has('pageAt') ? 'pageAt' : 'page'
     const sizeParamName = searchParams.has('pageSize') ? 'pageSize' : 'size'
     const page = parseInt(searchParams.get(pageParamName), 10) || defaultPageAt
-    const size =
-      parseInt(searchParams.get(sizeParamName), 10) || defaultPageSize
+    const size = parseInt(searchParams.get(sizeParamName), 10) || defaultPageSize
     const sortCol = searchParams.get('sortCol')
 
     let index = -1
@@ -31,13 +30,7 @@ export const makeSortPageSelector =
       obj = availableSortCol.find(c => c.col === sortCol)
 
       // If the sortCol is not defined as an available sorting col or it's disabled, then return the default ordering
-      if (
-        (index === -1 && !obj) ||
-        (dependencies &&
-          obj &&
-          obj.isEnabled &&
-          obj.isEnabled(dependencies) === false)
-      )
+      if ((index === -1 && !obj) || (dependencies && obj && obj.isEnabled && obj.isEnabled(dependencies) === false))
         return {
           sortCol: defaultSortCol,
           sortDir: defaultSortDir,
@@ -63,18 +56,10 @@ export const makeSearchParamsSanitizer =
       let shouldDelete = false
 
       const index = availableSortCol.indexOf(searchParams.get('sortCol'))
-      const obj = availableSortCol.find(
-        c => c.col === searchParams.get('sortCol')
-      )
+      const obj = availableSortCol.find(c => c.col === searchParams.get('sortCol'))
 
       if (index === -1 && !obj) shouldDelete = true
-      else if (
-        dependencies &&
-        obj &&
-        obj.isEnabled &&
-        obj.isEnabled(dependencies) === false
-      )
-        shouldDelete = true
+      else if (dependencies && obj && obj.isEnabled && obj.isEnabled(dependencies) === false) shouldDelete = true
 
       if (shouldDelete) {
         sanitized = true
@@ -82,10 +67,7 @@ export const makeSearchParamsSanitizer =
       }
     }
 
-    if (
-      searchParams.has('sortDir') &&
-      !availableSortDir.includes(searchParams.get('sortDir'))
-    ) {
+    if (searchParams.has('sortDir') && !availableSortDir.includes(searchParams.get('sortDir'))) {
       sanitized = true
       searchParams.delete('sortDir')
     }

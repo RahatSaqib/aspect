@@ -1,13 +1,8 @@
-const {
-  partnerName,
-  statsQueryDeviceApiToken,
-} = require('./fixtures/partnerData')
+const { partnerName, statsQueryDeviceApiToken } = require('./fixtures/partnerData')
 module.exports = require('../utils').seed(async knex => {
   const now = new Date()
 
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -15,9 +10,7 @@ module.exports = require('../utils').seed(async knex => {
     updatedBy: adminId,
   }
 
-  const { partnerId } = await knex('Partner')
-    .where('name', partnerName)
-    .first('id as partnerId')
+  const { partnerId } = await knex('Partner').where('name', partnerName).first('id as partnerId')
 
   const { geographyId } = await knex('Geography as g')
     .join('Country as c', 'c.id', 'g.countryId')

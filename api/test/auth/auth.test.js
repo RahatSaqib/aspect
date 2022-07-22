@@ -5,15 +5,9 @@ const sinon = require('sinon')
 const endpointUtils = require('../utils/endpointUtils')
 
 const validPassword = 'test07'
-const validHashedPassword =
-  '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2PuZThzK5K' // = test07
+const validHashedPassword = '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2PuZThzK5K' // = test07
 
-const {
-  canEdit,
-  canViewSites,
-  canViewDevices,
-  canViewResults,
-} = require('../../src/auth/constraints')
+const { canEdit, canViewSites, canViewDevices, canViewResults } = require('../../src/auth/constraints')
 
 describe('auth endpoints', () => {
   let dbSpy
@@ -32,9 +26,7 @@ describe('auth endpoints', () => {
     text: 'Howdy!',
     subject: 'Hi There',
   }
-  const inlineImageAttachments = [
-    { value: 'This is an inline image to be inserted into the email' },
-  ]
+  const inlineImageAttachments = [{ value: 'This is an inline image to be inserted into the email' }]
 
   const mockAuthObj = {
     credentials: {
@@ -140,9 +132,7 @@ describe('auth endpoints', () => {
           culture: 'en-US',
           password: validHashedPassword,
         })
-        dbSpy.query
-          .for('Get permissions for user and partner')
-          .resolvesWith(permissions)
+        dbSpy.query.for('Get permissions for user and partner').resolvesWith(permissions)
       })
 
       it('Should be approved to view total sites, devices and result data', () => {
@@ -252,17 +242,13 @@ describe('auth endpoints', () => {
             partnerId: 2,
             countryId: 3,
           }
-          dbSpy.query
-            .for('Get basic user details')
-            .resolvesWith(userHasToAcceptLicense)
+          dbSpy.query.for('Get basic user details').resolvesWith(userHasToAcceptLicense)
 
           const applicableLicense = {
             id: 99,
             acceptedOn: null,
           }
-          dbSpy.query
-            .for('Get latest applicable license and when user accepted it')
-            .resolvesWith(applicableLicense)
+          dbSpy.query.for('Get latest applicable license and when user accepted it').resolvesWith(applicableLicense)
 
           const requestData = {
             payload: {
@@ -313,10 +299,7 @@ describe('auth endpoints', () => {
           .with(requestData)
           .handleResponseWith(responseData => {
             assert.equal(responseData.output.statusCode, 403)
-            assert.equal(
-              responseData.output.payload.message,
-              'Your account is locked.'
-            )
+            assert.equal(responseData.output.payload.message, 'Your account is locked.')
           })
           .thenCall(done)
           .execute()
@@ -349,17 +332,11 @@ describe('auth endpoints', () => {
           .with(requestData)
           .handleResponseWith(responseData => {
             assert.equal(responseData.output.statusCode, 401)
-            assert.equal(
-              responseData.output.payload.message,
-              'Authentication failed. Wrong username or password.'
-            )
+            assert.equal(responseData.output.payload.message, 'Authentication failed. Wrong username or password.')
             const updateFieldsOnUser = dbSpy.query.withArgs(
               'Update failed password attempts and set locked out status on user'
             ).lastCall.returnValue.update.lastCall.args[0]
-            assert.equal(
-              updateFieldsOnUser.failedPasswordAttempts,
-              basicUserDetails.failedPasswordAttempts + 1
-            )
+            assert.equal(updateFieldsOnUser.failedPasswordAttempts, basicUserDetails.failedPasswordAttempts + 1)
           })
           .thenCall(done)
           .execute()
@@ -371,18 +348,11 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            assert.isOk(
-              dbSpy.query.calledWith(
-                'Update failed password attempts and set locked out status on user'
-              )
-            )
+            assert.isOk(dbSpy.query.calledWith('Update failed password attempts and set locked out status on user'))
             const updateFieldsOnUser = dbSpy.query.withArgs(
               'Update failed password attempts and set locked out status on user'
             ).lastCall.returnValue.update.lastCall.args[0]
-            assert.equal(
-              updateFieldsOnUser.failedPasswordAttempts,
-              basicUserDetails.failedPasswordAttempts + 1
-            )
+            assert.equal(updateFieldsOnUser.failedPasswordAttempts, basicUserDetails.failedPasswordAttempts + 1)
             assert.equal(updateFieldsOnUser.lockedOut, 1)
           })
           .thenCall(done)
@@ -410,8 +380,7 @@ describe('auth endpoints', () => {
         const requestData = {
           payload: {
             clientId: 'request client id',
-            token:
-              'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
+            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
           },
         }
         endpointUtils
@@ -436,8 +405,7 @@ describe('auth endpoints', () => {
         const requestData = {
           payload: {
             clientId: 'request client id',
-            token:
-              'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
+            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
           },
         }
         endpointUtils
@@ -445,10 +413,7 @@ describe('auth endpoints', () => {
           .with(requestData)
           .handleResponseWith(responseData => {
             assert.equal(responseData.output.statusCode, 400)
-            assert.equal(
-              responseData.output.payload.message,
-              'Unable to find token or token revoked'
-            )
+            assert.equal(responseData.output.payload.message, 'Unable to find token or token revoked')
           })
           .thenCall(done)
           .execute()
@@ -469,8 +434,7 @@ describe('auth endpoints', () => {
         const requestData = {
           payload: {
             clientId: 'request client id',
-            token:
-              'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
+            token: 'A+nmAmjiD0BqrZvfhrIRlnAoufJW0mhigNWa1Fnz/gl8JWsec4ochW9K5iaz3XcR',
           },
         }
         endpointUtils
@@ -521,9 +485,7 @@ describe('auth endpoints', () => {
         id: 99,
         acceptedOn: new Date(),
       }
-      dbSpy.query
-        .for('Get latest applicable license and when user accepted it')
-        .resolvesWith(applicableLicense)
+      dbSpy.query.for('Get latest applicable license and when user accepted it').resolvesWith(applicableLicense)
     })
 
     describe('When the user is changing both their username and password', () => {
@@ -551,9 +513,8 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs(
-              'Update user details'
-            ).lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails =
+              dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.password)
             assert.deepEqual(
               updateUserDetails,
@@ -592,9 +553,8 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs(
-              'Update user details'
-            ).lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails =
+              dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.notProperty(updateUserDetails, 'password')
             assert.deepEqual(updateUserDetails, {
               name: requestData.payload.newUsername,
@@ -629,9 +589,8 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs(
-              'Update user details'
-            ).lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails =
+              dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.notProperty(updateUserDetails, 'username')
             assert.isOk(updateUserDetails.password)
             assert.deepEqual(
@@ -702,9 +661,8 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs(
-              'Update user details'
-            ).lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails =
+              dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.password)
             assert.notOk(updateUserDetails.name)
             assert.deepEqual(
@@ -731,9 +689,8 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs(
-              'Update user details'
-            ).lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails =
+              dbSpy.query.withArgs('Update user details').lastCall.returnValue.update.lastCall.args[0]
             assert.notOk(updateUserDetails.password)
             assert.isOk(updateUserDetails.name)
             assert.deepEqual(updateUserDetails, updateUserDetails, {
@@ -784,9 +741,7 @@ describe('auth endpoints', () => {
           id: 123,
         })
         dbSpy.query.for('Get basic user details').resolvesWith(validUserRecord)
-        dbSpy.query
-          .for('Get permissions for user and partner')
-          .resolvesWith(permissions)
+        dbSpy.query.for('Get permissions for user and partner').resolvesWith(permissions)
       })
 
       it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', done => {
@@ -827,9 +782,7 @@ describe('auth endpoints', () => {
             partnerId: 2,
             countryId: 3,
           }
-          dbSpy.query
-            .for('Get basic user details')
-            .resolvesWith(southAfricanUser)
+          dbSpy.query.for('Get basic user details').resolvesWith(southAfricanUser)
           endpointUtils
             .callHandlerOn(endpoint)
             .with(requestData)
@@ -863,9 +816,7 @@ describe('auth endpoints', () => {
       const user = { id: 3, name: 'user-name', culture: 'fr-FR' }
 
       beforeEach(() => {
-        dbSpy.query
-          .for('Get user details from email address')
-          .resolvesWith([user])
+        dbSpy.query.for('Get user details from email address').resolvesWith([user])
       })
 
       it('should respond with ok', done => {
@@ -884,9 +835,8 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs(
-              'Save reset password token'
-            ).lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails =
+              dbSpy.query.withArgs('Save reset password token').lastCall.returnValue.update.lastCall.args[0]
             assert.isOk(updateUserDetails.resetPasswordToken)
             assert.equal(
               updateUserDetails.resetPasswordTokenExpires.toString(),
@@ -902,25 +852,11 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            assert.equal(
-              templateProcessorFake.process.lastCall.args[0],
-              'resetPassword'
-            )
-            assert.equal(
-              templateProcessorFake.process.lastCall.args[1].name,
-              user.name
-            )
-            assert.isOk(
-              templateProcessorFake.process.lastCall.args[1].resetPasswordToken
-            )
-            assert.equal(
-              templateProcessorFake.process.lastCall.args[2],
-              user.culture
-            )
-            assert.deepEqual(
-              templateProcessorFake.getInlineImageAttachments.lastCall.args,
-              [generatedEmail.html]
-            )
+            assert.equal(templateProcessorFake.process.lastCall.args[0], 'resetPassword')
+            assert.equal(templateProcessorFake.process.lastCall.args[1].name, user.name)
+            assert.isOk(templateProcessorFake.process.lastCall.args[1].resetPasswordToken)
+            assert.equal(templateProcessorFake.process.lastCall.args[2], user.culture)
+            assert.deepEqual(templateProcessorFake.getInlineImageAttachments.lastCall.args, [generatedEmail.html])
             assert.deepEqual(emailUtilFake.sendEmail.lastCall.args, [
               requestData.params.email,
               generatedEmail.subject,
@@ -941,9 +877,7 @@ describe('auth endpoints', () => {
       ]
 
       beforeEach(() => {
-        dbSpy.query
-          .for('Get user details from email address')
-          .resolvesWith(users)
+        dbSpy.query.for('Get user details from email address').resolvesWith(users)
       })
 
       it('should respond with a conflict response', done => {
@@ -955,8 +889,7 @@ describe('auth endpoints', () => {
             assert.deepEqual(response.output.payload, {
               statusCode: 409,
               error: 'Conflict',
-              message:
-                'Could not pinpoint the user from the email address provided',
+              message: 'Could not pinpoint the user from the email address provided',
             })
           })
           .thenCall(done)
@@ -1000,9 +933,7 @@ describe('auth endpoints', () => {
 
     describe("when reset password token doesn't exist", () => {
       beforeEach(() => {
-        dbSpy.query
-          .for('Get user with reset password token')
-          .resolvesWith(undefined)
+        dbSpy.query.for('Get user with reset password token').resolvesWith(undefined)
       })
 
       it('should respond with a 404 response', done => {
@@ -1057,9 +988,7 @@ describe('auth endpoints', () => {
       }
 
       beforeEach(() => {
-        dbSpy.query
-          .for('Get user with reset password token')
-          .resolvesWith(userDetails)
+        dbSpy.query.for('Get user with reset password token').resolvesWith(userDetails)
       })
 
       it('should respond with ok and the username', done => {
@@ -1081,17 +1010,13 @@ describe('auth endpoints', () => {
           .callHandlerOn(endpoint)
           .with(requestData)
           .handleResponseWith(() => {
-            const updateUserDetails = dbSpy.query.withArgs(
-              'Save password for user'
-            ).lastCall.returnValue.update.lastCall.args[0]
+            const updateUserDetails =
+              dbSpy.query.withArgs('Save password for user').lastCall.returnValue.update.lastCall.args[0]
             assert.equal(updateUserDetails.lockedOut, 0)
             assert.equal(updateUserDetails.failedPasswordAttempts, 0)
             assert.equal(updateUserDetails.legacyPassword, 0)
             assert.isOk(updateUserDetails.password)
-            assert.equal(
-              updateUserDetails.lastPasswordChange.toString(),
-              now.toString()
-            )
+            assert.equal(updateUserDetails.lastPasswordChange.toString(), now.toString())
             assert.isNull(updateUserDetails.resetPasswordToken)
             assert.isNull(updateUserDetails.resetPasswordTokenExpires)
           })

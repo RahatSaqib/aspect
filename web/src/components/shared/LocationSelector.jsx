@@ -8,16 +8,9 @@ import { connect } from 'react-redux'
 import { Field, change as changeFieldValue } from 'redux-form/immutable'
 
 import CountrySelectField from '../../filter/geography/CountrySelectField'
-import StateSelectField, {
-  getSelectedCountry,
-} from '../../filter/geography/StateSelectField'
-import LgaSelectField, {
-  getSelectedState,
-} from '../../filter/geography/LgaSelectField'
-import {
-  getCustomMessage,
-  commonDefinitions,
-} from '../../shared/utils/customMessages'
+import StateSelectField, { getSelectedCountry } from '../../filter/geography/StateSelectField'
+import LgaSelectField, { getSelectedState } from '../../filter/geography/LgaSelectField'
+import { getCustomMessage, commonDefinitions } from '../../shared/utils/customMessages'
 
 const messages = {
   ...commonDefinitions,
@@ -104,20 +97,12 @@ const renderLgaSelectField = ({ input, meta, ...restProps }) => (
 
 export class LocationSelector extends PureComponent {
   componentDidUpdate(prevProps) {
-    const { selectedCountryId, selectedStateId, onChangeSelectedState } =
-      prevProps
-    const { changeFieldValue, formName, stateIdFieldName, lgaIdFieldName } =
-      this.props
-    if (
-      !isEmpty(selectedCountryId) &&
-      selectedCountryId !== this.props.selectedCountryId
-    ) {
+    const { selectedCountryId, selectedStateId, onChangeSelectedState } = prevProps
+    const { changeFieldValue, formName, stateIdFieldName, lgaIdFieldName } = this.props
+    if (!isEmpty(selectedCountryId) && selectedCountryId !== this.props.selectedCountryId) {
       changeFieldValue(formName, stateIdFieldName, null)
       changeFieldValue(formName, lgaIdFieldName, null)
-    } else if (
-      !isEmpty(selectedStateId) &&
-      selectedStateId !== this.props.selectedStateId
-    ) {
+    } else if (!isEmpty(selectedStateId) && selectedStateId !== this.props.selectedStateId) {
       changeFieldValue(formName, lgaIdFieldName, null)
       onChangeSelectedState()
     }
@@ -144,10 +129,7 @@ export class LocationSelector extends PureComponent {
       countryId: selectedCountryId,
     })
     const statesLoading = !!selectedCountry && selectedCountry.children.loading
-    const statesDisabled =
-      !selectedCountry ||
-      statesLoading ||
-      selectedCountry.children.items.isEmpty()
+    const statesDisabled = !selectedCountry || statesLoading || selectedCountry.children.items.isEmpty()
 
     const selectedState = getSelectedState({
       countries,
@@ -155,8 +137,7 @@ export class LocationSelector extends PureComponent {
       stateId: selectedStateId,
     })
     const lgasLoading = !!selectedState && selectedState.children.loading
-    const lgasDisabled =
-      !selectedState || lgasLoading || selectedState.children.items.isEmpty()
+    const lgasDisabled = !selectedState || lgasLoading || selectedState.children.items.isEmpty()
 
     return (
       <div>
@@ -169,9 +150,7 @@ export class LocationSelector extends PureComponent {
             style={styles.field}
             disabled={countriesDisabled}
           />
-          {countriesLoading && (
-            <LinearProgress style={styles.loadingProgress} />
-          )}
+          {countriesLoading && <LinearProgress style={styles.loadingProgress} />}
         </div>
         <div style={styles.fieldContainer}>
           <Field
@@ -204,26 +183,10 @@ export class LocationSelector extends PureComponent {
 }
 
 function mapStateToProps(state, ownProps) {
-  const { formName, countryIdFieldName, stateIdFieldName, lgaIdFieldName } =
-    ownProps
-  const selectedCountryId = state.getIn([
-    'form',
-    formName,
-    'values',
-    countryIdFieldName,
-  ])
-  const selectedStateId = state.getIn([
-    'form',
-    formName,
-    'values',
-    stateIdFieldName,
-  ])
-  const selectedLgaId = state.getIn([
-    'form',
-    formName,
-    'values',
-    lgaIdFieldName,
-  ])
+  const { formName, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = ownProps
+  const selectedCountryId = state.getIn(['form', formName, 'values', countryIdFieldName])
+  const selectedStateId = state.getIn(['form', formName, 'values', stateIdFieldName])
+  const selectedLgaId = state.getIn(['form', formName, 'values', lgaIdFieldName])
   return {
     countries: state.getIn(['geography', 'countriesForLocationSelector']),
     selectedCountryId,
@@ -242,7 +205,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(
-  injectIntl,
-  connect(mapStateToProps, mapDispatchToProps)
-)(LocationSelector)
+export default flowRight(injectIntl, connect(mapStateToProps, mapDispatchToProps))(LocationSelector)

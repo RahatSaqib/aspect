@@ -13,13 +13,7 @@ async function down(knex) {
   await dropUniqueKey(knex, tableName)
   await knex.schema.alterTable(tableName, table => {
     table.unique(
-      [
-        'messageSeverityId',
-        'alertTemplateId',
-        'smsTemplateId',
-        'emailTemplateId',
-        'webhookTemplateId',
-      ],
+      ['messageSeverityId', 'alertTemplateId', 'smsTemplateId', 'emailTemplateId', 'webhookTemplateId'],
       `${tableName}_unique`
     )
   })

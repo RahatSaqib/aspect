@@ -148,8 +148,7 @@ export default {
     },
     currentPasswordRequired: {
       id: 'pages.UpdateLoginDetails.currentPasswordRequired',
-      defaultMessage:
-        'Please enter your current password to update your login details',
+      defaultMessage: 'Please enter your current password to update your login details',
     },
     newPasswordTooShort: {
       id: 'pages.UpdateLoginDetails.newPasswordTooShort',
@@ -157,8 +156,7 @@ export default {
     },
     newPasswordMustContainANumberOrSpecialCharacter: {
       id: 'pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter',
-      defaultMessage:
-        'The password needs to contain at least one number or special character (%!$*...)',
+      defaultMessage: 'The password needs to contain at least one number or special character (%!$*...)',
     },
     userLockedOutLabel: {
       id: 'pages.UpdateLoginDetails.userEnableLabel',
@@ -174,8 +172,7 @@ export default {
     },
     currentPasswordDialogMessage: {
       id: 'pages.UpdateLoginDetails.currentPasswordDialogMessage',
-      defaultMessage:
-        'To update your login details, please enter your current password',
+      defaultMessage: 'To update your login details, please enter your current password',
     },
     submitCurrentPassword: {
       id: 'pages.UpdateLoginDetails.submitCurrentPassword',

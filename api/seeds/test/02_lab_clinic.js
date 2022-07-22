@@ -21,9 +21,7 @@ const now = new Date()
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'reporter_admin' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'reporter_admin' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -201,15 +199,11 @@ async function seed(knex) {
   const modules = await getPermissionModules(knex)
 
   // Create clinics for every state in Malawi
-  const [malawiCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'MWI' })
-    .select('c.id', 'c.culture', 'c.timezone')
+  const [malawiCountry] = await knex('Country as c').where({ 'c.a3': 'MWI' }).select('c.id', 'c.culture', 'c.timezone')
 
   const { culture, timezone, id: countryId } = malawiCountry
 
-  const { id: geographyId } = await knex('Geography')
-    .where({ countryId })
-    .first()
+  const { id: geographyId } = await knex('Geography').where({ countryId }).first()
 
   // Permissions for Reporter Admin
   const [adminPersonId] = await knex('Person').insert({
@@ -225,11 +219,7 @@ async function seed(knex) {
 
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const jobFunctionIdLabAdmin = await upsertJobFunction(
-    knex,
-    'Lab Admin',
-    partnerId
-  )
+  const jobFunctionIdLabAdmin = await upsertJobFunction(knex, 'Lab Admin', partnerId)
 
   await knex('JobFunctionPermission').insert([
     {
@@ -338,9 +328,7 @@ async function seed(knex) {
     },
   ])
 
-  const [jobIdAdmin] = await knex('Job').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
-  ])
+  const [jobIdAdmin] = await knex('Job').insert([{ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
   await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
   // Results section
@@ -355,13 +343,9 @@ async function seed(knex) {
   } = await allResultCategoryToId()
 
   // Reuse previously seeded "static" data
-  const { id: assayIdChaiEid } = await knex('Assay')
-    .where('name', 'CHAI EID')
-    .first()
+  const { id: assayIdChaiEid } = await knex('Assay').where('name', 'CHAI EID').first()
 
-  const { id: assayIdChaiHivVl } = await knex('Assay')
-    .where('name', 'CHAI HIV VL')
-    .first()
+  const { id: assayIdChaiHivVl } = await knex('Assay').where('name', 'CHAI HIV VL').first()
 
   // EID results:
   // assign categories to assay

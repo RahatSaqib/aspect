@@ -4,10 +4,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { formatDate } from '../../../../shared/utils/dateFormat'
 
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../../components/shared/tableBody'
 
 import styles from '../../../../components/shared/DataTableRow.css'
 
@@ -28,12 +25,7 @@ const formatterByType = partial(
   }
 )
 
-const DeviceOperationTableRow = ({
-  intl,
-  deviceOperation,
-  deviceOperationSchema,
-  ...restProps
-}) => (
+const DeviceOperationTableRow = ({ intl, deviceOperation, deviceOperationSchema, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>{formatDate(deviceOperation.get('startedOn'))}</TableCell>
     <TableCell>{deviceOperation.get('id')}</TableCell>
@@ -41,11 +33,7 @@ const DeviceOperationTableRow = ({
       .map((schema, key) => (
         // eslint-disable-next-line react/no-array-index-key
         <TableCell key={key}>
-          {formatterByType(schema.get('type'))(
-            deviceOperation.getIn(['data', key]),
-            intl,
-            schema
-          )}
+          {formatterByType(schema.get('type'))(deviceOperation.getIn(['data', key]), intl, schema)}
         </TableCell>
       ))
       .valueSeq()}

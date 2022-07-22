@@ -4,15 +4,10 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const { rowsAsObject, updateUnknownErrorOnModuleMessage } = require('../utils')
-const {
-  getPermissionModules,
-  upsertIssueResolutionTrigger,
-} = require('../utils')
+const { getPermissionModules, upsertIssueResolutionTrigger } = require('../utils')
 const geography = require('./fixtures/geography.json')
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
-const {
-  updateDataCategoryNotificationTypeForRO,
-} = require('../dataCategoryLow')
+const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -26,22 +21,18 @@ async function seed(knex) {
 
   await knex('AlertTemplate')
     .where({
-      message:
-        'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
+      message: 'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
     })
     .update({
-      message:
-        'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+      message: 'Possible module failure on module {{issue.data.moduleName}} contact engineer',
     })
 
   await knex('SmsTemplate')
     .where({
-      message:
-        'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
+      message: 'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
     })
     .update({
-      message:
-        'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+      message: 'Possible module failure on module {{issue.data.moduleName}} contact engineer',
     })
 
   await knex('EmailTemplate')
@@ -51,56 +42,42 @@ async function seed(knex) {
     .update({
       subject: 'Possible module failure',
       body: 'Possible module failure on module {{issue.data.moduleName}} contact engineer',
-      htmlBody:
-        'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
+      htmlBody: 'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })
 
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
+  const { id: partnerId } = await knex('Partner').where({ name: 'Myanmar' }).first()
 
   await knex('IssueEscalationTrigger')
     .update({
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql',
+        evaluationParameter: './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql',
       }),
     })
-    .whereRaw(
-      'escalationConditions->>"$.evaluationParameter" LIKE "%/deviceOfflineLevel3ROEscalatedNetwork.sql"'
-    )
+    .whereRaw('escalationConditions->>"$.evaluationParameter" LIKE "%/deviceOfflineLevel3ROEscalatedNetwork.sql"')
     .andWhere('partnerId', partnerId)
 
   await knex('IssueEscalationTrigger')
     .update({
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql',
+        evaluationParameter: './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql',
       }),
     })
-    .whereRaw(
-      'escalationConditions->>"$.evaluationParameter" LIKE "%/deviceNoResultsLevel3ROEscalatedNoResults.sql"'
-    )
+    .whereRaw('escalationConditions->>"$.evaluationParameter" LIKE "%/deviceNoResultsLevel3ROEscalatedNoResults.sql"')
     .andWhere('partnerId', partnerId)
 
   await knex('IssueResolutionTrigger')
     .update({
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceOffline.sql',
+        evaluationParameter: './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceOffline.sql',
       }),
     })
-    .whereRaw(
-      'resolutionConditions->>"$.evaluationParameter" LIKE "%deviceOfflineResolveLUNetwork.sql"'
-    )
+    .whereRaw('resolutionConditions->>"$.evaluationParameter" LIKE "%deviceOfflineResolveLUNetwork.sql"')
     .andWhere('partnerId', partnerId)
 
-  const deviceNoResultsIssueResolutionTrigger = await knex(
-    'IssueResolutionTrigger as irt'
-  )
+  const deviceNoResultsIssueResolutionTrigger = await knex('IssueResolutionTrigger as irt')
     .join('Partner as p', 'irt.partnerId', 'p.id')
     .join('IssueType as it', 'irt.issueTypeId', 'it.id')
     .whereRaw(
@@ -120,8 +97,7 @@ async function seed(knex) {
       partnerId,
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql',
+        evaluationParameter: './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql',
       }),
       createdOn: now,
       updatedOn: now,
@@ -156,8 +132,7 @@ async function seed(knex) {
       message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
     })
     .update({
-      message:
-        'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+      message: 'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
     })
 
   await knex('SmsTemplate')
@@ -165,8 +140,7 @@ async function seed(knex) {
       message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
     })
     .update({
-      message:
-        'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+      message: 'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
     })
 
   await knex('EmailTemplate')
@@ -175,27 +149,20 @@ async function seed(knex) {
     })
     .update({
       body: 'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
-      htmlBody:
-        '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+      htmlBody: '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
     })
 
   const myanmarConsumableIssues = await knex('IssueCategory as ic')
     .join('IssueType as it', 'ic.id', 'it.issueCategoryId')
     .join('Issue as i', 'it.id', 'i.issueTypeId')
     .where(function () {
-      this.whereNull('i.consumableId')
-        .andWhere('i.partnerId', partnerId)
-        .andWhere('ic.name', 'Reagent Health')
+      this.whereNull('i.consumableId').andWhere('i.partnerId', partnerId).andWhere('ic.name', 'Reagent Health')
     })
     .pluck('i.id')
 
-  const { id: consumableIdTb } = await knex('Consumable')
-    .where('name', 'GeneXpert TB Cartridge')
-    .first('id')
+  const { id: consumableIdTb } = await knex('Consumable').where('name', 'GeneXpert TB Cartridge').first('id')
 
-  await knex('Issue')
-    .whereIn('id', myanmarConsumableIssues)
-    .update({ consumableId: consumableIdTb })
+  await knex('Issue').whereIn('id', myanmarConsumableIssues).update({ consumableId: consumableIdTb })
 
   await knex('PartnerConsumable').insert({
     partnerId,
@@ -204,9 +171,7 @@ async function seed(knex) {
   })
 
   const now = new Date()
-  const { id: myanmarAdminId } = await knex('User as u')
-    .where('u.name', 'myanmar_admin')
-    .first('u.id')
+  const { id: myanmarAdminId } = await knex('User as u').where('u.name', 'myanmar_admin').first('u.id')
 
   const roAlertTemplates = await knex('NotificationType as nt')
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
@@ -251,17 +216,9 @@ async function seed(knex) {
       .distinct('am.id')
       .pluck('am.id')
 
-    await knex('AlertMessage')
-      .whereIn('id', alertMessageIdsToUpdate)
-      .update({ alertTemplateId: newRoAlertTemplateId })
+    await knex('AlertMessage').whereIn('id', alertMessageIdsToUpdate).update({ alertTemplateId: newRoAlertTemplateId })
 
-    const {
-      notificationTypeId,
-      messageSeverityId,
-      emailTemplateId,
-      smsTemplateId,
-      webhookTemplateId,
-    } = roAlertTemplate
+    const { notificationTypeId, messageSeverityId, emailTemplateId, smsTemplateId, webhookTemplateId } = roAlertTemplate
 
     const [newMessageTypeId] = await knex('MessageType').insert({
       messageSeverityId,
@@ -271,9 +228,7 @@ async function seed(knex) {
       webhookTemplateId,
     })
 
-    await knex('NotificationType')
-      .where({ id: notificationTypeId })
-      .update({ messageTypeId: newMessageTypeId })
+    await knex('NotificationType').where({ id: notificationTypeId }).update({ messageTypeId: newMessageTypeId })
   })
 
   const roLuViewAlertTemplates = await knex('NotificationType as nt')
@@ -325,13 +280,8 @@ async function seed(knex) {
       .whereIn('id', alertMessageIdsToUpdate)
       .update({ alertTemplateId: newRoLuViewAlertTemplateId })
 
-    const {
-      notificationTypeId,
-      messageSeverityId,
-      emailTemplateId,
-      smsTemplateId,
-      webhookTemplateId,
-    } = luRoViewAlertTemplate
+    const { notificationTypeId, messageSeverityId, emailTemplateId, smsTemplateId, webhookTemplateId } =
+      luRoViewAlertTemplate
 
     const [newMessageTypeId] = await knex('MessageType').insert({
       messageSeverityId,
@@ -341,14 +291,10 @@ async function seed(knex) {
       webhookTemplateId,
     })
 
-    await knex('NotificationType')
-      .where({ id: notificationTypeId })
-      .update({ messageTypeId: newMessageTypeId })
+    await knex('NotificationType').where({ id: notificationTypeId }).update({ messageTypeId: newMessageTypeId })
   })
 
-  const myanmarJobFunctions = await knex('JobFunction as jf')
-    .where('jf.partnerId', partnerId)
-    .select()
+  const myanmarJobFunctions = await knex('JobFunction as jf').where('jf.partnerId', partnerId).select()
 
   const modules = await getPermissionModules(knex)
 

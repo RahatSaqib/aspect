@@ -19,33 +19,14 @@ async function getPatientResultsDetails(request) {
     .leftJoin('ResultFollowUp as rfu', 'r.id', 'rfu.resultId')
     .leftJoin('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .leftJoin('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .leftJoin(
-      'ResultWorkflowLog as rsl',
-      'r.resultWorkflowStatusLogId',
-      'rsl.id'
-    )
-    .leftJoin(
-      'ResultWorkflowStatus as rs',
-      'rsl.resultWorkflowStatusId',
-      'rs.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'r.treatmentStatusLogId',
-      'rtsl.id'
-    )
+    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
+    .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('User as u', 'rtsl.createdBy', 'u.id')
     .leftJoin('Person as p', 'u.id', 'p.UserId')
-    .leftJoin(
-      'ResultTreatmentStatus as rts',
-      'rtsl.resultTreatmentStatusId',
-      'rts.id'
-    )
+    .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .where(queryBuilder => {
-      queryBuilder.whereRaw(
-        'LOWER(JSON_EXTRACT(r.patientData,"$.id")) = LOWER(JSON_QUOTE(?))',
-        [query.patientId]
-      )
+      queryBuilder.whereRaw('LOWER(JSON_EXTRACT(r.patientData,"$.id")) = LOWER(JSON_QUOTE(?))', [query.patientId])
       if (query.diseaseId) queryBuilder.where('dis.id', query.diseaseId)
     })
     .modify(addConstraints, dataConstraints, {
@@ -103,14 +84,10 @@ async function getPatientResultsDetails(request) {
       ...result,
       resultData: result.resultData ? JSON.parse(result.resultData) : null,
       patientData: result.patientData ? JSON.parse(result.patientData) : null,
-      patientDataSchema: result.patientDataSchema
-        ? JSON.parse(result.patientDataSchema)
-        : null,
+      patientDataSchema: result.patientDataSchema ? JSON.parse(result.patientDataSchema) : null,
       date: result.resultEndedOn,
       type: 'Result',
-      description:
-        result.resultData.resultText ||
-        `${result.resultCategory1} ${result.resultCategory2 || ''}`,
+      description: result.resultData.resultText || `${result.resultCategory1} ${result.resultCategory2 || ''}`,
     })
   )
 
@@ -119,9 +96,7 @@ async function getPatientResultsDetails(request) {
       ...sample,
       resultData: sample.resultData ? JSON.parse(sample.resultData) : null,
       patientData: sample.patientData ? JSON.parse(sample.patientData) : null,
-      patientDataSchema: sample.patientDataSchema
-        ? JSON.parse(sample.patientDataSchema)
-        : null,
+      patientDataSchema: sample.patientDataSchema ? JSON.parse(sample.patientDataSchema) : null,
       date: sample.sampleCollectedOn,
       sampleType: sample.sampleType || '-',
       type: 'Sample',
@@ -134,9 +109,7 @@ async function getPatientResultsDetails(request) {
         ...fu,
         resultData: fu.resultData ? JSON.parse(fu.resultData) : null,
         patientData: fu.patientData ? JSON.parse(fu.patientData) : null,
-        patientDataSchema: fu.patientDataSchema
-          ? JSON.parse(fu.patientDataSchema)
-          : null,
+        patientDataSchema: fu.patientDataSchema ? JSON.parse(fu.patientDataSchema) : null,
         date: fu.followUpDate || fu.followUpCreatedOn,
         type: _.capitalize(fu.followUpTypeExternalId),
       })

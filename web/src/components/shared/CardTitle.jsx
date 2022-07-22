@@ -8,12 +8,7 @@ const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 
-export const Title = ({
-  className,
-  icon,
-  title,
-  renderRight = () => false,
-}) => (
+export const Title = ({ className, icon, title, renderRight = () => false }) => (
   <div className={cssClasses('Title', className)}>
     <div>
       {React.cloneElement(icon, {

@@ -27,10 +27,7 @@ const enhance = compose(
       nextPageSize => {
         const searchParams = new URLSearchParams(location.search)
         searchParams.set('pageSize', nextPageSize)
-        searchParams.set(
-          'pageAt',
-          Math.floor((pageAt * pageSize) / nextPageSize)
-        )
+        searchParams.set('pageAt', Math.floor((pageAt * pageSize) / nextPageSize))
 
         navigate(
           {

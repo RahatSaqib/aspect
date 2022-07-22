@@ -47,12 +47,8 @@ describe('ResetPassword module', () => {
       const smallScreenDiv = ResetPasswordWrapper.find(Hidden).find({
         xl: true,
       })
-      expect(
-        largeScreenDiv.find(Stepper).dive().props().value.orientation
-      ).toEqual('horizontal')
-      expect(
-        smallScreenDiv.find(Stepper).dive().props().value.orientation
-      ).toEqual('vertical')
+      expect(largeScreenDiv.find(Stepper).dive().props().value.orientation).toEqual('horizontal')
+      expect(smallScreenDiv.find(Stepper).dive().props().value.orientation).toEqual('vertical')
     })
 
     it('should contain the same steps for both large and small screens', () => {
@@ -61,21 +57,12 @@ describe('ResetPassword module', () => {
       })
       const smallScreenStepper = smallScreenDiv.find(Stepper)
       const smallScreenStep1Label = smallScreenStepper.find(StepLabel).at(0)
-      const smallScreenStep1ResetPasswordEnterEmail = smallScreenStepper
-        .find(StepContent)
-        .at(0)
-        .children()
+      const smallScreenStep1ResetPasswordEnterEmail = smallScreenStepper.find(StepContent).at(0).children()
       const smallScreenStep2Label = smallScreenStepper.find(StepLabel).at(1)
       const smallScreenStep3Label = smallScreenStepper.find(StepLabel).at(2)
-      const smallScreenStep3ResetPasswordEnterPassword = smallScreenStepper
-        .find(StepContent)
-        .at(2)
-        .children()
+      const smallScreenStep3ResetPasswordEnterPassword = smallScreenStepper.find(StepContent).at(2).children()
       const smallScreenStep4Label = smallScreenStepper.find(StepLabel).at(3)
-      const smallScreenStep4Finish = smallScreenStepper
-        .find(StepContent)
-        .at(3)
-        .children()
+      const smallScreenStep4Finish = smallScreenStepper.find(StepContent).at(3).children()
 
       let largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({
         xs: true,
@@ -86,9 +73,7 @@ describe('ResetPassword module', () => {
       const largeScreenStep2Label = largeScreenStepper.find(StepLabel).at(1)
       const largeScreenStep3Label = largeScreenStepper.find(StepLabel).at(2)
       const largeScreenStep4Label = largeScreenStepper.find(StepLabel).at(3)
-      const largeScreenStep1ResetPasswordEnterEmail = largeScreenDiv
-        .children()
-        .at(1)
+      const largeScreenStep1ResetPasswordEnterEmail = largeScreenDiv.children().at(1)
 
       ResetPasswordWrapper = ResetPasswordWrapper.setState({
         stepIndex: 1,
@@ -102,11 +87,7 @@ describe('ResetPassword module', () => {
         stepIndex: 2,
       })
       largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({ xs: true })
-      const largeScreenStep3ResetPasswordEnterPassword = largeScreenDiv
-        .children()
-        .at(1)
-        .children()
-        .first()
+      const largeScreenStep3ResetPasswordEnterPassword = largeScreenDiv.children().at(1).children().first()
 
       ResetPasswordWrapper = ResetPasswordWrapper.setState({
         stepIndex: 3,
@@ -117,29 +98,17 @@ describe('ResetPassword module', () => {
       })
       const largeScreenStep4Finish = largeScreenDiv.children().at(1)
 
-      expect(largeScreenStep1Label.children().text()).toEqual(
-        smallScreenStep1Label.children().text()
-      )
-      expect(largeScreenStep2Label.children().text()).toEqual(
-        smallScreenStep2Label.children().text()
-      )
-      expect(largeScreenStep3Label.children().text()).toEqual(
-        smallScreenStep3Label.children().text()
-      )
-      expect(largeScreenStep4Label.children().text()).toEqual(
-        smallScreenStep4Label.children().text()
-      )
+      expect(largeScreenStep1Label.children().text()).toEqual(smallScreenStep1Label.children().text())
+      expect(largeScreenStep2Label.children().text()).toEqual(smallScreenStep2Label.children().text())
+      expect(largeScreenStep3Label.children().text()).toEqual(smallScreenStep3Label.children().text())
+      expect(largeScreenStep4Label.children().text()).toEqual(smallScreenStep4Label.children().text())
 
-      expect(largeScreenStep1ResetPasswordEnterEmail.props()).toEqual(
-        smallScreenStep1ResetPasswordEnterEmail.props()
-      )
+      expect(largeScreenStep1ResetPasswordEnterEmail.props()).toEqual(smallScreenStep1ResetPasswordEnterEmail.props())
       expect(largeScreenStep3ResetPasswordEnterPassword.props()).toEqual(
         smallScreenStep3ResetPasswordEnterPassword.props()
       )
       for (let i = 0; i < largeScreenStep4Finish.children().length; i++) {
-        expect(largeScreenStep4Finish.children().at(i).props()).toEqual(
-          smallScreenStep4Finish.children().at(i).props()
-        )
+        expect(largeScreenStep4Finish.children().at(i).props()).toEqual(smallScreenStep4Finish.children().at(i).props())
       }
     })
 
@@ -187,28 +156,15 @@ describe('ResetPassword module', () => {
       it('should contain a hidden admin help dialog', () => {
         const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
 
-        expect(adminHelpDialog.props().title).toEqual(
-          'Request a New Password From Aspect'
-        )
+        expect(adminHelpDialog.props().title).toEqual('Request a New Password From Aspect')
         expect(adminHelpDialog.props().open).toBe(false)
-        expect(adminHelpDialog.children().props().id).toEqual(
-          'pages.ResetPassword.adminHelpContent'
-        )
-        expect(
-          {}.hasOwnProperty.call(
-            adminHelpDialog.children().props().values,
-            'supportEmail'
-          )
-        ).toBe(true)
+        expect(adminHelpDialog.children().props().id).toEqual('pages.ResetPassword.adminHelpContent')
+        expect({}.hasOwnProperty.call(adminHelpDialog.children().props().values, 'supportEmail')).toBe(true)
       })
 
       it('should show a dialog when user requests help', () => {
-        const resetPasswordEnterEmail = ResetPasswordWrapper.find(
-          ResetPasswordEnterEmail
-        ).first()
-        resetPasswordEnterEmail
-          .props()
-          .onShowAdminHelpDialog({ preventDefault: noop })
+        const resetPasswordEnterEmail = ResetPasswordWrapper.find(ResetPasswordEnterEmail).first()
+        resetPasswordEnterEmail.props().onShowAdminHelpDialog({ preventDefault: noop })
         ResetPasswordWrapper.update()
 
         const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)

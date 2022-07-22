@@ -4,11 +4,7 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import { Field } from 'redux-form/immutable'
 
-import {
-  LazyLoadItems,
-  LazyLoadParent,
-  LazyLoadChild,
-} from '../../geography/GeographyRedux'
+import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/GeographyRedux'
 
 describe('LocationSelector module', () => {
   const { LocationSelector } = require('./LocationSelector')
@@ -102,14 +98,10 @@ describe('LocationSelector module', () => {
     })
 
     it('Should contain three Field for country, state and LGA', () => {
-      const CountrySelectFieldWrapper = LocationSelectorWrapper.find(
-        Field
-      ).filter({ name: 'countryId' })
+      const CountrySelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'countryId' })
       expect(CountrySelectFieldWrapper.length).toEqual(1)
 
-      const StateSelectFieldWrapper = LocationSelectorWrapper.find(
-        Field
-      ).filter({ name: 'stateId' })
+      const StateSelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({ name: 'stateId' })
       expect(StateSelectFieldWrapper.length).toEqual(1)
 
       const LgaSelectFieldWrapper = LocationSelectorWrapper.find(Field).filter({

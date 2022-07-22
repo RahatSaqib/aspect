@@ -9,10 +9,7 @@ const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-const {
-  definePluginVariables,
-  customPropertiesVariables,
-} = require('./variables')
+const { definePluginVariables, customPropertiesVariables } = require('./variables')
 
 const postcssPlugins = () => [
   pxToRem({
@@ -50,9 +47,7 @@ module.exports = NODE_ENV => {
         {
           test: /\.css$/,
           use: [
-            NODE_ENV === 'development'
-              ? 'style-loader'
-              : MiniCssExtractPlugin.loader,
+            NODE_ENV === 'development' ? 'style-loader' : MiniCssExtractPlugin.loader,
             {
               loader: 'css-loader',
               options: {

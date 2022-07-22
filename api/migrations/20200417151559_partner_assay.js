@@ -2,11 +2,7 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.createTable('PartnerAssay', x => {
-    x.integer('partnerId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Partner')
+    x.integer('partnerId').unsigned().index().references('id').inTable('Partner')
     x.integer('assayId').unsigned().index().references('id').inTable('Assay')
 
     x.boolean('canCreate').notNullable().defaultTo(0)

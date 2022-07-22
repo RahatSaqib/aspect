@@ -22,14 +22,7 @@ async function upFunc(knex, tblName, refTable, refColName) {
   })
 
   await knex.schema.alterTable(tblName, tbl => {
-    tbl
-      .integer(refColName)
-      .unsigned()
-      .nullable()
-      .index()
-      .references('id')
-      .inTable(refTable)
-      .alter()
+    tbl.integer(refColName).unsigned().nullable().index().references('id').inTable(refTable).alter()
     tbl.unique([refColName, 'tagId'])
   })
 }
@@ -42,14 +35,7 @@ async function downFunc(knex, tblName, refTable, refColName) {
   })
 
   await knex.schema.alterTable(tblName, tbl => {
-    tbl
-      .integer(refColName)
-      .unsigned()
-      .notNullable()
-      .index()
-      .references('id')
-      .inTable(refTable)
-      .alter()
+    tbl.integer(refColName).unsigned().notNullable().index().references('id').inTable(refTable).alter()
     tbl.primary([refColName, 'tagId'])
   })
 }

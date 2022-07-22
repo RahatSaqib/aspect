@@ -49,10 +49,7 @@ const enhance = compose(
 )
 
 export const Unit = props => (
-  <div
-    {...omit(props, keys(pureGridPropTypes))}
-    className={getClassNames(props).join(' ')}
-  >
+  <div {...omit(props, keys(pureGridPropTypes))} className={getClassNames(props).join(' ')}>
     {props.children}
   </div>
 )

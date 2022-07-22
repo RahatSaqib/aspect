@@ -22,13 +22,9 @@ const messages = {
 
 const ReportAutoCompleteField = ({ name, value, onChange }) => {
   const { formatMessage } = useI18n()
-  const [selectedValue, setSelectedValue] = useState(
-    value === '' ? undefined : value
-  )
-  const { isLoading, data: { data: reportData } = false } = useQuery(
-    [REPORT_SELECT_LIST.KEY],
-    async () =>
-      fetchWrapperForQueries({ endpoint: REPORT_SELECT_LIST.ENDPOINT })
+  const [selectedValue, setSelectedValue] = useState(value === '' ? undefined : value)
+  const { isLoading, data: { data: reportData } = false } = useQuery([REPORT_SELECT_LIST.KEY], async () =>
+    fetchWrapperForQueries({ endpoint: REPORT_SELECT_LIST.ENDPOINT })
   )
 
   const onSelect = (_, value) => {
@@ -43,9 +39,7 @@ const ReportAutoCompleteField = ({ name, value, onChange }) => {
       getOptionLabel={option => option.name ?? option}
       disableClearable
       filterOptions={(options, state) =>
-        options.filter(o =>
-          o.name.toLowerCase().includes(state.inputValue.toLowerCase())
-        )
+        options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))
       }
       value={selectedValue || null}
       loading={isLoading}

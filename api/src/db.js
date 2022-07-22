@@ -11,16 +11,10 @@ function query() {
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort & paging modifications
 function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
-  const sortingAndPagingValues = getSortPageParams(
-    params,
-    sortColumnMapping,
-    defaultSort
-  )
+  const sortingAndPagingValues = getSortPageParams(params, sortColumnMapping, defaultSort)
   queryBuilder.orderBy(sortingAndPagingValues.orderBy)
   if (sortingAndPagingValues.size) {
-    queryBuilder
-      .limit(sortingAndPagingValues.size)
-      .offset(sortingAndPagingValues.skip)
+    queryBuilder.limit(sortingAndPagingValues.size).offset(sortingAndPagingValues.skip)
   }
 }
 
@@ -72,9 +66,7 @@ function filterParams(queryBuilder, params, filters) {
         })
       })
     } else if (_.isArray(params[paramName])) {
-      queryBuilder.whereIn(
-        ...getWhereArgs(columnNameOrArray, params[paramName])
-      )
+      queryBuilder.whereIn(...getWhereArgs(columnNameOrArray, params[paramName]))
     } else {
       queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
     }

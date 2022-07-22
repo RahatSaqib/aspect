@@ -3,18 +3,13 @@ const { knex } = require('../db')
 const { version } = require('../../package.json')
 const { normalizeToken } = require('./apiKey')
 const { lookupUsingCredentials } = require('../deviceApiKey/service')
-const {
-  authenticate: tryAnonymousAuthenticate,
-} = require('./deviceApiRawUnauthenticatedPlugin')
+const { authenticate: tryAnonymousAuthenticate } = require('./deviceApiRawUnauthenticatedPlugin')
 const logger = require('../shared/logger')
 
 function register(plugin) {
   plugin.auth.scheme('deviceApiKey', () => ({ authenticate }))
   plugin.ext('onPostAuth', (request, h) => {
-    if (
-      typeof request.payload === 'string' &&
-      request.mime === 'application/json'
-    ) {
+    if (typeof request.payload === 'string' && request.mime === 'application/json') {
       request.payload = JSON.parse(request.payload)
     }
     return h.continue
@@ -65,10 +60,7 @@ async function authUsernameAndPassword(username, password) {
   if (!username || !password) {
     throw Boom.unauthorized('Invalid Credentials')
   }
-  const deviceApiKeyAuthResult = await lookupUsingCredentials(
-    username,
-    password
-  )
+  const deviceApiKeyAuthResult = await lookupUsingCredentials(username, password)
   const { authenticated, data } = deviceApiKeyAuthResult || {}
   if (!authenticated || !data) {
     if (password) {

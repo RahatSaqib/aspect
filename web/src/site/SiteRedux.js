@@ -12,16 +12,8 @@ import {
   errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
-import {
-  receiveItem,
-  Items,
-  receiveListWithSet,
-} from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { receiveItem, Items, receiveListWithSet } from '../shared/metaReducers/items'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { getLatLongFromAddress, convertToFloat } from './utils/address'
 import { getFilters } from '../filter/utils'
 
@@ -116,15 +108,7 @@ export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
       .catch(() => dispatch(rejectSites()))
   }
 }
-export function exportSites(
-  filtersParams,
-  sortCol,
-  sortDir,
-  page,
-  pageSize,
-  fileFormat,
-  reportName
-) {
+export function exportSites(filtersParams, sortCol, sortDir, page, pageSize, fileFormat, reportName) {
   return dispatch => {
     const filters = getFilters(filtersParams)
 
@@ -198,10 +182,7 @@ export function fetchSitesForSelectList(forceRefresh) {
     const shouldFetch =
       forceRefresh ||
       !site.getIn(['sitesForSelectList', 'lastRefreshed']) ||
-      differenceInMinutes(
-        new Date(),
-        site.getIn(['sitesForSelectList', 'lastRefreshed'])
-      ) > 5 // five minutes
+      differenceInMinutes(new Date(), site.getIn(['sitesForSelectList', 'lastRefreshed'])) > 5 // five minutes
     if (!shouldFetch) {
       return
     }
@@ -347,16 +328,7 @@ export function updateSingleSiteFromForm(siteId) {
 export function updateLatLongFromFormAddress() {
   const formName = 'siteDetail'
   const formSelector = formValueSelector(formName)
-  const formAddressSelector = state =>
-    formSelector(
-      state,
-      'country',
-      'state',
-      'lga',
-      'city',
-      'address',
-      'address2'
-    )
+  const formAddressSelector = state => formSelector(state, 'country', 'state', 'lga', 'city', 'address', 'address2')
 
   return (dispatch, getState) => {
     const formAddress = formAddressSelector(getState())
@@ -395,8 +367,7 @@ export function deleteSingleSite(siteId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.deleteSingleSite.DELETE.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Delete the Site',
+              defaultMessage: 'An Error Occurred When Trying to Delete the Site',
             },
           })
         ),
@@ -450,10 +421,7 @@ export default function siteReducer(state = initialState, action) {
     case types.RECEIVE_UPDATED_SINGLE_SITE:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
-        mutState.set(
-          'items',
-          mutState.items.setIn(['byId', immutItem.get('id')], immutItem)
-        )
+        mutState.set('items', mutState.items.setIn(['byId', immutItem.get('id')], immutItem))
       })
     case types.RECEIVE_ASSIGN_PERSON:
       return state.withMutations(mutState => {

@@ -1,11 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
-const {
-  seedIssueType,
-  seedIssueEventTriggersForPartner,
-  upsertNotificationTypes,
-} = require('../utils')
+const { seedIssueType, seedIssueEventTriggersForPartner, upsertNotificationTypes } = require('../utils')
 
 async function seed(knex) {
   const { partnerId, userId } = await knex('User as u')

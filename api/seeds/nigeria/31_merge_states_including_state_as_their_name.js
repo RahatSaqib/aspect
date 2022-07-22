@@ -3,9 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 
 async function seed(knex) {
-  const { id: countryId } = await knex('Country')
-    .where('name', 'Nigeria')
-    .first('id')
+  const { id: countryId } = await knex('Country').where('name', 'Nigeria').first('id')
 
   // Get all the states including " State" in their name
   const currentStates = await knex('State as s')
@@ -56,15 +54,11 @@ async function seed(knex) {
             'Target',
           ]
           await Promise.each(tables, async tbl =>
-            knex(tbl)
-              .where({ geographyId: currGeography.id })
-              .update({ geographyId: actualGeography.id })
+            knex(tbl).where({ geographyId: currGeography.id }).update({ geographyId: actualGeography.id })
           )
         } else {
           // IF the equivalent actual geography does not exist, then we should update the existing geography to be set to the actual state
-          await knex('Geography')
-            .where({ id: currGeography.id })
-            .update({ stateId: actualState.id })
+          await knex('Geography').where({ id: currGeography.id }).update({ stateId: actualState.id })
         }
       })
 
@@ -74,9 +68,7 @@ async function seed(knex) {
       await knex('State').where('id', currState.id).delete()
     } else {
       // If the correct state is not present, then we can just update the name of the current one
-      await knex('State')
-        .where('id', currState.id)
-        .update('name', actualStateName)
+      await knex('State').where('id', currState.id).update('name', actualStateName)
     }
   })
 }

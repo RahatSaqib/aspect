@@ -1,27 +1,18 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const { rowsAsObject } = require('../utils')
-const {
-  issueCategoryToId,
-  messageSeverityToId,
-} = require('../../src/shared/dictionary')
+const { issueCategoryToId, messageSeverityToId } = require('../../src/shared/dictionary')
 
 const now = new Date()
 
 async function seed(knex) {
-  const issueTypeDeviceMaintenance = await knex('IssueType')
-    .where({ externalId: 'DeviceMaintenance' })
-    .first('id')
+  const issueTypeDeviceMaintenance = await knex('IssueType').where({ externalId: 'DeviceMaintenance' }).first('id')
   if (issueTypeDeviceMaintenance != null) {
     return
   }
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
+  const { id: partnerId } = await knex('Partner').where({ name: 'Myanmar' }).first()
 
-  const { id: adminId } = await knex('User as u')
-    .where({ 'u.name': 'myanmar_admin' })
-    .first('u.id')
+  const { id: adminId } = await knex('User as u').where({ 'u.name': 'myanmar_admin' }).first('u.id')
 
   const auditFields = {
     createdOn: now,
@@ -72,9 +63,7 @@ async function seed(knex) {
     message: knex.raw("replace(message, 'Generic', 'Procedural')"),
   })
 
-  await knex('Partner')
-    .where({ id: partnerId })
-    .update({ maxDaysDeviceNoResults: 14 })
+  await knex('Partner').where({ id: partnerId }).update({ maxDaysDeviceNoResults: 14 })
 
   // Issue Escalation Triggers
   await knex('IssueEscalationTrigger').insert([
@@ -95,8 +84,7 @@ async function seed(knex) {
       escalateToLevel: 3,
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+        evaluationParameter: './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
       }),
       createdOn: now,
       updatedOn: now,
@@ -115,26 +103,22 @@ async function seed(knex) {
   ])
 
   // Add Device Maintenance issue (no notifications for Myanmar, only issue generation)
-  const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
-    {
-      message: 'Device Maintenance',
-      ...auditFields,
-    }
-  )
+  const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert({
+    message: 'Device Maintenance',
+    ...auditFields,
+  })
 
   const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert({
     message: '{{site.name}} maintenance',
     ...auditFields,
   })
 
-  const [deviceMaintenanceEmailTemplateId] = await knex('EmailTemplate').insert(
-    {
-      subject: '{{site.name}} Maintenance',
-      body: '{{site.name}} maintenance',
-      htmlBody: '{{site.name}} maintenance',
-      ...auditFields,
-    }
-  )
+  const [deviceMaintenanceEmailTemplateId] = await knex('EmailTemplate').insert({
+    subject: '{{site.name}} Maintenance',
+    body: '{{site.name}} maintenance',
+    htmlBody: '{{site.name}} maintenance',
+    ...auditFields,
+  })
 
   const [deviceMaintenanceMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: await messageSeverityToId('Recommendation'),

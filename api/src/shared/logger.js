@@ -1,11 +1,6 @@
 const Sentry = require('winston-sentry-log')
 
-const {
-  createLogger,
-  format,
-  transports,
-  config: winstonConfig,
-} = require('winston')
+const { createLogger, format, transports, config: winstonConfig } = require('winston')
 const { Mail } = require('winston-mail')
 
 const config = require('../config')
@@ -19,9 +14,7 @@ const plainTextFormat = printf(info => {
     info.message = JSON.stringify(info.message, null, 3)
   }
 
-  return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}${
-    info.stack ? `\n${info.stack}` : ''
-  }`
+  return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}${info.stack ? `\n${info.stack}` : ''}`
 })
 
 const relabel = format(info => {
@@ -60,8 +53,7 @@ const getBaseFormat = (extraFormater, { labelsBlackList, labelsWhiteList }) =>
     extraFormater
   )
 
-const consoleLogger =
-  config.log.format === 'JSON' ? format.simple() : plainTextFormat
+const consoleLogger = config.log.format === 'JSON' ? format.simple() : plainTextFormat
 const logger = createLogger({
   levels: winstonConfig.syslog.levels,
   format: getBaseFormat(consoleLogger, config.log),
@@ -72,10 +64,7 @@ const logger = createLogger({
 if (config.log.file.path) {
   logger.add(
     new transports.File({
-      format: getBaseFormat(
-        config.log.file.format === 'JSON' ? format.simple() : plainTextFormat,
-        config.log.file
-      ),
+      format: getBaseFormat(config.log.file.format === 'JSON' ? format.simple() : plainTextFormat, config.log.file),
       filename: config.log.file.path,
       level: config.log.file.logLevel,
     })

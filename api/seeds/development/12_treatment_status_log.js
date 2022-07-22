@@ -11,12 +11,8 @@ module.exports = require('../utils').seed(seed, __filename)
 async function seed(knex) {
   const modules = await getPermissionModules(knex)
   const now = new Date()
-  const treatmentStatusOnTreatmentId = await resultTreatmentStatusToId(
-    'OnTreatment'
-  )
-  const treatmentStatusNotPossibleId = await resultTreatmentStatusToId(
-    'NotPossible'
-  )
+  const treatmentStatusOnTreatmentId = await resultTreatmentStatusToId('OnTreatment')
+  const treatmentStatusNotPossibleId = await resultTreatmentStatusToId('NotPossible')
 
   const users = ['myanmar_admin', 'admin', 'reporter_admin']
   await Promise.each(users, async userName => {
@@ -37,10 +33,7 @@ async function seed(knex) {
     const query = knex('Result as r')
       .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
       .innerJoin('ResultCategoryAssay as rca', function () {
-        this.on('r.assayId', 'rca.assayId').andOn(
-          'r.resultCategory1',
-          'rca.resultCategoryId'
-        )
+        this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
       })
       .where('rca.requiresTreatment', 1)
       .where('r.partnerId', partnerId)
@@ -53,22 +46,14 @@ async function seed(knex) {
       // get results for current month
       const results = await query
         .clone()
-        .leftOuterJoin(
-          'ResultTreatmentStatusLog as log',
-          'r.treatmentStatusLogId',
-          'log.id'
-        )
+        .leftOuterJoin('ResultTreatmentStatusLog as log', 'r.treatmentStatusLogId', 'log.id')
         .where('r.endedOn', '>=', startedOn)
         .where('r.endedOn', '<=', endedOn)
         .select('r.*', 'log.resultTreatmentStatusId')
       // ----------------------
       // helper functions
       // ----------------------
-      const updateResultTable = async (
-        result,
-        resultTreatmentStatusId = null,
-        treatmentStatusLogId = null
-      ) => {
+      const updateResultTable = async (result, resultTreatmentStatusId = null, treatmentStatusLogId = null) => {
         const { id: resultId } = result
         // set props for local 'result' item
         result.resultTreatmentStatusId = resultTreatmentStatusId
@@ -89,20 +74,14 @@ async function seed(knex) {
           if (result) {
             const { id: resultId } = result
             // insert in ResultTreatmentStatusLog
-            const [treatmentStatusLogId] = await knex(
-              'ResultTreatmentStatusLog'
-            ).insert({
+            const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
               resultId,
               resultTreatmentStatusId,
               changedOn: now,
               createdOn: now,
             })
             // update Result
-            await updateResultTable(
-              result,
-              resultTreatmentStatusId,
-              treatmentStatusLogId
-            )
+            await updateResultTable(result, resultTreatmentStatusId, treatmentStatusLogId)
           }
         })
       }
@@ -119,17 +98,11 @@ async function seed(knex) {
           }
         })
       // ----------------------
-      const addIfTooLittle = async (
-        scopeResults,
-        pcMin,
-        pcMax,
-        treatmentStatusId
-      ) => {
+      const addIfTooLittle = async (scopeResults, pcMin, pcMax, treatmentStatusId) => {
         const pcCurrentStatus = (100 * scopeResults.length) / cntTotal
         if (pcCurrentStatus < pcMin) {
           const pcNewStatus = _.random(pcMin, pcMax)
-          const cntDiff =
-            Math.round((pcNewStatus - pcCurrentStatus) * cntTotal) / 100
+          const cntDiff = Math.round((pcNewStatus - pcCurrentStatus) * cntTotal) / 100
           if (cntDiff > 0) {
             await addLogs(cntDiff, treatmentStatusId)
           }
@@ -150,12 +123,8 @@ async function seed(knex) {
       // set 'OnTreatment' and 'NotPossible' to be in % range
       // ----------------------
       const cntTotal = results.length
-      const resultsOnTreatment = results.filter(
-        x => x.resultTreatmentStatusId === treatmentStatusOnTreatmentId
-      )
-      const resultsNotPossible = results.filter(
-        x => x.resultTreatmentStatusId === treatmentStatusNotPossibleId
-      )
+      const resultsOnTreatment = results.filter(x => x.resultTreatmentStatusId === treatmentStatusOnTreatmentId)
+      const resultsNotPossible = results.filter(x => x.resultTreatmentStatusId === treatmentStatusNotPossibleId)
       if (cntTotal > 0) {
         // remove from log table if percentage exceeds max %
         await releaseIfTooMany(resultsOnTreatment, 60) // max %

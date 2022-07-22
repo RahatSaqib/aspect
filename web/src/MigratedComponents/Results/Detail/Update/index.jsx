@@ -32,13 +32,11 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
     isLoading,
     isError,
     error,
-  } = useQuery(
-    [RESULT_DETAIL.KEY, { resultId }],
-    async ({ queryKey: [, { resultId }] }) =>
-      fetchWrapperForQueries({
-        endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
-        customErrorNotifications: ResultDetailsErrors,
-      })
+  } = useQuery([RESULT_DETAIL.KEY, { resultId }], async ({ queryKey: [, { resultId }] }) =>
+    fetchWrapperForQueries({
+      endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
+      customErrorNotifications: ResultDetailsErrors,
+    })
   )
 
   if (isError) {
@@ -55,8 +53,7 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
       if (data.resultCategory2) {
         data.resultCategory2 = `${data.resultCategory2}`
       }
-      data.patientId =
-        data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
+      data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
       // This is for the title, so wee need the colons
       setPatientId(`: ${data.patientId}`)
 
@@ -86,10 +83,7 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
     <Shell>
       {!isLoading && formConfig ? (
         <FormikProvider config={formConfig}>
-          <ShellHeader
-            icon={FaNotesMedical}
-            title={`${formConfig.title}${patientId}`}
-          >
+          <ShellHeader icon={FaNotesMedical} title={`${formConfig.title}${patientId}`}>
             <FormActions config={formConfig} onSubmit={onSubmit} />
           </ShellHeader>
           <ShellContent>

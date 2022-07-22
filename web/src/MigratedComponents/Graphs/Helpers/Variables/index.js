@@ -1,9 +1,7 @@
 import variables from '../../../../../cfg/variables.js'
 
 const envSource =
-  process.env && process.env.initialised
-    ? process.env
-    : Object.assign(process.env, variables.customPropertiesVariables)
+  process.env && process.env.initialised ? process.env : Object.assign(process.env, variables.customPropertiesVariables)
 
 const {
   '--aspect-color-mandy': colorMandy,

@@ -59,9 +59,7 @@ export const RawDataDialog = ({
       {isEmpty(logs) && loading ? (
         <LinearProgress />
       ) : isEmpty(logs) ? (
-        <div style={{ paddingTop: '10px' }}>
-          No log entries found for this result
-        </div>
+        <div style={{ paddingTop: '10px' }}>No log entries found for this result</div>
       ) : (
         logs.map((log, index) => {
           const createdOn = new Date(log.createdOn)

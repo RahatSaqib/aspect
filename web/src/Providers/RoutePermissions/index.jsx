@@ -13,8 +13,7 @@ function extractPermissionsFromRoutes(routes, path) {
   if (routes.length) {
     const foundRoute = filter(
       routes,
-      ({ props: { path: routePath = false } }) =>
-        routePath && matchPath(routePath, path)
+      ({ props: { path: routePath = false } }) => routePath && matchPath(routePath, path)
     )
     if (foundRoute.length) {
       const permissions = get(foundRoute[0], 'props.element.props.permissions')
@@ -31,14 +30,10 @@ function RoutesPermissionProvider({ children }) {
     props: { children: routes = [] },
   } = children
 
-  const { permissions: userPermissions } = useSelector(
-    ({ user }) => user.toJS().jwt
-  )
+  const { permissions: userPermissions } = useSelector(({ user }) => user.toJS().jwt)
 
   return (
-    <RoutesPermissionContext.Provider
-      value={{ isPermitted: false, routes, userPermissions }}
-    >
+    <RoutesPermissionContext.Provider value={{ isPermitted: false, routes, userPermissions }}>
       {children}
     </RoutesPermissionContext.Provider>
   )
@@ -48,15 +43,10 @@ function useUserIsPermitted(path) {
   // const match = useRouteMatch()
   const context = useContext(RoutesPermissionContext)
   if (context === undefined) {
-    throw new Error(
-      'useUserIsPermitted must be used within a RoutesPermissionProvider'
-    )
+    throw new Error('useUserIsPermitted must be used within a RoutesPermissionProvider')
   }
   const { userPermissions, routes } = context
-  const routePermissionsRequired = extractPermissionsFromRoutes(
-    routes,
-    path.replace(/[?|#].*/, '')
-  )
+  const routePermissionsRequired = extractPermissionsFromRoutes(routes, path.replace(/[?|#].*/, ''))
   const allow = isPermittedUser(userPermissions, {
     required: routePermissionsRequired,
   })

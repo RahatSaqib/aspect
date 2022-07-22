@@ -6,9 +6,7 @@ const Promise = require('bluebird')
 const dashboardWidget = require('./fixtures/dashboardWidget')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Philippines' })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: 'Philippines' }).first('id')
 
   const widgetIds = {}
   await Promise.all(
@@ -47,9 +45,7 @@ async function seed(knex) {
     })
   )
 
-  const jobFunctions = await knex('JobFunction')
-    .where({ partnerId })
-    .select('id', 'name')
+  const jobFunctions = await knex('JobFunction').where({ partnerId }).select('id', 'name')
   await Promise.each(jobFunctions, async jobFunction => {
     await knex('JobFunctionDashboardWidget').insert([
       { jobFunctionId: jobFunction.id, widgetId: widgetIds.sites },

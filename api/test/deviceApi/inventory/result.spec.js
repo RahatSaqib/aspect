@@ -3,11 +3,7 @@ const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const { subDays, addDays, startOfDay } = require('date-fns')
 const { knex } = require('../../../src/db')
-const {
-  parseDateOrDefault,
-  getLocalDateInUtc,
-  startOfDayUtc,
-} = require('../../../src/shared/date')
+const { parseDateOrDefault, getLocalDateInUtc, startOfDayUtc } = require('../../../src/shared/date')
 const { getResult } = require('../../../src/deviceApi/result')
 const { createTestContext } = require('../utils')
 
@@ -17,9 +13,7 @@ const baseConfig = {
   firmwareUpdateRequired: 'no',
 }
 const server = require('../../utils/testUtils')
-const {
-  selectAssayConsumables,
-} = require('../../../src/consumable/assayConsumableService')
+const { selectAssayConsumables } = require('../../../src/consumable/assayConsumableService')
 
 const { assert } = chai.use(chaiSubset)
 
@@ -40,13 +34,7 @@ describe('admin result updates', () => {
     return _.map(
       await knex('InventoryItem')
         .where({ siteId })
-        .select(
-          'id',
-          'consumableId',
-          'lotNumber',
-          'expiresOn',
-          'quantityOnHand'
-        )
+        .select('id', 'consumableId', 'lotNumber', 'expiresOn', 'quantityOnHand')
         .orderBy('id'),
       inventoryItem =>
         _.assign({}, inventoryItem, {
@@ -80,19 +68,10 @@ describe('admin result updates', () => {
 
       await Promise.all(
         _.map(results, async resultDetails => {
-          const { siteId } = await knex('Device')
-            .where({ id: resultDetails.deviceId })
-            .first('siteId')
-          const cartridgeId = (
-            await knex('Consumable')
-              .where({ name: resultDetails.cartridgeName })
-              .first('id')
-          ).id
+          const { siteId } = await knex('Device').where({ id: resultDetails.deviceId }).first('siteId')
+          const cartridgeId = (await knex('Consumable').where({ name: resultDetails.cartridgeName }).first('id')).id
 
-          const inventoryItemsBefore = await getInventoryItemsAtSite(
-            knex,
-            siteId
-          )
+          const inventoryItemsBefore = await getInventoryItemsAtSite(knex, siteId)
           const firstCartridgeConsumable = _.find(
             inventoryItemsBefore,
             item => item.consumableId === cartridgeId && item.expiresOn != null
@@ -119,10 +98,7 @@ describe('admin result updates', () => {
                 assert.equal(res.status, 200)
               })
 
-            const inventoryItemsAfter = await getInventoryItemsAtSite(
-              knex,
-              siteId
-            )
+            const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
             assayConsumables.forEach(assayConsumable => {
               const inventoryItemBefore = _.find(inventoryItemsBefore, {
@@ -148,17 +124,11 @@ describe('admin result updates', () => {
     it('should try to deduct the correct inventory item based on expiration date and lot number', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const past = new Date(+now - 36000)
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
       const assayExternalId = 'DaktariHivVL'
       const daktariHivVlCartridgeId = (
-        await knex('Consumable as c')
-          .where('c.name', 'Daktari HIV-VL Cartridge')
-          .first('c.id')
+        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
       ).id
 
       let resultDetails = {
@@ -166,9 +136,7 @@ describe('admin result updates', () => {
         expirationDate: '2045-01-30 00:00:00Z',
       }
 
-      const [lotNumberAndExpirationDateMatch] = await knex(
-        'InventoryItem'
-      ).insert({
+      const [lotNumberAndExpirationDateMatch] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
         siteId,
         lotNumber: resultDetails.lotNumber,
@@ -192,8 +160,7 @@ describe('admin result updates', () => {
         await getInventoryItemsAtSite(knex, siteId),
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       await server
@@ -218,8 +185,7 @@ describe('admin result updates', () => {
         await getInventoryItemsAtSite(knex, siteId),
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       assert.equal(
@@ -248,8 +214,7 @@ describe('admin result updates', () => {
         await getInventoryItemsAtSite(knex, siteId),
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            randomExpiryDate.toISOString()
+          inventoryItem.expiresOn.toISOString() === randomExpiryDate.toISOString()
       )
 
       await server
@@ -274,8 +239,7 @@ describe('admin result updates', () => {
         await getInventoryItemsAtSite(knex, siteId),
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            randomExpiryDate.toISOString()
+          inventoryItem.expiresOn.toISOString() === randomExpiryDate.toISOString()
       )
 
       assert.equal(
@@ -304,8 +268,7 @@ describe('admin result updates', () => {
         await getInventoryItemsAtSite(knex, siteId),
         inventoryItem =>
           inventoryItem.lotNumber === randomLotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       await server
@@ -331,23 +294,14 @@ describe('admin result updates', () => {
         inventoryAfter,
         inventoryItem =>
           inventoryItem.lotNumber === randomLotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       await knex('InventoryLog')
-        .whereIn('inventoryItemId', [
-          lotNumberAndExpirationDateMatch,
-          onlyLotNumberMatches,
-          onlyExpirationDateMatches,
-        ])
+        .whereIn('inventoryItemId', [lotNumberAndExpirationDateMatch, onlyLotNumberMatches, onlyExpirationDateMatches])
         .del()
       await knex('InventoryItem')
-        .whereIn('id', [
-          lotNumberAndExpirationDateMatch,
-          onlyLotNumberMatches,
-          onlyExpirationDateMatches,
-        ])
+        .whereIn('id', [lotNumberAndExpirationDateMatch, onlyLotNumberMatches, onlyExpirationDateMatches])
         .del()
 
       assert.equal(
@@ -360,17 +314,11 @@ describe('admin result updates', () => {
     it('should try to deduct the correct inventory item based on expiration date over lot number', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const past = new Date(+now - 36000)
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
       const assayExternalId = 'DaktariHivVL'
       const daktariHivVlCartridgeId = (
-        await knex('Consumable as c')
-          .where('c.name', 'Daktari HIV-VL Cartridge')
-          .first('c.id')
+        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
       ).id
       const inventoryConsumedByTest = (
         await knex('ConsumableAssay as ca')
@@ -413,15 +361,13 @@ describe('admin result updates', () => {
         inventoryItemsBefore,
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(randomExpiryDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(randomExpiryDate).toISOString()
       )
       const matchingExpirationDateCartridgeAtSiteBefore = _.find(
         inventoryItemsBefore,
         inventoryItem =>
           inventoryItem.lotNumber === randomLotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       await server
@@ -440,39 +386,29 @@ describe('admin result updates', () => {
 
       const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
-      await knex('InventoryLog')
-        .whereIn('inventoryItemId', [
-          onlyLotNumberMatches,
-          onlyExpirationDateMatches,
-        ])
-        .del()
+      await knex('InventoryLog').whereIn('inventoryItemId', [onlyLotNumberMatches, onlyExpirationDateMatches]).del()
 
-      await knex('InventoryItem')
-        .whereIn('id', [onlyLotNumberMatches, onlyExpirationDateMatches])
-        .del()
+      await knex('InventoryItem').whereIn('id', [onlyLotNumberMatches, onlyExpirationDateMatches]).del()
 
       const matchingLotNumberCartridgeAtSiteAfter = _.find(
         inventoryItemsAfter,
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            randomExpiryDate.toISOString()
+          inventoryItem.expiresOn.toISOString() === randomExpiryDate.toISOString()
       )
 
       const matchingExpirationDateCartridgeAtSiteAfter = _.find(
         inventoryItemsAfter,
         inventoryItem =>
           inventoryItem.lotNumber === randomLotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       const matchingNewInventoryItemAtSiteAfter = _.find(
         inventoryItemsAfter,
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       assert.equal(
@@ -485,20 +421,13 @@ describe('admin result updates', () => {
         matchingExpirationDateCartridgeAtSiteBefore.quantityOnHand
       )
 
-      assert.equal(
-        matchingNewInventoryItemAtSiteAfter.quantityOnHand,
-        -1 * inventoryConsumedByTest
-      )
+      assert.equal(matchingNewInventoryItemAtSiteAfter.quantityOnHand, -1 * inventoryConsumedByTest)
     })
 
     it('should deduct inventory item with null lot number and expiresOn', async () => {
       const { deviceId, deviceAuth, now, user } = context
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
 
       const past = subDays(now, 1)
       const future = addDays(startOfDayUtc(now), 7)
@@ -509,9 +438,7 @@ describe('admin result updates', () => {
         .first('c.id')
 
       // Remove inventory item if it already exists
-      await knex('InventoryItem')
-        .where({ consumableId: daktariHivVlCartridgeId, siteId })
-        .del()
+      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
@@ -525,9 +452,7 @@ describe('admin result updates', () => {
         updatedOn: past,
       })
 
-      const { quantity: inventoryConsumedByTest } = await knex(
-        'ConsumableAssay as ca'
-      )
+      const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
         .andWhere('ca.consumableId', daktariHivVlCartridgeId)
@@ -544,15 +469,10 @@ describe('admin result updates', () => {
       })
       assert.isOk(inventoryItemBefore)
       assert.isOk(inventoryItemBefore.lotNumber)
-      assert.equal(
-        inventoryItemBefore.expiresOn.toISOString(),
-        future.toISOString()
-      )
+      assert.equal(inventoryItemBefore.expiresOn.toISOString(), future.toISOString())
       assert.equal(inventoryItemBefore.quantityOnHand, 50)
 
-      const inventoryLogsBefore = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select('id')
+      const inventoryLogsBefore = await knex('InventoryLog').where({ inventoryItemId }).select('id')
       assert.equal(inventoryLogsBefore.length, 0)
 
       await server
@@ -573,26 +493,15 @@ describe('admin result updates', () => {
 
       const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       const inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
       assert.isOk(inventoryItemAfter.lotNumber)
-      assert.equal(
-        inventoryItemAfter.expiresOn.toISOString(),
-        future.toISOString()
-      )
-      assert.equal(
-        inventoryItemAfter.quantityOnHand,
-        inventoryItemBefore.quantityOnHand - inventoryConsumedByTest
-      )
+      assert.equal(inventoryItemAfter.expiresOn.toISOString(), future.toISOString())
+      assert.equal(inventoryItemAfter.quantityOnHand, inventoryItemBefore.quantityOnHand - inventoryConsumedByTest)
 
-      const inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select()
+      const inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).select()
       assert.equal(inventoryLogsAfter.length, 1)
 
       const inventoryLog = inventoryLogsAfter[0]
@@ -610,28 +519,20 @@ describe('admin result updates', () => {
 
     it.skip('should update lot number if null and exact match of expiresOn', async () => {
       const { deviceId, deviceAuth, now, user, partnerId } = context
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
 
       const past = subDays(now, 3)
       const future = addDays(now, 7)
       const futureExpiresOn = getLocalDateInUtc(startOfDay(future))
 
       const assayExternalId = 'DaktariHivVL'
-      const { assayId } = await knex('Assay')
-        .where('externalId', assayExternalId)
-        .first('id as assayId')
+      const { assayId } = await knex('Assay').where('externalId', assayExternalId).first('id as assayId')
       const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
         .where('c.name', 'Daktari HIV-VL Cartridge')
         .first('c.id')
 
-      await knex('InventoryItem')
-        .where({ consumableId: daktariHivVlCartridgeId, siteId })
-        .del()
+      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
@@ -644,12 +545,11 @@ describe('admin result updates', () => {
         updatedBy: adminId,
         updatedOn: past,
       })
-      const [{ quantity: inventoryConsumedByTest }] =
-        await selectAssayConsumables(
-          knex,
-          { partner: { id: partnerId } },
-          assayId
-        )
+      const [{ quantity: inventoryConsumedByTest }] = await selectAssayConsumables(
+        knex,
+        { partner: { id: partnerId } },
+        assayId
+      )
 
       const resultDetails = {
         lotNumber: 'HIV58119',
@@ -662,15 +562,10 @@ describe('admin result updates', () => {
       })
       assert.isOk(inventoryItemBefore)
       assert.isNotOk(inventoryItemBefore.lotNumber)
-      assert.equal(
-        inventoryItemBefore.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
+      assert.equal(inventoryItemBefore.expiresOn.toISOString(), futureExpiresOn.toISOString())
       assert.equal(inventoryItemBefore.quantityOnHand, 50)
 
-      const inventoryLogsBefore = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select('id')
+      const inventoryLogsBefore = await knex('InventoryLog').where({ inventoryItemId }).select('id')
       assert.equal(inventoryLogsBefore.length, 0)
 
       let res = await server
@@ -689,26 +584,15 @@ describe('admin result updates', () => {
         })
       assert.equal(res.status, 200)
       let inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       let inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
-      assert.equal(
-        inventoryItemAfter.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
-      assert.equal(
-        inventoryItemAfter.quantityOnHand,
-        inventoryItemBefore.quantityOnHand - inventoryConsumedByTest
-      )
+      assert.equal(inventoryItemAfter.expiresOn.toISOString(), futureExpiresOn.toISOString())
+      assert.equal(inventoryItemAfter.quantityOnHand, inventoryItemBefore.quantityOnHand - inventoryConsumedByTest)
 
-      let inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select()
+      let inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).select()
       assert.equal(inventoryLogsAfter.length, 1)
 
       let [inventoryLog] = inventoryLogsAfter
@@ -740,30 +624,18 @@ describe('admin result updates', () => {
       assert.equal(res.status, 200)
 
       inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
 
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
 
-      assert.equal(
-        inventoryItemAfter.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
+      assert.equal(inventoryItemAfter.expiresOn.toISOString(), futureExpiresOn.toISOString())
 
-      assert.equal(
-        inventoryItemAfter.quantityOnHand,
-        inventoryItemBefore.quantityOnHand - inventoryConsumedByTest * 2
-      )
+      assert.equal(inventoryItemAfter.quantityOnHand, inventoryItemBefore.quantityOnHand - inventoryConsumedByTest * 2)
 
-      inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .orderBy('id', 'desc')
-        .select()
+      inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).orderBy('id', 'desc').select()
       assert.equal(inventoryLogsAfter.length, 2)
       ;[inventoryLog] = inventoryLogsAfter
       assert.equal(inventoryLog.inventoryItemId, inventoryItemId)
@@ -780,12 +652,8 @@ describe('admin result updates', () => {
 
     it('should update quantityOnHand only if the result does not exists on InventoryLog', async () => {
       const { deviceId, deviceAuth, now, user } = context
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
 
       const past = subDays(now, 1)
       const future = addDays(now, 7)
@@ -796,9 +664,7 @@ describe('admin result updates', () => {
         .where('c.name', 'Daktari HIV-VL Cartridge')
         .first('c.id')
 
-      await knex('InventoryItem')
-        .where({ consumableId: daktariHivVlCartridgeId, siteId })
-        .del()
+      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
@@ -812,9 +678,7 @@ describe('admin result updates', () => {
         updatedOn: past,
       })
 
-      const { quantity: inventoryConsumedByTest } = await knex(
-        'ConsumableAssay as ca'
-      )
+      const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
         .andWhere('ca.consumableId', daktariHivVlCartridgeId)
@@ -831,15 +695,10 @@ describe('admin result updates', () => {
       })
       assert.isOk(inventoryItemBefore)
       assert.equal(inventoryItemBefore.lotNumber, resultDetails.lotNumber)
-      assert.equal(
-        inventoryItemBefore.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
+      assert.equal(inventoryItemBefore.expiresOn.toISOString(), futureExpiresOn.toISOString())
       assert.equal(inventoryItemBefore.quantityOnHand, 50)
 
-      const inventoryLogsBefore = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select('id')
+      const inventoryLogsBefore = await knex('InventoryLog').where({ inventoryItemId }).select('id')
       assert.equal(inventoryLogsBefore.length, 0)
       const fakeResultId = 'fake-result-id'
       const fakeSampleId = 'fake-sample-id'
@@ -863,33 +722,21 @@ describe('admin result updates', () => {
 
       let inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
 
       let inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
-      assert.equal(
-        inventoryItemAfter.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
-      assert.equal(
-        inventoryItemBefore.id,
-        inventoryItemAfter.id,
-        'Inventory Item used is the one created by the test'
-      )
+      assert.equal(inventoryItemAfter.expiresOn.toISOString(), futureExpiresOn.toISOString())
+      assert.equal(inventoryItemBefore.id, inventoryItemAfter.id, 'Inventory Item used is the one created by the test')
       assert.equal(
         inventoryItemAfter.quantityOnHand,
         inventoryItemBefore.quantityOnHand - inventoryConsumedByTest,
         'Quantity on Hand must be updated after first result'
       )
 
-      let inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select()
+      let inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).select()
       assert.equal(inventoryLogsAfter.length, 1)
 
       let [inventoryLog] = inventoryLogsAfter
@@ -928,20 +775,14 @@ describe('admin result updates', () => {
         })
         .expect(200)
       inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
 
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
 
-      assert.equal(
-        inventoryItemAfter.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
+      assert.equal(inventoryItemAfter.expiresOn.toISOString(), futureExpiresOn.toISOString())
 
       assert.equal(
         inventoryItemAfter.quantityOnHand,
@@ -949,10 +790,7 @@ describe('admin result updates', () => {
         'Quantity on Hand must not be updated after second result'
       )
 
-      inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .orderBy('id', 'desc')
-        .select()
+      inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).orderBy('id', 'desc').select()
 
       assert.equal(inventoryLogsAfter.length, 1)
       ;[inventoryLog] = inventoryLogsAfter
@@ -985,10 +823,7 @@ describe('admin result updates', () => {
         .expect(200)
 
       inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
@@ -996,10 +831,7 @@ describe('admin result updates', () => {
       assert.isOk(inventoryItemAfter.expiresOn)
       assert.equal(inventoryItemAfter.quantityOnHand, newQuantityOnHand)
 
-      inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .orderBy('id', 'desc')
-        .select()
+      inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).orderBy('id', 'desc').select()
       assert.equal(inventoryLogsAfter.length, 1)
       ;[inventoryLog] = inventoryLogsAfter
       assert.equal(inventoryLog.inventoryItemId, inventoryItemId)
@@ -1016,19 +848,13 @@ describe('admin result updates', () => {
 
     it('should log inventory consumption, even when no inventory item exists for site', async () => {
       const { deviceId, deviceAuth, now } = context
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
       const assayExternalId = 'DaktariHivVL'
       const daktariHivVlCartridgeId = (
-        await knex('Consumable as c')
-          .where('c.name', 'Daktari HIV-VL Cartridge')
-          .first('c.id')
+        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
       ).id
       // Remove inventory item if it already exists
-      await knex('InventoryItem')
-        .where({ consumableId: daktariHivVlCartridgeId, siteId })
-        .del()
+      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
       const inventoryConsumedByTest = (
         await knex('ConsumableAssay as ca')
           .join('Assay as a', 'ca.assayId', 'a.id')
@@ -1040,16 +866,12 @@ describe('admin result updates', () => {
       const resultDetails = {
         lotNumber: 'HIV533',
         expirationDate: getLocalDateInUtc(
-          new Date(
-            new Date().getTime() + _.random(0, 1000 * 60 * 60 * 24 * 365)
-          ).setHours(0, 0, 0, 0)
+          new Date(new Date().getTime() + _.random(0, 1000 * 60 * 60 * 24 * 365)).setHours(0, 0, 0, 0)
         ),
       }
       const inventoryItemsBefore = await getInventoryItemsAtSite(knex, siteId)
 
-      assert.isUndefined(
-        _.find(inventoryItemsBefore, { lotNumber: resultDetails.lotNumber })
-      )
+      assert.isUndefined(_.find(inventoryItemsBefore, { lotNumber: resultDetails.lotNumber }))
 
       await server
         .post(devicePostResultPath)
@@ -1086,9 +908,7 @@ describe('admin result updates', () => {
           'il.createdOn'
         )
 
-      const { count: otherInventoryConsumptionLogsForThisTest } = await knex(
-        'InventoryLog'
-      )
+      const { count: otherInventoryConsumptionLogsForThisTest } = await knex('InventoryLog')
         .whereNot({ id: inventoryConsumptionLog.id })
         .andWhere({
           siteId,
@@ -1096,42 +916,25 @@ describe('admin result updates', () => {
         })
         .count('id as count')
 
-      await knex('InventoryLog')
-        .where({ resultId: inventoryConsumptionLog.resultId })
-        .del()
+      await knex('InventoryLog').where({ resultId: inventoryConsumptionLog.resultId }).del()
 
-      await knex('InventoryItem')
-        .where({ id: inventoryConsumptionLog.inventoryItemId })
-        .del()
+      await knex('InventoryItem').where({ id: inventoryConsumptionLog.inventoryItemId }).del()
 
-      assert.isOk(
-        _.find(inventoryItemsAfter, { lotNumber: resultDetails.lotNumber })
-      )
+      assert.isOk(_.find(inventoryItemsAfter, { lotNumber: resultDetails.lotNumber }))
       assert.isOk(inventoryConsumptionLog.inventoryItemId)
 
-      assert.equal(
-        inventoryConsumptionLog.consumableReasonName,
-        'Test Conducted'
-      )
+      assert.equal(inventoryConsumptionLog.consumableReasonName, 'Test Conducted')
       assert.isOk(inventoryConsumptionLog.resultId)
       assert.equal(inventoryConsumptionLog.lotNumber, resultDetails.lotNumber)
-      assert.equal(
-        inventoryConsumptionLog.expiresOn.toISOString(),
-        resultDetails.expirationDate.toISOString()
-      )
-      assert.equal(
-        inventoryConsumptionLog.quantity,
-        Math.abs(inventoryConsumedByTest)
-      )
+      assert.equal(inventoryConsumptionLog.expiresOn.toISOString(), resultDetails.expirationDate.toISOString())
+      assert.equal(inventoryConsumptionLog.quantity, Math.abs(inventoryConsumedByTest))
 
       assert.isNotOk(otherInventoryConsumptionLogsForThisTest)
     })
   })
 
   describe('inventory management with Expiration date strategy', () => {
-    before(async () =>
-      knex('Consumable').update({ strategy: 'withExpirationDateStrategy' })
-    )
+    before(async () => knex('Consumable').update({ strategy: 'withExpirationDateStrategy' }))
     after(async () =>
       knex('Consumable').update({
         strategy: 'withLotAndExpirationDateStrategy',
@@ -1149,19 +952,10 @@ describe('admin result updates', () => {
 
       await Promise.all(
         _.map(results, async resultDetails => {
-          const { siteId } = await knex('Device')
-            .where({ id: resultDetails.deviceId })
-            .first('siteId')
-          const cartridgeId = (
-            await knex('Consumable')
-              .where({ name: resultDetails.cartridgeName })
-              .first('id')
-          ).id
+          const { siteId } = await knex('Device').where({ id: resultDetails.deviceId }).first('siteId')
+          const cartridgeId = (await knex('Consumable').where({ name: resultDetails.cartridgeName }).first('id')).id
 
-          const inventoryItemsBefore = await getInventoryItemsAtSite(
-            knex,
-            siteId
-          )
+          const inventoryItemsBefore = await getInventoryItemsAtSite(knex, siteId)
           const firstCartridgeConsumable = _.find(
             inventoryItemsBefore,
             item => item.consumableId === cartridgeId && item.expiresOn != null
@@ -1188,10 +982,7 @@ describe('admin result updates', () => {
                 assert.equal(res.status, 200)
               })
 
-            const inventoryItemsAfter = await getInventoryItemsAtSite(
-              knex,
-              siteId
-            )
+            const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
             assayConsumables.forEach(assayConsumable => {
               const inventoryItemBefore = _.find(inventoryItemsBefore, {
@@ -1217,17 +1008,11 @@ describe('admin result updates', () => {
     it('should try to deduct the correct inventory item based on expiration date', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const past = new Date(+now - 36000)
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
       const assayExternalId = 'DaktariHivVL'
       const daktariHivVlCartridgeId = (
-        await knex('Consumable as c')
-          .where('c.name', 'Daktari HIV-VL Cartridge')
-          .first('c.id')
+        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
       ).id
 
       let resultDetails = {
@@ -1235,9 +1020,7 @@ describe('admin result updates', () => {
         expirationDate: '2045-01-30 00:00:00Z',
       }
 
-      const [lotNumberAndExpirationDateMatch] = await knex(
-        'InventoryItem'
-      ).insert({
+      const [lotNumberAndExpirationDateMatch] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
         siteId,
         lotNumber: resultDetails.lotNumber,
@@ -1249,9 +1032,7 @@ describe('admin result updates', () => {
         updatedOn: past,
       })
 
-      const { quantity: inventoryConsumedByTest } = await knex(
-        'ConsumableAssay as ca'
-      )
+      const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
         .andWhere('ca.consumableId', daktariHivVlCartridgeId)
@@ -1259,9 +1040,7 @@ describe('admin result updates', () => {
 
       let cartridgeAtSiteBefore = _.find(
         await getInventoryItemsAtSite(knex, siteId),
-        inventoryItem =>
-          inventoryItem.expiresOn.toISOString() ===
-          new Date(resultDetails.expirationDate).toISOString()
+        inventoryItem => inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       await server
@@ -1284,9 +1063,7 @@ describe('admin result updates', () => {
 
       let cartridgeAtSiteAfter = _.find(
         await getInventoryItemsAtSite(knex, siteId),
-        inventoryItem =>
-          inventoryItem.expiresOn.toISOString() ===
-          new Date(resultDetails.expirationDate).toISOString()
+        inventoryItem => inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       assert.equal(
@@ -1313,9 +1090,7 @@ describe('admin result updates', () => {
       })
       cartridgeAtSiteBefore = _.find(
         await getInventoryItemsAtSite(knex, siteId),
-        inventoryItem =>
-          inventoryItem.expiresOn.toISOString() ===
-          randomExpiryDate.toISOString()
+        inventoryItem => inventoryItem.expiresOn.toISOString() === randomExpiryDate.toISOString()
       )
 
       await server
@@ -1338,9 +1113,7 @@ describe('admin result updates', () => {
 
       cartridgeAtSiteAfter = _.find(
         await getInventoryItemsAtSite(knex, siteId),
-        inventoryItem =>
-          inventoryItem.expiresOn.toISOString() ===
-          randomExpiryDate.toISOString()
+        inventoryItem => inventoryItem.expiresOn.toISOString() === randomExpiryDate.toISOString()
       )
 
       assert.equal(
@@ -1367,9 +1140,7 @@ describe('admin result updates', () => {
       })
       cartridgeAtSiteBefore = _.find(
         await getInventoryItemsAtSite(knex, siteId),
-        inventoryItem =>
-          inventoryItem.expiresOn.toISOString() ===
-          new Date(resultDetails.expirationDate).toISOString()
+        inventoryItem => inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       await server
@@ -1393,24 +1164,14 @@ describe('admin result updates', () => {
       const inventoryAfter = await getInventoryItemsAtSite(knex, siteId)
       cartridgeAtSiteAfter = _.find(
         inventoryAfter,
-        inventoryItem =>
-          inventoryItem.expiresOn.toISOString() ===
-          new Date(resultDetails.expirationDate).toISOString()
+        inventoryItem => inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       await knex('InventoryLog')
-        .whereIn('inventoryItemId', [
-          lotNumberAndExpirationDateMatch,
-          onlyLotNumberMatches,
-          onlyExpirationDateMatches,
-        ])
+        .whereIn('inventoryItemId', [lotNumberAndExpirationDateMatch, onlyLotNumberMatches, onlyExpirationDateMatches])
         .del()
       await knex('InventoryItem')
-        .whereIn('id', [
-          lotNumberAndExpirationDateMatch,
-          onlyLotNumberMatches,
-          onlyExpirationDateMatches,
-        ])
+        .whereIn('id', [lotNumberAndExpirationDateMatch, onlyLotNumberMatches, onlyExpirationDateMatches])
         .del()
 
       assert.equal(
@@ -1423,17 +1184,11 @@ describe('admin result updates', () => {
     it('should try to deduct the correct inventory item based on expiration date', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const past = new Date(+now - 36000)
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
       const assayExternalId = 'DaktariHivVL'
       const daktariHivVlCartridgeId = (
-        await knex('Consumable as c')
-          .where('c.name', 'Daktari HIV-VL Cartridge')
-          .first('c.id')
+        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
       ).id
       const inventoryConsumedByTest = (
         await knex('ConsumableAssay as ca')
@@ -1476,15 +1231,13 @@ describe('admin result updates', () => {
         inventoryItemsBefore,
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(randomExpiryDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(randomExpiryDate).toISOString()
       )
       const matchingExpirationDateCartridgeAtSiteBefore = _.find(
         inventoryItemsBefore,
         inventoryItem =>
           inventoryItem.lotNumber === randomLotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            new Date(resultDetails.expirationDate).toISOString()
+          inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       await server
@@ -1505,28 +1258,18 @@ describe('admin result updates', () => {
 
       const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
-      await knex('InventoryLog')
-        .whereIn('inventoryItemId', [
-          onlyLotNumberMatches,
-          onlyExpirationDateMatches,
-        ])
-        .del()
-      await knex('InventoryItem')
-        .whereIn('id', [onlyLotNumberMatches, onlyExpirationDateMatches])
-        .del()
+      await knex('InventoryLog').whereIn('inventoryItemId', [onlyLotNumberMatches, onlyExpirationDateMatches]).del()
+      await knex('InventoryItem').whereIn('id', [onlyLotNumberMatches, onlyExpirationDateMatches]).del()
 
       const matchingLotNumberCartridgeAtSiteAfter = _.find(
         inventoryItemsAfter,
         inventoryItem =>
           inventoryItem.lotNumber === resultDetails.lotNumber &&
-          inventoryItem.expiresOn.toISOString() ===
-            randomExpiryDate.toISOString()
+          inventoryItem.expiresOn.toISOString() === randomExpiryDate.toISOString()
       )
       const matchingExpirationDateCartridgeAtSiteAfter = _.find(
         inventoryItemsAfter,
-        inventoryItem =>
-          inventoryItem.expiresOn.toISOString() ===
-          new Date(resultDetails.expirationDate).toISOString()
+        inventoryItem => inventoryItem.expiresOn.toISOString() === new Date(resultDetails.expirationDate).toISOString()
       )
 
       assert.equal(
@@ -1537,19 +1280,14 @@ describe('admin result updates', () => {
       assert.equal(
         matchingExpirationDateCartridgeAtSiteAfter.quantityOnHand,
 
-        matchingExpirationDateCartridgeAtSiteBefore.quantityOnHand -
-          inventoryConsumedByTest
+        matchingExpirationDateCartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest
       )
     })
 
     it('should deduct inventory item with expiresOn', async () => {
       const { deviceId, deviceAuth, now, user } = context
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
 
       const past = subDays(now, 1)
       const future = addDays(startOfDay(now), 7)
@@ -1560,9 +1298,7 @@ describe('admin result updates', () => {
         .first('c.id')
 
       // Remove inventory item if it already exists
-      await knex('InventoryItem')
-        .where({ consumableId: daktariHivVlCartridgeId, siteId })
-        .del()
+      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
@@ -1576,9 +1312,7 @@ describe('admin result updates', () => {
         updatedOn: past,
       })
 
-      const { quantity: inventoryConsumedByTest } = await knex(
-        'ConsumableAssay as ca'
-      )
+      const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
         .andWhere('ca.consumableId', daktariHivVlCartridgeId)
@@ -1595,15 +1329,10 @@ describe('admin result updates', () => {
       })
       assert.isOk(inventoryItemBefore)
       assert.isNotOk(inventoryItemBefore.lotNumber)
-      assert.equal(
-        inventoryItemBefore.expiresOn.toISOString(),
-        future.toISOString()
-      )
+      assert.equal(inventoryItemBefore.expiresOn.toISOString(), future.toISOString())
       assert.equal(inventoryItemBefore.quantityOnHand, 50)
 
-      const inventoryLogsBefore = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select('id')
+      const inventoryLogsBefore = await knex('InventoryLog').where({ inventoryItemId }).select('id')
       assert.equal(inventoryLogsBefore.length, 0)
 
       await server
@@ -1625,26 +1354,15 @@ describe('admin result updates', () => {
         })
 
       const inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       const inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
       assert.isNotOk(inventoryItemAfter.lotNumber)
-      assert.equal(
-        inventoryItemAfter.expiresOn.toISOString(),
-        future.toISOString()
-      )
-      assert.equal(
-        inventoryItemAfter.quantityOnHand,
-        inventoryItemBefore.quantityOnHand - inventoryConsumedByTest
-      )
+      assert.equal(inventoryItemAfter.expiresOn.toISOString(), future.toISOString())
+      assert.equal(inventoryItemAfter.quantityOnHand, inventoryItemBefore.quantityOnHand - inventoryConsumedByTest)
 
-      const inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select()
+      const inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).select()
       assert.equal(inventoryLogsAfter.length, 1)
 
       const inventoryLog = inventoryLogsAfter[0]
@@ -1662,12 +1380,8 @@ describe('admin result updates', () => {
 
     it('should update quantityOnHand only if the result does not exists on InventoryLog', async () => {
       const { deviceId, deviceAuth, now, user } = context
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
 
       const past = subDays(now, 1)
       const future = addDays(now, 7)
@@ -1678,9 +1392,7 @@ describe('admin result updates', () => {
         .where('c.name', 'Daktari HIV-VL Cartridge')
         .first('c.id')
 
-      await knex('InventoryItem')
-        .where({ consumableId: daktariHivVlCartridgeId, siteId })
-        .del()
+      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
 
       const [inventoryItemId] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
@@ -1694,9 +1406,7 @@ describe('admin result updates', () => {
         updatedOn: past,
       })
 
-      const { quantity: inventoryConsumedByTest } = await knex(
-        'ConsumableAssay as ca'
-      )
+      const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
         .andWhere('ca.consumableId', daktariHivVlCartridgeId)
@@ -1713,16 +1423,11 @@ describe('admin result updates', () => {
       })
       assert.isOk(inventoryItemBefore)
       assert.equal(inventoryItemBefore.lotNumber, resultDetails.lotNumber)
-      assert.equal(
-        inventoryItemBefore.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
+      assert.equal(inventoryItemBefore.expiresOn.toISOString(), futureExpiresOn.toISOString())
 
       assert.equal(inventoryItemBefore.quantityOnHand, 50)
 
-      const inventoryLogsBefore = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select('id')
+      const inventoryLogsBefore = await knex('InventoryLog').where({ inventoryItemId }).select('id')
       assert.equal(inventoryLogsBefore.length, 0)
       const fakeResultId = 'fake-result-id'
       const fakeSampleId = 'fake-sample-id'
@@ -1745,23 +1450,13 @@ describe('admin result updates', () => {
 
       let inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       let inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
-      assert.equal(
-        inventoryItemAfter.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
-      assert.equal(
-        inventoryItemBefore.id,
-        inventoryItemAfter.id,
-        'Inventory Item used is the one created by the test'
-      )
+      assert.equal(inventoryItemAfter.expiresOn.toISOString(), futureExpiresOn.toISOString())
+      assert.equal(inventoryItemBefore.id, inventoryItemAfter.id, 'Inventory Item used is the one created by the test')
 
       assert.equal(
         inventoryItemAfter.quantityOnHand,
@@ -1769,9 +1464,7 @@ describe('admin result updates', () => {
         'Quantity on Hand must be updated after first result'
       )
 
-      let inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .select()
+      let inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).select()
 
       assert.equal(inventoryLogsAfter.length, 1)
 
@@ -1812,20 +1505,14 @@ describe('admin result updates', () => {
 
       inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
 
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
 
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
 
-      assert.equal(
-        inventoryItemAfter.expiresOn.toISOString(),
-        futureExpiresOn.toISOString()
-      )
+      assert.equal(inventoryItemAfter.expiresOn.toISOString(), futureExpiresOn.toISOString())
 
       assert.equal(
         inventoryItemAfter.quantityOnHand,
@@ -1833,10 +1520,7 @@ describe('admin result updates', () => {
         'Quantity on Hand must not be updated after second result'
       )
 
-      inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .orderBy('id', 'desc')
-        .select()
+      inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).orderBy('id', 'desc').select()
 
       assert.equal(inventoryLogsAfter.length, 1)
       ;[inventoryLog] = inventoryLogsAfter
@@ -1870,10 +1554,7 @@ describe('admin result updates', () => {
         .expect(200)
 
       inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
-      assert.deepEqual(
-        _.map(inventoryItemsBefore, 'id'),
-        _.map(inventoryItemsAfter, 'id')
-      )
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
@@ -1881,10 +1562,7 @@ describe('admin result updates', () => {
       assert.isOk(inventoryItemAfter.expiresOn)
       assert.equal(inventoryItemAfter.quantityOnHand, newQuantityOnHand)
 
-      inventoryLogsAfter = await knex('InventoryLog')
-        .where({ inventoryItemId })
-        .orderBy('id', 'desc')
-        .select()
+      inventoryLogsAfter = await knex('InventoryLog').where({ inventoryItemId }).orderBy('id', 'desc').select()
       assert.equal(inventoryLogsAfter.length, 1)
       ;[inventoryLog] = inventoryLogsAfter
       assert.equal(inventoryLog.inventoryItemId, inventoryItemId)
@@ -1902,13 +1580,9 @@ describe('admin result updates', () => {
     it('if no Inventory Item is found, should add a new item with negative quantity on hand', async () => {
       const { deviceId, deviceAuth, now, user } = context
       const fakeSampleId = 'New Test Add Negative Quantity'
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
 
-      const { id: adminId } = await knex('User')
-        .where({ name: user })
-        .first('id')
+      const { id: adminId } = await knex('User').where({ name: user }).first('id')
 
       const past = subDays(now, 1)
       const future = addDays(now, 7)
@@ -1919,9 +1593,7 @@ describe('admin result updates', () => {
         .first('c.id')
 
       // Remove inventory item if it already exists
-      await knex('InventoryItem')
-        .where({ consumableId: daktariHivVlCartridgeId, siteId })
-        .del()
+      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
 
       const [inventoryItemNotAsCloseId] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
@@ -1946,9 +1618,7 @@ describe('admin result updates', () => {
         updatedOn: past,
       })
 
-      const [inventoryItemStillNotAsCloseId] = await knex(
-        'InventoryItem'
-      ).insert({
+      const [inventoryItemStillNotAsCloseId] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
         siteId,
         lotNumber: 'still not as close',
@@ -1960,9 +1630,7 @@ describe('admin result updates', () => {
         updatedOn: past,
       })
 
-      const { quantity: inventoryConsumedByTest } = await knex(
-        'ConsumableAssay as ca'
-      )
+      const { quantity: inventoryConsumedByTest } = await knex('ConsumableAssay as ca')
         .join('Assay as a', 'ca.assayId', 'a.id')
         .where('a.externalId', assayExternalId)
         .andWhere('ca.consumableId', daktariHivVlCartridgeId)
@@ -1992,24 +1660,12 @@ describe('admin result updates', () => {
       const inventoryItemsAfter = await (
         await getInventoryItemsAtSite(knex, siteId)
       ).filter(
-        ii =>
-          ![
-            inventoryItemNotAsCloseId,
-            inventoryItemClosestId,
-            inventoryItemStillNotAsCloseId,
-          ].includes(ii.id)
+        ii => ![inventoryItemNotAsCloseId, inventoryItemClosestId, inventoryItemStillNotAsCloseId].includes(ii.id)
       )
 
-      assert.equal(
-        inventoryItemsAfter.length,
-        1,
-        'Must be 1 item after the inventory handling'
-      )
+      assert.equal(inventoryItemsAfter.length, 1, 'Must be 1 item after the inventory handling')
       const inventoryItemAfter = inventoryItemsAfter[0]
-      assert.isNull(
-        inventoryItemAfter.lotNumber,
-        'Newly created InventoryItem must have null lotNumber'
-      )
+      assert.isNull(inventoryItemAfter.lotNumber, 'Newly created InventoryItem must have null lotNumber')
       assert.equal(
         parseDateOrDefault(inventoryItemAfter.expiresOn).toISOString(),
         resultDetails.expirationDate.toISOString()
@@ -2021,9 +1677,7 @@ describe('admin result updates', () => {
         'The newly created item must have the negative quantity on hand'
       )
 
-      const inventoryLogsAfter = await knex('InventoryLog')
-        .where('inventoryItemId', inventoryItemAfter.id)
-        .select()
+      const inventoryLogsAfter = await knex('InventoryLog').where('inventoryItemId', inventoryItemAfter.id).select()
       assert.equal(inventoryLogsAfter.length, 1, 'InventoryLog must exist')
 
       const inventoryLog = inventoryLogsAfter[0]
@@ -2041,19 +1695,13 @@ describe('admin result updates', () => {
 
     it('should log inventory consumption, even when no inventory item exists for site', async () => {
       const { deviceId, deviceAuth, now } = context
-      const { siteId } = await knex('Device')
-        .where({ id: deviceId })
-        .first('siteId')
+      const { siteId } = await knex('Device').where({ id: deviceId }).first('siteId')
       const assayExternalId = 'DaktariHivVL'
       const daktariHivVlCartridgeId = (
-        await knex('Consumable as c')
-          .where('c.name', 'Daktari HIV-VL Cartridge')
-          .first('c.id')
+        await knex('Consumable as c').where('c.name', 'Daktari HIV-VL Cartridge').first('c.id')
       ).id
       // Remove inventory item if it already exists
-      await knex('InventoryItem')
-        .where({ consumableId: daktariHivVlCartridgeId, siteId })
-        .del()
+      await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
       const inventoryConsumedByTest = (
         await knex('ConsumableAssay as ca')
           .join('Assay as a', 'ca.assayId', 'a.id')
@@ -2065,9 +1713,7 @@ describe('admin result updates', () => {
       const resultDetails = {
         lotNumber: 'HIV533',
         expirationDate: getLocalDateInUtc(
-          new Date(
-            new Date().getTime() + _.random(0, 1000 * 60 * 60 * 24 * 365)
-          ).setHours(0, 0, 0, 0)
+          new Date(new Date().getTime() + _.random(0, 1000 * 60 * 60 * 24 * 365)).setHours(0, 0, 0, 0)
         ),
       }
 
@@ -2103,9 +1749,7 @@ describe('admin result updates', () => {
           'il.createdOn'
         )
 
-      const { count: otherInventoryConsumptionLogsForThisTest } = await knex(
-        'InventoryLog'
-      )
+      const { count: otherInventoryConsumptionLogsForThisTest } = await knex('InventoryLog')
         .whereNot({ id: inventoryConsumptionLog.id })
         .andWhere({
           siteId,
@@ -2113,30 +1757,17 @@ describe('admin result updates', () => {
         })
         .count('id as count')
 
-      await knex('InventoryLog')
-        .where({ resultId: inventoryConsumptionLog.resultId })
-        .del()
+      await knex('InventoryLog').where({ resultId: inventoryConsumptionLog.resultId }).del()
 
-      await knex('InventoryItem')
-        .where({ id: inventoryConsumptionLog.inventoryItemId })
-        .del()
+      await knex('InventoryItem').where({ id: inventoryConsumptionLog.inventoryItemId }).del()
 
       assert.isOk(inventoryConsumptionLog.inventoryItemId)
 
-      assert.equal(
-        inventoryConsumptionLog.consumableReasonName,
-        'Test Conducted'
-      )
+      assert.equal(inventoryConsumptionLog.consumableReasonName, 'Test Conducted')
       assert.isOk(inventoryConsumptionLog.resultId)
       assert.isNull(inventoryConsumptionLog.lotNumber)
-      assert.equal(
-        inventoryConsumptionLog.expiresOn.toISOString(),
-        resultDetails.expirationDate.toISOString()
-      )
-      assert.equal(
-        inventoryConsumptionLog.quantity,
-        Math.abs(inventoryConsumedByTest)
-      )
+      assert.equal(inventoryConsumptionLog.expiresOn.toISOString(), resultDetails.expirationDate.toISOString())
+      assert.equal(inventoryConsumptionLog.quantity, Math.abs(inventoryConsumedByTest))
 
       assert.isNotOk(otherInventoryConsumptionLogsForThisTest)
     })

@@ -15,22 +15,10 @@ import ShellFooter from '../../../Shell/Footer'
 import { getFormConfigWithData } from '../utils'
 import validationSchema from '../../Forms/validation'
 
-const AspectNotificationDetail = ({
-  notificationType,
-  jobFunctions,
-  onSubmit,
-}) => {
+const AspectNotificationDetail = ({ notificationType, jobFunctions, onSubmit }) => {
   const intl = useI18n()
   const [formConfig] = useState(
-    getFormConfigWithData(
-      intl,
-      jobFunctions,
-      notificationType,
-      '',
-      validationSchema(intl.formatMessage),
-      false,
-      null
-    )
+    getFormConfigWithData(intl, jobFunctions, notificationType, '', validationSchema(intl.formatMessage), false, null)
   )
   return (
     <Shell>

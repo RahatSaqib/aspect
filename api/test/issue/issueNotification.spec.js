@@ -3,10 +3,7 @@ const _ = require('lodash')
 
 const { knex } = require('../../src/db')
 const { shouldNotify } = require('../../src/notification/service')
-const {
-  issueTypeToId,
-  issueStatusToId,
-} = require('../../src/shared/dictionary')
+const { issueTypeToId, issueStatusToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
 const issueToDeleteId = []
@@ -28,11 +25,7 @@ async function getPersonByName(personName) {
     )
 }
 
-const beforeEachForPerson = async (
-  personName,
-  resultInItsGeography = true,
-  resultOutsideItsSite = false
-) => {
+const beforeEachForPerson = async (personName, resultInItsGeography = true, resultOutsideItsSite = false) => {
   const person = await getPersonByName(personName)
 
   const { id: resultId } = _.pick(
@@ -92,15 +85,10 @@ describe('Issue Notification', () => {
 
     before(async () => {
       clinician = await beforeEachForPerson('Clinician')
-      clinicianInDifferentSiteResult = await beforeEachForPerson(
-        'Clinician',
-        false,
-        true
-      )
+      clinicianInDifferentSiteResult = await beforeEachForPerson('Clinician', false, true)
     })
     it('Should send notification to the clinician jobFunction', async () => {
-      const clinicianIssueInItsSiteId =
-        issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
+      const clinicianIssueInItsSiteId = issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
       const issue = await shouldNotify(
         knex,
         { issueId: clinicianIssueInItsSiteId },
@@ -126,20 +114,11 @@ describe('Issue Notification', () => {
 
     before(async () => {
       rm = await beforeEachForPerson('Regional Manager')
-      rmInDifferentStateResult = await beforeEachForPerson(
-        'Regional Manager',
-        false,
-        true
-      )
+      rmInDifferentStateResult = await beforeEachForPerson('Regional Manager', false, true)
     })
     it('should send notification to the Regional Manager jobFunction', async () => {
       const rmIssueInItsSiteId = issueToDeleteId[issueToDeleteId.length - 2] // the first issue inserted in before each
-      const issue = await shouldNotify(
-        knex,
-        { issueId: rmIssueInItsSiteId },
-        rm.personId,
-        rm.jobFunctionId
-      )
+      const issue = await shouldNotify(knex, { issueId: rmIssueInItsSiteId }, rm.personId, rm.jobFunctionId)
       assert.isFalse(_.isNil(issue))
     })
     it('should NOT send notification to the Regional Manager jobFunction', async () => {

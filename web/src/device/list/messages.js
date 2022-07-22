@@ -56,8 +56,7 @@ export const messages = {
     },
     lastSeenDescription: {
       id: 'pages.DeviceList.lastSeenDescription',
-      defaultMessage:
-        'Represents the last time when the GxConnect application made a connection with Aspect',
+      defaultMessage: 'Represents the last time when the GxConnect application made a connection with Aspect',
     },
     numberOfTests: {
       id: 'pages.DeviceList.numberOfTests',
