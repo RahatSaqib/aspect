@@ -80,6 +80,7 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
         ...validateSortPageParams(
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
+          'siteName',
           'state',
           'statusI18nKey',
           'errorRate',
