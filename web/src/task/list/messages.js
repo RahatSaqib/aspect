@@ -5,30 +5,12 @@ const messages = defineMessages({
     id: 'pages.TaskList.title',
     defaultMessage: 'Tasks',
   },
-  topic: {
-    id: 'pages.TaskList.topic',
-    defaultMessage: 'Topic',
-  },
-  site: {
-    id: 'pages.TaskList.site',
-    defaultMessage: 'Site',
-  },
-  time: {
-    id: 'pages.TaskList.time',
-    defaultMessage: 'Time',
-  },
+
   alertCount: {
     id: 'pages.TaskList.alertCount',
     defaultMessage: `{alertCount, plural,
       one {# alert}
       other {# alerts}
-    }`,
-  },
-  paginatorStatus: {
-    id: 'pages.TaskList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# task}
-      other {# tasks}
     }`,
   },
   issueStatusInactive: {
@@ -95,6 +77,29 @@ const messages = defineMessages({
   taskListOptionsConnectivity: {
     id: 'pages.TaskList.taskListOptionsConnectivity',
     defaultMessage: 'Connectivity',
+  },
+  taskAggreTitle: {
+    id: 'pages.TaskAggre.title',
+    defaultMessage: 'Task',
+  },
+  topic: {
+    id: 'pages.TaskList.topic',
+    defaultMessage: 'Topic',
+  },
+  site: {
+    id: 'pages.TaskList.site',
+    defaultMessage: 'Site',
+  },
+  time: {
+    id: 'pages.TaskList.time',
+    defaultMessage: 'Time',
+  },
+  paginatorStatus: {
+    id: 'pages.TaskList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# task}
+      other {# tasks}
+    }`,
   },
 })
 

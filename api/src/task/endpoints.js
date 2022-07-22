@@ -109,9 +109,9 @@ const routes = [
           alertTemplateId: Joi.number().description(
             'Filter for the alert template'
           ),
-          deviceId: Joi.number()
-            .integer()
-            .allow(null)
+          deviceId: Joi.string()
+            // .integer()
+            .allow(null, '')
             .description('Filter for device id'),
           siteId: Joi.number()
             .integer()

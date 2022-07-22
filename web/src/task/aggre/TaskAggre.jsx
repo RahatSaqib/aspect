@@ -1,7 +1,7 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -28,34 +28,9 @@ import {
 import { getTasksByAlertTemplateAndDate } from '../TaskRedux'
 
 import styles from './TaskAggre.css'
+import messages from '../list/messages'
 
 const cssClasses = classnames.bind(styles)
-
-const messages = defineMessages({
-  taskAggreTitle: {
-    id: 'pages.TaskAggre.title',
-    defaultMessage: 'Task',
-  },
-  topic: {
-    id: 'pages.TaskList.topic',
-    defaultMessage: 'Topic',
-  },
-  site: {
-    id: 'pages.TaskList.site',
-    defaultMessage: 'Site',
-  },
-  time: {
-    id: 'pages.TaskList.time',
-    defaultMessage: 'Time',
-  },
-  paginatorStatus: {
-    id: 'pages.TaskList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# task}
-      other {# tasks}
-    }`,
-  },
-})
 
 const enhance = compose(
   injectIntl,
