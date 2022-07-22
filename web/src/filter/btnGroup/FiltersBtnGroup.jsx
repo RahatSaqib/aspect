@@ -489,13 +489,24 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
           .get('name'),
       })
     ),
-    deviceMaintenanceStatusId: makeButton((deviceMaintenanceStatusId, { deviceMaintenanceStatusItems }) =>
-      formatMessage(messages.withDeviceMaintenanceStatus, {
-        deviceMaintenanceStatusName: deviceMaintenanceStatusItems
-          .find(it => it.get('externalId') === deviceMaintenanceStatusId, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
-      })
-    ),
+    deviceMaintenanceStatusId: (filterKey, props) => {
+      const {
+        filters: { deviceMaintenanceStatusId },
+      } = props
+      const deviceMaintenanceStatusIds = isArray(deviceMaintenanceStatusId)
+        ? deviceMaintenanceStatusId
+        : [deviceMaintenanceStatusId]
+
+      return deviceMaintenanceStatusIds.map((deviceMaintenanceStatusId, index) =>
+        makeButton((__, { deviceMaintenanceStatusItems }) =>
+          formatMessage(messages.withDeviceMaintenanceStatus, {
+            deviceMaintenanceStatusName: deviceMaintenanceStatusItems
+              .find(it => it.get('externalId') === deviceMaintenanceStatusId, EMPTY_CONTEXT, EMPTY_MAP)
+              .get('name'),
+          })
+        )(filterKey, props, index)
+      )
+    },
     deviceTypeId: makeButton((deviceTypeId, { deviceTypeItems }) =>
       formatMessage(messages.withDeviceType, {
         deviceTypeName: deviceTypeItems.find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP).get('name'),

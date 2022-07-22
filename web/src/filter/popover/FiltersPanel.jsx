@@ -988,6 +988,7 @@ export const FiltersPanel = ({
             {config.deviceMaintenanceStatus && (
               <div className={cssClasses('Control')}>
                 <DeviceMaintenanceStatusSelectField
+                  allItemText={formatMessage(messages.all)}
                   value={filters.deviceMaintenanceStatusId}
                   onDeviceMaintenanceStatusChange={onDeviceMaintenanceStatusIdChange}
                   floatingLabelFixed
