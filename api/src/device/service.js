@@ -149,6 +149,12 @@ async function getListDevices(query, auth) {
       if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
         queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
+      if (query.gxConnectStatus) {
+        queryBuilder.whereIn(
+          knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END'),
+          query.gxConnectStatus
+        )
+      }
     })
     .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     .modify(queryBuilder => {
@@ -222,6 +228,7 @@ async function getListDevices(query, auth) {
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
       'd.lastSeenOn as deviceLastSeenOn',
+      knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END as gxConnectStatus'),
     ])
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')

@@ -70,6 +70,11 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
         category: Joi.string().description('Filter for device type category'),
         type: Joi.string().description('Filter for device type'),
         name: Joi.string().allow('').description('Filter for device name'),
+        gxConnectStatus: Joi.array()
+          .items(Joi.string())
+          .single()
+          .allow(null)
+          .description('Filter for gxConnect status'),
         siteName: Joi.string().allow('').description('Filter for site name'),
         siteId: Joi.number().allow(null).description('Filter for site Id'),
         siteExternalId: Joi.string().allow('').description('Filter for facility code'),
@@ -117,6 +122,7 @@ function listDevicesBaseResponse() {
               id: Joi.number().required().description('The ID of the device'),
               name: Joi.string().required().description('The name of the device'),
               shortName: Joi.string().allow('', null).description('The short name of the device'),
+              gxConnectStatus: Joi.string().allow('', null).description('The gxConnect status'),
               createdOn: Joi.date().required().description('When the device was added to the database'),
               lastPingOn: Joi.date().allow(null).description('When the device last pinged'),
               lastSeen: Joi.date()
