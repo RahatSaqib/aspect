@@ -31,22 +31,13 @@ describe('Device route Job constraints', () => {
       ;({ name: deviceTypeGeneXpertName } = await knex('DeviceType')
         .where('externalId', deviceTypeGeneXpertExternalId)
         .first('name'))
-      gxClinicianUserId = await createUser(
-        'Partner One',
-        'US',
-        gxClinicianUsername,
-        gxClinicianPassword,
-        [
-          {
-            jobFunctionExternalId: 'clinician',
-            deviceTypeExternalId: deviceTypeGeneXpertExternalId,
-          },
-        ]
-      )
-      gxClinicianAuthAccessToken = await getAccessToken(
-        gxClinicianUsername,
-        gxClinicianPassword
-      )
+      gxClinicianUserId = await createUser('Partner One', 'US', gxClinicianUsername, gxClinicianPassword, [
+        {
+          jobFunctionExternalId: 'clinician',
+          deviceTypeExternalId: deviceTypeGeneXpertExternalId,
+        },
+      ])
+      gxClinicianAuthAccessToken = await getAccessToken(gxClinicianUsername, gxClinicianPassword)
       ;({ name: deviceTypeDaktariVirologyName } = await knex('DeviceType')
         .where('externalId', deviceTypeDaktariVirologyExternalId)
         .first('name'))
@@ -95,20 +86,14 @@ describe('Device route Job constraints', () => {
       it("should constrain results returned based on the user's job context", async () => {
         const bothDeviceTypesResponse = await server
           .get(path)
-          .set(
-            'Authorization',
-            `Bearer ${bothDeviceTypesClinicianAuthAccessToken}`
-          )
+          .set('Authorization', `Bearer ${bothDeviceTypesClinicianAuthAccessToken}`)
         assert.equal(bothDeviceTypesResponse.status, 200)
         assert.typeOf(bothDeviceTypesResponse.body, 'Object')
         assert.property(bothDeviceTypesResponse.body, 'data')
         assert.typeOf(bothDeviceTypesResponse.body.data, 'array')
         assert.property(bothDeviceTypesResponse.body, 'total')
         bothDeviceTypesResponse.body.data.forEach(device => {
-          assert.include(
-            [deviceTypeGeneXpertName, deviceTypeDaktariVirologyName],
-            device.type
-          )
+          assert.include([deviceTypeGeneXpertName, deviceTypeDaktariVirologyName], device.type)
         })
       })
     })

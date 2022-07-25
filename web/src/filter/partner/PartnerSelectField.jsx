@@ -20,8 +20,7 @@ const enhance = compose(
   }),
   connect(
     state => ({
-      partnersAndJobFunctionsForSelectList:
-        state.jobs.partnersAndJobFunctionsForSelectList,
+      partnersAndJobFunctionsForSelectList: state.jobs.partnersAndJobFunctionsForSelectList,
     }),
     dispatch =>
       bindActionCreators(
@@ -38,12 +37,7 @@ const enhance = compose(
   }),
   mapProps(props => ({
     ..._fp.omit(
-      [
-        'emptyId',
-        'emptyText',
-        'partnersAndJobFunctionsForSelectList',
-        'fetchPartnersAndJobFunctionsForSelectList',
-      ],
+      ['emptyId', 'emptyText', 'partnersAndJobFunctionsForSelectList', 'fetchPartnersAndJobFunctionsForSelectList'],
       props
     ),
     partnerList: props.partnersAndJobFunctionsForSelectList.partners
@@ -60,13 +54,7 @@ const enhance = compose(
   }))
 )
 
-export function PartnerSelectField({
-  onChangePartner,
-  partnerId,
-  partnerList,
-  disabled,
-  ...restProps
-}) {
+export function PartnerSelectField({ onChangePartner, partnerId, partnerList, disabled, ...restProps }) {
   return (
     <SelectField
       {...restProps}

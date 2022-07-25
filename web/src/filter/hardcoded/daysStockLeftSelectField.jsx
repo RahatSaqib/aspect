@@ -12,11 +12,7 @@ export default ({ allItemText, onChange, value, ...restProps }) => {
   }
   const { formatMessage } = useIntl()
   return (
-    <SelectField
-      {...restProps}
-      value={value}
-      onChange={handleSelectFieldChange}
-    >
+    <SelectField {...restProps} value={value} onChange={handleSelectFieldChange}>
       {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
       {daysStockLeftOptions.map(({ externalId, name }) => (
         <MenuItem key={externalId} value={externalId}>

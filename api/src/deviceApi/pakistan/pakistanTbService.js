@@ -1,7 +1,4 @@
-const {
-  getConstraintsByDeviceAPIKey,
-  addConstraints,
-} = require('../../auth/constraints')
+const { getConstraintsByDeviceAPIKey, addConstraints } = require('../../auth/constraints')
 
 async function getTbResultsStats(context) {
   const {
@@ -12,18 +9,10 @@ async function getTbResultsStats(context) {
   const { from, to } = context.query
   const constraints = await getConstraintsByDeviceAPIKey(apiKey)
 
-  const countryQuery = getTbResultsQueryWholeCountry(
-    knex,
-    constraints,
-    from,
-    to
-  )
+  const countryQuery = getTbResultsQueryWholeCountry(knex, constraints, from, to)
   const statesQuery = getTbResultsStatsQueryByState(knex, constraints, from, to)
 
-  const [[countryTotals], stateTotals] = await Promise.all([
-    countryQuery,
-    statesQuery,
-  ])
+  const [[countryTotals], stateTotals] = await Promise.all([countryQuery, statesQuery])
 
   return { from, to, countryTotals, stateTotals }
 }
@@ -35,13 +24,7 @@ function getTbResultsStatsQueryByState(knex, constraints, from, to) {
     .leftJoin(baseQuery.as('b'), builder => builder.on({ 'b.stateId': 's.id' }))
     .whereIn(
       's.id',
-      knex.raw(
-        '(?)',
-        knex('Geography as g')
-          .where('g.countryId', constraints.country.id)
-          .pluck('stateId')
-          .distinct()
-      )
+      knex.raw('(?)', knex('Geography as g').where('g.countryId', constraints.country.id).pluck('stateId').distinct())
     )
     .select(
       knex.raw(`coalesce(s.abbreviation,'') as stateCode`),
@@ -61,13 +44,7 @@ function getTbResultsQueryWholeCountry(knex, constraints, from, to) {
     .leftJoin(baseQuery.as('b'), builder => builder.on({ 'b.stateId': 's.id' }))
     .whereIn(
       's.id',
-      knex.raw(
-        '(?)',
-        knex('Geography as g')
-          .where('g.countryId', constraints.country.id)
-          .pluck('stateId')
-          .distinct()
-      )
+      knex.raw('(?)', knex('Geography as g').where('g.countryId', constraints.country.id).pluck('stateId').distinct())
     )
     .select(
       knex.raw('sum(coalesce(b.tests,0)) as tests'),
@@ -97,9 +74,7 @@ function getTbResultsStatsQuery(knex, constraints, from, to) {
     .select(
       'g.stateId',
       knex.raw('count(r.id) as tests'),
-      knex.raw(
-        `coalesce(sum(case coalesce(rcDetected.externalId,-1) when 'Detected' then 1 else 0 end),0) as cases`
-      ),
+      knex.raw(`coalesce(sum(case coalesce(rcDetected.externalId,-1) when 'Detected' then 1 else 0 end),0) as cases`),
       knex.raw(
         `coalesce(sum(case 
               when rcDetected.externalId = 'Detected' 

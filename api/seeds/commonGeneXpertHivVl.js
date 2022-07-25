@@ -71,11 +71,7 @@ async function fixActualGeneXpertHivVlData(knex) {
         )
       )
       .where({ assayId })
-      .andWhere(
-        knex.raw("resultData ->>'$.resultText'"),
-        'LIKE',
-        'HIV-1 DETECTED %copies%'
-      )
+      .andWhere(knex.raw("resultData ->>'$.resultText'"), 'LIKE', 'HIV-1 DETECTED %copies%')
 
     // Fix all results with the resultText property null values assigned and the resultCategory 'Success'.
     // It updates to No Result
@@ -90,11 +86,7 @@ async function fixActualGeneXpertHivVlData(knex) {
     await knex('Result')
       .update('resultCategory1', resultCategoryNotDetected)
       .andWhere('resultCategory1', resultCategorySuccess)
-      .andWhere(
-        knex.raw("resultData ->>'$.resultText'"),
-        'LIKE',
-        'HIV-1 NOT DETECTED'
-      )
+      .andWhere(knex.raw("resultData ->>'$.resultText'"), 'LIKE', 'HIV-1 NOT DETECTED')
 
     await upsertAssayResultCategories(knex, assayId, ['LessThan40'])
   }

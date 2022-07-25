@@ -1,12 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { knex } = require('../db')
-const {
-  canView,
-  canEdit,
-  getConstraints,
-  addConstraints,
-} = require('../auth/constraints')
+const { canView, canEdit, getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = ['t.id', 't.title', 't.partnerId']
 
@@ -87,9 +82,7 @@ async function updateTags(request) {
   } = request
 
   if (!canEdit(auth, `${tagType}:`)) {
-    return Boom.forbidden(
-      `You are not permitted to update tags to this ${tagType}`
-    )
+    return Boom.forbidden(`You are not permitted to update tags to this ${tagType}`)
   }
 
   await updateTagsById(id, tagType, tags, auth)
@@ -106,20 +99,12 @@ async function updateTagsById(id, tagType, tags, auth) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const oldTags = _.map(await getTagsById(auth, id, tagType), 'title')
-  const allTagsByTitle = _.keyBy(await getAllTags(auth), tag =>
-    tag.title.toLowerCase()
-  )
+  const allTagsByTitle = _.keyBy(await getAllTags(auth), tag => tag.title.toLowerCase())
 
   const newTags = _.split(tags, ',')
 
-  const tagsToBeDeleted = _.filter(
-    oldTags,
-    tag => !includesIgnoreCase(newTags, tag)
-  )
-  const tagsToBeAdded = _.filter(
-    newTags,
-    tag => !includesIgnoreCase(oldTags, tag)
-  )
+  const tagsToBeDeleted = _.filter(oldTags, tag => !includesIgnoreCase(newTags, tag))
+  const tagsToBeAdded = _.filter(newTags, tag => !includesIgnoreCase(oldTags, tag))
 
   await Promise.all(
     _.map(tagsToBeAdded, async tag => {

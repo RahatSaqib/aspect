@@ -15,10 +15,7 @@ const buildMarkersForDailyStatus = (data, statuses) => {
         lng: longitude,
         ...rest,
         maintenanceStatusExternalId,
-        color:
-          customPropertiesVariables[
-            `--aspect-device-${maintenanceStatusExternalId}`
-          ],
+        color: customPropertiesVariables[`--aspect-device-${maintenanceStatusExternalId}`],
       })
   )
 

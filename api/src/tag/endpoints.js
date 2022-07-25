@@ -12,10 +12,7 @@ const routes = [
       notes: "List of Tag ID's and title",
       validate: {
         params: {
-          tagType: Joi.string()
-            .valid('result', 'site', 'device', 'person')
-            .description('Tag Type')
-            .required(),
+          tagType: Joi.string().valid('result', 'site', 'device', 'person').description('Tag Type').required(),
         },
       },
     },
@@ -30,10 +27,7 @@ const routes = [
       validate: {
         params: {
           id: Joi.number().integer().description('Id').required(),
-          tagType: Joi.string()
-            .valid('result', 'site', 'device', 'person')
-            .description('Tag Type')
-            .required(),
+          tagType: Joi.string().valid('result', 'site', 'device', 'person').description('Tag Type').required(),
         },
       },
     },
@@ -48,10 +42,7 @@ const routes = [
       validate: {
         params: {
           id: Joi.number().integer().description('Id').required(),
-          tagType: Joi.string()
-            .valid('result', 'site', 'device', 'person')
-            .description('Tag Type')
-            .required(),
+          tagType: Joi.string().valid('result', 'site', 'device', 'person').description('Tag Type').required(),
         },
         payload: {
           tags: Joi.string().max(500).allow('').required(),

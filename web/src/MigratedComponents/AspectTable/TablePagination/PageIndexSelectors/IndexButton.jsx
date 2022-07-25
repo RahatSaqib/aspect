@@ -16,10 +16,7 @@ const cssClasses = classnames.bind(styles)
 const IndexButton = ({ modifier, disabled, action, icon, label }) => {
   return (
     <Button
-      className={cssClasses([
-        'pageindex__button',
-        `pageindex__button--${modifier}`,
-      ])}
+      className={cssClasses(['pageindex__button', `pageindex__button--${modifier}`])}
       disabled={disabled}
       onClick={action}
     >

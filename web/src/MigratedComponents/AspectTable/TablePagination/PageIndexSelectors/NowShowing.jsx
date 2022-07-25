@@ -15,11 +15,7 @@ const cssClasses = classnames.bind(styles)
 
 const NowShowing = ({ dataLength, pageIndex, pageSize, name, namePlural }) => {
   const { formatMessage } = i18nWrapper()
-  const boundaries = getFirstAndLastVisibleRowNumbers(
-    dataLength,
-    pageIndex,
-    pageSize
-  )
+  const boundaries = getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize)
   const countName = boundaries
     ? formatMessage(messages.nowShowing, {
         firstItemIndex: boundaries[0],
@@ -30,10 +26,7 @@ const NowShowing = ({ dataLength, pageIndex, pageSize, name, namePlural }) => {
       })
     : null
   return (
-    <div
-      className={cssClasses('nowShowing__container')}
-      data-testid="now-showing"
-    >
+    <div className={cssClasses('nowShowing__container')} data-testid="now-showing">
       {countName}
     </div>
   )

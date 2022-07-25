@@ -14,10 +14,7 @@ async function seed(knex) {
     .where('u.name', 'reporter_admin')
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-  const resultsByPartnerByMonth = await getTreatmentDistributionByPartner(
-    knex,
-    partnerId
-  )
+  const resultsByPartnerByMonth = await getTreatmentDistributionByPartner(knex, partnerId)
   if (resultsByPartnerByMonth.length === 0) {
     await generateResults(knex, userId, partnerId, patients, errorCodes)
   }

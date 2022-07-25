@@ -25,9 +25,7 @@ function waitForApproximately(numberOf, units = 'milliseconds') {
   if (!unitInMilliseconds[lowerUnits]) {
     throw new Error('Invalid unit name')
   }
-  return new Promise(resolve =>
-    setTimeout(resolve, unitInMilliseconds[lowerUnits] * numberOf)
-  ).then(waitForIdle)
+  return new Promise(resolve => setTimeout(resolve, unitInMilliseconds[lowerUnits] * numberOf)).then(waitForIdle)
 }
 
 // Number of milliseconds to wait for completion of

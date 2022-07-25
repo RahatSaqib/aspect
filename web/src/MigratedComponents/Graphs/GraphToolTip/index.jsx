@@ -28,13 +28,8 @@ const GraphToolTip = ({ clickThrough, displayMethod, values }) => {
   return (
     <div className={cssClasses('tooltip__container')}>
       <div className={cssClasses('tooltip__row')}>
-        <div
-          className={cssClasses('tooltip__color')}
-          style={{ background: color }}
-        />
-        <div className={cssClasses('tooltip__text')}>
-          {`${displayId}${indexValue ? ` - ${indexValue}` : ''}: `}
-        </div>
+        <div className={cssClasses('tooltip__color')} style={{ background: color }} />
+        <div className={cssClasses('tooltip__text')}>{`${displayId}${indexValue ? ` - ${indexValue}` : ''}: `}</div>
 
         <div className={cssClasses('tooltip__value')}>
           {typeof displayValue === 'object' ? (
@@ -54,9 +49,7 @@ const GraphToolTip = ({ clickThrough, displayMethod, values }) => {
               )}
             </div>
           ) : (
-            <div className={cssClasses('tooltip__valuePrimary')}>
-              {displayValue}
-            </div>
+            <div className={cssClasses('tooltip__valuePrimary')}>{displayValue}</div>
           )}
         </div>
       </div>

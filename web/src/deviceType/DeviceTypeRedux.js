@@ -36,10 +36,7 @@ export function fetchDeviceTypesForSelectList(forceRefresh) {
     const shouldFetch =
       forceRefresh ||
       !site.getIn(['sitesForSelectList', 'lastRefreshed']) ||
-      differenceInMinutes(
-        new Date(),
-        site.getIn(['sitesForSelectList', 'lastRefreshed'])
-      ) > 5 // five minutes
+      differenceInMinutes(new Date(), site.getIn(['sitesForSelectList', 'lastRefreshed'])) > 5 // five minutes
     if (!shouldFetch) {
       return
     }

@@ -142,10 +142,7 @@ export const JobAssignmentForm = ({
   return (
     <div className={cssClasses('Job__Assignment', 'Form__Content')}>
       <Unit sm="1-2" className={cssClasses('Section__Content')}>
-        <form
-          onSubmit={handleSubmit}
-          className={cssClasses('Assignment__Form')}
-        >
+        <form onSubmit={handleSubmit} className={cssClasses('Assignment__Form')}>
           <SelectField
             fullWidth
             hintText={formatMessage(messages.selectJob)}
@@ -234,9 +231,7 @@ export const JobAssignmentForm = ({
               type="submit"
               color="primary"
               variant="contained"
-              disabled={
-                loading || form.pristine || !form.valid || form.submitting
-              }
+              disabled={loading || form.pristine || !form.valid || form.submitting}
             >
               {formatMessage(messages.save)}
             </Button>

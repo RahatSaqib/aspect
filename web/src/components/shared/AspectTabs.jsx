@@ -1,11 +1,5 @@
 import PropTypes from 'prop-types'
-import React, {
-  cloneElement,
-  createElement,
-  Children,
-  Component,
-  isValidElement,
-} from 'react'
+import React, { cloneElement, createElement, Children, Component, isValidElement } from 'react'
 import classNames from 'classnames'
 
 import { withStyles } from '@material-ui/styles'
@@ -27,17 +21,15 @@ const styles = () => ({
   selected: {},
 })
 
-const TabContainer = withStyles(styles)(
-  ({ classes: classesMap, selected, children }) => (
-    <div
-      className={classNames(classesMap.container, {
-        [classesMap.selected]: selected,
-      })}
-    >
-      {children}
-    </div>
-  )
-)
+const TabContainer = withStyles(styles)(({ classes: classesMap, selected, children }) => (
+  <div
+    className={classNames(classesMap.container, {
+      [classesMap.selected]: selected,
+    })}
+  >
+    {children}
+  </div>
+))
 
 const getTabs = children => {
   const tabs = []
@@ -55,10 +47,7 @@ class AspectTabs extends Component {
     super(props)
     const { initialSelectedIndex, children } = props
     this.state = {
-      selectedIndex:
-        initialSelectedIndex < getTabs(children).length
-          ? initialSelectedIndex
-          : 0,
+      selectedIndex: initialSelectedIndex < getTabs(children).length ? initialSelectedIndex : 0,
     }
   }
 

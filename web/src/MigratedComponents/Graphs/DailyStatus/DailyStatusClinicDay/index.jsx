@@ -56,9 +56,7 @@ const DailyStatusClinicDay = ({
   onClickDay,
 }) => {
   const { formatDate, formatMessage } = useI18n()
-  const isActive =
-    maintenanceStatusI18nKey === 'active' ||
-    maintenanceStatusI18nKey === 'reportedActive'
+  const isActive = maintenanceStatusI18nKey === 'active' || maintenanceStatusI18nKey === 'reportedActive'
   const isEditable = maintenanceStatusExternalId !== 'active'
   const { weekend } = consts
   const { checked } =
@@ -68,11 +66,7 @@ const DailyStatusClinicDay = ({
 
   let dayModifier = isWeekend ? weekend : null
   if (checked) {
-    dayModifier = isActive
-      ? maintenanceStatusI18nKey
-      : isWeekend
-      ? weekend
-      : maintenanceStatusI18nKey
+    dayModifier = isActive ? maintenanceStatusI18nKey : isWeekend ? weekend : maintenanceStatusI18nKey
   }
 
   const title = getDayTitle({
@@ -89,28 +83,18 @@ const DailyStatusClinicDay = ({
   const manuallySet = !isEmpty(maintenanceStatusManuallySetBy)
     ? `; ${formatMessage(messages.toolTipLastUpdatedBy, {
         username: maintenanceStatusManuallySetBy.name,
-        updatedDate: formatDate(
-          new Date(maintenanceStatusManuallySetBy.updatedDate)
-        ),
+        updatedDate: formatDate(new Date(maintenanceStatusManuallySetBy.updatedDate)),
       })}`
     : ''
 
   return (
     <AspectTooltip
       showPointerCursor={isEditable}
-      title={
-        !isEditable
-          ? `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}`
-          : `${title}${manuallySet}`
-      }
+      title={!isEditable ? `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}` : `${title}${manuallySet}`}
       toolTipContainerClass="inline__tooltip"
       placement="right"
     >
-      <DayBlock
-        consts={consts}
-        dayModifier={dayModifier}
-        onClick={isEditable ? onClickDay : noop}
-      />
+      <DayBlock consts={consts} dayModifier={dayModifier} onClick={isEditable ? onClickDay : noop} />
     </AspectTooltip>
   )
 }
@@ -128,10 +112,7 @@ DailyStatusClinicDay.defaultProps = {
 DailyStatusClinicDay.propTypes = {
   isWeekend: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
   maintenanceStatusI18nKey: PropTypes.string,
-  maintenanceStatusName: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool,
-  ]),
+  maintenanceStatusName: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   maintenanceStatusManuallySetBy: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     name: PropTypes.string,
@@ -139,10 +120,7 @@ DailyStatusClinicDay.propTypes = {
   }),
   maintenanceStatusExternalId: PropTypes.string,
   daysInSameStatus: PropTypes.number,
-  statuses: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.arrayOf(PropTypes.object),
-  ]),
+  statuses: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.object)]),
   consts: PropTypes.shape({
     weekend: PropTypes.string,
   }).isRequired,

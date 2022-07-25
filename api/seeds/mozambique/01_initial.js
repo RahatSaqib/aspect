@@ -1,10 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const {
-  partnerName,
-  deviceApiToken,
-  serverUrl,
-} = require('./fixtures/partnerData')
+const { partnerName, deviceApiToken, serverUrl } = require('./fixtures/partnerData')
 const jobFunctionsFixture = require('./fixtures/jobFunctions')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
@@ -12,10 +8,7 @@ const geographyFromGxAlert = require('./fixtures/geography.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
 const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
-const {
-  baseGxAlertMigration,
-  ensureResultTreatmentStatuses,
-} = require('../common')
+const { baseGxAlertMigration, ensureResultTreatmentStatuses } = require('../common')
 const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
 const {
   addDeviceCapacities,

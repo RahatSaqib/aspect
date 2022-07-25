@@ -7,9 +7,7 @@ const { allDeviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 
 module.exports = async (knex, partnerName, adminName, countryAbbreviation) => {
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: adminName })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: adminName }).first('id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -67,11 +65,7 @@ module.exports = async (knex, partnerName, adminName, countryAbbreviation) => {
 
     // for most of the devices, also create an older record
     if (index > 2 && index % 5 !== 0) {
-      await addCalibration(
-        deviceId,
-        subDays(contextDate, random(180, 540)),
-        false
-      )
+      await addCalibration(deviceId, subDays(contextDate, random(180, 540)), false)
     }
   })
 }

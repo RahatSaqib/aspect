@@ -1,18 +1,10 @@
 const { assert } = require('chai')
 const { _ } = require('lodash')
 const { knex } = require('../../src/db')
-const {
-  createMessageContext,
-  queuePurge,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
+const { createMessageContext, queuePurge, waitForIdle, waitForAction } = require('../utils/mqUtils')
 const config = require('../../src/config')
 const { webhookMessageCreated } = require('../../src/webhook/actions')
-const {
-  messageStatusToId,
-  fileContentTypeToId,
-} = require('../../src/shared/dictionary')
+const { messageStatusToId, fileContentTypeToId } = require('../../src/shared/dictionary')
 const { processDynamicMessage } = require('../../src/stringTemplate/service')
 
 describe('Sending Webhook Message via Message Queue', () => {
@@ -27,18 +19,8 @@ describe('Sending Webhook Message via Message Queue', () => {
   let initialMessageStatusId
   let errorMessageStatusId
 
-  async function createWebHookTemplate(
-    externalId,
-    method,
-    url,
-    headers,
-    payload,
-    fileContentTypeId,
-    adminId
-  ) {
-    const testWebhookTemplate = await knex('WebhookTemplate')
-      .where({ externalId })
-      .first('id')
+  async function createWebHookTemplate(externalId, method, url, headers, payload, fileContentTypeId, adminId) {
+    const testWebhookTemplate = await knex('WebhookTemplate').where({ externalId }).first('id')
     const now = new Date()
     const templateValues = {
       method,
@@ -60,18 +42,14 @@ describe('Sending Webhook Message via Message Queue', () => {
       webhookTemplateIds.push(webhookTemplateId)
     } else {
       webhookTemplateId = testWebhookTemplate.id
-      await knex('WebhookTemplate')
-        .where('id', testWebhookTemplate.id)
-        .update(templateValues)
+      await knex('WebhookTemplate').where('id', testWebhookTemplate.id).update(templateValues)
     }
     return webhookTemplateId
   }
 
   before(async () => {
     ;({ id: adminId } = await knex('User').where({ name: 'admin' }).first('id'))
-    ;({ token: deviceApiKey } = await knex('DeviceApiKey')
-      .where({ revoked: false })
-      .first('token'))
+    ;({ token: deviceApiKey } = await knex('DeviceApiKey').where({ revoked: false }).first('token'))
     defaultTestWebhookTemplateId = await createWebHookTemplate(
       'testWebhookTemplate',
       'POST',
@@ -81,11 +59,7 @@ describe('Sending Webhook Message via Message Queue', () => {
       await fileContentTypeToId('applicationJson'),
       adminId
     )
-    ;({
-      id: resultId,
-      siteId,
-      deviceId,
-    } = await knex('Result').first('id', 'siteId', 'deviceId'))
+    ;({ id: resultId, siteId, deviceId } = await knex('Result').first('id', 'siteId', 'deviceId'))
     initialMessageStatusId = await messageStatusToId('Initial')
     errorMessageStatusId = await messageStatusToId('Error')
   })
@@ -146,15 +120,9 @@ describe('Sending Webhook Message via Message Queue', () => {
 
     const msg = await knex('WebhookMessage').where('id', messageId).first()
     assert.equal(msg.messageStatusId, errorMessageStatusId)
-    assert.equal(
-      msg.response,
-      '404 - Not Found {"statusCode":404,"error":"Not Found","message":"Cannot find plugin."}'
-    )
+    assert.equal(msg.response, '404 - Not Found {"statusCode":404,"error":"Not Found","message":"Cannot find plugin."}')
     // make sure generated message does not have unprocessed curly braces {{ }}
     const payload = processDynamicMessage(msg.payload)
-    assert(
-      !payload.includes('{{') && !payload.includes('}}'),
-      'Webhook message template has not been parsed well'
-    )
+    assert(!payload.includes('{{') && !payload.includes('}}'), 'Webhook message template has not been parsed well')
   })
 })

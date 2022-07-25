@@ -1,21 +1,13 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  sampleTypeToId,
-  deviceTypeToPlugin,
-} = require('../../../shared/dictionary')
+const { sampleTypeToId, deviceTypeToPlugin } = require('../../../shared/dictionary')
 
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
   const plugin = await deviceTypeToPlugin(deviceType)
   const { loadPlugin } = require('../../registration')
-  const deviceTypeTransformMergeResultPayload = await loadPlugin(
-    [plugin],
-    'transformMergeResultPayload'
-  )
-  const transformedPayload = await deviceTypeTransformMergeResultPayload(
-    context
-  )
+  const deviceTypeTransformMergeResultPayload = await loadPlugin([plugin], 'transformMergeResultPayload')
+  const transformedPayload = await deviceTypeTransformMergeResultPayload(context)
   if (deviceType === 'CepheidGeneXpert') {
     parseNotes(transformedPayload)
     parsePatientId(transformedPayload)
@@ -50,11 +42,7 @@ function parseNotes(payload) {
   const genderRegex = /(^|\s|,)([0-9]{0,2})([m]|[f]),?($|\s|,)/i
   const genderMatches = notes.match(genderRegex) || []
 
-  if (
-    _.isEmpty(hivStatusMatches) &&
-    _.isEmpty(ageInYearsMatches) &&
-    _.isEmpty(genderMatches)
-  ) {
+  if (_.isEmpty(hivStatusMatches) && _.isEmpty(ageInYearsMatches) && _.isEmpty(genderMatches)) {
     return
   }
 
@@ -181,8 +169,7 @@ async function parseCustomFields(payload /* , knex */) {
     (customFieldValues, customFieldValue) => {
       const mappedCustomFieldValue = {}
       if (Object.keys(customFieldMappings).includes(customFieldValue.label)) {
-        mappedCustomFieldValue[customFieldMappings[customFieldValue.label]] =
-          customFieldValue.value
+        mappedCustomFieldValue[customFieldMappings[customFieldValue.label]] = customFieldValue.value
       }
       return _.assign({}, customFieldValues, mappedCustomFieldValue)
     },
@@ -193,16 +180,12 @@ async function parseCustomFields(payload /* , knex */) {
       _.set(
         payload,
         'patient.name',
-        customFieldValues.patientName
-          .trim()
-          .substr(0, customFieldValues.patientName.trim().lastIndexOf(' '))
+        customFieldValues.patientName.trim().substr(0, customFieldValues.patientName.trim().lastIndexOf(' '))
       )
       _.set(
         payload,
         'patient.surname',
-        customFieldValues.patientName
-          .trim()
-          .substr(customFieldValues.patientName.trim().lastIndexOf(' ') + 1)
+        customFieldValues.patientName.trim().substr(customFieldValues.patientName.trim().lastIndexOf(' ') + 1)
       )
     } else {
       _.set(payload, 'patient.name', customFieldValues.patientName.trim())
@@ -244,57 +227,35 @@ async function parseCustomFields(payload /* , knex */) {
     } else if (customFieldValues.patientMicroscopyResult === 'Smear Negative') {
       _.set(payload, 'patient.microscopyResult', 'Negative')
     } else {
-      const existingMicroscopyResult = _.get(
-        payload,
-        'patient.microscopyResult'
-      )
+      const existingMicroscopyResult = _.get(payload, 'patient.microscopyResult')
       if (!existingMicroscopyResult) {
-        _.set(
-          payload,
-          'patient.microscopyResult',
-          customFieldValues.patientMicroscopyResult
-        )
+        _.set(payload, 'patient.microscopyResult', customFieldValues.patientMicroscopyResult)
       }
     }
   }
   if (customFieldValues.patientPreviouslyTreated) {
     if (customFieldValues.patientPreviouslyTreated === 'Previously Treated') {
       _.set(payload, 'patient.previouslyTreated', 'Yes')
-    } else if (
-      customFieldValues.patientPreviouslyTreated === 'No Previous Treatment'
-    ) {
+    } else if (customFieldValues.patientPreviouslyTreated === 'No Previous Treatment') {
       _.set(payload, 'patient.previouslyTreated', 'No')
     } else {
-      const existingPreviouslyTreated = _.get(
-        payload,
-        'patient.previouslyTreated'
-      )
+      const existingPreviouslyTreated = _.get(payload, 'patient.previouslyTreated')
       if (!existingPreviouslyTreated) {
-        _.set(
-          payload,
-          'patient.previouslyTreated',
-          customFieldValues.patientPreviouslyTreated
-        )
+        _.set(payload, 'patient.previouslyTreated', customFieldValues.patientPreviouslyTreated)
       }
     }
   }
   if (customFieldValues.sampleType) {
     const existingSampleType = _.get(payload, 'sample.type')
     if (!existingSampleType) {
-      const customSampleTypeId = await sampleTypeToId(
-        _.get(customFieldValues, 'sampleType', '')
-      )
+      const customSampleTypeId = await sampleTypeToId(_.get(customFieldValues, 'sampleType', ''))
       if (customSampleTypeId != null) {
         _.set(payload, 'sample.type.id', customFieldValues.sampleType)
       }
     }
   }
   if (customFieldValues.otherReasonForTest) {
-    _.set(
-      payload,
-      'data.otherReasonForTest',
-      customFieldValues.otherReasonForTest
-    )
+    _.set(payload, 'data.otherReasonForTest', customFieldValues.otherReasonForTest)
   }
   if (customFieldValues.referralCenter) {
     _.set(payload, 'data.referralCenter', customFieldValues.referralCenter)

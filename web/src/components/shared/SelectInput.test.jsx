@@ -70,15 +70,11 @@ describe('SelectInput', () => {
   })
 
   it('Should create menu items from the datasource and datasource config passed to it', () => {
-    expect(SelectInputWrapper.find(MenuItem).length).toEqual(
-      props.dataSource.length
-    )
+    expect(SelectInputWrapper.find(MenuItem).length).toEqual(props.dataSource.length)
     each(props.dataSource, item => {
       expect(
         SelectInputWrapper.findWhere(
-          element =>
-            element.type() === MenuItem &&
-            element.props().value === item.personId
+          element => element.type() === MenuItem && element.props().value === item.personId
         ).props().children
       ).toEqual(item.fullName)
     })

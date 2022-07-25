@@ -7,9 +7,7 @@ const { issueCategoryToId } = require('../../src/shared/dictionary')
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
+  const { id: partnerId } = await knex('Partner').where({ name: 'Myanmar' }).first()
 
   if (partnerId) return
   await insertModuleReplacedIssue(knex)

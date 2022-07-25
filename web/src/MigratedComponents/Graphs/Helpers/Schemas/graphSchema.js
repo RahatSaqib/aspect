@@ -1,5 +1,4 @@
-const graphItemsApiParamsSchemaId =
-  '#/properties/graphType/items/properties/api/items/properties/params/items'
+const graphItemsApiParamsSchemaId = '#/properties/graphType/items/properties/api/items/properties/params/items'
 const graphItemsApiParamsSchema = {
   $id: graphItemsApiParamsSchemaId,
   type: 'object',
@@ -20,8 +19,7 @@ const graphItemsApiParamsSchema = {
   },
 }
 
-const graphItemsApiSchemaId =
-  '#/properties/graphType/items/properties/api/items'
+const graphItemsApiSchemaId = '#/properties/graphType/items/properties/api/items'
 const graphItemsApiSchema = {
   $id: graphItemsApiSchemaId,
   type: 'object',

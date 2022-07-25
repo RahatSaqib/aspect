@@ -96,22 +96,14 @@ describe('Query generator for filtering conditions', () => {
     deviceLevelId: 'lab',
   }
   it('Should generate a proper query filter for ResultCategoryGroup', async () => {
-    const query = knex('Result as r').modify(
-      resultConditionsMet,
-      filterConditionExample,
-      { result: 'r' }
-    )
+    const query = knex('Result as r').modify(resultConditionsMet, filterConditionExample, { result: 'r' })
     assert.include(
       query.toString(),
       "where ((`a`.`externalId` = 'abbottM2000DBSHivVL' and (`rc1`.`externalId` in ('Indeterminate', 'Error') or `rc2`.`externalId` in ('Indeterminate', 'Error'))) or (`a`.`externalId` = 'GxMtbRif' and `rcg`.`externalId` in ('GxMtbRifMtbDetectedRifNotDetected', 'GxMtbRifMtbInvalid'))"
     )
   })
   it('Should generate a proper query filter for ResultCategory', async () => {
-    const query = knex('Result as r').modify(
-      resultConditionsMet,
-      filterConditionExample2,
-      { result: 'r' }
-    )
+    const query = knex('Result as r').modify(resultConditionsMet, filterConditionExample2, { result: 'r' })
     assert.include(
       query.toString(),
       "(`a`.`externalId` = 'assayBdMgitGnd' and (`rc1`.`externalId` in ('Success', 'Unknown') or `rc2`.`externalId` in ('Success', 'Unknown')))"

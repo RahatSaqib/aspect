@@ -10,27 +10,20 @@ const types = {
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
   DEVICE_MAINTENANCE_RESOLVED: 'DEVICE_MAINTENANCE_RESOLVED',
   DEVICE_MAINTENANCE_STATUS_LOGGED: 'DEVICE_MAINTENANCE_STATUS_LOGGED',
-  DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED:
-    'DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED',
+  DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED: 'DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED',
   DEVICE_MODULE_DISABLE_RECEIVED: 'DEVICE_MODULE_DISABLE_RECEIVED',
   DEVICE_INSTRUMENT_REPLACED: 'DEVICE_INSTRUMENT_REPLACED',
   DEVICE_UNUSED_MODULES: 'DEVICE_UNUSED_MODULES',
   HARDWARE_SYRINGE_STALL_ERROR: 'HARDWARE_SYRINGE_STALL_ERROR', // 2005
   HARDWARE_SYRINGE_PRESSURE_TOOHIGH: 'HARDWARE_SYRINGE_PRESSURE_TOOHIGH', // 2008
-  HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE:
-    'HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE', // 2026
-  HARDWARE_ULTRASONIC_HORN_TUNING_ERROR:
-    'HARDWARE_ULTRASONIC_HORN_TUNING_ERROR', // 2032
+  HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE: 'HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE', // 2026
+  HARDWARE_ULTRASONIC_HORN_TUNING_ERROR: 'HARDWARE_ULTRASONIC_HORN_TUNING_ERROR', // 2032
   HARDWARE_ULTRASONIC_HORN_FAILURE: 'HARDWARE_ULTRASONIC_HORN_FAILURE', // 2035
-  HARDWARE_CARTRIDGE_INTEGRITY_TEST_FAILURE:
-    'HARDWARE_CARTRIDGE_INTEGRITY_TEST_FAILURE', // 2037
-  HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR:
-    'HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR', // 2096
-  HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR_2:
-    'HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR_2', // 2097
+  HARDWARE_CARTRIDGE_INTEGRITY_TEST_FAILURE: 'HARDWARE_CARTRIDGE_INTEGRITY_TEST_FAILURE', // 2037
+  HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR: 'HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR', // 2096
+  HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR_2: 'HARDWARE_ASSAY_SPECIFIC_TERMINATION_ERROR_2', // 2097
   HARDWARE_MODULE_WAS_RESET: 'HARDWARE_MODULE_WAS_RESET', // 2126
-  HARDWARE_POWER_SUPPLY_VOLTAGE_OUT_OF_RANGE:
-    'HARDWARE_POWER_SUPPLY_VOLTAGE_OUT_OF_RANGE', // 4008
+  HARDWARE_POWER_SUPPLY_VOLTAGE_OUT_OF_RANGE: 'HARDWARE_POWER_SUPPLY_VOLTAGE_OUT_OF_RANGE', // 4008
   HARDWARE_TEMPERATURE_ERRORS: 'HARDWARE_TEMPERATURE_ERRORS', // 4017
 }
 
@@ -96,9 +89,7 @@ function deviceMaintenance(deviceId, options) {
  */
 function deviceMaintenanceResolved(deviceId) {
   if (!deviceId) {
-    throw new Error(
-      'Must specify deviceId for notify deviceMaintenanceResolved'
-    )
+    throw new Error('Must specify deviceId for notify deviceMaintenanceResolved')
   }
   return {
     type: types.DEVICE_MAINTENANCE_RESOLVED,
@@ -187,9 +178,7 @@ function deviceHasNewResults(deviceId) {
  */
 function deviceModuleDisabled(device, moduleSerial, disabledOn) {
   if (!device || !moduleSerial || !disabledOn) {
-    throw new Error(
-      'Must specify deviceId, moduleSerial and disabledOn and for deviceModuleDisable'
-    )
+    throw new Error('Must specify deviceId, moduleSerial and disabledOn and for deviceModuleDisable')
   }
   return {
     type: types.DEVICE_MODULE_DISABLE_RECEIVED,
@@ -224,17 +213,9 @@ function deviceModuleUnused(deviceId) {
  */
 function deviceInstrumentReplaced(device, options) {
   if (!device && !options) {
-    throw new Error(
-      'Must specify device and options for deviceInstrumentReplaced'
-    )
+    throw new Error('Must specify device and options for deviceInstrumentReplaced')
   }
-  const issueProps = _.pick(device, [
-    'deviceId',
-    'siteId',
-    'geographyId',
-    'partnerId',
-    'resultId',
-  ])
+  const issueProps = _.pick(device, ['deviceId', 'siteId', 'geographyId', 'partnerId', 'resultId'])
   return {
     ...issueProps,
     type: types.DEVICE_INSTRUMENT_REPLACED,
@@ -250,9 +231,7 @@ function deviceInstrumentReplaced(device, options) {
  */
 function deviceMaintenanceStatusLogged(deviceMaintenanceStatusLogId) {
   if (!deviceMaintenanceStatusLogId) {
-    throw new Error(
-      'Must specify deviceMaintenanceStatusLogId for deviceMaintenanceStatusLogged'
-    )
+    throw new Error('Must specify deviceMaintenanceStatusLogId for deviceMaintenanceStatusLogged')
   }
   return {
     type: types.DEVICE_MAINTENANCE_STATUS_LOGGED,
@@ -282,15 +261,8 @@ function logDeviceMaintenanceStatus(today = null) {
  * @param options - parameters for the hardware error
  */
 function deviceHardwareError(device, resultErrorCode, options) {
-  if (
-    !device ||
-    !resultErrorCode ||
-    !options ||
-    !hardwareErrorActions[resultErrorCode]
-  ) {
-    throw new Error(
-      'Must specify device, resultErrorCode and options for deviceHardwareError'
-    )
+  if (!device || !resultErrorCode || !options || !hardwareErrorActions[resultErrorCode]) {
+    throw new Error('Must specify device, resultErrorCode and options for deviceHardwareError')
   }
   const { id: deviceId, siteId, geographyId, partnerId } = device
   return {

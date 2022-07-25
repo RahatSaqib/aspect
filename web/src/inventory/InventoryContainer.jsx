@@ -51,18 +51,12 @@ export const InventoryContainer = ({ navigate, location }) => {
         >
           <Tab
             label={tabsConfig.supplies.label}
-            className={cssClasses(
-              'tabs__tab',
-              currentTabStyle('supplies', activeTab)
-            )}
+            className={cssClasses('tabs__tab', currentTabStyle('supplies', activeTab))}
             value={tabsConfig.supplies.path}
           />
           <Tab
             label={tabsConfig.inventoryLog.label}
-            className={cssClasses(
-              'tabs__tab',
-              currentTabStyle('log', activeTab)
-            )}
+            className={cssClasses('tabs__tab', currentTabStyle('log', activeTab))}
             value={tabsConfig.inventoryLog.path}
           />
         </Tabs>

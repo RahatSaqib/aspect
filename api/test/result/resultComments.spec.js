@@ -27,11 +27,7 @@ describe('Result Comments', () => {
     await context.createDeviceWithResult()
     resultId = context.resultId
 
-    clinicianAccessToken = await getAccessToken(
-      'clinician',
-      'test07',
-      'Mocha web'
-    )
+    clinicianAccessToken = await getAccessToken('clinician', 'test07', 'Mocha web')
     adminAccessToken = await getAccessToken('admin', 'test07', 'Mocha web')
   })
   after(async () => {
@@ -70,9 +66,7 @@ describe('Result Comments', () => {
   })
 
   it('Should fail on retrieving comments of unknown resultId', async () => {
-    const res = await server
-      .get(`/api/result/result-all-notes/99999999`)
-      .set('Authorization', `Bearer ${shared.token}`)
+    const res = await server.get(`/api/result/result-all-notes/99999999`).set('Authorization', `Bearer ${shared.token}`)
 
     assert.equal(res.status, 404) // Not Found
   })

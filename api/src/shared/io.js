@@ -127,10 +127,7 @@ async function generateExcelFile(props) {
   props.populateData(workbook)
 
   const dir = getExportDirectory() // get path for export directory
-  const ok = await writeExcelFile(
-    `${dir.full}/${props.outputFileName}`,
-    workbook
-  )
+  const ok = await writeExcelFile(`${dir.full}/${props.outputFileName}`, workbook)
   return { ok, url: `${dir.url}/${props.outputFileName}`, message }
 }
 
@@ -233,10 +230,7 @@ function getContentType(fileExt) {
 }
 
 // ----------------------------------------------------------------------------------------------
-function getTemplateFilePath(
-  templateFolderPath,
-  { lang, langDefault = LANG_DEFAULT, countryAbbreviation }
-) {
+function getTemplateFilePath(templateFolderPath, { lang, langDefault = LANG_DEFAULT, countryAbbreviation }) {
   const countryAbbreviationLo = countryAbbreviation?.toLowerCase()
   const baseFolderPath = `templates/${templateFolderPath}`
   let filePath = null
@@ -279,10 +273,7 @@ function getTemplateFilePath(
 }
 
 // ----------------------------------------------------------------------------------------------
-async function readTemplateFile(
-  templateFolderPath,
-  { lang, langDefault = LANG_DEFAULT, countryAbbreviation }
-) {
+async function readTemplateFile(templateFolderPath, { lang, langDefault = LANG_DEFAULT, countryAbbreviation }) {
   const { filePath, exists } = getTemplateFilePath(templateFolderPath, {
     lang,
     langDefault,

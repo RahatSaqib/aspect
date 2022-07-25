@@ -1,16 +1,7 @@
 const _ = require('lodash')
 
 const chai = require('chai')
-const {
-  addDays,
-  format,
-  isWeekend,
-  addMinutes,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-  parseISO,
-} = require('date-fns')
+const { addDays, format, isWeekend, addMinutes, subMonths, startOfMonth, endOfMonth, parseISO } = require('date-fns')
 const Promise = require('bluebird')
 const server = require('../utils/testUtils')
 
@@ -100,9 +91,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
     const countryAbbreviation = 'US'
 
-    ;[assayGeneXpertMtbRif] = [
-      await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name'),
-    ]
+    ;[assayGeneXpertMtbRif] = [await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name')]
 
     const device = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -138,17 +127,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
         weekDays.push(day)
       }
     }
-    const {
-      deviceId,
-      deviceName,
-      geographyId,
-      siteId,
-      siteName,
-      countryId,
-      stateId,
-      lgaId,
-      deviceType,
-    } = device
+    const { deviceId, deviceName, geographyId, siteId, siteName, countryId, stateId, lgaId, deviceType } = device
 
     // -----------------------------
     // add site tag 'Reportable Site'
@@ -183,10 +162,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     // reset all data tables affected in test
     await reset('ResultDownloadLog', initialState.resultDownloadLogId)
     await reset('ResultStatusLog', initialState.resultStatusLogId)
-    await reset(
-      'ResultTreatmentStatusLog',
-      initialState.resultTreatmentStatusLogId
-    )
+    await reset('ResultTreatmentStatusLog', initialState.resultTreatmentStatusLogId)
     await reset('Result', initialState.resultId)
     await reset('Sample', initialState.sampleId)
     await reset('SiteTag', initialState.tagId, 'tagId')
@@ -205,20 +181,15 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
     }
 
     const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
-    const { DiagnosticDevice: resultSourceDiagnosticId } =
-      await allResultSourceToId()
+    const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
     const resultTypePatientId = await resultTypeToId('Patient')
-    const {
-      Detected: resultCategoryDetectedId,
-      NotDetected: resultCategoryNotDetectedId,
-    } = await allResultCategoryToId()
+    const { Detected: resultCategoryDetectedId, NotDetected: resultCategoryNotDetectedId } =
+      await allResultCategoryToId()
     const resultStatusIds = await allResultStatusToId()
     const resultTreatmentStatusIds = await allResultTreatmentStatusToId()
 
     // get sites
-    const resSites = await server
-      .get('/api/site')
-      .set('Authorization', `Bearer ${shared.token}`)
+    const resSites = await server.get('/api/site').set('Authorization', `Bearer ${shared.token}`)
     assert.equal(resSites.status, 200)
     assert.typeOf(resSites.body, 'Object')
     assert.property(resSites.body, 'data')
@@ -248,9 +219,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
       // -----------------------------
       const resultElement = {
         ...auditFields,
-        externalId: `UQTB-${_.times(8, () =>
-          _.toUpper(_.random(36).toString(36))
-        ).join('')}`,
+        externalId: `UQTB-${_.times(8, () => _.toUpper(_.random(36).toString(36))).join('')}`,
         assayId: assayGeneXpertMtbRif.id,
         partnerId,
         geographyId,
@@ -388,15 +357,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
   // ------------------------------------------------------------------------
   const assertAllCounts = (
     site,
-    {
-      delivered,
-      notPossible,
-      notOnTreatment,
-      onTreatment,
-      requiresTreatment,
-      totalResults,
-      transferred,
-    }
+    { delivered, notPossible, notOnTreatment, onTreatment, requiresTreatment, totalResults, transferred }
   ) => {
     // 5 results inserted AND delivered, and 1 transferred away - but we count totals WITH transferred results
     assert.equal(site.delivered, delivered + 5)

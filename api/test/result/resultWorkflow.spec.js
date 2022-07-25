@@ -16,9 +16,7 @@ describe('Result Workflow Status Log', () => {
   describe('GET', () => {
     // TODO: Fails only eventually in Bamboo, works locally
     it.skip('should return a list of Result Workflow Status Logs (when using valid token)', async () => {
-      const res = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
       assert.property(res.body, 'data')

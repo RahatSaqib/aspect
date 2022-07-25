@@ -3,9 +3,7 @@ import PropTypes from 'prop-types'
 import * as Sentry from '@sentry/react'
 import IconProvider from '../IconProvider'
 
-const ErrorIcon = () => (
-  <IconProvider icon="FaExclamationCircle" className="errorBoundary__error" />
-)
+const ErrorIcon = () => <IconProvider icon="FaExclamationCircle" className="errorBoundary__error" />
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -42,11 +40,7 @@ class ErrorBoundary extends React.Component {
       )
     }
     if (!isDevelopment) {
-      return (
-        <Sentry.ErrorBoundary fallback={FallBackComponent}>
-          {children}
-        </Sentry.ErrorBoundary>
-      )
+      return <Sentry.ErrorBoundary fallback={FallBackComponent}>{children}</Sentry.ErrorBoundary>
     }
     return children
   }

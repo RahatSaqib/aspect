@@ -12,14 +12,9 @@ async function preProcessCreateDevice({ auth, payload }) {
   const device = await transact(async knex => {
     const hostId = _.get(payload, 'configuration.data.hostId', null)
     const countryCode = _.get(payload, 'configuration.data.country', null)
-    const deviceSerialNumber = _.get(
-      payload,
-      'configuration.data.deviceSerialNumber'
-    )
+    const deviceSerialNumber = _.get(payload, 'configuration.data.deviceSerialNumber')
     if (countryCode) {
-      const { partnerId } = await knex('DeviceApiKey')
-        .where({ token: auth.credentials.token })
-        .first('partnerId')
+      const { partnerId } = await knex('DeviceApiKey').where({ token: auth.credentials.token }).first('partnerId')
       const deviceDetails = {
         partnerId,
         hostId,
@@ -31,17 +26,12 @@ async function preProcessCreateDevice({ auth, payload }) {
         let matchingDevice = null
         if (matchingDevices.length > 1) {
           throw Boom.conflict(
-            `Cannot uniquely determine which device this request came from using ${JSON.stringify(
-              deviceDetails
-            )})`
+            `Cannot uniquely determine which device this request came from using ${JSON.stringify(deviceDetails)})`
           )
         } else if (matchingDevices.length === 1) {
           ;[matchingDevice] = matchingDevices
         }
-        await knex
-          .from('DeviceApiKey')
-          .where({ deviceId: matchingDevice.id })
-          .update({ deviceId: null, revoked: 1 })
+        await knex.from('DeviceApiKey').where({ deviceId: matchingDevice.id }).update({ deviceId: null, revoked: 1 })
 
         await knex
           .from('DeviceApiKey')

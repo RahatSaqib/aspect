@@ -3,16 +3,12 @@ module.exports = require('../utils').seed(seed, __filename)
 const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
+  const { id: partnerId } = await knex('Partner').where({ name: 'Myanmar' }).first()
 
   // check if this seed already ran
   const issueResolutionTrigger = await knex('IssueResolutionTrigger')
     .where({ partnerId })
-    .whereRaw(
-      'resolutionConditions->>"$.evaluationParameter" = "resolveIssueStockout"'
-    )
+    .whereRaw('resolutionConditions->>"$.evaluationParameter" = "resolveIssueStockout"')
     .first()
   if (issueResolutionTrigger) {
     return
@@ -26,9 +22,7 @@ async function seed(knex) {
   // helper function to insert into IssueResolutionTrigger if no record with specified issueTypeId and partnerId
   const addIssueResolutionTrigger = async data => {
     const { issueTypeId, partnerId } = data
-    const item = await knex('IssueResolutionTrigger')
-      .where({ issueTypeId, partnerId })
-      .first()
+    const item = await knex('IssueResolutionTrigger').where({ issueTypeId, partnerId }).first()
 
     if (!item) {
       await knex('IssueResolutionTrigger').insert(data)

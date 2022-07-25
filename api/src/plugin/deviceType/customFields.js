@@ -4,26 +4,14 @@ const { normalizePhoneNumber } = require('../../shared/phoneNormalization')
 const { knex } = require('../../db')
 const { createFormObject } = require('../../forms/service')
 
-async function mapPayloadWithCustomFields(
-  payload,
-  countryCode,
-  partnerId,
-  assayId,
-  diseaseId
-) {
+async function mapPayloadWithCustomFields(payload, countryCode, partnerId, assayId, diseaseId) {
   const queryForm = await knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .join(
-      'FormDefinitionSchema as fschema',
-      'fd.formDefinitionSchemaId',
-      'fschema.id'
-    )
+    .join('FormDefinitionSchema as fschema', 'fd.formDefinitionSchemaId', 'fschema.id')
     .where('fd.partnerId', partnerId)
     .modify(builder => {
-      if (assayId)
-        builder.whereNull('fd.assayId').orWhere('fd.assayId', assayId)
-      if (diseaseId)
-        builder.whereNull('fd.diseaseId').orWhere('fd.diseaseId', diseaseId)
+      if (assayId) builder.whereNull('fd.assayId').orWhere('fd.assayId', assayId)
+      if (diseaseId) builder.whereNull('fd.diseaseId').orWhere('fd.diseaseId', diseaseId)
     })
     .where('ft.externalId', 'gxConnectForm')
     .distinct(
@@ -31,9 +19,7 @@ async function mapPayloadWithCustomFields(
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw(
-        "REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName"
-      )
+      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
 
   const forms = createFormObject(queryForm)

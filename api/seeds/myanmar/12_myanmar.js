@@ -1,14 +1,10 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
-const {
-  updateDataCategoryNotificationTypeForRO,
-} = require('../dataCategoryLow')
+const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
 
 async function seed(knex) {
-  const widget = await knex('DashboardWidget')
-    .where('title', 'children')
-    .first('id')
+  const widget = await knex('DashboardWidget').where('title', 'children').first('id')
 
   if (widget == null) {
     return
@@ -20,13 +16,9 @@ async function seed(knex) {
 }
 
 async function removeChildrenDashboardTarget(knex) {
-  const { id: childrenWidgetId } = await knex('DashboardWidget')
-    .where('title', 'Children')
-    .first('id')
+  const { id: childrenWidgetId } = await knex('DashboardWidget').where('title', 'Children').first('id')
 
-  await knex('JobFunctionDashboardWidget')
-    .where('widgetId', childrenWidgetId)
-    .delete()
+  await knex('JobFunctionDashboardWidget').where('widgetId', childrenWidgetId).delete()
 
   await knex('DashboardWidgetTarget').where('targetToken', 'Children').delete()
 

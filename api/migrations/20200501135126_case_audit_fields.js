@@ -18,22 +18,8 @@ async function up(knex) {
   }
 
   await knex.schema.alterTable('Case', async tblCase => {
-    tblCase
-      .integer('createdBy')
-      .unsigned()
-      .index()
-      .notNullable()
-      .references('id')
-      .inTable('User')
-      .alter()
-    tblCase
-      .integer('updatedBy')
-      .unsigned()
-      .index()
-      .notNullable()
-      .references('id')
-      .inTable('User')
-      .alter()
+    tblCase.integer('createdBy').unsigned().index().notNullable().references('id').inTable('User').alter()
+    tblCase.integer('updatedBy').unsigned().index().notNullable().references('id').inTable('User').alter()
   })
 }
 

@@ -1,15 +1,6 @@
 import React from 'react'
 import isNil from 'lodash/isNil'
-import {
-  array,
-  bool,
-  func,
-  number,
-  object,
-  shape,
-  string,
-  oneOfType,
-} from 'prop-types'
+import { array, bool, func, number, object, shape, string, oneOfType } from 'prop-types'
 import { GoogleMap } from '@react-google-maps/api'
 import noop from 'lodash/noop'
 
@@ -19,14 +10,10 @@ import GooglePin from './Markers/GooglePin'
  * Adds AspectMaps as a Google Maps component
  */
 
-const AspectMap = ({
-  config: { containerStyle, fitMarkers, markers: markersConfig, options, zoom },
-}) => {
+const AspectMap = ({ config: { containerStyle, fitMarkers, markers: markersConfig, options, zoom } }) => {
   const { data } = markersConfig
 
-  const filteredData = data?.filter(
-    ({ lat, lng }) => !isNil(lat) && !isNil(lng)
-  )
+  const filteredData = data?.filter(({ lat, lng }) => !isNil(lat) && !isNil(lng))
 
   const fitBounds = map => {
     const bounds = new window.google.maps.LatLngBounds()
@@ -46,18 +33,16 @@ const AspectMap = ({
       mapContainerStyle={containerStyle}
       zoom={zoom}
     >
-      {filteredData?.map(
-        ({ lat, lng, color, id, maintenanceStatusI18nKey, name }) => (
-          <GooglePin
-            id={id}
-            key={id}
-            position={{ lat, lng }}
-            config={markersConfig}
-            color={color}
-            info={{ maintenanceStatusI18nKey, name }}
-          />
-        )
-      )}
+      {filteredData?.map(({ lat, lng, color, id, maintenanceStatusI18nKey, name }) => (
+        <GooglePin
+          id={id}
+          key={id}
+          position={{ lat, lng }}
+          config={markersConfig}
+          color={color}
+          info={{ maintenanceStatusI18nKey, name }}
+        />
+      ))}
     </GoogleMap>
   )
 }

@@ -78,17 +78,9 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
           const store = require('../../store').default
           store.dispatch(setLastServerResponseTime(new Date(date)))
         }
-        if (
-          contentDisposition &&
-          contentDisposition.indexOf('attachment;') === 0
-        ) {
+        if (contentDisposition && contentDisposition.indexOf('attachment;') === 0) {
           const str = 'filename='
-          const fileName = trim(
-            contentDisposition.substr(
-              contentDisposition.indexOf(str) + str.length
-            ),
-            ' ;'
-          )
+          const fileName = trim(contentDisposition.substr(contentDisposition.indexOf(str) + str.length), ' ;')
           return {
             blob: resp.blob(), // <--- blob() returns Promise
             fileName,
@@ -104,8 +96,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         // HTTP Status !== 2xx
         return resp.json().then(resp => {
           const error = new APIApplicationError(resp || {}, resp.message)
-          error.statusCode =
-            resp.statusCode /* HAPI always responds with statusCode */
+          error.statusCode = resp.statusCode /* HAPI always responds with statusCode */
           throw error
         })
       },
@@ -113,14 +104,8 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
     )
     .catch(err => {
       const store = require('../../store').default
-      const customErrorNotifications = get(
-        options,
-        `errorNotifications.customErrorNotifications.${err.statusCode}`
-      )
-      if (
-        customErrorNotifications &&
-        typeof customErrorNotifications === 'function'
-      ) {
+      const customErrorNotifications = get(options, `errorNotifications.customErrorNotifications.${err.statusCode}`)
+      if (customErrorNotifications && typeof customErrorNotifications === 'function') {
         const customErrorMessage = customErrorNotifications(err.data.extraData)
         store.dispatch(showError(customErrorMessage, err))
         return Promise.reject(err)
@@ -155,9 +140,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
             customErrorNotification = errorNotification(err.data, true)
           }
           // Maybe dont dispatch always the message? in case we need to do something else with the response.
-          store.dispatch(
-            showError(customErrorNotification || errorNotification, err)
-          )
+          store.dispatch(showError(customErrorNotification || errorNotification, err))
         }
       }
       return Promise.reject(err)

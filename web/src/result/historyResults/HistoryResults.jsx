@@ -14,10 +14,7 @@ import DataTableHead from '../../components/shared/tableHead'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 
 import cssStyles from './HistoryResults.css'
 
@@ -53,9 +50,7 @@ export const Results = ({
       </header>
       <div>
         <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
+        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
         {!items.currentIdList.isEmpty() && (
           <Table className={cssClasses('ResultDataTable')}>
             <DataTableHead
@@ -69,31 +64,17 @@ export const Results = ({
               {items.currentIdList
                 .map(id => items.byId.get(id))
                 .map(result => (
-                  <TableRow
-                    key={result.get('id')}
-                    onClick={onRowClick}
-                    data-result-id={result.get('id')}
-                  >
+                  <TableRow key={result.get('id')} onClick={onRowClick} data-result-id={result.get('id')}>
                     {columns &&
                       map(columns, elem => (
-                        <TableCell
-                          key={`${result.get('id')}-${elem.key}`}
-                          hiddenOn={elem.hiddenOn || 'sm'}
-                        >
+                        <TableCell key={`${result.get('id')}-${elem.key}`} hiddenOn={elem.hiddenOn || 'sm'}>
                           {elem.tooltip && result.get(elem.key) && (
-                            <Tooltip
-                              title={result.get(elem.tooltip)}
-                              disableInteractive
-                            >
-                              <PermIdentity
-                                className={styles[`${result.get(elem.key)}`]}
-                              />
+                            <Tooltip title={result.get(elem.tooltip)} disableInteractive>
+                              <PermIdentity className={styles[`${result.get(elem.key)}`]} />
                             </Tooltip>
                           )}
                           {!elem.tooltip &&
-                            (elem.formatter
-                              ? elem.formatter(result.get(elem.key))
-                              : result.get(elem.key))}
+                            (elem.formatter ? elem.formatter(result.get(elem.key)) : result.get(elem.key))}
                         </TableCell>
                       ))}
                   </TableRow>

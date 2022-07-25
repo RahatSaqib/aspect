@@ -102,18 +102,12 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
       dependencies: ['deviceLevelId'],
       placeholder: formik => {
         const { deviceLevelId } = formik.values
-        return deviceLevelId
-          ? formatMessage(
-              messages[`Select${capitalize(deviceLevelId)}Placeholder`]
-            )
-          : '-'
+        return deviceLevelId ? formatMessage(messages[`Select${capitalize(deviceLevelId)}Placeholder`]) : '-'
       },
     },
     label: formik => {
       const { deviceLevelId } = formik.values
-      return deviceLevelId
-        ? formatMessage(messages[`Select${capitalize(deviceLevelId)}Title`])
-        : '-'
+      return deviceLevelId ? formatMessage(messages[`Select${capitalize(deviceLevelId)}Title`]) : '-'
     },
     visibleIf: values => {
       const { deviceLevelId } = values
@@ -157,11 +151,7 @@ function buildFromThisDevice(formatMessage) {
           },
           {
             id: 'areaItemsState',
-            ...sharedAreaItemsConfig(
-              formatMessage,
-              stateSelectOptions,
-              'state'
-            ),
+            ...sharedAreaItemsConfig(formatMessage, stateSelectOptions, 'state'),
           },
           {
             id: 'areaItemsLGA',
@@ -234,8 +224,7 @@ const getSectionsBase = formatMessage => [
               queryKey: ASSAY_LIST.KEY,
               normalizeLoadedData: response => {
                 const { ok, data } = response
-                const options =
-                  ok === true ? getBaseData(data, formatMessage, messages) : []
+                const options = ok === true ? getBaseData(data, formatMessage, messages) : []
                 return options
               },
               placeholder: formatMessage(messages.assayPlaceholder),
@@ -252,25 +241,18 @@ const getSectionsBase = formatMessage => [
               queryKey: ASSAY_LIST.KEY,
               normalizeLoadedData: (response, formik, subRowIndex) => {
                 let options = []
-                const { assayId: selectedAssayId } =
-                  formik.values.result[subRowIndex]
+                const { assayId: selectedAssayId } = formik.values.result[subRowIndex]
                 if (selectedAssayId) {
                   const { ok, data } = response
                   if (ok === true) {
-                    const selectedAssay = data.find(
-                      ({ externalId }) => externalId === selectedAssayId
-                    )
-                    const { resultCategories = [], resultCategoryGroups } =
-                      selectedAssay || {}
+                    const selectedAssay = data.find(({ externalId }) => externalId === selectedAssayId)
+                    const { resultCategories = [], resultCategoryGroups } = selectedAssay || {}
                     const scope =
-                      isArray(resultCategoryGroups) &&
-                      !isEmpty(resultCategoryGroups)
+                      isArray(resultCategoryGroups) && !isEmpty(resultCategoryGroups)
                         ? 'ResultCategoryGroups'
                         : 'ResultCategories'
                     options = getBaseData(
-                      scope === 'ResultCategoryGroups'
-                        ? resultCategoryGroups
-                        : resultCategories,
+                      scope === 'ResultCategoryGroups' ? resultCategoryGroups : resultCategories,
                       formatMessage,
                       messages
                     )
@@ -460,10 +442,7 @@ function buildJobFunctionsRows(jobFunctions) {
                   },
                   label: jf.name,
                   onAfterChange: formik => {
-                    formik.setFieldTouched(
-                      `jobFunctions[${index}].checked`,
-                      true
-                    )
+                    formik.setFieldTouched(`jobFunctions[${index}].checked`, true)
                   },
                 },
               ],
@@ -483,9 +462,7 @@ function buildJobFunctionsRows(jobFunctions) {
                       const { ok, data } = response
                       let options = []
                       if (ok === true) {
-                        let personTags = union(
-                          ...data.map(({ tagDetails }) => tagDetails)
-                        )
+                        let personTags = union(...data.map(({ tagDetails }) => tagDetails))
                         personTags = uniqWith(personTags, isEqual)
                         options = personTags.map(({ tagName, tagId }) => ({
                           label: tagName,
@@ -497,10 +474,7 @@ function buildJobFunctionsRows(jobFunctions) {
                     isMulti: true,
                   },
                   classNames: {
-                    itemContainer: cssClasses(
-                      'max-width-100pc',
-                      'tags-container'
-                    ),
+                    itemContainer: cssClasses('max-width-100pc', 'tags-container'),
                     controlContainer: cssClasses('full-width-100pc'),
                     item: cssClasses('full-width-100pc'),
                   },
@@ -618,12 +592,7 @@ function buildSendToPersons(formatMessage) {
   }
 }
 
-const getFormConfig = (
-  formatMessage,
-  _notificationType,
-  jobFunctions,
-  isEdit
-) => {
+const getFormConfig = (formatMessage, _notificationType, jobFunctions, isEdit) => {
   const validationBase = getBaseValidation(formatMessage, messages)
   const fromThisDevice = buildFromThisDevice(formatMessage)
   const sendToPersons = buildSendToPersons(formatMessage)

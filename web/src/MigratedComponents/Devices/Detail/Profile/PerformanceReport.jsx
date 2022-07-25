@@ -22,22 +22,12 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
         timeZone: 'UTC',
       })
       item.period = monthName
-      item.exceededErrorRate =
-        item.errorRate > payload.errorRateAvg
-          ? item.errorRate - payload.errorRateAvg
-          : 0
-      item.errorRate =
-        item.errorRate > payload.errorRateAvg
-          ? payload.errorRateAvg
-          : item.errorRate
+      item.exceededErrorRate = item.errorRate > payload.errorRateAvg ? item.errorRate - payload.errorRateAvg : 0
+      item.errorRate = item.errorRate > payload.errorRateAvg ? payload.errorRateAvg : item.errorRate
       item.exceededUtilizationRate =
-        item.utilizationRate > payload.utilizationRateAvg
-          ? item.utilizationRate - payload.utilizationRateAvg
-          : 0
+        item.utilizationRate > payload.utilizationRateAvg ? item.utilizationRate - payload.utilizationRateAvg : 0
       item.utilizationRate =
-        item.utilizationRate > payload.utilizationRateAvg
-          ? payload.utilizationRateAvg
-          : item.utilizationRate
+        item.utilizationRate > payload.utilizationRateAvg ? payload.utilizationRateAvg : item.utilizationRate
     })
     maxUtilizationRate = payload.data.reduce(
       (prev, current) =>
@@ -48,9 +38,7 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
     )
     maxErrorRate = payload.data.reduce(
       (prev, current) =>
-        prev > current.errorRate + current.exceededErrorRate
-          ? prev
-          : current.errorRate + current.exceededErrorRate,
+        prev > current.errorRate + current.exceededErrorRate ? prev : current.errorRate + current.exceededErrorRate,
       payload.errorRateAvg
     )
 
@@ -92,10 +80,7 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
         <p data-panel-title>{formatMessage(messages.performanceTitle)}</p>
         <div data-graph-container>
           {data && data[0].utilizationRate !== null && (
-            <div
-              className={cssClasses('Graph_Container')}
-              data-utilization-graph
-            >
+            <div className={cssClasses('Graph_Container')} data-utilization-graph>
               {data && (
                 <div>
                   <p>{formatMessage(messages.utilizationRate)}</p>

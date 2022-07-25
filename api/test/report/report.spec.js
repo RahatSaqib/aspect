@@ -58,21 +58,12 @@ describe('Global reports', () => {
 
           // special header Content-Disposition for generated Excel file is used to specify file name
           assert.typeOf(res.headers['content-disposition'], 'string')
-          assert.equal(
-            res.headers['content-disposition'].includes('attachment'),
-            true
-          )
-          assert.equal(
-            res.headers['content-disposition'].includes('filename='),
-            true
-          )
+          assert.equal(res.headers['content-disposition'].includes('attachment'), true)
+          assert.equal(res.headers['content-disposition'].includes('filename='), true)
 
           // Content-Type should match Excel file with extension .xlsx
           assert.typeOf(res.headers['content-type'], 'string')
-          assert.equal(
-            res.headers['content-type'],
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          )
+          assert.equal(res.headers['content-type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         })
     })
   })
@@ -103,9 +94,7 @@ describe('Global reports', () => {
 
     // helper func which runs func and return same list of devices as for report
     const getDeviceForReport = async (userName, deviceId) => {
-      const {
-        getDeviceCalibrationsForReport,
-      } = require('../../src/device/service')
+      const { getDeviceCalibrationsForReport } = require('../../src/device/service')
       const auth = { credentials: { name: userName } }
       const { ok, total, data } = await getDeviceCalibrationsForReport(auth, {})
       assert.isTrue(ok)

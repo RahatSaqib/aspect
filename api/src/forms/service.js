@@ -37,23 +37,16 @@ const getCustomFields = async (partnerId, deviceId) => {
     .join('Device as d', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where('d.id', deviceId)
-    .select(
-      knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId')
-    )
+    .select(knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId'))
     .groupBy('fd.id')
 
   let forms = { fields: [] }
   _.each(formQuery, form => {
-    const fields = _.map(
-      formDictionary[form.jsonSchemaFileName].fields,
-      field => ({
-        ...field,
-        assayExternalId: form.assayExternalId
-          ? form.assayExternalId.split(',')
-          : [],
-        diseaseId: form.diseaseId,
-      })
-    )
+    const fields = _.map(formDictionary[form.jsonSchemaFileName].fields, field => ({
+      ...field,
+      assayExternalId: form.assayExternalId ? form.assayExternalId.split(',') : [],
+      diseaseId: form.diseaseId,
+    }))
     forms = { fields: _.concat(forms.fields, fields) }
   })
 
@@ -62,11 +55,7 @@ const getCustomFields = async (partnerId, deviceId) => {
 function getFormsBaseQuery(partnerId, query) {
   const queryForm = knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .join(
-      'FormDefinitionSchema as fschema',
-      'fd.formDefinitionSchemaId',
-      'fschema.id'
-    )
+    .join('FormDefinitionSchema as fschema', 'fd.formDefinitionSchemaId', 'fschema.id')
     .where('fd.partnerId', partnerId)
     .modify(filterParams, query, {
       assayId: 'fd.assayId',
@@ -79,9 +68,7 @@ function getFormsBaseQuery(partnerId, query) {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw(
-        "REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName"
-      )
+      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
   return queryForm
 }

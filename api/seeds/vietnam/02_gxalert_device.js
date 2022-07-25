@@ -5,12 +5,7 @@ const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const customFieldsFromGxAlert = require('./fixtures/customFieldsFromGxAlert.json')
 const geography = require('./fixtures/geography.json')
 const sitesFromGxAlert = require('./fixtures/sitesFromGxAlert.json')
-const {
-  adminUserName,
-  partnerName,
-  serverUrl,
-  deviceApiToken,
-} = require('./fixtures/partnerData')
+const { adminUserName, partnerName, serverUrl, deviceApiToken } = require('./fixtures/partnerData')
 
 const { baseGxAlertMigration, upsertDashboardWidgets } = require('../common')
 const partnerData = require('./fixtures/partnerData')
@@ -38,9 +33,7 @@ async function seed(knex) {
     partnerData
   )
 
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
 
   await upsertDashboardWidgets(knex, partnerId)
 }

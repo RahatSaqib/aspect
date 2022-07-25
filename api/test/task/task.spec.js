@@ -19,9 +19,7 @@ describe('Task Routes', () => {
         const statusId = 3
 
         const res = await server
-          .get(
-            `${path}?alertTemplateId=${alertTemplateId}&date=${date}&categoryId=${statusId}`
-          )
+          .get(`${path}?alertTemplateId=${alertTemplateId}&date=${date}&categoryId=${statusId}`)
           .set('Authorization', `Bearer ${shared.token}`)
         assert.isNotNull(res.body.data)
         assert.isAbove(res.body.data.length, 1)
@@ -45,9 +43,7 @@ describe('Task Routes', () => {
     describe('GET', () => {
       it.skip('should return an alert and issues by specific id', async () => {
         const taskId = context.getMessageId()
-        const res = await server
-          .get(`${path}${taskId}`)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(`${path}${taskId}`).set('Authorization', `Bearer ${shared.token}`)
 
         assert.typeOf(res.body, 'object')
         assert.isNotNull(res.body)

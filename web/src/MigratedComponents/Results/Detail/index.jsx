@@ -52,15 +52,7 @@ const AspectResultDetail = () => {
     submitResult({ values, id })
   }
 
-  return (
-    <Fragment>
-      {isNew ? (
-        <Create onSubmit={onSubmit} />
-      ) : (
-        <Update resultId={id} onSubmit={onSubmit} />
-      )}
-    </Fragment>
-  )
+  return <Fragment>{isNew ? <Create onSubmit={onSubmit} /> : <Update resultId={id} onSubmit={onSubmit} />}</Fragment>
 }
 
 export default AspectResultDetail

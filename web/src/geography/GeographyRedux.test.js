@@ -2,12 +2,7 @@ import Immutable from 'immutable'
 import map from 'lodash/map'
 import find from 'lodash/find'
 import sinon from 'sinon'
-import geography, {
-  types,
-  LazyLoadItems,
-  LazyLoadParent,
-  LazyLoadChild,
-} from './GeographyRedux'
+import geography, { types, LazyLoadItems, LazyLoadParent, LazyLoadChild } from './GeographyRedux'
 
 describe('geography reducer', () => {
   describe('initial state', () => {
@@ -18,16 +13,10 @@ describe('geography reducer', () => {
     })
 
     it("should contain an empty LazyLoadItems object that isn't loading and has not been refreshed yet", () => {
-      expect(initialState.countriesForLocationSelector).toBeInstanceOf(
-        Immutable.Record
-      )
+      expect(initialState.countriesForLocationSelector).toBeInstanceOf(Immutable.Record)
       expect(initialState.countriesForLocationSelector.loading).toBe(false)
-      expect(
-        initialState.countriesForLocationSelector.lastRefreshed
-      ).not.toBeDefined()
-      expect(initialState.countriesForLocationSelector.items).toBeInstanceOf(
-        Immutable.List
-      )
+      expect(initialState.countriesForLocationSelector.lastRefreshed).not.toBeDefined()
+      expect(initialState.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
       expect(initialState.countriesForLocationSelector.items.size).toEqual(0)
     })
   })
@@ -69,9 +58,7 @@ describe('geography reducer', () => {
           const countryIds = map(countriesReceived, 'id')
           const countryNames = map(countriesReceived, 'name')
 
-          expect(state.countriesForLocationSelector.items).toBeInstanceOf(
-            Immutable.List
-          )
+          expect(state.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
           state.countriesForLocationSelector.items.forEach(countryRecord => {
             expect(countryIds).toContain(countryRecord.id)
             expect(countryNames).toContain(countryRecord.name)
@@ -114,9 +101,7 @@ describe('geography reducer', () => {
           const countryIds = map(countriesReceived, 'id')
           const countryNames = map(countriesReceived, 'name')
 
-          expect(state.countriesForLocationSelector.items).toBeInstanceOf(
-            Immutable.List
-          )
+          expect(state.countriesForLocationSelector.items).toBeInstanceOf(Immutable.List)
           state.countriesForLocationSelector.items.forEach(countryRecord => {
             expect(countryIds).toContain(countryRecord.id)
             expect(countryNames).toContain(countryRecord.name)
@@ -128,9 +113,7 @@ describe('geography reducer', () => {
             if (countryReceived.states) {
               const stateIds = map(countryReceived.states, 'id')
               const stateNames = map(countryReceived.states, 'name')
-              expect(countryRecord.children.items).toBeInstanceOf(
-                Immutable.List
-              )
+              expect(countryRecord.children.items).toBeInstanceOf(Immutable.List)
               expect(countryRecord.children.lastRefreshed).toEqual(now)
               countryRecord.children.items.forEach(stateRecord => {
                 expect(stateIds).toContain(stateRecord.id)
@@ -143,9 +126,7 @@ describe('geography reducer', () => {
                 if (stateReceived.lgas) {
                   const lgaIds = map(stateReceived.lgas, 'id')
                   const lgaNames = map(stateReceived.lgas, 'name')
-                  expect(stateRecord.children.items).toBeInstanceOf(
-                    Immutable.List
-                  )
+                  expect(stateRecord.children.items).toBeInstanceOf(Immutable.List)
                   expect(stateRecord.children.lastRefreshed).toEqual(now)
                   stateRecord.children.items.forEach(lgaRecord => {
                     expect(lgaIds).toContain(lgaRecord.id)
@@ -195,10 +176,7 @@ describe('geography reducer', () => {
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId,
           })
-          const selectedCountry =
-            newState.countriesForLocationSelector.items.find(
-              val => val.id === selectedCountryId
-            )
+          const selectedCountry = newState.countriesForLocationSelector.items.find(val => val.id === selectedCountryId)
 
           expect(selectedCountry.children.loading).toBe(true)
         })
@@ -240,14 +218,10 @@ describe('geography reducer', () => {
             countries,
             lastRefreshed: now,
           })
-          selectedCountry =
-            initialState.countriesForLocationSelector.items.find(
-              country => country.id === selectedCountryId
-            )
-          indexOfSelectedCountry =
-            initialState.countriesForLocationSelector.items.indexOf(
-              selectedCountry
-            )
+          selectedCountry = initialState.countriesForLocationSelector.items.find(
+            country => country.id === selectedCountryId
+          )
+          indexOfSelectedCountry = initialState.countriesForLocationSelector.items.indexOf(selectedCountry)
           initialState = geography(initialState, {
             type: types.REQUEST_STATES_FOR_LOCATION_SELECTOR,
             selectedCountryId,
@@ -256,13 +230,7 @@ describe('geography reducer', () => {
 
         it('should show that states for the selected country are not loading anymore and update the last refreshed date', () => {
           expect(
-            initialState.getIn([
-              'countriesForLocationSelector',
-              'items',
-              indexOfSelectedCountry,
-              'children',
-              'loading',
-            ])
+            initialState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'loading'])
           ).toBe(true)
           expect(
             initialState.getIn([
@@ -281,13 +249,7 @@ describe('geography reducer', () => {
           })
 
           expect(
-            newState.getIn([
-              'countriesForLocationSelector',
-              'items',
-              indexOfSelectedCountry,
-              'children',
-              'loading',
-            ])
+            newState.getIn(['countriesForLocationSelector', 'items', indexOfSelectedCountry, 'children', 'loading'])
           ).toBe(false)
           expect(
             newState.getIn([
@@ -380,9 +342,7 @@ describe('geography reducer', () => {
               if (stateReceived.lgas) {
                 const lgaIds = map(stateReceived.lgas, 'id')
                 const lgaNames = map(stateReceived.lgas, 'name')
-                expect(stateRecord.children.items).toBeInstanceOf(
-                  Immutable.List
-                )
+                expect(stateRecord.children.items).toBeInstanceOf(Immutable.List)
                 expect(stateRecord.children.lastRefreshed).toEqual(now)
                 stateRecord.children.items.forEach(lgaRecord => {
                   expect(lgaIds).toContain(lgaRecord.id)
@@ -424,12 +384,7 @@ describe('geography reducer', () => {
             countries: countriesReceived,
             lastRefreshed: now,
           })
-          expect(
-            stateWithCountriesLoaded.getIn([
-              'countriesForLocationSelector',
-              'items',
-            ]).size
-          ).toEqual(2)
+          expect(stateWithCountriesLoaded.getIn(['countriesForLocationSelector', 'items']).size).toEqual(2)
           const newState = geography(stateWithCountriesLoaded, {
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId: 1,
@@ -466,13 +421,10 @@ describe('geography reducer', () => {
             selectedCountryId,
             selectedStateId,
           })
-          const selectedCountry =
-            newState.countriesForLocationSelector.items.find(
-              country => country.id === selectedCountryId
-            )
-          const selectedState = selectedCountry.children.items.find(
-            state => state.id === selectedStateId
+          const selectedCountry = newState.countriesForLocationSelector.items.find(
+            country => country.id === selectedCountryId
           )
+          const selectedState = selectedCountry.children.items.find(state => state.id === selectedStateId)
 
           expect(selectedState.children.loading).toBe(true)
         })
@@ -553,19 +505,12 @@ describe('geography reducer', () => {
             countries,
             lastRefreshed: now,
           })
-          selectedCountry =
-            initialState.countriesForLocationSelector.items.find(
-              country => country.id === selectedCountryId
-            )
-          indexOfSelectedCountry =
-            initialState.countriesForLocationSelector.items.indexOf(
-              selectedCountry
-            )
-          selectedState = selectedCountry.children.items.find(
-            state => state.id === selectedStateId
+          selectedCountry = initialState.countriesForLocationSelector.items.find(
+            country => country.id === selectedCountryId
           )
-          indexOfSelectedState =
-            selectedCountry.children.items.indexOf(selectedState)
+          indexOfSelectedCountry = initialState.countriesForLocationSelector.items.indexOf(selectedCountry)
+          selectedState = selectedCountry.children.items.find(state => state.id === selectedStateId)
+          indexOfSelectedState = selectedCountry.children.items.indexOf(selectedState)
           initialState = geography(initialState, {
             type: types.REQUEST_LGAS_FOR_LOCATION_SELECTOR,
             selectedCountryId,
@@ -717,16 +662,9 @@ describe('geography action creators', () => {
                               name: state.name,
                               children: new LazyLoadItems({
                                 loading: false,
-                                lastRefreshed: state.lgas
-                                  ? lastRefreshed
-                                  : undefined,
+                                lastRefreshed: state.lgas ? lastRefreshed : undefined,
                                 items: state.lgas
-                                  ? Immutable.List(
-                                      map(
-                                        state.lgas,
-                                        lga => new LazyLoadChild(lga)
-                                      )
-                                    )
+                                  ? Immutable.List(map(state.lgas, lga => new LazyLoadChild(lga)))
                                   : undefined,
                               }),
                             })
@@ -746,27 +684,12 @@ describe('geography action creators', () => {
   }
 
   function setLastRefreshedTimeOnCountryStates(countryIndex, lastRefreshed) {
-    return countriesState.setIn(
-      ['items', countryIndex, 'children', 'lastRefreshed'],
-      lastRefreshed
-    )
+    return countriesState.setIn(['items', countryIndex, 'children', 'lastRefreshed'], lastRefreshed)
   }
 
-  function setLastRefreshedTimeOnStateLGAs(
-    countryIndex,
-    stateIndex,
-    lastRefreshed
-  ) {
+  function setLastRefreshedTimeOnStateLGAs(countryIndex, stateIndex, lastRefreshed) {
     return countriesState.setIn(
-      [
-        'items',
-        countryIndex,
-        'children',
-        'items',
-        stateIndex,
-        'children',
-        'lastRefreshed',
-      ],
+      ['items', countryIndex, 'children', 'items', stateIndex, 'children', 'lastRefreshed'],
       lastRefreshed
     )
   }
@@ -776,13 +699,7 @@ describe('geography action creators', () => {
   }
 
   function getStateAt(countryIndex, stateIndex) {
-    return countriesState.getIn([
-      'items',
-      countryIndex,
-      'children',
-      'items',
-      stateIndex,
-    ])
+    return countriesState.getIn(['items', countryIndex, 'children', 'items', stateIndex])
   }
 
   beforeAll(() => {
@@ -806,8 +723,7 @@ describe('geography action creators', () => {
         })
 
         it('Should return a dispatch function that dispatches nothing', () => {
-          const dispatchFunction =
-            geographyRedux.fetchCountriesForLocationSelector(countriesState)
+          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(countriesState)
           dispatchFunction(dispatch)
           expect(dispatch.notCalled).toBe(true)
         })
@@ -825,14 +741,11 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub(),
           }
-          fetchStub.aspectFetch
-            .withArgs('/geography/country-select-list')
-            .returns(expectedResponseFromServer)
+          fetchStub.aspectFetch.withArgs('/geography/country-select-list').returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountries(expiredCacheTime)
-          const dispatchFunction =
-            geographyRedux.fetchCountriesForLocationSelector(countriesState)
+          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(countriesState)
           dispatchFunction(dispatch)
         })
 
@@ -845,9 +758,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of countries from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/country-select-list')
-          ).toBeTruthy()
+          expect(fetchStub.aspectFetch.calledWith('/geography/country-select-list')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
@@ -880,27 +791,20 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub(),
           }
-          fetchStub.aspectFetch
-            .withArgs('/geography/country-select-list')
-            .returns(expectedResponseFromServer)
+          fetchStub.aspectFetch.withArgs('/geography/country-select-list').returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountries(undefined)
-          const dispatchFunction =
-            geographyRedux.fetchCountriesForLocationSelector(countriesState)
+          const dispatchFunction = geographyRedux.fetchCountriesForLocationSelector(countriesState)
           dispatchFunction(dispatch)
         })
 
         it('Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action', () => {
-          expect(dispatch.firstCall.args).toEqual([
-            { type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR },
-          ])
+          expect(dispatch.firstCall.args).toEqual([{ type: types.REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR }])
         })
 
         it('Should request a new list of countries from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/country-select-list')
-          ).toBeTruthy()
+          expect(fetchStub.aspectFetch.calledWith('/geography/country-select-list')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
@@ -948,8 +852,7 @@ describe('geography action creators', () => {
 
       it('Should return a dispatch function that dispatches nothing', () => {
         const selectedCountry = getCountryAt(0)
-        const dispatchFunction =
-          geographyRedux.fetchStatesForLocationSelector(selectedCountry)
+        const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(selectedCountry)
         dispatchFunction(dispatch, getState)
         expect(dispatch.notCalled).toBe(true)
       })
@@ -966,19 +869,13 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub(),
           }
-          fetchStub.aspectFetch
-            .withArgs('/geography/state-select-list/1')
-            .returns(expectedResponseFromServer)
+          fetchStub.aspectFetch.withArgs('/geography/state-select-list/1').returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           getState = sinon.spy(() => ({ geography: geographyState }))
           createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnCountryStates(
-            0,
-            expiredCacheTime
-          )
+          countriesState = setLastRefreshedTimeOnCountryStates(0, expiredCacheTime)
           const selectedCountry = getCountryAt(0)
-          const dispatchFunction =
-            geographyRedux.fetchStatesForLocationSelector(selectedCountry)
+          const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(selectedCountry)
           dispatchFunction(dispatch, getState)
         })
 
@@ -992,9 +889,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of states from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')
-          ).toBeTruthy()
+          expect(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
@@ -1028,16 +923,13 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub(),
           }
-          fetchStub.aspectFetch
-            .withArgs('/geography/state-select-list/1')
-            .returns(expectedResponseFromServer)
+          fetchStub.aspectFetch.withArgs('/geography/state-select-list/1').returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           getState = sinon.spy(() => ({ geography: geographyState }))
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnCountryStates(0, undefined)
           const selectedCountry = getCountryAt(0)
-          const dispatchFunction =
-            geographyRedux.fetchStatesForLocationSelector(selectedCountry)
+          const dispatchFunction = geographyRedux.fetchStatesForLocationSelector(selectedCountry)
           dispatchFunction(dispatch, getState)
         })
 
@@ -1051,9 +943,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of states from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')
-          ).toBeTruthy()
+          expect(fetchStub.aspectFetch.calledWith('/geography/state-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
@@ -1105,10 +995,7 @@ describe('geography action creators', () => {
       it('Should return a dispatch function that dispatches nothing', () => {
         const selectedCountry = getCountryAt(0)
         const selectedState = getStateAt(0, 0)
-        const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-          selectedCountry,
-          selectedState
-        )
+        const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(selectedCountry, selectedState)
         dispatchFunction(dispatch)
         expect(dispatch.notCalled).toBe(true)
       })
@@ -1125,22 +1012,13 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub(),
           }
-          fetchStub.aspectFetch
-            .withArgs('/geography/lga-select-list/1')
-            .returns(expectedResponseFromServer)
+          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1').returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           createGeographyReduxWithStubs(fetchStub)
-          countriesState = setLastRefreshedTimeOnStateLGAs(
-            0,
-            0,
-            expiredCacheTime
-          )
+          countriesState = setLastRefreshedTimeOnStateLGAs(0, 0, expiredCacheTime)
           const selectedCountry = getCountryAt(0)
           const selectedState = getStateAt(0, 0)
-          const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-            selectedCountry,
-            selectedState
-          )
+          const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(selectedCountry, selectedState)
           dispatchFunction(dispatch)
         })
 
@@ -1155,9 +1033,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')
-          ).toBeTruthy()
+          expect(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {
@@ -1192,18 +1068,13 @@ describe('geography action creators', () => {
           fetchStub = {
             aspectFetch: sinon.stub(),
           }
-          fetchStub.aspectFetch
-            .withArgs('/geography/lga-select-list/1')
-            .returns(expectedResponseFromServer)
+          fetchStub.aspectFetch.withArgs('/geography/lga-select-list/1').returns(expectedResponseFromServer)
           dispatch = sinon.spy()
           createGeographyReduxWithStubs(fetchStub)
           countriesState = setLastRefreshedTimeOnStateLGAs(0, 0, undefined)
           const selectedCountry = getCountryAt(0)
           const selectedState = getStateAt(0, 0)
-          const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(
-            selectedCountry,
-            selectedState
-          )
+          const dispatchFunction = geographyRedux.fetchLgasForLocationSelector(selectedCountry, selectedState)
           dispatchFunction(dispatch)
         })
 
@@ -1218,9 +1089,7 @@ describe('geography action creators', () => {
         })
 
         it('Should request a new list of LGAs from the server', () => {
-          expect(
-            fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')
-          ).toBeTruthy()
+          expect(fetchStub.aspectFetch.calledWith('/geography/lga-select-list/1')).toBeTruthy()
         })
 
         describe('and a response is received from the server', () => {

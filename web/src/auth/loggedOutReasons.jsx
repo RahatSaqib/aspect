@@ -22,20 +22,11 @@ const reasonTypeList = [
   },
 ]
 
-export const reasonTypes = reduce(
-  reasonTypeList,
-  (acc, { type }) => set(acc, type, type),
-  {}
-)
+export const reasonTypes = reduce(reasonTypeList, (acc, { type }) => set(acc, type, type), {})
 
-export const typeToMessage = type =>
-  has(i18nKeyByType, type) && messages[i18nKeyByType[type]]
+export const typeToMessage = type => has(i18nKeyByType, type) && messages[i18nKeyByType[type]]
 
-const i18nKeyByType = reduce(
-  reasonTypeList,
-  (acc, { type, i18nKey }) => set(acc, type, i18nKey),
-  {}
-)
+const i18nKeyByType = reduce(reasonTypeList, (acc, { type, i18nKey }) => set(acc, type, i18nKey), {})
 
 const messages = defineMessages({
   [i18nKeyByType.userRequested]: {

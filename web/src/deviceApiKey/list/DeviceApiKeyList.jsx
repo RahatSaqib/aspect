@@ -5,29 +5,15 @@ import isEmpty from 'lodash/isEmpty'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
-import {
-  compose,
-  withProps,
-  withState,
-  withHandlers,
-  lifecycle,
-} from 'recompose'
+import { compose, withProps, withState, withHandlers, lifecycle } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -44,11 +30,7 @@ import {
 } from '../DeviceApiKeyRedux'
 import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
 import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
-import {
-  DeviceApiKeyDataTable,
-  DeviceApiKeyDataTableHead,
-  DeviceApiKeyDataTableRow,
-} from './DeviceApiKeyDataTable'
+import { DeviceApiKeyDataTable, DeviceApiKeyDataTableHead, DeviceApiKeyDataTableRow } from './DeviceApiKeyDataTable'
 import ExportListButton from '../../globals/components/ExportListButton'
 import AspectButton from '../../components/shared/AspectButton'
 
@@ -122,23 +104,11 @@ const DEFAULT_GENERATOR_VALUES = { count: 1 }
 const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'id',
-    'createdOn',
-    'token',
-    'partner',
-    'country',
-    'site',
-    'device',
-    'revoked',
-  ],
+  availableSortCol: ['id', 'createdOn', 'token', 'partner', 'country', 'site', 'device', 'revoked'],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -151,9 +121,7 @@ const enhance = compose(
     }),
     ({ location }) => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
+      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
       return {
         filters: getFilters(filtersParams),
       }
@@ -177,8 +145,7 @@ const enhance = compose(
     onInitialLoad:
       ({ location, fetchDeviceApiKeys, sortCol, sortDir, pageAt, pageSize }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           fetchDeviceApiKeys(filtersParams, sortCol, sortDir, pageAt, pageSize)
         }
@@ -188,8 +155,7 @@ const enhance = compose(
       ({ location, exportDeviceApiKeys, sortCol, sortDir, table, pageAt }) =>
       formatType => {
         const format = formatType.id
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           exportDeviceApiKeys(
             filtersParams,
@@ -205,11 +171,8 @@ const enhance = compose(
   }),
   lifecycle({
     UNSAFE_componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const { sanitized: filtersSanitized, value: filtersParams } =
-        filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized, value: searchParams } = searchSanitizer(this.props.location)
+      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -221,10 +184,7 @@ const enhance = compose(
           { replace: true }
         )
       }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
+      const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, this.props.userPermissions)
       this.setState({
         reducedFilters,
       })
@@ -247,9 +207,7 @@ const enhance = compose(
     isAssignerDialogOpen: false,
   }),
   withProps(({ items }) => ({
-    selectableIds: items.currentIdList
-      .filter(id => !items.byId.getIn([id, 'device']))
-      .sort(),
+    selectableIds: items.currentIdList.filter(id => !items.byId.getIn([id, 'device'])).sort(),
   })),
   withHandlers({
     onOpenGeneratorDialog:
@@ -273,12 +231,7 @@ const enhance = compose(
       generatorValues =>
         onChangeDialogState({ ...dialogState, generatorValues }),
     onGenerate:
-      ({
-        generateDeviceApiKeys,
-        onInitialLoad,
-        dialogState,
-        onChangeDialogState,
-      }) =>
+      ({ generateDeviceApiKeys, onInitialLoad, dialogState, onChangeDialogState }) =>
       generatorValues => {
         generateDeviceApiKeys(generatorValues).then(() => {
           onChangeDialogState({
@@ -294,12 +247,7 @@ const enhance = compose(
       assignerValues =>
         onChangeDialogState({ ...dialogState, assignerValues }),
     onAssign:
-      ({
-        assignDeviceApiKeys,
-        onInitialLoad,
-        dialogState,
-        onChangeDialogState,
-      }) =>
+      ({ assignDeviceApiKeys, onInitialLoad, dialogState, onChangeDialogState }) =>
       assignerValues => {
         assignDeviceApiKeys(assignerValues).then(() => {
           onChangeDialogState({
@@ -340,9 +288,7 @@ const enhance = compose(
         let selectedDDL = {}
         if (nextDeviceApiKeyIds.length === 1) {
           const [firstElementId] = nextDeviceApiKeyIds
-          const { siteId, countryId, partnerId } = items.byId
-            .get(firstElementId)
-            .toJS()
+          const { siteId, countryId, partnerId } = items.byId.get(firstElementId).toJS()
           selectedDDL = {
             siteId,
             countryId,
@@ -354,10 +300,7 @@ const enhance = compose(
             const { partnerId, siteId, countryId } = items.byId.get(id).toJS()
             selection.push({ partnerId, siteId, countryId })
           })
-          const [{ countryId, siteId, partnerId }] = intersectionWith(
-            selection,
-            isEqual
-          )
+          const [{ countryId, siteId, partnerId }] = intersectionWith(selection, isEqual)
           selectedDDL = { countryId, siteId, partnerId }
         }
         onChangeDialogState({
@@ -397,12 +340,7 @@ export const DeviceApiKeyList = ({
   pageSize,
   onExportClick,
   selectableIds,
-  dialogState: {
-    generatorValues,
-    assignerValues,
-    isGeneratorDialogOpen,
-    isAssignerDialogOpen,
-  },
+  dialogState: { generatorValues, assignerValues, isGeneratorDialogOpen, isAssignerDialogOpen },
   onOpenGeneratorDialog,
   onCloseGeneratorDialog,
   onOpenAssignerDialog,
@@ -426,13 +364,7 @@ export const DeviceApiKeyList = ({
       config={reducedFilters}
       onClickExport={onExportClick}
     >
-      <AspectButton
-        onClick={onOpenGeneratorDialog}
-        type="button"
-        color="primary"
-        variant="contained"
-        browseButton
-      >
+      <AspectButton onClick={onOpenGeneratorDialog} type="button" color="primary" variant="contained" browseButton>
         {intl.formatMessage(messages.generate)}
       </AspectButton>
       <AspectButton
@@ -473,9 +405,7 @@ export const DeviceApiKeyList = ({
         visible={!items.currentIdList.isEmpty()}
         reportName="DeviceApiKey"
       />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList navigate={navigate} location={location} />
-      )}
+      {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
       {!items.currentIdList.isEmpty() && (
         <DeviceApiKeyDataTable className={cssClasses('DeviceApiKeyDataTable')}>
           <DeviceApiKeyDataTableHead
@@ -490,9 +420,7 @@ export const DeviceApiKeyList = ({
                   <AspectCheckbox
                     name="selectAll"
                     disabled={selectableIds.isEmpty()}
-                    checked={selectableIds.equals(
-                      Immutable.List(assignerValues.deviceApiKeyIds).sort()
-                    )}
+                    checked={selectableIds.equals(Immutable.List(assignerValues.deviceApiKeyIds).sort())}
                     onChange={onSelectAllChange}
                   />
                 ),
@@ -543,11 +471,7 @@ export const DeviceApiKeyList = ({
                   intl={intl}
                   deviceApiKey={deviceApiKey}
                   disabled={!selectableIds.includes(deviceApiKey.get('id'))}
-                  checked={
-                    assignerValues.deviceApiKeyIds.indexOf(
-                      deviceApiKey.get('id')
-                    ) !== -1
-                  }
+                  checked={assignerValues.deviceApiKeyIds.indexOf(deviceApiKey.get('id')) !== -1}
                   onSelectedChange={onSelectedChange}
                   onRevokedChange={onRevokedChange}
                 />

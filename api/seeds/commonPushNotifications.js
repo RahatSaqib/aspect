@@ -53,9 +53,7 @@ async function insertNewResultPushTemplates(
 
   // if this value exists in the db means this was already executed
   if (lastIssueType) return
-  const [newResultsPushNotificationTemplateId] = await knex(
-    'PushNotificationTemplate'
-  ).insert({
+  const [newResultsPushNotificationTemplateId] = await knex('PushNotificationTemplate').insert({
     ...pushNotification.pushNotificationTemplate,
     ...auditFields,
   })
@@ -88,10 +86,7 @@ async function insertNewResultPushTemplates(
   })
 
   const { id: issueEventStatusId } = await knex('IssueEventStatus')
-    .where(
-      'externalId',
-      pushNotification.issueEventTrigger.issueEventStatusExternalId
-    )
+    .where('externalId', pushNotification.issueEventTrigger.issueEventStatusExternalId)
     .first('id')
 
   await knex('IssueEventTrigger').insert({
@@ -105,8 +100,7 @@ async function insertNewResultPushTemplates(
   await knex('IssueResolutionTrigger').insert({
     partnerId,
     issueTypeId: newResultsIssueTypeId,
-    resolutionConditions:
-      pushNotification.issueResolutionTrigger.resolutionConditions,
+    resolutionConditions: pushNotification.issueResolutionTrigger.resolutionConditions,
     ...timeStampFields,
   })
 }

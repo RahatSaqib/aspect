@@ -23,12 +23,7 @@ function reducer(state = initialState, action) {
 describe('InventoryLog module', () => {
   const User = Immutable.Record({
     jwt: {
-      permissions: [
-        'inventory:view',
-        'dashboard:summary',
-        'site:view',
-        'browse:view',
-      ],
+      permissions: ['inventory:view', 'dashboard:summary', 'site:view', 'browse:view'],
     },
   })
   const reduxState = { user: new User() }

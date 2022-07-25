@@ -15,12 +15,8 @@ describe('Device API Key routes', () => {
   before(async () => {
     shared.checkToken(server, path)
     const now = new Date()
-    const { id: partnerId } = await knex('Partner')
-      .where('name', 'Partner One')
-      .first('id')
-    const { userId } = await knex('User')
-      .where({ name: 'admin' })
-      .first('id as userId')
+    const { id: partnerId } = await knex('Partner').where('name', 'Partner One').first('id')
+    const { userId } = await knex('User').where({ name: 'admin' }).first('id as userId')
     const { id: geographyId } = await knex('Geography as g')
       .join('JobContext as jc', 'g.id', 'jc.geographyId')
       .join('Job as j', 'jc.jobId', 'j.id')
@@ -48,15 +44,11 @@ describe('Device API Key routes', () => {
     )
   })
 
-  after(async () =>
-    knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete()
-  )
+  after(async () => knex('DeviceApiKey').whereIn('id', deviceApiKeyIds).delete())
 
   describe('GET', () => {
     it('should return a list of deviceApiKeys when using valid token', async () => {
-      const res = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -76,17 +68,13 @@ describe('Device API Key routes', () => {
   })
   describe('POST', () => {
     it('should generate deviceApiKeys token', async () => {
-      const res = await server
-        .post(`${path}/api-key`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.post(`${path}/api-key`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
       assert.property(res.body, 'token')
 
-      const deviceApiKeyInDb = await knex('DeviceApiKey')
-        .where('token', res.body.token)
-        .first()
+      const deviceApiKeyInDb = await knex('DeviceApiKey').where('token', res.body.token).first()
       assert.isNotNull(deviceApiKeyInDb.partnerId)
       assert.isNotNull(deviceApiKeyInDb.geographyId)
 

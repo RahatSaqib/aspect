@@ -1,9 +1,5 @@
 const _ = require('lodash')
-const {
-  splitWithEscape,
-  escapeReservedRegexCharacters,
-  nullIfEmpty,
-} = require('./string')
+const { splitWithEscape, escapeReservedRegexCharacters, nullIfEmpty } = require('./string')
 
 function getDelimiters(
   astmMessage,
@@ -16,14 +12,8 @@ function getDelimiters(
 ) {
   if (_.isEmpty(explicitDelimiters)) {
     if (astmMessage.indexOf('H') > -1) {
-      const delimitersString = astmMessage.substr(
-        astmMessage.indexOf('H') + 1,
-        4
-      )
-      if (
-        astmMessage[astmMessage.indexOf(delimitersString) + 4] ===
-        delimitersString[0]
-      ) {
+      const delimitersString = astmMessage.substr(astmMessage.indexOf('H') + 1, 4)
+      if (astmMessage[astmMessage.indexOf(delimitersString) + 4] === delimitersString[0]) {
         return {
           fieldDelimiter: delimitersString[0],
           repeatDelimiter: delimitersString[1],
@@ -57,10 +47,7 @@ function getAstmField(astmMessage, astmPosition) {
   // first, get correct record/line
   const line = _.find(
     astmMessage.split(/\r|\n/),
-    l =>
-      l.indexOf(
-        `${astmArray[0]}|${astmArray[0] === 'H' ? '' : astmArray[2]}`
-      ) === 0
+    l => l.indexOf(`${astmArray[0]}|${astmArray[0] === 'H' ? '' : astmArray[2]}`) === 0
   )
 
   if (!line) {
@@ -90,28 +77,17 @@ function astmE1394RecordToJson(
     escapeDelimiter: '&',
   }
 ) {
-  const {
-    fieldDelimiter,
-    repeatDelimiter,
-    componentDelimiter,
-    escapeDelimiter,
-  } = delimiters
+  const { fieldDelimiter, repeatDelimiter, componentDelimiter, escapeDelimiter } = delimiters
   return _.omit(
     {
       value: nullIfEmpty(astmRecordString),
       ...baseOneIndex(
-        splitWithEscape(astmRecordString, fieldDelimiter, escapeDelimiter).map(
-          repeatedValueString => {
-            const repeatedValues = splitWithEscape(
-              repeatedValueString,
-              repeatDelimiter,
-              escapeDelimiter
-            ).map(repeatedValue => {
-              const componentValues = splitWithEscape(
-                repeatedValue,
-                componentDelimiter,
-                escapeDelimiter
-              ).map(component => component.trim())
+        splitWithEscape(astmRecordString, fieldDelimiter, escapeDelimiter).map(repeatedValueString => {
+          const repeatedValues = splitWithEscape(repeatedValueString, repeatDelimiter, escapeDelimiter).map(
+            repeatedValue => {
+              const componentValues = splitWithEscape(repeatedValue, componentDelimiter, escapeDelimiter).map(
+                component => component.trim()
+              )
               if (componentValues.length > 1) {
                 const value = arrayToString(componentValues)
                 return _.omit(
@@ -127,28 +103,24 @@ function astmE1394RecordToJson(
               return {
                 value: nullIfEmpty(componentValues[0]),
               }
-            })
-            if (repeatedValues.length > 1) {
-              const value = arrayToString(
-                repeatedValues.map(repeatedValue =>
-                  _.get(repeatedValue, 'value', repeatedValue)
-                ),
-                '\n'
-              )
-              return _.omit(
-                {
-                  items: repeatedValues.map((repeatedValue, index) =>
-                    (index + 1).toString()
-                  ),
-                  value: nullIfEmpty(value),
-                  ...baseOneIndex(repeatedValues),
-                },
-                '0'
-              )
             }
-            return nullIfEmpty(repeatedValues[0])
+          )
+          if (repeatedValues.length > 1) {
+            const value = arrayToString(
+              repeatedValues.map(repeatedValue => _.get(repeatedValue, 'value', repeatedValue)),
+              '\n'
+            )
+            return _.omit(
+              {
+                items: repeatedValues.map((repeatedValue, index) => (index + 1).toString()),
+                value: nullIfEmpty(value),
+                ...baseOneIndex(repeatedValues),
+              },
+              '0'
+            )
           }
-        )
+          return nullIfEmpty(repeatedValues[0])
+        })
       ),
     },
     '0'
@@ -168,10 +140,7 @@ function astmE1394CommentRecordToJson(
   const comment = astmE1394RecordToJson(astmCommentRecordString, delimiters)
   const commentRecordId = `${comment['1'].value}${comment['2'].value}`
   commentsObject[commentRecordId] = comment
-  commentsObject.comments = [
-    ...(commentsObject.comments || []),
-    commentRecordId,
-  ]
+  commentsObject.comments = [...(commentsObject.comments || []), commentRecordId]
   return commentsObject
 }
 
@@ -628,12 +597,7 @@ function astmE1394MessagesToJson(
         const astmMessage = astmMessages[astmMessages.length - 1]
         const { delimiters } = astmMessage
         astmMessage.rawMessage += `\n${astmRecord}`
-        if (
-          new RegExp(
-            `^P${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
-            'g'
-          ).test(astmRecord)
-        ) {
+        if (new RegExp(`^P${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(astmRecord)) {
           astmMessage.patients = [
             ...astmMessage.patients,
             {
@@ -643,14 +607,10 @@ function astmE1394MessagesToJson(
             },
           ]
         } else if (
-          new RegExp(
-            `^O${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
-            'g'
-          ).test(astmRecord)
+          new RegExp(`^O${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(astmRecord)
         ) {
           if (!_.isEmpty(astmMessage.patients)) {
-            const patient =
-              astmMessage.patients[astmMessage.patients.length - 1]
+            const patient = astmMessage.patients[astmMessage.patients.length - 1]
             patient.orders = [
               ...patient.orders,
               {
@@ -661,14 +621,10 @@ function astmE1394MessagesToJson(
             ]
           }
         } else if (
-          new RegExp(
-            `^R${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
-            'g'
-          ).test(astmRecord)
+          new RegExp(`^R${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(astmRecord)
         ) {
           if (!_.isEmpty(astmMessage.patients)) {
-            const patient =
-              astmMessage.patients[astmMessage.patients.length - 1]
+            const patient = astmMessage.patients[astmMessage.patients.length - 1]
             if (!_.isEmpty(patient.orders)) {
               const order = patient.orders[patient.orders.length - 1]
               order.results = [
@@ -681,10 +637,7 @@ function astmE1394MessagesToJson(
             }
           }
         } else if (
-          new RegExp(
-            `^Q${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
-            'g'
-          ).test(astmRecord)
+          new RegExp(`^Q${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(astmRecord)
         ) {
           astmMessage.enquiries = [
             ...astmMessage.enquiries,
@@ -693,10 +646,7 @@ function astmE1394MessagesToJson(
             },
           ]
         } else if (
-          new RegExp(
-            `^C${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
-            'g'
-          ).test(astmRecord)
+          new RegExp(`^C${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(astmRecord)
         ) {
           if (_.isEmpty(astmMessage.patients)) {
             astmMessage.comments = [
@@ -706,8 +656,7 @@ function astmE1394MessagesToJson(
               },
             ]
           } else {
-            const patient =
-              astmMessage.patients[astmMessage.patients.length - 1]
+            const patient = astmMessage.patients[astmMessage.patients.length - 1]
             if (_.isEmpty(patient.orders)) {
               patient.comments = [
                 ...patient.comments,
@@ -736,61 +685,37 @@ function astmE1394MessagesToJson(
             }
           }
         } else if (
-          new RegExp(
-            `^L${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`,
-            'g'
-          ).test(astmRecord)
+          new RegExp(`^L${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(astmRecord)
         ) {
           astmMessage.rawTerminator = astmRecord
         } else if (index > 0) {
           const previousAstmRecord = astmRecords[index - 1]
           if (
-            new RegExp(
-              `^H${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}`,
-              'g'
-            ).test(previousAstmRecord)
+            new RegExp(`^H${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}`, 'g').test(previousAstmRecord)
           ) {
             previousAstmRecord.rawHeader += astmRecord
           } else if (
-            new RegExp(
-              `^P${escapeReservedRegexCharacters(
-                delimiters.fieldDelimiter
-              )}\\d`,
-              'g'
-            ).test(previousAstmRecord)
+            new RegExp(`^P${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(previousAstmRecord)
           ) {
             if (!_.isEmpty(astmMessage.patients)) {
-              const patient =
-                astmMessage.patients[astmMessage.patients.length - 1]
+              const patient = astmMessage.patients[astmMessage.patients.length - 1]
               patient.rawMessage += `${astmRecord}`
             }
           } else if (
-            new RegExp(
-              `^O${escapeReservedRegexCharacters(
-                delimiters.fieldDelimiter
-              )}\\d`,
-              'g'
-            ).test(previousAstmRecord)
+            new RegExp(`^O${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(previousAstmRecord)
           ) {
             if (!_.isEmpty(astmMessage.patients)) {
-              const patient =
-                astmMessage.patients[astmMessage.patients.length - 1]
+              const patient = astmMessage.patients[astmMessage.patients.length - 1]
               if (!_.isEmpty(patient.orders)) {
                 const order = patient.orders[patient.orders.length - 1]
                 order.rawMessage += `${astmRecord}`
               }
             }
           } else if (
-            new RegExp(
-              `^R${escapeReservedRegexCharacters(
-                delimiters.fieldDelimiter
-              )}\\d`,
-              'g'
-            ).test(previousAstmRecord)
+            new RegExp(`^R${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(previousAstmRecord)
           ) {
             if (!_.isEmpty(astmMessage.patients)) {
-              const patient =
-                astmMessage.patients[astmMessage.patients.length - 1]
+              const patient = astmMessage.patients[astmMessage.patients.length - 1]
               if (!_.isEmpty(patient.orders)) {
                 const order = patient.orders[patient.orders.length - 1]
                 if (!_.isEmpty(order.results)) {
@@ -800,25 +725,14 @@ function astmE1394MessagesToJson(
               }
             }
           } else if (
-            new RegExp(
-              `^Q${escapeReservedRegexCharacters(
-                delimiters.fieldDelimiter
-              )}\\d`,
-              'g'
-            ).test(previousAstmRecord)
+            new RegExp(`^Q${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(previousAstmRecord)
           ) {
             if (!_.isEmpty(astmMessage.enquiries)) {
-              const enquiry =
-                astmMessage.enquiries[astmMessage.enquiries.length - 1]
+              const enquiry = astmMessage.enquiries[astmMessage.enquiries.length - 1]
               enquiry.rawMessage += `${astmRecord}`
             }
           } else if (
-            new RegExp(
-              `^C${escapeReservedRegexCharacters(
-                delimiters.fieldDelimiter
-              )}\\d`,
-              'g'
-            ).test(previousAstmRecord)
+            new RegExp(`^C${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(previousAstmRecord)
           ) {
             if (_.isEmpty(astmMessage.patients)) {
               if (!_.isEmpty(astmMessage.comments)) {
@@ -826,8 +740,7 @@ function astmE1394MessagesToJson(
                 comment.rawMessage += `${astmRecord}`
               }
             } else {
-              const patient =
-                astmMessage.patients[astmMessage.patients.length - 1]
+              const patient = astmMessage.patients[astmMessage.patients.length - 1]
               if (_.isEmpty(patient.orders)) {
                 if (!_.isEmpty(patient.comments)) {
                   const comment = patient.comments[patient.comments - 1]
@@ -850,12 +763,7 @@ function astmE1394MessagesToJson(
               }
             }
           } else if (
-            new RegExp(
-              `^L${escapeReservedRegexCharacters(
-                delimiters.fieldDelimiter
-              )}\\d`,
-              'g'
-            ).test(previousAstmRecord)
+            new RegExp(`^L${escapeReservedRegexCharacters(delimiters.fieldDelimiter)}\\d`, 'g').test(previousAstmRecord)
           ) {
             astmMessage.rawTerminator += astmRecord
           }
@@ -869,118 +777,66 @@ function astmE1394MessagesToJson(
         value: nullIfEmpty(astmMessage.rawMessage),
         H: {
           ...astmE1394RecordToJson(astmMessage.rawHeader, delimiters),
-          ...astmMessage.patients.reduce(
-            (patientsObject, patientAstmMessage) => {
-              const patient = {
-                ...astmE1394RecordToJson(
-                  patientAstmMessage.rawMessage,
-                  delimiters
-                ),
-                ...patientAstmMessage.orders.reduce(
-                  (ordersObject, orderAstmMessage) => {
-                    const order = {
-                      ...astmE1394RecordToJson(
-                        orderAstmMessage.rawMessage,
-                        delimiters
-                      ),
-                      ...orderAstmMessage.results.reduce(
-                        (resultsObject, resultAstmMessage) => {
-                          const result = {
-                            ...astmE1394RecordToJson(
-                              resultAstmMessage.rawMessage,
-                              delimiters
-                            ),
-                            ...resultAstmMessage.comments
-                              .map(comment => comment.rawMessage)
-                              .reduce(
-                                (commentsObject, astmCommentRecordString) =>
-                                  astmE1394CommentRecordToJson(
-                                    commentsObject,
-                                    astmCommentRecordString,
-                                    delimiters
-                                  ),
-                                {}
-                              ),
-                          }
-                          const resultRecordId = `${result['1'].value}${result['2'].value}`
-                          resultsObject[resultRecordId] = result
-                          resultsObject.results = [
-                            ...(resultsObject.results || []),
-                            resultRecordId,
-                          ]
-                          return resultsObject
-                        },
-                        {}
-                      ),
-                      ...orderAstmMessage.comments
+          ...astmMessage.patients.reduce((patientsObject, patientAstmMessage) => {
+            const patient = {
+              ...astmE1394RecordToJson(patientAstmMessage.rawMessage, delimiters),
+              ...patientAstmMessage.orders.reduce((ordersObject, orderAstmMessage) => {
+                const order = {
+                  ...astmE1394RecordToJson(orderAstmMessage.rawMessage, delimiters),
+                  ...orderAstmMessage.results.reduce((resultsObject, resultAstmMessage) => {
+                    const result = {
+                      ...astmE1394RecordToJson(resultAstmMessage.rawMessage, delimiters),
+                      ...resultAstmMessage.comments
                         .map(comment => comment.rawMessage)
                         .reduce(
                           (commentsObject, astmCommentRecordString) =>
-                            astmE1394CommentRecordToJson(
-                              commentsObject,
-                              astmCommentRecordString,
-                              delimiters
-                            ),
+                            astmE1394CommentRecordToJson(commentsObject, astmCommentRecordString, delimiters),
                           {}
                         ),
                     }
-                    const orderRecordId = `${order['1'].value}${order['2'].value}`
-                    ordersObject[orderRecordId] = order
-                    ordersObject.orders = [
-                      ...(ordersObject.orders || []),
-                      orderRecordId,
-                    ]
-                    return ordersObject
-                  },
+                    const resultRecordId = `${result['1'].value}${result['2'].value}`
+                    resultsObject[resultRecordId] = result
+                    resultsObject.results = [...(resultsObject.results || []), resultRecordId]
+                    return resultsObject
+                  }, {}),
+                  ...orderAstmMessage.comments
+                    .map(comment => comment.rawMessage)
+                    .reduce(
+                      (commentsObject, astmCommentRecordString) =>
+                        astmE1394CommentRecordToJson(commentsObject, astmCommentRecordString, delimiters),
+                      {}
+                    ),
+                }
+                const orderRecordId = `${order['1'].value}${order['2'].value}`
+                ordersObject[orderRecordId] = order
+                ordersObject.orders = [...(ordersObject.orders || []), orderRecordId]
+                return ordersObject
+              }, {}),
+              ...patientAstmMessage.comments
+                .map(comment => comment.rawMessage)
+                .reduce(
+                  (commentsObject, astmCommentRecordString) =>
+                    astmE1394CommentRecordToJson(commentsObject, astmCommentRecordString, delimiters),
                   {}
                 ),
-                ...patientAstmMessage.comments
-                  .map(comment => comment.rawMessage)
-                  .reduce(
-                    (commentsObject, astmCommentRecordString) =>
-                      astmE1394CommentRecordToJson(
-                        commentsObject,
-                        astmCommentRecordString,
-                        delimiters
-                      ),
-                    {}
-                  ),
-              }
-              const patientRecordId = `${patient['1'].value}${patient['2'].value}`
-              patientsObject[patientRecordId] = patient
-              patientsObject.patients = [
-                ...(patientsObject.patients || []),
-                patientRecordId,
-              ]
-              return patientsObject
-            },
-            {}
-          ),
-          ...astmMessage.enquiries.reduce(
-            (enquiriesObject, enquiryAstmMessage) => {
-              const enquiry = astmE1394RecordToJson(
-                enquiryAstmMessage.rawMessage,
-                delimiters
-              )
-              const enquiryRecordId = `${enquiry['1'].value}${enquiry['2'].value}`
-              enquiriesObject[enquiryRecordId] = enquiry
-              enquiriesObject.enquiries = [
-                ...(enquiriesObject.enquiries || []),
-                enquiryRecordId,
-              ]
-              return enquiriesObject
-            },
-            {}
-          ),
+            }
+            const patientRecordId = `${patient['1'].value}${patient['2'].value}`
+            patientsObject[patientRecordId] = patient
+            patientsObject.patients = [...(patientsObject.patients || []), patientRecordId]
+            return patientsObject
+          }, {}),
+          ...astmMessage.enquiries.reduce((enquiriesObject, enquiryAstmMessage) => {
+            const enquiry = astmE1394RecordToJson(enquiryAstmMessage.rawMessage, delimiters)
+            const enquiryRecordId = `${enquiry['1'].value}${enquiry['2'].value}`
+            enquiriesObject[enquiryRecordId] = enquiry
+            enquiriesObject.enquiries = [...(enquiriesObject.enquiries || []), enquiryRecordId]
+            return enquiriesObject
+          }, {}),
           ...astmMessage.comments
             .map(comment => comment.rawMessage)
             .reduce(
               (commentsObject, astmCommentRecordString) =>
-                astmE1394CommentRecordToJson(
-                  commentsObject,
-                  astmCommentRecordString,
-                  delimiters
-                ),
+                astmE1394CommentRecordToJson(commentsObject, astmCommentRecordString, delimiters),
               {}
             ),
         },

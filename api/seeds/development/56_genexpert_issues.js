@@ -4,10 +4,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays } = require('date-fns')
 
-const {
-  issueTypeToId,
-  issueStatusToId,
-} = require('../../src/shared/dictionary')
+const { issueTypeToId, issueStatusToId } = require('../../src/shared/dictionary')
 
 const now = new Date()
 
@@ -45,9 +42,7 @@ async function seed(knex) {
       },
     },
     {
-      issueTypeId: await issueTypeToId(
-        'SignalLossDetectedInAmplificationCurveModule'
-      ),
+      issueTypeId: await issueTypeToId('SignalLossDetectedInAmplificationCurveModule'),
       data: {
         moduleSerial: '654321',
         totalResults: 22,

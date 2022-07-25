@@ -109,11 +109,7 @@ const plugins = {
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
   alereftpconnector: {
-    handlerOptions: merge(
-      {},
-      DEFAULT_HANDLER_OPTIONS,
-      require('./deviceType/AlereFtpConnector/handlerOptions')
-    ),
+    handlerOptions: merge({}, DEFAULT_HANDLER_OPTIONS, require('./deviceType/AlereFtpConnector/handlerOptions')),
     getDeviceSeenOn: require('./deviceType/AlereFtpConnector/getDeviceSeenOn'),
     preProcessAddDeviceData: require('./deviceType/AlereFtpConnector/preProcessAddDeviceData'),
     preProcessMergeResult: require('./deviceType/AlereFtpConnector/preProcessMergeResult'),

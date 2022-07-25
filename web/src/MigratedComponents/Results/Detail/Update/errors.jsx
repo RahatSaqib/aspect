@@ -1,8 +1,5 @@
 import { defineMessages } from 'react-intl'
-import {
-  errorNotFound,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../../../../error/CommonErrorNotifications'
+import { errorNotFound, errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorNotifications'
 
 const ResultDetailsErrors = {
   404: errorNotFound(

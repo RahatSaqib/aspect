@@ -9,9 +9,7 @@ const cssClasses = classnames.bind(styles)
 
 const Footer = () => {
   const { version } = packageWeb
-  return (
-    <div className={cssClasses('page__footerWrapper')}>{`web: ${version}`}</div>
-  )
+  return <div className={cssClasses('page__footerWrapper')}>{`web: ${version}`}</div>
 }
 
 export default Footer

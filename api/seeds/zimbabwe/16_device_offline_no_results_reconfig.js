@@ -3,19 +3,11 @@ module.exports = require('../utils').seed(seed, __filename)
 const { allJobFunctionToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Zimbabwe')
-    .first('id')
-  await knex('Partner')
-    .where('name', 'Zimbabwe')
-    .update({ maxDaysDeviceOffline: 1, maxDaysDeviceNoResults: 1 })
+  const { id: partnerId } = await knex('Partner').where('name', 'Zimbabwe').first('id')
+  await knex('Partner').where('name', 'Zimbabwe').update({ maxDaysDeviceOffline: 1, maxDaysDeviceNoResults: 1 })
 
-  const noResultIssueType = await knex('IssueType')
-    .where('externalId', 'DeviceNoResults')
-    .first()
-  const deviceOfflineIssueType = await knex('IssueType')
-    .where('externalId', 'DeviceOffline')
-    .first()
+  const noResultIssueType = await knex('IssueType').where('externalId', 'DeviceNoResults').first()
+  const deviceOfflineIssueType = await knex('IssueType').where('externalId', 'DeviceOffline').first()
   const now = new Date()
   const sevenDaysEscalateToLevel2 = {
     partnerId,

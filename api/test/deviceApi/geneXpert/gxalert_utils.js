@@ -7,22 +7,11 @@ const { randomToken } = require('../../../src/deviceApi/apiKey')
 
 const { assert } = chai
 
-async function deleteGxAlertDeviceDataAndRefreshTokens(
-  knex,
-  apiKeys,
-  clientId
-) {
-  const deviceIds = await knex('DeviceApiKey as dak')
-    .whereIn('dak.token', apiKeys)
-    .pluck('dak.deviceId')
-  await knex('DeviceApiKey')
-    .whereIn('token', apiKeys)
-    .orWhereIn('deviceId', deviceIds)
-    .delete()
+async function deleteGxAlertDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
+  const deviceIds = await knex('DeviceApiKey as dak').whereIn('dak.token', apiKeys).pluck('dak.deviceId')
+  await knex('DeviceApiKey').whereIn('token', apiKeys).orWhereIn('deviceId', deviceIds).delete()
 
-  const opIds = await knex('DeviceOperation')
-    .whereIn('deviceId', deviceIds)
-    .pluck('id')
+  const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
 
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
@@ -35,13 +24,9 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
 
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1And2')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', deviceIds).delete()
 
   await knex('AlertMessage').whereIn('deviceId', deviceIds).delete()
 
@@ -50,32 +35,19 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
   await knex('RefreshToken').where({ clientId }).delete()
 }
 
-async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
-  knex,
-  gxAlertDeviceIds
-) {
+async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDeviceIds) {
   const deviceAndSiteIds = await knex('Device as d')
-    .whereRaw(
-      `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") IN (${gxAlertDeviceIds.join(
-        ','
-      )})`
-    )
+    .whereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") IN (${gxAlertDeviceIds.join(',')})`)
     .select('d.id', 'd.siteId')
-  const deviceIds = _.uniq(
-    _.map(deviceAndSiteIds, deviceAndSiteId => deviceAndSiteId.id)
-  )
-  const siteIds = _.uniq(
-    _.map(deviceAndSiteIds, deviceAndSiteId => deviceAndSiteId.siteId)
-  )
+  const deviceIds = _.uniq(_.map(deviceAndSiteIds, deviceAndSiteId => deviceAndSiteId.id))
+  const siteIds = _.uniq(_.map(deviceAndSiteIds, deviceAndSiteId => deviceAndSiteId.siteId))
 
   const inventoryItemIds = await knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)
     .distinct('ii.id')
     .pluck('ii.id')
 
-  await knex('InventoryLog')
-    .whereIn('inventoryItemId', inventoryItemIds)
-    .delete()
+  await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
@@ -89,20 +61,13 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
         .pluck('generatedResultId as id')
     })
 
-  const opIds = await knex('DeviceOperation')
-    .whereIn('deviceId', deviceIds)
-    .pluck('id')
+  const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
 
-  const issueIds = await knex('Issue')
-    .whereIn('deviceId', deviceIds)
-    .pluck('id')
+  const issueIds = await knex('Issue').whereIn('deviceId', deviceIds).pluck('id')
 
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
-  await knex('DeviceLog')
-    .whereIn('deviceId', deviceIds)
-    .orWhereIn('resultId', resultIds)
-    .delete()
+  await knex('DeviceLog').whereIn('deviceId', deviceIds).orWhereIn('resultId', resultIds).delete()
 
   await knex('DeviceMaintenance').whereIn('deviceId', deviceIds).delete()
 
@@ -112,13 +77,9 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
 
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1And2')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
 
@@ -128,9 +89,7 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .whereIn('issueId', issueIds)
     .orWhere(function () {
       if (resultIds != null && resultIds.length > 0) {
-        this.whereRaw(
-          `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
-        )
+        this.whereRaw(`JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`)
       }
     })
     .delete()
@@ -166,19 +125,14 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
 
   await knex('DeviceOperation').whereIn('id', opIds).delete()
 
-  await knex('Device')
-    .whereIn('siteId', siteIds)
-    .orWhereIn('id', deviceIds)
-    .delete()
+  await knex('Device').whereIn('siteId', siteIds).orWhereIn('id', deviceIds).delete()
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
   await knex('FactInventoryConsumptionRate').whereIn('siteId', siteIds).delete()
   await knex('JobContext').whereIn('siteId', siteIds).delete()
   await knex('Site').whereIn('id', siteIds).delete()
 
-  await knex('DeviceMaintenanceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('DeviceMaintenanceStatusLog').whereIn('deviceId', deviceIds).delete()
 }
 
 function createGxAlertTestContext(server) {
@@ -222,17 +176,10 @@ class GxAlertApiTestContext {
   }
 
   createGxAlertApiKey(apiKeyDetails = {}) {
-    const { countryAbbreviation = 'US', partnerName = 'Partner One' } =
-      apiKeyDetails
+    const { countryAbbreviation = 'US', partnerName = 'Partner One' } = apiKeyDetails
     return run(async knex => {
-      const gxAlertDeviceType = await knex
-        .from('DeviceType')
-        .where('externalId', 'GxAlert')
-        .first()
-      const partner = await knex
-        .from('Partner')
-        .where('name', partnerName)
-        .first()
+      const gxAlertDeviceType = await knex.from('DeviceType').where('externalId', 'GxAlert').first()
+      const partner = await knex.from('Partner').where('name', partnerName).first()
       const geography = await knex
         .from('Country as c')
         .join('Geography as g', 'g.countryId', 'c.id')
@@ -240,10 +187,7 @@ class GxAlertApiTestContext {
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
-      const approvedDeviceApproval = await knex
-        .from('DeviceApproval')
-        .where('token', 'approved')
-        .first()
+      const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
 
       const deviceCapacity = await knex('DeviceCapacity')
         .where({ deviceTypeId: gxAlertDeviceType.id })
@@ -283,10 +227,7 @@ class GxAlertApiTestContext {
       this.apiKeys.push(this.apiKey)
       this.deviceAuth = `Bearer ${this.apiKey}`
       this.device = await getDeviceFromApiKey(knex, { token: this.apiKey })
-      assert.isNotEmpty(
-        this.device,
-        `Cannot find device created from ${this.apiKey}`
-      )
+      assert.isNotEmpty(this.device, `Cannot find device created from ${this.apiKey}`)
     })
   }
 
@@ -300,12 +241,8 @@ class GxAlertApiTestContext {
     if (this.basicDevicePayload.configuration.data === null) {
       this.basicDevicePayload.configuration.data = {}
     }
-    if (
-      this.basicDevicePayload.configuration.data.gxAlertDeviceId !==
-      gxAlertDeviceId
-    ) {
-      this.basicDevicePayload.configuration.data.gxAlertDeviceId =
-        gxAlertDeviceId
+    if (this.basicDevicePayload.configuration.data.gxAlertDeviceId !== gxAlertDeviceId) {
+      this.basicDevicePayload.configuration.data.gxAlertDeviceId = gxAlertDeviceId
     }
   }
 
@@ -330,17 +267,10 @@ class GxAlertApiTestContext {
     return run(async knex => {
       await waitAsyncComplete()
       if (!_.isEmpty(this.gxAlertDeviceIds)) {
-        await deleteGeneXpertDeviceSiteDataAndRefreshTokens(
-          knex,
-          this.gxAlertDeviceIds
-        )
+        await deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, this.gxAlertDeviceIds)
       }
       if (!_.isEmpty(this.apiKeys)) {
-        await deleteGxAlertDeviceDataAndRefreshTokens(
-          knex,
-          this.apiKeys,
-          this.clientId
-        )
+        await deleteGxAlertDeviceDataAndRefreshTokens(knex, this.apiKeys, this.clientId)
       }
     })
   }
@@ -356,16 +286,8 @@ class GxAlertApiTestContext {
         .join('DeviceLog as dl', 'd.id', 'dl.deviceId')
         .join('Result as r', 'dl.resultId', 'r.id')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
-        .leftJoin(
-          'ResultWorkflowLog as rwsl',
-          'r.resultWorkflowStatusLogId',
-          'rwsl.id'
-        )
-        .leftJoin(
-          'ResultWorkflowStatus as rws',
-          'rwsl.resultWorkflowStatusId',
-          'rws.id'
-        )
+        .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+        .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
         .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
@@ -374,9 +296,7 @@ class GxAlertApiTestContext {
         .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
         .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
         .whereRaw(
-          `JSON_EXTRACT(sourceDevice.configurationData, "$.gxAlertDeviceId") IN (${this.gxAlertDeviceIds.join(
-            ','
-          )})`
+          `JSON_EXTRACT(sourceDevice.configurationData, "$.gxAlertDeviceId") IN (${this.gxAlertDeviceIds.join(',')})`
         )
         .andWhere('d.id', this.device.id)
         .orderBy('dl.id', 'desc')
@@ -428,16 +348,8 @@ class GxAlertApiTestContext {
     return run(async knex => {
       const resultDetails = await knex('Result as r')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
-        .leftJoin(
-          'ResultWorkflowLog as rwsl',
-          'r.resultWorkflowStatusLogId',
-          'rwsl.id'
-        )
-        .leftJoin(
-          'ResultWorkflowStatus as rws',
-          'rwsl.resultWorkflowStatusId',
-          'rws.id'
-        )
+        .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+        .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
         .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
@@ -498,21 +410,9 @@ class GxAlertApiTestContext {
           this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
         })
         .leftJoin('Country as c', 'g.countryId', 'c.id')
-        .leftJoin(
-          'DeviceMaintenanceStatusLog as dmsl',
-          'd.deviceMaintenanceStatusLogId',
-          'dmsl.id'
-        )
-        .leftJoin(
-          'DeviceMaintenanceStatus as dms',
-          'dmsl.deviceMaintenanceStatusId',
-          'dms.id'
-        )
-        .whereRaw(
-          `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${_.last(
-            this.gxAlertDeviceIds
-          )}`
-        )
+        .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+        .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+        .whereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${_.last(this.gxAlertDeviceIds)}`)
         .first(
           'd.id',
           'd.partnerId',

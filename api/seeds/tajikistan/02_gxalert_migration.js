@@ -1,11 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const {
-  deviceApiToken,
-  adminUserName,
-  partnerName,
-  serverUrl,
-} = require('./fixtures/partnerData')
+const { deviceApiToken, adminUserName, partnerName, serverUrl } = require('./fixtures/partnerData')
 const jobFunctionsFixture = require('../fixtures/jobFunctions')
 const contactsFromGxAlert = require('./fixtures/contactsFromGxAlert.json')
 const geographyFromGxAlert = require('./fixtures/geography.json')
@@ -36,9 +31,7 @@ async function seed(knex) {
     partnerData
   )
 
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
 
   await upsertDashboardWidgets(knex, partnerId)
 }

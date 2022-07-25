@@ -49,10 +49,7 @@ describe('Fact tables initial data', () => {
           .select('resultCount')
 
         // same?
-        assert.equal(
-          countInResultTable.resultCount,
-          countInFactTable.resultCount
-        )
+        assert.equal(countInResultTable.resultCount, countInFactTable.resultCount)
       }))
   })
 })

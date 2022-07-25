@@ -4,10 +4,7 @@ const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 
-const {
-  commonUpserts,
-  upsertGeneXpertDeviceTypeAndAssays,
-} = require('../common')
+const { commonUpserts, upsertGeneXpertDeviceTypeAndAssays } = require('../common')
 const upsertPartnerData = require('../common/upsert_partner_data')
 
 const partnerData = require('./fixtures/partnerData')

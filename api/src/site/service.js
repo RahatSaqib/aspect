@@ -1,20 +1,12 @@
 const Boom = require('@hapi/boom')
-const {
-  knex,
-  filterParams,
-  filterDateRangeParams,
-  sortPageParams,
-} = require('../db')
+const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
-const totalDevicesQuery = knex('Device as d')
-  .whereRaw('d.siteId = s.id')
-  .count('d.siteId')
-  .as('totalDevices')
+const totalDevicesQuery = knex('Device as d').whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices')
 
 const SELECT_LIST_FIELDS = [
   's.id',
@@ -65,12 +57,7 @@ async function listSites(request) {
     .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
     .leftOuterJoin(
       knex('Issue as i')
-        .select(
-          'i.siteId',
-          knex.raw(
-            "GROUP_CONCAT(DISTINCT ic.i18nKey SEPARATOR ',') as siteIssues"
-          )
-        )
+        .select('i.siteId', knex.raw("GROUP_CONCAT(DISTINCT ic.i18nKey SEPARATOR ',') as siteIssues"))
         .innerJoin('IssueStatus as ist', 'ist.id', 'i.issuestatusid ')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
         .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
@@ -114,15 +101,10 @@ async function listSites(request) {
 
   const getCount = knex
     .count('siteId as count')
-    .from(
-      siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery')
-    )
+    .from(siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery'))
     .first()
   // get rows
-  const getItems = siteQuery
-    .clone()
-    .modify(sortPageParams, query, 'name')
-    .select(SELECT_LIST_FIELDS)
+  const getItems = siteQuery.clone().modify(sortPageParams, query, 'name').select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -163,14 +145,7 @@ async function showSite(request) {
       deviceType: 'dt',
     })
     .where('siteId', params.siteId)
-    .select(
-      'd.id',
-      'd.name',
-      'd.shortName',
-      'dt.id as deviceTypeId',
-      'dt.name as deviceTypeName',
-      'dtc.id as category'
-    )
+    .select('d.id', 'd.name', 'd.shortName', 'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'dtc.id as category')
 
   const result = { ok: true, data: site }
 
@@ -202,18 +177,14 @@ async function getDisableSiteErrorReason(siteId, dataConstraints) {
   const site = await getSite(siteId, dataConstraints)
 
   if (!site) {
-    const rawSiteRecord = await knex('Site as s')
-      .where('s.id', siteId)
-      .first('s.id', 's.disabled')
+    const rawSiteRecord = await knex('Site as s').where('s.id', siteId).first('s.id', 's.disabled')
 
     if (!rawSiteRecord) {
       error = new Boom.notFound(`The site doesn't exists.`)
     } else if (rawSiteRecord.disabled) {
       error = new Boom.conflict('The site is already disabled.')
     } else {
-      error = new Boom.forbidden(
-        `You don't have access to this site. Ask your administrator.`
-      )
+      error = new Boom.forbidden(`You don't have access to this site. Ask your administrator.`)
     }
   }
   return error
@@ -237,11 +208,7 @@ async function listSitesForSelectList(request) {
       },
     }
   }
-  const response = await getListSitesForSelectList(
-    dataConstraints,
-    query?.tags,
-    mode
-  )
+  const response = await getListSitesForSelectList(dataConstraints, query?.tags, mode)
   return response
 }
 
@@ -261,14 +228,7 @@ async function getListSitesForSelectList(dataConstraints, tags, mode) {
   let columnsToSelect = ['s.id', 's.name', 'g.stateId', 'st.name as stateName']
 
   if (mode !== 'reporter') {
-    columnsToSelect = [
-      ...columnsToSelect,
-      's.partnerId',
-      'g.countryId',
-      'g.lgaId',
-      'l.name as lgaName',
-      's.externalId',
-    ]
+    columnsToSelect = [...columnsToSelect, 's.partnerId', 'g.countryId', 'g.lgaId', 'l.name as lgaName', 's.externalId']
   }
 
   sitesQuery = sitesQuery
@@ -321,10 +281,7 @@ function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
 
 async function listSitesWithReporters(request) {
   const { auth, query } = request
-  const dataConstraints = await getConstraints(
-    auth.credentials,
-    'actionDashboard'
-  )
+  const dataConstraints = await getConstraints(auth.credentials, 'actionDashboard')
   const { minDate, maxDate } = query
   const resultStatusTransferId = await resultStatusToId('Transfer')
 
@@ -378,9 +335,7 @@ async function listSitesWithReporters(request) {
   // totals available items
   const getCount = knex
     .count('siteId as count')
-    .from(
-      siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery')
-    )
+    .from(siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery'))
     .first()
 
   // get page items

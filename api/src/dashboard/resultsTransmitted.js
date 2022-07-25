@@ -2,16 +2,9 @@ const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const {
-  getOffsetFromIsoDateString,
-  startOfMonthUTC,
-  endOfMonthUTC,
-} = require('../shared/date')
+const { getOffsetFromIsoDateString, startOfMonthUTC, endOfMonthUTC } = require('../shared/date')
 
-const {
-  allResultCategoryToId,
-  allMessageStatusToId,
-} = require('../shared/dictionary')
+const { allResultCategoryToId, allMessageStatusToId } = require('../shared/dictionary')
 const { formatDateOrDefault } = require('../shared/date')
 
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
@@ -21,9 +14,7 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
     .innerJoin('ResultCategory as rcPositive', function () {
-      this.on('rca.resultCategoryId', 'rcPositive.id').andOn(
-        knex.raw(`rcPositive.id IN (${positiveResultCategories})`)
-      )
+      this.on('rca.resultCategoryId', 'rcPositive.id').andOn(knex.raw(`rcPositive.id IN (${positiveResultCategories})`))
     })
     .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -48,12 +39,7 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
     .groupBy('a.id', 'a.name', 'a.externalId', 'a.i18nKey')
 }
 
-async function getResultQuery(
-  query,
-  dataConstraints,
-  positiveResultCategories,
-  tz = '+00:00'
-) {
+async function getResultQuery(query, dataConstraints, positiveResultCategories, tz = '+00:00') {
   const { currentMonth = new Date() } = query
   const messageStatusToId = await allMessageStatusToId()
 
@@ -65,16 +51,10 @@ async function getResultQuery(
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Notification as n', 'r.id', 'n.resultId')
     .leftOuterJoin('EmailMessage as em', function () {
-      this.on('n.emailMessageId', 'em.id').andOn(
-        'em.messageStatusId',
-        messageStatusToId.Sent
-      )
+      this.on('n.emailMessageId', 'em.id').andOn('em.messageStatusId', messageStatusToId.Sent)
     })
     .leftOuterJoin('SmsMessage as sm', function () {
-      this.on('n.smsMessageId', 'sm.id').andOn(
-        'sm.messageStatusId',
-        messageStatusToId.Sent
-      )
+      this.on('n.smsMessageId', 'sm.id').andOn('sm.messageStatusId', messageStatusToId.Sent)
     })
     // only specified 'currentMonth' and previous onth
     .whereRaw(
@@ -211,30 +191,18 @@ async function resultsTransmittedDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultCategories = await allResultCategoryToId()
-  const positiveResultCategories = _.values(
-    _.pick(resultCategories, getPositiveCategoriesExternalIds())
-  )
+  const positiveResultCategories = _.values(_.pick(resultCategories, getPositiveCategoriesExternalIds()))
   // Because all the datetimes are transformed automatically to UTC
   // and it is not possible to take the offset from that date,
   // it is needed to use this function to obtain the offset received from the querystring.
   const offset = getOffsetFromIsoDateString(query.currentMonth)
 
   // get all assays which user can access
-  const assays = await getAssayQuery(
-    query,
-    dataConstraints,
-    positiveResultCategories
-  )
-  const items = await getResultQuery(
-    query,
-    dataConstraints,
-    positiveResultCategories,
-    offset
-  )
+  const assays = await getAssayQuery(query, dataConstraints, positiveResultCategories)
+  const items = await getResultQuery(query, dataConstraints, positiveResultCategories, offset)
 
   // eslint-disable-next-line no-confusing-arrow
-  const roundPercent = percent =>
-    percent < 1 ? Math.round(percent * 10) / 10 : Math.round(percent)
+  const roundPercent = percent => (percent < 1 ? Math.round(percent * 10) / 10 : Math.round(percent))
 
   // helper func for percentages
   const getPercent = (numerator, denominator) => {
@@ -245,24 +213,15 @@ async function resultsTransmittedDashboard(request) {
   items.forEach(item => {
     item.percentPositive = getPercent(item.cntPositive, item.cntAll)
     item.percentReported = getPercent(item.cntAllReported, item.cntPositive)
-    item.percentViaEmail = getPercent(
-      item.cntReportedViaEmail,
-      item.cntAllReported
-    )
+    item.percentViaEmail = getPercent(item.cntReportedViaEmail, item.cntAllReported)
     item.percentViaSms = getPercent(item.cntReportedViaSms, item.cntAllReported)
-    item.percentWithin2Hours = getPercent(
-      item.cntWithin2Hours,
-      item.cntAllReported
-    )
+    item.percentWithin2Hours = getPercent(item.cntWithin2Hours, item.cntAllReported)
   })
 
   // helpers
   const { currentMonth = new Date() } = query
   const currMonth = formatDateOrDefault(currentMonth, 'yyyy-MM')
-  const prevMonth = formatDateOrDefault(
-    subMonths(new Date(currentMonth), 1),
-    'yyyy-MM'
-  )
+  const prevMonth = formatDateOrDefault(subMonths(new Date(currentMonth), 1), 'yyyy-MM')
 
   const getChange = (pcCurr, pcPrev = null) => {
     if (pcPrev === null) {
@@ -274,65 +233,51 @@ async function resultsTransmittedDashboard(request) {
     item.yearMonth === yearMonth && item.assayExternalId === assayExternalId
 
   const data = assays
-    .map(
-      ({ assayId, assayName, assayExternalId, resultCategoryPositiveId }) => {
-        // get items for current and previous month
+    .map(({ assayId, assayName, assayExternalId, resultCategoryPositiveId }) => {
+      // get items for current and previous month
 
-        const currItem = items.find(findItem(currMonth, assayExternalId))
-        const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
+      const currItem = items.find(findItem(currMonth, assayExternalId))
+      const prevItem = items.find(findItem(prevMonth, assayExternalId)) || {}
 
-        const {
-          cntAll = 0,
-          cntPositive = 0,
-          cntAllReported = 0,
-          cntReportedViaEmail = 0,
-          cntReportedViaSms = 0,
-          cntWithin2Hours = 0,
-          percentPositive = 0,
-          percentReported = 0,
-          percentViaEmail = 0,
-          percentViaSms = 0,
-          percentWithin2Hours = 0,
-        } = currItem || {}
+      const {
+        cntAll = 0,
+        cntPositive = 0,
+        cntAllReported = 0,
+        cntReportedViaEmail = 0,
+        cntReportedViaSms = 0,
+        cntWithin2Hours = 0,
+        percentPositive = 0,
+        percentReported = 0,
+        percentViaEmail = 0,
+        percentViaSms = 0,
+        percentWithin2Hours = 0,
+      } = currItem || {}
 
-        return {
-          assayId,
-          assayName,
-          resultCategoryPositiveId,
-          // totals in current month
-          cntAll,
-          cntPositive,
-          cntAllReported,
-          cntReportedViaEmail,
-          cntReportedViaSms,
-          cntWithin2Hours,
-          // percent in current month
-          percentPositive,
-          percentReported,
-          percentViaEmail,
-          percentViaSms,
-          percentWithin2Hours,
-          // changes since previous month
-          percentPositiveChange: getChange(
-            percentPositive,
-            prevItem.percentPositive
-          ),
-          percentReportedChange: getChange(
-            percentReported,
-            prevItem.percentReported
-          ),
-          percentViaEmailChange: getChange(
-            percentViaEmail,
-            prevItem.percentViaEmail
-          ),
-          percentViaSmsChange: getChange(percentViaSms, prevItem.percentViaSms),
-          percentWithin2HoursChange: getChange(
-            percentWithin2Hours,
-            prevItem.percentWithin2Hours
-          ),
-        }
+      return {
+        assayId,
+        assayName,
+        resultCategoryPositiveId,
+        // totals in current month
+        cntAll,
+        cntPositive,
+        cntAllReported,
+        cntReportedViaEmail,
+        cntReportedViaSms,
+        cntWithin2Hours,
+        // percent in current month
+        percentPositive,
+        percentReported,
+        percentViaEmail,
+        percentViaSms,
+        percentWithin2Hours,
+        // changes since previous month
+        percentPositiveChange: getChange(percentPositive, prevItem.percentPositive),
+        percentReportedChange: getChange(percentReported, prevItem.percentReported),
+        percentViaEmailChange: getChange(percentViaEmail, prevItem.percentViaEmail),
+        percentViaSmsChange: getChange(percentViaSms, prevItem.percentViaSms),
+        percentWithin2HoursChange: getChange(percentWithin2Hours, prevItem.percentWithin2Hours),
       }
-    )
+    })
     .filter(item => item.cntAll > 0)
     .sort((a, b) => b.cntAll - a.cntAll)
 

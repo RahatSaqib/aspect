@@ -4,9 +4,7 @@ const _ = require('lodash')
 
 async function seed(knex) {
   // assign all notifications we created for Cepheid to the SystemOne job function
-  const { id: jobFunctionSystemOneId } = await knex('JobFunction')
-    .where('externalId', 'systemOne')
-    .first('id')
+  const { id: jobFunctionSystemOneId } = await knex('JobFunction').where('externalId', 'systemOne').first('id')
 
   const issueTypeIds = _.map(
     await knex('IssueType')
@@ -28,7 +26,5 @@ async function seed(knex) {
     i => i.id
   )
 
-  await knex('NotificationType')
-    .update('jobFunctionId', jobFunctionSystemOneId)
-    .whereIn('issueTypeId', issueTypeIds)
+  await knex('NotificationType').update('jobFunctionId', jobFunctionSystemOneId).whereIn('issueTypeId', issueTypeIds)
 }

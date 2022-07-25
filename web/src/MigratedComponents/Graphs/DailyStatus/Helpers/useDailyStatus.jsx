@@ -12,18 +12,9 @@ import { extractOptionValue } from '../../Helpers/Formatters'
 import { replaceRouteParams } from '../../../QueryFetch/Helpers'
 
 import fetchWrapperForQueries from '../../../QueryFetch'
-import {
-  DAILY_STATUS,
-  DEVICE_STATUS,
-  DEVICE_MAINTENANCE_STATUS_BY_PERIOD,
-} from '../../../QueryFetch/Device'
+import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../../../QueryFetch/Device'
 
-const useDailyStatus = (
-  minDate,
-  maxDate,
-  endpoint = DAILY_STATUS.ENDPOINT,
-  extraParams = {}
-) => {
+const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extraParams = {}) => {
   const queryClient = useQueryClient()
   const { formatMessage } = useIntl()
   const [statuses, setStatuses] = useState(false)
@@ -44,27 +35,18 @@ const useDailyStatus = (
     isError: devicesIsError,
     data: { data: devicesDaily } = false,
     error: devicesError,
-  } = useQuery(
-    [DAILY_STATUS.KEY, { params, ...extraParams }],
-    async ({ queryKey: [, { params }] }) =>
-      fetchWrapperForQueries({
-        endpoint,
-        params:
-          minDate && maxDate
-            ? { ...params, ...extraParams }
-            : Object.keys(extraParams).length > 0
-            ? extraParams
-            : null,
-      })
+  } = useQuery([DAILY_STATUS.KEY, { params, ...extraParams }], async ({ queryKey: [, { params }] }) =>
+    fetchWrapperForQueries({
+      endpoint,
+      params:
+        minDate && maxDate ? { ...params, ...extraParams } : Object.keys(extraParams).length > 0 ? extraParams : null,
+    })
   )
 
   const { mutate: changeDeviceStatus } = useMutation(
     ({ deviceId, values }) =>
       fetchWrapperForQueries({
-        endpoint: replaceRouteParams(
-          DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ENDPOINT,
-          { deviceId }
-        ),
+        endpoint: replaceRouteParams(DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ENDPOINT, { deviceId }),
         method: 'POST',
         params: {
           externalId: values.reason,
@@ -77,15 +59,11 @@ const useDailyStatus = (
     {
       onSuccess: (responseData, requestData) => {
         const { deviceId, values } = requestData
-        const selectedStatus = statuses.find(
-          ({ externalId }) => externalId === values.reason
-        )
+        const selectedStatus = statuses.find(({ externalId }) => externalId === values.reason)
         queryClient.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
           const { data: devicesDailyOld } = oldData
           const devicesDailyNew = cloneDeep(devicesDailyOld)
-          const { maintenanceStatusHistory } = devicesDailyNew.find(
-            ({ id }) => +id === +deviceId
-          )
+          const { maintenanceStatusHistory } = devicesDailyNew.find(({ id }) => +id === +deviceId)
           maintenanceStatusHistory
             .filter(
               /**
@@ -112,23 +90,19 @@ const useDailyStatus = (
     isLoading: deviceStatusesIsLoading,
     isError: deviceStatusesIsError,
     error: deviceStatusesError,
-  } = useQuery(
-    DEVICE_STATUS.KEY,
-    async () => fetchWrapperForQueries({ endpoint: DEVICE_STATUS.ENDPOINT }),
-    {
-      onSuccess: ({ data }) => {
-        const output = []
-        data.map(status =>
-          output.push({
-            ...status,
-            name: formatMessage(messages[status.i18nKey]),
-            checked: true,
-          })
-        )
-        setStatuses(output)
-      },
-    }
-  )
+  } = useQuery(DEVICE_STATUS.KEY, async () => fetchWrapperForQueries({ endpoint: DEVICE_STATUS.ENDPOINT }), {
+    onSuccess: ({ data }) => {
+      const output = []
+      data.map(status =>
+        output.push({
+          ...status,
+          name: formatMessage(messages[status.i18nKey]),
+          checked: true,
+        })
+      )
+      setStatuses(output)
+    },
+  })
 
   const toggleStatusVisibility = name => {
     const tempStatuses = [...visibleStatuses]
@@ -151,11 +125,7 @@ const useDailyStatus = (
     if (!visibleStatuses) {
       setVisibleStatuses(
         // do not use 'Decommissioned' for graphs
-        !statuses
-          ? statuses
-          : statuses.filter(
-              ({ externalId }) => externalId !== 'inactiveDecommissioned'
-            )
+        !statuses ? statuses : statuses.filter(({ externalId }) => externalId !== 'inactiveDecommissioned')
       )
     }
   }, [statuses, visibleStatuses])
@@ -171,26 +141,18 @@ const useDailyStatus = (
    * Notice that date range is _continuous dates with SAME status
    */
   const getDeviceDayDetails = ({ day, deviceId }) => {
-    const { maintenanceStatusHistory, shortName } = devicesDaily.find(
-      ({ id }) => +id === +deviceId
+    const { maintenanceStatusHistory, shortName } = devicesDaily.find(({ id }) => +id === +deviceId)
+    const { maintenanceStatusExternalId, maintenanceStatusNotes: note } = maintenanceStatusHistory.find(
+      it => it.day === day
     )
-    const { maintenanceStatusExternalId, maintenanceStatusNotes: note } =
-      maintenanceStatusHistory.find(it => it.day === day)
     const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
     // helper to get forward or backward index of first day with another status
     const getIndex = findFn =>
-      findFn(
-        maintenanceStatusHistory,
-        it => it.maintenanceStatusExternalId !== maintenanceStatusExternalId,
-        fromIndex
-      )
+      findFn(maintenanceStatusHistory, it => it.maintenanceStatusExternalId !== maintenanceStatusExternalId, fromIndex)
 
     const startedOnIndex = getIndex(findLastIndex) + 1
     let endedOnIndex = getIndex(findIndex)
-    endedOnIndex =
-      endedOnIndex === -1
-        ? maintenanceStatusHistory.length - 1
-        : endedOnIndex - 1
+    endedOnIndex = endedOnIndex === -1 ? maintenanceStatusHistory.length - 1 : endedOnIndex - 1
     const startedOn = maintenanceStatusHistory[startedOnIndex].day
     const endedOn = maintenanceStatusHistory[endedOnIndex].day
 
@@ -211,9 +173,7 @@ const useDailyStatus = (
     devices: {
       devicesIsLoading,
       devicesIsError,
-      devicesDaily: devicesDaily
-        ? devicesDaily.map(item => ({ ...item, id: +item.id }))
-        : devicesDaily,
+      devicesDaily: devicesDaily ? devicesDaily.map(item => ({ ...item, id: +item.id })) : devicesDaily,
       devicesError,
     },
     statuses: {

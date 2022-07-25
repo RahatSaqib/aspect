@@ -11,11 +11,7 @@ const server = require('../utils/testUtils')
 const { assert } = chai
 
 function getAllWidgets() {
-  const widgets = [
-    ...dashboardWidget.stat,
-    ...dashboardWidgetMyanmar.stat,
-    ...dashboardWidgetMyanmar.target,
-  ]
+  const widgets = [...dashboardWidget.stat, ...dashboardWidgetMyanmar.stat, ...dashboardWidgetMyanmar.target]
   return widgets
 }
 
@@ -41,9 +37,7 @@ describe('Dashboard routes', () => {
     })
 
     it('should return a list of stat dashboard widget objects for Operational Data dashboard', async () => {
-      const res = await server
-        .get(`${path}?dashboard=operational`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}?dashboard=operational`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -54,9 +48,7 @@ describe('Dashboard routes', () => {
 
       // check widget on OperationalData dashboard - fixture must have at least one widget for this dashboard
       const externalIds = getAllWidgets()
-        .filter(({ dashboards = {} }) =>
-          _.isPlainObject(dashboards.operational)
-        )
+        .filter(({ dashboards = {} }) => _.isPlainObject(dashboards.operational))
         .map(({ externalId }) => externalId)
       assert.equal(externalIds.includes(res.body.data[0].externalId), true)
     })
@@ -71,9 +63,7 @@ describe('Dashboard routes', () => {
           30
         ).toISOString()}&maxDate=${now.toISOString()}`
         it('should return a list of stat dashboard widget objects', async () => {
-          const res = await server
-            .get(path)
-            .set('Authorization', `Bearer ${shared.token}`)
+          const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')

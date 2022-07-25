@@ -10,10 +10,7 @@ import {
   connectConsumableFromInventoryItem,
   InventoryAdjustmentDialogForm,
 } from './InventoryAdjustmentDialogForm'
-import {
-  withTodayProps,
-  withDateFormatProps,
-} from '../../shared/utils/dateFormat'
+import { withTodayProps, withDateFormatProps } from '../../shared/utils/dateFormat'
 
 const messages = defineMessages({
   siteShouldBeDifferent: {
@@ -42,10 +39,7 @@ const messages = defineMessages({
   },
 })
 
-export function validate(
-  { canExpire, expiresOn, fromSiteId, toSiteId, quantity, dateAdjusted },
-  { intl }
-) {
+export function validate({ canExpire, expiresOn, fromSiteId, toSiteId, quantity, dateAdjusted }, { intl }) {
   const errors = {}
   if (canExpire && !expiresOn) {
     errors.expiresOn = intl.formatMessage(sharedMessages.expiryDateRequired)
@@ -103,9 +97,7 @@ const enhance = compose(
         ...DEFAULT_VALUES,
         lotNumber: inventoryItem.get('lotNumber') || DEFAULT_VALUES.lotNumber,
         canExpire: inventoryItem.get('canExpire') === 1,
-        expiresOn: inventoryItem.get('expiresOn')
-          ? new Date(inventoryItem.get('expiresOn'))
-          : undefined,
+        expiresOn: inventoryItem.get('expiresOn') ? new Date(inventoryItem.get('expiresOn')) : undefined,
         fromSiteId: inventoryItem.get('inTransitFromSiteId'),
         toSiteId: inventoryItem.get('siteId'),
         quantity: inventoryItem.get('quantityOnHand'),
@@ -126,9 +118,7 @@ const enhance = compose(
         o.get('inTransitFromSiteId') === null
     )
     // If the inventory item already exist, get the actual quantity. If not, set 0.
-    const quantityOnHand = destination
-      ? destination[1].get('quantityOnHand')
-      : 0
+    const quantityOnHand = destination ? destination[1].get('quantityOnHand') : 0
 
     return {
       currInventoryItem: inventoryItem,

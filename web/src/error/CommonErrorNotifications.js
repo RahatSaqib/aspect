@@ -1,9 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export function errorPleaseTryAgainInAFewMinutes(
-  messageDescriptors,
-  messageValues
-) {
+export function errorPleaseTryAgainInAFewMinutes(messageDescriptors, messageValues) {
   return {
     severity: 'error',
     ...defineMessages({
@@ -46,10 +43,7 @@ export function errorForbidden(messageDescriptors, messageValues) {
   }
 }
 
-export function inlineErrorPleaseTryAgainInAFewMinutes(
-  messageDescriptors,
-  messageValues
-) {
+export function inlineErrorPleaseTryAgainInAFewMinutes(messageDescriptors, messageValues) {
   return {
     ...errorPleaseTryAgainInAFewMinutes(messageDescriptors, messageValues),
     showAs: 'inline',

@@ -8,22 +8,11 @@ async function getNotificationSubscriptions(knex) {
       'ntc.triggerCondition',
       'nt.filterCondition',
       'nt.id as notificationTypeId',
-      knex.raw(
-        `IFNULL(MD5(CONCAT(ntc.externalId,nt.filterCondition)), ntc.externalId) as memoKey`
-      )
+      knex.raw(`IFNULL(MD5(CONCAT(ntc.externalId,nt.filterCondition)), ntc.externalId) as memoKey`)
     )
     .then(items =>
       items.reduce(
-        (
-          memo,
-          {
-            notificationTypeCategoryId,
-            triggerCondition,
-            filterCondition,
-            memoKey,
-            notificationTypeId,
-          }
-        ) => {
+        (memo, { notificationTypeCategoryId, triggerCondition, filterCondition, memoKey, notificationTypeId }) => {
           const { action, method } = JSON.parse(triggerCondition || '{}')
           if (action) {
             const elemToAdd = {

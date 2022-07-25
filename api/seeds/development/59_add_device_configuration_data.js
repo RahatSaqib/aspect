@@ -8,9 +8,7 @@ async function seed(knex) {
     .innerJoin('Country as c', 'c.id', 'g.countryId')
     .where({ 'c.a3': 'USA' })
     .first('g.id')
-  const { partnerId } = await knex('Partner')
-    .where({ name: 'Partner One' })
-    .first('id as partnerId')
+  const { partnerId } = await knex('Partner').where({ name: 'Partner One' }).first('id as partnerId')
   await knex('DeviceConfiguration').insert({
     deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
     geographyId,

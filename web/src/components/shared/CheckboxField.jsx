@@ -22,13 +22,7 @@ const styles = {
   },
 }
 
-const CheckboxField = ({
-  classes: classesMap,
-  className,
-  classNames,
-  label,
-  ...restProps
-}) => (
+const CheckboxField = ({ classes: classesMap, className, classNames, label, ...restProps }) => (
   <FormControlLabel
     classes={{
       root: classesMap.root,
@@ -36,11 +30,7 @@ const CheckboxField = ({
     }}
     className={className}
     control={
-      <AspectCheckbox
-        classes={{ root: classesMap.checkbox }}
-        className={classNames.controlContainer}
-        {...restProps}
-      />
+      <AspectCheckbox classes={{ root: classesMap.checkbox }} className={classNames.controlContainer} {...restProps} />
     }
     label={label}
   />

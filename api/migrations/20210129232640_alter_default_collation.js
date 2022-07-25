@@ -8,9 +8,7 @@ async function up(knex) {
    * There will be an update in our current devops script to set up all this things as a default
    */
 
-  await knex.raw(
-    `ALTER DATABASE ${config.db.database} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
-  )
+  await knex.raw(`ALTER DATABASE ${config.db.database} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`)
 
   const [alterTableQueries] = await knex.raw(
     "SELECT CONCAT('ALTER TABLE `', tbl.`TABLE_SCHEMA`, '`.`', tbl.`TABLE_NAME`, '` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;') as query FROM `information_schema`.`TABLES` tbl WHERE tbl.`TABLE_SCHEMA` = ? AND TABLE_COLLATION<>'utf8mb4_unicode_ci';",
@@ -23,20 +21,14 @@ async function up(knex) {
     ["'", "'", config.db.database]
   )
 
-  await Promise.each(alterTableQueries, tableQuery =>
-    knex.raw(tableQuery.query)
-  )
+  await Promise.each(alterTableQueries, tableQuery => knex.raw(tableQuery.query))
 
-  await Promise.each(alterColumnQueries, columnQuery =>
-    knex.raw(columnQuery.query)
-  )
+  await Promise.each(alterColumnQueries, columnQuery => knex.raw(columnQuery.query))
 }
 
 // eslint-disable-next-line no-unused-vars
 async function down(knex) {
-  await knex.raw(
-    `ALTER DATABASE ${config.db.database} CHARACTER SET utf8 COLLATE utf8_general_ci;`
-  )
+  await knex.raw(`ALTER DATABASE ${config.db.database} CHARACTER SET utf8 COLLATE utf8_general_ci;`)
 
   const [alterTableQueries] = await knex.raw(
     "SELECT CONCAT('ALTER TABLE `', tbl.`TABLE_SCHEMA`, '`.`', tbl.`TABLE_NAME`, '` CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;') as query FROM `information_schema`.`TABLES` tbl WHERE tbl.`TABLE_SCHEMA` = ? AND TABLE_COLLATION<>'utf8mb4_unicode_ci';",
@@ -48,11 +40,7 @@ async function down(knex) {
     ["'", "'", config.db.database]
   )
 
-  await Promise.each(alterTableQueries, tableQuery =>
-    knex.raw(tableQuery.query)
-  )
+  await Promise.each(alterTableQueries, tableQuery => knex.raw(tableQuery.query))
 
-  await Promise.each(alterColumnQueries, columnQuery =>
-    knex.raw(columnQuery.query)
-  )
+  await Promise.each(alterColumnQueries, columnQuery => knex.raw(columnQuery.query))
 }

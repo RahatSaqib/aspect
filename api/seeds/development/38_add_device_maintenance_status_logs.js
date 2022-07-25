@@ -2,22 +2,12 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  addDays,
-  subDays,
-  format,
-  addHours,
-  subHours,
-  subMonths,
-  parseISO,
-} = require('date-fns')
+const { addDays, subDays, format, addHours, subHours, subMonths, parseISO } = require('date-fns')
 
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const patients = require('./fixtures/patients.json')
 
-const {
-  allDeviceMaintenanceStatusToId,
-} = require('../../src/shared/dictionary')
+const { allDeviceMaintenanceStatusToId } = require('../../src/shared/dictionary')
 
 const { generateResults } = require('../commonGenerateResults')
 
@@ -59,13 +49,8 @@ async function seed(knex) {
   // ASP-2036 - Create a realistic, repeating, predefined activity pattern.
   // The array below defines for an n-th device what inactivity data should look like
   // Devices or date ranges that are not included are active
-  const {
-    active,
-    inactiveUnknown,
-    inactiveDownForRepair,
-    inactiveOutOfInventory,
-    inactiveNoTestsPerformed,
-  } = deviceMaintenanceStatusToId
+  const { active, inactiveUnknown, inactiveDownForRepair, inactiveOutOfInventory, inactiveNoTestsPerformed } =
+    deviceMaintenanceStatusToId
 
   const activityPattern = [
     {
@@ -210,23 +195,14 @@ async function seed(knex) {
   await Promise.each(deviceIds, async (deviceId, index) => {
     const dayAndStatus = []
     const patternForDevice = activityPattern.find(p => p.deviceIndex === index)
-    for (
-      let dayDate = minDate;
-      dayDate < maxDate;
-      dayDate = addDays(dayDate, 1)
-    ) {
+    for (let dayDate = minDate; dayDate < maxDate; dayDate = addDays(dayDate, 1)) {
       const dayOfMonth = dayDate.getUTCDate()
       const dayStatus = patternForDevice
-        ? patternForDevice.statuses.find(
-            p => p.start <= dayOfMonth && p.end >= dayOfMonth
-          )
+        ? patternForDevice.statuses.find(p => p.start <= dayOfMonth && p.end >= dayOfMonth)
         : null
       if (!patternForDevice || !dayStatus) {
         // if no pattern specified for the device or there is a pattern, but it doesn't include the current day, the device should be active, unless it's a weekend (in which case there's a 5% chance the device is active)
-        if (
-          (dayDate.getUTCDay() !== 0 && dayDate.getUTCDay() !== 6) ||
-          _.random(1, true) < 0.1
-        ) {
+        if ((dayDate.getUTCDay() !== 0 && dayDate.getUTCDay() !== 6) || _.random(1, true) < 0.1) {
           dayAndStatus.push({ dayDate, statusId: active })
         } else {
           dayAndStatus.push({ dayDate, statusId: inactiveNoTestsPerformed })
@@ -244,26 +220,14 @@ async function seed(knex) {
       await setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId)
 
       if (_.random(0, 9) === 5 && statusId !== 1 && !isWeekend) {
-        await setDeviceMaintenanceStatusLog(
-          knex,
-          deviceId,
-          dayDate,
-          statusId,
-          userId,
-          {
-            notes: '',
-            dateTo: dayDate,
-            dateFrom: dayDate,
-            externalId: statusId,
-          }
-        )
+        await setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId, userId, {
+          notes: '',
+          dateTo: dayDate,
+          dateFrom: dayDate,
+          externalId: statusId,
+        })
       }
-      deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatusLog(
-        knex,
-        deviceId,
-        dayDate,
-        statusId
-      )
+      deviceMaintenanceStatusLogId = await setDeviceMaintenanceStatusLog(knex, deviceId, dayDate, statusId)
       if (statusId === active) {
         await ensureResultExists(knex, deviceId, dayDate, userId, partnerId)
       } else {
@@ -286,9 +250,7 @@ async function setDeviceMaintenanceStatusLog(
   createdBy = false,
   data = false
 ) {
-  const [deviceMaintenanceStatusLogId] = await knex(
-    'DeviceMaintenanceStatusLog'
-  ).insert({
+  const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
     deviceId,
     deviceMaintenanceStatusId,
     data: data ? JSON.stringify(data) : '{}',
@@ -300,34 +262,11 @@ async function setDeviceMaintenanceStatusLog(
 }
 
 async function getResultsOnDay(knex, deviceId, dayDate) {
-  return knex('Result')
-    .where({ deviceId })
-    .whereRaw('DATE(endedOn) = DATE(?)', dayDate)
-    .select('id')
+  return knex('Result').where({ deviceId }).whereRaw('DATE(endedOn) = DATE(?)', dayDate).select('id')
 }
 
-async function generateResultForDay(
-  knex,
-  deviceId,
-  dayDate,
-  userId,
-  partnerId
-) {
-  await generateResults(
-    knex,
-    userId,
-    partnerId,
-    patients,
-    errorCodes,
-    'US',
-    false,
-    1,
-    0,
-    0,
-    0,
-    deviceId,
-    dayDate
-  )
+async function generateResultForDay(knex, deviceId, dayDate, userId, partnerId) {
+  await generateResults(knex, userId, partnerId, patients, errorCodes, 'US', false, 1, 0, 0, 0, deviceId, dayDate)
 }
 
 async function ensureResultExists(knex, deviceId, dayDate, userId, partnerId) {
@@ -351,22 +290,13 @@ async function ensureResultDoesNotExist(knex, deviceId, dayDate) {
 
 async function moveResultFromDay(knex, deviceId, dayDate, resultIds) {
   // move result to a date before the min date range, somewhere between 10am and 3pm
-  const daysToSubtract =
-    (dayDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) +
-    _.random(5, 20)
-  const minutesToSubtract =
-    daysToSubtract * 24 * 60 + _.random(10 * 60, 15 * 60)
+  const daysToSubtract = (dayDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24) + _.random(5, 20)
+  const minutesToSubtract = daysToSubtract * 24 * 60 + _.random(10 * 60, 15 * 60)
 
   await knex('Result')
     .update({
-      startedOn: knex.raw(
-        'DATE_SUB(startedOn, INTERVAL ? MINUTE)',
-        minutesToSubtract
-      ),
-      endedOn: knex.raw(
-        'DATE_SUB(endedOn, INTERVAL ? MINUTE)',
-        minutesToSubtract
-      ),
+      startedOn: knex.raw('DATE_SUB(startedOn, INTERVAL ? MINUTE)', minutesToSubtract),
+      endedOn: knex.raw('DATE_SUB(endedOn, INTERVAL ? MINUTE)', minutesToSubtract),
     })
     .whereIn('id', resultIds)
 }
