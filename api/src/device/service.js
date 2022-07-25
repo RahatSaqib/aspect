@@ -228,7 +228,8 @@ async function getListDevices(query, auth) {
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
       'd.lastSeenOn as deviceLastSeenOn',
-      knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END as gxConnectStatus'),
+      knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END AS gxConnectStatus'),
+      knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS gxConnectVersion'),
     ])
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')

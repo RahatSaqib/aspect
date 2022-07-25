@@ -97,7 +97,8 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           'deliveredLastMonth',
           'deliveredThisMonth',
           'acknowledgedRatio',
-          'totalFlagged'
+          'totalFlagged',
+          'gxConnectVersion'
         ),
       },
     },
@@ -123,6 +124,7 @@ function listDevicesBaseResponse() {
               name: Joi.string().required().description('The name of the device'),
               shortName: Joi.string().allow('', null).description('The short name of the device'),
               gxConnectStatus: Joi.string().allow('', null).description('The gxConnect status'),
+              gxConnectVersion: Joi.string().allow('', null).description('The gxConnect version'),
               createdOn: Joi.date().required().description('When the device was added to the database'),
               lastPingOn: Joi.date().allow(null).description('When the device last pinged'),
               lastSeen: Joi.date()
