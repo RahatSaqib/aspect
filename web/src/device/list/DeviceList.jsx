@@ -51,6 +51,10 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['device'],
   },
   {
+    deviceStatus: true,
+    requiredPermissions: [],
+  },
+  {
     deviceMaintenanceStatus: true,
     requiredPermissions: [],
   },

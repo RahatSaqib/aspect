@@ -39,6 +39,7 @@ import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './FiltersPanel.css'
 import GxConnectStatusSelectField from '../resource/GxConnectStatusSelectField'
+import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
 
 const cssClasses = classnames.bind(styles)
 
@@ -537,6 +538,14 @@ const messages = {
       id: 'filter.popover.gxConnectStatus',
       defaultMessage: 'GxConnect Status',
     },
+    selectDeviceStatus: {
+      id: 'filter.popover.selectDeviceStatus',
+      defaultMessage: 'Select Device status...',
+    },
+    deviceStatus: {
+      id: 'filter.popover.deviceStatus',
+      defaultMessage: 'Device Status',
+    },
   }),
 }
 
@@ -995,6 +1004,18 @@ export const FiltersPanel = ({
                   floatingLabelFixed
                   hintText={formatMessage(messages.selectGxConnectStatus)}
                   floatingLabelText={formatMessage(messages.gxConnectStatus)}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.deviceStatus && (
+              <div className={cssClasses('Control')}>
+                <DeviceStatusSelectField
+                  value={filters.deviceMaintenanceStatusId}
+                  onDeviceMaintenanceStatusChange={onDeviceMaintenanceStatusIdChange}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectDeviceStatus)}
+                  floatingLabelText={formatMessage(messages.deviceStatus)}
                   autoWidth
                 />
               </div>
