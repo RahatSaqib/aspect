@@ -14,38 +14,28 @@ const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
 
 async function seed(knex) {
   // TB LAMP Assays Data Schema Updates
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Philippines')
-    .first('id')
-  const { id: deviceTypeId } = await knex('DeviceType')
-    .where('externalId', 'PhilippinesNtrl')
-    .first('id')
-  await upsertTbLampDeviceTypes(
-    knex,
-    partnerId,
-    deviceTypeId,
-    patientDataSchema,
-    {
-      encodedResult: {
-        list: false,
-        type: 'object',
-        order: 0,
-        title: 'Encoded Result',
-        properties: {
-          ...tbLampResultDataSchema,
-          verifiedBy: {
-            type: 'string',
-            title: 'Verified By',
-          },
-          notedBy: {
-            type: 'string',
-            title: 'Noted By',
-          },
+  const { id: partnerId } = await knex('Partner').where('name', 'Philippines').first('id')
+  const { id: deviceTypeId } = await knex('DeviceType').where('externalId', 'PhilippinesNtrl').first('id')
+  await upsertTbLampDeviceTypes(knex, partnerId, deviceTypeId, patientDataSchema, {
+    encodedResult: {
+      list: false,
+      type: 'object',
+      order: 0,
+      title: 'Encoded Result',
+      properties: {
+        ...tbLampResultDataSchema,
+        verifiedBy: {
+          type: 'string',
+          title: 'Verified By',
+        },
+        notedBy: {
+          type: 'string',
+          title: 'Noted By',
         },
       },
-      ...resultSignOffResultDataSchema,
-    }
-  )
+    },
+    ...resultSignOffResultDataSchema,
+  })
   // SMEAR Assays Data Schema Updates
   await knex('Assay')
     .where('externalId', 'assaySmear')
@@ -192,9 +182,7 @@ async function seed(knex) {
   await knex('Assay')
     .where('externalId', 'assayGenericCulture')
     .update({
-      resultDataSchema: JSON.stringify(
-        ntrlDatabaseGenericCultureResultDataSchema
-      ),
+      resultDataSchema: JSON.stringify(ntrlDatabaseGenericCultureResultDataSchema),
       patientDataSchema: JSON.stringify(patientDataSchema),
     })
   await knex('Assay')
@@ -215,10 +203,8 @@ async function seed(knex) {
       .filter(mgitDataValue => typeof mgitDataValue.order !== 'undefined')
       .map(mgitDataValue => mgitDataValue.order)
   )
-  ntrlDatabaseMGITCultureResultDataSchema.encodedResult.order =
-    maxOrderFromBdMgitGndResultDataSchema + 1
-  ntrlDatabaseMGITCultureResultDataSchema.resultSignOff.order =
-    maxOrderFromBdMgitGndResultDataSchema + 2
+  ntrlDatabaseMGITCultureResultDataSchema.encodedResult.order = maxOrderFromBdMgitGndResultDataSchema + 1
+  ntrlDatabaseMGITCultureResultDataSchema.resultSignOff.order = maxOrderFromBdMgitGndResultDataSchema + 2
 
   const ntrlDatabaseMGITDstResultDataSchema = {
     ...AssayBdMgitAstResultDataSchema,
@@ -229,10 +215,8 @@ async function seed(knex) {
       .filter(mgitDataValue => typeof mgitDataValue.order !== 'undefined')
       .map(mgitDataValue => mgitDataValue.order)
   )
-  ntrlDatabaseMGITDstResultDataSchema.encodedResult.order =
-    maxOrderFromBdMgitAstResultDataSchema + 1
-  ntrlDatabaseMGITDstResultDataSchema.resultSignOff.order =
-    maxOrderFromBdMgitAstResultDataSchema + 2
+  ntrlDatabaseMGITDstResultDataSchema.encodedResult.order = maxOrderFromBdMgitAstResultDataSchema + 1
+  ntrlDatabaseMGITDstResultDataSchema.resultSignOff.order = maxOrderFromBdMgitAstResultDataSchema + 2
 
   await knex('Assay')
     .where('externalId', 'assayBdMgitGnd')

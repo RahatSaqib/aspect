@@ -32,14 +32,8 @@ export const NESTED_ACCESS_LEVELS_FOR = {
 
 // Get a permissions list from the combination of permissionsInConfig (from HOC)
 // and overriddenPermissions, extraPermissions that are passed in by props
-export function getPermissions(
-  permissionsInConfig,
-  overriddenPermissions,
-  extraPermissions
-) {
-  const basePermissions = isEmpty(overriddenPermissions)
-    ? permissionsInConfig
-    : overriddenPermissions
+export function getPermissions(permissionsInConfig, overriddenPermissions, extraPermissions) {
+  const basePermissions = isEmpty(overriddenPermissions) ? permissionsInConfig : overriddenPermissions
   const permissions = basePermissions.concat(extraPermissions)
   return permissions
 }
@@ -49,17 +43,11 @@ export function getPermissions(
 // !name:activity => forbidden
 // name:activity => optional
 export function groupByPermissionTypes(permissions) {
-  const requiredPermissions = permissions
-    .filter(it => it[0] === '+')
-    .map(it => it.substr(1))
+  const requiredPermissions = permissions.filter(it => it[0] === '+').map(it => it.substr(1))
 
-  const forbiddenPermissions = permissions
-    .filter(it => it[0] === '!')
-    .map(it => it.substr(1))
+  const forbiddenPermissions = permissions.filter(it => it[0] === '!').map(it => it.substr(1))
 
-  const optionalPermissions = permissions.filter(
-    it => it[0] !== '+' && it[0] !== '!'
-  )
+  const optionalPermissions = permissions.filter(it => it[0] !== '+' && it[0] !== '!')
 
   return {
     required: requiredPermissions,
@@ -79,10 +67,7 @@ export function groupByPermissionTypes(permissions) {
  *     matchValue - string or array of strings
  *   }
  */
-export function getMatchedUserPermissions(
-  userPermissions,
-  requestedPermissions
-) {
+export function getMatchedUserPermissions(userPermissions, requestedPermissions) {
   return userPermissions.reduce((acc, permission) => {
     // exact match of permission!
     if (requestedPermissions.includes(permission)) {
@@ -118,13 +103,11 @@ export function getMatchedUserPermissions(
       const nestedLevels = NESTED_ACCESS_LEVELS_FOR[level]
       if (nestedLevels && isArray(nestedLevels) && nestedLevels.length > 0) {
         // assemble fully defined permissions from nested levels
-        const nestedPermissions = nestedLevels.map(
-          nestedLevel => `${scope}:${nestedLevel}`
-        )
+        const nestedPermissions = nestedLevels.map(nestedLevel => `${scope}:${nestedLevel}`)
 
         // check if requestedPermissions contains nested permissions
-        const matchedNestedPermissions = nestedPermissions.filter(
-          nestedPermission => requestedPermissions.includes(nestedPermission)
+        const matchedNestedPermissions = nestedPermissions.filter(nestedPermission =>
+          requestedPermissions.includes(nestedPermission)
         )
         if (matchedNestedPermissions.length > 0) {
           return [
@@ -152,16 +135,11 @@ export function isPermittedUser(
   { required = [], forbidden = [], optional = [] }
 ) {
   // treat resource access is allowed when no permissions requested
-  if (
-    required.length === 0 &&
-    forbidden.length === 0 &&
-    optional.length === 0
-  ) {
+  if (required.length === 0 && forbidden.length === 0 && optional.length === 0) {
     return true
   }
 
-  const cntMatches = requestedPerms =>
-    getMatchedUserPermissions(userPermissions, requestedPerms).length
+  const cntMatches = requestedPerms => getMatchedUserPermissions(userPermissions, requestedPerms).length
 
   return (
     // ALL items in `required` must be found in userPermissions
@@ -179,9 +157,7 @@ export function isPermittedUser(
 export const requirePermissions = outerProps => WrappedComponent => {
   const PermissionResolver = props => {
     const store = useStore()
-    const [userPermissions, setUserPermissions] = useState(
-      store.getState().user.jwt.permissions
-    )
+    const [userPermissions, setUserPermissions] = useState(store.getState().user.jwt.permissions)
 
     let unsubscribe = noop
 
@@ -201,31 +177,19 @@ export const requirePermissions = outerProps => WrappedComponent => {
       setUserPermissions(store.getState().user.jwt.permissions)
     }
 
-    const {
-      permissions: permissionsInConfig = [],
-      ForbiddenComponent = constant(false),
-    } = outerProps
-    const {
-      overriddenPermissions = [],
-      extraPermissions = [],
-      ...restProps
-    } = props
-    const permissionsByTypes = flowRight([
-      groupByPermissionTypes,
-      getPermissions,
-    ])(permissionsInConfig, overriddenPermissions, extraPermissions)
+    const { permissions: permissionsInConfig = [], ForbiddenComponent = constant(false) } = outerProps
+    const { overriddenPermissions = [], extraPermissions = [], ...restProps } = props
+    const permissionsByTypes = flowRight([groupByPermissionTypes, getPermissions])(
+      permissionsInConfig,
+      overriddenPermissions,
+      extraPermissions
+    )
     const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
 
-    return isPermitted ? (
-      <WrappedComponent {...restProps} />
-    ) : (
-      <ForbiddenComponent {...restProps} />
-    )
+    return isPermitted ? <WrappedComponent {...restProps} /> : <ForbiddenComponent {...restProps} />
   }
 
-  PermissionResolver.displayName = `requirePermissions(${getDisplayName(
-    WrappedComponent
-  )})`
+  PermissionResolver.displayName = `requirePermissions(${getDisplayName(WrappedComponent)})`
   PermissionResolver.propTypes = {
     overriddenPermissions: PropTypes.arrayOf(PropTypes.string),
     extraPermissions: PropTypes.arrayOf(PropTypes.string),

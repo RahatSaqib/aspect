@@ -19,13 +19,7 @@ const SiteForm = props => {
     }
     return onSubmit(site.get('id'))
   }
-  const {
-    site,
-    siteTags,
-    formatMessage,
-    onSiteTagChange,
-    updateLatLongFromFormAddress,
-  } = props
+  const { site, siteTags, formatMessage, onSiteTagChange, updateLatLongFromFormAddress } = props
   const extraValuesForMap = {
     // SiteLocationFormMap reads the values from redux-form to construct names for Geocoder
     country: site.get('country'),

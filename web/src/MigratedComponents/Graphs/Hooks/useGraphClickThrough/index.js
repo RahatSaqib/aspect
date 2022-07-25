@@ -27,9 +27,7 @@ const {
 const parseDate = (date, dateFormat) => {
   const baseFormat = 'yyyy-MM-dd'
   const parsedDate =
-    dateFormat === 'MMM'
-      ? negateTimeZoneOffset(new Date(date), baseFormat)
-      : parse(date, dateFormat, new Date())
+    dateFormat === 'MMM' ? negateTimeZoneOffset(new Date(date), baseFormat) : parse(date, dateFormat, new Date())
   return {
     [MIN_DATE]: format(startOfMonth(parsedDate), baseFormat),
     [MAX_DATE]: format(endOfMonth(parsedDate), baseFormat),
@@ -38,9 +36,7 @@ const parseDate = (date, dateFormat) => {
 
 const flattenAssaysStructure = ({ data }) => {
   const output = []
-  map(data, ({ resultCategories }) =>
-    map(resultCategories, category => output.push({ ...category }))
-  )
+  map(data, ({ resultCategories }) => map(resultCategories, category => output.push({ ...category })))
   return uniqBy(output, 'i18nKey')
 }
 
@@ -80,25 +76,16 @@ function getQueryParameters(
       if (filterBy?.resultCategory1) {
         const { values } = filterBy.resultCategory1
         values.forEach(externalId => {
-          const { id: resultCategoryId } = assayResultCategoryIdFromKey(
-            categories,
-            externalId
-          )
+          const { id: resultCategoryId } = assayResultCategoryIdFromKey(categories, externalId)
           params.append('resultCategoryId', resultCategoryId)
         })
 
         if (keyToConsume === 'resultCategory2') {
-          const { id: resultCategoryId } = assayResultCategoryIdFromKey(
-            categories,
-            id
-          )
+          const { id: resultCategoryId } = assayResultCategoryIdFromKey(categories, id)
           params.set('resultCategory2Id', resultCategoryId)
         }
       } else {
-        const { id: resultCategoryId } = assayResultCategoryIdFromKey(
-          categories,
-          id
-        )
+        const { id: resultCategoryId } = assayResultCategoryIdFromKey(categories, id)
         params.set('resultCategoryId', resultCategoryId)
       }
       return
@@ -154,9 +141,7 @@ function getQueryParameters(
 
   // params from `assays`
   if (assays) {
-    linkData.data
-      .filter(it => assays.includes(it.externalId))
-      .map(it => params.append('assayId', it.id))
+    linkData.data.filter(it => assays.includes(it.externalId)).map(it => params.append('assayId', it.id))
   }
   // params from `paramKeys`
   paramKeys.forEach(key => buildParamsFromKey(key, params))
@@ -194,20 +179,13 @@ const useGraphClickThrough = () => {
       } = config
 
       if (allow) {
-        const params = getQueryParameters(
-          linkData,
-          data,
-          formatDate,
-          id,
-          indexBy,
-          {
-            assays,
-            baseAssay,
-            keys,
-            filterBy,
-            keyToConsume,
-          }
-        )
+        const params = getQueryParameters(linkData, data, formatDate, id, indexBy, {
+          assays,
+          baseAssay,
+          keys,
+          filterBy,
+          keyToConsume,
+        })
         setLink(`${baseUrl}${encodeURIComponent(params.toString())}`)
       }
     }

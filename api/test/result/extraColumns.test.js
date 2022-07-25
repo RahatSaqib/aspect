@@ -1,8 +1,5 @@
 const { assert } = require('chai')
-const {
-  applyExtraColumns,
-  sanitizeExtraColumns,
-} = require('../../src/result/extraColumns')
+const { applyExtraColumns, sanitizeExtraColumns } = require('../../src/result/extraColumns')
 
 const cloneResults = results =>
   results.map(r => {
@@ -61,10 +58,7 @@ describe('Result Schema', () => {
       const newResults = cloneResults(baseResults)
       applyExtraColumns(newResults, extraColumns)
       assert.deepEqual(newResults, baseResults)
-      assert.deepEqual(
-        [extraColumn],
-        [{ ...extraColumn, fieldName: extraColumn.db }]
-      )
+      assert.deepEqual([extraColumn], [{ ...extraColumn, fieldName: extraColumn.db }])
     })
 
     it('one extra column defined using a new fieldName, a new field should be created', async () => {
@@ -77,9 +71,7 @@ describe('Result Schema', () => {
 
       const newResults = cloneResults(baseResults)
       applyExtraColumns(newResults, extraColumns)
-      assert.deepEqual(newResults, [
-        { ...baseResult, aDbValue: 'Haha, what a value, right?' },
-      ])
+      assert.deepEqual(newResults, [{ ...baseResult, aDbValue: 'Haha, what a value, right?' }])
     })
 
     it('one extra column defined using a postProcess function, a new field should be created and the post processed value should be set', async () => {
@@ -93,9 +85,7 @@ describe('Result Schema', () => {
 
       const newResults = cloneResults(baseResults)
       applyExtraColumns(newResults, extraColumns)
-      assert.deepEqual(newResults, [
-        { ...baseResult, aDbValue: 'Haha, what a value, right? ...Right?' },
-      ])
+      assert.deepEqual(newResults, [{ ...baseResult, aDbValue: 'Haha, what a value, right? ...Right?' }])
     })
   })
 

@@ -13,27 +13,16 @@ const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormS
 async function seed(knex) {
   utils.hasSeededStaticData = true
 
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Wakanda')
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where('name', 'Wakanda').first('id')
 
-  const covidDeviceTypes = await upsertCovidDeviceTypes(
-    knex,
-    partnerId,
-    wakandaCovidResultFormSchema
-  )
+  const covidDeviceTypes = await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),
     async deviceTypeId =>
-      knex('DeviceType')
-        .where('id', deviceTypeId)
-        .whereNull('plugin')
-        .update({ plugin: 'aspectresultentry' })
+      knex('DeviceType').where('id', deviceTypeId).whereNull('plugin').update({ plugin: 'aspectresultentry' })
   )
 
-  const countryWakanda = geography.countries.find(
-    country => country.abbreviation === 'WK'
-  )
+  const countryWakanda = geography.countries.find(country => country.abbreviation === 'WK')
 
   const covidResultFormData = await knex('AssayType as at')
     .join('Assay as a', 'at.id', 'a.assayTypeId')
@@ -149,70 +138,42 @@ async function seed(knex) {
     .where('a.externalId', 'assayGenericCovid19')
     .andWhere('rf.partnerId', partnerId)
     .first('rf.*')) || { formSchema: '{}' }
-  const aspectGenericResultFormSchema = JSON.parse(
-    aspectGenericResultForm.formSchema
-  )
+  const aspectGenericResultFormSchema = JSON.parse(aspectGenericResultForm.formSchema)
   await Promise.each(covidResultFormData, async result => {
     const underlyingConditionsAndComorbidity = randomYesNoUnknown()
     const exposureRiskIsCaseAHealthCareWorker = randomYesNoUnknown()
-    const exposureRiskHealthcareWorkerCountry = randomCountryIf(
-      exposureRiskIsCaseAHealthCareWorker === 'yes'
-    )
-    const exposureRiskHealthcareWorkerCity = randomCityIf(
-      exposureRiskHealthcareWorkerCountry === 'Wakanda'
-    )
-    const exposureRiskHealthcareWorkerFacility =
-      exposureRiskHealthcareWorkerCity
-        ? (
-            utils.randomOption(
-              cityClinics.exposureRiskHealthcareWorkerCity || []
-            ) || {}
-          ).name
-        : undefined
+    const exposureRiskHealthcareWorkerCountry = randomCountryIf(exposureRiskIsCaseAHealthCareWorker === 'yes')
+    const exposureRiskHealthcareWorkerCity = randomCityIf(exposureRiskHealthcareWorkerCountry === 'Wakanda')
+    const exposureRiskHealthcareWorkerFacility = exposureRiskHealthcareWorkerCity
+      ? (utils.randomOption(cityClinics.exposureRiskHealthcareWorkerCity || []) || {}).name
+      : undefined
     const resubmission30DaysAfterInitialReport = covidResultFormData.endedOn
       ? utils.randomOption([covidResultFormData.endedOn])
       : undefined
-    const resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms =
-      randomYesNoUnknown()
+    const resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms = randomYesNoUnknown()
     result.formData = {
       ...result.formData,
       testResult: result.resultCategory1ExternalId,
       dateAndTimeOfTest: result.endedOn,
-      testReasonOther: result.formData.testReason
-        ? null
-        : 'Referral by clinical trial',
+      testReasonOther: result.formData.testReason ? null : 'Referral by clinical trial',
       usualCountryOfResidency: 'Wakanda',
       anySymptomsOrSignsAtTimeOfSpecimenCollection: randomYesNoUnknown(),
       dateOfOnsetOfSymptoms: subDays(result.endedOn, _.random(3, 18)),
       underlyingConditionsAndComorbidity,
-      underlyingConditionsPregnancy: randomYesNoIf(
+      underlyingConditionsPregnancy: randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsPostPartum: randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsCardiovascularDiseaseIncludingHypertension: randomYesNoIf(
         underlyingConditionsAndComorbidity === 'yes'
       ),
-      underlyingConditionsPostPartum: randomYesNoIf(
+      underlyingConditionsImmunodeficiencyIncludingHIV: randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsDiabetes: randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsRenalDisease: randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsLiverDisease: randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsChronicLungDisease: randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
+      underlyingConditionsChronicNeurologicalOrNeuromuscularDisease: randomYesNoIf(
         underlyingConditionsAndComorbidity === 'yes'
       ),
-      underlyingConditionsCardiovascularDiseaseIncludingHypertension:
-        randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
-      underlyingConditionsImmunodeficiencyIncludingHIV: randomYesNoIf(
-        underlyingConditionsAndComorbidity === 'yes'
-      ),
-      underlyingConditionsDiabetes: randomYesNoIf(
-        underlyingConditionsAndComorbidity === 'yes'
-      ),
-      underlyingConditionsRenalDisease: randomYesNoIf(
-        underlyingConditionsAndComorbidity === 'yes'
-      ),
-      underlyingConditionsLiverDisease: randomYesNoIf(
-        underlyingConditionsAndComorbidity === 'yes'
-      ),
-      underlyingConditionsChronicLungDisease: randomYesNoIf(
-        underlyingConditionsAndComorbidity === 'yes'
-      ),
-      underlyingConditionsChronicNeurologicalOrNeuromuscularDisease:
-        randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
-      underlyingConditionsMalignancy: randomYesNoIf(
-        underlyingConditionsAndComorbidity === 'yes'
-      ),
+      underlyingConditionsMalignancy: randomYesNoIf(underlyingConditionsAndComorbidity === 'yes'),
       underlyingConditionsOthers:
         underlyingConditionsAndComorbidity === 'yes'
           ? utils.randomOption({
@@ -224,61 +185,43 @@ async function seed(knex) {
       exposureRiskHealthcareWorkerCountry,
       exposureRiskHealthcareWorkerCity,
       exposureRiskHealthcareWorkerFacility,
-      exposureRiskHasTravelledInThe14DaysPriorToSymptomOnset:
-        randomYesNoUnknown(),
-      exposureRiskHasVisitedHealthCareFacilityThe14DaysPriorToSymptomOnset:
-        randomYesNoUnknown(),
-      exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnset:
-        randomYesNoUnknown(),
-      exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetSetting:
-        utils.randomOption({
-          'Lived in same house as confirmed case for up to 10  days': 5,
-          'Went to prison with known confirmed cases': 6,
-          'Works in a busy restaurant': 5,
-          'Checks baggage at an airport for a living': 10,
-          'Frequents a busy playground': 12,
-          'School teacher': 16,
-        }),
+      exposureRiskHasTravelledInThe14DaysPriorToSymptomOnset: randomYesNoUnknown(),
+      exposureRiskHasVisitedHealthCareFacilityThe14DaysPriorToSymptomOnset: randomYesNoUnknown(),
+      exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnset: randomYesNoUnknown(),
+      exposureRiskHasHadContactWithAConfirmedCaseThe14DaysPriorToSymptomOnsetSetting: utils.randomOption({
+        'Lived in same house as confirmed case for up to 10  days': 5,
+        'Went to prison with known confirmed cases': 6,
+        'Works in a busy restaurant': 5,
+        'Checks baggage at an airport for a living': 10,
+        'Frequents a busy playground': 12,
+        'School teacher': 16,
+      }),
       mostLikelyCountryOfExposure: randomCountry(),
       resubmission30DaysAfterInitialReport,
-      resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms:
-        resubmission30DaysAfterInitialReport
-          ? resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms
-          : undefined,
-      resubmission30DaysAfterInitialReportDateOfOnsetOfSignsOfIllness:
-        resubmission30DaysAfterInitialReport
-          ? utils.randomOption([covidResultFormData.endedOn])
-          : undefined,
-      resubmission30DaysAfterInitialReportAdmissionToHospital:
-        randomYesNoUnknownIf(
-          resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
-            'yes'
-        ),
-      resubmission30DaysAfterInitialReportFirstDateOfAdmissionToHospital:
-        resubmission30DaysAfterInitialReport
-          ? utils.randomOption([
-              addDays(covidResultFormData.endedOn, _.random(3, 7)),
-            ])
-          : undefined,
-      resubmission30DaysAfterInitialReportDidTheCaseReceiveCareInAnICU:
-        randomYesNoUnknownIf(
-          resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
-            'yes'
-        ),
-      resubmission30DaysAfterInitialReportDidTheCaseReceiveVentilation:
-        randomYesNoUnknownIf(
-          resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
-            'yes'
-        ),
-      resubmission30DaysAfterInitialReportDidTheCaseReceiveExtracorporealMembraneOxygenation:
-        randomYesNoUnknownIf(
-          resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms ===
-            'yes'
-        ),
-      ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest:
-        utils.randomOption([
-          addDays(covidResultFormData.endedOn, _.random(5, 10)),
-        ]),
+      resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms: resubmission30DaysAfterInitialReport
+        ? resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms
+        : undefined,
+      resubmission30DaysAfterInitialReportDateOfOnsetOfSignsOfIllness: resubmission30DaysAfterInitialReport
+        ? utils.randomOption([covidResultFormData.endedOn])
+        : undefined,
+      resubmission30DaysAfterInitialReportAdmissionToHospital: randomYesNoUnknownIf(
+        resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms === 'yes'
+      ),
+      resubmission30DaysAfterInitialReportFirstDateOfAdmissionToHospital: resubmission30DaysAfterInitialReport
+        ? utils.randomOption([addDays(covidResultFormData.endedOn, _.random(3, 7))])
+        : undefined,
+      resubmission30DaysAfterInitialReportDidTheCaseReceiveCareInAnICU: randomYesNoUnknownIf(
+        resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms === 'yes'
+      ),
+      resubmission30DaysAfterInitialReportDidTheCaseReceiveVentilation: randomYesNoUnknownIf(
+        resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms === 'yes'
+      ),
+      resubmission30DaysAfterInitialReportDidTheCaseReceiveExtracorporealMembraneOxygenation: randomYesNoUnknownIf(
+        resubmission30DaysAfterInitialReportDidTheCaseDevelopAnySymptoms === 'yes'
+      ),
+      ifReleasedFromHospitalIsolationDateOfLastLaboratoryTest: utils.randomOption([
+        addDays(covidResultFormData.endedOn, _.random(5, 10)),
+      ]),
     }
     result.patientData = {
       ...result.patientData,
@@ -320,23 +263,12 @@ async function seed(knex) {
   ) {
     const testTypeOrder = aspectGenericResultFormSchema.fields.testResult
       ? aspectGenericResultFormSchema.fields.testResult.order + 1
-      : Math.min(
-          Object.values(aspectGenericResultFormSchema.fields).map(
-            field => field.order
-          )
-        )
-    Object.keys(aspectGenericResultFormSchema.fields).forEach(
-      assayResultFormSchemaFieldKey => {
-        if (
-          aspectGenericResultFormSchema.fields[assayResultFormSchemaFieldKey]
-            .order >= testTypeOrder
-        ) {
-          aspectGenericResultFormSchema.fields[
-            assayResultFormSchemaFieldKey
-          ].order += 1
-        }
+      : Math.min(Object.values(aspectGenericResultFormSchema.fields).map(field => field.order))
+    Object.keys(aspectGenericResultFormSchema.fields).forEach(assayResultFormSchemaFieldKey => {
+      if (aspectGenericResultFormSchema.fields[assayResultFormSchemaFieldKey].order >= testTypeOrder) {
+        aspectGenericResultFormSchema.fields[assayResultFormSchemaFieldKey].order += 1
       }
-    )
+    })
     aspectGenericResultFormSchema.fields.testType = {
       i18nLabel: 'testType',
       control: {

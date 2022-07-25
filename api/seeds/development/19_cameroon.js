@@ -43,9 +43,7 @@ async function seed(knex) {
     partnerId,
     adminId,
     {
-      countries: [
-        geography.countries.find(country => country.abbreviation === 'CM'),
-      ],
+      countries: [geography.countries.find(country => country.abbreviation === 'CM')],
     },
     'CM',
     'fkhrolf5kovl5ynya44h',
@@ -64,9 +62,7 @@ async function seed(knex) {
     .where('activity', 'edit')
     .first('id')
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where('name', 'Admin')
-    .first('id')
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').first('id')
 
   if (
     !(await knex('JobFunctionPermission')

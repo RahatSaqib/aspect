@@ -46,14 +46,9 @@ async function createResult(
     .andWhere('a.externalId', assayExternalId)
     .andWhere('c.abbreviation', 'US')
     .andWhere('d.deviceApprovalId', deviceApprovalApprovedId)
-    .first(
-      'd.*',
-      'deviceMaintenanceStatus.externalId as deviceMaintenanceStatusExternalId'
-    )
+    .first('d.*', 'deviceMaintenanceStatus.externalId as deviceMaintenanceStatusExternalId')
   if (!device) {
-    const { id: geographyId } = await knex('Geography')
-      .whereNotNull('lgaId')
-      .first('id')
+    const { id: geographyId } = await knex('Geography').whereNotNull('lgaId').first('id')
     const auditFields = {
       createdBy: userId,
       createdOn: new Date(),
@@ -80,12 +75,8 @@ async function createResult(
       ...auditFields,
     })
     device = await knex('Device').where('id', deviceId).first()
-  } else if (
-    device.deviceMaintenanceStatusExternalId === 'inactiveDecommissioned'
-  ) {
-    await knex('Device')
-      .where('id', device.id)
-      .update({ deviceMaintenanceStatusLogId: null })
+  } else if (device.deviceMaintenanceStatusExternalId === 'inactiveDecommissioned') {
+    await knex('Device').where('id', device.id).update({ deviceMaintenanceStatusLogId: null })
     await knex('DeviceMaintenanceStatusLog').where('deviceId', device.id).del()
   }
   const site = await knex('Site').where('id', device.siteId).first()
@@ -103,9 +94,7 @@ async function createResult(
   const assay = await knex('Assay').where('externalId', assayExternalId).first()
   ;[sample.id] = await knex('Sample').insert(sample)
   const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
-  const resultSourceDiagnosticDeviceId = await resultSourceToId(
-    'DiagnosticDevice'
-  )
+  const resultSourceDiagnosticDeviceId = await resultSourceToId('DiagnosticDevice')
   const resultCategories = await allResultCategoryToId()
   const resultTypePatientId = await resultTypeToId('Patient')
   const [resultId] = await knex('Result').insert({
@@ -118,10 +107,7 @@ async function createResult(
     deviceId: device.id,
     longitude: site.longitude,
     latitude: site.latitude,
-    resultSourceId:
-      deviceTypeExternalId === 'Aspect'
-        ? resultSourceEnteredByHandId
-        : resultSourceDiagnosticDeviceId,
+    resultSourceId: deviceTypeExternalId === 'Aspect' ? resultSourceEnteredByHandId : resultSourceDiagnosticDeviceId,
     resultTypeId: resultTypePatientId,
     sampleId: sample.id,
     resultCategory1: resultCategories.Unknown,

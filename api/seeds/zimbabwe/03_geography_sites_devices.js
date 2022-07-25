@@ -5,17 +5,12 @@ const Promise = require('bluebird')
 
 const geography = require('./fixtures/geography.json')
 const labClinic = require('./fixtures/labClinic.json')
-const {
-  addDeviceCapacities,
-  setCapacityForExistingDevices,
-} = require('../utils')
+const { addDeviceCapacities, setCapacityForExistingDevices } = require('../utils')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const now = new Date()
 
   const auditFields = {
@@ -158,22 +153,15 @@ async function seed(knex) {
   )
   const approvedDeviceApprovalId = await deviceApprovalToId('approved')
 
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Zimbabwe')
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where('name', 'Zimbabwe').first('id')
   await Promise.all(
     _.map(labClinic.labs, async lab => {
-      const siteData =
-        (await knex('Site').where('externalId', lab.externalId).first()) || {}
+      const siteData = (await knex('Site').where('externalId', lab.externalId).first()) || {}
       if (_.isEmpty(siteData)) {
         const labGeographyId = _.get(
           countries,
           ['ZW', 'states', lab.stateName, 'lgas', lab.lgaName, 'geographyId'],
-          _.get(
-            countries,
-            ['ZW', 'states', lab.stateName, 'geographyId'],
-            _.get(countries, ['ZW', 'geographyId'])
-          )
+          _.get(countries, ['ZW', 'states', lab.stateName, 'geographyId'], _.get(countries, ['ZW', 'geographyId']))
         )
         siteData.partnerId = partnerId
         siteData.geographyId = labGeographyId
@@ -211,9 +199,7 @@ async function seed(knex) {
               deviceData.putInServiceSource = 'Installed at lab'
               deviceData.configurationData = '{}'
               const { id: deviceTypeId } =
-                (await knex('DeviceType')
-                  .where('externalId', device.deviceTypeId)
-                  .first('id')) || {}
+                (await knex('DeviceType').where('externalId', device.deviceTypeId).first('id')) || {}
               const [deviceId] = await knex('Device').insert({
                 ...deviceData,
                 deviceTypeId,

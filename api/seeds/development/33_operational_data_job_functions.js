@@ -4,23 +4,15 @@ const { seedJobFunctionsAndUsersForOperationalData } = require('../utils')
 
 async function seed(knex) {
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
     updatedOn: now,
     updatedBy: adminId,
   }
-  const {
-    id: countryId,
-    culture,
-    timezone,
-  } = await knex('Country').where('abbreviation', 'US').first()
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Partner One')
-    .first('id')
+  const { id: countryId, culture, timezone } = await knex('Country').where('abbreviation', 'US').first()
+  const { id: partnerId } = await knex('Partner').where('name', 'Partner One').first('id')
 
   await seedJobFunctionsAndUsersForOperationalData(knex, {
     auditFields,

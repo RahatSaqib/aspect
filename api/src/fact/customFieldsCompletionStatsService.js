@@ -8,10 +8,7 @@ const { factCheckCompletionRatePerSite } = require('./actions')
 /**
  * Clean and fills FactCustomFieldCompletion table with stats for last 30 days
  */
-const factFillCustomFieldsCompletionStatsLast30Days = async (
-  _,
-  { messageContext }
-) => {
+const factFillCustomFieldsCompletionStatsLast30Days = async (_, { messageContext }) => {
   const context = messageContext.bindActionCreators({
     factCheckCompletionRatePerSite,
   })
@@ -36,28 +33,22 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
 
   const definitions = await getCustomFieldsDefinitions()
 
-  const selectColumnClauses =
-    convertCustomFieldsToColumnKnexClauses(definitions)
+  const selectColumnClauses = convertCustomFieldsToColumnKnexClauses(definitions)
 
   const allFields = definitions.map(d => d.fields).flat()
 
-  await knex.raw(
-    'delete from FactCustomFieldCompletion where date >= ?',
-    dateFrom
-  )
+  await knex.raw('delete from FactCustomFieldCompletion where date >= ?', dateFrom)
 
   await Promise.map(
     days,
     async day =>
-      getResultsCustomFields(selectColumnClauses, day, addDays(day, 1)).then(
-        async r => {
-          const stats = generateStatsResult(allFields, r)
-          if (stats.length > 0) {
-            await knex('FactCustomFieldCompletion').insert(stats)
-          }
-          insertedStats += stats.length
+      getResultsCustomFields(selectColumnClauses, day, addDays(day, 1)).then(async r => {
+        const stats = generateStatsResult(allFields, r)
+        if (stats.length > 0) {
+          await knex('FactCustomFieldCompletion').insert(stats)
         }
-      ),
+        insertedStats += stats.length
+      }),
     { concurrency: 10 }
   )
   return insertedStats
@@ -75,19 +66,14 @@ function convertCustomFieldsToColumnKnexClauses(formDefinitions) {
         clause: knex.raw(
           `SUM(CASE WHEN IFNULL(${getMySqlJsonPathFromCustomField(
             customField
-          )},'') IN ('', 'null') THEN 0 ELSE 1 END) AS '${
-            customField.fieldName
-          }'`
+          )},'') IN ('', 'null') THEN 0 ELSE 1 END) AS '${customField.fieldName}'`
         ),
       }))
     )
     .flat() // flatten fields from all forms
     .filter(
       // Unique clauses
-      (value, index, array) =>
-        array.findIndex(
-          v => v.clause.toString() === value.clause.toString()
-        ) === index
+      (value, index, array) => array.findIndex(v => v.clause.toString() === value.clause.toString()) === index
     )
 }
 
@@ -106,11 +92,7 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(
-      filterDateRangeParams,
-      { minDate: dateFrom, maxDate: dateTo },
-      'r.endedOn'
-    )
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .where('s.disabled', 0)
     .groupBy('s.id', 'a.id', knex.raw('DATE(r.endedOn)'))
     .select(
@@ -133,11 +115,7 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
 async function getCustomFieldsDefinitions() {
   const queryForm = await knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .join(
-      'FormDefinitionSchema as fschema',
-      'fd.formDefinitionSchemaId',
-      'fschema.id'
-    )
+    .join('FormDefinitionSchema as fschema', 'fd.formDefinitionSchemaId', 'fschema.id')
     .innerJoin('Disease as d', 'fd.diseaseId', 'd.id')
     .where('fd.partnerId', 1)
     .where('ft.externalId', 'gxConnectForm')
@@ -146,9 +124,7 @@ async function getCustomFieldsDefinitions() {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw(
-        "REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName"
-      )
+      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
 
   return queryForm.map(qf => ({
@@ -179,9 +155,7 @@ function generateStatsResult(fields, res) {
     .map(r => {
       let completionRate = 0
       const currentFields = fields.filter(f => {
-        return (
-          f.assayId === r.assayId || (!f.assayId && f.diseaseId === r.diseaseId)
-        )
+        return f.assayId === r.assayId || (!f.assayId && f.diseaseId === r.diseaseId)
       })
       const statsRow = {
         siteId: r.siteId,
@@ -201,11 +175,7 @@ function generateStatsResult(fields, res) {
             // * is expressed as coefficient (i.e. 0.5 = 50% completion)
             // * all values references this date/site/assay combination:
             // (100 / record count) * (completion count / total weight) * completion weight / 100
-            const fieldWeighting =
-              ((100 / r.recordCount) *
-                (completionCount / totalWeight) *
-                f.completionWeight) /
-              100
+            const fieldWeighting = ((100 / r.recordCount) * (completionCount / totalWeight) * f.completionWeight) / 100
             completionRate += fieldWeighting
             return [
               f.fieldName,

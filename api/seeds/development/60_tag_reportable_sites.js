@@ -20,12 +20,8 @@ module.exports = require('../utils').seed(async knex => {
     )
     .pluck('s.id')
     .distinct()
-  const { id: tagId } = await knex('Tag')
-    .where('title', 'Reportable Site')
-    .first()
+  const { id: tagId } = await knex('Tag').where('title', 'Reportable Site').first()
 
   // Set the 'Reportable Site' tag to reportable sites
-  await Promise.each(siteIds, async siteId =>
-    knex('SiteTag').insert({ siteId, tagId })
-  )
+  await Promise.each(siteIds, async siteId => knex('SiteTag').insert({ siteId, tagId }))
 }, __filename)

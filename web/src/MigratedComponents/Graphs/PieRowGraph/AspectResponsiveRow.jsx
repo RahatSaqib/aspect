@@ -22,19 +22,12 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
     <div className={cssClasses('piegraph__container')}>
       {data && data.length ? (
         <Fragment>
-          <div
-            className={cssClasses(['piegraphs__row', 'piegraphs__row--header'])}
-          >
+          <div className={cssClasses(['piegraphs__row', 'piegraphs__row--header'])}>
             {headings(data).map(heading => (
               <div key={heading} className={cssClasses('piegraphs__column')}>
                 <div className={cssClasses('piegraphs__columnTitle')}>
                   {messages[`${heading}Description`] ? (
-                    <AspectTooltip
-                      showHelpIcon
-                      title={intlFormatMessage(
-                        messages[`${heading}Description`]
-                      )}
-                    >
+                    <AspectTooltip showHelpIcon title={intlFormatMessage(messages[`${heading}Description`])}>
                       {intlFormatMessage(messages[heading])}
                     </AspectTooltip>
                   ) : (
@@ -45,22 +38,14 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
             ))}
           </div>
           {data.map((row, rowIndex) => (
-            <div
-              key={getRowKey(rowIndex)}
-              className={cssClasses('piegraphs__row')}
-            >
+            <div key={getRowKey(rowIndex)} className={cssClasses('piegraphs__row')}>
               {row.map(pie => {
                 const { value, type, link, heading } = pie
                 return (
-                  <div
-                    key={`${heading}-${type}`}
-                    className={cssClasses('piegraphs__column')}
-                  >
+                  <div key={`${heading}-${type}`} className={cssClasses('piegraphs__column')}>
                     <div className={cssClasses('piegraphs__columnGraph')}>
                       {type === 'string' ? (
-                        <div className={cssClasses('piegraphs__rowTitle')}>
-                          {value[0].value}
-                        </div>
+                        <div className={cssClasses('piegraphs__rowTitle')}>{value[0].value}</div>
                       ) : null}
                       {type === 'doughnut' || type === 'solid' ? (
                         <AspectResponsivePie

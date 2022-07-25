@@ -3,10 +3,7 @@ import isEmpty from 'lodash/isEmpty'
 
 const onRequested = (action, mutState, cb) => {
   if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
-    mutState.set(
-      'requestedAtSet',
-      mutState.requestedAtSet.delete(action.requestedAt)
-    )
+    mutState.set('requestedAtSet', mutState.requestedAtSet.delete(action.requestedAt))
     if (cb) cb()
   }
 }

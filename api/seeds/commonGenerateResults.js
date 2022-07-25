@@ -33,10 +33,7 @@ const {
   sampleTypeToId,
 } = require('../src/shared/dictionary')
 const { addCase } = require('../src/case/service')
-const {
-  getRandomGeneXpertPatientData,
-  getRandomTruenatPatientData,
-} = require('./commonTBResults')
+const { getRandomGeneXpertPatientData, getRandomTruenatPatientData } = require('./commonTBResults')
 const wakandaCovidResultFormSchema = require('./development/fixtures/wakandaCovidResultFormSchema.json')
 const {
   getDetectedResistanceCategoryTypes,
@@ -57,37 +54,21 @@ const { passwordSaltRounds } = require('../src/config')
 
 const bcryptHash = promisify(bcrypt.hash)
 
-function calculateDateForResultForCovid(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
+function calculateDateForResultForCovid(currentResult, totalResults, randomMillisToAdd) {
   const resultTimeFrameInDays = 360
 
   // unlike TB and HIV, we want to generate an exponential curve here
   const daysToSubtract = Math.ceil(Math.random() ** 4 * resultTimeFrameInDays)
 
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
+  return addMilliseconds(subDays(now, daysToSubtract), _.random(randomMillisToAdd))
 }
 
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
+function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {
   const resultTimeFrameInDays = 365
 
-  const daysToSubtract =
-    resultTimeFrameInDays -
-    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
+  const daysToSubtract = resultTimeFrameInDays - Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
+  return addMilliseconds(subDays(now, daysToSubtract), _.random(randomMillisToAdd))
 }
 
 async function createDevicesForAllMissingTypes(
@@ -114,20 +95,14 @@ async function createDevicesForAllMissingTypes(
   if (!_.isEmpty(siteDatas)) {
     let i = 0
     await Promise.each(deviceTypes, async deviceType => {
-      const siteIdsWithoutDeviceType = _.uniq(
-        siteDatas.map(site => site.id)
-      ).filter(siteId =>
+      const siteIdsWithoutDeviceType = _.uniq(siteDatas.map(site => site.id)).filter(siteId =>
         _.isEmpty(
           existingDeviceTypesAtEachSite.filter(
-            deviceTypeAtSite =>
-              deviceTypeAtSite.siteId === siteId &&
-              deviceTypeAtSite.deviceTypeId === deviceType.id
+            deviceTypeAtSite => deviceTypeAtSite.siteId === siteId && deviceTypeAtSite.deviceTypeId === deviceType.id
           )
         )
       )
-      const validSites = siteDatas.filter(site =>
-        siteIdsWithoutDeviceType.includes(site.id)
-      )
+      const validSites = siteDatas.filter(site => siteIdsWithoutDeviceType.includes(site.id))
       if (_.isEmpty(validSites)) {
         return Promise.resolve()
       }
@@ -149,10 +124,7 @@ async function createDevicesForAllMissingTypes(
         }
         const [deviceId] = await knex('Device').insert(deviceToInsert)
         if (deviceType.requiresApiCredentials) {
-          const password = await bcryptHash(
-            siteData.shortName,
-            parseInt(passwordSaltRounds, 10)
-          )
+          const password = await bcryptHash(siteData.shortName, parseInt(passwordSaltRounds, 10))
           await knex('DeviceApiKey').insert({
             token: randomToken(),
             revoked: 0,
@@ -203,24 +175,19 @@ async function generateResults(
   const diseases = await knex('Disease').select()
   const assayTypes = await knex('AssayType').select()
   const tbDisease = _.find(diseases, d => d.externalId === 'tb')
-  const tbAssayTypeIds = _.filter(
-    assayTypes,
-    assayType => assayType.diseaseId === tbDisease.id
-  ).map(assayType => assayType.id)
-  const assays = await knex('Assay').select()
-  const tbAssays = _.filter(assays, assay =>
-    tbAssayTypeIds.includes(assay.assayTypeId)
+  const tbAssayTypeIds = _.filter(assayTypes, assayType => assayType.diseaseId === tbDisease.id).map(
+    assayType => assayType.id
   )
+  const assays = await knex('Assay').select()
+  const tbAssays = _.filter(assays, assay => tbAssayTypeIds.includes(assay.assayTypeId))
   const tbDeviceTypeIds = _.uniq(tbAssays.map(assay => assay.deviceTypeId))
   if (insertMissingDevicesForPartner)
-    await createDevicesForAllMissingTypes(
-      knex,
-      siteDatas,
-      partnerId,
-      auditFields,
-      1,
-      ['BDMGIT', 'CepheidGeneXpert', 'AspectResultEntry', 'molbioTruenat']
-    )
+    await createDevicesForAllMissingTypes(knex, siteDatas, partnerId, auditFields, 1, [
+      'BDMGIT',
+      'CepheidGeneXpert',
+      'AspectResultEntry',
+      'molbioTruenat',
+    ])
   const devices = await knex('Device')
     .andWhere(qb => qb.whereIn('siteId', _.map(siteDatas, 'id')))
     .andWhere('partnerId', partnerId)
@@ -231,9 +198,7 @@ async function generateResults(
     })
     .select()
 
-  const tbDevices = _.filter(devices, device =>
-    tbDeviceTypeIds.includes(device.deviceTypeId)
-  )
+  const tbDevices = _.filter(devices, device => tbDeviceTypeIds.includes(device.deviceTypeId))
   const tbResults = await addTBResults(
     knex,
     resultMtbNumber,
@@ -249,19 +214,12 @@ async function generateResults(
   )
 
   const ebolaDisease = _.find(diseases, d => d.externalId === 'ebola')
-  const ebolaAssayTypeIds = _.filter(
-    assayTypes,
-    assayType => assayType.diseaseId === ebolaDisease.id
-  ).map(assayType => assayType.id)
-  const ebolaAssays = _.filter(assays, assay =>
-    ebolaAssayTypeIds.includes(assay.assayTypeId)
+  const ebolaAssayTypeIds = _.filter(assayTypes, assayType => assayType.diseaseId === ebolaDisease.id).map(
+    assayType => assayType.id
   )
-  const ebolaDeviceTypeIds = _.uniq(
-    ebolaAssays.map(assay => assay.deviceTypeId)
-  )
-  const ebolaDevices = _.filter(devices, device =>
-    ebolaDeviceTypeIds.includes(device.deviceTypeId)
-  )
+  const ebolaAssays = _.filter(assays, assay => ebolaAssayTypeIds.includes(assay.assayTypeId))
+  const ebolaDeviceTypeIds = _.uniq(ebolaAssays.map(assay => assay.deviceTypeId))
+  const ebolaDevices = _.filter(devices, device => ebolaDeviceTypeIds.includes(device.deviceTypeId))
   const ebolaResults = await addEbolaResults(
     knex,
     resultEbolaNumber,
@@ -286,17 +244,12 @@ async function generateResults(
   )
 
   const hivDisease = _.find(diseases, d => d.externalId === 'hiv')
-  const hivAssayTypeIds = _.filter(
-    assayTypes,
-    assayType => assayType.diseaseId === hivDisease.id
-  ).map(assayType => assayType.id)
-  const hivAssays = _.filter(assays, assay =>
-    hivAssayTypeIds.includes(assay.assayTypeId)
+  const hivAssayTypeIds = _.filter(assayTypes, assayType => assayType.diseaseId === hivDisease.id).map(
+    assayType => assayType.id
   )
+  const hivAssays = _.filter(assays, assay => hivAssayTypeIds.includes(assay.assayTypeId))
   const hivDeviceTypeIds = _.uniq(hivAssays.map(assay => assay.deviceTypeId))
-  const hivDevices = _.filter(devices, device =>
-    hivDeviceTypeIds.includes(device.deviceTypeId)
-  )
+  const hivDevices = _.filter(devices, device => hivDeviceTypeIds.includes(device.deviceTypeId))
   const hivVlResults = await addHivVlResults(
     knex,
     resultHivVlNumber,
@@ -320,19 +273,12 @@ async function generateResults(
     date
   )
   const covidDisease = _.find(diseases, d => d.externalId === 'covid19')
-  const covidAssayTypeIds = _.filter(
-    assayTypes,
-    assayType => assayType.diseaseId === covidDisease.id
-  ).map(assayType => assayType.id)
-  const covidAssays = _.filter(assays, assay =>
-    covidAssayTypeIds.includes(assay.assayTypeId)
+  const covidAssayTypeIds = _.filter(assayTypes, assayType => assayType.diseaseId === covidDisease.id).map(
+    assayType => assayType.id
   )
-  const covidDeviceTypeIds = _.uniq(
-    covidAssays.map(assay => assay.deviceTypeId)
-  )
-  const covidDevices = _.filter(devices, device =>
-    covidDeviceTypeIds.includes(device.deviceTypeId)
-  )
+  const covidAssays = _.filter(assays, assay => covidAssayTypeIds.includes(assay.assayTypeId))
+  const covidDeviceTypeIds = _.uniq(covidAssays.map(assay => assay.deviceTypeId))
+  const covidDevices = _.filter(devices, device => covidDeviceTypeIds.includes(device.deviceTypeId))
   const covidResults = await addCovidResults(
     knex,
     resultCovidNumber,
@@ -344,10 +290,7 @@ async function generateResults(
     null,
     date
   )
-  const covidPositiveResults = _.filter(
-    covidResults,
-    result => result.resultCategory1 === resultCategories.Positive
-  )
+  const covidPositiveResults = _.filter(covidResults, result => result.resultCategory1 === resultCategories.Positive)
   await addCovidResults(
     knex,
     resultCovidNumber,
@@ -359,12 +302,7 @@ async function generateResults(
     covidPositiveResults,
     date
   )
-  return [].concat(
-    tbResults || [],
-    ebolaResults || [],
-    hivVlResults || [],
-    covidResults || []
-  )
+  return [].concat(tbResults || [], ebolaResults || [], hivVlResults || [], covidResults || [])
 }
 
 async function addCovidResults(
@@ -391,47 +329,26 @@ async function addCovidResults(
   } = await allResultCategoryToId()
   const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
   const resultTypePatientId = await resultTypeToId('Patient')
-  const resultWorkflowStatusProcessedId = await resultWorkflowStatusToId(
-    'Processed'
-  )
-  const resultWorkflowStatusValidatedId = await resultWorkflowStatusToId(
-    'Validated'
-  )
-  const resultWorkflowStatusDeliverableId = await resultWorkflowStatusToId(
-    'Deliverable'
-  )
+  const resultWorkflowStatusProcessedId = await resultWorkflowStatusToId('Processed')
+  const resultWorkflowStatusValidatedId = await resultWorkflowStatusToId('Validated')
+  const resultWorkflowStatusDeliverableId = await resultWorkflowStatusToId('Deliverable')
 
-  const quantity = positiveResults
-    ? Math.ceil(positiveResults.length * _.random(0.4, 0.8))
-    : resultCovidNumber
+  const quantity = positiveResults ? Math.ceil(positiveResults.length * _.random(0.4, 0.8)) : resultCovidNumber
   // seed samples
   const samples = []
 
   // does the partner have any clinics? If so, use them as the sample origin:
-  const hasClinics = _.some(
-    siteDatas,
-    site =>
-      site.externalId.indexOf('_clinic') || site.name.indexOf('Clinic') >= 0
-  )
+  const hasClinics = _.some(siteDatas, site => site.externalId.indexOf('_clinic') || site.name.indexOf('Clinic') >= 0)
 
   await Promise.each(_.range(quantity), async i => {
     const siteData = _.sample(
       hasClinics
-        ? _.filter(
-            siteDatas,
-            site =>
-              site.externalId.indexOf('_clinic') >= 0 ||
-              site.name.indexOf('Clinic') >= 0
-          )
+        ? _.filter(siteDatas, site => site.externalId.indexOf('_clinic') >= 0 || site.name.indexOf('Clinic') >= 0)
         : siteDatas
     )
     const sample = {
       externalId: `SMP-CV-${format(new Date(), 'TT')}`,
-      collectedOn: calculateDateForResultForCovid(
-        i,
-        resultCovidNumber,
-        millisInMinute
-      ),
+      collectedOn: calculateDateForResultForCovid(i, resultCovidNumber, millisInMinute),
       sampleTypeId: sampleTypeNasalSwab,
       originSiteId: siteData.id,
     }
@@ -471,9 +388,7 @@ async function addCovidResults(
       resultText: 'Unknown',
     },
   ]
-  const { id: aspectDeviceTypeId } = await knex('DeviceType')
-    .where('externalId', 'Aspect')
-    .first('id')
+  const { id: aspectDeviceTypeId } = await knex('DeviceType').where('externalId', 'Aspect').first('id')
   const aspectDevice = await knex('Device')
     .where({
       partnerId,
@@ -498,29 +413,22 @@ async function addCovidResults(
       value: 'digitalXRay',
     },
   ]
-  const genericAssay = await knex('Assay')
-    .where('externalId', 'assayGenericCovid19')
-    .first()
+  const genericAssay = await knex('Assay').where('externalId', 'assayGenericCovid19').first()
   const elegiblesSites = _.filter(
     siteDatas,
-    site =>
-      site.externalId.indexOf('_lab') >= 0 || site.name.indexOf(' Lab') >= 0
+    site => site.externalId.indexOf('_lab') >= 0 || site.name.indexOf(' Lab') >= 0
   )
 
   const assayDiseases = await knex('Assay as a')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
     .whereIn('a.id', _.uniq([...assays, genericAssay].map(assay => assay.id)))
     .select('a.id', 'at.diseaseId')
-  const assayIdDiseaseIdMap = assayDiseases.reduce(
-    (accumulator, assayDisease) => {
-      accumulator[assayDisease.id] = assayDisease.diseaseId
-      return accumulator
-    },
-    {}
-  )
+  const assayIdDiseaseIdMap = assayDiseases.reduce((accumulator, assayDisease) => {
+    accumulator[assayDisease.id] = assayDisease.diseaseId
+    return accumulator
+  }, {})
   await Promise.each(_.range(quantity), async i => {
-    const resultCapturedInAspect =
-      !!aspectDevice && (i % 7 === 0 || _.isEmpty(devices))
+    const resultCapturedInAspect = !!aspectDevice && (i % 7 === 0 || _.isEmpty(devices))
 
     const device = resultCapturedInAspect ? aspectDevice : _.sample(devices)
 
@@ -532,13 +440,10 @@ async function addCovidResults(
 
     const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
     const caseExternalId = `CASE-${uid}-ID`
-    const reportableSite = sample.originSiteId
-      ? _.find(siteDatas, c => c.id === sample.originSiteId)
-      : siteData
+    const reportableSite = sample.originSiteId ? _.find(siteDatas, c => c.id === sample.originSiteId) : siteData
     let result
     let formData = {}
-    const randomDate =
-      date || calculateDateForResultForCovid(i, resultCovidNumber, 6000)
+    const randomDate = date || calculateDateForResultForCovid(i, resultCovidNumber, 6000)
     let linkedResult
     let resultToInsert = {}
     const assayId = resultCapturedInAspect
@@ -546,10 +451,7 @@ async function addCovidResults(
       : _.find(assays, elem => elem.deviceTypeId === device.deviceTypeId).id
     if (!positiveResults) {
       const rnd = _.random(0, 100)
-      result = _.find(
-        possibleResults,
-        r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-      )
+      result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
 
       formData = {
         age: rnd,
@@ -558,8 +460,7 @@ async function addCovidResults(
         testReason: _.random(1, 6),
         dateAndTimeOfTest: addMinutes(randomDate, 100),
       }
-      const selectedTestType =
-        genericTestTypes[_.random(0, genericTestTypes.length - 1)]
+      const selectedTestType = genericTestTypes[_.random(0, genericTestTypes.length - 1)]
       if (resultCapturedInAspect) {
         formData.testType = selectedTestType.value
       }
@@ -656,9 +557,7 @@ async function addCovidResults(
       createdBy: auditFields.createdBy,
     })
 
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   return results
@@ -759,12 +658,8 @@ async function addHivVlResults(
     },
   }
 
-  const assayGeneXpertHiv1VlId = _.find(
-    assays,
-    elem => elem.externalId === 'GxHiv1Vl'
-  ).id
-  const { DiagnosticDevice: resultSourceDiagnosticId } =
-    await allResultSourceToId()
+  const assayGeneXpertHiv1VlId = _.find(assays, elem => elem.externalId === 'GxHiv1Vl').id
+  const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
   const patientNumber = patients.length - 1
   // make sure we have at least one result with these status
   const ensureResultIds = [acknowledged, validated, deliverable]
@@ -774,21 +669,16 @@ async function addHivVlResults(
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
-    const randomDate =
-      date || calculateDateForResult(i, resultHivVlNumber, 6000)
+    const randomDate = date || calculateDateForResult(i, resultHivVlNumber, 6000)
 
     const rnd = _.random(0, 100)
-    const selectionConditionWithNoErrors = r =>
-      rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    const selectionConditionWithErrors = r =>
-      r.category1 === resultCategories.resultCategoryErrorId
+    const selectionConditionWithNoErrors = r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+    const selectionConditionWithErrors = r => r.category1 === resultCategories.resultCategoryErrorId
 
     // we make sure to have at least one error result if error codes are passed
     const result = _.find(
       possibleResults,
-      errorCodes.length > 0 && i === 0
-        ? selectionConditionWithErrors
-        : selectionConditionWithNoErrors
+      errorCodes.length > 0 && i === 0 ? selectionConditionWithErrors : selectionConditionWithNoErrors
     )
 
     let copies = 0
@@ -806,19 +696,11 @@ async function addHivVlResults(
 
     resultData.copies = copies
     resultData.log = log
-    resultData.resultText = result.resultText
-      .replace('{0}', copies)
-      .replace('{1}', log)
+    resultData.resultText = result.resultText.replace('{0}', copies).replace('{1}', log)
 
-    const { id: lastSampleId } = await knex('Sample')
-      .orderBy('id', 'desc')
-      .first('id')
+    const { id: lastSampleId } = await knex('Sample').orderBy('id', 'desc').first('id')
     const resultStatus =
-      ensureResultIds.shift() || _.random(1) < 0.3
-        ? deliverable
-        : _.random(1) < 0.5
-        ? validated
-        : acknowledged
+      ensureResultIds.shift() || _.random(1) < 0.3 ? deliverable : _.random(1) < 0.5 ? validated : acknowledged
 
     const [resultId] = await knex('Result').insert({
       ...auditFields,
@@ -853,14 +735,8 @@ async function addHivVlResults(
       senderVersion: '4.4',
       senderOperator: 'Marsha',
       notes: 'This is an HIV test result',
-      errorCode:
-        result.category1 === resultCategories.resultCategoryErrorId
-          ? _.sample(errorCodes)
-          : null,
-      errorNotes:
-        result.category1 === resultCategories.resultCategoryErrorId
-          ? 'Exceeded cycle threshold'
-          : null,
+      errorCode: result.category1 === resultCategories.resultCategoryErrorId ? _.sample(errorCodes) : null,
+      errorNotes: result.category1 === resultCategories.resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
     })
     const resultInserted = {
       id: resultId,
@@ -879,9 +755,7 @@ async function addHivVlResults(
       createdBy: auditFields.createdBy,
     })
 
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
   return resultIds
 }
@@ -920,8 +794,7 @@ async function addTBResults(
       samples.push(sample)
     }
   })
-  const { DiagnosticDevice: resultSourceDiagnosticId } =
-    await allResultSourceToId()
+  const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
   // Result Workflow Status
   const {
     Validated: validated,
@@ -936,19 +809,13 @@ async function addTBResults(
   // Results section
   // GeneXpert TB results:
   const gxAssayExternalIds = ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr']
-  const truenatAssayExternalIds = [
-    'assayTruenatMtb',
-    'assayTruenatMtbPlus',
-    'assayTruenatRif',
-  ]
+  const truenatAssayExternalIds = ['assayTruenatMtb', 'assayTruenatMtbPlus', 'assayTruenatRif']
   const possibleResults = {
     GxMtbRif: JSON.parse(JSON.stringify(gxMtbRifPossibleResults)),
     GxMtbRifUltra: JSON.parse(JSON.stringify(gxMtbRifPossibleResults)),
     GxMtbXdr: JSON.parse(JSON.stringify(gxXdrPossibleResults)),
     assayTruenatMtb: JSON.parse(JSON.stringify(truenatMtbPossibleResults)),
-    assayTruenatMtbPlus: JSON.parse(
-      JSON.stringify(truenatMtbPlusPossibleResults)
-    ),
+    assayTruenatMtbPlus: JSON.parse(JSON.stringify(truenatMtbPlusPossibleResults)),
     assayTruenatRif: JSON.parse(JSON.stringify(truenatMtbRifDxPossibleResults)),
   }
   const resultData = {
@@ -959,10 +826,7 @@ async function addTBResults(
     assayTruenatMtbPlus: truenatMtbPlusResultData,
     assayTruenatRif: truenatMtbRifDxResultData,
   }
-  const deviceTypeBDMGIT = _.find(
-    deviceTypes,
-    elem => elem.externalId === 'BDMGIT'
-  ).id
+  const deviceTypeBDMGIT = _.find(deviceTypes, elem => elem.externalId === 'BDMGIT').id
   const resultTypePatientId = await resultTypeToId('Patient')
   const devicesMGIT = await knex('Device')
     .where({ deviceTypeId: deviceTypeBDMGIT, partnerId: partnerOneId })
@@ -975,8 +839,7 @@ async function addTBResults(
     const randomDate = date || subHours(subDays(new Date(), _.random(5)), 5)
     const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
     const rnd = _.random(0, 100)
-    const selectionConditionWithNoErrors = r =>
-      rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+    const selectionConditionWithNoErrors = r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     const selectionConditionWithErrors = r => r.category1 === 'Error'
 
     const assay = _.sample(
@@ -991,9 +854,7 @@ async function addTBResults(
           elem.externalId === 'assayTruenatRif'
       )
     )
-    const validDevices = tbDiagnosticDevices.filter(
-      device => device.deviceTypeId === assay.deviceTypeId
-    )
+    const validDevices = tbDiagnosticDevices.filter(device => device.deviceTypeId === assay.deviceTypeId)
     if (_.isEmpty(validDevices)) {
       return
     }
@@ -1022,16 +883,11 @@ async function addTBResults(
 
     if (gxAssayExternalIds.includes(assay.externalId)) {
       resultData[assay.externalId].resultText = result.resultText
-      resultData[assay.externalId].detectedResistance =
-        getDetectedResistanceCategoryTypes(result.resultText)
+      resultData[assay.externalId].detectedResistance = getDetectedResistanceCategoryTypes(result.resultText)
     }
 
     const resultStatus =
-      ensureResultIds.shift() || _.random(1) < 0.3
-        ? deliverable
-        : _.random(1) < 0.5
-        ? validated
-        : acknowledged
+      ensureResultIds.shift() || _.random(1) < 0.3 ? deliverable : _.random(1) < 0.5 ? validated : acknowledged
 
     const resultElement = {
       ...auditFields,
@@ -1068,29 +924,17 @@ async function addTBResults(
       resultElement.assayVersion = '4'
       resultElement.moduleName = 'Module A'
       resultElement.moduleSerial = `M-1234-${i % 4}`
-      resultElement.patientData = JSON.stringify(
-        getRandomGeneXpertPatientData(patientNumber, patients)
-      )
+      resultElement.patientData = JSON.stringify(getRandomGeneXpertPatientData(patientNumber, patients))
       resultElement.senderVersion = '4.6b'
-      resultElement.errorCode =
-        result.resultCategory1 === resultCategories.Error
-          ? _.sample(errorCodes)
-          : null
-      resultElement.errorNotes =
-        result.resultCategory1 === resultCategories.Error
-          ? 'Exceeded cycle threshold'
-          : null
+      resultElement.errorCode = result.resultCategory1 === resultCategories.Error ? _.sample(errorCodes) : null
+      resultElement.errorNotes = result.resultCategory1 === resultCategories.Error ? 'Exceeded cycle threshold' : null
     }
     if (truenatAssayExternalIds.includes(assay.externalId)) {
-      resultElement.patientData = JSON.stringify(
-        getRandomTruenatPatientData(patientNumber, patients)
-      )
+      resultElement.patientData = JSON.stringify(getRandomTruenatPatientData(patientNumber, patients))
     }
     const assayBdMgit = _.filter(
       assays,
-      elem =>
-        elem.externalId === 'assayBdMgitAst' ||
-        elem.externalId === 'assayBdMgitGnd'
+      elem => elem.externalId === 'assayBdMgitAst' || elem.externalId === 'assayBdMgitGnd'
     )
     const [resultId] = await knex('Result').insert(resultElement)
 
@@ -1102,13 +946,7 @@ async function addTBResults(
       assayBdMgit.length > 0
     ) {
       resultElement.id = resultId
-      positiveMTBResults.push(
-        await getMGITResultFromTBPositive(
-          resultElement,
-          assayBdMgit,
-          devicesMGIT
-        )
-      )
+      positiveMTBResults.push(await getMGITResultFromTBPositive(resultElement, assayBdMgit, devicesMGIT))
     }
 
     resultIds.push({
@@ -1125,14 +963,11 @@ async function addTBResults(
       createdOn: subHours(randomDate, 26),
       createdBy: auditFields.createdBy,
     })
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   // insert 80% of mgit results when tb is positive on mgit.
-  if (positiveMTBResults.length > 0)
-    await knex('Result').insert(positiveMTBResults)
+  if (positiveMTBResults.length > 0) await knex('Result').insert(positiveMTBResults)
 
   return resultIds
 }
@@ -1232,10 +1067,7 @@ async function addEbolaResults(
       qc2Endpt: 1.22,
     },
   }
-  const assayGeneXpertEbolaId = _.find(
-    assays,
-    elem => elem.externalId === 'GxEbola'
-  ).id
+  const assayGeneXpertEbolaId = _.find(assays, elem => elem.externalId === 'GxEbola').id
   const patientNumber = patients.length - 1
 
   await Promise.each(_.range(resultEbolaNumber), async i => {
@@ -1246,8 +1078,7 @@ async function addEbolaResults(
     const uid = _.times(8, () => _.toUpper(_.random(36).toString(36))).join('')
     const randomDate = date || subDays(new Date(), _.random(5))
     // Result source
-    const { DiagnosticDevice: resultSourceDiagnosticId } =
-      await allResultSourceToId()
+    const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
 
     let j = 0
     const result = _.sample(possibleResults)
@@ -1289,14 +1120,8 @@ async function addEbolaResults(
         senderVersion: '4.7a',
         senderOperator: 'Marsha',
         notes: 'This is an Ebola test result',
-        errorCode:
-          result.category1 === resultCategories.resultCategoryErrorId
-            ? _.sample(errorCodes)
-            : null,
-        errorNotes:
-          result.category1 === resultCategories.resultCategoryErrorId
-            ? 'Exceeded cycle threshold'
-            : null,
+        errorCode: result.category1 === resultCategories.resultCategoryErrorId ? _.sample(errorCodes) : null,
+        errorNotes: result.category1 === resultCategories.resultCategoryErrorId ? 'Exceeded cycle threshold' : null,
       }
       const [resultId] = await knex('Result').insert(resultObject)
       const insertedResult = {
@@ -1315,34 +1140,21 @@ async function addEbolaResults(
         createdOn: addHours(randomDate, 1),
         createdBy: auditFields.createdBy,
       })
-      await knex('Result')
-        .where('id', resultId)
-        .update({ resultWorkflowStatusLogId: lastLogId })
+      await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
     }
   })
   return resultIds
 }
 
-async function setTreatmentStatusToResults(
-  knex,
-  resultsToUpdate,
-  treatmentStatus
-) {
+async function setTreatmentStatusToResults(knex, resultsToUpdate, treatmentStatus) {
   const followUps = await knex('FollowUp as f')
     .join('FollowUpType as fut', 'f.followUpTypeId', 'fut.id')
     .leftOuterJoin('FollowUpAssay as fa', 'f.id', 'fa.followUpId')
-    .select(
-      'f.id',
-      'fa.assayId',
-      'f.externalId',
-      'fut.externalId as followUpTypeExternalId'
-    )
+    .select('f.id', 'fa.assayId', 'f.externalId', 'fut.externalId as followUpTypeExternalId')
 
   await Promise.each(resultsToUpdate, async result => {
     const randomTreatmentStatusExternalId = _.sample(treatmentStatus)
-    const treatment = treatmentStatus
-      ? await resultTreatmentStatusToId(randomTreatmentStatusExternalId)
-      : null
+    const treatment = treatmentStatus ? await resultTreatmentStatusToId(randomTreatmentStatusExternalId) : null
 
     const treatmentDateTime = addMinutes(result.createdOn, 90)
 
@@ -1360,16 +1172,10 @@ async function setTreatmentStatusToResults(
     })
 
     // add a follow up treatment if on treatment
-    if (
-      followUps.length > 0 &&
-      randomTreatmentStatusExternalId === 'OnTreatment'
-    ) {
+    if (followUps.length > 0 && randomTreatmentStatusExternalId === 'OnTreatment') {
       const followUp = _.sample(
         _.filter(followUps, f => {
-          return (
-            f.followUpTypeExternalId === 'treatment' &&
-            (f.assayId === result.assayId || !f.assayId)
-          )
+          return f.followUpTypeExternalId === 'treatment' && (f.assayId === result.assayId || !f.assayId)
         })
       )
       if (followUp)
@@ -1387,23 +1193,13 @@ async function setTreatmentStatusToResults(
 
     // add random outcomes for some results (80%)
     // outcome really only makes sense if it's been a while since treatmnent
-    if (
-      _.random() < 0.8 &&
-      differenceInDays(now, treatmentDateTime) > 7 &&
-      followUps.length > 0
-    ) {
+    if (_.random() < 0.8 && differenceInDays(now, treatmentDateTime) > 7 && followUps.length > 0) {
       const outcome = _.sample(
         _.filter(followUps, f => {
-          return (
-            f.followUpTypeExternalId === 'outcome' &&
-            (f.assayId === result.assayId || !f.assayId)
-          )
+          return f.followUpTypeExternalId === 'outcome' && (f.assayId === result.assayId || !f.assayId)
         })
       )
-      const outcomeDateTime =
-        addDays(treatmentDateTime, 7) > now
-          ? now
-          : addDays(treatmentDateTime, 7)
+      const outcomeDateTime = addDays(treatmentDateTime, 7) > now ? now : addDays(treatmentDateTime, 7)
       await knex('ResultFollowUp').insert({
         resultId: result.id,
         externalId: outcome.externalId,
@@ -1421,82 +1217,43 @@ async function setTreatmentStatusToResults(
 async function getTreatmentDistributionByPartner(knex, partnerId, month) {
   const conditionBuilder = (builder, partId, specificMonth) => {
     if (partnerId) builder.where('r.partnerId', partId)
-    if (specificMonth)
-      builder.whereRaw("DATE_FORMAT (r.createdon, '%Y-%m') = ?", specificMonth)
+    if (specificMonth) builder.whereRaw("DATE_FORMAT (r.createdon, '%Y-%m') = ?", specificMonth)
   }
 
   return knex('Result as r')
     .innerJoin('ResultCategoryAssay as rca', builder => {
-      builder
-        .on('r.assayId', 'rca.assayId')
-        .andOn('r.resultCategory1', 'rca.resultCategoryId')
+      builder.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
     })
-    .leftJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'r.treatmentStatusLogId',
-      'rtsl.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatus as rts',
-      'rtsl.resultTreatmentStatusId',
-      'rts.id'
-    )
+    .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
+    .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin(
-      'DeviceApproval as deviceApproval',
-      'd.deviceApprovalId',
-      'deviceApproval.id'
-    )
+    .leftJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
     .where('rca.requiresTreatment', true)
     .where('deviceApproval.token', 'approved')
     .modify(conditionBuilder, partnerId, month)
     .groupByRaw("DATE_FORMAT(r.createdon,'%Y-%m')")
     .select(
       knex.raw("DATE_FORMAT(r.createdon,'%Y-%m') as month"),
-      knex.raw(
-        'SUM(CASE WHEN rts.externalid  IS NULL THEN 1 ELSE 0 END) AS notLinked'
-      ),
-      knex.raw(
-        "SUM(CASE WHEN rts.externalid IN ('OnTreatment','AwaitingTreatment') THEN 1 ELSE 0 END) inTreatment"
-      ),
-      knex.raw(
-        "SUM(CASE WHEN rts.externalid IN ('NotPossible') THEN 1 ELSE 0 END) notPossible"
-      ),
+      knex.raw('SUM(CASE WHEN rts.externalid  IS NULL THEN 1 ELSE 0 END) AS notLinked'),
+      knex.raw("SUM(CASE WHEN rts.externalid IN ('OnTreatment','AwaitingTreatment') THEN 1 ELSE 0 END) inTreatment"),
+      knex.raw("SUM(CASE WHEN rts.externalid IN ('NotPossible') THEN 1 ELSE 0 END) notPossible"),
       knex.raw('COUNT(*) as totalQuantity')
     )
 }
 
-async function normalizeTreatmentStatusDistribution(
-  knex,
-  partnerId,
-  currentMonth
-) {
-  let resultsByPartnerByMonths = await getTreatmentDistributionByPartner(
-    knex,
-    partnerId,
-    currentMonth
-  )
+async function normalizeTreatmentStatusDistribution(knex, partnerId, currentMonth) {
+  let resultsByPartnerByMonths = await getTreatmentDistributionByPartner(knex, partnerId, currentMonth)
   // updates results to have 70~80% with some status of treatment for each month
   if (resultsByPartnerByMonths.length > 0) {
     await Promise.each(resultsByPartnerByMonths, async elem => {
-      const percentageInTreatment = Math.round(
-        (elem.inTreatment / Math.max(parseFloat(elem.totalQuantity), 1.0)) * 100
-      )
+      const percentageInTreatment = Math.round((elem.inTreatment / Math.max(parseFloat(elem.totalQuantity), 1.0)) * 100)
       if (!_.inRange(percentageInTreatment, 50, 60)) {
-        const resultsQuantity = Math.round(
-          (_.random(50, 60) / 100.0) * elem.totalQuantity
-        )
+        const resultsQuantity = Math.round((_.random(50, 60) / 100.0) * elem.totalQuantity)
         const queryLimit = Math.abs(resultsQuantity - elem.inTreatment)
         const queryBuilder =
           percentageInTreatment < 50
-            ? builder =>
-                builder.whereRaw(
-                  "(rts.externalId is null or rts.externalId ='NotPossible')"
-                )
-            : builder =>
-                builder
-                  .whereNotNull('rts.externalId')
-                  .where('rts.externalId', '<>', knex.raw("'NotPossible'"))
+            ? builder => builder.whereRaw("(rts.externalId is null or rts.externalId ='NotPossible')")
+            : builder => builder.whereNotNull('rts.externalId').where('rts.externalId', '<>', knex.raw("'NotPossible'"))
 
         const resultsToUpdate = await getRandomResults(
           knex,
@@ -1527,30 +1284,21 @@ async function normalizeTreatmentStatusDistribution(
   }
 
   // check again the distribution
-  resultsByPartnerByMonths = await getTreatmentDistributionByPartner(
-    knex,
-    partnerId,
-    currentMonth
-  )
+  resultsByPartnerByMonths = await getTreatmentDistributionByPartner(knex, partnerId, currentMonth)
 
   if (resultsByPartnerByMonths.length > 0) {
     // normalize not possible treatment status to have 10~20% of results.
     await Promise.each(resultsByPartnerByMonths, async elem => {
-      const percentageNotPossible = Math.round(
-        (elem.notPossible / Math.max(parseFloat(elem.totalQuantity), 1.0)) * 100
-      )
+      const percentageNotPossible = Math.round((elem.notPossible / Math.max(parseFloat(elem.totalQuantity), 1.0)) * 100)
 
       if (!_.inRange(percentageNotPossible, 10, 20)) {
-        const resultsQuantity = Math.round(
-          (_.random(10, 20) / 100.0) * elem.totalQuantity
-        )
+        const resultsQuantity = Math.round((_.random(10, 20) / 100.0) * elem.totalQuantity)
 
         const queryLimit = Math.abs(resultsQuantity - elem.notPossible)
         const queryBuilder =
           percentageNotPossible < 10
             ? builder => builder.whereNull('rts.externalId')
-            : builder =>
-                builder.where('rts.externalId', '=', knex.raw("'NotPossible'"))
+            : builder => builder.where('rts.externalId', '=', knex.raw("'NotPossible'"))
 
         const resultsToUpdate = await getRandomResults(
           knex,
@@ -1588,13 +1336,8 @@ async function normalizeTreatmentStatusDistributionByResults(
   maxPercentTreatment = 50
 ) {
   if (resultIds.length > 0) {
-    const inTreatment = Math.floor(
-      (_.random(minPercentOnTreatment, maxPercentTreatment) / 100.0) *
-        resultIds.length
-    )
-    const notPossible = Math.floor(
-      (_.random(10, 20) / 100.0) * resultIds.length
-    )
+    const inTreatment = Math.floor((_.random(minPercentOnTreatment, maxPercentTreatment) / 100.0) * resultIds.length)
+    const notPossible = Math.floor((_.random(10, 20) / 100.0) * resultIds.length)
 
     if (inTreatment > 0)
       await setTreatmentStatusToResults(
@@ -1604,11 +1347,7 @@ async function normalizeTreatmentStatusDistributionByResults(
       )
 
     if (notPossible > 0) {
-      await setTreatmentStatusToResults(
-        knex,
-        resultIds.slice(inTreatment, notPossible),
-        treatmentStatuses.slice(-1)
-      )
+      await setTreatmentStatusToResults(knex, resultIds.slice(inTreatment, notPossible), treatmentStatuses.slice(-1))
     }
   }
 }
@@ -1624,29 +1363,14 @@ async function getRandomResults(
 ) {
   const query = knex('Result as r')
     .innerJoin('ResultCategoryAssay as rca', builder => {
-      builder
-        .on('r.assayId', 'rca.assayId')
-        .andOn('r.resultCategory1', 'rca.resultCategoryId')
+      builder.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
     })
-    .leftJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'r.treatmentStatusLogId',
-      'rtsl.id'
-    )
-    .leftJoin(
-      'ResultTreatmentStatus as rts',
-      'rtsl.resultTreatmentStatusId',
-      'rts.id'
-    )
+    .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
+    .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin(
-      'DeviceApproval as deviceApproval',
-      'd.deviceApprovalId',
-      'deviceApproval.id'
-    )
+    .leftJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
     .modify((builder, selectedMonth) => {
-      if (selectedMonth)
-        builder.whereRaw("DATE_FORMAT(r.createdon,'%Y-%m')= ?", selectedMonth)
+      if (selectedMonth) builder.whereRaw("DATE_FORMAT(r.createdon,'%Y-%m')= ?", selectedMonth)
     }, month)
     .modify(
       (builder, idpartner, approvedDevices, requiresTreatment) => {

@@ -7,10 +7,7 @@ import PermIdentity from '@material-ui/icons/PermIdentity'
 import Tooltip from '@material-ui/core/Tooltip'
 import PermissionsProvider from '../../Providers/PermissionsProvider'
 
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import useI18n from '../../Hooks/i18n/useI18n'
 import formatters from '../formatters'
 import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
@@ -36,32 +33,18 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
 
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
-      <TableCell>
-        {result.get('endedOn')
-          ? format(new Date(result.get('endedOn')), dateFormat)
-          : ''}
-      </TableCell>
+      <TableCell>{result.get('endedOn') ? format(new Date(result.get('endedOn')), dateFormat) : ''}</TableCell>
       <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
       <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
       <TableCell>{result.get('sampleId')}</TableCell>
-      <TableCell>
-        {formatMessage(
-          messages[result.get('assayI18nKey')],
-          null,
-          result.get('assayName')
-        )}
-      </TableCell>
+      <TableCell>{formatMessage(messages[result.get('assayI18nKey')], null, result.get('assayName'))}</TableCell>
       {extraColumns.isEmpty() ? (
         <TableCell>
           {`${formatMessage(
             messages[result.get('resultCategory1Titlei18nKey')],
             null,
             result.get('resultCategory1Title')
-          )}:${formatMessage(
-            messages[result.get('resultCategory1I18nKey')],
-            null,
-            result.get('resultCategory1Name')
-          )}`}
+          )}:${formatMessage(messages[result.get('resultCategory1I18nKey')], null, result.get('resultCategory1Name'))}`}
           {result.get('resultCategory2I18nKey') &&
             result.get('resultCategory2Titlei18nKey') &&
             ` | ${formatMessage(
@@ -87,9 +70,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           <TableCell key={column.get('i18nKey')} hiddenOn="nd">
             {formatterByType(column.get('type'))(
               column.get('formatter')
-                ? formatters[column.get('formatter')](
-                    result.get(column.get('fieldName'))
-                  )
+                ? formatters[column.get('formatter')](result.get(column.get('fieldName')))
                 : result.get(column.get('fieldName'))
             )}
           </TableCell>
@@ -98,11 +79,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
       <PermissionsProvider permissions={['+reporter']}>
         <TableCell hiddenOn="md">
-          {formatMessage(
-            messages[result.get('resultWorkflowStatusI18nkey')],
-            null,
-            result.get('resultWorkflowStatus')
-          )}
+          {formatMessage(messages[result.get('resultWorkflowStatusI18nkey')], null, result.get('resultWorkflowStatus'))}
         </TableCell>
       </PermissionsProvider>
       <PermissionsProvider permissions={['+reporter']}>
@@ -116,9 +93,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
               )}
               disableInteractive
             >
-              <PermIdentity
-                className={styles[`${result.get('treatmentStatusInfo')}`]}
-              />
+              <PermIdentity className={styles[`${result.get('treatmentStatusInfo')}`]} />
             </Tooltip>
           )}
         </TableCell>

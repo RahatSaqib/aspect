@@ -8,10 +8,7 @@ import startOfDay from 'date-fns/startOfDay'
 import format from 'date-fns/format'
 import { withProps } from 'recompose'
 
-import {
-  getAspectDisplayPreferences,
-  getTimezoneId,
-} from '../../globals/sideEffects/LocalStorage'
+import { getAspectDisplayPreferences, getTimezoneId } from '../../globals/sideEffects/LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
 import { i18nWrapper } from '../../Providers/I18nProvider'
@@ -37,13 +34,9 @@ function formatBase(date, displayPreferenceKey) {
   const { code: localeCode } = getLocale()
   const timeZone = getTimezoneById(userSetTimeZone)
   const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
-  const timeToFormat = isString(date)
-    ? new Date(date).toLocaleString(localeCode, { timeZone })
-    : date
+  const timeToFormat = isString(date) ? new Date(date).toLocaleString(localeCode, { timeZone }) : date
 
-  return timeToFormat === null
-    ? ''
-    : format(new Date(timeToFormat), dateFormatPreference)
+  return timeToFormat === null ? '' : format(new Date(timeToFormat), dateFormatPreference)
 }
 
 export const SECOND_IN_MILLISECONDS = 1000
@@ -67,8 +60,7 @@ export function formatDateTime(date) {
   return formatBase(date, 'dateTimeFormat')
 }
 
-export const formatWithLocale = locale => (date, formatStr) =>
-  format(date, formatStr, { locale: getLocale(locale) })
+export const formatWithLocale = locale => (date, formatStr) => format(date, formatStr, { locale: getLocale(locale) })
 
 export const withDateFormatProps = withProps(() => {
   const prefs = getAspectDisplayPreferences()

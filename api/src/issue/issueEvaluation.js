@@ -1,14 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const {
-  addSeconds,
-  addMinutes,
-  addHours,
-  addDays,
-  addWeeks,
-  addMonths,
-  addYears,
-} = require('date-fns')
+const { addSeconds, addMinutes, addHours, addDays, addWeeks, addMonths, addYears } = require('date-fns')
 const { readTextFile } = require('../shared/io')
 
 const evaluationMethods = {
@@ -28,51 +20,25 @@ async function issueConditionsMet(knex, issue, conditions) {
   if (Array.isArray(conditions)) {
     return evaluateArrayOfConditions(knex, issue, conditions)
   }
-  const {
-    evaluationMethod = null,
-    evaluationParameter = null,
-    evaluationFilterParameters = null,
-  } = conditions
+  const { evaluationMethod = null, evaluationParameter = null, evaluationFilterParameters = null } = conditions
   if (!evaluationMethods[evaluationMethod]) {
-    throw new Error(
-      `Unrecognised evaluation method in condition ${evaluationMethod}`
-    )
+    throw new Error(`Unrecognised evaluation method in condition ${evaluationMethod}`)
   }
-  return evaluationMethods[evaluationMethod](
-    knex,
-    issue,
-    evaluationParameter,
-    evaluationFilterParameters
-  )
+  return evaluationMethods[evaluationMethod](knex, issue, evaluationParameter, evaluationFilterParameters)
 }
 
 async function evaluateArrayOfConditions(knex, issue, conditions) {
-  const invalidConditions = _.filter(
-    conditions,
-    ({ evaluationMethod = null }) => !evaluationMethods[evaluationMethod]
-  )
+  const invalidConditions = _.filter(conditions, ({ evaluationMethod = null }) => !evaluationMethods[evaluationMethod])
   if (!_.isEmpty(invalidConditions)) {
     const invalidMethods = _.orderBy(
-      _.uniq(
-        _.filter(
-          _.map(invalidConditions, 'evaluationMethod'),
-          evaluationMethod => !!evaluationMethod
-        )
-      )
+      _.uniq(_.filter(_.map(invalidConditions, 'evaluationMethod'), evaluationMethod => !!evaluationMethod))
     ).join()
-    throw new Error(
-      `Unrecognised evaluation method(s) in condition ${invalidMethods}`.trim()
-    )
+    throw new Error(`Unrecognised evaluation method(s) in condition ${invalidMethods}`.trim())
   }
-  const andConditions = _.filter(
-    conditions,
-    condition => !condition.operator || condition.operator === 'AND'
-  )
+  const andConditions = _.filter(conditions, condition => !condition.operator || condition.operator === 'AND')
   if (!_.isEmpty(andConditions)) {
     const andConditionsMet = await Promise.all(
-      _.map(andConditions, async condition =>
-        issueConditionsMet(knex, issue, condition)
-      )
+      _.map(andConditions, async condition => issueConditionsMet(knex, issue, condition))
     )
     if (_.some(andConditionsMet, andConditionMet => !andConditionMet)) {
       return false
@@ -81,9 +47,7 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
   const orConditions = _.filter(conditions, { operator: 'OR' })
   if (!_.isEmpty(orConditions)) {
     const orConditionsMet = await Promise.all(
-      _.map(orConditions, async condition =>
-        issueConditionsMet(knex, issue, condition)
-      )
+      _.map(orConditions, async condition => issueConditionsMet(knex, issue, condition))
     )
     if (_.every(orConditionsMet, orConditionMet => !orConditionMet)) {
       return false
@@ -92,15 +56,8 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
   return true
 }
 
-async function evaluatePluginFunction(
-  knex,
-  issue,
-  functionName,
-  evaluationFunctionParameter = {}
-) {
-  const partner = await knex('Partner')
-    .where({ id: issue.partnerId })
-    .first('plugin')
+async function evaluatePluginFunction(knex, issue, functionName, evaluationFunctionParameter = {}) {
+  const partner = await knex('Partner').where({ id: issue.partnerId }).first('plugin')
   if (partner == null) {
     return false
   }
@@ -122,10 +79,7 @@ async function evaluateSqlScript(knex, issue, pathToSqlScript) {
 }
 
 async function evaluateSql(knex, issue, sql) {
-  const {
-    processUsingHandlebarsSyntax,
-    getMustacheTokensInString,
-  } = require('../stringTemplate/service')
+  const { processUsingHandlebarsSyntax, getMustacheTokensInString } = require('../stringTemplate/service')
 
   const issueValues = _.omit(issue, 'conditions')
   const parameterPlaceholders = _.mapValues(issueValues, () => '?')
@@ -148,10 +102,7 @@ async function evaluateSql(knex, issue, sql) {
    FOR ESCALATION CONDITIONS ONLY:
    escalateToLevel int NOT NULL
   */
-  const parameterisedSqlQuery = processUsingHandlebarsSyntax(
-    sql,
-    parameterPlaceholders
-  )
+  const parameterisedSqlQuery = processUsingHandlebarsSyntax(sql, parameterPlaceholders)
   const parameterPlaceHolders = getMustacheTokensInString(sql)
   const parameters = _.map(parameterPlaceHolders, parameterPlaceHolder =>
     processUsingHandlebarsSyntax(parameterPlaceHolder, issueValues)
@@ -181,11 +132,7 @@ function isResultTruthy(result, parameterisedSqlQuery, parameters) {
   if (_.isPlainObject(result)) {
     // Is the first value in the record from the SQL query
     // return something that is truthy?
-    return isResultTruthy(
-      _.head(_.values(result)),
-      parameterisedSqlQuery,
-      parameters
-    )
+    return isResultTruthy(_.head(_.values(result)), parameterisedSqlQuery, parameters)
   }
   return !!result
 }
@@ -209,10 +156,7 @@ async function triggeredEventOlderThan(knex, issue, issueAge) {
       addWeeks(
         addDays(
           addHours(
-            addMinutes(
-              addSeconds(issue.triggeredOn, issueAgeSpec.seconds),
-              issueAgeSpec.minutes
-            ),
+            addMinutes(addSeconds(issue.triggeredOn, issueAgeSpec.seconds), issueAgeSpec.minutes),
             issueAgeSpec.hours
           ),
           issueAgeSpec.days
@@ -243,16 +187,10 @@ async function checkResultCategory(knex, issue, evaluationParameter) {
         queryBuilder.whereIn('a.externalId', evaluationParameter.assays)
       }
       if (evaluationParameter.resultCategory1) {
-        queryBuilder.whereIn(
-          'rc1.externalId',
-          evaluationParameter.resultCategory1
-        )
+        queryBuilder.whereIn('rc1.externalId', evaluationParameter.resultCategory1)
       }
       if (evaluationParameter.resultCategory2) {
-        queryBuilder.whereIn(
-          'rc2.externalId',
-          evaluationParameter.resultCategory2
-        )
+        queryBuilder.whereIn('rc2.externalId', evaluationParameter.resultCategory2)
       }
     })
     .first('r.id')

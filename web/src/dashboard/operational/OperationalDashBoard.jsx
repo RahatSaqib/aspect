@@ -28,9 +28,7 @@ const OperationalDashBoard = () => {
     isError,
     data: { data: assays } = false,
     error,
-  } = useQuery(ASSAY_LIST.KEY, async () =>
-    fetchWrapperForQueries({ endpoint: ASSAY_LIST.ENDPOINT })
-  )
+  } = useQuery(ASSAY_LIST.KEY, async () => fetchWrapperForQueries({ endpoint: ASSAY_LIST.ENDPOINT }))
 
   if (isError) {
     throw new Error(error)
@@ -39,23 +37,13 @@ const OperationalDashBoard = () => {
     <Fragment>
       <ErrorBoundary>
         <PermissionsProvider permissions={['operationalData']}>
-          <SummaryStatus
-            className={cssClasses('Section--summary')}
-            dashboard="operational"
-          />
+          <SummaryStatus className={cssClasses('Section--summary')} dashboard="operational" />
         </PermissionsProvider>
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider
-          permissions={resultsTransmitted.graphRenderPermissions}
-        >
-          {assays && assays.length ? (
-            <GraphsContainer
-              assaysFromState={assays}
-              config={resultsTransmitted}
-            />
-          ) : null}
+        <PermissionsProvider permissions={resultsTransmitted.graphRenderPermissions}>
+          {assays && assays.length ? <GraphsContainer assaysFromState={assays} config={resultsTransmitted} /> : null}
         </PermissionsProvider>
       </ErrorBoundary>
 
@@ -66,9 +54,7 @@ const OperationalDashBoard = () => {
       </ErrorBoundary>
 
       <ErrorBoundary>
-        <PermissionsProvider
-          permissions={inventoryStatus.graphRenderPermissions}
-        >
+        <PermissionsProvider permissions={inventoryStatus.graphRenderPermissions}>
           <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
         </PermissionsProvider>
       </ErrorBoundary>

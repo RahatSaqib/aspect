@@ -36,32 +36,17 @@ const normalizeData = (data, { sortByKeys }) => {
   let filteredData = data
   if (sortByKeys?.length) {
     const firstDataItem = first(sortBy(data, sortByKeys))
-    filteredData = filter(data, d =>
-      every(sortByKeys, k => d[k] === firstDataItem[k])
-    )
+    filteredData = filter(data, d => every(sortByKeys, k => d[k] === firstDataItem[k]))
   }
   return filteredData
 }
 
 // ----------------------------------------------------------
-const graphsToHaveCustomLegend = [
-  'bar',
-  'stackedDeviceActivity',
-  'barLegacyTreatment',
-  'bar-line',
-]
+const graphsToHaveCustomLegend = ['bar', 'stackedDeviceActivity', 'barLegacyTreatment', 'bar-line']
 
 // ----------------------------------------------------------
 const getLegend = (props, config, { formatMessage }) => {
-  const {
-    assaysFromState,
-    config: baseConfig,
-    displayLegend,
-    legendsNotToRender,
-    keys,
-    type,
-    i18nKeys,
-  } = props
+  const { assaysFromState, config: baseConfig, displayLegend, legendsNotToRender, keys, type, i18nKeys } = props
   const { id: graphId, fields } = baseConfig
   const { translateX, itemDirection, itemWidth, symbolShape } = config
   const baseLegend =
@@ -70,18 +55,9 @@ const getLegend = (props, config, { formatMessage }) => {
           {
             dataFrom: 'keys',
             data: keys.map(k =>
-              generateLegendIntl(
-                formatMessage,
-                messages,
-                i18nKeys,
-                k,
-                assaysFromState,
-                graphId,
-                legendsNotToRender,
-                {
-                  colorExternalId: getColorIdByFieldName(fields, k),
-                }
-              )
+              generateLegendIntl(formatMessage, messages, i18nKeys, k, assaysFromState, graphId, legendsNotToRender, {
+                colorExternalId: getColorIdByFieldName(fields, k),
+              })
             ),
             anchor: 'bottom',
             direction: 'row',
@@ -107,9 +83,7 @@ const formatAxisLabel = (v, type, displayMethod, i18n) => {
   if (isFunction(displayMethod)) {
     return displayMethod(v, i18n, { type })
   }
-  return type === 'stackedDeviceActivity'
-    ? v.replace(/\D/g, '')
-    : formatValuesForGraphs(v, displayMethod, i18n)
+  return type === 'stackedDeviceActivity' ? v.replace(/\D/g, '') : formatValuesForGraphs(v, displayMethod, i18n)
 }
 
 /** ***********************************************************
@@ -139,9 +113,7 @@ const AspectResponsiveBar = props => {
   const { format, formatMessage } = i18n
 
   const { id: graphId, sortByKeys, groupMode, fields, layers = [] } = baseConfig
-  const keysForBars = fields
-    ? fields.filter(it => it.target === 'bar').map(it => it.name)
-    : keys
+  const keysForBars = fields ? fields.filter(it => it.target === 'bar').map(it => it.name) : keys
   const filteredData = normalizeData(data, { sortByKeys })
   const generateConfig = (type, data) => {
     switch (true) {
@@ -149,20 +121,8 @@ const AspectResponsiveBar = props => {
         return {
           legend: `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
           ylegend: false,
-          yTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
-          xTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
+          yTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
           gridYValues: null,
           extraConfig: {
             ...getMaxValueForDivergent(data, 'value'),
@@ -183,13 +143,7 @@ const AspectResponsiveBar = props => {
         }
 
       case type === 'barInventory': {
-        const yAxisValues = generateTickValues(
-          data,
-          tickValuesYShape,
-          keys,
-          'Y',
-          true
-        )
+        const yAxisValues = generateTickValues(data, tickValuesYShape, keys, 'Y', true)
         return {
           legend: formatMessage(messages.inventoryGraphStatusXAxisLegend),
           ylegend: formatMessage(messages.inventoryGraphStatusYAxisLegend),
@@ -197,13 +151,7 @@ const AspectResponsiveBar = props => {
           enableGridY: true,
           yTickValues: yAxisValues,
           enableGridX: true,
-          xTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
           translateX: -25,
           layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
           extraConfig: {},
@@ -219,21 +167,9 @@ const AspectResponsiveBar = props => {
         return {
           legend: false,
           ylegend: false,
-          yTickValues: generateTickValues(
-            data,
-            tickValuesYShape,
-            keys,
-            'Y',
-            true
-          ),
+          yTickValues: generateTickValues(data, tickValuesYShape, keys, 'Y', true),
           gridYValues: null,
-          xTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
           extraConfig: {},
           padding: 0.03,
           translateX: 15,
@@ -253,12 +189,9 @@ const AspectResponsiveBar = props => {
               }),
               lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
               legendOrientation: 'horizontal',
-              legend: `${calcOverallRate(
-                'devicesActiveRaw',
-                'devicesTotal',
-                data,
-                { weekendOrHoliday: 0 }
-              ).toFixed(0)}%`,
+              legend: `${calcOverallRate('devicesActiveRaw', 'devicesTotal', data, { weekendOrHoliday: 0 }).toFixed(
+                0
+              )}%`,
               legendOffsetX: -30,
               legendOffsetY: 0,
               textStyle: {
@@ -271,14 +204,7 @@ const AspectResponsiveBar = props => {
 
       case type === 'bar-line': {
         const groupMode = 'grouped'
-        const yAxisValues = generateTickValues(
-          data,
-          tickValuesYShape,
-          keysForBars,
-          'Y',
-          true,
-          { groupMode }
-        )
+        const yAxisValues = generateTickValues(data, tickValuesYShape, keysForBars, 'Y', true, { groupMode })
 
         return {
           legend: false,
@@ -287,13 +213,7 @@ const AspectResponsiveBar = props => {
           enableGridY: true,
           yTickValues: yAxisValues,
           enableGridX: true,
-          xTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
           extraConfig: {},
           padding: 0.3,
           translateX: -25,
@@ -314,21 +234,9 @@ const AspectResponsiveBar = props => {
         return {
           legend: false,
           ylegend: false,
-          yTickValues: generateTickValues(
-            data,
-            tickValuesYShape,
-            keys,
-            'Y',
-            true
-          ),
+          yTickValues: generateTickValues(data, tickValuesYShape, keys, 'Y', true),
           gridYValues: null,
-          xTickValues: generateTickValues(
-            data,
-            tickValuesXShape,
-            indexBy,
-            'X',
-            false
-          ),
+          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
           extraConfig: {},
           padding: 0.3,
           translateX: -25,
@@ -380,9 +288,7 @@ const AspectResponsiveBar = props => {
           colors={v => {
             let valueId = v.id
             if (fields) {
-              ;[{ colorId: valueId }] = fields.filter(
-                it => it.target === 'bar' && it.name === v.id
-              )
+              ;[{ colorId: valueId }] = fields.filter(it => it.target === 'bar' && it.name === v.id)
             }
             return generateColorForValue(valueId, graphId)
           }}
@@ -469,24 +375,10 @@ AspectResponsiveBar.propTypes = {
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  formatDate: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool,
-    PropTypes.func,
-  ]),
-  legendsToPopover: PropTypes.oneOfType([
-    PropTypes.array,
-    PropTypes.bool,
-    PropTypes.func,
-  ]),
+  formatDate: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.func]),
+  legendsToPopover: PropTypes.oneOfType([PropTypes.array, PropTypes.bool, PropTypes.func]),
   legendsNotToRender: PropTypes.oneOfType([PropTypes.array]),
-  tickValuesYShape: PropTypes.oneOf([
-    'bookends',
-    'clubsandwich',
-    'all',
-    'none',
-    'twos',
-  ]),
+  tickValuesYShape: PropTypes.oneOf(['bookends', 'clubsandwich', 'all', 'none', 'twos']),
   tickValuesXShape: PropTypes.oneOf(['bookends', 'all', 'none', 'twos']),
   type: PropTypes.oneOf([
     'bar',

@@ -13,12 +13,7 @@ describe('Hidden module', () => {
         lg: true,
       })
 
-      expect(className).toEqual([
-        'abc',
-        'pure-hidden-xs',
-        'pure-hidden-sm',
-        'pure-hidden-lg',
-      ])
+      expect(className).toEqual(['abc', 'pure-hidden-xs', 'pure-hidden-sm', 'pure-hidden-lg'])
     })
   })
 
@@ -27,9 +22,7 @@ describe('Hidden module', () => {
       const ComponentWrapper = shallow(<Hidden md xl />)
 
       expect(ComponentWrapper.type()).toEqual('div')
-      expect(ComponentWrapper.props().className).toEqual(
-        'pure-hidden-md pure-hidden-xl'
-      )
+      expect(ComponentWrapper.props().className).toEqual('pure-hidden-md pure-hidden-xl')
     })
 
     describe('Given component = span', () => {
@@ -37,9 +30,7 @@ describe('Hidden module', () => {
         const ComponentWrapper = shallow(<Hidden component="span" md xl />)
 
         expect(ComponentWrapper.type()).toEqual('span')
-        expect(ComponentWrapper.props().className).toEqual(
-          'pure-hidden-md pure-hidden-xl'
-        )
+        expect(ComponentWrapper.props().className).toEqual('pure-hidden-md pure-hidden-xl')
       })
     })
   })

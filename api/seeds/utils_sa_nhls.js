@@ -19,9 +19,7 @@ async function seedNotifications(knex, { partnerId }) {
     process.exit(1)
   }
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: 'nhls_eid' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'nhls_eid' }).first('id')
 
   const auditFields = {
     createdOn: now,
@@ -101,9 +99,7 @@ async function seedNotifications(knex, { partnerId }) {
     ...auditFields,
   })
 
-  const [positiveAlereResultDataEnteredSmsTemplateId] = await knex(
-    'SmsTemplate'
-  ).insert({
+  const [positiveAlereResultDataEnteredSmsTemplateId] = await knex('SmsTemplate').insert({
     message:
       `GxAlert. New ` +
       `{{#if (or (eq result.assay.id 'assayAlereQHiv12VLPlasma') (eq result.assay.id 'GxHiv1Vl'))}}` +
@@ -153,9 +149,7 @@ async function seedNotifications(knex, { partnerId }) {
       webhookTemplateId: redCapAlereQWebHookTemplateId,
     },
   ])
-  const [positiveResultDataEnteredMessageTypeId] = await knex(
-    'MessageType'
-  ).insert([
+  const [positiveResultDataEnteredMessageTypeId] = await knex('MessageType').insert([
     {
       messageSeverityId: messageSeverityAlertId,
       smsTemplateId: positiveAlereResultDataEnteredSmsTemplateId,
@@ -177,15 +171,11 @@ async function seedNotifications(knex, { partnerId }) {
     issueCategoryId: issueCategoryDataHealthId,
   })
 
-  const { id: adminJobFunctionId } = await knex('JobFunction')
-    .where({ name: 'Admin', partnerId })
-    .first('id')
+  const { id: adminJobFunctionId } = await knex('JobFunction').where({ name: 'Admin', partnerId }).first('id')
   const { id: regionalOfficerJobFunctionId } = await knex('JobFunction')
     .where({ name: 'Regional Officer', partnerId })
     .first('id')
-  const { id: labUserJobFunctionId } = await knex('JobFunction')
-    .where({ name: 'Lab User', partnerId })
-    .first('id')
+  const { id: labUserJobFunctionId } = await knex('JobFunction').where({ name: 'Lab User', partnerId }).first('id')
 
   await knex('NotificationType').insert({
     name: 'Result Uploaded',
@@ -216,19 +206,17 @@ async function seedNotifications(knex, { partnerId }) {
     messageTypeId: positiveResultDataEnteredMessageTypeId,
     ...auditFields,
   })
-  const [roPositiveResultDataEnteredId] = await knex('NotificationType').insert(
-    {
-      name: 'RO Positive Result Data Entered',
-      partnerId,
-      issueTypeId: issueTypeResultDataEnteredId,
-      jobFunctionId: regionalOfficerJobFunctionId,
-      level: 2,
-      canAcknowledge: 0,
-      messageTypeId: positiveResultDataEnteredMessageTypeId,
-      sendToContactsWithMatchingTags: true,
-      ...auditFields,
-    }
-  )
+  const [roPositiveResultDataEnteredId] = await knex('NotificationType').insert({
+    name: 'RO Positive Result Data Entered',
+    partnerId,
+    issueTypeId: issueTypeResultDataEnteredId,
+    jobFunctionId: regionalOfficerJobFunctionId,
+    level: 2,
+    canAcknowledge: 0,
+    messageTypeId: positiveResultDataEnteredMessageTypeId,
+    sendToContactsWithMatchingTags: true,
+    ...auditFields,
+  })
   const [positiveEidTag] = await knex('Tag').insert({
     title: 'EID+',
     partnerId,
@@ -247,9 +235,7 @@ async function seedNotifications(knex, { partnerId }) {
       tagId: positiveVLTag,
     },
   ])
-  const [adminPositiveResultDataEnteredId] = await knex(
-    'NotificationType'
-  ).insert({
+  const [adminPositiveResultDataEnteredId] = await knex('NotificationType').insert({
     name: 'Admin Positive Result Data Entered',
     partnerId,
     issueTypeId: issueTypeResultDataEnteredId,

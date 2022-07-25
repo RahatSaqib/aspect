@@ -31,23 +31,15 @@ export const AccordionHeader = ({
     tabIndex="0"
     {...restProps}
   >
-    <div className={cssClasses('Label')}>
-      {expanded ? expandedLabel || label : label}
-    </div>
-    <div className={cssClasses('Header__Content')}>
-      {expanded ? children : collapsedChildren || children}
-    </div>
+    <div className={cssClasses('Label')}>{expanded ? expandedLabel || label : label}</div>
+    <div className={cssClasses('Header__Content')}>{expanded ? children : collapsedChildren || children}</div>
     <IconButton
       disabled={disabled}
       className={cssClasses('Header__Icon', {
         'Header__Icon--disabled': disabled,
       })}
     >
-      {expanded ? (
-        <ExpandLessIcon style={{ fontSize: '20px' }} />
-      ) : (
-        <ExpandMoreIcon style={{ fontSize: '20px' }} />
-      )}
+      {expanded ? <ExpandLessIcon style={{ fontSize: '20px' }} /> : <ExpandMoreIcon style={{ fontSize: '20px' }} />}
     </IconButton>
   </div>
 )

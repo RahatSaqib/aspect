@@ -75,10 +75,7 @@ const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
         {Children.map(children, menuItem => {
           if (isValidElement(menuItem)) {
             return cloneElement(menuItem, {
-              className: classNames(
-                menuItem.props.className,
-                classNameValues.menuItem
-              ),
+              className: classNames(menuItem.props.className, classNameValues.menuItem),
               onClick: handleClick(menuItem),
             })
           }

@@ -9,16 +9,7 @@ import styles from '../DailyStatus.css'
 
 const cssClasses = classnames.bind(styles)
 
-const DailyStatusClinic = ({
-  name,
-  data,
-  deviceId,
-  total,
-  statuses,
-  consts,
-  totalDays,
-  onClickDay,
-}) => {
+const DailyStatusClinic = ({ name, data, deviceId, total, statuses, consts, totalDays, onClickDay }) => {
   const dataDays = data.length
   const fillerDays = times(totalDays - dataDays)
   const {
@@ -87,10 +78,7 @@ DailyStatusClinic.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   deviceId: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
-  statuses: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.arrayOf(PropTypes.object),
-  ]),
+  statuses: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.object)]),
   consts: PropTypes.shape({
     blockSize: PropTypes.oneOfType([PropTypes.object]),
     totalBlockSize: PropTypes.oneOfType([PropTypes.object]),

@@ -82,12 +82,7 @@ export const AspectExportListButtonWithProps = ({
   )
 }
 
-const AspectExportListButton = ({
-  onExport,
-  visible,
-  disableCSV,
-  disableExcel,
-}) => {
+const AspectExportListButton = ({ onExport, visible, disableCSV, disableExcel }) => {
   const [downloadStarted, setDownloadStarted] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
 

@@ -1,13 +1,7 @@
 const _ = require('lodash')
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
-const {
-  allMessageStatusToId,
-  messageStatusToId,
-} = require('../shared/dictionary')
-const {
-  addDataSourceToQuery,
-  processUsingDataSourceQuery,
-} = require('../stringTemplate/service')
+const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
+const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
 const { normalizePhoneNumber } = require('../shared/phoneNormalization')
@@ -55,10 +49,7 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
 // -----------------------------
 // onSmsMessageReadyForSending - event handler for SMS_MESSAGE_READY_FOR_SENDING
 // -----------------------------
-async function onSmsMessageReadyForSending(
-  { smsMessageId },
-  { messageContext }
-) {
+async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     smsMessageSent,
   })
@@ -85,8 +76,7 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   const { sendSms } = require('./smsUtil')
 
   // assume status is 'Sent'
-  const { Sent: messageStatusIdSent, Error: messageStatusIdError } =
-    await allMessageStatusToId()
+  const { Sent: messageStatusIdSent, Error: messageStatusIdError } = await allMessageStatusToId()
   let messageStatusId = messageStatusIdSent
 
   // send sms
@@ -106,9 +96,7 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
 }
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
-  const { personId } = await knex('SmsMessage')
-    .where('id', smsMessageId)
-    .first('personId')
+  const { personId } = await knex('SmsMessage').where('id', smsMessageId).first('personId')
 
   const dataConstraints = await getConstraints({ personId })
 
@@ -142,11 +130,7 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
       'tmpl.phoneNumber as phoneNumberTemplate',
       knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
     )
-  return processUsingDataSourceQuery(data, [
-    'messageTemplate',
-    'phoneNumberTemplate',
-    'countryAbbreviation',
-  ])
+  return processUsingDataSourceQuery(data, ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'])
 }
 
 module.exports = {

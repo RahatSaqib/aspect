@@ -12,12 +12,7 @@ import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
 import isEditable from '../../shared/selectors/isEditable'
-import {
-  fetchSingleSite,
-  updateSingleSiteFromForm,
-  updateLatLongFromFormAddress,
-  Site,
-} from '../SiteRedux'
+import { fetchSingleSite, updateSingleSiteFromForm, updateLatLongFromFormAddress, Site } from '../SiteRedux'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import { fetchSiteContacts } from '../../person/PersonRedux'
 
@@ -111,9 +106,7 @@ export const SiteDetail = props => {
         </Routes>
       ) : null}
       <section className={cssClasses('Section', 'Section--first')}>
-        <Paper>
-          {hasSiteWithLocation() ? <SiteLocationFormMap site={site} /> : null}
-        </Paper>
+        <Paper>{hasSiteWithLocation() ? <SiteLocationFormMap site={site} /> : null}</Paper>
       </section>
     </div>
   )
@@ -123,10 +116,7 @@ const mapStateToProps = (state, ownProps) => {
   const { siteId } = ownProps.match.params
   const site = state.site.items.byId.get(siteId)
   const siteTags = state.tag.tags.getIn(['site', siteId], Immutable.List())
-  const siteContacts = state.person.siteContacts.getIn(
-    [siteId],
-    Immutable.List()
-  )
+  const siteContacts = state.person.siteContacts.getIn([siteId], Immutable.List())
   return {
     editable: isEditable(state.user, 'site'),
     site,

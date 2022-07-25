@@ -20,12 +20,7 @@ async function addIssueTypes(
   knex,
   _partnerId,
   _adminId,
-  defaultIssues = [
-    'DeviceOffline',
-    'DeviceNoResults',
-    'InventoryStockExpiring',
-    'NewResultsAvailable',
-  ]
+  defaultIssues = ['DeviceOffline', 'DeviceNoResults', 'InventoryStockExpiring', 'NewResultsAvailable']
 ) {
   // here is preferible to add an enviroment variable just
   // for defining the admin user name and remove the hardcoded one
@@ -54,17 +49,11 @@ async function addIssueTypes(
     updatedOn: now,
     updatedBy: adminId,
   }
-  const insertedIssueTypes = _.map(
-    await knex('IssueType').select('externalId'),
-    elem => elem.externalId
-  )
+  const insertedIssueTypes = _.map(await knex('IssueType').select('externalId'), elem => elem.externalId)
   const issues = await getBaseIssues(auditFields)
   await Promise.each(Object.keys(issues), async elem => {
     // if defaultissues is null all are inserted
-    if (
-      insertedIssueTypes.indexOf(elem) === -1 &&
-      (!defaultIssues || defaultIssues.indexOf(elem) >= 0)
-    ) {
+    if (insertedIssueTypes.indexOf(elem) === -1 && (!defaultIssues || defaultIssues.indexOf(elem) >= 0)) {
       let alertTemplateId
       let smsTemplateId
       let emailTemplateId
@@ -73,30 +62,22 @@ async function addIssueTypes(
       let webhookTemplateId
 
       if (issues[elem].AlertTemplate) {
-        ;[alertTemplateId] = await knex('AlertTemplate').insert(
-          issues[elem].AlertTemplate
-        )
+        ;[alertTemplateId] = await knex('AlertTemplate').insert(issues[elem].AlertTemplate)
       }
       if (issues[elem].SmsTemplate) {
-        ;[smsTemplateId] = await knex('SmsTemplate').insert(
-          issues[elem].SmsTemplate
-        )
+        ;[smsTemplateId] = await knex('SmsTemplate').insert(issues[elem].SmsTemplate)
       }
       if (issues[elem].EmailTemplate) {
-        ;[emailTemplateId] = await knex('EmailTemplate').insert(
-          issues[elem].EmailTemplate
-        )
+        ;[emailTemplateId] = await knex('EmailTemplate').insert(issues[elem].EmailTemplate)
       }
 
       if (issues[elem].PushNotificationTemplate) {
-        ;[pushNotificationTemplateId] = await knex(
-          'PushNotificationTemplate'
-        ).insert(issues[elem].PushNotificationTemplate)
+        ;[pushNotificationTemplateId] = await knex('PushNotificationTemplate').insert(
+          issues[elem].PushNotificationTemplate
+        )
       }
       if (issues[elem].WebhookTemplate) {
-        ;[webhookTemplateId] = await knex('WebhookTemplate').insert(
-          issues[elem].WebhookTemplate
-        )
+        ;[webhookTemplateId] = await knex('WebhookTemplate').insert(issues[elem].WebhookTemplate)
       }
       if (issues[elem].MessageType) {
         ;[messageTypeId] = await knex('MessageType').insert({
@@ -146,18 +127,13 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
     }
   }
   const forms = await getBaseForms()
-  const insertedForms = await knex('FormDefinition')
-    .where({ partnerId })
-    .pluck('externalId')
+  const insertedForms = await knex('FormDefinition').where({ partnerId }).pluck('externalId')
 
   await Promise.each(Object.keys(forms), async form => {
     if (insertedForms.indexOf(form) === -1 && formsNeeded.indexOf(form) >= 0) {
       const formDefinitionSchemaId =
         _.get(
-          _.find(
-            existingSchemas,
-            elem => elem.jsonSchemaFile === forms[form].fileName
-          ),
+          _.find(existingSchemas, elem => elem.jsonSchemaFile === forms[form].fileName),
           'id'
         ) ||
         (

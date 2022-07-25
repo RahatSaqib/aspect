@@ -36,10 +36,7 @@ const layerProps = {
 }
 
 export const FqrToMtbPercentageLine = propsFromBarGraph => (
-  <Line
-    {...propsFromBarGraph}
-    layerProps={{ ...layerProps, valueFieldName: 'FqrToMtbPercentage' }}
-  />
+  <Line {...propsFromBarGraph} layerProps={{ ...layerProps, valueFieldName: 'FqrToMtbPercentage' }} />
 )
 
 export default {

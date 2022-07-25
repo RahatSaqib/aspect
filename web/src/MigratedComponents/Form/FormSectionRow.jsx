@@ -26,8 +26,7 @@ const FormSectionRow = ({
 }) => {
   const { formatMessage } = useI18n()
 
-  const onClickAdd = () =>
-    arrayHelpers.insert(subRowIndex + 1, { __guid__: uniqueId(rowId) })
+  const onClickAdd = () => arrayHelpers.insert(subRowIndex + 1, { __guid__: uniqueId(rowId) })
 
   const onClickDelete = () => arrayHelpers.remove(subRowIndex)
 

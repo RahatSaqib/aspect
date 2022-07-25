@@ -13,10 +13,7 @@ import {
   sharedFields,
   InventoryAdjustmentDialogForm,
 } from './InventoryAdjustmentDialogForm'
-import {
-  withTodayProps,
-  withDateFormatProps,
-} from '../../shared/utils/dateFormat'
+import { withTodayProps, withDateFormatProps } from '../../shared/utils/dateFormat'
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -44,16 +41,7 @@ const messages = defineMessages({
 })
 
 export function validate(
-  {
-    reasonId,
-    dateAdjustedFrom,
-    dateAdjustedTo,
-    canExpire,
-    expiresOn,
-    fromSiteId,
-    quantity,
-    dateAdjusted,
-  },
+  { reasonId, dateAdjustedFrom, dateAdjustedTo, canExpire, expiresOn, fromSiteId, quantity, dateAdjusted },
   { intl, consumableReason }
 ) {
   const errors = {}
@@ -69,19 +57,14 @@ export function validate(
   if (!reasonId) {
     errors.reasonId = intl.formatMessage(sharedMessages.reasonRequired)
   }
-  if (
-    consumableReason &&
-    consumableReason.get('i18nKey') === testConductedReasonI18nKey
-  ) {
+  if (consumableReason && consumableReason.get('i18nKey') === testConductedReasonI18nKey) {
     if (!dateAdjustedFrom) {
       errors.dateAdjustedFrom = intl.formatMessage(sharedMessages.dateRequired)
     }
     if (!dateAdjustedTo) {
       errors.dateAdjustedTo = intl.formatMessage(sharedMessages.dateRequired)
     } else if (dateAdjustedFrom > dateAdjustedTo) {
-      errors.dateAdjustedTo = intl.formatMessage(
-        sharedMessages.dateFromAfterDateTo
-      )
+      errors.dateAdjustedTo = intl.formatMessage(sharedMessages.dateFromAfterDateTo)
     }
   } else if (!dateAdjusted) {
     errors.dateAdjusted = intl.formatMessage(sharedMessages.dateRequired)
@@ -128,9 +111,7 @@ const enhance = compose(
         ...DEFAULT_VALUES,
         lotNumber: inventoryItem.get('lotNumber') || DEFAULT_VALUES.lotNumber,
         canExpire: inventoryItem.get('canExpire') === 1,
-        expiresOn: inventoryItem.get('expiresOn')
-          ? new Date(inventoryItem.get('expiresOn'))
-          : undefined,
+        expiresOn: inventoryItem.get('expiresOn') ? new Date(inventoryItem.get('expiresOn')) : undefined,
         fromSiteId: inventoryItem.get('siteId'),
         dateAdjustedFrom: today,
         dateAdjustedTo: today,

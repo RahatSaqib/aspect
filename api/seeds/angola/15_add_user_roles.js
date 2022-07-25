@@ -3,15 +3,9 @@ const { upsertJobFunctionFixture } = require('../common')
 const partnerData = require('./fixtures/partnerData')
 
 const seed = async knex => {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerData.partnerName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerData.partnerName }).first('id')
   if (partnerId) {
-    await upsertJobFunctionFixture(
-      knex,
-      get(partnerData.fixtures, 'jobFunctions'),
-      partnerId
-    )
+    await upsertJobFunctionFixture(knex, get(partnerData.fixtures, 'jobFunctions'), partnerId)
   }
 }
 

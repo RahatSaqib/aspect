@@ -2,11 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('boom')
 const { transact } = require('../../../db')
-const {
-  getDateOrDefault,
-  parseDateOrDefault,
-  dateEqual,
-} = require('../../../shared/date')
+const { getDateOrDefault, parseDateOrDefault, dateEqual } = require('../../../shared/date')
 const { deviceSeen } = require('../../../device/actions')
 const {
   sampleTypeToId,
@@ -19,11 +15,7 @@ const {
 const PhilippinesNtrlDatabase = require('../philippinesNtrlDatabase')
 const expectedKeys = require('./expectedKeys')
 const dateKeys = require('./dateKeys')
-const {
-  sampleTypeMapping,
-  mapPatientData,
-  resultDataMappings,
-} = require('./mappings')
+const { sampleTypeMapping, mapPatientData, resultDataMappings } = require('./mappings')
 const { getResultDateOrDefault } = require('../common/utils')
 const { testTypes } = require('../common/mapping')
 
@@ -42,8 +34,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
     const payloadKeys = Object.keys(payload)
     return (
       expectedKeys.every(expectedKey => payloadKeys.includes(expectedKey)) &&
-      (payload.database.indexOf('RITM') === 0 ||
-        payload.table.indexOf('RECORDS_WITH_SIGN_OFFS_RITM') === 0)
+      (payload.database.indexOf('RITM') === 0 || payload.table.indexOf('RECORDS_WITH_SIGN_OFFS_RITM') === 0)
     )
   }
 
@@ -58,9 +49,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             .where('token', auth.credentials.token)
             .first('deviceId', 'partnerId', 'geographyId')) || {}
         if (!deviceId) {
-          throw Boom.badRequest(
-            'Invalid device API key: Cannot determine which device this came from'
-          )
+          throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
         }
         this.response.deviceId = deviceId
         dateKeys.forEach(dateKey => {
@@ -69,42 +58,28 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         const rawMessage = JSON.stringify(request.plugins.rawPayload)
         const utcNow = new Date()
 
-        await knex('Device')
-          .where({ id: deviceId })
-          .update({ lastSeenOn: utcNow, updatedOn: utcNow })
+        await knex('Device').where({ id: deviceId }).update({ lastSeenOn: utcNow, updatedOn: utcNow })
         const site = await knex('Device as d')
           .join('Site as s', 'd.siteId', 's.id')
           .where('d.id', deviceId)
-          .first(
-            's.*',
-            'd.name as deviceName',
-            'd.defaultReportableSiteId as deviceDefaultReportableSiteId'
-          )
+          .first('s.*', 'd.name as deviceName', 'd.defaultReportableSiteId as deviceDefaultReportableSiteId')
 
         this.messageContext.dispatch(deviceSeen(deviceId))
 
-        const sampleTypeId = await sampleTypeToId(
-          sampleTypeMapping[payload['Specimen Type']] || 'Other'
-        )
+        const sampleTypeId = await sampleTypeToId(sampleTypeMapping[payload['Specimen Type']] || 'Other')
         const sanitizeReferringFacility = rawValue => {
           let facilityName = (rawValue || '').replace(/c\/o|,|\(|\)/gi, ' ')
           while (facilityName.indexOf('  ') > -1) {
             facilityName = facilityName.replace(/\s\s/g, ' ').trim()
           }
-          if (
-            ['DOTS', 'NO DATA', 'CD', 'D', 'C'].includes(
-              facilityName.toUpperCase()
-            )
-          ) {
+          if (['DOTS', 'NO DATA', 'CD', 'D', 'C'].includes(facilityName.toUpperCase())) {
             facilityName = null
           }
           return facilityName
         }
         let referringFacility = sanitizeReferringFacility(payload.Address)
         if (!referringFacility) {
-          referringFacility = sanitizeReferringFacility(
-            payload['Referring Facility']
-          )
+          referringFacility = sanitizeReferringFacility(payload['Referring Facility'])
         }
         let originSite
         if (referringFacility) {
@@ -118,29 +93,15 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             })
             .first()
           if (!originSite) {
-            const shortName =
-              referringFacility.length > 45
-                ? referringFacility.substring(0, 45)
-                : referringFacility
+            const shortName = referringFacility.length > 45 ? referringFacility.substring(0, 45) : referringFacility
             const countryDetails =
               (await knex('Geography as siteGeography')
-                .join(
-                  'Country as country',
-                  'siteGeography.countryId',
-                  'country.id'
-                )
-                .join(
-                  'Geography as countryGeography',
-                  'siteGeography.countryId',
-                  'countryGeography.countryId'
-                )
+                .join('Country as country', 'siteGeography.countryId', 'country.id')
+                .join('Geography as countryGeography', 'siteGeography.countryId', 'countryGeography.countryId')
                 .where('siteGeography.id', geographyId)
                 .whereNull('countryGeography.stateId')
                 .whereNull('countryGeography.lgaId')
-                .first(
-                  'countryGeography.id as countryGeographyId',
-                  'country.timezone'
-                )) || {}
+                .first('countryGeography.id as countryGeographyId', 'country.timezone')) || {}
             const [originSiteId] = await knex('Site').insert({
               name: referringFacility,
               shortName,
@@ -155,16 +116,14 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           }
         }
         const labRequestIdPrefix =
-          payload.database === 'RITM' ||
-          payload.table === 'RECORDS_WITH_SIGN_OFFS_RITM'
+          payload.database === 'RITM' || payload.table === 'RECORDS_WITH_SIGN_OFFS_RITM'
             ? 'RN-19-'
             : payload.database.indexOf('RITM') === 0
             ? `RN-${payload.database.substr(payload.database.length - 2)}-`
             : `RN-${payload.table.substr(payload.table.length - 2)}-`
         const ntrlLabRequestId = `${labRequestIdPrefix}${payload['Serial Code RN-14-']}`
         const sampleOriginSiteId = originSite ? originSite.id : null
-        const reportableSiteId =
-          sampleOriginSiteId || site.deviceDefaultReportableSiteId || site.id
+        const reportableSiteId = sampleOriginSiteId || site.deviceDefaultReportableSiteId || site.id
 
         const numberOfSamples =
           !!payload['Smear Result 3'] ||
@@ -180,26 +139,18 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             : 1
         const samples = _.range(1, numberOfSamples + 1).map(sampleNumber => {
           const sample = {
-            externalId:
-              numberOfSamples > 1
-                ? `${ntrlLabRequestId}-${sampleNumber}`
-                : `${ntrlLabRequestId}`,
+            externalId: numberOfSamples > 1 ? `${ntrlLabRequestId}-${sampleNumber}` : `${ntrlLabRequestId}`,
             collectedOn:
-              payload[`Smear Result ${sampleNumber} Date Collected`] ||
-              payload['Date and Time of Specimen Collection'],
+              payload[`Smear Result ${sampleNumber} Date Collected`] || payload['Date and Time of Specimen Collection'],
             sampleTypeId,
             originSiteId: sampleOriginSiteId,
           }
           return sample
         })
         await Promise.each(samples, async (sample, index) => {
-          let existingSample = await knex('Sample')
-            .where('externalId', sample.externalId)
-            .first()
+          let existingSample = await knex('Sample').where('externalId', sample.externalId).first()
           if (!existingSample && index === 0) {
-            existingSample = await knex('Sample')
-              .where('externalId', ntrlLabRequestId)
-              .first()
+            existingSample = await knex('Sample').where('externalId', ntrlLabRequestId).first()
           }
           if (existingSample) {
             sample.id = existingSample.id
@@ -241,8 +192,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           updatedBy: null,
         }
 
-        let { mapResultData, isPayloadValid } =
-          resultDataMappings[testTypes.DST]
+        let { mapResultData, isPayloadValid } = resultDataMappings[testTypes.DST]
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
           const { encodedResult } = mappedResultData
@@ -274,10 +224,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             .first()) || {
             ...baseNewResult,
             externalId,
-            assayId:
-              (encodedResult.methodUsed || '').indexOf('MGIT') > -1
-                ? assayBdMgitAstId
-                : assayGenericDstId,
+            assayId: (encodedResult.methodUsed || '').indexOf('MGIT') > -1 ? assayBdMgitAstId : assayGenericDstId,
             sampleId: samples[0].id,
             startedOn: performedOn,
             endedOn: performedOn,
@@ -303,10 +250,8 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               'Non-tuberculous mycobacteria': resultCategories.PositiveMOTT,
               Contaminated: resultCategories.Contaminated,
               'Incomplete: Did Not Sumbit 2 Samples': resultCategories.Missing,
-              'Incomplete: Did Not Submit 2 Samples w/in 3 days':
-                resultCategories.Missing,
-              'Incomplete: Not submitted 2 samples w/in 3 days':
-                resultCategories.Missing,
+              'Incomplete: Did Not Submit 2 Samples w/in 3 days': resultCategories.Missing,
+              'Incomplete: Not submitted 2 samples w/in 3 days': resultCategories.Missing,
             }[encodedResult.idResult] || resultCategories.Missing
           const dstResultCategory2IdMappings = {
             RESISTANT: resultCategories.Resistant,
@@ -328,33 +273,27 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           let resultCategory2Id = resultCategories.Missing
           if (
             dstResultsForDrugsTested.some(
-              resultForDrugsTested =>
-                dstResultCategory2IdMappings[resultForDrugsTested] ===
-                resultCategories.Resistant
+              resultForDrugsTested => dstResultCategory2IdMappings[resultForDrugsTested] === resultCategories.Resistant
             )
           ) {
             resultCategory2Id = resultCategories.Resistant
           } else if (
             dstResultsForDrugsTested.some(
               resultForDrugsTested =>
-                dstResultCategory2IdMappings[resultForDrugsTested] ===
-                resultCategories.Contaminated
+                dstResultCategory2IdMappings[resultForDrugsTested] === resultCategories.Contaminated
             )
           ) {
             resultCategory2Id = resultCategories.Contaminated
           } else if (
             dstResultsForDrugsTested.some(
               resultForDrugsTested =>
-                dstResultCategory2IdMappings[resultForDrugsTested] ===
-                resultCategories.Susceptible
+                dstResultCategory2IdMappings[resultForDrugsTested] === resultCategories.Susceptible
             )
           ) {
             resultCategory2Id = resultCategories.Susceptible
           } else if (
             dstResultsForDrugsTested.some(
-              resultForDrugsTested =>
-                dstResultCategory2IdMappings[resultForDrugsTested] ===
-                resultCategories.Invalid
+              resultForDrugsTested => dstResultCategory2IdMappings[resultForDrugsTested] === resultCategories.Invalid
             )
           ) {
             resultCategory2Id = resultCategories.Invalid
@@ -380,8 +319,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
 
-        ;({ mapResultData, isPayloadValid } =
-          resultDataMappings[testTypes.CULTURE])
+        ;({ mapResultData, isPayloadValid } = resultDataMappings[testTypes.CULTURE])
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
           const { encodedResult } = mappedResultData
@@ -435,9 +373,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               ...baseNewResult,
               externalId,
               assayId:
-                (encodedResult.methodUsed1 || '').indexOf('MGIT') > -1
-                  ? assayBdMgitGndId
-                  : assayGenericCultureId,
+                (encodedResult.methodUsed1 || '').indexOf('MGIT') > -1 ? assayBdMgitGndId : assayGenericCultureId,
               sampleId: cultureSample.id,
               reportableSiteId,
               startedOn: performedOn,
@@ -450,19 +386,14 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             }
             const resultData = JSON.parse(result.resultData)
             if (resultData.testStartDateTime) {
-              result.startedOn = parseDateOrDefault(
-                resultData.testStartDateTime
-              )
+              result.startedOn = parseDateOrDefault(resultData.testStartDateTime)
             }
             if (resultData.testEndedDateTime) {
               result.endedOn = parseDateOrDefault(resultData.testEndedDateTime)
             }
             const resultCategory1Id =
-              resultCategoryMappings[encodedResult[`result${index + 1}`]] ||
-              resultCategories.Missing
-            const resultCategory2Id =
-              resultCategoryMappings[encodedResult.finalResult] ||
-              resultCategories.Missing
+              resultCategoryMappings[encodedResult[`result${index + 1}`]] || resultCategories.Missing
+            const resultCategory2Id = resultCategoryMappings[encodedResult.finalResult] || resultCategories.Missing
             await this.upsertResult(
               knex,
               rawMessage,
@@ -485,8 +416,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           })
         }
 
-        ;({ mapResultData, isPayloadValid } =
-          resultDataMappings[testTypes.SMEAR])
+        ;({ mapResultData, isPayloadValid } = resultDataMappings[testTypes.SMEAR])
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
           const { encodedResult } = mappedResultData
@@ -577,10 +507,8 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               }),
               senderOperator: encodedResult.laboratoryTechnician,
             }
-            const resultCategory1Id =
-              resultCategoryMappings[encodedResult[`smearResult${index + 1}`]]
-            const resultCategory2Id =
-              resultCategoryMappings[encodedResult.finalResult]
+            const resultCategory1Id = resultCategoryMappings[encodedResult[`smearResult${index + 1}`]]
+            const resultCategory2Id = resultCategoryMappings[encodedResult.finalResult]
             await this.upsertResult(
               knex,
               rawMessage,
@@ -603,8 +531,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           })
         }
 
-        ;({ mapResultData, isPayloadValid } =
-          resultDataMappings[testTypes.GENEXPERT])
+        ;({ mapResultData, isPayloadValid } = resultDataMappings[testTypes.GENEXPERT])
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
           const { encodedResult } = mappedResultData
@@ -618,10 +545,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             .orWhere(queryBuilder => {
               queryBuilder
                 .where('sampleId', samples[0].id)
-                .whereIn('assayId', [
-                  assayGeneXpertMtbRifId,
-                  assayGeneXpertMtbRifUltraId,
-                ])
+                .whereIn('assayId', [assayGeneXpertMtbRifId, assayGeneXpertMtbRifUltraId])
                 .andWhere('siteId', site.id)
             })
             .first()) || {
@@ -691,8 +615,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           )
         }
 
-        ;({ mapResultData, isPayloadValid } =
-          resultDataMappings[testTypes.TBLAMP])
+        ;({ mapResultData, isPayloadValid } = resultDataMappings[testTypes.TBLAMP])
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
           const { encodedResult } = mappedResultData
@@ -708,10 +631,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
           const result = (await knex('Result')
             .where({ externalId, deviceId })
             .orWhere(queryBuilder => {
-              queryBuilder
-                .whereIn('sampleId', sampleIds)
-                .andWhere('assayId', assayTbLampId)
-                .andWhere('siteId', site.id)
+              queryBuilder.whereIn('sampleId', sampleIds).andWhere('assayId', assayTbLampId).andWhere('siteId', site.id)
             })
             .first()) || {
             ...baseNewResult,
@@ -727,8 +647,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             }),
             senderOperator: encodedResult.examiner,
           }
-          const resultCategory1Id =
-            resultCategoryMappings[encodedResult.tbLampResult]
+          const resultCategory1Id = resultCategoryMappings[encodedResult.tbLampResult]
           const resultOverwritePriority = [
             resultCategories.Positive,
             resultCategories.Negative,

@@ -11,11 +11,7 @@ export default ({ allItemText, onChange, value, ...restProps }) => {
   }
 
   return (
-    <SelectField
-      {...restProps}
-      value={value}
-      onChange={handleSelectFieldChange}
-    >
+    <SelectField {...restProps} value={value} onChange={handleSelectFieldChange}>
       {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
       <MenuItem value="0">{formatMessage(messages.contactEnabled)}</MenuItem>
       <MenuItem value="1">{formatMessage(messages.contactDisabled)}</MenuItem>

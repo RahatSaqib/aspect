@@ -1,13 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-  compose,
-  pure,
-  setPropTypes,
-  mapProps,
-  lifecycle,
-  withHandlers,
-} from 'recompose'
+import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
 import { useIntl } from 'react-intl'
 import MenuItem from '@material-ui/core/MenuItem'

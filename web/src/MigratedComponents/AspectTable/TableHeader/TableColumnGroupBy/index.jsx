@@ -15,11 +15,7 @@ const cssClasses = classnames.bind(styles)
  * Component to allow rows to be grouped for this column
  */
 
-const TableColumnGroupBy = ({
-  headerIndex,
-  handleGroupByColumnToggle,
-  isGrouped,
-}) => {
+const TableColumnGroupBy = ({ headerIndex, handleGroupByColumnToggle, isGrouped }) => {
   const { formatMessage } = useIntl()
   return isGrouped ? (
     <IconButton
@@ -28,10 +24,7 @@ const TableColumnGroupBy = ({
       data-testid={`ungroup_${headerIndex}`}
       title={formatMessage(messages.unGroupByColumn)}
     >
-      <IconProvider
-        icon="FaCheckSquare"
-        className="tableheader__groupbybutton"
-      />
+      <IconProvider icon="FaCheckSquare" className="tableheader__groupbybutton" />
     </IconButton>
   ) : (
     <IconButton
@@ -40,10 +33,7 @@ const TableColumnGroupBy = ({
       data-testid={`group_${headerIndex}`}
       title={formatMessage(messages.groupByColumn)}
     >
-      <IconProvider
-        icon="FaRegCheckSquare"
-        className="tableheader__groupbybutton"
-      />
+      <IconProvider icon="FaRegCheckSquare" className="tableheader__groupbybutton" />
     </IconButton>
   )
 }

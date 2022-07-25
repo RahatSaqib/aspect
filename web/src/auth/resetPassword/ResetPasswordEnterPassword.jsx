@@ -17,18 +17,11 @@ export function validate({ newPassword, confirmNewPassword }, { intl }) {
   if (newPassword) {
     if (newPassword.trim().length < 8) {
       errors.newPassword = intl.formatMessage(messages.newPasswordTooShort)
-    } else if (
-      !/\d/.test(newPassword) &&
-      !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(newPassword)
-    ) {
-      errors.newPassword = intl.formatMessage(
-        messages.newPasswordMustContainANumberOrSpecialCharacter
-      )
+    } else if (!/\d/.test(newPassword) && !/(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(newPassword)) {
+      errors.newPassword = intl.formatMessage(messages.newPasswordMustContainANumberOrSpecialCharacter)
     }
     if (newPassword !== confirmNewPassword) {
-      errors.confirmNewPassword = intl.formatMessage(
-        messages.passwordsDoNotMatch
-      )
+      errors.confirmNewPassword = intl.formatMessage(messages.passwordsDoNotMatch)
     }
   } else {
     errors.newPassword = intl.formatMessage(messages.newPasswordRequired)
@@ -92,9 +85,7 @@ export const ResetPasswordEnterPassword = ({
         value={values.confirmNewPassword}
         onChange={onConfirmNewPasswordChange}
         error={meta.confirmNewPassword.touched && meta.confirmNewPassword.error}
-        helperText={
-          meta.confirmNewPassword.touched && meta.confirmNewPassword.error
-        }
+        helperText={meta.confirmNewPassword.touched && meta.confirmNewPassword.error}
         inputProps={{ maxLength: 100 }}
       />
     </div>

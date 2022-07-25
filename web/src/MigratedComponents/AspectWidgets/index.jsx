@@ -15,9 +15,7 @@ const EmptyWidgets = () =>
 const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
   return (
     <Fragment>
-      {widgetGroups && widgetGroups.length ? (
-        <Group data={widgetGroups} />
-      ) : null}
+      {widgetGroups && widgetGroups.length ? <Group data={widgetGroups} /> : null}
       {nonGroupedWidgets && nonGroupedWidgets.length
         ? nonGroupedWidgets.map(widget => (
             <Unit key={widget.id} sm="1-2" lg="1-4">

@@ -1,10 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  assayTypeToId,
-  resultSourceToId,
-  resultCategoryToId,
-} = require('../src/shared/dictionary')
+const { assayTypeToId, resultSourceToId, resultCategoryToId } = require('../src/shared/dictionary')
 const AssayTbLampResultDataSchema = require('./fixtures/AssayTbLampResultDataSchema.json')
 
 async function upsertTbLampDeviceTypes(
@@ -35,10 +31,7 @@ async function upsertTbLampDeviceTypes(
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
 
-  let { id: assayTbLampId } =
-    (await knex('Assay')
-      .where('externalId', assayTbLamp.externalId)
-      .first('id')) || {}
+  let { id: assayTbLampId } = (await knex('Assay').where('externalId', assayTbLamp.externalId).first('id')) || {}
 
   if (!assayTbLampId) {
     ;[assayTbLampId] = await knex('Assay').insert(assayTbLamp)

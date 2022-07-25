@@ -2,40 +2,26 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
 const _ = require('lodash')
-const {
-  getRandomResults,
-  createDevicesForAllMissingTypes,
-} = require('../commonGenerateResults')
+const { getRandomResults, createDevicesForAllMissingTypes } = require('../commonGenerateResults')
 const { getMGITResultFromTBPositive } = require('../commonTB')
 
 const { allResultCategoryToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const {
-    Detected: resultCategoryDetectedId,
-    'Trace Detected': resultCategoryTraceDetectedId,
-  } = await allResultCategoryToId()
-  const MGITAssays = await knex('Assay')
-    .whereIn('externalid', ['assayBdMgitAst', 'assayBdMgitGnd'])
-    .select('id')
+  const { Detected: resultCategoryDetectedId, 'Trace Detected': resultCategoryTraceDetectedId } =
+    await allResultCategoryToId()
+  const MGITAssays = await knex('Assay').whereIn('externalid', ['assayBdMgitAst', 'assayBdMgitGnd']).select('id')
   const queryBuilderFunction = queryBuilder =>
     queryBuilder
       .whereRaw('RAND()*100<=80')
-      .whereIn('r.resultCategory1', [
-        resultCategoryDetectedId,
-        resultCategoryTraceDetectedId,
-      ])
+      .whereIn('r.resultCategory1', [resultCategoryDetectedId, resultCategoryTraceDetectedId])
 
   const results = await getRandomResults(knex, queryBuilderFunction)
 
   const partner = await knex('Person as p')
     .join('User as u', 'u.id', 'p.userId')
     .where('u.name', 'admin')
-    .first(
-      'p.lastPartnerId as partnerId',
-      'u.id as userId',
-      'u.name as userName'
-    )
+    .first('p.lastPartnerId as partnerId', 'u.id as userId', 'u.name as userName')
 
   const siteData = await knex('Site as s')
     .join('Geography as g', 's.geographyId', 'g.id')
@@ -58,13 +44,8 @@ async function seed(knex) {
 
   // adding existing mgit results for tb positive results.
   await Promise.each(results, async result => {
-    const elegibleDevices = _.filter(
-      devicesMGIT,
-      device => device.siteId === result.siteId
-    )
+    const elegibleDevices = _.filter(devicesMGIT, device => device.siteId === result.siteId)
     if (elegibleDevices.length > 0)
-      await knex('Result').insert(
-        await getMGITResultFromTBPositive(result, MGITAssays, elegibleDevices)
-      )
+      await knex('Result').insert(await getMGITResultFromTBPositive(result, MGITAssays, elegibleDevices))
   })
 }

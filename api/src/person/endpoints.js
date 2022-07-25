@@ -1,12 +1,6 @@
 const Joi = require('@hapi/joi')
-const {
-  asyncHandler,
-  validateDateRangeParams,
-  validateSortPageParams,
-} = require('../routes')
-const {
-  validateAllGeographyFilterParams,
-} = require('../geography/requestValidation')
+const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const {
   listPeople,
   listPeopleForSelectList,
@@ -23,38 +17,23 @@ const {
 } = require('./service')
 
 const { exportContacts } = require('./serviceReports')
-const {
-  contactDetailsPayload,
-  newContactDetailsPayload,
-  personDetailsResponse,
-} = require('./helpers')
+const { contactDetailsPayload, newContactDetailsPayload, personDetailsResponse } = require('./helpers')
 
 function listContactBaseConfig() {
   return {
     auth: { scope: ['person:view'] },
     validate: {
       query: {
-        contactNameOrEmail: Joi.string()
-          .allow('')
-          .description('Filter for person name/email'),
+        contactNameOrEmail: Joi.string().allow('').description('Filter for person name/email'),
         siteId: Joi.number().allow('').description('Site ID'),
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
-        geographicLevel: Joi.string()
-          .valid('', 'lab', 'state', 'lga')
-          .description('The geographic scope level'),
-        tags: Joi.array()
-          .items(Joi.string())
-          .single()
-          .description('The tags assigned to persons'),
+        format: Joi.string().allow('').description('File format for exporting data'),
+        geographicLevel: Joi.string().valid('', 'lab', 'state', 'lga').description('The geographic scope level'),
+        tags: Joi.array().items(Joi.string()).single().description('The tags assigned to persons'),
         tagDetails: Joi.array()
           .items(Joi.object())
           .single()
           .description('The array of {tagName,tagId} assigned to persons'),
-        contactStatus: Joi.number()
-          .allow('')
-          .description('Filter for person enabled/disabled'),
+        contactStatus: Joi.number().allow('').description('Filter for person enabled/disabled'),
         ...validateAllGeographyFilterParams(),
         ...validateSortPageParams('name', 'level', 'state', 'lga'),
       },
@@ -67,30 +46,14 @@ function listReporterBaseConfig() {
     auth: { scope: ['reporter:view'] },
     validate: {
       query: {
-        contactNameOrEmail: Joi.string()
-          .allow('')
-          .description('Filter for person name/email'),
-        deviceName: Joi.string()
-          .allow('')
-          .description('Filter for device name'),
+        contactNameOrEmail: Joi.string().allow('').description('Filter for person name/email'),
+        deviceName: Joi.string().allow('').description('Filter for device name'),
         assayId: Joi.string().allow('').description('Filter for assay'),
-        diseaseId: Joi.number()
-          .integer()
-          .positive()
-          .optional()
-          .description('The disease ID'),
-        treatmentStatusId: Joi.string()
-          .allow('')
-          .description('Filter for treatment status'),
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
-        contactStatus: Joi.number()
-          .allow('')
-          .description('Filter for person enabled/disabled'),
-        revoked: Joi.string()
-          .valid('0', '1')
-          .description('Filter for revoked status'),
+        diseaseId: Joi.number().integer().positive().optional().description('The disease ID'),
+        treatmentStatusId: Joi.string().allow('').description('Filter for treatment status'),
+        format: Joi.string().allow('').description('File format for exporting data'),
+        contactStatus: Joi.number().allow('').description('Filter for person enabled/disabled'),
+        revoked: Joi.string().valid('0', '1').description('Filter for revoked status'),
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),
         ...validateSortPageParams(
@@ -161,67 +124,30 @@ const routes = [
           allowUnknown: false,
         },
         schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
-          total: Joi.number()
-            .required()
-            .description(
-              'The total number of refresh tokens that match the given filters'
-            ),
-          length: Joi.number()
-            .required()
-            .description(
-              'The number of refresh tokens included in this response'
-            ),
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of refresh tokens that match the given filters'),
+          length: Joi.number().required().description('The number of refresh tokens included in this response'),
           data: Joi.array()
             .required()
             .description('Reporters')
             .items(
               Joi.object().keys({
-                id: Joi.string()
-                  .required()
-                  .description('The Client ID of the refresh token'),
-                user: Joi.string()
-                  .required()
-                  .description(
-                    'The username of the person logged into the reporter app'
-                  ),
-                deviceName: Joi.string()
-                  .required()
-                  .description('The name of the mobile device used'),
+                id: Joi.string().required().description('The Client ID of the refresh token'),
+                user: Joi.string().required().description('The username of the person logged into the reporter app'),
+                deviceName: Joi.string().required().description('The name of the mobile device used'),
                 createdOn: Joi.date()
                   .required()
-                  .description(
-                    'The data a refresh token was created for the particular device'
-                  ),
+                  .description('The data a refresh token was created for the particular device'),
                 revoked: Joi.number()
                   .valid(0, 1)
                   .required()
-                  .description(
-                    'Indicator of whether or not a token has been revoked'
-                  ),
-                lastSeen: Joi.date()
-                  .required()
-                  .allow(null)
-                  .description('The date when the device was last online'),
-                acknowledgedRatio: Joi.number()
-                  .required()
-                  .allow(null)
-                  .description('The acknowledged ratio'),
-                confirmFollowUpRatio: Joi.number()
-                  .required()
-                  .allow(null)
-                  .description('The confirm follow up ratio'),
-                delivered: Joi.number()
-                  .required()
-                  .description('The total result delivered'),
-                requiresFollowUp: Joi.number()
-                  .required()
-                  .description('The total requires followup'),
-                totalOnTreatment: Joi.number()
-                  .required()
-                  .description('The total result on treatment'),
+                  .description('Indicator of whether or not a token has been revoked'),
+                lastSeen: Joi.date().required().allow(null).description('The date when the device was last online'),
+                acknowledgedRatio: Joi.number().required().allow(null).description('The acknowledged ratio'),
+                confirmFollowUpRatio: Joi.number().required().allow(null).description('The confirm follow up ratio'),
+                delivered: Joi.number().required().description('The total result delivered'),
+                requiresFollowUp: Joi.number().required().description('The total requires followup'),
+                totalOnTreatment: Joi.number().required().description('The total result on treatment'),
               })
             ),
         }),
@@ -238,9 +164,7 @@ const routes = [
       auth: { scope: ['reporter:edit'] },
       validate: {
         params: {
-          refreshTokenId: Joi.string()
-            .description('Refresh token id')
-            .required(),
+          refreshTokenId: Joi.string().description('Refresh token id').required(),
         },
         payload: {
           revoked: Joi.bool().required(),
@@ -251,21 +175,15 @@ const routes = [
           allowUnknown: false,
         },
         schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
+          ok: Joi.bool().required().description('False if there was some sort of error'),
           data: Joi.object()
             .description('The refresh token that has been updated')
             .keys({
-              id: Joi.string()
-                .required()
-                .description('The Client ID of the refresh token'),
+              id: Joi.string().required().description('The Client ID of the refresh token'),
               revoked: Joi.boolean()
                 .valid(true, false)
                 .required()
-                .description(
-                  'Indicator of whether or not a token has been revoked'
-                ),
+                .description('Indicator of whether or not a token has been revoked'),
             }),
         }),
       },

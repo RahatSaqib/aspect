@@ -53,12 +53,7 @@ const PurePhoneNumber = props => {
     }
   }
 
-  return (
-    <RenderPhoneNumber
-      dialCodeProps={dialCodeProps}
-      numberProps={numberProps}
-    />
-  )
+  return <RenderPhoneNumber dialCodeProps={dialCodeProps} numberProps={numberProps} />
 }
 
 export default PurePhoneNumber

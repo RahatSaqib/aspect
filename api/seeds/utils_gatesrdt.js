@@ -1,15 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
-const {
-  addMilliseconds,
-  addHours,
-  addMinutes,
-  subDays,
-  subHours,
-  subMinutes,
-  subMonths,
-} = require('date-fns')
+const { addMilliseconds, addHours, addMinutes, subDays, subHours, subMinutes, subMonths } = require('date-fns')
 
 const {
   allResultCategoryToId,
@@ -23,59 +15,27 @@ const millisInMinute = 1000 * 60
 const resultHivNumber = 100
 
 const resultTimeFrameInDays = 180
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  const daysToSubtract =
-    resultTimeFrameInDays -
-    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
+function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {
+  const daysToSubtract = resultTimeFrameInDays - Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
+  return addMilliseconds(subDays(now, daysToSubtract), _.random(randomMillisToAdd))
 }
 
 async function createUniqueSampleIdForSite(knex, prefix, siteId) {
-  const randomId = prefix
-    ? `${prefix}-${_.random(200000, 888888)}`
-    : _.random(200000, 888888).toString()
-  const existingSamplesWithId = await knex('Sample as s')
-    .where('externalId', randomId)
-    .select()
-  if (
-    (siteId && _.some(existingSamplesWithId, { originSiteId: siteId })) ||
-    !_.isEmpty(existingSamplesWithId)
-  ) {
+  const randomId = prefix ? `${prefix}-${_.random(200000, 888888)}` : _.random(200000, 888888).toString()
+  const existingSamplesWithId = await knex('Sample as s').where('externalId', randomId).select()
+  if ((siteId && _.some(existingSamplesWithId, { originSiteId: siteId })) || !_.isEmpty(existingSamplesWithId)) {
     return createUniqueSampleIdForSite(knex, prefix, siteId)
   }
   return randomId
 }
 
-async function createUniqueResultIdForDevice(
-  knex,
-  candidateId,
-  deviceId,
-  tryNumber
-) {
+async function createUniqueResultIdForDevice(knex, candidateId, deviceId, tryNumber) {
   const existingResultsWithId = await knex('Result as r')
-    .where(
-      'externalId',
-      tryNumber ? `${candidateId}-${tryNumber}` : candidateId
-    )
+    .where('externalId', tryNumber ? `${candidateId}-${tryNumber}` : candidateId)
     .select()
-  if (
-    (deviceId && _.some(existingResultsWithId, { deviceId })) ||
-    !_.isEmpty(existingResultsWithId)
-  ) {
-    return createUniqueResultIdForDevice(
-      knex,
-      candidateId,
-      deviceId,
-      (tryNumber || 0) + 1
-    )
+  if ((deviceId && _.some(existingResultsWithId, { deviceId })) || !_.isEmpty(existingResultsWithId)) {
+    return createUniqueResultIdForDevice(knex, candidateId, deviceId, (tryNumber || 0) + 1)
   }
   return tryNumber ? `${candidateId}-${tryNumber}` : candidateId
 }
@@ -95,13 +55,8 @@ async function createSample(knex, siteId, sampleTypeId, i) {
 }
 
 // -------------------------------------------------------------------------------------
-async function createResults(
-  knex,
-  { partnerId, deviceTypeId, assayId, patients }
-) {
-  const { id: userId } = await knex('User')
-    .where({ name: 'gates_rdt' })
-    .first('id')
+async function createResults(knex, { partnerId, deviceTypeId, assayId, patients }) {
+  const { id: userId } = await knex('User').where({ name: 'gates_rdt' }).first('id')
   const auditFields = {
     createdOn: subMonths(now, 1),
     createdBy: userId,
@@ -110,12 +65,8 @@ async function createResults(
   }
 
   // get siteId and geographyId
-  const { id: siteId, geographyId } = await knex('Site')
-    .where({ partnerId, externalId: 'commcare' })
-    .first()
-  const { id: deviceApprovalId } = await knex('DeviceApproval')
-    .where({ token: 'approved' })
-    .first()
+  const { id: siteId, geographyId } = await knex('Site').where({ partnerId, externalId: 'commcare' }).first()
+  const { id: deviceApprovalId } = await knex('DeviceApproval').where({ token: 'approved' }).first()
   // get/create device
   let { id: deviceId } =
     (await knex('Device')
@@ -146,17 +97,14 @@ async function createResults(
     })
   }
 
-  const { Validated: validated, Deliverable: deliverable } =
-    await allResultWorkflowStatusToId()
+  const { Validated: validated, Deliverable: deliverable } = await allResultWorkflowStatusToId()
 
   const rnd = _.random(0, 100)
   const resultSourceLimsId = await resultSourceToId('LIMS')
   const resultTypePatientId = await resultTypeToId('Patient')
 
   // Results and samples
-  const { id: sampleTypeDBSId } = await knex('SampleType')
-    .where('externalId', 'DBS')
-    .select('id')
+  const { id: sampleTypeDBSId } = await knex('SampleType').where('externalId', 'DBS').select('id')
 
   const samples = []
   const {
@@ -205,18 +153,11 @@ async function createResults(
     const sample = await createSample(knex, siteId, sampleTypeDBSId, i)
     samples.push(sample)
 
-    const result = _.find(
-      possibleResultsHiv,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    )
+    const result = _.find(possibleResultsHiv, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
 
     const patient = patients[_.random(patients.length - 1)]
     const resultData = { resultText: result.resultText }
-    const resultExternalId = await createUniqueResultIdForDevice(
-      knex,
-      sample.externalId,
-      deviceId
-    )
+    const resultExternalId = await createUniqueResultIdForDevice(knex, sample.externalId, deviceId)
 
     const [resultId] = await knex('Result').insert({
       ...auditFields,
@@ -272,14 +213,10 @@ async function createResults(
       createdOn: addHours(randomDate, 1),
       createdBy: userId,
     })
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
     // for 1st result - add an attachment image
     if (i === 0) {
-      const { id: fileContentTypeId } = await knex('FileContentType')
-        .where({ externalId: 'imageJpg' })
-        .first('id')
+      const { id: fileContentTypeId } = await knex('FileContentType').where({ externalId: 'imageJpg' }).first('id')
       // add image to table 'FileReference'
       const imageFileName = '19.jpg'
       let { id: fileReferenceId } =
@@ -309,16 +246,8 @@ async function createResults(
         })
       }
       // copy image to folder /files/##
-      const filesFolder = path.join(
-        __dirname,
-        '../files',
-        fileReferenceId.toString()
-      )
-      const fixturesFolder = path.join(
-        __dirname,
-        'development/fixtures',
-        imageFileName
-      )
+      const filesFolder = path.join(__dirname, '../files', fileReferenceId.toString())
+      const fixturesFolder = path.join(__dirname, 'development/fixtures', imageFileName)
       const filePath = path.join(filesFolder, imageFileName)
 
       if (!fs.existsSync(filesFolder)) {

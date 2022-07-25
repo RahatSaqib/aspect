@@ -56,74 +56,46 @@ async function getSheetData(request, sheet, sharedResults) {
   try {
     endpointModule = require(`../${moduleName}`) //eslint-disable-line
   } catch (error) {
-    return Boom.preconditionFailed(
-      `Can not load module ${moduleName}: ${error.toString()}`
-    )
+    return Boom.preconditionFailed(`Can not load module ${moduleName}: ${error.toString()}`)
   }
 
   const dataFunc = endpointModule[functionName]
   if (!dataFunc) {
-    return Boom.preconditionFailed(
-      `Can not find function ${functionName} in module ${moduleName}`
-    )
+    return Boom.preconditionFailed(`Can not find function ${functionName} in module ${moduleName}`)
   }
 
-  logger.debug(
-    `Report moduleName='${moduleName}', functionName='${functionName}'`,
-    RELABEL_EXCEL
-  )
+  logger.debug(`Report moduleName='${moduleName}', functionName='${functionName}'`, RELABEL_EXCEL)
 
   const result = await dataFunc(auth, query, { sharedResults, useNamedData })
-  const {
-    ok,
-    data,
-    total,
-    errorMessage,
-    dynamicColumns = [],
-    dataSelector = null,
-    sections = [],
-  } = result
+  const { ok, data, total, errorMessage, dynamicColumns = [], dataSelector = null, sections = [] } = result
 
   if (nameOfSharedData) {
     sharedResults[nameOfSharedData] = result
   }
 
   const listSize = _.isPlainObject(data) ? data?.rows?.length : data?.length
-  logger.debug(
-    `Worksheet data - total=${total}, list size=${listSize}'`,
-    RELABEL_EXCEL
-  )
+  logger.debug(`Worksheet data - total=${total}, list size=${listSize}'`, RELABEL_EXCEL)
 
   if (ok) {
     return { data, total, dynamicColumns, dataSelector, sections }
   }
 
-  return Boom.preconditionFailed(
-    `Error in function ${functionName} of module ${moduleName} - ${errorMessage}`
-  )
+  return Boom.preconditionFailed(`Error in function ${functionName} of module ${moduleName} - ${errorMessage}`)
 }
 
 // ----------------------------------------------------------------------------------------------
-function getDateRangeString({
-  minDate,
-  maxDate,
-  timeZone = 'America/New_York',
-}) {
+function getDateRangeString({ minDate, maxDate, timeZone = 'America/New_York' }) {
   const dateFormat = 'dd-MM-yyyy'
   if (!minDate && !maxDate) {
     return 'all'
   }
   const dates = []
   if (minDate) {
-    dates.push(
-      minDate ? formatInTimeZone(new Date(minDate), timeZone, dateFormat) : ''
-    )
+    dates.push(minDate ? formatInTimeZone(new Date(minDate), timeZone, dateFormat) : '')
   }
   dates.push(' — ') // long dash
   if (maxDate) {
-    dates.push(
-      maxDate ? formatInTimeZone(new Date(maxDate), timeZone, dateFormat) : ''
-    )
+    dates.push(maxDate ? formatInTimeZone(new Date(maxDate), timeZone, dateFormat) : '')
   }
   return dates.join('')
 }
@@ -205,18 +177,14 @@ async function getAllSheetsData(request, sheets) {
 async function createReport(request, reply) {
   const { auth, query, params } = request
   const { externalId, templateFolderPath } = params
-  const { sheets, fileName, exportExcel } = await getReportDetails(
-    auth,
-    externalId
-  )
+  const { sheets, fileName, exportExcel } = await getReportDetails(auth, externalId)
   const user = await getUser(auth.credentials.name)
   const { countryAbbreviation, culture, partnerId, userName } = user
   const email = user.email || '-'
   const cell = user.cell || '-'
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
-  const extension =
-    (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
+  const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
 
   if (_.isNil(query.minDate)) {
     query.minDate = subDays(new Date(query.maxDate), 30).toISOString()

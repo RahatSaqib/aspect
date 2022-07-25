@@ -135,9 +135,7 @@ export function updateTags(qryId, qryType, tags) {
           })
         ),
       },
-    }).then(json =>
-      dispatch(createReceiveUpdatedTags(qryId, qryType, json.data))
-    )
+    }).then(json => dispatch(createReceiveUpdatedTags(qryId, qryType, json.data)))
   }
 }
 
@@ -169,10 +167,7 @@ export default function tagReducer(state = initialState, action) {
   switch (action.type) {
     case types.RECEIVE_TAGS:
     case types.RECEIVE_UPDATED_TAGS:
-      return state.setIn(
-        ['tags', action.qryType, action.qryId],
-        Immutable.fromJS(action.items)
-      )
+      return state.setIn(['tags', action.qryType, action.qryId], Immutable.fromJS(action.items))
     case types.REQUEST_POSSIBLE_TAGS:
       return requestPossibleTags(state, action.qryType)
     case types.RECEIVE_POSSIBLE_TAGS:

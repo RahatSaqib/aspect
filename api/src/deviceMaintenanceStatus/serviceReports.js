@@ -1,12 +1,5 @@
 const _ = require('lodash')
-const {
-  addMonths,
-  differenceInMonths,
-  format,
-  parseISO,
-  subMonths,
-  subDays,
-} = require('date-fns')
+const { addMonths, differenceInMonths, format, parseISO, subMonths, subDays } = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery } = require('../device/service')
 const { deviceStatusByDayQuery, getDeviceStatusOverTime } = require('./service')
@@ -24,41 +17,17 @@ async function getDeviceActivityPercentReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-  const {
-    minDate = subMonths(new Date(), 12).toISOString(),
-    maxDate = new Date().toISOString(),
-  } = query
+  const { minDate = subMonths(new Date(), 12).toISOString(), maxDate = new Date().toISOString() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
   // get rows
   const getItems = deviceQuery
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.deviceMaintenanceStatusLogId',
-      'dmsl.id'
-    )
-    .leftJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
-    .select(
-      'd.id',
-      'd.name',
-      'd.serial',
-      'da.name as deviceApprovalStatus',
-      'dms.name as deviceMaintenanceStatus'
-    )
-    .select(
-      getDateTimeProjectionInUserTimeZone(
-        knex,
-        'MAX(r.endedOn)',
-        offset,
-        'lastUploadOn'
-      )
-    )
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
+    .select(getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn'))
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
   const minDateDateValue = parseDateOrDefault(minDate)
@@ -66,28 +35,18 @@ async function getDeviceActivityPercentReport(auth, query) {
   const activityPercentPerMonth = knex
     .from(
       knex
-        .from(
-          deviceStatusByDayQuery(dataConstraints, minDate, maxDate).as(
-            'deviceStatusByDay'
-          )
-        )
+        .from(deviceStatusByDayQuery(dataConstraints, minDate, maxDate).as('deviceStatusByDay'))
         .leftJoin('Result as r', qb => {
           qb.on('deviceStatusByDay.deviceId', 'r.deviceId')
             .andOn('r.endedOn', '>=', 'deviceStatusByDay.day')
-            .andOn(
-              'r.endedOn',
-              '<',
-              knex.raw('DATE_ADD(deviceStatusByDay.day, INTERVAL 1 DAY)')
-            )
+            .andOn('r.endedOn', '<', knex.raw('DATE_ADD(deviceStatusByDay.day, INTERVAL 1 DAY)'))
         })
         .select(
           'deviceStatusByDay.deviceId',
           'deviceStatusByDay.day',
           'deviceStatusByDay.maintenanceStatusExternalId',
           'deviceStatusByDay.maintenanceStatusIsActive',
-          knex.raw(
-            'SUM(CASE WHEN r.id IS NULL THEN 0 ELSE 1 END) as numberOfResultsForDay'
-          )
+          knex.raw('SUM(CASE WHEN r.id IS NULL THEN 0 ELSE 1 END) as numberOfResultsForDay')
         )
         .groupBy('deviceStatusByDay.deviceId', 'deviceStatusByDay.day')
         .as('deviceStatusByDayWithResultCounts')
@@ -103,12 +62,7 @@ async function getDeviceActivityPercentReport(auth, query) {
       // then we will just transform (not convert!!!) those dates to the given offset
       knex.raw(`MONTH(deviceStatusByDayWithResultCounts.day) as monthNumber`),
       knex.raw(`YEAR(deviceStatusByDayWithResultCounts.day) as year`),
-      getMonthYearField(
-        knex,
-        'MAX(deviceStatusByDayWithResultCounts.day)',
-        'monthYear',
-        offset
-      ),
+      getMonthYearField(knex, 'MAX(deviceStatusByDayWithResultCounts.day)', 'monthYear', offset),
       knex.raw(
         `SUM(CASE WHEN DAYOFWEEK(deviceStatusByDayWithResultCounts.day) = 7 OR DAYOFWEEK(deviceStatusByDayWithResultCounts.day) = 1 OR (deviceStatusByDayWithResultCounts.maintenanceStatusExternalId = 'active' AND deviceStatusByDayWithResultCounts.numberOfResultsForDay = 0) THEN 0 ELSE deviceStatusByDayWithResultCounts.maintenanceStatusIsActive END) AS activeDaysInMonth`
       ),
@@ -136,10 +90,7 @@ async function getDeviceActivityPercentReport(auth, query) {
         )}' ELSE LAST_DAY(deviceStatusByDayWithResultCounts.day) END) + 1, 1)) + 1 AS daysInMonth`
       )
     )
-  const [data, deviceDetails] = await Promise.all([
-    getItems,
-    activityPercentPerMonth,
-  ])
+  const [data, deviceDetails] = await Promise.all([getItems, activityPercentPerMonth])
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
   const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
   const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
@@ -156,14 +107,9 @@ async function getDeviceActivityPercentReport(auth, query) {
 
   const devices = _.map(data, elem => {
     _.each(
-      _.filter(
-        deviceDetails,
-        filteredElem => filteredElem.deviceId === elem.id
-      ),
+      _.filter(deviceDetails, filteredElem => filteredElem.deviceId === elem.id),
       ({ activeDaysInMonth, daysInMonth, monthYear }) => {
-        elem[monthYear] = daysInMonth
-          ? `${((activeDaysInMonth / daysInMonth) * 100).toFixed(2)}%`
-          : ''
+        elem[monthYear] = daysInMonth ? `${((activeDaysInMonth / daysInMonth) * 100).toFixed(2)}%` : ''
       }
     )
 
@@ -223,10 +169,7 @@ async function getDeviceUtilizationPerDayReport(auth, query, mode) {
            * and may have 1 optional prop `style`
            */
           acc[day] = {
-            value:
-              deviceCapacity && deviceCapacity > 0
-                ? totalResults / deviceCapacity
-                : 'N/A',
+            value: deviceCapacity && deviceCapacity > 0 ? totalResults / deviceCapacity : 'N/A',
             style: { numFmt: '0.00%' },
           }
         } else {
@@ -236,10 +179,7 @@ async function getDeviceUtilizationPerDayReport(auth, query, mode) {
       },
       {}
     )
-    const utilizationRate =
-      cntWorkingDays > 0 && deviceCapacity > 0
-        ? totals / (deviceCapacity * cntWorkingDays)
-        : 0
+    const utilizationRate = cntWorkingDays > 0 && deviceCapacity > 0 ? totals / (deviceCapacity * cntWorkingDays) : 0
     return {
       name,
       totalResults: totals,

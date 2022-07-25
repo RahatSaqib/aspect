@@ -9,12 +9,7 @@ const config = require('../../src/config')
 module.exports = async (knex, partnerData, contacts) => {
   const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
-  const {
-    partnerName,
-    adminUserName,
-    partnerAbbreviation,
-    defaultPassword = 'WelcomeToAspect',
-  } = partnerData
+  const { partnerName, adminUserName, partnerAbbreviation, defaultPassword = 'WelcomeToAspect' } = partnerData
 
   const { id: partnerId } = await getPartnerByName(knex, partnerName)
 
@@ -29,9 +24,7 @@ module.exports = async (knex, partnerData, contacts) => {
     )
 
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: adminUserName })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: adminUserName }).first('id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -62,11 +55,10 @@ module.exports = async (knex, partnerData, contacts) => {
       stateName: province.name,
     })
     if (provinceDistricts) {
-      provinceMemo[province.name.toLowerCase()].districts =
-        provinceDistricts.reduce((districtMemo, district) => {
-          districtMemo[district.name.toLowerCase()] = district
-          return districtMemo
-        }, {})
+      provinceMemo[province.name.toLowerCase()].districts = provinceDistricts.reduce((districtMemo, district) => {
+        districtMemo[district.name.toLowerCase()] = district
+        return districtMemo
+      }, {})
     }
     return provinceMemo
   }, {})
@@ -85,16 +77,11 @@ module.exports = async (knex, partnerData, contacts) => {
   await Promise.each(contacts, async person => {
     let userId = null
     if (person.username) {
-      const existingUser = await knex('User')
-        .where('name', person.username)
-        .first('id')
+      const existingUser = await knex('User').where('name', person.username).first('id')
       if (existingUser) {
         userId = existingUser.id
       } else {
-        const pw = bcrypt.hashSync(
-          person.password || defaultPassword,
-          saltRounds
-        )
+        const pw = bcrypt.hashSync(person.password || defaultPassword, saltRounds)
         const baseUserData = {
           password: pw,
           failedPasswordAttempts: 0,
@@ -121,9 +108,7 @@ module.exports = async (knex, partnerData, contacts) => {
             districts: {},
           }
     const district =
-      province.districts &&
-      !_.isEmpty(person.geographies) &&
-      person.geographies[0].lgaName
+      province.districts && !_.isEmpty(person.geographies) && person.geographies[0].lgaName
         ? province.districts[person.geographies[0].lgaName.toLowerCase()] || {
             id: null,
           }
@@ -210,31 +195,21 @@ module.exports = async (knex, partnerData, contacts) => {
 
     if (person.tags && person.tags.length > 0) {
       // Insert missing Tag records
-      let tags = await knex('Tag')
-        .where({ partnerId })
-        .whereIn('title', person.tags)
+      let tags = await knex('Tag').where({ partnerId }).whereIn('title', person.tags)
       await Promise.each(
-        person.tags.filter(
-          tagTitle => !tags.map(t => t.title).includes(tagTitle)
-        ),
+        person.tags.filter(tagTitle => !tags.map(t => t.title).includes(tagTitle)),
         async t => knex('Tag').insert({ title: t, partnerId })
       )
 
       // Insert all the PersonTag records
-      tags = await knex('Tag')
-        .where({ partnerId })
-        .whereIn('title', person.tags)
-      await Promise.each(tags, async t =>
-        knex('PersonTag').insert({ tagId: t.id, personId })
-      )
+      tags = await knex('Tag').where({ partnerId }).whereIn('title', person.tags)
+      await Promise.each(tags, async t => knex('PersonTag').insert({ tagId: t.id, personId }))
     }
 
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
         let { id: jobId } =
-          (await knex('Job')
-            .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
-            .first()) || {}
+          (await knex('Job').where({ personId, jobFunctionId: jobFunctions[jobFunctionName] }).first()) || {}
         if (!jobId) {
           ;[jobId] = await knex('Job').insert({
             personId,
@@ -246,10 +221,7 @@ module.exports = async (knex, partnerData, contacts) => {
           !_.isEmpty(person.sites) &&
           _.some(person.sites, site => !!siteIds[site.shortName || site.name])
         ) {
-          const existingJobContexts = await knex('JobContext')
-            .whereNotNull('siteId')
-            .andWhere({ jobId })
-            .select()
+          const existingJobContexts = await knex('JobContext').whereNotNull('siteId').andWhere({ jobId }).select()
           const expectedJobContexts = person.sites
             .filter(site => !!siteIds[site.shortName || site.name])
             .map(site => ({
@@ -258,24 +230,13 @@ module.exports = async (knex, partnerData, contacts) => {
             }))
           const jobContextItem = expectedJobContexts.filter(
             expectedJobContext =>
-              !_.some(
-                existingJobContexts,
-                jobContext => jobContext.siteId === expectedJobContext.siteId
-              )
+              !_.some(existingJobContexts, jobContext => jobContext.siteId === expectedJobContext.siteId)
           )
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
           } else {
-            logger.error(
-              person.sites.filter(
-                site => !!siteIds[site.shortName || site.name]
-              )
-            )
-            logger.error(
-              `There is an existing JobContext for site ${JSON.stringify(
-                person.sites
-              )} for this person`
-            )
+            logger.error(person.sites.filter(site => !!siteIds[site.shortName || site.name]))
+            logger.error(`There is an existing JobContext for site ${JSON.stringify(person.sites)} for this person`)
           }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
@@ -288,16 +249,11 @@ module.exports = async (knex, partnerData, contacts) => {
             .whereNull('geographyId')
             .whereIn(
               'siteId',
-              existingJobContextsToRemove.map(
-                existingJobContextToRemove => existingJobContextToRemove.siteId
-              )
+              existingJobContextsToRemove.map(existingJobContextToRemove => existingJobContextToRemove.siteId)
             )
             .delete()
           await Promise.each(
-            existingJobContextsToRemove.filter(
-              existingJobContextToRemove =>
-                !!existingJobContextToRemove.geographyId
-            ),
+            existingJobContextsToRemove.filter(existingJobContextToRemove => !!existingJobContextToRemove.geographyId),
             existingJobContextToUpdate =>
               knex
                 .where({
@@ -307,16 +263,8 @@ module.exports = async (knex, partnerData, contacts) => {
                 .update({ siteId: null })
           )
         }
-        if (
-          ['Admin', 'Regional Officer', 'Data Viewer'].includes(
-            jobFunctionName
-          ) &&
-          !_.isEmpty(person.geographies)
-        ) {
-          const existingJobContexts = await knex('JobContext')
-            .whereNotNull('geographyId')
-            .andWhere({ jobId })
-            .select()
+        if (['Admin', 'Regional Officer', 'Data Viewer'].includes(jobFunctionName) && !_.isEmpty(person.geographies)) {
+          const existingJobContexts = await knex('JobContext').whereNotNull('geographyId').andWhere({ jobId }).select()
           let expectedJobContexts = []
           await Promise.each(person.geographies, async geography => {
             const jobProvince = geography.stateName
@@ -353,11 +301,7 @@ module.exports = async (knex, partnerData, contacts) => {
           })
           const jobContextItem = expectedJobContexts.filter(
             expectedJobContext =>
-              !_.some(
-                existingJobContexts,
-                jobContext =>
-                  jobContext.geographyId === expectedJobContext.geographyId
-              )
+              !_.some(existingJobContexts, jobContext => jobContext.geographyId === expectedJobContext.geographyId)
           )
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
@@ -375,16 +319,11 @@ module.exports = async (knex, partnerData, contacts) => {
             .whereNull('siteId')
             .whereIn(
               'geographyId',
-              existingJobContextsToRemove.map(
-                existingJobContextToRemove =>
-                  existingJobContextToRemove.geographyId
-              )
+              existingJobContextsToRemove.map(existingJobContextToRemove => existingJobContextToRemove.geographyId)
             )
             .delete()
           await Promise.each(
-            existingJobContextsToRemove.filter(
-              existingJobContextToRemove => !!existingJobContextToRemove.siteId
-            ),
+            existingJobContextsToRemove.filter(existingJobContextToRemove => !!existingJobContextToRemove.siteId),
             existingJobContextToUpdate =>
               knex
                 .where({

@@ -2,14 +2,7 @@
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
-import {
-  compose,
-  pure,
-  setPropTypes,
-  mapProps,
-  lifecycle,
-  withHandlers,
-} from 'recompose'
+import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
 
 // Material-UI
@@ -47,10 +40,7 @@ const enhance = compose(
       this.props.fetchDevicesWithFiltersForSelectList()
     },
     componentDidUpdate(prevProps) {
-      const filtersChanged = _fp.any(
-        name => this.props[name] !== prevProps[name],
-        ['countryId', 'partnerId', 'siteId']
-      )
+      const filtersChanged = _fp.any(name => this.props[name] !== prevProps[name], ['countryId', 'partnerId', 'siteId'])
       if (filtersChanged) {
         this.props.fetchDevicesWithFiltersForSelectList()
       }
@@ -84,20 +74,13 @@ const enhance = compose(
   }))
 )
 
-export function DeviceSelectField({
-  devicesSelectList,
-  onChange,
-  disabled,
-  ...restProps
-}) {
+export function DeviceSelectField({ devicesSelectList, onChange, disabled, ...restProps }) {
   const disable = disabled || devicesSelectList.length === 0
   return (
     <SelectField
       {...restProps}
       onChange={onChange}
-      helperText={
-        devicesSelectList.length === 0 ? 'No devices for this site' : ''
-      }
+      helperText={devicesSelectList.length === 0 ? 'No devices for this site' : ''}
       disabled={disable}
     >
       {devicesSelectList.length > 0 &&

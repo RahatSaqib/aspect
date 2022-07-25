@@ -6,13 +6,7 @@ import Cell from '../../TableCell/Cell'
 import GroupedCell from '../../TableCell/GroupedCell'
 import PlaceholderCell from '../../TableCell/PlaceholderCell'
 
-const TableBodyRow = ({
-  cells,
-  getToggleRowExpandedProps,
-  isExpanded,
-  subRows,
-  onClick,
-}) =>
+const TableBodyRow = ({ cells, getToggleRowExpandedProps, isExpanded, subRows, onClick }) =>
   cells &&
   cells.map(
     ({

@@ -12,11 +12,7 @@ import {
 
 import messages from '../Detail/messages'
 
-const getConfig = (
-  formatMessage,
-  isNew,
-  { resultCategory1i18nKey, resultCategory2i18nKey } = {}
-) => {
+const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategory2i18nKey } = {}) => {
   return {
     title: formatMessage(messages.resultTitle, 'Result Details'),
     icon: 'document',
@@ -181,8 +177,7 @@ const getConfig = (
                 labelI18nKey: resultCategory1i18nKey || 'resultCategory1',
                 label: 'resultCategory1Label',
                 disabledIf: values =>
-                  !!values.resultSourceExternalId &&
-                  values.resultSourceExternalId !== 'EnteredByHand',
+                  !!values.resultSourceExternalId && values.resultSourceExternalId !== 'EnteredByHand',
               },
               {
                 id: 'resultCategory2',
@@ -194,8 +189,7 @@ const getConfig = (
                 label: 'resultCategory2Label',
                 hideIfNull: true,
                 disabledIf: values =>
-                  !!values.resultSourceExternalId &&
-                  values.resultSourceExternalId !== 'EnteredByHand',
+                  !!values.resultSourceExternalId && values.resultSourceExternalId !== 'EnteredByHand',
               },
               {
                 id: 'detectedResistance',
@@ -274,8 +268,7 @@ const getConfig = (
                 label: 'End Date',
                 labelI18nKey: 'endDate',
                 disabledIf: values =>
-                  !!values.resultSourceExternalId &&
-                  values.resultSourceExternalId !== 'EnteredByHand',
+                  !!values.resultSourceExternalId && values.resultSourceExternalId !== 'EnteredByHand',
               },
             ],
           },

@@ -63,9 +63,7 @@ const Template = ({ config }) => {
   } = table
 
   const mockedPage = []
-  page.map(({ id, index, depth, original }) =>
-    mockedPage.push({ id, index, depth, original })
-  )
+  page.map(({ id, index, depth, original }) => mockedPage.push({ id, index, depth, original }))
 
   function handleChangeRowsPerPage(val) {
     setPageSize(typeof val !== 'number' ? data.length : Number(val))

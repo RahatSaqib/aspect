@@ -5,16 +5,9 @@ import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 import { receiveList, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { getFilters } from '../filter/utils'
 
 export const types = {
@@ -48,15 +41,7 @@ function requestTask(id) {
   }
 }
 
-function requestTasksByStatus(
-  sortCol,
-  sortDir,
-  page,
-  size,
-  filters,
-  date,
-  categoryId
-) {
+function requestTasksByStatus(sortCol, sortDir, page, size, filters, date, categoryId) {
   return {
     type: types.REQUEST_TASKSBYSTATUS,
     sortCol,
@@ -118,18 +103,7 @@ export function getTasksByAlertTemplateAndDate(
 ) {
   return dispatch => {
     const filters = getFilters(filtersParams)
-    dispatch(
-      requestTasksByStatus(
-        sortCol,
-        sortDir,
-        page,
-        pageSize,
-        filters,
-        date,
-        categoryId,
-        alertTemplateId
-      )
-    )
+    dispatch(requestTasksByStatus(sortCol, sortDir, page, pageSize, filters, date, categoryId, alertTemplateId))
 
     return aspectFetch(
       `/taskbystatus?${stringify({

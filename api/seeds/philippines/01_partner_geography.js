@@ -9,16 +9,13 @@ const { commonUpserts } = require('../common')
 const partnerData = require('./fixtures/partnerData')
 const upsertPartnerData = require('../common/upsert_partner_data')
 
-const { adminUserName, adminPassword, partnerAbbreviation, deviceApiToken } =
-  partnerData
+const { adminUserName, adminPassword, partnerAbbreviation, deviceApiToken } = partnerData
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: adminUserName })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: adminUserName }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -38,12 +35,5 @@ async function seed(knex) {
     partnerTypeId: await partnerTypeToId('Operating'),
   })
 
-  await commonUpserts(
-    knex,
-    partnerId,
-    adminId,
-    geography,
-    partnerAbbreviation,
-    deviceApiToken
-  )
+  await commonUpserts(knex, partnerId, adminId, geography, partnerAbbreviation, deviceApiToken)
 }

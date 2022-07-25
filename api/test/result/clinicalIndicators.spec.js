@@ -57,10 +57,7 @@ describe('/result/clinical-indicator-aggregations', () => {
                 reportableResultCategory.name === o.resultCategory1Name
             )
           })
-          .map(
-            ({ resultCategory1, resultCategory1I18nKey }) =>
-              `${resultCategory1}_${resultCategory1I18nKey}`
-          )
+          .map(({ resultCategory1, resultCategory1I18nKey }) => `${resultCategory1}_${resultCategory1I18nKey}`)
           .groupBy()
           .map((value, key) => ({
             resultCategory1: key.split('_')[0],
@@ -115,10 +112,7 @@ describe('/result/clinical-indicator-aggregations', () => {
             )
           })
           .map(o => ({
-            stateMonth: `${o.stateName}_${format(
-              new Date(o.endedOn),
-              'yyyy-MM'
-            )}`,
+            stateMonth: `${o.stateName}_${format(new Date(o.endedOn), 'yyyy-MM')}`,
           }))
           .groupBy('stateMonth')
           .map((value, key) => ({
@@ -170,10 +164,9 @@ describe('/result/clinical-indicator-aggregations', () => {
             )
           })
           .map(o => ({
-            categoryMonth: `${o.resultCategory1Name.replace(' ', '')}_${format(
-              new Date(o.endedOn),
-              'yyyy-MM'
-            )}_${o.resultCategory1I18nKey}`,
+            categoryMonth: `${o.resultCategory1Name.replace(' ', '')}_${format(new Date(o.endedOn), 'yyyy-MM')}_${
+              o.resultCategory1I18nKey
+            }`,
           }))
           .groupBy('categoryMonth')
           .map((value, key) => ({
@@ -194,9 +187,10 @@ describe('/result/clinical-indicator-aggregations', () => {
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
           .map(o => ({
-            categoryMonth: `${
-              _.find(assays, assay => assay.id === o.assayId).externalId
-            }_${format(new Date(o.endedOn), 'yyyy-MM')}_${o.assayI18nKey}`,
+            categoryMonth: `${_.find(assays, assay => assay.id === o.assayId).externalId}_${format(
+              new Date(o.endedOn),
+              'yyyy-MM'
+            )}_${o.assayI18nKey}`,
           }))
           .groupBy('categoryMonth')
           .map((value, key) => ({
@@ -216,32 +210,21 @@ describe('/result/clinical-indicator-aggregations', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         assert.equal(res.status, 400)
-        assert.equal(
-          res.body.message.substring(0, 24),
-          '"groupBy" must be one of'
-        )
+        assert.equal(res.body.message.substring(0, 24), '"groupBy" must be one of')
       }))
 
   it.skip('for specified assay should return results grouped by month, resultCategory2, resultCategory1', async () =>
     server
-      .get(
-        `${path}?assay=DaktariHivVL&groupBy=month&groupBy=resultCategory2&groupBy=resultCategory1`
-      )
+      .get(`${path}?assay=DaktariHivVL&groupBy=month&groupBy=resultCategory2&groupBy=resultCategory1`)
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         assert.equal(res.status, 200)
 
         // assayId for 'DaktariHivVL'
-        const { id: assayId } = assays.find(
-          assay => assay.externalId === 'DaktariHivVL'
-        )
+        const { id: assayId } = assays.find(assay => assay.externalId === 'DaktariHivVL')
         // normalize/group raw data by month, resultCategory2, resultCategory1
         const expectedResponse = _.chain(resultsForUser)
-          .filter(
-            x =>
-              +x.assayId === +assayId &&
-              ['Detected', 'Not Detected'].includes(x.resultCategory1Name)
-          )
+          .filter(x => +x.assayId === +assayId && ['Detected', 'Not Detected'].includes(x.resultCategory1Name))
           .map(o => ({
             groupingKey: `${
               // month date
@@ -249,16 +232,12 @@ describe('/result/clinical-indicator-aggregations', () => {
             }_${
               // resultCategory1
               o.resultCategory1I18nKey
-                ? resultCategories.find(
-                    x => x.i18nKey === o.resultCategory1I18nKey
-                  ).externalId
+                ? resultCategories.find(x => x.i18nKey === o.resultCategory1I18nKey).externalId
                 : 'null'
             }_${o.resultCategory1I18nKey ?? 'null'}_${
               // resultCategory2
               o.resultCategory2I18nKey
-                ? resultCategories.find(
-                    x => x.i18nKey === o.resultCategory2I18nKey
-                  ).externalId
+                ? resultCategories.find(x => x.i18nKey === o.resultCategory2I18nKey).externalId
                 : 'null'
             }_${o.resultCategory2I18nKey ?? 'null'}`,
           }))

@@ -1,16 +1,11 @@
-const {
-  ensureResultTreatmentStatuses,
-  upsertAssayResultCategories,
-} = require('../../common')
+const { ensureResultTreatmentStatuses, upsertAssayResultCategories } = require('../../common')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('../../utils')
 
 module.exports = async function (knex) {
   await ensureResultTreatmentStatuses(knex)
 
   // MTB-Rif categories
-  const { id: geneXpertMtbRifAssayId } = await knex('Assay')
-    .where('externalId', 'GxMtbRif')
-    .first('id')
+  const { id: geneXpertMtbRifAssayId } = await knex('Assay').where('externalId', 'GxMtbRif').first('id')
   await upsertAssayResultCategories(knex, geneXpertMtbRifAssayId, [
     'Detected',
     'NotDetected',
@@ -21,9 +16,7 @@ module.exports = async function (knex) {
   ])
 
   // MTB-Rif ULTRA categories
-  const { id: geneXpertMtbRifUltraAssayId } = await knex('Assay')
-    .where('externalId', 'GxMtbRifUltra')
-    .first('id')
+  const { id: geneXpertMtbRifUltraAssayId } = await knex('Assay').where('externalId', 'GxMtbRifUltra').first('id')
   await upsertAssayResultCategories(knex, geneXpertMtbRifUltraAssayId, [
     'Detected',
     'Trace Detected',
@@ -35,9 +28,7 @@ module.exports = async function (knex) {
   ])
 
   // HIV-VL categories
-  const { id: geneXpertHivVlAssayId } = await knex('Assay')
-    .where('externalId', 'GxHiv1Vl')
-    .first('id')
+  const { id: geneXpertHivVlAssayId } = await knex('Assay').where('externalId', 'GxHiv1Vl').first('id')
   await upsertAssayResultCategories(knex, geneXpertHivVlAssayId, [
     'LessThan1000',
     'MoreThan1000',
@@ -48,9 +39,7 @@ module.exports = async function (knex) {
   ])
 
   // HIV-QUAL categories
-  const { id: geneXpertHivQualAssayId } = await knex('Assay')
-    .where('externalId', 'GxHiv1Qual')
-    .first('id')
+  const { id: geneXpertHivQualAssayId } = await knex('Assay').where('externalId', 'GxHiv1Qual').first('id')
   await upsertAssayResultCategories(knex, geneXpertHivQualAssayId, [
     'Detected',
     'NotDetected',

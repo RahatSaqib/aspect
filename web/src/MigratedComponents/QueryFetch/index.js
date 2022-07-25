@@ -2,12 +2,7 @@ import { aspectFetch } from '../../shared/utils/fetch'
 import defaultErrors from './errors'
 import { buildBodyParams, buildEndpointAndQueryString } from './Helpers'
 
-const fetchWrapperForQueries = ({
-  endpoint,
-  method = 'GET',
-  params = {},
-  customErrorNotifications = {},
-}) => {
+const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customErrorNotifications = {} }) => {
   if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
   let body = null
 
@@ -22,9 +17,7 @@ const fetchWrapperForQueries = ({
       endpoint = buildEndpointAndQueryString(endpoint, params)
       break
     default:
-      throw new Error(
-        `Method ${method} is not supported by fetchWrapperForQueries function`
-      )
+      throw new Error(`Method ${method} is not supported by fetchWrapperForQueries function`)
   }
 
   return aspectFetch(endpoint, {

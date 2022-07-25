@@ -5,21 +5,10 @@ import isEqual from 'lodash/isEqual'
 import classnames from 'classnames/bind'
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-  compose,
-  withProps,
-  withHandlers,
-  lifecycle,
-  setPropTypes,
-  defaultProps,
-} from 'recompose'
+import { compose, withProps, withHandlers, lifecycle, setPropTypes, defaultProps } from 'recompose'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 import StyledDropdown from '../../components/shared/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -27,11 +16,7 @@ import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchTasks } from '../TaskRedux'
-import {
-  TaskDataTable,
-  TaskDataTableHead,
-  TaskDataTableRow,
-} from './TaskDataTable'
+import { TaskDataTable, TaskDataTableHead, TaskDataTableRow } from './TaskDataTable'
 import messages from './messages'
 import styles from './TaskList.css'
 import { i18nWrapper } from '../../Providers/I18nProvider/index'
@@ -47,10 +32,7 @@ export const searchSanitizer = makeSearchParamsSanitizer({
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -92,26 +74,11 @@ const enhance = compose(
   ),
   withHandlers({
     onInitialLoad:
-      ({
-        location,
-        fetchTasks,
-        sortCol,
-        sortDir,
-        pageAt,
-        pageSize,
-        filterOptions,
-      }) =>
+      ({ location, fetchTasks, sortCol, sortDir, pageAt, pageSize, filterOptions }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
-          fetchTasks(
-            mergeFilterOptions(filtersParams, filterOptions),
-            sortCol,
-            sortDir,
-            pageAt,
-            pageSize
-          )
+          fetchTasks(mergeFilterOptions(filtersParams, filterOptions), sortCol, sortDir, pageAt, pageSize)
         }
       },
 
@@ -123,14 +90,9 @@ const enhance = compose(
         },
       }) => {
         const searchParams = new URLSearchParams(location.search)
-        const filtersParams = new URLSearchParams(
-          searchParams.get('filters') || ''
-        )
+        const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
         filtersParams.set('alertType', alertType)
-        searchParams.set(
-          'filters',
-          mergeFilterOptions(filtersParams, filterOptions)
-        )
+        searchParams.set('filters', mergeFilterOptions(filtersParams, filterOptions))
 
         navigate(
           {
@@ -145,14 +107,9 @@ const enhance = compose(
       ({ navigate, location, filterOptions }) =>
       ({ target: { value: issueCategory } }) => {
         const searchParams = new URLSearchParams(location.search)
-        const filtersParams = new URLSearchParams(
-          searchParams.get('filters') || ''
-        )
+        const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
         filtersParams.set('issueCategory', issueCategory)
-        searchParams.set(
-          'filters',
-          mergeFilterOptions(filtersParams, filterOptions)
-        )
+        searchParams.set('filters', mergeFilterOptions(filtersParams, filterOptions))
 
         navigate(
           {
@@ -176,14 +133,10 @@ const enhance = compose(
     UNSAFE_componentWillMount() {
       const { location, navigate, filterOptions } = this.props
       const { sanitized, value: searchParams } = searchSanitizer(location)
-      const { sanitized: filtersSanitized, value: filtersParams } =
-        filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
 
       if (sanitized || filtersSanitized) {
-        searchParams.set(
-          'filters',
-          mergeFilterOptions(filtersParams, filterOptions)
-        )
+        searchParams.set('filters', mergeFilterOptions(filtersParams, filterOptions))
         navigate(
           {
             ...location,
@@ -238,12 +191,7 @@ export const TaskList = ({
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.tasksTitle)} />
       <div className={cssClasses('FiltersGroup')}>
-        <div
-          className={cssClasses(
-            'FiltersGroup__Child',
-            'FiltersGroup__Child--dropdown'
-          )}
-        >
+        <div className={cssClasses('FiltersGroup__Child', 'FiltersGroup__Child--dropdown')}>
           <StyledDropdown
             value={issueCategory}
             source={[
@@ -274,9 +222,7 @@ export const TaskList = ({
       </div>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
+        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
         {!items.currentIdList.isEmpty() && (
           <TaskDataTable className={cssClasses('TaskDataTable')}>
             <TaskDataTableHead

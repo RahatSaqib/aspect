@@ -8,19 +8,13 @@ async function seed(knex) {
 
   await Promise.each(users, async user => {
     const userDetail = await knex('User').where({ name: user }).first('id')
-    const personId = await knex('Person')
-      .where({ userId: userDetail.id })
-      .first('id')
+    const personId = await knex('Person').where({ userId: userDetail.id }).first('id')
     personIds[user] = personId.id
   })
 
-  const partnerIdOne = await knex('Partner')
-    .where({ name: 'Partner One' })
-    .first('id')
+  const partnerIdOne = await knex('Partner').where({ name: 'Partner One' }).first('id')
 
-  const partnerIdTwo = await knex('Partner')
-    .where({ name: 'Partner Two' })
-    .first('id')
+  const partnerIdTwo = await knex('Partner').where({ name: 'Partner Two' }).first('id')
 
   const jobFunctionLabManager = await knex('JobFunction')
     .where({
@@ -43,13 +37,9 @@ async function seed(knex) {
     })
     .first('id')
 
-  const country = await knex('Country')
-    .where({ abbreviation: 'US' })
-    .first('id')
+  const country = await knex('Country').where({ abbreviation: 'US' }).first('id')
 
-  const { id: geographyId } = await knex('Geography')
-    .where({ countryId: country.id })
-    .first('id')
+  const { id: geographyId } = await knex('Geography').where({ countryId: country.id }).first('id')
 
   const checkJobEd = await knex('Job').where({
     personId: personIds.jon,

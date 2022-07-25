@@ -94,30 +94,21 @@ exports.seed = async function (knex) {
   const states4Delete = ['Federally Administered TA', 'Mercy Corps Sites']
 
   const getGeoBaseQuery = state =>
-    knex('Geography')
-      .select('id')
-      .andWhere('stateId', knex('State').select('id').where('name', state))
-      .first('id')
+    knex('Geography').select('id').andWhere('stateId', knex('State').select('id').where('name', state)).first('id')
 
   const getGeo = (state, lga) =>
-    getGeoBaseQuery(state)
-      .clone()
-      .andWhere('lgaId', 'in', knex('Lga').select('id').where('name', lga))
+    getGeoBaseQuery(state).clone().andWhere('lgaId', 'in', knex('Lga').select('id').where('name', lga))
 
-  const getGeoLgaNull = state =>
-    getGeoBaseQuery(state).clone().whereNull('lgaId')
+  const getGeoLgaNull = state => getGeoBaseQuery(state).clone().whereNull('lgaId')
 
-  const updateTbl = (table, oldId, newId) =>
-    knex(table).where({ geographyId: oldId }).update({ geographyId: newId })
+  const updateTbl = (table, oldId, newId) => knex(table).where({ geographyId: oldId }).update({ geographyId: newId })
 
   /* Fix typo, according to https://en.wikipedia.org/wiki/Districts_of_Pakistan `Vihari` does not exist */
   await knex('Lga').where({ name: 'Vihari' }).update({ name: 'Vehari' })
 
   /* Update tables, replace old geographyId with new one */
   await Promise.each(map, async item => {
-    const oldGeo = item.oldLga
-      ? await getGeo(item.oldState, item.oldLga)
-      : await getGeoLgaNull(item.oldState)
+    const oldGeo = item.oldLga ? await getGeo(item.oldState, item.oldLga) : await getGeoLgaNull(item.oldState)
     const newGeo = await getGeo(item.newState, item.newLga)
     if (oldGeo && newGeo && oldGeo.id && newGeo.id) {
       await Promise.each(tables, async tbl => {
@@ -127,12 +118,7 @@ exports.seed = async function (knex) {
   })
 
   /* delete deprecated states and geography ids */
-  await knex('Geography')
-    .whereIn(
-      'stateId',
-      knex('State').select('id').whereIn('name', states4Delete)
-    )
-    .delete()
+  await knex('Geography').whereIn('stateId', knex('State').select('id').whereIn('name', states4Delete)).delete()
 
   await knex('State').whereIn('name', states4Delete).delete()
 }

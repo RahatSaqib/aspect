@@ -10,13 +10,7 @@ import useI18n from '../../../../Hooks/i18n/useI18n'
 import messages from '../../../Notifications/Detail/NotificationDetailHistory/messages'
 
 const cssClasses = classnames.bind(styles)
-const ErrorCell = ({
-  sent = 0,
-  withErrors = 0,
-  pending = 0,
-  recipients,
-  value,
-}) => {
+const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value }) => {
   const { formatMessage } = useI18n()
   const [modalConfiguration, setModalConfiguration] = useState({
     showDialog: false,
@@ -67,15 +61,9 @@ const ErrorCell = ({
               })
             }}
           />
-          <Button
-            className={cssClasses({ hasError: withErrors })}
-            onClick={handleClick}
-          >
+          <Button className={cssClasses({ hasError: withErrors })} onClick={handleClick}>
             {sent}/{sent + withErrors + pending}
-            <IconProvider
-              icon="MdKeyboardArrowDown"
-              className={cssClasses('popover-cell__icon')}
-            />
+            <IconProvider icon="MdKeyboardArrowDown" className={cssClasses('popover-cell__icon')} />
           </Button>
         </AspectTooltip>
       )}

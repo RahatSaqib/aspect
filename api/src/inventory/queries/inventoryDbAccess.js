@@ -50,9 +50,7 @@ const INVENTORY_ITEM_SELECT = [
 ]
 
 async function getConsumableStrategy(consumableId) {
-  const { strategy } = await knex('Consumable')
-    .where({ id: consumableId })
-    .first('strategy')
+  const { strategy } = await knex('Consumable').where({ id: consumableId }).first('strategy')
   return strategies[strategy]
 }
 
@@ -72,10 +70,7 @@ function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
     })
 
   if (inTransitFromSiteId) {
-    matchingInventoryItemsQuery.where(
-      'ii.inTransitFromSiteId',
-      inTransitFromSiteId
-    )
+    matchingInventoryItemsQuery.where('ii.inTransitFromSiteId', inTransitFromSiteId)
   } else {
     matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
   }
@@ -90,15 +85,10 @@ async function findInventoryItems(
   inTransitFromSiteId = null,
   select = INVENTORY_ITEMS_TABLE_WITH_STRATEGY
 ) {
-  const matchingInventoryItemsQuery = baseInventoryQuery(
-    siteId,
-    consumableId,
-    inTransitFromSiteId
-  )
+  const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
   if (lotNumber || expiresOn) {
     const matchingStrategy = await getConsumableStrategy(consumableId)
-    if (matchingStrategy)
-      matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+    if (matchingStrategy) matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
   }
   const matchingInventoryItems = await matchingInventoryItemsQuery
     .clone()
@@ -111,27 +101,15 @@ async function findInventoryItems(
   return matchingInventoryItems
 }
 
-async function findInventoryItem(
-  siteId,
-  consumableId,
-  expiresOn,
-  lotNumber,
-  inTransitFromSiteId
-) {
-  const matchingInventoryItemsQuery = baseInventoryQuery(
-    siteId,
-    consumableId,
-    inTransitFromSiteId
-  )
+async function findInventoryItem(siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId) {
+  const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
   const matchingStrategy = await getConsumableStrategy(consumableId)
 
   if (matchingStrategy) {
     matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
   }
 
-  const matchingInventoryItems = await matchingInventoryItemsQuery.first(
-    INVENTORY_ITEM_SELECT
-  )
+  const matchingInventoryItems = await matchingInventoryItemsQuery.first(INVENTORY_ITEM_SELECT)
 
   return matchingInventoryItems
 }

@@ -22,16 +22,12 @@ const styles = theme => ({
     fontSize: theme.customPropertiesVariables['--aspect-font-size-sm'],
     fontWeight: theme.typography.fontWeightBold,
     color: theme.customPropertiesVariables['--aspect-color-white'],
-    backgroundColor:
-      theme.customPropertiesVariables['--aspect-color-chill-blue-1'],
-    borderRadius:
-      theme.customPropertiesVariables['--aspect-button-border-radius'],
+    backgroundColor: theme.customPropertiesVariables['--aspect-color-chill-blue-1'],
+    borderRadius: theme.customPropertiesVariables['--aspect-button-border-radius'],
 
     '&:focus': {
-      backgroundColor:
-        theme.customPropertiesVariables['--aspect-color-chill-blue-1'],
-      borderRadius:
-        theme.customPropertiesVariables['--aspect-button-border-radius'],
+      backgroundColor: theme.customPropertiesVariables['--aspect-color-chill-blue-1'],
+      borderRadius: theme.customPropertiesVariables['--aspect-button-border-radius'],
     },
   },
   menu: {
@@ -70,9 +66,7 @@ export const Dropdown = ({ classes, source, ...props }) => {
       {source &&
         source.map(item => (
           <MenuItem key={item.value} value={item.value}>
-            {messages && messages[item.i18nKey]
-              ? formatMessage(messages[item.i18nKey])
-              : item.label}
+            {messages && messages[item.i18nKey] ? formatMessage(messages[item.i18nKey]) : item.label}
           </MenuItem>
         ))}
     </Select>

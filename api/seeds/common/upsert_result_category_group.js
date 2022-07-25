@@ -6,22 +6,15 @@ const validateFixture = fixture => {
   const byExternalId = groupBy(fixture, 'externalId')
   const duplicatedExternalIds = []
   Object.keys(byExternalId).forEach(externalId => {
-    if (byExternalId[externalId].length > 1)
-      duplicatedExternalIds.push(externalId)
+    if (byExternalId[externalId].length > 1) duplicatedExternalIds.push(externalId)
   })
   if (duplicatedExternalIds.length > 0)
     throw new Error(
-      `Some result category groups external ids where specified more than one time: ${duplicatedExternalIds.join(
-        ', '
-      )}`
+      `Some result category groups external ids where specified more than one time: ${duplicatedExternalIds.join(', ')}`
     )
 }
 
-module.exports = async function upsertResultCategoryGroups(
-  knex,
-  fixture,
-  assayWhitelist = []
-) {
+module.exports = async function upsertResultCategoryGroups(knex, fixture, assayWhitelist = []) {
   validateFixture(fixture)
 
   const assayIds = {}
@@ -29,13 +22,9 @@ module.exports = async function upsertResultCategoryGroups(
 
   const assays = await knex('Assay').select('id', 'externalId')
 
-  if (assayWhitelist.length === 0)
-    assayWhitelist = assays.map(a => a.externalId)
+  if (assayWhitelist.length === 0) assayWhitelist = assays.map(a => a.externalId)
 
-  const resultCategories = await knex('ResultCategory').select(
-    'id',
-    'externalId'
-  )
+  const resultCategories = await knex('ResultCategory').select('id', 'externalId')
   assays.forEach(({ id, externalId }) => {
     assayIds[externalId] = id
   })
@@ -43,8 +32,7 @@ module.exports = async function upsertResultCategoryGroups(
     resultCategoryIds[externalId] = id
   })
 
-  if (assayWhitelist.length > 0)
-    fixture = fixture.filter(g => assayWhitelist.includes(g.assayExternalId))
+  if (assayWhitelist.length > 0) fixture = fixture.filter(g => assayWhitelist.includes(g.assayExternalId))
 
   const groups = fixture.map(
     ({
@@ -76,9 +64,7 @@ module.exports = async function upsertResultCategoryGroups(
 
     if (resultCategoryGroupToUpdate) {
       // Update
-      await knex('ResultCategoryGroup')
-        .where({ externalId: group.externalId })
-        .update(group)
+      await knex('ResultCategoryGroup').where({ externalId: group.externalId }).update(group)
     } else {
       // Create
       await knex('ResultCategoryGroup').insert(group)

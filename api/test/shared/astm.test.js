@@ -1,8 +1,5 @@
 const { assert } = require('chai')
-const {
-  getAstmField,
-  astmE1394MessagesToJson,
-} = require('../../src/shared/astm')
+const { getAstmField, astmE1394MessagesToJson } = require('../../src/shared/astm')
 
 const standardBDMGITAstmString = `H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|19981019184200
 P|1
@@ -124,8 +121,7 @@ L|1`
               9: { value: null },
               10: { value: 'Dr.Amesbury' },
               11: { value: 'ParkClinic' },
-              value:
-                'P|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife|19320122|F||Dr.Amesbury|ParkClinic',
+              value: 'P|1|||PIDSID13|Patient^Im^A\\And^This^Is^My^Wife|19320122|F||Dr.Amesbury|ParkClinic',
               O1: {
                 1: { value: 'O' },
                 2: { value: '1' },
@@ -151,8 +147,7 @@ L|1`
                 8: { value: '20010223081223' },
                 9: { value: null },
                 10: { value: 'F' },
-                value:
-                  'O|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F',
+                value: 'O|1|SID13|SID3^A123^5|^^^123^Assay1^UNDILUTED^P|R||20010223081223||F',
                 R1: {
                   1: { value: 'R' },
                   2: { value: '1' },
@@ -211,8 +206,7 @@ L|1`
                   9: { value: null },
                   10: { value: '19990715081030' },
                   11: { value: 'I20100' },
-                  value:
-                    'R|2|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^I|NEGATIVE||||F||19990715081030|I20100',
+                  value: 'R|2|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^I|NEGATIVE||||F||19990715081030|I20100',
                 },
                 R3: {
                   1: { value: 'R' },
@@ -239,8 +233,7 @@ L|1`
                   9: { value: null },
                   10: { value: '19990715081030' },
                   11: { value: 'I20100' },
-                  value:
-                    'R|3|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^P|9245|RLU|||F||19990715081030|I20100',
+                  value: 'R|3|^^^0021^B-hCG^UNDILUTED^P^47331M100^00788^^P|9245|RLU|||F||19990715081030|I20100',
                   C1: {
                     1: { value: 'C' },
                     2: { value: '1' },
@@ -364,8 +357,7 @@ L|1`
                 8: { value: null },
                 9: { value: 'Q' },
                 10: { value: 'F' },
-                value:
-                  'O|1|TSHBIORAD 2|TSHBIORAD 2^A123^2|^^^0241^TSH^UNDILUTED^P|R|||Q|F',
+                value: 'O|1|TSHBIORAD 2|TSHBIORAD 2^A123^2|^^^0241^TSH^UNDILUTED^P|R|||Q|F',
                 R1: {
                   1: { value: 'R' },
                   2: { value: '1' },

@@ -13,15 +13,7 @@ import styles from './AspectVertMenu.css'
 
 const cssClasses = classnames.bind(styles)
 
-const AspectVertMenuItem = ({
-  icon,
-  disabled = false,
-  text,
-  action,
-  params,
-  separator = false,
-  onClick,
-}) => (
+const AspectVertMenuItem = ({ icon, disabled = false, text, action, params, separator = false, onClick }) => (
   <Fragment>
     <MenuItem
       disabled={disabled}
@@ -54,11 +46,7 @@ const AspectVertMenu = ({ actions, params }) =>
   actions ? (
     <IconMenu icon={<MoreVertIcon />} className={cssClasses('menu')}>
       {actions.map(item => (
-        <AspectVertMenuItem
-          key={`${item.icon}-${item.text}`}
-          {...item}
-          params={params}
-        />
+        <AspectVertMenuItem key={`${item.icon}-${item.text}`} {...item} params={params} />
       ))}
     </IconMenu>
   ) : null

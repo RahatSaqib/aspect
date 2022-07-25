@@ -19,16 +19,12 @@ module.exports = async knex => {
         subTitleI18nKey,
         titleI18nKey,
       })
-      await knex('DashboardWidgetStat')
-        .where({ dashboardWidgetId: widget.id })
-        .update({ statUnitI18nKey })
+      await knex('DashboardWidgetStat').where({ dashboardWidgetId: widget.id }).update({ statUnitI18nKey })
     }
   }
 
   /**
    * for all declared base widgets - call func updateI18nKeys
    */
-  await Promise.all(
-    _.map(dashboardWidgetsBase.stat, widget => updateI18nKeys(widget))
-  )
+  await Promise.all(_.map(dashboardWidgetsBase.stat, widget => updateI18nKeys(widget)))
 }

@@ -9,9 +9,7 @@ async function up(knex) {
     tbl.json('triggerCondition').nullable()
   })
   await seedTable(knex, 'NotificationTypeCategory')
-  const { id: notificationTypeCategoryId } = await knex(
-    'NotificationTypeCategory'
-  )
+  const { id: notificationTypeCategoryId } = await knex('NotificationTypeCategory')
     .first()
     .where({ externalId: 'issueBased' })
   await knex.schema.alterTable('NotificationType', tbl => {
@@ -25,35 +23,14 @@ async function up(knex) {
       .default(notificationTypeCategoryId)
       .after('id')
     tbl.dropForeign('issueTypeId')
-    tbl
-      .integer('issueTypeId')
-      .index()
-      .unsigned()
-      .references('id')
-      .inTable('IssueType')
-      .nullable()
-      .alter()
+    tbl.integer('issueTypeId').index().unsigned().references('id').inTable('IssueType').nullable().alter()
     tbl.json('filterCondition').nullable().after('jobFunctionId')
   })
 
   await knex.schema.alterTable('Notification', tbl => {
     tbl.dropForeign('issueId')
-    tbl
-      .integer('issueId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Issue')
-      .nullable()
-      .alter()
-    tbl
-      .integer('resultId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Result')
-      .nullable()
-      .after('issueId')
+    tbl.integer('issueId').unsigned().index().references('id').inTable('Issue').nullable().alter()
+    tbl.integer('resultId').unsigned().index().references('id').inTable('Result').nullable().after('issueId')
     tbl.json('data').nullable()
   })
 }
@@ -64,13 +41,7 @@ async function down(knex) {
     tbl.dropColumn('notificationTypeCategoryId')
     tbl.dropForeign('issueTypeId')
     tbl.dropIndex('issueTypeid')
-    tbl
-      .integer('issueTypeId')
-      .unsigned()
-      .references('id')
-      .inTable('IssueType')
-      .notNullable()
-      .alter()
+    tbl.integer('issueTypeId').unsigned().references('id').inTable('IssueType').notNullable().alter()
     tbl.dropColumn('filterCondition')
   })
 
@@ -79,14 +50,7 @@ async function down(knex) {
   await knex.schema.alterTable('Notification', tbl => {
     tbl.dropForeign('issueId')
     tbl.dropIndex('issueId')
-    tbl
-      .integer('issueId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Issue')
-      .notNullable()
-      .alter()
+    tbl.integer('issueId').unsigned().index().references('id').inTable('Issue').notNullable().alter()
     tbl.dropForeign('resultId')
     tbl.dropColumn('resultId')
     tbl.dropColumn('data')

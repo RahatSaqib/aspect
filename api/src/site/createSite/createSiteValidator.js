@@ -9,9 +9,7 @@ async function validateSiteNotExists({ name, shortName }) {
   const existingSite = await getRepeatedSiteIfExists(name, shortName)
 
   if (existingSite) {
-    throw Boom.badData(
-      `A site with the same name (${name}) or short name (${shortName}) already exists.`
-    )
+    throw Boom.badData(`A site with the same name (${name}) or short name (${shortName}) already exists.`)
   }
 }
 

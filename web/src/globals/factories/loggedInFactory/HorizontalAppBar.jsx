@@ -43,36 +43,22 @@ const enhance = compose(
 const HorizontalAppBar = ({ closeDrawer, userRequestedLogout, intl }) => {
   const navigate = useNavigate()
   const navigateRoot = () => navigate('/')
-  const navigateCurrentAccountDetails = () =>
-    navigate('/account-details/current')
+  const navigateCurrentAccountDetails = () => navigate('/account-details/current')
 
   const Account = requirePermissions({
     permissions: ['account:edit'],
-  })(() => (
-    <MenuItem onClick={navigateCurrentAccountDetails}>
-      {intl.formatMessage(messages.accountDetails)}
-    </MenuItem>
-  ))
+  })(() => <MenuItem onClick={navigateCurrentAccountDetails}>{intl.formatMessage(messages.accountDetails)}</MenuItem>)
   return (
-    <AppBar
-      className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}
-      color="inherit"
-    >
+    <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')} color="inherit">
       <Toolbar>
-        <IconButton
-          className={cssClasses('AppBar__leftIcon')}
-          aria-label="Logo"
-          onClick={navigateRoot}
-        >
+        <IconButton className={cssClasses('AppBar__leftIcon')} aria-label="Logo" onClick={navigateRoot}>
           <ConfluenceIcon />
         </IconButton>
 
         <LinkNavigation type="horizontal" onClick={closeDrawer} />
         <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
           <Account />
-          <MenuItem onClick={userRequestedLogout}>
-            {intl.formatMessage(messages.signOut)}
-          </MenuItem>
+          <MenuItem onClick={userRequestedLogout}>{intl.formatMessage(messages.signOut)}</MenuItem>
         </IconMenu>
       </Toolbar>
     </AppBar>

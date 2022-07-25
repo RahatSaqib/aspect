@@ -53,23 +53,18 @@ describe('transformMergeResultPayload for Myanmar', () => {
   let transformMergeResultPayload
 
   function initialisePluginAndPayload(payload) {
-    deviceTypeTransformMergeResultPayload = sinon
-      .stub()
-      .resolves(getPayload(payload))
-    transformMergeResultPayload = proxyquire(
-      '../../../src/plugin/partner/Myanmar/transformMergeResultPayload',
-      {
-        '../../registration': {
-          async loadPlugin() {
-            return deviceTypeTransformMergeResultPayload
-          },
+    deviceTypeTransformMergeResultPayload = sinon.stub().resolves(getPayload(payload))
+    transformMergeResultPayload = proxyquire('../../../src/plugin/partner/Myanmar/transformMergeResultPayload', {
+      '../../registration': {
+        async loadPlugin() {
+          return deviceTypeTransformMergeResultPayload
         },
-        '../../../shared/dictionary': {
-          deviceTypeToPlugin: async () => Promise.resolve(null),
-          sampleTypeToId: async () => Promise.resolve(-1),
-        },
-      }
-    )
+      },
+      '../../../shared/dictionary': {
+        deviceTypeToPlugin: async () => Promise.resolve(null),
+        sampleTypeToId: async () => Promise.resolve(-1),
+      },
+    })
   }
 
   beforeEach(() => {
@@ -79,9 +74,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
   it('should execute plugins for the device type in the payload', () =>
     runTest(transformMergeResultPayload, [gxConnectPluginContext])(() => {
       assert.ok(deviceTypeTransformMergeResultPayload.calledOnce)
-      assert.ok(
-        deviceTypeTransformMergeResultPayload.calledWith(gxConnectPluginContext)
-      )
+      assert.ok(deviceTypeTransformMergeResultPayload.calledWith(gxConnectPluginContext))
     }))
 
   describe('when request comes from from a GeneXpert', () => {
@@ -156,8 +149,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
               id: 'Lee Michelle Nicaise,Bogota',
               age: undefined,
             },
-            notes:
-              '6MONTHS,Yes,HIV-,Na,Nd,YoDaYarKone,Pathein TSP,+9550993323.',
+            notes: '6MONTHS,Yes,HIV-,Na,Nd,YoDaYarKone,Pathein TSP,+9550993323.',
           },
           transformedPayload: {
             patient: {
@@ -172,8 +164,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
             data: {
               testReasonShortName: 'Na',
             },
-            notes:
-              '6MONTHS,Yes,HIV-,Na,Nd,YoDaYarKone,Pathein TSP,+9550993323.',
+            notes: '6MONTHS,Yes,HIV-,Na,Nd,YoDaYarKone,Pathein TSP,+9550993323.',
           },
         },
         {
@@ -201,19 +192,12 @@ describe('transformMergeResultPayload for Myanmar', () => {
           },
         },
       ]
-      await Promise.each(
-        expectations,
-        async ({ initialPayload, transformedPayload }) => {
-          initialisePluginAndPayload(initialPayload)
-          return runTest(transformMergeResultPayload, [gxConnectPluginContext])(
-            actualTransformedPayload => {
-              expect(actualTransformedPayload).to.containSubset(
-                transformedPayload
-              )
-            }
-          )
-        }
-      )
+      await Promise.each(expectations, async ({ initialPayload, transformedPayload }) => {
+        initialisePluginAndPayload(initialPayload)
+        return runTest(transformMergeResultPayload, [gxConnectPluginContext])(actualTransformedPayload => {
+          expect(actualTransformedPayload).to.containSubset(transformedPayload)
+        })
+      })
     })
 
     describe('and the notes do not describe the patient', () => {
@@ -265,29 +249,18 @@ describe('transformMergeResultPayload for Myanmar', () => {
             },
           },
         ]
-        await Promise.each(
-          expectations,
-          async ({ initialPayload, transformedPayload }) => {
-            initialisePluginAndPayload(initialPayload)
-            return runTest(transformMergeResultPayload, [
-              gxConnectPluginContext,
-            ])(actualTransformedPayload => {
-              expect(actualTransformedPayload).to.containSubset(
-                transformedPayload
-              )
-              assert.isUndefined(actualTransformedPayload.patient.age)
-              assert.isUndefined(actualTransformedPayload.patient.gender)
-              assert.isUndefined(
-                actualTransformedPayload.patient.previouslyTreated
-              )
-              assert.isUndefined(actualTransformedPayload.patient.hivStatus)
-              assert.isUndefined(
-                actualTransformedPayload.patient.microscopyResult
-              )
-              assert.isUndefined(actualTransformedPayload.data)
-            })
-          }
-        )
+        await Promise.each(expectations, async ({ initialPayload, transformedPayload }) => {
+          initialisePluginAndPayload(initialPayload)
+          return runTest(transformMergeResultPayload, [gxConnectPluginContext])(actualTransformedPayload => {
+            expect(actualTransformedPayload).to.containSubset(transformedPayload)
+            assert.isUndefined(actualTransformedPayload.patient.age)
+            assert.isUndefined(actualTransformedPayload.patient.gender)
+            assert.isUndefined(actualTransformedPayload.patient.previouslyTreated)
+            assert.isUndefined(actualTransformedPayload.patient.hivStatus)
+            assert.isUndefined(actualTransformedPayload.patient.microscopyResult)
+            assert.isUndefined(actualTransformedPayload.data)
+          })
+        })
       })
     })
 
@@ -353,19 +326,12 @@ describe('transformMergeResultPayload for Myanmar', () => {
             },
           },
         ]
-        await Promise.each(
-          expectations,
-          async ({ initialPayload, transformedPayload }) => {
-            initialisePluginAndPayload(initialPayload)
-            return runTest(transformMergeResultPayload, [
-              gxConnectPluginContext,
-            ])(actualTransformedPayload => {
-              expect(actualTransformedPayload).to.containSubset(
-                transformedPayload
-              )
-            })
-          }
-        )
+        await Promise.each(expectations, async ({ initialPayload, transformedPayload }) => {
+          initialisePluginAndPayload(initialPayload)
+          return runTest(transformMergeResultPayload, [gxConnectPluginContext])(actualTransformedPayload => {
+            expect(actualTransformedPayload).to.containSubset(transformedPayload)
+          })
+        })
       })
     })
 
@@ -892,19 +858,12 @@ describe('transformMergeResultPayload for Myanmar', () => {
             },
           },
         ]
-        await Promise.each(
-          expectations,
-          async ({ initialPayload, transformedPayload }) => {
-            initialisePluginAndPayload(initialPayload)
-            return runTest(transformMergeResultPayload, [
-              gxConnectPluginContext,
-            ])(actualTransformedPayload => {
-              expect(actualTransformedPayload).to.containSubset(
-                transformedPayload
-              )
-            })
-          }
-        )
+        await Promise.each(expectations, async ({ initialPayload, transformedPayload }) => {
+          initialisePluginAndPayload(initialPayload)
+          return runTest(transformMergeResultPayload, [gxConnectPluginContext])(actualTransformedPayload => {
+            expect(actualTransformedPayload).to.containSubset(transformedPayload)
+          })
+        })
       })
     })
   })
@@ -931,9 +890,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
     })
 
     it('should NOT parse notes and patient ID ', async () => {
-      await runTest(transformMergeResultPayload, [
-        otherDeviceTypePluginContext,
-      ])(transformedPayload => {
+      await runTest(transformMergeResultPayload, [otherDeviceTypePluginContext])(transformedPayload => {
         expect(transformedPayload).to.containSubset({
           patient: {
             id: 'Bryan Richards,Johannesburg',

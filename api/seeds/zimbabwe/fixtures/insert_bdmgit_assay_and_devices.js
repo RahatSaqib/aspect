@@ -1,9 +1,5 @@
 const { upsertMGITDeviceTypeAndAssays } = require('../../commonTB')
-const {
-  deviceTypeCategoryToId,
-  assayTypeToId,
-  resultSourceToId,
-} = require('../../../src/shared/dictionary')
+const { deviceTypeCategoryToId, assayTypeToId, resultSourceToId } = require('../../../src/shared/dictionary')
 const patientDataSchema = require('../../fixtures/MGITPatientDataSchema')
 const AssayBdMgitAstResultDataSchema = require('../../fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('../../fixtures/AssayBdMgitGndResultDataSchema.json')
@@ -11,9 +7,7 @@ const upsertConsumables = require('../../common/upsert_consumables')
 
 async function upsertMGITDevices(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
-  const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId(
-    'Information System'
-  )
+  const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId('Information System')
 
   // MGIT
   const assayBdMgitAstResultDataSchema = {
@@ -127,8 +121,7 @@ async function upsertMGITDevices(knex) {
 
   // Senaite
   const { id: deviceTypeSenaiteLimsId } =
-    (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
-    {}
+    (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) || {}
   const existingDeviceType = await knex('DeviceType')
     .where({
       externalId: 'SenaiteLims',
@@ -147,9 +140,7 @@ async function upsertMGITDevices(knex) {
 
   // Hain GenoScan
   let { id: deviceTypeHainGenoScanId } =
-    (await knex('DeviceType')
-      .where('externalId', 'HainGenoScan')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'HainGenoScan').first('id')) || {}
   if (!deviceTypeHainGenoScanId) {
     ;[deviceTypeHainGenoScanId] = await knex('DeviceType').insert({
       externalId: 'HainGenoScan',
@@ -601,10 +592,7 @@ async function upsertMGITDevices(knex) {
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
 
-  let { id: assayGenoTypeMTBCV1Id } =
-    (await knex('Assay')
-      .where('externalId', 'assayGenoTypeMTBCV1')
-      .first('id')) || {}
+  let { id: assayGenoTypeMTBCV1Id } = (await knex('Assay').where('externalId', 'assayGenoTypeMTBCV1').first('id')) || {}
   if (!assayGenoTypeMTBCV1Id) {
     ;[assayGenoTypeMTBCV1Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBCV1,
@@ -613,9 +601,7 @@ async function upsertMGITDevices(knex) {
 
     await upsertConsumables(knex, true, ['assayGenoTypeMTBCV1'])
   } else {
-    await knex('Assay')
-      .where('id', assayGenoTypeMTBCV1Id)
-      .update(assayGenoTypeMTBCV1)
+    await knex('Assay').where('id', assayGenoTypeMTBCV1Id).update(assayGenoTypeMTBCV1)
   }
 
   /*
@@ -1488,9 +1474,7 @@ async function upsertMGITDevices(knex) {
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRplusV2Id } =
-    (await knex('Assay')
-      .where('externalId', 'assayGenoTypeMTBDRplusV2')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayGenoTypeMTBDRplusV2').first('id')) || {}
   if (!assayGenoTypeMTBDRplusV2Id) {
     ;[assayGenoTypeMTBDRplusV2Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBDRplusV2,
@@ -1498,9 +1482,7 @@ async function upsertMGITDevices(knex) {
     })
     await upsertConsumables(knex, true, ['assayGenoTypeMTBDRplusV2'])
   } else {
-    await knex('Assay')
-      .where('id', assayGenoTypeMTBDRplusV2Id)
-      .update(assayGenoTypeMTBDRplusV2)
+    await knex('Assay').where('id', assayGenoTypeMTBDRplusV2Id).update(assayGenoTypeMTBDRplusV2)
   }
 
   /*
@@ -2241,9 +2223,7 @@ async function upsertMGITDevices(knex) {
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRslV1Id } =
-    (await knex('Assay')
-      .where('externalId', 'assayGenoTypeMTBDRslV1')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayGenoTypeMTBDRslV1').first('id')) || {}
   if (!assayGenoTypeMTBDRslV1Id) {
     ;[assayGenoTypeMTBDRslV1Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBDRslV1,
@@ -2251,9 +2231,7 @@ async function upsertMGITDevices(knex) {
     })
     await upsertConsumables(knex, true, ['assayGenoTypeMTBDRslV1'])
   } else {
-    await knex('Assay')
-      .where('id', assayGenoTypeMTBDRslV1Id)
-      .update(assayGenoTypeMTBDRslV1)
+    await knex('Assay').where('id', assayGenoTypeMTBDRslV1Id).update(assayGenoTypeMTBDRslV1)
   }
   /*
     - VER 2.0: Strip Consists of 27 Bands: 2 Control Bands, 1 MTBC probe band and 24 gene probe bands
@@ -3115,9 +3093,7 @@ async function upsertMGITDevices(knex) {
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
   let { id: assayGenoTypeMTBDRslV2Id } =
-    (await knex('Assay')
-      .where('externalId', 'assayGenoTypeMTBDRslV2')
-      .first('id')) || {}
+    (await knex('Assay').where('externalId', 'assayGenoTypeMTBDRslV2').first('id')) || {}
   if (!assayGenoTypeMTBDRslV2Id) {
     ;[assayGenoTypeMTBDRslV2Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBDRslV2,
@@ -3125,9 +3101,7 @@ async function upsertMGITDevices(knex) {
     })
     await upsertConsumables(knex, true, ['assayGenoTypeMTBDRslV2'])
   } else {
-    await knex('Assay')
-      .where('id', assayGenoTypeMTBDRslV2Id)
-      .update(assayGenoTypeMTBDRslV2)
+    await knex('Assay').where('id', assayGenoTypeMTBDRslV2Id).update(assayGenoTypeMTBDRslV2)
   }
 }
 module.exports = upsertMGITDevices

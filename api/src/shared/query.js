@@ -1,9 +1,4 @@
-const addTransferredQuery = (
-  queryBuilder,
-  knex,
-  resultStatusTransferId,
-  { minDate, maxDate }
-) => {
+const addTransferredQuery = (queryBuilder, knex, resultStatusTransferId, { minDate, maxDate }) => {
   queryBuilder
     /**
      * for counting `transferred` results -
@@ -14,12 +9,7 @@ const addTransferredQuery = (
      */
     .leftOuterJoin('ResultStatusLog as rslogTransferred', builder => {
       builder
-        .on(
-          's.id',
-          knex.raw(
-            `CAST(IFNULL(rslogTransferred.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)`
-          )
-        )
+        .on('s.id', knex.raw(`CAST(IFNULL(rslogTransferred.data ->> '$.previousReportableSiteId', 0) as UNSIGNED)`))
         // limit this join by `Transfer` result status only
         .andOn('rslogTransferred.resultStatusId', resultStatusTransferId)
     })
@@ -30,44 +20,27 @@ const addTransferredQuery = (
     .leftOuterJoin('Result as resultTransferred', queryBuilder => {
       queryBuilder.on('rslogTransferred.resultId', 'resultTransferred.id')
       if (minDate) {
-        queryBuilder.andOn(
-          'resultTransferred.endedOn',
-          '>=',
-          knex.raw('?', [minDate])
-        )
+        queryBuilder.andOn('resultTransferred.endedOn', '>=', knex.raw('?', [minDate]))
       }
       if (maxDate) {
-        queryBuilder.andOn(
-          'resultTransferred.endedOn',
-          '<=',
-          knex.raw('?', [maxDate])
-        )
+        queryBuilder.andOn('resultTransferred.endedOn', '<=', knex.raw('?', [maxDate]))
       }
     })
     /**
      * for counting only rcaTransferred.requiresTreatment = 1
      */
     .leftOuterJoin('ResultCategoryAssay as rcaTransferred', queryBuilder => {
-      queryBuilder
-        .on('resultTransferred.assayId', 'rcaTransferred.assayId')
-        .andOn(qb => {
-          qb.on(
-            'resultTransferred.resultCategory1',
-            'rcaTransferred.resultCategoryId'
-          ).orOn(
-            'resultTransferred.resultCategory2',
-            'rcaTransferred.resultCategoryId'
-          )
-        })
+      queryBuilder.on('resultTransferred.assayId', 'rcaTransferred.assayId').andOn(qb => {
+        qb.on('resultTransferred.resultCategory1', 'rcaTransferred.resultCategoryId').orOn(
+          'resultTransferred.resultCategory2',
+          'rcaTransferred.resultCategoryId'
+        )
+      })
     })
     /**
      * for counting only delivered transferred results
      */
-    .leftOuterJoin(
-      'ResultDownloadLog as rdlTransferred',
-      'rdlTransferred.resultId',
-      'resultTransferred.id'
-    )
+    .leftOuterJoin('ResultDownloadLog as rdlTransferred', 'rdlTransferred.resultId', 'resultTransferred.id')
     .count({
       // see comment for joining table ResultStatusLog
       transferred: knex.raw(`DISTINCT
@@ -80,11 +53,7 @@ const addTransferredQuery = (
 }
 
 // --------------------------------------------------------------------
-const addResultCountsQuery = (
-  queryBuilder,
-  knex,
-  { withResultCategory2 = true } = {}
-) => {
+const addResultCountsQuery = (queryBuilder, knex, { withResultCategory2 = true } = {}) => {
   queryBuilder
     /**
      * join to ResultDownloadLog for counting results 'delivered' to Reporters
@@ -93,16 +62,8 @@ const addResultCountsQuery = (
     /**
      * for counting different statuses rts.externalId = 'XXX'
      */
-    .leftOuterJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'rtsl.id',
-      'r.treatmentStatusLogId'
-    )
-    .leftOuterJoin(
-      'ResultTreatmentStatus as rts',
-      'rts.id',
-      'rtsl.resultTreatmentStatusId'
-    )
+    .leftOuterJoin('ResultTreatmentStatusLog as rtsl', 'rtsl.id', 'r.treatmentStatusLogId')
+    .leftOuterJoin('ResultTreatmentStatus as rts', 'rts.id', 'rtsl.resultTreatmentStatusId')
     /**
      * for counting  rca.requiresTreatment = 1
      */

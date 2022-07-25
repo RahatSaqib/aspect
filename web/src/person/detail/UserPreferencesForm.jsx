@@ -102,10 +102,7 @@ export const UserPreferencesForm = ({
         {languages.map(item => (
           <MenuItem key={item.culture} value={item.culture}>
             <span>
-              <FlagIcon
-                withRightMargin
-                countryIsoAlpha2Code={item.isoAlpha2Code}
-              />
+              <FlagIcon withRightMargin countryIsoAlpha2Code={item.isoAlpha2Code} />
               {item.languageName}
             </span>
           </MenuItem>

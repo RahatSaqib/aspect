@@ -5,15 +5,8 @@ const { getUser } = require('../../auth/service')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { knex, filterDateRangeParams, filterParams } = require('../../db')
 const [m4b1Mapping] = require('../../../templates/xpert_m4b1_patients/mapping')
-const {
-  getWellFormattedDateStringWithTimezone,
-  startOfMonthUTC,
-  endOfMonthUTC,
-} = require('../../shared/date')
-const {
-  getTypeOfPatientCategory,
-  getMappingFieldName,
-} = require('./geneXpertM4B1PatientsReport')
+const { getWellFormattedDateStringWithTimezone, startOfMonthUTC, endOfMonthUTC } = require('../../shared/date')
+const { getTypeOfPatientCategory, getMappingFieldName } = require('./geneXpertM4B1PatientsReport')
 const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 const activeScreeningUseKey = 'Sàng lọc chủ động: ghi rõ'
@@ -59,18 +52,10 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
     .select([
       'rc1.externalId as resultCategory1',
       'rc2.externalId as resultCategory2',
-      knex.raw(
-        `r.resultData->>'$.customFieldData."257".value' as typeOfPatient`
-      ),
-      knex.raw(
-        `r.resultData->>'$.customFieldData."256".value' as specimenType`
-      ),
-      knex.raw(
-        `r.resultData->>'$.customFieldData."251".value' as testingReason`
-      ),
-      knex.raw(
-        `r.resultData->>'$.customFieldData."254".value' as previouslyTreated`
-      ),
+      knex.raw(`r.resultData->>'$.customFieldData."257".value' as typeOfPatient`),
+      knex.raw(`r.resultData->>'$.customFieldData."256".value' as specimenType`),
+      knex.raw(`r.resultData->>'$.customFieldData."251".value' as testingReason`),
+      knex.raw(`r.resultData->>'$.customFieldData."254".value' as previouslyTreated`),
       knex.raw('COUNT(*) as quantity'),
     ])
 
@@ -80,26 +65,18 @@ async function getGeneXpertM4B1PatientsReport(auth, query) {
     defaultValues[reportValue] = 0
   })
   // Get the types of patient included in the report
-  const typesOfPatient = Object.keys(defaultValues).map(
-    reportKey => reportKey.split('_')[2]
-  )
+  const typesOfPatient = Object.keys(defaultValues).map(reportKey => reportKey.split('_')[2])
 
   const report = reduce(
     rawReport,
     (partialReport, reportItem) => {
-      const typeOfPatient = getTypeOfPatientCategory(
-        reportItem.typeOfPatient,
-        reportItem.specimenType,
-        typesOfPatient
-      )
+      const typeOfPatient = getTypeOfPatientCategory(reportItem.typeOfPatient, reportItem.specimenType, typesOfPatient)
 
       const fieldName = getMappingFieldName(reportItem, typeOfPatient)
       partialReport[fieldName] += reportItem.quantity
 
       // "Active Screening/Other" is a separate count, not included in totals, so it's treated apart
-      if (
-        includes([activeScreeningUseKey, otherUseKey], reportItem.testingReason)
-      ) {
+      if (includes([activeScreeningUseKey, otherUseKey], reportItem.testingReason)) {
         partialReport[`ActiveScreening_${typeOfPatient}`] += reportItem.quantity
       }
 
@@ -135,30 +112,16 @@ async function getGeneXpertM4B2ActivitiesReport(auth, query) {
       mtbTraceNoRif,
       mtbNoResult,
       mtbInvalid,
-      error_5006_5007_5017: knex.raw(
-        "SUM(CASE WHEN r.errorCode IN ('5006', '5007', '5017') THEN 1 ELSE 0 END)"
-      ),
+      error_5006_5007_5017: knex.raw("SUM(CASE WHEN r.errorCode IN ('5006', '5007', '5017') THEN 1 ELSE 0 END)"),
       error_1001_1002_2014_4009_4010_4017: knex.raw(
         "SUM(CASE WHEN r.errorCode IN ('1001', '1002', '2014', '4009', '4010', '4017') THEN 1 ELSE 0 END)"
       ),
-      error_2008: knex.raw(
-        "SUM(CASE WHEN r.errorCode = '2008' THEN 1 ELSE 0 END)"
-      ),
-      error_2005_2006_2016: knex.raw(
-        "SUM(CASE WHEN r.errorCode IN ('2005', '2006', '2016') THEN 1 ELSE 0 END)"
-      ),
-      error_2035: knex.raw(
-        "SUM(CASE WHEN r.errorCode = '2035' THEN 1 ELSE 0 END)"
-      ),
-      error_5011: knex.raw(
-        "SUM(CASE WHEN r.errorCode = '5011' THEN 1 ELSE 0 END)"
-      ),
-      error_2037: knex.raw(
-        "SUM(CASE WHEN r.errorCode = '2037' THEN 1 ELSE 0 END)"
-      ),
-      error_2126_2127: knex.raw(
-        "SUM(CASE WHEN r.errorCode IN ('2126', '2127') THEN 1 ELSE 0 END)"
-      ),
+      error_2008: knex.raw("SUM(CASE WHEN r.errorCode = '2008' THEN 1 ELSE 0 END)"),
+      error_2005_2006_2016: knex.raw("SUM(CASE WHEN r.errorCode IN ('2005', '2006', '2016') THEN 1 ELSE 0 END)"),
+      error_2035: knex.raw("SUM(CASE WHEN r.errorCode = '2035' THEN 1 ELSE 0 END)"),
+      error_5011: knex.raw("SUM(CASE WHEN r.errorCode = '5011' THEN 1 ELSE 0 END)"),
+      error_2037: knex.raw("SUM(CASE WHEN r.errorCode = '2037' THEN 1 ELSE 0 END)"),
+      error_2126_2127: knex.raw("SUM(CASE WHEN r.errorCode IN ('2126', '2127') THEN 1 ELSE 0 END)"),
       error_5001_5002_5003_5004_5005: knex.raw(
         "SUM(CASE WHEN r.errorCode IN ('5001', '5002', '5003', '5004', '5005') THEN 1 ELSE 0 END)"
       ),
@@ -202,16 +165,8 @@ async function getListRResistantTestReport(auth, query) {
 
 async function getReasonForTestingReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  let {
-    minDate: minDateStr = getWellFormattedDateStringWithTimezone(
-      startOfMonth(new Date())
-    ),
-  } = query
-  const {
-    maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(
-      endOfMonth(new Date())
-    ),
-  } = query
+  let { minDate: minDateStr = getWellFormattedDateStringWithTimezone(startOfMonth(new Date())) } = query
+  const { maxDate: maxDateStr = getWellFormattedDateStringWithTimezone(endOfMonth(new Date())) } = query
   if (typeof minDateStr !== 'string') {
     minDateStr = minDateStr.toISOString()
   }
@@ -226,9 +181,7 @@ async function getReasonForTestingReport(auth, query) {
       ),
       knex.raw(`count(resultData->>'$.customFieldData."251".value') AS total`),
     ])
-    .andWhere(
-      knex.raw(`resultData->>'$.customFieldData."251".value' is not null`)
-    )
+    .andWhere(knex.raw(`resultData->>'$.customFieldData."251".value' is not null`))
     .modify(addConstraints, dataConstraints, {
       result: 'r',
     })
@@ -238,11 +191,7 @@ async function getReasonForTestingReport(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
-    .modify(
-      filterDateRangeParams,
-      { minDate: dateFrom, maxDate: dateTo },
-      'r.endedOn'
-    )
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     // Keeping this to the Pr approve, if the dates are wrong filtred (now it takes 1 month), maybe it should bounded to the current day only)
     // .andWhere('r.endedOn', '>=', dateFrom)
     // .andWhere('r.endedOn', '<=', dateTo)
@@ -285,9 +234,7 @@ async function getResultCountsByHIVStatus(auth, query) {
 }
 
 const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
-  joinQuery
-    .on('il.inventoryItemId', 'ii.id')
-    .andOn(knex.raw(`IFNULL(il.adjustedFrom, il.createdOn) >= '${dateFrom}'`))
+  joinQuery.on('il.inventoryItemId', 'ii.id').andOn(knex.raw(`IFNULL(il.adjustedFrom, il.createdOn) >= '${dateFrom}'`))
 }
 
 async function getGlobalFundInventoryReport(auth, query) {
@@ -297,9 +244,7 @@ async function getGlobalFundInventoryReport(auth, query) {
   const { maxDate } = query
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
-    .leftJoin('InventoryLog as il', q =>
-      joinCurrentPeriodInventoryLog(q, new Date(query.minDate).toISOString())
-    )
+    .leftJoin('InventoryLog as il', q => joinCurrentPeriodInventoryLog(q, new Date(query.minDate).toISOString()))
     .leftJoin('ConsumableReason as cr', 'cr.id', 'il.consumableReasonId')
     .leftJoin('Geography as g', 'g.id', 's.geographyId')
     .select([
@@ -330,11 +275,7 @@ async function getGlobalFundInventoryReport(auth, query) {
     dynamicColumns: globalFundInventoryReportDictionary[culture],
     dataSelector: dataRow => {
       const stockLastPeriod =
-        dataRow.quantityOnHand -
-        dataRow.transferFrom +
-        dataRow.receiveTo +
-        dataRow.use +
-        dataRow.damage
+        dataRow.quantityOnHand - dataRow.transferFrom + dataRow.receiveTo + dataRow.use + dataRow.damage
       return {
         ...dataRow,
         stockLastMonth: stockLastPeriod,
@@ -350,9 +291,7 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
 
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')
-    .leftJoin('InventoryLog as il', q =>
-      joinCurrentPeriodInventoryLog(q, new Date(query.minDate).toISOString())
-    )
+    .leftJoin('InventoryLog as il', q => joinCurrentPeriodInventoryLog(q, new Date(query.minDate).toISOString()))
     .leftJoin('Result as r', 'r.id', 'il.resultId')
     .join('Consumable as c', 'c.id', 'ii.consumableId')
     .join('Unit as u', 'u.id', 'c.unit')
@@ -405,14 +344,7 @@ async function getGeneXpertM4B3BiologicalProducts(auth, query) {
 const getM4B3dataSelectorFunction = row => {
   row.existence = row.quantityOnHand
   row.stockLastPeriod =
-    row.quantityOnHand -
-    row.transferFrom -
-    row.receiveTo +
-    row.use +
-    row.expired +
-    row.stolen +
-    row.damage +
-    row.lost
+    row.quantityOnHand - row.transferFrom - row.receiveTo + row.use + row.expired + row.stolen + row.damage + row.lost
   return {
     ...row,
   }
@@ -435,16 +367,7 @@ function getM4B3Totals(rows) {
   }
 
   rows.reduce((acc, row) => {
-    const {
-      quantityOnHand,
-      transferFrom,
-      receiveTo: receive,
-      use,
-      expired,
-      damage,
-      stolen,
-      lost,
-    } = row
+    const { quantityOnHand, transferFrom, receiveTo: receive, use, expired, damage, stolen, lost } = row
 
     acc.totalTransferFrom += transferFrom
     acc.totalUse += use
@@ -454,10 +377,7 @@ function getM4B3Totals(rows) {
     acc.totalStolen += stolen
     acc.totalLost += lost
     acc.totalExistence += quantityOnHand
-    acc.totalInventory +=
-      quantityOnHand -
-      receive +
-      (transferFrom + use + expired + damage + stolen + lost)
+    acc.totalInventory += quantityOnHand - receive + (transferFrom + use + expired + damage + stolen + lost)
     const { activeScreening, routine, other } = row
     acc.totalActiveScreening += activeScreening
     acc.totalRoutine += routine

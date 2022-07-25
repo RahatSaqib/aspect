@@ -43,15 +43,11 @@ const shallowWithI18n = children => {
 }
 
 const shallowWithQuery = children => {
-  return shallow(
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  )
+  return shallow(<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>)
 }
 
 const mountWithQuery = children => {
-  return mount(
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  )
+  return mount(<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>)
 }
 
 const mountWithTheme = children => {

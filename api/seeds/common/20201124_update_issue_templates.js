@@ -1,9 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const {
-  deleteIssueTypes,
-  updateIssueNotificationTemplates,
-} = require('../utils')
+const { deleteIssueTypes, updateIssueNotificationTemplates } = require('../utils')
 
 async function seed(knex) {
   // delete issue types we no longer need
