@@ -231,6 +231,10 @@ async function getListDevices(query, auth) {
       knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END AS gxConnectStatus'),
       knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS gxConnectVersion'),
       knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
+      knex.raw(`CASE 
+        WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
+        WHEN dms.externalId IN ('inactiveOutOfInventory', 'inactiveDownForRepair', 'inactiveNoStaff', 'inactiveNoPower', 'inactiveNoSamples', 'inactiveOther') THEN 'down'
+        ELSE 'unknown' END AS 'deviceStatus'`),
     ])
     .leftJoin(
       knex('Result as resDevice')
