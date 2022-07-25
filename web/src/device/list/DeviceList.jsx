@@ -106,6 +106,11 @@ const getColumns = intl => [
     hiddenOn: 'lg',
   },
   {
+    key: 'deviceStatus',
+    label: intl.formatMessage(messages.deviceStatus),
+    sortable: true,
+  },
+  {
     key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
     label: intl.formatMessage(messages.status),
     sortable: true,

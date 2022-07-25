@@ -145,6 +145,10 @@ export const messages = {
       id: 'pages.DeviceList.lastResultConductedOn',
       defaultMessage: 'Last Result Conducted On',
     },
+    deviceStatus: {
+      id: 'pages.DeviceList.deviceStatus',
+      defaultMessage: 'Device Status',
+    },
   }),
 }
 

@@ -33,6 +33,13 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
   <TableRow {...restProps} className={cssClasses('TableRow', restProps.className)}>
     <TableCell>{device.get('name')}</TableCell>
     <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
+    <TableCell>
+      <StatusIcon
+        status={
+          device.get('deviceStatus') === 'up' ? 'success' : device.get('deviceStatus') === 'down' ? 'error' : 'warning'
+        }
+      />
+    </TableCell>
     <TableCell>{intl.formatMessage(messages[device.get('statusI18nKey')])}</TableCell>
     <TableCell>{formatRelative(device.get('lastResultConductedOn'))}</TableCell>
     <TableCell>
