@@ -141,6 +141,10 @@ export const messages = {
       id: 'pages.DeviceList.gxConnectVersion',
       defaultMessage: 'GxConnect Version',
     },
+    lastResultConductedOn: {
+      id: 'pages.DeviceList.lastResultConductedOn',
+      defaultMessage: 'Last Result Conducted On',
+    },
   }),
 }
 

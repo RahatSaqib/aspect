@@ -84,6 +84,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'resultCountLastMonth',
     'resultCountThisMonth',
     'gxConnectVersion',
+    'lastResultConductedOn',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -107,6 +108,11 @@ const getColumns = intl => [
   {
     key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
     label: intl.formatMessage(messages.status),
+    sortable: true,
+  },
+  {
+    key: 'lastResultConductedOn',
+    label: intl.formatMessage(messages.lastResultConductedOn),
     sortable: true,
   },
   {

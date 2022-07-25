@@ -34,6 +34,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     <TableCell>{device.get('name')}</TableCell>
     <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
     <TableCell>{intl.formatMessage(messages[device.get('statusI18nKey')])}</TableCell>
+    <TableCell>{formatRelative(device.get('lastResultConductedOn'))}</TableCell>
     <TableCell>
       <Rate intl={intl} it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />
     </TableCell>
