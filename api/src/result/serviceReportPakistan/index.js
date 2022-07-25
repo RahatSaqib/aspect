@@ -3,10 +3,7 @@ const { subMonths } = require('date-fns')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { getDatesFromQuery } = require('../../shared/date')
-const {
-  allAssayToId,
-  allResultCategoryToId,
-} = require('../../shared/dictionary')
+const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
 
 /**
  * **************************************
@@ -65,11 +62,7 @@ async function getReportXdrDevicesSummary(auth, query) {
       geography: 'g',
       result: 'r',
     })
-    .modify(
-      filterDateRangeParams,
-      { minDate: dateFrom, maxDate: dateTo },
-      'r.endedOn'
-    )
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -89,18 +82,9 @@ async function getReportXdrDevicesSummary(auth, query) {
       cnt_kan: countXdr('KAN'),
       cnt_cap: countXdr('CAP'),
       cnt_eth: countXdr('ETH'),
-      cnt_Invalid: counter(
-        'r.id',
-        `r.resultCategory1 = ${resultCategoryIds.Invalid}`
-      ),
-      cnt_NoResult: counter(
-        'r.id',
-        `r.resultCategory1 = ${resultCategoryIds.NoResult}`
-      ),
-      cnt_Error: counter(
-        'r.id',
-        `r.resultCategory1 = ${resultCategoryIds.Error}`
-      ),
+      cnt_Invalid: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Invalid}`),
+      cnt_NoResult: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.NoResult}`),
+      cnt_Error: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Error}`),
     })
 
   const counterField = name => knex.raw(`IFNULL(_sub.${name}, 0) as ${name}`)

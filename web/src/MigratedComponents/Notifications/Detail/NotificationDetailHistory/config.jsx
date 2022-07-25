@@ -18,11 +18,7 @@
  */
 import messages from './messages'
 import { DateTimeCell } from '../../../AspectTable/TableCell/DateTimeCell'
-import {
-  EmailCell,
-  SMSCell,
-  WebhookCell,
-} from '../../../AspectTable/TableCell/ErrorCell/NotificationCells.jsx'
+import { EmailCell, SMSCell, WebhookCell } from '../../../AspectTable/TableCell/ErrorCell/NotificationCells.jsx'
 
 const baseConfig = ({ formatMessage }) => {
   return {

@@ -13,9 +13,7 @@ import styles from './Form.css'
 
 const cssClasses = classnames.bind(styles)
 
-const AspectForm = ({
-  config: { sections, classNames, messages: customMessages },
-}) => {
+const AspectForm = ({ config: { sections, classNames, messages: customMessages } }) => {
   const { formik, toggleEdit } = useFormikContext()
   const messages = {
     ...formMessagesBase,
@@ -30,53 +28,34 @@ const AspectForm = ({
         [classNames.container]: !!classNames.container,
       })}
     >
-      <Form
-        noValidate
-        autoComplete="off"
-        className={cssClasses('form__parent')}
-      >
+      <Form noValidate autoComplete="off" className={cssClasses('form__parent')}>
         {sections &&
-          sections.map(
-            ({
-              id,
-              label,
-              labelI18nKey,
-              rows,
-              hideHeader,
-              classNames = {},
-              visibleIf,
-            }) => {
-              if (visibleIf && !visibleIf(formik.values, toggleEdit)) {
-                return null
-              }
-              return (
-                <Grid
-                  key={id}
-                  item
-                  xs={12}
-                  className={cssClasses('form__sectionContainer')}
-                >
-                  <Grid container>
-                    {hideHeader ? null : (
-                      <FormSectionHeader
-                        classNames={classNames}
-                        header={label}
-                        headerI18nKey={labelI18nKey}
-                        messages={messages}
-                      />
-                    )}
-                    <FormSection
-                      classNames={classNames}
-                      fullWidth={hideHeader === true}
-                      messages={messages}
-                      rows={rows}
-                      parentKey={id}
-                    />
-                  </Grid>
-                </Grid>
-              )
+          sections.map(({ id, label, labelI18nKey, rows, hideHeader, classNames = {}, visibleIf }) => {
+            if (visibleIf && !visibleIf(formik.values, toggleEdit)) {
+              return null
             }
-          )}
+            return (
+              <Grid key={id} item xs={12} className={cssClasses('form__sectionContainer')}>
+                <Grid container>
+                  {hideHeader ? null : (
+                    <FormSectionHeader
+                      classNames={classNames}
+                      header={label}
+                      headerI18nKey={labelI18nKey}
+                      messages={messages}
+                    />
+                  )}
+                  <FormSection
+                    classNames={classNames}
+                    fullWidth={hideHeader === true}
+                    messages={messages}
+                    rows={rows}
+                    parentKey={id}
+                  />
+                </Grid>
+              </Grid>
+            )
+          })}
       </Form>
     </Grid>
   )

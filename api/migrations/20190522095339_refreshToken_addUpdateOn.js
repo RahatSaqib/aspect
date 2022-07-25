@@ -6,18 +6,10 @@ async function up(knex) {
     refreshToken.dateTime('updatedOn')
   })
 
-  const rt = await knex('RefreshToken as r').select(
-    'r.expires',
-    'r.createdOn',
-    'r.clientType'
-  )
+  const rt = await knex('RefreshToken as r').select('r.expires', 'r.createdOn', 'r.clientType')
 
   await Promise.each(rt, token => {
-    const updatedOn = setUpdatedOn(
-      token.expires,
-      token.createdOn,
-      token.clientType
-    )
+    const updatedOn = setUpdatedOn(token.expires, token.createdOn, token.clientType)
     return knex('RefreshToken as r')
       .update({
         updatedOn,
@@ -27,12 +19,8 @@ async function up(knex) {
 
   function setUpdatedOn(expires, created, type = 'web') {
     const validity = type === 'web' ? 7 : 30
-    const timeDiff = Math.ceil(
-      (expires.getTime() - created.getTime()) / 86400000
-    )
-    return timeDiff > validity
-      ? new Date(expires.getTime() - validity * 86400000)
-      : null
+    const timeDiff = Math.ceil((expires.getTime() - created.getTime()) / 86400000)
+    return timeDiff > validity ? new Date(expires.getTime() - validity * 86400000) : null
   }
 }
 

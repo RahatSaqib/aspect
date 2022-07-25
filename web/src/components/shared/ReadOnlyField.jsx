@@ -42,10 +42,7 @@ export const ReadOnlyField = ({
         {label}
       </label>
       {/* eslint-enable jsx-a11y/label-has-for */}
-      <div
-        id={label.replace(' ', '_')}
-        className={cssClasses('Container__Value')}
-      >
+      <div id={label.replace(' ', '_')} className={cssClasses('Container__Value')}>
         {!value ? nullText : format ? format(value) : value}
         {to && (
           <Link to={to} className={cssClasses('Container__Link')}>

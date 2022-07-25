@@ -13,7 +13,7 @@ import TextField from '@material-ui/core/TextField'
 // Our own imports
 import recomposeForm, { errorProps } from '../../components/recomposeForm'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
-import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
+import SiteAutoCompleteField from '../../MigratedComponents/SiteAutocompleteField'
 import { tokens } from '../../deviceApproval/DeviceApprovalRedux'
 import AspectDialog from '../../components/shared/AspectDialog'
 
@@ -69,12 +69,7 @@ export const RouterDetailModalForm = props => {
 
   const actions = [
     props.onCancel && (
-      <Button
-        onClick={props.onCancel}
-        type="button"
-        color="primary"
-        style={{ marginRight: 10 }}
-      >
+      <Button onClick={props.onCancel} type="button" color="primary" style={{ marginRight: 10 }}>
         {labels.cancel}
       </Button>
     ),
@@ -127,13 +122,12 @@ export const RouterDetailModalForm = props => {
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>
             <SiteAutoCompleteField
-              className={cssClasses('AutoCompleteField__Inner__AutoComplete')}
               name="SiteId"
               floatingLabelText={labels.siteId}
               value={values.siteId}
-              onSiteIdChange={props.onSiteIdChange}
+              onChange={props.onSiteIdChange}
               hintText="Enter site name"
-              fullWidth
+              floatingLabelFixed
               errorText={meta.siteId.touched && meta.siteId.error}
             />
             <Link
@@ -155,9 +149,7 @@ export const RouterDetailModalForm = props => {
               value={field.value}
               onClick={stopEventPropagation}
               onChange={event =>
-                props.onConfigurationDataChange(
-                  values.configurationData.setIn(field.path, event.target.value)
-                )
+                props.onConfigurationDataChange(values.configurationData.setIn(field.path, event.target.value))
               }
               fullWidth
               margin="normal"

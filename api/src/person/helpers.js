@@ -14,11 +14,7 @@ const customBoolean = description => [
   [
     Joi.boolean().optional().allow(null).description(description),
     Joi.number().optional().valid(0, 1).allow(null).description(description),
-    Joi.string()
-      .optional()
-      .valid('false', 'true', '0', '1')
-      .allow(null)
-      .description(description),
+    Joi.string().optional().valid('false', 'true', '0', '1').allow(null).description(description),
   ],
 ]
 // -------------------------------------------------------------------------------
@@ -81,9 +77,7 @@ const personDetailsResponse = {
         timezone: Joi.string().allow(null, '').description('Person timezone'),
         culture: Joi.string().allow(null, '').description('Person culture'),
         notes: Joi.string().allow(null, '').description('Person notes'),
-        lastPartnerId: Joi.number()
-          .allow(null)
-          .description('Person lastPartnerId'),
+        lastPartnerId: Joi.number().allow(null).description('Person lastPartnerId'),
         hidePatientId: customBoolean('Person hidePatientId'),
         hideSampleId: customBoolean('Person hideSampleId'),
         hideNotes: customBoolean('Person hideNotes'),
@@ -93,20 +87,11 @@ const personDetailsResponse = {
         userLockedOut: customBoolean('User userLockedOut'),
         canLogIn: customBoolean('Person canLogIn'),
         disabled: customBoolean('Person disabled'),
-        disabledOn: Joi.date()
-          .allow(null)
-          .description('Date person was disabled'),
-        disabledBy: Joi.number()
-          .allow(null)
-          .description('Id of user that disabled person'),
+        disabledOn: Joi.date().allow(null).description('Date person was disabled'),
+        disabledBy: Joi.number().allow(null).description('Id of user that disabled person'),
         jobId: Joi.number().allow(null).description('Id of first Job'),
-        jobFunctions: Joi.array()
-          .items(Joi.number())
-          .allow(null)
-          .description('Array of jobFunctionId'),
-        partnerId: Joi.number()
-          .allow(null)
-          .description('partnerId of first jobFunction'),
+        jobFunctions: Joi.array().items(Joi.number()).allow(null).description('Array of jobFunctionId'),
+        partnerId: Joi.number().allow(null).description('partnerId of first jobFunction'),
       }),
   }),
 }

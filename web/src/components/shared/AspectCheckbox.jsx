@@ -4,13 +4,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 
-const AspectCheckbox = ({
-  autoWidth,
-  className,
-  size = 'medium',
-  color = 'primary',
-  ...restProps
-}) => (
+const AspectCheckbox = ({ autoWidth, className, size = 'medium', color = 'primary', ...restProps }) => (
   <Checkbox
     className={classNames(className)}
     color={color}

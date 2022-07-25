@@ -22,9 +22,7 @@ const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
       {...restProps}
       onClick={onClick || onLinkClick}
       className={classNames(theme.link, {
-        [theme.active]: new RegExp(`^${restProps.href}`).test(
-          location.pathname
-        ),
+        [theme.active]: new RegExp(`^${restProps.href}`).test(location.pathname),
       })}
       to={restProps.href}
     >

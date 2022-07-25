@@ -36,10 +36,7 @@ const NotificationList = () => {
   const location = useLocation()
 
   const onClickRow = ({ column, row }) => {
-    const url = column.link.url.replace(
-      `:${column.link.key}`,
-      get(row.original, column.link.key)
-    )
+    const url = column.link.url.replace(`:${column.link.key}`, get(row.original, column.link.key))
     gotoWithReturnUrl(url, navigate, location)
   }
 
@@ -52,20 +49,12 @@ const NotificationList = () => {
           // style={{ paddingTop: '2px', paddingBottom: '2px' }}
           className={cssClasses('logs-header')}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => navigate('/browse/notification')}
-          >
+          <Button variant="contained" color="primary" onClick={() => navigate('/browse/notification')}>
             {formatMessage(messages.backButton)}
           </Button>
         </ShellHeader>
         <ShellContent>
-          <AspectTable
-            baseConfig={baseConfig}
-            consts={NOTIFICATION_HISTORY}
-            onClickRow={onClickRow}
-          />
+          <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_HISTORY} onClickRow={onClickRow} />
         </ShellContent>
       </Shell>
       {/* </div> */}

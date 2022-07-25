@@ -8,16 +8,7 @@ import { connect } from 'react-redux'
 import TagInput from '../components/shared/TagInput'
 import { fetchPossibleTags } from './TagRedux'
 
-const ConnectedTagInput = ({
-  qryId,
-  qryType,
-  tags,
-  maxTags,
-  value,
-  onTagChange,
-  fetchPossibleTags,
-  ...restProps
-}) => {
+const ConnectedTagInput = ({ qryId, qryType, tags, maxTags, value, onTagChange, fetchPossibleTags, ...restProps }) => {
   useEffect(() => {
     fetchPossibleTags(qryType)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,13 +36,9 @@ const ConnectedTagInput = ({
       return
     }
 
-    const isExist = Array.from(selectedItem).some(
-      val => val.title.toLowerCase() === newTag.toLowerCase()
-    )
+    const isExist = Array.from(selectedItem).some(val => val.title.toLowerCase() === newTag.toLowerCase())
 
-    const newSelectedItem = !isExist
-      ? [...selectedItem, { title: newTag }]
-      : [...selectedItem]
+    const newSelectedItem = !isExist ? [...selectedItem, { title: newTag }] : [...selectedItem]
 
     onChange(newSelectedItem)
   }
@@ -89,6 +76,4 @@ ConnectedTagInput.propTypes = {
   maxTags: PropTypes.number,
 }
 
-export default connect(mapStateToProps, { fetchPossibleTags })(
-  ConnectedTagInput
-)
+export default connect(mapStateToProps, { fetchPossibleTags })(ConnectedTagInput)

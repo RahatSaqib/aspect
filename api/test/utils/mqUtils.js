@@ -3,9 +3,7 @@ const QUEUE_TIMEOUT_TIME = 4000
 
 const { createMessageQueue } = require('../../src/mq')
 const config = require('../../src/config')
-const {
-  updateSubscription: updateHandlersSubscription,
-} = require('../../src/subscriptions')
+const { updateSubscription: updateHandlersSubscription } = require('../../src/subscriptions')
 
 let sharedQueue = null
 async function queueConnect() {

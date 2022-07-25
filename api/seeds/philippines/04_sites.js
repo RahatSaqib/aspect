@@ -6,18 +6,13 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const sites = require('./fixtures/sites.json')
-const {
-  deviceTypeToId,
-  deviceApprovalToId,
-} = require('../../src/shared/dictionary')
+const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 const { getPartnerByName } = require('../utils')
 
 async function seed(knex) {
   const partner = await getPartnerByName(knex, 'Philippines')
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -37,23 +32,19 @@ async function seed(knex) {
     .innerJoin('State as s', 's.id', 'g.stateId')
     .where({ 'g.countryId': philippinesCountry.id })
     .select('g.countryId', 'l.id', 'l.name', 's.name as stateName')
-  const provincesByName = philippinesRegions.reduce(
-    (provinceMemo, province) => {
-      provinceMemo[province.name.toLowerCase()] = province
-      const provinceDistricts = _.filter(philippinesDistricts, {
-        stateName: province.name,
-      })
-      if (provinceDistricts) {
-        provinceMemo[province.name.toLowerCase()].districts =
-          provinceDistricts.reduce((districtMemo, district) => {
-            districtMemo[district.name.toLowerCase()] = district
-            return districtMemo
-          }, {})
-      }
-      return provinceMemo
-    },
-    {}
-  )
+  const provincesByName = philippinesRegions.reduce((provinceMemo, province) => {
+    provinceMemo[province.name.toLowerCase()] = province
+    const provinceDistricts = _.filter(philippinesDistricts, {
+      stateName: province.name,
+    })
+    if (provinceDistricts) {
+      provinceMemo[province.name.toLowerCase()].districts = provinceDistricts.reduce((districtMemo, district) => {
+        districtMemo[district.name.toLowerCase()] = district
+        return districtMemo
+      }, {})
+    }
+    return provinceMemo
+  }, {})
 
   await Promise.each(sites, async clinic => {
     const province = clinic.stateName
@@ -137,20 +128,14 @@ async function seed(knex) {
               hostId: device.hostId,
               culture: philippinesCountry.culture,
               timezone: siteData.timezoneId,
-              configurationData: device.gxAlertDeviceId
-                ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}`
-                : '{}',
+              configurationData: device.gxAlertDeviceId ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}` : '{}',
               ...auditFields,
             })
           } else {
             const deviceConfigurationData = JSON.parse(
-              existingDevice.configurationData
-                ? existingDevice.configurationData
-                : '{}'
+              existingDevice.configurationData ? existingDevice.configurationData : '{}'
             )
-            if (
-              deviceConfigurationData.gxAlertDeviceId !== device.gxAlertDeviceId
-            ) {
+            if (deviceConfigurationData.gxAlertDeviceId !== device.gxAlertDeviceId) {
               deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
             }
             if (
@@ -162,8 +147,7 @@ async function seed(knex) {
               existingDevice.macAddress !== device.macAddress ||
               existingDevice.hostId !== device.hostId ||
               existingDevice.timezone !== siteData.timezoneId ||
-              existingDevice.configurationData !==
-                JSON.stringify(deviceConfigurationData)
+              existingDevice.configurationData !== JSON.stringify(deviceConfigurationData)
             ) {
               await knex('Device')
                 .where('id', existingDevice.id)

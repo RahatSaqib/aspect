@@ -9,21 +9,8 @@ async function up(knex) {
     person.dropForeign(['updatedBy'])
   })
   await knex.schema.table('Person', person => {
-    person
-      .integer('createdBy')
-      .unsigned()
-      .references('id')
-      .inTable('User')
-      .nullable()
-      .alter()
-    person
-      .integer('updatedBy')
-      .unsigned()
-      .references('id')
-      .inTable('User')
-      .onDelete('SET NULL')
-      .nullable()
-      .alter()
+    person.integer('createdBy').unsigned().references('id').inTable('User').nullable().alter()
+    person.integer('updatedBy').unsigned().references('id').inTable('User').onDelete('SET NULL').nullable().alter()
   })
 
   await knex.schema.table('NotificationType', notificationType => {
@@ -31,13 +18,7 @@ async function up(knex) {
     notificationType.dropForeign(['updatedBy'])
   })
   await knex.schema.table('NotificationType', notificationType => {
-    notificationType
-      .integer('createdBy')
-      .unsigned()
-      .references('id')
-      .inTable('User')
-      .nullable()
-      .alter()
+    notificationType.integer('createdBy').unsigned().references('id').inTable('User').nullable().alter()
     notificationType
       .integer('updatedBy')
       .unsigned()
@@ -91,20 +72,8 @@ async function down(knex) {
   }
 
   await knex.schema.table('Person', person => {
-    person
-      .integer('createdBy')
-      .unsigned()
-      .references('id')
-      .inTable('User')
-      .notNullable()
-      .alter()
-    person
-      .integer('updatedBy')
-      .unsigned()
-      .references('id')
-      .inTable('User')
-      .notNullable()
-      .alter()
+    person.integer('createdBy').unsigned().references('id').inTable('User').notNullable().alter()
+    person.integer('updatedBy').unsigned().references('id').inTable('User').notNullable().alter()
   })
 
   await knex.schema.table('NotificationType', notificationType => {
@@ -114,29 +83,15 @@ async function down(knex) {
 
   if (!_.isEmpty(firstCountryAdminUserPerPartner)) {
     await Promise.each(firstCountryAdminUserPerPartner, async countryAdmin =>
-      knex('NotificationType')
-        .where('partnerId', countryAdmin.partnerId)
-        .update({
-          createdBy: countryAdmin.userId,
-          updatedBy: countryAdmin.userId,
-        })
+      knex('NotificationType').where('partnerId', countryAdmin.partnerId).update({
+        createdBy: countryAdmin.userId,
+        updatedBy: countryAdmin.userId,
+      })
     )
   }
 
   await knex.schema.table('NotificationType', notificationType => {
-    notificationType
-      .integer('createdBy')
-      .unsigned()
-      .references('id')
-      .inTable('User')
-      .notNullable()
-      .alter()
-    notificationType
-      .integer('updatedBy')
-      .unsigned()
-      .references('id')
-      .inTable('User')
-      .notNullable()
-      .alter()
+    notificationType.integer('createdBy').unsigned().references('id').inTable('User').notNullable().alter()
+    notificationType.integer('updatedBy').unsigned().references('id').inTable('User').notNullable().alter()
   })
 }

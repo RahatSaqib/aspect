@@ -4,17 +4,9 @@ const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
 
 const { getUser } = require('../../auth/service')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
-const {
-  knex,
-  filterParams,
-  filterDateRangeParams,
-  sortPageParams,
-} = require('../../db')
+const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../../db')
 const { formatDateOrDefault, getDatesFromQuery } = require('../../shared/date')
-const {
-  allAssayToId,
-  allResultCategoryToId,
-} = require('../../shared/dictionary')
+const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const logger = require('../../shared/logger')
 const { RELABEL_EXCEL } = require('../../shared/constants')
@@ -25,10 +17,7 @@ const { createFormObject } = require('../../forms/service')
  * helpers
  * **************************************
  */
-const presumptiveTbCases = [
-  'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-  'Presumptive_TB',
-]
+const presumptiveTbCases = ['Presumptive_Pulmonary_Smear_Negative_TB_Cases', 'Presumptive_TB']
 const presumptiveDrTbCases = [
   'Failures_of_Category_I',
   'Non_converters_of_Category_I',
@@ -83,11 +72,7 @@ const inTypeOfPatient = (typeOfPatientValues, moreConditions) => {
   return counter('r.id', condition)
 }
 // ----------------
-const andByHistory = (
-  typeOfPatientValue,
-  patientHistoryValue,
-  resultCategoryCondition
-) => {
+const andByHistory = (typeOfPatientValue, patientHistoryValue, resultCategoryCondition) => {
   let condition = `
     ${typeOfPatient(typeOfPatientValue)}
   `
@@ -100,11 +85,7 @@ const andByHistory = (
   return counter('r.id', condition)
 }
 // ----------------
-const andByRetreatment = (
-  typeOfPatientValue,
-  patientRetreatmentValue,
-  resultCategoryCondition
-) => {
+const andByRetreatment = (typeOfPatientValue, patientRetreatmentValue, resultCategoryCondition) => {
   let condition = `
     ${typeOfPatient(typeOfPatientValue)}
   `
@@ -128,9 +109,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   }
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
-  const positiveResultCategories = _.values(
-    _.pick(resultCategoryIds, getPositiveCategoriesExternalIds())
-  )
+  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
 
   // ----------------
   const mtbDetected = `
@@ -154,16 +133,10 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
        */
       .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
       .leftJoin('ResultCategoryAssay as rca1', function () {
-        this.on('r.assayId', 'rca1.assayId').andOn(
-          'r.resultCategory1',
-          'rca1.resultCategoryId'
-        )
+        this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
       })
       .leftJoin('ResultCategoryAssay as rca2', function () {
-        this.on('r.assayId', 'rca2.assayId').andOn(
-          'r.resultCategory2',
-          'rca2.resultCategoryId'
-        )
+        this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
       })
       .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
       .modify(addConstraints, dataConstraints, {
@@ -173,11 +146,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         assay: 'a',
         result: 'r',
       })
-      .modify(
-        filterDateRangeParams,
-        { minDate: dateFrom, maxDate: dateTo },
-        'r.endedOn'
-      )
+      .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
       .modify(filterParams, query, {
         countryId: 'g.countryId',
         stateId: 'g.stateId',
@@ -187,16 +156,16 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .select(
         'r.deviceId',
         knex.raw(`
-      DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
-    `),
+          DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
+        `),
         /**
          * Notice that we below group by `deviceId`
          * only because we need to count number of modules
          * for each device
          */
         knex.raw(`
-      ROUND(IFNULL(dc.dailyCapacity, 12) / 3, 0) as cntModules
-    `)
+          ROUND(IFNULL(dc.dailyCapacity, 12) / 3, 0) as cntModules
+        `)
       )
       .groupBy('yearAndMonth', 'r.deviceId')
       /**
@@ -245,15 +214,14 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         r.resultCategory2 = ${resultCategoryIds.Indeterminate}
       `
         ),
-        cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate:
-          inTypeOfPatient(
-            presumptiveDrTbCases,
-            `
+        cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `
         r.resultCategory1 IN (${positiveResultCategories})
         and
         r.resultCategory2 = ${resultCategoryIds.Indeterminate}
       `
-          ),
+        ),
         /**
          * ****************************************
          * Block 2 - Type of Patient : Presumptive TB Cases
@@ -263,10 +231,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * Patient History = Unknown History
          */
         // cell B26
-        cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_all: andByHistory(
-          'Presumptive_TB',
-          'unknown'
-        ),
+        cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_all: andByHistory('Presumptive_TB', 'unknown'),
         // cell B29
         cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_Mtb: andByHistory(
           'Presumptive_TB',
@@ -274,28 +239,20 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           mtbDetected
         ),
         // cell B32
-        cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_MtbRif:
-          andByHistory('Presumptive_TB', 'unknown', mtbRifDetected),
+        cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_MtbRif: andByHistory(
+          'Presumptive_TB',
+          'unknown',
+          mtbRifDetected
+        ),
         /** -----------------
          * Patient History = New
          */
         // cell C26
-        cnt_TypeOfPatient_Presumptive_TB_Cases_New_all: andByHistory(
-          'Presumptive_TB',
-          'new'
-        ),
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_all: andByHistory('Presumptive_TB', 'new'),
         // cell C29
-        cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb: andByHistory(
-          'Presumptive_TB',
-          'new',
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb: andByHistory('Presumptive_TB', 'new', mtbDetected),
         // cell C32
-        cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif: andByHistory(
-          'Presumptive_TB',
-          'new',
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif: andByHistory('Presumptive_TB', 'new', mtbRifDetected),
         /**
          * ****************************************
          * Block 2 - Type of Patient : Presumptive DR TB Cases
@@ -305,126 +262,61 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * Column (3) - remain positive at month 5 or later and smear negative patients who become smear positive at month 2
          */
         // cell E26
-        cnt_TypeOfPatient_Column_3_all: andByRetreatment(
-          'Failures_of_Category_I'
-        ),
+        cnt_TypeOfPatient_Column_3_all: andByRetreatment('Failures_of_Category_I'),
         // cell E29
-        cnt_TypeOfPatient_Column_3_Mtb: andByRetreatment(
-          'Failures_of_Category_I',
-          null,
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_Column_3_Mtb: andByRetreatment('Failures_of_Category_I', null, mtbDetected),
         // cell E32
-        cnt_TypeOfPatient_Column_3_MtbRif: andByRetreatment(
-          'Failures_of_Category_I',
-          null,
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_Column_3_MtbRif: andByRetreatment('Failures_of_Category_I', null, mtbRifDetected),
         /** -----------------
          * Column (4) - remain positive at month 5 or later
          */
         // cell F26
-        cnt_TypeOfPatient_Column_4_all: andByRetreatment(
-          'Failures_of_Retreatment'
-        ),
+        cnt_TypeOfPatient_Column_4_all: andByRetreatment('Failures_of_Retreatment'),
         // cell F29
-        cnt_TypeOfPatient_Column_4_Mtb: andByRetreatment(
-          'Failures_of_Retreatment',
-          null,
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_Column_4_Mtb: andByRetreatment('Failures_of_Retreatment', null, mtbDetected),
         // cell F32
-        cnt_TypeOfPatient_Column_4_MtbRif: andByRetreatment(
-          'Failures_of_Retreatment',
-          null,
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_Column_4_MtbRif: andByRetreatment('Failures_of_Retreatment', null, mtbRifDetected),
         /** -----------------
          * Column (5) - remain positive at month 2
          */
         // cell G26
-        cnt_TypeOfPatient_Column_5_all: andByRetreatment(
-          'Non_converters_of_Category_I'
-        ),
+        cnt_TypeOfPatient_Column_5_all: andByRetreatment('Non_converters_of_Category_I'),
         // cell G29
-        cnt_TypeOfPatient_Column_5_Mtb: andByRetreatment(
-          'Non_converters_of_Category_I',
-          null,
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_Column_5_Mtb: andByRetreatment('Non_converters_of_Category_I', null, mtbDetected),
         // cell G32
-        cnt_TypeOfPatient_Column_5_MtbRif: andByRetreatment(
-          'Non_converters_of_Category_I',
-          null,
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_Column_5_MtbRif: andByRetreatment('Non_converters_of_Category_I', null, mtbRifDetected),
         /** -----------------
          * Column (6) - remain positive at month 3
          */
         // cell H26
-        cnt_TypeOfPatient_Column_6_all: andByRetreatment(
-          'Non_converters_of_Retreatment'
-        ),
+        cnt_TypeOfPatient_Column_6_all: andByRetreatment('Non_converters_of_Retreatment'),
         // cell H29
-        cnt_TypeOfPatient_Column_6_Mtb: andByRetreatment(
-          'Non_converters_of_Retreatment',
-          null,
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_Column_6_Mtb: andByRetreatment('Non_converters_of_Retreatment', null, mtbDetected),
         // cell H32
-        cnt_TypeOfPatient_Column_6_MtbRif: andByRetreatment(
-          'Non_converters_of_Retreatment',
-          null,
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_Column_6_MtbRif: andByRetreatment('Non_converters_of_Retreatment', null, mtbRifDetected),
         /** -----------------
          * Column (7) - Relapses (CAT I)
          */
         // cell I26
-        cnt_TypeOfPatient_Column_7_all: andByRetreatment(
-          'Relapses',
-          'Category-I'
-        ),
+        cnt_TypeOfPatient_Column_7_all: andByRetreatment('Relapses', 'Category-I'),
         // cell I29
-        cnt_TypeOfPatient_Column_7_Mtb: andByRetreatment(
-          'Relapses',
-          'Category-I',
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_Column_7_Mtb: andByRetreatment('Relapses', 'Category-I', mtbDetected),
         // cell I32
-        cnt_TypeOfPatient_Column_7_MtbRif: andByRetreatment(
-          'Relapses',
-          'Category-I',
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_Column_7_MtbRif: andByRetreatment('Relapses', 'Category-I', mtbRifDetected),
         /** -----------------
          * Column (8) - Relapses (CAT II)
          */
         // cell J26
-        cnt_TypeOfPatient_Column_8_all: andByRetreatment(
-          'Relapses',
-          'Retreatment'
-        ),
+        cnt_TypeOfPatient_Column_8_all: andByRetreatment('Relapses', 'Retreatment'),
         // cell J29
-        cnt_TypeOfPatient_Column_8_Mtb: andByRetreatment(
-          'Relapses',
-          'Retreatment',
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_Column_8_Mtb: andByRetreatment('Relapses', 'Retreatment', mtbDetected),
         // cell J32
-        cnt_TypeOfPatient_Column_8_MtbRif: andByRetreatment(
-          'Relapses',
-          'Retreatment',
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_Column_8_MtbRif: andByRetreatment('Relapses', 'Retreatment', mtbRifDetected),
         /** -----------------
          * Column (9) - Treatment after loss to follow up (CAT I)
          */
         // cell K26
-        cnt_TypeOfPatient_Column_9_all: andByRetreatment(
-          'Treatment_after_loss_to_follow_up',
-          'Category-I'
-        ),
+        cnt_TypeOfPatient_Column_9_all: andByRetreatment('Treatment_after_loss_to_follow_up', 'Category-I'),
         // cell K29
         cnt_TypeOfPatient_Column_9_Mtb: andByRetreatment(
           'Treatment_after_loss_to_follow_up',
@@ -441,10 +333,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * Column (10) - Treatment after loss to follow up (CAT II)
          */
         // cell L26
-        cnt_TypeOfPatient_Column_10_all: andByRetreatment(
-          'Treatment_after_loss_to_follow_up',
-          'Retreatment'
-        ),
+        cnt_TypeOfPatient_Column_10_all: andByRetreatment('Treatment_after_loss_to_follow_up', 'Retreatment'),
         // cell L29
         cnt_TypeOfPatient_Column_10_Mtb: andByRetreatment(
           'Treatment_after_loss_to_follow_up',
@@ -466,10 +355,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           'unknown'
         ),
         // cell O27
-        cnt_TypeOfPatient_Column_11_all_New: andByHistory(
-          'Close_contacts_of_DR_TB_patient_with_symptoms',
-          'new'
-        ),
+        cnt_TypeOfPatient_Column_11_all_New: andByHistory('Close_contacts_of_DR_TB_patient_with_symptoms', 'new'),
         // cell O28
         cnt_TypeOfPatient_Column_11_all_PrevTreated: andByHistory(
           'Close_contacts_of_DR_TB_patient_with_symptoms',
@@ -517,20 +403,11 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * Column (12) - HIV infected person with TB S/S
          */
         // cell R26
-        cnt_TypeOfPatient_Column_12_all_UnknownHistory: andByHistory(
-          'HIV_infected_person_with_TB_SS',
-          'unknown'
-        ),
+        cnt_TypeOfPatient_Column_12_all_UnknownHistory: andByHistory('HIV_infected_person_with_TB_SS', 'unknown'),
         // cell R27
-        cnt_TypeOfPatient_Column_12_all_New: andByHistory(
-          'HIV_infected_person_with_TB_SS',
-          'new'
-        ),
+        cnt_TypeOfPatient_Column_12_all_New: andByHistory('HIV_infected_person_with_TB_SS', 'new'),
         // cell R28
-        cnt_TypeOfPatient_Column_12_all_PrevTreated: andByHistory(
-          'HIV_infected_person_with_TB_SS',
-          'treated'
-        ),
+        cnt_TypeOfPatient_Column_12_all_PrevTreated: andByHistory('HIV_infected_person_with_TB_SS', 'treated'),
 
         // cell R29
         cnt_TypeOfPatient_Column_12_Mtb_UnknownHistory: andByHistory(
@@ -539,11 +416,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           mtbDetected
         ),
         // cell R30
-        cnt_TypeOfPatient_Column_12_Mtb_New: andByHistory(
-          'HIV_infected_person_with_TB_SS',
-          'new',
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_Column_12_Mtb_New: andByHistory('HIV_infected_person_with_TB_SS', 'new', mtbDetected),
         // cell R31
         cnt_TypeOfPatient_Column_12_Mtb_PrevTreated: andByHistory(
           'HIV_infected_person_with_TB_SS',
@@ -558,11 +431,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           mtbRifDetected
         ),
         // cell R33
-        cnt_TypeOfPatient_Column_12_MtbRif_New: andByHistory(
-          'HIV_infected_person_with_TB_SS',
-          'new',
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_Column_12_MtbRif_New: andByHistory('HIV_infected_person_with_TB_SS', 'new', mtbRifDetected),
         // cell R34
         cnt_TypeOfPatient_Column_12_MtbRif_PrevTreated: andByHistory(
           'HIV_infected_person_with_TB_SS',
@@ -577,25 +446,22 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          */
         // ------------
         // cell B39
-        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_all:
-          andByHistory(
-            'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-            'unknown'
-          ),
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_all: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'unknown'
+        ),
         // cell B41
-        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_Mtb:
-          andByHistory(
-            'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-            'unknown',
-            mtbDetected
-          ),
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_Mtb: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'unknown',
+          mtbDetected
+        ),
         // cell B43
-        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_MtbRif:
-          andByHistory(
-            'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-            'unknown',
-            mtbRifDetected
-          ),
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_UnknownHistory_MtbRif: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'unknown',
+          mtbRifDetected
+        ),
         // ------------
         // cell C39
         cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_New_all: andByHistory(
@@ -627,12 +493,11 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           mtbDetected
         ),
         // cell D43
-        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_MtbRif:
-          andByHistory(
-            'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
-            'treated',
-            mtbRifDetected
-          ),
+        cnt_TypeOfPatient_Pres_SmearNeg_TB_Cases_PrevTreated_MtbRif: andByHistory(
+          'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+          'treated',
+          mtbRifDetected
+        ),
         /**
          * ****************************************
          * Block 3 - *Others (Specify)
@@ -661,10 +526,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         ),
         // ------------
         // cell M41
-        cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_all: andByHistory(
-          'Others_Extra_Pulmonary',
-          'unknown'
-        ),
+        cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_all: andByHistory('Others_Extra_Pulmonary', 'unknown'),
         // cell P41
         cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_Mtb: andByHistory(
           'Others_Extra_Pulmonary',
@@ -701,10 +563,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          */
         // ------------
         // cell N40
-        cnt_TypeOfPatient_OtherPulmClinDiag_New_all: andByHistory(
-          'Others_Pulmonary_clinically_diagnosed',
-          'new'
-        ),
+        cnt_TypeOfPatient_OtherPulmClinDiag_New_all: andByHistory('Others_Pulmonary_clinically_diagnosed', 'new'),
         // cell Q40
         cnt_TypeOfPatient_OtherPulmClinDiag_New_Mtb: andByHistory(
           'Others_Pulmonary_clinically_diagnosed',
@@ -719,22 +578,11 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         ),
         // ------------
         // cell N41
-        cnt_TypeOfPatient_OtherExtraPulm_New_all: andByHistory(
-          'Others_Extra_Pulmonary',
-          'new'
-        ),
+        cnt_TypeOfPatient_OtherExtraPulm_New_all: andByHistory('Others_Extra_Pulmonary', 'new'),
         // cell Q41
-        cnt_TypeOfPatient_OtherExtraPulm_New_Mtb: andByHistory(
-          'Others_Extra_Pulmonary',
-          'new',
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_OtherExtraPulm_New_Mtb: andByHistory('Others_Extra_Pulmonary', 'new', mtbDetected),
         // cell T41
-        cnt_TypeOfPatient_OtherExtraPulm_New_MtbRif: andByHistory(
-          'Others_Extra_Pulmonary',
-          'new',
-          mtbRifDetected
-        ),
+        cnt_TypeOfPatient_OtherExtraPulm_New_MtbRif: andByHistory('Others_Extra_Pulmonary', 'new', mtbRifDetected),
         // ------------
         // cell N42
         cnt_TypeOfPatient_OtherPulmBactConf_New_all: andByHistory(
@@ -776,16 +624,9 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         ),
         // ------------
         // cell O41
-        cnt_TypeOfPatient_OtherExtraPulm_Treated_all: andByHistory(
-          'Others_Extra_Pulmonary',
-          'treated'
-        ),
+        cnt_TypeOfPatient_OtherExtraPulm_Treated_all: andByHistory('Others_Extra_Pulmonary', 'treated'),
         // cell R41
-        cnt_TypeOfPatient_OtherExtraPulm_Treated_Mtb: andByHistory(
-          'Others_Extra_Pulmonary',
-          'treated',
-          mtbDetected
-        ),
+        cnt_TypeOfPatient_OtherExtraPulm_Treated_Mtb: andByHistory('Others_Extra_Pulmonary', 'treated', mtbDetected),
         // cell U41
         cnt_TypeOfPatient_OtherExtraPulm_Treated_MtbRif: andByHistory(
           'Others_Extra_Pulmonary',
@@ -875,14 +716,10 @@ async function getDataForReportDrTb10A(auth, query) {
   data.lgaName = 'All'
   data.siteName = siteName || 'All'
   if (stateId) {
-    ;[{ name: data.stateName }] = await knex('State')
-      .where('id', stateId)
-      .select('name')
+    ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
   }
   if (lgaId) {
-    ;[{ name: data.lgaName }] = await knex('Lga')
-      .where('id', lgaId)
-      .select('name')
+    ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
   }
 
   return {
@@ -914,9 +751,7 @@ async function getDataForReportDrTb10B(auth, query) {
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
-  const positiveResultCategories = _.values(
-    _.pick(resultCategoryIds, getPositiveCategoriesExternalIds())
-  )
+  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
 
   const data = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -936,11 +771,7 @@ async function getDataForReportDrTb10B(auth, query) {
     })
     .modify(sortPageParams, query, 'r.endedOn')
     // apply date range filter
-    .modify(
-      filterDateRangeParams,
-      { minDate: dateFrom, maxDate: dateTo },
-      'r.endedOn'
-    )
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     // apply remaining filters
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -1062,12 +893,8 @@ async function getDataForReportCovid19(auth, query) {
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
-  const positiveResultCategories = _.values(
-    _.pick(resultCategoryIds, getPositiveCategoriesExternalIds())
-  )
-  const negativeResultCategories = _.values(
-    _.pick(resultCategoryIds, ['NotDetected', 'Negative'])
-  )
+  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
+  const negativeResultCategories = _.values(_.pick(resultCategoryIds, ['NotDetected', 'Negative']))
 
   const conditionBase = (typeOfTest, gender, extraCondition) => {
     let condition = `
@@ -1090,37 +917,20 @@ async function getDataForReportCovid19(auth, query) {
   const fields = {
     cntAll: knex.raw('DISTINCT r.id'),
 
-    cnt_Invalid: counter(
-      'r.id',
-      `r.resultCategory1 = ${resultCategoryIds.Invalid}`
-    ),
-    cnt_NoResult: counter(
-      'r.id',
-      `r.resultCategory1 = ${resultCategoryIds.NoResult}`
-    ),
-    cnt_Error: counter(
-      'r.id',
-      `r.resultCategory1 = ${resultCategoryIds.Error}`
-    ),
+    cnt_Invalid: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Invalid}`),
+    cnt_NoResult: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.NoResult}`),
+    cnt_Error: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Error}`),
     /**
      * column C - Type of Test : New, Male
      */
     cnt_new_male_all: counter('r.id', conditionBase('new', 'Male')),
     cnt_new_male_positive: counter(
       'r.id',
-      conditionBase(
-        'new',
-        'Male',
-        `r.resultCategory1 IN (${positiveResultCategories})`
-      )
+      conditionBase('new', 'Male', `r.resultCategory1 IN (${positiveResultCategories})`)
     ),
     cnt_new_male_negative: counter(
       'r.id',
-      conditionBase(
-        'new',
-        'Male',
-        `r.resultCategory1 IN (${negativeResultCategories})`
-      )
+      conditionBase('new', 'Male', `r.resultCategory1 IN (${negativeResultCategories})`)
     ),
     /**
      * column D - Type of Test : New, Female
@@ -1128,19 +938,11 @@ async function getDataForReportCovid19(auth, query) {
     cnt_new_female_all: counter('r.id', conditionBase('new', 'Female')),
     cnt_new_female_positive: counter(
       'r.id',
-      conditionBase(
-        'new',
-        'Female',
-        `r.resultCategory1 IN (${positiveResultCategories})`
-      )
+      conditionBase('new', 'Female', `r.resultCategory1 IN (${positiveResultCategories})`)
     ),
     cnt_new_female_negative: counter(
       'r.id',
-      conditionBase(
-        'new',
-        'Female',
-        `r.resultCategory1 IN (${negativeResultCategories})`
-      )
+      conditionBase('new', 'Female', `r.resultCategory1 IN (${negativeResultCategories})`)
     ),
     /**
      * column F - Type of Test : Follow up, Female
@@ -1148,19 +950,11 @@ async function getDataForReportCovid19(auth, query) {
     cnt_treated_male_all: counter('r.id', conditionBase('treated', 'Male')),
     cnt_treated_male_positive: counter(
       'r.id',
-      conditionBase(
-        'treated',
-        'Male',
-        `r.resultCategory1 IN (${positiveResultCategories})`
-      )
+      conditionBase('treated', 'Male', `r.resultCategory1 IN (${positiveResultCategories})`)
     ),
     cnt_treated_male_negative: counter(
       'r.id',
-      conditionBase(
-        'treated',
-        'Male',
-        `r.resultCategory1 IN (${negativeResultCategories})`
-      )
+      conditionBase('treated', 'Male', `r.resultCategory1 IN (${negativeResultCategories})`)
     ),
     /**
      * column H - Type of Test : Follow up, Male
@@ -1168,19 +962,11 @@ async function getDataForReportCovid19(auth, query) {
     cnt_treated_female_all: counter('r.id', conditionBase('treated', 'Female')),
     cnt_treated_female_positive: counter(
       'r.id',
-      conditionBase(
-        'treated',
-        'Female',
-        `r.resultCategory1 IN (${positiveResultCategories})`
-      )
+      conditionBase('treated', 'Female', `r.resultCategory1 IN (${positiveResultCategories})`)
     ),
     cnt_treated_female_negative: counter(
       'r.id',
-      conditionBase(
-        'treated',
-        'Female',
-        `r.resultCategory1 IN (${negativeResultCategories})`
-      )
+      conditionBase('treated', 'Female', `r.resultCategory1 IN (${negativeResultCategories})`)
     ),
   }
   /**
@@ -1195,16 +981,10 @@ async function getDataForReportCovid19(auth, query) {
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('ResultCategoryAssay as rca1', function () {
-      this.on('r.assayId', 'rca1.assayId').andOn(
-        'r.resultCategory1',
-        'rca1.resultCategoryId'
-      )
+      this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
     })
     .leftJoin('ResultCategoryAssay as rca2', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn(
-        'r.resultCategory2',
-        'rca2.resultCategoryId'
-      )
+      this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
     })
     // scope Covid19 assay
     .whereIn('a.id', [assayIds.assayGXCovid19])
@@ -1216,11 +996,7 @@ async function getDataForReportCovid19(auth, query) {
       result: 'r',
     })
     // apply date range filter
-    .modify(
-      filterDateRangeParams,
-      { minDate: dateFrom, maxDate: dateTo },
-      'r.endedOn'
-    )
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     // apply remaining filters
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -1259,12 +1035,7 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
     .clone()
     .leftOuterJoin('Lga as lga', 'lga.id', 'g.lgaId')
     .leftOuterJoin('State as state', 'state.id', 'g.stateId')
-    .select(
-      's.id as siteId',
-      's.name as siteName',
-      'state.name as stateName',
-      'lga.name as lgaName'
-    )
+    .select('s.id as siteId', 's.name as siteName', 'state.name as stateName', 'lga.name as lgaName')
   const CONSTANT_COLS = [
     {
       line: 'line1',
@@ -1721,14 +1492,7 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
       _.forEach(_.keys(current), key => {
         const found = _.find(CONSTANT_COLS, { key })
         if (found) {
-          const {
-            deviceId,
-            lgaName,
-            siteId,
-            siteName,
-            stateName,
-            yearAndMonth,
-          } = current
+          const { deviceId, lgaName, siteId, siteName, stateName, yearAndMonth } = current
 
           obj[found.line] = {
             ...obj[found.line],
@@ -1768,11 +1532,7 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
 
   const queryForm = await knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
-    .join(
-      'FormDefinitionSchema as fschema',
-      'fd.formDefinitionSchemaId',
-      'fschema.id'
-    )
+    .join('FormDefinitionSchema as fschema', 'fd.formDefinitionSchemaId', 'fschema.id')
     .innerJoin('Disease as d', 'fd.diseaseId', 'd.id')
     .where('fd.partnerId', partnerId)
     .where('ft.externalId', 'gxConnectForm')
@@ -1782,9 +1542,7 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
       'fd.assayId',
       'fd.diseaseId',
       'ft.externalId as formTypeId',
-      knex.raw(
-        "REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName"
-      )
+      knex.raw("REPLACE(fschema.jsonSchemaFile, '.json', '') as jsonSchemaFileName")
     )
   /**
    * `forms` is a object with 2 props for 2 forms
@@ -1906,11 +1664,7 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
       assay: 'a',
       result: 'r',
     })
-    .modify(
-      filterDateRangeParams,
-      { minDate: dateFrom, maxDate: dateTo },
-      'r.endedOn'
-    )
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -1936,14 +1690,8 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
       const total = siteRow[`cntAll_${assayId}`]
       fields.forEach(field => {
         const fieldName = field.gxAlertDbColumn || field.name
-        const percentRaw =
-          total > 0 ? (100 * siteRow[`cnt_${assayId}_${fieldName}`]) / total : 0
-        const percent =
-          percentRaw === 0
-            ? 0
-            : percentRaw < 1
-            ? _.round(percentRaw, 2)
-            : _.round(percentRaw)
+        const percentRaw = total > 0 ? (100 * siteRow[`cnt_${assayId}_${fieldName}`]) / total : 0
+        const percent = percentRaw === 0 ? 0 : percentRaw < 1 ? _.round(percentRaw, 2) : _.round(percentRaw)
         siteRow[`cnt_${assayId}_${fieldName}`] = `${percent}%`
         sum += percent
       })

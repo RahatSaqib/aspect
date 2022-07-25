@@ -14,12 +14,7 @@ const { convertStringToFloat } = require('../shared/string')
 const { getDevice } = require('../device/service')
 const inventory = require('../inventory/service')
 
-async function mergeResult(
-  knex,
-  deviceId,
-  payload,
-  { now = new Date(), sampleId = null } = {}
-) {
+async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId = null } = {}) {
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {
@@ -70,20 +65,14 @@ async function mergeResult(
   // Select Workflow Status if specified, otherwise Error or OK depending on error payload
   let resultWorkflowStatusId = null
   if (_.has(payload, 'workflow.status.id')) {
-    resultWorkflowStatusId = await resultWorkflowStatusToId(
-      _.get(payload, 'workflow.status.id', '')
-    )
+    resultWorkflowStatusId = await resultWorkflowStatusToId(_.get(payload, 'workflow.status.id', ''))
   } else if (
     payload.error ||
-    (_.get(payload, 'data.resultText') &&
-      _.get(payload, 'data.resultText').toUpperCase().indexOf('ERROR') !== -1)
+    (_.get(payload, 'data.resultText') && _.get(payload, 'data.resultText').toUpperCase().indexOf('ERROR') !== -1)
   ) {
     resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
   } else if (existingResult) {
-    ;({ resultWorkflowStatusId } = await getLatestResultWorkflowLog(
-      knex,
-      existingResult.id
-    ))
+    ;({ resultWorkflowStatusId } = await getLatestResultWorkflowLog(knex, existingResult.id))
   } else {
     resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   }
@@ -133,9 +122,7 @@ async function mergeResult(
   if (_.has(payload, 'source.id')) {
     resultSourceId = await resultSourceToId(_.get(payload, 'source.id', ''))
     if (!resultSourceId) {
-      throw Boom.badRequest(
-        `Cannot find result source with id ${_.get(payload, 'source.id')}`
-      )
+      throw Boom.badRequest(`Cannot find result source with id ${_.get(payload, 'source.id')}`)
     }
   } else if (existingResult) {
     ;({ resultSourceId } = existingResult)
@@ -230,29 +217,17 @@ async function mergeResult(
       .first()
     let siteGeography = {}
     if (sampleOriginSite && sampleOriginSite.geographyId) {
-      siteGeography = await knex('Geography')
-        .where('id', sampleOriginSite.geographyId)
-        .first()
+      siteGeography = await knex('Geography').where('id', sampleOriginSite.geographyId).first()
     }
     if (originSiteGeographyId) {
-      const originSiteGeography =
-        (await knex('Geography').where('id', originSiteGeographyId).first()) ||
-        {}
+      const originSiteGeography = (await knex('Geography').where('id', originSiteGeographyId).first()) || {}
       if (originSiteGeography.countryId && !siteGeography.countryId) {
         siteGeography.countryId = originSiteGeography.countryId
       }
-      if (
-        siteGeography.countryId &&
-        originSiteGeography.stateId &&
-        !siteGeography.stateId
-      ) {
+      if (siteGeography.countryId && originSiteGeography.stateId && !siteGeography.stateId) {
         siteGeography.stateId = originSiteGeography.stateId
       }
-      if (
-        siteGeography.stateId &&
-        originSiteGeography.lgaId &&
-        !siteGeography.lgaId
-      ) {
+      if (siteGeography.stateId && originSiteGeography.lgaId && !siteGeography.lgaId) {
         siteGeography.lgaId = originSiteGeography.lgaId
       }
     }
@@ -287,25 +262,15 @@ async function mergeResult(
       street1: _.get(payload, 'sample.originSite.street1'),
       street2: _.get(payload, 'sample.originSite.street2'),
       zip: _.get(payload, 'sample.originSite.zip'),
-      longitude: convertStringToFloat(
-        _.get(payload, 'sample.originSite.location.longitude')
-      ),
-      latitude: convertStringToFloat(
-        _.get(payload, 'sample.originSite.location.latitude')
-      ),
+      longitude: convertStringToFloat(_.get(payload, 'sample.originSite.location.longitude')),
+      latitude: convertStringToFloat(_.get(payload, 'sample.originSite.location.latitude')),
       timezoneId: _.get(payload, 'sample.originSite.timezoneId'),
-      hoursStart: convertStringToFloat(
-        _.get(payload, 'sample.originSite.hoursStart')
-      ),
-      hoursEnd: convertStringToFloat(
-        _.get(payload, 'sample.originSite.hoursEnd')
-      ),
+      hoursStart: convertStringToFloat(_.get(payload, 'sample.originSite.hoursStart')),
+      hoursEnd: convertStringToFloat(_.get(payload, 'sample.originSite.hoursEnd')),
     }
     if (!sampleOriginSite) {
       if (!sampleOriginSiteName) {
-        throw Boom.badRequest(
-          `Cannot find Sample origin site ${payloadOriginSiteId}`
-        )
+        throw Boom.badRequest(`Cannot find Sample origin site ${payloadOriginSiteId}`)
       }
       const newSampleOriginSite = {
         ...sampleOriginSiteDetailsInPayload,
@@ -317,14 +282,9 @@ async function mergeResult(
         newSampleOriginSite.shortName = sampleOriginSiteName
       }
       if (newSampleOriginSite.shortName.length > 45) {
-        newSampleOriginSite.shortName = newSampleOriginSite.shortName.substr(
-          0,
-          45
-        )
+        newSampleOriginSite.shortName = newSampleOriginSite.shortName.substr(0, 45)
       }
-      const [newSampleOriginSiteId] = await knex('Site').insert(
-        newSampleOriginSite
-      )
+      const [newSampleOriginSiteId] = await knex('Site').insert(newSampleOriginSite)
       sampleOriginSite = { id: newSampleOriginSiteId }
     } else {
       await knex('Site')
@@ -353,154 +313,69 @@ async function mergeResult(
       const existingSample =
         (await knex('Sample')
           .where({ id: sampleId })
-          .first(
-            'externalId',
-            'collectedOn',
-            'sampleTypeId',
-            'originSiteId'
-          )) || {}
+          .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId')) || {}
       await knex('Sample')
         .where({ id: sampleId })
         .update({
           externalId: _.get(payload, 'sample.id', existingSample.externalId),
-          collectedOn: _.get(
-            payload,
-            'sample.collectedOn',
-            _.get(existingSample, 'collectedOn', null)
-          ),
-          sampleTypeId: payloadSampleTypeId
-            ? sampleTypeId
-            : existingSample.sampleTypeId,
-          originSiteId: payloadOriginSiteId
-            ? sampleOriginSiteId
-            : existingSample.originSiteId,
+          collectedOn: _.get(payload, 'sample.collectedOn', _.get(existingSample, 'collectedOn', null)),
+          sampleTypeId: payloadSampleTypeId ? sampleTypeId : existingSample.sampleTypeId,
+          originSiteId: payloadOriginSiteId ? sampleOriginSiteId : existingSample.originSiteId,
         })
     }
   }
 
   const existingResultDataString = _.get(existingResult, 'resultData', null)
-  const existingResultData = isJson(existingResultDataString)
-    ? JSON.parse(existingResultDataString)
-    : {}
+  const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}
 
   const resultData = _.has(payload, 'data')
     ? JSON.stringify(deepMerge(existingResultData, payload.data))
     : existingResultDataString
 
   const existingResultPatientString = _.get(existingResult, 'patientData', null)
-  const existingResultPatient = isJson(existingResultPatientString)
-    ? JSON.parse(existingResultPatientString)
-    : {}
+  const existingResultPatient = isJson(existingResultPatientString) ? JSON.parse(existingResultPatientString) : {}
   const patientData = _.has(payload, 'patient')
     ? JSON.stringify(deepMerge(existingResultPatient, payload.patient))
     : existingResultPatientString
 
-  const oemData = _.has(payload, 'oemData')
-    ? String(payload.oemData)
-    : _.get(existingResult, 'oemData')
+  const oemData = _.has(payload, 'oemData') ? String(payload.oemData) : _.get(existingResult, 'oemData')
 
-  const rawData = _.has(payload, 'rawData')
-    ? String(payload.rawData)
-    : _.get(existingResult, 'rawData')
+  const rawData = _.has(payload, 'rawData') ? String(payload.rawData) : _.get(existingResult, 'rawData')
 
   const result = {
-    latitude: _.get(
-      payload,
-      'location.latitude',
-      _.get(existingResult, 'latitude', site.latitude)
-    ),
-    longitude: _.get(
-      payload,
-      'location.longitude',
-      _.get(existingResult, 'longitude', site.longitude)
-    ),
+    latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', site.latitude)),
+    longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', site.longitude)),
     assayId: assay.id,
-    assayVersion: _.get(
-      payload,
-      'assay.version',
-      _.get(existingResult, 'assayVersion', null)
-    ),
+    assayVersion: _.get(payload, 'assay.version', _.get(existingResult, 'assayVersion', null)),
     resultTypeId,
     resultSourceId,
     sampleId,
-    sampleRunNumber: _.get(
-      payload,
-      'sample.runNumber',
-      _.get(existingResult, 'sampleRunNumber', null)
-    ),
-    sampleGroup: _.get(
-      payload,
-      'sample.group',
-      _.get(existingResult, 'sampleGroup', null)
-    ),
+    sampleRunNumber: _.get(payload, 'sample.runNumber', _.get(existingResult, 'sampleRunNumber', null)),
+    sampleGroup: _.get(payload, 'sample.group', _.get(existingResult, 'sampleGroup', null)),
     resultCategory1,
     resultCategory2,
     resultData,
-    startedOn: _.get(
-      payload,
-      'startedOn',
-      _.get(existingResult, 'startedOn', null)
-    ),
+    startedOn: _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null)),
     endedOn: _.get(payload, 'endedOn', _.get(existingResult, 'endedOn', null)),
-    consumableSerial: _.get(
-      payload,
-      'consumable[0].serial',
-      _.get(existingResult, 'consumableSerial', null)
-    ),
+    consumableSerial: _.get(payload, 'consumable[0].serial', _.get(existingResult, 'consumableSerial', null)),
     consumableExpirationDate: _.get(
       payload,
       'consumable[0].expirationDate',
       _.get(existingResult, 'consumableExpirationDate', null)
     ),
-    consumableLot: _.get(
-      payload,
-      'consumable[0].lot',
-      _.get(existingResult, 'consumableLot', null)
-    ),
-    instrumentSerial: _.get(
-      payload,
-      'instrument.serial',
-      _.get(existingResult, 'instrumentSerial', null)
-    ),
-    moduleSerial: _.get(
-      payload,
-      'instrument.module.serial',
-      _.get(existingResult, 'moduleSerial', null)
-    ),
-    moduleName: _.get(
-      payload,
-      'instrument.module.name',
-      _.get(existingResult, 'moduleName', null)
-    ),
+    consumableLot: _.get(payload, 'consumable[0].lot', _.get(existingResult, 'consumableLot', null)),
+    instrumentSerial: _.get(payload, 'instrument.serial', _.get(existingResult, 'instrumentSerial', null)),
+    moduleSerial: _.get(payload, 'instrument.module.serial', _.get(existingResult, 'moduleSerial', null)),
+    moduleName: _.get(payload, 'instrument.module.name', _.get(existingResult, 'moduleName', null)),
     oemData,
     rawData,
-    researchId: _.get(
-      payload,
-      'research.id',
-      _.get(existingResult, 'researchId', null)
-    ),
+    researchId: _.get(payload, 'research.id', _.get(existingResult, 'researchId', null)),
     patientData,
-    senderVersion: _.get(
-      payload,
-      'sender.version',
-      _.get(existingResult, 'senderVersion', null)
-    ),
-    senderOperator: _.get(
-      payload,
-      'sender.operator',
-      _.get(existingResult, 'senderOperator', null)
-    ),
+    senderVersion: _.get(payload, 'sender.version', _.get(existingResult, 'senderVersion', null)),
+    senderOperator: _.get(payload, 'sender.operator', _.get(existingResult, 'senderOperator', null)),
     notes: _.get(payload, 'notes', _.get(existingResult, 'notes', null)),
-    errorCode: _.get(
-      payload,
-      'error.code',
-      _.get(existingResult, 'errorCode', null)
-    ),
-    errorNotes: _.get(
-      payload,
-      'error.notes',
-      _.get(existingResult, 'errorNotes', null)
-    ),
+    errorCode: _.get(payload, 'error.code', _.get(existingResult, 'errorCode', null)),
+    errorNotes: _.get(payload, 'error.notes', _.get(existingResult, 'errorNotes', null)),
     updatedOn: now,
     createdOn: _.get(existingResult, 'createdOn', now),
     reportableSiteId,
@@ -556,16 +431,8 @@ async function getResult(knex, resultId) {
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
-    .leftJoin(
-      'ResultWorkflowLog as rsl',
-      'r.resultWorkflowStatusLogId',
-      'rsl.id'
-    )
-    .leftJoin(
-      'ResultWorkflowStatus as rs',
-      'rsl.resultWorkflowStatusId',
-      'rs.id'
-    )
+    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .where('r.id', resultId)
     .first(
       'r.externalId as resultExternalId',
@@ -696,11 +563,7 @@ async function getResult(knex, resultId) {
     lot: row.consumableLot,
     expirationDate: row.consumableExpirationDate,
   }
-  if (
-    consumable.serial != null ||
-    consumable.lot != null ||
-    consumable.expirationDate != null
-  ) {
+  if (consumable.serial != null || consumable.lot != null || consumable.expirationDate != null) {
     result.consumable = [consumable]
   }
 
@@ -750,14 +613,7 @@ async function getResult(knex, resultId) {
 async function postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
 
-  await addResultWorkflowLogIfChanged(
-    knex,
-    payload,
-    result,
-    previousResult,
-    'Device API Update',
-    now
-  )
+  await addResultWorkflowLogIfChanged(knex, payload, result, previousResult, 'Device API Update', now)
 
   await resolveAutoTagging(knex, result)
   // // TODO ASP-355 consume inventory using a message listener instead
@@ -772,9 +628,7 @@ async function postProcessMergeResult(context, result, previousResult) {
 async function consumeInventoryForResult(knex, payload, result) {
   // TODO ASP-355 Move consumeInventory for Result to listener
   // Update Inventory Levels at Site
-  const consumablesInResultData = _.isEmpty(payload.consumable)
-    ? []
-    : payload.consumable
+  const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
   await inventory.consumeInventoryForResult(
     result.id,
     result.assayId,
@@ -798,16 +652,9 @@ async function resolveAutoTagging(knex, result) {
   // taggingResults is array of strings ['']
   const taggingResults = getAllResultTags(country, result)
   // existingTags is array [{ id: number, title: 'string' }]
-  const existingTags = await getExistingTagByPartner(
-    knex,
-    result.partnerId,
-    taggingResults,
-    result.id
-  )
+  const existingTags = await getExistingTagByPartner(knex, result.partnerId, taggingResults, result.id)
 
-  const tagsToBeAdded = _.uniqBy(
-    _.filter(taggingResults, tag => !includesIgnoreCase(existingTags, tag))
-  )
+  const tagsToBeAdded = _.uniqBy(_.filter(taggingResults, tag => !includesIgnoreCase(existingTags, tag)))
 
   const tagsToBeUpdated = _.uniqBy(
     _.filter(existingTags, tag =>
@@ -837,10 +684,7 @@ async function resolveAutoTagging(knex, result) {
 }
 
 function includesIgnoreCase(collection, value) {
-  return _.some(
-    collection,
-    item => item.title.toLowerCase() === value.toLowerCase()
-  )
+  return _.some(collection, item => item.title.toLowerCase() === value.toLowerCase())
 }
 
 async function getCountryByDeviceId(knex, deviceId) {
@@ -866,11 +710,7 @@ function getAllResultTags(country, result) {
       if (res) taggingResults = taggingResults.concat(res)
     }
     const patientdata = JSON.parse(result.patientData)
-    if (
-      patientdata &&
-      country.tagRegexPatientId &&
-      country.tagRegexPatientId !== ''
-    ) {
+    if (patientdata && country.tagRegexPatientId && country.tagRegexPatientId !== '') {
       res = getTags(country.tagRegexPatientId, patientdata.id)
       if (res) taggingResults = taggingResults.concat(res)
     }
@@ -878,12 +718,7 @@ function getAllResultTags(country, result) {
   return _.uniqBy(taggingResults)
 }
 
-async function getExistingTagByPartner(
-  knex,
-  partnerId,
-  taggingResults,
-  resultId
-) {
+async function getExistingTagByPartner(knex, partnerId, taggingResults, resultId) {
   return knex('Tag as t')
     .join('ResultTag as rt', 't.id', 'rt.tagId')
     .select('t.id', 't.title')
@@ -903,86 +738,54 @@ async function addResultWorkflowLogIfChanged(
   changedOn
 ) {
   // Log Result Workflow Update if any field changed
-  let resultWorkflowChanged =
-    !previousResult ||
-    previousResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
+  let resultWorkflowChanged = !previousResult || previousResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
   let latestResultWorkflowLog
-  if (
-    !resultWorkflowChanged &&
-    (_.has(payload, 'workflow.operator') ||
-      _.has(payload, 'workflow.changedOn'))
-  ) {
+  if (!resultWorkflowChanged && (_.has(payload, 'workflow.operator') || _.has(payload, 'workflow.changedOn'))) {
     // check to see if operator or changedOn is different from latest log
     latestResultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
     resultWorkflowChanged =
       !latestResultWorkflowLog ||
-      _.get(payload, 'workflow.operator', null) !==
-        latestResultWorkflowLog.operator ||
-      +_.get(payload, 'workflow.changedOn', NaN) !==
-        +latestResultWorkflowLog.changedOn
+      _.get(payload, 'workflow.operator', null) !== latestResultWorkflowLog.operator ||
+      +_.get(payload, 'workflow.changedOn', NaN) !== +latestResultWorkflowLog.changedOn
   }
   if (!resultWorkflowChanged && changedOn) {
     // check to see if specified changedOn is different from latest log
     if (!latestResultWorkflowLog) {
-      latestResultWorkflowLog = await getLatestResultWorkflowLog(
-        knex,
-        result.id
-      )
+      latestResultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
     }
-    resultWorkflowChanged =
-      !latestResultWorkflowLog ||
-      +changedOn !== +latestResultWorkflowLog.changedOn
+    resultWorkflowChanged = !latestResultWorkflowLog || +changedOn !== +latestResultWorkflowLog.changedOn
   }
   const device = await getDevice(result.deviceId)
   if (resultWorkflowChanged) {
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId: result.id,
-      resultWorkflowStatusId:
-        result.resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
+      resultWorkflowStatusId: result.resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
       reason: reason || 'Device Api Update',
-      operator:
-        _.get(payload, 'workflow.operator', null) ||
-        _.get(payload, 'sender.operator', null) ||
-        device.name,
+      operator: _.get(payload, 'workflow.operator', null) || _.get(payload, 'sender.operator', null) || device.name,
       changedOn: _.get(payload, 'workflow.changedOn', changedOn || now),
       createdOn: now,
     })
-    await knex('Result')
-      .where('id', result.id)
-      .update({ resultWorkflowStatusLogId: lastLogId })
+    await knex('Result').where('id', result.id).update({ resultWorkflowStatusLogId: lastLogId })
   }
   return resultWorkflowChanged
 }
 
-async function updateResultWorkflowStatus(
-  knex,
-  resultId,
-  workflowStatusExternalId,
-  reason,
-  now = new Date()
-) {
+async function updateResultWorkflowStatus(knex, resultId, workflowStatusExternalId, reason, now = new Date()) {
   // get internal workflow status id based on the external id we got
-  const resultWorkflowStatusId = await resultWorkflowStatusToId(
-    workflowStatusExternalId
-  )
+  const resultWorkflowStatusId = await resultWorkflowStatusToId(workflowStatusExternalId)
   if (resultWorkflowStatusId === null) {
-    throw new Error(
-      `Workflow status with external ID "${workflowStatusExternalId}" not found`
-    )
+    throw new Error(`Workflow status with external ID "${workflowStatusExternalId}" not found`)
   }
 
   const [lastLogId] = await knex('ResultWorkflowLog').insert({
     resultId,
-    resultWorkflowStatusId:
-      resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
+    resultWorkflowStatusId: resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
     reason,
     changedOn: now,
     createdOn: now,
   })
 
-  await knex('Result')
-    .where('id', resultId)
-    .update({ resultWorkflowStatusLogId: lastLogId })
+  await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
 
   return {}
 }

@@ -196,8 +196,7 @@ const recomposeForm =
         }
       }
 
-      handleFormStateChange = form =>
-        this.setState(state => _fp.mergeAll([state, { form }]))
+      handleFormStateChange = form => this.setState(state => _fp.mergeAll([state, { form }]))
 
       handleSubmitting = () => {
         this.handleFormStateChange({

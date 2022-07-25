@@ -2,10 +2,7 @@ import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../../../shared/utils/fetch'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../../../error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../../../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_DEVICE_MAINTENCE_STATUS: 'REQUEST_DEVICE_MAINTENCE_STATUS',
@@ -38,8 +35,7 @@ export function fetchDeviceMaintenanceStatus(forceRefresh) {
       forceRefresh ||
       !deviceMaintenanceStatus.lastRefreshed ||
       // check every 60 mins in case new option added in db
-      differenceInMinutes(new Date(), deviceMaintenanceStatus.lastRefreshed) >
-        60
+      differenceInMinutes(new Date(), deviceMaintenanceStatus.lastRefreshed) > 60
     if (!shouldFetch) {
       return
     }

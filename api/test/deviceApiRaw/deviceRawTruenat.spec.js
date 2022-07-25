@@ -31,10 +31,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
 
   describe('Truelab authentication route', () => {
     it('should respond with a bearer token, a username and a successful flag when valid credentials are sent', async () => {
-      const { body } = await authenticateWithTruelabApi(
-        truenatDevice.username,
-        truenatDevice.password
-      )
+      const { body } = await authenticateWithTruelabApi(truenatDevice.username, truenatDevice.password)
       assert.isOk(body.token)
       assert.match(body.token, /^Bearer\s/)
       assert.isOk(body.username)
@@ -42,10 +39,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
     })
 
     it('should respond with 401 when invalid credentials are sent', async () => {
-      const response = await authenticateWithTruelabApi(
-        truenatDevice.username,
-        'BAD PASSWORD'
-      )
+      const response = await authenticateWithTruelabApi(truenatDevice.username, 'BAD PASSWORD')
       const { status } = response
       assert.equal(status, 401)
     })
@@ -88,42 +82,31 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
     describe('when the device API key token is still valid', () => {
       let authHeaderValue
       before(async () => {
-        const { body } = await authenticateWithTruelabApi(
-          truenatDevice.username,
-          truenatDevice.password
-        )
+        const { body } = await authenticateWithTruelabApi(truenatDevice.username, truenatDevice.password)
         authHeaderValue = body.token
       })
 
       it('should create new results', async () => {
-        const { maxId: lastResultIdBefore } = await knex('Result')
-          .max('id as maxId')
-          .first()
+        const { maxId: lastResultIdBefore } = await knex('Result').max('id as maxId').first()
         const newIdValue = uuid.v4()
         const response = await sendResult(authHeaderValue, {
           ...defaultPayload,
           PatientID: newIdValue,
         })
-        const { maxId: lastResultIdAfter } = await knex('Result')
-          .max('id as maxId')
-          .first()
+        const { maxId: lastResultIdAfter } = await knex('Result').max('id as maxId').first()
         assert.isAbove(lastResultIdAfter, lastResultIdBefore)
         const {
           body: { resultExternalId, success },
         } = response
         assert.isTrue(success)
-        const result = await knex('Result')
-          .where('externalId', resultExternalId)
-          .first()
+        const result = await knex('Result').where('externalId', resultExternalId).first()
         assert.isAbove(result.id, lastResultIdBefore)
         const patient = JSON.parse(result.patientData)
         assert.equal(patient.id, newIdValue)
       })
 
       it('should update existing results', async () => {
-        const { maxId: lastResultIdBefore } = await knex('Result')
-          .max('id as maxId')
-          .first()
+        const { maxId: lastResultIdBefore } = await knex('Result').max('id as maxId').first()
         const newIdValue = uuid.v4()
         const firstUploadResponse = await sendResult(authHeaderValue, {
           ...defaultPayload,
@@ -132,9 +115,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
         const {
           body: { resultExternalId: createdResultExternalId },
         } = firstUploadResponse
-        const resultCreated = await knex('Result')
-          .where('externalId', createdResultExternalId)
-          .first()
+        const resultCreated = await knex('Result').where('externalId', createdResultExternalId).first()
         assert.isAbove(resultCreated.id, lastResultIdBefore)
         const createdResultPatient = JSON.parse(resultCreated.patientData)
         assert.equal(createdResultPatient.age, defaultPayload.Age)
@@ -147,9 +128,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
         const {
           body: { resultExternalId: updatedResultExternalId },
         } = secondUploadResponse
-        const resultUpdated = await knex('Result')
-          .where('externalId', updatedResultExternalId)
-          .first()
+        const resultUpdated = await knex('Result').where('externalId', updatedResultExternalId).first()
         assert.equal(resultUpdated.id, resultCreated.id)
         const patient = JSON.parse(resultUpdated.patientData)
         assert.equal(patient.id, newIdValue)
@@ -160,10 +139,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
     describe('after the device API key token has expired', () => {
       let authHeaderValue
       before(async () => {
-        const { body } = await authenticateWithTruelabApi(
-          truenatDevice.username,
-          truenatDevice.password
-        )
+        const { body } = await authenticateWithTruelabApi(truenatDevice.username, truenatDevice.password)
         authHeaderValue = body.token
         const { id: deviceApiKeyId } = await knex('DeviceApiKey')
           .where(knex.raw("CONCAT('Bearer ', token) = ?", authHeaderValue))

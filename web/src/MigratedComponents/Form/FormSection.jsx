@@ -7,24 +7,13 @@ import { getVisibleRows } from './Formik/Helpers/index'
 import FormSectionRow from './FormSectionRow'
 import messagesBase from './messages'
 
-const FormSection = ({
-  classNames,
-  fullWidth,
-  messages,
-  rows = [],
-  visibleIf,
-  parentKey,
-}) => {
+const FormSection = ({ classNames, fullWidth, messages, rows = [], visibleIf, parentKey }) => {
   const { formik, toggleEdit } = useFormikContext()
 
   // check if section is visible
-  const isSectionVisible = visibleIf
-    ? visibleIf(formik.values, toggleEdit)
-    : true
+  const isSectionVisible = visibleIf ? visibleIf(formik.values, toggleEdit) : true
   // check if rows are visible
-  const visibleRows = isSectionVisible
-    ? getVisibleRows(rows, formik.values, toggleEdit)
-    : []
+  const visibleRows = isSectionVisible ? getVisibleRows(rows, formik.values, toggleEdit) : []
 
   return isSectionVisible ? (
     <Grid item xs={fullWidth ? 12 : 10}>
@@ -41,20 +30,18 @@ const FormSection = ({
                   key={key}
                   name={row.id}
                   render={arrayHelpers =>
-                    subRows.map(
-                      ({ __guid__: subRowKey = row.id }, subRowIndex) => (
-                        <FormSectionRow
-                          {...commonProps}
-                          arrayHelpers={arrayHelpers}
-                          isMulti
-                          key={subRowKey}
-                          parentKey={subRowKey}
-                          rowId={row.id}
-                          showDeleteButton={subRows.length > 1}
-                          subRowIndex={subRowIndex}
-                        />
-                      )
-                    )
+                    subRows.map(({ __guid__: subRowKey = row.id }, subRowIndex) => (
+                      <FormSectionRow
+                        {...commonProps}
+                        arrayHelpers={arrayHelpers}
+                        isMulti
+                        key={subRowKey}
+                        parentKey={subRowKey}
+                        rowId={row.id}
+                        showDeleteButton={subRows.length > 1}
+                        subRowIndex={subRowIndex}
+                      />
+                    ))
                   }
                 />
               )

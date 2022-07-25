@@ -1,7 +1,6 @@
 const xdrDevicesSummary = {
   name: 'Summary table for XDR devices',
-  description:
-    'Lists sites/devices grouped by province showing main XDR parameters',
+  description: 'Lists sites/devices grouped by province showing main XDR parameters',
   i18nKey: 'xdrDevicesSummary',
   externalId: 'xdr_devices_summary', // folder name in /templates
   i18nKeyDescription: 'xdrDevicesSummaryDescription',

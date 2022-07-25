@@ -3,11 +3,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import * as reactRedux from 'react-redux'
 
-import {
-  groupByPermissionTypes,
-  isPermittedUser,
-  requirePermissions,
-} from './requirePermissions'
+import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
 
 describe('requirePermissions', () => {
   describe('groupByPermissionTypes', () => {
@@ -143,14 +139,11 @@ describe('requirePermissions', () => {
 
     describe('required, forbidden and optional', () => {
       it('should be valid for admin user', () => {
-        const isPermitted = isPermittedUser(
-          Immutable.Set(['person:edit', 'device:view']),
-          {
-            required: ['person:edit'],
-            forbidden: ['site:view'],
-            optional: ['device:view'],
-          }
-        )
+        const isPermitted = isPermittedUser(Immutable.Set(['person:edit', 'device:view']), {
+          required: ['person:edit'],
+          forbidden: ['site:view'],
+          optional: ['device:view'],
+        })
 
         expect(isPermitted).toBe(true)
       })

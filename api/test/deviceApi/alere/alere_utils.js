@@ -8,17 +8,10 @@ const { randomToken } = require('../../../src/deviceApi/apiKey')
 const { assert } = chai
 
 async function deleteDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
-  const deviceIds = await knex('DeviceApiKey as dak')
-    .whereIn('dak.token', apiKeys)
-    .pluck('dak.deviceId')
-  await knex('DeviceApiKey')
-    .whereIn('token', apiKeys)
-    .orWhereIn('deviceId', deviceIds)
-    .delete()
+  const deviceIds = await knex('DeviceApiKey as dak').whereIn('dak.token', apiKeys).pluck('dak.deviceId')
+  await knex('DeviceApiKey').whereIn('token', apiKeys).orWhereIn('deviceId', deviceIds).delete()
 
-  const opIds = await knex('DeviceOperation')
-    .whereIn('deviceId', deviceIds)
-    .pluck('id')
+  const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
 
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
   await knex('DeviceLog').whereIn('deviceId', deviceIds).delete()
@@ -31,23 +24,16 @@ async function deleteDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1And2')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', deviceIds).delete()
 
   await knex('Device').whereIn('id', deviceIds).delete()
 
   await knex('RefreshToken').where({ clientId }).delete()
 }
 
-async function deleteDeviceSiteDataAndRefreshTokens(
-  knex,
-  alereDeviceSerialNumbers
-) {
+async function deleteDeviceSiteDataAndRefreshTokens(knex, alereDeviceSerialNumbers) {
   const alereDeviceTypes = ['AlereQ']
   const deviceAndSiteIds = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -56,21 +42,15 @@ async function deleteDeviceSiteDataAndRefreshTokens(
       this.whereIn('dt.externalId', alereDeviceTypes)
     })
     .select('d.id', 'd.siteId')
-  const deviceIds = _.uniq(
-    _.map(deviceAndSiteIds, deviceAndSiteId => deviceAndSiteId.id)
-  )
-  const siteIds = _.uniq(
-    _.map(deviceAndSiteIds, deviceAndSiteId => deviceAndSiteId.siteId)
-  )
+  const deviceIds = _.uniq(_.map(deviceAndSiteIds, deviceAndSiteId => deviceAndSiteId.id))
+  const siteIds = _.uniq(_.map(deviceAndSiteIds, deviceAndSiteId => deviceAndSiteId.siteId))
 
   const inventoryItemIds = await knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)
     .distinct('ii.id')
     .pluck('ii.id')
 
-  await knex('InventoryLog')
-    .whereIn('inventoryItemId', inventoryItemIds)
-    .delete()
+  await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
@@ -84,20 +64,13 @@ async function deleteDeviceSiteDataAndRefreshTokens(
         .pluck('generatedResultId as id')
     })
 
-  const opIds = await knex('DeviceOperation')
-    .whereIn('deviceId', deviceIds)
-    .pluck('id')
+  const opIds = await knex('DeviceOperation').whereIn('deviceId', deviceIds).pluck('id')
 
-  const issueIds = await knex('Issue')
-    .whereIn('deviceId', deviceIds)
-    .pluck('id')
+  const issueIds = await knex('Issue').whereIn('deviceId', deviceIds).pluck('id')
 
   await knex('DeviceApprovalLog').whereIn('deviceId', deviceIds).delete()
 
-  await knex('DeviceLog')
-    .whereIn('deviceId', deviceIds)
-    .orWhereIn('resultId', resultIds)
-    .delete()
+  await knex('DeviceLog').whereIn('deviceId', deviceIds).orWhereIn('resultId', resultIds).delete()
 
   await knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
 
@@ -105,13 +78,9 @@ async function deleteDeviceSiteDataAndRefreshTokens(
 
   await knex('FactResultsDeviceByAssay').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByCategory1').whereIn('deviceId', deviceIds).delete()
 
-  await knex('FactResultsDeviceByCategory1And2')
-    .whereIn('deviceId', deviceIds)
-    .delete()
+  await knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', deviceIds).delete()
 
   await knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
 
@@ -134,10 +103,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(
 
   await knex('DeviceOperation').whereIn('id', opIds).delete()
 
-  await knex('Device')
-    .whereIn('siteId', siteIds)
-    .orWhereIn('deviceId', deviceIds)
-    .delete()
+  await knex('Device').whereIn('siteId', siteIds).orWhereIn('deviceId', deviceIds).delete()
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
   await knex('Site').whereIn('id', siteIds).delete()
@@ -176,17 +142,10 @@ class DeviceApiTestContext {
   }
 
   createAlereFtpConnectorApiKey(apiKeyDetails = {}) {
-    const { countryAbbreviation = 'US', partnerName = 'Partner One' } =
-      apiKeyDetails
+    const { countryAbbreviation = 'US', partnerName = 'Partner One' } = apiKeyDetails
     return run(async knex => {
-      const alereFtpConnectorDeviceType = await knex
-        .from('DeviceType')
-        .where('externalId', 'AlereFtpConnector')
-        .first()
-      const partner = await knex
-        .from('Partner')
-        .where('name', partnerName)
-        .first()
+      const alereFtpConnectorDeviceType = await knex.from('DeviceType').where('externalId', 'AlereFtpConnector').first()
+      const partner = await knex.from('Partner').where('name', partnerName).first()
       const geography = await knex
         .from('Country as c')
         .join('Geography as g', 'g.countryId', 'c.id')
@@ -194,10 +153,7 @@ class DeviceApiTestContext {
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
-      const approvedApprovalStatus = await knex
-        .from('DeviceApproval')
-        .where('token', 'approved')
-        .first()
+      const approvedApprovalStatus = await knex.from('DeviceApproval').where('token', 'approved').first()
       const deviceCapacity = await knex('DeviceCapacity')
         .where({ deviceTypeId: alereFtpConnectorDeviceType.id })
         .where({ partnerId: partner.id })
@@ -235,10 +191,7 @@ class DeviceApiTestContext {
       this.apiKeys.push(this.apiKey)
       this.deviceAuth = `Bearer ${this.apiKey}`
       this.device = await getDeviceFromApiKey(knex, { token: this.apiKey })
-      assert.isNotEmpty(
-        this.device,
-        `Cannot find device created from ${this.apiKey}`
-      )
+      assert.isNotEmpty(this.device, `Cannot find device created from ${this.apiKey}`)
     })
   }
 
@@ -255,16 +208,10 @@ class DeviceApiTestContext {
     if (this.basicDevicePayload.result.data === null) {
       this.basicDevicePayload.result.data = {}
     }
-    if (
-      this.basicDevicePayload.result.instrument.serial !==
-      alereDeviceSerialNumber
-    ) {
+    if (this.basicDevicePayload.result.instrument.serial !== alereDeviceSerialNumber) {
       this.basicDevicePayload.result.instrument.serial = alereDeviceSerialNumber
     }
-    if (
-      this.basicDevicePayload.result.data.deviceSerial !==
-      alereDeviceSerialNumber
-    ) {
+    if (this.basicDevicePayload.result.data.deviceSerial !== alereDeviceSerialNumber) {
       this.basicDevicePayload.result.data.deviceSerial = alereDeviceSerialNumber
     }
   }
@@ -290,17 +237,10 @@ class DeviceApiTestContext {
     return run(async knex => {
       await waitAsyncComplete()
       if (!_.isEmpty(this.alereDeviceSerialNumbers)) {
-        await deleteDeviceSiteDataAndRefreshTokens(
-          knex,
-          this.alereDeviceSerialNumbers
-        )
+        await deleteDeviceSiteDataAndRefreshTokens(knex, this.alereDeviceSerialNumbers)
       }
       if (!_.isEmpty(this.apiKeys)) {
-        await deleteDeviceDataAndRefreshTokens(
-          knex,
-          this.apiKeys,
-          this.clientId
-        )
+        await deleteDeviceDataAndRefreshTokens(knex, this.apiKeys, this.clientId)
       }
       await knex('FactInventoryConsumptionRate')
         .where({
@@ -321,16 +261,8 @@ class DeviceApiTestContext {
         .join('DeviceLog as dl', 'd.id', 'dl.deviceId')
         .join('Result as r', 'dl.resultId', 'r.id')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
-        .leftJoin(
-          'ResultWorkflowLog as rwsl',
-          'r.resultWorkflowStatusLogId',
-          'rwsl.id'
-        )
-        .leftJoin(
-          'ResultWorkflowStatus as rws',
-          'rwsl.resultWorkflowStatusId',
-          'rws.id'
-        )
+        .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+        .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
         .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
@@ -388,16 +320,8 @@ class DeviceApiTestContext {
     return run(async knex => {
       const resultDetails = await knex('Result as r')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
-        .leftJoin(
-          'ResultWorkflowLog as rwsl',
-          'r.resultWorkflowStatusLogId',
-          'rwsl.id'
-        )
-        .leftJoin(
-          'ResultWorkflowStatus as rws',
-          'rwsl.resultWorkflowStatusId',
-          'rws.id'
-        )
+        .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+        .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
         .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
         .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')

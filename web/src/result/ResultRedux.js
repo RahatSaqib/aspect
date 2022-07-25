@@ -9,11 +9,7 @@ import {
   errorForbidden,
 } from '../error/CommonErrorNotifications'
 import { receiveList, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 import screenSchema from './ResultScreenSchema.json'
 import { getFilters } from '../filter/utils'
@@ -32,10 +28,8 @@ export const types = {
   REQUEST_CREATING_RESULT_NOTE: 'REQUEST_CREATING_RESULT_NOTE',
   RECEIVE_CREATING_RESULT_NOTE: 'RECEIVE_CREATING_RESULT_NOTE',
 
-  REQUEST_CREATING_TREATMENT_STATUS_LOG:
-    'REQUEST_CREATING_TREATMENT_STATUS_LOG',
-  RECEIVE_CREATING_TREATMENT_STATUS_LOG:
-    'RECEIVE_CREATING_TREATMENT_STATUS_LOG',
+  REQUEST_CREATING_TREATMENT_STATUS_LOG: 'REQUEST_CREATING_TREATMENT_STATUS_LOG',
+  RECEIVE_CREATING_TREATMENT_STATUS_LOG: 'RECEIVE_CREATING_TREATMENT_STATUS_LOG',
 
   REQUEST_WORKFLOW_LOG: 'REQUEST_WORKFLOW_LOG',
   RECEIVE_WORKFLOW_LOG: 'RECEIVE_WORKFLOW_LOG',
@@ -97,8 +91,7 @@ export function logTreatmentStatus(resultId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the Result',
+              defaultMessage: 'An Error Occurred When Trying to Save the Result',
             },
           })
         ),
@@ -118,8 +111,7 @@ export function addResultNote(resultId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the Result',
+              defaultMessage: 'An Error Occurred When Trying to Save the Result',
             },
           })
         ),
@@ -267,8 +259,7 @@ export function updateSingleResult(resultId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the Result',
+              defaultMessage: 'An Error Occurred When Trying to Save the Result',
             },
           })
         ),
@@ -302,8 +293,7 @@ export function updateResultWorkflowStatus(resultId) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the Workflow Status',
+              defaultMessage: 'An Error Occurred When Trying to Save the Workflow Status',
             },
           })
         ),
@@ -344,8 +334,7 @@ function sendUpdatedResultFormData(dispatch, resultId, formData) {
         defineMessages({
           title: {
             id: 'errorResponseMessages.saveResultFormDataValue.PUT.default.title',
-            defaultMessage:
-              'An error occurred when trying to update the result.',
+            defaultMessage: 'An error occurred when trying to update the result.',
           },
         })
       ),
@@ -360,15 +349,7 @@ function sendUpdatedResultFormData(dispatch, resultId, formData) {
 
 export function saveResultFormDataValue(resultId, formFieldKey, value) {
   return (dispatch, getState) => {
-    const originalFieldValue =
-      getState().getIn([
-        'result',
-        'items',
-        'byId',
-        resultId,
-        'formData',
-        formFieldKey,
-      ]) || ''
+    const originalFieldValue = getState().getIn(['result', 'items', 'byId', resultId, 'formData', formFieldKey]) || ''
     if (value !== originalFieldValue) {
       dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
       dispatch(savingSingleResultFormData(resultId))
@@ -381,19 +362,9 @@ export function saveResultFormDataValue(resultId, formFieldKey, value) {
 
 export function setResultFormDataValue(resultId, formFieldKey, value) {
   return (dispatch, getState) => {
-    const originalFieldValue =
-      getState().getIn([
-        'result',
-        'items',
-        'byId',
-        resultId,
-        'formData',
-        formFieldKey,
-      ]) || ''
+    const originalFieldValue = getState().getIn(['result', 'items', 'byId', resultId, 'formData', formFieldKey]) || ''
     if (value !== originalFieldValue) {
-      return dispatch(
-        setSingleResultFormDataValue(resultId, formFieldKey, value)
-      )
+      return dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
     }
   }
 }
@@ -429,13 +400,7 @@ function receiveWorkflowStatusLogsAction(json) {
 }
 
 // load a list of workflow-status-logs for given resultId
-export function fetchWorkflowStatusLogs(
-  resultId,
-  sortCol = 'changedOn',
-  sortDir = 'desc',
-  page = 0,
-  pageSize = 10
-) {
+export function fetchWorkflowStatusLogs(resultId, sortCol = 'changedOn', sortDir = 'desc', page = 0, pageSize = 10) {
   return dispatch => {
     // action to set table's prop loading:true
     dispatch(requestWorkflowStatusLogsAction(sortCol, sortDir, page, pageSize))
@@ -473,16 +438,7 @@ export function fetchWorkflowStatusLogs(
 }
 
 // TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
-export function exportResults(
-  filtersParams,
-  format,
-  sortCol,
-  sortDir,
-  page,
-  pageSize,
-  fileFormat,
-  reportName
-) {
+export function exportResults(filtersParams, format, sortCol, sortDir, page, pageSize, fileFormat, reportName) {
   return dispatch => {
     const filters = getFilters(filtersParams)
     return aspectFetch(
@@ -561,10 +517,7 @@ export default function resultReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
-        mutState.set(
-          'table',
-          receiveTableItems(mutState.table, action.total, action.extraColumns)
-        )
+        mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
       })
     case types.REJECTED_RESULTS:
       return state.withMutations(mutState => {
@@ -576,13 +529,7 @@ export default function resultReducer(state = initialState, action) {
         .withMutations(mutState => {
           const formData = {}
           formData[action.formFieldKey] = action.value
-          mutState.set(
-            'items',
-            mutState.items.mergeDeepIn(
-              ['byId', action.resultId],
-              Immutable.fromJS({ formData })
-            )
-          )
+          mutState.set('items', mutState.items.mergeDeepIn(['byId', action.resultId], Immutable.fromJS({ formData })))
         })
         .merge({ formDataDirty: true })
     case types.SAVING_RESULT_FORM_DATA:
@@ -605,10 +552,7 @@ export default function resultReducer(state = initialState, action) {
 
     case types.REQUEST_WORKFLOW_LOG:
       return state.withMutations(mutState => {
-        const workflowLog = mutState.workflowLog.mergeIn(
-          ['table'],
-          requestTable(mutState.workflowLog.table, action)
-        )
+        const workflowLog = mutState.workflowLog.mergeIn(['table'], requestTable(mutState.workflowLog.table, action))
         mutState.set('workflowLog', workflowLog)
       })
     case types.RECEIVE_WORKFLOW_LOG:
@@ -616,10 +560,7 @@ export default function resultReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         const workflowLog = mutState.workflowLog.withMutations(mutLog => {
           mutLog.set('items', receiveList(mutLog.items, immutList))
-          mutLog.set(
-            'table',
-            receiveTableItems(mutLog.table, action.total, action.extraColumns)
-          )
+          mutLog.set('table', receiveTableItems(mutLog.table, action.total, action.extraColumns))
         })
         mutState.set('workflowLog', workflowLog)
       })

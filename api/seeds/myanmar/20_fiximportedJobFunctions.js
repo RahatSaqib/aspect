@@ -14,10 +14,7 @@ async function seed(knex) {
   const jobFunctions = await knex('JobFunction').where({ partnerId }).select()
 
   await Promise.each(jobFunctions, async elem => {
-    if (
-      _.includes(elem.externalId, 'regionalOfficer') ||
-      _.includes(elem.externalId, 'admin')
-    )
+    if (_.includes(elem.externalId, 'regionalOfficer') || _.includes(elem.externalId, 'admin'))
       await upsertJobFunctionPermission(knex, elem.id, [
         modules.assay.view,
         modules.dashboard.siteFilter,

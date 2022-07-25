@@ -2,10 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { issueResolved } = require('./actions')
 const { issueConditionsMet } = require('./issueEvaluation')
-const {
-  issueStatusToId,
-  issueEventStatusToId,
-} = require('../shared/dictionary')
+const { issueStatusToId, issueEventStatusToId } = require('../shared/dictionary')
 const logger = require('../shared/logger')
 
 async function onResolveIssues(action, { messageContext: context }) {
@@ -17,10 +14,7 @@ async function onResolveIssues(action, { messageContext: context }) {
       },
       { reLabel: 'issues:onResolveIssues' }
     )
-    const openIssuesToCheck = await findOpenIssuesToCheckForResolution(
-      knex,
-      action.issueId
-    )
+    const openIssuesToCheck = await findOpenIssuesToCheckForResolution(knex, action.issueId)
     logger.debug(
       {
         action_type: action.type,
@@ -34,11 +28,7 @@ async function onResolveIssues(action, { messageContext: context }) {
       return Promise.resolve()
     }
     return Promise.each(openIssuesToCheck, async issueResolutionTrigger => {
-      const shouldResolve = await issueConditionsMet(
-        knex,
-        issueResolutionTrigger,
-        issueResolutionTrigger.conditions
-      )
+      const shouldResolve = await issueConditionsMet(knex, issueResolutionTrigger, issueResolutionTrigger.conditions)
       logger.debug(
         {
           action_type: action.type,
@@ -99,10 +89,7 @@ async function findOpenIssuesToCheckForResolution(knex, issueId) {
       )
     })
     .join('IssueResolutionTrigger as irt', function () {
-      this.on('i.issueTypeId', 'irt.issueTypeId').on(
-        'i.partnerId',
-        'irt.partnerId'
-      )
+      this.on('i.issueTypeId', 'irt.issueTypeId').on('i.partnerId', 'irt.partnerId')
     })
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .where(function () {

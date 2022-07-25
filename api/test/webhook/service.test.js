@@ -23,9 +23,7 @@ describe('Webhook Template', () => {
           shouldFail: [],
           ...useCases[useCaseName],
         }
-        const okResponseSuccessRegexExpression = new RegExp(
-          useCase.okResponseSuccessRegex
-        )
+        const okResponseSuccessRegexExpression = new RegExp(useCase.okResponseSuccessRegex)
         useCase.shouldPass.forEach(passUseCase => {
           expect(passUseCase).to.match(
             okResponseSuccessRegexExpression,

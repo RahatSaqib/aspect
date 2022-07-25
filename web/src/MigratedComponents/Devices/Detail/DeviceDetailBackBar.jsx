@@ -22,14 +22,7 @@ const messages = defineMessages({
   },
 })
 
-export const DeviceDetailBackBar = ({
-  intl,
-  navigate,
-  location,
-  params,
-  title,
-  disabled,
-}) => {
+export const DeviceDetailBackBar = ({ intl, navigate, location, params, title, disabled }) => {
   const onBackClick = () => {
     navigate(-1)
   }

@@ -20,9 +20,7 @@ const FormActionButton = ({ formik, action, onClick, isVisible }) => {
         'form__button--invisible': !isVisible,
       })}
       disabled={action.id === 'save' && (!formik.isValid || !formik.dirty)}
-      onClick={() =>
-        isFunction(action.onClick) ? action.onClick() : onClick(action)
-      }
+      onClick={() => (isFunction(action.onClick) ? action.onClick() : onClick(action))}
       variant={action.ui?.variant || 'contained'}
     >
       {action.text}
@@ -48,9 +46,7 @@ const FormActions = ({ config, onSubmit }) => {
   const { actions } = config
   const { items: formActions, default: defaultAction } = actions
   const { formik, toggleEdit, setToggleEdit, meta } = useFormikContext()
-  const [displayConfig, setDisplayConfig] = useState(
-    getDefaultDisplayState(defaultAction)
-  )
+  const [displayConfig, setDisplayConfig] = useState(getDefaultDisplayState(defaultAction))
   const [currentAction, setCurrentAction] = useState(false)
 
   useEffect(() => {
@@ -109,11 +105,7 @@ const FormActions = ({ config, onSubmit }) => {
         formik={formik}
         action={action}
         onClick={setCurrentAction}
-        isVisible={
-          isFunction(action.isVisible)
-            ? action.isVisible(permissions, toggleEdit)
-            : displayConfig[action.id]
-        }
+        isVisible={isFunction(action.isVisible) ? action.isVisible(permissions, toggleEdit) : displayConfig[action.id]}
       />
     ))
   )

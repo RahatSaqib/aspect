@@ -8,10 +8,7 @@ import Modal from '@material-ui/core/Modal'
 import Card from '@material-ui/core/Card'
 import { connect } from 'react-redux'
 
-import {
-  getCustomMessage,
-  commonDefinitions,
-} from '../../shared/utils/customMessages'
+import { getCustomMessage, commonDefinitions } from '../../shared/utils/customMessages'
 import { isCountryFilterHidden } from '../utils'
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
@@ -24,7 +21,7 @@ import DiseaseSelectField from '../resource/DiseaseSelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ResultCategoryGroupSelectField from '../resource/ResultCategoryGroupSelectField'
 import ConsumableSelectField from '../resource/ConsumableSelectField'
-import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
+import SiteAutoCompleteField from '../../MigratedComponents/SiteAutocompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import ResultTreatmentStatusSelectField from '../resource/ResultTreatmentStatusSelectField'
@@ -36,7 +33,7 @@ import CheckboxField from '../../components/shared/CheckboxField'
 import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceStatusSelectField'
 import DaysStockLeftSelectField from '../hardcoded/daysStockLeftSelectField'
 import EnabledDisabledPersonsSelectField from '../hardcoded/toggleDisabledEnabledPersons'
-import ReportAutoCompleteField from '../resource/ReportAutoCompleteField'
+import ReportAutoCompleteField from '../../MigratedComponents/ReportAutocompleteField'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
 
@@ -126,30 +123,21 @@ const enhance = compose(
         }),
     onSampleOriginSiteChange:
       ({ onChangeFilters }) =>
-      sampleOriginSite =>
-        onChangeFilters({
-          sampleOriginSite,
-        }),
+      site =>
+        onChangeFilters({ sampleOriginSite: site.name }),
     onSiteNameChange:
       ({ onChangeFilters }) =>
-      siteName =>
-        onChangeFilters({
-          siteName,
-        }),
+      site =>
+        onChangeFilters({ siteName: site.name }),
     onReportableSiteChange:
       ({ onChangeFilters }) =>
       ({ id, name }) => {
-        onChangeFilters({
-          reportableSiteName: name,
-          reportableSiteId: id,
-        })
+        onChangeFilters({ reportableSiteName: name, reportableSiteId: id })
       },
     onSiteIdChange:
       ({ onChangeFilters }) =>
-      siteId =>
-        onChangeFilters({
-          siteId,
-        }),
+      site =>
+        onChangeFilters({ siteId: site.name }),
     onWorkflowStatusIdChange:
       ({ onChangeFilters }) =>
       workflowStatusId =>
@@ -184,20 +172,14 @@ const enhance = compose(
         onChangeFilters({
           revoked,
         }),
-    onExcelExport: props => () =>
-      clickExport(props, props.exportFormatTypes.EXCEL),
+    onExcelExport: props => () => clickExport(props, props.exportFormatTypes.EXCEL),
     onCsvExport: props => () => clickExport(props, props.exportFormatTypes.CSV),
     onDisagreedConfirmation:
       ({ closeExportConfirmation }) =>
       () =>
         closeExportConfirmation(),
     onAgreedConfirmation:
-      ({
-        listExport,
-        beginListExportProcessing,
-        onClickExport,
-        closeExportConfirmation,
-      }) =>
+      ({ listExport, beginListExportProcessing, onClickExport, closeExportConfirmation }) =>
       () => {
         beginListExportProcessing(listExport.currentFormatType)
         onClickExport(listExport.currentFormatType)
@@ -241,10 +223,9 @@ const enhance = compose(
         }),
     onReportNameChange:
       ({ onChangeFilters }) =>
-      reportName =>
-        onChangeFilters({
-          reportName,
-        }),
+      report => {
+        onChangeFilters({ reportName: report.name })
+      },
     onToggleEnabledDisabled:
       ({ onChangeFilters }) =>
       contactStatus =>
@@ -255,12 +236,7 @@ const enhance = compose(
 )
 
 const clickExport = (
-  {
-    askConfirmationForExport,
-    askExportConfirmation,
-    beginListExportProcessing,
-    onClickExport,
-  },
+  { askConfirmationForExport, askExportConfirmation, beginListExportProcessing, onClickExport },
   formatType
 ) => {
   if (askConfirmationForExport === true) {
@@ -530,14 +506,6 @@ const messages = {
       id: 'filter.popover.hasStock',
       defaultMessage: 'Has Stock',
     },
-    reportName: {
-      id: 'filter.popover.reportName',
-      defaultMessage: 'Report',
-    },
-    enterReportName: {
-      id: 'filter.popover.enterReportName',
-      defaultMessage: 'Enter report name...',
-    },
     lotNumber: {
       id: 'filter.popover.lotNumber',
       defaultMessage: 'Lot Number',
@@ -606,9 +574,7 @@ export const FiltersPanel = ({
   const { formatMessage } = useI18n()
   let assayResultCategory2Label
   if (assayItems && assayId) {
-    const selectedAssay = assayItems
-      .filter(a => a.get('id') === assayId.toString())
-      .get(0)
+    const selectedAssay = assayItems.filter(a => a.get('id') === assayId.toString()).get(0)
 
     if (selectedAssay) {
       const { resultCategory2Label } = selectedAssay.toJS()
@@ -627,8 +593,7 @@ export const FiltersPanel = ({
       /**
        * current filter does NOT have `countryId` defined
        */
-      (!filters.countryId ||
-        !countries.items.find(it => it.id === filters.countryId))
+      (!filters.countryId || !countries.items.find(it => it.id === filters.countryId))
     ) {
       // pre-select countryId
       const { id } = countries.items.get(0)
@@ -636,10 +601,7 @@ export const FiltersPanel = ({
     }
   }, [countries, filters, onCountryIdChange])
 
-  const showCountryFilter = React.useMemo(
-    () => !isCountryFilterHidden(countries),
-    [countries]
-  )
+  const showCountryFilter = React.useMemo(() => !isCountryFilterHidden(countries), [countries])
 
   return (
     <div className={cssClasses('Container', className)}>
@@ -674,11 +636,7 @@ export const FiltersPanel = ({
         />
       </AspectButton>
 
-      <Modal
-        className={cssClasses('Modal')}
-        open={isShown}
-        onClose={onToggleShown}
-      >
+      <Modal className={cssClasses('Modal')} open={isShown} onClose={onToggleShown}>
         <Fragment />
       </Modal>
 
@@ -732,12 +690,7 @@ export const FiltersPanel = ({
                   countryId={filters.countryId}
                   stateId={filters.stateId}
                   floatingLabelFixed
-                  hintText={getCustomMessage(
-                    messages,
-                    'selectPlaceholder',
-                    user,
-                    { entity: 'state' }
-                  )}
+                  hintText={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
                   floatingLabelText={getCustomMessage(messages, 'state', user)}
                   style={{ verticalAlign: 'bottom' }}
                 />
@@ -752,12 +705,7 @@ export const FiltersPanel = ({
                   stateId={filters.stateId}
                   lgaId={filters.lgaId}
                   floatingLabelFixed
-                  hintText={getCustomMessage(
-                    messages,
-                    'selectPlaceholder',
-                    user,
-                    { entity: 'lga' }
-                  )}
+                  hintText={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
                   floatingLabelText={getCustomMessage(messages, 'lga', user)}
                   style={{ verticalAlign: 'bottom' }}
                 />
@@ -793,41 +741,37 @@ export const FiltersPanel = ({
               </div>
             )}
 
-            {!assayResultCategory2Label &&
-              config.resultCategory &&
-              !config.onlyDisease && (
-                <div className={cssClasses('Control')}>
-                  <ResultCategorySelectField
-                    allItemText={formatMessage(messages.all)}
-                    disabled={!filters.assayId}
-                    assayId={filters.assayId}
-                    value={filters.resultCategoryId}
-                    onResultCategoryChange={onResultCategoryChange}
-                    floatingLabelFixed
-                    hintText={formatMessage(messages.selectResult)}
-                    floatingLabelText={formatMessage(messages.result)}
-                    style={{ verticalAlign: 'bottom' }}
-                  />
-                </div>
-              )}
+            {!assayResultCategory2Label && config.resultCategory && !config.onlyDisease && (
+              <div className={cssClasses('Control')}>
+                <ResultCategorySelectField
+                  allItemText={formatMessage(messages.all)}
+                  disabled={!filters.assayId}
+                  assayId={filters.assayId}
+                  value={filters.resultCategoryId}
+                  onResultCategoryChange={onResultCategoryChange}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectResult)}
+                  floatingLabelText={formatMessage(messages.result)}
+                  style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
 
-            {assayResultCategory2Label &&
-              config.resultCategoryGroup &&
-              !config.onlyDisease && (
-                <div className={cssClasses('Control', 'Control--wide')}>
-                  <ResultCategoryGroupSelectField
-                    allItemText={formatMessage(messages.all)}
-                    disabled={!filters.assayId}
-                    assayId={filters.assayId}
-                    value={filters.resultCategoryGroupId}
-                    onResultCategoryGroupChange={onResultCategoryGroupChange}
-                    floatingLabelFixed
-                    hintText={formatMessage(messages.selectResult)}
-                    floatingLabelText={formatMessage(messages.result)}
-                    style={{ verticalAlign: 'bottom' }}
-                  />
-                </div>
-              )}
+            {assayResultCategory2Label && config.resultCategoryGroup && !config.onlyDisease && (
+              <div className={cssClasses('Control', 'Control--wide')}>
+                <ResultCategoryGroupSelectField
+                  allItemText={formatMessage(messages.all)}
+                  disabled={!filters.assayId}
+                  assayId={filters.assayId}
+                  value={filters.resultCategoryGroupId}
+                  onResultCategoryGroupChange={onResultCategoryGroupChange}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectResult)}
+                  floatingLabelText={formatMessage(messages.result)}
+                  style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
 
             {config.errorCode && (
               <div className={cssClasses('Control')}>
@@ -938,7 +882,7 @@ export const FiltersPanel = ({
                 <SiteAutoCompleteField
                   name="siteName"
                   value={filters.siteName || ''}
-                  onSiteNameChange={onSiteNameChange}
+                  onChange={onSiteNameChange}
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterSiteName)}
                   floatingLabelText={formatMessage(messages.site)}
@@ -962,7 +906,7 @@ export const FiltersPanel = ({
                 <SiteAutoCompleteField
                   name="sampleOriginSite"
                   value={filters.sampleOriginSite || ''}
-                  onSiteNameChange={onSampleOriginSiteChange}
+                  onChange={onSampleOriginSiteChange}
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterSampleOriginSite)}
                   floatingLabelText={formatMessage(messages.sampleOriginSite)}
@@ -1045,16 +989,10 @@ export const FiltersPanel = ({
               <div className={cssClasses('Control')}>
                 <DeviceMaintenanceStatusSelectField
                   value={filters.deviceMaintenanceStatusId}
-                  onDeviceMaintenanceStatusChange={
-                    onDeviceMaintenanceStatusIdChange
-                  }
+                  onDeviceMaintenanceStatusChange={onDeviceMaintenanceStatusIdChange}
                   floatingLabelFixed
-                  hintText={formatMessage(
-                    messages.selectDeviceMaintenanceStatus
-                  )}
-                  floatingLabelText={formatMessage(
-                    messages.deviceMaintenanceStatus
-                  )}
+                  hintText={formatMessage(messages.selectDeviceMaintenanceStatus)}
+                  floatingLabelText={formatMessage(messages.deviceMaintenanceStatus)}
                   style={{ verticalAlign: 'bottom' }}
                   autoWidth
                 />
@@ -1077,9 +1015,7 @@ export const FiltersPanel = ({
             )}
             {config.date && (
               <DateRangeSelector
-                floatingLabelText={
-                  dateFilterLabel || formatMessage(messages.date)
-                }
+                floatingLabelText={dateFilterLabel || formatMessage(messages.date)}
                 onChangeDate={onDateChange}
                 controlClassName={cssClasses('Control')}
                 minDate={filters.minDate}
@@ -1110,9 +1046,7 @@ export const FiltersPanel = ({
                     controlContainer: cssClasses('checkbox-wrapper'),
                   }}
                   checked={[true, 'true'].includes(filters.hasStock)}
-                  onChange={event =>
-                    onHasStockChange(event.target.checked || null)
-                  }
+                  onChange={event => onHasStockChange(event.target.checked || null)}
                   label={formatMessage(messages.hasStock)}
                   name="onlyHasStock"
                   autoWidth
@@ -1151,7 +1085,7 @@ export const FiltersPanel = ({
                 <SiteAutoCompleteField
                   name="siteId"
                   value={filters.siteId || ''}
-                  onSiteNameChange={onSiteIdChange}
+                  onChange={onSiteIdChange}
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterSiteId)}
                   floatingLabelText={formatMessage(messages.siteId)}
@@ -1164,14 +1098,8 @@ export const FiltersPanel = ({
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
                   }}
-                  checked={[true, 'true'].includes(
-                    filters.onlyReportableResults
-                  )}
-                  onChange={event =>
-                    onOnlyReportableResultsBoolChange(
-                      event.target.checked || null
-                    )
-                  }
+                  checked={[true, 'true'].includes(filters.onlyReportableResults)}
+                  onChange={event => onOnlyReportableResultsBoolChange(event.target.checked || null)}
                   label={formatMessage(messages.onlyReportableResults)}
                   name="onlyReportableResults"
                   autoWidth
@@ -1184,55 +1112,36 @@ export const FiltersPanel = ({
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
                   }}
-                  checked={[true, 'true'].includes(
-                    filters.onlyDownloadedByReporter
-                  )}
-                  onChange={event =>
-                    onOnlyDownloadedByReporterBoolChange(
-                      event.target.checked || null
-                    )
-                  }
+                  checked={[true, 'true'].includes(filters.onlyDownloadedByReporter)}
+                  onChange={event => onOnlyDownloadedByReporterBoolChange(event.target.checked || null)}
                   label={formatMessage(messages.onlyDownloadedByReporter)}
                   name="onlyDownloadedByReporter"
                   autoWidth
                 />
               </div>
             )}
-            {(reportableSiteName || reportableSiteId) &&
-              config.onlyEverTransferred && (
-                <div className={cssClasses('Control', 'Control-checkbox')}>
-                  <CheckboxField
-                    classNames={{
-                      controlContainer: cssClasses('checkbox-wrapper'),
-                    }}
-                    checked={[true, 'true'].includes(
-                      filters.onlyEverTransferred
-                    )}
-                    onChange={event =>
-                      onOnlyEverTransferredBoolChange(
-                        event.target.checked || null
-                      )
-                    }
-                    label={formatMessage(messages.onlyEverTransferred)}
-                    name="onlyEverTransferred"
-                    autoWidth
-                  />
-                </div>
-              )}
+            {(reportableSiteName || reportableSiteId) && config.onlyEverTransferred && (
+              <div className={cssClasses('Control', 'Control-checkbox')}>
+                <CheckboxField
+                  classNames={{
+                    controlContainer: cssClasses('checkbox-wrapper'),
+                  }}
+                  checked={[true, 'true'].includes(filters.onlyEverTransferred)}
+                  onChange={event => onOnlyEverTransferredBoolChange(event.target.checked || null)}
+                  label={formatMessage(messages.onlyEverTransferred)}
+                  name="onlyEverTransferred"
+                  autoWidth
+                />
+              </div>
+            )}
             {config.onlyTreatmentRequired && (
               <div className={cssClasses('Control', 'Control-checkbox')}>
                 <CheckboxField
                   classNames={{
                     controlContainer: cssClasses('checkbox-wrapper'),
                   }}
-                  checked={[true, 'true'].includes(
-                    filters.onlyTreatmentRequired
-                  )}
-                  onChange={event =>
-                    onOnlyTreatmentRequiredBoolChange(
-                      event.target.checked || null
-                    )
-                  }
+                  checked={[true, 'true'].includes(filters.onlyTreatmentRequired)}
+                  onChange={event => onOnlyTreatmentRequiredBoolChange(event.target.checked || null)}
                   label={formatMessage(messages.onlyTreatmentRequired)}
                   name="onlyTreatmentRequired"
                   autoWidth
@@ -1257,10 +1166,7 @@ export const FiltersPanel = ({
                 <ReportAutoCompleteField
                   name="reportName"
                   value={filters.reportName || ''}
-                  onReportNameChange={onReportNameChange}
-                  floatingLabelFixed
-                  hintText={formatMessage(messages.enterReportName)}
-                  floatingLabelText={formatMessage(messages.reportName)}
+                  onChange={onReportNameChange}
                 />
               </div>
             )}

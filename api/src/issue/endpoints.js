@@ -1,10 +1,6 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
-const {
-  getIssueEventTriggerSubscriptions,
-  triggerIssue,
-  updateIssueStatus,
-} = require('./service')
+const { getIssueEventTriggerSubscriptions, triggerIssue, updateIssueStatus } = require('./service')
 const { onEscalateIssues, onIssueTriggered } = require('./escalations')
 const { onResolveIssues } = require('./resolutions')
 
@@ -37,14 +33,8 @@ const routes = [
       auth: { scope: ['notification:edit', 'issue:edit'] },
       validate: {
         payload: {
-          issueType: Joi.string()
-            .required()
-            .description(
-              'Issue Type as of value of `externalId` from table IssueType'
-            ),
-          data: Joi.object()
-            .allow(null)
-            .description('The json object with data for corresponding action'),
+          issueType: Joi.string().required().description('Issue Type as of value of `externalId` from table IssueType'),
+          data: Joi.object().allow(null).description('The json object with data for corresponding action'),
         },
       },
     },

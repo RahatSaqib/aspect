@@ -58,12 +58,7 @@ const enhance = compose(
   })
 )
 
-export const JSONSchemaCard = ({
-  initiallyExpanded,
-  renderField,
-  dataSchema,
-  data,
-}) => (
+export const JSONSchemaCard = ({ initiallyExpanded, renderField, dataSchema, data }) => (
   <div>
     {dataSchema
       .keySeq()

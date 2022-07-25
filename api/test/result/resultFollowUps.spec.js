@@ -43,9 +43,7 @@ describe('Result Follow Up', () => {
 
     it('should return a list of possible result follow ups filtered by disease', async () => {
       const diseaseId = await diseaseToId('hiv')
-      const res = await server
-        .get(`${path}?diseaseId=${diseaseId}`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}?diseaseId=${diseaseId}`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -67,9 +65,7 @@ describe('Result Follow Up', () => {
     })
     it('should return a list of possible result follow ups filtered by assay', async () => {
       const assayId = await assayToId('abbottM2000DBSHivVL')
-      const res = await server
-        .get(`${path}?assayId=${assayId}`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}?assayId=${assayId}`).set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
       assert.property(res.body, 'data')
@@ -103,9 +99,7 @@ describe('Result Follow Up', () => {
     const path = `/api/result/follow-up/${resultId}`
 
     it('Should add a follow up to a result and update treatment status', async () => {
-      const { id: followUpId } = await knex('FollowUp')
-        .where('externalId', 'drtb-prexdr')
-        .first('id')
+      const { id: followUpId } = await knex('FollowUp').where('externalId', 'drtb-prexdr').first('id')
 
       const date = new Date('2019-08-01')
       const resultFollowUpExternalId = '1234'
@@ -118,9 +112,7 @@ describe('Result Follow Up', () => {
       assert.equal(responseFirst.statusCode, 200)
 
       // should have follow up with the externalId 'drtb-prexdr'
-      const { externalId: externalIdFollowUp, date: followUpDate } = await knex(
-        'ResultFollowUp as rfu'
-      )
+      const { externalId: externalIdFollowUp, date: followUpDate } = await knex('ResultFollowUp as rfu')
         .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
         .where('rfu.resultId', resultId)
         .where('rfu.externalId', resultFollowUpExternalId)
@@ -134,24 +126,12 @@ describe('Result Follow Up', () => {
         .send({ followUpId, externalId: resultFollowUpExternalId })
         .set('Authorization', `Bearer ${shared.token}`)
 
-      assert.equal(
-        responseSecond.statusCode,
-        400,
-        'Should return error if external ID already exists'
-      )
+      assert.equal(responseSecond.statusCode, 400, 'Should return error if external ID already exists')
 
       // should have a treatment status of "On Treatment"
       const { externalId } = await knex('Result as r')
-        .join(
-          'ResultTreatmentStatusLog as rtsl',
-          'r.treatmentStatusLogId',
-          'rtsl.id'
-        )
-        .join(
-          'ResultTreatmentStatus as rts',
-          'rtsl.resultTreatmentStatusId',
-          'rts.id'
-        )
+        .join('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
+        .join('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
         .where('resultId', resultId)
         .first('rts.externalId')
 
@@ -216,10 +196,7 @@ describe('Result Follow Up', () => {
         .where('rfu.externalId', '1234')
         .first('rfu.date', 'fu.externalId')
 
-      assert.equal(
-        existingFollowUp.date.getTime(),
-        updatedFollowUp.date.getTime()
-      )
+      assert.equal(existingFollowUp.date.getTime(), updatedFollowUp.date.getTime())
       assert.equal('drtb-bbsr', updatedFollowUp.externalId)
     })
 
@@ -253,10 +230,7 @@ describe('Result Follow Up', () => {
       assert.property(response.body.data, 'resultData')
 
       // should not have any follow ups
-      const followUps = await knex('ResultFollowUp')
-        .where('resultId', resultId)
-        .where('externalId', '1234')
-        .first('id')
+      const followUps = await knex('ResultFollowUp').where('resultId', resultId).where('externalId', '1234').first('id')
 
       assert(!followUps)
     })
@@ -276,10 +250,7 @@ describe('Result Follow Up', () => {
       assert.property(response.body.data, 'resultData')
 
       // should not have any follow ups
-      const followUps = await knex('ResultFollowUp')
-        .where('resultId', resultId)
-        .where('externalId', '1234')
-        .first('id')
+      const followUps = await knex('ResultFollowUp').where('resultId', resultId).where('externalId', '1234').first('id')
 
       assert(!followUps)
     })

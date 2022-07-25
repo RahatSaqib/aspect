@@ -23,16 +23,9 @@ async function shouldRaiseNewResultAlert(knex, action) {
       return true
     }
     const currentIssueStatus = resultUploadedIssueResults[0].issueStatus
-    const latestIssueEventStatus = _.orderBy(
-      resultUploadedIssueResults,
-      'issueEventDate',
-      'desc'
-    )[0].issueEventStatusId
+    const latestIssueEventStatus = _.orderBy(resultUploadedIssueResults, 'issueEventDate', 'desc')[0].issueEventStatusId
 
-    if (
-      currentIssueStatus === 'Inactive' &&
-      latestIssueEventStatus !== 'Triggered'
-    ) {
+    if (currentIssueStatus === 'Inactive' && latestIssueEventStatus !== 'Triggered') {
       const { formData } = resultUploadedIssueResults[0]
       let formDataObject
       if (formData) {
@@ -43,10 +36,7 @@ async function shouldRaiseNewResultAlert(knex, action) {
         _.isEmpty(formDataObject) ||
         _.every(
           _.values(formDataObject),
-          formDataValue =>
-            _.isEmpty(formDataValue) ||
-            _.isNil(formDataValue) ||
-            formDataValue === ''
+          formDataValue => _.isEmpty(formDataValue) || _.isNil(formDataValue) || formDataValue === ''
         )
       ) {
         return true
@@ -58,9 +48,7 @@ async function shouldRaiseNewResultAlert(knex, action) {
 
 async function shouldSendResultToRedCAP(knex, action) {
   if (action.resultId) {
-    const result = await knex('Result as r')
-      .where('r.id', action.resultId)
-      .first('r.id', 'r.formData')
+    const result = await knex('Result as r').where('r.id', action.resultId).first('r.id', 'r.formData')
     if (_.isEmpty(result)) {
       return false
     }
@@ -73,10 +61,7 @@ async function shouldSendResultToRedCAP(knex, action) {
       _.isEmpty(formDataObject) ||
       _.every(
         _.values(formDataObject),
-        formDataValue =>
-          _.isEmpty(formDataValue) ||
-          _.isNil(formDataValue) ||
-          formDataValue === ''
+        formDataValue => _.isEmpty(formDataValue) || _.isNil(formDataValue) || formDataValue === ''
       )
     ) {
       return false
@@ -100,18 +85,10 @@ async function shouldSendResultToRedCAP(knex, action) {
       return true
     }
     const currentIssueStatus = resultDataEnteredIssueResults[0].issueStatus
-    const latestIssueEventStatus = _.orderBy(
-      resultDataEnteredIssueResults,
-      'issueEventDate',
-      'desc'
-    )[0].issueEventStatusId
-    if (
-      currentIssueStatus === 'Inactive' &&
-      latestIssueEventStatus !== 'Triggered'
-    ) {
-      const previouslySentRedCapNotificationsForResult = await knex(
-        'Notification as n'
-      )
+    const latestIssueEventStatus = _.orderBy(resultDataEnteredIssueResults, 'issueEventDate', 'desc')[0]
+      .issueEventStatusId
+    if (currentIssueStatus === 'Inactive' && latestIssueEventStatus !== 'Triggered') {
+      const previouslySentRedCapNotificationsForResult = await knex('Notification as n')
         .join('WebhookMessage as wm', 'n.webhookMessageId', 'wm.id')
         .join('WebhookTemplate as wt', 'wm.webhookTemplateId', 'wt.id')
         .join('MessageStatus as ms', 'wm.messageStatusId', 'ms.id')

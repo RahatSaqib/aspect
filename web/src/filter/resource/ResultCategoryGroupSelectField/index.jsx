@@ -15,21 +15,13 @@ import styles from '../../popover/FiltersPanel.css'
 
 const cssClasses = classnames.bind(styles)
 
-const ResultCategoryGroupSelectField = ({
-  onResultCategoryGroupChange,
-  value,
-  assayId,
-  allItemText,
-  ...restProps
-}) => {
+const ResultCategoryGroupSelectField = ({ onResultCategoryGroupChange, value, assayId, allItemText, ...restProps }) => {
   const { formatMessage } = useI18n()
-  const { data, isError } = useQuery(
-    [RESULT_CATEGORY_GROUP_SELECT_LIST.KEY, assayId],
-    async () =>
-      fetchWrapperForQueries({
-        endpoint: RESULT_CATEGORY_GROUP_SELECT_LIST.ENDPOINT,
-        params: { assayId },
-      })
+  const { data, isError } = useQuery([RESULT_CATEGORY_GROUP_SELECT_LIST.KEY, assayId], async () =>
+    fetchWrapperForQueries({
+      endpoint: RESULT_CATEGORY_GROUP_SELECT_LIST.ENDPOINT,
+      params: { assayId },
+    })
   )
 
   const [resultCategoryGroups, setResultCategoryGroups] = useState(false)
@@ -57,9 +49,7 @@ const ResultCategoryGroupSelectField = ({
       {resultCategoryGroups
         ? resultCategoryGroups.map(({ externalId, name, i18nKey }) => (
             <MenuItem key={externalId} value={externalId}>
-              <div className={cssClasses('Control__inner')}>
-                {formatMessage(messages[i18nKey], name)}
-              </div>
+              <div className={cssClasses('Control__inner')}>{formatMessage(messages[i18nKey], name)}</div>
             </MenuItem>
           ))
         : null}

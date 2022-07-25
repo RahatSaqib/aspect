@@ -3,17 +3,10 @@ import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 import { receiveList, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { getFilters } from '../filter/utils'
 
 export const types = {
@@ -42,13 +35,7 @@ function receiveDeviceOperations(json) {
   }
 }
 
-export function fetchDeviceOperations(
-  filtersParams,
-  sortCol,
-  sortDir,
-  page,
-  pageSize
-) {
+export function fetchDeviceOperations(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = getFilters(filtersParams)
     dispatch(requestDeviceOperations(sortCol, sortDir, page, pageSize, filters))

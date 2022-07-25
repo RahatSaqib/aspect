@@ -1,10 +1,6 @@
 const { assert } = require('chai')
 const _ = require('lodash')
-const {
-  getResultCategoriesHivVL,
-  getResultCategories,
-  getVLCopies,
-} = require('../../../src/plugin/deviceType/gxUtils')
+const { getResultCategoriesHivVL, getResultCategories, getVLCopies } = require('../../../src/plugin/deviceType/gxUtils')
 const {
   detectedLess1000,
   detectedMoreThan1000,
@@ -57,18 +53,11 @@ describe('Extracting data from Result Text HIV VL', () => {
       },
     ]
     resultText.forEach(elem => {
-      assert.equal(
-        elem.copies,
-        getVLCopies(
-          elem.resulText ? elem.resulText.replace('HIV-1', '') : elem.resulText
-        )
-      )
+      assert.equal(elem.copies, getVLCopies(elem.resulText ? elem.resulText.replace('HIV-1', '') : elem.resulText))
 
       assert.equal(
         elem.value,
-        getResultCategoriesHivVL(
-          elem.resulText ? elem.resulText.replace('HIV-1', '') : elem.resulText
-        )
+        getResultCategoriesHivVL(elem.resulText ? elem.resulText.replace('HIV-1', '') : elem.resulText)
       )
     })
   })
@@ -96,9 +85,7 @@ describe('Extracting data from Result Text HIV VL', () => {
       },
     ]
     textsToTest.forEach(elem => {
-      const [{ id: categoryExternalId }] = getResultCategories(
-        _.assign({}, elem.payload)
-      )
+      const [{ id: categoryExternalId }] = getResultCategories(_.assign({}, elem.payload))
       assert.equal(categoryExternalId, elem.expectedCategory)
     })
   })

@@ -36,15 +36,7 @@ const messages = defineMessages({
   },
 })
 export const ClinicalHistory = props => {
-  const {
-    intl,
-    navigate,
-    location,
-    params,
-    patientDataSchema,
-    items,
-    fetchResultsByPatient,
-  } = props
+  const { intl, navigate, location, params, patientDataSchema, items, fetchResultsByPatient } = props
 
   const onBackClick = () => {
     navigate(-1)
@@ -96,21 +88,14 @@ export const ClinicalHistory = props => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={`${intl.formatMessage(messages.patient)} ${patientId}`} />
-      <NavTitle
-        title={`${intl.formatMessage(messages.patient)} ${patientId}`}
-      />
-      <DetailBackBar
-        onBackClick={onBackClick}
-        title={`${intl.formatMessage(messages.patient)} ${patientId}`}
-      />
+      <NavTitle title={`${intl.formatMessage(messages.patient)} ${patientId}`} />
+      <DetailBackBar onBackClick={onBackClick} title={`${intl.formatMessage(messages.patient)} ${patientId}`} />
       <section className={cssClasses('Section', 'Section--first')}>
         <Grid container spacing={16}>
           <Grid item xs={12} sm={12} md={3}>
             <Paper style={{ height: '100%' }}>
               <section style={{ padding: 20 }}>
-                <p data-panel-title>
-                  {intl.formatMessage(messages.patientData)}
-                </p>
+                <p data-panel-title>{intl.formatMessage(messages.patientData)}</p>
               </section>
               <div style={{ padding: '0px 0px 20px 20px' }}>
                 <Grid container>
@@ -126,10 +111,7 @@ export const ClinicalHistory = props => {
           </Grid>
           <Grid item xs sm md container>
             <Paper style={{ width: '100%' }}>
-              <AspectTimeline
-                items={timelineItems}
-                title={intl.formatMessage(messages.clinicalHistory)}
-              />
+              <AspectTimeline items={timelineItems} title={intl.formatMessage(messages.clinicalHistory)} />
             </Paper>
           </Grid>
         </Grid>
@@ -140,18 +122,10 @@ export const ClinicalHistory = props => {
 const mapStateToProps = (state, ownProps) => {
   const { intl } = ownProps
   const format = type =>
-    type === 'number'
-      ? intl.formatNumber
-      : type === 'date'
-      ? formatDate
-      : type === 'time'
-      ? formatDateTime
-      : null
+    type === 'number' ? intl.formatNumber : type === 'date' ? formatDate : type === 'time' ? formatDateTime : null
   const orderSchemaProperties = patient => {
     const patientData = []
-    mapKeys(patient.toJS().patientDataSchema, (value, key) =>
-      patientData.push({ ...value, key })
-    )
+    mapKeys(patient.toJS().patientDataSchema, (value, key) => patientData.push({ ...value, key }))
 
     return sortBy(patientData, 'order').map(value => ({
       key: get(value, 'key'),
@@ -163,15 +137,9 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     items: state.patient.items,
-    patientDataSchema:
-      state.patient.items.count() > 0
-        ? orderSchemaProperties(state.patient.items.get(0))
-        : null,
+    patientDataSchema: state.patient.items.count() > 0 ? orderSchemaProperties(state.patient.items.get(0)) : null,
     userPermissions: state.user.jwt.permissions,
   }
 }
 
-export default flowRight(
-  injectIntl,
-  connect(mapStateToProps, { fetchResultsByPatient })
-)(ClinicalHistory)
+export default flowRight(injectIntl, connect(mapStateToProps, { fetchResultsByPatient }))(ClinicalHistory)

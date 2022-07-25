@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types'
 
-import {
-  makeGetClassNames,
-  makeDelegateComponent,
-} from './makeDelegateComponent'
+import { makeGetClassNames, makeDelegateComponent } from './makeDelegateComponent'
 import styles from './pure-grids-responsive-min.css'
 
 const pureGridPropTypes = {
@@ -22,15 +19,8 @@ const keyToClassNameMappings = {
   xl: styles['pure-hidden-xl'],
 }
 
-export const getClassNames = makeGetClassNames(
-  pureGridPropTypes,
-  keyToClassNameMappings
-)
+export const getClassNames = makeGetClassNames(pureGridPropTypes, keyToClassNameMappings)
 
-export const Hidden = makeDelegateComponent(
-  'Hidden',
-  pureGridPropTypes,
-  keyToClassNameMappings
-)
+export const Hidden = makeDelegateComponent('Hidden', pureGridPropTypes, keyToClassNameMappings)
 
 export default Hidden

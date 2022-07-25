@@ -10,26 +10,14 @@ import Paper from '@material-ui/core/Paper'
 
 import NavTitle from '../../globals/components/NavTitle'
 import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
-import {
-  fetchAccountDetails,
-  saveContactDetails,
-  saveLoginDetails,
-  saveUserPreferences,
-} from '../AccountRedux'
+import { fetchAccountDetails, saveContactDetails, saveLoginDetails, saveUserPreferences } from '../AccountRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import styles from './AccountDetails.css'
 import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
-import {
-  ContactDetails,
-  LoginDetails,
-  UserPreferences,
-} from '../../person/PersonRedux'
+import { ContactDetails, LoginDetails, UserPreferences } from '../../person/PersonRedux'
 import AccountDetailsBackBar from './AccountDetailsBackBar'
-import {
-  setTimezoneId,
-  setCurrentCulture,
-} from '../../globals/sideEffects/LocalStorage'
+import { setTimezoneId, setCurrentCulture } from '../../globals/sideEffects/LocalStorage'
 import ContactDetailsFormFormik from '../../MigratedComponents/Account/Details'
 
 const enhance = compose(
@@ -83,10 +71,7 @@ export class AccountDetails extends PureComponent {
   componentDidUpdate() {
     if (
       this.props.accountDetails &&
-      this.props.accountDetails.getIn([
-        'loginDetails',
-        'incorrectCurrentPasswordEntered',
-      ])
+      this.props.accountDetails.getIn(['loginDetails', 'incorrectCurrentPasswordEntered'])
     ) {
       this.openCurrentPasswordInputDialog()
     }
@@ -164,10 +149,7 @@ export class AccountDetails extends PureComponent {
               {(loading || saving) && <LinearProgress />}
               <AccountDetailsBackBar
                 formatMessage={formatMessage}
-                title={
-                  accountDetails &&
-                  accountDetails.get('contactDetails').get('name')
-                }
+                title={accountDetails && accountDetails.get('contactDetails').get('name')}
                 {...this.props}
               />
               <Paper className={styles.AddMargin}>
@@ -180,10 +162,7 @@ export class AccountDetails extends PureComponent {
               {(loading || saving) && <LinearProgress />}
               <AccountDetailsBackBar
                 formatMessage={formatMessage}
-                title={
-                  accountDetails &&
-                  accountDetails.get('contactDetails').get('name')
-                }
+                title={accountDetails && accountDetails.get('contactDetails').get('name')}
                 {...this.props}
               />
               <Paper className={styles.AddMargin}>
@@ -192,15 +171,9 @@ export class AccountDetails extends PureComponent {
                   loading={loading || saving}
                   canModify={false}
                   loginDetails={accountDetails.get('loginDetails')}
-                  currentPasswordInputDialogOpen={
-                    this.state.currentPasswordInputDialogOpen
-                  }
-                  openCurrentPasswordInputDialog={
-                    this.openCurrentPasswordInputDialog
-                  }
-                  closeCurrentPasswordInputDialog={
-                    this.closeCurrentPasswordInputDialog
-                  }
+                  currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
+                  openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
+                  closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
                   onSubmit={this.handleSaveLoginDetails}
                 />
               </Paper>

@@ -8,34 +8,14 @@ async function seed(knex) {
     .max('id as elegibleId')
     .count('id as qty')
     .sum('quantityOnHand as quantityOnHand')
-    .select(
-      'consumableId',
-      'siteId',
-      'lotNumber',
-      'expiresOn',
-      'inTransitFromSiteId'
-    )
-    .groupBy(
-      'consumableId',
-      'siteId',
-      'lotNumber',
-      'expiresOn',
-      'inTransitFromSiteId'
-    )
+    .select('consumableId', 'siteId', 'lotNumber', 'expiresOn', 'inTransitFromSiteId')
+    .groupBy('consumableId', 'siteId', 'lotNumber', 'expiresOn', 'inTransitFromSiteId')
     .having('qty', '>', 1)
   const trx = await knex.transaction()
   try {
     await Promise.each(
       inventoryLog,
-      async ({
-        consumableId,
-        siteId,
-        lotNumber,
-        quantityOnHand,
-        expiresOn,
-        inTransitFromSiteId,
-        elegibleId,
-      }) => {
+      async ({ consumableId, siteId, lotNumber, quantityOnHand, expiresOn, inTransitFromSiteId, elegibleId }) => {
         const toBeDeleted = await knex('InventoryItem')
           .where({
             consumableId,
@@ -47,12 +27,8 @@ async function seed(knex) {
           .where('id', '<>', elegibleId)
           .pluck('id')
 
-        await trx('InventoryLog')
-          .whereIn('inventoryItemId', toBeDeleted)
-          .update({ inventoryItemId: elegibleId })
-        await trx('InventoryItem')
-          .where('id', elegibleId)
-          .update({ quantityOnHand })
+        await trx('InventoryLog').whereIn('inventoryItemId', toBeDeleted).update({ inventoryItemId: elegibleId })
+        await trx('InventoryItem').where('id', elegibleId).update({ quantityOnHand })
         await trx('InventoryItem').whereIn('id', toBeDeleted).delete()
       }
     )

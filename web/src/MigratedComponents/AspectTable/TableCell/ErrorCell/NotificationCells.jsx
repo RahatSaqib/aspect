@@ -1,10 +1,7 @@
 import React from 'react'
 import ErrorCell from './index'
 
-const WebhookCell = ({
-  item: { webhookSent, webhookWithErrors, webhookPending, webhookRecipients },
-  value,
-}) => (
+const WebhookCell = ({ item: { webhookSent, webhookWithErrors, webhookPending, webhookRecipients }, value }) => (
   <ErrorCell
     sent={webhookSent}
     withErrors={webhookWithErrors}
@@ -14,10 +11,7 @@ const WebhookCell = ({
   />
 )
 
-const EmailCell = ({
-  item: { emailSent, emailWithErrors, emailPending, emailRecipients },
-  value,
-}) => (
+const EmailCell = ({ item: { emailSent, emailWithErrors, emailPending, emailRecipients }, value }) => (
   <ErrorCell
     sent={emailSent}
     withErrors={emailWithErrors}
@@ -27,17 +21,8 @@ const EmailCell = ({
   />
 )
 
-const SMSCell = ({
-  value,
-  item: { smsSent, smsWithErrors, smsPending, smsRecipients },
-}) => (
-  <ErrorCell
-    sent={smsSent}
-    withErrors={smsWithErrors}
-    pending={smsPending}
-    recipients={smsRecipients}
-    value={value}
-  />
+const SMSCell = ({ value, item: { smsSent, smsWithErrors, smsPending, smsRecipients } }) => (
+  <ErrorCell sent={smsSent} withErrors={smsWithErrors} pending={smsPending} recipients={smsRecipients} value={value} />
 )
 
 export { EmailCell, SMSCell, WebhookCell }

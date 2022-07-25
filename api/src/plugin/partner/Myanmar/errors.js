@@ -1,20 +1,5 @@
-const MODULE_TEMPERATURE_ERROR_CODES = [
-  '1001',
-  '1004',
-  '1017',
-  '2014',
-  '2022',
-  '4009',
-  '4010',
-]
-const MODULE_POWER_ERROR_CODES = [
-  '1007',
-  '2122',
-  '2123',
-  '2126',
-  '2127',
-  '4008',
-]
+const MODULE_TEMPERATURE_ERROR_CODES = ['1001', '1004', '1017', '2014', '2022', '4009', '4010']
+const MODULE_POWER_ERROR_CODES = ['1007', '2122', '2123', '2126', '2127', '4008']
 
 const MODULE_FAILURE_ERROR_CODES = [
   '1002',

@@ -106,18 +106,15 @@ export const sharedFields = {
   },
 }
 
-export const connectConsumableFromInventoryItem = connect(
-  (state, { inventoryItem }) => ({
-    consumable: state.consumable.consumables.items.find(
-      c => inventoryItem && c.get('id') === inventoryItem.get('consumableId'),
-      null,
-      EMPTY_MAP
-    ),
-    isReceiveInventoryDialog:
-      state.inventory.inventoryAdjustment.get('actionType') ===
-      types.SHOW_RECEIVE_INVENTORY_DIALOG,
-  })
-)
+export const connectConsumableFromInventoryItem = connect((state, { inventoryItem }) => ({
+  consumable: state.consumable.consumables.items.find(
+    c => inventoryItem && c.get('id') === inventoryItem.get('consumableId'),
+    null,
+    EMPTY_MAP
+  ),
+  isReceiveInventoryDialog:
+    state.inventory.inventoryAdjustment.get('actionType') === types.SHOW_RECEIVE_INVENTORY_DIALOG,
+}))
 
 export const InventoryAdjustmentDialogForm = ({
   intl,
@@ -146,9 +143,7 @@ export const InventoryAdjustmentDialogForm = ({
   onNotesChange,
   handleSubmit,
 }) => {
-  const showLot =
-    (currInventoryItem && currInventoryItem.get('showLot')) ||
-    (consumable && consumable.get('showLot'))
+  const showLot = (currInventoryItem && currInventoryItem.get('showLot')) || (consumable && consumable.get('showLot'))
   const showExpirationDate =
     (currInventoryItem && currInventoryItem.get('showExpirationDate')) ||
     (consumable && consumable.get('showExpirationDate'))
@@ -158,12 +153,7 @@ export const InventoryAdjustmentDialogForm = ({
         <Button color="primary" onClick={onCancel}>
           {intl.formatMessage(messages.cancel)}
         </Button>,
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={!form.valid || form.submitting}
-          onClick={handleSubmit}
-        >
+        <Button color="primary" variant="contained" disabled={!form.valid || form.submitting} onClick={handleSubmit}>
           {intl.formatMessage(messages.submit)}
         </Button>,
       ]}
@@ -180,18 +170,10 @@ export const InventoryAdjustmentDialogForm = ({
                 name="consumableId"
                 floatingLabelText={intl.formatMessage(messages.consumable)}
                 floatingLabelFixed
-                disabled={
-                  form.submitting ||
-                  (currInventoryItem &&
-                    !isNil(currInventoryItem.get('consumableId')))
-                }
+                disabled={form.submitting || (currInventoryItem && !isNil(currInventoryItem.get('consumableId')))}
                 value={values.consumableId}
                 onConsumableChange={onConsumableIdChange}
-                errorText={
-                  meta.consumableId &&
-                  meta.consumableId.touched &&
-                  meta.consumableId.error
-                }
+                errorText={meta.consumableId && meta.consumableId.touched && meta.consumableId.error}
                 fullWidth
               />
             )}
@@ -203,11 +185,7 @@ export const InventoryAdjustmentDialogForm = ({
                 type="text"
                 name="lotNumber"
                 label={intl.formatMessage(messages.lotNumber)}
-                disabled={
-                  form.submitting ||
-                  (currInventoryItem &&
-                    !isNil(currInventoryItem.get('lotNumber')))
-                }
+                disabled={form.submitting || (currInventoryItem && !isNil(currInventoryItem.get('lotNumber')))}
                 value={values.lotNumber}
                 onChange={onLotNumberChange}
                 error={meta.lotNumber.touched && meta.lotNumber.error}
@@ -226,11 +204,7 @@ export const InventoryAdjustmentDialogForm = ({
                 <DateTimeInput
                   fullWidth
                   margin="normal"
-                  disabled={
-                    form.submitting ||
-                    (currInventoryItem &&
-                      !isNil(currInventoryItem.get('expiresOn')))
-                  }
+                  disabled={form.submitting || (currInventoryItem && !isNil(currInventoryItem.get('expiresOn')))}
                   dateFormat={dateFormat}
                   intl={intl}
                   RootProps={{
@@ -254,9 +228,7 @@ export const InventoryAdjustmentDialogForm = ({
                 floatingLabelText={intl.formatMessage(messages.fromSiteName)}
                 disabled={
                   form.submitting ||
-                  (currInventoryItem &&
-                    (isReceiveInventoryDialog ||
-                      !isNil(currInventoryItem.get('siteId'))))
+                  (currInventoryItem && (isReceiveInventoryDialog || !isNil(currInventoryItem.get('siteId'))))
                 }
                 value={values.fromSiteId}
                 onSiteChange={onFromSiteIdChange}
@@ -329,43 +301,42 @@ export const InventoryAdjustmentDialogForm = ({
               />
             </section>
           )}
-          {consumableReason &&
-            consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
-              <section>
-                <FormGroup label={intl.formatMessage(messages.testsRunBetween)}>
-                  <DateTimeInput
-                    fullWidth
-                    margin="normal"
-                    intl={intl}
-                    disabled={form.submitting}
-                    dateFormat={dateFormat}
-                    RootProps={{
-                      name: 'dateAdjustedFrom',
-                    }}
-                    value={values.dateAdjustedFrom}
-                    onChange={onDateAdjustedFromChange}
-                  />
-                </FormGroup>
-                <FormGroup label={intl.formatMessage(messages.and)}>
-                  <DateTimeInput
-                    fullWidth
-                    margin="normal"
-                    disabled={form.submitting}
-                    dateFormat={dateFormat}
-                    intl={intl}
-                    RootProps={{
-                      name: 'dateAdjustedTo',
-                      // style: formFieldStyle
-                    }}
-                    value={values.dateAdjustedTo}
-                    onChange={onDateAdjustedToChange}
-                    // container="inline"
-                    // mode="landscape"
-                    // style={formFieldStyle}
-                  />
-                </FormGroup>
-              </section>
-            )}
+          {consumableReason && consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
+            <section>
+              <FormGroup label={intl.formatMessage(messages.testsRunBetween)}>
+                <DateTimeInput
+                  fullWidth
+                  margin="normal"
+                  intl={intl}
+                  disabled={form.submitting}
+                  dateFormat={dateFormat}
+                  RootProps={{
+                    name: 'dateAdjustedFrom',
+                  }}
+                  value={values.dateAdjustedFrom}
+                  onChange={onDateAdjustedFromChange}
+                />
+              </FormGroup>
+              <FormGroup label={intl.formatMessage(messages.and)}>
+                <DateTimeInput
+                  fullWidth
+                  margin="normal"
+                  disabled={form.submitting}
+                  dateFormat={dateFormat}
+                  intl={intl}
+                  RootProps={{
+                    name: 'dateAdjustedTo',
+                    // style: formFieldStyle
+                  }}
+                  value={values.dateAdjustedTo}
+                  onChange={onDateAdjustedToChange}
+                  // container="inline"
+                  // mode="landscape"
+                  // style={formFieldStyle}
+                />
+              </FormGroup>
+            </section>
+          )}
           {has(values, 'dateAdjusted') && (
             <section>
               <FormGroup label={labels.dateAdjusted}>

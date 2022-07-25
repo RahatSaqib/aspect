@@ -47,13 +47,7 @@ const bobUserPermissions = [
   'site:edit',
 ]
 
-const cepheidUserPermissions = [
-  'account:edit',
-  'assay:view',
-  'inventory:view',
-  'operationalData:view',
-  'site:view',
-]
+const cepheidUserPermissions = ['account:edit', 'assay:view', 'inventory:view', 'operationalData:view', 'site:view']
 
 const users = [
   { key: 'admin', permissions: adminUserPermissions },
@@ -169,18 +163,15 @@ const links = [
   {
     link: '/browse/result',
     expected: {
-      allowed:
-        '/browse/result?filters=deviceType%3DCepheidGeneXpert%26onlyReportableResults%3Dtrue',
+      allowed: '/browse/result?filters=deviceType%3DCepheidGeneXpert%26onlyReportableResults%3Dtrue',
       restricted: '#',
     },
-    linkParams:
-      '{"deviceType": "CepheidGeneXpert", "onlyReportableResults": true}',
+    linkParams: '{"deviceType": "CepheidGeneXpert", "onlyReportableResults": true}',
   },
   {
     link: '/browse/result',
     expected: {
-      allowed:
-        '/browse/result?filters=deviceType%3DCepheidGeneXpert%26workflowStatusId%3D2',
+      allowed: '/browse/result?filters=deviceType%3DCepheidGeneXpert%26workflowStatusId%3D2',
       restricted: '#',
     },
     linkParams: '{"deviceType": "CepheidGeneXpert", "workflowStatusId": 2}',
@@ -212,22 +203,18 @@ const links = [
   {
     link: '/browse/device',
     expected: {
-      allowed:
-        '/browse/device?filters=deviceType%3DCepheidGeneXpert%26issueTypeId%3DInstrumentReplaced',
+      allowed: '/browse/device?filters=deviceType%3DCepheidGeneXpert%26issueTypeId%3DInstrumentReplaced',
       restricted: '#',
     },
-    linkParams:
-      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "InstrumentReplaced"}',
+    linkParams: '{"deviceType": "CepheidGeneXpert", "issueTypeId": "InstrumentReplaced"}',
   },
   {
     link: '/browse/device',
     expected: {
-      allowed:
-        '/browse/device?filters=deviceType%3DCepheidGeneXpert%26issueTypeId%3DModuleReplaced',
+      allowed: '/browse/device?filters=deviceType%3DCepheidGeneXpert%26issueTypeId%3DModuleReplaced',
       restricted: '#',
     },
-    linkParams:
-      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "ModuleReplaced"}',
+    linkParams: '{"deviceType": "CepheidGeneXpert", "issueTypeId": "ModuleReplaced"}',
   },
   {
     link: '/browse/notification',
@@ -248,12 +235,10 @@ const links = [
   {
     link: '/browse/device',
     expected: {
-      allowed:
-        '/browse/device?filters=deviceType%3DCepheidGeneXpert%26issueTypeId%3DUnusedModules',
+      allowed: '/browse/device?filters=deviceType%3DCepheidGeneXpert%26issueTypeId%3DUnusedModules',
       restricted: '#',
     },
-    linkParams:
-      '{"deviceType": "CepheidGeneXpert", "issueTypeId": "UnusedModules"}',
+    linkParams: '{"deviceType": "CepheidGeneXpert", "issueTypeId": "UnusedModules"}',
   },
 ]
 

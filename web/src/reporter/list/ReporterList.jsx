@@ -9,16 +9,8 @@ import TableBody from '@material-ui/core/TableBody'
 import Immutable from 'immutable'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import { useAuthState } from '../../Providers/AuthProvider'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
@@ -26,16 +18,8 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import {
-  getExportableFile,
-  REPORTERS_LIST,
-  REPORTERS_LIST_REVOKE_ONE,
-} from '../ReporterQueries'
-import {
-  ReporterDataTable,
-  ReporterDataTableHead,
-  ReporterDataTableRow,
-} from './ReporterDataTable'
+import { getExportableFile, REPORTERS_LIST, REPORTERS_LIST_REVOKE_ONE } from '../ReporterQueries'
+import { ReporterDataTable, ReporterDataTableHead, ReporterDataTableRow } from './ReporterDataTable'
 
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
 import { receiveList, Items } from '../../shared/metaReducers/items'
@@ -118,17 +102,12 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 const getCurrentFilters = locationSearch => {
   const urlSearchParams = new URLSearchParams(locationSearch)
-  const { value: filtersParams } = filtersSanitizer(
-    urlSearchParams.get('filters') || ''
-  )
+  const { value: filtersParams } = filtersSanitizer(urlSearchParams.get('filters') || '')
   return getFilters(filtersParams)
 }
 const getCurrentPagination = location => {
@@ -159,11 +138,7 @@ export const ReporterListWithProps = ({
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.reportersTitle)} />
       <NavTitle title={formatMessage(messages.reportersTitle)} />
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        config={reducedFilters}
-      />
+      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!isLoading} />
 
@@ -172,9 +147,7 @@ export const ReporterListWithProps = ({
           visible={!items.currentIdList.isEmpty()}
           reportName="Reporters"
         />
-        {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
+        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
         {!items.currentIdList.isEmpty() && (
           <ReporterDataTable className={cssClasses('ReporterDataTable')}>
             <ReporterDataTableHead
@@ -188,10 +161,7 @@ export const ReporterListWithProps = ({
               {items.currentIdList
                 .map(id => items.byId.get(id))
                 .map(reporter => (
-                  <ReporterDataTableRow
-                    key={reporter.get('siteId')}
-                    reporter={reporter}
-                  />
+                  <ReporterDataTableRow key={reporter.get('siteId')} reporter={reporter} />
                 ))}
             </TableBody>
           </ReporterDataTable>
@@ -267,8 +237,7 @@ const ReporterList = () => {
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } =
-      filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
@@ -302,15 +271,7 @@ const ReporterList = () => {
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
-      return getExportableFile(
-        filtersParams,
-        formatType,
-        sortCol,
-        sortDir,
-        0,
-        total,
-        'Reporters'
-      )
+      return getExportableFile(filtersParams, formatType, sortCol, sortDir, 0, total, 'Reporters')
     }
   }
 

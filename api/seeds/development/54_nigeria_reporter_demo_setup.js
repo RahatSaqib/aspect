@@ -9,12 +9,8 @@ const partnerData = require('./fixtures/partnerData')
 const NUMBER_OF_SITES = 50
 
 async function seed(knex) {
-  const { id: countryId } = await knex('Country')
-    .where('abbreviation', 'NG')
-    .first()
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Partner One')
-    .first()
+  const { id: countryId } = await knex('Country').where('abbreviation', 'NG').first()
+  const { id: partnerId } = await knex('Partner').where('name', 'Partner One').first()
   const geographies = await knex('Geography as g')
     .where({ countryId })
     .andWhere(knex.raw('ISNULL(lgaId) = 0'))

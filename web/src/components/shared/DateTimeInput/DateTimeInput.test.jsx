@@ -26,22 +26,24 @@ describe('DateTimeInput component', () => {
   describe('common', () => {
     it('should determine the order of dropdowns by `dateFormat` and `timeFormat` props', () => {
       const wrapper = mountWithTheme(<DateTimeInputI18n {...commonProps} />)
-      expect(
-        wrapper.find(selectRootSelector).map(node => node.prop('name'))
-      ).toEqual(['Year', 'Month', 'Date', 'Hours', 'Minutes'])
+      expect(wrapper.find(selectRootSelector).map(node => node.prop('name'))).toEqual([
+        'Year',
+        'Month',
+        'Date',
+        'Hours',
+        'Minutes',
+      ])
 
       wrapper.setProps({
-        children: (
-          <DateTimeInputI18n
-            {...commonProps}
-            dateFormat="d/M/y"
-            timeFormat="s:m:H"
-          />
-        ),
+        children: <DateTimeInputI18n {...commonProps} dateFormat="d/M/y" timeFormat="s:m:H" />,
       })
-      expect(
-        wrapper.find(selectRootSelector).map(node => node.prop('name'))
-      ).toEqual(['Date', 'Month', 'Year', 'Minutes', 'Hours'])
+      expect(wrapper.find(selectRootSelector).map(node => node.prop('name'))).toEqual([
+        'Date',
+        'Month',
+        'Year',
+        'Minutes',
+        'Hours',
+      ])
     })
   })
 
@@ -72,9 +74,7 @@ describe('DateTimeInput component', () => {
       })
 
       act(() => {
-        const yearSelect = wrapper
-          .find(Downshift)
-          .filterWhere(node => node.children().prop('name') === 'Year')
+        const yearSelect = wrapper.find(Downshift).filterWhere(node => node.children().prop('name') === 'Year')
 
         yearSelect.prop('onSelect')({
           value: 2006,
@@ -89,9 +89,7 @@ describe('DateTimeInput component', () => {
       })
 
       act(() => {
-        const monthSelect = wrapper
-          .find(Downshift)
-          .filterWhere(node => node.children().prop('name') === 'Month')
+        const monthSelect = wrapper.find(Downshift).filterWhere(node => node.children().prop('name') === 'Month')
         monthSelect.prop('onSelect')({
           value: 3,
           label: 'Apr',

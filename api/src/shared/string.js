@@ -59,10 +59,7 @@ function getAllStringsEnclosedBetweenCharacters(
   } else {
     endQuoteCharacter = escapeReservedRegexCharacters(endQuoteCharacter)
   }
-  const regex = new RegExp(
-    `${startQuoteCharacter}([\\s\\S]*?)${endQuoteCharacter}`,
-    'g'
-  )
+  const regex = new RegExp(`${startQuoteCharacter}([\\s\\S]*?)${endQuoteCharacter}`, 'g')
   const result = []
   let current = regex.exec(stringContainingQuotes)
   while (current) {
@@ -81,9 +78,7 @@ function splitWithEscape(stringToSplit, splitOnCharacter, escapeCharacter) {
   while (regex.test(stringBeingSplit)) {
     stringBeingSplit = stringBeingSplit.replace(regex, `$1${safeDelimiter}`)
   }
-  return stringBeingSplit
-    .split(safeDelimiter)
-    .map(item => item.replace(new RegExp(e, 'g'), ''))
+  return stringBeingSplit.split(safeDelimiter).map(item => item.replace(new RegExp(e, 'g'), ''))
 }
 
 function splitCsvWithTrim(csv, defaultValue) {

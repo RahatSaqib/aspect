@@ -29,10 +29,7 @@ function groupDateRanges(data) {
 }
 
 function dateRangeByWeekDay(startOfMonth, endOfPeriodDate) {
-  const amountOfDays = range(
-    0,
-    differenceInCalendarDays(endOfPeriodDate, startOfMonth) + 1
-  )
+  const amountOfDays = range(0, differenceInCalendarDays(endOfPeriodDate, startOfMonth) + 1)
   return amountOfDays.reduce((acc, curr) => {
     const thisDay = addDays(startOfMonth, curr)
     const weekInt = getWeek(thisDay, { weekStartsOn: 1 })
@@ -86,9 +83,7 @@ const getDayTitle = ({
 
 const setClassNames = (item, cssClasses) => {
   if (item.classNames) {
-    item.classNames = mapValues(item.classNames, className =>
-      cssClasses(className)
-    )
+    item.classNames = mapValues(item.classNames, className => cssClasses(className))
   }
 }
 
@@ -108,12 +103,4 @@ const setInitialValue = (items, id, initialValue, cssClasses, callback) => {
   return item
 }
 
-export {
-  dateRangeByWeekDay,
-  getDayTitle,
-  getIndex,
-  getTotalDays,
-  groupDateRanges,
-  setClassNames,
-  setInitialValue,
-}
+export { dateRangeByWeekDay, getDayTitle, getIndex, getTotalDays, groupDateRanges, setClassNames, setInitialValue }

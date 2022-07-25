@@ -42,9 +42,7 @@ const COMMON_LIST_FIELDS_UTC = {
   sampleOriginSiteName: 'so.name',
   sampleTypeName: 'stp.name',
   patientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))'),
-  requiresTreatment: knex.raw(
-    'GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0))'
-  ),
+  requiresTreatment: knex.raw('GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0))'),
   treatmentStatusInfo: knex.raw(
     "case when GREATEST(IFNULL(rca.requiresTreatment,0), IFNULL(rca2.requiresTreatment,0)) = 0 then null else case when rts.externalId= 'OnTreatment' then 'ok' when rts.externalId = 'NotPossible' then 'na' when r.endedOn<DATE_SUB(NOW(),INTERVAL 32 DAY) then 'alert' when r.endedOn<=DATE_SUB(NOW(),INTERVAL 16 DAY) and r.endedOn>=DATE_SUB(NOW(),INTERVAL 32 DAY) then 'warning' else 'na' end end"
   ),
@@ -97,11 +95,7 @@ const getReportCommonFieldsTZ = userTimeOffset => ({
   errorCode: 'r.errorCode',
   copies: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.copies"))'),
   caseExternalId: 'ca.externalId',
-  endedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'r.endedOn',
-    userTimeOffset
-  ),
+  endedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', userTimeOffset),
 })
 
 /**
@@ -112,66 +106,18 @@ const getReportCommonFieldsTZ = userTimeOffset => ({
 const getSelectCommonListFieldsTZ = userTimeOffset => ({
   ...COMMON_LIST_FIELDS_UTC,
   // override datetime fields with user time offset:
-  startedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'r.startedOn',
-    userTimeOffset
-  ),
-  endedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'r.endedOn',
-    userTimeOffset
-  ),
-  resultWorkflowChangedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'rsl.changedOn',
-    userTimeOffset
-  ),
-  consumableExpirationDate: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'r.consumableExpirationDate',
-    userTimeOffset
-  ),
-  createdOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'r.createdOn',
-    userTimeOffset
-  ),
-  updatedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'r.updatedOn',
-    userTimeOffset
-  ),
-  sampleCollectedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'sp.collectedOn',
-    userTimeOffset
-  ),
-  resultWorkflowLogCreatedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'rsl.createdOn',
-    userTimeOffset
-  ),
-  resultWorkflowLogChangedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'rsl.changedOn',
-    userTimeOffset
-  ),
-  resultTreatmentStatusChangedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'rtsl.changedOn',
-    userTimeOffset
-  ),
-  transferredOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'rslog.createdOn',
-    userTimeOffset
-  ),
-  firstViewedOn: getDateTimeProjectionInUserTimeZone(
-    knex,
-    'r.firstViewedOn',
-    userTimeOffset
-  ),
+  startedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.startedOn', userTimeOffset),
+  endedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', userTimeOffset),
+  resultWorkflowChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.changedOn', userTimeOffset),
+  consumableExpirationDate: getDateTimeProjectionInUserTimeZone(knex, 'r.consumableExpirationDate', userTimeOffset),
+  createdOn: getDateTimeProjectionInUserTimeZone(knex, 'r.createdOn', userTimeOffset),
+  updatedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.updatedOn', userTimeOffset),
+  sampleCollectedOn: getDateTimeProjectionInUserTimeZone(knex, 'sp.collectedOn', userTimeOffset),
+  resultWorkflowLogCreatedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.createdOn', userTimeOffset),
+  resultWorkflowLogChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rsl.changedOn', userTimeOffset),
+  resultTreatmentStatusChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rtsl.changedOn', userTimeOffset),
+  transferredOn: getDateTimeProjectionInUserTimeZone(knex, 'rslog.createdOn', userTimeOffset),
+  firstViewedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.firstViewedOn', userTimeOffset),
 })
 
 /**
@@ -231,38 +177,18 @@ const SELECT_FIELDS_UTC = {
 }
 
 const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
-  errorRate: knex.raw(
-    "ROUND(IFNULL(COUNT(r.id) / SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END), 0), 2)"
-  ),
+  errorRate: knex.raw("ROUND(IFNULL(COUNT(r.id) / SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END), 0), 2)"),
   // Flat mtb cnt
-  mtbNotDetected: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc1.externalId = 'NotDetected' THEN 1 ELSE 0 END), 0)"
-  ),
-  mtbDetected: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Detected' THEN 1 ELSE 0 END), 0)"
-  ),
-  mtbNoResult: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END), 0)"
-  ),
-  mtbInvalid: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END), 0)"
-  ),
-  mtbError: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END), 0)"
-  ),
-  mtbTraceDetected: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc1.externalId = 'Trace Detected' THEN 1 ELSE 0 END), 0)"
-  ),
+  mtbNotDetected: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'NotDetected' THEN 1 ELSE 0 END), 0)"),
+  mtbDetected: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Detected' THEN 1 ELSE 0 END), 0)"),
+  mtbNoResult: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END), 0)"),
+  mtbInvalid: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END), 0)"),
+  mtbError: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END), 0)"),
+  mtbTraceDetected: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Trace Detected' THEN 1 ELSE 0 END), 0)"),
   // Flat rif cnt
-  rifDetected: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)"
-  ),
-  rifNotDetected: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END), 0)"
-  ),
-  rifIndeterminate: knex.raw(
-    "IFNULL(SUM(CASE WHEN rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"
-  ),
+  rifDetected: knex.raw("IFNULL(SUM(CASE WHEN rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)"),
+  rifNotDetected: knex.raw("IFNULL(SUM(CASE WHEN rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END), 0)"),
+  rifIndeterminate: knex.raw("IFNULL(SUM(CASE WHEN rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"),
 
   // Flat groups cnt
   mtbDetectedRifNotDetected: knex.raw(
@@ -346,6 +272,30 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'pa.unreliablePatientExternalIdTemplate',
 ]
 
+// ----------------
+const caseCondition = (id, condition) =>
+  knex.raw(`
+      DISTINCT
+      CASE
+        WHEN ${condition}
+        THEN ${id}
+        ELSE null
+      END
+    `)
+
+// ----------------
+const countXdr = xdrResistanceValue =>
+  caseCondition(
+    'r.id',
+    `
+      JSON_SEARCH(
+        r.resultData ->> '$.detectedResistance[*]',
+        'one',
+        '${xdrResistanceValue}'
+      ) IS NOT NULL
+    `
+  )
+
 module.exports = {
   getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
@@ -354,4 +304,7 @@ module.exports = {
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
+
+  caseCondition,
+  countXdr,
 }

@@ -24,10 +24,7 @@ export class AssaySelectField extends PureComponent {
     diseaseId: PropTypes.string,
     assayTypeId: PropTypes.string,
     deviceTypeId: PropTypes.string,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.arrayOf(PropTypes.string),
-    ]),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   }
 
   static defaultProps = {
@@ -72,27 +69,16 @@ export class AssaySelectField extends PureComponent {
     const restProps = omit(rest, ['fetchAssays'])
     const { formatMessage } = this.context
 
-    if (
-      assayItemsLoading === false &&
-      isSingleAssay &&
-      value !== validAssays.first().get('id')
-    ) {
+    if (assayItemsLoading === false && isSingleAssay && value !== validAssays.first().get('id')) {
       onAssayChange(validAssays.first().get('id'))
-    } else if (assayItemsLoading === false && validAssays.size === 0 && value)
-      onAssayChange()
+    } else if (assayItemsLoading === false && validAssays.size === 0 && value) onAssayChange()
 
     const validFilteredAssays = assayItems =>
       assayItems.filter(
         a =>
-          (!diseaseId ||
-            !a.get('diseaseId') ||
-            a.get('diseaseId').toString() === diseaseId.toString()) &&
-          (!assayTypeId ||
-            !a.get('assayTypeId') ||
-            a.get('assayTypeId').toString() === assayTypeId.toString()) &&
-          (!deviceTypeId ||
-            !a.get('deviceTypeId') ||
-            a.get('deviceTypeId').toString() === deviceTypeId.toString())
+          (!diseaseId || !a.get('diseaseId') || a.get('diseaseId').toString() === diseaseId.toString()) &&
+          (!assayTypeId || !a.get('assayTypeId') || a.get('assayTypeId').toString() === assayTypeId.toString()) &&
+          (!deviceTypeId || !a.get('deviceTypeId') || a.get('deviceTypeId').toString() === deviceTypeId.toString())
       )
     const textForAssayItem = assayItem => {
       return (
@@ -136,6 +122,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  AssaySelectField
-)
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(AssaySelectField)

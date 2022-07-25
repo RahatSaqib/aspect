@@ -5,25 +5,12 @@ import TableCell from '@material-ui/core/TableCell'
 
 import styles from './DataTableRowStyle'
 
-const DataTableCell = ({
-  classes,
-  className,
-  children,
-  hiddenOn,
-  numeric,
-  small,
-  ...restProps
-}) => (
+const DataTableCell = ({ classes, className, children, hiddenOn, numeric, small, ...restProps }) => (
   <TableCell
-    className={classNames(
-      className,
-      classes.cell,
-      classes[`hidden${hiddenOn}Down`],
-      {
-        [classes.numeric]: numeric,
-        [classes.small]: small,
-      }
-    )}
+    className={classNames(className, classes.cell, classes[`hidden${hiddenOn}Down`], {
+      [classes.numeric]: numeric,
+      [classes.small]: small,
+    })}
     {...restProps}
   >
     {children}

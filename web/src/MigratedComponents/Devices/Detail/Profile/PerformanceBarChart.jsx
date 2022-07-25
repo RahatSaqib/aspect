@@ -26,16 +26,7 @@ const messages = defineMessages({
   },
 })
 
-const PerformanceBarChart = ({
-  data,
-  series,
-  color,
-  legend,
-  avgValue,
-  maxValue,
-  info,
-  dailyCapacity,
-}) => {
+const PerformanceBarChart = ({ data, series, color, legend, avgValue, maxValue, info, dailyCapacity }) => {
   const intl = useIntl()
   return (
     <ResponsiveBar
@@ -97,29 +88,17 @@ const PerformanceBarChart = ({
           info === 'Error Rate'
             ? periodData.errorRate + periodData.exceededErrorRate
             : periodData.utilizationRate + periodData.exceededUtilizationRate
-        const totalResultsLabel = `${intl.formatMessage(
-          messages.totalResults
-        )} ${periodData.totalResult}`
+        const totalResultsLabel = `${intl.formatMessage(messages.totalResults)} ${periodData.totalResult}`
         const isoDate = parseISO(periodData.monthTested)
-        const businessDays = differenceInBusinessDays(
-          endOfMonth(isoDate),
-          startOfMonth(isoDate)
-        )
+        const businessDays = differenceInBusinessDays(endOfMonth(isoDate), startOfMonth(isoDate))
         const errorsCapacityLabel =
           info === 'Error Rate'
-            ? `${intl.formatMessage(messages.totalErrors)}: ${
-                periodData.errorCount
-              }`
-            : `${intl.formatMessage(messages.totalCapacity)}: ${
-                dailyCapacity * businessDays
-              }`
+            ? `${intl.formatMessage(messages.totalErrors)}: ${periodData.errorCount}`
+            : `${intl.formatMessage(messages.totalCapacity)}: ${dailyCapacity * businessDays}`
         return (
           <div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div
-                className={cssClasses('Performance--graph-tooltip-color')}
-                style={{ backgroundColor: color }}
-              />
+              <div className={cssClasses('Performance--graph-tooltip-color')} style={{ backgroundColor: color }} />
               {`% ${info}-- `}
             </div>
             <div>

@@ -17,11 +17,7 @@ async function upsertSheets(knex, reportId, sheets) {
   )
 }
 
-module.exports = async function upsertReports(
-  knex,
-  countrySpecificReportFixture = {},
-  omitFields = []
-) {
+module.exports = async function upsertReports(knex, countrySpecificReportFixture = {}, omitFields = []) {
   const assayIds = await getIdsByExternalId('Assay')
   const deviceTypeIds = await getIdsByExternalId('DeviceType')
   const resultCategoryIds = await getIdsByExternalId('ResultCategory')
@@ -35,20 +31,13 @@ module.exports = async function upsertReports(
     const sheets = []
     report.sheets.forEach(({ query = {}, ...sheet }) => {
       // Replace externalIds with Ids
-      if (query.resultCategoryId)
-        query.resultCategoryId = resultCategoryIds[query.resultCategoryId]
+      if (query.resultCategoryId) query.resultCategoryId = resultCategoryIds[query.resultCategoryId]
 
-      if (query.resultCategory2Id)
-        query.resultCategory2Id = resultCategoryIds[query.resultCategory2Id]
+      if (query.resultCategory2Id) query.resultCategory2Id = resultCategoryIds[query.resultCategory2Id]
 
-      if (query.assayId)
-        query.assayId = mapExternalIdToId(assayIds, query.assayId)
+      if (query.assayId) query.assayId = mapExternalIdToId(assayIds, query.assayId)
 
-      if (query.deviceTypeId)
-        query.deviceTypeId = mapExternalIdToId(
-          deviceTypeIds,
-          query.deviceTypeId
-        )
+      if (query.deviceTypeId) query.deviceTypeId = mapExternalIdToId(deviceTypeIds, query.deviceTypeId)
 
       sheets.push({ ...sheet, query })
     })
@@ -60,9 +49,7 @@ module.exports = async function upsertReports(
   const whitelist = Object.keys(reportsById)
 
   // remove reports which are not in a whitelist
-  const removeReportIds = await knex('Report')
-    .whereNotIn('externalId', whitelist)
-    .pluck('id')
+  const removeReportIds = await knex('Report').whereNotIn('externalId', whitelist).pluck('id')
   // delete report job functions and then reports
   await knex('JobFunctionReport').whereIn('reportId', removeReportIds).delete()
   await knex('Report').whereIn('id', removeReportIds).delete()
@@ -75,9 +62,7 @@ module.exports = async function upsertReports(
 
     if (reportToUpdate) {
       // Update
-      await knex('Report')
-        .where({ externalId })
-        .update(_.omit(report, omitFields))
+      await knex('Report').where({ externalId }).update(_.omit(report, omitFields))
       reportId = reportToUpdate.id
     } else {
       // Create

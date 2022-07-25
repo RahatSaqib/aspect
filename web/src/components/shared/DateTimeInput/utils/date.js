@@ -72,19 +72,13 @@ export function getDateObject(value, defaultValue) {
   if (isString(value)) return parseISO(value)
   if (isDate(value)) return value
   if (defaultValue && !isDate(defaultValue)) {
-    console.error(
-      'getDateObject accepts only Date object for defaultValue if provided'
-    )
+    console.error('getDateObject accepts only Date object for defaultValue if provided')
   }
   return defaultValue
 }
 
 export function isValidDateRange(minDate, maxDate) {
-  if (
-    !isValid(maxDate) ||
-    !isValid(minDate) ||
-    differenceInSeconds(maxDate, minDate) < 0
-  ) {
+  if (!isValid(maxDate) || !isValid(minDate) || differenceInSeconds(maxDate, minDate) < 0) {
     return false
   }
   return true
@@ -163,11 +157,7 @@ export function getHourList({ date, minDate = since, maxDate = until }) {
     return defaultHourList
   }
 
-  const isAllEqualFromYearToDate = isAllSameDateFields([
-    'Year',
-    'Month',
-    'Date',
-  ])
+  const isAllEqualFromYearToDate = isAllSameDateFields(['Year', 'Month', 'Date'])
   if (isAllEqualFromYearToDate(date, minDate)) {
     return range(getHours(minDate), 24)
   }
@@ -184,12 +174,7 @@ export function getMinuteList({ date, minDate = since, maxDate = until }) {
     return defaultMinuteList
   }
 
-  const isAllEqualFromYearToHour = isAllSameDateFields([
-    'Year',
-    'Month',
-    'Date',
-    'Hours',
-  ])
+  const isAllEqualFromYearToHour = isAllSameDateFields(['Year', 'Month', 'Date', 'Hours'])
   if (isAllEqualFromYearToHour(date, minDate)) {
     return range(getMinutes(minDate), 60)
   }
@@ -207,9 +192,7 @@ const negateTimeZoneOffset = dateString => {
   const date = new Date(dateString)
   const offset = date.getTimezoneOffset()
 
-  return Math.sign(offset) !== -1
-    ? addMinutes(date, offset)
-    : subMinutes(date, Math.abs(offset))
+  return Math.sign(offset) !== -1 ? addMinutes(date, offset) : subMinutes(date, Math.abs(offset))
 }
 
 const getISOFromString = (date, sod = true, eod = false) => {
@@ -257,35 +240,24 @@ const getTimePeriod = (cnt, period, dateFormat) => {
 const startOfMonthUTC = dateString => {
   const [datepart, time] = dateString.split('T')
 
-  const offset = time.split(
-    /[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/
-  )[1]
+  const offset = time.split(/[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/)[1]
   return new Date(
     startOfMonth(new Date(`${datepart}T00:00:00.000Z`))
       .toISOString()
       .replace('T00:00:00.000Z', `T00:00:00.000${offset}`)
   )
 }
-const getAllDaysInCurrentMonth = (
-  upToToday = false,
-  dateFormat = 'yyyy-MM-dd'
-) => {
+const getAllDaysInCurrentMonth = (upToToday = false, dateFormat = 'yyyy-MM-dd') => {
   const dateNow = new Date()
   const start = startOfMonth(dateNow)
   const end = upToToday ? dateNow : endOfMonth(dateNow)
   return { start: format(start, dateFormat), end: format(end, dateFormat) }
 }
 
-const getPreviousPeriod = (
-  period = 'month',
-  dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-) => {
+const getPreviousPeriod = (period = 'month', dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") => {
   // currently only works for month
   const previousPeriodStart = getTimePeriod(1, period, dateFormat)
-  const previousPeriodEnd = format(
-    endOfMonth(new Date(previousPeriodStart)),
-    dateFormat
-  )
+  const previousPeriodEnd = format(endOfMonth(new Date(previousPeriodStart)), dateFormat)
   return { start: previousPeriodStart, end: previousPeriodEnd }
 }
 
@@ -305,9 +277,7 @@ const dateRangeOptions = (key, showLast30Days = true) => {
   if (showLast30Days)
     dateRange.push({
       id: DATE_CONSTS.DATE_RANGE_OPTIONS.LAST_30_DAYS,
-      name: formatMessage
-        ? formatMessage(messages.last30Days)
-        : messages.hoursPlaceholder.id,
+      name: formatMessage ? formatMessage(messages.last30Days) : messages.hoursPlaceholder.id,
       value: {
         minDate: getTimePeriod(30, 'days', dateFormatValue),
         maxDate: format(today, dateFormatValue),
@@ -352,35 +322,21 @@ const dateRangeOptions = (key, showLast30Days = true) => {
 }
 
 const checkIfParamsIsDate = (params, encode = true) => {
-  const {
-    DATE_RANGE_KEYS,
-    DATE_RANGE_START_OF_DAY_KEYS,
-    DATE_RANGE_END_OF_DAY_KEYS,
-  } = DATE_CONSTS
+  const { DATE_RANGE_KEYS, DATE_RANGE_START_OF_DAY_KEYS, DATE_RANGE_END_OF_DAY_KEYS } = DATE_CONSTS
   const dateStringMatches = values(DATE_RANGE_KEYS)
   const startKeys = DATE_RANGE_START_OF_DAY_KEYS
   const endKeys = DATE_RANGE_END_OF_DAY_KEYS
 
   const iSOHelper = (value, key) =>
     encode
-      ? encodeURIComponent(
-          getISOFromString(
-            value,
-            startKeys.includes(key),
-            endKeys.includes(key)
-          )
-        )
+      ? encodeURIComponent(getISOFromString(value, startKeys.includes(key), endKeys.includes(key)))
       : getISOFromString(value, startKeys.includes(key), endKeys.includes(key))
 
   if (isPlainObject(params)) {
     const output = [] // {}
     map(params, (value, key) => {
       const values = isArray(value) ? value : [value]
-      return values.map(v =>
-        output.push(
-          `${key}=${dateStringMatches.includes(key) ? iSOHelper(v, key) : v}`
-        )
-      )
+      return values.map(v => output.push(`${key}=${dateStringMatches.includes(key) ? iSOHelper(v, key) : v}`))
     })
     return output
   }
@@ -389,11 +345,7 @@ const checkIfParamsIsDate = (params, encode = true) => {
     const output = []
     map(params, param => {
       const [key, value] = Object.entries(param)[0]
-      return output.push(
-        `${key}=${
-          dateStringMatches.includes(key) ? iSOHelper(value, key) : value
-        }`
-      )
+      return output.push(`${key}=${dateStringMatches.includes(key) ? iSOHelper(value, key) : value}`)
     })
     return output
   }

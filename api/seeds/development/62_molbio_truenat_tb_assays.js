@@ -9,14 +9,5 @@ module.exports = require('../utils').seed(async knex => {
     .innerJoin('User as u')
     .where('u.name', 'admin')
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
-  await generateResults(
-    knex,
-    userId,
-    partnerId,
-    patients,
-    errorCodes,
-    'US',
-    true,
-    20
-  )
+  await generateResults(knex, userId, partnerId, patients, errorCodes, 'US', true, 20)
 }, __filename)

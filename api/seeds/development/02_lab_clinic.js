@@ -4,15 +4,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  addMilliseconds,
-  addHours,
-  addMinutes,
-  subDays,
-  subHours,
-  subMinutes,
-  subMonths,
-} = require('date-fns')
+const { addMilliseconds, addHours, addMinutes, subDays, subHours, subMinutes, subMonths } = require('date-fns')
 const { upsertJobFunctionFixture } = require('../common')
 const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
@@ -40,26 +32,15 @@ const resultHivVlNumber = resultMultiplier
 const now = new Date()
 const patientNumber = patients.length - 1
 
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  const daysToSubtract =
-    resultTimeFrameInDays -
-    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
+function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {
+  const daysToSubtract = resultTimeFrameInDays - Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
+  return addMilliseconds(subDays(now, daysToSubtract), _.random(randomMillisToAdd))
 }
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'reporter_admin' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'reporter_admin' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -236,9 +217,7 @@ async function seed(knex) {
   })
 
   // Create clinics for every state in Malawi
-  const [malawiCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'MWI' })
-    .select('c.id', 'c.culture', 'c.timezone')
+  const [malawiCountry] = await knex('Country as c').where({ 'c.a3': 'MWI' }).select('c.id', 'c.culture', 'c.timezone')
 
   const malawiStates = await knex('Geography as g')
     .innerJoin('State as s', 's.id', 'g.stateId')
@@ -247,9 +226,7 @@ async function seed(knex) {
 
   const { culture, timezone, id: countryId } = malawiCountry
 
-  const { id: geographyId } = await knex('Geography')
-    .where({ countryId })
-    .first()
+  const { id: geographyId } = await knex('Geography').where({ countryId }).first()
 
   // Permissions for Reporter Admin
   const [adminPersonId] = await knex('Person').insert({
@@ -264,12 +241,8 @@ async function seed(knex) {
   })
 
   await upsertJobFunctionFixture(knex, jobFunctionsFixtureReporter, partnerId)
-  const [jobFunctionIdAdmin] = await knex('JobFunction')
-    .where({ externalId: 'admin', partnerId })
-    .pluck('id')
-  const [jobFunctionIdLabAdmin] = await knex('JobFunction')
-    .where({ externalId: 'labAdmin', partnerId })
-    .pluck('id')
+  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
+  const [jobFunctionIdLabAdmin] = await knex('JobFunction').where({ externalId: 'labAdmin', partnerId }).pluck('id')
 
   // add widgets
   const widgets = await knex('DashboardWidget').select('id', 'title')
@@ -309,9 +282,7 @@ async function seed(knex) {
     },
   ])
 
-  const [jobIdAdmin] = await knex('Job').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
-  ])
+  const [jobIdAdmin] = await knex('Job').insert([{ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
   await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
   const statesByName = malawiStates.reduce((memo, state) => {
@@ -319,9 +290,7 @@ async function seed(knex) {
     return memo
   }, {})
 
-  const { id: deviceTypeIdRouter } = await knex('DeviceType')
-    .where({ externalId: 'MetacomRouter' })
-    .first()
+  const { id: deviceTypeIdRouter } = await knex('DeviceType').where({ externalId: 'MetacomRouter' }).first()
 
   const approvedDeviceApprovalId = await deviceApprovalToId('approved')
 
@@ -331,9 +300,7 @@ async function seed(knex) {
       const { id: clinicGeographyId } = await knex('Geography')
         .where({
           countryId,
-          stateId: (
-            statesByName[clinic.stateName.toLowerCase()] || { id: null }
-          ).id,
+          stateId: (statesByName[clinic.stateName.toLowerCase()] || { id: null }).id,
         })
         .first()
 
@@ -474,9 +441,7 @@ async function seed(knex) {
               deviceData.putInServiceSource = 'Installed at lab'
               deviceData.configurationData = '{}'
               const { id: deviceTypeId } =
-                (await knex('DeviceType')
-                  .where('externalId', device.deviceTypeId)
-                  .first('id')) || {}
+                (await knex('DeviceType').where('externalId', device.deviceTypeId).first('id')) || {}
               const [deviceId] = await knex('Device').insert({
                 ...deviceData,
                 deviceTypeId,
@@ -525,9 +490,7 @@ async function seed(knex) {
   )
 
   // EID Results and samples
-  const { id: sampleTypeDBSId } = await knex('SampleType')
-    .where('externalId', 'DBS')
-    .select('id')
+  const { id: sampleTypeDBSId } = await knex('SampleType').where('externalId', 'DBS').select('id')
 
   const clinicsWithReporters = _.filter(labClinic.clinics, {
     hasReporter: true,
@@ -536,16 +499,9 @@ async function seed(knex) {
   let samples = []
 
   async function createUniqueSampleIdForSite(prefix, siteId) {
-    const randomId = prefix
-      ? `${prefix}-${_.random(200000, 888888)}`
-      : _.random(200000, 888888).toString()
-    const existingSamplesWithId = await knex('Sample as s')
-      .where('externalId', randomId)
-      .select()
-    if (
-      (siteId && _.some(existingSamplesWithId, { originSiteId: siteId })) ||
-      !_.isEmpty(existingSamplesWithId)
-    ) {
+    const randomId = prefix ? `${prefix}-${_.random(200000, 888888)}` : _.random(200000, 888888).toString()
+    const existingSamplesWithId = await knex('Sample as s').where('externalId', randomId).select()
+    if ((siteId && _.some(existingSamplesWithId, { originSiteId: siteId })) || !_.isEmpty(existingSamplesWithId)) {
       return createUniqueSampleIdForSite(prefix, siteId)
     }
     return randomId
@@ -554,9 +510,7 @@ async function seed(knex) {
   async function createSampleEid(i) {
     const clinic = clinicsWithReporters[i % clinicsWithReporters.length]
 
-    const { id: siteId } = await knex('Site')
-      .where('externalId', clinic.externalId)
-      .first()
+    const { id: siteId } = await knex('Site').where('externalId', clinic.externalId).first()
 
     const externalId = await createUniqueSampleIdForSite('PREID', siteId)
     const sample = {
@@ -587,16 +541,11 @@ async function seed(knex) {
   } = await allResultCategoryToId()
 
   // Reuse previously seeded "static" data
-  const { id: assayIdEid } = await knex('Assay')
-    .where('externalId', 'abbottM2000HIVEID')
-    .first()
+  const { id: assayIdEid } = await knex('Assay').where('externalId', 'abbottM2000HIVEID').first()
 
-  const { id: assayIdHivVl } = await knex('Assay')
-    .where('externalId', 'abbottM2000DBSHivVL')
-    .first()
+  const { id: assayIdHivVl } = await knex('Assay').where('externalId', 'abbottM2000DBSHivVL').first()
 
-  const { Validated: validated, Deliverable: deliverable } =
-    await allResultWorkflowStatusToId()
+  const { Validated: validated, Deliverable: deliverable } = await allResultWorkflowStatusToId()
 
   const resultSourceLimsId = await resultSourceToId('LIMS')
 
@@ -630,53 +579,29 @@ async function seed(knex) {
   ]
 
   const deviceTypeAbbottM2000 = await deviceTypeToId('AbbottM2000')
-  const m2000Devices = await knex('Device')
-    .where('deviceTypeId', deviceTypeAbbottM2000)
-    .select('id', 'siteId')
+  const m2000Devices = await knex('Device').where('deviceTypeId', deviceTypeAbbottM2000).select('id', 'siteId')
 
-  async function createUniqueResultIdForDevice(
-    candidateId,
-    deviceId,
-    tryNumber
-  ) {
+  async function createUniqueResultIdForDevice(candidateId, deviceId, tryNumber) {
     const existingResultsWithId = await knex('Result as r')
-      .where(
-        'externalId',
-        tryNumber ? `${candidateId}-${tryNumber}` : candidateId
-      )
+      .where('externalId', tryNumber ? `${candidateId}-${tryNumber}` : candidateId)
       .select()
-    if (
-      (deviceId && _.some(existingResultsWithId, { deviceId })) ||
-      !_.isEmpty(existingResultsWithId)
-    ) {
-      return createUniqueResultIdForDevice(
-        candidateId,
-        deviceId,
-        (tryNumber || 0) + 1
-      )
+    if ((deviceId && _.some(existingResultsWithId, { deviceId })) || !_.isEmpty(existingResultsWithId)) {
+      return createUniqueResultIdForDevice(candidateId, deviceId, (tryNumber || 0) + 1)
     }
     return tryNumber ? `${candidateId}-${tryNumber}` : candidateId
   }
 
   async function createResultEid(i) {
     const device = m2000Devices[i % m2000Devices.length]
-    const siteData = await knex('Site')
-      .where('id', device.siteId)
-      .first('id', 'geographyId')
+    const siteData = await knex('Site').where('id', device.siteId).first('id', 'geographyId')
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultEidNumber, 6000)
 
     const rnd = _.random(0, 100)
-    const result = _.find(
-      possibleResultsEid,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    )
+    const result = _.find(possibleResultsEid, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
     const patient = patients[_.random(patientNumber)]
     const resultData = { resultText: result.resultText }
-    const resultExternalId = await createUniqueResultIdForDevice(
-      sample.externalId,
-      device.id
-    )
+    const resultExternalId = await createUniqueResultIdForDevice(sample.externalId, device.id)
 
     const [resultId] = await knex('Result').insert({
       ...auditFields,
@@ -705,14 +630,8 @@ async function seed(knex) {
       moduleName: 'Module A',
       moduleSerial: `M-1234-${i % 4}`,
       senderOperator: 'Frank',
-      errorCode:
-        result.category1 === resultCategoryErrorId
-          ? _.random(2000, 9000)
-          : null,
-      errorNotes:
-        result.category1 === resultCategoryErrorId
-          ? 'Temperature out of acceptable range'
-          : null,
+      errorCode: result.category1 === resultCategoryErrorId ? _.random(2000, 9000) : null,
+      errorNotes: result.category1 === resultCategoryErrorId ? 'Temperature out of acceptable range' : null,
       reportableSiteId: sample.originSiteId || siteData.id,
       patientData: JSON.stringify({
         id: patient.id,
@@ -745,9 +664,7 @@ async function seed(knex) {
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId: lastLogId })
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultEidNumber)) {
@@ -792,9 +709,7 @@ async function seed(knex) {
   async function createSampleHiv(i) {
     const clinic = clinicsWithReporters[i % clinicsWithReporters.length]
 
-    const { id: siteId } = await knex('Site')
-      .where('externalId', clinic.externalId)
-      .first()
+    const { id: siteId } = await knex('Site').where('externalId', clinic.externalId).first()
 
     const externalId = await createUniqueSampleIdForSite('PRHIVVL', siteId)
     const sample = {
@@ -815,17 +730,12 @@ async function seed(knex) {
 
   async function createResultHiv(i) {
     const device = m2000Devices[i % m2000Devices.length]
-    const siteData = await knex('Site')
-      .where('id', device.siteId)
-      .first('id', 'geographyId')
+    const siteData = await knex('Site').where('id', device.siteId).first('id', 'geographyId')
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
     const rnd = _.random(0, 100)
-    const result = _.find(
-      possibleResultsHivVl,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    )
+    const result = _.find(possibleResultsHivVl, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
     const patient = patients[_.random(patientNumber)]
 
     let copies = null
@@ -838,14 +748,9 @@ async function seed(knex) {
     }
 
     const resultData = {
-      resultText: copies
-        ? result.resultText.replace('X', copies)
-        : result.resultText,
+      resultText: copies ? result.resultText.replace('X', copies) : result.resultText,
     }
-    const resultExternalId = await createUniqueResultIdForDevice(
-      sample.externalId,
-      device.id
-    )
+    const resultExternalId = await createUniqueResultIdForDevice(sample.externalId, device.id)
     const [resultId] = await knex('Result').insert({
       ...auditFields,
       externalId: resultExternalId,
@@ -874,14 +779,8 @@ async function seed(knex) {
       moduleName: 'Module A',
       moduleSerial: `M-1234-${i % 4}`,
       senderOperator: 'Frank',
-      errorCode:
-        result.category1 === resultCategoryErrorId
-          ? _.random(2000, 9000)
-          : null,
-      errorNotes:
-        result.category1 === resultCategoryErrorId
-          ? 'Temperature out of acceptable range'
-          : null,
+      errorCode: result.category1 === resultCategoryErrorId ? _.random(2000, 9000) : null,
+      errorNotes: result.category1 === resultCategoryErrorId ? 'Temperature out of acceptable range' : null,
       patientData: JSON.stringify({
         id: patient.id,
         age: patient.age,
@@ -910,9 +809,7 @@ async function seed(knex) {
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
-    await knex('Result')
-      .where({ id: resultId })
-      .update({ resultWorkflowStatusLogId: lastLogId })
+    await knex('Result').where({ id: resultId }).update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultHivVlNumber)) {

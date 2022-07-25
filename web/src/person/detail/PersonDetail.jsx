@@ -58,14 +58,8 @@ const enhance = compose(
       const person = isNew ? personNew : items.byId.get(personId)
       const prefillUser = person ? person.get('userId') > 0 : false
 
-      const partnersAndJobFunctionsForSelectList = state.jobs.get(
-        'partnersAndJobFunctionsForSelectList'
-      )
-      const jobFunctions = partnersAndJobFunctionsForSelectList.getIn([
-        'partners',
-        0,
-        'jobFunctions',
-      ])
+      const partnersAndJobFunctionsForSelectList = state.jobs.get('partnersAndJobFunctionsForSelectList')
+      const jobFunctions = partnersAndJobFunctionsForSelectList.getIn(['partners', 0, 'jobFunctions'])
 
       return {
         editable: isEditable(state.user, 'person'),
@@ -124,21 +118,14 @@ export class PersonDetail extends PureComponent {
     }
   }
 
-  handleFetchPerson = ({
-    personId,
-    fetchSinglePerson,
-    fetchPersonAssignments,
-    isNew,
-  }) => {
+  handleFetchPerson = ({ personId, fetchSinglePerson, fetchPersonAssignments, isNew }) => {
     if (isNew) return
     fetchSinglePerson(personId, () => {
       fetchPersonAssignments(personId)
     })
   }
 
-  handleFetchPartnersAndJobFunctions = ({
-    fetchPartnersAndJobFunctionsForSelectList,
-  }) => {
+  handleFetchPartnersAndJobFunctions = ({ fetchPartnersAndJobFunctionsForSelectList }) => {
     fetchPartnersAndJobFunctionsForSelectList()
   }
 
@@ -186,8 +173,7 @@ export class PersonDetail extends PureComponent {
   }
 
   render() {
-    const { intl, person, user, editable, isNew, jobFunctions, location } =
-      this.props
+    const { intl, person, user, editable, isNew, jobFunctions, location } = this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)

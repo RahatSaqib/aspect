@@ -43,17 +43,9 @@ async function seed(knex) {
     },
   ]
 
-  await Promise.each(
-    devicesClinics,
-    async ({ hostId, defaultReportableSiteExternalId }) => {
-      const { id: defaultReportableSiteId } =
-        (await knex('Site')
-          .where({ externalId: defaultReportableSiteExternalId })
-          .first()) || {}
-      if (defaultReportableSiteId)
-        await knex('Device')
-          .where({ hostId })
-          .update({ defaultReportableSiteId })
-    }
-  )
+  await Promise.each(devicesClinics, async ({ hostId, defaultReportableSiteExternalId }) => {
+    const { id: defaultReportableSiteId } =
+      (await knex('Site').where({ externalId: defaultReportableSiteExternalId }).first()) || {}
+    if (defaultReportableSiteId) await knex('Device').where({ hostId }).update({ defaultReportableSiteId })
+  })
 }

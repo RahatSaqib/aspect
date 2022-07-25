@@ -10,39 +10,29 @@ const MODE_DELETE = 'MODE_DELETE'
 async function getJobFunctionsForSelectList(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const partnersAndJobFunctions = await query(
-    'Get partners and job functions for select lists'
-  )
+  const partnersAndJobFunctions = await query('Get partners and job functions for select lists')
     .from('JobFunction as jf')
     .innerJoin('Partner as p', 'jf.partnerId', 'p.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .orderBy(['p.name', 'jf.name'], 'asc')
-    .select(
-      'p.id as partnerId',
-      'p.name as partnerName',
-      'jf.id as jobFunctionId',
-      'jf.name as jobFunctionName'
-    )
+    .select('p.id as partnerId', 'p.name as partnerName', 'jf.id as jobFunctionId', 'jf.name as jobFunctionName')
 
-  const partners = _.map(
-    _.uniqBy(partnersAndJobFunctions, 'partnerId'),
-    partnerRecord => ({
-      id: partnerRecord.partnerId,
-      name: partnerRecord.partnerName,
-      jobFunctions: _.orderBy(
-        _.map(
-          _.filter(partnersAndJobFunctions, {
-            partnerId: partnerRecord.partnerId,
-          }),
-          jobFunctionRecord => ({
-            id: jobFunctionRecord.jobFunctionId,
-            name: jobFunctionRecord.jobFunctionName,
-          })
-        ),
-        'name'
+  const partners = _.map(_.uniqBy(partnersAndJobFunctions, 'partnerId'), partnerRecord => ({
+    id: partnerRecord.partnerId,
+    name: partnerRecord.partnerName,
+    jobFunctions: _.orderBy(
+      _.map(
+        _.filter(partnersAndJobFunctions, {
+          partnerId: partnerRecord.partnerId,
+        }),
+        jobFunctionRecord => ({
+          id: jobFunctionRecord.jobFunctionId,
+          name: jobFunctionRecord.jobFunctionName,
+        })
       ),
-    })
-  )
+      'name'
+    ),
+  }))
 
   return {
     ok: true,
@@ -79,9 +69,7 @@ async function getPermissions(request) {
 
 // ----------------------------------------------------------------------------------------
 async function getJobFunction(jobFunctionId, partnerId, err) {
-  const jobFunction = await knex('JobFunction')
-    .where({ id: jobFunctionId })
-    .first('partnerId')
+  const jobFunction = await knex('JobFunction').where({ id: jobFunctionId }).first('partnerId')
   if (!jobFunction) {
     return Boom.notFound('Requested JobFunction is missing')
   }
@@ -127,15 +115,12 @@ async function manageJob(request, mode) {
   }
 
   // return all jobs for requested person
-  const jobs = await knex('Job')
-    .where({ personId })
-    .select('id', 'personId', 'jobFunctionId')
+  const jobs = await knex('Job').where({ personId }).select('id', 'personId', 'jobFunctionId')
   return { ok: true, data: jobs }
 }
 // ----------------------------------------------------------------------------------------
 const assignJobContext = async request => manageJobContext(request, MODE_INSERT)
-const unassignJobContext = async request =>
-  manageJobContext(request, MODE_DELETE)
+const unassignJobContext = async request => manageJobContext(request, MODE_DELETE)
 const validateAndNormalizeJobContextData = async request => {
   const { payload } = request
   const { auth } = request
@@ -146,17 +131,13 @@ const validateAndNormalizeJobContextData = async request => {
   // either jobId or both (personId and jobFunctionId) are needed
   const hasPersonAndJobFunction = !!personId && !!jobFunctionId
   if (!jobId && !hasPersonAndJobFunction) {
-    return Boom.expectationFailed(
-      'Either jobId or (personId and jobFunctionId) is needed to manage JobContext'
-    )
+    return Boom.expectationFailed('Either jobId or (personId and jobFunctionId) is needed to manage JobContext')
   }
   // either geographyId or siteId is needed
   const bothMissing = !geographyId && !siteId
   const bothPresent = !!geographyId && !!siteId
   if (bothMissing || bothPresent) {
-    return Boom.conflict(
-      'Either geographyId or siteId (not both) is needed to manage JobContext'
-    )
+    return Boom.conflict('Either geographyId or siteId (not both) is needed to manage JobContext')
   }
   // existing siteId
   if (siteId) {
@@ -169,9 +150,7 @@ const validateAndNormalizeJobContextData = async request => {
   if (geographyId) {
     const item = await knex('Geography').where({ id: geographyId }).first()
     if (!item) {
-      return Boom.badData(
-        `Missing geography with specified geographyId=${geographyId}`
-      )
+      return Boom.badData(`Missing geography with specified geographyId=${geographyId}`)
     }
   }
   if (jobId) {
@@ -183,9 +162,7 @@ const validateAndNormalizeJobContextData = async request => {
       return Boom.badData(`Missing job with specified jobId=${jobId}`)
     }
     if (item.partnerId !== partnerId) {
-      return Boom.expectationFailed(
-        'Only Admin with same partnerId as Job/JobFunction can manage Jobs'
-      )
+      return Boom.expectationFailed('Only Admin with same partnerId as Job/JobFunction can manage Jobs')
     }
   } else if (!jobId) {
     // if no jobId - create Job with personId/jobFunctionId
@@ -197,9 +174,7 @@ const validateAndNormalizeJobContextData = async request => {
       return jobResponse
     }
     // get jobId for requested personId/jobFunctionId from list of all Jobs for personId
-    ;[{ id: jobId }] = jobResponse.data.filter(
-      x => x.personId === personId && x.jobFunctionId === jobFunctionId
-    )
+    ;[{ id: jobId }] = jobResponse.data.filter(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
   } else {
     const item = await knex('Job').where({ id: jobId }).first()
     if (!item) {
@@ -245,13 +220,7 @@ async function manageJobContext(request, mode) {
   const jobContexts = await knex('JobContext as jc')
     .join('Job as j', 'jc.jobId', 'j.id')
     .where('jc.jobId', jobId)
-    .select(
-      'jc.jobId',
-      'jc.geographyId',
-      'jc.siteId',
-      'j.personId',
-      'j.jobFunctionId'
-    )
+    .select('jc.jobId', 'jc.geographyId', 'jc.siteId', 'j.personId', 'j.jobFunctionId')
   return { ok: true, data: jobContexts }
 }
 
@@ -300,18 +269,13 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
         .del()
     }
   } else if (mode === MODE_INSERT) {
-    const existingIds = await knex(tableName)
-      .where({ jobFunctionId })
-      .select(fieldName)
+    const existingIds = await knex(tableName).where({ jobFunctionId }).select(fieldName)
     //
     const toInsertIds = items.filter(x => !existingIds.includes(x))
     const toDeleteIds = existingIds.filter(x => !items.includes(x))
     //
     if (toDeleteIds.length > 0) {
-      await knex(tableName)
-        .where({ jobFunctionId })
-        .whereIn(fieldName, toDeleteIds)
-        .del()
+      await knex(tableName).where({ jobFunctionId }).whereIn(fieldName, toDeleteIds).del()
     }
     if (toInsertIds.length > 0) {
       await knex(tableName).insert(
@@ -324,9 +288,7 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
   }
 
   // return all items for specified jobFunctionId
-  const data = await knex(tableName)
-    .where({ jobFunctionId })
-    .select('jobFunctionId', fieldName)
+  const data = await knex(tableName).where({ jobFunctionId }).select('jobFunctionId', fieldName)
   return { ok: true, data }
 }
 
@@ -417,10 +379,7 @@ async function assignPersonTo(request) {
 
   let deviceTypeId
   if (deviceTypeExternalId) {
-    ;[deviceTypeId] =
-      (await knex('DeviceType')
-        .where('externalId', deviceTypeExternalId)
-        .pluck('id')) || []
+    ;[deviceTypeId] = (await knex('DeviceType').where('externalId', deviceTypeExternalId).pluck('id')) || []
   }
 
   // ----------------
@@ -604,13 +563,7 @@ async function getAssignments({ auth, personId }) {
         }
         // if assayTypeId is used by JobContext - then get assay type's disease props
         if (assayTypeId) {
-          ;[
-            {
-              diseaseId2: diseaseId,
-              diseaseName2: diseaseName,
-              diseasei18nKey2: diseasei18nKey,
-            },
-          ] = [item]
+          ;[{ diseaseId2: diseaseId, diseaseName2: diseaseName, diseasei18nKey2: diseasei18nKey }] = [item]
         }
         // if assayId is used by JobContext - then get assay's assay & device type props
         if (assayId) {
@@ -726,10 +679,7 @@ async function removePersonAssignment(request) {
   await knex('JobContext').where('id', jobContextId).del()
 
   // remove also Job entry if no other JobContexts use it
-  const { count } = await knex('JobContext')
-    .where('jobId', jobContext.jobId)
-    .count('id as count')
-    .first()
+  const { count } = await knex('JobContext').where('jobId', jobContext.jobId).count('id as count').first()
   if (count === 0) {
     await knex('Job').where('id', jobContext.jobId).del()
   }

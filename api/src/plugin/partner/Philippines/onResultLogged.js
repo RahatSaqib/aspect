@@ -1,32 +1,17 @@
 const { resultLogged } = require('../../../result/actions')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
-async function onResultLogged(
-  { resultId, deviceLogId, userId },
-  { messageContext }
-) {
+async function onResultLogged({ resultId, deviceLogId, userId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultLogged })
   return context.transact(async knex => {
-    const {
-      deviceTypeExternalId,
-      diseaseExternalId,
-      currentResultWorkflowStatusExternalId,
-    } = await knex('Result as r')
+    const { deviceTypeExternalId, diseaseExternalId, currentResultWorkflowStatusExternalId } = await knex('Result as r')
       .join('Device as d', 'r.deviceId', 'd.id')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('Assay as a', 'r.assayId', 'a.id')
       .join('AssayType as at', 'a.assayTypeId', 'at.id')
       .join('Disease as dis', 'at.diseaseId', 'dis.id')
-      .leftJoin(
-        'ResultWorkflowLog as rwl',
-        'r.resultWorkflowStatusLogId',
-        'rwl.id'
-      )
-      .leftJoin(
-        'ResultWorkflowStatus as rws',
-        'rwl.resultWorkflowStatusId',
-        'rws.id'
-      )
+      .leftJoin('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
+      .leftJoin('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
       .where('r.id', resultId)
       .first(
         'dt.externalId as deviceTypeExternalId',
@@ -38,9 +23,7 @@ async function onResultLogged(
     }
     if (
       deviceTypeExternalId === 'CepheidGeneXpert' &&
-      ['Processed', 'Error', 'Validated'].includes(
-        currentResultWorkflowStatusExternalId
-      )
+      ['Processed', 'Error', 'Validated'].includes(currentResultWorkflowStatusExternalId)
     ) {
       /*
       When the result:
@@ -57,11 +40,7 @@ async function onResultLogged(
         userId,
         'Automatically Deliver GeneXpert Results'
       )
-    } else if (
-      ['Validated', 'Delivered', 'Acknowledged', 'Flagged'].includes(
-        currentResultWorkflowStatusExternalId
-      )
-    ) {
+    } else if (['Validated', 'Delivered', 'Acknowledged', 'Flagged'].includes(currentResultWorkflowStatusExternalId)) {
       /*
       When the result:
        - does not come from a GeneXpert (most likely, the NTRL Database)
@@ -80,18 +59,9 @@ async function onResultLogged(
   })
 }
 
-async function updateResultToDeliverable(
-  knex,
-  context,
-  resultId,
-  deviceLogId,
-  userId,
-  reason
-) {
+async function updateResultToDeliverable(knex, context, resultId, deviceLogId, userId, reason) {
   const now = new Date()
-  const resultWorkflowDeliverableId = await resultWorkflowStatusToId(
-    'Deliverable'
-  )
+  const resultWorkflowDeliverableId = await resultWorkflowStatusToId('Deliverable')
   const [resultWorkflowLogId] = await knex('ResultWorkflowLog').insert({
     resultId,
     resultWorkflowStatusId: resultWorkflowDeliverableId,

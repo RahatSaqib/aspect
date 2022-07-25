@@ -11,8 +11,7 @@ export default defineMessages({
   },
   enterEmailAddressContent: {
     id: 'pages.ResetPassword.enterEmailAddressContent',
-    defaultMessage:
-      'Please enter the email address that you are registered with',
+    defaultMessage: 'Please enter the email address that you are registered with',
   },
   emailAddress: {
     id: 'pages.ResetPassword.emailAddress',
@@ -32,8 +31,7 @@ export default defineMessages({
   },
   generateTokenFailedResolution: {
     id: 'pages.ResetPassword.generateTokenFailedResolution',
-    defaultMessage:
-      'You can request further help by sending an email to {supportEmail}',
+    defaultMessage: 'You can request further help by sending an email to {supportEmail}',
   },
   iDontHaveAnEmailAddress: {
     id: 'pages.ResetPassword.iDontHaveAnEmailAddress',
@@ -103,8 +101,7 @@ export default defineMessages({
   },
   newPasswordMustContainANumberOrSpecialCharacter: {
     id: 'pages.ResetPassword.newPasswordMustContainANumber',
-    defaultMessage:
-      'Your password needs to contain at least one number or special character (%!$*...)',
+    defaultMessage: 'Your password needs to contain at least one number or special character (%!$*...)',
   },
   confirmNewPassword: {
     id: 'pages.ResetPassword.confirmNewPassword',
@@ -132,8 +129,7 @@ export default defineMessages({
   },
   passwordUpdateFailedResolution: {
     id: 'pages.ResetPassword.passwordUpdateFailedResolution',
-    defaultMessage:
-      'You can request further help by sending an email to {supportEmail}',
+    defaultMessage: 'You can request further help by sending an email to {supportEmail}',
   },
   finish: {
     id: 'pages.ResetPassword.finish',
@@ -141,8 +137,7 @@ export default defineMessages({
   },
   finishContent: {
     id: 'pages.ResetPassword.finishContent',
-    defaultMessage:
-      'Your password has been changed successfully. You can now login with your new details',
+    defaultMessage: 'Your password has been changed successfully. You can now login with your new details',
   },
   loginWithMyNewPassword: {
     id: 'pages.ResetPassword.loginWithMyNewPassword',

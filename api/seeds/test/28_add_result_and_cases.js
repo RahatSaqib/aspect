@@ -8,10 +8,7 @@ async function seed(knex) {
   const results = await knex('Result as r')
     .join('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn(function () {
-        this.on('r.resultCategory1', 'rca.resultCategoryId').orOn(
-          'r.resultCategory2',
-          'rca.resultCategoryId'
-        )
+        this.on('r.resultCategory1', 'rca.resultCategoryId').orOn('r.resultCategory2', 'rca.resultCategoryId')
       })
     })
     .whereNull('r.patientCaseId')
@@ -20,16 +17,11 @@ async function seed(knex) {
   const assayDiseases = await knex('Assay as a')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
     .select('a.id', 'at.diseaseId')
-  const assayIdDiseaseIdMap = assayDiseases.reduce(
-    (accumulator, assayDisease) => {
-      accumulator[assayDisease.id] = assayDisease.diseaseId
-      return accumulator
-    },
-    {}
-  )
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const assayIdDiseaseIdMap = assayDiseases.reduce((accumulator, assayDisease) => {
+    accumulator[assayDisease.id] = assayDisease.diseaseId
+    return accumulator
+  }, {})
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const cases = []
   await Promise.each(
     results.filter(result => !!assayIdDiseaseIdMap[result.assayId]),
@@ -49,9 +41,7 @@ async function seed(knex) {
         } else {
           result.patientCaseId = caseId
         }
-        await knex('Result')
-          .update({ patientCaseId: result.patientCaseId })
-          .where({ id: result.id })
+        await knex('Result').update({ patientCaseId: result.patientCaseId }).where({ id: result.id })
       }
     }
   )

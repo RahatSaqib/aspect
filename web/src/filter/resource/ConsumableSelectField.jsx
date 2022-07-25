@@ -11,10 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 // Our imports
 import SelectField from '../../components/shared/SelectField'
-import {
-  fetchConsumables,
-  ConsumableItems,
-} from '../../consumable/ConsumableRedux'
+import { fetchConsumables, ConsumableItems } from '../../consumable/ConsumableRedux'
 
 export class ConsumableSelectField extends PureComponent {
   static propTypes = {
@@ -78,6 +75,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  ConsumableSelectField
-)
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(ConsumableSelectField)

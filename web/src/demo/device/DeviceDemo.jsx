@@ -145,12 +145,7 @@ export class DeviceDemo extends PureComponent {
           </TextField>
         </div>
         <div>
-          <Button
-            color="primary"
-            onClick={this.handlePostResult}
-            disabled={!postEnabled}
-            variant="contained"
-          >
+          <Button color="primary" onClick={this.handlePostResult} disabled={!postEnabled} variant="contained">
             Post New Result
           </Button>
         </div>

@@ -56,38 +56,27 @@ describe('account details service', () => {
     }
 
     beforeEach(() => {
-      dbSpy.query
-        .for('Get account details for currently logged in user')
-        .resolvesWith(accountDetails)
+      dbSpy.query.for('Get account details for currently logged in user').resolvesWith(accountDetails)
     })
 
     it('Should lookup the account details for the currently logged in user', () =>
-      runTest(service.getAccountDetailsForLoggedInUser, [requestData])(
-        response => {
-          assert.isTrue(response.ok)
-          assert.deepEqual(response.data, accountDetails)
+      runTest(service.getAccountDetailsForLoggedInUser, [requestData])(response => {
+        assert.isTrue(response.ok)
+        assert.deepEqual(response.data, accountDetails)
 
-          const getPersonQuery = dbSpy.query.withArgs(
-            'Get account details for currently logged in user'
-          ).lastCall.returnValue
-          assert.equal(getPersonQuery.from.lastCall.args[0], 'User as u')
-          assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, [
-            'Person as p',
-            'u.id',
-            'p.userId',
-          ])
-          assert.deepEqual(getPersonQuery.where.lastCall.args[0], {
-            'u.name': requestData.auth.credentials.name,
-          })
-        }
-      ))
+        const getPersonQuery = dbSpy.query.withArgs('Get account details for currently logged in user').lastCall
+          .returnValue
+        assert.equal(getPersonQuery.from.lastCall.args[0], 'User as u')
+        assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, ['Person as p', 'u.id', 'p.userId'])
+        assert.deepEqual(getPersonQuery.where.lastCall.args[0], {
+          'u.name': requestData.auth.credentials.name,
+        })
+      }))
 
     it('Should respond with an account details object for the currently logged in user', () =>
-      runTest(service.getAccountDetailsForLoggedInUser, [requestData])(
-        response => {
-          assert.deepEqual(response.data, accountDetails)
-        }
-      ))
+      runTest(service.getAccountDetailsForLoggedInUser, [requestData])(response => {
+        assert.deepEqual(response.data, accountDetails)
+      }))
   })
 
   describe('saveContactDetailsForLoggedInUser', () => {
@@ -119,9 +108,7 @@ describe('account details service', () => {
     })
 
     beforeEach(() => {
-      dbSpy.query
-        .for('Get account details for currently logged in user')
-        .resolvesWith(acountDetails)
+      dbSpy.query.for('Get account details for currently logged in user').resolvesWith(acountDetails)
     })
 
     it("Should save the user's account details which have changed and update updatedOn and updatedBy", () => {
@@ -132,17 +119,14 @@ describe('account details service', () => {
       }
 
       const now = new Date()
-      const clock = sinon.useFakeTimers(now.getTime())
-
       return runTest(service.saveContactDetailsForLoggedInUser, [
         {
           auth: requestData.auth,
           payload: { ...contactDetails, ...changedRequestProperties },
         },
       ])(() => {
-        const savePersonQuery = dbSpy.query.withArgs(
-          'Save account details for currently logged in user'
-        ).lastCall.returnValue
+        const savePersonQuery = dbSpy.query.withArgs('Save account details for currently logged in user').lastCall
+          .returnValue
         assert.equal(savePersonQuery.from.lastCall.args[0], 'Person as p')
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], {
           'p.id': contactDetails.id,
@@ -153,7 +137,6 @@ describe('account details service', () => {
           updatedOn: now,
           updatedBy: contactDetails.userId,
         })
-        clock.restore()
       })
     })
 
@@ -164,11 +147,7 @@ describe('account details service', () => {
           payload: contactDetails,
         },
       ])(() => {
-        assert.isFalse(
-          dbSpy.query.withArgs(
-            'Save account details for currently logged in user'
-          ).called
-        )
+        assert.isFalse(dbSpy.query.withArgs('Save account details for currently logged in user').called)
       }))
 
     it('Should respond with an account details object for the currently logged in user', () =>
@@ -232,9 +211,7 @@ describe('account details service', () => {
     })
 
     beforeEach(() => {
-      dbSpy.query
-        .for('Get account details for currently logged in user')
-        .resolvesWith(accountDetails)
+      dbSpy.query.for('Get account details for currently logged in user').resolvesWith(accountDetails)
     })
 
     it("Should save the user's preferences which have changed and update updatedOn and updatedBy", () => {
@@ -252,7 +229,6 @@ describe('account details service', () => {
       )
 
       const now = new Date()
-      const clock = sinon.useFakeTimers(now.getTime())
 
       return runTest(service.saveUserPreferencesForLoggedInUser, [
         {
@@ -260,9 +236,8 @@ describe('account details service', () => {
           payload: { ...userPreferences, ...changedRequestProperties },
         },
       ])(() => {
-        const savePersonQuery = dbSpy.query.withArgs(
-          'Save account details for currently logged in user'
-        ).lastCall.returnValue
+        const savePersonQuery = dbSpy.query.withArgs('Save account details for currently logged in user').lastCall
+          .returnValue
         assert.equal(savePersonQuery.from.lastCall.args[0], 'Person as p')
         assert.deepEqual(savePersonQuery.where.lastCall.args[0], {
           'p.id': userPreferences.id,
@@ -272,7 +247,6 @@ describe('account details service', () => {
           updatedOn: now,
           updatedBy: userPreferences.userId,
         })
-        clock.restore()
       })
     })
 
@@ -283,11 +257,7 @@ describe('account details service', () => {
           payload: userPreferences,
         },
       ])(() => {
-        assert.isFalse(
-          dbSpy.query.withArgs(
-            'Save account details for currently logged in user'
-          ).called
-        )
+        assert.isFalse(dbSpy.query.withArgs('Save account details for currently logged in user').called)
       }))
 
     it('Should respond with an account details object for the currently logged in user', () =>

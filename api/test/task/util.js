@@ -28,16 +28,12 @@ class TaskContextTest {
       const {
         auth: { user },
       } = this
-      const { userId } = await knex('User')
-        .where({ name: user })
-        .first('id as userId')
+      const { userId } = await knex('User').where({ name: user }).first('id as userId')
       assert.isOk(userId, `Cannot find user ${user}`)
       this.userId = userId
 
       // read 1st alert template
-      const { id: alertTemplateId } = await knex('AlertTemplate')
-        .where('id', 1)
-        .first('id')
+      const { id: alertTemplateId } = await knex('AlertTemplate').where('id', 1).first('id')
       assert.isOk(alertTemplateId)
 
       const { issueTypeId } = await knex('IssueType')
@@ -99,9 +95,7 @@ class TaskContextTest {
     return run(async knex => {
       // remove sample message
       if (this.messageIds.length > 0) {
-        await knex('Notification')
-          .whereIn('alertMessageId', this.messageIds)
-          .delete()
+        await knex('Notification').whereIn('alertMessageId', this.messageIds).delete()
         await knex('AlertMessage').whereIn('id', this.messageIds).delete()
         await knex('Issue').whereIn('id', this.issueIds).delete()
       }

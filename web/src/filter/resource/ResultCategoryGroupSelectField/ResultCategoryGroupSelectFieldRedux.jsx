@@ -2,10 +2,7 @@ import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../../../shared/utils/fetch'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../../../error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../../../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_RESULT_CATEGORY_GROUP: 'REQUEST_RESULT_CATEGORY_GROUP',
@@ -90,19 +87,12 @@ function receiveResultCategoryGroup(state, items, lastRefreshed) {
   })
 }
 
-export default function resultCategoryGroupReducer(
-  state = initialState,
-  action
-) {
+export default function resultCategoryGroupReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_RESULT_CATEGORY_GROUP:
       return requestResultCategoryGroup(state)
     case types.RECEIVE_RESULT_CATEGORY_GROUP:
-      return receiveResultCategoryGroup(
-        state,
-        action.items,
-        action.lastRefreshed
-      )
+      return receiveResultCategoryGroup(state, action.items, action.lastRefreshed)
     default:
       return state
   }

@@ -11,12 +11,7 @@ describe('test headers and sortable states', () => {
     const table = getByRole('table')
     const columnHeaders = within(table).getAllByRole('columnheader')
     expect(columnHeaders).toHaveLength(4)
-    expect(columnHeaders.map(d => d.textContent)).toEqual([
-      'Name',
-      'Last Triggered',
-      'Total Triggers',
-      'Contacts',
-    ])
+    expect(columnHeaders.map(d => d.textContent)).toEqual(['Name', 'Last Triggered', 'Total Triggers', 'Contacts'])
   })
   it('contacts column is not sortable', () => {
     const { getByRole } = render(<Default {...Default.args} />)
@@ -52,8 +47,7 @@ describe('test headers and sortable states', () => {
     const nameOrderLeftButton = within(nameColumn).getByTestId('order_left_0')
     const contactsHeader = columns.getByText(/contacts/i)
     const contactsColumn = contactsHeader.closest('th')
-    const contactsOrderRightButton =
-      within(contactsColumn).getByTestId('order_right_3')
+    const contactsOrderRightButton = within(contactsColumn).getByTestId('order_right_3')
     expect(nameOrderLeftButton).toBeDisabled()
     expect(contactsOrderRightButton).toBeDisabled()
   })
@@ -69,9 +63,7 @@ describe('test headers and sortable states', () => {
     ).toEqual(['Last Triggered', 'Name', 'Total Triggers', 'Contacts'])
   })
   it('check allowed hide-column states, hide column, and test headers', () => {
-    const { getByRole, getByTestId, queryByTestId } = render(
-      <Default {...Default.args} />
-    )
+    const { getByRole, getByTestId, queryByTestId } = render(<Default {...Default.args} />)
     const table = getByRole('table')
     const contactsHideColumnButton = getByTestId('hide_column_contacts')
     userEvent.click(contactsHideColumnButton)

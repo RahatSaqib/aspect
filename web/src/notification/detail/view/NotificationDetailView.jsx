@@ -12,10 +12,7 @@ import TableBody from '@material-ui/core/TableBody'
 
 import { Unit } from '../../../components/pureGrids'
 import NotificationDetailBackBar from '../NotificationDetailBackBar'
-import {
-  NotificationDeliveryDataTable,
-  NotificationDeliveryDataTableRow,
-} from './NotificationDeliveryDataTable'
+import { NotificationDeliveryDataTable, NotificationDeliveryDataTableRow } from './NotificationDeliveryDataTable'
 import AspectButton from '../../../components/shared/AspectButton'
 
 import styles from '../../../MigratedComponents/Notifications/Detail/NotificationDetail.css'
@@ -23,14 +20,11 @@ import styles from '../../../MigratedComponents/Notifications/Detail/Notificatio
 const cssClasses = classnames.bind(styles)
 
 // TODO: Switch back to just using Button directly. This is demo only
-const MockTogglBtn = withStateHandlers(
-  props => ({ inverse: !!props.inverse }),
-  {
-    onClick:
-      ({ inverse }) =>
-      () => ({ inverse: !inverse }),
-  }
-)(AspectButton)
+const MockTogglBtn = withStateHandlers(props => ({ inverse: !!props.inverse }), {
+  onClick:
+    ({ inverse }) =>
+    () => ({ inverse: !inverse }),
+})(AspectButton)
 
 const enhance = identity
 
@@ -77,20 +71,18 @@ export const NotificationDetailView = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Alert type</h2>
         <div>
-          {['Result', 'Calibration', 'Error', 'Reporting', 'Inventory'].map(
-            label => (
-              <MockTogglBtn
-                key={label}
-                className={cssClasses('Card__Button', 'Card__Button--inline')}
-                color="primary"
-                variant="contained"
-                inverse={label !== 'Result'}
-                theme={BUTTON_THEME}
-              >
-                {label}
-              </MockTogglBtn>
-            )
-          )}
+          {['Result', 'Calibration', 'Error', 'Reporting', 'Inventory'].map(label => (
+            <MockTogglBtn
+              key={label}
+              className={cssClasses('Card__Button', 'Card__Button--inline')}
+              color="primary"
+              variant="contained"
+              inverse={label !== 'Result'}
+              theme={BUTTON_THEME}
+            >
+              {label}
+            </MockTogglBtn>
+          ))}
         </div>
       </Card>
     </section>
@@ -117,16 +109,7 @@ export const NotificationDetailView = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Result</h2>
         <div>
-          {[
-            'MTB-',
-            'MTB+',
-            'MTB+ Rif-',
-            'MTB+ Rif+',
-            'MTB+ Rif?',
-            'Invalid',
-            'Error',
-            'No result',
-          ].map(label => (
+          {['MTB-', 'MTB+', 'MTB+ Rif-', 'MTB+ Rif+', 'MTB+ Rif?', 'Invalid', 'Error', 'No result'].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -145,12 +128,7 @@ export const NotificationDetailView = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Devices</h2>
         <div>
-          {[
-            'Any',
-            'Choose by state',
-            'Choose by county',
-            'Choose by individual devices',
-          ].map(label => (
+          {['Any', 'Choose by state', 'Choose by county', 'Choose by individual devices'].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -175,11 +153,7 @@ export const NotificationDetailView = ({
           />
         </div>
         <div>
-          {[
-            'State name 1 (3 devices)',
-            'State name 2 (0 devices)',
-            'State name 3 (2 devices)',
-          ].map(label => (
+          {['State name 1 (3 devices)', 'State name 2 (0 devices)', 'State name 3 (2 devices)'].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -212,15 +186,7 @@ export const NotificationDetailView = ({
                 className={cssClasses('Card__Button', 'Card__Button--block')}
                 color="primary"
                 variant="contained"
-                inverse={
-                  !includes(
-                    [
-                      'State contacts (in same state as device)',
-                      'Lab contacts for the device',
-                    ],
-                    label
-                  )
-                }
+                inverse={!includes(['State contacts (in same state as device)', 'Lab contacts for the device'], label)}
                 theme={BUTTON_THEME}
               >
                 {label}
@@ -317,11 +283,7 @@ export const NotificationDetailView = ({
         <hr />
         <div>
           <span>Coming from</span>
-          {[
-            'State name 1 (3 devices)',
-            'State name 2 (0 devices)',
-            'State name 3 (2 devices)',
-          ].map(label => (
+          {['State name 1 (3 devices)', 'State name 2 (0 devices)', 'State name 3 (2 devices)'].map(label => (
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
@@ -389,17 +351,12 @@ export const NotificationDetailView = ({
         <h2 className={cssClasses('Card__Title')}>
           <div>Result</div>
           <div>
-            <MockTogglBtn
-              className={cssClasses('Button--square')}
-              variant="contained"
-            >
+            <MockTogglBtn className={cssClasses('Button--square')} variant="contained">
               <MdRefresh />
             </MockTogglBtn>
           </div>
         </h2>
-        <NotificationDeliveryDataTable
-          className={cssClasses('NotificationDeliveryDataTable')}
-        >
+        <NotificationDeliveryDataTable className={cssClasses('NotificationDeliveryDataTable')}>
           <TableBody>
             {[
               {
@@ -438,11 +395,7 @@ export const NotificationDetailView = ({
                 time: subDays(now, 7),
               },
             ].map(delivery => (
-              <NotificationDeliveryDataTableRow
-                key={delivery.id}
-                intl={intl}
-                delivery={delivery}
-              />
+              <NotificationDeliveryDataTableRow key={delivery.id} intl={intl} delivery={delivery} />
             ))}
           </TableBody>
         </NotificationDeliveryDataTable>

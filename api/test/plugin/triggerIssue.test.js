@@ -1,8 +1,5 @@
 const chai = require('chai')
-const {
-  analyzeResultsWithErrors,
-  hasUnusedModules,
-} = require('../../src/plugin/issueTriggers')
+const { analyzeResultsWithErrors, hasUnusedModules } = require('../../src/plugin/issueTriggers')
 const { resultAnalyzeCategoriesAndErrors } = require('../../src/result/actions')
 
 const { assert } = chai
@@ -19,9 +16,7 @@ describe('This test is for testing different triggers conditions', () => {
     assert.isFalse(hasUnusedModules(0, 0, 20, 4))
     chai
       .expect(() => hasUnusedModules(null, undefined, 20, 4))
-      .to.throw(
-        "numberOfResults and numberOfModules can't be null or undefined"
-      )
+      .to.throw("numberOfResults and numberOfModules can't be null or undefined")
   })
 
   it('analyzeResultsWithErrors', async () => {
@@ -108,16 +103,10 @@ describe('This test is for testing different triggers conditions', () => {
         type2: 'RESULT_ANALYZE_PROBES_LOT',
       },
     ].forEach(elem => {
-      const analyzeProbesModule = resultAnalyzeCategoriesAndErrors(
-        1,
-        1,
-        elem.resultCategoryId,
-        elem.errorCode,
-        {
-          moduleName: 'Test1',
-          moduleSerial: 'Module2',
-        }
-      )
+      const analyzeProbesModule = resultAnalyzeCategoriesAndErrors(1, 1, elem.resultCategoryId, elem.errorCode, {
+        moduleName: 'Test1',
+        moduleSerial: 'Module2',
+      })
       const analyzeProbesLot = resultAnalyzeCategoriesAndErrors(
         1,
         1,

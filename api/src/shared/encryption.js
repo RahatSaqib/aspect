@@ -24,27 +24,15 @@ function createSalt() {
 }
 
 function encrypt(plainText, salt) {
-  const cipher = crypto.createCipheriv(
-    encryptionAlgorithm,
-    createHashPassword(salt),
-    initVector
-  )
+  const cipher = crypto.createCipheriv(encryptionAlgorithm, createHashPassword(salt), initVector)
   let encryptedText = cipher.update(plainText, inputEncoding, outputEncoding)
   encryptedText += cipher.final(outputEncoding)
   return encryptedText
 }
 
 function decrypt(encryptedText, salt) {
-  const decipher = crypto.createDecipheriv(
-    encryptionAlgorithm,
-    createHashPassword(salt),
-    initVector
-  )
-  let decryptedText = decipher.update(
-    encryptedText,
-    outputEncoding,
-    inputEncoding
-  )
+  const decipher = crypto.createDecipheriv(encryptionAlgorithm, createHashPassword(salt), initVector)
+  let decryptedText = decipher.update(encryptedText, outputEncoding, inputEncoding)
   decryptedText += decipher.final(inputEncoding)
   return decryptedText
 }

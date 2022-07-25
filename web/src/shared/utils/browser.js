@@ -39,10 +39,7 @@ function getBrowserInfo() {
   try {
     const ua = navigator.userAgent
     let tem
-    let M =
-      ua.match(
-        /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i
-      ) || []
+    let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []
 
     if (/trident/i.test(M[1])) {
       tem = /\brv[ :]+(\d+)/g.exec(ua) || []

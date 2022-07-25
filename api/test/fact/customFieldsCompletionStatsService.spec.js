@@ -1,16 +1,12 @@
 const { expect } = require('chai')
 const { startOfToday, addDays } = require('date-fns')
 const Promise = require('bluebird')
-const {
-  createGxConnectTestContext,
-} = require('../deviceApi/geneXpert/gxconnect_utils')
+const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 const server = require('../utils/testUtils')
 
 const { waitForIdle } = require('../utils/mqUtils')
 
-const {
-  factFillCustomFieldsCompletionStats,
-} = require('../../src/fact/customFieldsCompletionStatsService')
+const { factFillCustomFieldsCompletionStats } = require('../../src/fact/customFieldsCompletionStatsService')
 const { knex } = require('../../src/db')
 
 let context
@@ -51,18 +47,10 @@ describe('CustomFieldsCompletionStatsService', async () => {
   it('Must save stats data', async () => {
     const dateFrom = addDays(startOfToday(), -21)
     const dateTo = addDays(startOfToday(), -14)
-    const statsCount = await factFillCustomFieldsCompletionStats(
-      dateFrom,
-      dateTo
-    )
+    const statsCount = await factFillCustomFieldsCompletionStats(dateFrom, dateTo)
 
     const stats = await knex('FactCustomFieldCompletion as f')
-      .select(
-        'f.recordCount',
-        'f.date',
-        'f.completionRate',
-        `f.completionByField`
-      )
+      .select('f.recordCount', 'f.date', 'f.completionRate', `f.completionByField`)
       .orderBy('f.date')
     expect(statsCount).to.be.equal(3, 'There has to be saved a record per date')
 

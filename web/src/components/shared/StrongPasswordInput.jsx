@@ -92,19 +92,15 @@ const StrongPasswordInput = ({
     minLength: input.value.length > 7,
     containsNumber: /\d/.test(input.value),
     mixUpperAndLowerCase: /(?=.*?[a-z])(?=.*?[A-Z])/.test(input.value),
-    containSpecialCharacter: /(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(
-      input.value
-    ),
+    containSpecialCharacter: /(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(input.value),
   }
   const passwordStrengthResults = {
     isWeak:
       !passwordStrengthRules.minLength ||
-      (!passwordStrengthRules.containsNumber &&
-        !passwordStrengthRules.containSpecialCharacter),
+      (!passwordStrengthRules.containsNumber && !passwordStrengthRules.containSpecialCharacter),
     isOkay:
       passwordStrengthRules.minLength &&
-      (passwordStrengthRules.containsNumber ||
-        passwordStrengthRules.containSpecialCharacter),
+      (passwordStrengthRules.containsNumber || passwordStrengthRules.containSpecialCharacter),
     isStrong:
       passwordStrengthRules.minLength &&
       passwordStrengthRules.containsNumber &&
@@ -112,11 +108,7 @@ const StrongPasswordInput = ({
       passwordStrengthRules.containSpecialCharacter,
   }
 
-  const passwordStrengthScore = passwordStrengthResults.isWeak
-    ? 30
-    : passwordStrengthResults.isStrong
-    ? 100
-    : 60
+  const passwordStrengthScore = passwordStrengthResults.isWeak ? 30 : passwordStrengthResults.isStrong ? 100 : 60
   const iconStyle = {
     lineHeight: '1.3em',
     width: '1.3em',
@@ -167,12 +159,7 @@ const StrongPasswordInput = ({
         onBlur={handleBlur}
       />
 
-      <Popper
-        anchorEl={anchorEl}
-        open={showMeter && !isEmpty(input.value)}
-        placement="bottom-start"
-        {...popOverProps}
-      >
+      <Popper anchorEl={anchorEl} open={showMeter && !isEmpty(input.value)} placement="bottom-start" {...popOverProps}>
         <Paper className={classesMap.warningPopover}>
           <span style={strengthMessageStyle}>{strengthMessage}</span>
           <LinearProgress
@@ -206,9 +193,7 @@ const StrongPasswordInput = ({
               ) : (
                 <CloseIcon style={crossIconStyle} />
               )}
-              <span style={strengthRuleStyle}>
-                {formatMessage(messages.passwordStrengthMeterContainsNumber)}
-              </span>
+              <span style={strengthRuleStyle}>{formatMessage(messages.passwordStrengthMeterContainsNumber)}</span>
             </li>
             <li>
               {passwordStrengthRules.mixUpperAndLowerCase ? (
@@ -216,11 +201,7 @@ const StrongPasswordInput = ({
               ) : (
                 <CloseIcon style={crossIconStyle} />
               )}
-              <span style={strengthRuleStyle}>
-                {formatMessage(
-                  messages.passwordStrengthMeterMixUpperAndLowerCase
-                )}
-              </span>
+              <span style={strengthRuleStyle}>{formatMessage(messages.passwordStrengthMeterMixUpperAndLowerCase)}</span>
             </li>
             <li>
               {passwordStrengthRules.containSpecialCharacter ? (
@@ -229,9 +210,7 @@ const StrongPasswordInput = ({
                 <CloseIcon style={crossIconStyle} />
               )}
               <span style={strengthRuleStyle}>
-                {formatMessage(
-                  messages.passwordStrengthMeterContainsSpecialCharacter
-                )}
+                {formatMessage(messages.passwordStrengthMeterContainsSpecialCharacter)}
               </span>
             </li>
           </ul>

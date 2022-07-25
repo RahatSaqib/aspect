@@ -68,10 +68,7 @@ export default ({ theme, themedColors }) => ({
         border: `1px solid ${alpha(themedColors.primary, 0.5)}`,
         '&:hover': {
           border: `1px solid ${themedColors.primary}`,
-          backgroundColor: alpha(
-            themedColors.primary,
-            theme.palette.action.hoverOpacity
-          ),
+          backgroundColor: alpha(themedColors.primary, theme.palette.action.hoverOpacity),
           // Reset on touch devices, it doesn't add specificity
           '@media (hover: none)': {
             backgroundColor: 'transparent',

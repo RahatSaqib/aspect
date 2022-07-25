@@ -4,21 +4,17 @@ const types = {
   FACT_GENERATE_DEVICE_CONNECTIVITY: 'FACT_GENERATE_DEVICE_CONNECTIVITY',
   FACT_GENERATE_RESULT_COUNTS: 'FACT_GENERATE_RESULT_COUNTS',
   FACT_CHECK_INVENTORY_STOCK: 'FACT_CHECK_INVENTORY_STOCK',
-  FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES:
-    'FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES',
+  FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES: 'FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES',
   // for DataCategoryLow issue types
   FACT_DATA_CATEGORY_LOW_CHECK: 'FACT_DATA_CATEGORY_LOW_CHECK',
   FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS: 'FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS',
-  FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED:
-    'FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED',
-  FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT:
-    'FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT',
+  FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED: 'FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED',
+  FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT: 'FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT',
   FACT_DATA_CATEGORY_IS_LOW_OTHER: 'FACT_DATA_CATEGORY_IS_LOW_OTHER',
   FACT_NEW_RESULTS_AVAILABLE_CHECK: 'FACT_NEW_RESULTS_AVAILABLE_CHECK',
   FACT_NEW_RESULTS_AVAILABLE: 'FACT_NEW_RESULTS_AVAILABLE',
   FACT_CHECK_EXTERNAL_FACT_SOURCE: 'FACT_CHECK_EXTERNAL_FACT_SOURCE',
-  FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS:
-    'FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS',
+  FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS: 'FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS',
   FACT_CHECK_COMPLETION_RATE_PER_SITE: 'FACT_CHECK_COMPLETION_RATE_PER_SITE',
   SITE_WITH_LOW_COMPLETION_RATE: 'SITE_WITH_LOW_COMPLETION_RATE',
 }
@@ -103,20 +99,8 @@ function factDataCategoryLowCheck() {
  *
  * categoryToken, categoryName, periodName, siteId, percentage are required.
  */
-function factDataCategoryLow({
-  categoryToken,
-  categoryName,
-  periodName,
-  siteId,
-  percentage,
-}) {
-  if (
-    !categoryToken ||
-    !categoryName ||
-    !periodName ||
-    !siteId ||
-    isNil(percentage)
-  ) {
+function factDataCategoryLow({ categoryToken, categoryName, periodName, siteId, percentage }) {
+  if (!categoryToken || !categoryName || !periodName || !siteId || isNil(percentage)) {
     throw new Error(
       'Must specify each parameter - categoryToken, categoryName, periodName, siteId, percentage - for Data Category Low notification'
     )
@@ -152,9 +136,7 @@ function factNewResultsAvailableCheck() {
  */
 function factNewResultsAvailable({ siteId, numberOfResults }) {
   if (!siteId || !numberOfResults) {
-    throw new Error(
-      'Must specify siteId and numberOfResults - for new results available'
-    )
+    throw new Error('Must specify siteId and numberOfResults - for new results available')
   }
   return {
     type: types.FACT_NEW_RESULTS_AVAILABLE,

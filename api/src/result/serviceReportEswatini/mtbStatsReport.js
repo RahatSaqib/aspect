@@ -26,10 +26,7 @@ function addErrorTableSiteTotals(data) {
       const item = data[i]
       errorTableItems.push({
         ...item,
-        percentagePerModule:
-          totalsBySite[siteName] > 0
-            ? round((item.total * 100) / totalsBySite[siteName], 2)
-            : 0,
+        percentagePerModule: totalsBySite[siteName] > 0 ? round((item.total * 100) / totalsBySite[siteName], 2) : 0,
       })
       mtbInvalid += item.mtbInvalid
       mtbNoResult += item.mtbNoResult
@@ -48,8 +45,7 @@ function addErrorTableSiteTotals(data) {
 }
 
 async function getErrorTable(dataConstraints, params) {
-  const { errorRate, mtbInvalid, mtbNoResult } =
-    SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
+  const { errorRate, mtbInvalid, mtbNoResult } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
   const data = await getBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.resultCategory1)
     .modify(filterParams, params)
@@ -102,22 +98,15 @@ async function getGeneralStatsForMapping(dataConstraints, params) {
       mtbError,
       mtbDetectedRifIndeterminate,
       total: knex.raw('IFNULL(COUNT(r.id), 0)'),
-      totalRif: knex.raw(
-        'IFNULL(SUM(CASE WHEN r.resultCategory2 IS NOT NULL THEN 1 ELSE 0 END), 0)'
-      ),
+      totalRif: knex.raw('IFNULL(SUM(CASE WHEN r.resultCategory2 IS NOT NULL THEN 1 ELSE 0 END), 0)'),
     })
     .first()
 
   data.mtbInconclusive = data.mtbInvalid + data.mtbNoResult + data.mtbError
   data.mtbValid = data.mtbDetected + data.mtbNotDetected
-  data.percentMtbDetected =
-    data.total > 0 ? round((data.mtbDetected * 100) / data.total, 2) : 0
-  data.percentRifDetected =
-    data.totalRif > 0
-      ? round((data.mtbDetectedRifDetected * 100) / data.totalRif, 2)
-      : 0
-  data.percentMtbError =
-    data.total > 0 ? round((data.mtbError * 100) / data.total, 2) : 0
+  data.percentMtbDetected = data.total > 0 ? round((data.mtbDetected * 100) / data.total, 2) : 0
+  data.percentRifDetected = data.totalRif > 0 ? round((data.mtbDetectedRifDetected * 100) / data.totalRif, 2) : 0
+  data.percentMtbError = data.total > 0 ? round((data.mtbError * 100) / data.total, 2) : 0
   data.avgTestsPerDay = round(data.total / daysInRange, 2)
 
   return data

@@ -5,13 +5,7 @@ import messages from './messages'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import AspectButton from '../../components/shared/AspectButton'
 
-const PersonDetailBackBar = ({
-  canLogIn = false,
-  formatMessage,
-  navigate,
-  title,
-  disabled,
-}) => {
+const PersonDetailBackBar = ({ canLogIn = false, formatMessage, navigate, title, disabled }) => {
   const params = useParams()
   const location = useLocation()
 

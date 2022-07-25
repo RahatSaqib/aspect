@@ -3,20 +3,15 @@ import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { useQuery } from 'react-query'
 import { defineMessages, injectIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
-
 import AspectDialog from '../../../../components/shared/AspectDialog'
-import AutoComplete from '../../../../components/shared/AutoComplete'
 import CheckboxField from '../../../../components/shared/CheckboxField'
-import fetchWrapperForQueries from '../../../QueryFetch'
-import { SITE_ALL } from '../../../QueryFetch/Site'
 import { RESULT_TRANSFER } from '../../../QueryFetch/Result'
 import { aspectFetch } from '../../../../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../../error/CommonErrorNotifications'
-import { SitesAllErrors } from './errors'
 import messages from '../messages'
+import SiteAutoCompleteField from '../../../SiteAutocompleteField'
 
 import styles from '../Detail.css'
 
@@ -28,7 +23,6 @@ const ResultTransferModal = ({
   isOpen,
   onClose,
 }) => {
-  const [allSites, setAllSites] = useState([])
   const [sourceSite, setSourceSite] = useState(null)
   const [selectedSite, setSelectedSite] = useState(null)
   const [comment, setComment] = useState('')
@@ -37,23 +31,6 @@ const ResultTransferModal = ({
   const [transferError, setTransferError] = useState(null)
   const [isSuccessAlert, setSuccessAlert] = useState(false)
   const navigate = useNavigate()
-
-  useQuery(
-    [SITE_ALL.KEY],
-    async () =>
-      fetchWrapperForQueries({
-        endpoint: `${SITE_ALL.ENDPOINT}`,
-        customErrorNotifications: SitesAllErrors,
-      }),
-    {
-      onSuccess: ({ data }) =>
-        setAllSites(
-          data
-            .filter(({ id }) => +id !== +reportableSiteId)
-            .map(({ id, name }) => ({ text: name, value: id }))
-        ),
-    }
-  )
 
   const reset = () => {
     setSelectedSite(null)
@@ -121,9 +98,7 @@ const ResultTransferModal = ({
         <div className={cssClasses('processing-spinner')}>
           <CircularProgress size="100%" thickness={1} disableShrink />
         </div>
-        <div className={cssClasses('processing-label')}>
-          {formatMessage(messages.processing)}
-        </div>
+        <div className={cssClasses('processing-label')}>{formatMessage(messages.processing)}</div>
       </div>
     ),
     [formatMessage]
@@ -166,31 +141,15 @@ const ResultTransferModal = ({
         </div>
       </AspectDialog>
     )
-  }, [
-    formatMessage,
-    patientId,
-    sourceSite?.name,
-    selectedSite?.text,
-    navigate,
-    onRequestClose,
-  ])
+  }, [formatMessage, patientId, sourceSite?.name, selectedSite?.text, navigate, onRequestClose])
 
   return (
     <AspectDialog
       actions={[
-        <Button
-          color="primary"
-          disabled={isProcessing}
-          onClick={onRequestClose}
-        >
+        <Button color="primary" disabled={isProcessing} onClick={onRequestClose}>
           {formatMessage(messages.buttonCancel)}
         </Button>,
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={isProcessing || !selectedSite}
-          onClick={onSubmit}
-        >
+        <Button color="primary" variant="contained" disabled={isProcessing || !selectedSite} onClick={onSubmit}>
           {formatMessage(messages.buttonTransfer)}
         </Button>,
       ]}
@@ -203,21 +162,18 @@ const ResultTransferModal = ({
       open={isOpen}
       onRequestClose={onRequestClose}
       showCrossIcon
-      title={`${formatMessage(messages.header)}${
-        patientId ? `: ${patientId}` : ''
-      }`}
+      title={`${formatMessage(messages.header)}${patientId ? `: ${patientId}` : ''}`}
       disableEscapeKeyDown
     >
       <div>
-        <AutoComplete
-          classes={{ container: cssClasses('autocomplete-wrapper') }}
+        <SiteAutoCompleteField
+          name="siteName"
+          value={selectedSite}
+          onChange={(_, value) => setSelectedSite(value)}
+          floatingLabelFixed
           hintText={formatMessage(messages.hint)}
           floatingLabelText={formatMessage(messages.titleSites)}
-          floatingLabelFixed
-          dataSource={allSites}
-          listStyle={{ width: 'auto' }}
-          onSelect={selectedSite => setSelectedSite(selectedSite)}
-          filter={AutoComplete.caseInsensitiveFilter}
+          width="100%"
         />
         <TextField
           fullWidth
@@ -238,15 +194,11 @@ const ResultTransferModal = ({
           onChange={event => setIncludeAllResults(event.target.checked)}
         />
       </div>
-      <div className={cssClasses('NoteWrapper')}>
-        {formatMessage(messages.note)}
-      </div>
+      <div className={cssClasses('NoteWrapper')}>{formatMessage(messages.note)}</div>
 
       {isProcessing && renderSpinner()}
 
-      {transferError && (
-        <div className={cssClasses('ErrorMessage')}>{transferError}</div>
-      )}
+      {transferError && <div className={cssClasses('ErrorMessage')}>{transferError}</div>}
 
       {isSuccessAlert && renderSuccessAlert()}
     </AspectDialog>

@@ -15,9 +15,7 @@ import {
 
 describe('getYearList', () => {
   it('should return a default year list if some of the given arguments are invalid', () => {
-    expect(getYearList({ minDate: null, maxDate: null })).toEqual(
-      defaultYearList
-    )
+    expect(getYearList({ minDate: null, maxDate: null })).toEqual(defaultYearList)
     expect(getYearList({ minDate: null })).toEqual(defaultYearList)
     expect(getYearList({ maxDate: null })).toEqual(defaultYearList)
   })
@@ -86,12 +84,12 @@ describe('getDateList', () => {
     expect(getDateList({ date: null })).toEqual(defaultDateList)
     expect(getDateList({ minDate: null })).toEqual(defaultDateList)
     expect(getDateList({ maxDate: null })).toEqual(defaultDateList)
-    expect(
-      getDateList({ date: new Date('2000-05-05'), minDate: null })
-    ).toEqual(range(1, getDaysInMonth(new Date('2000-05-05')) + 1))
-    expect(
-      getDateList({ date: new Date('2000-05-05'), maxDate: null })
-    ).toEqual(range(1, getDaysInMonth(new Date('2000-05-05')) + 1))
+    expect(getDateList({ date: new Date('2000-05-05'), minDate: null })).toEqual(
+      range(1, getDaysInMonth(new Date('2000-05-05')) + 1)
+    )
+    expect(getDateList({ date: new Date('2000-05-05'), maxDate: null })).toEqual(
+      range(1, getDaysInMonth(new Date('2000-05-05')) + 1)
+    )
   })
 
   it('should return the days in month when the date between minDate and maxDate', () => {

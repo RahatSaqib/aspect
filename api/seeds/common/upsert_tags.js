@@ -22,9 +22,7 @@ const references = {
 }
 
 module.exports = async (knex, partnerName, fixture = defaultFixture) => {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
   const tags = fixture.map(({ title }) => {
     return {
       title,
@@ -45,9 +43,7 @@ module.exports = async (knex, partnerName, fixture = defaultFixture) => {
         )
 
       const { column, table } = ref
-      const defaultTagExists = await knex(table)
-        .whereRaw(`tagId = ? AND ${column} IS NULL`, [tagId])
-        .first()
+      const defaultTagExists = await knex(table).whereRaw(`tagId = ? AND ${column} IS NULL`, [tagId]).first()
 
       if (!defaultTagExists) await knex(table).insert({ tagId })
     })

@@ -2,14 +2,7 @@
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import React from 'react'
-import {
-  compose,
-  pure,
-  setPropTypes,
-  mapProps,
-  lifecycle,
-  withHandlers,
-} from 'recompose'
+import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -49,15 +42,7 @@ const enhance = compose(
   }),
   mapProps(props => ({
     ..._fp.omit(
-      [
-        'countryId',
-        'stateId',
-        'lgaId',
-        'partnerId',
-        'onSiteChange',
-        'fetchSitesForSelectList',
-        'siteSelectList',
-      ],
+      ['countryId', 'stateId', 'lgaId', 'partnerId', 'onSiteChange', 'fetchSitesForSelectList', 'siteSelectList'],
       props
     ),
     sitesSelectList: props.sitesSelectList.items
@@ -84,12 +69,7 @@ const enhance = compose(
   }))
 )
 
-export function SiteSelectField({
-  sitesSelectList,
-  onChange,
-  allItemText,
-  ...restProps
-}) {
+export function SiteSelectField({ sitesSelectList, onChange, allItemText, ...restProps }) {
   return (
     <SelectField {...restProps} onChange={onChange}>
       {allItemText && <MenuItem value={undefined}>{allItemText}</MenuItem>}

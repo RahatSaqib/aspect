@@ -13,11 +13,7 @@ import {
 } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { getFilters } from '../filter/utils'
 
 export const types = {
@@ -42,8 +38,7 @@ export const types = {
 
   REQUEST_UPDATING_SINGLE_PERSON: 'REQUEST_UPDATING_SINGLE_PERSON',
   RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON',
-  RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
-    'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS',
+  RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS: 'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS',
 
   REQUEST_UPDATE_SITE_CONTACTS: 'REQUEST_UPDATE_SITE_CONTACTS',
   RECEIVE_UPDATE_SITE_CONTACTS: 'RECEIVE_UPDATE_SITE_CONTACTS',
@@ -183,15 +178,7 @@ function receiveAvailablePersons(items) {
   }
 }
 
-export function exportContacts(
-  filtersParams,
-  sortCol,
-  sortDir,
-  page,
-  pageSize,
-  fileFormat,
-  reportName
-) {
+export function exportContacts(filtersParams, sortCol, sortDir, page, pageSize, fileFormat, reportName) {
   return dispatch => {
     const filters = getFilters(filtersParams)
 
@@ -367,8 +354,7 @@ export function createPerson(data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.createPerson.POST.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Create the Contact',
+              defaultMessage: 'An Error Occurred When Trying to Create the Contact',
             },
           })
         ),
@@ -426,8 +412,7 @@ function updatePerson(path, personId, data, fields) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updatePerson.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the Contact',
+              defaultMessage: 'An Error Occurred When Trying to Save the Contact',
             },
           })
         ),
@@ -437,12 +422,7 @@ function updatePerson(path, personId, data, fields) {
 }
 
 export function updateSinglePerson(personId, data) {
-  return updatePerson(
-    `/person/${personId}`,
-    personId,
-    data,
-    contactDetailsFields
-  )
+  return updatePerson(`/person/${personId}`, personId, data, contactDetailsFields)
 }
 
 export function updateSinglePersonLoginDetails(personId, data) {
@@ -452,9 +432,7 @@ export function updateSinglePersonLoginDetails(personId, data) {
     const loginDetailsJson = data.toJS ? data.toJS() : data
     return aspectFetch(`/auth/update-person-login-details/${personId}`, {
       method: 'PUT',
-      body: JSON.stringify(
-        pick(loginDetailsJson, ['newUsername', 'newPassword', 'userLockedOut'])
-      ),
+      body: JSON.stringify(pick(loginDetailsJson, ['newUsername', 'newPassword', 'userLockedOut'])),
       errorNotifications: {
         409: inlineWarning(
           defineMessages({
@@ -464,8 +442,7 @@ export function updateSinglePersonLoginDetails(personId, data) {
             },
             message: {
               id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
-              defaultMessage:
-                'The username that you have entered is already in use by another user on the system',
+              defaultMessage: 'The username that you have entered is already in use by another user on the system',
             },
             resolution: {
               id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
@@ -490,17 +467,12 @@ export function updateSinglePersonLoginDetails(personId, data) {
           })
         ),
       },
-    }).then(json =>
-      dispatch(receiveUpdatedSinglePersonLoadinDetails(json.data))
-    )
+    }).then(json => dispatch(receiveUpdatedSinglePersonLoadinDetails(json.data)))
   }
 }
 
 export function updateSinglePersonUserPreferences(personId, data) {
-  return updatePerson(`/person/preferences/${personId}`, personId, data, [
-    'timezone',
-    'culture',
-  ])
+  return updatePerson(`/person/preferences/${personId}`, personId, data, ['timezone', 'culture'])
 }
 
 function requestUpdateSiteContacts() {
@@ -584,22 +556,19 @@ export function deletePersonAssignment(data) {
       personId,
       jobContextId,
     })
-    return aspectFetch(
-      `/job-function/person-assignment/${personId}/${jobContextId}`,
-      {
-        method: 'DELETE',
-        errorNotifications: {
-          403: errorForbidden(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
-                defaultMessage: 'Not Found',
-              },
-            })
-          ),
-        },
-      }
-    ).then(json =>
+    return aspectFetch(`/job-function/person-assignment/${personId}/${jobContextId}`, {
+      method: 'DELETE',
+      errorNotifications: {
+        403: errorForbidden(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
+              defaultMessage: 'Not Found',
+            },
+          })
+        ),
+      },
+    }).then(json =>
       dispatch({
         type: types.RECEIVE_DELETE_ASSIGNMENT,
         personId,
@@ -700,10 +669,7 @@ export default function personReducer(state = initialState, action) {
         mutState.set('table', mutState.get('table').clear())
       })
     case types.CAN_LOG_IN_PERSON:
-      return state.setIn(
-        ['items', 'byId', action.personId, 'canLogIn'],
-        action.canLogIn
-      )
+      return state.setIn(['items', 'byId', action.personId, 'canLogIn'], action.canLogIn)
     case types.REQUEST_AVAILABLE_PERSONS:
       return requestAvailableContacts(state)
     case types.RECEIVE_AVAILABLE_PERSONS:
@@ -717,10 +683,7 @@ export default function personReducer(state = initialState, action) {
       )
     case types.RECEIVE_UPDATE_SITE_CONTACTS:
     case types.RECEIVE_SITE_CONTACTS:
-      return state.setIn(
-        ['siteContacts', action.siteId],
-        Immutable.fromJS(action.items)
-      )
+      return state.setIn(['siteContacts', action.siteId], Immutable.fromJS(action.items))
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
     case types.RECEIVE_CREATED_SINGLE_PERSON:
@@ -729,10 +692,7 @@ export default function personReducer(state = initialState, action) {
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
     case types.PREFILL_EMAIL:
-      return state.setIn(
-        ['items', 'byId', action.personId, 'email'],
-        action.email
-      )
+      return state.setIn(['items', 'byId', action.personId, 'email'], action.email)
     case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
       return state.mergeIn(['items', 'byId', action.personId], {
         loaded: true,

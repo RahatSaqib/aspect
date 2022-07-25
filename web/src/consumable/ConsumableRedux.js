@@ -2,10 +2,7 @@ import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_CONSUMABLES: 'REQUEST_CONSUMABLES',
@@ -40,10 +37,7 @@ export function fetchConsumables(forceRefresh) {
     const shouldFetch =
       forceRefresh ||
       !consumable.getIn(['consumables', 'lastRefreshed']) ||
-      differenceInMinutes(
-        new Date(),
-        consumable.getIn(['consumables', 'lastRefreshed'])
-      ) > 5 // five minutes
+      differenceInMinutes(new Date(), consumable.getIn(['consumables', 'lastRefreshed'])) > 5 // five minutes
     if (!shouldFetch) {
       return
     }
@@ -94,10 +88,7 @@ export function fetchConsumableReasons(forceRefresh) {
     const shouldFetch =
       forceRefresh ||
       !consumable.getIn(['consumableReasons', 'lastRefreshed']) ||
-      differenceInMinutes(
-        new Date(),
-        consumable.getIn(['consumableReasons', 'lastRefreshed'])
-      ) > 5 // five minutes
+      differenceInMinutes(new Date(), consumable.getIn(['consumableReasons', 'lastRefreshed'])) > 5 // five minutes
     if (!shouldFetch) {
       return
     }
