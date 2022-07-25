@@ -65,6 +65,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     <TableCell>
       <StatusIcon status={device.get('gxConnectStatus') === 'online' ? 'success' : 'error'} />
     </TableCell>
+    <TableCell hiddenOn="lg">{device.get('gxConnectVersion')}</TableCell>
     <TableCell hiddenOn="lg" numeric>
       {intl.formatNumber(device.get('resultCountLastMonth'))}
     </TableCell>

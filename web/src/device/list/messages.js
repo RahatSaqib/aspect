@@ -137,6 +137,10 @@ export const messages = {
       id: 'pages.DeviceList.gxConnectStatus',
       defaultMessage: 'GxConnect Status',
     },
+    gxConnectVersion: {
+      id: 'pages.DeviceList.gxConnectVersion',
+      defaultMessage: 'GxConnect Version',
+    },
   }),
 }
 
