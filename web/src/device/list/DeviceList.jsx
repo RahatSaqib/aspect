@@ -133,7 +133,7 @@ const getColumns = intl => [
     key: 'resultCountLastMonth',
     sortable: true,
     label: intl.formatMessage(messages.lastMonth),
-    tooltip: intl.formatMessage(messages.lastMonthDescription, {
+    tooltip: intl.formatMessage(messages.resultCountDescription, {
       startDate: format(subDays(new Date(), 60 + 1), dateFormat),
       endDate: format(subDays(new Date(), 30 + 1), dateFormat),
     }),
@@ -142,7 +142,7 @@ const getColumns = intl => [
     key: 'resultCountThisMonth',
     sortable: true,
     label: intl.formatMessage(messages.thisMonth),
-    tooltip: intl.formatMessage(messages.thisMonthDescription, {
+    tooltip: intl.formatMessage(messages.resultCountDescription, {
       startDate: format(subDays(new Date(), 30), dateFormat),
       endDate: format(new Date(), dateFormat),
     }),
