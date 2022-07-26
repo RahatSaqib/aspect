@@ -6,9 +6,7 @@ const { startOfDayUtc } = require('../../src/shared/date')
 
 describe('taskTracker helper functions', () => {
   it('should return all dates to be executed the task based on the dates that were executed', () => {
-    const daysExecuted = _.map([2, 4, 5], day =>
-      startOfDayUtc(addDays(new Date(), -day))
-    )
+    const daysExecuted = _.map([2, 4, 5], day => startOfDayUtc(addDays(new Date(), -day)))
     const now = new Date()
 
     const daysToExecute = getDaysWithNoRuns(daysExecuted, 7)

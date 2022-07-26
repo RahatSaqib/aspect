@@ -11,10 +11,7 @@ async function exportNotifications(request, reply) {
       ...item,
       // TODO: update func listNotifications() to include column issueCategories
       // replace array of `issueCategories` with csv-string of IssueCategory shortNames
-      issuesCategories: _.map(
-        item.issueCategories,
-        key => issueCategories[key]
-      ).join(', '),
+      issuesCategories: _.map(item.issueCategories, key => issueCategories[key]).join(', '),
     })),
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',

@@ -23,9 +23,7 @@ const addDeviceRawDataHandler = asyncHandler(async (request, h) => {
   return Promise.race([responseReady, error])
     .then(async responseContent => {
       if (dataProcessor.responseStatusCode) {
-        return h
-          .response(responseContent)
-          .code(dataProcessor.responseStatusCode)
+        return h.response(responseContent).code(dataProcessor.responseStatusCode)
       }
       return responseContent
     })
@@ -43,12 +41,8 @@ const addDeviceRawDataHandler = asyncHandler(async (request, h) => {
 async function continueUnprocessedRawData(queue) {
   const lockedId = await deviceApiRawStatusToId('Locked')
   const readyId = await deviceApiRawStatusToId('Ready')
-  await knex('DeviceApiRaw')
-    .where('deviceApiRawStatusId', lockedId)
-    .update({ deviceApiRawStatusId: readyId })
-  const readyDeviceApiRawRecords = await knex('DeviceApiRaw')
-    .where('deviceApiRawStatusId', readyId)
-    .select()
+  await knex('DeviceApiRaw').where('deviceApiRawStatusId', lockedId).update({ deviceApiRawStatusId: readyId })
+  const readyDeviceApiRawRecords = await knex('DeviceApiRaw').where('deviceApiRawStatusId', readyId).select()
   if (!_.isEmpty(readyDeviceApiRawRecords)) {
     // eslint-disable-next-line no-console
     console.log(

@@ -60,11 +60,7 @@ export const ExportListButton = ({
   visible ? (
     <div>
       {downloadStarted && <LinearProgress />}
-      <IconButton
-        variant="contained"
-        onClick={onPopoverClick}
-        className={cssClasses('DownloadButton')}
-      >
+      <IconButton variant="contained" onClick={onPopoverClick} className={cssClasses('DownloadButton')}>
         <CloudDownloadIcon style={{ fontSize: '1.25rem' }} />
       </IconButton>
 
@@ -90,24 +86,12 @@ export const ExportListButton = ({
           }}
         >
           <li>
-            <button
-              type="button"
-              className={cssClasses('Reports_Button')}
-              inverse
-              onClick={onMyExport}
-              id="xlsx"
-            >
+            <button type="button" className={cssClasses('Reports_Button')} inverse onClick={onMyExport} id="xlsx">
               Excel
             </button>
           </li>
           <li>
-            <button
-              type="button"
-              className={cssClasses('Reports_Button')}
-              inverse
-              onClick={onMyExport}
-              id="csv"
-            >
+            <button type="button" className={cssClasses('Reports_Button')} inverse onClick={onMyExport} id="csv">
               CSV
             </button>
           </li>

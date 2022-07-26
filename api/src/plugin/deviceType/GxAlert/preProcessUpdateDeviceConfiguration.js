@@ -1,10 +1,7 @@
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const parseISO = require('date-fns/parseISO')
-const {
-  deviceMaintenance,
-  deviceMaintenanceResolved,
-} = require('../../../device/actions')
+const { deviceMaintenance, deviceMaintenanceResolved } = require('../../../device/actions')
 const { parseDateOrDefault } = require('../../../shared/date')
 
 async function preProcessUpdateDeviceConfiguration(context) {
@@ -20,18 +17,10 @@ async function preProcessUpdateDeviceConfiguration(context) {
       note: null,
       expectedBackOnline: null,
     }
-    const expectedBackOnlineInData = _.get(
-      payload,
-      'data.inactiveMaintenanceExpectedBackOnline',
-      null
-    )
+    const expectedBackOnlineInData = _.get(payload, 'data.inactiveMaintenanceExpectedBackOnline', null)
     const newMaintenanceData = _.assign({}, blankMaintenanceData, {
-      reason: inactive
-        ? _.get(payload, 'data.inactiveMaintenanceReason', null)
-        : null,
-      note: inactive
-        ? _.get(payload, 'data.inactiveMaintenanceNote', null)
-        : null,
+      reason: inactive ? _.get(payload, 'data.inactiveMaintenanceReason', null) : null,
+      note: inactive ? _.get(payload, 'data.inactiveMaintenanceNote', null) : null,
       expectedBackOnline:
         !inactive || _.isEmpty(expectedBackOnlineInData)
           ? null

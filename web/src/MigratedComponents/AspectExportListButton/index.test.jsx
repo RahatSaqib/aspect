@@ -21,9 +21,7 @@ describe('ExportListButton', () => {
   })
 
   it('should shallow render export list correctly', () => {
-    const element = shallow(
-      <AspectExportListButtonWithProps {...props} visible />
-    )
+    const element = shallow(<AspectExportListButtonWithProps {...props} visible />)
 
     expect(element).toMatchSnapshot()
     expect(element.find('div')).toHaveLength(1)

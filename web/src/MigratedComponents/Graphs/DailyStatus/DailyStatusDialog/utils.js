@@ -17,22 +17,16 @@ export const getFormConfig = (formConfig, statuses, data) => {
     section.rows.forEach(({ items }) => {
       setInitialValue(items, 'startedOn', data.startedOn, cssClasses)
       setInitialValue(items, 'endedOn', data.endedOn, cssClasses)
-      setInitialValue(
-        items,
-        'reason',
-        data.maintenanceStatusExternalId,
-        cssClasses,
-        item => {
-          // init dropdown options
-          item.controlType.options = statuses
-            // show only statuses with manuallySet flag
-            .filter(({ manuallySet }) => manuallySet === 1)
-            .map(({ externalId, name }) => ({
-              label: name,
-              value: externalId,
-            }))
-        }
-      )
+      setInitialValue(items, 'reason', data.maintenanceStatusExternalId, cssClasses, item => {
+        // init dropdown options
+        item.controlType.options = statuses
+          // show only statuses with manuallySet flag
+          .filter(({ manuallySet }) => manuallySet === 1)
+          .map(({ externalId, name }) => ({
+            label: name,
+            value: externalId,
+          }))
+      })
       setInitialValue(items, 'note', data.note, cssClasses)
     })
   })

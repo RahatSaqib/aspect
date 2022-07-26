@@ -4,11 +4,7 @@ import flowRight from 'lodash/flowRight'
 
 import { useAuthState } from '../AuthProvider'
 
-import {
-  getPermissions,
-  groupByPermissionTypes,
-  isPermittedUser,
-} from '../../components/shared/requirePermissions'
+import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../../components/shared/requirePermissions'
 
 export const isGraphPermitted = ({
   auth,
@@ -19,10 +15,11 @@ export const isGraphPermitted = ({
   const {
     jwt: { permissions },
   } = auth
-  const permissionsByTypes = flowRight([
-    groupByPermissionTypes,
-    getPermissions,
-  ])(permissionsInConfig, overriddenPermissions, extraPermissions)
+  const permissionsByTypes = flowRight([groupByPermissionTypes, getPermissions])(
+    permissionsInConfig,
+    overriddenPermissions,
+    extraPermissions
+  )
   const isPermitted = isPermittedUser(permissions, permissionsByTypes)
   return isPermitted
 }

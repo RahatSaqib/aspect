@@ -32,8 +32,7 @@ function getCommCarePayload({
       '@name': 'RDT Assay',
       '@uiVersion': '1',
       '@version': '112',
-      '@xmlns':
-        'http://openrosa.org/formdesigner/BEC9A305-4674-4FE7-B4C6-8779CCB7C5A5',
+      '@xmlns': 'http://openrosa.org/formdesigner/BEC9A305-4674-4FE7-B4C6-8779CCB7C5A5',
       age,
       education_level: '8_to_matriculation',
       gender,

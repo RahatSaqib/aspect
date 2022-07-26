@@ -10,11 +10,7 @@ import reduce from 'lodash/reduce'
 import set from 'lodash/set'
 import xor from 'lodash/xor'
 
-import {
-  getInitialValuesFromFormConfig,
-  pickItems,
-  pickKeys,
-} from '../Formik/Helpers'
+import { getInitialValuesFromFormConfig, pickItems, pickKeys } from '../Formik/Helpers'
 
 const getState = formConfig => {
   const { sections } = formConfig
@@ -88,13 +84,7 @@ export const useFormConfig = formConfig => {
 
   useEffect(() => {
     const currentState = getState(formConfig)
-    if (
-      !isEqualWith(
-        meta.initialValues,
-        currentState.initialValues,
-        compareValuesSkipGuid
-      )
-    ) {
+    if (!isEqualWith(meta.initialValues, currentState.initialValues, compareValuesSkipGuid)) {
       setMeta(currentState)
     }
   }, [formConfig, meta.initialValues])
@@ -109,13 +99,9 @@ export const useFormConfig = formConfig => {
           const itemId = `${isMulti ? `${rowId}[${subRowIndex}].` : ''}${id}`
           formik.unregisterField(itemId)
 
-          const isVisible =
-            !visibleIf || visibleIf(values, isEditMode, subRowIndex)
+          const isVisible = !visibleIf || visibleIf(values, isEditMode, subRowIndex)
           if (isVisible) {
-            if (
-              validateIf &&
-              !validateIf(values, formik, { subRowIndex, touchedName })
-            ) {
+            if (validateIf && !validateIf(values, formik, { subRowIndex, touchedName })) {
               validate = undefined
             }
 

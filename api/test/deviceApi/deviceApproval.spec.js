@@ -1,9 +1,5 @@
 const chai = require('chai')
-const {
-  createTestContext,
-  getDeviceConfigurationData,
-  getLastDeviceOperationData,
-} = require('./utils')
+const { createTestContext, getDeviceConfigurationData, getLastDeviceOperationData } = require('./utils')
 const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
@@ -58,10 +54,7 @@ describe('Device API approval tests', () => {
             assert.equal(res.status, 200)
           })
         const configPost1 = await getDeviceConfigurationData(knex, deviceId)
-        assert.deepEqual(
-          { shouldChangeThisThing: 'b', ...configPre },
-          configPost1
-        )
+        assert.deepEqual({ shouldChangeThisThing: 'b', ...configPre }, configPost1)
         const opPost1 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual({ shouldChangeThisOtherThing: 'c' }, opPost1)
 
@@ -73,10 +66,7 @@ describe('Device API approval tests', () => {
             assert.equal(res.status, 200)
           })
         const configPost2 = await getDeviceConfigurationData(knex, deviceId)
-        assert.deepEqual(
-          { shouldChangeThisThing: 'c', ...configPre },
-          configPost2
-        )
+        assert.deepEqual({ shouldChangeThisThing: 'c', ...configPre }, configPost2)
 
         await server
           .post(deviceOperationPath)

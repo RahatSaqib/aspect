@@ -35,18 +35,14 @@ describe('Result Transfer', () => {
     before(async () => {
       shared.checkToken(server, path)
       // get list of results accessible for current user
-      let response = await server
-        .set('Authorization', `Bearer ${shared.token}`)
-        .get(path)
+      let response = await server.set('Authorization', `Bearer ${shared.token}`).get(path)
 
       assert.equal(response.statusCode, 200)
       assert.isAtLeast(response.body.data.length, 1)
       const resultId = response.body.data[0].id
 
       // get result by resultId
-      response = await server
-        .set('Authorization', `Bearer ${shared.token}`)
-        .get(`${path}/${resultId}`)
+      response = await server.set('Authorization', `Bearer ${shared.token}`).get(`${path}/${resultId}`)
 
       assertResult(response)
       result = response.body.data
@@ -56,9 +52,7 @@ describe('Result Transfer', () => {
       ;[{ reportableSiteId, resultStatusLogId }] = [result]
 
       // get list of accessible sites for current user
-      response = await server
-        .set('Authorization', `Bearer ${shared.token}`)
-        .get(`/api/site`)
+      response = await server.set('Authorization', `Bearer ${shared.token}`).get(`/api/site`)
       assert.equal(response.statusCode, 200)
       assert.isAtLeast(response.body.data.length, 1)
       const sites = response.body.data
@@ -70,9 +64,7 @@ describe('Result Transfer', () => {
 
     after(async () => {
       // restore initial data
-      await knex('Result')
-        .where('id', result.id)
-        .update({ reportableSiteId, resultStatusLogId })
+      await knex('Result').where('id', result.id).update({ reportableSiteId, resultStatusLogId })
       await knex('ResultStatusLog')
         // assume resultStatusLogId is 0 if `result` didn't have any record in ResultStatusLog
         .where('id', '>', resultStatusLogId || 0)
@@ -146,9 +138,7 @@ describe('Result Transfer', () => {
 
       // check if comment stored
       const { resultStatusLogId } = testResult
-      const logData = await knex('ResultStatusLog')
-        .where('id', resultStatusLogId)
-        .first('data')
+      const logData = await knex('ResultStatusLog').where('id', resultStatusLogId).first('data')
       const log = JSON.parse(logData.data)
       assert.equal(comment, log.comment)
     })

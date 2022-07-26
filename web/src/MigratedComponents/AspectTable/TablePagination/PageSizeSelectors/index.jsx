@@ -11,11 +11,7 @@ const cssClasses = classnames.bind(styles)
  * Component to render page selectors for table component
  */
 
-const PageSizeSelectors = ({
-  dataLength,
-  pageSize,
-  handleChangeRowsPerPage,
-}) => {
+const PageSizeSelectors = ({ dataLength, pageSize, handleChangeRowsPerPage }) => {
   const ALL_KEY = 'All'
   const pageSizeButtonKeys = [10, 25, 50, 100, ALL_KEY]
   return pageSizeButtonKeys.map(key => (

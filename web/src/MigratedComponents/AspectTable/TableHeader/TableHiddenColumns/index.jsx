@@ -22,11 +22,7 @@ const getProperColumnLabelFromKey = (key, columns) => {
  * Component to render names of hidden columns
  */
 
-const TableHiddenColumns = ({
-  columns,
-  hiddenColumns,
-  handleHideColumnToggle,
-}) => {
+const TableHiddenColumns = ({ columns, hiddenColumns, handleHideColumnToggle }) => {
   const { formatMessage } = useIntl()
   return (
     <div className={cssClasses('hiddenColumn__container')}>

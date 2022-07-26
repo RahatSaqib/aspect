@@ -1,9 +1,6 @@
 const Promise = require('bluebird')
 
-const {
-  PhilippinesNtrlPmdt,
-  PhilippinesNtrlRitm,
-} = require('./philippinesNtrlDatabases')
+const { PhilippinesNtrlPmdt, PhilippinesNtrlRitm } = require('./philippinesNtrlDatabases')
 
 const registeredDataProcessors = [
   require('./truenatDevice/authenticate'),

@@ -9,12 +9,7 @@ import messages from './messages'
 import fetchWrapperForQueries from '../../../QueryFetch/index'
 import { NOTIFICATION_DELETE } from '../../../QueryFetch/Notification/index'
 
-const DeleteConfirmationModal = ({
-  notificationId,
-  notificationName = '',
-  showDialog,
-  onClose,
-}) => {
+const DeleteConfirmationModal = ({ notificationId, notificationName = '', showDialog, onClose }) => {
   const [notificationData, setNotificationData] = useState({})
   const { formatMessage } = useIntl()
   const { mutate: deleteNotificationSubmit } = useMutation(
@@ -44,9 +39,7 @@ const DeleteConfirmationModal = ({
         <Button
           color="primary"
           variant="contained"
-          onClick={() =>
-            deleteNotificationSubmit({ id: notificationData.notificationId })
-          }
+          onClick={() => deleteNotificationSubmit({ id: notificationData.notificationId })}
         >
           {formatMessage(messages.yesDelete)}
         </Button>,

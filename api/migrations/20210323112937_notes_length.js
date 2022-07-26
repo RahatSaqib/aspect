@@ -11,27 +11,19 @@ async function up(knex) {
 }
 
 async function down(knex) {
-  const longNotes = await knex('Result')
-    .where(knex.raw('LENGTH(notes) > 2000'))
-    .select('id')
+  const longNotes = await knex('Result').where(knex.raw('LENGTH(notes) > 2000')).select('id')
 
   await Promise.all(
     _.map(longNotes, async row => {
-      await knex('Result')
-        .where({ id: row.id })
-        .update('notes', knex.raw('LEFT(notes, 2000)'))
+      await knex('Result').where({ id: row.id }).update('notes', knex.raw('LEFT(notes, 2000)'))
     })
   )
 
-  const longErrorNotes = await knex('Result')
-    .where(knex.raw('LENGTH(errorNotes) > 2000'))
-    .select('id')
+  const longErrorNotes = await knex('Result').where(knex.raw('LENGTH(errorNotes) > 2000')).select('id')
 
   await Promise.all(
     _.map(longErrorNotes, async row => {
-      await knex('Result')
-        .where({ id: row.id })
-        .update('errorNotes', knex.raw('LEFT(errorNotes, 2000)'))
+      await knex('Result').where({ id: row.id }).update('errorNotes', knex.raw('LEFT(errorNotes, 2000)'))
     })
   )
 

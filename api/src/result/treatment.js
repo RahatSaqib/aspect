@@ -29,9 +29,7 @@ async function confirmedTreatmentTracking(request) {
     maxDate = endOfMonth(subMonths(now, 1))
   }
   if (maxDate > endOfMonth(now)) {
-    return Boom.expectationFailed(
-      '"maxDate" can not be greater than current month'
-    )
+    return Boom.expectationFailed('"maxDate" can not be greater than current month')
   }
   let { minDate } = query
   if (minDate) {
@@ -62,9 +60,7 @@ async function confirmedTreatmentTracking(request) {
     })
     .modify(queryBuilder => {
       if (assayTypeId && resultCategoryId) {
-        queryBuilder
-          .where('a.assayTypeId', assayTypeId)
-          .where('r.resultCategory1', resultCategoryId)
+        queryBuilder.where('a.assayTypeId', assayTypeId).where('r.resultCategory1', resultCategoryId)
       }
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')

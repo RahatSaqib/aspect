@@ -21,9 +21,7 @@ function flattenItem(item, childrenPropertyPath) {
   const childrenPropertyName = head(childrenPropertyPath)
   if (childrenPropertyName) {
     const children = flattenDeep(
-      map(item[childrenPropertyName], item =>
-        flattenItem(item, without(childrenPropertyPath, childrenPropertyName))
-      )
+      map(item[childrenPropertyName], item => flattenItem(item, without(childrenPropertyPath, childrenPropertyName)))
     )
     if (isEmpty(children)) {
       return {
@@ -42,22 +40,14 @@ function flattenItem(item, childrenPropertyPath) {
     const flatParentItem = {
       ...flatParentItemWithFirstChild,
       rowSpans: parentRowSpans,
-      visibleProperties: without(
-        Object.keys(flatParentItemWithFirstChild),
-        'rowSpans',
-        'visibleProperties'
-      ),
+      visibleProperties: without(Object.keys(flatParentItemWithFirstChild), 'rowSpans', 'visibleProperties'),
     }
     const childrenWithParentProperties = map(drop(children), child => {
       const rowSpans = {
         ...parentRowSpans,
         ...child.rowSpans,
       }
-      const visibleProperties = without(
-        Object.keys(child),
-        'rowSpans',
-        'visibleProperties'
-      )
+      const visibleProperties = without(Object.keys(child), 'rowSpans', 'visibleProperties')
       return {
         visibleProperties,
         ...flatParentItem,
@@ -70,18 +60,12 @@ function flattenItem(item, childrenPropertyPath) {
   return {
     ...item,
     rowSpans: rowSpans(item, childrenPropertyPath, 0),
-    visibleProperties: without(
-      Object.keys(item),
-      'rowSpans',
-      'visibleProperties'
-    ),
+    visibleProperties: without(Object.keys(item), 'rowSpans', 'visibleProperties'),
   }
 }
 
 export function receiveList(items, childrenPropertyPath, listOfTreeObjects) {
-  const list = flattenDeep(
-    map(listOfTreeObjects, item => flattenItem(item, childrenPropertyPath))
-  )
+  const list = flattenDeep(map(listOfTreeObjects, item => flattenItem(item, childrenPropertyPath)))
 
   const immutableList = Immutable.fromJS(list)
 

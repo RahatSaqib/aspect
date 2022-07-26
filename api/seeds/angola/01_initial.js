@@ -3,22 +3,13 @@ const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
-const {
-  commonUpserts,
-  upsertGeneXpertDeviceTypeAndAssays,
-} = require('../common')
+const { commonUpserts, upsertGeneXpertDeviceTypeAndAssays } = require('../common')
 const { upsertMGITDeviceTypeAndAssays } = require('../commonTB')
 const partnerData = require('./fixtures/partnerData')
 const upsertPartnerData = require('../common/upsert_partner_data')
 
-const {
-  adminUserName,
-  adminPassword,
-  deviceApiToken,
-  lowerLevelUserPassword,
-  partnerAbbreviation,
-  assays,
-} = partnerData
+const { adminUserName, adminPassword, deviceApiToken, lowerLevelUserPassword, partnerAbbreviation, assays } =
+  partnerData
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()

@@ -6,24 +6,14 @@ const { Readable } = require('stream')
 const Promise = require('bluebird')
 
 const { createEmailTestContext } = require('./utils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
+const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 // get test context with created sample messageId
 const context = createEmailTestContext({ user: 'admin' })
 
 // action creators
-const {
-  emailMessageCreated,
-  emailMessageReadyForSending,
-  emailMessageSent,
-} = require('../../src/email/actions')
-const {
-  columnsDeviceErrorHistoryForAttachment,
-} = require('../../src/result/serviceReport')
+const { emailMessageCreated, emailMessageReadyForSending, emailMessageSent } = require('../../src/email/actions')
+const { columnsDeviceErrorHistoryForAttachment } = require('../../src/result/serviceReport')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 
 describe('Sending Email via Message Queue', () => {
@@ -81,10 +71,7 @@ describe('Sending Email via Message Queue', () => {
         !msg.subject.includes('{{') && !msg.subject.includes('}}'),
         'Email subject template has not been parsed well'
       )
-      assert(
-        !msg.body.includes('{{') && !msg.body.includes('}}'),
-        'Email body template has not been parsed well'
-      )
+      assert(!msg.body.includes('{{') && !msg.body.includes('}}'), 'Email body template has not been parsed well')
       assert(
         !msg.htmlBody.includes('{{') && !msg.htmlBody.includes('}}'),
         'Email htmlBody template has not been parsed well'
@@ -182,8 +169,7 @@ describe('Sending Email via Message Queue', () => {
             RawText: `<SomeError>Error Code ${errorCode.systemLog}, Heater Temperature Differential Error in module ${moduleName}`,
           },
           logLevel: 'SEVERE',
-          logFileName:
-            'C:\\GeneXpert\\log\\XpertCal-2017.10.10_15.49.26.026-0.log',
+          logFileName: 'C:\\GeneXpert\\log\\XpertCal-2017.10.10_15.49.26.026-0.log',
         }),
       })
       context.deviceOperationsToDelete = [deviceOperationId]
@@ -231,10 +217,7 @@ describe('Sending Email via Message Queue', () => {
         !msg.subject.includes('{{') && !msg.subject.includes('}}'),
         'Email subject template has not been parsed well'
       )
-      assert(
-        !msg.body.includes('{{') && !msg.body.includes('}}'),
-        'Email body template has not been parsed well'
-      )
+      assert(!msg.body.includes('{{') && !msg.body.includes('}}'), 'Email body template has not been parsed well')
       assert(
         !msg.htmlBody.includes('{{') && !msg.htmlBody.includes('}}'),
         'Email htmlBody template has not been parsed well'
@@ -277,9 +260,7 @@ describe('Sending Email via Message Queue', () => {
        */
       // helper func
       const getHeaderValue = key => {
-        const { header } = columnsDeviceErrorHistoryForAttachment.find(
-          column => column.key === key
-        )
+        const { header } = columnsDeviceErrorHistoryForAttachment.find(column => column.key === key)
         return header
       }
       // values in 1st row for some columns

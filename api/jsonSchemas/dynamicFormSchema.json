@@ -302,7 +302,7 @@
                   "title": "The Operator Schema",
                   "description": "An explanation about the purpose of this instance.",
                   "default": "=",
-                  "enum": ["===", "!==", ">=", "<="]
+                  "enum": ["=", "===", "!==", ">=", "<="]
                 },
                 "fieldToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/fieldToCompare",

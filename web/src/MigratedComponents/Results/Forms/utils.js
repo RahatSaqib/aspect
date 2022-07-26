@@ -7,19 +7,13 @@ import messages from '../Detail/messages'
 
 export const getBaseOptions = (
   response,
-  {
-    formatMessage,
-    propNameForLabel = 'name',
-    propNameForValue = 'id',
-    propNameForI18n,
-  } = {}
+  { formatMessage, propNameForLabel = 'name', propNameForValue = 'id', propNameForI18n } = {}
 ) => {
   let options = []
   const { ok, data } = response
   if (ok) {
     options = data.map(item => {
-      const msg =
-        propNameForI18n && formatMessage ? messages[propNameForI18n] : null
+      const msg = propNameForI18n && formatMessage ? messages[propNameForI18n] : null
       return {
         label: msg ? formatMessage(msg) : item[propNameForLabel],
         value: item[propNameForValue],
@@ -80,11 +74,7 @@ export const siteProps = (isNew, props) => {
           const { stateId, lgaId } = formik.values
           if (ok) {
             options = data
-              .filter(
-                item =>
-                  (!stateId || item.stateId === stateId) &&
-                  (!lgaId || item.lgaId === lgaId)
-              )
+              .filter(item => (!stateId || item.stateId === stateId) && (!lgaId || item.lgaId === lgaId))
               .map(({ id, name }) => ({
                 label: name,
                 value: id,
@@ -187,9 +177,7 @@ export const deviceProps = (isNew, props) => {
           if (ok) {
             options = data
               .filter(
-                item =>
-                  (!siteId || item.siteId === siteId) &&
-                  (!deviceTypeId || item.deviceTypeId === deviceTypeId)
+                item => (!siteId || item.siteId === siteId) && (!deviceTypeId || item.deviceTypeId === deviceTypeId)
               )
               .map(({ id, name }) => ({
                 label: name,
@@ -200,8 +188,7 @@ export const deviceProps = (isNew, props) => {
         },
         populateOnChange: (value, { formik }, dataSource) => {
           // see `endpoint` for props in dataSource
-          const { deviceType, deviceTypeId, deviceSerial } =
-            dataSource.find(({ id }) => id === value) || {}
+          const { deviceType, deviceTypeId, deviceSerial } = dataSource.find(({ id }) => id === value) || {}
           // set other fields on a form
           formik.setFieldValue('deviceType', deviceType || '', false)
           formik.setFieldValue('deviceTypeId', deviceTypeId, false)
@@ -232,10 +219,7 @@ export const deviceTypeProps = (isNew, props) => {
           const { ok, data } = response
           if (ok) {
             options = data
-              .filter(
-                ({ name }) =>
-                  !name.includes('Aspect') && !name.includes('GxAlert')
-              )
+              .filter(({ name }) => !name.includes('Aspect') && !name.includes('GxAlert'))
               .map(({ id, name }) => ({
                 label: name,
                 value: id,
@@ -307,8 +291,7 @@ export const resultCategoryControlType = formatMessage => {
       const { ok, data } = response
       const { assayId } = formik.values
       if (ok) {
-        const { resultCategories = [] } =
-          data.find(({ id }) => id === assayId) || {}
+        const { resultCategories = [] } = data.find(({ id }) => id === assayId) || {}
         options = resultCategories.map(({ id, name, i18nKey }) => ({
           label: formatMessage(messages[i18nKey], name),
           value: id,

@@ -7,6 +7,7 @@ import isNull from 'lodash/isNull'
 import keys from 'lodash/keys'
 import last from 'lodash/last'
 import map from 'lodash/map'
+import max from 'lodash/max'
 import nth from 'lodash/nth'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
@@ -64,24 +65,20 @@ const normaliseKeys = data => {
 }
 
 const filterByMultiple = (data, filterBy) => {
-  return data.filter(d =>
-    keys(filterBy).every(f => includes(filterBy[f].values, d[f]))
-  )
+  return data.filter(d => keys(filterBy).every(f => includes(filterBy[f].values, d[f])))
 }
 
-const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
+const formatValuesForGraphs = (value, displayMethod, { formatNumber }) => {
   let formatted
   switch (true) {
-    case (typeof value === 'number' || !Number.isNaN(Number(value))) &&
-      displayMethod === 'actual':
+    case (typeof value === 'number' || !Number.isNaN(Number(value))) && displayMethod === 'actual':
       formatted = formatNumber(Math.abs(value), {
         notation: 'compact',
         compactDisplay: 'short',
       })
       break
 
-    case (typeof value === 'number' || !Number.isNaN(Number(value))) &&
-      displayMethod === 'percentage':
+    case (typeof value === 'number' || !Number.isNaN(Number(value))) && displayMethod === 'percentage':
       formatted = formatNumber(Number(value / 100), {
         style: 'percent',
         minimumFractionDigits: 0,
@@ -98,23 +95,13 @@ const formatValuesForGraphs = (value, displayMethod, formatNumber) => {
 
 const orderKeysById = keys => {
   const sortedKeys = []
-  keys.map(k =>
-    graphColorMap.filter(
-      ({ id, externalId }) =>
-        externalId === k && sortedKeys.push({ id, externalId })
-    )
-  )
+  keys.map(k => graphColorMap.filter(({ id, externalId }) => externalId === k && sortedKeys.push({ id, externalId })))
   return map(sortBy(sortedKeys, ['id']), 'externalId')
 }
 
 const getGraphKeysFromResults = (data, keyToOmit) => {
   const newdata = []
-  data.filter(d =>
-    forOwn(
-      d,
-      (value, key) => keyToOmit === key || newdata.push({ [key]: value })
-    )
-  )
+  data.filter(d => forOwn(d, (value, key) => keyToOmit === key || newdata.push({ [key]: value })))
   return orderKeysById(uniq(newdata.flatMap(a => keys(a))))
 }
 
@@ -133,14 +120,16 @@ const clubsandwich = (boundaries, rounded = false) => {
   return uniq([low, rounded ? roundIfNumber(middle) : middle, high])
 }
 
-const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
+const getBoundaries = (data, keys, { whichAxes, zeroOut, groupMode }) => {
   let dataOut
   const dataOutTemp = zeroOut && whichAxes === 'Y' ? [0] : []
   switch (whichAxes) {
-    case 'Y':
-      data.map(d => dataOutTemp.push(sum(values(pick(d, keys)).map(Number))))
+    case 'Y': {
+      const aggregationFunc = groupMode === 'grouped' ? max : sum
+      data.map(d => dataOutTemp.push(aggregationFunc(values(pick(d, keys)).map(Number))))
       dataOut = sortByValue(dataOutTemp)
       break
+    }
 
     default:
       data.map(d => dataOutTemp.push(...valuesIn(pick(d, keys))))
@@ -151,22 +140,23 @@ const getBoundaries = (data, keys, whichAxes, zeroOut = true) => {
 }
 
 const incrementSplit = (boundaries, increment) => {
+  if (boundaries[1] === 1) {
+    return boundaries
+  }
   const split = Math.round(boundaries[1] / increment)
   const values = [boundaries[0], split * increment]
   times(split, v => values.push(v * increment))
   return sortBy(uniq(values))
 }
 
-const generateTickValues = (
-  data,
-  axesTicks,
-  keys,
-  whichAxes,
-  zeroOut = false
-) => {
+const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut = false, { groupMode } = {}) => {
   let values
   let dynamicAxesTicks
-  const boundaries = getBoundaries(data, keys, whichAxes, zeroOut)
+  const boundaries = getBoundaries(data, keys, {
+    whichAxes,
+    zeroOut,
+    groupMode,
+  })
   const upperBoundary = boundaries[1] || 0
 
   switch (true) {
@@ -207,18 +197,14 @@ const generateTickValues = (
 
 const filterColour = (valueId, graphId) => {
   let colorValue
-  const tbResultsGraphs = [
-    'tbResultsByCategory1Monthly',
-    'tbResultsByCategory1Aggregate',
-  ]
+  const tbResultsGraphs = ['tbResultsByCategory1Monthly', 'tbResultsByCategory1Aggregate']
   const tbResultsValues = ['Trace Detected', 'NotDetected', 'NoResult']
   const tRifGraphs = ['tbByCategory1Monthly', 'tbByCategory1Aggregate']
   const tbRifValues = ['NotDetected']
   const covidGraphs = ['covidByCategory1Monthly', 'covidByCategory1Aggregate']
   const covidValues = ['Negative', 'Unknown', 'NotDetected']
   switch (true) {
-    case includes(tbResultsGraphs, graphId) &&
-      includes(tbResultsValues, valueId):
+    case includes(tbResultsGraphs, graphId) && includes(tbResultsValues, valueId):
       colorValue = `${valueId}_${graphId}`
       break
 
@@ -235,15 +221,11 @@ const filterColour = (valueId, graphId) => {
       break
   }
 
-  return graphColorMap.filter(
-    color => color.externalId === colorValue || color.id === 999
-  )[0].color
+  return graphColorMap.filter(color => color.externalId === colorValue || color.id === 999)[0].color
 }
 
-const generateColorForValue = (valueId, graphId) =>
-  filterColour(valueId, graphId)
-const generateColorForLegend = (valueId, graphId) =>
-  filterColour(valueId, graphId)
+const generateColorForValue = (valueId, graphId) => filterColour(valueId, graphId)
+const generateColorForLegend = (valueId, graphId) => filterColour(valueId, graphId)
 
 const generateMargin = (tickValuesYShape, legend, type = false) => {
   const shouldMargin = tickValuesYShape !== 'none'
@@ -270,20 +252,12 @@ const generateToolTip = (
 ) => {
   const { color, id, indexValue, value, data } = item
   let displayValue = ''
-  let displayId = translateLabel(
-    id,
-    assaysFromState,
-    formatMessage,
-    intlMessages,
-    i18nKeys
-  )
+  let displayId = translateLabel(id, assaysFromState, formatMessage, intlMessages, i18nKeys)
   if (type === 'stackedDeviceActivity') {
     const { devicesTotal } = data
     const valuePercentage = parseFloat(`${value}%`) / 100
     const displayCount = Math.round(devicesTotal * valuePercentage)
-    const displayTitle = formatMessage(
-      intlMessages[`device${displayCount === 1 ? '' : 's'}`]
-    )
+    const displayTitle = formatMessage(intlMessages[`device${displayCount === 1 ? '' : 's'}`])
 
     displayValue = `${displayCount} ${displayTitle}`
   } else if (type === 'solid') {
@@ -302,33 +276,27 @@ const generateToolTip = (
     } else {
       totalOut = totalCnt
     }
-    const percentage = formatValuesForGraphs(value, displayMethod, formatNumber)
+    const percentage = formatValuesForGraphs(value, displayMethod, {
+      formatNumber,
+    })
     const percentageToValue = Math.round((parseFloat(value) / 100) * totalCnt)
     displayValue = {
       value: percentage,
       actual: { totalCnt: totalOut, percentageToValue },
     }
   } else {
-    displayValue = formatValuesForGraphs(value, displayMethod, formatNumber)
+    displayValue = formatValuesForGraphs(value, displayMethod, { formatNumber })
   }
   return { color, displayId, indexValue, displayValue, externalId: id }
 }
 
 const removeStringsFromArray = string => {
   const removeStrings = ['devices', 'inactive']
-  const newString = removeStrings.map(removeString =>
-    string.replace(removeString, '')
-  )
+  const newString = removeStrings.map(removeString => string.replace(removeString, ''))
   return newString.length > 1 ? newString[1] : newString[0]
 }
 
-const translateLabel = (
-  string,
-  assaysFromState,
-  formatMessage,
-  intlMessages,
-  i18nKeys
-) => {
+const translateLabel = (string, assaysFromState, formatMessage, intlMessages, i18nKeys) => {
   const dictionary = []
   assaysFromState.map(
     ({ resultCategories }) =>
@@ -336,19 +304,14 @@ const translateLabel = (
       resultCategories.map(
         ({ resultCategories }) =>
           Array.isArray(resultCategories) &&
-          resultCategories.map(({ externalId, name }) =>
-            dictionary.push({ externalId, name })
-          )
+          resultCategories.map(({ externalId, name }) => dictionary.push({ externalId, name }))
       )
   )
 
   const assayResults = uniqBy(dictionary, 'externalId')
-  const newString = assayResults.filter(
-    ({ externalId }) => externalId === string
-  )
+  const newString = assayResults.filter(({ externalId }) => externalId === string)
   return formatMessage && intlMessages[i18nKeys[string]]
-    ? formatMessage(intlMessages[i18nKeys[string]]) ||
-        get(nth(newString, 0), 'name')
+    ? formatMessage(intlMessages[i18nKeys[string]]) || get(nth(newString, 0), 'name')
     : makeProperCase(removeStringsFromArray(string))
 }
 const generateLegendIntl = (
@@ -363,13 +326,7 @@ const generateLegendIntl = (
 ) => {
   if (!legendsNotToRender?.includes(string)) {
     return {
-      label: translateLabel(
-        string,
-        assaysFromState,
-        formatMessage,
-        intlMessages,
-        i18nKeys
-      ),
+      label: translateLabel(string, assaysFromState, formatMessage, intlMessages, i18nKeys),
       color: generateColorForLegend(colorExternalId || string, graphId),
     }
   }
@@ -394,14 +351,7 @@ const formatDataByGraphType = (
     case 'bar':
     case 'calendar':
     case 'stacked':
-      grouped = groupByKey(
-        data,
-        indexBy,
-        keyToConsume,
-        displayMethod,
-        formatDate,
-        filterBy
-      )
+      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
       break
 
     case 'divergent':
@@ -409,42 +359,19 @@ const formatDataByGraphType = (
       break
 
     case 'barLegacyTreatment':
-      grouped = groupForOldTreatmentAPI(
-        data,
-        keyToConsume,
-        indexBy,
-        formatDate,
-        filterBy,
-        displayMethod
-      )
+      grouped = groupForOldTreatmentAPI(data, keyToConsume, indexBy, formatDate, filterBy, displayMethod)
       break
 
     case 'stackedDeviceActivity':
-      grouped = groupForDeviceStatusAPI(
-        data,
-        keyToConsume,
-        indexBy,
-        formatDate,
-        filterBy
-      )
+      grouped = groupForDeviceStatusAPI(data, keyToConsume, indexBy, formatDate, filterBy)
       break
 
     case 'barInventory':
-      grouped = groupForInventoryStatusAPI(
-        data,
-        i18nKeys,
-        formatMessage,
-        messages
-      )
+      grouped = groupForInventoryStatusAPI(data, i18nKeys, formatMessage, messages)
       break
 
     case 'pieLegacyTreatment':
-      grouped = groupForPieOldTreatmentAPI(
-        data,
-        keyToConsume,
-        indexBy,
-        filterBy
-      )
+      grouped = groupForPieOldTreatmentAPI(data, keyToConsume, indexBy, filterBy)
       break
 
     case 'pie':
@@ -461,14 +388,7 @@ const formatDataByGraphType = (
     }
 
     case 'bar-line':
-      grouped = groupByKey(
-        data,
-        indexBy,
-        keyToConsume,
-        displayMethod,
-        formatDate,
-        filterBy
-      )
+      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
       return grouped
 
     default:
@@ -513,12 +433,8 @@ const extractOptionValue = (identifier, selectedOption) => {
 
     case 'assayTypeId':
       optionValue = {
-        assayTypeId: selectedOption
-          ? split(selectedOption.id, '-', 1)[0]
-          : null,
-        resultCategoryId: selectedOption
-          ? split(selectedOption.id, '-', 2)[1]
-          : null,
+        assayTypeId: selectedOption ? split(selectedOption.id, '-', 1)[0] : null,
+        resultCategoryId: selectedOption ? split(selectedOption.id, '-', 2)[1] : null,
       }
       break
 
@@ -529,9 +445,7 @@ const extractOptionValue = (identifier, selectedOption) => {
       break
     case 'consumableExternalId':
       optionValue = {
-        consumableExternalId: selectedOption
-          ? selectedOption.consumableExternalId
-          : null,
+        consumableExternalId: selectedOption ? selectedOption.consumableExternalId : null,
       }
       break
     default:
@@ -548,15 +462,10 @@ const prepAssaysForParams = whiteListed => {
 
 const prepParamsForEndPoint = (urlParams, updatedParams) => {
   const params = []
-  const paramsToUse =
-    updatedParams && !isNull(values(updatedParams)[0])
-      ? updatedParams
-      : urlParams
+  const paramsToUse = updatedParams && !isNull(values(updatedParams)[0]) ? updatedParams : urlParams
 
   map(paramsToUse, (value, key) =>
-    isArray(value)
-      ? map(value, v => params.push({ [key]: v }))
-      : params.push({ [key]: value })
+    isArray(value) ? map(value, v => params.push({ [key]: v })) : params.push({ [key]: value })
   )
   return params
 }

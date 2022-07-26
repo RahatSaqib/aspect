@@ -96,8 +96,7 @@ const AspectSelect = props => {
           showLabelWhenDisabled: true,
         }}
         action={({ identifier, selectedOption, action }, dataSource) => {
-          const value =
-            action === 'clear' ? null : getValue(selectedOption, formik, id)
+          const value = action === 'clear' ? null : getValue(selectedOption, formik, id)
 
           updateField(identifier, value, { formik, toggleEdit })
 
@@ -107,9 +106,7 @@ const AspectSelect = props => {
         }}
         theme={UI_CONSTS.themeName.mui}
       />
-      {error && helperText ? (
-        <FormHelperText>{helperText}</FormHelperText>
-      ) : null}
+      {error && helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
     </FormControl>
   )
 }

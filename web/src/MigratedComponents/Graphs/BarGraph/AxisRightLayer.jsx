@@ -21,13 +21,7 @@ const AxisRight = barGraphProps => {
     .y(it => it.y)
 
   const tickValuesYShape = 'twos'
-  const tickValues = generateTickValues(
-    data,
-    tickValuesYShape,
-    [fieldName],
-    'Y',
-    true
-  )
+  const tickValues = generateTickValues(data, tickValuesYShape, [fieldName], 'Y', true)
 
   const minValue = tickValues[0]
   const maxValue = tickValues[tickValues.length - 1]
@@ -50,13 +44,7 @@ const AxisRight = barGraphProps => {
       <g transform={`translate(${width}, 0)`}>
         {tickValues.map(y => (
           <g transform={`translate(0, ${yScale(y)})`} key={y}>
-            <line
-              x1={0}
-              x2={5}
-              y1={0}
-              y2={0}
-              className={cssClasses('aspectresponsivebar__tick-line')}
-            />
+            <line x1={0} x2={5} y1={0} y2={0} className={cssClasses('aspectresponsivebar__tick-line')} />
             <text
               dominantBaseline="central"
               textAnchor="begin"

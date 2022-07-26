@@ -18,13 +18,9 @@ const ShellHeader = ({ children, icon: Icon, title, className }) => (
           <Icon />
         </div>
       ) : null}
-      {title ? (
-        <div className={cssClasses('shell__headerText')}>{title}</div>
-      ) : null}
+      {title ? <div className={cssClasses('shell__headerText')}>{title}</div> : null}
     </div>
-    {children ? (
-      <div className={cssClasses('shell__headerActions')}>{children}</div>
-    ) : null}
+    {children ? <div className={cssClasses('shell__headerActions')}>{children}</div> : null}
   </div>
 )
 
@@ -36,11 +32,7 @@ ShellHeader.defaultProps = {
 }
 
 ShellHeader.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array,
-    PropTypes.bool,
-  ]),
+  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.bool]),
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   icon: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   className: PropTypes.string,

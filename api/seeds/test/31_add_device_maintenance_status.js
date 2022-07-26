@@ -17,9 +17,7 @@ async function seed(knex) {
     .join('Device as d', 'dt.id', 'd.deviceTypeId')
     .where('dtc.hasResults', true)
     .select('d.id', 'd.shortName', 'd.putInService')
-  const deviceMaintenanceStatuses = await knex(
-    'DeviceMaintenanceStatus'
-  ).select()
+  const deviceMaintenanceStatuses = await knex('DeviceMaintenanceStatus').select()
   const otherInactiveStatuses = deviceMaintenanceStatuses.filter(
     deviceMaintenanceStatus =>
       !deviceMaintenanceStatus.active &&
@@ -29,17 +27,10 @@ async function seed(knex) {
   await Promise.each(days, async day => {
     await Promise.each(devices, async device => {
       if (!device.putInService || device.putInService >= day) {
-        const deviceMaintenanceStatus =
-          deviceMaintenanceStatuses[
-            _.random(0, deviceMaintenanceStatuses.length + 3)
-          ]
+        const deviceMaintenanceStatus = deviceMaintenanceStatuses[_.random(0, deviceMaintenanceStatuses.length + 3)]
         if (deviceMaintenanceStatus) {
           const data = {}
-          if (
-            device.id % 3 === 0 &&
-            device.shortName &&
-            deviceMaintenanceStatus.manuallySet
-          ) {
+          if (device.id % 3 === 0 && device.shortName && deviceMaintenanceStatus.manuallySet) {
             data.options = {
               data: {
                 notes: `Some maintenance note for ${device.shortName}`,
@@ -56,31 +47,19 @@ async function seed(knex) {
           if (deviceMaintenanceStatus.externalId === 'inactiveUnknown') {
             await knex('DeviceMaintenanceStatusLog').insert({
               deviceId: device.id,
-              deviceMaintenanceStatusId:
-                otherInactiveStatuses[
-                  _.random(0, otherInactiveStatuses.length - 1)
-                ].id,
+              deviceMaintenanceStatusId: otherInactiveStatuses[_.random(0, otherInactiveStatuses.length - 1)].id,
               data: JSON.stringify(data),
               day,
-              createdOn: addSeconds(
-                day,
-                _.random(60 * 60 * 24 + 1, 60 * 60 * 24 * 5)
-              ),
+              createdOn: addSeconds(day, _.random(60 * 60 * 24 + 1, 60 * 60 * 24 * 5)),
             })
           }
         } else {
           await knex('DeviceMaintenanceStatusLog').insert({
             deviceId: device.id,
-            deviceMaintenanceStatusId:
-              deviceMaintenanceStatuses[
-                _.random(0, deviceMaintenanceStatuses.length - 1)
-              ].id,
+            deviceMaintenanceStatusId: deviceMaintenanceStatuses[_.random(0, deviceMaintenanceStatuses.length - 1)].id,
             data: JSON.stringify({}),
             day,
-            createdOn: addSeconds(
-              day,
-              _.random(60 * 60 * 24 + 1, 60 * 60 * 24 * 5)
-            ),
+            createdOn: addSeconds(day, _.random(60 * 60 * 24 + 1, 60 * 60 * 24 * 5)),
           })
         }
       }

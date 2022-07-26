@@ -6,10 +6,8 @@ import { aspectFetch } from '../shared/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 export const types = {
-  REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST:
-    'REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
-  RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST:
-    'RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
+  REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
+  RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
 }
 
 /*
@@ -34,10 +32,7 @@ export function fetchPartnersAndJobFunctionsForSelectList(forceRefresh) {
       return
     }
     const { lastRefreshed } = partnersAndJobFunctionsForSelectList
-    const shouldFetch =
-      forceRefresh ||
-      !lastRefreshed ||
-      differenceInMinutes(new Date(), lastRefreshed) > 5 // five minutes
+    const shouldFetch = forceRefresh || !lastRefreshed || differenceInMinutes(new Date(), lastRefreshed) > 5 // five minutes
     if (!shouldFetch) {
       return
     }
@@ -54,9 +49,7 @@ export function fetchPartnersAndJobFunctionsForSelectList(forceRefresh) {
           })
         ),
       },
-    }).then(json =>
-      dispatch(createReceivePartnersAndJobFunctionsForSelectList(json.data))
-    )
+    }).then(json => dispatch(createReceivePartnersAndJobFunctionsForSelectList(json.data)))
   }
 }
 

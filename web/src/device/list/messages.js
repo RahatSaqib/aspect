@@ -24,9 +24,19 @@ export const messages = {
       id: 'pages.DeviceList.availabilityRate',
       defaultMessage: 'Active',
     },
+    availabilityRateDescription: {
+      id: 'pages.DeviceList.availabilityRateDescription',
+      defaultMessage:
+        "Based on the last 30 days, represents the percentage of days when the device was reported as 'active' compared to the total number of working days",
+    },
     errorRate: {
       id: 'pages.DeviceList.errorRate',
       defaultMessage: 'Test failures',
+    },
+    errorRateDescription: {
+      id: 'pages.DeviceList.errorRateDescription',
+      defaultMessage:
+        'Based on the last 30 days, represents the percentage of results with errors compared to the total number of performed results',
     },
     issues: {
       id: 'pages.DeviceList.issues',
@@ -44,17 +54,21 @@ export const messages = {
       id: 'pages.DeviceList.lastSeen',
       defaultMessage: 'Last Seen',
     },
+    lastSeenDescription: {
+      id: 'pages.DeviceList.lastSeenDescription',
+      defaultMessage: 'Represents the last time when the GxConnect application made a connection with Aspect',
+    },
     numberOfTests: {
       id: 'pages.DeviceList.numberOfTests',
       defaultMessage: 'Number of Tests',
     },
     lastMonth: {
       id: 'pages.DeviceList.lastMonth',
-      defaultMessage: 'Last 30 Days',
+      defaultMessage: '#Results (Last 30 Days)',
     },
     thisMonth: {
       id: 'pages.DeviceList.thisMonth',
-      defaultMessage: 'Preceding 30 Days',
+      defaultMessage: '#Results (Preceding 30 Days)',
     },
     needsRepair: {
       id: 'pages.DeviceList.needsRepair',

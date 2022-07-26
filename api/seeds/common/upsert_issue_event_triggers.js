@@ -1,22 +1,16 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { upsertSingle } = require('../utils')
-const {
-  data: IssueEventTrigger,
-} = require('../fixtures/IssueEventTrigger.json')
+const { data: IssueEventTrigger } = require('../fixtures/IssueEventTrigger.json')
 
 module.exports = upsertIssueEventTrigger
 
 async function upsertIssueEventTrigger(knex, partnerName) {
   const now = new Date()
   await Promise.each(IssueEventTrigger, async issueEvent => {
-    const { id: partnerId } = await knex('Partner')
-      .where({ name: partnerName })
-      .first()
+    const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
 
-    const [issueTypeId] = await knex('IssueType')
-      .where({ externalId: issueEvent.issueType })
-      .pluck('id')
+    const [issueTypeId] = await knex('IssueType').where({ externalId: issueEvent.issueType }).pluck('id')
     const [issueEventStatusId] = await knex('IssueEventStatus')
       .where({ externalId: issueEvent.issueEventStatus })
       .pluck('id')
@@ -33,9 +27,7 @@ async function upsertIssueEventTrigger(knex, partnerName) {
         issueTypeId,
         issueEventStatusId,
         triggerConditions: JSON.stringify(issueEvent.triggerConditions),
-        filterIssueCondition: issueEvent.filterIssueCondition
-          ? JSON.stringify(issueEvent.filterIssueCondition)
-          : null,
+        filterIssueCondition: issueEvent.filterIssueCondition ? JSON.stringify(issueEvent.filterIssueCondition) : null,
         createdOn: now,
         updatedOn: now,
       }
@@ -45,28 +37,16 @@ async function upsertIssueEventTrigger(knex, partnerName) {
 }
 
 async function removeIssueTriggers(knex, partnerName) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first()
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
 
-  const issueTypesInserted = await knex('IssueEventTrigger').pluck(
-    'issueTypeId'
-  )
-  const issueTypesInFixture = await Promise.map(
-    IssueEventTrigger,
-    async ({ issueType }) => {
-      const [issueTypeId] = await knex('IssueType')
-        .where({ externalId: issueType })
-        .pluck('id')
-      return issueTypeId
-    }
-  )
+  const issueTypesInserted = await knex('IssueEventTrigger').pluck('issueTypeId')
+  const issueTypesInFixture = await Promise.map(IssueEventTrigger, async ({ issueType }) => {
+    const [issueTypeId] = await knex('IssueType').where({ externalId: issueType }).pluck('id')
+    return issueTypeId
+  })
 
   await knex('IssueEventTrigger')
     .delete()
-    .whereIn(
-      'issueTypeId',
-      _.difference(issueTypesInserted, issueTypesInFixture)
-    )
+    .whereIn('issueTypeId', _.difference(issueTypesInserted, issueTypesInFixture))
     .where({ partnerId })
 }

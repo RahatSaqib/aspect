@@ -41,13 +41,9 @@ async function createUser(
   if (!partner) {
     throw new Error(`partnerName ${partnerName} not found in the database`)
   }
-  const country = await knex('Country')
-    .where('abbreviation', countryAbbreviation)
-    .first()
+  const country = await knex('Country').where('abbreviation', countryAbbreviation).first()
   if (!country) {
-    throw new Error(
-      `countryAbbreviation ${countryAbbreviation} not found in the database`
-    )
+    throw new Error(`countryAbbreviation ${countryAbbreviation} not found in the database`)
   }
   const geography = await knex('Geography')
     .where('countryId', country.id)
@@ -143,9 +139,7 @@ async function createUser(
   })
   const jobFunctions = _.uniq(jobs.map(job => job.jobFunctionExternalId))
   await Promise.each(jobFunctions, async jobFunctionExternalId => {
-    const jobFunction = await knex('JobFunction')
-      .where('externalId', jobFunctionExternalId)
-      .first()
+    const jobFunction = await knex('JobFunction').where('externalId', jobFunctionExternalId).first()
     let jobId
     const job = await knex('Job')
       .where({
@@ -161,9 +155,7 @@ async function createUser(
         jobFunctionId: jobFunction.id,
       })
     }
-    const jobFunctionJobs = jobs.filter(
-      job => job.jobFunctionExternalId === jobFunctionExternalId
-    )
+    const jobFunctionJobs = jobs.filter(job => job.jobFunctionExternalId === jobFunctionExternalId)
     await knex('JobContext').where({ jobId }).del()
     await Promise.each(jobFunctionJobs, async jobFunctionJob => {
       let jobGeography = {}
@@ -199,25 +191,11 @@ async function createUser(
           })
           .first('g.*')
       }
-      const site =
-        (await knex('Site').where('externalId', job.siteExternalId).first()) ||
-        {}
-      const deviceType =
-        (await knex('DeviceType')
-          .where('externalId', job.deviceTypeExternalId)
-          .first()) || {}
-      const assayType =
-        (await knex('AssayType')
-          .where('externalId', job.assayTypeExternalId)
-          .first()) || {}
-      const assay =
-        (await knex('Assay')
-          .where('externalId', job.assayExternalId)
-          .first()) || {}
-      const disease =
-        (await knex('Disease')
-          .where('externalId', job.diseaseExternalId)
-          .first()) || {}
+      const site = (await knex('Site').where('externalId', job.siteExternalId).first()) || {}
+      const deviceType = (await knex('DeviceType').where('externalId', job.deviceTypeExternalId).first()) || {}
+      const assayType = (await knex('AssayType').where('externalId', job.assayTypeExternalId).first()) || {}
+      const assay = (await knex('Assay').where('externalId', job.assayExternalId).first()) || {}
+      const disease = (await knex('Disease').where('externalId', job.diseaseExternalId).first()) || {}
       await knex('JobContext').insert({
         jobId,
         geographyId: jobGeography.id,

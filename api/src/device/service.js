@@ -15,13 +15,7 @@ const {
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
 
 const { deviceMaintenanceStatusLogged } = require('./actions')
-const {
-  knex,
-  filterParams,
-  filterDateRangeParams,
-  sortPageParams,
-  transact,
-} = require('../db')
+const { knex, filterParams, filterDateRangeParams, sortPageParams, transact } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
@@ -38,39 +32,15 @@ const {
   formatDateOrDefault,
   getArrayOfDaysInRange,
 } = require('../shared/date')
-const {
-  getOffsetFromIsoDateString,
-  getDateTimeProjectionInUserTimeZone,
-} = require('../shared/date')
+const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
 function getSelectListFields(userTimeOffset, { lastSeenField } = {}) {
   const fields = SELECT_LIST_FIELDS
-  fields.push(
-    getDateTimeProjectionInUserTimeZone(
-      knex,
-      'd.createdOn',
-      userTimeOffset,
-      'createdOn'
-    )
-  )
-  fields.push(
-    getDateTimeProjectionInUserTimeZone(
-      knex,
-      'd.lastPingOn',
-      userTimeOffset,
-      'lastPingOn'
-    )
-  )
-  fields.push(
-    getDateTimeProjectionInUserTimeZone(
-      knex,
-      lastSeenField ?? 'd.lastSeenOn',
-      userTimeOffset,
-      'lastSeen'
-    )
-  )
+  fields.push(getDateTimeProjectionInUserTimeZone(knex, 'd.createdOn', userTimeOffset, 'createdOn'))
+  fields.push(getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', userTimeOffset, 'lastPingOn'))
+  fields.push(getDateTimeProjectionInUserTimeZone(knex, lastSeenField ?? 'd.lastSeenOn', userTimeOffset, 'lastSeen'))
   return fields
 }
 
@@ -81,9 +51,7 @@ const SELECT_LIST_FIELDS = [
   'st.name as state',
   'dt.name as type',
   's.name as siteName',
-  knex.raw(
-    "CASE WHEN da.token = 'approved' AND ISNULL(dms.name) = 0 THEN dms.name ELSE da.name END as status"
-  ),
+  knex.raw("CASE WHEN da.token = 'approved' AND ISNULL(dms.name) = 0 THEN dms.name ELSE da.name END as status"),
   knex.raw(
     "CASE WHEN da.token = 'approved' AND ISNULL(dms.i18nKey) = 0 THEN dms.i18nKey ELSE da.i18nKey END as statusI18nKey"
   ),
@@ -172,24 +140,13 @@ async function getListDevices(query, auth) {
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.deviceMaintenanceStatusLogId',
-      'dmsl.id'
-    )
-    .leftJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .where(queryBuilder => {
       if (query.deviceIds) {
         queryBuilder.whereIn('d.id', query.deviceIds.split(','))
       }
-      if (
-        query.deviceMaintenanceStatusId &&
-        !_.isEmpty(query.deviceMaintenanceStatusId)
-      ) {
+      if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
         queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
     })
@@ -198,30 +155,19 @@ async function getListDevices(query, auth) {
       if (query.onlyOpenIssues || query.issueTypeId) {
         queryBuilder.innerJoin(
           'Issue as issue',
-          joinBuilder =>
-            joinBuilder
-              .on('issue.deviceId', 'd.id')
-              .andOn(knex.raw('issue.resultId is null')) // not interested in result-specific issues
+          joinBuilder => joinBuilder.on('issue.deviceId', 'd.id').andOn(knex.raw('issue.resultId is null')) // not interested in result-specific issues
         )
 
         if (query.issueTypeId)
           queryBuilder
-            .innerJoin(
-              'IssueType as issueType',
-              'issue.issueTypeId',
-              'issueType.id'
-            )
+            .innerJoin('IssueType as issueType', 'issue.issueTypeId', 'issueType.id')
             .whereIn('issueType.externalId', query.issueTypeId)
 
         if (query.onlyOpenIssues)
           queryBuilder.innerJoin('IssueStatus as issueStatus', joinBuilder =>
             joinBuilder
               .on('issue.issueStatusId', 'issueStatus.id')
-              .andOn(
-                knex.raw(
-                  "issueStatus.externalId not in ('Inactive','OK','Resolved')"
-                )
-              )
+              .andOn(knex.raw("issueStatus.externalId not in ('Inactive','OK','Resolved')"))
           )
       }
     })
@@ -268,14 +214,10 @@ async function getListDevices(query, auth) {
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
-      knex.raw(
-        'IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'
-      ),
+      knex.raw('IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'),
       knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
       knex.raw('count(distinct dmslActivity.day) as totalDays'),
-      knex.raw(
-        'count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'
-      ),
+      knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
       'issues.categories as issueCategories',
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
@@ -284,17 +226,9 @@ async function getListDevices(query, auth) {
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')
         .select('deviceId', 'day', knex.raw('max(s.active) as active'))
-        .innerJoin(
-          'DeviceMaintenanceStatus as s',
-          'd.deviceMaintenanceStatusId',
-          's.id'
-        )
+        .innerJoin('DeviceMaintenanceStatus as s', 'd.deviceMaintenanceStatusId', 's.id')
         .whereRaw('WEEKDAY(day) < 5') // 5 - Saturday, 6 - Sunday
-        .andWhere(
-          'day',
-          '>=',
-          knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)')
-        )
+        .andWhere('day', '>=', knex.raw('DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)'))
         .groupBy('deviceId', 'day')
         .as('dmslActivity'),
       'dmslActivity.deviceId',
@@ -302,23 +236,17 @@ async function getListDevices(query, auth) {
     )
     .leftJoin(
       knex('Issue as i')
-        .select(
-          'i.deviceId',
-          knex.raw('GROUP_CONCAT(DISTINCT ic.i18nKey) as categories')
-        )
+        .select('i.deviceId', knex.raw('GROUP_CONCAT(DISTINCT ic.i18nKey) as categories'))
         .innerJoin('Notification as n', 'n.issueId', 'i.id')
         .innerJoin('AlertMessage as a', 'a.id', 'n.alertMessageId')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
         .innerJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
         .leftOuterJoin('IssueCategory as ic', leftBuilder =>
-          leftBuilder
-            .on('it.issueCategoryId', 'ic.id')
-            .andOn('it.hasTag', knex.raw('1'))
+          leftBuilder.on('it.issueCategoryId', 'ic.id').andOn('it.hasTag', knex.raw('1'))
         )
         .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
         .modify(queryBuilder => {
-          if (query.issueTypeId)
-            queryBuilder.whereIn('it.externalId', query.issueTypeId)
+          if (query.issueTypeId) queryBuilder.whereIn('it.externalId', query.issueTypeId)
         })
         .where('a.personId', accountDetails.id)
         .groupBy('i.deviceId')
@@ -344,25 +272,16 @@ async function getListDevices(query, auth) {
     it.error = {
       count: it.thisMonthErrors || 0,
       total: it.resultCountThisMonth || 0,
-      rate: it.resultCountThisMonth
-        ? it.thisMonthErrors / it.resultCountThisMonth
-        : 0,
+      rate: it.resultCountThisMonth ? it.thisMonthErrors / it.resultCountThisMonth : 0,
     }
     delete it.thisMonthErrors
 
-    it.issueCategories = it.issueCategories
-      ? it.issueCategories.split(',').map(key => ({ key }))
-      : []
+    it.issueCategories = it.issueCategories ? it.issueCategories.split(',').map(key => ({ key })) : []
 
     /**
      * for Active devices - get devices when Device.lastSeenOn < DeviceMaintenanceStatusLog.day
      */
-    if (
-      +it.isDeviceActive &&
-      it.deviceLastSeenOn &&
-      it.dmslDay &&
-      it.deviceLastSeenOn < it.dmslDay
-    ) {
+    if (+it.isDeviceActive && it.deviceLastSeenOn && it.dmslDay && it.deviceLastSeenOn < it.dmslDay) {
       toSyncDmslAndDevice[it.id] = { lastSeenOn: it.dmslDay }
     }
     delete it.dmslDay
@@ -374,9 +293,7 @@ async function getListDevices(query, auth) {
     await Promise.all(
       _.map(_.keys(toSyncDmslAndDevice), async deviceId => {
         const { lastSeenOn } = toSyncDmslAndDevice[deviceId]
-        return knex('Device')
-          .where({ id: deviceId })
-          .update({ lastSeenOn, updatedOn: new Date() })
+        return knex('Device').where({ id: deviceId }).update({ lastSeenOn, updatedOn: new Date() })
       })
     )
   }
@@ -398,27 +315,15 @@ async function listDevices(request) {
   return result
 }
 
-async function getDeviceByDeviceId({
-  deviceId,
-  credentials,
-  fields = SELECT_SHOW_FIELDS,
-}) {
+async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW_FIELDS }) {
   const dataConstraints = await getConstraints(credentials)
 
-  const maintenanceCalibrationId = await deviceMaintenanceTypeToId(
-    'calibration'
-  )
+  const maintenanceCalibrationId = await deviceMaintenanceTypeToId('calibration')
   const maintenanceWarrantyId = await deviceMaintenanceTypeToId('warranty')
 
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
-  const device = await getDeviceByIdBaseQuery(
-    dataConstraints,
-    deviceId,
-    fields,
-    true,
-    true
-  )
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields, true, true)
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
@@ -451,16 +356,8 @@ async function getDeviceByDeviceId({
         .andOn('dmW.current', 1)
         .andOn('dmW.deviceMaintenanceTypeId', maintenanceWarrantyId)
     })
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.deviceMaintenanceStatusLogId',
-      'dmsl.id'
-    )
-    .leftJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       deviceType: 'dt',
@@ -486,8 +383,7 @@ async function getDeviceByDeviceId({
   delete device.configurationDataSchema
   delete device.deviceOperationSchema
 
-  device.resultCountLastMonth =
-    device.resultCount60 - device.resultCountThisMonth
+  device.resultCountLastMonth = device.resultCount60 - device.resultCountThisMonth
   device.errorCountLastMonth = device.errorCount60 - device.errorCountThisMonth
 
   device.utilizationRateThisMonth = device.dailyCapacity
@@ -536,18 +432,11 @@ async function updateDevice(request) {
 
   const device = await getDeviceByRequest(request)
 
-  const configurationData = _.assign(
-    {},
-    device.configurationData,
-    payload.configurationData
-  )
+  const configurationData = _.assign({}, device.configurationData, payload.configurationData)
 
   let { deviceApprovalId } = device
   // check if a approvalToken is provided
-  if (
-    _.has(payload, 'approvalToken') &&
-    device.approvalToken !== payload.approvalToken
-  ) {
+  if (_.has(payload, 'approvalToken') && device.approvalToken !== payload.approvalToken) {
     deviceApprovalId = await deviceApprovalToId(payload.approvalToken)
   }
 
@@ -575,10 +464,7 @@ async function listApprovalTypes() {
   const getCount = resultQuery.clone().count('da.id as count').first()
 
   // get rows
-  const getItems = resultQuery
-    .clone()
-    .orderBy('id', 'asc')
-    .select('id', 'name', 'i18nKey')
+  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name', 'i18nKey')
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -632,14 +518,7 @@ async function listDevicesForSelectList(request) {
     })
     .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     .orderBy(['d.name'], 'asc')
-    .select(
-      'd.id',
-      'd.name',
-      'd.serial as deviceSerial',
-      'd.siteId',
-      'd.deviceTypeId',
-      'dt.name as deviceType'
-    )
+    .select('d.id', 'd.name', 'd.serial as deviceSerial', 'd.siteId', 'd.deviceTypeId', 'dt.name as deviceType')
 
   return { ok: true, data: devices }
 }
@@ -657,13 +536,7 @@ async function updateDeviceMaintenance(request) {
   } = request
   const dataConstraints = await getConstraints(credentials)
 
-  let device = await getDeviceByIdBaseQuery(
-    dataConstraints,
-    params.deviceId,
-    'd.id',
-    true,
-    true
-  )
+  let device = await getDeviceByIdBaseQuery(dataConstraints, params.deviceId, 'd.id', true, true)
   if (!device) {
     return Boom.notFound()
   }
@@ -672,9 +545,7 @@ async function updateDeviceMaintenance(request) {
   const currentlyLoggedInUser = await getUser(credentials.name)
 
   const { externalId, contextDate = new Date(), notes } = payload
-  const { id: deviceMaintenanceTypeId } = await knex('DeviceMaintenanceType')
-    .where({ externalId })
-    .first('id')
+  const { id: deviceMaintenanceTypeId } = await knex('DeviceMaintenanceType').where({ externalId }).first('id')
 
   // get currently active maintenance item
   const item = await knex('DeviceMaintenance')
@@ -756,9 +627,7 @@ async function getDevicePerformance(request) {
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where('d.id', deviceId)
 
-  const [{ countryTotalResult, countryTotalErrorCount }] = await knex(
-    'Result as r'
-  )
+  const [{ countryTotalResult, countryTotalErrorCount }] = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
@@ -799,9 +668,7 @@ async function getDevicePerformance(request) {
       utilizationRateAvg = 80
 
       x.utilizationRate = Math.round(
-        (x.totalResult * 100) /
-          (getDaysInMonth(new Date(x.monthTested)) *
-            deviceCapacity.dailyCapacity)
+        (x.totalResult * 100) / (getDaysInMonth(new Date(x.monthTested)) * deviceCapacity.dailyCapacity)
       )
     } else {
       x.utilizationRate = null
@@ -819,19 +686,12 @@ async function getDevicePerformance(request) {
     ok: true,
     length: newData.length,
     utilizationRateAvg,
-    errorRateAvg: Math.round(
-      (countryTotalErrorCount * 100) / countryTotalResult
-    ),
+    errorRateAvg: Math.round((countryTotalErrorCount * 100) / countryTotalResult),
     data: _.sortBy(newData, [x => x.monthTested]),
   }
 }
 
-function getDeviceBaseQuery(
-  query,
-  dataConstraints,
-  showUnapprovedDevices = false,
-  showDecommissionedDevices = false
-) {
+function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = false, showDecommissionedDevices = false) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -847,15 +707,13 @@ function getDeviceBaseQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (query.assayId || query.assayExternalId)
-        queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+      if (query.assayId || query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
       if (query.assayId) {
         const { assayId } = query
         const assayIds = _.isArray(assayId) ? assayId : [assayId]
         queryBuilder.whereIn('a.id', assayIds)
       }
-      if (query.assayExternalId)
-        queryBuilder.where('a.externalId', query.assayExternalId)
+      if (query.assayExternalId) queryBuilder.where('a.externalId', query.assayExternalId)
       if (query.resultCategoryId)
         queryBuilder
           .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
@@ -918,17 +776,10 @@ async function getDevicesForReport(auth, query) {
     .clone()
     .modify(sortPageParams, query, 'name')
     .select([
-      ..._.filter(
-        getSelectListFields(userTimeOffset),
-        elem => _.isString(elem) && elem.indexOf('dms.') < 0
-      ),
+      ..._.filter(getSelectListFields(userTimeOffset), elem => _.isString(elem) && elem.indexOf('dms.') < 0),
       'd.serial',
       queryResults.clone().countDistinct('r.id').as('totalResults'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.Error)
-        .countDistinct('r.id')
-        .as('totalErrors'),
+      queryResults.clone().where('r.resultCategory1', resultCategoryIds.Error).countDistinct('r.id').as('totalErrors'),
       queryResults
         .clone()
         .where('r.resultCategory1', resultCategoryIds.Invalid)
@@ -936,11 +787,7 @@ async function getDevicesForReport(auth, query) {
         .as('totalInvalid'),
       queryResults
         .clone()
-        .innerJoin(
-          'ResultWorkflowLog as rl',
-          'r.resultWorkflowStatusLogId',
-          'rl.id'
-        )
+        .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusLogId', 'rl.id')
         .max('rl.changedOn')
         .as('lastUploadOn'),
     ])
@@ -950,9 +797,7 @@ async function getDevicesForReport(auth, query) {
 
   // add more fields which depend on aggregations
   data.forEach(async it => {
-    const errorPercentage = Math.round(
-      100 * (it.totalResults ? it.totalErrors / it.totalResults : 0)
-    )
+    const errorPercentage = Math.round(100 * (it.totalResults ? it.totalErrors / it.totalResults : 0))
     it.errorRate = errorPercentage / 100
   })
 
@@ -1017,9 +862,7 @@ async function getDevicesForRifResistanceReport(auth, query) {
 
   // add more fields which depend on aggregations
   data.forEach(async it => {
-    it.rifResistanceRate = it.totalDetected1
-      ? it.totalDetected2 / it.totalDetected1
-      : 0
+    it.rifResistanceRate = it.totalDetected1 ? it.totalDetected2 / it.totalDetected1 : 0
   })
 
   const result = { ok: true, total, length: data.length, data }
@@ -1027,17 +870,8 @@ async function getDevicesForRifResistanceReport(auth, query) {
   return result
 }
 
-async function setDeviceMaintenanceStatus(
-  deviceId,
-  userId,
-  deviceMaintenanceStatusId,
-  dayDate,
-  data,
-  messageContext
-) {
-  const [deviceMaintenanceStatusLogId] = await knex(
-    'DeviceMaintenanceStatusLog'
-  ).insert({
+async function setDeviceMaintenanceStatus(deviceId, userId, deviceMaintenanceStatusId, dayDate, data, messageContext) {
+  const [deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
     deviceId,
     deviceMaintenanceStatusId,
     day: dayDate,
@@ -1078,18 +912,10 @@ function getDeviceByIdBaseQuery(
   return query
 }
 
-const getDeviceMaintenanceStatusesInRange = async (
-  deviceId,
-  dateFrom,
-  dateTo
-) =>
+const getDeviceMaintenanceStatusesInRange = async (deviceId, dateFrom, dateTo) =>
   knex('DeviceMaintenanceStatusLog as dmsl')
     .where({ deviceId })
-    .innerJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
+    .innerJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .andWhere('day', '>=', dateFrom)
     .andWhere('day', '<=', dateTo)
     .distinct('dms.externalId')
@@ -1114,54 +940,27 @@ async function setStatusForDateRange(request) {
   const user = await getUser(credentials.name)
 
   // Get device or throw boom error if it's a bad request
-  const device = await getDeviceByIdBaseQuery(
-    dataConstraints,
-    deviceId,
-    'd.*',
-    true,
-    true
-  )
-  if (!device)
-    throw Boom.forbidden(
-      "You don't have permissions for updating the requested device"
-    )
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, 'd.*', true, true)
+  if (!device) throw Boom.forbidden("You don't have permissions for updating the requested device")
 
   // >>> VALIDATIONS
   const deviceMaintenanceStatus = await getMaintenanceStatusesQuery({
     externalId,
   }).first()
   if (!deviceMaintenanceStatus)
-    throw Boom.badRequest(
-      'The provided device maintenance status external id does not exist'
-    )
+    throw Boom.badRequest('The provided device maintenance status external id does not exist')
   else {
     const { manuallySet } = deviceMaintenanceStatus
-    const statusesInDateRange = await getDeviceMaintenanceStatusesInRange(
-      deviceId,
-      dateFrom,
-      dateTo
-    )
+    const statusesInDateRange = await getDeviceMaintenanceStatusesInRange(deviceId, dateFrom, dateTo)
 
     if (statusesInDateRange.includes('inactiveDecommissioned'))
-      throw Boom.badRequest(
-        'You cannot change the status of a device in days when it was decommissioned'
-      )
-    else if (!manuallySet)
-      throw Boom.badRequest(
-        "The status you are trying to assign can't be set manually"
-      )
+      throw Boom.badRequest('You cannot change the status of a device in days when it was decommissioned')
+    else if (!manuallySet) throw Boom.badRequest("The status you are trying to assign can't be set manually")
     else if (statusesInDateRange.includes('active'))
-      throw Boom.badRequest(
-        'You cannot change the status of a device in days when it was active'
-      )
+      throw Boom.badRequest('You cannot change the status of a device in days when it was active')
     else if (externalId === 'inactiveDecommissioned')
-      throw Boom.badRequest(
-        'Status "Decommissioned" cannot be set for a date range'
-      )
-    else if (
-      statusesInDateRange.includes('inactiveNoTestsPerformed') &&
-      externalId === 'reportedActive'
-    )
+      throw Boom.badRequest('Status "Decommissioned" cannot be set for a date range')
+    else if (statusesInDateRange.includes('inactiveNoTestsPerformed') && externalId === 'reportedActive')
       throw Boom.badRequest(
         'You cannot change the status of a device to "Reported Active" for days when it was reported as "No Tests Performed"'
       )
@@ -1192,21 +991,18 @@ async function setStatusForDateRange(request) {
     }
 
     const deviceMaintenanceStatusLogIds = []
-    await Promise.mapSeries(
-      getArrayOfDaysInRange(dateFrom, dateTo),
-      async day => {
-        deviceMaintenanceStatusLogIds.push(
-          await setDeviceMaintenanceStatus(
-            deviceId,
-            user.id,
-            deviceMaintenanceStatus.id,
-            startOfDayUtc(day),
-            payload,
-            messageContext
-          )
+    await Promise.mapSeries(getArrayOfDaysInRange(dateFrom, dateTo), async day => {
+      deviceMaintenanceStatusLogIds.push(
+        await setDeviceMaintenanceStatus(
+          deviceId,
+          user.id,
+          deviceMaintenanceStatus.id,
+          startOfDayUtc(day),
+          payload,
+          messageContext
         )
-      }
-    )
+      )
+    })
 
     if (!payload.dateFrom && !payload.dateTo) {
       ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
@@ -1231,63 +1027,40 @@ async function automaticallySetDeviceMaintenanceStatus(
 
   const latestDeviceMaintenanceStatusForDay =
     (await knex('DeviceMaintenanceStatusLog as dmsl')
-      .join(
-        'DeviceMaintenanceStatus as dms',
-        'dmsl.deviceMaintenanceStatusId',
-        'dms.id'
-      )
+      .join('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
       .where('dmsl.deviceId', deviceId)
       .andWhere('dmsl.day', dayDate)
       .orderByRaw('dmsl.createdOn desc, dmsl.id desc')
       .first('dms.*')) || {}
 
   if (
-    latestDeviceMaintenanceStatusForDay.externalId ===
-      deviceMaintenanceStatusExternalId ||
-    (!latestDeviceMaintenanceStatusForDay.manuallySet &&
-      latestDeviceMaintenanceStatusForDay.active)
+    latestDeviceMaintenanceStatusForDay.externalId === deviceMaintenanceStatusExternalId ||
+    (!latestDeviceMaintenanceStatusForDay.manuallySet && latestDeviceMaintenanceStatusForDay.active)
   ) {
     // If, in the day, the device was already in an automatically
     //   set active status it can't be automatically overwritten
     return
   }
   const { id: deviceMaintenanceStatusId } =
-    (await knex('DeviceMaintenanceStatus')
-      .where({ externalId: deviceMaintenanceStatusExternalId })
-      .first('id')) || {}
+    (await knex('DeviceMaintenanceStatus').where({ externalId: deviceMaintenanceStatusExternalId }).first('id')) || {}
 
   if (!deviceMaintenanceStatusId) {
     return Boom.badRequest(
       `${deviceMaintenanceStatusExternalId} is not a known maintenance status that can be automatically set`
     )
   }
-  await setDeviceMaintenanceStatus(
-    deviceId,
-    null,
-    deviceMaintenanceStatusId,
-    dayDate,
-    data,
-    messageContext
-  )
+  await setDeviceMaintenanceStatus(deviceId, null, deviceMaintenanceStatusId, dayDate, data, messageContext)
 }
 
-async function onDeviceMaintenanceStatusLogged(
-  { deviceMaintenanceStatusLogId },
-  { messageContext }
-) {
+async function onDeviceMaintenanceStatusLogged({ deviceMaintenanceStatusLogId }, { messageContext }) {
   return messageContext.run(async knex => {
     if (!deviceMaintenanceStatusLogId) return
 
     const { deviceId } =
-      (await knex('DeviceMaintenanceStatusLog')
-        .where('id', deviceMaintenanceStatusLogId)
-        .first('deviceId')) || {}
+      (await knex('DeviceMaintenanceStatusLog').where('id', deviceMaintenanceStatusLogId).first('deviceId')) || {}
     if (!deviceId) return
 
-    const {
-      latestDeviceMaintenanceStatusLogId,
-      currentDeviceMaintenanceStatusLogId,
-    } =
+    const { latestDeviceMaintenanceStatusLogId, currentDeviceMaintenanceStatusLogId } =
       (await knex('DeviceMaintenanceStatusLog as dmsl')
         .join('Device as d', 'dmsl.deviceId', 'd.id')
         .where('dmsl.deviceId', deviceId)
@@ -1296,9 +1069,7 @@ async function onDeviceMaintenanceStatusLogged(
           'dmsl.id as latestDeviceMaintenanceStatusLogId',
           'd.deviceMaintenanceStatusLogId as currentDeviceMaintenanceStatusLogId'
         )) || {}
-    if (
-      currentDeviceMaintenanceStatusLogId !== latestDeviceMaintenanceStatusLogId
-    ) {
+    if (currentDeviceMaintenanceStatusLogId !== latestDeviceMaintenanceStatusLogId) {
       await knex('Device').where('id', deviceId).update({
         deviceMaintenanceStatusLogId: latestDeviceMaintenanceStatusLogId,
         updatedOn: new Date(),
@@ -1315,8 +1086,7 @@ async function onDeviceMaintenanceStatusLogged(
 async function updateStatusUnknownToNoTestsPerformed(deviceId, dateLimit) {
   const statusesByExternalId = await allDeviceMaintenanceStatusToId()
   const inactiveUnknownId = statusesByExternalId.inactiveUnknown
-  const inactiveNoTestsPerformedId =
-    statusesByExternalId.inactiveNoTestsPerformed
+  const inactiveNoTestsPerformedId = statusesByExternalId.inactiveNoTestsPerformed
   await knex('DeviceMaintenanceStatusLog')
     .where('day', '<', dateLimit)
     .andWhere({ deviceId, deviceMaintenanceStatusId: inactiveUnknownId })
@@ -1331,12 +1101,7 @@ async function onResultLogged(action, { messageContext }) {
         .leftJoin('Device as d', 'r.deviceId', 'd.id')
         .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
         .where('r.id', resultId)
-        .first(
-          'r.deviceId',
-          'r.startedOn',
-          'r.endedOn',
-          'da.token as approvalToken'
-        )) || {}
+        .first('r.deviceId', 'r.startedOn', 'r.endedOn', 'da.token as approvalToken')) || {}
 
     if (deviceId && (endedOn || startedOn)) {
       const testDateToUse = endedOn || startedOn
@@ -1344,9 +1109,7 @@ async function onResultLogged(action, { messageContext }) {
       await automaticallySetDeviceMaintenanceStatus(
         deviceId,
         testDateToUse,
-        approvalToken === 'decommissioned'
-          ? 'inactiveDecommissioned'
-          : 'active',
+        approvalToken === 'decommissioned' ? 'inactiveDecommissioned' : 'active',
         action,
         messageContext
       )
@@ -1361,8 +1124,7 @@ async function onResultLogged(action, { messageContext }) {
         .andWhere({ deviceId })
         .count('r.id as numberOfPreviousTestsInDay')
         .first()
-      if (numberOfPreviousTestsInDay === 0)
-        await updateStatusUnknownToNoTestsPerformed(deviceId, testDateToUse)
+      if (numberOfPreviousTestsInDay === 0) await updateStatusUnknownToNoTestsPerformed(deviceId, testDateToUse)
 
       await shouldTriggerInstrumentReplaced(knex, messageContext, resultId)
     }
@@ -1383,28 +1145,17 @@ async function onDeviceMaintenanceResolved(action, { messageContext }) {
   return Promise.resolve()
 }
 
-async function onDeviceUpdateMaintenanceStatusNoResults(
-  action,
-  { messageContext }
-) {
+async function onDeviceUpdateMaintenanceStatusNoResults(action, { messageContext }) {
   const { deviceId, options = {} } = action
   if (deviceId) {
     const daysSinceLastResult = []
-    let day = options.lastResultOn
-      ? startOfDayUtc(parseDateOrDefault(options.lastResultOn))
-      : startOfDayUtc(new Date())
+    let day = options.lastResultOn ? startOfDayUtc(parseDateOrDefault(options.lastResultOn)) : startOfDayUtc(new Date())
     while (day < new Date()) {
       daysSinceLastResult.push(day)
       day = addDays(day, 1)
     }
     await Promise.each(daysSinceLastResult, day =>
-      automaticallySetDeviceMaintenanceStatus(
-        deviceId,
-        day,
-        'inactiveUnknown',
-        action,
-        messageContext
-      )
+      automaticallySetDeviceMaintenanceStatus(deviceId, day, 'inactiveUnknown', action, messageContext)
     )
   }
   return Promise.resolve()
@@ -1446,21 +1197,12 @@ async function deviceMaintenanceStatusHistory(request) {
   let filterByDeviceIds = await knex('Device as d')
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', queryBuilder => {
       queryBuilder
-        .on(
-          knex.raw('dmsl.day BETWEEN ? AND ?', [days[0], days[days.length - 1]])
-        )
+        .on(knex.raw('dmsl.day BETWEEN ? AND ?', [days[0], days[days.length - 1]]))
         .andOn('d.id', 'dmsl.deviceId')
     })
-    .innerJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
+    .innerJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .modify(queryBuilder => {
-      if (
-        query.deviceMaintenanceStatusId &&
-        !_.isEmpty(query.deviceMaintenanceStatusId)
-      ) {
+      if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
         queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
       if (!_.isEmpty(queryDeviceIds)) {
@@ -1477,27 +1219,15 @@ async function deviceMaintenanceStatusHistory(request) {
     : await knex('Device as d')
         .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
         .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-        .innerJoin(
-          'DeviceTypeCategory as dc',
-          'dt.deviceTypeCategoryId',
-          'dc.id'
-        )
+        .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
         .innerJoin('Site as s', 'd.siteId', 's.id')
         .leftJoin('Geography as g', 's.geographyId', 'g.id')
         .leftJoin('State as st', 'g.stateId', 'st.id')
         .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
         .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
         .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
-        .leftJoin(
-          'DeviceMaintenanceStatusLog as dmsl',
-          'd.deviceMaintenanceStatusLogId',
-          'dmsl.id'
-        )
-        .leftJoin(
-          'DeviceMaintenanceStatus as dms',
-          'dmsl.deviceMaintenanceStatusId',
-          'dms.id'
-        )
+        .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+        .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
         .whereIn('d.id', filterByDeviceIds)
         .andWhere('dc.hasResults', true)
         .modify(filterParams, query, {
@@ -1532,11 +1262,7 @@ async function deviceMaintenanceStatusHistory(request) {
   filterByDeviceIds = devicesWithConstraints.map(({ id }) => id)
 
   const latestDeviceMaintenanceStatusLogsPerDay = await knex('Device as d')
-    .leftOuterJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.id',
-      'dmsl.deviceId'
-    )
+    .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', 'd.id', 'dmsl.deviceId')
     .leftOuterJoin('DeviceMaintenanceStatusLog as dmslNewer', queryBuilder => {
       queryBuilder
         .on('dmslNewer.deviceId', 'dmsl.deviceId')
@@ -1544,19 +1270,11 @@ async function deviceMaintenanceStatusHistory(request) {
         .andOn(function () {
           this.on('dmslNewer.createdOn', '>', 'dmsl.createdOn')
           this.orOn(function () {
-            this.on('dmslNewer.createdOn', '=', 'dmsl.createdOn').andOn(
-              'dmslNewer.id',
-              '>',
-              'dmsl.id'
-            )
+            this.on('dmslNewer.createdOn', '=', 'dmsl.createdOn').andOn('dmslNewer.id', '>', 'dmsl.id')
           })
         })
     })
-    .leftOuterJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
+    .leftOuterJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .whereNull('dmslNewer.id')
     .whereIn('d.id', filterByDeviceIds)
     .whereRaw('dmsl.day >= ? AND dmsl.day <= ?', [
@@ -1577,20 +1295,13 @@ async function deviceMaintenanceStatusHistory(request) {
        * if query.deviceMaintenanceStatusId is specified then return only items
        * for those devices which have this status for at least one day in range
        */
-      if (
-        query.deviceMaintenanceStatusId &&
-        !_.isEmpty(query.deviceMaintenanceStatusId)
-      ) {
+      if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
         let correctedItems = []
         filterByDeviceIds.forEach(deviceId => {
-          const itemsForDevice = items.filter(
-            item => item.deviceId === deviceId
-          )
+          const itemsForDevice = items.filter(item => item.deviceId === deviceId)
           if (
             itemsForDevice.find(item =>
-              query.deviceMaintenanceStatusId.includes(
-                item.deviceMaintenanceStatusExternalId
-              )
+              query.deviceMaintenanceStatusId.includes(item.deviceMaintenanceStatusExternalId)
             )
           ) {
             correctedItems = [...correctedItems, ...itemsForDevice]
@@ -1603,15 +1314,9 @@ async function deviceMaintenanceStatusHistory(request) {
     })
 
   // final device id's - which contain specified (if any) query.deviceMaintenanceStatusId
-  filterByDeviceIds = [
-    ...new Set(
-      latestDeviceMaintenanceStatusLogsPerDay.map(({ deviceId }) => deviceId)
-    ),
-  ]
+  filterByDeviceIds = [...new Set(latestDeviceMaintenanceStatusLogsPerDay.map(({ deviceId }) => deviceId))]
 
-  const devices = devicesWithConstraints.filter(({ id }) =>
-    filterByDeviceIds.includes(id)
-  )
+  const devices = devicesWithConstraints.filter(({ id }) => filterByDeviceIds.includes(id))
 
   // get total results per each device per period
   const deviceResultCounts = await knex('Result as r')
@@ -1623,11 +1328,9 @@ async function deviceMaintenanceStatusHistory(request) {
     })
     .modify(queryBuilder => {
       if (minDate) {
-        queryBuilder
-          .whereBetween('r.endedOn', [minDate, maxDate])
-          .orWhere(queryBuilder => {
-            queryBuilder.whereBetween('r.startedOn', [minDate, maxDate])
-          })
+        queryBuilder.whereBetween('r.endedOn', [minDate, maxDate]).orWhere(queryBuilder => {
+          queryBuilder.whereBetween('r.startedOn', [minDate, maxDate])
+        })
       }
     })
     .whereIn('r.deviceId', filterByDeviceIds)
@@ -1643,29 +1346,21 @@ async function deviceMaintenanceStatusHistory(request) {
     length: devices.length,
     data: devices.map(device => ({
       ...device,
-      resultCount:
-        (deviceResultCounts.find(item => item.deviceId === device.id) || {})
-          .resultCount || 0,
+      resultCount: (deviceResultCounts.find(item => item.deviceId === device.id) || {}).resultCount || 0,
       days: days.map(day => {
         const deviceMaintenanceStatusLog =
           latestDeviceMaintenanceStatusLogsPerDay.find(
-            log =>
-              log.deviceId === device.id &&
-              format(log.day, 'yyyyMMdd') === format(day, 'yyyyMMdd')
+            log => log.deviceId === device.id && format(log.day, 'yyyyMMdd') === format(day, 'yyyyMMdd')
           ) || {}
         const dayStatus = {
           date: day,
-          externalId:
-            deviceMaintenanceStatusLog.externalId || 'inactiveUnknown',
+          externalId: deviceMaintenanceStatusLog.externalId || 'inactiveUnknown',
           isWeekend: isWeekend(day),
           data: {},
         }
         if (deviceMaintenanceStatusLog.data) {
           dayStatus.data = JSON.parse(deviceMaintenanceStatusLog.data)
-          dayStatus.notes = _.get(
-            deviceMaintenanceStatusLog,
-            'data.options.data.notes'
-          )
+          dayStatus.notes = _.get(deviceMaintenanceStatusLog, 'data.options.data.notes')
         }
         return dayStatus
       }),
@@ -1681,11 +1376,7 @@ async function deviceMaintenanceStatus(request) {
 
   const currentDeviceMaintenanceStatusLog =
     (await knex('Device as d')
-      .join(
-        'DeviceMaintenanceStatusLog as dmsl',
-        'd.deviceMaintenanceStatusLogId',
-        'dmsl.Id'
-      )
+      .join('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.Id')
       .modify(addConstraints, dataConstraints, {
         device: 'd',
         showUnapprovedDevices: true,
@@ -1694,14 +1385,8 @@ async function deviceMaintenanceStatus(request) {
       .where('d.id', deviceId)
       .first('dmsl.*')) || {}
   if (currentDeviceMaintenanceStatusLog.data) {
-    currentDeviceMaintenanceStatusLog.data = JSON.parse(
-      currentDeviceMaintenanceStatusLog.data
-    )
-    currentDeviceMaintenanceStatusLog.notes = _.get(
-      currentDeviceMaintenanceStatusLog,
-      'data.options.data.notes',
-      null
-    )
+    currentDeviceMaintenanceStatusLog.data = JSON.parse(currentDeviceMaintenanceStatusLog.data)
+    currentDeviceMaintenanceStatusLog.notes = _.get(currentDeviceMaintenanceStatusLog, 'data.options.data.notes', null)
   }
   return {
     ok: true,
@@ -1722,26 +1407,12 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
   return knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as current_dmsl',
-      'd.deviceMaintenanceStatusLogId',
-      'current_dmsl.id'
-    )
-    .leftJoin(
-      'DeviceMaintenanceStatus as current_dms',
-      'current_dmsl.deviceMaintenanceStatusId',
-      'current_dms.id'
-    )
+    .leftJoin('DeviceMaintenanceStatusLog as current_dmsl', 'd.deviceMaintenanceStatusLogId', 'current_dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as current_dms', 'current_dmsl.deviceMaintenanceStatusId', 'current_dms.id')
     .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
-      queryBuilder
-        .on('d.id', 'today_dmsl.deviceId')
-        .andOn('today_dmsl.day', knex.raw('DATE(?)', [today]))
+      queryBuilder.on('d.id', 'today_dmsl.deviceId').andOn('today_dmsl.day', knex.raw('DATE(?)', [today]))
     })
-    .leftJoin(
-      'DeviceMaintenanceStatus as today_dms',
-      'today_dmsl.deviceMaintenanceStatusId',
-      'today_dms.id'
-    )
+    .leftJoin('DeviceMaintenanceStatus as today_dms', 'today_dmsl.deviceMaintenanceStatusId', 'today_dms.id')
     .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin('Result as r', queryBuilder => {
       queryBuilder.on('d.id', 'r.deviceId').andOn(function () {
@@ -1782,10 +1453,7 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
     )
 }
 
-async function onDeviceMaintenanceStatusLogScheduled(
-  action,
-  { messageContext }
-) {
+async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext }) {
   return messageContext.run(async knex => {
     const getCustomToday = today => {
       if (today) {
@@ -1799,8 +1467,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
       return startOfTodayUtc()
     }
     const today = getCustomToday(action.today)
-    const devicesMaintenanceLogForTheDay =
-      await getDevicesMaintenanceLogForTheDay(knex, today)
+    const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(knex, today)
 
     await Promise.each(devicesMaintenanceLogForTheDay, async device => {
       const {
@@ -1821,11 +1488,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
        * and the last log was one of the inactive statuses,
        * then assume that the reason of inactivity is the same than before.
        */
-      if (
-        currentMaintenanceStatusExternalId &&
-        today > currentMaintenanceStatusDay &&
-        !currentMaintenanceStatusActive
-      )
+      if (currentMaintenanceStatusExternalId && today > currentMaintenanceStatusDay && !currentMaintenanceStatusActive)
         deviceMaintenanceStatusForTheDay = currentMaintenanceStatusExternalId
       /**
        * Else, as we don't know the reason of inactivity, 'inactiveUnknown' will be set as default
@@ -1846,20 +1509,11 @@ async function onDeviceMaintenanceStatusLogScheduled(
           .first()
 
         if (lastDeviceApprovalLog) {
-          const {
-            createdOn: lastApprovalDate,
-            deviceApprovalId: lastApprovalDeviceApprovalId,
-          } = lastDeviceApprovalLog
-          if (
-            lastApprovalDate < today &&
-            lastApprovalDeviceApprovalId === decommissionedId
-          )
+          const { createdOn: lastApprovalDate, deviceApprovalId: lastApprovalDeviceApprovalId } = lastDeviceApprovalLog
+          if (lastApprovalDate < today && lastApprovalDeviceApprovalId === decommissionedId)
             deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
         } else deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
-      } else if (
-        totalResults === 0 &&
-        deviceMaintenanceStatusForTheDay === 'inactiveUnknown'
-      ) {
+      } else if (totalResults === 0 && deviceMaintenanceStatusForTheDay === 'inactiveUnknown') {
         /**
          * If the device didn't report results in the day and we don't know the inactivity reason,
          * then we should check if it just didn't perform tests.
@@ -1884,9 +1538,7 @@ async function onDeviceMaintenanceStatusLogScheduled(
 
       // set maintenance status log data
       const deviceMaintenanceStatusLogData =
-        currentMaintenanceStatusDay === today
-          ? currentMaintenanceStatusLogData
-          : '{}'
+        currentMaintenanceStatusDay === today ? currentMaintenanceStatusLogData : '{}'
 
       await automaticallySetDeviceMaintenanceStatus(
         id,
@@ -1956,9 +1608,7 @@ async function postPayloadFromDevice(deviceLogDetails, optionalKnex) {
       createdOn: now,
       ...deviceLogDetails,
     })
-    await inlineKnex('Device')
-      .where({ id: deviceLogDetails.deviceId })
-      .update({ lastSeenOn: now, updatedOn: now })
+    await inlineKnex('Device').where({ id: deviceLogDetails.deviceId }).update({ lastSeenOn: now, updatedOn: now })
     return deviceLogId
   }
   if (!optionalKnex) {

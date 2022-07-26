@@ -1,10 +1,7 @@
 import React from 'react'
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import styles from '../../components/shared/DataTableRow.css'
 import AccountEnableDisable from '../../MigratedComponents/Account/AccountEnableDisable'
 

@@ -9,9 +9,7 @@ async function seed(knex) {
   await updateJobFunctions(knex, partnerName, jobFunctionFixture)
 
   // we also have to update the widgets after adding a new job function
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
 
   await upsertDashboardWidgets(knex, partnerId, dashboardWidgets)
 }

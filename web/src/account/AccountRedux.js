@@ -4,15 +4,8 @@ import pick from 'lodash/pick'
 import { SubmissionError } from 'redux-form/immutable'
 import { getClientName } from '../shared/utils/browser'
 import { aspectFetch } from '../shared/utils/fetch'
-import {
-  ContactDetails,
-  LoginDetails,
-  UserPreferences,
-} from '../person/PersonRedux'
-import {
-  errorPleaseTryAgainInAFewMinutes,
-  inlineWarning,
-} from '../error/CommonErrorNotifications'
+import { ContactDetails, LoginDetails, UserPreferences } from '../person/PersonRedux'
+import { errorPleaseTryAgainInAFewMinutes, inlineWarning } from '../error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',
@@ -23,8 +16,7 @@ export const types = {
   RECEIVE_UPDATED_CONTACT_DETAILS: 'RECEIVE_UPDATED_CONTACT_DETAILS',
   RECEIVE_UPDATED_LOGIN_DETAILS: 'RECEIVE_UPDATED_LOGIN_DETAILS',
   RECEIVE_UPDATED_USER_PREFERENCES: 'RECEIVE_UPDATED_USER_PREFERENCES',
-  RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR:
-    'RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR',
+  RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR: 'RECEIVE_UPDATED_LOGIN_DETAILS_EXPECTED_ERROR',
 }
 
 /*
@@ -133,8 +125,7 @@ export function saveLoginDetails(loginDetails) {
             },
             message: {
               id: 'errorResponseMessages.saveLoginDetails.PUT.409.message',
-              defaultMessage:
-                'The username that you have entered is already in use by another user on the system',
+              defaultMessage: 'The username that you have entered is already in use by another user on the system',
             },
             resolution: {
               id: 'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
@@ -150,13 +141,11 @@ export function saveLoginDetails(loginDetails) {
             },
             message: {
               id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
-              defaultMessage:
-                'The current password that you have entered is incorrect.',
+              defaultMessage: 'The current password that you have entered is incorrect.',
             },
             resolution: {
               id: 'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-              defaultMessage:
-                'Please try re-entering your password or contact us to reset your login details',
+              defaultMessage: 'Please try re-entering your password or contact us to reset your login details',
             },
           })
         ),
@@ -180,16 +169,11 @@ export function saveLoginDetails(loginDetails) {
         )
       })
       .catch(err => {
-        if (
-          ['Incorrect password.', 'Username already in use'].includes(
-            err.message
-          )
-        ) {
+        if (['Incorrect password.', 'Username already in use'].includes(err.message)) {
           dispatch(createReceiveUpdatedLoginDetailsExpectedError())
           const submissionError = { _error: err.message }
           if (err.message === 'Incorrect password.') {
-            submissionError.currentPassword =
-              'The password that you entered is not valid'
+            submissionError.currentPassword = 'The password that you entered is not valid'
           } else if (err.message === 'Username already in use') {
             submissionError.username = 'This username is unavailable'
           }
@@ -256,20 +240,14 @@ function receiveAccountDetails(state, accountDetailsData) {
     saving: false,
     data: new AccountDetailsData({
       contactDetails: new ContactDetails(
-        pick(
-          accountDetailsData,
-          Object.keys(state.getIn(['data', 'contactDetails']).toJS())
-        )
+        pick(accountDetailsData, Object.keys(state.getIn(['data', 'contactDetails']).toJS()))
       ),
       loginDetails: new LoginDetails({
         id: accountDetailsData.userId,
         username: accountDetailsData.username,
       }),
       userPreferences: new UserPreferences(
-        pick(
-          accountDetailsData,
-          Object.keys(state.getIn(['data', 'userPreferences']).toJS())
-        )
+        pick(accountDetailsData, Object.keys(state.getIn(['data', 'userPreferences']).toJS()))
       ),
     }),
   })
@@ -287,10 +265,7 @@ function receiveUpdatedContactDetails(state, accountDetailsData) {
     saving: false,
     data: new AccountDetailsData({
       contactDetails: new ContactDetails(
-        pick(
-          accountDetailsData,
-          Object.keys(state.getIn(['data', 'contactDetails']).toJS())
-        )
+        pick(accountDetailsData, Object.keys(state.getIn(['data', 'contactDetails']).toJS()))
       ),
       loginDetails: state.getIn(['data', 'loginDetails']),
       userPreferences: state.getIn(['data', 'userPreferences']),
@@ -337,10 +312,7 @@ function receiveUpdatedUserPreferences(state, accountDetailsData) {
       contactDetails: state.getIn(['data', 'contactDetails']),
       loginDetails: state.getIn(['data', 'loginDetails']),
       userPreferences: new UserPreferences(
-        pick(
-          accountDetailsData,
-          Object.keys(state.getIn(['data', 'userPreferences']).toJS())
-        )
+        pick(accountDetailsData, Object.keys(state.getIn(['data', 'userPreferences']).toJS()))
       ),
     }),
   })

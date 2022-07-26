@@ -1,9 +1,6 @@
 import reduce from 'lodash/reduce'
 import { isGraphPermitted } from '../../Providers/PermissionsProvider'
-import {
-  isAllowedGroupsWithoutAssays,
-  getWhitelistedAssays,
-} from '../../shared/utils/graph'
+import { isAllowedGroupsWithoutAssays, getWhitelistedAssays } from '../../shared/utils/graph'
 import hivGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/HIV'
 import covidGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/Covid'
 import tbGraphs from '../../MigratedComponents/Graphs/GraphConfigurations/TB'
@@ -28,26 +25,11 @@ const { hivResults } = hivGraphs
 const { tbDetected, tbResults } = tbGraphs
 const { xdrResults } = xdrGraphs
 const { covidResults } = covidGraphs
-const {
-  trendInYearsAllTests,
-  trendInYearsMtbDetected,
-  trendInYearsRifDetected,
-} = trendInYears
-const { trendInQuartersMtbDetected, trendInQuartersRifDetected } =
-  trendInQuarters
+const { trendInYearsAllTests, trendInYearsMtbDetected, trendInYearsRifDetected } = trendInYears
+const { trendInQuartersMtbDetected, trendInQuartersRifDetected } = trendInQuarters
 const baseGroupFor = {
-  sortedByTotalResults: [
-    hivResults,
-    tbDetected,
-    tbResults,
-    xdrResults,
-    covidResults,
-  ],
-  trendInYears: [
-    trendInYearsAllTests,
-    trendInYearsMtbDetected,
-    trendInYearsRifDetected,
-  ],
+  sortedByTotalResults: [hivResults, tbDetected, tbResults, xdrResults, covidResults],
+  trendInYears: [trendInYearsAllTests, trendInYearsMtbDetected, trendInYearsRifDetected],
   trendInQuarters: [trendInQuartersMtbDetected, trendInQuartersRifDetected],
 }
 /**

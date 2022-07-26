@@ -22,15 +22,12 @@ const DeviceMaintenanceStatusSelectField = ({
   ...restProps
 }) => {
   const { formatMessage } = useI18n()
-  const { data, isError } = useQuery(
-    [DEVICE_STATUS.KEY, onlyManuallySetableStatuses],
-    async () => {
-      return fetchWrapperForQueries({
-        endpoint: DEVICE_STATUS.ENDPOINT,
-        params: { onlyManuallySet: onlyManuallySetableStatuses },
-      })
-    }
-  )
+  const { data, isError } = useQuery([DEVICE_STATUS.KEY, onlyManuallySetableStatuses], async () => {
+    return fetchWrapperForQueries({
+      endpoint: DEVICE_STATUS.ENDPOINT,
+      params: { onlyManuallySet: onlyManuallySetableStatuses },
+    })
+  })
 
   const [maintenanceStatuses, setMaintenanceStatuses] = useState(false)
   const dispatch = useDispatch()
@@ -58,12 +55,7 @@ const DeviceMaintenanceStatusSelectField = ({
       {maintenanceStatuses
         ? maintenanceStatuses.map(ms => (
             <MenuItem key={ms.externalId} value={ms.externalId}>
-              {formatI18nMessage(
-                messages,
-                formatMessage,
-                ms.i18nKey,
-                ms.i18nKey
-              )}
+              {formatI18nMessage(messages, formatMessage, ms.i18nKey, ms.i18nKey)}
             </MenuItem>
           ))
         : null}
@@ -77,8 +69,7 @@ DeviceMaintenanceStatusSelectField.defaultProps = {
 }
 
 DeviceMaintenanceStatusSelectField.propTypes = {
-  onDeviceMaintenanceStatusChange: PropTypes.oneOfType([PropTypes.func])
-    .isRequired,
+  onDeviceMaintenanceStatusChange: PropTypes.oneOfType([PropTypes.func]).isRequired,
   value: PropTypes.oneOfType([PropTypes.string]),
   onlyManuallySetableStatuses: PropTypes.oneOfType([PropTypes.bool]),
 }

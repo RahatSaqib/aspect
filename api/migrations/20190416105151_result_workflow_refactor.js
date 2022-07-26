@@ -15,10 +15,7 @@ async function up(knex) {
   })
   await knex.schema.alterTable('ResultWorkflowLog', t => {
     t.dropForeign('resultId')
-    t.foreign('resultId')
-      .references('id')
-      .inTable('Result')
-      .onDelete('SET NULL')
+    t.foreign('resultId').references('id').inTable('Result').onDelete('SET NULL')
   })
 }
 

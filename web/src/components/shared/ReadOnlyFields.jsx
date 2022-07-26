@@ -7,8 +7,7 @@ import ReadOnlyField, { readOnlyFieldPropTypes } from './ReadOnlyField'
 const enhance = compose(
   pure,
   setPropTypes({
-    fields: PropTypes.arrayOf(PropTypes.shape(readOnlyFieldPropTypes))
-      .isRequired,
+    fields: PropTypes.arrayOf(PropTypes.shape(readOnlyFieldPropTypes)).isRequired,
   }),
   withProps(({ fields, hideLabel = false }) => ({
     fields,

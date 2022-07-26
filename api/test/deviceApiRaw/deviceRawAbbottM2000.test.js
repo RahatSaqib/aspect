@@ -186,11 +186,7 @@ L|1`
     },
   }
 
-  function mockOutDefaultAbbottM2000(
-    existingResultRecord,
-    updateSpy,
-    insertSpy
-  ) {
+  function mockOutDefaultAbbottM2000(existingResultRecord, updateSpy, insertSpy) {
     const buildKnexSpy = (updateSpy, insertSpy) => table => {
       const knex = {
         insert: async (...rest) => {
@@ -201,18 +197,12 @@ L|1`
       const where = (...rest) => {
         const returnData = async asArray => {
           let returnValue
-          if (
-            table === 'Result' &&
-            _.get(rest, '1') === existingResultRecord.externalId
-          ) {
+          if (table === 'Result' && _.get(rest, '1') === existingResultRecord.externalId) {
             returnValue = {
               ...JSON.parse(JSON.stringify(existingResultRecord)),
               resultData: JSON.stringify(existingResultRecord.resultData),
             }
-          } else if (
-            table === 'Sample as s' &&
-            existingSamples[_.get(rest, '1')]
-          ) {
+          } else if (table === 'Sample as s' && existingSamples[_.get(rest, '1')]) {
             returnValue = existingSamples[_.get(rest, '1')]
           } else {
             returnValue = databaseRecords[table]
@@ -245,8 +235,7 @@ L|1`
     const resolveWith = returnValue => async () => Promise.resolve(returnValue)
     return proxyquire('../../src/deviceApiRaw/dataProcessors/abbottM2000', {
       '../../db': {
-        transact: async transaction =>
-          transaction(buildKnexSpy(updateSpy, insertSpy)),
+        transact: async transaction => transaction(buildKnexSpy(updateSpy, insertSpy)),
       },
       '../../shared/date': {
         parseDateOrDefault,
@@ -258,9 +247,7 @@ L|1`
         resultTypeToId: resolveWith(staticDatabaseData.resultTypeId),
         resultSourceToId: resolveWith(staticDatabaseData.resultSourceId),
         allResultCategoryToId: resolveWith(staticDatabaseData.ResultCategory),
-        allResultWorkflowStatusToId: resolveWith(
-          staticDatabaseData.ResultWorkflowStatus
-        ),
+        allResultWorkflowStatusToId: resolveWith(staticDatabaseData.ResultWorkflowStatus),
       },
       '../../shared/request': {
         getRemoteAddress: () => deviceIpAddress,
@@ -275,10 +262,7 @@ L|1`
       // The example below is an obfuscated copy of a PKL taken
       //   from the Abbott M2000 running HIV Viral Load Tests using
       //   the 1mLDBSvOP HIV1.0mlDBS Assay
-      dbsHivVlPklPayload = await readTextFile(
-        path.join(__dirname, 'abbottM2000DbsHivVl.pkl'),
-        'utf8'
-      )
+      dbsHivVlPklPayload = await readTextFile(path.join(__dirname, 'abbottM2000DbsHivVl.pkl'), 'utf8')
     })
 
     it('should be able to identify whether the payload is a PKL from an M2000 connector', async () => {
@@ -397,11 +381,7 @@ L|1`
     it('should be able to parse a PKL file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
-        existingResultRecord,
-        updateSpy,
-        insertSpy
-      )
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(existingResultRecord, updateSpy, insertSpy)
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
           auth: { credentials: { token: 'some device API key' } },
@@ -410,24 +390,15 @@ L|1`
         { dispatch: () => {} }
       )
       await m2000DataProcessorViralLoad.processRequest()
-      assert.equal(
-        m2000DataProcessorViralLoad.response.deviceId,
-        databaseRecords.Device.id
-      )
-      expect(
-        m2000DataProcessorViralLoad.response.deviceLogIds
-      ).to.have.lengthOf(94)
+      assert.equal(m2000DataProcessorViralLoad.response.deviceId, databaseRecords.Device.id)
+      expect(m2000DataProcessorViralLoad.response.deviceLogIds).to.have.lengthOf(94)
       const insertCalls = insertSpy.getCalls()
       const updateCalls = updateSpy.getCalls()
 
-      const updateDeviceCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Device'
-      )
+      const updateDeviceCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Device')
       expect(updateDeviceCalls).to.have.lengthOf(1)
       const actualDeviceUpdates = updateDeviceCalls[0].args[1]
-      actualDeviceUpdates.configurationData = JSON.parse(
-        actualDeviceUpdates.configurationData
-      )
+      actualDeviceUpdates.configurationData = JSON.parse(actualDeviceUpdates.configurationData)
       expect(actualDeviceUpdates).to.containSubset({
         configurationData: {
           comments: [],
@@ -442,25 +413,12 @@ L|1`
         siteId: 5,
       })
 
-      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
-      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
-      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
+      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(now.getTime(), 60000)
 
-      const insertSampleCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'Sample'
-      )
-      const updateSampleCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Sample'
-      )
+      const insertSampleCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Sample')
+      const updateSampleCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Sample')
       expect(insertSampleCalls).to.have.lengthOf(91)
       expect(updateSampleCalls).to.have.lengthOf(2)
       expect(updateSampleCalls[0].args[1]).to.containSubset({
@@ -474,17 +432,11 @@ L|1`
         }),
       })
 
-      const insertResultCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'Result'
-      )
-      const updateResultCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Result'
-      )
+      const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
+      const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
       expect(insertResultCalls).to.have.lengthOf(92)
       expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
-      const insertedResults = insertResultCalls.map(
-        insertResultCall => insertResultCall.args[1]
-      )
+      const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
       const runLevelProperties = insertedResults.map(result => ({
         ..._.pick(result, [
           'instrumentSerial',
@@ -498,14 +450,9 @@ L|1`
           'latitude',
           'resultSourceId',
         ]),
-        resultData: _.pick(JSON.parse(result.resultData), [
-          'qualityControlSummary',
-        ]),
+        resultData: _.pick(JSON.parse(result.resultData), ['qualityControlSummary']),
       }))
-      const uniqueRunLevelProperties = _.uniqBy(
-        runLevelProperties,
-        JSON.stringify
-      )
+      const uniqueRunLevelProperties = _.uniqBy(runLevelProperties, JSON.stringify)
       expect(uniqueRunLevelProperties).to.have.lengthOf(1)
       expect(uniqueRunLevelProperties).to.containSubset([
         {
@@ -576,30 +523,21 @@ L|1`
           resultSourceId: staticDatabaseData.resultSourceId,
         },
       ])
-      expect(
-        _.uniq(insertedResults.map(result => result.externalId))
-      ).to.have.lengthOf(92)
+      expect(_.uniq(insertedResults.map(result => result.externalId))).to.have.lengthOf(92)
       const errorResults = insertedResults
-        .filter(
-          result =>
-            result.resultCategory1 === staticDatabaseData.ResultCategory.Error
-        )
+        .filter(result => result.resultCategory1 === staticDatabaseData.ResultCategory.Error)
         .map(result => ({
           ...result,
           resultData: result.resultData ? JSON.parse(result.resultData) : null,
-          patientData: result.patientData
-            ? JSON.parse(result.patientData)
-            : null,
+          patientData: result.patientData ? JSON.parse(result.patientData) : null,
           formData: result.formData ? JSON.parse(result.formData) : null,
         }))
       expect(errorResults).to.have.lengthOf(1)
       expect(errorResults).to.containSubset([
         {
           errorCode: '4442',
-          errorNotes:
-            '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
-          notes:
-            '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
+          errorNotes: '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
+          notes: '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
           resultData: {
             reportType: 'Test could not be performed',
             comments: [
@@ -607,8 +545,7 @@ L|1`
                 source: 'Instrument',
                 text: '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
                 type: 'Exception String',
-                rawData:
-                  '\nC|1|I|4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].|I',
+                rawData: '\nC|1|I|4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].|I',
               },
             ],
           },
@@ -616,14 +553,10 @@ L|1`
       ])
       expect(
         updateResultCalls
-          .filter(
-            updateResultCall => Object.keys(updateResultCall.args[1]).length > 1
-          )
+          .filter(updateResultCall => Object.keys(updateResultCall.args[1]).length > 1)
           .map(updateResultCall => ({
             ...updateResultCall.args[1],
-            resultData: updateResultCall.args[1].resultData
-              ? JSON.parse(updateResultCall.args[1].resultData)
-              : null,
+            resultData: updateResultCall.args[1].resultData ? JSON.parse(updateResultCall.args[1].resultData) : null,
           }))
       ).to.containSubset([
         {
@@ -635,26 +568,20 @@ L|1`
             'H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\nP|1\nO|1|SYS123165|SYS123165^vl110^D1|^^^1mLDBSvOP^HIV1.0mlDBS|||20190823101300||||||||||||||||||F\nR|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\nR|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\nR|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\nL|1',
           resultData: {
             ...JSON.parse(existingResultRecord.resultData),
-            messageSentOn: convertToTimeZone(
-              new Date(2019, 7, 25, 16, 53, 12),
-              {
-                timeZone: 'UTC',
-              }
-            ).toISOString(),
+            messageSentOn: convertToTimeZone(new Date(2019, 7, 25, 16, 53, 12), {
+              timeZone: 'UTC',
+            }).toISOString(),
             qualityControlSummary: {
               highPositiveControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.highPositiveControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.highPositiveControl,
                 ['endedOn']
               ),
               lowPositiveControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.lowPositiveControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.lowPositiveControl,
                 ['endedOn']
               ),
               negativeControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.negativeControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.negativeControl,
                 ['endedOn']
               ),
             },
@@ -662,16 +589,10 @@ L|1`
         },
       ])
 
-      const insertResultWorkflowLogCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'ResultWorkflowLog'
-      )
+      const insertResultWorkflowLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
       expect(insertResultWorkflowLogCalls).to.have.lengthOf(93)
-      const insertDeviceLogCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'DeviceLog'
-      )
-      expect(insertDeviceLogCalls).to.have.lengthOf(
-        insertResultWorkflowLogCalls.length + 1
-      )
+      const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
+      expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
     })
   })
 
@@ -679,10 +600,7 @@ L|1`
     let plasmaHivVlPayload = ''
 
     before(async () => {
-      plasmaHivVlPayload = await readTextFile(
-        path.join(__dirname, 'abbottM2000DbsHivVl.pkl'),
-        'utf8'
-      )
+      plasmaHivVlPayload = await readTextFile(path.join(__dirname, 'abbottM2000DbsHivVl.pkl'), 'utf8')
     })
 
     it('should be able to identify whether the payload is a PKL from an M2000 connector', async () => {
@@ -800,11 +718,7 @@ L|1`
     it('should be able to parse a RAW ASTM conversation file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
-        existingResultRecord,
-        updateSpy,
-        insertSpy
-      )
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(existingResultRecord, updateSpy, insertSpy)
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
           auth: { credentials: { token: 'some device API key' } },
@@ -813,24 +727,15 @@ L|1`
         { dispatch: () => {} }
       )
       await m2000DataProcessorViralLoad.processRequest()
-      assert.equal(
-        m2000DataProcessorViralLoad.response.deviceId,
-        databaseRecords.Device.id
-      )
-      expect(
-        m2000DataProcessorViralLoad.response.deviceLogIds
-      ).to.have.lengthOf(94)
+      assert.equal(m2000DataProcessorViralLoad.response.deviceId, databaseRecords.Device.id)
+      expect(m2000DataProcessorViralLoad.response.deviceLogIds).to.have.lengthOf(94)
       const insertCalls = insertSpy.getCalls()
       const updateCalls = updateSpy.getCalls()
 
-      const updateDeviceCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Device'
-      )
+      const updateDeviceCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Device')
       expect(updateDeviceCalls).to.have.lengthOf(1)
       const actualDeviceUpdates = updateDeviceCalls[0].args[1]
-      actualDeviceUpdates.configurationData = JSON.parse(
-        actualDeviceUpdates.configurationData
-      )
+      actualDeviceUpdates.configurationData = JSON.parse(actualDeviceUpdates.configurationData)
       expect(actualDeviceUpdates).to.containSubset({
         configurationData: {
           comments: [],
@@ -845,34 +750,17 @@ L|1`
         siteId: 5,
       })
 
-      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
-      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
-      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
+      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(now.getTime(), 60000)
 
-      const insertSampleCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'Sample'
-      )
+      const insertSampleCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Sample')
       expect(insertSampleCalls).to.have.lengthOf(91)
-      const insertResultCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'Result'
-      )
-      const updateResultCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Result'
-      )
+      const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
+      const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
       expect(insertResultCalls).to.have.lengthOf(92)
       expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
-      const insertedResults = insertResultCalls.map(
-        insertResultCall => insertResultCall.args[1]
-      )
+      const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
       const runLevelProperties = insertedResults.map(result => ({
         ..._.pick(result, [
           'instrumentSerial',
@@ -886,14 +774,9 @@ L|1`
           'latitude',
           'resultSourceId',
         ]),
-        resultData: _.pick(JSON.parse(result.resultData), [
-          'qualityControlSummary',
-        ]),
+        resultData: _.pick(JSON.parse(result.resultData), ['qualityControlSummary']),
       }))
-      const uniqueRunLevelProperties = _.uniqBy(
-        runLevelProperties,
-        JSON.stringify
-      )
+      const uniqueRunLevelProperties = _.uniqBy(runLevelProperties, JSON.stringify)
       expect(uniqueRunLevelProperties).to.have.lengthOf(1)
       expect(uniqueRunLevelProperties).to.containSubset([
         {
@@ -973,20 +856,13 @@ L|1`
           resultSourceId: staticDatabaseData.resultSourceId,
         },
       ])
-      expect(
-        _.uniq(insertedResults.map(result => result.externalId))
-      ).to.have.lengthOf(92)
+      expect(_.uniq(insertedResults.map(result => result.externalId))).to.have.lengthOf(92)
       const errorResults = insertedResults
-        .filter(
-          result =>
-            result.resultCategory1 === staticDatabaseData.ResultCategory.Error
-        )
+        .filter(result => result.resultCategory1 === staticDatabaseData.ResultCategory.Error)
         .map(result => ({
           ...result,
           resultData: result.resultData ? JSON.parse(result.resultData) : null,
-          patientData: result.patientData
-            ? JSON.parse(result.patientData)
-            : null,
+          patientData: result.patientData ? JSON.parse(result.patientData) : null,
           formData: result.formData ? JSON.parse(result.formData) : null,
         }))
       expect(errorResults).to.have.lengthOf(1)
@@ -999,28 +875,21 @@ L|1`
                 source: 'Instrument',
                 text: '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
                 type: 'Exception String',
-                rawData:
-                  '\nC|1|I|4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].|I',
+                rawData: '\nC|1|I|4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].|I',
               },
             ],
           },
           errorCode: '4442',
-          errorNotes:
-            '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
-          notes:
-            '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
+          errorNotes: '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
+          notes: '4442 : Internal control cycle number is too high. Valid range is [19.22, 23.22].',
         },
       ])
       expect(
         updateResultCalls
-          .filter(
-            updateResultCall => Object.keys(updateResultCall.args[1]).length > 1
-          )
+          .filter(updateResultCall => Object.keys(updateResultCall.args[1]).length > 1)
           .map(updateResultCall => ({
             ...updateResultCall.args[1],
-            resultData: updateResultCall.args[1].resultData
-              ? JSON.parse(updateResultCall.args[1].resultData)
-              : null,
+            resultData: updateResultCall.args[1].resultData ? JSON.parse(updateResultCall.args[1].resultData) : null,
           }))
       ).to.containSubset([
         {
@@ -1033,26 +902,20 @@ L|1`
             'H|\\^&|||m2000^8.0.25.0^275021695^H1P1O1R1C1L1|||||||P|1|20190825165312\nP|1\nO|1|SYS123165|SYS123165^vl110^D1|^^^1mLDBSvOP^HIV1.0mlDBS|||20190823101300||||||||||||||||||F\nR|1|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^F|Not detected|Copies / mL||OPEN||F||bryan^bryan||20190825165311|275021695\nR|2|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^I|Target not detected|||||F||bryan^bryan||20190825165311|275021695\nR|3|^^^1mLDBSvOP^HIV1.0mlDBS^466746^11176551^^P|-1.00|cycle number||||F||bryan^bryan||20190825165311|275021695\nL|1',
           resultData: {
             ...JSON.parse(existingResultRecord.resultData),
-            messageSentOn: convertToTimeZone(
-              new Date(2019, 7, 25, 16, 53, 12),
-              {
-                timeZone: 'UTC',
-              }
-            ).toISOString(),
+            messageSentOn: convertToTimeZone(new Date(2019, 7, 25, 16, 53, 12), {
+              timeZone: 'UTC',
+            }).toISOString(),
             qualityControlSummary: {
               highPositiveControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.highPositiveControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.highPositiveControl,
                 ['endedOn']
               ),
               lowPositiveControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.lowPositiveControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.lowPositiveControl,
                 ['endedOn']
               ),
               negativeControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.negativeControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.negativeControl,
                 ['endedOn']
               ),
             },
@@ -1060,16 +923,10 @@ L|1`
         },
       ])
 
-      const insertResultWorkflowLogCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'ResultWorkflowLog'
-      )
+      const insertResultWorkflowLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
       expect(insertResultWorkflowLogCalls).to.have.lengthOf(93)
-      const insertDeviceLogCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'DeviceLog'
-      )
-      expect(insertDeviceLogCalls).to.have.lengthOf(
-        insertResultWorkflowLogCalls.length + 1
-      )
+      const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
+      expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
     })
   })
 
@@ -1077,10 +934,7 @@ L|1`
     let plasmaHivVlPayload = ''
 
     before(async () => {
-      plasmaHivVlPayload = await readTextFile(
-        path.join(__dirname, 'abbottM2000PlasmaHbvVlRaw.pkl'),
-        'utf8'
-      )
+      plasmaHivVlPayload = await readTextFile(path.join(__dirname, 'abbottM2000PlasmaHbvVlRaw.pkl'), 'utf8')
     })
 
     it('should be able to identify whether the payload is a PKL from an M2000 connector', async () => {
@@ -1194,11 +1048,7 @@ L|1`
     it('should be able to parse a RAW ASTM conversation file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
-        existingResultRecord,
-        updateSpy,
-        insertSpy
-      )
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(existingResultRecord, updateSpy, insertSpy)
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
           auth: { credentials: { token: 'some device API key' } },
@@ -1207,24 +1057,15 @@ L|1`
         { dispatch: () => {} }
       )
       await m2000DataProcessorViralLoad.processRequest()
-      assert.equal(
-        m2000DataProcessorViralLoad.response.deviceId,
-        databaseRecords.Device.id
-      )
-      expect(
-        m2000DataProcessorViralLoad.response.deviceLogIds
-      ).to.have.lengthOf(46)
+      assert.equal(m2000DataProcessorViralLoad.response.deviceId, databaseRecords.Device.id)
+      expect(m2000DataProcessorViralLoad.response.deviceLogIds).to.have.lengthOf(46)
       const insertCalls = insertSpy.getCalls()
       const updateCalls = updateSpy.getCalls()
 
-      const updateDeviceCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Device'
-      )
+      const updateDeviceCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Device')
       expect(updateDeviceCalls).to.have.lengthOf(1)
       const actualDeviceUpdates = updateDeviceCalls[0].args[1]
-      actualDeviceUpdates.configurationData = JSON.parse(
-        actualDeviceUpdates.configurationData
-      )
+      actualDeviceUpdates.configurationData = JSON.parse(actualDeviceUpdates.configurationData)
       expect(actualDeviceUpdates).to.containSubset({
         configurationData: {
           comments: [],
@@ -1239,34 +1080,17 @@ L|1`
         siteId: 5,
       })
 
-      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
-      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
-      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
+      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(now.getTime(), 60000)
 
-      const insertSampleCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'Sample'
-      )
+      const insertSampleCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Sample')
       expect(insertSampleCalls).to.have.lengthOf(45)
-      const insertResultCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'Result'
-      )
-      const updateResultCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Result'
-      )
+      const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
+      const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
       expect(insertResultCalls).to.have.lengthOf(44)
       expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
-      const insertedResults = insertResultCalls.map(
-        insertResultCall => insertResultCall.args[1]
-      )
+      const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
       const runLevelProperties = insertedResults.map(result => ({
         ..._.pick(result, [
           'instrumentSerial',
@@ -1280,14 +1104,9 @@ L|1`
           'latitude',
           'resultSourceId',
         ]),
-        resultData: _.pick(JSON.parse(result.resultData), [
-          'qualityControlSummary',
-        ]),
+        resultData: _.pick(JSON.parse(result.resultData), ['qualityControlSummary']),
       }))
-      const uniqueRunLevelProperties = _.uniqBy(
-        runLevelProperties,
-        JSON.stringify
-      )
+      const uniqueRunLevelProperties = _.uniqBy(runLevelProperties, JSON.stringify)
       expect(uniqueRunLevelProperties).to.have.lengthOf(1)
       expect(uniqueRunLevelProperties).to.containSubset([
         {
@@ -1367,33 +1186,22 @@ L|1`
           resultSourceId: staticDatabaseData.resultSourceId,
         },
       ])
-      expect(
-        _.uniq(insertedResults.map(result => result.externalId))
-      ).to.have.lengthOf(44)
+      expect(_.uniq(insertedResults.map(result => result.externalId))).to.have.lengthOf(44)
       const errorResults = insertedResults
-        .filter(
-          result =>
-            result.resultCategory1 === staticDatabaseData.ResultCategory.Error
-        )
+        .filter(result => result.resultCategory1 === staticDatabaseData.ResultCategory.Error)
         .map(result => ({
           ...result,
           resultData: result.resultData ? JSON.parse(result.resultData) : null,
-          patientData: result.patientData
-            ? JSON.parse(result.patientData)
-            : null,
+          patientData: result.patientData ? JSON.parse(result.patientData) : null,
           formData: result.formData ? JSON.parse(result.formData) : null,
         }))
       expect(errorResults).to.have.lengthOf(0)
       expect(
         updateResultCalls
-          .filter(
-            updateResultCall => Object.keys(updateResultCall.args[1]).length > 1
-          )
+          .filter(updateResultCall => Object.keys(updateResultCall.args[1]).length > 1)
           .map(updateResultCall => ({
             ...updateResultCall.args[1],
-            resultData: updateResultCall.args[1].resultData
-              ? JSON.parse(updateResultCall.args[1].resultData)
-              : null,
+            resultData: updateResultCall.args[1].resultData ? JSON.parse(updateResultCall.args[1].resultData) : null,
           }))
       ).to.containSubset([
         {
@@ -1412,18 +1220,15 @@ L|1`
             resultText: '2376',
             qualityControlSummary: {
               highPositiveControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.highPositiveControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.highPositiveControl,
                 ['endedOn']
               ),
               lowPositiveControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.lowPositiveControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.lowPositiveControl,
                 ['endedOn']
               ),
               negativeControl: _.omit(
-                JSON.parse(existingResultRecord.resultData)
-                  .qualityControlSummary.negativeControl,
+                JSON.parse(existingResultRecord.resultData).qualityControlSummary.negativeControl,
                 ['endedOn']
               ),
             },
@@ -1431,16 +1236,10 @@ L|1`
         },
       ])
 
-      const insertResultWorkflowLogCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'ResultWorkflowLog'
-      )
+      const insertResultWorkflowLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
       expect(insertResultWorkflowLogCalls).to.have.lengthOf(45)
-      const insertDeviceLogCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'DeviceLog'
-      )
-      expect(insertDeviceLogCalls).to.have.lengthOf(
-        insertResultWorkflowLogCalls.length + 1
-      )
+      const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
+      expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
     })
   })
 
@@ -1453,10 +1252,7 @@ L|1`
         path.join(__dirname, 'abbottM2000Covid19ControlFail.pkl'),
         'utf8'
       )
-      covid19DaanNPayload = await readTextFile(
-        path.join(__dirname, 'abbottM2000Covid19.pkl'),
-        'utf8'
-      )
+      covid19DaanNPayload = await readTextFile(path.join(__dirname, 'abbottM2000Covid19.pkl'), 'utf8')
     })
 
     it('should be able to identify whether the payload is a PKL from an M2000 connector', async () => {
@@ -1588,11 +1384,7 @@ L|1`
     it('should be able to parse a RAW ASTM conversation file into results', async () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
-      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
-        existingResultRecord,
-        updateSpy,
-        insertSpy
-      )
+      const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(existingResultRecord, updateSpy, insertSpy)
       const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
         {
           auth: { credentials: { token: 'some device API key' } },
@@ -1601,24 +1393,15 @@ L|1`
         { dispatch: () => {} }
       )
       await m2000DataProcessorViralLoad.processRequest()
-      assert.equal(
-        m2000DataProcessorViralLoad.response.deviceId,
-        databaseRecords.Device.id
-      )
-      expect(
-        m2000DataProcessorViralLoad.response.deviceLogIds
-      ).to.have.lengthOf(95)
+      assert.equal(m2000DataProcessorViralLoad.response.deviceId, databaseRecords.Device.id)
+      expect(m2000DataProcessorViralLoad.response.deviceLogIds).to.have.lengthOf(95)
       const insertCalls = insertSpy.getCalls()
       const updateCalls = updateSpy.getCalls()
 
-      const updateDeviceCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Device'
-      )
+      const updateDeviceCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Device')
       expect(updateDeviceCalls).to.have.lengthOf(1)
       const actualDeviceUpdates = updateDeviceCalls[0].args[1]
-      actualDeviceUpdates.configurationData = JSON.parse(
-        actualDeviceUpdates.configurationData
-      )
+      actualDeviceUpdates.configurationData = JSON.parse(actualDeviceUpdates.configurationData)
       expect(actualDeviceUpdates).to.containSubset({
         configurationData: {
           comments: [],
@@ -1633,34 +1416,17 @@ L|1`
         siteId: 5,
       })
 
-      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
-      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
-      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
-        now.getTime(),
-        60000
-      )
+      expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+      expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+      expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(now.getTime(), 60000)
 
-      const insertSampleCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'Sample'
-      )
+      const insertSampleCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Sample')
       expect(insertSampleCalls).to.have.lengthOf(94)
-      const insertResultCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'Result'
-      )
-      const updateResultCalls = updateCalls.filter(
-        updateCall => updateCall.args[0] === 'Result'
-      )
+      const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
+      const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
       expect(insertResultCalls).to.have.lengthOf(94)
       expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length)
-      const insertedResults = insertResultCalls.map(
-        insertResultCall => insertResultCall.args[1]
-      )
+      const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
       const runLevelProperties = insertedResults.map(result => ({
         ..._.pick(result, [
           'instrumentSerial',
@@ -1674,14 +1440,9 @@ L|1`
           'latitude',
           'resultSourceId',
         ]),
-        resultData: _.pick(JSON.parse(result.resultData), [
-          'qualityControlSummary',
-        ]),
+        resultData: _.pick(JSON.parse(result.resultData), ['qualityControlSummary']),
       }))
-      const uniqueRunLevelProperties = _.uniqBy(
-        runLevelProperties,
-        JSON.stringify
-      )
+      const uniqueRunLevelProperties = _.uniqBy(runLevelProperties, JSON.stringify)
       expect(uniqueRunLevelProperties).to.have.lengthOf(1)
       expect(uniqueRunLevelProperties).to.containSubset([
         {
@@ -1785,18 +1546,12 @@ L|1`
           resultSourceId: staticDatabaseData.resultSourceId,
         },
       ])
-      expect(
-        _.uniq(insertedResults.map(result => result.externalId))
-      ).to.have.lengthOf(94)
+      expect(_.uniq(insertedResults.map(result => result.externalId))).to.have.lengthOf(94)
       const insertedResultCategories = _.uniqBy(
-        insertedResults.map(result =>
-          _.pick(result, ['resultCategory1', 'resultCategory2'])
-        ),
+        insertedResults.map(result => _.pick(result, ['resultCategory1', 'resultCategory2'])),
         insertedResultCategory => JSON.stringify(insertedResultCategory)
       )
-      expect(
-        _.sortBy(insertedResultCategories, result => result.resultCategory1)
-      ).to.deep.equal(
+      expect(_.sortBy(insertedResultCategories, result => result.resultCategory1)).to.deep.equal(
         _.sortBy(
           [
             {
@@ -1816,16 +1571,10 @@ L|1`
         )
       )
 
-      const insertResultWorkflowLogCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'ResultWorkflowLog'
-      )
+      const insertResultWorkflowLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'ResultWorkflowLog')
       expect(insertResultWorkflowLogCalls).to.have.lengthOf(94)
-      const insertDeviceLogCalls = insertCalls.filter(
-        insertCall => insertCall.args[0] === 'DeviceLog'
-      )
-      expect(insertDeviceLogCalls).to.have.lengthOf(
-        insertResultWorkflowLogCalls.length + 1
-      )
+      const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
+      expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
     })
 
     const controlResults = `5H|\\^&|||m2000^8.1.9.0^275020383^H1P1O1R1C1L1|||||||P|1|20200508045155
@@ -1880,11 +1629,7 @@ L|1`
     describe('When there is no amplification curve or Ct value > 40 in the FAM and VIC channels and there is amplification curve in the Cy5 channel', () => {
       it('can be judged that there is no 2019 Novel Coronavirus (2019-nCoV) RNA in the sample', async () => {
         const insertSpy = sinon.spy()
-        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
-          existingResultRecord,
-          sinon.spy(),
-          insertSpy
-        )
+        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(existingResultRecord, sinon.spy(), insertSpy)
         const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
           {
             auth: { credentials: { token: 'some device API key' } },
@@ -1928,8 +1673,7 @@ ${controlResults}`,
           .filter(insertCall => insertCall.args[0] === 'Result')
           .map(insertResultCall => insertResultCall.args[1])
         const resultDetectedOnlyAfter40Cycles = insertedResults.find(
-          result =>
-            result.externalId === '4755-4758/20|275020383|054|C2|20200508045151'
+          result => result.externalId === '4755-4758/20|275020383|054|C2|20200508045151'
         )
         expect(resultDetectedOnlyAfter40Cycles).to.containSubset({
           resultCategory1: staticDatabaseData.ResultCategory.NotDetected,
@@ -1941,11 +1685,7 @@ ${controlResults}`,
     describe('When there is obvious amplification curve in the FAM and VIC channels and Ct value ≤ 40', () => {
       it('can be judged that the sample is positive for 2019 Novel Coronavirus (2019-nCoV)', async () => {
         const insertSpy = sinon.spy()
-        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
-          existingResultRecord,
-          sinon.spy(),
-          insertSpy
-        )
+        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(existingResultRecord, sinon.spy(), insertSpy)
         const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
           {
             auth: { credentials: { token: 'some device API key' } },
@@ -1989,8 +1729,7 @@ ${controlResults}`,
           .filter(insertCall => insertCall.args[0] === 'Result')
           .map(insertResultCall => insertResultCall.args[1])
         const resultDetectedOnlyAfter40Cycles = insertedResults.find(
-          result =>
-            result.externalId === '4872/20|275020383|054|D7|20200508045151'
+          result => result.externalId === '4872/20|275020383|054|D7|20200508045151'
         )
         expect(resultDetectedOnlyAfter40Cycles).to.containSubset({
           resultCategory1: staticDatabaseData.ResultCategory.Detected,
@@ -2002,11 +1741,7 @@ ${controlResults}`,
     describe('When there is a Ct value of ≤ 40 in a single channel of FAM or VIC, and there is no amplification curve in the other channel', () => {
       it('should be interpreted as inconclusive', async () => {
         const insertSpy = sinon.spy()
-        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
-          existingResultRecord,
-          sinon.spy(),
-          insertSpy
-        )
+        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(existingResultRecord, sinon.spy(), insertSpy)
         const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
           {
             auth: { credentials: { token: 'some device API key' } },
@@ -2050,8 +1785,7 @@ ${controlResults}`,
           .filter(insertCall => insertCall.args[0] === 'Result')
           .map(insertResultCall => insertResultCall.args[1])
         const resultDetectedOnlyAfter40Cycles = insertedResults.find(
-          result =>
-            result.externalId === '4873/20|275020383|054|E7|20200508045151'
+          result => result.externalId === '4873/20|275020383|054|E7|20200508045151'
         )
         expect(resultDetectedOnlyAfter40Cycles).to.containSubset({
           resultCategory1: staticDatabaseData.ResultCategory.Indeterminate,
@@ -2064,11 +1798,7 @@ ${controlResults}`,
       it('should parse a RAW ASTM conversation file into invalid results', async () => {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
-        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(
-          existingResultRecord,
-          updateSpy,
-          insertSpy
-        )
+        const DefaultAbbottM2000 = mockOutDefaultAbbottM2000(existingResultRecord, updateSpy, insertSpy)
         const m2000DataProcessorViralLoad = new DefaultAbbottM2000(
           {
             auth: { credentials: { token: 'some device API key' } },
@@ -2077,24 +1807,15 @@ ${controlResults}`,
           { dispatch: () => {} }
         )
         await m2000DataProcessorViralLoad.processRequest()
-        assert.equal(
-          m2000DataProcessorViralLoad.response.deviceId,
-          databaseRecords.Device.id
-        )
-        expect(
-          m2000DataProcessorViralLoad.response.deviceLogIds
-        ).to.have.lengthOf(47)
+        assert.equal(m2000DataProcessorViralLoad.response.deviceId, databaseRecords.Device.id)
+        expect(m2000DataProcessorViralLoad.response.deviceLogIds).to.have.lengthOf(47)
         const insertCalls = insertSpy.getCalls()
         const updateCalls = updateSpy.getCalls()
 
-        const updateDeviceCalls = updateCalls.filter(
-          updateCall => updateCall.args[0] === 'Device'
-        )
+        const updateDeviceCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Device')
         expect(updateDeviceCalls).to.have.lengthOf(1)
         const actualDeviceUpdates = updateDeviceCalls[0].args[1]
-        actualDeviceUpdates.configurationData = JSON.parse(
-          actualDeviceUpdates.configurationData
-        )
+        actualDeviceUpdates.configurationData = JSON.parse(actualDeviceUpdates.configurationData)
         expect(actualDeviceUpdates).to.containSubset({
           configurationData: {
             comments: [],
@@ -2109,34 +1830,17 @@ ${controlResults}`,
           siteId: 5,
         })
 
-        expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(
-          now.getTime(),
-          60000
-        )
-        expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(
-          now.getTime(),
-          60000
-        )
-        expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(
-          now.getTime(),
-          60000
-        )
+        expect(actualDeviceUpdates.lastPingOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+        expect(actualDeviceUpdates.lastSeenOn.getTime()).to.be.closeTo(now.getTime(), 60000)
+        expect(actualDeviceUpdates.updatedOn.getTime()).to.be.closeTo(now.getTime(), 60000)
 
-        const insertSampleCalls = insertCalls.filter(
-          insertCall => insertCall.args[0] === 'Sample'
-        )
+        const insertSampleCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Sample')
         expect(insertSampleCalls).to.have.lengthOf(45)
-        const insertResultCalls = insertCalls.filter(
-          insertCall => insertCall.args[0] === 'Result'
-        )
-        const updateResultCalls = updateCalls.filter(
-          updateCall => updateCall.args[0] === 'Result'
-        )
+        const insertResultCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'Result')
+        const updateResultCalls = updateCalls.filter(updateCall => updateCall.args[0] === 'Result')
         expect(insertResultCalls).to.have.lengthOf(45)
         expect(updateResultCalls).to.have.lengthOf(insertResultCalls.length + 2)
-        const insertedResults = insertResultCalls.map(
-          insertResultCall => insertResultCall.args[1]
-        )
+        const insertedResults = insertResultCalls.map(insertResultCall => insertResultCall.args[1])
         const runLevelProperties = insertedResults.map(result => ({
           ..._.pick(result, [
             'instrumentSerial',
@@ -2150,15 +1854,9 @@ ${controlResults}`,
             'latitude',
             'resultSourceId',
           ]),
-          resultData: _.pick(JSON.parse(result.resultData), [
-            'passedQualityControl',
-            'qualityControlSummary',
-          ]),
+          resultData: _.pick(JSON.parse(result.resultData), ['passedQualityControl', 'qualityControlSummary']),
         }))
-        const uniqueRunLevelProperties = _.uniqBy(
-          runLevelProperties,
-          JSON.stringify
-        )
+        const uniqueRunLevelProperties = _.uniqBy(runLevelProperties, JSON.stringify)
         expect(uniqueRunLevelProperties).to.have.lengthOf(1)
         expect(uniqueRunLevelProperties).to.containSubset([
           {
@@ -2239,22 +1937,13 @@ ${controlResults}`,
             resultSourceId: staticDatabaseData.resultSourceId,
           },
         ])
-        expect(
-          _.uniq(insertedResults.map(result => result.externalId))
-        ).to.have.lengthOf(45)
+        expect(_.uniq(insertedResults.map(result => result.externalId))).to.have.lengthOf(45)
         const errorResults = insertedResults
-          .filter(
-            result =>
-              result.resultCategory1 === staticDatabaseData.ResultCategory.Error
-          )
+          .filter(result => result.resultCategory1 === staticDatabaseData.ResultCategory.Error)
           .map(result => ({
             ...result,
-            resultData: result.resultData
-              ? JSON.parse(result.resultData)
-              : null,
-            patientData: result.patientData
-              ? JSON.parse(result.patientData)
-              : null,
+            resultData: result.resultData ? JSON.parse(result.resultData) : null,
+            patientData: result.patientData ? JSON.parse(result.patientData) : null,
             formData: result.formData ? JSON.parse(result.formData) : null,
           }))
         expect(errorResults).to.containSubset([
@@ -2380,14 +2069,10 @@ ${controlResults}`,
           },
         ])
         const insertedResultCategories = _.uniqBy(
-          insertedResults.map(result =>
-            _.pick(result, ['resultCategory1', 'resultCategory2'])
-          ),
+          insertedResults.map(result => _.pick(result, ['resultCategory1', 'resultCategory2'])),
           insertedResultCategory => JSON.stringify(insertedResultCategory)
         )
-        expect(
-          _.sortBy(insertedResultCategories, result => result.resultCategory1)
-        ).to.deep.equal(
+        expect(_.sortBy(insertedResultCategories, result => result.resultCategory1)).to.deep.equal(
           _.sortBy(
             [
               {
@@ -2405,52 +2090,40 @@ ${controlResults}`,
 
         expect(
           updateResultCalls
-            .filter(
-              updateResultCall =>
-                Object.keys(updateResultCall.args[1]).length > 1
-            )
+            .filter(updateResultCall => Object.keys(updateResultCall.args[1]).length > 1)
             .map(updateResultCall => ({
               ...updateResultCall.args[1],
-              resultData: updateResultCall.args[1].resultData
-                ? JSON.parse(updateResultCall.args[1].resultData)
-                : null,
+              resultData: updateResultCall.args[1].resultData ? JSON.parse(updateResultCall.args[1].resultData) : null,
             }))
         ).to.containSubset([
           {
             ..._.omit(existingResultRecord, ['endedOn', 'updatedOn']),
             resultData: {
               ...JSON.parse(existingResultRecord.resultData),
-              messageSentOn: convertToTimeZone(
-                new Date(2020, 3, 30, 3, 49, 4),
-                {
-                  timeZone: 'UTC',
-                }
-              ).toISOString(),
+              messageSentOn: convertToTimeZone(new Date(2020, 3, 30, 3, 49, 4), {
+                timeZone: 'UTC',
+              }).toISOString(),
               qualityControlSummary: {
                 'Daan Target N gene LDA': {
                   negativeControl: _.omit(
-                    JSON.parse(existingResultRecord.resultData)
-                      .qualityControlSummary['Daan Target N gene LDA']
+                    JSON.parse(existingResultRecord.resultData).qualityControlSummary['Daan Target N gene LDA']
                       .negativeControl,
                     ['endedOn']
                   ),
                   positiveControl: _.omit(
-                    JSON.parse(existingResultRecord.resultData)
-                      .qualityControlSummary['Daan Target N gene LDA']
+                    JSON.parse(existingResultRecord.resultData).qualityControlSummary['Daan Target N gene LDA']
                       .positiveControl,
                     ['endedOn']
                   ),
                 },
                 'Daan nCOVID-19 ORF LDA': {
                   negativeControl: _.omit(
-                    JSON.parse(existingResultRecord.resultData)
-                      .qualityControlSummary['Daan nCOVID-19 ORF LDA']
+                    JSON.parse(existingResultRecord.resultData).qualityControlSummary['Daan nCOVID-19 ORF LDA']
                       .negativeControl,
                     ['endedOn']
                   ),
                   positiveControl: _.omit(
-                    JSON.parse(existingResultRecord.resultData)
-                      .qualityControlSummary['Daan nCOVID-19 ORF LDA']
+                    JSON.parse(existingResultRecord.resultData).qualityControlSummary['Daan nCOVID-19 ORF LDA']
                       .positiveControl,
                     ['endedOn']
                   ),
@@ -2466,12 +2139,8 @@ ${controlResults}`,
           insertCall => insertCall.args[0] === 'ResultWorkflowLog'
         )
         expect(insertResultWorkflowLogCalls).to.have.lengthOf(46)
-        const insertDeviceLogCalls = insertCalls.filter(
-          insertCall => insertCall.args[0] === 'DeviceLog'
-        )
-        expect(insertDeviceLogCalls).to.have.lengthOf(
-          insertResultWorkflowLogCalls.length + 1
-        )
+        const insertDeviceLogCalls = insertCalls.filter(insertCall => insertCall.args[0] === 'DeviceLog')
+        expect(insertDeviceLogCalls).to.have.lengthOf(insertResultWorkflowLogCalls.length + 1)
       })
     })
   })

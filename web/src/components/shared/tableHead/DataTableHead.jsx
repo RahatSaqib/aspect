@@ -9,11 +9,16 @@ import TableCell from '@material-ui/core/TableCell'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 import PermissionsProvider from '../../../Providers/PermissionsProvider'
+import AspectTooltip from '../AspectTooltip'
 
 const styles = theme => {
   const style = {
     cell: {
       fontWeight: theme.typography.fontWeightBold,
+      whiteSpace: 'nowrap',
+    },
+    columnLabel: {
+      whiteSpace: 'normal',
     },
     clickable: {
       cursor: 'pointer',
@@ -32,6 +37,11 @@ const styles = theme => {
       width: '1em',
       height: '1em',
     },
+    tooltipIcon: {
+      display: 'inline-flex',
+      width: '1em',
+      height: '1em',
+    },
   }
   const hidden = {
     display: 'none',
@@ -45,55 +55,30 @@ const styles = theme => {
   }, style)
 }
 
-const DataTableHead = ({
-  classes,
-  compact,
-  sortColumnKey,
-  sortColumnDir,
-  columns,
-  onHeadColumnClick = noop,
-}) => (
+const DataTableHead = ({ classes, compact, sortColumnKey, sortColumnDir, columns, onHeadColumnClick = noop }) => (
   <TableHead>
     <TableRow className={classNames({ [classes.compact]: compact })}>
       {columns.map(
         (
-          {
-            key = index,
-            colSpan,
-            label,
-            onClick,
-            sortable = false,
-            isHidden,
-            hiddenOn,
-            auth,
-            ...restProps
-          },
+          { key = index, colSpan, label, onClick, sortable = false, tooltip, isHidden, hiddenOn, auth, ...restProps },
           index
         ) =>
           !isHidden ? (
-            <PermissionsProvider
-              key={`PermissionProvider--${key}`}
-              permissions={auth || []}
-            >
+            <PermissionsProvider key={`PermissionProvider--${key}`} permissions={auth || []}>
               <TableCell
                 data-column={key}
                 colSpan={colSpan}
                 sortDirection={sortColumnKey === key ? sortColumnDir : false}
                 onClick={onClick}
                 {...restProps}
-                className={classNames(
-                  restProps.className,
-                  classes.cell,
-                  classes[`hidden${hiddenOn}Down`],
-                  {
-                    [classes.centerAlignedCell]: !!colSpan,
-                    [classes.clickable]: isFunction(onClick) || sortable,
-                    [classes.compact]: compact,
-                  }
-                )}
+                className={classNames(restProps.className, classes.cell, classes[`hidden${hiddenOn}Down`], {
+                  [classes.centerAlignedCell]: !!colSpan,
+                  [classes.clickable]: isFunction(onClick) || sortable,
+                  [classes.compact]: compact,
+                })}
               >
                 {!sortable ? (
-                  label
+                  <span className={classes.columnLabel}>{label}</span>
                 ) : (
                   <TableSortLabel
                     active={sortColumnKey === key}
@@ -101,12 +86,14 @@ const DataTableHead = ({
                     onClick={() => onHeadColumnClick(key)}
                     IconComponent={KeyboardArrowDown}
                     classes={{
+                      root: classes.columnLabel,
                       icon: classes.sortIcon,
                     }}
                   >
                     {label}
                   </TableSortLabel>
                 )}
+                {tooltip && <AspectTooltip title={tooltip} showHelpIcon toolTipContainerClass={classes.tooltipIcon} />}
               </TableCell>
             </PermissionsProvider>
           ) : null

@@ -4,14 +4,7 @@ import PermissionsProvider from '../../Providers/PermissionsProvider'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import GraphsContainer from '../../MigratedComponents/Graphs/GraphsContainer'
 
-const GroupedGraphs = ({
-  assays,
-  classNames,
-  graphs,
-  groupName,
-  onGraphSettled,
-  isOwnerReady,
-}) => {
+const GroupedGraphs = ({ assays, classNames, graphs, groupName, onGraphSettled, isOwnerReady }) => {
   return graphs && assays?.length
     ? graphs.map(graph => (
         <ErrorBoundary key={graph.id}>

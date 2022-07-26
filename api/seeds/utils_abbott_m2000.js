@@ -1,9 +1,5 @@
 const Promise = require('bluebird')
-const {
-  allAssayTypeToId,
-  deviceTypeCategoryToId,
-  resultSourceToId,
-} = require('../src/shared/dictionary')
+const { allAssayTypeToId, deviceTypeCategoryToId, resultSourceToId } = require('../src/shared/dictionary')
 const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
 
 async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
@@ -29,10 +25,7 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
   const deviceTypeCategoryLabId = await deviceTypeCategoryToId('Lab')
 
   const deviceTypeExternalId = 'AbbottM2000'
-  let { id: deviceTypeM2000Id } =
-    (await knex('DeviceType')
-      .where('externalId', deviceTypeExternalId)
-      .first('id')) || {}
+  let { id: deviceTypeM2000Id } = (await knex('DeviceType').where('externalId', deviceTypeExternalId).first('id')) || {}
   if (!deviceTypeM2000Id) {
     ;[deviceTypeM2000Id] = await knex('DeviceType').insert({
       externalId: deviceTypeExternalId,
@@ -295,17 +288,11 @@ async function seedAbbottM2000AndAssays(knex, updateExistingAssays) {
   const ensureResultCategories = async (assayId, resultCategories) =>
     Promise.each(resultCategories, async resultCategory => {
       let { id: resultCategoryId } =
-        (await knex('ResultCategory')
-          .where('externalId', resultCategory.externalId)
-          .first()) || {}
+        (await knex('ResultCategory').where('externalId', resultCategory.externalId).first()) || {}
       if (!resultCategoryId) {
-        ;[resultCategoryId] = await knex('ResultCategory').insert(
-          resultCategory
-        )
+        ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
       }
-      const resultCategoryAssay = await knex('ResultCategoryAssay')
-        .where({ assayId, resultCategoryId })
-        .first()
+      const resultCategoryAssay = await knex('ResultCategoryAssay').where({ assayId, resultCategoryId }).first()
       if (!resultCategoryAssay) {
         await knex('ResultCategoryAssay').insert({
           assayId,

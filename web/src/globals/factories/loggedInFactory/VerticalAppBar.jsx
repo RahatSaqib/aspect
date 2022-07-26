@@ -26,16 +26,9 @@ const VerticalAppBar = ({ toggleDrawer }) => {
   const navigateRoot = () => navigate('/')
 
   return (
-    <AppBar
-      className={cssClasses('AppBar__appBar', 'AppBar__appBar--xs')}
-      color="inherit"
-    >
+    <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--xs')} color="inherit">
       <Toolbar className={cssClasses('VerticalAppBar')}>
-        <IconButton
-          className={cssClasses('AppBar__leftIcon')}
-          aria-label="Menu"
-          onClick={toggleDrawer}
-        >
+        <IconButton className={cssClasses('AppBar__leftIcon')} aria-label="Menu" onClick={toggleDrawer}>
           <MenuIcon fontSize="large" />
         </IconButton>
         <IconButton aria-label="Logo" onClick={navigateRoot}>

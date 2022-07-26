@@ -18,20 +18,10 @@ const PureCheckboxInput = props => {
   return (
     <FormControl>
       <FormControlLabel
-        control={
-          <Checkbox
-            id={id}
-            name={id}
-            checked={values[id]}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-        }
+        control={<Checkbox id={id} name={id} checked={values[id]} onChange={handleChange} onBlur={handleBlur} />}
         label={label || startCase(id)}
       />
-      {isError ? (
-        <FormHelperText>{touched[id] && errors[id]}</FormHelperText>
-      ) : null}
+      {isError ? <FormHelperText>{touched[id] && errors[id]}</FormHelperText> : null}
     </FormControl>
   )
 }

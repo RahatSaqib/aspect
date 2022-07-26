@@ -19,9 +19,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'admin' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -745,14 +743,7 @@ async function seed(knex) {
     assayId: assayGeneXpertHcvId,
   })
 
-  await upsertConsumables(knex, true, [
-    'GxMtbRif',
-    'GxMtbRifUltra',
-    'GxEbola',
-    'GxHiv1Vl',
-    'GxHcv',
-    'GxHiv1Qual',
-  ])
+  await upsertConsumables(knex, true, ['GxMtbRif', 'GxMtbRifUltra', 'GxEbola', 'GxHiv1Vl', 'GxHcv', 'GxHiv1Qual'])
 
   // Create geographic hierarchy
   const countries = {}

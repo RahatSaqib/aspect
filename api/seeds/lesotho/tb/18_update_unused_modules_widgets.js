@@ -4,7 +4,5 @@ const { getPartnerByName } = require('../../utils')
 
 module.exports = require('../../utils').seed(async knex => {
   const { id: partnerId } = await getPartnerByName(knex, 'Lesotho TB')
-  await upsertDashboardWidgets(knex, partnerId, dashboardWidget, [
-    'unusedModules',
-  ])
+  await upsertDashboardWidgets(knex, partnerId, dashboardWidget, ['unusedModules'])
 }, __filename)

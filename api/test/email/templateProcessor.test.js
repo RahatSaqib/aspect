@@ -12,36 +12,18 @@ describe('email/templateProcessor', () => {
           aspectUrl: 'https://aspect.id',
           resetPasswordToken: 'reset-token-12345',
         }
-        return runTest(templateProcessor.process, [
-          'resetPassword',
-          tokenValues,
-        ])(result => {
+        return runTest(templateProcessor.process, ['resetPassword', tokenValues])(result => {
           assert.include(result.subject, 'Aspect Password Reset')
           assert.include(result.html, `Dear ${tokenValues.name},`)
           assert.include(result.html, 'Click here to reset your password')
-          assert.include(
-            result.html,
-            `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
-          )
+          assert.include(result.html, `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`)
           assert.include(result.html, 'Copyable link: ')
-          assert.include(
-            result.html,
-            'This link is valid for the next hour and can only be used once.'
-          )
+          assert.include(result.html, 'This link is valid for the next hour and can only be used once.')
 
           assert.include(result.text, `Dear ${tokenValues.name},`)
-          assert.include(
-            result.text,
-            'you can reset your password by opening the following URL in your browser'
-          )
-          assert.include(
-            result.text,
-            `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
-          )
-          assert.include(
-            result.text,
-            'This link is valid for the next hour and can only be used once.'
-          )
+          assert.include(result.text, 'you can reset your password by opening the following URL in your browser')
+          assert.include(result.text, `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`)
+          assert.include(result.text, 'This link is valid for the next hour and can only be used once.')
         })
       })
 
@@ -52,20 +34,10 @@ describe('email/templateProcessor', () => {
             aspectUrl: 'https://aspect.id',
             resetPasswordToken: 'reset-token-12345',
           }
-          return runTest(templateProcessor.process, [
-            'resetPassword',
-            tokenValues,
-            'fr-FR',
-          ])(result => {
-            assert.include(
-              result.subject,
-              'Réinitialisation du mot de passe Aspect'
-            )
+          return runTest(templateProcessor.process, ['resetPassword', tokenValues, 'fr-FR'])(result => {
+            assert.include(result.subject, 'Réinitialisation du mot de passe Aspect')
             assert.include(result.html, `Cher ${tokenValues.name},`)
-            assert.include(
-              result.html,
-              'Cliquez ici pour réinitialiser votre mot de passe'
-            )
+            assert.include(result.html, 'Cliquez ici pour réinitialiser votre mot de passe')
             assert.include(
               result.html,
               `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
@@ -98,15 +70,8 @@ describe('email/templateProcessor', () => {
   describe('generateAttachment', () => {
     describe('api/src/email/templates/systemone.jpg', () => {
       it('should generate an attachment object with base 64 encoded string for the file', async () => {
-        const filePath = path.join(
-          __dirname,
-          '../../src/email/templates/systemone.jpg'
-        )
-        return runTest(templateProcessor.generateAttachment, [
-          filePath,
-          'image/jpeg',
-          'inline',
-        ])(attachment => {
+        const filePath = path.join(__dirname, '../../src/email/templates/systemone.jpg')
+        return runTest(templateProcessor.generateAttachment, [filePath, 'image/jpeg', 'inline'])(attachment => {
           assert.isOk(attachment.content)
           assert.equal(attachment.mimeType, 'image/jpeg')
           assert.equal(attachment.disposition, 'inline')

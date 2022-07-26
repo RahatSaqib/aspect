@@ -33,11 +33,7 @@ async function process(templateName, tokenValues, locale) {
   return result
 }
 
-async function generateAttachment(
-  pathToFile,
-  mimeType = 'application/octet-stream',
-  disposition = 'attachment'
-) {
+async function generateAttachment(pathToFile, mimeType = 'application/octet-stream', disposition = 'attachment') {
   return {
     content: await encode(pathToFile, { string: true, local: true }),
     mimeType,
@@ -64,11 +60,7 @@ async function getInlineImageAttachments(htmlContent) {
 
         if (mimeType) {
           attachments.push(
-            await generateAttachment(
-              path.join(__dirname, 'templates', directoryItems[i]),
-              mimeType,
-              'inline'
-            )
+            await generateAttachment(path.join(__dirname, 'templates', directoryItems[i]), mimeType, 'inline')
           )
         }
       }

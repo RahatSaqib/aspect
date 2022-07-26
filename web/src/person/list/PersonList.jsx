@@ -8,25 +8,12 @@ import { connect, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
-import {
-  getCustomMessage,
-  commonDefinitions,
-} from '../../shared/utils/customMessages'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
-import requirePermissions, {
-  isPermittedUser,
-} from '../../components/shared/requirePermissions'
+import { getCustomMessage, commonDefinitions } from '../../shared/utils/customMessages'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
+import requirePermissions, { isPermittedUser } from '../../components/shared/requirePermissions'
 
 import AspectButton from '../../components/shared/AspectButton'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -34,11 +21,7 @@ import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchPersons, exportContacts } from '../PersonRedux'
-import {
-  PersonDataTable,
-  PersonDataTableHead,
-  PersonDataTableRow,
-} from './PersonDataTable'
+import { PersonDataTable, PersonDataTableHead, PersonDataTableRow } from './PersonDataTable'
 import { i18nWrapper } from '../../Providers/I18nProvider/index'
 
 import ExportListButton from '../../globals/components/ExportListButton'
@@ -117,10 +100,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -131,9 +111,7 @@ const enhance = compose(
     }),
     ({ location }) => {
       const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
+      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
       return {
         filters: getFilters(filtersParams),
       }
@@ -155,8 +133,7 @@ const enhance = compose(
     onInitialLoad:
       ({ location, fetchPersons, sortCol, sortDir, pageAt, pageSize }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           fetchPersons(filtersParams, sortCol, sortDir, pageAt, pageSize)
         }
@@ -166,8 +143,7 @@ const enhance = compose(
       ({ location, exportContacts, sortCol, sortDir, pageAt, table }) =>
       formatType => {
         const format = formatType.id
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           exportContacts(
             filtersParams,
@@ -199,11 +175,8 @@ const enhance = compose(
   }),
   lifecycle({
     UNSAFE_componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const { sanitized: filtersSanitized, value: filtersParams } =
-        filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized, value: searchParams } = searchSanitizer(this.props.location)
+      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
         this.props.navigate(
@@ -214,10 +187,7 @@ const enhance = compose(
           { replace: true }
         )
       }
-      const reducedFilters = reduceFiltersConfig(
-        FILTERS_CONFIG,
-        this.props.userPermissions
-      )
+      const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, this.props.userPermissions)
       this.setState({
         reducedFilters,
       })
@@ -256,9 +226,7 @@ export const PersonList = ({
   })(AspectButton)
   const { formatMessage } = i18nWrapper()
 
-  const { permissions: userPermissions } = useSelector(
-    ({ user }) => user.toJS().jwt
-  )
+  const { permissions: userPermissions } = useSelector(({ user }) => user.toJS().jwt)
 
   const editor = user.toJS()
   const isEditAllow = isPermittedUser(userPermissions, {
@@ -269,26 +237,14 @@ export const PersonList = ({
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.contactsTitle)} />
       <NavTitle title={formatMessage(messages.contactsTitle)} />
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        config={reducedFilters}
-      >
-        <AddNewButton
-          type="button"
-          color="primary"
-          variant="contained"
-          browseButton
-          onClick={showNewContactPage}
-        >
+      <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+        <AddNewButton type="button" color="primary" variant="contained" browseButton onClick={showNewContactPage}>
           {formatMessage(messages.addContact)}
         </AddNewButton>
       </BrowseFilters>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
+        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
         <ExportListButton
           onExcelClick={onExcelClick}
           onCsvClick={onExcelClick}
@@ -345,9 +301,7 @@ export const PersonList = ({
                     person={person}
                     onClick={onRowClick}
                     data-person-id={person.get('id')}
-                    personEditPermission={
-                      isEditAllow && editor?.userId !== person.get('id')
-                    }
+                    personEditPermission={isEditAllow && editor?.userId !== person.get('id')}
                   />
                 ))}
             </TableBody>

@@ -14,11 +14,7 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import Shell from '../../Shell'
 
 import isEditable from '../../../shared/selectors/isEditable'
-import {
-  fetchSingleSite,
-  updateSingleSiteFromForm,
-  updateLatLongFromFormAddress,
-} from '../../../site/SiteRedux'
+import { fetchSingleSite, updateSingleSiteFromForm, updateLatLongFromFormAddress } from '../../../site/SiteRedux'
 import { fetchTags, updateTags } from '../../../tag/TagRedux'
 import { fetchSiteContacts } from '../../../person/PersonRedux'
 
@@ -63,27 +59,19 @@ export const SiteDetail = props => {
   } = props
   const { siteId } = useParams()
   const intl = useIntl()
-  const { editable, site, siteTags, siteContacts, user } = useSelector(
-    state => {
-      const site = state.site.items.byId.get(siteId)
-      const siteTags = state.tag.tags.getIn(['site', siteId], Immutable.List())
-      const siteContacts = state.person.siteContacts.getIn(
-        [siteId],
-        Immutable.List()
-      )
-      return {
-        editable: isEditable(state.user, 'site'),
-        site,
-        siteTags,
-        lastServerResponseTime: state.getIn([
-          'globals',
-          'lastServerResponseTime',
-        ]),
-        siteContacts,
-        user: state.user,
-      }
+  const { editable, site, siteTags, siteContacts, user } = useSelector(state => {
+    const site = state.site.items.byId.get(siteId)
+    const siteTags = state.tag.tags.getIn(['site', siteId], Immutable.List())
+    const siteContacts = state.person.siteContacts.getIn([siteId], Immutable.List())
+    return {
+      editable: isEditable(state.user, 'site'),
+      site,
+      siteTags,
+      lastServerResponseTime: state.getIn(['globals', 'lastServerResponseTime']),
+      siteContacts,
+      user: state.user,
     }
-  )
+  })
 
   useEffect(() => {
     const handleFetchSite = siteId => {
@@ -98,8 +86,7 @@ export const SiteDetail = props => {
     updateTags(qryId, qryType, tags.join(','))
   }
 
-  const hasSiteWithLocation = () =>
-    site && !isNil(site.get('longitude')) && !isNil(site.get('latitude'))
+  const hasSiteWithLocation = () => site && !isNil(site.get('longitude')) && !isNil(site.get('latitude'))
 
   const hasSite = () => site && site.has('longitude') && site.has('latitude')
 
@@ -156,12 +143,7 @@ export const SiteDetail = props => {
               />
             </Route>
             <Route path="alerts">
-              <SiteDetailAlert
-                {...props}
-                intl={intl}
-                disabled={!editable}
-                siteId={+siteId}
-              />
+              <SiteDetailAlert {...props} intl={intl} disabled={!editable} siteId={+siteId} />
             </Route>
             <Route path="edit">
               {editable ? (

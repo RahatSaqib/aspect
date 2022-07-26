@@ -33,14 +33,8 @@ const enhance = compose(
     const last30Days = formatDate(subtractDays(now, 30), 'yyyy-MM-dd')
     const beginningOfThisYear = formatDate(startOfYear(now), 'yyyy-MM-dd')
     const endOfThisYear = formatDate(endOfYear(now), 'yyyy-MM-dd')
-    const beginningOfLastYear = formatDate(
-      startOfYear(subtractYears(now, 1)),
-      'yyyy-MM-dd'
-    )
-    const endOfLastYear = formatDate(
-      endOfYear(subtractYears(now, 1)),
-      'yyyy-MM-dd'
-    )
+    const beginningOfLastYear = formatDate(startOfYear(subtractYears(now, 1)), 'yyyy-MM-dd')
+    const endOfLastYear = formatDate(endOfYear(subtractYears(now, 1)), 'yyyy-MM-dd')
     return {
       showHigherLevel: isEmpty(filtersParams.get('siteId')),
       token: getAspectAccess(),

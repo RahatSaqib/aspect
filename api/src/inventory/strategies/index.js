@@ -11,32 +11,20 @@ function withLotStrategy(knexQuery, { lotNumber }, inventoryItemAlias = 'ii') {
     knexQuery.where('ii.lotNumber', lotNumber)
   } else {
     knexQuery.where(builder =>
-      builder
-        .whereNull(`${inventoryItemAlias}.lotNumber`)
-        .orWhere(`${inventoryItemAlias}.lotNumber`, '')
+      builder.whereNull(`${inventoryItemAlias}.lotNumber`).orWhere(`${inventoryItemAlias}.lotNumber`, '')
     )
   }
 }
 
-function withExpirationDateStrategy(
-  knexQuery,
-  { expiresOn = null },
-  inventoryItemAlias = 'ii'
-) {
+function withExpirationDateStrategy(knexQuery, { expiresOn = null }, inventoryItemAlias = 'ii') {
   if (!_.isNil(expiresOn)) {
-    knexQuery.whereRaw(`Date(${inventoryItemAlias}.expiresOn) = date(?)`, [
-      expiresOn,
-    ])
+    knexQuery.whereRaw(`Date(${inventoryItemAlias}.expiresOn) = date(?)`, [expiresOn])
   } else {
     knexQuery.whereNull(`${inventoryItemAlias}.expiresOn`)
   }
 }
 
-function withLotAndExpirationDateStrategy(
-  knexQuery,
-  { lotNumber, expiresOn },
-  inventoryItemAlias = 'ii'
-) {
+function withLotAndExpirationDateStrategy(knexQuery, { lotNumber, expiresOn }, inventoryItemAlias = 'ii') {
   withLotStrategy(knexQuery, { lotNumber }, inventoryItemAlias)
   withExpirationDateStrategy(knexQuery, { expiresOn }, inventoryItemAlias)
 }

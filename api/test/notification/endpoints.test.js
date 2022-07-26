@@ -2,9 +2,7 @@ const proxyquire = require('proxyquire')
 const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
-const {
-  resultBasedNotificationPayload,
-} = require('../../src/notification/validations')
+const { resultBasedNotificationPayload } = require('../../src/notification/validations')
 
 describe('notification endpoints', () => {
   function setupRoute(method, path, serviceStub) {

@@ -13,9 +13,7 @@ async function seed(knex) {
     .where('activity', 'admin')
     .first('id')
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where('name', 'Admin')
-    .first('id')
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').first('id')
 
   const { jobFunctionId } = knex('JobFunctionPermission')
     .where('jobFunctionId', jobFunctionIdAdmin)
@@ -31,16 +29,7 @@ async function seed(knex) {
     ])
   await upsertGeneXpertDeviceTypeAndAssays(
     knex,
-    [
-      'GxUnknown',
-      'GxHcv',
-      'GxHiv',
-      'GxMtbRif',
-      'GxMtbRifUltra',
-      'GxHiv1Vl',
-      'GxHiv1Qual',
-      'GxEbola',
-    ],
+    ['GxUnknown', 'GxHcv', 'GxHiv', 'GxMtbRif', 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual', 'GxEbola'],
     patientData
   )
 }

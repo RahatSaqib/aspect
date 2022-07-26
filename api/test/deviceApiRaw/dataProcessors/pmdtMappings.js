@@ -82,8 +82,7 @@ module.exports = {
         'TAT Culture Remarks': null,
         'DSSM&Culture Releasing Form Med Tech': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
         'DST ID Result': null,
         'DST Date Inoculated': null,
         'DST MT Inoculated': null,
@@ -377,8 +376,7 @@ module.exports = {
         'Smear Only Test Requested 2': 'DSSM Only',
         'LPA Ethionamide/Prothionamide': null,
         'Test Requested Paragonimiasis': null,
-        'DST Releasing Form Lab Manager':
-          'Michellin Roxanne S. Baje, RMT License #: 0055901',
+        'DST Releasing Form Lab Manager': 'Michellin Roxanne S. Baje, RMT License #: 0055901',
         'DST Releasing Form Released Date': null,
         'Laboratory Releasing Form Remarks': null,
         'DSSM&Culture Releasing Form Med Tech': null,
@@ -387,8 +385,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
       },
       resultData: {
         encodedResult: {
@@ -581,8 +578,7 @@ module.exports = {
         'LPA Test Requested Others': null,
         'Paragioniamiasis Result 1': null,
         'Paragioniamiasis Result 2': null,
-        'Referring Health Facility':
-          'San Jose Del Monte City Health Center IV - PMDT STC',
+        'Referring Health Facility': 'San Jose Del Monte City Health Center IV - PMDT STC',
         'Smear Only Test Requested': 'DSSM Only',
         'DST Releasing Form MedTech': null,
         'Laboratory Registry Remarks': null,
@@ -598,8 +594,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
       },
       resultData: {
         encodedResult: {
@@ -716,8 +711,7 @@ module.exports = {
         'TAT Culture Remarks': null,
         'DSSM&Culture Releasing Form Med Tech': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
         'DST ID Result': null,
         'DST Date Inoculated': null,
         'DST MT Inoculated': null,
@@ -1020,8 +1014,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
       },
       resultData: {
         encodedResult: {
@@ -1231,8 +1224,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
         GeneXpertSignedOffBy1: null,
         GeneXpertSignedOffBy2: null,
         GeneXpertSignedOffBy3: null,
@@ -1391,8 +1383,7 @@ module.exports = {
         'Gx Test Requested': null,
         'LPA Date Released': null,
         'Repeat Collection': null,
-        'Smear Verified By':
-          'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
+        'Smear Verified By': 'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
         'Specimen Accepted': null,
         'Test Requested Gx': false,
         'Culture DST Status': null,
@@ -1460,8 +1451,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
         GeneXpertSignedOffBy1: null,
         GeneXpertSignedOffBy2: null,
         GeneXpertSignedOffBy3: null,
@@ -1488,8 +1478,7 @@ module.exports = {
           dateReleased: '2021-05-20T00:00:00.000Z',
           smearResult1: '0',
           smearResult2: '0',
-          laboratoryTechnician:
-            'Kevin Joshua A. Alonzo, RMT      License #: 0072790',
+          laboratoryTechnician: 'Kevin Joshua A. Alonzo, RMT      License #: 0072790',
         },
       },
     },
@@ -1602,8 +1591,7 @@ module.exports = {
         'Gx Test Requested': null,
         'LPA Date Released': null,
         'Repeat Collection': null,
-        'Smear Verified By':
-          'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
+        'Smear Verified By': 'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
         'Specimen Accepted': null,
         'Test Requested Gx': false,
         'Culture DST Status': null,
@@ -1671,8 +1659,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
         GeneXpertSignedOffBy1: null,
         GeneXpertSignedOffBy2: null,
         GeneXpertSignedOffBy3: null,
@@ -1699,8 +1686,7 @@ module.exports = {
           dateReleased: '2021-05-19T00:00:00.000Z',
           smearResult1: '0',
           smearResult2: null,
-          laboratoryTechnician:
-            'Glenn Hector S. Talaoc, RMT  License #: 0058208',
+          laboratoryTechnician: 'Glenn Hector S. Talaoc, RMT  License #: 0058208',
         },
       },
     },
@@ -1851,8 +1837,7 @@ module.exports = {
         'Cat IV Screening Code': null,
         'Culture Date Released': null,
         'Culture Result Status': null,
-        'Gx Laboratory Manager':
-          'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
+        'Gx Laboratory Manager': 'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
         'LPA Rifampicin Result': null,
         'DST Method Used Others': null,
         'Date transfered to DST': null,
@@ -1883,8 +1868,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
       },
       resultData: {
         encodedResult: {
@@ -2048,8 +2032,7 @@ module.exports = {
         'Cat IV Screening Code': null,
         'Culture Date Released': null,
         'Culture Result Status': null,
-        'Gx Laboratory Manager':
-          'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
+        'Gx Laboratory Manager': 'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
         'LPA Rifampicin Result': null,
         'DST Method Used Others': null,
         'Date transfered to DST': null,
@@ -2080,8 +2063,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
         GeneXpertSignedOffBy1: null,
         GeneXpertSignedOffBy2: null,
         GeneXpertSignedOffBy3: 'ltreyes',
@@ -2259,8 +2241,7 @@ module.exports = {
         'Cat IV Screening Code': null,
         'Culture Date Released': null,
         'Culture Result Status': null,
-        'Gx Laboratory Manager':
-          'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
+        'Gx Laboratory Manager': 'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
         'LPA Rifampicin Result': null,
         'DST Method Used Others': null,
         'Date transfered to DST': null,
@@ -2892,8 +2873,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
         GeneXpertSignedOffBy1: null,
         GeneXpertSignedOffBy2: null,
         GeneXpertSignedOffBy3: null,
@@ -3098,8 +3078,7 @@ module.exports = {
         'DST Laboratory Releasing Form Remarks': null,
         'Laboratory Releasing Form Smear Remarks': null,
         'DSSM&Culture Releasing Form Date Released': null,
-        'DSSM&Culture Releasing Form Laboratory Manager':
-          'Cristina C. Villarico, RMT',
+        'DSSM&Culture Releasing Form Laboratory Manager': 'Cristina C. Villarico, RMT',
       },
       resultData: {
         encodedResult: {

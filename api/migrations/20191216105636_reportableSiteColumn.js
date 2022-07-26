@@ -3,13 +3,7 @@ module.exports = require('../src/db').migration(up, down)
 async function up(knex) {
   await knex.schema.alterTable('Device', x => {
     x.dropForeign('siteId')
-    x.integer('siteId')
-      .unsigned()
-      .references('id')
-      .inTable('Site')
-      .nullable()
-      .onDelete('SET NULL')
-      .alter()
+    x.integer('siteId').unsigned().references('id').inTable('Site').nullable().onDelete('SET NULL').alter()
   })
   await knex.schema.alterTable('Result', result => {
     result.integer('reportableSiteId').unsigned().nullable()
@@ -22,14 +16,7 @@ async function up(knex) {
     })
     .whereNull('reportableSiteId')
   await knex.schema.alterTable('Result', result => {
-    result
-      .integer('reportableSiteId')
-      .unsigned()
-      .notNullable()
-      .index()
-      .references('id')
-      .inTable('Site')
-      .alter()
+    result.integer('reportableSiteId').unsigned().notNullable().index().references('id').inTable('Site').alter()
   })
 }
 
@@ -42,13 +29,6 @@ async function down(knex) {
     device.dropForeign('siteId')
   })
   await knex.schema.alterTable('Device', device => {
-    device
-      .integer('siteId')
-      .notNullable()
-      .unsigned()
-      .references('id')
-      .inTable('Site')
-      .onDelete('CASCADE')
-      .alter()
+    device.integer('siteId').notNullable().unsigned().references('id').inTable('Site').onDelete('CASCADE').alter()
   })
 }

@@ -10,10 +10,7 @@ import CheckIcon from '@material-ui/icons/Check'
 import { useMutation } from 'react-query'
 import ErrorIcon from '@material-ui/icons/Error'
 import useI18n from '../../Hooks/i18n/useI18n'
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import messages from './messages'
 import {
   showAddInventoryDialog,
@@ -29,12 +26,7 @@ import PermissionsProvider from '../../Providers/PermissionsProvider'
 
 const cssClasses = classnames.bind(styles)
 
-const InventoryTableRow = ({
-  inventoryItem,
-  breakOutByLot,
-  inventoryOnHand,
-  refetch,
-}) => {
+const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refetch }) => {
   const { formatMessage, formatNumber } = useI18n()
 
   const [newQtyOnHand, setNewQtyOnHand] = useState('')
@@ -49,29 +41,25 @@ const InventoryTableRow = ({
       icon: 'FaCheck',
       text: formatMessage(messages.receiveInventory),
       disabled: !isInTransit,
-      action: ({ inventoryItemId }) =>
-        dispatch(showReceiveInventoryDialog(inventoryItemId)),
+      action: ({ inventoryItemId }) => dispatch(showReceiveInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaPlus',
       text: formatMessage(messages.addInventory),
       disabled: isInTransit,
-      action: ({ inventoryItemId }) =>
-        dispatch(showAddInventoryDialog(inventoryItemId)),
+      action: ({ inventoryItemId }) => dispatch(showAddInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaExchangeAlt',
       text: formatMessage(messages.transferInventory),
       disabled: isInTransit,
-      action: ({ inventoryItemId }) =>
-        dispatch(showTransferInventoryDialog(inventoryItemId)),
+      action: ({ inventoryItemId }) => dispatch(showTransferInventoryDialog(inventoryItemId)),
     },
     {
       icon: 'FaMinus',
       text: formatMessage(messages.removeInventory),
       disabled: isInTransit,
-      action: ({ inventoryItemId }) =>
-        dispatch(showRemoveInventoryDialog(inventoryItemId)),
+      action: ({ inventoryItemId }) => dispatch(showRemoveInventoryDialog(inventoryItemId)),
     },
   ]
   const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
@@ -113,12 +101,8 @@ const InventoryTableRow = ({
   }
   const rowSpan = name => inventoryItem.getIn(['rowSpans', name])
   // helper funcs
-  const hasQtyOnHand = qty =>
-    isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty)
-  const hasDailyConsumption = qty =>
-    isNull(qty)
-      ? formatMessage(messages.noConsumption)
-      : formatNumber(round(qty, 2))
+  const hasQtyOnHand = qty => (isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty))
+  const hasDailyConsumption = qty => (isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(round(qty, 2)))
   const newQtyHandler = evt => {
     if (!evt.target.value) {
       return setNewQtyOnHand('')
@@ -137,17 +121,11 @@ const InventoryTableRow = ({
       onBlur={updateInventoryOnBlur}
       onFocus={() => setShowCheck(false)}
     >
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('siteName')}
-      >
+      <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('siteName')}>
         {inventoryItem.get('siteName')}
       </TableCell>
 
-      <TableCell
-        className={cssClasses('TableCell')}
-        rowSpan={rowSpan('consumableName')}
-      >
+      <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('consumableName')}>
         {inventoryItem.get('consumableName')}
       </TableCell>
       <TableCell className={cssClasses('TableCell')}>
@@ -157,9 +135,7 @@ const InventoryTableRow = ({
           <span>
             <small>
               {formatMessage(messages.inTransitFromSiteName, {
-                inTransitFromSiteName: inventoryItem.get(
-                  'inTransitFromSiteName'
-                ),
+                inTransitFromSiteName: inventoryItem.get('inTransitFromSiteName'),
               })}
             </small>
           </span>
@@ -169,9 +145,7 @@ const InventoryTableRow = ({
               {inventoryItem.get('pendingTransfers')
                 ? formatMessage(messages.excludedLotInTransit, {
                     pendingTransfers: inventoryItem.get('pendingTransfers'),
-                    pendingTransfersQuantityOnHand: inventoryItem.get(
-                      'pendingTransfersQuantityOnHand'
-                    ),
+                    pendingTransfersQuantityOnHand: inventoryItem.get('pendingTransfersQuantityOnHand'),
                   })
                 : null}
             </small>
@@ -179,46 +153,31 @@ const InventoryTableRow = ({
         )}
         {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
           <span className={cssClasses('alert')}>
-            &nbsp; (
-            {parseFloat(inventoryItem.get('quantityOnHand')) <= 0 ? '' : '-'}
+            &nbsp; ({parseFloat(inventoryItem.get('quantityOnHand')) <= 0 ? '' : '-'}
             {inventoryItem.get('qtyExpired')} Expired)
           </span>
         ) : null}
       </TableCell>
       {inventoryItem.get('dailyConsumptionRate') !== undefined ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('dailyConsumptionRate')}
-        >
+        <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('dailyConsumptionRate')}>
           {hasDailyConsumption(inventoryItem.get('dailyConsumptionRate'))}
         </TableCell>
       ) : null}
       {inventoryItem.get('lotNumber') !== undefined ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('lotNumber')}
-        >
-          {inventoryItem.get('lotNumber')
-            ? inventoryItem.get('lotNumber')
-            : 'N/A'}
+        <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('lotNumber')}>
+          {inventoryItem.get('lotNumber') ? inventoryItem.get('lotNumber') : 'N/A'}
         </TableCell>
       ) : null}
       {inventoryItem.get('expiresOn') !== undefined ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('expiresOn')}
-        >
+        <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('expiresOn')}>
           <span
             className={
-              inventoryItem.get('expiresOn') !== null &&
-              new Date(inventoryItem.get('expiresOn')) < new Date()
+              inventoryItem.get('expiresOn') !== null && new Date(inventoryItem.get('expiresOn')) < new Date()
                 ? cssClasses('alert')
                 : null
             }
           >
-            {inventoryItem.get('expiresOn')
-              ? inventoryItem.get('expiresOn').split('T')[0]
-              : 'N/A'}
+            {inventoryItem.get('expiresOn') ? inventoryItem.get('expiresOn').split('T')[0] : 'N/A'}
           </span>
         </TableCell>
       ) : null}
@@ -245,10 +204,7 @@ const InventoryTableRow = ({
             <TextField
               size="large"
               value={notes}
-              error={
-                !!newQtyOnHand &&
-                newQtyOnHand !== inventoryItem.get('quantityOnHand')
-              }
+              error={!!newQtyOnHand && newQtyOnHand !== inventoryItem.get('quantityOnHand')}
               type="text"
               name="resultQuantityOnHandNotes"
               disabled={isNull(inventoryItem.get('quantityOnHand'))}
@@ -264,23 +220,13 @@ const InventoryTableRow = ({
         </>
       ) : null}
       {inventoryItem.get('daysStockLeft') !== undefined ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('daysStockLeft')}
-        >
-          {inventoryItem.get('daysStockLeft') !== null
-            ? round(inventoryItem.get('daysStockLeft'), 2)
-            : 'N/A'}
+        <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('daysStockLeft')}>
+          {inventoryItem.get('daysStockLeft') !== null ? round(inventoryItem.get('daysStockLeft'), 2) : 'N/A'}
         </TableCell>
       ) : null}
       {inventoryItem.get('projectedWaste') !== undefined ? (
-        <TableCell
-          className={cssClasses('TableCell')}
-          rowSpan={rowSpan('projectedWaste')}
-        >
-          {inventoryItem.get('projectedWaste') !== null
-            ? round(inventoryItem.get('projectedWaste'), 2)
-            : 'N/A'}
+        <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('projectedWaste')}>
+          {inventoryItem.get('projectedWaste') !== null ? round(inventoryItem.get('projectedWaste'), 2) : 'N/A'}
         </TableCell>
       ) : null}
       {!inventoryOnHand ? (

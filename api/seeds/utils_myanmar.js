@@ -23,12 +23,9 @@ async function updateDashboardWidgetQueries(knex) {
   const inAssays = "a.externalId IN ('GxMtbRif', 'GxMtbRifUltra')"
   const hivYes = "IFNULL(patientData ->> '$.hivStatus', '') = 'HIV Positive'"
   const hivNo = "IFNULL(patientData ->> '$.hivStatus', '') != 'HIV Positive'"
-  const mdrYes =
-    "IFNULL(patientData ->> '$.previouslyTreated', '') IN ('Yes', 'true')"
-  const mdrNo =
-    "IFNULL(patientData ->> '$.previouslyTreated', '') NOT IN ('Yes', 'true')"
-  const smearYes =
-    "IFNULL(patientData ->> '$.microscopyResult', '') LIKE '%Positive'"
+  const mdrYes = "IFNULL(patientData ->> '$.previouslyTreated', '') IN ('Yes', 'true')"
+  const mdrNo = "IFNULL(patientData ->> '$.previouslyTreated', '') NOT IN ('Yes', 'true')"
+  const smearYes = "IFNULL(patientData ->> '$.microscopyResult', '') LIKE '%Positive'"
 
   const items = [
     // a category "Total" ("All Tests") shall, in parallel, monitor progress toward an overall testing goal.
@@ -65,9 +62,7 @@ async function updateDashboardWidgetQueries(knex) {
   //
   await Promise.all(
     _.map(items, async ({ titleI18nKey, sqlForIndicator }) => {
-      await knex('DashboardWidget')
-        .where({ titleI18nKey })
-        .update({ sqlForIndicator })
+      await knex('DashboardWidget').where({ titleI18nKey }).update({ sqlForIndicator })
     })
   )
 }

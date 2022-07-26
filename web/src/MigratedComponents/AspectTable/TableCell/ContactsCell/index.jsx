@@ -36,17 +36,10 @@ const ContactsCell = ({ value }) => {
       </div>
     )
   }
-  if (
-    valToArray.length > 0 &&
-    valToArray.length <= CONTACTS.MAX_VISIBLE_COUNT
-  ) {
+  if (valToArray.length > 0 && valToArray.length <= CONTACTS.MAX_VISIBLE_COUNT) {
     return <div>{valToArray.join(', ')}</div>
   }
-  return (
-    <div className={cssClasses('message--not-configured')}>
-      {formatMessage(messages.notConfigured)}
-    </div>
-  )
+  return <div className={cssClasses('message--not-configured')}>{formatMessage(messages.notConfigured)}</div>
 }
 
 ContactsCell.defaultProps = {

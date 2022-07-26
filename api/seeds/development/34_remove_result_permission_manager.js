@@ -3,9 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 
 async function seed(knex) {
-  const manager = await knex('JobFunction as jf')
-    .where('jf.externalId', 'manager')
-    .first()
+  const manager = await knex('JobFunction as jf').where('jf.externalId', 'manager').first()
 
   const checkIfExist = async activity => {
     if (activity) {

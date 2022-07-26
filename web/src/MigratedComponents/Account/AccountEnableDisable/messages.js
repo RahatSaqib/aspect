@@ -16,8 +16,7 @@ export default defineMessages({
   },
   disableUser: {
     id: 'pages.PersonList.disabled.disableUser',
-    defaultMessage:
-      'This will disable this user, and they will not be able to login. Would you like to continue?',
+    defaultMessage: 'This will disable this user, and they will not be able to login. Would you like to continue?',
   },
   disabledOn: {
     id: 'pages.PersonList.disabled.disabledOn',

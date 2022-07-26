@@ -10,9 +10,7 @@ const uknwExtId = 'GxUnknown'
 
 exports.seed = async function (knex) {
   const rcMapping = await allResultCategoryToId()
-  const newAssayId = (
-    await knex('Assay').select('id').where('externalId', xdrExtId)
-  )[0].id
+  const newAssayId = (await knex('Assay').select('id').where('externalId', xdrExtId))[0].id
 
   const ids = await knex('Result')
     .select('id')
@@ -20,10 +18,7 @@ exports.seed = async function (knex) {
     .andWhere('resultData', 'like', '%INH%')
 
   await Promise.each(ids, async item => {
-    const resData = JSON.parse(
-      (await knex('Result').select('resultData').where('id', item.id))[0]
-        .resultData
-    )
+    const resData = JSON.parse((await knex('Result').select('resultData').where('id', item.id))[0].resultData)
 
     const result = getResultCategories({
       data: resData,
@@ -35,10 +30,7 @@ exports.seed = async function (knex) {
     const rc1 = result && result[0] ? result[0].id : null
     const rc2 = result && result[1] ? result[1].id : null
 
-    if (rc2)
-      resData.detectedResistance = getDetectedResistanceCategoryTypes(
-        resData.resultText
-      )
+    if (rc2) resData.detectedResistance = getDetectedResistanceCategoryTypes(resData.resultText)
     else resData.detectedResistance = null
 
     await knex('Result')

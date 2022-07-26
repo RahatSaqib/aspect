@@ -36,19 +36,13 @@ describe('DateRangeSelector Component', () => {
       })
       const minDate = new Date(2014, 1, 23)
       const maxDate = new Date(2016, 10, 2)
-      DateRangeSelectorWrapper.find(DateTimeInput)
-        .first()
-        .props()
-        .onChange(minDate)
+      DateRangeSelectorWrapper.find(DateTimeInput).first().props().onChange(minDate)
 
       expect(props.onChangeDate.lastCall.args[0]).toEqual({
         minDate: minDate.toJSON(),
       })
 
-      DateRangeSelectorWrapper.find(DateTimeInput)
-        .last()
-        .props()
-        .onChange(maxDate)
+      DateRangeSelectorWrapper.find(DateTimeInput).last().props().onChange(maxDate)
       const endOfDayMilliseconds = 1000 * 60 * 60 * 24 - 1
       expect(props.onChangeDate.lastCall.args[0]).toEqual({
         maxDate: new Date(maxDate.getTime() + endOfDayMilliseconds).toJSON(),
@@ -604,9 +598,7 @@ describe('DateRangeSelector Component', () => {
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
-            .filterWhere(
-              item => !includes(item.prop('className'), 'emptyMenuItem')
-            )
+            .filterWhere(item => !includes(item.prop('className'), 'emptyMenuItem'))
           expect(dropDownListItems.length).toEqual(8)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
@@ -666,9 +658,7 @@ describe('DateRangeSelector Component', () => {
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
-            .filterWhere(
-              item => !includes(item.prop('className'), 'emptyMenuItem')
-            )
+            .filterWhere(item => !includes(item.prop('className'), 'emptyMenuItem'))
           expect(dropDownListItems.length).toEqual(9)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
@@ -734,9 +724,7 @@ describe('DateRangeSelector Component', () => {
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
-            .filterWhere(
-              item => !includes(item.prop('className'), 'emptyMenuItem')
-            )
+            .filterWhere(item => !includes(item.prop('className'), 'emptyMenuItem'))
           expect(dropDownListItems.length).toEqual(13)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
@@ -826,9 +814,7 @@ describe('DateRangeSelector Component', () => {
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
-            .filterWhere(
-              item => !includes(item.prop('className'), 'emptyMenuItem')
-            )
+            .filterWhere(item => !includes(item.prop('className'), 'emptyMenuItem'))
           expect(dropDownListItems.length).toEqual(12)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
@@ -915,9 +901,7 @@ describe('DateRangeSelector Component', () => {
           const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
-            .filterWhere(
-              item => !includes(item.prop('className'), 'emptyMenuItem')
-            )
+            .filterWhere(item => !includes(item.prop('className'), 'emptyMenuItem'))
           expect(dropDownListItems.length).toEqual(7)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({

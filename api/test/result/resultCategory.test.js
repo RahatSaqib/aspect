@@ -2,9 +2,7 @@ const { assert } = require('chai')
 const _ = require('lodash')
 const { getResultCategories } = require('../../src/plugin/deviceType/gxUtils')
 const assayResults = require('../deviceApi/geneXpert/notVLResultTextMappings')
-const {
-  basicResultPayload,
-} = require('../deviceApi/geneXpert/geneXpertConstants')
+const { basicResultPayload } = require('../deviceApi/geneXpert/geneXpertConstants')
 
 const getPayloadsCollection = trackedResults => {
   return _.map(trackedResults, assertion => {
@@ -46,9 +44,7 @@ describe('Extracting data from Result Text and categorize them', async () => {
 
     it(`should obtain  ${key} proper result categories base on it result text property`, async () => {
       getPayloadsCollection(assayTypeResults).forEach(result => {
-        const payloadCategory = getResultCategories(
-          _.assign({}, result.payload.result)
-        )
+        const payloadCategory = getResultCategories(_.assign({}, result.payload.result))
         const expected = {
           resultCategory1Id: result.expectedCategory1,
           resultCategory2Id: result.expectedCategory2,

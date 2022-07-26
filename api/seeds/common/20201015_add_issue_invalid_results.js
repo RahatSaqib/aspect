@@ -1,10 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const {
-  seedIssueType,
-  seedIssueEventTriggersForPartner,
-  upsertNotificationTypes,
-} = require('../utils')
+const { seedIssueType, seedIssueEventTriggersForPartner, upsertNotificationTypes } = require('../utils')
 
 async function seed(knex) {
   const { partnerId, userId } = await knex('User as u')
@@ -12,22 +8,15 @@ async function seed(knex) {
     .where({ 'u.name': 'admin' })
     .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
 
-  const issueTypeModule = await seedIssueType(
-    knex,
-    'TooManyInvalidResultsModule',
-    {
-      userName: 'admin',
-    }
-  )
+  const issueTypeModule = await seedIssueType(knex, 'TooManyInvalidResultsModule', {
+    userName: 'admin',
+  })
   const issueTypeLot = await seedIssueType(knex, 'TooManyInvalidResultsLot', {
     userName: 'admin',
   })
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: [
-      'TooManyInvalidResultsLot',
-      'TooManyInvalidResultsModule',
-    ],
+    issueTypeWhitelist: ['TooManyInvalidResultsLot', 'TooManyInvalidResultsModule'],
   })
   const auditFields = {
     createdOn: new Date(),
@@ -36,12 +25,8 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const issueTypeTooManyInvalidResultsModule = await knex('IssueType')
-    .where({ id: issueTypeModule })
-    .first()
-  const issueTypeTooManyInvalidResultsLot = await knex('IssueType')
-    .where({ id: issueTypeLot })
-    .first()
+  const issueTypeTooManyInvalidResultsModule = await knex('IssueType').where({ id: issueTypeModule }).first()
+  const issueTypeTooManyInvalidResultsLot = await knex('IssueType').where({ id: issueTypeLot }).first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
       externalId: 'admin',

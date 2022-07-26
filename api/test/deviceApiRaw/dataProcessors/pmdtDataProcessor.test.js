@@ -1,9 +1,5 @@
-const {
-  resultDataMappings,
-} = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt/mappings')
-const {
-  testTypes,
-} = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
+const { resultDataMappings } = require('../../../src/deviceApiRaw/dataProcessors/philippinesNtrlPmdt/mappings')
+const { testTypes } = require('../../../src/deviceApiRaw/dataProcessors/common/mapping')
 const {
   dstAssayBdMgitAst,
   dstAssayGenericDst,

@@ -76,9 +76,7 @@ const enhance = compose(
     UNSAFE_componentWillMount() {
       this.setState({
         onChange: ({ target: { value } }) => {
-          this.props.onConsumableReasonIdChange(
-            value === 'all' ? undefined : value
-          )
+          this.props.onConsumableReasonIdChange(value === 'all' ? undefined : value)
         },
       })
     },
@@ -102,18 +100,12 @@ export const ConsumableReasonSelectField = ({
   <SelectField
     {...restProps}
     onChange={onChange}
-    disabled={
-      restProps.disabled ||
-      consumableReasons.loading ||
-      consumableReasons.items.isEmpty()
-    }
+    disabled={restProps.disabled || consumableReasons.loading || consumableReasons.items.isEmpty()}
   >
     {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
     {consumableReasons.items.map(c => (
       <MenuItem key={c.get('id')} value={c.get('id')}>
-        {messages[c.get('i18nKey')]
-          ? intl.formatMessage(messages[c.get('i18nKey')])
-          : c.get('name')}
+        {messages[c.get('i18nKey')] ? intl.formatMessage(messages[c.get('i18nKey')]) : c.get('name')}
       </MenuItem>
     ))}
   </SelectField>

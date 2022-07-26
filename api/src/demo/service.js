@@ -1,13 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const {
-  createFetch,
-  base,
-  accept,
-  header,
-  method,
-  body,
-} = require('http-client')
+const { createFetch, base, accept, header, method, body } = require('http-client')
 
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -46,12 +39,7 @@ async function getDemoDevice(request) {
         .innerJoin('Device as d', 'r.deviceId', 'd.id')
         .where('r.assayId', assay.id)
         .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
-        .distinct(
-          'r.id',
-          knex.raw(
-            'JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")) as name'
-          )
-        )
+        .distinct('r.id', knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")) as name'))
         .orderBy('name')
         .limit(1000)
       result.assays.push({ results: _.sortedUniqBy(results, 'name'), ...assay })
@@ -89,16 +77,8 @@ async function postDemoDeviceResult(request) {
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
-    .leftJoin(
-      'ResultWorkflowLog as rsl',
-      'r.resultWorkflowStatusLogId',
-      'rsl.id'
-    )
-    .leftJoin(
-      'ResultWorkflowStatus as rs',
-      'rsl.resultWorkflowStatusId',
-      'rs.id'
-    )
+    .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .modify(addConstraints, userConstraints, {
       assay: 'a',
       device: 'd',
@@ -180,11 +160,7 @@ async function postDemoDeviceResult(request) {
     lot: resultTemplate.consumableLot,
     expirationDate: resultTemplate.consumableExpirationDate,
   }
-  if (
-    consumable.serial != null ||
-    consumable.lot != null ||
-    consumable.expirationDate != null
-  ) {
+  if (consumable.serial != null || consumable.lot != null || consumable.expirationDate != null) {
     result.consumable = [consumable]
   }
 
@@ -241,9 +217,7 @@ async function postDemoDeviceResult(request) {
   const resp = await deviceApiFetch('/device')
   const respJson = await resp.json()
 
-  return resp.ok
-    ? respJson
-    : Boom.create(+resp.status || 500, JSON.stringify(respJson))
+  return resp.ok ? respJson : Boom.create(+resp.status || 500, JSON.stringify(respJson))
 }
 
 module.exports = {

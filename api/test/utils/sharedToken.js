@@ -13,9 +13,7 @@ module.exports = {
       })
 
       it('should return 401 and error message when using invalid token', async () => {
-        const res = await server
-          .get(path)
-          .set('Authorization', 'Bearer MOARTOKENZ')
+        const res = await server.get(path).set('Authorization', 'Bearer MOARTOKENZ')
 
         assert.equal(res.status, 401)
         assert.isString(res.body.message)

@@ -1,7 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
-const {
-  upsertMessageAndNotificationTypes,
-} = require('../common/upsert_message_and_notification_types')
+const { upsertMessageAndNotificationTypes } = require('../common/upsert_message_and_notification_types')
 const { adminUserName } = require('./fixtures/partnerData')
 
 async function seed(knex) {

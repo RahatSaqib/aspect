@@ -1,9 +1,5 @@
 const _ = require('lodash')
-const {
-  mergeResult,
-  getResult,
-  addResultWorkflowLogIfChanged,
-} = require('../../../deviceApi/result')
+const { mergeResult, getResult, addResultWorkflowLogIfChanged } = require('../../../deviceApi/result')
 const { resultUpdated } = require('../../../result/actions')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
@@ -23,12 +19,7 @@ const MERGEABLE_CHAI_IDS = [
   FLAGGED_EXTERNALID,
   ERROR_EXTERNALID,
 ]
-const MERGEABLE_REPORTABLE_IDS = [
-  DELIVERED_EXTERNALID,
-  ACKNOWLEDGED_EXTERNALID,
-  FLAGGED_EXTERNALID,
-  ERROR_EXTERNALID,
-]
+const MERGEABLE_REPORTABLE_IDS = [DELIVERED_EXTERNALID, ACKNOWLEDGED_EXTERNALID, FLAGGED_EXTERNALID, ERROR_EXTERNALID]
 
 async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
@@ -46,11 +37,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
 async function mergeResults({ knex, actions, resultId, now }) {
   const qcResult = await knex('Result as r')
     .join('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
-    .join(
-      'ResultWorkflowStatus as rws',
-      'rwsl.resultWorkflowStatusId',
-      'rws.id'
-    )
+    .join('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
     .join('Device as d', 'r.deviceId', 'd.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sm', 'r.sampleId', 'sm.id')
@@ -68,44 +55,17 @@ async function mergeResults({ knex, actions, resultId, now }) {
   if (qcResult != null) {
     const { sampleSiteId, workflowStatus, deviceType, deviceName } = qcResult
 
-    if (
-      deviceType === DEVICE_TYPE_CHAI &&
-      _.indexOf(MERGEABLE_CHAI_IDS, workflowStatus) !== -1
-    ) {
+    if (deviceType === DEVICE_TYPE_CHAI && _.indexOf(MERGEABLE_CHAI_IDS, workflowStatus) !== -1) {
       // it is a qcChecked CHAI result, merge into Reporter results
-      await mergeChaiResultToReporters(
-        knex,
-        actions,
-        resultId,
-        sampleSiteId,
-        deviceName,
-        now
-      )
-    } else if (
-      deviceType === DEVICE_TYPE_REPORTER &&
-      _.indexOf(MERGEABLE_REPORTABLE_IDS, workflowStatus) !== -1
-    ) {
+      await mergeChaiResultToReporters(knex, actions, resultId, sampleSiteId, deviceName, now)
+    } else if (deviceType === DEVICE_TYPE_REPORTER && _.indexOf(MERGEABLE_REPORTABLE_IDS, workflowStatus) !== -1) {
       // it is a qcChecked Reportable result, merge into CHAI results
-      await mergeReporterToChaiResult(
-        knex,
-        actions,
-        resultId,
-        sampleSiteId,
-        deviceName,
-        now
-      )
+      await mergeReporterToChaiResult(knex, actions, resultId, sampleSiteId, deviceName, now)
     }
   }
 }
 
-async function mergeChaiResultToReporters(
-  knex,
-  actions,
-  resultId,
-  sampleSiteId,
-  deviceName,
-  now
-) {
+async function mergeChaiResultToReporters(knex, actions, resultId, sampleSiteId, deviceName, now) {
   // Find all Reporter devices assigned to sample origin site
   // And merge result for that device with same external id
   const reporterDevices = await knex('Device as d')
@@ -128,17 +88,10 @@ async function mergeChaiResultToReporters(
   await Promise.all(
     _.map(reporterDevices, async device => {
       const { deviceId } = device
-      const { processedResult, existingResult } = await mergeResult(
-        knex,
-        deviceId,
-        payload,
-        { sampleId, now }
-      )
+      const { processedResult, existingResult } = await mergeResult(knex, deviceId, payload, { sampleId, now })
       if (!existingResult) {
         // not change workflow status otherwise
-        const deliverableId = await resultWorkflowStatusToId(
-          DELIVERABLE_EXTERNALID
-        )
+        const deliverableId = await resultWorkflowStatusToId(DELIVERABLE_EXTERNALID)
 
         processedResult.resultWorkflowStatusId = deliverableId
 
@@ -160,14 +113,7 @@ async function mergeChaiResultToReporters(
   )
 }
 
-async function mergeReporterToChaiResult(
-  knex,
-  actions,
-  resultId,
-  sampleSiteId,
-  deviceName,
-  now
-) {
+async function mergeReporterToChaiResult(knex, actions, resultId, sampleSiteId, deviceName, now) {
   // Get Reporter result in Device API format
   const reporterResult = await getResult(knex, resultId)
 
@@ -194,12 +140,7 @@ async function mergeReporterToChaiResult(
     _.map(chaiDevices, async device => {
       const { deviceId } = device
 
-      const { processedResult, existingResult } = await mergeResult(
-        knex,
-        deviceId,
-        payload,
-        now
-      )
+      const { processedResult, existingResult } = await mergeResult(knex, deviceId, payload, now)
       const workflowChanged = await addResultWorkflowLogIfChanged(
         knex,
         payload,

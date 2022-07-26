@@ -3,10 +3,7 @@ import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
 
 import { groupWidgets } from '../../MigratedComponents/AspectWidgets/Helpers'
-import {
-  AspectWidgets,
-  EmptyWidgets,
-} from '../../MigratedComponents/AspectWidgets'
+import { AspectWidgets, EmptyWidgets } from '../../MigratedComponents/AspectWidgets'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import SUMMARY_STATUS_WIDGETS from '../../MigratedComponents/QueryFetch/Dashboard/index'
 

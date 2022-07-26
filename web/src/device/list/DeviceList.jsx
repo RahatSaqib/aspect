@@ -9,17 +9,9 @@ import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import { useQuery } from 'react-query'
 
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
+import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
 
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 
 import { useAuthState } from '../../Providers/AuthProvider'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
@@ -32,11 +24,7 @@ import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import getExportableFile from '../DeviceQueries'
 import ExportListButton from '../../MigratedComponents/AspectExportListButton'
-import {
-  DeviceDataTable,
-  DeviceDataTableHead,
-  DeviceDataTableRow,
-} from './DeviceDataTable'
+import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
 import { DEVICE_LIST } from '../../MigratedComponents/QueryFetch/Device/index'
 import messages from './messages'
 
@@ -58,7 +46,6 @@ const FILTERS_CONFIG = [
     siteName: true,
     requiredPermissions: ['site:view'],
   },
-  { date: true, requiredPermissions: [] },
   {
     deviceName: true,
     requiredPermissions: ['device'],
@@ -88,17 +75,14 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'availabilityRate',
     'errorRate',
     'createdOn',
-    'lastSeen',
+    'lastPingOn',
     'resultCountLastMonth',
     'resultCountThisMonth',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -117,11 +101,13 @@ const getColumns = intl => [
     key: 'availabilityRate',
     label: intl.formatMessage(messages.availabilityRate),
     sortable: false,
+    tooltip: intl.formatMessage(messages.availabilityRateDescription),
   },
   {
     key: 'errorRate',
     label: intl.formatMessage(messages.errorRate),
     sortable: false,
+    tooltip: intl.formatMessage(messages.errorRateDescription),
   },
   {
     key: 'issueCategory',
@@ -133,9 +119,10 @@ const getColumns = intl => [
     label: intl.formatMessage(messages.reportingFor),
   },
   {
-    key: 'lastSeen',
+    key: 'lastPingOn',
     sortable: true,
     label: intl.formatMessage(messages.lastSeen),
+    tooltip: intl.formatMessage(messages.lastSeenDescription),
   },
   {
     key: 'resultCountLastMonth',
@@ -170,21 +157,11 @@ export const DeviceListWithProps = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
-    <BrowseFilters
-      navigate={navigate}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-    />
+    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
-      <ExportListButton
-        onExport={onExportClick}
-        visible={!items.currentIdList.isEmpty()}
-      />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList navigate={navigate} location={location} />
-      )}
+      <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
+      {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
       {!items.currentIdList.isEmpty() && (
         <DeviceDataTable className={cssClasses('DeviceDataTable')}>
           <DeviceDataTableHead
@@ -293,8 +270,7 @@ export const DeviceList = () => {
   }, [data])
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } =
-      filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
       navigate(
@@ -319,15 +295,7 @@ export const DeviceList = () => {
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
     if (!sanitized) {
-      return getExportableFile(
-        filtersParams,
-        formatType,
-        sortCol,
-        sortDir,
-        0,
-        total,
-        'devices'
-      )
+      return getExportableFile(filtersParams, formatType, sortCol, sortDir, 0, total, 'devices')
     }
   }
 

@@ -6,46 +6,30 @@ const sample = require('lodash/sample')
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 
 async function seed(knex) {
-  const results = await knex('ResultFollowUp').select(
-    'resultId',
-    'followUpId',
-    'externalId',
-    'updatedBy'
-  )
+  const results = await knex('ResultFollowUp').select('resultId', 'followUpId', 'externalId', 'updatedBy')
   const followUps = await knex('FollowUp').select('id', 'externalId')
   /** Grab random sample from current outcomes equaling % of mulitplier */
   const resultSampleSize = 40
-  const resultsSample = sampleSize(
-    results,
-    (resultSampleSize / 100) * resultMultiplier
-  )
+  const resultsSample = sampleSize(results, (resultSampleSize / 100) * resultMultiplier)
 
   const randomOutcomeResult = ({ externalId }) => {
     let updated = {}
 
     switch (externalId) {
       case 'admissionToHospital':
-        updated = followUps.filter(
-          m => m.externalId === sample(['died', 'recovered', 'recovered'])
-        )
+        updated = followUps.filter(m => m.externalId === sample(['died', 'recovered', 'recovered']))
         break
 
       case 'admissionToHospitalIcu':
-        updated = followUps.filter(
-          m => m.externalId === sample(['died', 'died', 'died', 'recovered'])
-        )
+        updated = followUps.filter(m => m.externalId === sample(['died', 'died', 'died', 'recovered']))
         break
 
       case 'quarantine':
-        updated = followUps.filter(
-          m => m.externalId === sample(['died', 'recovered', 'unknown'])
-        )
+        updated = followUps.filter(m => m.externalId === sample(['died', 'recovered', 'unknown']))
         break
 
       case 'selfQuarantine':
-        updated = followUps.filter(
-          m => m.externalId === sample(['recovered', 'unknown'])
-        )
+        updated = followUps.filter(m => m.externalId === sample(['recovered', 'unknown']))
         break
 
       default:

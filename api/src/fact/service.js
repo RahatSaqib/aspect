@@ -1,16 +1,7 @@
-const {
-  addDays,
-  subDays,
-  startOfMonth,
-  endOfMonth,
-  parseISO,
-} = require('date-fns')
+const { addDays, subDays, startOfMonth, endOfMonth, parseISO } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  inventoryStockout,
-  inventoryStockExpiring,
-} = require('../inventory/actions')
+const { inventoryStockout, inventoryStockExpiring } = require('../inventory/actions')
 const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
@@ -19,22 +10,14 @@ const {
   siteWithLowCompletionRateIssue,
 } = require('./actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
-const {
-  deviceOffline,
-  deviceOnline,
-  deviceNoResults,
-  deviceHasNewResults,
-} = require('../device/actions')
+const { deviceOffline, deviceOnline, deviceNoResults, deviceHasNewResults } = require('../device/actions')
 const {
   issueTypeToId,
   issueStatusToId,
   issueEventStatusToId,
   resultWorkflowStatusToId,
 } = require('../shared/dictionary')
-const {
-  auditInventoryStockout,
-  auditInventoryStockExpiring,
-} = require('../shared/utilsInventory')
+const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const { startOfDayUtc } = require('../shared/date')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
@@ -44,10 +27,7 @@ const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
 const MIN_PERCENTAGE_FIELDS_COMPLETION_RATE = 0.8
 
-async function onFactGenerateDeviceConnectivity(
-  { deviceId },
-  { messageContext }
-) {
+async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     deviceOffline,
     deviceNoResults,
@@ -85,9 +65,7 @@ async function onFactGenerateDeviceConnectivity(
         'f.maintenanceDueOn',
         knex('Result as r')
           .whereRaw('r.deviceId = d.id')
-          .select(
-            knex.raw('max(coalesce(r.endedOn, r.startedOn, r.updatedOn))')
-          )
+          .select(knex.raw('max(coalesce(r.endedOn, r.startedOn, r.updatedOn))'))
           .as('lastResultOn')
       )
     if (deviceId != null) {
@@ -108,14 +86,8 @@ async function onFactGenerateDeviceConnectivity(
         maintenance,
         maintenanceDueOn,
       }) => {
-        const maxLastDateOffline =
-          maxDaysDeviceOffline == null
-            ? null
-            : subDays(now, maxDaysDeviceOffline)
-        const maxLastDateNoResult =
-          maxDaysDeviceNoResults == null
-            ? null
-            : subDays(now, maxDaysDeviceNoResults)
+        const maxLastDateOffline = maxDaysDeviceOffline == null ? null : subDays(now, maxDaysDeviceOffline)
+        const maxLastDateNoResult = maxDaysDeviceNoResults == null ? null : subDays(now, maxDaysDeviceNoResults)
         // TODO move #days to partner config
         const maxMaintenanceDateNoResult = addDays(lastSeenOn, 30)
 
@@ -124,16 +96,10 @@ async function onFactGenerateDeviceConnectivity(
           lastResultOn = deviceCreatedOn
         }
 
-        if (
-          lastPingOn == null ||
-          (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)
-        ) {
+        if (lastPingOn == null || (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)) {
           // Number of days of "heartbeat" > X days
           context.deviceOffline(id, { lastSeenOn, lastPingOn })
-        } else if (
-          maxLastDateNoResult != null &&
-          lastResultOn <= maxLastDateNoResult
-        ) {
+        } else if (maxLastDateNoResult != null && lastResultOn <= maxLastDateNoResult) {
           // OR no tests run > Y days
           context.deviceNoResults(id, { lastResultOn })
         } else if (
@@ -144,11 +110,7 @@ async function onFactGenerateDeviceConnectivity(
         ) {
           // OR inactive - expected back date > Z days
           context.deviceNoResults(id, { lastResultOn })
-        } else if (
-          maintenance === 1 &&
-          maintenanceDueOn != null &&
-          now > maintenanceDueOn
-        ) {
+        } else if (maintenance === 1 && maintenanceDueOn != null && now > maintenanceDueOn) {
           // OR date passes expected back date
           context.deviceNoResults(id, { lastResultOn })
         }
@@ -172,9 +134,7 @@ async function onFactGenerateResultCounts(action, context) {
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
-    return Promise.each(items, async ({ deviceId }) =>
-      messageContext.factGenerateResultCounts(deviceId)
-    )
+    await Promise.each(items, async ({ deviceId }) => messageContext.factGenerateResultCounts(deviceId))
   })
 }
 
@@ -190,9 +150,7 @@ async function onDeviceSeen({ deviceId }, { messageContext }) {
         this.whereNull('fdf.deviceId')
           // If fact is marked offline and we've seen the device more recently
           // then the update, we are also online
-          .orWhereRaw(
-            'fdf.offline = 1 and (fdf.updatedOn <= IFNULL(d.lastSeenOn, fdf.updatedOn))'
-          )
+          .orWhereRaw('fdf.offline = 1 and (fdf.updatedOn <= IFNULL(d.lastSeenOn, fdf.updatedOn))')
       })
       .first('d.id')
     if (offlineDevice != null) {
@@ -209,23 +167,15 @@ function onDeviceUpdateFlag(updates) {
     return context.run(async knex => {
       const flagUpdates = { updatedOn: new Date(), ...updates }
 
-      if (
-        updates.maintenance === 1 &&
-        options != null &&
-        options.dueOn != null
-      ) {
+      if (updates.maintenance === 1 && options != null && options.dueOn != null) {
         flagUpdates.maintenanceDueOn = new Date(options.dueOn)
       } else if (updates.maintenance === 0) {
         flagUpdates.maintenanceDueOn = null
       }
 
-      const updatedRows = await knex('FactDeviceFlag')
-        .where({ deviceId })
-        .update(flagUpdates)
+      const updatedRows = await knex('FactDeviceFlag').where({ deviceId }).update(flagUpdates)
       if (updatedRows === 0) {
-        const existingFact = await knex('FactDeviceFlag')
-          .where({ deviceId })
-          .first()
+        const existingFact = await knex('FactDeviceFlag').where({ deviceId }).first()
         if (!existingFact) {
           // If we don't have a flag for this device yet, create it!
           await knex('FactDeviceFlag').insert({ deviceId, ...flagUpdates })
@@ -245,25 +195,11 @@ async function onResultLogged({ resultId }, { messageContext }) {
     deviceHasNewResults,
   })
   return context.transact(async knex => {
-    const {
-      deviceId,
-      assayId,
-      resultCategory1,
-      resultCategory2,
-      noResults,
-      endedOn,
-    } =
+    const { deviceId, assayId, resultCategory1, resultCategory2, noResults, endedOn } =
       (await knex('Result as r')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
         .where({ id: resultId })
-        .first(
-          'r.deviceId',
-          'r.assayId',
-          'r.resultCategory1',
-          'r.resultCategory2',
-          'fdf.noResults',
-          'r.endedOn'
-        )) || {}
+        .first('r.deviceId', 'r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'fdf.noResults', 'r.endedOn')) || {}
     if (!deviceId) {
       return
     }
@@ -279,16 +215,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
-async function onFactGenerateResultCountsForDevice(
-  { deviceId, options = {} },
-  { messageContext }
-) {
-  const {
-    assayId,
-    resultCategory1,
-    resultCategory2,
-    endedOn: resultEndedOn,
-  } = options
+async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, { messageContext }) {
+  const { assayId, resultCategory1, resultCategory2, endedOn: resultEndedOn } = options
   return messageContext.transact(async knex => {
     const now = new Date()
 
@@ -307,9 +235,7 @@ async function onFactGenerateResultCountsForDevice(
     })
 
     // calculate by device - make sure it still exists
-    const device = await knex('Device')
-      .where({ id: deviceId })
-      .first('deviceId')
+    const device = await knex('Device').where({ id: deviceId }).first('deviceId')
     if (!device) {
       return
     }
@@ -317,54 +243,34 @@ async function onFactGenerateResultCountsForDevice(
     await Promise.each(daysToCalculate, async days => {
       const endedOn = startOfDayUtc(subDays(now, days))
       // query for selecting data for the device
-      const query = knex('Result as r')
-        .where('r.deviceId', deviceId)
-        .where('r.endedOn', '>', endedOn)
+      const query = knex('Result as r').where('r.deviceId', deviceId).where('r.endedOn', '>', endedOn)
       const factResultsDevice = {
         calculatedOn: now,
       }
       if (daysToCalculateCountOfDeliveredResults.includes(days)) {
-        const deliveredResultWorkfowStatusId = await resultWorkflowStatusToId(
-          'Delivered'
-        )
+        const deliveredResultWorkfowStatusId = await resultWorkflowStatusToId('Delivered')
         const countByDevice = (await query
           .clone()
           .leftJoin('ResultWorkflowLog as rwl', queryBuilder => {
             queryBuilder
               .on('r.resultWorkflowStatusLogId', 'rwl.id')
-              .andOn(
-                knex.raw(
-                  'rwl.resultWorkflowStatusId = ?',
-                  deliveredResultWorkfowStatusId
-                )
-              )
+              .andOn(knex.raw('rwl.resultWorkflowStatusId = ?', deliveredResultWorkfowStatusId))
               .andOn(knex.raw('rwl.changedOn > ?', endedOn))
           })
           .first(
             knex.raw('COUNT(DISTINCT r.id) as resultCount'),
-            knex.raw(
-              'SUM(CASE WHEN rwl.id IS NULL THEN 0 ELSE 1 END) as resultsDeliveredCount'
-            )
+            knex.raw('SUM(CASE WHEN rwl.id IS NULL THEN 0 ELSE 1 END) as resultsDeliveredCount')
           )) || { resultCount: 0 }
         factResultsDevice.resultCount = countByDevice.resultCount
-        factResultsDevice.resultsDeliveredCount =
-          countByDevice.resultsDeliveredCount
+        factResultsDevice.resultsDeliveredCount = countByDevice.resultsDeliveredCount
       } else {
-        const countByDevice = await query
-          .clone()
-          .count('r.id as resultCount')
-          .select('r.deviceId')
-          .first()
+        const countByDevice = await query.clone().count('r.id as resultCount').select('r.deviceId').first()
         factResultsDevice.resultCount = countByDevice.resultCount
       }
 
-      const existingFactResultsDeviceRecord = await knex('FactResultsDevice')
-        .where({ deviceId, days })
-        .first()
+      const existingFactResultsDeviceRecord = await knex('FactResultsDevice').where({ deviceId, days }).first()
       if (existingFactResultsDeviceRecord) {
-        await knex('FactResultsDevice')
-          .where({ deviceId, days })
-          .update(factResultsDevice)
+        await knex('FactResultsDevice').where({ deviceId, days }).update(factResultsDevice)
       } else {
         await knex('FactResultsDevice').insert({
           ...factResultsDevice,
@@ -386,12 +292,10 @@ async function onFactGenerateResultCountsForDevice(
           .where({ deviceId, assayId: count.assayId, days })
           .first()
         if (factResultsDeviceByAssay) {
-          await knex('FactResultsDeviceByAssay')
-            .where({ deviceId, assayId: count.assayId, days })
-            .update({
-              resultCount: count.resultCount,
-              calculatedOn: now,
-            })
+          await knex('FactResultsDeviceByAssay').where({ deviceId, assayId: count.assayId, days }).update({
+            resultCount: count.resultCount,
+            calculatedOn: now,
+          })
         } else {
           await knex('FactResultsDeviceByAssay').insert({
             deviceId,
@@ -413,9 +317,7 @@ async function onFactGenerateResultCountsForDevice(
         .select('r.assayId', 'r.resultCategory1')
 
       await Promise.each(countsByCategory, async count => {
-        const factResultsDeviceByCategory1 = await knex(
-          'FactResultsDeviceByCategory1'
-        )
+        const factResultsDeviceByCategory1 = await knex('FactResultsDeviceByCategory1')
           .where({
             deviceId,
             assayId: count.assayId,
@@ -455,9 +357,7 @@ async function onFactGenerateResultCountsForDevice(
         .select('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
 
       await Promise.each(countsByCategories, async count => {
-        const factResultsDeviceByCategory1And2 = await knex(
-          'FactResultsDeviceByCategory1And2'
-        )
+        const factResultsDeviceByCategory1And2 = await knex('FactResultsDeviceByCategory1And2')
           .where({
             deviceId,
             assayId: count.assayId,
@@ -498,35 +398,23 @@ async function onFactGenerateResultCountsForDevice(
         .clone()
         .whereNotNull('r.assayId')
         .whereNotNull('r.resultCategory1')
-        .groupBy(
-          'r.assayId',
-          'r.resultCategory1',
-          'r.resultCategory2',
-          'startedOnTimeFrame'
-        )
+        .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
         .count('r.id as resultCount')
         .modify(qb => {
           if (resultEndedOn) {
             // TODO: we'll have to account for different timeframes here if we ever want to calculate more than just month
-            qb.whereBetween('r.endedOn', [
-              startOfMonth(parseISO(resultEndedOn)),
-              endOfMonth(parseISO(resultEndedOn)),
-            ])
+            qb.whereBetween('r.endedOn', [startOfMonth(parseISO(resultEndedOn)), endOfMonth(parseISO(resultEndedOn))])
           }
         })
         .select(
           'r.assayId',
           'r.resultCategory1',
           'r.resultCategory2',
-          knex.raw(
-            'DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame'
-          )
+          knex.raw('DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame')
         )
       // if we didn't get an endedOn, generate all time frames since first result from device
       await Promise.each(countsByCategories, async count => {
-        const factResultsDeviceByCategory1And2 = await knex(
-          'FactResultsDeviceByTimeFrame'
-        )
+        const factResultsDeviceByCategory1And2 = await knex('FactResultsDeviceByTimeFrame')
           .where({
             deviceId,
             assayId: count.assayId,
@@ -566,10 +454,7 @@ async function onFactGenerateResultCountsForDevice(
     })
 
     // delete orphan data (=not updated in the loop)
-    await knex('FactResultsDevice')
-      .where({ deviceId })
-      .whereRaw('calculatedOn < ?', now)
-      .delete()
+    await knex('FactResultsDevice').where({ deviceId }).whereRaw('calculatedOn < ?', now).delete()
 
     await knex('FactResultsDeviceByAssay')
       .where({ deviceId })
@@ -640,9 +525,7 @@ async function onFactCheckInventoryStock(action, { messageContext }) {
         'ii.siteId',
         'ii.consumableId',
         knex.raw('MAX(p.dueDaysInventoryStockout) as dueDaysInventoryStockout'),
-        knex.raw(
-          'MAX(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring'
-        )
+        knex.raw('MAX(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring')
       )
 
     // loop all sites and for each check if there are enough inventory items in stock
@@ -682,14 +565,9 @@ async function onFactCheckInventoryStock(action, { messageContext }) {
 
 // ------------------------------
 // is called from scheduler
-async function onFactCalculateInventoryConsumptionRates(
-  action,
-  { messageContext }
-) {
+async function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
   return messageContext.run(async knex => {
-    const items = await knex('InventoryItem')
-      .groupBy('siteId', 'consumableId')
-      .select('siteId', 'consumableId')
+    const items = await knex('InventoryItem').groupBy('siteId', 'consumableId').select('siteId', 'consumableId')
 
     // loop through all sites/consumables and refresh rate
     return Promise.each(items, async item =>
@@ -704,20 +582,16 @@ async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
   const consumptionTotals = await getConsumptions(knex, siteId, consumableId)
   await Promise.each(consumptionTotals, async consumptionTotal => {
-    const factInventoryConsumptionRate = await knex(
-      'FactInventoryConsumptionRate'
-    )
+    const factInventoryConsumptionRate = await knex('FactInventoryConsumptionRate')
       .where({ siteId, consumableId, days: consumptionTotal.days })
       .first()
     if (factInventoryConsumptionRate) {
-      await knex('FactInventoryConsumptionRate')
-        .where({ siteId, consumableId, days: consumptionTotal.days })
-        .update({
-          // in GxAlert we stored totals in field 'rate', so same here.
-          // to get actual rate - do rate/days
-          rate: consumptionTotal.total,
-          updatedOn,
-        })
+      await knex('FactInventoryConsumptionRate').where({ siteId, consumableId, days: consumptionTotal.days }).update({
+        // in GxAlert we stored totals in field 'rate', so same here.
+        // to get actual rate - do rate/days
+        rate: consumptionTotal.total,
+        updatedOn,
+      })
     } else {
       await knex('FactInventoryConsumptionRate').insert({
         siteId,
@@ -753,10 +627,7 @@ async function getConsumptions(knex, siteId, consumableId) {
         .limit(limitItems)
         .as('t1')
     })
-    .first(
-      knex.raw('min(endedOn) as dateFrom'),
-      knex.raw('max(endedOn) as dateTo')
-    )
+    .first(knex.raw('min(endedOn) as dateFrom'), knex.raw('max(endedOn) as dateTo'))
 
   if (!lastDaysWithTest) {
     return totals
@@ -828,27 +699,18 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
 
   return context.run(async knex => {
     // get all partners with defined plugin
-    const partners = await knex('Partner')
-      .whereNotNull('plugin')
-      .select('id', 'plugin')
+    const partners = await knex('Partner').whereNotNull('plugin').select('id', 'plugin')
 
     // loop all partners
-    return Promise.each(partners, async ({ id: partnerId, plugin }) => {
-      const { dataCategories = [] } = await loadPlugin(
-        [plugin],
-        'dataCategories'
-      )
+    await Promise.each(partners, async ({ id: partnerId, plugin }) => {
+      const { dataCategories = [] } = await loadPlugin([plugin], 'dataCategories')
       // check data categories for 'low status'
       return Promise.each(dataCategories, async dataCategory => {
         const { externalId: categoryToken } = dataCategory
-        const issueTypeId = await issueTypeToId(
-          `DataCategoryLowFor${categoryToken}`
-        )
+        const issueTypeId = await issueTypeToId(`DataCategoryLowFor${categoryToken}`)
 
         // get all sites for current partnerId
-        const sites = await knex('Site')
-          .where({ partnerId })
-          .select('id', 'name')
+        const sites = await knex('Site').where({ partnerId }).select('id', 'name')
 
         // for each site
         return Promise.each(sites, async site => {
@@ -904,12 +766,8 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
 }
 
 // helper function for getting Data Category Low status
-async function getDataCategoryStatus(
-  knex,
-  { period: { dateFrom, dateTo }, siteId, dataCategory }
-) {
-  const validValues =
-    dataCategory.validValues && JSON.parse(dataCategory.validValues)
+async function getDataCategoryStatus(knex, { period: { dateFrom, dateTo }, siteId, dataCategory }) {
+  const validValues = dataCategory.validValues && JSON.parse(dataCategory.validValues)
   // lower 1st character because props in patientData follow cammel-case naming convention
   const { externalId } = dataCategory
   const categoryToken = externalId[0].toLowerCase() + externalId.substring(1)
@@ -922,9 +780,7 @@ async function getDataCategoryStatus(
     .where(`d.siteId`, siteId)
 
   // get totals
-  const [{ count: totals }] = await itemsBase
-    .clone()
-    .countDistinct('r.id as count')
+  const [{ count: totals }] = await itemsBase.clone().countDistinct('r.id as count')
 
   let percentage = 0
   let numValid = 0
@@ -941,9 +797,7 @@ async function getDataCategoryStatus(
           this.andWhere(function () {
             // check if category is one of valid values
             _.each(validValues, value => {
-              this.orWhereRaw(`(r.patientData ->> '$.${categoryToken}') = ?`, [
-                value,
-              ])
+              this.orWhereRaw(`(r.patientData ->> '$.${categoryToken}') = ?`, [value])
             })
           })
         } else {
@@ -1033,25 +887,17 @@ async function onFactCompletionRatePerSite(action, { messageContext }) {
     const now = new Date()
     // get sites with completion rate above the 80%
 
-    const sitesWithLowCompletionRate = await knex(
-      'FactCustomFieldCompletion as fcr'
-    )
+    const sitesWithLowCompletionRate = await knex('FactCustomFieldCompletion as fcr')
       .join('Site as si', 'si.id', 'fcr.siteId')
       .where('fcr.date', '>=', subDays(now, 30))
       .select(
         'fcr.siteId',
-        knex.raw(
-          'SUM(completionRate*recordCount)/SUM(recordCount) as completionRatePerSite'
-        ),
+        knex.raw('SUM(completionRate*recordCount)/SUM(recordCount) as completionRatePerSite'),
         'si.partnerId as partnerId',
         'si.geographyId as geographyId'
       )
       .groupBy('fcr.siteId', 'partnerId', 'geographyId')
-      .having(
-        knex.raw('completionRatePerSite <= ?', [
-          MIN_PERCENTAGE_FIELDS_COMPLETION_RATE,
-        ])
-      )
+      .having(knex.raw('completionRatePerSite <= ?', [MIN_PERCENTAGE_FIELDS_COMPLETION_RATE]))
 
     // loop all and trigger issue
     return Promise.each(sitesWithLowCompletionRate, async site =>

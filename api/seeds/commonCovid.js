@@ -6,11 +6,7 @@ const {
   deviceTypeCategoryToId,
   resultCategoryToId,
 } = require('../src/shared/dictionary')
-const {
-  updateAssayResultCategoryTreatmentEmphasize,
-  seedPartnerAssay,
-  seedPartnerDisease,
-} = require('./utils')
+const { updateAssayResultCategoryTreatmentEmphasize, seedPartnerAssay, seedPartnerDisease } = require('./utils')
 const AssayCovidPatientDataSchema = require('./fixtures/AssayCovidPatientDataSchema.json')
 const AssayCovidResultDataSchema = require('./fixtures/AssayCovidResultDataSchema.json')
 const AssayCovidResultFormSchema = require('./fixtures/AssayCovidResultFormSchema.json')
@@ -33,9 +29,7 @@ async function upsertCovidDeviceTypes(
   await Promise.each(
     [
       {
-        deviceTypeCategoryId: await deviceTypeCategoryToId(
-          'Information System'
-        ),
+        deviceTypeCategoryId: await deviceTypeCategoryToId('Information System'),
         externalId: 'Aspect',
         name: 'Aspect',
         manufacturer: 'SystemOne',
@@ -79,19 +73,9 @@ async function upsertCovidDeviceTypes(
         (await knex('DeviceType')
           .whereIn(
             'externalId',
-            _.uniq([
-              deviceTypeSpec.externalId,
-              deviceTypeSpec.oldExternalId || deviceTypeSpec.externalId,
-            ])
+            _.uniq([deviceTypeSpec.externalId, deviceTypeSpec.oldExternalId || deviceTypeSpec.externalId])
           )
-          .first()) ||
-        _.pick(deviceTypeSpec, [
-          'deviceTypeCategoryId',
-          'externalId',
-          'name',
-          'manufacturer',
-          'plugin',
-        ])
+          .first()) || _.pick(deviceTypeSpec, ['deviceTypeCategoryId', 'externalId', 'name', 'manufacturer', 'plugin'])
       if (deviceType.id) {
         await knex('DeviceType').where('id', deviceType.id).update(deviceType)
       } else {
@@ -110,8 +94,7 @@ async function upsertCovidDeviceTypes(
         resultCategory1Label: 'COVID-19',
         resultCategory1i18nKey: 'resultCategoryCovid19',
         resultDataSchema: JSON.stringify(
-          deviceTypeSpec.abbreviation === 'Generic' &&
-            !resultDataSchema.typeOfTest
+          deviceTypeSpec.abbreviation === 'Generic' && !resultDataSchema.typeOfTest
             ? {
                 ...resultDataSchema,
                 typeOfTest: { type: 'string', title: 'Type of Test' },
@@ -125,10 +108,7 @@ async function upsertCovidDeviceTypes(
         (await knex('Assay')
           .whereIn(
             'externalId',
-            _.uniq([
-              assayCovid19.externalId,
-              deviceTypeSpec.oldAssayExternalId || assayCovid19.externalId,
-            ])
+            _.uniq([assayCovid19.externalId, deviceTypeSpec.oldAssayExternalId || assayCovid19.externalId])
           )
           .where('externalId', assayCovid19.externalId)
           .first('id')) || {}
@@ -165,29 +145,15 @@ async function upsertCovidDeviceTypes(
         })
         .first()
       const assayResultFormSchema = JSON.parse(JSON.stringify(resultFormSchema))
-      if (
-        deviceTypeSpec.abbreviation === 'Generic' &&
-        !assayResultFormSchema.fields.testType
-      ) {
+      if (deviceTypeSpec.abbreviation === 'Generic' && !assayResultFormSchema.fields.testType) {
         const testTypeOrder = assayResultFormSchema.fields.testResult
           ? assayResultFormSchema.fields.testResult.order + 1
-          : Math.min(
-              Object.values(assayResultFormSchema.fields).map(
-                field => field.order
-              )
-            )
-        Object.keys(assayResultFormSchema.fields).forEach(
-          assayResultFormSchemaFieldKey => {
-            if (
-              assayResultFormSchema.fields[assayResultFormSchemaFieldKey]
-                .order >= testTypeOrder
-            ) {
-              assayResultFormSchema.fields[
-                assayResultFormSchemaFieldKey
-              ].order += 1
-            }
+          : Math.min(Object.values(assayResultFormSchema.fields).map(field => field.order))
+        Object.keys(assayResultFormSchema.fields).forEach(assayResultFormSchemaFieldKey => {
+          if (assayResultFormSchema.fields[assayResultFormSchemaFieldKey].order >= testTypeOrder) {
+            assayResultFormSchema.fields[assayResultFormSchemaFieldKey].order += 1
           }
-        )
+        })
         assayResultFormSchema.fields.testType = {
           i18nLabel: 'testType',
           control: {
@@ -226,10 +192,7 @@ async function upsertCovidDeviceTypes(
         })
       } else {
         const existingFormSchema = JSON.parse(resultForm.formSchema || '{}')
-        if (
-          existingFormSchema.sendChangesOn !==
-          assayResultFormSchema.sendChangesOn
-        ) {
+        if (existingFormSchema.sendChangesOn !== assayResultFormSchema.sendChangesOn) {
           existingFormSchema.sendChangesOn = assayResultFormSchema.sendChangesOn
         }
         await knex('ResultForm')

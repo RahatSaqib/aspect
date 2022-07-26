@@ -23,18 +23,11 @@ async function seed(knex) {
 
   await upsertJobFunctionFixture(knex, fixture, partnerId)
 
-  const persons = await knex('Person')
-    .whereIn('cell', cellsToNotify)
-    .select('id')
+  const persons = await knex('Person').whereIn('cell', cellsToNotify).select('id')
 
-  const { id: jobFunctionId } = await knex('JobFunction')
-    .where({ externalId: 'dataViewer', partnerId })
-    .first()
+  const { id: jobFunctionId } = await knex('JobFunction').where({ externalId: 'dataViewer', partnerId }).first()
 
-  const { id: geographyId } = await knex('Geography')
-    .whereNull('stateId')
-    .whereNull('lgaId')
-    .first()
+  const { id: geographyId } = await knex('Geography').whereNull('stateId').whereNull('lgaId').first()
 
   await Promise.each(persons, async person => {
     const [jobId] = await knex('Job').insert({
@@ -47,9 +40,7 @@ async function seed(knex) {
     })
   })
 
-  const { id: adminId } = await knex('User')
-    .where('name', adminUserName)
-    .first('id')
+  const { id: adminId } = await knex('User').where('name', adminUserName).first('id')
 
   const issueTypeExternalId = 'ResultReceived'
 
@@ -77,13 +68,9 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const { id: messageSeverityId } = await knex('MessageSeverity')
-    .where('externalId', 'Alert')
-    .first('id')
+  const { id: messageSeverityId } = await knex('MessageSeverity').where('externalId', 'Alert').first('id')
 
-  const { id: issueTypeId } = await knex('IssueType')
-    .where('externalId', issueTypeExternalId)
-    .first('id')
+  const { id: issueTypeId } = await knex('IssueType').where('externalId', issueTypeExternalId).first('id')
 
   // Result 1 positive.
   const result1PositiveMessage =
