@@ -142,7 +142,7 @@ const messageQueuePlugin = {
         }
         return queue
       })
-      .then(queue => {
+      .then(async queue => {
         return continueUnprocessedRawData(queue)
       })
       .catch(err => {
