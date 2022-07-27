@@ -30,7 +30,7 @@ const PopoverCell = ({ children, label }) => {
     <Fragment>
       <Button onClick={handleClick}>
         {label}
-        <IconProvider icon="MdKeyboardArrowDown" title="" className={cssClasses('popover-cell__icon')} />
+        <IconProvider icon="MdKeyboardArrowDown" className={cssClasses('popover-cell__icon')} />
       </Button>
       <Popover
         open={open}
