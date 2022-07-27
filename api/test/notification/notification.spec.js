@@ -21,7 +21,7 @@ const { assert } = chai
 
 const { filterConditionWithAssay, filterConditionWithJf, baseFilterCondition } = require('./fitlerCondtions')
 
-describe.only('Issue based Notifications triggers', () => {
+describe('Issue based Notifications triggers', () => {
   let insertedIssueId = null
   before(async () => {
     const resultSample = await knex('Result').first()
@@ -331,6 +331,7 @@ describe.only('Result Notifications triggers', () => {
         persons: [{ personId: `${adminId}` }],
         jobFunctions: [{ jobFunctionId: `${managerJobFunctionId}` }, { jobFunctionId: `${adminJobFunctionId}` }],
       }
+      console.log('filterConditions', filterConditions)
       await createTestContext(filterConditions)
     })
 

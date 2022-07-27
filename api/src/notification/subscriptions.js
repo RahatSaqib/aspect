@@ -42,7 +42,6 @@ async function getNotificationSubscriptions(knex) {
   //     )
   //   )
 
-  console.log(actionParameters)
   return { actions: actionParameters }
 }
 
