@@ -1,5 +1,4 @@
 import React, { Suspense, lazy, memo } from 'react'
-import isBoolean from 'lodash/isBoolean'
 import { bool, string, oneOfType } from 'prop-types'
 import classnames from 'classnames/bind'
 import { FaSquare } from 'react-icons/fa'
@@ -53,7 +52,7 @@ const IconProvider = memo(({ icon, className, title }) => {
     >
       <IconShell>
         <ErrorBoundary fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}>
-          <IconComponent title={isBoolean(title) ? (!title ? '' : icon) : title} />
+          <IconComponent title={title} />
         </ErrorBoundary>
       </IconShell>
     </Suspense>

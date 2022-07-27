@@ -38,7 +38,7 @@ const addDeviceRawDataHandler = asyncHandler(async (request, h) => {
     })
 })
 
-async function continueUnprocessedRawData(queue) {
+async function continueUnprocessedRawData(action, { messageContext }) {
   const lockedId = await deviceApiRawStatusToId('Locked')
   const readyId = await deviceApiRawStatusToId('Ready')
   await knex('DeviceApiRaw').where('deviceApiRawStatusId', lockedId).update({ deviceApiRawStatusId: readyId })
@@ -49,10 +49,10 @@ async function continueUnprocessedRawData(queue) {
       `Processing ${readyDeviceApiRawRecords.length} messages from the raw device API while starting web server.`
     )
   }
-  Promise.each(readyDeviceApiRawRecords, async readyDeviceApiRawRecord => {
+  return Promise.each(readyDeviceApiRawRecords, async readyDeviceApiRawRecord => {
     // eslint-disable-next-line no-console
     console.log(`Processing DeviceApiRaw ID: ${readyDeviceApiRawRecord.id}.`)
-    const messageContext = queue.createMessageContext('aspect_request')
+
     let requestText = readyDeviceApiRawRecord.rawData
     if (readyDeviceApiRawRecord.salt) {
       requestText = decrypt(requestText, readyDeviceApiRawRecord.salt)
