@@ -71,7 +71,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
     <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
     <TableCell>
-      <StatusIcon status={device.get('gxConnectStatus') === 'online' ? 'success' : 'error'} />
+      <StatusIcon status={device.get('connectorStatus') === 'online' ? 'success' : 'error'} />
     </TableCell>
     <TableCell hiddenOn="lg">{device.get('connectorVersion')}</TableCell>
     <TableCell hiddenOn="lg" numeric>

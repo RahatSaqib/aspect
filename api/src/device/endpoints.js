@@ -70,11 +70,11 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
         category: Joi.string().description('Filter for device type category'),
         type: Joi.string().description('Filter for device type'),
         name: Joi.string().allow('').description('Filter for device name'),
-        gxConnectStatus: Joi.array()
+        connectorStatus: Joi.array()
           .items(Joi.string())
           .single()
           .allow(null)
-          .description('Filter for gxConnect status'),
+          .description('Filter for connector status'),
         siteName: Joi.string().allow('').description('Filter for site name'),
         siteId: Joi.number().allow(null).description('Filter for site Id'),
         siteExternalId: Joi.string().allow('').description('Filter for facility code'),
@@ -124,8 +124,8 @@ function listDevicesBaseResponse() {
               id: Joi.number().required().description('The ID of the device'),
               name: Joi.string().required().description('The name of the device'),
               shortName: Joi.string().allow('', null).description('The short name of the device'),
-              deviceStatus: Joi.string().allow('', null).description('The gxConnect status'),
-              gxConnectStatus: Joi.string().allow('', null).description('The gxConnect status'),
+              deviceStatus: Joi.string().allow('', null).description('The connector status'),
+              connectorStatus: Joi.string().allow('', null).description('The connector status'),
               connectorVersion: Joi.string().allow('', null).description('The gxConnect version'),
               createdOn: Joi.date().required().description('When the device was added to the database'),
               lastResultConductedOn: Joi.date().allow(null).description('When the device generate last result'),

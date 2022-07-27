@@ -74,7 +74,7 @@ const FILTERS_CONFIG = [
     requiredPermissions: [],
   },
   {
-    gxConnectStatus: true,
+    connectorStatus: true,
     requiredPermissions: [],
   },
 ]
@@ -157,9 +157,9 @@ const getColumns = intl => [
     tooltip: intl.formatMessage(messages.lastSeenDescription),
   },
   {
-    key: 'gxConnectStatus',
+    key: 'connectorStatus',
     sortable: false,
-    label: intl.formatMessage(messages.gxConnectStatus),
+    label: intl.formatMessage(messages.connectorStatus),
   },
   {
     key: 'connectorVersion',

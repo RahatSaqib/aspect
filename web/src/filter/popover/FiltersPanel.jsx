@@ -38,7 +38,7 @@ import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './FiltersPanel.css'
-import GxConnectStatusSelectField from '../resource/GxConnectStatusSelectField'
+import ConnectorStatusSelectField from '../resource/ConnectorStatusSelectField'
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
 
 const cssClasses = classnames.bind(styles)
@@ -158,11 +158,11 @@ const enhance = compose(
         onChangeFilters({
           deviceApprovalId,
         }),
-    onGxConnectStatusChange:
+    onConnectorStatusChange:
       ({ onChangeFilters }) =>
-      gxConnectStatus =>
+      connectorStatus =>
         onChangeFilters({
-          gxConnectStatus,
+          connectorStatus,
         }),
     onDeviceTypeChange:
       ({ onChangeFilters }) =>
@@ -530,13 +530,13 @@ const messages = {
       id: 'filter.popover.contactStatusHint',
       defaultMessage: 'Select contact status...',
     },
-    selectGxConnectStatus: {
-      id: 'filter.popover.selectGxConnectStatus',
-      defaultMessage: 'Select GxConnect status...',
+    selectConnectorStatus: {
+      id: 'filter.popover.selectConnectorStatus',
+      defaultMessage: 'Select connector status...',
     },
-    gxConnectStatus: {
-      id: 'filter.popover.gxConnectStatus',
-      defaultMessage: 'GxConnect Status',
+    connectorStatus: {
+      id: 'filter.popover.connectorStatus',
+      defaultMessage: 'Connector Status',
     },
     selectDeviceStatus: {
       id: 'filter.popover.selectDeviceStatus',
@@ -577,7 +577,7 @@ export const FiltersPanel = ({
   onWorkflowStatusIdChange,
   onTreatmentStatusChange,
   onDeviceApprovalIdChange,
-  onGxConnectStatusChange,
+  onConnectorStatusChange,
   onResultCategoryGroupChange,
   onDeviceMaintenanceStatusIdChange,
   onDeviceTypeChange,
@@ -996,14 +996,14 @@ export const FiltersPanel = ({
                 />
               </div>
             )}
-            {config.gxConnectStatus && (
+            {config.connectorStatus && (
               <div className={cssClasses('Control')}>
-                <GxConnectStatusSelectField
-                  value={filters.gxConnectStatus}
-                  onGxConnectStatusChange={onGxConnectStatusChange}
+                <ConnectorStatusSelectField
+                  value={filters.connectorStatus}
+                  onConnectorStatusChange={onConnectorStatusChange}
                   floatingLabelFixed
-                  hintText={formatMessage(messages.selectGxConnectStatus)}
-                  floatingLabelText={formatMessage(messages.gxConnectStatus)}
+                  hintText={formatMessage(messages.selectConnectorStatus)}
+                  floatingLabelText={formatMessage(messages.connectorStatus)}
                   autoWidth
                 />
               </div>

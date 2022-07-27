@@ -108,9 +108,9 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withDeviceType',
     defaultMessage: 'type is {deviceTypeName}',
   },
-  withGxConnectStatus: {
-    id: 'filter.btnGroup.withGxConnectStatus',
-    defaultMessage: 'GxConnect Status is {gxConnectStatus}',
+  withConnectorStatus: {
+    id: 'filter.btnGroup.withConnectorStatus',
+    defaultMessage: 'Connector Status is {connectorStatus}',
   },
   whereExternalIdIncludes: {
     id: 'filter.btnGroup.whereExternalIdIncludes',
@@ -584,9 +584,9 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         contactStatus: statusOptions.find(it => it.id === status, EMPTY_CONTEXT, EMPTY_MAP).name,
       })
     ),
-    gxConnectStatus: makeButton(gxConnectStatus =>
-      formatMessage(messages.withGxConnectStatus, {
-        gxConnectStatus: formatMessage(messages[gxConnectStatus]),
+    connectorStatus: makeButton(connectorStatus =>
+      formatMessage(messages.withConnectorStatus, {
+        connectorStatus: formatMessage(messages[connectorStatus]),
       })
     ),
   }

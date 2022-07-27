@@ -10,21 +10,21 @@ import PropTypeOf from '../../shared/types'
 
 const messages = defineMessages({
   optionOffline: {
-    id: 'pages.gxConnectStatusSelectField.offline',
+    id: 'pages.connectorStatusSelectField.offline',
     defaultMessage: 'Offline',
   },
   optionOnline: {
-    id: 'pages.gxConnectStatusSelectField.online',
+    id: 'pages.connectorStatusSelectField.online',
     defaultMessage: 'Online',
   },
 })
-const GxConnectStatusSelectField = props => {
+const ConnectorStatusSelectField = props => {
   const handleChange = ({ target: { value } }) => {
-    props.onGxConnectStatusChange(value === 'all' ? undefined : value)
+    props.onConnectorStatusChange(value === 'all' ? undefined : value)
   }
 
   const { value } = props
-  const restProps = omit(props, ['value', 'onGxConnectStatusChange'])
+  const restProps = omit(props, ['value', 'onConnectorStatusChange'])
 
   return (
     <SelectField {...restProps} value={value} onChange={handleChange}>
@@ -34,14 +34,14 @@ const GxConnectStatusSelectField = props => {
   )
 }
 
-GxConnectStatusSelectField.propTypes = {
+ConnectorStatusSelectField.propTypes = {
   intl: PropTypeOf.intl.isRequired,
-  onGxConnectStatusChange: PropTypes.func.isRequired,
+  onConnectorStatusChange: PropTypes.func.isRequired,
   value: PropTypes.string,
 }
 
-GxConnectStatusSelectField.defaultProps = {
+ConnectorStatusSelectField.defaultProps = {
   value: '',
 }
 
-export default injectIntl(GxConnectStatusSelectField)
+export default injectIntl(ConnectorStatusSelectField)
