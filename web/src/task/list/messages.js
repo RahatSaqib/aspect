@@ -46,16 +46,32 @@ const messages = defineMessages({
     id: 'pages.TaskList.issueCategoryDeviceHealth',
     defaultMessage: 'Device Health',
   },
+  DeviceHealth: {
+    id: 'pages.TaskList.DeviceHealth',
+    defaultMessage: 'Device Health',
+  },
   issueCategoryReagentHealth: {
     id: 'pages.TaskList.issueCategoryReagentHealth',
+    defaultMessage: 'Reagent Health',
+  },
+  ReagentHealth: {
+    id: 'pages.TaskList.ReagentHealth',
     defaultMessage: 'Reagent Health',
   },
   issueCategoryDataHealth: {
     id: 'pages.TaskList.issueCategoryDataHealth',
     defaultMessage: 'Data Health',
   },
+  DataHealth: {
+    id: 'pages.TaskList.dataHealth',
+    defaultMessage: 'Data Health',
+  },
   issueCategoryConnectivityHealth: {
     id: 'pages.TaskList.issueCategoryConnectivityHealth',
+    defaultMessage: 'Connectivity Health',
+  },
+  ConnectivityHealth: {
+    id: 'pages.TaskList.ConnectivityHealth',
     defaultMessage: 'Connectivity Health',
   },
   taskListOptionsAllTopics: {
