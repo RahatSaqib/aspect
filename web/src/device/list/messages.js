@@ -153,6 +153,26 @@ export const messages = {
       id: 'pages.DeviceList.deviceStatus',
       defaultMessage: 'Device Status',
     },
+    online: {
+      id: 'pages.DeviceList.online',
+      defaultMessage: 'Online',
+    },
+    offline: {
+      id: 'pages.DeviceList.offline',
+      defaultMessage: 'Offline',
+    },
+    up: {
+      id: 'pages.DeviceList.up',
+      defaultMessage: 'Up',
+    },
+    down: {
+      id: 'pages.DeviceList.down',
+      defaultMessage: 'Down',
+    },
+    unknown: {
+      id: 'pages.DeviceList.unknown',
+      defaultMessage: 'Unknown',
+    },
   }),
 }
 

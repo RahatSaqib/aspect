@@ -35,6 +35,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
     <TableCell>
       <StatusIcon
+        title={intl.formatMessage(messages[device.get('deviceStatus')])}
         status={
           device.get('deviceStatus') === 'up' ? 'success' : device.get('deviceStatus') === 'down' ? 'error' : 'warning'
         }
@@ -71,7 +72,10 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
     <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
     <TableCell>
-      <StatusIcon status={device.get('connectorStatus') === 'online' ? 'success' : 'error'} />
+      <StatusIcon
+        title={intl.formatMessage(messages[device.get('connectorStatus')])}
+        status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
+      />
     </TableCell>
     <TableCell hiddenOn="lg">{device.get('connectorVersion')}</TableCell>
     <TableCell hiddenOn="lg" numeric>
