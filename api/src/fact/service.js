@@ -570,9 +570,7 @@ async function onFactCalculateInventoryConsumptionRates(action, { messageContext
     const items = await knex('InventoryItem').groupBy('siteId', 'consumableId').select('siteId', 'consumableId')
 
     // loop through all sites/consumables and refresh rate
-    return Promise.each(items, async item =>
-      refreshConsumptionRates(knex, item.siteId, item.consumableId)
-    )
+    return Promise.each(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId))
   })
 }
 
@@ -900,9 +898,7 @@ async function onFactCompletionRatePerSite(action, { messageContext }) {
       .having(knex.raw('completionRatePerSite <= ?', [MIN_PERCENTAGE_FIELDS_COMPLETION_RATE]))
 
     // loop all and trigger issue
-    return Promise.each(sitesWithLowCompletionRate, async site =>
-      context.siteWithLowCompletionRateIssue(site)
-    )
+    return Promise.each(sitesWithLowCompletionRate, async site => context.siteWithLowCompletionRateIssue(site))
   })
 }
 

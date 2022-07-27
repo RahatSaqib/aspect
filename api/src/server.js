@@ -16,7 +16,6 @@ const { addLoggers } = require('./logger/service')
 const logger = require('./shared/logger')
 const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
-const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
 const { port } = config
 const server = new Hapi.server({
@@ -113,30 +112,24 @@ const queueName = config.scheduler.enabled ? config.amqp.name : `${config.amqp.n
 const messageQueuePlugin = {
   name: 'messageQueue',
   version,
-  register: async server =>
-    createMessageQueue(queueName)
-      .then(queue => {
-        server.ext('onPreHandler', (request, h) => {
-          request.plugins.messageContext =
-            queue.createMessageContext('aspect_request')
-          return h.continue
-        })
-        return queue
+  register: async server => {
+    try {
+      const queue = await createMessageQueue(queueName)
+
+      server.ext('onPreHandler', (request, h) => {
+        request.plugins.messageContext = queue.createMessageContext('aspect_request')
+        return h.continue
       })
-      .then(async queue => {
-        addLoggers(server, queue)
-        await addSubscriptions(queue)
-        if (config.scheduler.enabled) {
-          startScheduler(queue)
-        }
-        return queue
-      })
-      .then(async queue => {
-        return continueUnprocessedRawData(queue)
-      })
-      .catch(err => {
-        logger.error(err)
-      }),
+
+      addLoggers(server, queue)
+      await addSubscriptions(queue)
+      if (config.scheduler.enabled) {
+        startScheduler(queue)
+      }
+    } catch (err) {
+      logger.error(err)
+    }
+  },
 }
 
 const plugins = [
