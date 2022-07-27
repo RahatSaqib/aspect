@@ -20,9 +20,9 @@ export const messages = {
       id: 'pages.DeviceList.site',
       defaultMessage: 'Site',
     },
-    status: {
-      id: 'pages.DeviceList.status',
-      defaultMessage: 'Status',
+    maintenanceStatus: {
+      id: 'pages.DeviceList.maintenanceStatus',
+      defaultMessage: 'Maintenance Status',
     },
     availabilityRate: {
       id: 'pages.DeviceList.availabilityRate',
