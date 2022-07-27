@@ -90,6 +90,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'lastPingOn',
     'resultCountLastMonth',
     'resultCountThisMonth',
+    'deviceStatus',
     'connectorVersion',
     'lastResultConductedOn',
   ],

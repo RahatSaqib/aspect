@@ -98,6 +98,7 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           'deliveredThisMonth',
           'acknowledgedRatio',
           'totalFlagged',
+          'deviceStatus',
           'connectorVersion',
           'lastResultConductedOn'
         ),
