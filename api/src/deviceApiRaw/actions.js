@@ -4,6 +4,7 @@ const types = {
   DEVICE_RAW_MESSAGE_RESPONSE_READY: 'DEVICE_RAW_MESSAGE_RESPONSE_READY',
   DEVICE_RAW_MESSAGE_PROCESSED: 'DEVICE_RAW_MESSAGE_PROCESSED',
   DEVICE_RAW_MESSAGE_ERROR: 'DEVICE_RAW_MESSAGE_ERROR',
+  DEVICE_CONTINUE_UNPROCESSED_RAW_DATA: 'DEVICE_CONTINUE_UNPROCESSED_RAW_DATA',
 }
 
 // ----------- Action Creators -------------------
@@ -76,10 +77,20 @@ function deviceRawMessageError(deviceApiRawId, error) {
   }
 }
 
+/**
+ * Try to finish processing of data in table `deviceRawData`
+ */
+function tryToContinueUnprocessedRawData() {
+  return {
+    type: types.DEVICE_CONTINUE_UNPROCESSED_RAW_DATA,
+  }
+}
+
 module.exports = {
   types,
   deviceRawMessagePosted,
   deviceRawMessageResponseReady,
   deviceRawMessageProcessed,
   deviceRawMessageError,
+  tryToContinueUnprocessedRawData,
 }
