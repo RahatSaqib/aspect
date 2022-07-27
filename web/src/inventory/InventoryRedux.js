@@ -3,15 +3,8 @@ import Immutable from 'immutable'
 
 import fetchWrapperForQueries from '../MigratedComponents/QueryFetch'
 import { receiveList, Items } from '../shared/metaReducers/groupedItems'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/groupedTable'
-import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/groupedTable'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { getFilters } from '../filter/utils'
 
@@ -21,8 +14,7 @@ export const types = {
   REJECTED_INVENTORY_ITEMS: 'REJECTED_INVENTORY_ITEMS',
   TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE',
 
-  RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
-    'RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM',
+  RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM: 'RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM',
 
   SHOW_NEW_INVENTORY_DIALOG: 'SHOW_NEW_INVENTORY_DIALOG',
   SHOW_ADD_INVENTORY_DIALOG: 'SHOW_ADD_INVENTORY_DIALOG',
@@ -88,17 +80,7 @@ function hideAdjustInventoryDialog() {
   }
 }
 
-function exportSupplies(
-  filtersParams,
-  breakOutByLot,
-  sortCol,
-  sortDir,
-  page,
-  size,
-  fileFormat,
-  reportName,
-  dispatch
-) {
+function exportSupplies(filtersParams, breakOutByLot, sortCol, sortDir, page, size, fileFormat, reportName, dispatch) {
   const filters = getFilters(filtersParams) || {}
   filters.breakOutByLot = breakOutByLot
   return fetchWrapperForQueries({
@@ -141,8 +123,7 @@ function addInventory(data, dispatch, inventoryState) {
     inventoryAdjustment: { inventoryItemId },
   } = inventoryState
 
-  if (!data.consumableId && inventoryItemId)
-    data.consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
+  if (!data.consumableId && inventoryItemId) data.consumableId = items.getIn(['byId', inventoryItemId, 'consumableId'])
 
   return fetchWrapperForQueries({
     endpoint: '/inventory/add',
@@ -322,14 +303,8 @@ export default function inventoryItemsReducer(state = initialState, action) {
       return state.set('table', requestTable(state.table, action))
     case types.RECEIVE_INVENTORY_ITEMS:
       return state.withMutations(mutState => {
-        mutState.set(
-          'items',
-          receiveList(mutState.items, action.childrenPropertyPath, action.items)
-        )
-        mutState.set(
-          'table',
-          receiveTableItems(mutState.table, action.total, action.extraColumns)
-        )
+        mutState.set('items', receiveList(mutState.items, action.childrenPropertyPath, action.items))
+        mutState.set('table', receiveTableItems(mutState.table, action.total, action.extraColumns))
       })
     case types.REJECTED_INVENTORY_ITEMS:
       return state.withMutations(mutState => {
@@ -337,10 +312,7 @@ export default function inventoryItemsReducer(state = initialState, action) {
         mutState.set('table', mutState.get('table').clear())
       })
     case types.TOGGLE_GROUP_BY_SITE:
-      return state.setIn(
-        ['table', 'groupBy'],
-        action.toggleOn ? Immutable.List(['siteId']) : Immutable.List([])
-      )
+      return state.setIn(['table', 'groupBy'], action.toggleOn ? Immutable.List(['siteId']) : Immutable.List([]))
     case types.SHOW_NEW_INVENTORY_DIALOG:
     case types.SHOW_ADD_INVENTORY_DIALOG:
     case types.SHOW_REMOVE_INVENTORY_DIALOG:

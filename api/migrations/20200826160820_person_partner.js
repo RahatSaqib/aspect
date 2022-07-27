@@ -2,12 +2,7 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.alterTable('Person', person => {
-    person
-      .integer('partnerId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Partner')
+    person.integer('partnerId').unsigned().index().references('id').inTable('Partner')
   })
 }
 

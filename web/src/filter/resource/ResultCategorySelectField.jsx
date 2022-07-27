@@ -19,10 +19,7 @@ export class ResultCategorySelectField extends PureComponent {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
     assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
-    assayId: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.arrayOf(PropTypes.string),
-    ]),
+    assayId: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
   }
@@ -55,9 +52,7 @@ export class ResultCategorySelectField extends PureComponent {
     ])
     const assayIds = isArray(assayId) ? assayId : [assayId]
     const possibleAssay = assayItems.find(a => assayIds.includes(a.get('id')))
-    const resultCategories = possibleAssay
-      ? possibleAssay.get('resultCategories')
-      : []
+    const resultCategories = possibleAssay ? possibleAssay.get('resultCategories') : []
     const { formatMessage } = this.context
 
     return (
@@ -66,12 +61,7 @@ export class ResultCategorySelectField extends PureComponent {
         {resultCategories &&
           resultCategories.map(a => (
             <MenuItem key={a.get('id')} value={a.get('id')}>
-              {formatI18nMessage(
-                messages,
-                formatMessage,
-                a.get('i18nKey'),
-                a.get('name')
-              )}
+              {formatI18nMessage(messages, formatMessage, a.get('i18nKey'), a.get('name'))}
             </MenuItem>
           ))}
       </SelectField>
@@ -94,6 +84,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  ResultCategorySelectField
-)
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(ResultCategorySelectField)

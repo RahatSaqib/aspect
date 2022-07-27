@@ -52,11 +52,7 @@ async function getModuleActivityReportData(minDate, dataConstraints, query) {
       'i.dateLastIssue',
     ])
     .groupBy('r.deviceId', 'r.moduleName')
-    .orderBy([
-      { column: 'lastSeen', order: 'desc' },
-      'r.deviceId',
-      'r.moduleName',
-    ])
+    .orderBy([{ column: 'lastSeen', order: 'desc' }, 'r.deviceId', 'r.moduleName'])
 
     .modify(addConstraints, dataConstraints, {
       device: 'd',

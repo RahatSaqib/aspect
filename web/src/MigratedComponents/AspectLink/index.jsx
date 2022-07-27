@@ -29,13 +29,7 @@ const AspectLink = ({ to, children, className, ...restProps }) => {
   return (
     <Fragment>
       {isPermitted && isURL(to) ? (
-        <a
-          {...restProps}
-          href={to}
-          target="_blank"
-          className={linkClassName}
-          rel="noreferrer"
-        >
+        <a {...restProps} href={to} target="_blank" className={linkClassName} rel="noreferrer">
           {children}
         </a>
       ) : null}

@@ -153,9 +153,7 @@ const DemoComponent = ({ config: { flag } }) => {
         </h4>
         <div style={styles.items}>
           <div style={styles.item}>{formatMessage(messages.demoString)}</div>
-          <div style={styles.item}>
-            {formatMessage(messages.missingDefault)}
-          </div>
+          <div style={styles.item}>{formatMessage(messages.missingDefault)}</div>
           <div style={styles.item}>{formatMessage(messages.dontExist)}</div>
         </div>
       </div>

@@ -109,8 +109,7 @@ export default defineMessages({
   },
   siteWithoutLocation: {
     id: 'pages.SiteDetail.siteWithoutLocation',
-    defaultMessage:
-      ' No location set to this site - Please, edit to assign the latitude and longitude fields.',
+    defaultMessage: ' No location set to this site - Please, edit to assign the latitude and longitude fields.',
   },
   cancel: {
     id: 'pages.SiteDetail.disable.cancel',

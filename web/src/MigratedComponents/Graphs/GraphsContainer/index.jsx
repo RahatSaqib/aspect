@@ -4,10 +4,7 @@ import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid'
 import GraphContainer from './GraphContainer'
 import { validateGraphConfig } from '../Helpers/Formatters'
-import {
-  isAllowedGroupsWithoutAssays,
-  getWhitelistedAssays,
-} from '../../../shared/utils/graph'
+import { isAllowedGroupsWithoutAssays, getWhitelistedAssays } from '../../../shared/utils/graph'
 
 const spacing = {
   half: { innerSize: 12, outerSize: 6 },

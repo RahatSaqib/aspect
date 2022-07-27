@@ -57,21 +57,11 @@ const FILTERS_CONFIG = {
 }
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'endedOn',
-    'deviceName',
-    'sampleOriginSiteName',
-    'sampleId',
-    'errorCode',
-    'patientId',
-  ],
+  availableSortCol: ['endedOn', 'deviceName', 'sampleOriginSiteName', 'sampleId', 'errorCode', 'patientId'],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -111,18 +101,9 @@ const enhance = compose(
   ),
   withHandlers({
     onInitialLoad:
-      ({
-        device,
-        location,
-        fetchResults,
-        sortCol,
-        sortDir,
-        pageAt,
-        pageSize,
-      }) =>
+      ({ device, location, fetchResults, sortCol, sortDir, pageAt, pageSize }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
 
         if (!sanitized) {
           filtersParams.set('deviceId', device.get('id'))
@@ -130,37 +111,18 @@ const enhance = compose(
         }
       },
     onExportClick:
-      ({
-        device,
-        location,
-        exportResults,
-        sortCol,
-        sortDir,
-        pageAt,
-        pageSize,
-      }) =>
+      ({ device, location, exportResults, sortCol, sortDir, pageAt, pageSize }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           filtersParams.set('deviceId', device.get('id'))
-          exportResults(
-            filtersParams,
-            'xlsx',
-            sortCol,
-            sortDir,
-            pageAt,
-            pageSize,
-            'xlsx',
-            'deviceResults'
-          )
+          exportResults(filtersParams, 'xlsx', sortCol, sortDir, pageAt, pageSize, 'xlsx', 'deviceResults')
         }
       },
     onExportDeviceLogsClick:
       ({ device, location, exportDeviceLogs }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           filtersParams.set('deviceId', device.get('id'))
           exportDeviceLogs(filtersParams, 'xlsx', 'deviceLogs')
@@ -181,10 +143,7 @@ const enhance = compose(
         updateSingleDevice({
           deviceId: device.get('id'),
           data: {
-            approvalToken:
-              device.get('approvalToken') !== tokens.APPROVED
-                ? tokens.APPROVED
-                : tokens.ASSIGNED,
+            approvalToken: device.get('approvalToken') !== tokens.APPROVED ? tokens.APPROVED : tokens.ASSIGNED,
           },
         }),
     onShowCalibrationDialog:
@@ -209,11 +168,8 @@ const enhance = compose(
   }),
   lifecycle({
     UNSAFE_componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
-      const { sanitized: filtersSanitized, value: filtersParams } =
-        filtersSanitizer(searchParams.get('filters') || '')
+      const { sanitized, value: searchParams } = searchSanitizer(this.props.location)
+      const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
       if (sanitized || filtersSanitized) {
         searchParams.set('filters', filtersParams)
 
@@ -281,8 +237,7 @@ const DeviceDetailProfile = ({
   const warrantyNotes = device.get('warrantyNotes')
 
   const maintenanceStatusNotes =
-    !device.get('maintenanceStatusNotes') ||
-    device.get('maintenanceStatusNotes') === ''
+    !device.get('maintenanceStatusNotes') || device.get('maintenanceStatusNotes') === ''
       ? null
       : device.get('maintenanceStatusNotes')
   const resultColumns = [
@@ -335,12 +290,10 @@ const DeviceDetailProfile = ({
 
   // convert 0/1 numbers of maintenanceStatusActive and maintenanceStatusManuallySet to bool
   const isMaintenanceStatusChangeDisabled = !!(
-    device.get('maintenanceStatusActive') &&
-    !device.get('maintenanceStatusManuallySet')
+    device.get('maintenanceStatusActive') && !device.get('maintenanceStatusManuallySet')
   )
 
-  const formatMaintenanceDate = date =>
-    date ? formatDate(date) : formatMessage(messages.undefinedValue)
+  const formatMaintenanceDate = date => (date ? formatDate(date) : formatMessage(messages.undefinedValue))
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
@@ -349,22 +302,11 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
-              to={`/browse/device?filters=deviceTypeId%3D${device.getIn([
-                'deviceType',
-                'id',
-              ])}`}
+              to={`/browse/device?filters=deviceTypeId%3D${device.getIn(['deviceType', 'id'])}`}
               action={
                 <Fragment>
-                  <Tooltip
-                    title={formatMessage(messages.deviceLogsTooltip)}
-                    placement="right"
-                  >
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={onExportDeviceLogsClick}
-                      disabled={disabled}
-                    >
+                  <Tooltip title={formatMessage(messages.deviceLogsTooltip)} placement="right">
+                    <Button variant="contained" color="success" onClick={onExportDeviceLogsClick} disabled={disabled}>
                       {formatMessage(messages.deviceLogs)}
                     </Button>
                   </Tooltip>
@@ -378,9 +320,7 @@ const DeviceDetailProfile = ({
                     className={cssClasses('deviceSummary__container')}
                     iconClass="deviceSummary__helpIcon"
                     showHelpIcon
-                    title={formatMessage(
-                      messages.deviceStatusChangeDisabledTooltip
-                    )}
+                    title={formatMessage(messages.deviceStatusChangeDisabledTooltip)}
                   >
                     {formatMessage(messages.maintenance)}
                   </AspectTooltip>
@@ -392,11 +332,7 @@ const DeviceDetailProfile = ({
                 <Fragment>
                   {maintenanceStatusText}
                   {maintenanceStatusNotes && (
-                    <Tooltip
-                      title={maintenanceStatusNotes}
-                      placement="top"
-                      disableInteractive
-                    >
+                    <Tooltip title={maintenanceStatusNotes} placement="top" disableInteractive>
                       <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
@@ -421,11 +357,7 @@ const DeviceDetailProfile = ({
                 <Fragment>
                   {formatMaintenanceDate(device.get('calibrationDate'))}
                   {calibrationNotes && (
-                    <Tooltip
-                      title={calibrationNotes}
-                      placement="top"
-                      disableInteractive
-                    >
+                    <Tooltip title={calibrationNotes} placement="top" disableInteractive>
                       <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
@@ -434,12 +366,7 @@ const DeviceDetailProfile = ({
                 </Fragment>
               }
               action={
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={onShowCalibrationDialog}
-                  disabled={disabled}
-                >
+                <Button variant="contained" color="success" onClick={onShowCalibrationDialog} disabled={disabled}>
                   {formatMessage(messages.buttonAddRecord)}
                 </Button>
               }
@@ -461,11 +388,7 @@ const DeviceDetailProfile = ({
                 <Fragment>
                   {formatMaintenanceDate(device.get('warrantyDueDate'))}
                   {warrantyNotes && (
-                    <Tooltip
-                      title={warrantyNotes}
-                      placement="bottom"
-                      disableInteractive
-                    >
+                    <Tooltip title={warrantyNotes} placement="bottom" disableInteractive>
                       <IconButton aria-label={formatMessage(messages.notes)}>
                         <NotesIcon fontSize="larger" />
                       </IconButton>
@@ -474,12 +397,7 @@ const DeviceDetailProfile = ({
                 </Fragment>
               }
               action={
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={onShowWarrantyDialog}
-                  disabled={disabled}
-                >
+                <Button variant="contained" color="success" onClick={onShowWarrantyDialog} disabled={disabled}>
                   {formatMessage(messages.buttonUpdate)}
                 </Button>
               }
@@ -552,16 +470,9 @@ const DeviceDetailProfile = ({
             {/* Approval Status Summary */}
             <Summary
               title={formatMessage(messages.approval)}
-              description={formatMessage(
-                messages[device.get('approvalStatusI18nKey')]
-              )}
+              description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
               action={
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={onToggleDeviceApproval}
-                  disabled={disabled}
-                >
+                <Button variant="contained" color="success" onClick={onToggleDeviceApproval} disabled={disabled}>
                   {formatMessage(messages.buttonChange)}
                 </Button>
               }

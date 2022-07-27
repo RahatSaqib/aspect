@@ -9,20 +9,11 @@ async function seed(knex) {
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .whereNotIn('rc.externalId', [
-      'Detected',
-      'Trace Detected',
-      'Error',
-      'Invalid',
-      'NoResult',
-      'Success',
-    ])
+    .whereNotIn('rc.externalId', ['Detected', 'Trace Detected', 'Error', 'Invalid', 'NoResult', 'Success'])
     .whereNotNull('r.resultCategory2')
     .select('r.id')
 
-  await Promise.each(resultsCategories, result =>
-    knex('Result').where('id', result.id).update('resultCategory2', null)
-  )
+  await Promise.each(resultsCategories, result => knex('Result').where('id', result.id).update('resultCategory2', null))
 
   // For all assays, the result cannot have an error code unless result1 is either Invalid, No Result, or Error
   const resultsErrorCodes = await knex('Result as r')
@@ -31,9 +22,7 @@ async function seed(knex) {
     .whereNotNull('r.errorCode')
     .select('r.id')
 
-  await Promise.each(resultsErrorCodes, result =>
-    knex('Result').where('id', result.id).update('errorCode', null)
-  )
+  await Promise.each(resultsErrorCodes, result => knex('Result').where('id', result.id).update('errorCode', null))
 }
 
 module.exports = seed

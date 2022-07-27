@@ -12,14 +12,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { safeDownloadFile } from '../../shared/utils/files'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { REPORT_LIST } from '../../MigratedComponents/QueryFetch/Report/index'
-import {
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../shared/selectors/searchParams'
-import {
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import ReportCard from './ReportCard'
@@ -48,10 +42,7 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer()
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(
-    filtersSanitizer,
-    searchParams => searchParams.get('filters') || ''
-  ),
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -67,16 +58,13 @@ const ReportIndex = () => {
   const [visibleFilters, setVisibleFilters] = useState([])
   const dispatch = useDispatch()
 
-  const { data: { data } = false } = useQuery(
-    [REPORT_LIST.KEY, location.search],
-    async () => {
-      const { value: filtersParams } = filtersFromLocation(location)
-      return fetchWrapperForQueries({
-        endpoint: REPORT_LIST.ENDPOINT,
-        params: { ...fromPairs([...filtersParams.entries()]) },
-      })
-    }
-  )
+  const { data: { data } = false } = useQuery([REPORT_LIST.KEY, location.search], async () => {
+    const { value: filtersParams } = filtersFromLocation(location)
+    return fetchWrapperForQueries({
+      endpoint: REPORT_LIST.ENDPOINT,
+      params: { ...fromPairs([...filtersParams.entries()]) },
+    })
+  })
   const onClickDownload = (externalId, fileExtension = 'xlsx', reportName) => {
     const { value: filtersParams } = filtersFromLocation(location)
     const params = { ...fromPairs([...filtersParams.entries()]) }
@@ -143,8 +131,7 @@ const ReportIndex = () => {
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } =
-      filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 
@@ -199,31 +186,19 @@ const ReportIndex = () => {
           margin: 0,
         }}
       >
-        {items?.map(
-          ({
-            externalId,
-            name,
-            description,
-            i18nKey,
-            i18nKeyDescription,
-            exportExcel,
-            exportCsv,
-          }) => (
-            <ReportCard
-              title={name}
-              description={description}
-              i18nKey={i18nKey}
-              i18nKeyDescription={i18nKeyDescription}
-              exportExcel={exportExcel}
-              exportCsv={exportCsv}
-              key={externalId}
-              onClick={(fileExtension, reportName) =>
-                onClickDownload(externalId, fileExtension, reportName)
-              }
-              navigate={navigate}
-            />
-          )
-        )}
+        {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (
+          <ReportCard
+            title={name}
+            description={description}
+            i18nKey={i18nKey}
+            i18nKeyDescription={i18nKeyDescription}
+            exportExcel={exportExcel}
+            exportCsv={exportCsv}
+            key={externalId}
+            onClick={(fileExtension, reportName) => onClickDownload(externalId, fileExtension, reportName)}
+            navigate={navigate}
+          />
+        ))}
       </Grid>
     </div>
   )

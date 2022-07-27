@@ -23,11 +23,7 @@ import union from 'lodash/union'
 
 import messages from './messages'
 import tableMessages from '../../AspectTable/TableCell/messages'
-import {
-  timeClassification,
-  totalItemCount,
-  translate,
-} from '../../AspectTable/Helpers'
+import { timeClassification, totalItemCount, translate } from '../../AspectTable/Helpers'
 import ContactsCell from '../../AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../AspectTable/TableCell/DateTimeCell'
 import NumberCell from '../../AspectTable/TableCell/NumberCell'
@@ -103,8 +99,7 @@ const groupedOptions = ({ formatMessage }) => [
 export const getNotificationMeta = (notificationType, intl) => {
   const options = groupedOptions(intl)
   const allOptions = union(...options.map(({ options }) => options))
-  const { name, icon } =
-    allOptions.find(({ id }) => id === notificationType) || {}
+  const { name, icon } = allOptions.find(({ id }) => id === notificationType) || {}
   return { name, value: notificationType, icon }
 }
 
@@ -116,9 +111,7 @@ const CustomOption = props => {
   } = props
   return (
     <components.Option {...rest}>
-      <span style={{ opacity: isDisabled ? 0.4 : 1 }}>
-        {icon ? <IconProvider icon={icon} /> : null}
-      </span>
+      <span style={{ opacity: isDisabled ? 0.4 : 1 }}>{icon ? <IconProvider icon={icon} /> : null}</span>
       <span style={{ opacity: isDisabled ? 0.4 : 1 }}>{name}</span>
     </components.Option>
   )
@@ -129,9 +122,7 @@ const groupStyles = {
   fontSize: '15px',
   textTransform: 'none',
 }
-const GroupHeading = props => (
-  <components.GroupHeading {...props} style={groupStyles} />
-)
+const GroupHeading = props => <components.GroupHeading {...props} style={groupStyles} />
 
 export const getCreateNotificationMenuProps = intl => ({
   components: {
@@ -210,9 +201,7 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
     },
     {
       key: 'persons',
-      label: formatMessage(
-        messages.notificationsTableHeaderJobFunctionsPersons
-      ),
+      label: formatMessage(messages.notificationsTableHeaderJobFunctionsPersons),
       disableHide: true,
       disableGroupBy: true,
       width: 25,
@@ -230,21 +219,14 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
       disableGroupBy: true,
       width: 5,
       format: ({ value }) => {
-        if (value === true || value === 'true')
-          return formatMessage(messages.yes)
+        if (value === true || value === 'true') return formatMessage(messages.yes)
         return formatMessage(messages.no)
       },
     },
   ],
   columnOrder: {
     allow: false,
-    initialOrder: [
-      'name',
-      'typeCategory',
-      'lastTriggeredOn',
-      'totalTriggers',
-      'contacts',
-    ],
+    initialOrder: ['name', 'typeCategory', 'lastTriggeredOn', 'totalTriggers', 'contacts'],
   },
   contextualMenu: NotificationsContextualMenu,
 })

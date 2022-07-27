@@ -10,11 +10,7 @@ import ReactDOM from 'react-dom'
 
 class FallbackUntilDone extends PureComponent {
   static propTypes = {
-    component: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.func,
-      PropTypes.object,
-    ]),
+    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.object]),
     className: PropTypes.string,
     fallbacks: PropTypes.arrayOf(PropTypes.object).isRequired,
     isDone: PropTypes.func.isRequired,

@@ -1,12 +1,7 @@
 import React, { useCallback } from 'react'
 import DataTableHead from './DataTableHead'
 
-export const useSortFilter = ({
-  navigate,
-  location,
-  sortColumnKey: sortCol,
-  sortColumnDir: sortDir,
-}) => {
+export const useSortFilter = ({ navigate, location, sortColumnKey: sortCol, sortColumnDir: sortDir }) => {
   const onSortColumn = useCallback(
     nextSortCol => {
       const searchParams = new URLSearchParams(location.search)

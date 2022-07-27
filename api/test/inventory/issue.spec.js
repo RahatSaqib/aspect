@@ -5,29 +5,13 @@ const subHours = require('date-fns/subHours')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { knex } = require('../../src/db')
-const {
-  createMessageContext,
-  waitForIdle,
-  dispatchAndWaitForAction,
-  waitForAction,
-} = require('../utils/mqUtils')
-const {
-  processUsingHandlebarsSyntax,
-} = require('../../src/stringTemplate/service')
+const { createMessageContext, waitForIdle, dispatchAndWaitForAction, waitForAction } = require('../utils/mqUtils')
+const { processUsingHandlebarsSyntax } = require('../../src/stringTemplate/service')
 // action creators
-const {
-  inventoryStockout,
-  inventoryStockExpiring,
-} = require('../../src/inventory/actions')
+const { inventoryStockout, inventoryStockExpiring } = require('../../src/inventory/actions')
 const { escalateIssues } = require('../../src/issue/actions')
 const { refreshConsumptionRates } = require('../../src/fact/service')
-const {
-  getPartner,
-  getSite,
-  getIssue,
-  getIssueNotifications,
-  cleanUpIssues,
-} = require('../utils/issueUtils')
+const { getPartner, getSite, getIssue, getIssueNotifications, cleanUpIssues } = require('../utils/issueUtils')
 const { loadPlugin } = require('../../src/plugin/registration')
 const {
   deviceTypeToId,
@@ -66,22 +50,14 @@ describe('Inventory Stock Issues Endpoint', () => {
 
     const inventoryItem = await createTestInventory(knex, siteId, partner.id)
 
-    const [deviceId] = await createTestDevice(
-      knex,
-      siteId,
-      geographyId,
-      partner.id
-    )
+    const [deviceId] = await createTestDevice(knex, siteId, geographyId, partner.id)
 
     const device = await knex('Device').where({ id: deviceId }).first()
 
     const resultId = await createTestResult(knex, device)
     resultIds.push(resultId)
 
-    const { displayPreferences = {} } = await loadPlugin(
-      [partner.plugin],
-      'settings'
-    )
+    const { displayPreferences = {} } = await loadPlugin([partner.plugin], 'settings')
     baseProps = {
       siteId,
       siteRegionalOfficer,
@@ -101,23 +77,15 @@ describe('Inventory Stock Issues Endpoint', () => {
 
   after(async () => {
     if (resultIds.length > 0) {
-      const deviceIds = await knex('Result')
-        .whereIn('id', resultIds)
-        .pluck('deviceId')
-      const sampleIds = await knex('Result')
-        .whereIn('id', resultIds)
-        .pluck('sampleId')
+      const deviceIds = await knex('Result').whereIn('id', resultIds).pluck('deviceId')
+      const sampleIds = await knex('Result').whereIn('id', resultIds).pluck('sampleId')
       const { consumableId } = await knex('Consumable')
         .where({ externalId: 'DaktariCartridge' })
         .first('id as consumableId')
       await knex('InventoryItem').where({ consumableId }).delete()
-      await knex('FactInventoryConsumptionRate')
-        .where({ consumableId })
-        .delete()
+      await knex('FactInventoryConsumptionRate').where({ consumableId }).delete()
       await knex('ConsumableAssay').where({ consumableId }).delete()
-      await knex('PartnerConsumable')
-        .where({ consumableId, partnerId: partner.id })
-        .delete()
+      await knex('PartnerConsumable').where({ consumableId, partnerId: partner.id }).delete()
       const issuesId = await knex('Issue').where({ consumableId }).pluck('id')
       await knex('Notification').whereIn('issueId', issuesId).delete()
       await knex('Issue').whereIn('id', issuesId).delete()
@@ -152,23 +120,14 @@ describe('Inventory Stock Issues Endpoint', () => {
     const totals = await refreshConsumptionRates(knex, siteId, consumableId)
 
     // read from db
-    const ratesDb = await knex('FactInventoryConsumptionRate')
-      .where({ siteId, consumableId })
-      .select('days', 'rate')
+    const ratesDb = await knex('FactInventoryConsumptionRate').where({ siteId, consumableId }).select('days', 'rate')
 
     totals.forEach(justCalculated => {
       const fromDb = ratesDb.find(x => x.days === justCalculated.days)
 
-      assert.exists(
-        fromDb,
-        `No rate entry in db for period ${justCalculated.days} days`
-      )
+      assert.exists(fromDb, `No rate entry in db for period ${justCalculated.days} days`)
 
-      assert.equal(
-        justCalculated.total,
-        fromDb.rate,
-        `Rates do not match for period ${justCalculated.days} days`
-      )
+      assert.equal(justCalculated.total, fromDb.rate, `Rates do not match for period ${justCalculated.days} days`)
     })
   })
 
@@ -221,9 +180,7 @@ describe('Inventory Stock Issues Endpoint', () => {
     })
 
     it('change stock level to make stock lasts for less than 14 days and dispatch escalate issue action', async () => {
-      const { siteId, consumableId } = await knex('Issue')
-        .where('id', issueId)
-        .first()
+      const { siteId, consumableId } = await knex('Issue').where('id', issueId).first()
 
       // get dailyRate
       const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
@@ -374,18 +331,10 @@ async function triggerInitialIssue({
   issueEventIds.push(issue.issueEventId)
 
   // compare requested issueType with saved in db
-  assert.equal(
-    issue.issueType,
-    issueType,
-    `issue types do not match - ${issueType} and ${issue.issueType}`
-  )
+  assert.equal(issue.issueType, issueType, `issue types do not match - ${issueType} and ${issue.issueType}`)
 
   // issue should have status Active
-  assert.equal(
-    issue.issueStatus,
-    'Active',
-    `issueStatus (${issue.issueStatus}) is not Active`
-  )
+  assert.equal(issue.issueStatus, 'Active', `issueStatus (${issue.issueStatus}) is not Active`)
 
   // get issue notifications sorted by Job Function
   const notifications = await knex('Notification as n')
@@ -415,24 +364,16 @@ async function triggerInitialIssue({
   const notifRO = _.find(
     notifications,
     notification =>
-      notification.notificationTypeName.indexOf('RO View') === -1 &&
-      notification.jobFunction === 'Regional Officer'
+      notification.notificationTypeName.indexOf('RO View') === -1 && notification.jobFunction === 'Regional Officer'
   )
   const notifLUROView = _.find(
     notifications,
     notification =>
-      notification.notificationTypeName.indexOf('RO View') > 0 &&
-      notification.jobFunction === 'Regional Officer'
+      notification.notificationTypeName.indexOf('RO View') > 0 && notification.jobFunction === 'Regional Officer'
   )
 
   // helper func for asserting similar things for each notification
-  const assertNotification = (
-    notification,
-    userNamePrefix,
-    jobFunction,
-    level,
-    canAcknowledge
-  ) => {
+  const assertNotification = (notification, userNamePrefix, jobFunction, level, canAcknowledge) => {
     expect(notification.userName).to.include(userNamePrefix)
     assert.equal(notification.jobFunction, jobFunction)
     assert.equal(notification.level, level)
@@ -442,23 +383,17 @@ async function triggerInitialIssue({
   assertNotification(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
   const ack = issueType === 'InventoryStockout' ? 1 : 0
   assertNotification(notifRO, USER_RO_NAME_PREFIX, 'Regional Officer', 1, ack)
-  assertNotification(
-    notifLUROView,
-    USER_RO_NAME_PREFIX,
-    'Regional Officer',
-    1,
-    0
-  )
+  assertNotification(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
 
   // check alert message
   if (issueType === 'InventoryStockout') {
     const date = addDays(new Date(), daysDue)
     assert.equal(
       notifLU.alertMessage,
-      processUsingHandlebarsSyntax(
-        `Stock-out expected {{formatDate date}} - Order Stock.`,
-        { date, displayPreferences }
-      )
+      processUsingHandlebarsSyntax(`Stock-out expected {{formatDate date}} - Order Stock.`, {
+        date,
+        displayPreferences,
+      })
     )
   }
 
@@ -471,11 +406,7 @@ async function triggerInitialIssue({
     consumableId,
     `consumableId from action (${consumableId}) does not match consumableId in db (${consumableId2})`
   )
-  assert.equal(
-    action2.daysDue,
-    daysDue,
-    `action.daysDue (${daysDue}) does not match daysDue in db (${daysDue2})`
-  )
+  assert.equal(action2.daysDue, daysDue, `action.daysDue (${daysDue}) does not match daysDue in db (${daysDue2})`)
   if (issueType === 'InventoryStockExpiring') {
     assert.equal(
       action2.totalWasted,
@@ -488,9 +419,7 @@ async function triggerInitialIssue({
 }
 
 async function deleteConsumableTestData(knex, consumableId) {
-  const inventoryItems = await knex('InventoryItem')
-    .where({ consumableId })
-    .select('id')
+  const inventoryItems = await knex('InventoryItem').where({ consumableId }).select('id')
   const inventoryItemIds = _.map(inventoryItems, 'id')
   await deleteInventoryTestData(knex, inventoryItemIds)
 
@@ -501,9 +430,7 @@ async function deleteConsumableTestData(knex, consumableId) {
 }
 
 async function deleteInventoryTestData(knex, inventoryItemIds) {
-  await knex('InventoryLog')
-    .whereIn('inventoryItemId', inventoryItemIds)
-    .delete()
+  await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 }
 
@@ -523,9 +450,7 @@ async function createTestDevice(knex, siteId, geographyId, partnerId) {
 async function createTestResult(knex, device) {
   const now = new Date()
   const admin = await knex('User').where({ name: 'myanmar_admin' }).first()
-  const gxMtbRifAssay = await knex('Assay')
-    .where({ externalId: 'GxMtbRif' })
-    .first()
+  const gxMtbRifAssay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first()
 
   const resultSourceId = await resultSourceToId('DiagnosticDevice')
   const resultTypeId = await resultTypeToId('Patient')
@@ -563,9 +488,7 @@ async function createTestResult(knex, device) {
 }
 
 async function createTestInventory(knex, siteId, partnerId) {
-  const { id: assayId } = await knex('Assay')
-    .where({ externalId: 'GxMtbRif' })
-    .first('id')
+  const { id: assayId } = await knex('Assay').where({ externalId: 'GxMtbRif' }).first('id')
 
   const [consumableId] = await knex('Consumable').insert({
     name: 'Test Cartridge',
@@ -594,9 +517,7 @@ async function createTestInventory(knex, siteId, partnerId) {
     quantityOnHand: 500,
   })
 
-  const inventoryItem = await knex('InventoryItem')
-    .where({ id: inventoryItemId })
-    .first()
+  const inventoryItem = await knex('InventoryItem').where({ id: inventoryItemId }).first()
 
   return inventoryItem
 }

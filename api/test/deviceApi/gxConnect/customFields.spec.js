@@ -25,13 +25,10 @@ describe('Custom field mapper', () => {
 
     assert.isTrue(validate(schema, datasourceExample))
 
-    const mappingOutput = await mapGxConnectCustomFieldsWithDataSources(
-      datasourceExample,
-      {
-        countryId: 1,
-        stateId: 1,
-      }
-    )
+    const mappingOutput = await mapGxConnectCustomFieldsWithDataSources(datasourceExample, {
+      countryId: 1,
+      stateId: 1,
+    })
 
     assert.notDeepEqual(mappingOutput.CustomFields.Fields, [
       {

@@ -28,16 +28,10 @@ const LANG_DEFAULT = 'en'
   For instance, `cell.type = 2` is `excel.ValueType.Number`
 */
 
-const valueCellTypes = [
-  excel.ValueType.String,
-  excel.ValueType.Number,
-  excel.ValueType.Date,
-  excel.ValueType.Boolean,
-]
+const valueCellTypes = [excel.ValueType.String, excel.ValueType.Number, excel.ValueType.Date, excel.ValueType.Boolean]
 
 const isDataAList = data => {
-  if (typeof data === 'object' && !Array.isArray(data) && data !== null)
-    return false
+  if (typeof data === 'object' && !Array.isArray(data) && data !== null) return false
   return true
 }
 
@@ -160,23 +154,12 @@ function getHeaderRows(sheet, cellTableToken) {
 
 // ----------------------------------------------------------------------------------------------
 function getContentDispositionFilename(fileNamePrefix, extension) {
-  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(
-    /:/g,
-    '-'
-  )
+  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(/:/g, '-')
 }
 
 // ----------------------------------------------------------------------------------------------
-async function respondFile({
-  reply,
-  dataBuffer,
-  extension = 'xlsx',
-  fileNamePrefix = 'report',
-}) {
-  const reportFileName = getContentDispositionFilename(
-    fileNamePrefix,
-    extension
-  )
+async function respondFile({ reply, dataBuffer, extension = 'xlsx', fileNamePrefix = 'report' }) {
+  const reportFileName = getContentDispositionFilename(fileNamePrefix, extension)
   return reply
     .response(dataBuffer)
     .encoding('binary')
@@ -185,16 +168,8 @@ async function respondFile({
 }
 
 // ----------------------------------------------------------------------------------------------
-async function respondStream({
-  reply,
-  stream,
-  extension = 'xlsx',
-  fileNamePrefix = 'report',
-}) {
-  const reportFileName = getContentDispositionFilename(
-    fileNamePrefix,
-    extension
-  )
+async function respondStream({ reply, stream, extension = 'xlsx', fileNamePrefix = 'report' }) {
+  const reportFileName = getContentDispositionFilename(fileNamePrefix, extension)
   return reply
     .response(stream)
     .encoding('binary')
@@ -235,12 +210,7 @@ function setCellStyle(cell, style) {
 }
 
 // ----------------------------------------------------------------------------------------------
-function fillInSheetWithMap({
-  templateFolderPath,
-  sheetIndex,
-  dataSet,
-  worksheet,
-}) {
+function fillInSheetWithMap({ templateFolderPath, sheetIndex, dataSet, worksheet }) {
   let mapping
   try {
     mapping = require(`../../templates/${templateFolderPath}/mapping`) //eslint-disable-line
@@ -298,21 +268,18 @@ function fillInSheetWithMap({
 // ----------------------------------------------------------------------------------------------
 function replacePlaceholders(worksheet, replacements, data) {
   // replace placeholders, i.e. <Dates>, <States>, etc in the header
-  _.each(
-    replacements,
-    ({ placeholder, value, condition = () => false, action = () => true }) => {
-      if (data && !_.isEmpty(data)) {
-        if (condition(data)) {
-          const [conditionalCell] = getCellsBySubstring(worksheet, placeholder)
-          action(conditionalCell, worksheet)
-        }
-        if (_.isFunction(value)) {
-          value = value(data)
-        }
+  _.each(replacements, ({ placeholder, value, condition = () => false, action = () => true }) => {
+    if (data && !_.isEmpty(data)) {
+      if (condition(data)) {
+        const [conditionalCell] = getCellsBySubstring(worksheet, placeholder)
+        action(conditionalCell, worksheet)
       }
-      replaceSubstringInCell(worksheet, placeholder, value)
+      if (_.isFunction(value)) {
+        value = value(data)
+      }
     }
-  )
+    replaceSubstringInCell(worksheet, placeholder, value)
+  })
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -342,12 +309,7 @@ async function renderExcelTemplate({
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
     const dataForSheet = dataSet[sheetIndex] || {}
-    const {
-      data,
-      dynamicColumns = [],
-      defaultNoDataMessage,
-      dataSelector: dataSelectorSheet,
-    } = dataForSheet
+    const { data, dynamicColumns = [], defaultNoDataMessage, dataSelector: dataSelectorSheet } = dataForSheet
     // define sections on a sheet
     let { sections } = dataForSheet
     const isListWithSections = !!sections
@@ -356,14 +318,11 @@ async function renderExcelTemplate({
     }
     if (sections) {
       _.forEach(sections, section => {
-        section.tableToken = section.dataSource
-          ? `<Table-${section.dataSource}>`
-          : '<Table>'
+        section.tableToken = section.dataSource ? `<Table-${section.dataSource}>` : '<Table>'
       })
     }
 
-    const wayToFillInData =
-      isListWithSections || isDataAList(data) ? 'list' : 'mapping'
+    const wayToFillInData = isListWithSections || isDataAList(data) ? 'list' : 'mapping'
 
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
@@ -416,20 +375,10 @@ async function renderExcelTemplate({
 
         // append dynamic columns if specified
         if (dynamicColumns.length > 0) {
-          addColumnsToHeader(
-            worksheet,
-            dynamicColumns,
-            headerRow,
-            allHeaderRows.length
-          )
+          addColumnsToHeader(worksheet, dynamicColumns, headerRow, allHeaderRows.length)
         }
 
-        const dataRows =
-          wayToFillInData === 'mapping'
-            ? data.rows
-            : sectionDataSource
-            ? data[sectionDataSource]
-            : data
+        const dataRows = wayToFillInData === 'mapping' ? data.rows : sectionDataSource ? data[sectionDataSource] : data
 
         // fill in array 'rows'
         let rows = []
@@ -453,9 +402,7 @@ async function renderExcelTemplate({
               const normalizer = dataSelector || dataSelectorSheet
               if (normalizer) normalizedValues = normalizer(dataRow)
               else normalizedValues = dataRow
-              valuesInDynamicColumns = dynamicColumns.map(
-                column => normalizedValues[column.key]
-              )
+              valuesInDynamicColumns = dynamicColumns.map(column => normalizedValues[column.key])
             }
             return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
           })
@@ -486,9 +433,7 @@ async function renderExcelTemplate({
           _.each(formulae, f => {
             const masterCell = firstRow.getCell(f.index)
 
-            const rangeToFillFormula = `${
-              masterCell.address
-            }:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
+            const rangeToFillFormula = `${masterCell.address}:${masterCell.address.replace(/[^a-zA-Z]+/g, '')}${
               rows.length + masterCell.row - 1
             }`
 
@@ -498,10 +443,7 @@ async function renderExcelTemplate({
           /**
            * style dynamic columns, if styling is defined
            */
-          if (
-            dynamicColumns.length > 0 &&
-            dynamicColumns.find(column => !!column.style)
-          ) {
+          if (dynamicColumns.length > 0 && dynamicColumns.find(column => !!column.style)) {
             const dynamicColumnsStartCol = fieldNames.length + 1
             dynamicColumns.forEach((column, dynamicColumnIndex) => {
               if (!column.style) return
@@ -535,9 +477,7 @@ async function renderExcelTemplate({
   })
 
   // return binary buffer
-  return extension === 'csv'
-    ? workbook.csv.writeBuffer()
-    : workbook.xlsx.writeBuffer()
+  return extension === 'csv' ? workbook.csv.writeBuffer() : workbook.xlsx.writeBuffer()
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -559,12 +499,7 @@ async function renderExcelTemplateToCsv({
 
   const worksheet = workbook.worksheets[0]
   const worksheetData = dataSet[0]
-  const {
-    data = [],
-    defaultNoDataMessage,
-    dataSelector: dataSelectorSheet,
-    dynamicColumns = [],
-  } = worksheetData || {}
+  const { data = [], defaultNoDataMessage, dataSelector: dataSelectorSheet, dynamicColumns = [] } = worksheetData || {}
 
   /**
    * replace base placeholders, i.e. <Dates>, <States>, etc in the header
@@ -575,8 +510,7 @@ async function renderExcelTemplateToCsv({
    * prepare table in worksheet, i.e.
    * append dynamic columns, get all predefined field names, get pattern row number
    */
-  const { patternRowNumber, fieldNames, dynamicMerges, allHeaderRows } =
-    prepareWorksheet(worksheet, dynamicColumns)
+  const { patternRowNumber, fieldNames, dynamicMerges, allHeaderRows } = prepareWorksheet(worksheet, dynamicColumns)
 
   /**
    * merge dynamically appended cells
@@ -731,10 +665,7 @@ async function streamExcelTemplate({
        * prepare table in worksheet, i.e.
        * append dynamic columns, get all predefined field names, get pattern row number
        */
-      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(
-        worksheetTemplate,
-        dynamicColumns
-      ))
+      ;({ patternRowNumber, fieldNames, dynamicMerges } = prepareWorksheet(worksheetTemplate, dynamicColumns))
     }
 
     /**
@@ -756,17 +687,15 @@ async function streamExcelTemplate({
     /**
      * all ranges for merged cells
      */
-    const allRanges = [...worksheetTemplate.model.merges, ...dynamicMerges].map(
-      rng => {
-        const range = new Range(rng)
-        // shift down all ranges below table
-        if (patternRowNumber !== -1 && range.top > patternRowNumber) {
-          range.top += rowsValues.length - 1
-          range.bottom += rowsValues.length - 1
-        }
-        return range
+    const allRanges = [...worksheetTemplate.model.merges, ...dynamicMerges].map(rng => {
+      const range = new Range(rng)
+      // shift down all ranges below table
+      if (patternRowNumber !== -1 && range.top > patternRowNumber) {
+        range.top += rowsValues.length - 1
+        range.bottom += rowsValues.length - 1
       }
-    )
+      return range
+    })
 
     /**
      * set all merges - for original cells on worksheetTemplate and for
@@ -877,13 +806,7 @@ async function streamExcelTemplate({
 }
 
 // ----------------------------------------------------------------------------------------------
-function writeRowToStream({
-  worksheet,
-  rowNumber,
-  rowTemplate,
-  rowValues,
-  cellsStyle,
-}) {
+function writeRowToStream({ worksheet, rowNumber, rowTemplate, rowValues, cellsStyle }) {
   /**
    * get/create row
    */
@@ -953,29 +876,19 @@ function writeRowToStream({
 }
 
 // ----------------------------------------------------------------------------------------------
-function replaceBasePlaceholders(
-  replacements,
-  worksheetTemplate,
-  worksheetData
-) {
-  _.each(
-    replacements,
-    ({ placeholder, value, condition = () => false, action = () => true }) => {
-      if (worksheetData) {
-        if (condition(worksheetData)) {
-          const [conditionalCell] = getCellsBySubstring(
-            worksheetTemplate,
-            placeholder
-          )
-          action(conditionalCell, worksheetTemplate)
-        }
-        if (_.isFunction(value)) {
-          value = value(worksheetData)
-        }
+function replaceBasePlaceholders(replacements, worksheetTemplate, worksheetData) {
+  _.each(replacements, ({ placeholder, value, condition = () => false, action = () => true }) => {
+    if (worksheetData) {
+      if (condition(worksheetData)) {
+        const [conditionalCell] = getCellsBySubstring(worksheetTemplate, placeholder)
+        action(conditionalCell, worksheetTemplate)
       }
-      replaceSubstringInCell(worksheetTemplate, placeholder, value)
+      if (_.isFunction(value)) {
+        value = value(worksheetData)
+      }
     }
-  )
+    replaceSubstringInCell(worksheetTemplate, placeholder, value)
+  })
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -1019,12 +932,7 @@ function prepareWorksheet(worksheetTemplate, dynamicColumns) {
      * when specified - append dynamic columns to template worksheet
      */
     if (dynamicColumns.length > 0) {
-      dynamicMerges = appendColumnsToHeader(
-        worksheetTemplate,
-        dynamicColumns,
-        headerRow,
-        allHeaderRows.length
-      )
+      dynamicMerges = appendColumnsToHeader(worksheetTemplate, dynamicColumns, headerRow, allHeaderRows.length)
     }
   }
 
@@ -1037,13 +945,7 @@ function prepareWorksheet(worksheetTemplate, dynamicColumns) {
 }
 
 // ----------------------------------------------------------------------------------------------
-function getNormalizedData({
-  data,
-  fieldNames,
-  normalizer,
-  dynamicColumns,
-  defaultNoDataMessage,
-}) {
+function getNormalizedData({ data, fieldNames, normalizer, dynamicColumns, defaultNoDataMessage }) {
   /**
    * fill in array 'rowsValues' - this is an array (item for each row)
    * of array (cell values for current row)
@@ -1106,9 +1008,7 @@ async function exportData(request, reply, sheetData, scope, options) {
 // ----------------------------------------------------------------------------------------------
 function addColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   const lastPredefinedCellNumber = headerRow.cellCount
-  const lastPredefinedCellStyle = getCellStyle(
-    headerRow.getCell(lastPredefinedCellNumber)
-  )
+  const lastPredefinedCellStyle = getCellStyle(headerRow.getCell(lastPredefinedCellNumber))
 
   // keep styles of all predefined cells in 1st header rows
   const cellStyles = []
@@ -1139,45 +1039,24 @@ function addColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   headerRow.eachCell(cell => headerRowValues.push(cell.value))
 
   // update row
-  headerRow.values = [
-    ...headerRowValues,
-    ...columns.map(column => column.header),
-  ]
+  headerRow.values = [...headerRowValues, ...columns.map(column => column.header)]
   headerRow.commit()
 
   // loop all cells and merge cells (if needed) and set styles
   headerRow.eachCell((cell, cellNumber) => {
-    const cellStyle =
-      cellNumber <= lastPredefinedCellNumber
-        ? cellStyles[cellNumber - 1]
-        : lastPredefinedCellStyle
+    const cellStyle = cellNumber <= lastPredefinedCellNumber ? cellStyles[cellNumber - 1] : lastPredefinedCellStyle
 
     if (cellNumber <= lastPredefinedCellNumber) {
       const refCell = headerRowCells.find(c => c.cellNumber === cellNumber)
       const { totalMerged } = refCell
       if (totalMerged > 1) {
         // merge by start row, start column, end row, end column (equivalent to K10:M12)
-        worksheet.unMergeCells(
-          cell.row,
-          cellNumber,
-          cell.row,
-          cellNumber + totalMerged - 1
-        )
-        worksheet.mergeCells(
-          cell.row,
-          cellNumber,
-          cell.row,
-          cellNumber + totalMerged - 1
-        )
+        worksheet.unMergeCells(cell.row, cellNumber, cell.row, cellNumber + totalMerged - 1)
+        worksheet.mergeCells(cell.row, cellNumber, cell.row, cellNumber + totalMerged - 1)
       }
     } else if (totalHeaderRows > 1) {
       // merge by start row, start column, end row, end column (equivalent to K10:M12)
-      worksheet.mergeCells(
-        cell.row,
-        cellNumber,
-        cell.row + totalHeaderRows - 1,
-        cellNumber
-      )
+      worksheet.mergeCells(cell.row, cellNumber, cell.row + totalHeaderRows - 1, cellNumber)
     }
 
     if (cell === cell.master) {
@@ -1221,9 +1100,7 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
      * style cell in pattern row (with field name placeholders)
      */
     const cellPattern = patternRow.getCell(columnNumber)
-    const cellStyle = patternInfo.lastCellStyle
-      ? { ...patternInfo.lastCellStyle, numFmt: null }
-      : null
+    const cellStyle = patternInfo.lastCellStyle ? { ...patternInfo.lastCellStyle, numFmt: null } : null
     setCellStyle(cellPattern, cellStyle)
   })
 

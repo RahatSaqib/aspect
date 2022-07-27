@@ -1,7 +1,4 @@
-const {
-  onAlertMessageCreated,
-  onAlertMessageUpdateAfterIssueDataChanged,
-} = require('./service')
+const { onAlertMessageCreated, onAlertMessageUpdateAfterIssueDataChanged } = require('./service')
 
 const subscriptions = [
   {

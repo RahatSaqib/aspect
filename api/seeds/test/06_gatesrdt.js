@@ -1,13 +1,9 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'GatesRDT')
-    .first()
+  const { id: partnerId } = await knex('Partner').where('name', 'GatesRDT').first()
 
-  const { id: commCareGatesRdtAssayId } = await knex('Assay')
-    .where('externalId', 'CommCareGatesRDT')
-    .first()
+  const { id: commCareGatesRdtAssayId } = await knex('Assay').where('externalId', 'CommCareGatesRDT').first()
   const existingResultForm = await knex('ResultForm')
     .where({ partnerId, assayId: commCareGatesRdtAssayId })
     .first('partnerId', 'assayId')

@@ -27,47 +27,27 @@ describe('ResetPasswordEnterEmail module', () => {
 
     it('should disable the submit button when the form is pristine, invalid or submitting', () => {
       let wrapper = shallow(
-        <ResetPasswordEnterEmail
-          {...props}
-          form={{ pristine: true, valid: false, submitting: false }}
-        />
+        <ResetPasswordEnterEmail {...props} form={{ pristine: true, valid: false, submitting: false }} />
       )
-      expect(
-        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
-      ).toBeTruthy()
+      expect(wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')).toBeTruthy()
 
       wrapper = shallow(
-        <ResetPasswordEnterEmail
-          {...props}
-          form={{ pristine: false, valid: false, submitting: false }}
-        />
+        <ResetPasswordEnterEmail {...props} form={{ pristine: false, valid: false, submitting: false }} />
       )
-      expect(
-        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
-      ).toBeTruthy()
+      expect(wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')).toBeTruthy()
 
       wrapper = shallow(
-        <ResetPasswordEnterEmail
-          {...props}
-          form={{ pristine: false, valid: true, submitting: true }}
-        />
+        <ResetPasswordEnterEmail {...props} form={{ pristine: false, valid: true, submitting: true }} />
       )
-      expect(
-        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
-      ).toBeTruthy()
+      expect(wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')).toBeTruthy()
     })
 
     it('should enable the submit button when the form is dirty, valid and not submitting', () => {
       const wrapper = shallow(
-        <ResetPasswordEnterEmail
-          {...props}
-          form={{ pristine: false, valid: true, submitting: false }}
-        />
+        <ResetPasswordEnterEmail {...props} form={{ pristine: false, valid: true, submitting: false }} />
       )
 
-      expect(
-        wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')
-      ).toBeFalsy()
+      expect(wrapper.find(Button).filter({ type: 'submit' }).prop('disabled')).toBeFalsy()
     })
 
     it('should show the error when the text field is touched and the email is invalid', () => {
@@ -79,33 +59,21 @@ describe('ResetPasswordEnterEmail module', () => {
         meta: { emailAddress: { touched: true, error: 'error-message' } },
       })
       expect(wrapper.find(TextField).prop('error')).toBeTruthy()
-      expect(wrapper.find(TextField).prop('helperText')).toEqual(
-        'error-message'
-      )
+      expect(wrapper.find(TextField).prop('helperText')).toEqual('error-message')
     })
   })
 
   describe('validate function', () => {
     const invalidEmailAddress = intl.formatMessage(messages.invalidEmailAddress)
     it('should contain error message with invalid emails', () => {
-      expect(validate({ emailAddress: '' }, props).emailAddress).toEqual(
-        invalidEmailAddress
-      )
-      expect(validate({ emailAddress: 'test' }, props).emailAddress).toEqual(
-        invalidEmailAddress
-      )
-      expect(
-        validate({ emailAddress: 'test@example' }, props).emailAddress
-      ).toEqual(invalidEmailAddress)
+      expect(validate({ emailAddress: '' }, props).emailAddress).toEqual(invalidEmailAddress)
+      expect(validate({ emailAddress: 'test' }, props).emailAddress).toEqual(invalidEmailAddress)
+      expect(validate({ emailAddress: 'test@example' }, props).emailAddress).toEqual(invalidEmailAddress)
     })
 
     it('should not contain an `emailAddress` property of error with valid emails', () => {
-      expect(
-        validate({ emailAddress: 'test@example.com' }, props)
-      ).not.toHaveProperty('emailAddress')
-      expect(
-        validate({ emailAddress: 'test@gmail.com' }, props)
-      ).not.toHaveProperty('emailAddress')
+      expect(validate({ emailAddress: 'test@example.com' }, props)).not.toHaveProperty('emailAddress')
+      expect(validate({ emailAddress: 'test@gmail.com' }, props)).not.toHaveProperty('emailAddress')
     })
   })
 })

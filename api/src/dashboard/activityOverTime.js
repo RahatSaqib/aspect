@@ -6,11 +6,7 @@ const addDays = require('date-fns/addDays')
 const addMinutes = require('date-fns/addMinutes')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const {
-  getArrayOfDaysInRange,
-  getOffsetFromIsoDateStringInMinutes,
-  formatDateOrDefault,
-} = require('../shared/date')
+const { getArrayOfDaysInRange, getOffsetFromIsoDateStringInMinutes, formatDateOrDefault } = require('../shared/date')
 
 async function activityOverTimeDashboard(request) {
   const { auth, query } = request
@@ -21,24 +17,20 @@ async function activityOverTimeDashboard(request) {
   const maxDate = addMinutes(new Date(query.maxDate), offset)
 
   // build up array of days in date range, excluding today because it could be incomplete. It makes querying easier:
-  let days = getArrayOfDaysInRange(
-    minDate,
-    min([maxDate, addDays(new Date(), -1)]),
-    {
-      devicesActive: 0,
-      devicesInactive: 0,
-      devicesTotal: 0,
-      inactiveUnknown: 0,
-      inactiveNoTestsPerformed: 0,
-      inactiveOutOfInventory: 0,
-      inactiveDownForRepair: 0,
-      inactiveDecommissioned: 0,
-      inactiveNoStaff: 0,
-      inactiveNoSamples: 0,
-      inactiveNoPower: 0,
-      inactiveOther: 0,
-    }
-  )
+  let days = getArrayOfDaysInRange(minDate, min([maxDate, addDays(new Date(), -1)]), {
+    devicesActive: 0,
+    devicesInactive: 0,
+    devicesTotal: 0,
+    inactiveUnknown: 0,
+    inactiveNoTestsPerformed: 0,
+    inactiveOutOfInventory: 0,
+    inactiveDownForRepair: 0,
+    inactiveDecommissioned: 0,
+    inactiveNoStaff: 0,
+    inactiveNoSamples: 0,
+    inactiveNoPower: 0,
+    inactiveOther: 0,
+  })
 
   // base query for all actual devices
   const allDevicesBase = knex('Device as d')
@@ -81,11 +73,7 @@ async function activityOverTimeDashboard(request) {
   // count devices by different statuses
   const allCounts = await allDevicesBase
     .clone()
-    .leftOuterJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.id',
-      'dmsl.deviceId'
-    )
+    .leftOuterJoin('DeviceMaintenanceStatusLog as dmsl', 'd.id', 'dmsl.deviceId')
     // left join to the same table DeviceMaintenanceStatusLog for the same
     // 'day' and 'deviceId' and make sure we deal with LATEST entry for `dmsl` -
     // i.e. for this we do dmsl2.createdOn > dmsl.createdOn, and if date are equal
@@ -98,19 +86,11 @@ async function activityOverTimeDashboard(request) {
         .andOn(function () {
           this.on('dmsl2.createdOn', '>', 'dmsl.createdOn')
           this.orOn(function () {
-            this.on('dmsl2.createdOn', '=', 'dmsl.createdOn').andOn(
-              'dmsl2.id',
-              '>',
-              'dmsl.id'
-            )
+            this.on('dmsl2.createdOn', '=', 'dmsl.createdOn').andOn('dmsl2.id', '>', 'dmsl.id')
           })
         })
     })
-    .leftOuterJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
+    .leftOuterJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .whereRaw('dmsl.day >= ? AND dmsl.day < ?', [
       formatDateOrDefault(minDate, 'yyyy-MM-dd'),
       formatDateOrDefault(addDays(maxDate, 1), 'yyyy-MM-dd'),
@@ -178,10 +158,7 @@ async function activityOverTimeDashboard(request) {
   // update the devices counts for each day in the range
 
   days = days.map(day => {
-    const dayCounts = allCounts.find(
-      ({ dayDate }) =>
-        format(day.date, 'yyyy-MM-dd') === format(dayDate, 'yyyy-MM-dd')
-    )
+    const dayCounts = allCounts.find(({ dayDate }) => format(day.date, 'yyyy-MM-dd') === format(dayDate, 'yyyy-MM-dd'))
     if (dayCounts) {
       day = {
         ...day,
@@ -196,11 +173,7 @@ async function activityOverTimeDashboard(request) {
       }
     }
     day.isWeekendOrHoliday = isWeekend(
-      new Date(
-        day.date.getUTCFullYear(),
-        day.date.getUTCMonth(),
-        day.date.getUTCDate()
-      )
+      new Date(day.date.getUTCFullYear(), day.date.getUTCMonth(), day.date.getUTCDate())
     )
     return day
   })

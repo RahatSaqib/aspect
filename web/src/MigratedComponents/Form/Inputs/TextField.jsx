@@ -27,9 +27,7 @@ const AspectTextField = ({
   return (
     <TextField
       {...rest}
-      label={
-        !multiline && link ? <FormHTMLLabel label={label} link={link} /> : label
-      }
+      label={!multiline && link ? <FormHTMLLabel label={label} link={link} /> : label}
       multiline={multiline}
       onChange={onChangeLocal}
       {...getFieldErrorProps(formik, rest.id)}

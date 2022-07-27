@@ -45,8 +45,7 @@ describe('Authentication routes', () => {
       })
       .then(res => res.body)
 
-  const daysToExpire = token =>
-    (token.expires - new Date()) / (1000 * 60 * 60 * 24)
+  const daysToExpire = token => (token.expires - new Date()) / (1000 * 60 * 60 * 24)
 
   beforeEach(async () => {
     const webResponse = await getToken(webClientName, webClientType)
@@ -61,9 +60,7 @@ describe('Authentication routes', () => {
   })
   afterEach(() =>
     runTestWithKnex(async knex => {
-      await knex('RefreshToken')
-        .whereIn('clientName', [webClientName, appClientName])
-        .delete()
+      await knex('RefreshToken').whereIn('clientName', [webClientName, appClientName]).delete()
     })
   )
 
@@ -113,9 +110,7 @@ describe('Authentication routes', () => {
     })
     after(() =>
       runTestWithKnex(async knex => {
-        await knex('RefreshToken')
-          .whereIn('clientId', ['123123123-123123123', '9999-9999'])
-          .delete()
+        await knex('RefreshToken').whereIn('clientId', ['123123123-123123123', '9999-9999']).delete()
         await knex('Person').where('name', unlicensedUser).delete()
         await knex('User').where('name', unlicensedUser).delete()
       })
@@ -220,12 +215,7 @@ describe('Authentication routes', () => {
           const rt = await knex('RefreshToken').where('token', appToken).first()
           assert.equal(rt.clientName, appClientName)
           assert.equal(rt.clientType, appClientType)
-          assert.closeTo(
-            daysToExpire(rt),
-            30,
-            0.00001,
-            'Expiration days for app'
-          )
+          assert.closeTo(daysToExpire(rt), 30, 0.00001, 'Expiration days for app')
         }))
 
       it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', () =>
@@ -233,12 +223,7 @@ describe('Authentication routes', () => {
           const rt = await knex('RefreshToken').where('token', webToken).first()
           assert.equal(rt.clientName, webClientName)
           assert.equal(rt.clientType, webClientType)
-          assert.closeTo(
-            daysToExpire(rt),
-            7,
-            0.00001,
-            'Expiration days for web'
-          )
+          assert.closeTo(daysToExpire(rt), 7, 0.00001, 'Expiration days for web')
         }))
       it('should return 400 and error message if no user name is provided', async () => {
         await server
@@ -295,10 +280,7 @@ describe('Authentication routes', () => {
           })
           .then(res => {
             assert.equal(res.status, 401)
-            assert.equal(
-              res.body.message,
-              'Authentication failed. Wrong username or password.'
-            )
+            assert.equal(res.body.message, 'Authentication failed. Wrong username or password.')
           })
       })
     })
@@ -348,17 +330,10 @@ describe('Authentication routes', () => {
             assert.isAbove(res.body.refresh.length, 50)
             return res.body.refresh
           })
-        const rt = await knex('RefreshToken')
-          .where('token', newWebToken)
-          .first()
+        const rt = await knex('RefreshToken').where('token', newWebToken).first()
         assert.equal(rt.clientName, webClientName)
         assert.equal(rt.clientType, webClientType)
-        assert.closeTo(
-          daysToExpire(rt),
-          7,
-          0.00001,
-          'Expiration for web after refresh'
-        )
+        assert.closeTo(daysToExpire(rt), 7, 0.00001, 'Expiration for web after refresh')
       }))
 
     it('should return a JSON message with a token valid for approximately 30 days for reporter app', () =>
@@ -376,18 +351,11 @@ describe('Authentication routes', () => {
             assert.isNull(res.body.deviceTokenId)
             return res.body.refresh
           })
-        const rt = await knex('RefreshToken')
-          .where('token', newAppToken)
-          .first()
+        const rt = await knex('RefreshToken').where('token', newAppToken).first()
         assert.equal(rt.clientName, appClientName)
         assert.equal(rt.clientType, appClientType)
         assert.isNull(rt.deviceTokenId)
-        assert.closeTo(
-          daysToExpire(rt),
-          30,
-          0.00001,
-          'Expiration for app after refresh'
-        )
+        assert.closeTo(daysToExpire(rt), 30, 0.00001, 'Expiration for app after refresh')
       }))
 
     it('should store deviceTokenId for reporter app and return a JSON message with a deviceTokenId for reporter app', () =>
@@ -406,9 +374,7 @@ describe('Authentication routes', () => {
             assert.equal(res.body.deviceTokenId, deviceTokenId)
             return res.body.refresh
           })
-        const rt = await knex('RefreshToken')
-          .where('token', newAppToken)
-          .first()
+        const rt = await knex('RefreshToken').where('token', newAppToken).first()
         assert.equal(rt.deviceTokenId, deviceTokenId)
       }))
     it('should not store deviceTokenId for web app and return a JSON message with deviceTokenId = null for web app', () =>
@@ -427,9 +393,7 @@ describe('Authentication routes', () => {
             assert.isNull(res.body.deviceTokenId)
             return res.body.refresh
           })
-        const rt = await knex('RefreshToken')
-          .where('token', newAppToken)
-          .first()
+        const rt = await knex('RefreshToken').where('token', newAppToken).first()
         assert.isNull(rt.deviceTokenId)
       }))
 
@@ -468,10 +432,7 @@ describe('Authentication routes', () => {
         })
         .then(res => {
           assert.equal(res.status, 400)
-          assert.equal(
-            res.body.message,
-            'Unable to find token or token revoked'
-          )
+          assert.equal(res.body.message, 'Unable to find token or token revoked')
         })
     })
   })
@@ -754,10 +715,7 @@ describe('Authentication routes', () => {
         })
         .then(res => {
           assert.equal(res.status, 404)
-          assert.equal(
-            res.body.message,
-            'The reset password token was not found'
-          )
+          assert.equal(res.body.message, 'The reset password token was not found')
         })
     })
   })

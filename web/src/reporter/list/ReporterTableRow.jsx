@@ -2,15 +2,9 @@ import React from 'react'
 import classnames from 'classnames/bind'
 import { useLocation } from 'react-router-dom'
 import AspectLink from '../../MigratedComponents/AspectLink'
-import {
-  buildURL,
-  getFiltersObjectFromLocation,
-} from '../../MigratedComponents/AspectLink/helpers'
+import { buildURL, getFiltersObjectFromLocation } from '../../MigratedComponents/AspectLink/helpers'
 
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 
 import ReporterLinkCell from './ReporterLinkCell'
 

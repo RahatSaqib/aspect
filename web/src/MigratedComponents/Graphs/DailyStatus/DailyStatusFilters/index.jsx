@@ -9,11 +9,7 @@ import styles from '../DailyStatus.css'
 
 const cssClasses = classnames.bind(styles)
 
-const DailyStatusFilters = ({
-  toggleAll: { checked, key, label },
-  statuses,
-  action,
-}) => {
+const DailyStatusFilters = ({ toggleAll: { checked, key, label }, statuses, action }) => {
   return (
     <div className={cssClasses('statuses__row')}>
       <div className={cssClasses('statuses__spacer')} />

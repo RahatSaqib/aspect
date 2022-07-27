@@ -41,14 +41,7 @@ GraphLegend.propTypes = {
 
 const PieInnerLegend = ({ averages, data }) => {
   const { formatMessage: intlFormatMessage } = useIntl()
-  const {
-    title,
-    key,
-    subTitle,
-    showTotal = false,
-    totalDisplayMethod = false,
-    notation = 'standard',
-  } = averages
+  const { title, key, subTitle, showTotal = false, totalDisplayMethod = false, notation = 'standard' } = averages
   const [average, setAverage] = useState(0)
   const prevData = usePrevious(data)
 
@@ -60,13 +53,8 @@ const PieInnerLegend = ({ averages, data }) => {
 
   return isEmpty(average) ? null : (
     <div className={cssClasses('legend__container')}>
-      <div
-        className={cssClasses('legend__average')}
-        style={{ color: average.color }}
-      >
-        {!totalDisplayMethod || totalDisplayMethod !== 'actual'
-          ? `${average.avg}%`
-          : average.totals}
+      <div className={cssClasses('legend__average')} style={{ color: average.color }}>
+        {!totalDisplayMethod || totalDisplayMethod !== 'actual' ? `${average.avg}%` : average.totals}
       </div>
       {showTotal ? (
         <Fragment>
@@ -77,15 +65,11 @@ const PieInnerLegend = ({ averages, data }) => {
             </div>
           ) : null}
           {subTitle ? (
-            <div className={cssClasses('legend__subTitle')}>
-              {intlFormatMessage(messages[subTitle])}
-            </div>
+            <div className={cssClasses('legend__subTitle')}>{intlFormatMessage(messages[subTitle])}</div>
           ) : null}
         </Fragment>
       ) : (
-        <div className={cssClasses('legend__title')}>
-          {intlFormatMessage(messages[title])}
-        </div>
+        <div className={cssClasses('legend__title')}>{intlFormatMessage(messages[title])}</div>
       )}
     </div>
   )
@@ -99,13 +83,8 @@ PieInnerLegend.propTypes = {
 const PieInnerLegendSolidBase = ({ data }) => {
   const { valueLabel } = data && data[0]
   return data && data.length ? (
-    <div
-      className={cssClasses(['legend__container', 'legend__container--solid'])}
-    >
-      <div
-        className={cssClasses(['legend__average', 'legend__average--solid'])}
-        style={{ color: 'white' }}
-      >
+    <div className={cssClasses(['legend__container', 'legend__container--solid'])}>
+      <div className={cssClasses(['legend__average', 'legend__average--solid'])} style={{ color: 'white' }}>
         {valueLabel}
       </div>
     </div>
@@ -124,36 +103,15 @@ const PieInnerLegendSolid = ({ data, link }) =>
 const PieInnerLegendDoughNut = ({ data }) => {
   const { value, difference } = data && data[0]
   return data && data.length ? (
-    <div
-      className={cssClasses(['legend__container', 'legend__container--solid'])}
-    >
-      <div
-        className={cssClasses(['legend__average', 'legend__average--doughnut'])}
-      >
-        {value}%
-      </div>
+    <div className={cssClasses(['legend__container', 'legend__container--solid'])}>
+      <div className={cssClasses(['legend__average', 'legend__average--doughnut'])}>{value}%</div>
       <div className={cssClasses('legend__averageDirectionContainer')}>
-        {difference > 0 ? (
-          <IconProvider
-            icon="FaArrowUp"
-            className="legend__averageDirectionArrow"
-          />
-        ) : null}
-        {difference < 0 ? (
-          <IconProvider
-            icon="FaArrowDown"
-            className="legend__averageDirectionArrow"
-          />
-        ) : null}
+        {difference > 0 ? <IconProvider icon="FaArrowUp" className="legend__averageDirectionArrow" /> : null}
+        {difference < 0 ? <IconProvider icon="FaArrowDown" className="legend__averageDirectionArrow" /> : null}
         <div>{difference}%</div>
       </div>
     </div>
   ) : null
 }
 
-export {
-  GraphLegend,
-  PieInnerLegend,
-  PieInnerLegendSolid,
-  PieInnerLegendDoughNut,
-}
+export { GraphLegend, PieInnerLegend, PieInnerLegendSolid, PieInnerLegendDoughNut }

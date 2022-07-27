@@ -29,12 +29,8 @@ const RevokedSelectField = props => {
   return (
     <SelectField {...restProps} value={value} onChange={handleChange}>
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-      <MenuItem value="0">
-        {props.intl.formatMessage(messages.optionFalse)}
-      </MenuItem>
-      <MenuItem value="1">
-        {props.intl.formatMessage(messages.optionTrue)}
-      </MenuItem>
+      <MenuItem value="0">{props.intl.formatMessage(messages.optionFalse)}</MenuItem>
+      <MenuItem value="1">{props.intl.formatMessage(messages.optionTrue)}</MenuItem>
     </SelectField>
   )
 }

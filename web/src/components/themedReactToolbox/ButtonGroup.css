@@ -5,13 +5,11 @@
 }
 
 .ButtonGroup--adjacent > *:not(:first-child) {
-  border-radius: 0 var(--toolbox-button-border-radius)
-    var(--toolbox-button-border-radius) 0;
+  border-radius: 0 var(--toolbox-button-border-radius) var(--toolbox-button-border-radius) 0;
 }
 
 .ButtonGroup--adjacent > *:not(:last-child) {
-  border-radius: var(--toolbox-button-border-radius) 0 0
-    var(--toolbox-button-border-radius);
+  border-radius: var(--toolbox-button-border-radius) 0 0 var(--toolbox-button-border-radius);
 }
 
 .ButtonGroup--isolated {

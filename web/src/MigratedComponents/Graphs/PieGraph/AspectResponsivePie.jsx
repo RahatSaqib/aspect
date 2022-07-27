@@ -3,17 +3,9 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import { ResponsivePie } from '@nivo/pie'
-import {
-  PieInnerLegend,
-  PieInnerLegendSolid,
-  PieInnerLegendDoughNut,
-} from '../GraphLegend'
+import { PieInnerLegend, PieInnerLegendSolid, PieInnerLegendDoughNut } from '../GraphLegend'
 import messages from '../intlMessages'
-import {
-  generateColorForValue,
-  generateToolTip,
-  percentageOrActualForPie,
-} from '../Helpers/Formatters'
+import { generateColorForValue, generateToolTip, percentageOrActualForPie } from '../Helpers/Formatters'
 
 import { GraphToolTip } from '../GraphToolTip'
 
@@ -113,12 +105,8 @@ const AspectResponsivePie = ({
         )}
         colors={v => generateColorForValue(v.id, graphId)}
       />
-      {averages && !type ? (
-        <PieInnerLegend averages={averages} data={data} />
-      ) : null}
-      {type === 'solid' ? (
-        <PieInnerLegendSolid data={data} link={link} />
-      ) : null}
+      {averages && !type ? <PieInnerLegend averages={averages} data={data} /> : null}
+      {type === 'solid' ? <PieInnerLegendSolid data={data} link={link} /> : null}
       {type === 'doughnut' ? <PieInnerLegendDoughNut data={data} /> : null}
     </div>
   )

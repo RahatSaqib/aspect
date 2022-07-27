@@ -1,21 +1,9 @@
 const Joi = require('@hapi/joi')
-const {
-  validateAllGeographyFilterParams,
-} = require('../geography/requestValidation')
-const {
-  asyncHandler,
-  validateDateRangeParams,
-  validateSortPageParams,
-} = require('../routes')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const createSite = require('./createSite')
 const updateSite = require('./updateSite')
-const {
-  listSites,
-  showSite,
-  listSitesForSelectList,
-  listSitesWithReporters,
-  disableSite,
-} = require('./service')
+const { listSites, showSite, listSitesForSelectList, listSitesWithReporters, disableSite } = require('./service')
 const { postSchema, updateSchema } = require('./requestValidation')
 
 const { exportSites, exportReporters } = require('./serviceReports')
@@ -26,16 +14,10 @@ function listSitesBaseConfig() {
     validate: {
       query: {
         siteIds: Joi.string().allow('').description('Filter for site ids'),
-        deviceName: Joi.string()
-          .allow('')
-          .description('Filter for device name'),
+        deviceName: Joi.string().allow('').description('Filter for device name'),
         siteName: Joi.string().allow('').description('Filter for site name'),
-        externalId: Joi.string()
-          .allow('')
-          .description('Filter for facility code'),
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
+        externalId: Joi.string().allow('').description('Filter for facility code'),
+        format: Joi.string().allow('').description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),
         ...validateSortPageParams(
@@ -75,33 +57,17 @@ function reportersBaseConfig() {
           'transferred'
         ),
         deviceName: Joi.string().allow('').description('Device name'),
-        deviceType: Joi.string()
-          .optional()
-          .description('Filter by device type externalId'),
+        deviceType: Joi.string().optional().description('Filter by device type externalId'),
         siteName: Joi.string().allow('').description('Filter by site name'),
         siteIds: Joi.string().allow('').description('Filter by site ids'),
-        siteId: Joi.number()
-          .integer()
-          .positive()
-          .optional()
-          .description('Filter by site Id'),
-        partnerId: Joi.number()
-          .integer()
-          .positive()
-          .optional()
-          .description('Filter by Partner Id'),
+        siteId: Joi.number().integer().positive().optional().description('Filter by site Id'),
+        partnerId: Joi.number().integer().positive().optional().description('Filter by Partner Id'),
         assayId: Joi.alternatives()
           .try(Joi.array().items(Joi.number()), Joi.number())
           .allow(null, '')
           .description('Filter for assay ID(s)'),
-        diseaseId: Joi.number()
-          .integer()
-          .positive()
-          .optional()
-          .description('Filter by disease Id'),
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
+        diseaseId: Joi.number().integer().positive().optional().description('Filter by disease Id'),
+        format: Joi.string().allow('').description('File format for exporting data'),
       },
     },
     response: {
@@ -109,17 +75,9 @@ function reportersBaseConfig() {
         allowUnknown: false,
       },
       schema: Joi.object().keys({
-        ok: Joi.bool()
-          .required()
-          .description('False if there was some sort of error'),
-        total: Joi.number()
-          .required()
-          .description(
-            'The total number of items that match the given filters'
-          ),
-        length: Joi.number()
-          .required()
-          .description('The number of items included in this response'),
+        ok: Joi.bool().required().description('False if there was some sort of error'),
+        total: Joi.number().required().description('The total number of items that match the given filters'),
+        length: Joi.number().required().description('The number of items included in this response'),
         data: Joi.array()
           .required()
           .description('List of sites with statistics of reporters')
@@ -135,18 +93,10 @@ function reportersBaseConfig() {
               stateName: Joi.string().allow('', null).description('State name'),
               lgaId: Joi.number().allow(null).description('Lga Id'),
               lgaName: Joi.string().allow('', null).description('Lga name'),
-              totalResults: Joi.number().description(
-                'The number of results where the reportable site is the clinic'
-              ),
-              delivered: Joi.number().description(
-                'The number of those results that were delivered to any Reporter'
-              ),
-              requiresTreatment: Joi.number().description(
-                'The number of delivered results that require treatment'
-              ),
-              onTreatment: Joi.number().description(
-                'The number of delivered results on treatment'
-              ),
+              totalResults: Joi.number().description('The number of results where the reportable site is the clinic'),
+              delivered: Joi.number().description('The number of those results that were delivered to any Reporter'),
+              requiresTreatment: Joi.number().description('The number of delivered results that require treatment'),
+              onTreatment: Joi.number().description('The number of delivered results on treatment'),
               notPossible: Joi.number().description(
                 'The number of results where "Not Possible" was selected for treatment'
               ),
@@ -220,37 +170,21 @@ const routes = [
       auth: { scope: ['site:view'] },
       validate: {
         query: {
-          tags: [
-            Joi.array()
-              .items(Joi.string())
-              .description('Tag names of sites requested')
-              .optional(),
-          ],
+          tags: [Joi.array().items(Joi.string()).description('Tag names of sites requested').optional()],
         },
       },
       response: {
         schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
-          mode: Joi.string()
-            .allow(null, '')
-            .description('The mode that was use for this request'),
-          countryName: Joi.string()
-            .required()
-            .description('Country name of the user that requested the sites'),
-          stateName: Joi.string()
-            .required()
-            .allow(null)
-            .description('State name of the user that requested the sites'),
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          mode: Joi.string().allow(null, '').description('The mode that was use for this request'),
+          countryName: Joi.string().required().description('Country name of the user that requested the sites'),
+          stateName: Joi.string().required().allow(null).description('State name of the user that requested the sites'),
           data: Joi.array()
             .required()
             .description('The results')
             .items(
               Joi.object().keys({
-                id: Joi.number()
-                  .required()
-                  .description('Unique ID of the site'),
+                id: Joi.number().required().description('Unique ID of the site'),
                 name: Joi.string().required().description('Name of the site'),
                 partnerId: Joi.number()
                   .when('mode', {
@@ -265,9 +199,7 @@ const routes = [
                     then: Joi.required(),
                   })
                   .description("Unique ID of the site's country"),
-                stateId: Joi.number()
-                  .allow(null)
-                  .description("Unique ID of the site's state"),
+                stateId: Joi.number().allow(null).description("Unique ID of the site's state"),
                 lgaId: Joi.number()
                   .when('mode', {
                     not: 'reporter',
@@ -282,10 +214,7 @@ const routes = [
                   })
                   .allow(null)
                   .description("Name of the site's LGA"),
-                stateName: Joi.string()
-                  .required()
-                  .allow(null)
-                  .description("Name of the site's state"),
+                stateName: Joi.string().required().allow(null).description("Name of the site's state"),
                 externalId: Joi.string()
                   .when('mode', {
                     not: 'reporter',

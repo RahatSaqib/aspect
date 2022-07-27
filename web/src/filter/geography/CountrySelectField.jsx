@@ -6,10 +6,7 @@ import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
-import {
-  fetchCountriesForLocationSelector,
-  LazyLoadItems,
-} from '../../geography/GeographyRedux'
+import { fetchCountriesForLocationSelector, LazyLoadItems } from '../../geography/GeographyRedux'
 
 export class CountrySelectField extends PureComponent {
   static propTypes = {
@@ -47,11 +44,7 @@ export class CountrySelectField extends PureComponent {
     } = this.props
 
     return (
-      <SelectField
-        {...restProps}
-        value={countryId}
-        onChange={this.handleSelectFieldChange}
-      >
+      <SelectField {...restProps} value={countryId} onChange={this.handleSelectFieldChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {countries.items.map(c => (
           <MenuItem key={c.id} value={c.id}>
@@ -78,6 +71,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  CountrySelectField
-)
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(CountrySelectField)

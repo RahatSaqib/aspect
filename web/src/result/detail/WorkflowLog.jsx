@@ -10,11 +10,7 @@ import TableBody from '@material-ui/core/TableBody'
 
 import TablePaginator from '../../components/shared/TablePaginator'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import {
-  WorkflowLogDataTable,
-  WorkflowLogDataTableHead,
-  WorkflowLogDataTableRow,
-} from './WorkflowLogDataTable'
+import { WorkflowLogDataTable, WorkflowLogDataTableHead, WorkflowLogDataTableRow } from './WorkflowLogDataTable'
 
 import styles from './WorkflowLog.css'
 
@@ -65,11 +61,7 @@ const enhance = compose(
       }) =>
         onFetch(
           nextSortCol,
-          table.sortCol === nextSortCol
-            ? table.sortDir === 'asc'
-              ? 'desc'
-              : 'asc'
-            : table.sortDir,
+          table.sortCol === nextSortCol ? (table.sortDir === 'asc' ? 'desc' : 'asc') : table.sortDir,
           0,
           table.pageSize
         ),
@@ -106,9 +98,7 @@ export const ResultWorkflowStatusLog = ({
     />
     <CardContent>
       {items.currentIdList.isEmpty() && (
-        <Typography className={cssClasses('CardText')}>
-          {intl.formatMessage(messages.noWorkflowStatusLog)}
-        </Typography>
+        <Typography className={cssClasses('CardText')}>{intl.formatMessage(messages.noWorkflowStatusLog)}</Typography>
       )}
       {!items.currentIdList.isEmpty() && (
         <Typography>
@@ -139,11 +129,7 @@ export const ResultWorkflowStatusLog = ({
               {items.currentIdList
                 .map(id => items.byId.get(id))
                 .map(workflowLog => (
-                  <WorkflowLogDataTableRow
-                    key={workflowLog.get('id')}
-                    intl={intl}
-                    workflowLog={workflowLog}
-                  />
+                  <WorkflowLogDataTableRow key={workflowLog.get('id')} intl={intl} workflowLog={workflowLog} />
                 ))}
             </TableBody>
           </WorkflowLogDataTable>

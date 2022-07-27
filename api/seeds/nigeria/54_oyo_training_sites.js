@@ -6,12 +6,8 @@ const partnerData = require('./fixtures/partnerData')
 const deduplicateStatesAndLgas = require('../common/20220308_deduplicate_states_and_lgas')
 
 async function seed(knex) {
-  const { id: countryId } = await knex('Country')
-    .where({ abbreviation: partnerData.partnerAbbreviation })
-    .first()
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerData.partnerName })
-    .first()
+  const { id: countryId } = await knex('Country').where({ abbreviation: partnerData.partnerAbbreviation }).first()
+  const { id: partnerId } = await knex('Partner').where({ name: partnerData.partnerName }).first()
   await insertSites(knex, partnerId, countryId, sites)
 
   await deduplicateStatesAndLgas(knex, countryId)

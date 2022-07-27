@@ -17,20 +17,14 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
     return true
   }
 
-  return new Yup.ValidationError(
-    formatMessage(messages.personOrJobFunctionRequired),
-    null,
-    'persons'
-  )
+  return new Yup.ValidationError(formatMessage(messages.personOrJobFunctionRequired), null, 'persons')
 }
 
 const validationSchema = formatMessage =>
   Yup.object()
     .shape({
       notificationType: Yup.string().oneOf(['resultBased', 'issueBased']),
-      name: Yup.string().required(
-        formatMessage(messages.notificationNameRequired)
-      ),
+      name: Yup.string().required(formatMessage(messages.notificationNameRequired)),
       result: Yup.array()
         .of(
           Yup.object().shape({
@@ -40,9 +34,7 @@ const validationSchema = formatMessage =>
                 Yup.object().shape({
                   label: Yup.string().required(),
                   value: Yup.string().required(),
-                  scope: Yup.string()
-                    .required()
-                    .oneOf(['ResultCategories', 'ResultCategoryGroups']),
+                  scope: Yup.string().required().oneOf(['ResultCategories', 'ResultCategoryGroups']),
                 })
               )
               .required()
@@ -50,9 +42,7 @@ const validationSchema = formatMessage =>
           })
         )
         .min(1, formatMessage(messages.assayRequired)),
-      deviceLevelId: Yup.string()
-        .required()
-        .oneOf(['national', 'state', 'lga', 'lab']),
+      deviceLevelId: Yup.string().required().oneOf(['national', 'state', 'lga', 'lab']),
       areaItemsState: Yup.array()
         .of(
           Yup.object().shape({
@@ -121,43 +111,21 @@ const validationSchema = formatMessage =>
       sendEmail: Yup.boolean(),
       sendSms: Yup.boolean(),
       sendWeb: Yup.boolean(),
-      emailSubject: Yup.string().when(
-        'sendEmail',
-        optionsForSendXXX(formatMessage(messages.emailSubjectRequired))
-      ),
-      emailBody: Yup.string().when(
-        'sendEmail',
-        optionsForSendXXX(formatMessage(messages.emailBodyRequired))
-      ),
+      emailSubject: Yup.string().when('sendEmail', optionsForSendXXX(formatMessage(messages.emailSubjectRequired))),
+      emailBody: Yup.string().when('sendEmail', optionsForSendXXX(formatMessage(messages.emailBodyRequired))),
       smsBody: Yup.string()
-        .when(
-          'sendSms',
-          optionsForSendXXX(formatMessage(messages.smsBodyRequired))
-        )
+        .when('sendSms', optionsForSendXXX(formatMessage(messages.smsBodyRequired)))
         .max(144),
-      webBody: Yup.string().when(
-        'sendWeb',
-        optionsForSendXXX(formatMessage(messages.webBodyRequired))
-      ),
+      webBody: Yup.string().when('sendWeb', optionsForSendXXX(formatMessage(messages.webBodyRequired))),
       webUrl: Yup.string()
-        .when(
-          'sendWeb',
-          optionsForSendXXX(formatMessage(messages.webUrlRequired))
-        )
-        .matches(
-          /^(ftp|http|https):\/\/[^ "]+$/,
-          formatMessage(messages.webUrlInvalidFormat)
-        ),
+        .when('sendWeb', optionsForSendXXX(formatMessage(messages.webUrlRequired)))
+        .matches(/^(ftp|http|https):\/\/[^ "]+$/, formatMessage(messages.webUrlInvalidFormat)),
     })
     .test('oneOfRequired', item => {
       if (item.sendEmail || item.sendSms || item.sendWeb) {
         return true // everything is fine
       }
-      return new Yup.ValidationError(
-        formatMessage(messages.notificationChannels),
-        null,
-        'sendEmail'
-      )
+      return new Yup.ValidationError(formatMessage(messages.notificationChannels), null, 'sendEmail')
     })
 
 export default validationSchema

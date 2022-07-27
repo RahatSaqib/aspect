@@ -69,12 +69,7 @@ export const RouterDetailModalForm = props => {
 
   const actions = [
     props.onCancel && (
-      <Button
-        onClick={props.onCancel}
-        type="button"
-        color="primary"
-        style={{ marginRight: 10 }}
-      >
+      <Button onClick={props.onCancel} type="button" color="primary" style={{ marginRight: 10 }}>
         {labels.cancel}
       </Button>
     ),
@@ -154,9 +149,7 @@ export const RouterDetailModalForm = props => {
               value={field.value}
               onClick={stopEventPropagation}
               onChange={event =>
-                props.onConfigurationDataChange(
-                  values.configurationData.setIn(field.path, event.target.value)
-                )
+                props.onConfigurationDataChange(values.configurationData.setIn(field.path, event.target.value))
               }
               fullWidth
               margin="normal"

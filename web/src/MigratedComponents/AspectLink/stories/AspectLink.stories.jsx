@@ -64,24 +64,10 @@ const Template = ({ to, Permissions: permissions, ...rest }) => {
       <MemoryRouter>
         <RoutesPermissionProvider>
           <Fragment>
-            <Route
-              exact
-              path="/browse/site"
-              element={<RenderTo permissions={['browse', 'site']} />}
-            />
-            <Route
-              path="/browse/site/:siteId"
-              element={<RenderTo permissions={['browse', 'site:edit']} />}
-            />
-            <Route
-              exact
-              path="/browse/person"
-              element={<RenderTo permissions={['browse', 'person']} />}
-            />
-            <Route
-              path="/browse/person/:personId"
-              element={<RenderTo permissions={['browse', 'person:edit']} />}
-            />
+            <Route exact path="/browse/site" element={<RenderTo permissions={['browse', 'site']} />} />
+            <Route path="/browse/site/:siteId" element={<RenderTo permissions={['browse', 'site:edit']} />} />
+            <Route exact path="/browse/person" element={<RenderTo permissions={['browse', 'person']} />} />
+            <Route path="/browse/person/:personId" element={<RenderTo permissions={['browse', 'person:edit']} />} />
             <AspectLink {...rest} to={to}>
               Link
             </AspectLink>

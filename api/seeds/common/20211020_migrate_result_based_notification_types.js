@@ -2,15 +2,9 @@ const Promise = require('bluebird')
 const isNil = require('lodash/isNil')
 
 module.exports = async (knex, partnerName) => {
-  const [partnerId] = await knex('Partner')
-    .where({ name: partnerName })
-    .pluck('id')
-  const [resultBasedId] = await knex('NotificationTypeCategory')
-    .where({ externalId: 'resultBased' })
-    .pluck('id')
-  const [resultReceivedIssueTypeId] = await knex('IssueType')
-    .where({ externalId: 'ResultReceived' })
-    .pluck('id')
+  const [partnerId] = await knex('Partner').where({ name: partnerName }).pluck('id')
+  const [resultBasedId] = await knex('NotificationTypeCategory').where({ externalId: 'resultBased' }).pluck('id')
+  const [resultReceivedIssueTypeId] = await knex('IssueType').where({ externalId: 'ResultReceived' }).pluck('id')
   const assays = await knex('Assay')
   const resultCategories = await knex('ResultCategory')
   const resultCategoryIdByExternalId = {}
@@ -82,9 +76,7 @@ module.exports = async (knex, partnerName) => {
         .pluck('escalationConditions')
 
       if (issueEscalationTrigger) {
-        const { evaluationMethod, evaluationParameter } = JSON.parse(
-          issueEscalationTrigger
-        )
+        const { evaluationMethod, evaluationParameter } = JSON.parse(issueEscalationTrigger)
 
         if (evaluationMethod === 'result-category') {
           let { resultCategory1, resultCategory2 } = evaluationParameter
@@ -95,8 +87,7 @@ module.exports = async (knex, partnerName) => {
           await Promise.each(evaluatedAssays, async assayExternalId => {
             const assay = assays.find(a => a.externalId === assayExternalId)
 
-            if (isNil(assay))
-              throw new Error(`Unknown assay external id ${assayExternalId}`)
+            if (isNil(assay)) throw new Error(`Unknown assay external id ${assayExternalId}`)
 
             const { id: assayId, resultCategory1Label } = assay
 
@@ -113,14 +104,8 @@ module.exports = async (knex, partnerName) => {
 
             await Promise.each(resultCategory1, async rc1ExternalId => {
               await Promise.each(resultCategory2, async rc2ExternalId => {
-                const resultCategory1Id =
-                  rc1ExternalId != null
-                    ? resultCategoryIdByExternalId[rc1ExternalId]
-                    : null
-                const resultCategory2Id =
-                  rc2ExternalId != null
-                    ? resultCategoryIdByExternalId[rc2ExternalId]
-                    : null
+                const resultCategory1Id = rc1ExternalId != null ? resultCategoryIdByExternalId[rc1ExternalId] : null
+                const resultCategory2Id = rc2ExternalId != null ? resultCategoryIdByExternalId[rc2ExternalId] : null
 
                 const resultCategoryGroups = await knex('ResultCategoryGroup')
                   .where({ assayId })
@@ -142,17 +127,10 @@ module.exports = async (knex, partnerName) => {
                       value: rcg.externalId,
                     })
                   )
-                } else if (
-                  resultCategory1Id !== null &&
-                  resultCategory2Id === null
-                ) {
+                } else if (resultCategory1Id !== null && resultCategory2Id === null) {
                   // Else if result category 1 was defined in the old condition, then add it as a scoped category
                   const resultCategory1 = await knex('ResultCategory as rc')
-                    .innerJoin(
-                      'ResultCategoryAssay as rca',
-                      'rc.id',
-                      'rca.resultCategoryId'
-                    )
+                    .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
                     .where('rc.id', resultCategory1Id)
                     .andWhere('rca.assayId', assayId)
                     .select('rc.*')
@@ -192,8 +170,7 @@ module.exports = async (knex, partnerName) => {
     }
 
     await knex('NotificationType').insert(migratedNotificationType)
-    if (numberOfSentNotifications > 0)
-      await knex('NotificationType').where({ id }).update({ enabled: false })
+    if (numberOfSentNotifications > 0) await knex('NotificationType').where({ id }).update({ enabled: false })
     else await knex('NotificationType').where({ id }).del()
   })
 }

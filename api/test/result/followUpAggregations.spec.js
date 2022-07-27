@@ -50,12 +50,8 @@ describe('Result Follow-Up Aggregations for reports', () => {
     const followUpTypes = await knex('FollowUpType').pluck('externalId')
     const fields = []
     followUpTypes.forEach(followUpType => {
-      fields.push(
-        `${followUpType}FollowUp.externalId as ${followUpType}FollowUp`
-      )
-      fields.push(
-        `${followUpType}FollowUpType.externalId as ${followUpType}FollowUpType`
-      )
+      fields.push(`${followUpType}FollowUp.externalId as ${followUpType}FollowUp`)
+      fields.push(`${followUpType}FollowUpType.externalId as ${followUpType}FollowUpType`)
     })
 
     // get data constraints
@@ -70,22 +66,12 @@ describe('Result Follow-Up Aggregations for reports', () => {
       .leftJoin('Geography as g', 's.geographyId', 'g.id')
       .leftJoin('State as st', 'st.id', 'g.stateId')
       .innerJoin('ResultCategoryAssay as rca', function () {
-        this.on('r.assayId', 'rca.assayId').andOn(
-          'r.resultCategory1',
-          'rca.resultCategoryId'
-        )
+        this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
       })
       .leftJoin('ResultCategoryAssay as rсa2', function () {
-        this.on('r.assayId', 'rсa2.assayId').andOn(
-          'r.resultCategory2',
-          'rсa2.resultCategoryId'
-        )
+        this.on('r.assayId', 'rсa2.assayId').andOn('r.resultCategory2', 'rсa2.resultCategoryId')
       })
-      .leftJoin(
-        queryResultFollowUpLastItems(knex, followUpTypes).as('rfu'),
-        'r.id',
-        'rfu.resultId'
-      )
+      .leftJoin(queryResultFollowUpLastItems(knex, followUpTypes).as('rfu'), 'r.id', 'rfu.resultId')
       .modify(qb => {
         followUpTypes.forEach(followUpType => {
           qb.leftJoin(
@@ -146,9 +132,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .value()
 
         assert.equal(res.status, 200)
-        const orderedResponse = _.chain(res.body.data)
-          .orderBy('followUp')
-          .value()
+        const orderedResponse = _.chain(res.body.data).orderBy('followUp').value()
         assert.deepEqual(orderedResponse, expectedResponse)
       }))
 
@@ -166,9 +150,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
         const expectedResponse = _.chain(resultsForUser)
           .filter(o => !!o.treatmentFollowUp)
           .map(o => ({
-            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
-              o.treatmentFollowUp
-            }`,
+            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${o.treatmentFollowUp}`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
@@ -183,9 +165,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .orderBy(groupNames)
           .value()
         assert.equal(res.status, 200)
-        const orderedResponse = _.chain(res.body.data)
-          .orderBy(groupNames)
-          .value()
+        const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
         assert.deepEqual(orderedResponse, expectedResponse)
       })
   })
@@ -204,9 +184,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
         const expectedResponse = _.chain(resultsForUser)
           .filter(o => !!o.treatmentFollowUp)
           .map(o => ({
-            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
-              o.treatmentFollowUp
-            }_${o.stateName}`,
+            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${o.treatmentFollowUp}_${o.stateName}`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
@@ -222,9 +200,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .orderBy(groupNames)
           .value()
         assert.equal(res.status, 200)
-        const orderedResponse = _.chain(res.body.data)
-          .orderBy(groupNames)
-          .value()
+        const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
         assert.deepEqual(orderedResponse, expectedResponse)
       })
   })
@@ -242,9 +218,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
         const expectedResponse = _.chain(resultsForUser)
           .filter(o => !!o.treatmentFollowUp)
           .map(o => ({
-            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM-dd')}_${
-              o.treatmentFollowUp
-            }`,
+            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM-dd')}_${o.treatmentFollowUp}`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
@@ -259,9 +233,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .orderBy(groupNames)
           .value()
         assert.equal(res.status, 200)
-        const orderedResponse = _.chain(res.body.data)
-          .orderBy(groupNames)
-          .value()
+        const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
         assert.deepEqual(orderedResponse, expectedResponse)
       })
   })
@@ -278,13 +250,11 @@ describe('Result Follow-Up Aggregations for reports', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         const expectedResponse = _.chain(resultsForUser)
-          .filter(
-            o => o.treatmentFollowUp && o.siteName.indexOf('Cuyahoga') >= 0
-          )
+          .filter(o => o.treatmentFollowUp && o.siteName.indexOf('Cuyahoga') >= 0)
           .map(o => ({
-            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
-              o.treatmentFollowUp
-            }_${o.resultCategory1}_${o.resultCategory1I18nKey}`,
+            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${o.treatmentFollowUp}_${o.resultCategory1}_${
+              o.resultCategory1I18nKey
+            }`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
@@ -301,9 +271,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .orderBy(groupNames)
           .value()
         assert.equal(res.status, 200)
-        const orderedResponse = _.chain(res.body.data)
-          .orderBy(groupNames)
-          .value()
+        const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
         assert.deepEqual(orderedResponse, expectedResponse)
       })
   })
@@ -318,10 +286,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
       .set('Authorization', `Bearer ${shared.token}`)
       .then(res => {
         assert.equal(res.status, 400)
-        assert.equal(
-          res.body.message.substring(0, 24),
-          '"groupBy" must be one of'
-        )
+        assert.equal(res.body.message.substring(0, 24), '"groupBy" must be one of')
       }))
 
   it('should return all outcome results grouped by month and followUp, and filtered by site', async () => {
@@ -338,9 +303,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
         const expectedResponse = _.chain(resultsForUser)
           .filter(o => o.outcomeFollowUp && o.siteName.indexOf('Cuyahoga') >= 0)
           .map(o => ({
-            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${
-              o.outcomeFollowUp
-            }`,
+            joinedValues: `${format(new Date(o.endedOn), 'yyyy-MM')}_${o.outcomeFollowUp}`,
           }))
           .groupBy('joinedValues')
           .map((value, key) => {
@@ -354,9 +317,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .orderBy(groupNames)
           .value()
         assert.equal(res.status, 200)
-        const orderedResponse = _.chain(res.body.data)
-          .orderBy(groupNames)
-          .value()
+        const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
         assert.deepEqual(orderedResponse, expectedResponse)
       })
   })

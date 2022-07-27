@@ -53,11 +53,7 @@ export class StateSelectField extends PureComponent {
   componentDidUpdate(prevProps) {
     const prevSelectedCountry = getSelectedCountry(prevProps)
     const selectedCountry = getSelectedCountry(this.props)
-    if (
-      selectedCountry &&
-      (!prevSelectedCountry ||
-        prevSelectedCountry.get('id') !== selectedCountry.get('id'))
-    ) {
+    if (selectedCountry && (!prevSelectedCountry || prevSelectedCountry.get('id') !== selectedCountry.get('id'))) {
       this.props.fetchStatesForLocationSelector(selectedCountry)
     }
   }
@@ -111,6 +107,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  StateSelectField
-)
+export default flowRight(connect(mapStateToProps, mapDispatchToProps))(StateSelectField)

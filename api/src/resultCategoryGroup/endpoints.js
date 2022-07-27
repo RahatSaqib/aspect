@@ -9,8 +9,7 @@ const routes = [
     handler: asyncHandler(listResultCategoryGroupsForSelectList),
     config: {
       description: 'Result Category Group List',
-      notes:
-        "List of the result category groups' external IDs and the concatenated names of their result categories",
+      notes: "List of the result category groups' external IDs and the concatenated names of their result categories",
       auth: { scope: ['browse', 'result'] },
       validate: {
         query: {

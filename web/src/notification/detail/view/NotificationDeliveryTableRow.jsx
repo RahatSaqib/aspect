@@ -6,10 +6,7 @@ import { injectIntl } from 'react-intl'
 
 import ColoredButton from '../../../components/themedReactToolbox/ColoredButton'
 
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../components/shared/tableBody'
 import { formatRelative } from '../../../shared/utils/dateFormat'
 
 import styles from './NotificationDeliveryTableRow.css'
@@ -24,17 +21,11 @@ const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
       <FaCircle className={cssClasses('FaCircle')} />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      <ColoredButton
-        className={cssClasses('ColoredButton')}
-        shipCove
-        label={delivery.topic}
-      />
+      <ColoredButton className={cssClasses('ColoredButton')} shipCove label={delivery.topic} />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>{delivery.title}</TableCell>
     <TableCell className={cssClasses('TableCell')}>{delivery.site}</TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {formatRelative(delivery.time)}
-    </TableCell>
+    <TableCell className={cssClasses('TableCell')}>{formatRelative(delivery.time)}</TableCell>
     <TableCell className={cssClasses('TableCell')}>…</TableCell>
   </TableRow>
 )

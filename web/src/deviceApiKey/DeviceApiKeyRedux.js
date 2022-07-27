@@ -10,11 +10,7 @@ import {
 } from '../error/CommonErrorNotifications'
 
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
-import {
-  requestTable,
-  receiveTableItems,
-  Table,
-} from '../shared/metaReducers/table'
+import { requestTable, receiveTableItems, Table } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../globals/GlobalsRedux'
 import { getFilters } from '../filter/utils'
 
@@ -23,10 +19,8 @@ export const types = {
   RECEIVE_DEVICE_API_KEYS: 'RECEIVE_DEVICE_API_KEYS',
   REJECTED_DEVICE_API_KEYS: 'REJECTED_DEVICE_API_KEYS',
 
-  REQUEST_UPDATING_SINGLE_DEVICE_API_KEY:
-    'REQUEST_UPDATING_SINGLE_DEVICE_API_KEY',
-  RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY:
-    'RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY',
+  REQUEST_UPDATING_SINGLE_DEVICE_API_KEY: 'REQUEST_UPDATING_SINGLE_DEVICE_API_KEY',
+  RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY: 'RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -56,13 +50,7 @@ function rejectDeviceApiKeys() {
   }
 }
 
-export function fetchDeviceApiKeys(
-  filtersParams,
-  sortCol,
-  sortDir,
-  page,
-  pageSize
-) {
+export function fetchDeviceApiKeys(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = getFilters(filtersParams)
     dispatch(requestDeviceApiKeys(sortCol, sortDir, page, pageSize, filters))
@@ -109,15 +97,7 @@ export function fetchDeviceApiKeys(
   }
 }
 
-export function exportDeviceApiKeys(
-  filtersParams,
-  fileFormat,
-  sortCol,
-  sortDir,
-  page,
-  pageSize,
-  reportName
-) {
+export function exportDeviceApiKeys(filtersParams, fileFormat, sortCol, sortDir, page, pageSize, reportName) {
   return dispatch => {
     const filters = getFilters(filtersParams)
 
@@ -236,8 +216,7 @@ export function updateSingleDeviceApiKey(deviceApiKeyId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the DeviceApiKey',
+              defaultMessage: 'An Error Occurred When Trying to Save the DeviceApiKey',
             },
           })
         ),

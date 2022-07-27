@@ -27,11 +27,7 @@ const {
 const { createUniqueIdForResult } = require('../../../src/result/service')
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { resolveIssues } = require('../../../src/issue/actions')
-const {
-  waitForIdle,
-  waitForAction,
-  dispatchAndWaitForAction,
-} = require('../../utils/mqUtils')
+const { waitForIdle, waitForAction, dispatchAndWaitForAction } = require('../../utils/mqUtils')
 
 describe.skip('Myanmar Issue endpoints', () => {
   function createContext() {
@@ -41,13 +37,7 @@ describe.skip('Myanmar Issue endpoints', () => {
   const deviceName = 'This Lab Has Results!'
 
   const context = createContext()
-  const {
-    beforeCreateGxAlertApiKey,
-    useGxAlertDeviceId,
-    basicDevicePayload,
-    runTest,
-    afterCleanUp,
-  } = context
+  const { beforeCreateGxAlertApiKey, useGxAlertDeviceId, basicDevicePayload, runTest, afterCleanUp } = context
   let { deviceAuth } = context
   beforeEach(() =>
     run(async () => {
@@ -84,30 +74,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: 'A1',
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
               },
             },
-          }
-        )
+          },
+        })
 
         if (i < 4) {
           // Post the result to aspect
@@ -117,9 +101,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errors > 4
-          const waitForModuleTemperatureError = waitForAction(
-            resultModuleTemperatureError(deviceId)
-          )
+          const waitForModuleTemperatureError = waitForAction(resultModuleTemperatureError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -137,10 +119,7 @@ describe.skip('Myanmar Issue endpoints', () => {
       }
 
       await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, moduleTempErrorIssueId))
 
       // Update ended on for initial issue to past so module failure issue is resolved
       const errorTestResultId = 'UNIQUE-ID-WITH-TEMP-ERROR-0'
@@ -158,10 +137,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         payload,
       })
       await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, moduleTempErrorIssueId))
     }))
 
   it('should create a module temperature issue and resolve on module change', () =>
@@ -192,30 +168,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         instrumentSerial = `CEPH-PC-123${i}`
         testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: 'A1',
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
               },
             },
-          }
-        )
+          },
+        })
 
         if (i < 4) {
           // Post the result to aspect
@@ -225,9 +195,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errors > 4
-          const waitForModuleTemperatureError = waitForAction(
-            resultModuleTemperatureError(deviceId)
-          )
+          const waitForModuleTemperatureError = waitForAction(resultModuleTemperatureError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -261,30 +229,24 @@ describe.skip('Myanmar Issue endpoints', () => {
       const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-X`
       // new value for module serial
       moduleSerial = `${moduleSerial}-X`
-      const payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result: {
-            id: errorTestResultId,
-            startedOn: testStartedOn,
-            endedOn: testEndedOn,
-            error: {
-              code: errorCode,
-            },
-            sample: { id: sampleId },
-            instrument: {
-              serial: instrumentSerial,
-              module: {
-                serial: moduleSerial,
-                name: 'A1',
-              },
+      const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result: {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          error: {
+            code: errorCode,
+          },
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
             },
           },
-        }
-      )
+        },
+      })
 
       // Post the result to aspect
       await postToDeviceApi({
@@ -294,10 +256,7 @@ describe.skip('Myanmar Issue endpoints', () => {
 
       await waitForIdle()
       await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, moduleTempErrorIssueId))
     }))
 
   it('should create a module temperature issue and resolve on Machine temp error', () =>
@@ -323,30 +282,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: 'A1',
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
               },
             },
-          }
-        )
+          },
+        })
 
         if (i < 4) {
           // Post the result to aspect
@@ -356,9 +309,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errors > 4
-          const waitForModuleTemperatureError = waitForAction(
-            resultModuleTemperatureError(deviceId)
-          )
+          const waitForModuleTemperatureError = waitForAction(resultModuleTemperatureError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -376,10 +327,7 @@ describe.skip('Myanmar Issue endpoints', () => {
       }
 
       await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, moduleTempErrorIssueId))
 
       let machineTempErrorIssueId = null
       for (let i = 0; i < 9; i++) {
@@ -391,30 +339,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: moduleName,
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: moduleName,
               },
             },
-          }
-        )
+          },
+        })
         if (i < 8) {
           // Post the result to aspect
           await postToDeviceApi({
@@ -423,9 +365,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errors > 8
-          const waitForMachineTemperatureError = waitForAction(
-            resultMachineTemperatureError(deviceId)
-          )
+          const waitForMachineTemperatureError = waitForAction(resultMachineTemperatureError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -446,16 +386,10 @@ describe.skip('Myanmar Issue endpoints', () => {
       }
 
       await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, moduleTempErrorIssueId))
 
       await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, machineTempErrorIssueId))
     }))
 
   it('should create a machine temperature issue and resolve when under percent', () =>
@@ -481,35 +415,27 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: moduleName,
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: moduleName,
               },
             },
-          }
-        )
+          },
+        })
         if (i === 8) {
           // Should create issue when errors === 8
-          const waitForMachineTemperatureError = waitForAction(
-            resultMachineTemperatureError(deviceId)
-          )
+          const waitForMachineTemperatureError = waitForAction(resultMachineTemperatureError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -549,16 +475,11 @@ describe.skip('Myanmar Issue endpoints', () => {
           .orderBy('r.id')
           .select('r.id')
         assert.equal(results.length, 12 - i)
-        await knex('Result')
-          .where({ id: results[0].id })
-          .update({ errorCode: null })
+        await knex('Result').where({ id: results[0].id }).update({ errorCode: null })
 
         // Should resolve when result count under 1%
         await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
-        assert.equal(
-          i < 11 ? 'Active' : 'Resolved',
-          await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
-        )
+        assert.equal(i < 11 ? 'Active' : 'Resolved', await getIssueStatusByIssueId(knex, machineTempErrorIssueId))
       }
     }))
 
@@ -586,30 +507,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: moduleName,
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: moduleName,
               },
             },
-          }
-        )
+          },
+        })
         data.push({
           errorTestResultId,
           testStartedOn,
@@ -622,9 +537,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         })
         if (i === 8) {
           // Should create issue when errors === 8
-          const waitForMachineTemperatureError = waitForAction(
-            resultMachineTemperatureError(deviceId)
-          )
+          const waitForMachineTemperatureError = waitForAction(resultMachineTemperatureError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -671,10 +584,7 @@ describe.skip('Myanmar Issue endpoints', () => {
 
       // Should resolve because modules were replaced
       await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, machineTempErrorIssueId))
     }))
 
   it('should create a module power issue and resolve when TC no longer met', () =>
@@ -699,30 +609,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: 'A1',
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
               },
             },
-          }
-        )
+          },
+        })
         if (i < 4) {
           // Post the result to aspect
           await postToDeviceApi({
@@ -731,9 +635,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errors > 4
-          const waitForModulePowerError = waitForAction(
-            resultModulePowerError(deviceId)
-          )
+          const waitForModulePowerError = waitForAction(resultModulePowerError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -751,10 +653,7 @@ describe.skip('Myanmar Issue endpoints', () => {
       }
 
       await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, modulePowerErrorIssueId))
 
       // Update ended on for initial issue to past so module power issue is resolved
       const errorTestResultId = 'UNIQUE-ID-WITH-POWER-ERROR-0'
@@ -772,10 +671,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         payload,
       })
       await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, modulePowerErrorIssueId))
     }))
 
   it('should create a module power issue and resolve when Machine power issue', () =>
@@ -800,30 +696,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: 'A1',
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
               },
             },
-          }
-        )
+          },
+        })
         if (i < 4) {
           // Post the result to aspect
           await postToDeviceApi({
@@ -832,9 +722,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errors > 4
-          const waitForModulePowerError = waitForAction(
-            resultModulePowerError(deviceId)
-          )
+          const waitForModulePowerError = waitForAction(resultModulePowerError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -852,10 +740,7 @@ describe.skip('Myanmar Issue endpoints', () => {
       }
 
       await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, modulePowerErrorIssueId))
 
       let machinePowerErrorIssueId = null
       for (let i = 0; i < 9; i++) {
@@ -868,30 +753,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: moduleName,
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: moduleName,
               },
             },
-          }
-        )
+          },
+        })
         if (i < 8) {
           // Post the result to aspect
           await postToDeviceApi({
@@ -900,9 +779,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errors > 8
-          const waitForMachinePowerError = waitForAction(
-            resultMachinePowerError(deviceId)
-          )
+          const waitForMachinePowerError = waitForAction(resultMachinePowerError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -922,15 +799,9 @@ describe.skip('Myanmar Issue endpoints', () => {
         }
       }
       await dispatchAndWaitForAction(resolveIssues(machinePowerErrorIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, machinePowerErrorIssueId))
       await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, modulePowerErrorIssueId))
     }))
 
   it('should create a module failure issue ', () =>
@@ -955,30 +826,24 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: 'A1',
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
               },
             },
-          }
-        )
+          },
+        })
         if (i < 2) {
           // Post the result to aspect
           await postToDeviceApi({
@@ -987,9 +852,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errors > 4
-          const waitForModuleFailureError = waitForAction(
-            resultModuleFailureError(deviceId)
-          )
+          const waitForModuleFailureError = waitForAction(resultModuleFailureError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -1007,10 +870,7 @@ describe.skip('Myanmar Issue endpoints', () => {
       }
 
       await dispatchAndWaitForAction(resolveIssues(moduleFailureIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, moduleFailureIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, moduleFailureIssueId))
 
       // Update ended on for initial issue to past so module failure issue is resolved
       const errorTestResultId = 'UNIQUE-ID-WITH-FAILURE-ERROR-0'
@@ -1028,10 +888,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         payload,
       })
       await dispatchAndWaitForAction(resolveIssues(moduleFailureIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, moduleFailureIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, moduleFailureIssueId))
     }))
 
   it('should create a procedural module issue ', () =>
@@ -1077,15 +934,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           }
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         await postToDeviceApi({
           authHeader: deviceAuth,
           payload,
@@ -1137,15 +988,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           }
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         // minErrorsForLUGenericModuleIssue = 6, see src/plugin/partner/Myanmar/onResultLogged.js,
         if (i < 9) {
           // Post the result to aspect - 5 error results (i=4..8) do not trigger Module issue
@@ -1155,9 +1000,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errorCode is added
-          const waitForModuleProceduralError = waitForAction(
-            resultModuleProceduralError(deviceId)
-          )
+          const waitForModuleProceduralError = waitForAction(resultModuleProceduralError(deviceId))
           // 6-th error result (i=9) will trigger Module issue
           await postToDeviceApi({
             authHeader: deviceAuth,
@@ -1171,12 +1014,7 @@ describe.skip('Myanmar Issue endpoints', () => {
             .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
             .where({ 'i.deviceId': deviceId })
             .whereNot('it.externalId', 'ModuleReplaced')
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+            .select('i.id', 'it.externalId as issueType', 'i.deviceId', 'is.externalId as issueStatus')
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModuleProceduralError')
           assert.equal(issues[0].deviceId, deviceId)
@@ -1196,18 +1034,11 @@ describe.skip('Myanmar Issue endpoints', () => {
           .orderBy('r.id')
           .select('r.id')
         assert.equal(results.length, 7 - i)
-        await knex('Result')
-          .where({ id: results[0].id })
-          .update({ errorCode: null })
+        await knex('Result').where({ id: results[0].id }).update({ errorCode: null })
 
         // Should resolve when result count under 3%
-        await dispatchAndWaitForAction(
-          resolveIssues(moduleProceduralErrorIssueId)
-        )
-        assert.equal(
-          i < 6 ? 'Active' : 'Resolved',
-          await getIssueStatusByIssueId(knex, moduleProceduralErrorIssueId)
-        )
+        await dispatchAndWaitForAction(resolveIssues(moduleProceduralErrorIssueId))
+        assert.equal(i < 6 ? 'Active' : 'Resolved', await getIssueStatusByIssueId(knex, moduleProceduralErrorIssueId))
       }
     }))
 
@@ -1254,15 +1085,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           }
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         await postToDeviceApi({
           authHeader: deviceAuth,
           payload,
@@ -1300,15 +1125,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           }
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         if (i < 9) {
           // Post the result to aspect - 5 error results (i=4..8) do not trigger Module issue
           await postToDeviceApi({
@@ -1317,9 +1136,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errorCode is added
-          const waitForModuleProceduralError = waitForAction(
-            resultModuleProceduralError(deviceId)
-          )
+          const waitForModuleProceduralError = waitForAction(resultModuleProceduralError(deviceId))
           // 6-th error result (i=9) will trigger Module issue
           await postToDeviceApi({
             authHeader: deviceAuth,
@@ -1333,12 +1150,7 @@ describe.skip('Myanmar Issue endpoints', () => {
             .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
             .where({ 'i.deviceId': deviceId })
             .whereNot('it.externalId', 'ModuleReplaced')
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+            .select('i.id', 'it.externalId as issueType', 'i.deviceId', 'is.externalId as issueStatus')
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModuleProceduralError')
           assert.equal(issues[0].deviceId, deviceId)
@@ -1364,19 +1176,11 @@ describe.skip('Myanmar Issue endpoints', () => {
           },
         },
       }
-      const payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
+      const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result,
+      })
       // Should create issue when errorCode is added
-      const waitForMachineProceduralError = waitForAction(
-        resultMachineProceduralError(deviceId)
-      )
+      const waitForMachineProceduralError = waitForAction(resultMachineProceduralError(deviceId))
       // so, there are 6 errors in previous (2nd) module,
       // and here we add 2nd error to the 1st module - totally we have now 8 errors - this triggers Machine issue
       await postToDeviceApi({
@@ -1390,12 +1194,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
         .where({ 'i.deviceId': deviceId })
-        .select(
-          'i.id',
-          'it.externalId as issueType',
-          'i.deviceId',
-          'is.externalId as issueStatus'
-        )
+        .select('i.id', 'it.externalId as issueType', 'i.deviceId', 'is.externalId as issueStatus')
       assert.equal(issues.length, 2)
       issues.forEach(issue => {
         if (issue.issueType === 'MachineProceduralError') {
@@ -1430,35 +1229,27 @@ describe.skip('Myanmar Issue endpoints', () => {
         const instrumentSerial = `CEPH-PC-397${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result: {
-              id: errorTestResultId,
-              startedOn: testStartedOn,
-              endedOn: testEndedOn,
-              error: {
-                code: errorCode,
-              },
-              sample: { id: sampleId },
-              instrument: {
-                serial: instrumentSerial,
-                module: {
-                  serial: moduleSerial,
-                  name: moduleName,
-                },
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: moduleName,
               },
             },
-          }
-        )
+          },
+        })
         if (i === 8) {
           // Should create issue when errors === 8
-          const waitForMachineProceduralError = waitForAction(
-            resultMachineProceduralError(deviceId)
-          )
+          const waitForMachineProceduralError = waitForAction(resultMachineProceduralError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -1498,18 +1289,11 @@ describe.skip('Myanmar Issue endpoints', () => {
           .orderBy('r.id')
           .select('r.id')
         assert.equal(results.length, 12 - i)
-        await knex('Result')
-          .where({ id: results[0].id })
-          .update({ errorCode: null })
+        await knex('Result').where({ id: results[0].id }).update({ errorCode: null })
 
         // Should resolve when result count under 3%
-        await dispatchAndWaitForAction(
-          resolveIssues(machineProceduralErrorIssueId)
-        )
-        assert.equal(
-          i < 11 ? 'Active' : 'Resolved',
-          await getIssueStatusByIssueId(knex, machineProceduralErrorIssueId)
-        )
+        await dispatchAndWaitForAction(resolveIssues(machineProceduralErrorIssueId))
+        assert.equal(i < 11 ? 'Active' : 'Resolved', await getIssueStatusByIssueId(knex, machineProceduralErrorIssueId))
       }
     }))
 
@@ -1550,36 +1334,28 @@ describe.skip('Myanmar Issue endpoints', () => {
           const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
           const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
 
-          const payload = _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result: {
-                id: errorTestResultId,
-                startedOn: testStartedOn,
-                endedOn: testEndedOn,
-                error: {
-                  code: errorCode,
-                },
-                sample: { id: sampleId },
-                instrument: {
-                  serial: instrumentSerial,
-                  module: {
-                    serial: moduleSerial,
-                    name: moduleName,
-                  },
+          const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
                 },
               },
-            }
-          )
+            },
+          })
 
           if (i === 8) {
             // Should create issue when errors === 8
-            const waitForMachinePowerError = waitForAction(
-              resultMachinePowerError(deviceId)
-            )
+            const waitForMachinePowerError = waitForAction(resultMachinePowerError(deviceId))
             await postToDeviceApi({
               authHeader: deviceAuth,
               payload,
@@ -1609,10 +1385,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         }
 
         await dispatchAndWaitForAction(resolveIssues(machinePowerErrorIssueId))
-        assert.equal(
-          'Active',
-          await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
-        )
+        assert.equal('Active', await getIssueStatusByIssueId(knex, machinePowerErrorIssueId))
 
         const last30day = subDays(now, 30)
         for (let i = 0; i < 12; i++) {
@@ -1625,18 +1398,11 @@ describe.skip('Myanmar Issue endpoints', () => {
             .orderBy('r.id')
             .select('r.id')
           assert.equal(results.length, 12 - i)
-          await knex('Result')
-            .where({ id: results[0].id })
-            .update({ errorCode: null })
+          await knex('Result').where({ id: results[0].id }).update({ errorCode: null })
 
           // Should resolve when result count under 1%
-          await dispatchAndWaitForAction(
-            resolveIssues(machinePowerErrorIssueId)
-          )
-          assert.equal(
-            i < 11 ? 'Active' : 'Resolved',
-            await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
-          )
+          await dispatchAndWaitForAction(resolveIssues(machinePowerErrorIssueId))
+          assert.equal(i < 11 ? 'Active' : 'Resolved', await getIssueStatusByIssueId(knex, machinePowerErrorIssueId))
         }
       }))
 
@@ -1682,15 +1448,9 @@ describe.skip('Myanmar Issue endpoints', () => {
             }
           }
 
-          const payload = _.merge(
-            {},
-            basicDevicePayload,
-            { name: deviceName },
-            basicResultPayload,
-            {
-              result,
-            }
-          )
+          const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+            result,
+          })
           if (i < 10) {
             // Post the result to aspect
             await postToDeviceApi({
@@ -1699,9 +1459,7 @@ describe.skip('Myanmar Issue endpoints', () => {
             })
           } else {
             // Should create issue when errors >= 8
-            const waitForMachinePowerError = waitForAction(
-              resultMachinePowerError(deviceId)
-            )
+            const waitForMachinePowerError = waitForAction(resultMachinePowerError(deviceId))
             await postToDeviceApi({
               authHeader: deviceAuth,
               payload,
@@ -1713,12 +1471,7 @@ describe.skip('Myanmar Issue endpoints', () => {
               .join('IssueType as it', 'i.issueTypeId', 'it.id')
               .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
               .where({ 'i.deviceId': deviceId })
-              .select(
-                'i.id',
-                'it.externalId as issueType',
-                'i.deviceId',
-                'is.externalId as issueStatus'
-              )
+              .select('i.id', 'it.externalId as issueType', 'i.deviceId', 'is.externalId as issueStatus')
             assert.equal(issues.length, 1)
             assert.equal(issues[0].issueType, 'MachinePowerError')
             assert.equal(issues[0].deviceId, deviceId)
@@ -1768,15 +1521,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           },
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         if (i < 7) {
           // Post first 7 results to aspect
           await postToDeviceApi({
@@ -1785,9 +1532,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // 8th error result should create issue
-          const waitForModuleGenericError = waitForAction(
-            inventoryReagentHealth(deviceId, 2)
-          )
+          const waitForModuleGenericError = waitForAction(inventoryReagentHealth(deviceId, 2))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -1804,10 +1549,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         }
       }
       await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, reagentHealthIssueId))
 
       const { errorResultId } = await knex('Result as r')
         .where('r.errorCode', '2037')
@@ -1823,10 +1565,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         })
 
       await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, reagentHealthIssueId))
     }))
 
   it('should create a reagent health issue when invalid result exceed', () =>
@@ -1882,15 +1621,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           }
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         if (i < 9) {
           // Post the result to aspect
           await postToDeviceApi({
@@ -1899,9 +1632,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errorCode is added
-          const waitForModuleGenericError = waitForAction(
-            inventoryReagentHealth(deviceId, 2)
-          )
+          const waitForModuleGenericError = waitForAction(inventoryReagentHealth(deviceId, 2))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -1918,10 +1649,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         }
       }
       await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, reagentHealthIssueId))
 
       const { invalidResultId } = await knex('Result as r')
         .join('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
@@ -1934,16 +1662,11 @@ describe.skip('Myanmar Issue endpoints', () => {
           id: invalidResultId,
         })
         .update({
-          resultCategory1: knex('ResultCategory')
-            .where({ externalId: 'Success' })
-            .first('id'),
+          resultCategory1: knex('ResultCategory').where({ externalId: 'Success' }).first('id'),
         })
 
       await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, reagentHealthIssueId))
     }))
 
   it('should create a reagent health issue when a single batch invalid result exceed', () =>
@@ -2005,15 +1728,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           }
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         if (i < 9) {
           // Post the result to aspect
           await postToDeviceApi({
@@ -2022,9 +1739,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue when errorCode is added
-          const waitForModuleGenericError = waitForAction(
-            inventoryReagentHealth(deviceId, 2)
-          )
+          const waitForModuleGenericError = waitForAction(inventoryReagentHealth(deviceId, 2))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -2041,10 +1756,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         }
       }
       await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, reagentHealthIssueId))
 
       const { invalidResultId } = await knex('Result as r')
         .join('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
@@ -2057,16 +1769,11 @@ describe.skip('Myanmar Issue endpoints', () => {
           id: invalidResultId,
         })
         .update({
-          resultCategory1: knex('ResultCategory')
-            .where({ externalId: 'Success' })
-            .first('id'),
+          resultCategory1: knex('ResultCategory').where({ externalId: 'Success' }).first('id'),
         })
 
       await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, reagentHealthIssueId))
     }))
 
   it('should create a module and machine "Unknown Error" issues', () =>
@@ -2112,15 +1819,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           }
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         await postToDeviceApi({
           authHeader: deviceAuth,
           payload,
@@ -2158,15 +1859,9 @@ describe.skip('Myanmar Issue endpoints', () => {
           }
         }
 
-        const payload = _.merge(
-          {},
-          basicDevicePayload,
-          { name: deviceName },
-          basicResultPayload,
-          {
-            result,
-          }
-        )
+        const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result,
+        })
         if (i < 9) {
           // Post the result to aspect
           await postToDeviceApi({
@@ -2175,9 +1870,7 @@ describe.skip('Myanmar Issue endpoints', () => {
           })
         } else {
           // Should create issue
-          const waitForModuleUnknownError = waitForAction(
-            resultModuleUnknownError(deviceId)
-          )
+          const waitForModuleUnknownError = waitForAction(resultModuleUnknownError(deviceId))
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -2195,10 +1888,7 @@ describe.skip('Myanmar Issue endpoints', () => {
       }
 
       await dispatchAndWaitForAction(resolveIssues(moduleUnknownErrorId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, moduleUnknownErrorId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, moduleUnknownErrorId))
 
       // Post an additional result with procedural error to to module A
       const testStartedOn = setMilliseconds(subDays(now, 22 + 3), 0)
@@ -2218,19 +1908,11 @@ describe.skip('Myanmar Issue endpoints', () => {
           },
         },
       }
-      const payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
+      const payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result,
+      })
       // Should create issue when errorCode is added
-      const waitForMachineUnknownError = waitForAction(
-        resultMachineUnknownError(deviceId)
-      )
+      const waitForMachineUnknownError = waitForAction(resultMachineUnknownError(deviceId))
       await postToDeviceApi({
         authHeader: deviceAuth,
         payload,
@@ -2250,15 +1932,9 @@ describe.skip('Myanmar Issue endpoints', () => {
       })
 
       await dispatchAndWaitForAction(resolveIssues(moduleUnknownErrorId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, moduleUnknownErrorId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, moduleUnknownErrorId))
       await dispatchAndWaitForAction(resolveIssues(machineUnknownErrorId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, machineUnknownErrorId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, machineUnknownErrorId))
 
       const { machineResultId } = await knex('Result as r')
         .where('r.deviceId', deviceId)
@@ -2268,20 +1944,12 @@ describe.skip('Myanmar Issue endpoints', () => {
         .first('r.id as machineResultId')
 
       assert.isOk(machineResultId)
-      await knex('Result')
-        .where({ id: machineResultId })
-        .update({ errorCode: '1' })
+      await knex('Result').where({ id: machineResultId }).update({ errorCode: '1' })
 
       await dispatchAndWaitForAction(resolveIssues(moduleUnknownErrorId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, moduleUnknownErrorId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, moduleUnknownErrorId))
       await dispatchAndWaitForAction(resolveIssues(machineUnknownErrorId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, machineUnknownErrorId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, machineUnknownErrorId))
 
       const { moduleResultId } = await knex('Result as r')
         .where('r.deviceId', deviceId)
@@ -2291,20 +1959,12 @@ describe.skip('Myanmar Issue endpoints', () => {
         .first('r.id as moduleResultId')
 
       assert.isOk(moduleResultId)
-      await knex('Result')
-        .where({ id: moduleResultId })
-        .update({ errorCode: '1' })
+      await knex('Result').where({ id: moduleResultId }).update({ errorCode: '1' })
 
       await dispatchAndWaitForAction(resolveIssues(moduleUnknownErrorId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, moduleUnknownErrorId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, moduleUnknownErrorId))
       await dispatchAndWaitForAction(resolveIssues(machineUnknownErrorId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, machineUnknownErrorId)
-      )
+      assert.equal('Resolved', await getIssueStatusByIssueId(knex, machineUnknownErrorId))
     }))
 
   it('should create a module replaced issue when a new serial is detected in a slot', () =>
@@ -2342,15 +2002,9 @@ describe.skip('Myanmar Issue endpoints', () => {
         },
       }
 
-      let payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
+      let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result,
+      })
       await postToDeviceApi({
         authHeader: deviceAuth,
         payload,
@@ -2380,15 +2034,9 @@ describe.skip('Myanmar Issue endpoints', () => {
         },
       }
 
-      payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
+      payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result,
+      })
 
       // Should create one module replaced issue
       response = await postToDeviceApi({
@@ -2396,9 +2044,7 @@ describe.skip('Myanmar Issue endpoints', () => {
         payload,
       })
 
-      const waitForModuleReplacedIssue = waitForAction(
-        resultModuleReplaced(response.body.result.id)
-      )
+      const waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.result.id))
       await waitForModuleReplacedIssue
       await waitForIdle()
 
@@ -2410,10 +2056,7 @@ describe.skip('Myanmar Issue endpoints', () => {
       moduleReplacedIssueId = issues[0].id
 
       await dispatchAndWaitForAction(resolveIssues(moduleReplacedIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, moduleReplacedIssueId)
-      )
+      assert.equal('Active', await getIssueStatusByIssueId(knex, moduleReplacedIssueId))
     }))
 
   it('should NOT create a module replaced issue when a new serial is detected in a different slot', () =>
@@ -2451,15 +2094,9 @@ describe.skip('Myanmar Issue endpoints', () => {
         },
       }
 
-      let payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
+      let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result,
+      })
       await postToDeviceApi({
         authHeader: deviceAuth,
         payload,
@@ -2488,15 +2125,9 @@ describe.skip('Myanmar Issue endpoints', () => {
         },
       }
 
-      payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
+      payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result,
+      })
 
       // Should NOT create module replaced issue
       await postToDeviceApi({
@@ -2544,15 +2175,9 @@ describe.skip('Myanmar Issue endpoints', () => {
         },
       }
 
-      let payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
+      let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result,
+      })
       await postToDeviceApi({
         authHeader: deviceAuth,
         payload,
@@ -2580,15 +2205,9 @@ describe.skip('Myanmar Issue endpoints', () => {
         },
       }
 
-      payload = _.merge(
-        {},
-        basicDevicePayload,
-        { name: deviceName },
-        basicResultPayload,
-        {
-          result,
-        }
-      )
+      payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result,
+      })
 
       // Should NOT create module replaced issue
       await postToDeviceApi({
@@ -2608,12 +2227,7 @@ async function getIssuesByDeviceId(knex, deviceId) {
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .where({ 'i.deviceId': deviceId })
     .orderBy('i.id')
-    .select(
-      'i.id',
-      'it.externalId as issueType',
-      'i.deviceId',
-      'is.externalId as issueStatus'
-    )
+    .select('i.id', 'it.externalId as issueType', 'i.deviceId', 'is.externalId as issueStatus')
 }
 
 async function getIssueStatusByIssueId(knex, issueId) {

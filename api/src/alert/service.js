@@ -1,10 +1,7 @@
 const Promise = require('bluebird')
 const { alertMessageSent } = require('./actions')
 const { messageStatusToId, issueTypeToId } = require('../shared/dictionary')
-const {
-  addDataSourceToQuery,
-  processUsingDataSourceQuery,
-} = require('../stringTemplate/service')
+const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
 async function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
@@ -24,13 +21,9 @@ async function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   })
 }
 
-async function onAlertMessageUpdateAfterIssueDataChanged(
-  { issueId },
-  { messageContext }
-) {
+async function onAlertMessageUpdateAfterIssueDataChanged({ issueId }, { messageContext }) {
   return messageContext.transact(async knex => {
-    const { issueTypeId } =
-      (await knex('Issue').where('id', issueId).first('issueTypeId')) || {}
+    const { issueTypeId } = (await knex('Issue').where('id', issueId).first('issueTypeId')) || {}
 
     // if issueType does not need to update alert message - exit
     // (later add here condition for DataCategoryLow* issue types which should update percentage in alert message)
@@ -65,9 +58,7 @@ async function onAlertMessageUpdateAfterIssueDataChanged(
 // helper functions
 // --------------------------------------
 async function createAlertMessageFromTemplate(knex, alertMessageId) {
-  const { personId } = await knex('AlertMessage')
-    .where('id', alertMessageId)
-    .first('personId')
+  const { personId } = await knex('AlertMessage').where('id', alertMessageId).first('personId')
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('AlertMessage as m')
     .innerJoin('AlertTemplate as tmpl', 'm.alertTemplateId', 'tmpl.id')
@@ -91,13 +82,9 @@ async function createAlertMessageFromTemplate(knex, alertMessageId) {
     })
     .where({ 'm.id': alertMessageId })
     .first('tmpl.message as messageTemplate')
-  const { message } = await processUsingDataSourceQuery(
-    data,
-    ['messageTemplate'],
-    {
-      dynamic: true,
-    }
-  )
+  const { message } = await processUsingDataSourceQuery(data, ['messageTemplate'], {
+    dynamic: true,
+  })
   return message
 }
 

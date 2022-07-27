@@ -29,9 +29,7 @@ function getAccountDetailsForUsername(username) {
 }
 
 async function getAccountDetailsForLoggedInUser(request) {
-  const accountDetails = await getAccountDetailsForUsername(
-    request.auth.credentials.name
-  )
+  const accountDetails = await getAccountDetailsForUsername(request.auth.credentials.name)
   return { ok: true, data: accountDetails }
 }
 
@@ -54,11 +52,7 @@ async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
   const changedFields = _.reduce(
     newAccountDetails,
     (result, value, key) => {
-      if (
-        _.includes(updatablePersonFields, key) &&
-        key in accountDetails &&
-        accountDetails[key] !== value
-      ) {
+      if (_.includes(updatablePersonFields, key) && key in accountDetails && accountDetails[key] !== value) {
         result[key] = value
       }
       return result
@@ -103,10 +97,7 @@ async function saveContactDetailsForLoggedInUser(request) {
 }
 
 async function saveUserPreferencesForLoggedInUser(request) {
-  const response = await saveDetailsForLoggedInUser(request, [
-    'timezone',
-    'culture',
-  ])
+  const response = await saveDetailsForLoggedInUser(request, ['timezone', 'culture'])
   return response
 }
 

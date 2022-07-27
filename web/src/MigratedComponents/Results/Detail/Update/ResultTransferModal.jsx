@@ -98,9 +98,7 @@ const ResultTransferModal = ({
         <div className={cssClasses('processing-spinner')}>
           <CircularProgress size="100%" thickness={1} disableShrink />
         </div>
-        <div className={cssClasses('processing-label')}>
-          {formatMessage(messages.processing)}
-        </div>
+        <div className={cssClasses('processing-label')}>{formatMessage(messages.processing)}</div>
       </div>
     ),
     [formatMessage]
@@ -143,31 +141,15 @@ const ResultTransferModal = ({
         </div>
       </AspectDialog>
     )
-  }, [
-    formatMessage,
-    patientId,
-    sourceSite?.name,
-    selectedSite?.text,
-    navigate,
-    onRequestClose,
-  ])
+  }, [formatMessage, patientId, sourceSite?.name, selectedSite?.text, navigate, onRequestClose])
 
   return (
     <AspectDialog
       actions={[
-        <Button
-          color="primary"
-          disabled={isProcessing}
-          onClick={onRequestClose}
-        >
+        <Button color="primary" disabled={isProcessing} onClick={onRequestClose}>
           {formatMessage(messages.buttonCancel)}
         </Button>,
-        <Button
-          color="primary"
-          variant="contained"
-          disabled={isProcessing || !selectedSite}
-          onClick={onSubmit}
-        >
+        <Button color="primary" variant="contained" disabled={isProcessing || !selectedSite} onClick={onSubmit}>
           {formatMessage(messages.buttonTransfer)}
         </Button>,
       ]}
@@ -180,9 +162,7 @@ const ResultTransferModal = ({
       open={isOpen}
       onRequestClose={onRequestClose}
       showCrossIcon
-      title={`${formatMessage(messages.header)}${
-        patientId ? `: ${patientId}` : ''
-      }`}
+      title={`${formatMessage(messages.header)}${patientId ? `: ${patientId}` : ''}`}
       disableEscapeKeyDown
     >
       <div>
@@ -214,15 +194,11 @@ const ResultTransferModal = ({
           onChange={event => setIncludeAllResults(event.target.checked)}
         />
       </div>
-      <div className={cssClasses('NoteWrapper')}>
-        {formatMessage(messages.note)}
-      </div>
+      <div className={cssClasses('NoteWrapper')}>{formatMessage(messages.note)}</div>
 
       {isProcessing && renderSpinner()}
 
-      {transferError && (
-        <div className={cssClasses('ErrorMessage')}>{transferError}</div>
-      )}
+      {transferError && <div className={cssClasses('ErrorMessage')}>{transferError}</div>}
 
       {isSuccessAlert && renderSuccessAlert()}
     </AspectDialog>

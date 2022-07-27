@@ -1,10 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const {
-  seedIssueType,
-  seedIssueEventTriggersForPartner,
-  upsertNotificationTypes,
-} = require('../utils')
+const { seedIssueType, seedIssueEventTriggersForPartner, upsertNotificationTypes } = require('../utils')
 
 async function seed(knex) {
   const { partnerId, userId } = await knex('User as u')
@@ -29,12 +25,8 @@ async function seed(knex) {
     updatedBy: userId,
   }
 
-  const issueTypeProbeCheckTooLowModule = await knex('IssueType')
-    .where({ id: issueTypeModule })
-    .first()
-  const issueTypeProbeCheckTooLowLot = await knex('IssueType')
-    .where({ id: issueTypeLot })
-    .first()
+  const issueTypeProbeCheckTooLowModule = await knex('IssueType').where({ id: issueTypeModule }).first()
+  const issueTypeProbeCheckTooLowLot = await knex('IssueType').where({ id: issueTypeLot }).first()
   const { jobFunctionAdminId } = await knex('JobFunction')
     .where({
       externalId: 'admin',

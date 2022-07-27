@@ -53,8 +53,7 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
           },
           message: {
             id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.message',
-            defaultMessage:
-              'You cannot change the status of a device in days when it was active',
+            defaultMessage: 'You cannot change the status of a device in days when it was active',
           },
           resolution: {
             id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution',
@@ -64,26 +63,24 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
         }),
       },
     },
-    'You cannot change the status of a device in days when it was decommissioned':
-      {
-        severity: 'warn',
-        ...defineMessages({
-          title: {
-            id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.title',
-            defaultMessage: 'Validation error',
-          },
-          message: {
-            id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromDecommissioned.message',
-            defaultMessage:
-              'You cannot change the status of a device in days when it was decommissioned',
-          },
-          resolution: {
-            id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromDecommissioned.resolution',
-            defaultMessage:
-              "Please, change the date range. Some of the selected days are set to status Decommissioned, and they can't be changed",
-          },
-        }),
-      },
+    'You cannot change the status of a device in days when it was decommissioned': {
+      severity: 'warn',
+      ...defineMessages({
+        title: {
+          id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.title',
+          defaultMessage: 'Validation error',
+        },
+        message: {
+          id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromDecommissioned.message',
+          defaultMessage: 'You cannot change the status of a device in days when it was decommissioned',
+        },
+        resolution: {
+          id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromDecommissioned.resolution',
+          defaultMessage:
+            "Please, change the date range. Some of the selected days are set to status Decommissioned, and they can't be changed",
+        },
+      }),
+    },
     "The status you are trying to assign can't be set manually": {
       severity: 'warn',
       ...defineMessages({
@@ -93,8 +90,7 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
         },
         message: {
           id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.statusCannotBeSetManually.message',
-          defaultMessage:
-            "The status you are trying to assign can't be set manually",
+          defaultMessage: "The status you are trying to assign can't be set manually",
         },
         resolution: {
           id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.statusCannotBeSetManually.resolution',
@@ -111,8 +107,7 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
         },
         message: {
           id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.decommissionedCannotBeSetForDateRange.message',
-          defaultMessage:
-            'The status "Decommissioned" cannot be set for a date range',
+          defaultMessage: 'The status "Decommissioned" cannot be set for a date range',
         },
         resolution: {
           id: 'errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.decommissionedCannotBeSetForDateRange.resolution',

@@ -56,13 +56,11 @@ const messages = defineMessages({
   },
   RIF_Resistance_Rate_description: {
     id: 'pages.ReportIndex.RIF_Resistance_Rate_description',
-    defaultMessage:
-      'Listing RIF Resistance Rate for all facilities, ranked highest to lowest',
+    defaultMessage: 'Listing RIF Resistance Rate for all facilities, ranked highest to lowest',
   },
   Critical_Errors_By_Device_description: {
     id: 'pages.ReportIndex.Critical_Errors_By_Device_description',
-    defaultMessage:
-      'Includes a list of GeneXpert devices that had at least 2 critical errors',
+    defaultMessage: 'Includes a list of GeneXpert devices that had at least 2 critical errors',
   },
   MTB_Detected_RR_Detected_description: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected_description',
@@ -85,13 +83,11 @@ const messages = defineMessages({
   },
   Device_Calibration_Report_description: {
     id: 'pages.ReportIndex.Device_Calibration_Report_description',
-    defaultMessage:
-      'All devices along with the last calibration date and when next calibration is due',
+    defaultMessage: 'All devices along with the last calibration date and when next calibration is due',
   },
   geneXpertIssues_description: {
     id: 'pages.ReportIndex.geneXpertIssues_description',
-    defaultMessage:
-      'This report shows all issues that apply to GeneXpert devices',
+    defaultMessage: 'This report shows all issues that apply to GeneXpert devices',
   },
   deviceUtilizationReport: {
     id: 'pages.ReportIndex."deviceUtilizationReport"',
@@ -108,8 +104,7 @@ const messages = defineMessages({
   },
   xpertTestActivitiesReport_description: {
     id: 'pages.ReportIndex.xpertTestActivitiesReport_description',
-    defaultMessage:
-      'This report shows the number of GeneXpert MTB tests performed categorized by result',
+    defaultMessage: 'This report shows the number of GeneXpert MTB tests performed categorized by result',
   },
   listRResistantTestReport: {
     id: 'pages.ReportIndex.listRResistantTestReport',

@@ -9,13 +9,7 @@ import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 
 const enhance = identity
 
-const RawData = ({
-  createdOn,
-  index,
-  formatMessage,
-  createdOnLabel,
-  rawMessage,
-}) => (
+const RawData = ({ createdOn, index, formatMessage, createdOnLabel, rawMessage }) => (
   <div style={{ paddingTop: '10px' }}>
     <Accordion defaultExpanded={index === 0}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -30,10 +24,7 @@ const RawData = ({
       </AccordionSummary>
       <AccordionDetails>
         <Typography variant="body2" component="div">
-          <ReadOnlyField
-            label=""
-            value={<pre>{JSON.stringify(rawMessage, null, 1)}</pre>}
-          />
+          <ReadOnlyField label="" value={<pre>{JSON.stringify(rawMessage, null, 1)}</pre>} />
         </Typography>
       </AccordionDetails>
     </Accordion>

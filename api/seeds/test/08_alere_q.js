@@ -1,17 +1,11 @@
 module.exports = require('../utils').seed(seed, __filename)
 const { rowsAsObject } = require('../utils')
-const {
-  deviceTypeCategoryToId,
-  assayTypeToId,
-  resultSourceToId,
-} = require('../../src/shared/dictionary')
+const { deviceTypeCategoryToId, assayTypeToId, resultSourceToId } = require('../../src/shared/dictionary')
 const upsertConsumables = require('../common/upsert_consumables')
 
 async function seed(knex) {
   // Skip this seed file if we already have an AlereFtpConnector Device Type
-  const alereFtpConnectorDeviceType = await knex('DeviceType')
-    .where('externalId', 'AlereFtpConnector')
-    .first('id')
+  const alereFtpConnectorDeviceType = await knex('DeviceType').where('externalId', 'AlereFtpConnector').first('id')
   if (alereFtpConnectorDeviceType) {
     return
   }
@@ -306,8 +300,5 @@ async function seed(knex) {
     }),
   })
 
-  await upsertConsumables(knex, true, [
-    'assayAlereQHiv12Detect',
-    'assayAlereQHiv12VLPlasma',
-  ])
+  await upsertConsumables(knex, true, ['assayAlereQHiv12Detect', 'assayAlereQHiv12VLPlasma'])
 }

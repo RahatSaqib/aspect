@@ -1,25 +1,10 @@
 const _ = require('lodash')
-const {
-  format,
-  parseISO,
-  addMonths,
-  differenceInMonths,
-  differenceInBusinessDays,
-  subMonths,
-} = require('date-fns')
+const { format, parseISO, addMonths, differenceInMonths, differenceInBusinessDays, subMonths } = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery, listDevices } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
-const {
-  issueCategoryIntlToShortname,
-  issueTypeToId,
-} = require('../../shared/dictionary')
-const {
-  knex,
-  filterDateRangeParams,
-  filterParams,
-  sortPageParams,
-} = require('../../db')
+const { issueCategoryIntlToShortname, issueTypeToId } = require('../../shared/dictionary')
+const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../../db')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const {
   getMonthYearUserTimeZoneField,
@@ -41,10 +26,7 @@ async function exportDevices(request, reply) {
     scope === 'devices'
       ? dataSet.map(item => ({
           ...item,
-          issuesCategories: _.map(
-            item.issueCategories,
-            ({ key }) => issueCategories[key]
-          ).join(', '),
+          issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
           availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
           errorRate: item.error.rate, // Excel column formatted as 'Percentage'
         }))
@@ -97,36 +79,13 @@ async function getDeviceActivityReport(auth, query) {
   const getItems = deviceQuery
     .clone()
     .leftJoin('Result as r', builder => {
-      builder
-        .on('d.id', 'r.deviceId')
-        .andOn(knex.raw('r.endedOn between ? and ?', [minDate, maxDate]))
+      builder.on('d.id', 'r.deviceId').andOn(knex.raw('r.endedOn between ? and ?', [minDate, maxDate]))
     })
-    .leftJoin(
-      'DeviceMaintenanceStatusLog as dmsl',
-      'd.deviceMaintenanceStatusLogId',
-      'dmsl.id'
-    )
-    .leftJoin(
-      'DeviceMaintenanceStatus as dms',
-      'dmsl.deviceMaintenanceStatusId',
-      'dms.id'
-    )
-    .select(
-      'd.id',
-      'd.name',
-      'd.serial',
-      'da.name as deviceApprovalStatus',
-      'dms.name as deviceMaintenanceStatus'
-    )
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
     .countDistinct('r.id as totalResults')
-    .select(
-      getDateTimeProjectionInUserTimeZone(
-        knex,
-        'MAX(r.endedOn)',
-        offset,
-        'lastUploadOn'
-      )
-    )
+    .select(getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn'))
     .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
@@ -136,23 +95,14 @@ async function getDeviceActivityReport(auth, query) {
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
     .countDistinct('r.id as totalResults')
-    .select(
-      'd.id as deviceId',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset)
-    )
+    .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
     .modify(filterDateRangeParams, query, 'r.endedOn')
-    .groupBy(
-      'd.id',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
-    )
+    .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
     .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .modify(addingGroupingAndSelect, query)
 
   // return result when both queries are finished
-  const [data, deviceDetails] = await Promise.all([
-    getItems,
-    deviceResultsPerMonths,
-  ])
+  const [data, deviceDetails] = await Promise.all([getItems, deviceResultsPerMonths])
   const dateFields = getMonthsDatefields(minDate, maxDate, culture)
   const extraField = query.select ? query.select.split(' as ')[1].trim() : null
 
@@ -161,8 +111,7 @@ async function getDeviceActivityReport(auth, query) {
       _.filter(
         deviceDetails,
         filteredElem =>
-          filteredElem.deviceId === elem.id &&
-          (extraField ? elem[extraField] === filteredElem[extraField] : true)
+          filteredElem.deviceId === elem.id && (extraField ? elem[extraField] === filteredElem[extraField] : true)
       ),
       detail => {
         elem[detail.monthYear] = detail.totalResults
@@ -196,9 +145,7 @@ async function getModuleSwapsReport(auth, query) {
     .clone()
     .innerJoin('Issue as i', 'i.deviceId', 'd.id')
     .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
-    .join('Result as oldResult', builder =>
-      builder.on(knex.raw('i.data->>"$.oldResultId" = oldResult.id '))
-    )
+    .join('Result as oldResult', builder => builder.on(knex.raw('i.data->>"$.oldResultId" = oldResult.id ')))
     .select(
       'd.name as deviceName',
       'd.serial',
@@ -210,19 +157,10 @@ async function getModuleSwapsReport(auth, query) {
         'DATEDIFF(COALESCE(newModuleResult.endedOn,newModuleResult.startedOn), COALESCE(oldResult.endedOn,oldResult.startedOn)) as daysDifference'
       ),
       'da.name as deviceApprovalStatus',
-      knex.raw(
-        'COALESCE(newModuleResult.endedOn,newModuleResult.startedOn) as lastResultNewModule'
-      ),
-      knex.raw(
-        'COALESCE(oldResult.endedOn,oldResult.startedOn) as lastResultOldModule'
-      )
+      knex.raw('COALESCE(newModuleResult.endedOn,newModuleResult.startedOn) as lastResultNewModule'),
+      knex.raw('COALESCE(oldResult.endedOn,oldResult.startedOn) as lastResultOldModule')
     )
-    .andWhere(
-      knex.raw('i.createdOn between ? and ?', [
-        minDateFormatted,
-        maxDateFormatted,
-      ])
-    )
+    .andWhere(knex.raw('i.createdOn between ? and ?', [minDateFormatted, maxDateFormatted]))
     .andWhere('i.issueTypeId', issueTypeId)
     .modify(sortPageParams, query, 'name')
   const dataset = {
@@ -270,14 +208,7 @@ async function getGeneXpertIssuesReport(auth, query) {
       site: 's',
     })
     .modify(sortPageParams, query, 'i.createdOn')
-    .select(
-      getDateTimeProjectionInUserTimeZone(
-        knex,
-        'i.createdOn',
-        offset,
-        'triggeredOn'
-      )
-    )
+    .select(getDateTimeProjectionInUserTimeZone(knex, 'i.createdOn', offset, 'triggeredOn'))
     .select(
       's.name as siteName',
       'st.name as stateName',
@@ -309,10 +240,7 @@ async function getGeneXpertIssuesReport(auth, query) {
 
 async function exportDeviceOperationLogReport(request, reply) {
   const { auth, query } = request
-  const { data, replacements } = await getGeneXpertOperationLogsReport(
-    auth,
-    query
-  )
+  const { data, replacements } = await getGeneXpertOperationLogsReport(auth, query)
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const sheetData = {
@@ -343,19 +271,11 @@ async function getDeviceCapacityReport(auth, query) {
     .leftJoin('Result as r', builder =>
       builder
         .on('d.id', 'r.deviceId')
-        .andOn(
-          knex.raw('DATE(r.endedOn) between date(?) and date(?)', [
-            minDate,
-            maxDate,
-          ])
-        )
+        .andOn(knex.raw('DATE(r.endedOn) between date(?) and date(?)', [minDate, maxDate]))
         .andOn(knex.raw('DAYOFWEEK(r.endedOn) not in (1,7)'))
     )
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
-    .groupBy(
-      'd.id',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset)
-    )
+    .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
     .select(
       'd.name',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
@@ -377,29 +297,20 @@ async function getDeviceCapacityReport(auth, query) {
     .select('d.name', 'd.id')
     .orderBy('d.name')
   // return result when both queries are finished
-  const [capacityData, deviceDetails] = await Promise.all([
-    monthlyCapacity,
-    devices,
-  ])
+  const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
   const data = _.map(deviceDetails, deviceRow => {
     _.each(
-      _.filter(
-        capacityData,
-        deviceFiltered => deviceFiltered.deviceId === deviceRow.id
-      ),
+      _.filter(capacityData, deviceFiltered => deviceFiltered.deviceId === deviceRow.id),
       filteredMonthlyCapacity => {
         const workingDays = differenceInBusinessDays(
           filteredMonthlyCapacity.lastDayOfMonth,
-          format(
-            new Date(`${filteredMonthlyCapacity.monthYear}-01`),
-            'yyyy-MM'
-          ) === format(new Date(minDate), 'yyyy-MM')
+          format(new Date(`${filteredMonthlyCapacity.monthYear}-01`), 'yyyy-MM') ===
+            format(new Date(minDate), 'yyyy-MM')
             ? parseISO(minDate)
             : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
         )
         deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
-          filteredMonthlyCapacity.resultCount /
-            Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
+          filteredMonthlyCapacity.resultCount / Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
           2
         )
       }
@@ -437,11 +348,7 @@ async function getGeneXpertOperationLogsReport(auth, query) {
     .join('DeviceOperation as dl', 'dl.deviceId', 'd.id')
     .join('Site as s', 'd.siteId', 's.id')
     .join('Geography as g', 'd.geographyId', 'g.id')
-    .modify(
-      filterDateRangeParams,
-      { minDate: minDateFormatted, maxDate: maxDateFormatted },
-      'dl.startedOn'
-    )
+    .modify(filterDateRangeParams, { minDate: minDateFormatted, maxDate: maxDateFormatted }, 'dl.startedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
     })
@@ -488,11 +395,7 @@ async function getGeneXpertOperationLogsReport(auth, query) {
 async function getModuleActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { minDate } = query
-  const rows = await getModuleActivityReportData(
-    minDate,
-    dataConstraints,
-    query
-  )
+  const rows = await getModuleActivityReportData(minDate, dataConstraints, query)
 
   return {
     ok: true,
@@ -504,12 +407,7 @@ async function getModuleActivityReport(auth, query) {
 async function getModuleStatusReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { minDate, maxDate } = query
-  const rows = await getModuleStatusReportData(
-    minDate,
-    maxDate,
-    dataConstraints,
-    query
-  )
+  const rows = await getModuleStatusReportData(minDate, maxDate, dataConstraints, query)
 
   return {
     ok: true,

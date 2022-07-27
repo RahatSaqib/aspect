@@ -27,18 +27,10 @@ function TableColumnHeader({
           active={isSorted}
           direction={isSortedDesc ? 'desc' : 'asc'}
           hideSortIcon
-          className={cssClasses(
-            `${canSort ? 'table__headerLabel' : 'table__headerLabel--nohover'}`
-          )}
+          className={cssClasses(`${canSort ? 'table__headerLabel' : 'table__headerLabel--nohover'}`)}
         >
           <div
-            className={cssClasses(
-              `${
-                isSorted
-                  ? 'table__headerTitle table__headerTitle--bold'
-                  : 'table__headerTitle'
-              }`
-            )}
+            className={cssClasses(`${isSorted ? 'table__headerTitle table__headerTitle--bold' : 'table__headerTitle'}`)}
           >
             {render}
           </div>

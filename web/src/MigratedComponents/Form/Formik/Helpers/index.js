@@ -31,10 +31,7 @@ const mergeFormConfigWithData = (data, config, messages) => {
           acc.link = curr.link
             ? {
                 ...curr.link,
-                url: curr.link.url.replace(
-                  `:${curr.link.key}`,
-                  get(data, curr.link.key)
-                ),
+                url: curr.link.url.replace(`:${curr.link.key}`, get(data, curr.link.key)),
               }
             : null
           return acc
@@ -60,32 +57,24 @@ const getInitialValuesFromFormConfig = (config, savedValues) => {
         initialValues[rowId] = initialValues[rowId] || []
         const subRowsInitial = initialValues[rowId]
         // having saved sub-rows
-        if (
-          savedValues &&
-          isPlainObject(savedValues) &&
-          isArray(savedValues[rowId])
-        ) {
+        if (savedValues && isPlainObject(savedValues) && isArray(savedValues[rowId])) {
           const subRowsSaved = savedValues[rowId]
           subRowsSaved.forEach((subRow, subRowIndex) => {
             subRowsInitial[subRowIndex] = subRowsInitial[subRowIndex] || {
               __guid__: uniqueId(rowId),
             }
 
-            items.forEach(
-              ({ controlType = {}, id: fieldName, initialValue }) => {
-                const { component } = controlType
-                const savedValue = get(subRow, fieldName)
-                let value
-                if (component === 'checkbox') {
-                  value = isBoolean(savedValue)
-                    ? savedValue
-                    : initialValue === true
-                } else {
-                  value = savedValue || initialValue || ''
-                }
-                set(subRowsInitial[subRowIndex], fieldName, value)
+            items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
+              const { component } = controlType
+              const savedValue = get(subRow, fieldName)
+              let value
+              if (component === 'checkbox') {
+                value = isBoolean(savedValue) ? savedValue : initialValue === true
+              } else {
+                value = savedValue || initialValue || ''
               }
-            )
+              set(subRowsInitial[subRowIndex], fieldName, value)
+            })
           })
         } else {
           subRowsInitial[0] = subRowsInitial[0] || {
@@ -122,17 +111,17 @@ const getInitialValuesFromFormConfig = (config, savedValues) => {
 const pickKeys = (sections, key, defaultValue) => {
   const picked = {}
   if (sections && sections.length) {
-    flatten(
-      sections.map(({ rows }) => flatten(rows.map(row => row.items)))
-    ).forEach(({ controlType: { component } = {}, id, [key]: keyToPick }) => {
-      let value = keyToPick || defaultValue
-      if (key === 'initialValue') {
-        if (component === 'checkbox') {
-          value = keyToPick === true
+    flatten(sections.map(({ rows }) => flatten(rows.map(row => row.items)))).forEach(
+      ({ controlType: { component } = {}, id, [key]: keyToPick }) => {
+        let value = keyToPick || defaultValue
+        if (key === 'initialValue') {
+          if (component === 'checkbox') {
+            value = keyToPick === true
+          }
         }
+        picked[id] = value
       }
-      picked[id] = value
-    })
+    )
   }
   return picked
 }
@@ -204,10 +193,7 @@ const createValidationSchema = (fields, intlFormatMessage) => {
 
           default:
             validator = validator[type](
-              ...[
-                constraint,
-                intlFormatMessage(messages[messageId], { total: constraint }),
-              ].filter(p => p)
+              ...[constraint, intlFormatMessage(messages[messageId], { total: constraint })].filter(p => p)
             )
             break
         }
@@ -222,25 +208,14 @@ const createValidationSchema = (fields, intlFormatMessage) => {
 
 const buildLabel = (label, validation) => {
   const isrequired =
-    validation && validation.length
-      ? validation.filter(item => item.type === 'required').length > 0
-      : false
+    validation && validation.length ? validation.filter(item => item.type === 'required').length > 0 : false
   return `${label} ${isrequired ? '*' : ''}`
 }
 
-const getLabel = ({
-  messages,
-  formatMessage,
-  labelI18nKey,
-  label,
-  formik,
-  validation,
-}) => {
+const getLabel = ({ messages, formatMessage, labelI18nKey, label, formik, validation }) => {
   let text
   if (labelI18nKey) {
-    text = formatMessage(
-      messages[isFunction(labelI18nKey) ? labelI18nKey(formik) : labelI18nKey]
-    )
+    text = formatMessage(messages[isFunction(labelI18nKey) ? labelI18nKey(formik) : labelI18nKey])
   } else {
     text = isFunction(label) ? label(formik) : label
   }
@@ -248,16 +223,10 @@ const getLabel = ({
   return buildLabel(text, validation)
 }
 
-const getFormattedString = (
-  i18nKey,
-  { messages, formatMessage, formik },
-  defaultValue
-) => {
+const getFormattedString = (i18nKey, { messages, formatMessage, formik }, defaultValue) => {
   let text = defaultValue || ''
   if (i18nKey) {
-    text = formatMessage(
-      messages[isFunction(i18nKey) ? i18nKey(formik) : i18nKey]
-    )
+    text = formatMessage(messages[isFunction(i18nKey) ? i18nKey(formik) : i18nKey])
   }
 
   return text
@@ -276,17 +245,14 @@ const getFieldErrorProps = (formik, id) => ({
 })
 
 const getBaseValidation = (formatMessage, messages) => {
-  const requiredBase = (value, i18nKey) =>
-    value ? '' : formatMessage(messages[i18nKey])
+  const requiredBase = (value, i18nKey) => (value ? '' : formatMessage(messages[i18nKey]))
 
   return {
     required: value => requiredBase(value, 'required'),
     checked: requiredBase,
     requiredLimitLength: (value, maxLength, i18nLimitLength) => {
       if (!value) return formatMessage(messages.required)
-      return value.length > maxLength
-        ? formatMessage(messages[i18nLimitLength])
-        : ''
+      return value.length > maxLength ? formatMessage(messages[i18nLimitLength]) : ''
     },
     requiredValidUrl: value => {
       if (!value) return formatMessage(messages.required)
@@ -305,9 +271,7 @@ const getVisibleRows = (rows, values, toggleEdit) => {
     const { isMulti, id: rowId } = row
     const itemsVisible = row.items.map(({ visibleIf }) =>
       range(isMulti ? values[rowId].length : 1)
-        .map(subRowIndex =>
-          visibleIf ? visibleIf(values, toggleEdit, subRowIndex) : true
-        )
+        .map(subRowIndex => (visibleIf ? visibleIf(values, toggleEdit, subRowIndex) : true))
         .includes(true)
     )
     return itemsVisible.includes(true)

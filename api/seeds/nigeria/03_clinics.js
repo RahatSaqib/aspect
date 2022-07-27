@@ -10,11 +10,7 @@ const {
   upsertJobFunctionPermission,
   upsertJobFunction,
 } = require('../common')
-const {
-  updateAssayResultCategoryTreatmentEmphasize,
-  insertSites,
-  getPermissionModules,
-} = require('../utils')
+const { updateAssayResultCategoryTreatmentEmphasize, insertSites, getPermissionModules } = require('../utils')
 const config = require('../../src/config')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -24,13 +20,9 @@ async function seed(knex) {
 
   await ensureResultTreatmentStatuses(knex)
 
-  const { id: countryId } = await knex('Country')
-    .where('name', 'Nigeria')
-    .first('id')
+  const { id: countryId } = await knex('Country').where('name', 'Nigeria').first('id')
 
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Nigeria' })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: 'Nigeria' }).first('id')
 
   // have to check if states are already set up because they're now part of common inserts:
   const { stateCount } = await knex('State').count('id as stateCount').first()
@@ -40,9 +32,7 @@ async function seed(knex) {
   }
 
   // give admin access to persons and reporters
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where('name', 'Admin')
-    .first('id')
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').first('id')
 
   // persons
   const { id: permissionPersonEditId } = await knex('Permission')
@@ -87,20 +77,11 @@ async function seed(knex) {
 
   // set up result category assays:
   // HCV categories
-  const { id: geneXpertHcvAssayId } = await knex('Assay')
-    .where('externalId', 'GxHcv')
-    .first('id')
-  await upsertAssayResultCategories(geneXpertHcvAssayId, [
-    'Detected',
-    'Invalid',
-    'NoResult',
-    'Error',
-  ])
+  const { id: geneXpertHcvAssayId } = await knex('Assay').where('externalId', 'GxHcv').first('id')
+  await upsertAssayResultCategories(geneXpertHcvAssayId, ['Detected', 'Invalid', 'NoResult', 'Error'])
 
   // MTB-Rif categories
-  const { id: geneXpertMtbRifAssayId } = await knex('Assay')
-    .where('externalId', 'GxMtbRif')
-    .first('id')
+  const { id: geneXpertMtbRifAssayId } = await knex('Assay').where('externalId', 'GxMtbRif').first('id')
   await upsertAssayResultCategories(knex, geneXpertMtbRifAssayId, [
     'Detected',
     'NotDetected',
@@ -111,9 +92,7 @@ async function seed(knex) {
   ])
 
   // MTB-Rif ULTRA categories
-  const { id: geneXpertMtbRifUltraAssayId } = await knex('Assay')
-    .where('externalId', 'GxMtbRifUltra')
-    .first('id')
+  const { id: geneXpertMtbRifUltraAssayId } = await knex('Assay').where('externalId', 'GxMtbRifUltra').first('id')
   await upsertAssayResultCategories(knex, geneXpertMtbRifUltraAssayId, [
     'Detected',
     'Trace Detected',
@@ -125,9 +104,7 @@ async function seed(knex) {
   ])
 
   // HIV-VL categories
-  const { id: geneXpertHivVlAssayId } = await knex('Assay')
-    .where('externalId', 'GxHiv1Vl')
-    .first('id')
+  const { id: geneXpertHivVlAssayId } = await knex('Assay').where('externalId', 'GxHiv1Vl').first('id')
   await upsertAssayResultCategories(knex, geneXpertHivVlAssayId, [
     'LessThan1000',
     'MoreThan1000',
@@ -138,9 +115,7 @@ async function seed(knex) {
   ])
 
   // HIV-QUAL categories
-  const { id: geneXpertHivQualAssayId } = await knex('Assay')
-    .where('externalId', 'GxHiv1Qual')
-    .first('id')
+  const { id: geneXpertHivQualAssayId } = await knex('Assay').where('externalId', 'GxHiv1Qual').first('id')
   await upsertAssayResultCategories(knex, geneXpertHivQualAssayId, [
     'Detected',
     'NotDetected',
@@ -150,9 +125,7 @@ async function seed(knex) {
   ])
 
   // Ebola categories
-  const { id: geneXpertEbolaAssayId } = await knex('Assay')
-    .where('externalId', 'GxEbola')
-    .first('id')
+  const { id: geneXpertEbolaAssayId } = await knex('Assay').where('externalId', 'GxEbola').first('id')
   await upsertAssayResultCategories(knex, geneXpertEbolaAssayId, [
     'Detected',
     'NotDetected',
@@ -168,11 +141,7 @@ async function seed(knex) {
   // add reporter logins for testing
   const { id: adminId } = await knex('User').where('name', 'admin').first('id')
 
-  const jobFunctionIdClinician = await upsertJobFunction(
-    knex,
-    'Clinician',
-    partnerId
-  )
+  const jobFunctionIdClinician = await upsertJobFunction(knex, 'Clinician', partnerId)
 
   const modules = await getPermissionModules(knex)
 
@@ -197,9 +166,7 @@ async function seed(knex) {
     failedPasswordAttempts: 0,
   })
 
-  const { id: siteIdMaitama } = await knex('Site')
-    .where('externalId', 'Maitama District Hospital')
-    .first('id')
+  const { id: siteIdMaitama } = await knex('Site').where('externalId', 'Maitama District Hospital').first('id')
 
   // create Person
   const [personIdMaitama] = await knex('Person').insert({
@@ -240,9 +207,7 @@ async function seed(knex) {
     failedPasswordAttempts: 0,
   })
 
-  const { id: siteIdTownship } = await knex('Site')
-    .where('externalId', '2171')
-    .first('id')
+  const { id: siteIdTownship } = await knex('Site').where('externalId', '2171').first('id')
 
   // create Person
   const [personIdTownship] = await knex('Person').insert({
@@ -323,13 +288,7 @@ async function seed(knex) {
 
   // fix assay patient data schema for all other assays
   await knex('Assay')
-    .whereIn('externalId', [
-      'GxUnknown',
-      'GxHcv',
-      'GxHiv1Vl',
-      'GxHiv1Qual',
-      'GxEbola',
-    ])
+    .whereIn('externalId', ['GxUnknown', 'GxHcv', 'GxHiv1Vl', 'GxHiv1Qual', 'GxEbola'])
     .update(
       'patientDataSchema',
       JSON.stringify({

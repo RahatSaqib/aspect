@@ -112,12 +112,7 @@ export const EditableFieldsForm = ({
   return (
     <form onSubmit={handleSubmit}>
       <div className={cssClasses('container')}>
-        <Field
-          className={cssClasses('container__field')}
-          name="name"
-          label={labels.name}
-          component={renderTextField}
-        />
+        <Field className={cssClasses('container__field')} name="name" label={labels.name} component={renderTextField} />
         <Field
           className={cssClasses('container__field')}
           name="shortName"
@@ -186,21 +181,12 @@ export const EditableFieldsForm = ({
           component={renderTextField}
         />
         <div className={cssClasses('coordinate__button')}>
-          <AspectButton
-            color="primary"
-            variant="contained"
-            onClick={onSetBasedAddressClick}
-          >
+          <AspectButton color="primary" variant="contained" onClick={onSetBasedAddressClick}>
             {formatMessage(messages.buttonSetBasedonAddress)}
           </AspectButton>
         </div>
       </div>
-      <TimezoneSelect
-        name="timezone"
-        label={labels.timezone}
-        disabled={loading || submitting}
-        fullWidth
-      />
+      <TimezoneSelect name="timezone" label={labels.timezone} disabled={loading || submitting} fullWidth />
       <ReadOnlyField
         label={labels.tags}
         value={siteTags}
@@ -215,12 +201,7 @@ export const EditableFieldsForm = ({
           />
         )}
       />
-      <Button
-        disabled={invalid || pristine || submitting}
-        type="submit"
-        color="secondary"
-        variant="contained"
-      >
+      <Button disabled={invalid || pristine || submitting} type="submit" color="secondary" variant="contained">
         {formatMessage(messages.buttonUpdate)}
       </Button>
       <PermissionsProvider permissions={['site:admin']}>
@@ -242,11 +223,7 @@ export const EditableFieldsForm = ({
           <Button color="primary" onClick={() => setShowConfirmation(false)}>
             {formatMessage(messages.cancel)}
           </Button>,
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => handleDelete()}
-          >
+          <Button color="primary" variant="contained" onClick={() => handleDelete()}>
             {formatMessage(messages.yes)}
           </Button>,
         ]}
@@ -255,9 +232,7 @@ export const EditableFieldsForm = ({
         onClose={() => setShowConfirmation(false)}
       >
         <h3>{formatMessage(messages.deleteSiteConfirmationTitle)}</h3>
-        <div style={{ marginTop: '15px' }}>
-          {formatMessage(messages.deleteSiteConfirmationMessage)}
-        </div>
+        <div style={{ marginTop: '15px' }}>{formatMessage(messages.deleteSiteConfirmationMessage)}</div>
       </AspectDialog>
     </form>
   )

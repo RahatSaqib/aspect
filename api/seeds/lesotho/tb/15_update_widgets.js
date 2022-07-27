@@ -4,9 +4,7 @@ const dashboardWidget = require('../../fixtures/DashboardWidgetExtended')
 const { upsertDashboardWidgets } = require('../../common')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Lesotho TB' })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: 'Lesotho TB' }).first('id')
 
   await upsertDashboardWidgets(knex, partnerId, dashboardWidget)
 }

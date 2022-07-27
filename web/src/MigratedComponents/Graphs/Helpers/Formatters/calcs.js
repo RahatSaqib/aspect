@@ -10,27 +10,18 @@ import values from 'lodash/values'
 
 import { filterColour } from './index'
 
-const calcPercentageForGraphs = (value, total, precision = 4) =>
-  ((value / total) * 100).toFixed(precision)
+const calcPercentageForGraphs = (value, total, precision = 4) => ((value / total) * 100).toFixed(precision)
 
 const getMaxValueForDivergent = data => {
   const keyValues = []
-  data.map(d =>
-    values(d).map(v => Number.isInteger(v) && keyValues.push(Math.abs(v)))
-  )
+  data.map(d => values(d).map(v => Number.isInteger(v) && keyValues.push(Math.abs(v))))
   const maxVal = max(keyValues) % 2 === 0 ? max(keyValues) : max(keyValues) + 1
   return { minValue: -maxVal, maxValue: maxVal }
 }
 
-const roundIfNumber = value =>
-  typeof value === 'number' && value > 0 ? Math.round(value) : value
+const roundIfNumber = value => (typeof value === 'number' && value > 0 ? Math.round(value) : value)
 
-const calcPercentageSplitBar = (
-  data,
-  keyToOmit,
-  displayMethod,
-  precision = 4
-) => {
+const calcPercentageSplitBar = (data, keyToOmit, displayMethod, precision = 4) => {
   return displayMethod === 'actual'
     ? data
     : data.map(d => {
@@ -68,8 +59,7 @@ const getAverageFromData = (data, value, which, notation, culture) => {
     data.map(d => total.push(sum(values(pick(d, value)).map(Number))))
     const totalSum = Number(sum(total))
     const totalSumAvg = which === '*' ? (totalSum / 12).toFixed(1) : totalSum
-    const totalNotation =
-      totalSumAvg > 1000 ? 'compact' : notation || 'standard'
+    const totalNotation = totalSumAvg > 1000 ? 'compact' : notation || 'standard'
 
     if (Array.isArray(which)) {
       const rangeTotal = which.reduce((acc, curr) => {
@@ -84,17 +74,12 @@ const getAverageFromData = (data, value, which, notation, culture) => {
             }
           }
         } else {
-          console.warn(
-            `There are no results to match your config for item: ${curr}`
-          )
+          console.warn(`There are no results to match your config for item: ${curr}`)
         }
         return acc
       }, {})
 
-      if (
-        Object.keys(rangeTotal).length !== 0 &&
-        rangeTotal.constructor === Object
-      ) {
+      if (Object.keys(rangeTotal).length !== 0 && rangeTotal.constructor === Object) {
         totalForFilter.push(rangeTotal)
       }
     } else if (which === '*') {
@@ -108,18 +93,9 @@ const getAverageFromData = (data, value, which, notation, culture) => {
     }
 
     if (totalForFilter && totalForFilter.length) {
-      const sumData = data.reduce(
-        (acc, curr) => acc + parseFloat(curr.value),
-        0
-      )
+      const sumData = data.reduce((acc, curr) => acc + parseFloat(curr.value), 0)
       const avg =
-        sumData < 1
-          ? sumData
-          : calcPercentageForGraphs(
-              parseFloat(totalForFilter[0][value]),
-              round(sumData),
-              1
-            )
+        sumData < 1 ? sumData : calcPercentageForGraphs(parseFloat(totalForFilter[0][value]), round(sumData), 1)
 
       const avgObj = {
         avg: parseFloat(avg),

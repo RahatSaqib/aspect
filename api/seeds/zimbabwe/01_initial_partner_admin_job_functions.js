@@ -17,9 +17,7 @@ const { adminUserName, adminPassword, fixtures } = partnerData
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'admin' }).first('id')
   if (existingAdminUser) {
     return
   }

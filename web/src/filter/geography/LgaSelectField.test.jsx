@@ -3,11 +3,7 @@ import React from 'react'
 import sinon from 'sinon'
 import { shallow } from 'enzyme'
 
-import {
-  LazyLoadItems,
-  LazyLoadParent,
-  LazyLoadChild,
-} from '../../geography/GeographyRedux'
+import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../geography/GeographyRedux'
 import SelectField from '../../components/shared/SelectField'
 import { mountWithTheme } from '../../test/common'
 
@@ -94,9 +90,7 @@ describe('LgaSelectField module', () => {
         countryId: '1',
         stateId: '2',
       }
-      const LgaSelectFieldWrapper = mountWithTheme(
-        <LgaSelectField {...props} />
-      )
+      const LgaSelectFieldWrapper = mountWithTheme(<LgaSelectField {...props} />)
       expect(props.fetchLgasForLocationSelector.calledOnce).toBe(true)
 
       LgaSelectFieldWrapper.setProps({

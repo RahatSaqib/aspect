@@ -72,13 +72,11 @@ const messagesResult = defineMessages({
   },
   successMessagePatient: {
     id: 'pages.transferResult.successMessagePatient',
-    defaultMessage:
-      'Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"',
+    defaultMessage: 'Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"',
   },
   successMessageButton: {
     id: 'pages.transferResult.successMessageButton',
-    defaultMessage:
-      'After clicking the OK button below, you will be redirected to the list of results.',
+    defaultMessage: 'After clicking the OK button below, you will be redirected to the list of results.',
   },
 })
 

@@ -15,8 +15,7 @@ import styles from './OperationalData.css'
 
 const cssClasses = classnames.bind(styles)
 
-const currentTabStyle = (currentTab, index) =>
-  currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'
+const currentTabStyle = (currentTab, index) => (currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive')
 
 const messages = defineMessages({
   operationalDashboardTitle: {
@@ -45,8 +44,7 @@ export const OperationalData = () => {
     },
   }
 
-  const { path: currentTab } =
-    find(tabsConfig, { path: pathname }) || tabsConfig.dashboard
+  const { path: currentTab } = find(tabsConfig, { path: pathname }) || tabsConfig.dashboard
 
   return (
     <div className={cssClasses('Container')}>
@@ -61,18 +59,12 @@ export const OperationalData = () => {
         >
           <Tab
             label={tabsConfig.dashboard.label}
-            className={cssClasses(
-              'tabs__tab',
-              currentTabStyle(currentTab, tabsConfig.dashboard.path)
-            )}
+            className={cssClasses('tabs__tab', currentTabStyle(currentTab, tabsConfig.dashboard.path))}
             value={tabsConfig.dashboard.path}
           />
           <Tab
             label={tabsConfig.dailyStatus.label}
-            className={cssClasses(
-              'tabs__tab',
-              currentTabStyle(currentTab, tabsConfig.dailyStatus.path)
-            )}
+            className={cssClasses('tabs__tab', currentTabStyle(currentTab, tabsConfig.dailyStatus.path))}
             value={tabsConfig.dailyStatus.path}
           />
         </Tabs>
