@@ -233,8 +233,8 @@ async function getListDevices(query, auth) {
       knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
       knex.raw(`CASE 
         WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
-        WHEN dms.externalId IN ('inactiveOutOfInventory', 'inactiveDownForRepair', 'inactiveNoStaff', 'inactiveNoPower', 'inactiveNoSamples', 'inactiveOther') THEN 'down'
-        ELSE 'unknown' END AS 'deviceStatus'`),
+        WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
+        ELSE 'down' END AS 'deviceStatus'`),
     ])
     .leftJoin(
       knex('Result as resDevice')
