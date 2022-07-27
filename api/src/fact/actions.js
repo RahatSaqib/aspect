@@ -148,12 +148,7 @@ function factNewResultsAvailable({ siteId, numberOfResults }) {
   }
 }
 
-function siteWithLowCompletionRateIssue({
-  siteId,
-  geographyId,
-  partnerId,
-  completionRatePerSite: completionRate,
-}) {
+function siteWithLowCompletionRateIssue({ siteId, geographyId, partnerId, completionRatePerSite: completionRate }) {
   if (!siteId || isNil(completionRate)) {
     throw new Error('Must specify siteId and completionRate for new Evaluation')
   }
