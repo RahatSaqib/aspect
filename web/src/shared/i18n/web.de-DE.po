@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-07-26T18:51:05.755Z\n"
+"POT-Creation-Date: 2022-07-27T14:37:31.707Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,14 +11,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.1.1\n"
 
-#. [pages.DeviceList.lastMonth]
+#. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
 #. #Results (Last 30 Days)
 #: extracted_strings.json
 msgid "#Results (Last 30 Days)"
 msgstr "#Ergebnisse (Letzte 30 Tage)"
 
-#. [pages.DeviceList.thisMonth]
+#. [pages.DeviceList.lastMonth]
 #. defaultMessage is:
 #. #Results (Preceding 30 Days)
 #: extracted_strings.json
@@ -7208,6 +7208,16 @@ msgid ""
 msgstr ""
 "Stellt das letzte Mal dar, als die GxConnect-Anwendung eine Verbindung mit "
 "Aspect hergestellt hat"
+
+#. [pages.DeviceList.resultCountDescription]
+#. defaultMessage is:
+#. Represents the number of results conducted from {startDate} to {endDate}
+#: extracted_strings.json
+msgid ""
+"Represents the number of results conducted from {startDate} to {endDate}"
+msgstr ""
+"Stellt die Anzahl der durchgeführten Ergebnisse von {startDate} bis "
+"{endDate} dar"
 
 #. [pages.ResetPassword.adminHelpHeader]
 #. defaultMessage is:
