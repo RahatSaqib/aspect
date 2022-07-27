@@ -21,6 +21,10 @@ const messages = defineMessages({
     id: 'pages.DeviceStatusSelectField.unknown',
     defaultMessage: 'Unknown',
   },
+  optionAll: {
+    id: 'pages.DeviceStatusSelectField.all',
+    defaultMessage: 'All',
+  },
 })
 
 const options = {
@@ -56,6 +60,7 @@ const DeviceStatusSelectField = props => {
 
   return (
     <SelectField {...restProps} value={value} onChange={handleChange}>
+      <MenuItem value={undefined}>{props.intl.formatMessage(messages.optionAll)}</MenuItem>
       <MenuItem value="up" style={{ color: '#99D25D' }}>
         {props.intl.formatMessage(messages.optionUp)}
       </MenuItem>

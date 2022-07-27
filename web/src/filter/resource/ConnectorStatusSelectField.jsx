@@ -17,6 +17,10 @@ const messages = defineMessages({
     id: 'pages.connectorStatusSelectField.online',
     defaultMessage: 'Online',
   },
+  optionAll: {
+    id: 'pages.connectorStatusSelectField.all',
+    defaultMessage: 'All',
+  },
 })
 const ConnectorStatusSelectField = props => {
   const handleChange = ({ target: { value } }) => {
@@ -28,6 +32,7 @@ const ConnectorStatusSelectField = props => {
 
   return (
     <SelectField {...restProps} value={value} onChange={handleChange}>
+      <MenuItem value={undefined}>{props.intl.formatMessage(messages.optionAll)}</MenuItem>
       <MenuItem value="offline">{props.intl.formatMessage(messages.optionOffline)}</MenuItem>
       <MenuItem value="online">{props.intl.formatMessage(messages.optionOnline)}</MenuItem>
     </SelectField>
