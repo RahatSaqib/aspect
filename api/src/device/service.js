@@ -238,7 +238,7 @@ async function getListDevices(query, auth) {
     ])
     .leftJoin(
       knex('Result as resDevice')
-        .select('deviceId', knex.raw('max(resDevice.createdOn) as lastResultConductedOn'))
+        .select('deviceId', knex.raw('max(resDevice.endedOn) as lastResultConductedOn'))
         .groupBy('deviceId')
         .as('deviceResult'),
       'd.id',
