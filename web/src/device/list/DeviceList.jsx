@@ -90,7 +90,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'lastPingOn',
     'resultCountLastMonth',
     'resultCountThisMonth',
-    'gxConnectVersion',
+    'connectorVersion',
     'lastResultConductedOn',
   ],
 })
@@ -162,9 +162,9 @@ const getColumns = intl => [
     label: intl.formatMessage(messages.gxConnectStatus),
   },
   {
-    key: 'gxConnectVersion',
+    key: 'connectorVersion',
     sortable: true,
-    label: intl.formatMessage(messages.gxConnectVersion),
+    label: intl.formatMessage(messages.connectorVersion),
     hiddenOn: 'lg',
   },
   {

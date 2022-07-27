@@ -141,9 +141,9 @@ export const messages = {
       id: 'pages.DeviceList.gxConnectStatus',
       defaultMessage: 'GxConnect Status',
     },
-    gxConnectVersion: {
-      id: 'pages.DeviceList.gxConnectVersion',
-      defaultMessage: 'GxConnect Version',
+    connectorVersion: {
+      id: 'pages.DeviceList.connectorVersion',
+      defaultMessage: 'Connector Version',
     },
     lastResultConductedOn: {
       id: 'pages.DeviceList.lastResultConductedOn',
