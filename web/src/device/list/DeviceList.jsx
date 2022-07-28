@@ -162,19 +162,20 @@ const getColumns = intl => [
     label: intl.formatMessage(messages.availabilityRate),
     sortable: false,
     tooltip: intl.formatMessage(messages.availabilityRateDescription),
-    hiddenOn: 'sm',
+    hiddenOn: 'lg',
   },
   {
     key: 'errorRate',
     label: intl.formatMessage(messages.errorRate),
     sortable: false,
     tooltip: intl.formatMessage(messages.errorRateDescription),
-    hiddenOn: 'sm',
+    hiddenOn: 'lg',
   },
   {
     key: 'createdOn',
     sortable: true,
     label: intl.formatMessage(messages.reportingFor),
+    hiddenOn: 'lg',
   },
   {
     key: 'resultCountLastMonth',

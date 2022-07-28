@@ -73,10 +73,10 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
         />
       ))}
     </TableCell>
-    <TableCell hiddenOn="sm">
+    <TableCell hiddenOn="lg">
       <Rate intl={intl} it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />
     </TableCell>
-    <TableCell hiddenOn="sm">
+    <TableCell hiddenOn="lg">
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
@@ -84,7 +84,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
         messageId={messages.errorOfTotal}
       />
     </TableCell>
-    <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
+    <TableCell hiddenOn="lg">{formatRelative(device.get('createdOn'))}</TableCell>
     <TableCell hiddenOn="lg" numeric>
       {intl.formatNumber(device.get('resultCountLastMonth'))}
     </TableCell>
