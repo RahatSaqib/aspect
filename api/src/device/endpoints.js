@@ -128,7 +128,7 @@ function listDevicesBaseResponse() {
               shortName: Joi.string().allow('', null).description('The short name of the device'),
               deviceStatus: Joi.string().allow('', null).description('The connector status'),
               connectorStatus: Joi.string().allow('', null).description('The connector status'),
-              connectorVersion: Joi.string().allow('', null).description('The gxConnect version'),
+              connectorVersion: Joi.string().allow('', null).description('The connector version'),
               createdOn: Joi.date().required().description('When the device was added to the database'),
               lastResultConductedOn: Joi.date().allow(null).description('When the device generate last result'),
               lastPingOn: Joi.date().allow(null).description('When the device last pinged'),
