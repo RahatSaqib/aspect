@@ -108,6 +108,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withDeviceType',
     defaultMessage: 'type is {deviceTypeName}',
   },
+  withConnectorStatus: {
+    id: 'filter.btnGroup.withConnectorStatus',
+    defaultMessage: 'Connector Status is {connectorStatus}',
+  },
   whereExternalIdIncludes: {
     id: 'filter.btnGroup.whereExternalIdIncludes',
     defaultMessage: 'ID includes "{externalId}"',
@@ -195,6 +199,14 @@ const messages = defineMessages({
   contactEnabledStatus: {
     id: 'filter.btnGroup.contactEnabledStatus',
     defaultMessage: 'Contact Status: {contactStatus}',
+  },
+  online: {
+    id: 'filter.btnGroup.online',
+    defaultMessage: 'Online',
+  },
+  offline: {
+    id: 'filter.btnGroup.offline',
+    defaultMessage: 'Offline',
   },
 })
 const revokedOptions = [
@@ -489,13 +501,24 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
           .get('name'),
       })
     ),
-    deviceMaintenanceStatusId: makeButton((deviceMaintenanceStatusId, { deviceMaintenanceStatusItems }) =>
-      formatMessage(messages.withDeviceMaintenanceStatus, {
-        deviceMaintenanceStatusName: deviceMaintenanceStatusItems
-          .find(it => it.get('externalId') === deviceMaintenanceStatusId, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
-      })
-    ),
+    deviceMaintenanceStatusId: (filterKey, props) => {
+      const {
+        filters: { deviceMaintenanceStatusId },
+      } = props
+      const deviceMaintenanceStatusIds = isArray(deviceMaintenanceStatusId)
+        ? deviceMaintenanceStatusId
+        : [deviceMaintenanceStatusId]
+
+      return deviceMaintenanceStatusIds.map((deviceMaintenanceStatusId, index) =>
+        makeButton((__, { deviceMaintenanceStatusItems }) =>
+          formatMessage(messages.withDeviceMaintenanceStatus, {
+            deviceMaintenanceStatusName: deviceMaintenanceStatusItems
+              .find(it => it.get('externalId') === deviceMaintenanceStatusId, EMPTY_CONTEXT, EMPTY_MAP)
+              .get('name'),
+          })
+        )(filterKey, props, index)
+      )
+    },
     deviceTypeId: makeButton((deviceTypeId, { deviceTypeItems }) =>
       formatMessage(messages.withDeviceType, {
         deviceTypeName: deviceTypeItems.find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP).get('name'),
@@ -559,6 +582,11 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     contactStatus: makeButton(status =>
       formatMessage(messages.contactEnabledStatus, {
         contactStatus: statusOptions.find(it => it.id === status, EMPTY_CONTEXT, EMPTY_MAP).name,
+      })
+    ),
+    connectorStatus: makeButton(connectorStatus =>
+      formatMessage(messages.withConnectorStatus, {
+        connectorStatus: formatMessage(messages[connectorStatus]),
       })
     ),
   }
