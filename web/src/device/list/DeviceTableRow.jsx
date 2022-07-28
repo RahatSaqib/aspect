@@ -25,6 +25,7 @@ const Rate = ({ intl, it, messageId, threshold }) => (
     ) : (
       <ColoredNumber number={it.rate} formatNumberStyle="percent" error={threshold && it.rate > threshold} />
     )}
+    <br />
     <span className={cssClasses('Rate__hover')}>{intl.formatMessage(messageId, it)}</span>
   </span>
 )
