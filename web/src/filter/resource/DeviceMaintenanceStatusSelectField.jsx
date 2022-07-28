@@ -19,6 +19,7 @@ const DeviceMaintenanceStatusSelectField = ({
   onDeviceMaintenanceStatusChange,
   value,
   allItemText,
+  multiple,
   onlyManuallySetableStatuses,
   ...restProps
 }) => {
@@ -50,7 +51,7 @@ const DeviceMaintenanceStatusSelectField = ({
   }
 
   return (
-    <SelectField {...restProps} value={value} onChange={onChange} multiple>
+    <SelectField {...restProps} value={value} onChange={onChange} multiple={multiple}>
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {maintenanceStatuses
         ? maintenanceStatuses.map(ms => (
@@ -65,12 +66,14 @@ const DeviceMaintenanceStatusSelectField = ({
 
 DeviceMaintenanceStatusSelectField.defaultProps = {
   value: '',
-  allItemText: 'all',
+  allItemText: '',
   onlyManuallySetableStatuses: false,
+  multiple: false,
 }
 
 DeviceMaintenanceStatusSelectField.propTypes = {
   onDeviceMaintenanceStatusChange: PropTypes.oneOfType([PropTypes.func]).isRequired,
+  multiple: PropTypes.oneOfType([PropTypes.bool]),
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   allItemText: PropTypes.oneOfType([PropTypes.string]),
   onlyManuallySetableStatuses: PropTypes.oneOfType([PropTypes.bool]),

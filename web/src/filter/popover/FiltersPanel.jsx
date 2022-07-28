@@ -1037,6 +1037,7 @@ export const FiltersPanel = ({
             {config.deviceMaintenanceStatus && (
               <div className={cssClasses('Control')}>
                 <DeviceMaintenanceStatusSelectField
+                  multiple
                   allItemText={formatMessage(messages.all)}
                   value={filters.deviceMaintenanceStatusId}
                   onDeviceMaintenanceStatusChange={onDeviceMaintenanceStatusIdChange}
