@@ -33,6 +33,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
   <TableRow {...restProps} className={cssClasses('TableRow', restProps.className)}>
     <TableCell>{device.get('name')}</TableCell>
     <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
+    <TableCell>{intl.formatMessage(messages[device.get('approvalStatusI18nKey')])}</TableCell>
     <TableCell>
       <StatusIcon
         title={intl.formatMessage(messages[device.get('deviceStatus')])}
@@ -42,19 +43,15 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
       />
     </TableCell>
     <TableCell>{intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])}</TableCell>
-    <TableCell>{intl.formatMessage(messages[device.get('approvalStatusI18nKey')])}</TableCell>
     <TableCell>{formatRelative(device.get('lastResultConductedOn'))}</TableCell>
     <TableCell>
-      <Rate intl={intl} it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />
-    </TableCell>
-    <TableCell>
-      <Rate
-        intl={intl}
-        it={device.get('error').toJS()}
-        threshold={errorRateThreshold}
-        messageId={messages.errorOfTotal}
+      <StatusIcon
+        title={intl.formatMessage(messages[device.get('connectorStatus')])}
+        status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
       />
     </TableCell>
+    <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
+    <TableCell hiddenOn="lg">{device.get('connectorVersion')}</TableCell>
     <TableCell className={cssClasses('TableCell--alerts')}>
       {device.get('issueCategories').map(it => (
         <ColoredButton
@@ -70,15 +67,18 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
         />
       ))}
     </TableCell>
-    <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
-    <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
-    <TableCell>
-      <StatusIcon
-        title={intl.formatMessage(messages[device.get('connectorStatus')])}
-        status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
+    <TableCell hiddenOn="sm">
+      <Rate intl={intl} it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />
+    </TableCell>
+    <TableCell hiddenOn="sm">
+      <Rate
+        intl={intl}
+        it={device.get('error').toJS()}
+        threshold={errorRateThreshold}
+        messageId={messages.errorOfTotal}
       />
     </TableCell>
-    <TableCell hiddenOn="lg">{device.get('connectorVersion')}</TableCell>
+    <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
     <TableCell hiddenOn="lg" numeric>
       {intl.formatNumber(device.get('resultCountLastMonth'))}
     </TableCell>

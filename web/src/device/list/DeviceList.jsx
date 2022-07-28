@@ -117,6 +117,11 @@ const getColumns = intl => [
     hiddenOn: 'lg',
   },
   {
+    key: 'approvalStatusI18nKey',
+    label: intl.formatMessage(messages.approvalStatus),
+    sortable: true,
+  },
+  {
     key: 'deviceStatus',
     label: intl.formatMessage(messages.deviceStatus),
     sortable: true,
@@ -127,35 +132,14 @@ const getColumns = intl => [
     sortable: true,
   },
   {
-    key: 'approvalStatusI18nKey',
-    label: intl.formatMessage(messages.approvalStatus),
-    sortable: true,
-  },
-  {
     key: 'lastResultConductedOn',
     label: intl.formatMessage(messages.lastResultConductedOn),
     sortable: true,
   },
   {
-    key: 'availabilityRate',
-    label: intl.formatMessage(messages.availabilityRate),
+    key: 'connectorStatus',
     sortable: false,
-    tooltip: intl.formatMessage(messages.availabilityRateDescription),
-  },
-  {
-    key: 'errorRate',
-    label: intl.formatMessage(messages.errorRate),
-    sortable: false,
-    tooltip: intl.formatMessage(messages.errorRateDescription),
-  },
-  {
-    key: 'issueCategory',
-    label: intl.formatMessage(messages.issueCategory),
-  },
-  {
-    key: 'createdOn',
-    sortable: true,
-    label: intl.formatMessage(messages.reportingFor),
+    label: intl.formatMessage(messages.connectorStatus),
   },
   {
     key: 'lastPingOn',
@@ -164,15 +148,33 @@ const getColumns = intl => [
     tooltip: intl.formatMessage(messages.lastSeenDescription),
   },
   {
-    key: 'connectorStatus',
-    sortable: false,
-    label: intl.formatMessage(messages.connectorStatus),
-  },
-  {
     key: 'connectorVersion',
     sortable: true,
     label: intl.formatMessage(messages.connectorVersion),
     hiddenOn: 'lg',
+  },
+  {
+    key: 'issueCategory',
+    label: intl.formatMessage(messages.issueCategory),
+  },
+  {
+    key: 'availabilityRate',
+    label: intl.formatMessage(messages.availabilityRate),
+    sortable: false,
+    tooltip: intl.formatMessage(messages.availabilityRateDescription),
+    hiddenOn: 'sm',
+  },
+  {
+    key: 'errorRate',
+    label: intl.formatMessage(messages.errorRate),
+    sortable: false,
+    tooltip: intl.formatMessage(messages.errorRateDescription),
+    hiddenOn: 'sm',
+  },
+  {
+    key: 'createdOn',
+    sortable: true,
+    label: intl.formatMessage(messages.reportingFor),
   },
   {
     key: 'resultCountLastMonth',
