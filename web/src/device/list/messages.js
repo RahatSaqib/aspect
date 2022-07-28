@@ -24,6 +24,10 @@ export const messages = {
       id: 'pages.DeviceList.maintenanceStatus',
       defaultMessage: 'Maintenance Status',
     },
+    approvalStatus: {
+      id: 'pages.DeviceList.approvalStatus',
+      defaultMessage: 'Approval Status',
+    },
     availabilityRate: {
       id: 'pages.DeviceList.availabilityRate',
       defaultMessage: 'Active',

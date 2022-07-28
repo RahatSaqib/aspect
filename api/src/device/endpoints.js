@@ -87,7 +87,8 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           'name',
           'siteName',
           'state',
-          'statusI18nKey',
+          'maintenanceStatusI18nKey',
+          'approvalStatusI18nKey',
           'errorRate',
           'createdOn',
           'lastSeen',
@@ -141,7 +142,9 @@ function listDevicesBaseResponse() {
               siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
               approval: Joi.string().required().description('The current approval status of the device'),
               status: Joi.string().required().description('The current status of the device'),
-              statusI18nKey: Joi.string().required().description('The i18n key for the name of the status'),
+              approvalStatusI18nKey: Joi.string()
+                .allow('', null)
+                .description('The i18n key for the name of the approval status'),
               maintenanceStatus: Joi.string()
                 .allow('', null)
                 .description('The current maintenance status of the device'),

@@ -83,7 +83,8 @@ const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'name',
     'siteName',
-    'statusI18nKey',
+    'maintenanceStatusI18nKey',
+    'approvalStatusI18nKey',
     'availabilityRate',
     'errorRate',
     'createdOn',
@@ -121,8 +122,13 @@ const getColumns = intl => [
     sortable: true,
   },
   {
-    key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
+    key: 'maintenanceStatusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
     label: intl.formatMessage(messages.maintenanceStatus),
+    sortable: true,
+  },
+  {
+    key: 'approvalStatusI18nKey',
+    label: intl.formatMessage(messages.approvalStatus),
     sortable: true,
   },
   {
