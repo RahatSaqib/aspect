@@ -33,7 +33,9 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
   <TableRow {...restProps} className={cssClasses('TableRow', restProps.className)}>
     <TableCell>{device.get('name')}</TableCell>
     <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
-    <TableCell>{intl.formatMessage(messages[device.get('approvalStatusI18nKey')])}</TableCell>
+    <TableCell>
+      {device.get('approvalStatusI18nKey') ? intl.formatMessage(messages[device.get('approvalStatusI18nKey')]) : 'N/A'}
+    </TableCell>
     <TableCell>
       <StatusIcon
         title={intl.formatMessage(messages[device.get('deviceStatus')])}
@@ -42,7 +44,11 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
         }
       />
     </TableCell>
-    <TableCell>{intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])}</TableCell>
+    <TableCell>
+      {device.get('maintenanceStatusI18nKey')
+        ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
+        : 'N/A'}
+    </TableCell>
     <TableCell>{formatRelative(device.get('lastResultConductedOn'))}</TableCell>
     <TableCell>
       <StatusIcon
