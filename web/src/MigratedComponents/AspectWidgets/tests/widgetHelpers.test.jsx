@@ -89,3 +89,16 @@ describe('buildWidgetToLinkParams', () => {
     })
   })
 })
+
+describe('buildWidgetToLinkParams with params', () => {
+  it('validate query string of widget links with params', () => {
+    const simpleCase = buildWidgetToLinkParams('/test', JSON.stringify({ id: 5 }))
+    expect(simpleCase).toEqual('/test?filters=id%3D5')
+
+    const dateCase = buildWidgetToLinkParams('/test', JSON.stringify({ dateRange: 'last30Days' }))
+    expect(dateCase).toMatch(/\/test\?filters=minDate%3D[0-9-]*%26maxDate%3D[0-9-]*/)
+
+    const arrayCase = buildWidgetToLinkParams('/test', JSON.stringify({ status: ['active', 'reportedActive'] }))
+    expect(arrayCase).toEqual('/test?filters=status%3Dactive%26status%3DreportedActive')
+  })
+})
