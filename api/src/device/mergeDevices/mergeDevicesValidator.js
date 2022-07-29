@@ -1,18 +1,17 @@
 const Boom = require('@hapi/boom')
-const { getSite } = require('../query')
+const { deviceApprovalToId } = require('../../shared/dictionary')
 
 module.exports = async devicesToMerge => {
-  const [sourceDevice] = devicesToMerge
-  await validateDeviceIsNotActive(sourceDevice)
-  await validateSameSite(devicesToMerge)
+  await validateDeviceIsNotActive(devicesToMerge.sourceDevice)
+  // await validateSameSite(devicesToMerge)
 }
 
-async function validateDeviceIsNotActive({ id }) {
-  // TODO: implement
-  // const existingSite = await getRepeatedSiteIfExists(name, shortName)
-  // if (existingSite) {
-  //   throw Boom.badData(`A site with the same name (${name}) or short name (${shortName}) already exists.`)
-  // }
+async function validateDeviceIsNotActive(sourceDevice) {
+  const deviceApprovedId = await deviceApprovalToId('approved')
+
+  if (sourceDevice.deviceApprovalId === deviceApprovedId) {
+    throw Boom.badData(`An active device cannot be merged. Change the approval status first.`)
+  }
 }
 
 async function validateSameSite({ sourceDevice: { siteId: sourceSiteId }, targetDevice: { siteId: targetSiteId } }) {
@@ -20,4 +19,3 @@ async function validateSameSite({ sourceDevice: { siteId: sourceSiteId }, target
     throw Boom.badData('Cannot merge devices from different sites')
   }
 }
-

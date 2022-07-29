@@ -19,6 +19,7 @@ const {
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
 } = require('./service')
+const mergeDevices = require('./mergeDevices')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { taskTracker } = require('../scheduler/taskTracker')
@@ -685,6 +686,22 @@ const routes = [
               })
             ),
         }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/mergedevices',
+    handler: asyncHandler(mergeDevices),
+    config: {
+      description: 'Merges two devices',
+      notes: 'Move all unique source results to target device. Deletes source device',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        payload: {
+          sourceDeviceId: Joi.number().description('Source device Id').required(),
+          targetDeviceId: Joi.number().description('Target device Id').required(),
+        },
       },
     },
   },
