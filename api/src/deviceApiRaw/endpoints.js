@@ -1,5 +1,5 @@
 const Promise = require('bluebird')
-const { addDeviceRawDataHandler } = require('./service')
+const { addDeviceRawDataHandler, continueUnprocessedRawData } = require('./service')
 
 const routes = [
   {
@@ -43,6 +43,7 @@ const subscriptions = [
         shouldHandle: () => false,
         handlerFunction: async () => Promise.resolve(),
       },
+      DEVICE_CONTINUE_UNPROCESSED_RAW_DATA: continueUnprocessedRawData,
     },
   },
 ]

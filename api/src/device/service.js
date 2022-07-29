@@ -58,6 +58,7 @@ const SELECT_LIST_FIELDS = [
   'da.name as approval',
   'dms.externalId as maintenanceStatus',
   'dms.i18nKey as maintenanceStatusI18nKey',
+  'da.i18nKey as approvalStatusI18nKey',
   'dms.name as maintenanceStatusName',
   'dms.active as maintenanceStatusActive',
   'dms.manuallySet as maintenanceStatusManuallySet',
@@ -149,6 +150,12 @@ async function getListDevices(query, auth) {
       if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
         queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
+      if (query.connectorStatus) {
+        queryBuilder.whereIn(
+          knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END'),
+          query.connectorStatus
+        )
+      }
     })
     .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     .modify(queryBuilder => {
@@ -205,24 +212,14 @@ async function getListDevices(query, auth) {
   // get rows
   const getItems = deviceQuery
     .clone()
-    .modify(sortPageParams, query, 'name')
-    .groupBy('d.id')
-    .select([
-      ...getSelectListFields(userTimeOffset, {
-        lastSeenField: `CASE WHEN dms.active = 1 THEN GREATEST(dmsl.day, d.lastSeenOn) ELSE d.lastSeenOn END`,
-      }),
-      'frd30.resultCount as resultCountThisMonth',
-      knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
-      'frd30Errors.resultCount as thisMonthErrors',
-      knex.raw('IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'),
-      knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
-      knex.raw('count(distinct dmslActivity.day) as totalDays'),
-      knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
-      'issues.categories as issueCategories',
-      'dms.active as isDeviceActive',
-      'dmsl.day as dmslDay',
-      'd.lastSeenOn as deviceLastSeenOn',
-    ])
+    .leftJoin(
+      knex('Result as resDevice')
+        .select('deviceId', knex.raw('max(resDevice.endedOn) as lastResultConductedOn'))
+        .groupBy('deviceId')
+        .as('deviceResult'),
+      'd.id',
+      'deviceResult.deviceId'
+    )
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')
         .select('deviceId', 'day', knex.raw('max(s.active) as active'))
@@ -254,6 +251,31 @@ async function getListDevices(query, auth) {
       'issues.deviceId',
       'd.id'
     )
+    .modify(sortPageParams, query, 'name')
+    .groupBy('d.id')
+    .select([
+      ...getSelectListFields(userTimeOffset, {
+        lastSeenField: `CASE WHEN dms.active = 1 THEN GREATEST(dmsl.day, d.lastSeenOn) ELSE d.lastSeenOn END`,
+      }),
+      'frd30.resultCount as resultCountThisMonth',
+      knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
+      'frd30Errors.resultCount as thisMonthErrors',
+      knex.raw('IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'),
+      knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
+      knex.raw('count(distinct dmslActivity.day) as totalDays'),
+      knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
+      'issues.categories as issueCategories',
+      'dms.active as isDeviceActive',
+      'dmsl.day as dmslDay',
+      'd.lastSeenOn as deviceLastSeenOn',
+      knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END AS connectorStatus'),
+      knex.raw('IFNULL(d.ConfigurationData ->> "$.gxConnectVersion", "N/A") AS connectorVersion'),
+      knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
+      knex.raw(`CASE 
+        WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
+        WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
+        ELSE 'down' END AS 'deviceStatus'`),
+    ])
     .distinct()
 
   // return result when both queries are finished

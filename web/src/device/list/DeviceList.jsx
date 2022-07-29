@@ -9,6 +9,8 @@ import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import { useQuery } from 'react-query'
 
+import format from 'date-fns/format'
+import subDays from 'date-fns/subDays'
 import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
 
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
@@ -31,6 +33,7 @@ import messages from './messages'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 
 import styles from './DeviceList.css'
+import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 
 const cssClasses = classnames.bind(styles)
 
@@ -51,6 +54,10 @@ const FILTERS_CONFIG = [
     requiredPermissions: ['device'],
   },
   {
+    deviceStatus: true,
+    requiredPermissions: [],
+  },
+  {
     deviceMaintenanceStatus: true,
     requiredPermissions: [],
   },
@@ -66,18 +73,27 @@ const FILTERS_CONFIG = [
     issueTypeId: true,
     requiredPermissions: [],
   },
+  {
+    connectorStatus: true,
+    requiredPermissions: [],
+  },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'name',
-    'statusI18nKey',
+    'siteName',
+    'maintenanceStatusI18nKey',
+    'approvalStatusI18nKey',
     'availabilityRate',
     'errorRate',
     'createdOn',
     'lastPingOn',
     'resultCountLastMonth',
     'resultCountThisMonth',
+    'deviceStatus',
+    'connectorVersion',
+    'lastResultConductedOn',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -86,6 +102,8 @@ const filtersFromLocation = composeSanitizer(
   searchSanitizer
 )
 
+const { dateFormat } = getAspectDisplayPreferences().toJS()
+
 const getColumns = intl => [
   {
     key: 'name',
@@ -93,30 +111,35 @@ const getColumns = intl => [
     sortable: true,
   },
   {
-    key: 'statusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
-    label: intl.formatMessage(messages.status),
+    key: 'siteName',
+    label: intl.formatMessage(messages.site),
+    sortable: true,
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'approvalStatusI18nKey',
+    label: intl.formatMessage(messages.approvalStatus),
     sortable: true,
   },
   {
-    key: 'availabilityRate',
-    label: intl.formatMessage(messages.availabilityRate),
-    sortable: false,
-    tooltip: intl.formatMessage(messages.availabilityRateDescription),
-  },
-  {
-    key: 'errorRate',
-    label: intl.formatMessage(messages.errorRate),
-    sortable: false,
-    tooltip: intl.formatMessage(messages.errorRateDescription),
-  },
-  {
-    key: 'issueCategory',
-    label: intl.formatMessage(messages.issueCategory),
-  },
-  {
-    key: 'createdOn',
+    key: 'deviceStatus',
+    label: intl.formatMessage(messages.deviceStatus),
     sortable: true,
-    label: intl.formatMessage(messages.reportingFor),
+  },
+  {
+    key: 'maintenanceStatusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
+    label: intl.formatMessage(messages.maintenanceStatus),
+    sortable: true,
+  },
+  {
+    key: 'lastResultConductedOn',
+    label: intl.formatMessage(messages.lastResultConductedOn),
+    sortable: true,
+  },
+  {
+    key: 'connectorStatus',
+    sortable: false,
+    label: intl.formatMessage(messages.connectorStatus),
   },
   {
     key: 'lastPingOn',
@@ -125,14 +148,54 @@ const getColumns = intl => [
     tooltip: intl.formatMessage(messages.lastSeenDescription),
   },
   {
+    key: 'connectorVersion',
+    sortable: true,
+    label: intl.formatMessage(messages.connectorVersion),
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'issueCategory',
+    label: intl.formatMessage(messages.issueCategory),
+  },
+  {
+    key: 'availabilityRate',
+    label: intl.formatMessage(messages.availabilityRate),
+    sortable: false,
+    tooltip: intl.formatMessage(messages.availabilityRateDescription),
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'errorRate',
+    label: intl.formatMessage(messages.errorRate),
+    sortable: false,
+    tooltip: intl.formatMessage(messages.errorRateDescription),
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'createdOn',
+    sortable: true,
+    label: intl.formatMessage(messages.reportingFor),
+    hiddenOn: 'lg',
+  },
+  {
     key: 'resultCountLastMonth',
     sortable: true,
     label: intl.formatMessage(messages.lastMonth),
+    hiddenOn: 'lg',
+    tooltip: intl.formatMessage(messages.resultCountDescription, {
+      startDate: format(subDays(new Date(), 60 + 1), dateFormat),
+      endDate: format(subDays(new Date(), 30 + 1), dateFormat),
+    }),
   },
   {
     key: 'resultCountThisMonth',
     sortable: true,
     label: intl.formatMessage(messages.thisMonth),
+    hiddenOn: 'lg',
+    tooltip: intl.formatMessage(messages.resultCountDescription, {
+      startDate: format(subDays(new Date(), 30), dateFormat),
+      endDate: format(new Date(), dateFormat),
+    }),
   },
 ]
 
