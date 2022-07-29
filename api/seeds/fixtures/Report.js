@@ -10,7 +10,7 @@ const xdrDevicesSummary = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'result/serviceReportPakistan',
+      moduleName: 'result/serviceReport',
       functionName: 'getReportXdrDevicesSummary',
       query: {
         avoidStreaming: true,

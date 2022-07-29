@@ -2,8 +2,8 @@ const _ = require('lodash')
 const { subMonths } = require('date-fns')
 
 const { addConstraints, getConstraints } = require('../../auth/constraints')
-const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { getDatesFromQuery } = require('../../shared/date')
+const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 
@@ -38,7 +38,7 @@ const countXdr = value =>
 /**
  * getReportXdrDevicesSummary
  */
-async function getReportXdrDevicesSummary(auth, query) {
+module.exports = async (auth, query) => {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const dates = getDatesFromQuery(query)
@@ -132,8 +132,4 @@ async function getReportXdrDevicesSummary(auth, query) {
     length: data.length,
     data,
   }
-}
-
-module.exports = {
-  getReportXdrDevicesSummary,
 }
