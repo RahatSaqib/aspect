@@ -1,3 +1,24 @@
+const xdrDevicesSummary = {
+  name: 'Summary table for XDR devices',
+  description: 'Lists sites/devices grouped by province showing main XDR parameters',
+  i18nKey: 'xdrDevicesSummary',
+  externalId: 'xdr_devices_summary', // folder name in /templates
+  i18nKeyDescription: 'xdrDevicesSummaryDescription',
+  fileName: 'XdrDevicesSummary',
+  exportCsv: false,
+  sortOrder: 101,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/serviceReport',
+      functionName: 'getReportXdrDevicesSummary',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 const mtbDetectedRRDetected = {
   name: 'MTB Detected RR Detected',
   description: 'Contains all MTB Detected/Rif Detected cases',
@@ -418,4 +439,5 @@ module.exports = {
   inventoryLog,
   moduleStatusReport,
   tbWorkloadSummary,
+  xdrDevicesSummary,
 }
