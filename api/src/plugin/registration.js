@@ -79,6 +79,7 @@ const plugins = {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
   },
   malawi: {
+    settings: require('./partner/Malawi/settings'),
     transformNewDevicePayload: require('./partner/Malawi/transformNewDevicePayload'),
     preProcessGetResult: require('./partner/Malawi/preProcessGetResult'),
     postProcessMergeResult: require('./partner/Malawi/postProcessMergeResult'),
