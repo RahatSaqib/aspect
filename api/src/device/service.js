@@ -846,7 +846,7 @@ async function getDevicesForRifResistanceReport(auth, query) {
     .groupBy(['d.id'])
 
   // get total count for paging
-  const getCount = deviceQuery.clone().count('d.id as count').first()
+  const getCount = deviceQuery.clone().count('d.id as count')
 
   const queryResults = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')

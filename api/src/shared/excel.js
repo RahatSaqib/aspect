@@ -4,7 +4,7 @@ const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const Range = require('exceljs/lib/doc/range')
 const { getContentType, readExcelFile, readTemplateFile } = require('./io')
-const { getUser } = require('../auth/service')
+const { getDisplayPreferences, getUser } = require('../auth/service')
 const logger = require('./logger')
 const { RELABEL_EXCEL } = require('./constants')
 
@@ -91,6 +91,41 @@ const getMaxLimitPlaceHolders = () => [
     },
   },
 ]
+
+// ----------------------------------------------------------------------------------------------
+const getAdministrativeDivisionLabelPlaceHolders = async ({ partnerId }) => {
+  const displayPreferences = await getDisplayPreferences({ partnerId })
+  const { DEFAULT_SETTINGS } = require('../plugin/registration')
+  const getLabel = (name, defaultValue) =>
+    displayPreferences[name] || DEFAULT_SETTINGS[name] || defaultValue
+
+  return [
+    {
+      placeholder: '<StateLabel>',
+      value: getLabel('stateLabel', 'State'),
+    },
+    {
+      placeholder: '<StatesLabel>',
+      value: getLabel('statesLabel', 'States'),
+    },
+    {
+      placeholder: '<CountyLabel>',
+      value: getLabel('countyLabel', 'County'),
+    },
+    {
+      placeholder: '<CountiesLabel>',
+      value: getLabel('countiesLabel', 'Counties'),
+    },
+    {
+      placeholder: '<LgaLabel>',
+      value: getLabel('lgaLabel', 'LGA'),
+    },
+    {
+      placeholder: '<LgasLabel>',
+      value: getLabel('lgasLabel', 'LGAs'),
+    },
+  ]
+}
 
 // ----------------------------------------------------------------------------------------------
 function replaceSubstringInCell(worksheet, token, value) {
@@ -1077,6 +1112,7 @@ module.exports = {
   exportData,
   getBaseReplacements,
   getMaxLimitPlaceHolders,
+  getAdministrativeDivisionLabelPlaceHolders,
   getCellsBySubstring,
   getCellsByValue,
   readExcelFile,
