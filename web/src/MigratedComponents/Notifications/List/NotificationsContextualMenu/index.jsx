@@ -49,6 +49,7 @@ const NotificationsContextualMenu = ({ item }) => {
     {
       icon: 'FaTrash',
       text: formatMessage(messages.deleteTitle),
+      color: 'red',
       action: () =>
         setModalConfiguration({
           notificationId: id,
