@@ -67,7 +67,7 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
   const { formatDate, formats, formatMessage, locale, ...rest } = intl
   const dateFNSLocale = dateFNSLocales[userLocale]
   const validTimeZone = timeZoneFallBack(timezone)
-  const out = {
+  return {
     culture: locale,
     dateFNSLocale,
     format: (dateIn, formatIn) => format(dateIn, formatIn, { locale: dateFNSLocale }),
@@ -83,17 +83,15 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
       dateIn.toLocaleString(locale, {
         timeZone: validTimeZone,
       }),
-    formatMessage: (stringIn, values = {}, fallback = '!! I18N ID not set !!') =>
+    formatMessage: (stringIn, values = {}, fallback = `!! I18N ID not set !! ${stringIn}`) =>
       !stringIn ? fallback : formatMessage(stringIn, values),
     timezone: validTimeZone,
     ...rest,
   }
-  return out
 }
 
 const I18nProvider = ({ children }) => {
-  const i18n = useIntl()
-  const { messages } = i18n
+  const { messages } = useIntl()
   const value = i18nWrapper(messages)
   return (
     <I18nContext.Provider value={value}>

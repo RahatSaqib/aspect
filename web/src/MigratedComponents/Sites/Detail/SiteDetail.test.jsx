@@ -6,13 +6,16 @@ import Immutable from 'immutable'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import * as reactRedux from 'react-redux'
 
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { Site } from '../../../site/SiteRedux'
 import { SiteDetail } from './SiteDetail'
 
 const SiteDetailComponent = props => (
-  <IntlProvider locale="en">
-    <SiteDetail {...props} />
-  </IntlProvider>
+  <QueryClientProvider client={new QueryClient()}>
+    <IntlProvider locale="en">
+      <SiteDetail {...props} />
+    </IntlProvider>
+  </QueryClientProvider>
 )
 
 describe('SiteDetail component', () => {

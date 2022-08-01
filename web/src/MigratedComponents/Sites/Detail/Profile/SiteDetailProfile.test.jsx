@@ -2,6 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { fromJS } from 'immutable'
 
+import { QueryClient, QueryClientProvider } from 'react-query'
 import SiteDetailProfile from './SiteDetailProfile'
 
 describe('SiteDetailProfile Component', () => {
@@ -33,6 +34,10 @@ describe('SiteDetailProfile Component', () => {
   }
 
   it('should shallow render without crash', () => {
-    shallow(<SiteDetailProfile {...props} />)
+    shallow(
+      <QueryClientProvider client={new QueryClient()}>
+        <SiteDetailProfile {...props} />
+      </QueryClientProvider>
+    )
   })
 })

@@ -1,0 +1,5 @@
+const SITE_KEY = 'SITE'
+const SITE_KEY_BY_ID_ENDPOINT = '/site/:siteId'
+const SITE_KEY_DELETE_BY_ID_ENDPOINT = '/site/disable/:siteId'
+
+export { SITE_KEY, SITE_KEY_BY_ID_ENDPOINT, SITE_KEY_DELETE_BY_ID_ENDPOINT }

@@ -220,12 +220,7 @@ const ContactDetailsFormFormik = () => {
 
   const mutation = useMutation(
     ({ values, endpoint, method, customErrorNotifications }) => {
-      return fetchWrapperForQueries({
-        endpoint,
-        method,
-        params: { ...values },
-        customErrorNotifications,
-      })
+      return fetchWrapperForQueries({ endpoint, method, params: { ...values }, customErrorNotifications })
     },
     {
       onError: error => {

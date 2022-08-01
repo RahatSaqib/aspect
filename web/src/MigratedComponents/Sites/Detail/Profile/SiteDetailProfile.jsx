@@ -10,86 +10,56 @@ import Summary from '../../../../globals/components/Summary'
 import { getCustomMessage, commonDefinitions } from '../../../../shared/utils/customMessages'
 
 import styles from '../SiteDetail.css'
+import useContactBySite from '../../../../Hooks/person/useContactBySite'
 
 const cssClasses = classnames.bind(styles)
 
-const messages = {
-  ...commonDefinitions,
-  ...localMessages,
-}
+const messages = { ...commonDefinitions, ...localMessages }
 
-const SiteDetailProfile = ({ site, siteTags, siteContacts, formatMessage, disabled, user }) => {
+const SiteDetailProfile = ({ site, siteTags, formatMessage, disabled, user }) => {
+  const { data: siteContacts } = useContactBySite(site.id)
+
   const fields = [
-    {
-      label: formatMessage(messages.fieldName),
-      value: site.get('name'),
-    },
-    {
-      label: formatMessage(messages.fieldShortName),
-      value: site.get('shortName'),
-    },
-    {
-      label: formatMessage(messages.fieldExternalId),
-      value: site.get('externalId'),
-    },
+    { label: formatMessage(messages.fieldName), value: site.name },
+    { label: formatMessage(messages.fieldShortName), value: site.shortName },
+    { label: formatMessage(messages.fieldExternalId), value: site.externalId },
     {
       label: formatMessage(messages.fieldAddress),
       value: (
         <div>
-          <p>{site.get('street1')}</p>
-          <p>{site.get('street2')}</p>
-          <p>{site.get('zip')}</p>
+          <p>{site.street1}</p>
+          <p>{site.street2}</p>
+          <p>{site.zip}</p>
         </div>
       ),
     },
-    {
-      label: getCustomMessage(messages, 'state', user),
-      value: site.get('state'),
-    },
-    {
-      label: formatMessage(messages.fieldCity),
-      value: site.get('city'),
-    },
-    {
-      label: getCustomMessage(messages, 'lga', user),
-      value: site.get('lga'),
-    },
+    { label: getCustomMessage(messages, 'state', user), value: site.state },
+    { label: formatMessage(messages.fieldCity), value: site.city },
+    { label: getCustomMessage(messages, 'lga', user), value: site.lga },
     {
       label: formatMessage(messages.fieldDevices),
       value:
-        site.get('devices') &&
-        site
-          .get('devices')
-          .toJS()
-          .map(device => ({
-            description: device.name,
-            to: device.category === 2 ? '/browse/router' : `/browse/device/${device.id}`,
-          })),
+        site.devices &&
+        site.devices.map(device => ({
+          description: device.name,
+          to: device.category === 2 ? '/browse/router' : `/browse/device/${device.id}`,
+        })),
     },
-    {
-      label: formatMessage(messages.fieldTags),
-      value: siteTags.map(tag => tag.title).join(', '),
-    },
+    { label: formatMessage(messages.fieldTags), value: siteTags.map(tag => tag.title).join(', ') },
   ]
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           {fields.map(({ label, value }) => (
-            <Summary
-              key={`${label}_${site.get('id')}`}
-              title={label}
-              // `description` is marked as required in Summary
-              description={value || ''}
-              cols="4"
-            />
+            <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="4" />
           ))}
 
           <Contacts
-            id={site.get('id')}
+            id={site.id}
             formatMessage={formatMessage}
             title={formatMessage(messages.fieldContact)}
-            contacts={siteContacts}
+            contacts={siteContacts || []}
             disabled={disabled}
           />
         </Card>
@@ -100,7 +70,6 @@ const SiteDetailProfile = ({ site, siteTags, siteContacts, formatMessage, disabl
 
 SiteDetailProfile.defaultProps = {
   siteTags: [],
-  siteContacts: [],
 }
 
 SiteDetailProfile.propTypes = {
@@ -108,7 +77,6 @@ SiteDetailProfile.propTypes = {
   site: PropTypes.objectOf(Site).isRequired,
   disabled: PropTypes.bool.isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
-  siteContacts: PropTypes.arrayOf(PropTypes.object),
   user: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 

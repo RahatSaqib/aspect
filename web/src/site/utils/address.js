@@ -42,17 +42,12 @@ export function getLatLongFromAddress(address) {
         lng: location.lng(),
       })
 
-    geocoder.geocode(
-      {
-        address: addressQuery,
-      },
-      (results, status) => {
-        if (status !== google.maps.GeocoderStatus.OK) {
-          return reject(new Error('bad geocoder status'))
-        }
-        handler(results[0])
+    geocoder.geocode({ address: addressQuery }, (results, status) => {
+      if (status !== google.maps.GeocoderStatus.OK) {
+        return reject(new Error('bad geocoder status'))
       }
-    )
+      handler(results[0])
+    })
   })
 }
 

@@ -1,0 +1,5 @@
+const TAG_KEY = 'TAG'
+const TAG_KEY_BY_TYPE_AND_ID_ENDPOINT = '/tag/:type/:id'
+const TAG_KEY_BY_TYPE_ENDPOINT = '/tag/:type'
+
+export { TAG_KEY, TAG_KEY_BY_TYPE_ENDPOINT, TAG_KEY_BY_TYPE_AND_ID_ENDPOINT }
