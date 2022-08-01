@@ -49,6 +49,7 @@ const routes = [
                 personsCount: Joi.number(),
                 typeCategory: Joi.string(),
                 lastTriggeredOn: Joi.date().iso().allow(null),
+                enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
               })
             ),
         }),

@@ -165,6 +165,7 @@ async function listNotifications(request) {
     .select(
       'nt.id as id',
       'nt.name',
+      'nt.enabled',
       knex.raw(`count(distinct n.id) as totalTriggers`),
       columnCount('alert'),
       knex.raw('COUNT(DISTINCT filters.jfName) as jobFunctionsCount'),
