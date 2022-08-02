@@ -2,7 +2,7 @@ import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { FaExclamationTriangle } from 'react-icons/fa'
-import { useIntl } from 'react-intl'
+import useI18n from '../../Hooks/i18n/useI18n'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import AlertType from '../../components/shared/AlertType'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
@@ -15,7 +15,7 @@ const cssClasses = classnames.bind(styles)
 const enhance = identity
 
 const TaskTableRow = ({ messages, task, ...restProps }) => {
-  const intl = useIntl()
+  const intl = useI18n()
   const { formatMessage } = intl
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className, 'TableRow')}>

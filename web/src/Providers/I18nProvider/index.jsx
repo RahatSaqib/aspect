@@ -1,4 +1,5 @@
 import React, { createContext } from 'react'
+// eslint-disable-next-line no-restricted-imports
 import { createIntl, useIntl } from 'react-intl'
 import { DateTime } from 'luxon'
 import format from 'date-fns/format'
@@ -12,7 +13,7 @@ import ukLocale from 'date-fns/locale/uk'
 import esLocale from 'date-fns/locale/es'
 import viLocale from 'date-fns/locale/vi'
 
-import tgLocale from '../../date-fns-locales/tg-TJ'
+import tgLocale from './date-fns-locales/tg-TJ'
 import translation from '../../shared/i18n/translation'
 import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import { getCurrentCulture } from '../../globals/sideEffects/LocalStorage'

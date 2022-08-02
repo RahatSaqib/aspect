@@ -1,6 +1,5 @@
 import React from 'react'
 import { bool, func, number } from 'prop-types'
-import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
 
@@ -8,6 +7,7 @@ import messages from '../messages'
 import IconProvider from '../../../IconProvider'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -16,7 +16,7 @@ const cssClasses = classnames.bind(styles)
  */
 
 const TableColumnGroupBy = ({ headerIndex, handleGroupByColumnToggle, isGrouped }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   return isGrouped ? (
     <IconButton
       onClick={e => handleGroupByColumnToggle(e, headerIndex)}

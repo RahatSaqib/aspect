@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import classnames from 'classnames/bind'
 import styles from './InventoryContainer.css'
 import InventoryItemsList from './list/InventoryItemsList'
 import InventoryLog from './log/InventoryLog'
+import useI18n from '../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -24,7 +25,7 @@ const currentTabStyle = (currentTab, activeTab) =>
 
 export const InventoryContainer = ({ navigate, location }) => {
   const [activeTab, setActiveTab] = useState('supplies')
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const tabsConfig = {
     supplies: {
       path: 'supplies',

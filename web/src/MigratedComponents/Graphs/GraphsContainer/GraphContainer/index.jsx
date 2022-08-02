@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 
@@ -13,12 +12,13 @@ import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
 import styles from '../GraphsContainer.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 const GraphContainer = ({ assaysFromState, classNames, config, size, whiteListed }) => {
   const { title, id, selectorModifiers = false, isOwnerReady = true } = config
-  const { formatMessage: intlFormatMessage } = useIntl()
+  const { formatMessage: intlFormatMessage } = useI18n()
   const { graphType, graphRenderPermissions } = config
   const { innerSize, outerSize } = size
   const { identifier, isClientSide, component: ClientSideFilter } = selectorModifiers[0] || false

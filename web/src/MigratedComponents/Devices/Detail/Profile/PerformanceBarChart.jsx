@@ -1,5 +1,5 @@
 import React from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
 import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
@@ -8,6 +8,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { oneOfType, object, array, string, number } from 'prop-types'
 import classnames from 'classnames/bind'
 import styles from '../DeviceDetail.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -27,7 +28,7 @@ const messages = defineMessages({
 })
 
 const PerformanceBarChart = ({ data, series, color, legend, avgValue, maxValue, info, dailyCapacity }) => {
-  const intl = useIntl()
+  const intl = useI18n()
   return (
     <ResponsiveBar
       data={data}

@@ -1,8 +1,9 @@
 import React from 'react'
-import { IntlProvider, useIntl } from 'react-intl'
+import { IntlProvider } from 'react-intl'
 import AspectTableCore from './TableCore'
 
 import { mockDatafetch } from './Helpers'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const totalDataCount = 87
 const { data } = mockDatafetch(totalDataCount)
@@ -63,7 +64,7 @@ export default {
 }
 
 const StoryWrapped = args => {
-  const intl = useIntl()
+  const intl = useI18n()
   const config = baseConfig(intl)
   return <AspectTableCore config={config} {...args} />
 }

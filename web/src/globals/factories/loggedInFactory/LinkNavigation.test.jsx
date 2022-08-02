@@ -8,6 +8,7 @@ import '@testing-library/jest-dom/extend-expect'
 import { MemoryRouter } from 'react-router-dom'
 
 import { AuthProvider } from '../../../Providers/AuthProvider'
+import { I18nProvider } from '../../../Providers/I18nProvider'
 import { LinkNavigation } from './LinkNavigation'
 
 const initialState = {
@@ -33,11 +34,13 @@ describe('LinkNavigation', () => {
 
   const Wrapper = ({ children }) => (
     <Provider store={store}>
-      <AuthProvider>
-        <MemoryRouter>
-          <IntlProvider locale="en">{children}</IntlProvider>
-        </MemoryRouter>
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <MemoryRouter>
+            <IntlProvider locale="en">{children}</IntlProvider>
+          </MemoryRouter>
+        </AuthProvider>
+      </I18nProvider>
     </Provider>
   )
 
