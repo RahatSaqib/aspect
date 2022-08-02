@@ -23,7 +23,7 @@ const LgaSelectField = ({ allItemText, lgaId, stateId, onLgaIdChange, floatingLa
         variant="standard"
         value={lgaId}
         onChange={handleSelectFieldChange}
-        style={{ width: '98%' }}
+        style={{ width: '98%', margin: '0 1%' }}
       >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {(lgas || []).map(c => (

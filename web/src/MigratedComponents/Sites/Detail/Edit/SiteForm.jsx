@@ -24,6 +24,7 @@ import AspectDialog from '../../../../components/shared/AspectDialog'
 import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 import useI18n from '../../../../Hooks/i18n/useI18n'
 import useDeleteSite from '../../../../Hooks/site/useDeleteSite'
+import SiteTypeSelect from './SiteTypeSelect'
 
 const cssClasses = classnames.bind(styles)
 
@@ -70,7 +71,6 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
     setShowConfirmation(true)
   }
 
-  console.warn({ isChanged: isPristine })
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
@@ -85,7 +85,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               value={editSite.name}
               onChange={e => setEditSite({ ...editSite, name: e.target.value })}
               error={!isPristine && isEmpty(editSite.name)}
-              helperText={`${formatMessage(messages.fieldName)} is required`}
+              helperText={!isPristine && isEmpty(editSite.name) && `${formatMessage(messages.fieldName)} is required`}
             />
             <TextField
               className={cssClasses('container__field')}
@@ -96,7 +96,9 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               value={editSite.shortName}
               onChange={e => setEditSite({ ...editSite, shortName: e.target.value })}
               error={!isPristine && isEmpty(editSite.shortName)}
-              helperText={`${formatMessage(messages.fieldShortName)} is required`}
+              helperText={
+                !isPristine && isEmpty(editSite.name) && `${formatMessage(messages.fieldShortName)} is required`
+              }
             />
             <TextField
               className={cssClasses('container__field')}
@@ -108,30 +110,15 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               onChange={e => setEditSite({ ...editSite, externalId: e.target.value })}
             />
           </div>
-          <LocationSelector
-            countryId={editSite.countryId}
-            stateId={editSite.stateId}
-            lgaId={editSite.lgaId}
-            onChange={location => {
-              setEditSite({
-                ...editSite,
-                countryId: location.country.id,
-                country: location.country.name,
-                stateId: location.state.id,
-                state: location.state.name,
-                lgaId: location.lga.id,
-                lga: location.lga.name,
-              })
-              updateSiteLatLong({
-                country: location.country.name,
-                state: location.state.name,
-                lga: location.lga.name,
-                city: editSite.city,
-                address: editSite.street1,
-              })
-            }}
-          />
           <div className={cssClasses('container')}>
+            <SiteTypeSelect
+              name="siteType"
+              width="33%"
+              label={formatMessage(messages.fieldSiteType)}
+              value={editSite.siteTypeId}
+              onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
+              disabled
+            />
             <TextField
               className={cssClasses('container__field')}
               name="address"
@@ -170,6 +157,32 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
             />
           </div>
           <div className={cssClasses('container')}>
+            <LocationSelector
+              countryId={editSite.countryId}
+              stateId={editSite.stateId}
+              lgaId={editSite.lgaId}
+              onChange={location => {
+                setEditSite({
+                  ...editSite,
+                  countryId: location.country.id,
+                  country: location.country.name,
+                  stateId: location.state.id,
+                  state: location.state.name,
+                  lgaId: location.lga.id,
+                  lga: location.lga.name,
+                })
+                updateSiteLatLong({
+                  country: location.country.name,
+                  state: location.state.name,
+                  lga: location.lga.name,
+                  city: editSite.city,
+                  address: editSite.street1,
+                })
+              }}
+            />
+          </div>
+          {/*  */}
+          <div className={cssClasses('container')}>
             <TextField
               className={cssClasses('container__field')}
               name="city"
@@ -205,6 +218,13 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               fullWidth
               value={editSite.zip}
               onChange={e => setEditSite({ ...editSite, zip: e.target.value })}
+            />
+            <SiteTypeSelect
+              name="belongsTo"
+              width="33%"
+              label={formatMessage(messages.fieldBelongTo)}
+              value={editSite.parentWarehouseId}
+              onChange={parentWarehouseId => setEditSite({ ...editSite, parentWarehouseId })}
             />
           </div>
           <div className={cssClasses('container', 'coordinate')}>
@@ -250,18 +270,30 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               </AspectButton>
             </div>
           </div>
-          <TimezoneSelect
-            name="timezone"
-            label={formatMessage(messages.fieldTimeZone)}
-            fullWidth
-            onChange={timezone => setEditSite({ ...editSite, timezone })}
-            value={editSite.timezone || ''}
-          />
-          <ReadOnlyField
-            label={formatMessage(messages.fieldTags)}
-            value={siteTags}
-            format={v => <SiteTagInput qryId={editSite.id} onTagChange={tags => updateTags(tags)} value={v} />}
-          />
+          <div className={cssClasses('container', 'coordinate')}>
+            <TimezoneSelect
+              name="timezone"
+              label={formatMessage(messages.fieldTimeZone)}
+              fullWidth
+              onChange={timezone => setEditSite({ ...editSite, timezone })}
+              value={editSite.timezone || ''}
+            />
+            <ReadOnlyField
+              label={formatMessage(messages.fieldTags)}
+              value={siteTags}
+              format={v => <SiteTagInput qryId={editSite.id} onTagChange={tags => updateTags(tags)} value={v} />}
+            />
+          </div>
+          <div className={cssClasses('container', 'coordinate')}>
+            <TextField
+              label={formatMessage(messages.fieldNotes)}
+              multiline
+              rows={4}
+              fullWidth
+              defaultValue={editSite.notes}
+              onChange={e => setEditSite({ ...editSite, notes: e.target.value })}
+            />
+          </div>
           <Button color="secondary" variant="contained" onClick={handleSubmit} disabled={isPristine}>
             {formatMessage(messages.buttonUpdate)}
           </Button>
