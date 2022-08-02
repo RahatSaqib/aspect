@@ -4,17 +4,27 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/extend-expect'
 
 import { Default } from '../../Table.stories'
+import { I18nProvider } from '../../../../Providers/I18nProvider'
 
 describe('test headers and sortable states', () => {
   it('should render 4 columns in the correct order', () => {
-    const { getByRole } = render(<Default {...Default.args} />)
+    const { getByRole } = render(
+      <I18nProvider>
+        <Default {...Default.args} />
+      </I18nProvider>
+    )
+
     const table = getByRole('table')
     const columnHeaders = within(table).getAllByRole('columnheader')
     expect(columnHeaders).toHaveLength(4)
     expect(columnHeaders.map(d => d.textContent)).toEqual(['Name', 'Last Triggered', 'Total Triggers', 'Contacts'])
   })
   it('contacts column is not sortable', () => {
-    const { getByRole } = render(<Default {...Default.args} />)
+    const { getByRole } = render(
+      <I18nProvider>
+        <Default {...Default.args} />
+      </I18nProvider>
+    )
     const table = getByRole('table')
     const [rowGroup] = within(table).getAllByRole('rowgroup')
     const columns = within(rowGroup)
@@ -23,7 +33,11 @@ describe('test headers and sortable states', () => {
     expect(contactsColumn.getAttribute('title')).toBe(null)
   })
   it('sort columns, change page size, move to next page and verify correct values and states', () => {
-    const { getByRole, getByTestId } = render(<Default {...Default.args} />)
+    const { getByRole, getByTestId } = render(
+      <I18nProvider>
+        <Default {...Default.args} />
+      </I18nProvider>
+    )
     const table = getByRole('table')
     const [rowGroup] = within(table).getAllByRole('rowgroup')
     const columns = within(rowGroup)
@@ -38,7 +52,11 @@ describe('test headers and sortable states', () => {
     expect(nowShowing).toHaveTextContent('Showing 26-50 of 87 notifications')
   })
   it('test reorder buttons to be in correct states', () => {
-    const { getByRole } = render(<Default {...Default.args} />)
+    const { getByRole } = render(
+      <I18nProvider>
+        <Default {...Default.args} />
+      </I18nProvider>
+    )
     const table = getByRole('table')
     const [rowGroup] = within(table).getAllByRole('rowgroup')
     const columns = within(rowGroup)
@@ -52,7 +70,11 @@ describe('test headers and sortable states', () => {
     expect(contactsOrderRightButton).toBeDisabled()
   })
   it('reorder name column right, and test headers order', () => {
-    const { getByRole, getByTestId } = render(<Default {...Default.args} />)
+    const { getByRole, getByTestId } = render(
+      <I18nProvider>
+        <Default {...Default.args} />
+      </I18nProvider>
+    )
     const table = getByRole('table')
     const nameOrderRightButton = getByTestId('order_right_0')
     userEvent.click(nameOrderRightButton)
@@ -63,7 +85,11 @@ describe('test headers and sortable states', () => {
     ).toEqual(['Last Triggered', 'Name', 'Total Triggers', 'Contacts'])
   })
   it('check allowed hide-column states, hide column, and test headers', () => {
-    const { getByRole, getByTestId, queryByTestId } = render(<Default {...Default.args} />)
+    const { getByRole, getByTestId, queryByTestId } = render(
+      <I18nProvider>
+        <Default {...Default.args} />
+      </I18nProvider>
+    )
     const table = getByRole('table')
     const contactsHideColumnButton = getByTestId('hide_column_contacts')
     userEvent.click(contactsHideColumnButton)

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import isNil from 'lodash/isNil'
 
 import Paper from '@material-ui/core/Paper'
@@ -27,6 +27,7 @@ import useSite from '../../../Hooks/site/useSite'
 import useTagByTypeAndId from '../../../Hooks/tag/useTagByTypeAndId'
 import ErrorBoundary from '../../ErrorBoundary'
 import TaskList from '../../../task/list/TaskList'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -37,7 +38,7 @@ const titleMessages = defineMessages({
 })
 
 export const SiteDetail = ({ navigate, location }) => {
-  const intl = useIntl()
+  const intl = useI18n()
   const { siteId } = useParams()
   const { isLoading: isSiteLoading, data: site } = useSite(siteId)
   const { isLoading: isTagLoading, data: siteTags } = useTagByTypeAndId('site', siteId)

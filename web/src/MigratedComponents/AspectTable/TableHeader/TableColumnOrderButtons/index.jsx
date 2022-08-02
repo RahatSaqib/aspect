@@ -1,6 +1,5 @@
 import React from 'react'
 import { func, number } from 'prop-types'
-import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
 
@@ -8,11 +7,12 @@ import messages from '../messages'
 import IconProvider from '../../../IconProvider'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 const TableColumnOrderButtons = ({ headerIndex, headersLength, handleChangeColumnOrder }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('tableheader__orderbuttons')}>
       <IconButton

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import CountrySelectField from '../Geography/CountrySelectField'
 import StateSelectField from '../Geography/StateSelectField'
@@ -7,9 +6,10 @@ import LgaSelectField from '../Geography/LgaSelectField'
 import { getCustomMessage } from '../../shared/utils/customMessages'
 import messages from './messages'
 import styles from './styles'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const [selectedCountry, setSelectedCountry] = useState({ id: countryId, name: '' })
   const [selectedState, setSelectedState] = useState({ id: stateId, name: '' })
   const [selectedLga, setSelectedLga] = useState({ id: lgaId, name: '' })

@@ -96,8 +96,7 @@ const getMaxLimitPlaceHolders = () => [
 const getAdministrativeDivisionLabelPlaceHolders = async ({ partnerId }) => {
   const displayPreferences = await getDisplayPreferences({ partnerId })
   const { DEFAULT_SETTINGS } = require('../plugin/registration')
-  const getLabel = (name, defaultValue) =>
-    displayPreferences[name] || DEFAULT_SETTINGS[name] || defaultValue
+  const getLabel = (name, defaultValue) => displayPreferences[name] || DEFAULT_SETTINGS[name] || defaultValue
 
   return [
     {

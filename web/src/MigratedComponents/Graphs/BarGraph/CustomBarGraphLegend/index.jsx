@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 import find from 'lodash/find'
 
 import { getColorIdByFieldName } from '../../Helpers/Formatters'
@@ -9,11 +8,12 @@ import AspectTooltip from '../../../../components/shared/AspectTooltip'
 import messages from '../../intlMessages'
 
 import styles from './CustomLegend.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 const LegendKey = ({ symbolShape, color, label, tooltip: { show, placement, message }, ...rest }) => {
-  const { formatMessage: intlFormatMessage } = useIntl()
+  const { formatMessage: intlFormatMessage } = useI18n()
   let styles = {}
   if (symbolShape.includes('hollow-')) {
     styles = {
@@ -84,7 +84,7 @@ const CustomBarGraphLegend = ({
   symbolShape,
   i18nKeys,
 }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses(['customLegend__container', `customLegend__container--${type}`])}>
       {keys.map(k => {

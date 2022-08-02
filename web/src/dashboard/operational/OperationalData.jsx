@@ -6,12 +6,13 @@ import { Helmet } from 'react-helmet'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import find from 'lodash/find'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 import OperationalDashBoard from './OperationalDashBoard'
 import OperationalDailyStatus from './OperationalDailyStatus'
 
 import styles from './OperationalData.css'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -29,7 +30,7 @@ const messages = defineMessages({
 })
 
 export const OperationalData = () => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const { pathname } = useLocation()
   const navigate = useNavigate()
 

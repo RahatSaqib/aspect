@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import { ResponsivePie } from '@nivo/pie'
 import { PieInnerLegend, PieInnerLegendSolid, PieInnerLegendDoughNut } from '../GraphLegend'
@@ -10,6 +9,7 @@ import { generateColorForValue, generateToolTip, percentageOrActualForPie } from
 import { GraphToolTip } from '../GraphToolTip'
 
 import styles from './PieGraph.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -26,7 +26,7 @@ const AspectResponsivePie = ({
   config: baseConfig,
 }) => {
   const { id: graphId } = baseConfig
-  const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
+  const { formatNumber: intlFormatNumber, formatMessage } = useI18n()
   const config = (type, data, displayMethod) => {
     switch (true) {
       case type === 'doughnut':

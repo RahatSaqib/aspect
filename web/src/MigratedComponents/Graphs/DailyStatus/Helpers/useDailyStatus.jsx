@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
-import { useIntl } from 'react-intl'
 import cloneDeep from 'lodash/cloneDeep'
 import findIndex from 'lodash/findIndex'
 import findLastIndex from 'lodash/findLastIndex'
@@ -13,10 +12,11 @@ import { replaceRouteParams } from '../../../QueryFetch/Helpers'
 
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../../../QueryFetch/Device'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extraParams = {}) => {
   const queryClient = useQueryClient()
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const [statuses, setStatuses] = useState(false)
   const [visibleStatuses, setVisibleStatuses] = useState(false)
   const [toggleAll, setToggleAll] = useState({

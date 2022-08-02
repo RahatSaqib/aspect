@@ -195,10 +195,9 @@ async function createReport(request, reply) {
     throw data
   }
 
-  const administrativeDivisionLabelPlaceHolders =
-    await getAdministrativeDivisionLabelPlaceHolders({
-      partnerId,
-    })
+  const administrativeDivisionLabelPlaceHolders = await getAdministrativeDivisionLabelPlaceHolders({
+    partnerId,
+  })
 
   const replacements = [
     {

@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { useIntl, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 import styles from './GraphPlaceholders.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -58,7 +59,7 @@ const EmptyGraph = ({ type }) => {
   const barGraphs = ['bar', 'stacked', 'divergent', 'calendar', 'barLegacyTreatment', 'stackedDeviceActivity']
   const pieGraphs = ['pie', 'pieLegacyTreatment']
   const pieRowGraphs = ['pieRow']
-  const { formatMessage: intlFormatMessage } = useIntl()
+  const { formatMessage: intlFormatMessage } = useI18n()
 
   return (
     <Fragment>
