@@ -735,6 +735,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
     .leftJoin('ResultForm as rf', function () {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
+    .leftJoin('Partner as p', 'r.partnerId', 'p.id')
     .where('r.id', resultId)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -753,6 +754,9 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       resultCategory2: 'r.resultCategory2',
       sampleTypeId: 'stp.id',
       resultSourceExternalId: 'rso.externalId',
+      partnerId: 'p.id',
+      partnerPluginName: 'p.plugin',
+      deviceTypePluginName: 'dt.plugin',
     })
   let data = null
   // translate result data back to an object and get assay details
@@ -801,9 +805,25 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
 
     if (data.resultData && data.resultData.detectedResistance && data.resultData.detectedResistance.length > 0)
       data.detectedResistance = data.resultData.detectedResistance.join(', ')
+
+    data.customFieldsValues = await getCustomFieldsForResult(data)
   }
 
   return { ok: results.length === 1, data }
+}
+
+async function getCustomFieldsForResult(data) {
+  const { deviceId, partnerId, partnerPluginName, deviceTypePluginName } = data
+  const pluginNames = [partnerPluginName, deviceTypePluginName]
+  const { getCustomFields } = require('../deviceApi/service')
+  const customFieldsRaw = await getCustomFields({ knex, device: { id: deviceId, partnerId }, pluginNames })
+  let customFields = customFieldsRaw?.CustomFields?.Fields || []
+  customFields = _.sortBy(customFields, ['DisplayOrder', 'Name'])
+  const customFieldsValues = customFields.map(it => ({
+    caption: it.Label,
+    externalId: `patientData.${_.camelCase(it.ExternalId)}`,
+  }))
+  return customFieldsValues
 }
 
 async function getResultForStringTemplateProcessing(resultId, fields = RESULT_STRING_TEMPLATE_FIELDS, knex = knex) {
