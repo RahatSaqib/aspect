@@ -22,7 +22,7 @@ module.exports = async function (request) {
 
   const values = {
     ...siteParams,
-    externalId: siteParams.name,
+    externalId: siteParams.externalId || siteParams.name,
     partnerId: user.partnerId,
     createdOn: new Date(),
     createdBy: user.id,
