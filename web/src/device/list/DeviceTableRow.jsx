@@ -57,7 +57,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
         status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
       />
     </TableCell>
-    <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
+    <TableCell>{formatRelative(device.get('lastPingOn'))}</TableCell>
     <TableCell hiddenOn="lg">{device.get('connectorVersion')}</TableCell>
     <TableCell className={cssClasses('TableCell--alerts')}>
       {device.get('issueCategories').map(it => (
