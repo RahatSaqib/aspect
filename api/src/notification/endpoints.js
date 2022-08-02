@@ -7,6 +7,7 @@ const {
   getNotification,
   saveNotification,
   deleteNotification,
+  saveStatusNotification,
 } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
@@ -14,6 +15,7 @@ const {
   listNotificationsBaseConfig,
   resultBasedNotificationPayload,
   saveNotificationResponse,
+  changeNotificationStatusPayload,
 } = require('./validations')
 
 const routes = [
@@ -207,6 +209,23 @@ const routes = [
           notificationId: Joi.number().integer().positive().required(),
         },
       },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/notification/{id}/change-status',
+    handler: asyncHandler(saveStatusNotification),
+    config: {
+      description: 'Update Notification status',
+      notes: 'Returns ok: true when notification was updated successfully',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        payload: changeNotificationStatusPayload,
+        params: {
+          id: Joi.string().description('Item id depending on payload.notificationType').required(),
+        },
+      },
+      response: saveNotificationResponse,
     },
   },
 ]

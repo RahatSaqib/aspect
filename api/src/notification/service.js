@@ -1057,6 +1057,30 @@ async function deleteNotification(request) {
 
   return { ok: true }
 }
+
+async function saveStatusNotification(request) {
+  const { auth, params, payload } = request
+  const { id } = params
+  const user = await getUser(auth.credentials.name)
+  const { partnerId, id: userId } = user
+
+  const result = await saveNotificationType({
+    id,
+    partnerId,
+    userId,
+    payload,
+  })
+
+  if (result instanceof Boom.Boom) return result
+
+  const { ok, notificationTypeId, error } = result
+  if (!ok) {
+    return Boom.internal(`Can not save notification: ${error}`)
+  }
+
+  return { ok: true, notificationTypeId }
+}
+
 module.exports = {
   listNotifications,
   getNotifications,
@@ -1067,4 +1091,5 @@ module.exports = {
   getPeopleToNotify,
   saveNotification,
   deleteNotification,
+  saveStatusNotification,
 }
