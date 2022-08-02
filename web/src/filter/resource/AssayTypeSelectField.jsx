@@ -136,18 +136,11 @@ export const AssayTypeSelectField = ({
     <SelectField
       {...restProps}
       onChange={onChange}
-      disabled={
-        restProps.disabled || assayTypes.loading || assayTypes.items.isEmpty()
-      }
+      disabled={restProps.disabled || assayTypes.loading || assayTypes.items.isEmpty()}
     >
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {assayTypes.items
-        .filter(
-          at =>
-            !diseaseId ||
-            !at.get('diseaseId') ||
-            at.get('diseaseId').toString() === diseaseId.toString()
-        )
+        .filter(at => !diseaseId || !at.get('diseaseId') || at.get('diseaseId').toString() === diseaseId.toString())
         .map(at => (
           <MenuItem key={at.get('id')} value={at.get('id')}>
             {textForAssayTypeItem(at, formatMessage)}

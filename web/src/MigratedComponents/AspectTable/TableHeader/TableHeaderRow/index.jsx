@@ -34,10 +34,7 @@ const TableHeaderRow = ({
       index
     ) => {
       return (
-        <TableCell
-          {...getHeaderProps(getSortByToggleProps(), getGroupByToggleProps())}
-          style={{ width: `${width}%` }}
-        >
+        <TableCell {...getHeaderProps(getSortByToggleProps(), getGroupByToggleProps())} style={{ width: `${width}%` }}>
           <TableColumnHeader
             width={width}
             render={render('Header')}
@@ -56,10 +53,7 @@ const TableHeaderRow = ({
             }
             headerVisibilityComponent={() =>
               !disableHide ? (
-                <TableColumnHideButton
-                  headerIndex={id}
-                  handleHideColumnToggle={handleHideColumnToggle}
-                />
+                <TableColumnHideButton headerIndex={id} handleHideColumnToggle={handleHideColumnToggle} />
               ) : null
             }
             headerGroupByComponent={() =>

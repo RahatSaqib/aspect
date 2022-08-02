@@ -8,10 +8,7 @@ const enhance = compose(
 
     componentDidMount() {
       // Refresh the access token every 30 minutes.
-      this.intervalId = setInterval(
-        this.handleInterval.bind(this),
-        30 * 60 * 1000
-      )
+      this.intervalId = setInterval(this.handleInterval.bind(this), 30 * 60 * 1000)
     },
 
     componentWillUnmount() {

@@ -4,7 +4,6 @@ import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
 
 import fetchWrapperForQueries from '../QueryFetch'
@@ -12,12 +11,7 @@ import ErrorBoundary from '../ErrorBoundary'
 
 import AspectTableCore from './TableCore'
 
-import {
-  allowOnlyAPIKeys,
-  determineSortDirection,
-  getColumnIdFromFilterKey,
-  removeNullFromCollection,
-} from './Helpers'
+import { allowOnlyAPIKeys, determineSortDirection, getColumnIdFromFilterKey, removeNullFromCollection } from './Helpers'
 import { replaceRouteParams } from '../QueryFetch/Helpers'
 import {
   DEFAULT_PAGE_AT,
@@ -28,6 +22,7 @@ import {
 import { getFilters, sanitizeFiltersStringBy } from '../../filter/utils'
 
 import styles from './Table.css'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -76,10 +71,8 @@ const getCurrentState = ({ config, FILTERS_CONFIG, location }) => {
   /**
    * Run prepared funcs and return correct `searchParams` and `filtersParams`
    */
-  const { sanitized: searchSanitized, value: searchParams } =
-    searchSanitizer(location)
-  const { sanitized: filtersSanitized, value: filtersParams } =
-    filtersSanitizer(searchParams.get('filters') || '')
+  const { sanitized: searchSanitized, value: searchParams } = searchSanitizer(location)
+  const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
   /**
    * Set correct filters
    */
@@ -97,12 +90,7 @@ const getCurrentState = ({ config, FILTERS_CONFIG, location }) => {
     sortCol: getDefaultSortCol(config),
     sortDir: getDefaultSortDir(config),
   })
-  const {
-    sortCol,
-    sortDir,
-    pageAt: page,
-    pageSize: size,
-  } = sortPage({ location: { search: searchParams.toString() } })
+  const { sortCol, sortDir, pageAt: page, pageSize: size } = sortPage({ location: { search: searchParams.toString() } })
 
   return {
     // params to use by react-query
@@ -139,20 +127,13 @@ const toRelocate = (navigate, location, currentState, newState, setStates) => {
   }
 }
 // ------------------------------------
-const AspectTable = ({
-  baseConfig,
-  FILTERS_CONFIG,
-  consts: CONSTS,
-  onClickRow,
-}) => {
-  const intl = useIntl()
+const AspectTable = ({ baseConfig, FILTERS_CONFIG, consts: CONSTS, onClickRow }) => {
+  const intl = useI18n()
   const config = useMemo(() => baseConfig(intl), [baseConfig, intl])
   const navigate = useNavigate()
   const { ...routeParams } = useParams()
   const location = useLocation()
-  const [currentState, setCurrentState] = useState(
-    getCurrentState({ config, FILTERS_CONFIG, location })
-  )
+  const [currentState, setCurrentState] = useState(getCurrentState({ config, FILTERS_CONFIG, location }))
   const [allowReset, setAllowReset] = useState(false)
   const { filters } = currentState
 
@@ -161,8 +142,7 @@ const AspectTable = ({
   const [sortDir, setSortDir] = useState(currentState.sortDir)
   const [page, setPage] = useState(currentState.page)
   const params = useMemo(
-    () =>
-      removeNullFromCollection({ size, sortCol, sortDir, page, ...filters }),
+    () => removeNullFromCollection({ size, sortCol, sortDir, page, ...filters }),
     [page, size, sortCol, sortDir, filters]
   )
 
@@ -190,16 +170,8 @@ const AspectTable = ({
     }
     updateSearchParams('page', page, page === DEFAULT_PAGE_AT)
     updateSearchParams('size', size, size === DEFAULT_PAGE_SIZE)
-    updateSearchParams(
-      'sortCol',
-      sortCol,
-      !sortCol || sortCol === getDefaultSortCol(config)
-    )
-    updateSearchParams(
-      'sortDir',
-      sortDir,
-      !sortDir || sortDir === getDefaultSortDir(config)
-    )
+    updateSearchParams('sortCol', sortCol, !sortCol || sortCol === getDefaultSortCol(config))
+    updateSearchParams('sortDir', sortDir, !sortDir || sortDir === getDefaultSortDir(config))
 
     const newState = getCurrentState({
       config,

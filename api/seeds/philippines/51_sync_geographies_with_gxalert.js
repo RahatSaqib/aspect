@@ -4,9 +4,7 @@ const partnerData = require('./fixtures/partnerData')
 const { upsertStatesAndLgas } = require('../common')
 
 async function seed(knex) {
-  const { id: countryId } = await knex('Country')
-    .where({ abbreviation: partnerData.partnerAbbreviation })
-    .first()
+  const { id: countryId } = await knex('Country').where({ abbreviation: partnerData.partnerAbbreviation }).first()
 
   const { states } = countries[0]
 
@@ -16,7 +14,5 @@ async function seed(knex) {
     .update({ name: 'BANGSAMORO AUTONOMOUS REGION OF MUSLIM MINDANAO (BARMM)' })
     .where({ name: 'AUTONOMOUS REGION OF MUSLIM MINDANAO (ARMM)' })
 
-  await knex('State')
-    .update({ name: 'MIMAROPA' })
-    .where({ name: 'MiMaRoPa REGION' })
+  await knex('State').update({ name: 'MIMAROPA' }).where({ name: 'MiMaRoPa REGION' })
 }

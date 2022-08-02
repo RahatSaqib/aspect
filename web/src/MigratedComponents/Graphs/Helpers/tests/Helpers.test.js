@@ -58,14 +58,7 @@ describe('Graph Helpers', () => {
         const keyToConsume = 'resultCategory1'
         const formatDate = 'MMM yyyy'
         const filterBy = false
-        const grouped = groupByKey(
-          barDataActualFromAPIIn,
-          indexBy,
-          keyToConsume,
-          displayMethod,
-          formatDate,
-          filterBy
-        )
+        const grouped = groupByKey(barDataActualFromAPIIn, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
         expect(grouped).toEqual(barDataActualFromAPIOut)
       })
     })
@@ -75,21 +68,14 @@ describe('Graph Helpers', () => {
         const indexBy = 'cnt'
         const keyToConsume = 'resultCategory1'
         const filterBy = false
-        const grouped = groupForPie(
-          pieDataActualFromAPIIn,
-          keyToConsume,
-          indexBy,
-          filterBy
-        )
+        const grouped = groupForPie(pieDataActualFromAPIIn, keyToConsume, indexBy, filterBy)
         expect(grouped).toEqual(pieDataActualFromAPIOut)
       })
     })
 
     describe('PieRowchart: groupForPieRow', () => {
       it('should group data by types correctly', () => {
-        const mergedParams = [
-          { currentMonth: `${format(new Date(), 'yyyy-MM')}-01` },
-        ]
+        const mergedParams = [{ currentMonth: `${format(new Date(), 'yyyy-MM')}-01` }]
         const grouped = groupForPieRow(pieRowDataFromAPIIn, mergedParams)
         expect(grouped).toEqual(pieRowDataFromAPIOut)
       })
@@ -176,12 +162,7 @@ describe('Graph Helpers', () => {
         const indexBy = 'inRange'
         const keyToConsume = 'gender'
         const filterBy = false
-        const grouped = groupForDivergent(
-          divergentDataFromAPIIn,
-          indexBy,
-          keyToConsume,
-          filterBy
-        )
+        const grouped = groupForDivergent(divergentDataFromAPIIn, indexBy, keyToConsume, filterBy)
         expect(grouped).toEqual(divergentDataFromAPIOut)
       })
     })
@@ -221,9 +202,7 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).toEqual(
-          tickDataForBarYAxisShapeBookendsDisplayPercentageOut
-        )
+        expect(grouped).toEqual(tickDataForBarYAxisShapeBookendsDisplayPercentageOut)
       })
     })
 
@@ -240,9 +219,7 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).toEqual(
-          tickDataForBarYAxisShapeClubSandwichDisplayPercentageOut
-        )
+        expect(grouped).toEqual(tickDataForBarYAxisShapeClubSandwichDisplayPercentageOut)
       })
     })
 
@@ -259,9 +236,7 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).toEqual(
-          tickDataForBarYAxisShapeBookendsDisplayActualOut
-        )
+        expect(grouped).toEqual(tickDataForBarYAxisShapeBookendsDisplayActualOut)
       })
     })
 
@@ -278,9 +253,7 @@ describe('Graph Helpers', () => {
           whichAxis,
           zeroOut
         )
-        expect(grouped).toEqual(
-          tickDataForBarYAxisShapeClubSandwichDisplayActualOut
-        )
+        expect(grouped).toEqual(tickDataForBarYAxisShapeClubSandwichDisplayActualOut)
       })
     })
 
@@ -307,11 +280,7 @@ describe('Graph Helpers', () => {
       it('Should calculate percentages correctly as close to 100% as possible', () => {
         const indexBy = 'month'
         const filterResults = false
-        const normalised = normaliseKeys(
-          groupByKeyGrouped,
-          filterResults,
-          indexBy
-        )
+        const normalised = normaliseKeys(groupByKeyGrouped, filterResults, indexBy)
         const display = calcPercentageSplitBar(normalised, indexBy)
         expect(display).toEqual(tickDataForBarDisplayMethodPercentageIn)
       })
@@ -331,37 +300,19 @@ describe('Graph Helpers', () => {
 
       it('Should calculate tooltip correctly test 1', async () => {
         const item = { ...itemMocked, ...barDataForToolTipsNovIn1 }
-        const tooltip = await generateToolTip(
-          item,
-          displayMethod,
-          assaysFromState,
-          formatNumber,
-          type
-        )
+        const tooltip = await generateToolTip(item, displayMethod, assaysFromState, formatNumber, type)
         expect(tooltip).toEqual(barDataForToolTipsNovOut1)
       })
 
       it('Should calculate tooltip correctly test 2', async () => {
         const item = { ...itemMocked, ...barDataForToolTipsNovIn2 }
-        const tooltip = await generateToolTip(
-          item,
-          displayMethod,
-          assaysFromState,
-          formatNumber,
-          type
-        )
+        const tooltip = await generateToolTip(item, displayMethod, assaysFromState, formatNumber, type)
         expect(tooltip).toEqual(barDataForToolTipsNovOut2)
       })
 
       it('Should calculate tooltip correctly test 3', async () => {
         const item = { ...itemMocked, ...barDataForToolTipsNovIn3 }
-        const tooltip = await generateToolTip(
-          item,
-          displayMethod,
-          assaysFromState,
-          formatNumber,
-          type
-        )
+        const tooltip = await generateToolTip(item, displayMethod, assaysFromState, formatNumber, type)
         expect(tooltip).toEqual(barDataForToolTipsNovOut3)
       })
     })

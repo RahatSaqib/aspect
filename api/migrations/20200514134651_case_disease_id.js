@@ -18,9 +18,7 @@ async function up(knex) {
     .select('c.id', knex.raw('MAX(at.diseaseId) AS diseaseId'))
 
   if (caseDiseases.length > 0) {
-    const { id: defaultDiseaseId } = await knex('Disease')
-      .where('externalId', 'tb')
-      .first('id')
+    const { id: defaultDiseaseId } = await knex('Disease').where('externalId', 'tb').first('id')
     await Promise.each(caseDiseases, async caseDisease =>
       knex('Case')
         .where('id', caseDisease.id)
@@ -29,14 +27,7 @@ async function up(knex) {
   }
 
   await knex.schema.alterTable('Case', async tblCase => {
-    tblCase
-      .integer('diseaseId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Disease')
-      .notNullable()
-      .alter()
+    tblCase.integer('diseaseId').unsigned().index().references('id').inTable('Disease').notNullable().alter()
   })
 
   await knex.schema.alterTable('PartnerDisease', async tblPartnerDisease => {

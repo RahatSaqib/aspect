@@ -2,15 +2,7 @@ import React, { Fragment, useMemo, useEffect } from 'react'
 import { array, number, object, oneOfType, shape } from 'prop-types'
 import isNil from 'lodash/isNil'
 
-import {
-  useColumnOrder,
-  useExpanded,
-  useFilters,
-  useGroupBy,
-  usePagination,
-  useSortBy,
-  useTable,
-} from 'react-table'
+import { useColumnOrder, useExpanded, useFilters, useGroupBy, usePagination, useSortBy, useTable } from 'react-table'
 
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -38,8 +30,7 @@ const AspectTableCore = ({
   pageCount: controlledPageCount,
   onClickRow,
 }) => {
-  const { handleClearParams, setSize, setSortCol, setSortDir, setPage } =
-    setters
+  const { handleClearParams, setSize, setSortCol, setSortDir, setPage } = setters
   const { total = 0, data = [] } = tableData || {}
   const { name, namePlural } = config
   const {
@@ -66,15 +57,7 @@ const AspectTableCore = ({
     toggleGroupBy,
     toggleHideColumn,
     visibleColumns,
-    state: {
-      pageIndex,
-      pageSize,
-      sortBy,
-      columnOrder,
-      hiddenColumns,
-      groupBy,
-      expanded,
-    },
+    state: { pageIndex, pageSize, sortBy, columnOrder, hiddenColumns, groupBy, expanded },
   } = useTable(
     {
       columns,
@@ -98,9 +81,7 @@ const AspectTableCore = ({
 
   const handleChangeColumnOrder = (e, direction, index) => {
     e.stopPropagation()
-    setColumnOrder(
-      getCurrentColumnIndexAndShift(visibleColumns, direction, index)
-    )
+    setColumnOrder(getCurrentColumnIndexAndShift(visibleColumns, direction, index))
   }
 
   const handleHideColumnToggle = (e, id) => {
@@ -146,19 +127,11 @@ const AspectTableCore = ({
     if (visibleColumns && !columnOrder.length) {
       setColumnOrder(initialOrder)
     }
-  }, [
-    visibleColumns,
-    allowColumnReOrder,
-    columnOrder,
-    initialOrder,
-    setColumnOrder,
-  ])
+  }, [visibleColumns, allowColumnReOrder, columnOrder, initialOrder, setColumnOrder])
 
   return (
     <Fragment>
-      {initialState.allowReset ? (
-        <AspectTableReset isFetching={isFetching} action={handleClearParams} />
-      ) : null}
+      {initialState.allowReset ? <AspectTableReset isFetching={isFetching} action={handleClearParams} /> : null}
       {hiddenColumns && hiddenColumns.length ? (
         <TableHiddenColumns
           columns={columns}
@@ -185,13 +158,7 @@ const AspectTableCore = ({
         <TableBody>
           {page.map(row => {
             prepareRow(row)
-            const {
-              getRowProps,
-              cells,
-              getToggleRowExpandedProps,
-              isExpanded,
-              subRows,
-            } = row
+            const { getRowProps, cells, getToggleRowExpandedProps, isExpanded, subRows } = row
             return (
               <TableRow {...getRowProps()}>
                 <TableBodyRow

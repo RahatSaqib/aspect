@@ -1,32 +1,21 @@
 import classnames from 'classnames/bind'
 import React, { useEffect } from 'react'
-import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import PropTypes from 'prop-types'
+import useI18n from '../../Hooks/i18n/useI18n'
 import { useAuthState } from '../../Providers/AuthProvider'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-} from '../../shared/selectors/searchParams'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-} from '../../filter/utils'
+import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../shared/selectors/searchParams'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import {
-  InventoryLogDataTable,
-  InventoryLogDataTableHead,
-  InventoryLogTableRow,
-} from './InventoryLogDataTable'
+import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
 import { INVENTORY_LOG } from '../../MigratedComponents/QueryFetch/Inventory'
 import messages from './messages'
 import styles from './InventoryLog.css'
@@ -131,14 +120,9 @@ export const InventoryLogWithProps = ({
         config={reducedFilters}
         dateFilterLabel={intl.formatMessage(messages.date)}
       />
-      <DataTableCard
-        key={`DataTableCard--table-${location.key}`}
-        className={cssClasses('DataTableCard--table')}
-      >
+      <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
         <DataTableProgressBar disabled={!isLoading} />
-        {!hasItems && (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
+        {!hasItems && <BrowseEmptyList navigate={navigate} location={location} />}
         {hasItems && (
           <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>
             <InventoryLogDataTableHead
@@ -177,7 +161,7 @@ export const InventoryLogWithProps = ({
 
 const InventoryLog = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
-  const intl = useIntl()
+  const intl = useI18n()
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
@@ -187,21 +171,14 @@ const InventoryLog = ({ navigate, location }) => {
     sortCol: 'createdOn',
     sortDir: 'desc',
   })
-  const reducedFilters = reduceFiltersConfig(
-    FILTERS_CONFIG,
-    userPermissions,
-    {}
-  )
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({
     location,
     availableSortCol,
     dependencies: {},
   })
   const { value: searchParams } = searchSanitizer(location, {})
-  const { value: filtersParams } = filtersSanitizer(
-    searchParams.get('filters') || '',
-    {}
-  )
+  const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
   const filters = getFilters(filtersParams)
 
   // >>>>>> Defining queries <<<<<<
@@ -224,8 +201,10 @@ const InventoryLog = ({ navigate, location }) => {
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location, {})
-    const { sanitized: filtersSanitized, value: filtersParams } =
-      filtersSanitizer(searchParams.get('filters') || '', {})
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
+      searchParams.get('filters') || '',
+      {}
+    )
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
 

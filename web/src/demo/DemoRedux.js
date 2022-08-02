@@ -3,10 +3,7 @@ import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
 
-import {
-  errorNotFound,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../error/CommonErrorNotifications'
+import { errorNotFound, errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
 
 import { receiveItem, Items } from '../shared/metaReducers/items'
 
@@ -88,8 +85,7 @@ export function postDemoDeviceResult(deviceId, data) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.updateSingleDevice.PUT.default.title',
-              defaultMessage:
-                'An Error Occurred When Trying to Save the Device',
+              defaultMessage: 'An Error Occurred When Trying to Save the Device',
             },
           })
         ),
@@ -112,10 +108,7 @@ export default function demoReducer(state = initialState, action) {
     case types.DEMO_RECEIVE_DEVICE:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
-        mutState.set(
-          'deviceItems',
-          receiveItem(mutState.deviceItems, immutItem)
-        )
+        mutState.set('deviceItems', receiveItem(mutState.deviceItems, immutItem))
       })
     default:
       return state

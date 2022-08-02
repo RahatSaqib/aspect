@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import classnames from 'classnames/bind'
 import startCase from 'lodash/startCase'
 
 import styles from './GraphTooltip.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -23,18 +24,13 @@ const messages = defineMessages({
 })
 
 const GraphToolTip = ({ clickThrough, displayMethod, values }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const { color, displayId, indexValue = false, displayValue } = values
   return (
     <div className={cssClasses('tooltip__container')}>
       <div className={cssClasses('tooltip__row')}>
-        <div
-          className={cssClasses('tooltip__color')}
-          style={{ background: color }}
-        />
-        <div className={cssClasses('tooltip__text')}>
-          {`${displayId}${indexValue ? ` - ${indexValue}` : ''}: `}
-        </div>
+        <div className={cssClasses('tooltip__color')} style={{ background: color }} />
+        <div className={cssClasses('tooltip__text')}>{`${displayId}${indexValue ? ` - ${indexValue}` : ''}: `}</div>
 
         <div className={cssClasses('tooltip__value')}>
           {typeof displayValue === 'object' ? (
@@ -54,9 +50,7 @@ const GraphToolTip = ({ clickThrough, displayMethod, values }) => {
               )}
             </div>
           ) : (
-            <div className={cssClasses('tooltip__valuePrimary')}>
-              {displayValue}
-            </div>
+            <div className={cssClasses('tooltip__valuePrimary')}>{displayValue}</div>
           )}
         </div>
       </div>

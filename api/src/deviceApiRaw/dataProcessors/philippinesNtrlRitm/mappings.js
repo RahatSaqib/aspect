@@ -52,11 +52,7 @@ const mapPatientData = (payload, ntrlLabRequestId) => {
     }
   }
   return {
-    id:
-      payload['RITM Hospital No'] ||
-      patientNameId ||
-      payload['Laboratory No'] ||
-      ntrlLabRequestId,
+    id: payload['RITM Hospital No'] || patientNameId || payload['Laboratory No'] || ntrlLabRequestId,
     serialNumber: payload['Serial Code RN-14-'],
     referringHealthFacility: payload.Address || payload['Referring Facility'],
     requestingPhysician: payload.Requisitioner,
@@ -174,8 +170,7 @@ const resultDataMappings = {
     mapResultData: payload => {
       return {
         encodedResult: {
-          smearMethod:
-            payload['Laboratory Test Performed Acid Fast Bacili Microscopy'],
+          smearMethod: payload['Laboratory Test Performed Acid Fast Bacili Microscopy'],
           smearDateCollected1: payload['Smear Result 1 Date Collected'],
           smearResult1: payload['Smear Result 1'],
           smearDateCollected2: payload['Smear Result 2 Date Collected'],
@@ -220,13 +215,7 @@ const resultDataMappings = {
       }
     },
     isPayloadValid: payload =>
-      objectHasValues(
-        pick(payload, [
-          'MTB',
-          'Rifampicin:',
-          'Date and Time of Release of Gx Result',
-        ])
-      ),
+      objectHasValues(pick(payload, ['MTB', 'Rifampicin:', 'Date and Time of Release of Gx Result'])),
   },
   tblamp: {
     mapResultData: payload => {
@@ -236,8 +225,7 @@ const resultDataMappings = {
         },
       }
     },
-    isPayloadValid: payload =>
-      objectHasValues(pick(payload, ['TB LAMP Result'])),
+    isPayloadValid: payload => objectHasValues(pick(payload, ['TB LAMP Result'])),
   },
 }
 

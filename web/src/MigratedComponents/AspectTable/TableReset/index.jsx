@@ -4,11 +4,12 @@ import classnames from 'classnames/bind'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Tooltip from '@material-ui/core/Tooltip'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 import IconProvider from '../../IconProvider'
 
 import styles from '../Table.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -20,7 +21,7 @@ const messages = defineMessages({
 })
 
 const AspectTableReset = ({ isFetching, action }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('table__reload')}>
       <Tooltip

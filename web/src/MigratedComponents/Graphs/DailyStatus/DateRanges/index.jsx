@@ -1,11 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 import { groupDateRanges } from '../Helpers'
 
 import styles from '../DailyStatus.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -17,7 +18,7 @@ const messages = defineMessages({
 })
 
 const DateRanges = ({ data, consts }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
 
   const days = groupDateRanges(data)
   const {

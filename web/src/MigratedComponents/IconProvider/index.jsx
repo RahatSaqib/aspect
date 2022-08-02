@@ -1,5 +1,4 @@
 import React, { Suspense, lazy, memo } from 'react'
-import isBoolean from 'lodash/isBoolean'
 import { bool, string, oneOfType } from 'prop-types'
 import classnames from 'classnames/bind'
 import { FaSquare } from 'react-icons/fa'
@@ -32,9 +31,7 @@ async function loadIconModule(icon) {
  */
 
 const IconProvider = memo(({ icon, className, title }) => {
-  const IconShell = ({ children }) => (
-    <div className={cssClasses({ [className]: !!className })}>{children}</div>
-  )
+  const IconShell = ({ children }) => <div className={cssClasses({ [className]: !!className })}>{children}</div>
 
   const IconComponent = lazy(() =>
     loadIconModule(icon).then(module => {
@@ -54,12 +51,8 @@ const IconProvider = memo(({ icon, className, title }) => {
       }
     >
       <IconShell>
-        <ErrorBoundary
-          fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}
-        >
-          <IconComponent
-            title={isBoolean(title) ? (!title ? '' : icon) : title}
-          />
+        <ErrorBoundary fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}>
+          <IconComponent title={title} />
         </ErrorBoundary>
       </IconShell>
     </Suspense>

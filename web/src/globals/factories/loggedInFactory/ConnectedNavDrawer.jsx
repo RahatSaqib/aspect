@@ -20,26 +20,10 @@ const enhance = compose(
   )
 )
 
-const ConnectedNavDrawer = ({
-  navigate,
-  location,
-  drawerOpen,
-  toggleDrawer,
-  closeDrawer,
-}) => (
+const ConnectedNavDrawer = ({ navigate, location, drawerOpen, toggleDrawer, closeDrawer }) => (
   <Drawer open={drawerOpen} onClose={toggleDrawer}>
-    <LinkNavigation
-      navigate={navigate}
-      location={location}
-      type="vertical"
-      onClick={closeDrawer}
-    >
-      <ThemedLink
-        href="/account-details/current"
-        label="Account"
-        navigate={navigate}
-        location={location}
-      />
+    <LinkNavigation navigate={navigate} location={location} type="vertical" onClick={closeDrawer}>
+      <ThemedLink href="/account-details/current" label="Account" navigate={navigate} location={location} />
     </LinkNavigation>
   </Drawer>
 )

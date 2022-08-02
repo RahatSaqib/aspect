@@ -24,15 +24,10 @@ describe('Excel reports', () => {
   })
   it('should return Excel files when using valid token', async () => {
     await Promise.each(queriesExcel, async query => {
-      const res = await server
-        .get(query)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(query).set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 200)
       // Content-Type for Excel
-      assert.equal(
-        res.type,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      )
+      assert.equal(res.type, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
       assert.isObject(res.body)
     })
   })
@@ -55,9 +50,7 @@ describe('Excel reports', () => {
   })
   it('should return CSV files when using valid token', async () => {
     await Promise.each(queriesCSV, async query => {
-      const res = await server
-        .get(query)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(query).set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 200)
       // Content-Type for CSV
       assert.equal(res.type, 'application/octet-stream')

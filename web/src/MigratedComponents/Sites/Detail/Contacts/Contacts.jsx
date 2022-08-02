@@ -6,23 +6,18 @@ import Button from '@material-ui/core/Button'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 
 // Our own imports
-import ContactsTag from './ContactTags'
 import messages from '../messages'
 import { Unit } from '../../../../components/pureGrids'
 import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
 
 import styles from '../../../../globals/components/Summary.css'
+import ContactTagInput from '../../../ContactTagInput/ContactTagInput'
 
 const cssClasses = classnames.bind(styles)
 
 const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
   const [edit, setEdit] = useState(false)
-  const saveContacts = () => {
-    setEdit(true)
-  }
-  const editContacts = () => {
-    setEdit(false)
-  }
+
   return (
     <Unit sm="1-1" className={cssClasses('Summary')}>
       <div className={cssClasses('Summary__Title')}>{title}</div>
@@ -30,19 +25,11 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
         <div className={cssClasses('Summary__Tags__Wrap')}>
           <ReadOnlyField
             label="read"
-            value={contacts}
             hideLabel
-            format={v => (
-              <ContactsTag
-                siteId={id}
-                allowCreate
-                value={v}
-                identifier="name"
-                noMatch={formatMessage(messages.fieldNoMatch)}
-              />
-            )}
+            value={contacts}
+            format={v => <ContactTagInput siteId={id} value={v} />}
           />
-          <Button variant="contained" onClick={editContacts}>
+          <Button variant="contained" onClick={() => setEdit(false)}>
             {formatMessage(messages.actionChange)}
           </Button>
         </div>
@@ -50,12 +37,9 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
         <div className={cssClasses('Summary__Description')}>
           {contacts.length ? (
             contacts.map(contact => (
-              <Fragment>
+              <Fragment key={contact.id}>
                 {contact.name}
-                <Link
-                  to={`/browse/person/${contact.id}`}
-                  className={cssClasses('Summary__Description__Link')}
-                >
+                <Link to={`/browse/person/${contact.id}`} className={cssClasses('Summary__Description__Link')}>
                   <FaExternalLink />
                 </Link>
               </Fragment>
@@ -64,14 +48,8 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
             <i>{formatMessage(messages.fieldNoContact)}</i>
           )}
           <span className={cssClasses('Summary__Description__Action')}>
-            <Button
-              variant="contained"
-              onClick={saveContacts}
-              disabled={disabled}
-            >
-              {contacts.length
-                ? formatMessage(messages.actionUpdate)
-                : formatMessage(messages.actionAdd)}
+            <Button variant="contained" onClick={() => setEdit(true)} disabled={disabled}>
+              {contacts.length ? formatMessage(messages.actionUpdate) : formatMessage(messages.actionAdd)}
             </Button>
           </span>
         </div>

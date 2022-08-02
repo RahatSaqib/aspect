@@ -12,9 +12,7 @@ module.exports.up = async function (knex) {
 
   await knex(siteTypeTableName).insert(siteTypes.data)
 
-  const labSiteTypeFixedId = siteTypes.data.find(
-    st => st.externalId === 'lab'
-  ).id
+  const labSiteTypeFixedId = siteTypes.data.find(st => st.externalId === 'lab').id
 
   await knex.schema.alterTable('Site', site => {
     site
@@ -26,12 +24,7 @@ module.exports.up = async function (knex) {
       .references('id')
       .inTable('SiteType')
 
-    site
-      .integer('parentWarehouseId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Site')
+    site.integer('parentWarehouseId').unsigned().index().references('id').inTable('Site')
   })
 }
 

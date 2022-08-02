@@ -2,20 +2,11 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
 const { loadPlugin } = require('../plugin/registration')
-const {
-  issueCreated,
-  issueTriggered,
-  issueAcknowledged,
-  issueResolved,
-} = require('./actions')
+const { issueCreated, issueTriggered, issueAcknowledged, issueResolved } = require('./actions')
 const { actionConditionsMet } = require('./actionEvaluation')
 const { getUser } = require('../auth/service')
 const { parseDateOrDefault } = require('../shared/date')
-const {
-  issueTypeToId,
-  issueStatusToId,
-  issueEventStatusToId,
-} = require('../shared/dictionary')
+const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../shared/dictionary')
 const logger = require('../shared/logger')
 
 async function getIssueEventTriggerSubscriptions({ messageContext }) {
@@ -31,45 +22,33 @@ async function getIssueEventTriggerSubscriptions({ messageContext }) {
         'iet.filterIssueCondition'
       )
       .then(items =>
-        items.reduce(
-          (
-            memo,
-            {
-              issueType,
-              issueEventStatus,
-              partnerId,
-              triggerConditions,
-              filterIssueCondition,
+        items.reduce((memo, { issueType, issueEventStatus, partnerId, triggerConditions, filterIssueCondition }) => {
+          const { action } = JSON.parse(triggerConditions)
+          if (action != null) {
+            if (issueEventStatus === 'Triggered') {
+              memo[action] = [
+                ...(memo[action] || []),
+                {
+                  partnerId,
+                  issueType,
+                  triggerConditions,
+                  filterIssueCondition,
+                  issueEventStatus,
+                },
+              ]
+            } else if (issueEventStatus === 'Resolved') {
+              memo[action] = [
+                ...(memo[action] || []),
+                {
+                  issueType,
+                  filterIssueCondition,
+                  issueEventStatus,
+                },
+              ]
             }
-          ) => {
-            const { action } = JSON.parse(triggerConditions)
-            if (action != null) {
-              if (issueEventStatus === 'Triggered') {
-                memo[action] = [
-                  ...(memo[action] || []),
-                  {
-                    partnerId,
-                    issueType,
-                    triggerConditions,
-                    filterIssueCondition,
-                    issueEventStatus,
-                  },
-                ]
-              } else if (issueEventStatus === 'Resolved') {
-                memo[action] = [
-                  ...(memo[action] || []),
-                  {
-                    issueType,
-                    filterIssueCondition,
-                    issueEventStatus,
-                  },
-                ]
-              }
-            }
-            return memo
-          },
-          {}
-        )
+          }
+          return memo
+        }, {})
       )
     const actions = {}
     Object.keys(actionParameters).forEach(actionKey => {
@@ -86,12 +65,7 @@ function onIssueEvent(actionParametersList) {
       return Promise.each(actionParametersList, async actionParameters => {
         logger.debug(['action', action], { reLabel: 'issues:onIssueEvent' })
         if (actionParameters.issueEventStatus === 'Triggered') {
-          const {
-            partnerId,
-            issueType,
-            triggerConditions,
-            filterIssueCondition = null,
-          } = actionParameters
+          const { partnerId, issueType, triggerConditions, filterIssueCondition = null } = actionParameters
           const { suppressingConditions } = JSON.parse(triggerConditions)
 
           const shouldSuppressEventTriggering = !_.isNil(suppressingConditions)
@@ -121,12 +95,7 @@ function onIssueEvent(actionParametersList) {
             )
             if (shouldTriggerEvent) {
               const now = new Date()
-              const openIssue = await findOpenIssue(
-                knex,
-                issueType,
-                action,
-                JSON.parse(filterIssueCondition)
-              )
+              const openIssue = await findOpenIssue(knex, issueType, action, JSON.parse(filterIssueCondition))
               logger.debug(
                 {
                   action_type: action.type,
@@ -193,12 +162,7 @@ function onIssueEvent(actionParametersList) {
         } else if (actionParameters.issueEventStatus === 'Resolved') {
           const { issueType, filterIssueCondition } = actionParameters
           const now = new Date()
-          const issue = await findOpenIssue(
-            knex,
-            issueType,
-            action,
-            filterIssueCondition
-          )
+          const issue = await findOpenIssue(knex, issueType, action, filterIssueCondition)
           const hasTrigger =
             issue != null &&
             issue.partnerId &&
@@ -247,12 +211,7 @@ function onIssueEvent(actionParametersList) {
   }
 }
 
-async function findOpenIssue(
-  knex,
-  issueType,
-  action,
-  filterIssueCondition = {}
-) {
+async function findOpenIssue(knex, issueType, action, filterIssueCondition = {}) {
   const evaluationFunction = _.get(filterIssueCondition, 'evaluationFunction')
   const findOpenIssue = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -274,16 +233,9 @@ async function findOpenIssue(
   }
 
   if (_.get(action, 'options.data') && evaluationFunction) {
-    const filterFunctions = await getIssueFilter(
-      knex,
-      action.partnerId,
-      action.deviceId
-    )
+    const filterFunctions = await getIssueFilter(knex, action.partnerId, action.deviceId)
     if (filterFunctions[evaluationFunction])
-      findOpenIssue.modify(
-        filterFunctions[evaluationFunction],
-        action.options.data
-      )
+      findOpenIssue.modify(filterFunctions[evaluationFunction], action.options.data)
   }
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
@@ -291,9 +243,7 @@ async function findOpenIssue(
 async function getIssueFilter(knex, partnerId, deviceId) {
   let plugin
   if (partnerId) {
-    ;({ plugin } = await knex('Partner')
-      .where({ id: partnerId })
-      .first('plugin'))
+    ;({ plugin } = await knex('Partner').where({ id: partnerId }).first('plugin'))
   } else if (deviceId) {
     ;({ plugin } = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -323,13 +273,7 @@ async function createNewIssue(knex, issueType, action) {
     createdOn: now,
     updatedOn: now,
     ..._.pick(issueContext, ['deviceId', 'siteId', 'geographyId', 'partnerId']),
-    ..._.pick(action, [
-      'resultId',
-      'deviceId',
-      'siteId',
-      'geographyId',
-      'partnerId',
-    ]),
+    ..._.pick(action, ['resultId', 'deviceId', 'siteId', 'geographyId', 'partnerId']),
   }
   // Now that we know partnerId, check to see if we have a trigger
   const hasTrigger =
@@ -365,24 +309,15 @@ async function createNewIssue(knex, issueType, action) {
   return issue
 }
 
-async function lookupIssueContext(
-  { resultId, deviceId, siteId, consumableId },
-  knex
-) {
+async function lookupIssueContext({ resultId, deviceId, siteId, consumableId }, knex) {
   if (resultId) {
-    return knex('Result')
-      .where({ id: resultId })
-      .first('deviceId', 'siteId', 'geographyId', 'partnerId')
+    return knex('Result').where({ id: resultId }).first('deviceId', 'siteId', 'geographyId', 'partnerId')
   }
   if (deviceId) {
     return knex('Device as d')
       .leftJoin('Site as s', 's.id', 'd.siteId')
       .where({ 'd.id': deviceId })
-      .first(
-        'd.partnerId',
-        'd.siteId',
-        knex.raw('coalesce(d.geographyId, s.geographyId) as geographyId')
-      )
+      .first('d.partnerId', 'd.siteId', knex.raw('coalesce(d.geographyId, s.geographyId) as geographyId'))
   }
   if (siteId) {
     if (consumableId != null) {
@@ -390,27 +325,18 @@ async function lookupIssueContext(
         .innerJoin('Site as s', 'ii.siteId', 's.id')
         .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
         .leftJoin('PartnerConsumable as pc', function () {
-          this.on('pc.consumableId', 'c.id').andOn(
-            'pc.partnerId',
-            's.partnerId'
-          )
+          this.on('pc.consumableId', 'c.id').andOn('pc.partnerId', 's.partnerId')
         })
         .where('s.id', siteId)
         .andWhere('ii.consumableId', consumableId)
-        .first(
-          's.geographyId',
-          knex.raw('COALESCE(pc.partnerId, s.partnerId) as partnerId')
-        )
+        .first('s.geographyId', knex.raw('COALESCE(pc.partnerId, s.partnerId) as partnerId'))
     }
     return knex('Site').where({ id: siteId }).first('geographyId', 'partnerId')
   }
   return Promise.resolve({})
 }
 
-async function hasIssueEventTrigger(
-  knex,
-  { partnerId, issueType, issueEventStatus, action }
-) {
+async function hasIssueEventTrigger(knex, { partnerId, issueType, issueEventStatus, action }) {
   const issueTypeId = await issueTypeToId(issueType)
   const issueEventStatusId = await issueEventStatusToId(issueEventStatus)
   const issueEventTrigger = await knex('IssueEventTrigger')
@@ -447,11 +373,7 @@ function getActionData(action) {
   if (action.options != null) {
     // include any keys in options in issue data that is not recorded elsewhere,
     // with preference to keys in data plain object
-    _.merge(
-      actionData,
-      _.omit(action.options, ['dueOn', 'data']),
-      action.options.data
-    )
+    _.merge(actionData, _.omit(action.options, ['dueOn', 'data']), action.options.data)
   }
   return actionData
 }
@@ -493,15 +415,10 @@ async function updateIssueStatus(request) {
       throw Boom.forbidden('No Active Issue to Acknowledge')
     }
 
-    ;({ issueStatusId, issueStatusSeverityExternalId } = await knex(
-      'IssueStatus as is'
-    )
+    ;({ issueStatusId, issueStatusSeverityExternalId } = await knex('IssueStatus as is')
       .join('IssueStatusSeverity as iss', 'is.issueStatusSeverityId', 'iss.id')
       .where('is.externalId', issueStatusExternalId)
-      .first(
-        'is.id as issueStatusId',
-        'iss.externalId as issueStatusSeverityExternalId'
-      ))
+      .first('is.id as issueStatusId', 'iss.externalId as issueStatusSeverityExternalId'))
 
     await knex('Issue').where({ id: issueId }).update({
       issueStatusId,
@@ -584,12 +501,7 @@ async function triggerIssue(request) {
     case 'InventoryStockExpiring'.toLowerCase(): {
       const { siteId, consumableId, dueDays, totalWasted } = data
       if (totalWasted > 0) {
-        await messageContext.inventoryStockExpiring(
-          siteId,
-          consumableId,
-          dueDays,
-          totalWasted
-        )
+        await messageContext.inventoryStockExpiring(siteId, consumableId, dueDays, totalWasted)
         triggered = true
       }
       break
@@ -681,11 +593,7 @@ async function triggerIssue(request) {
     }
     case 'ModuleDisabled'.toLowerCase(): {
       const { deviceId, disabledOn, moduleSerialNumber } = data
-      await messageContext.deviceModuleDisabled(
-        deviceId,
-        moduleSerialNumber,
-        disabledOn
-      )
+      await messageContext.deviceModuleDisabled(deviceId, moduleSerialNumber, disabledOn)
       triggered = true
       break
     }

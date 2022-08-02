@@ -1,18 +1,21 @@
 import noop from 'lodash/noop'
 import React from 'react'
 import { mount } from 'enzyme'
-import { IntlProvider } from 'react-intl'
 import Immutable from 'immutable'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import * as reactRedux from 'react-redux'
 
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { Site } from '../../../site/SiteRedux'
 import { SiteDetail } from './SiteDetail'
+import { I18nProvider } from '../../../Providers/I18nProvider/index'
 
 const SiteDetailComponent = props => (
-  <IntlProvider locale="en">
-    <SiteDetail {...props} />
-  </IntlProvider>
+  <QueryClientProvider client={new QueryClient()}>
+    <I18nProvider>
+      <SiteDetail {...props} />
+    </I18nProvider>
+  </QueryClientProvider>
 )
 
 describe('SiteDetail component', () => {

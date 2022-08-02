@@ -8,9 +8,7 @@ const enhance = identity(injectIntl)
 
 const Reason = ({ intl, location, ...restProps }) =>
   typeToMessage(get(location, 'state.reason')) ? (
-    <div {...restProps}>
-      {intl.formatMessage(typeToMessage(get(location, 'state.reason')))}
-    </div>
+    <div {...restProps}>{intl.formatMessage(typeToMessage(get(location, 'state.reason')))}</div>
   ) : null
 
 export default enhance(Reason)

@@ -9,9 +9,7 @@ const SELECT_LIST_FIELDS = [
   'c.canExpire',
   'c.manufacturer',
   knex.raw('coalesce(pc.autoInclude, 0) as autoInclude'),
-  knex.raw(
-    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`
-  ),
+  knex.raw(`CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN TRUE ELSE FALSE END AS showLot`),
   knex.raw(
     `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN TRUE ELSE FALSE END AS showExpirationDate`
   ),
@@ -25,10 +23,7 @@ async function listConsumableTypes(request) {
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('PartnerConsumable as pc', function () {
-      this.on('c.id', 'pc.consumableId').andOn(
-        'pc.partnerId',
-        knex.raw(dataConstraints.partner.id)
-      )
+      this.on('c.id', 'pc.consumableId').andOn('pc.partnerId', knex.raw(dataConstraints.partner.id))
     })
     .leftJoin('Partner as p', 'pc.partnerId', 'p.id')
     .modify(filterParams, query, { name: 'c.name' })
@@ -37,10 +32,7 @@ async function listConsumableTypes(request) {
   const getCount = consumableQuery.clone().count('c.id as count').first()
 
   // get rows
-  const getItems = consumableQuery
-    .clone()
-    .modify(sortPageParams, query, 'name')
-    .select(SELECT_LIST_FIELDS)
+  const getItems = consumableQuery.clone().modify(sortPageParams, query, 'name').select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -53,11 +45,7 @@ async function listConsumableReasons(request) {
   const { query } = request
 
   // TODO: use dataContraints
-  const consumableReasonQuery = knex('ConsumableReason as cr').modify(
-    filterParams,
-    query,
-    { name: 'cr.name' }
-  )
+  const consumableReasonQuery = knex('ConsumableReason as cr').modify(filterParams, query, { name: 'cr.name' })
 
   // get total count for paging
   const getCount = consumableReasonQuery.clone().count('cr.id as count').first()
@@ -76,9 +64,7 @@ async function listConsumableReasons(request) {
 }
 
 async function findConsumables(knownConsumableDetails) {
-  const consumables = await knex('Consumable')
-    .where(knownConsumableDetails)
-    .select()
+  const consumables = await knex('Consumable').where(knownConsumableDetails).select()
   return consumables
 }
 

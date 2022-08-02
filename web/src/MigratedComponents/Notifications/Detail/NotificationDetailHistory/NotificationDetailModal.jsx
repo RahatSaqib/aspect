@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -11,17 +10,11 @@ import Avatar from '@material-ui/core/Avatar'
 import PropTypes from 'prop-types'
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import messages from './messages'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
-const NotificationDetailModal = ({
-  sent,
-  withErrors,
-  pending,
-  showDialog,
-  onClose,
-  recipients = [],
-}) => {
+const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClose, recipients = [] }) => {
   const [notificationData] = useState(recipients)
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
 
   const colors = {
     Sent: '#34717c',
@@ -117,12 +110,8 @@ const NotificationDetailModal = ({
           </Grid>
         </Grid>
         <Grid item xs={12} md={6} style={{ margin: 10 }}>
-          <Typography variant="h7">
-            {formatMessage(messages.contactDetails)}
-          </Typography>
-          <List
-            sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-          >
+          <Typography variant="h7">{formatMessage(messages.contactDetails)}</Typography>
+          <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
             {notificationData &&
               notificationData.length &&
               notificationData.map((recipient, index) => (

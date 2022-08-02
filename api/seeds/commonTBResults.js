@@ -2,12 +2,7 @@ const _ = require('lodash')
 
 function getRandomGeneXpertPatientData(patientNumber, patientData) {
   const tbPatientData = _.sample(patientData)
-  tbPatientData.hivStatus = _.sample([
-    'HIV Positive',
-    'HIV Negative',
-    'HIV Unknown',
-    null,
-  ])
+  tbPatientData.hivStatus = _.sample(['HIV Positive', 'HIV Negative', 'HIV Unknown', null])
   return tbPatientData
 }
 

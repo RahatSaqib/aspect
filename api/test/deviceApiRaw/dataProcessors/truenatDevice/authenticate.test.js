@@ -27,8 +27,7 @@ describe('Truenat Authenticate Data Processor', () => {
         updatedOn: new Date(2021, 11, 17, 14, 16, 53),
         updatedBy: 1,
         username: 'admin',
-        password:
-          '$1a$12$Te5t0/HaShed000000/PaSsW0rD01234567890123456789012345',
+        password: '$1a$12$Te5t0/HaShed000000/PaSsW0rD01234567890123456789012345',
         expiresOn: new Date().getTime() - 1000 * 10,
       },
     }
@@ -42,26 +41,22 @@ describe('Truenat Authenticate Data Processor', () => {
     }
     sinon.spy(mockSharedRequestService, 'getRemoteAddress')
     mockDeviceApiKeyService = {
-      lookupUsingCredentials: async () =>
-        Promise.resolve(deviceApiKeyLookupUsingCredentialsReturns),
+      lookupUsingCredentials: async () => Promise.resolve(deviceApiKeyLookupUsingCredentialsReturns),
     }
     sinon.spy(mockDeviceApiKeyService, 'lookupUsingCredentials')
-    return proxyquire(
-      '../../../../src/deviceApiRaw/dataProcessors/truenatDevice/authenticate',
-      {
-        '../_base': {
-          SynchronousDataProcessor: class {
-            constructor(request, messageContext) {
-              this.request = request
-              this.messageContext = messageContext
-            }
-          },
+    return proxyquire('../../../../src/deviceApiRaw/dataProcessors/truenatDevice/authenticate', {
+      '../_base': {
+        SynchronousDataProcessor: class {
+          constructor(request, messageContext) {
+            this.request = request
+            this.messageContext = messageContext
+          }
         },
-        '../../../shared/request': mockSharedRequestService,
-        '../../../deviceApiKey/service': mockDeviceApiKeyService,
-        '../../../device/service': mockDeviceService,
-      }
-    )
+      },
+      '../../../shared/request': mockSharedRequestService,
+      '../../../deviceApiKey/service': mockDeviceApiKeyService,
+      '../../../device/service': mockDeviceService,
+    })
   }
 
   describe('canProcessRequest', () => {
@@ -121,8 +116,8 @@ describe('Truenat Authenticate Data Processor', () => {
         const truenatLoginInstance = new TruenatLogin(request, messageContext)
         await truenatLoginInstance.processRequest()
         assert.isOk(messageContext.dispatch.calledOnce)
-        const deviceApiKeyLookupRevolvedValue = await mockDeviceApiKeyService
-          .lookupUsingCredentials.lastCall.returnValue
+        const deviceApiKeyLookupRevolvedValue = await mockDeviceApiKeyService.lookupUsingCredentials.lastCall
+          .returnValue
         const {
           data: { deviceId },
         } = deviceApiKeyLookupRevolvedValue
@@ -133,10 +128,8 @@ describe('Truenat Authenticate Data Processor', () => {
         const TruenatLogin = mockTruenatLoginDataProcessor()
         const truenatLoginInstance = new TruenatLogin(request, messageContext)
         await truenatLoginInstance.processRequest()
-        const credentialLookupSpy =
-          mockDeviceApiKeyService.lookupUsingCredentials.lastCall
-        const deviceApiKeyLookupRevolvedValue =
-          await credentialLookupSpy.returnValue
+        const credentialLookupSpy = mockDeviceApiKeyService.lookupUsingCredentials.lastCall
+        const deviceApiKeyLookupRevolvedValue = await credentialLookupSpy.returnValue
         const {
           data: { token },
         } = deviceApiKeyLookupRevolvedValue

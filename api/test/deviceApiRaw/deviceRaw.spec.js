@@ -17,9 +17,7 @@ describe('Device API Raw routes', () => {
   describe('Unauthorised scenarios', () => {
     describe('when no device API key is specified', () => {
       it('should respond with 401: Unauthorized', async () => {
-        const response = await server
-          .post(deviceApiRawPath)
-          .send({ data: { a: 'b' } })
+        const response = await server.post(deviceApiRawPath).send({ data: { a: 'b' } })
         assert.equal(response.statusCode, 401)
         assert.equal(response.body.error, 'Unauthorized')
       })
@@ -39,14 +37,10 @@ describe('Device API Raw routes', () => {
     describe('when a revoked device API key is specified', () => {
       const revokedApiKeyToken = randomToken()
       beforeEach(async () => {
-        const revokedKeyInDatabase = await knex('DeviceApiKey')
-          .where('token', revokedApiKeyToken)
-          .first()
+        const revokedKeyInDatabase = await knex('DeviceApiKey').where('token', revokedApiKeyToken).first()
         const now = new Date()
         if (revokedKeyInDatabase && !revokedKeyInDatabase.revoked) {
-          await knex('DeviceApiKey')
-            .where('id', revokedKeyInDatabase.id)
-            .update({ revoked: true, updatedOn: now })
+          await knex('DeviceApiKey').where('id', revokedKeyInDatabase.id).update({ revoked: true, updatedOn: now })
         } else if (!revokedKeyInDatabase) {
           const { id: userId, partnerId } = await knex('User as u')
             .innerJoin('Person as p', 'u.id', 'p.userId')
@@ -64,10 +58,7 @@ describe('Device API Raw routes', () => {
       })
 
       afterEach(async () => {
-        const { id: deviceApiKeyId } =
-          (await knex('DeviceApiKey')
-            .where('token', revokedApiKeyToken)
-            .first('id')) || {}
+        const { id: deviceApiKeyId } = (await knex('DeviceApiKey').where('token', revokedApiKeyToken).first('id')) || {}
         if (deviceApiKeyId) {
           await knex('DeviceApiKey').where('id', deviceApiKeyId).del()
         }
@@ -87,14 +78,10 @@ describe('Device API Raw routes', () => {
   describe('Authorised scenarios', () => {
     const validApiKeyToken = randomToken()
     beforeEach(async () => {
-      const validKeyInDatabase = await knex('DeviceApiKey')
-        .where('token', validApiKeyToken)
-        .first()
+      const validKeyInDatabase = await knex('DeviceApiKey').where('token', validApiKeyToken).first()
       const now = new Date()
       if (validKeyInDatabase && validKeyInDatabase.revoked) {
-        await knex('DeviceApiKey')
-          .where('id', validKeyInDatabase.id)
-          .update({ revoked: false, updatedOn: now })
+        await knex('DeviceApiKey').where('id', validKeyInDatabase.id).update({ revoked: false, updatedOn: now })
       } else if (!validKeyInDatabase) {
         const { id: userId, partnerId } = await knex('User as u')
           .innerJoin('Person as p', 'u.id', 'p.userId')
@@ -130,58 +117,36 @@ describe('Device API Raw routes', () => {
             .where('r.deviceId', deviceId)
             .pluck('generatedResultId as id')
         })
-      const opIds = await knex('DeviceOperation')
-        .where('deviceId', deviceId)
-        .pluck('id')
-      const issueIds = await knex('Issue')
-        .where('deviceId', deviceId)
-        .pluck('id')
+      const opIds = await knex('DeviceOperation').where('deviceId', deviceId).pluck('id')
+      const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
       await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
-      await knex('DeviceLog')
-        .where('deviceId', deviceId)
-        .orWhereIn('resultId', resultIds)
-        .delete()
+      await knex('DeviceLog').where('deviceId', deviceId).orWhereIn('resultId', resultIds).delete()
       await knex('DeviceOperation').whereIn('id', opIds).delete()
       await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
       await knex('DeviceSiteHistory').where('deviceId', deviceId).delete()
       await knex('FactResultsDevice').where('deviceId', deviceId).delete()
-      await knex('FactResultsDeviceByAssay')
-        .where('deviceId', deviceId)
-        .delete()
-      await knex('FactResultsDeviceByCategory1')
-        .where('deviceId', deviceId)
-        .delete()
-      await knex('FactResultsDeviceByCategory1And2')
-        .where('deviceId', deviceId)
-        .delete()
+      await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
+      await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
+      await knex('FactResultsDeviceByCategory1And2').where('deviceId', deviceId).delete()
       await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-      await knex('DeviceApiKey')
-        .where('token', validApiKeyToken)
-        .orWhere('deviceId', deviceId)
-        .delete()
+      await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
       await knex('Device').where('id', deviceId).delete()
       const inventoryItemIds = await knex('InventoryItem as ii')
         .where('ii.siteId', siteId)
         .distinct('ii.id')
         .pluck('ii.id')
-      await knex('InventoryLog')
-        .whereIn('inventoryItemId', inventoryItemIds)
-        .delete()
+      await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
       await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
       await knex('IssueEvent')
         .whereIn('issueId', issueIds)
         .orWhere(function () {
           if (resultIds != null && resultIds.length > 0) {
-            this.whereRaw(
-              `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
-            )
+            this.whereRaw(`JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`)
           }
         })
         .delete()
       await knex('InventoryLog').whereIn('resultId', resultIds).delete()
-      await knex('ResultQualityControlLog')
-        .whereIn('resultId', resultIds)
-        .delete()
+      await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
       await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
       await knex('ResultGeneratedResult')
         .whereIn('sourceResultId', resultIds)
@@ -203,17 +168,11 @@ describe('Device API Raw routes', () => {
         .send(payload)
       assert.equal(response.statusCode, 200)
       await Promise.delay(2000)
-      const deviceApiRawRecord = await knex('DeviceApiRaw')
-        .where({ id: response.body })
-        .first()
+      const deviceApiRawRecord = await knex('DeviceApiRaw').where({ id: response.body }).first()
       const deviceApiKey = JSON.parse(
-        JSON.stringify(
-          await knex('DeviceApiKey').where('token', validApiKeyToken).first()
-        )
+        JSON.stringify(await knex('DeviceApiKey').where('token', validApiKeyToken).first())
       )
-      const deviceApiKeySnapshot = JSON.parse(
-        JSON.stringify(deviceApiRawRecord.deviceApiKeySnapshot)
-      )
+      const deviceApiKeySnapshot = JSON.parse(JSON.stringify(deviceApiRawRecord.deviceApiKeySnapshot))
       expect(JSON.parse(deviceApiKeySnapshot)).to.deep.equal(deviceApiKey)
       const decryptedRequestData = JSON.parse(
         deviceApiRawRecord.salt
@@ -228,13 +187,9 @@ describe('Device API Raw routes', () => {
         someParamName: 'some_param_value',
         anotherParamName: 'another param value',
       })
-      expect(decryptedRequestData.auth.credentials.token).to.equal(
-        validApiKeyToken
-      )
+      expect(decryptedRequestData.auth.credentials.token).to.equal(validApiKeyToken)
       const processedStatusId = await deviceApiRawStatusToId('Processed')
-      expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(
-        processedStatusId
-      )
+      expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(processedStatusId)
     })
   })
 })

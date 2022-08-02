@@ -23,9 +23,7 @@ const addDeviceRawDataHandler = asyncHandler(async (request, h) => {
   return Promise.race([responseReady, error])
     .then(async responseContent => {
       if (dataProcessor.responseStatusCode) {
-        return h
-          .response(responseContent)
-          .code(dataProcessor.responseStatusCode)
+        return h.response(responseContent).code(dataProcessor.responseStatusCode)
       }
       return responseContent
     })
@@ -40,25 +38,21 @@ const addDeviceRawDataHandler = asyncHandler(async (request, h) => {
     })
 })
 
-async function continueUnprocessedRawData(queue) {
+async function continueUnprocessedRawData(action, { messageContext }) {
   const lockedId = await deviceApiRawStatusToId('Locked')
   const readyId = await deviceApiRawStatusToId('Ready')
-  await knex('DeviceApiRaw')
-    .where('deviceApiRawStatusId', lockedId)
-    .update({ deviceApiRawStatusId: readyId })
-  const readyDeviceApiRawRecords = await knex('DeviceApiRaw')
-    .where('deviceApiRawStatusId', readyId)
-    .select()
+  await knex('DeviceApiRaw').where('deviceApiRawStatusId', lockedId).update({ deviceApiRawStatusId: readyId })
+  const readyDeviceApiRawRecords = await knex('DeviceApiRaw').where('deviceApiRawStatusId', readyId).select()
   if (!_.isEmpty(readyDeviceApiRawRecords)) {
     // eslint-disable-next-line no-console
     console.log(
       `Processing ${readyDeviceApiRawRecords.length} messages from the raw device API while starting web server.`
     )
   }
-  Promise.each(readyDeviceApiRawRecords, async readyDeviceApiRawRecord => {
+  return Promise.each(readyDeviceApiRawRecords, async readyDeviceApiRawRecord => {
     // eslint-disable-next-line no-console
     console.log(`Processing DeviceApiRaw ID: ${readyDeviceApiRawRecord.id}.`)
-    const messageContext = queue.createMessageContext('aspect_request')
+
     let requestText = readyDeviceApiRawRecord.rawData
     if (readyDeviceApiRawRecord.salt) {
       requestText = decrypt(requestText, readyDeviceApiRawRecord.salt)

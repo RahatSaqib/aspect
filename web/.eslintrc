@@ -77,11 +77,11 @@
         "parser": "babel",
         "semi": false,
         "singleQuote": true,
-        "trailingComma": "es5"
+        "trailingComma": "es5",   
+        "printWidth": 120
       }
     ],
     "object-curly-newline": ["error", { "consistent": true }],
-
     "react/no-multi-comp": "off",
     "react/no-unescaped-entities": "off",
     "react/prop-types": [
@@ -93,7 +93,6 @@
     "react/forbid-prop-types": "warn",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-
     "no-unused-vars": [
       "warn",
       {
@@ -135,6 +134,13 @@
     "lodash/prefer-constant": "off",
     "lodash/prefer-lodash-typecheck": "off",
     "lodash/path-style": "off",
-    "lodash/prefer-immutable-method": "off"
+    "lodash/prefer-immutable-method": "off",
+    "no-restricted-imports": ["error", {
+      "paths": [{ 
+        "name": "react-intl",
+        "importNames": ["useIntl"],
+        "message": "Use 'useI18n' from Hooks folder instead."
+      }]
+    }]
   }
 }

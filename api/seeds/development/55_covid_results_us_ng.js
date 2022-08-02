@@ -7,18 +7,13 @@ const { addCovidResults } = require('../commonGenerateResults')
 
 const { getPartnerByName } = require('../utils')
 
-const {
-  deviceTypeToId,
-  deviceApprovalToId,
-} = require('../../src/shared/dictionary')
+const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 
 const resultMultiplier = process.env['seeds.resultMultiplier'] / 4 || 50
 const now = new Date()
 
 async function seed(knex) {
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
 
   const auditFields = {
     createdOn: now,
@@ -45,13 +40,7 @@ async function seed(knex) {
     _.filter(sites, s => s.name.indexOf('Lab') >= 0),
     (site, i) => {
       if (i % 3 === 0) {
-        addM2000DeviceForCovid(
-          knex,
-          auditFields,
-          site,
-          deviceApprovalId,
-          m2000DeviceTypeId
-        )
+        addM2000DeviceForCovid(knex, auditFields, site, deviceApprovalId, m2000DeviceTypeId)
       }
     }
   )
@@ -93,13 +82,7 @@ async function seed(knex) {
   )
 }
 
-async function addM2000DeviceForCovid(
-  knex,
-  auditFields,
-  site,
-  deviceApprovalId,
-  m2000DeviceTypeId
-) {
+async function addM2000DeviceForCovid(knex, auditFields, site, deviceApprovalId, m2000DeviceTypeId) {
   const device = {
     ...auditFields,
     name: `${site.name} M2000`.substr(0, 255),
@@ -113,12 +96,8 @@ async function addM2000DeviceForCovid(
     ...auditFields,
     lastPingOn: new Date(+now),
     lastSeenOn: new Date(+now),
-    hostId: _.times(8, () =>
-      String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-    ).join(''),
-    serial: _.times(24, () =>
-      String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-    ).join(''),
+    hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+    serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
   }
 
   ;[device.id] = await knex('Device').insert(device)

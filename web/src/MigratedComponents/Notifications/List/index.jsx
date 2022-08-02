@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { Helmet } from 'react-helmet'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import classnames from 'classnames/bind'
 
@@ -19,6 +19,7 @@ import { NOTIFICATION_LIST } from '../../QueryFetch/Notification'
 import { baseConfig, getCreateNotificationMenuProps } from './config'
 
 import styles from '../Notifications.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -39,7 +40,7 @@ const FILTERS_CONFIG = [
 ]
 
 const NotificationList = () => {
-  const intl = useIntl()
+  const intl = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
   const query = useUrlQuery(location.search)
@@ -54,12 +55,7 @@ const NotificationList = () => {
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
       <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
       <div className={cssClasses('filters__container')}>
-        <BrowseFilters
-          navigate={navigate}
-          location={location}
-          intl={intl}
-          config={reducedFilters}
-        >
+        <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
           <AspectDropDown
             props={{
               components: notificationMenuProps.components,
@@ -96,11 +92,7 @@ const NotificationList = () => {
       >
         <Shell>
           <ShellContent>
-            <AspectTable
-              baseConfig={baseConfig}
-              consts={NOTIFICATION_LIST}
-              FILTERS_CONFIG={FILTERS_CONFIG}
-            />
+            <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_LIST} FILTERS_CONFIG={FILTERS_CONFIG} />
           </ShellContent>
         </Shell>
       </div>

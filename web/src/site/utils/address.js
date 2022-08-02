@@ -17,24 +17,11 @@ export function isValidLatLng({ lat, lng }) {
   return isNumber(lat) && isNumber(lng)
 }
 
-export function isValidFullAddress({
-  country,
-  state,
-  lga,
-  city,
-  address,
-  address2,
-}) {
+export function isValidFullAddress({ country, state, lga, city, address, address2 }) {
   return some([country, state, lga, city, address, address2], isString)
 }
 
-export function formatFullAddressToAddressQuery({
-  country,
-  state,
-  lga,
-  city,
-  address,
-}) {
+export function formatFullAddressToAddressQuery({ country, state, lga, city, address }) {
   return `${address}, ${city}, ${lga}, ${state}, ${country}`
 }
 
@@ -55,17 +42,12 @@ export function getLatLongFromAddress(address) {
         lng: location.lng(),
       })
 
-    geocoder.geocode(
-      {
-        address: addressQuery,
-      },
-      (results, status) => {
-        if (status !== google.maps.GeocoderStatus.OK) {
-          return reject(new Error('bad geocoder status'))
-        }
-        handler(results[0])
+    geocoder.geocode({ address: addressQuery }, (results, status) => {
+      if (status !== google.maps.GeocoderStatus.OK) {
+        return reject(new Error('bad geocoder status'))
       }
-    )
+      handler(results[0])
+    })
   })
 }
 

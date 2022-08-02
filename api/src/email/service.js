@@ -3,24 +3,12 @@ const Promise = require('bluebird')
 const { subDays, subMonths } = require('date-fns')
 
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
-const {
-  allMessageStatusToId,
-  messageStatusToId,
-} = require('../shared/dictionary')
-const {
-  addDataSourceToQuery,
-  processUsingDataSourceQuery,
-} = require('../stringTemplate/service')
+const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
+const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { generateCsvAttachment } = require('../shared/io')
-const {
-  getDeviceErrorHistoryForAttachment,
-} = require('../result/serviceReport')
-const {
-  startOfDayUtc,
-  startOfMonthUTC,
-  endOfMonthUTC,
-} = require('../shared/date')
+const { getDeviceErrorHistoryForAttachment } = require('../result/serviceReport')
+const { startOfDayUtc, startOfMonthUTC, endOfMonthUTC } = require('../shared/date')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -39,8 +27,7 @@ async function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
 // prepareEmailMessageForSending
 // -----------------------------
 async function prepareEmailMessageForSending(context, knex, emailMessageId) {
-  const { subject, body, htmlBody, to, attachments } =
-    await createEmailFieldsFromTemplate(knex, emailMessageId)
+  const { subject, body, htmlBody, to, attachments } = await createEmailFieldsFromTemplate(knex, emailMessageId)
 
   const pendingMessageStatusId = await messageStatusToId('Pending')
   // store generated email message into the same record and set messageStatusId
@@ -63,10 +50,7 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
 // -----------------------------
 // onEmailMessageReadyForSending - event handler for EMAIL_MESSAGE_READY_FOR_SENDING
 // -----------------------------
-async function onEmailMessageReadyForSending(
-  { emailMessageId },
-  { messageContext }
-) {
+async function onEmailMessageReadyForSending({ emailMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     emailMessageSent,
   })
@@ -84,31 +68,18 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   const d = await knex('EmailMessage')
     .where('id', emailMessageId)
     .first('subject', 'body', 'htmlBody', 'to', 'attachments')
-  const {
-    subject,
-    htmlBody,
-    body,
-    to,
-    attachments: stringifiedAttachmentArray,
-  } = d || {}
+  const { subject, htmlBody, body, to, attachments: stringifiedAttachmentArray } = d || {}
   const attachments = JSON.parse(stringifiedAttachmentArray || '[]')
 
   // email handler
   const { sendEmail } = require('./emailUtil')
 
   // assume status is 'Sent'
-  const { Sent: messageStatusIdSent, Error: messageStatusIdError } =
-    await allMessageStatusToId()
+  const { Sent: messageStatusIdSent, Error: messageStatusIdError } = await allMessageStatusToId()
   let messageStatusId = messageStatusIdSent
 
   // send email
-  const sendResponse = await sendEmail(
-    to,
-    subject,
-    htmlBody,
-    body,
-    attachments
-  ).catch(err => {
+  const sendResponse = await sendEmail(to, subject, htmlBody, body, attachments).catch(err => {
     // set status to 'Error'
     messageStatusId = messageStatusIdError
     return err
@@ -188,18 +159,13 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   ])
   if (!processedTemplateFields.to) {
     processedTemplateFields.to = _.uniq(
-      _.compact(
-        [to, email, email2].map(address => address?.toLowerCase().trim())
-      )
+      _.compact([to, email, email2].map(address => address?.toLowerCase().trim()))
     ).join(',')
   }
   const attachmentProps = JSON.parse((data && data.attachments) || '[]')
 
   if (!_.isEmpty(attachmentProps)) {
-    processedTemplateFields.attachments = await generateAttachments(
-      attachmentProps,
-      data
-    )
+    processedTemplateFields.attachments = await generateAttachments(attachmentProps, data)
   }
 
   return processedTemplateFields
@@ -227,11 +193,7 @@ async function generateAttachments(attachmentProps, data) {
         minDate = startOfMonthUTC(previousMonth)
         maxDate = endOfMonthUTC(previousMonth)
       }
-      reportData = await getDeviceErrorHistoryForAttachment(
-        deviceId,
-        minDate,
-        maxDate
-      )
+      reportData = await getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate)
     }
 
     if (reportData) {

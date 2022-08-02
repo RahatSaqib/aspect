@@ -1,12 +1,12 @@
 import React from 'react'
 import { array, oneOfType, string } from 'prop-types'
-import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import isString from 'lodash/isString'
 
 import messages from '../messages'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -19,7 +19,7 @@ const CONTACTS = {
  */
 
 const ContactsCell = ({ value }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const valToArray = isString(value) ? value.split(',') : []
   if (valToArray.length > CONTACTS.MAX_VISIBLE_COUNT) {
     const tempContacts = [...valToArray]
@@ -36,17 +36,10 @@ const ContactsCell = ({ value }) => {
       </div>
     )
   }
-  if (
-    valToArray.length > 0 &&
-    valToArray.length <= CONTACTS.MAX_VISIBLE_COUNT
-  ) {
+  if (valToArray.length > 0 && valToArray.length <= CONTACTS.MAX_VISIBLE_COUNT) {
     return <div>{valToArray.join(', ')}</div>
   }
-  return (
-    <div className={cssClasses('message--not-configured')}>
-      {formatMessage(messages.notConfigured)}
-    </div>
-  )
+  return <div className={cssClasses('message--not-configured')}>{formatMessage(messages.notConfigured)}</div>
 }
 
 ContactsCell.defaultProps = {

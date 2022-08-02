@@ -6,17 +6,17 @@ import { Helmet } from 'react-helmet'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import find from 'lodash/find'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 import OperationalDashBoard from './OperationalDashBoard'
 import OperationalDailyStatus from './OperationalDailyStatus'
 
 import styles from './OperationalData.css'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
-const currentTabStyle = (currentTab, index) =>
-  currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive'
+const currentTabStyle = (currentTab, index) => (currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive')
 
 const messages = defineMessages({
   operationalDashboardTitle: {
@@ -30,7 +30,7 @@ const messages = defineMessages({
 })
 
 export const OperationalData = () => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
@@ -45,8 +45,7 @@ export const OperationalData = () => {
     },
   }
 
-  const { path: currentTab } =
-    find(tabsConfig, { path: pathname }) || tabsConfig.dashboard
+  const { path: currentTab } = find(tabsConfig, { path: pathname }) || tabsConfig.dashboard
 
   return (
     <div className={cssClasses('Container')}>
@@ -61,18 +60,12 @@ export const OperationalData = () => {
         >
           <Tab
             label={tabsConfig.dashboard.label}
-            className={cssClasses(
-              'tabs__tab',
-              currentTabStyle(currentTab, tabsConfig.dashboard.path)
-            )}
+            className={cssClasses('tabs__tab', currentTabStyle(currentTab, tabsConfig.dashboard.path))}
             value={tabsConfig.dashboard.path}
           />
           <Tab
             label={tabsConfig.dailyStatus.label}
-            className={cssClasses(
-              'tabs__tab',
-              currentTabStyle(currentTab, tabsConfig.dailyStatus.path)
-            )}
+            className={cssClasses('tabs__tab', currentTabStyle(currentTab, tabsConfig.dailyStatus.path))}
             value={tabsConfig.dailyStatus.path}
           />
         </Tabs>

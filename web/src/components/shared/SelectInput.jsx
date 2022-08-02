@@ -101,12 +101,7 @@ const renderFormField = props => {
         <MenuItem
           key={item.key}
           value={item.value}
-          label={
-            <MenuItemLabel
-              text={item.primaryText}
-              selectedItemStyle={selectedItemStyle}
-            />
-          }
+          label={<MenuItemLabel text={item.primaryText} selectedItemStyle={selectedItemStyle} />}
         >
           {item.primaryText}
         </MenuItem>

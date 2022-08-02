@@ -70,8 +70,7 @@ const messages = {
     },
     errorRateExplain: {
       id: 'pages.DeviceDetailProfile.errorRateExplain',
-      defaultMessage:
-        'Number of errors divided by number of results in the last 30 days',
+      defaultMessage: 'Number of errors divided by number of results in the last 30 days',
     },
     endedOn: {
       id: 'pages.DeviceDetailProfile.endedOn',

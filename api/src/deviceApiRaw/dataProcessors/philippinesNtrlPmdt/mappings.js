@@ -19,11 +19,7 @@ const mapPatientData = (payload, ntrlLabRequestId) => {
     patientNameId += ` ${payload['Middle Initial']}`
   }
   return {
-    id:
-      payload['TB Case Number'] ||
-      patientNameId ||
-      payload['Lab No 1'] ||
-      ntrlLabRequestId,
+    id: payload['TB Case Number'] || patientNameId || payload['Lab No 1'] || ntrlLabRequestId,
     serialNumber: payload['Serial Number'],
     mrfDateRequested: payload['MRF Date Requested'],
     referringHealthFacility: payload['Referring Health Facility'],
@@ -55,8 +51,7 @@ const mapPatientData = (payload, ntrlLabRequestId) => {
     testRequestedLpa: payload['Test Requested LPA'],
     testRequestedGx: payload['Test Requested Gx'],
     testRequestedTbLamp: payload['Test Requested TB LAMP'],
-    testRequestedParagonimiasis:
-      payload['Test Requested Paragonimiasis'] || null,
+    testRequestedParagonimiasis: payload['Test Requested Paragonimiasis'] || null,
     dateTransferedToDst: payload['Date transfered to DST'],
     cultureMethod: payload['Culture Method'],
     presumptiveDsOrDr: payload['Presumptive DS or DR'],
@@ -182,13 +177,8 @@ const resultDataMappings = {
           'LPA Ethionamide/Prothionamide',
         ].forEach(categoryType => {
           // Includes Low-Resistance Detected, Resistance Detected, etc
-          if (
-            payload[categoryType] &&
-            payload[categoryType].indexOf('Resistance Detected') > -1
-          )
-            detectedResistances.push(
-              categoryType.replace('LPA', '').replace('Result', '').trim()
-            )
+          if (payload[categoryType] && payload[categoryType].indexOf('Resistance Detected') > -1)
+            detectedResistances.push(categoryType.replace('LPA', '').replace('Result', '').trim())
         })
         return detectedResistances
       }
@@ -245,14 +235,7 @@ const resultDataMappings = {
       }
     },
     isPayloadValid: payload =>
-      objectHasValues(
-        pick(payload, [
-          'Smear Result 1',
-          'Smear Result 2',
-          'Smear Final Result',
-          'Smear Date Released',
-        ])
-      ),
+      objectHasValues(pick(payload, ['Smear Result 1', 'Smear Result 2', 'Smear Final Result', 'Smear Date Released'])),
   },
   genexpert: {
     mapResultData: payload => {
@@ -273,14 +256,7 @@ const resultDataMappings = {
       }
     },
     isPayloadValid: payload =>
-      objectHasValues(
-        pick(payload, [
-          'Gx Processing Date',
-          'Gx MTB',
-          'Gx Rifampicin',
-          'Gx Date Released',
-        ])
-      ),
+      objectHasValues(pick(payload, ['Gx Processing Date', 'Gx MTB', 'Gx Rifampicin', 'Gx Date Released'])),
   },
   tblamp: {
     mapResultData: payload => {
@@ -296,8 +272,7 @@ const resultDataMappings = {
         },
       }
     },
-    isPayloadValid: payload =>
-      objectHasValues(pick(payload, ['TB LAMP Result'])),
+    isPayloadValid: payload => objectHasValues(pick(payload, ['TB LAMP Result'])),
   },
 }
 

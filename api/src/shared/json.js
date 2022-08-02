@@ -17,16 +17,10 @@ function deepMerger(to, from) {
   if (_.isObject(to)) {
     return _.mergeWith(to, from, deepMerger)
   }
-  if (
-    (_.isNull(to) || _.isUndefined(to)) &&
-    !(_.isNull(from) || _.isUndefined(from))
-  ) {
+  if ((_.isNull(to) || _.isUndefined(to)) && !(_.isNull(from) || _.isUndefined(from))) {
     return from
   }
-  if (
-    (_.isNull(from) || _.isUndefined(from)) &&
-    !(_.isNull(to) || _.isUndefined(to))
-  ) {
+  if ((_.isNull(from) || _.isUndefined(from)) && !(_.isNull(to) || _.isUndefined(to))) {
     return to
   }
   if (_.isEmpty(to) && !_.isEmpty(from)) {

@@ -28,9 +28,7 @@ class EmailTestContext {
       const {
         auth: { user },
       } = this
-      const { userId } = await knex('User')
-        .where({ name: user })
-        .first('id as userId')
+      const { userId } = await knex('User').where({ name: user }).first('id as userId')
       assert.isOk(userId, `Cannot find user ${user}`)
       this.userId = userId
 
@@ -95,13 +93,8 @@ class EmailTestContext {
         })
       })
 
-      if (
-        this.deviceOperationsToDelete &&
-        this.deviceOperationsToDelete.length > 0
-      ) {
-        await knex('DeviceOperation')
-          .whereIn('id', this.deviceOperationsToDelete)
-          .del()
+      if (this.deviceOperationsToDelete && this.deviceOperationsToDelete.length > 0) {
+        await knex('DeviceOperation').whereIn('id', this.deviceOperationsToDelete).del()
       }
 
       await queuePurge()

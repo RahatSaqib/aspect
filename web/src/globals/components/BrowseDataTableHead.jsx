@@ -6,12 +6,7 @@ const enhance = compose(
   pure,
   withHandlers({
     onSortColumn:
-      ({
-        navigate,
-        location,
-        sortColumnKey: sortCol,
-        sortColumnDir: sortDir,
-      }) =>
+      ({ navigate, location, sortColumnKey: sortCol, sortColumnDir: sortDir }) =>
       nextSortCol => {
         const searchParams = new URLSearchParams(location.search)
 

@@ -2,11 +2,12 @@ import React from 'react'
 import SelectInput from './SelectInput'
 import { timezones } from '../../filter/hardcoded'
 
+/**
+ * @deprecated Use TimeZoneSelect from MigratedComponents
+ */
 const renderFormField = props => {
   const { name, label, disabled, fullWidth, defaultTimezoneText } = props
-  const timezoneData = defaultTimezoneText
-    ? [{ id: null, name: defaultTimezoneText }].concat(timezones)
-    : timezones
+  const timezoneData = defaultTimezoneText ? [{ id: null, name: defaultTimezoneText }].concat(timezones) : timezones
   return (
     <SelectInput
       name={name}

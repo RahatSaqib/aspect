@@ -25,12 +25,7 @@ describe('Module Replaced Issue testing', () => {
   const deviceName = 'This Lab Has Results!'
 
   const context = createContext()
-  const {
-    beforeCreateGxAlertApiKey,
-    useGxAlertDeviceId,
-    basicDevicePayload,
-    afterCleanUp,
-  } = context
+  const { beforeCreateGxAlertApiKey, useGxAlertDeviceId, basicDevicePayload, afterCleanUp } = context
   let { deviceAuth } = context
   beforeEach(async () => {
     await beforeCreateGxAlertApiKey({
@@ -75,15 +70,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    let payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
     response = await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
@@ -112,15 +101,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
 
     // Should create one module replaced issue
     response = await postToDeviceApi({
@@ -128,9 +111,7 @@ describe('Module Replaced Issue testing', () => {
       payload,
     })
 
-    let waitForModuleReplacedIssue = waitForAction(
-      resultModuleReplaced(response.body.result.id)
-    )
+    let waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.result.id))
     await waitForModuleReplacedIssue
     await waitForIdle()
 
@@ -155,9 +136,7 @@ describe('Module Replaced Issue testing', () => {
       payload,
     })
 
-    waitForModuleReplacedIssue = waitForAction(
-      resultModuleReplaced(response.body.result.id)
-    )
+    waitForModuleReplacedIssue = waitForAction(resultModuleReplaced(response.body.result.id))
     await waitForModuleReplacedIssue
     await waitForIdle()
 
@@ -203,15 +182,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    let payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
     response = await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
@@ -239,15 +212,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
 
     // Should create one module replaced issue
     response = await postToDeviceApi({
@@ -291,15 +258,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    let payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
     await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
@@ -328,15 +289,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
 
     // Should NOT create module replaced issue
     await postToDeviceApi({
@@ -380,15 +335,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    let payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
     await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
@@ -416,15 +365,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
 
     // Should NOT create module replaced issue
     await postToDeviceApi({
@@ -469,15 +412,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    let payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    let payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
     await postToDeviceApi({
       authHeader: deviceAuth,
       payload,
@@ -505,15 +442,9 @@ describe('Module Replaced Issue testing', () => {
       },
     }
 
-    payload = _.merge(
-      {},
-      basicDevicePayload,
-      { name: deviceName },
-      basicResultPayload,
-      {
-        result,
-      }
-    )
+    payload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+      result,
+    })
 
     // Should NOT create module replaced issue
     await postToDeviceApi({
@@ -533,11 +464,5 @@ async function getIssuesByDeviceId(knex, deviceId) {
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .where({ 'i.deviceId': deviceId })
     .orderBy('i.id')
-    .select(
-      'i.id',
-      'it.externalId as issueType',
-      'i.deviceId',
-      'is.externalId as issueStatus',
-      'i.data'
-    )
+    .select('i.id', 'it.externalId as issueType', 'i.deviceId', 'is.externalId as issueStatus', 'i.data')
 }

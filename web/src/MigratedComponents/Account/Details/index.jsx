@@ -50,11 +50,9 @@ const ContactDetailsFormFormik = () => {
     isError,
     data: queryData,
     error,
-  } = useQuery(
-    query?.key,
-    async () => fetchWrapperForQueries({ endpoint: query?.endpoint }),
-    { enabled: query?.enabled || false }
-  )
+  } = useQuery(query?.key, async () => fetchWrapperForQueries({ endpoint: query?.endpoint }), {
+    enabled: query?.enabled || false,
+  })
 
   if (isError) {
     throw new Error(error)
@@ -99,10 +97,7 @@ const ContactDetailsFormFormik = () => {
       }
       if (type === FORM_METHOD.SELF) {
         mutation.mutate({
-          values: transformOutputValues(values, [
-            ...baseOmitFields,
-            'canLogIn',
-          ]),
+          values: transformOutputValues(values, [...baseOmitFields, 'canLogIn']),
           endpoint: '/account-details/current-contact',
           method: 'PUT',
         })
@@ -139,10 +134,7 @@ const ContactDetailsFormFormik = () => {
 
   useEffect(() => {
     switch (true) {
-      case !!personId &&
-        personId !== FORM_METHOD.ADD &&
-        type !== FORM_METHOD.UPDATE &&
-        personId !== editor.userId:
+      case !!personId && personId !== FORM_METHOD.ADD && type !== FORM_METHOD.UPDATE && personId !== editor.userId:
         setType(FORM_METHOD.UPDATE)
         setQuery({
           key: [`get-user-${personId}`, personId],
@@ -152,8 +144,7 @@ const ContactDetailsFormFormik = () => {
         buildItems(setItems)
         break
 
-      case !personId ||
-        (type !== FORM_METHOD.SELF && personId === editor.userId):
+      case !personId || (type !== FORM_METHOD.SELF && personId === editor.userId):
         setType(FORM_METHOD.SELF)
         setQuery({
           key: ['get-current-user'],
@@ -181,9 +172,7 @@ const ContactDetailsFormFormik = () => {
       id: 'submit',
       type: 'submit',
       color: 'primary',
-      label: formatMessage(
-        type === FORM_METHOD.ADD ? messages.create : messages.save
-      ),
+      label: formatMessage(type === FORM_METHOD.ADD ? messages.create : messages.save),
       component: FormSubmit,
       action: handleSubmit,
     }
@@ -205,8 +194,7 @@ const ContactDetailsFormFormik = () => {
     }
 
     switch (true) {
-      case (type === FORM_METHOD.ADD || type === FORM_METHOD.SELF) &&
-        actions[0]?.label !== baseSubmit.label:
+      case (type === FORM_METHOD.ADD || type === FORM_METHOD.SELF) && actions[0]?.label !== baseSubmit.label:
         setActions([baseSubmit])
         break
 
@@ -232,19 +220,13 @@ const ContactDetailsFormFormik = () => {
 
   const mutation = useMutation(
     ({ values, endpoint, method, customErrorNotifications }) => {
-      return fetchWrapperForQueries({
-        endpoint,
-        method,
-        params: { ...values },
-        customErrorNotifications,
-      })
+      return fetchWrapperForQueries({ endpoint, method, params: { ...values }, customErrorNotifications })
     },
     {
       onError: error => {
         throw new Error(error)
       },
-      onSuccess: ({ data: response, ok }) =>
-        mutationSuccess(queryData, response, navigate, type, ok),
+      onSuccess: ({ data: response, ok }) => mutationSuccess(queryData, response, navigate, type, ok),
     }
   )
 
@@ -272,13 +254,7 @@ const ContactDetailsFormFormik = () => {
     newValues.cell = replace(values.cell, / /g, '')
     /* eslint-disable lodash/collection-return */
     map(newValues, (value, key) => {
-      if (
-        key === 'undefined' ||
-        value === '' ||
-        isNil(value) ||
-        includes(omitValues, key)
-      )
-        delete newValues[key]
+      if (key === 'undefined' || value === '' || isNil(value) || includes(omitValues, key)) delete newValues[key]
     })
     return newValues
   }

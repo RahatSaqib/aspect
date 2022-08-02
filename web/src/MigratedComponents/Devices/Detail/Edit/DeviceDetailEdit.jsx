@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
-import { defineMessages, injectIntl, useIntl } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import Immutable from 'immutable'
 import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
@@ -19,6 +19,7 @@ import ConnectedTagInput from '../../../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../../../tag/TagRedux'
 
 import styles from '../DeviceDetail.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -49,10 +50,7 @@ const enhance = compose(
   injectIntl,
   connect(
     (state, props) => {
-      const deviceTags = state.tag.tags.getIn(
-        ['device', props.device.get('id')],
-        Immutable.List()
-      )
+      const deviceTags = state.tag.tags.getIn(['device', props.device.get('id')], Immutable.List())
 
       return {
         deviceTags,
@@ -137,7 +135,7 @@ export const DeviceDetailEdit = ({
   handleSubmit,
   onDeviceTagChange,
 }) => {
-  const intl = useIntl()
+  const intl = useI18n()
   const deviceName = device.get('name')
 
   return (

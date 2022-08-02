@@ -15,11 +15,7 @@ async function up(knex) {
 
   await knex.schema.alterTable('Partner', tbl => {
     tbl.integer('dueDaysInventoryStockout').notNullable().default(30).alter()
-    tbl
-      .integer('dueDaysInventoryStockExpiring')
-      .notNullable()
-      .default(30)
-      .alter()
+    tbl.integer('dueDaysInventoryStockExpiring').notNullable().default(30).alter()
   })
 }
 

@@ -1,84 +1,335 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 
-import { EditableFieldsFormContainer } from './EditableFieldsForm'
+import { useNavigate } from 'react-router-dom'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import isEqual from 'lodash/isEqual'
+import isEmpty from 'lodash/isEmpty'
 import messages from '../messages'
 import { Site } from '../../../../site/SiteRedux'
+import { getLatLongFromAddress, convertToFloat } from '../../../../site/utils/address'
 
 import styles from '../SiteDetail.css'
+import useUpdateSite from '../../../../Hooks/site/useUpdateSite'
+import useUpdateTagByTypeAndId from '../../../../Hooks/tag/useUpdateTagByTypeAndId'
+import LocationSelector from '../../../LocationSelector'
+import TimezoneSelect from '../../../TimezoneSelect'
+import SiteTagInput from '../../../SiteTagInput'
+import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
+import AspectButton from '../../../../components/shared/AspectButton'
+import AspectDialog from '../../../../components/shared/AspectDialog'
+import PermissionsProvider from '../../../../Providers/PermissionsProvider'
+import useI18n from '../../../../Hooks/i18n/useI18n'
+import useDeleteSite from '../../../../Hooks/site/useDeleteSite'
+import SiteTypeSelect from './SiteTypeSelect'
 
 const cssClasses = classnames.bind(styles)
 
-const SiteForm = props => {
+const SiteForm = ({ site, siteTags, onLatLongChange }) => {
+  const { formatMessage } = useI18n()
+  const navigate = useNavigate()
+  const [showConfirmation, setShowConfirmation] = useState(false)
+
+  const { mutate: updateSite } = useUpdateSite(site.id)
+  const { mutate: updateTags } = useUpdateTagByTypeAndId('site', site.id)
+  const { mutate: deleteSite } = useDeleteSite(site.id)
+
+  const [editSite, setEditSite] = useState({ ...site })
+
+  const isPristine = isEqual(site, editSite)
+
+  const updateSiteLatLong = async address => {
+    getLatLongFromAddress(address).then(({ lat, lng }) => {
+      setEditSite({ ...editSite, latitude: convertToFloat(lat, 6), longitude: convertToFloat(lng, 6) })
+      onLatLongChange({ lat: convertToFloat(lat, 6), lng: convertToFloat(lng, 6) })
+    })
+  }
+
   const handleSubmit = async data => {
-    const { site, onSubmit, updateLatLongFromFormAddress } = props
-    if (!data.get('longitude') || !data.get('latitude')) {
-      await updateLatLongFromFormAddress()
+    if (!data.longitude || !data.latitude) {
+      await updateSiteLatLong({
+        country: editSite.country,
+        state: editSite.state,
+        lga: editSite.lga,
+        city: editSite.city,
+        address: editSite.address,
+      })
     }
-    return onSubmit(site.get('id'))
+    return updateSite(editSite)
   }
-  const {
-    site,
-    siteTags,
-    formatMessage,
-    onSiteTagChange,
-    updateLatLongFromFormAddress,
-  } = props
-  const extraValuesForMap = {
-    // SiteLocationFormMap reads the values from redux-form to construct names for Geocoder
-    country: site.get('country'),
-    state: site.get('state'),
-    lga: site.get('lga'),
+
+  const handleDelete = () => {
+    deleteSite()
+    setShowConfirmation(false)
+    navigate(-2)
   }
-  const initialValues = {
-    ...extraValuesForMap,
-    // Map API fields to form fields
-    name: site.get('name'),
-    shortName: site.get('shortName'),
-    externalId: site.get('externalId') || '',
-    timezone: site.get('timezone') || /* FIXME */ '',
-    countryId: site.get('countryId'),
-    stateId: site.get('stateId'),
-    lgaId: site.get('lgaId'),
-    address: site.get('street1'),
-    address2: site.get('street2') || /* FIXME */ '',
-    city: site.get('city'),
-    zip: site.get('zip'),
-    id: site.get('id'),
-    longitude: site.get('longitude'),
-    latitude: site.get('latitude'),
+
+  function handleDeletePrompt() {
+    setShowConfirmation(true)
   }
-  const labels = {
-    name: formatMessage(messages.fieldName),
-    shortName: formatMessage(messages.fieldShortName),
-    externalId: formatMessage(messages.fieldExternalId),
-    timezone: formatMessage(messages.fieldTimeZone),
-    address: formatMessage(messages.fieldAddress),
-    address2: formatMessage(messages.fieldAddress2),
-    city: formatMessage(messages.fieldCity),
-    zip: formatMessage(messages.fieldZip),
-    longitude: formatMessage(messages.fieldLongitude),
-    latitude: formatMessage(messages.fieldLatitude),
-    tags: formatMessage(messages.fieldTags),
-    noMatch: formatMessage(messages.fieldNoMatchTags),
-  }
+
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
-          <EditableFieldsFormContainer
-            formatMessage={formatMessage}
-            labels={labels}
-            id={site.get('id')}
-            enableReinitialize
-            initialValues={initialValues}
-            siteTags={siteTags}
-            onSubmit={handleSubmit}
-            onSiteTagChange={onSiteTagChange}
-            updateLatLongFromFormAddress={updateLatLongFromFormAddress}
-          />
+          <div className={cssClasses('container')}>
+            <TextField
+              className={cssClasses('container__field')}
+              name="name"
+              label={formatMessage(messages.fieldName)}
+              margin="normal"
+              fullWidth
+              value={editSite.name}
+              onChange={e => setEditSite({ ...editSite, name: e.target.value })}
+              error={!isPristine && isEmpty(editSite.name)}
+              helperText={!isPristine && isEmpty(editSite.name) && `${formatMessage(messages.fieldName)} is required`}
+            />
+            <TextField
+              className={cssClasses('container__field')}
+              name="shortName"
+              label={formatMessage(messages.fieldShortName)}
+              margin="normal"
+              fullWidth
+              value={editSite.shortName}
+              onChange={e => setEditSite({ ...editSite, shortName: e.target.value })}
+              error={!isPristine && isEmpty(editSite.shortName)}
+              helperText={
+                !isPristine && isEmpty(editSite.name) && `${formatMessage(messages.fieldShortName)} is required`
+              }
+            />
+            <TextField
+              className={cssClasses('container__field')}
+              name="externalId"
+              label={formatMessage(messages.fieldExternalId)}
+              margin="normal"
+              fullWidth
+              value={editSite.externalId || ''}
+              onChange={e => setEditSite({ ...editSite, externalId: e.target.value })}
+            />
+          </div>
+          <div className={cssClasses('container')}>
+            <SiteTypeSelect
+              name="siteType"
+              width="33%"
+              label={formatMessage(messages.fieldSiteType)}
+              value={editSite.siteTypeId}
+              onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
+              disabled
+            />
+            <TextField
+              className={cssClasses('container__field')}
+              name="address"
+              label={formatMessage(messages.fieldAddress)}
+              onBlur={() =>
+                updateSiteLatLong({
+                  country: editSite.country,
+                  state: editSite.state,
+                  lga: editSite.lga,
+                  city: editSite.value,
+                  address: editSite.street1,
+                })
+              }
+              margin="normal"
+              fullWidth
+              value={editSite.street1}
+              onChange={e => setEditSite({ ...editSite, street1: e.target.value })}
+            />
+            <TextField
+              className={cssClasses('container__field')}
+              name="address2"
+              label={formatMessage(messages.fieldAddress2)}
+              onBlur={() =>
+                updateSiteLatLong({
+                  country: editSite.country,
+                  state: editSite.state,
+                  lga: editSite.lga,
+                  city: editSite.value,
+                  address: editSite.street1,
+                })
+              }
+              margin="normal"
+              fullWidth
+              value={editSite.street2 || ''}
+              onChange={e => setEditSite({ ...editSite, street2: e.target.value })}
+            />
+          </div>
+          <div className={cssClasses('container')}>
+            <LocationSelector
+              countryId={editSite.countryId}
+              stateId={editSite.stateId}
+              lgaId={editSite.lgaId}
+              onChange={location => {
+                setEditSite({
+                  ...editSite,
+                  countryId: location.country.id,
+                  country: location.country.name,
+                  stateId: location.state.id,
+                  state: location.state.name,
+                  lgaId: location.lga.id,
+                  lga: location.lga.name,
+                })
+                updateSiteLatLong({
+                  country: location.country.name,
+                  state: location.state.name,
+                  lga: location.lga.name,
+                  city: editSite.city,
+                  address: editSite.street1,
+                })
+              }}
+            />
+          </div>
+          {/*  */}
+          <div className={cssClasses('container')}>
+            <TextField
+              className={cssClasses('container__field')}
+              name="city"
+              label={formatMessage(messages.fieldCity)}
+              margin="normal"
+              fullWidth
+              value={editSite.city}
+              onBlur={() =>
+                updateSiteLatLong({
+                  country: editSite.country,
+                  state: editSite.state,
+                  lga: editSite.lga,
+                  city: editSite.value,
+                  address: editSite.street1,
+                })
+              }
+              onChange={e => setEditSite({ ...editSite, city: e.target.value })}
+            />
+            <TextField
+              className={cssClasses('container__field')}
+              name="zip"
+              label={formatMessage(messages.fieldZip)}
+              onBlur={() =>
+                updateSiteLatLong({
+                  country: editSite.country,
+                  state: editSite.state,
+                  lga: editSite.lga,
+                  city: editSite.value,
+                  address: editSite.street1,
+                })
+              }
+              margin="normal"
+              fullWidth
+              value={editSite.zip}
+              onChange={e => setEditSite({ ...editSite, zip: e.target.value })}
+            />
+            <SiteTypeSelect
+              name="belongsTo"
+              width="33%"
+              label={formatMessage(messages.fieldBelongTo)}
+              value={editSite.parentWarehouseId}
+              onChange={parentWarehouseId => setEditSite({ ...editSite, parentWarehouseId })}
+            />
+          </div>
+          <div className={cssClasses('container', 'coordinate')}>
+            <TextField
+              className={cssClasses('container__field')}
+              name="longitude"
+              label={formatMessage(messages.fieldLongitude)}
+              margin="normal"
+              fullWidth
+              value={editSite.longitude}
+              onChange={e => {
+                setEditSite({ ...editSite, longitude: e.target.value })
+                onLatLongChange({ lat: editSite.latitude, lng: Number(e.target.value) })
+              }}
+            />
+            <TextField
+              className={cssClasses('container__field')}
+              name="latitude"
+              label={formatMessage(messages.fieldLatitude)}
+              margin="normal"
+              fullWidth
+              value={editSite.latitude}
+              onChange={e => {
+                setEditSite({ ...editSite, latitude: e.target.value })
+                onLatLongChange({ lat: Number(e.target.value), lng: editSite.longitude })
+              }}
+            />
+            <div className={cssClasses('coordinate__button')}>
+              <AspectButton
+                color="primary"
+                variant="contained"
+                onClick={() =>
+                  updateSiteLatLong({
+                    country: editSite.country,
+                    state: editSite.state,
+                    lga: editSite.lga,
+                    city: editSite.value,
+                    address: editSite.street1,
+                  })
+                }
+              >
+                {formatMessage(messages.buttonSetBasedonAddress)}
+              </AspectButton>
+            </div>
+          </div>
+          <div className={cssClasses('container', 'coordinate')}>
+            <TimezoneSelect
+              name="timezone"
+              label={formatMessage(messages.fieldTimeZone)}
+              fullWidth
+              onChange={timezone => setEditSite({ ...editSite, timezone })}
+              value={editSite.timezone || ''}
+            />
+            <ReadOnlyField
+              label={formatMessage(messages.fieldTags)}
+              value={siteTags}
+              format={v => <SiteTagInput qryId={editSite.id} onTagChange={tags => updateTags(tags)} value={v} />}
+            />
+          </div>
+          <div className={cssClasses('container', 'coordinate')}>
+            <TextField
+              label={formatMessage(messages.fieldNotes)}
+              multiline
+              rows={4}
+              fullWidth
+              defaultValue={editSite.notes}
+              onChange={e => setEditSite({ ...editSite, notes: e.target.value })}
+            />
+          </div>
+          <Button color="secondary" variant="contained" onClick={handleSubmit} disabled={isPristine}>
+            {formatMessage(messages.buttonUpdate)}
+          </Button>
+          <PermissionsProvider permissions={['site:admin']}>
+            <Button
+              disabled={!isPristine}
+              style={{
+                marginLeft: '1rem',
+                backgroundColor: !isPristine ? 'rgba(0, 0, 0, 0.08)' : 'red',
+                color: 'white',
+              }}
+              type="button"
+              color="error"
+              variant="contained"
+              onClick={handleDeletePrompt}
+            >
+              {formatMessage(messages.buttonDelete)}
+            </Button>
+          </PermissionsProvider>
+
+          <AspectDialog
+            actions={[
+              <Button color="primary" onClick={() => setShowConfirmation(false)}>
+                {formatMessage(messages.cancel)}
+              </Button>,
+              <Button color="primary" variant="contained" onClick={() => handleDelete()}>
+                {formatMessage(messages.yes)}
+              </Button>,
+            ]}
+            maxWidth="sm"
+            open={showConfirmation}
+            onClose={() => setShowConfirmation(false)}
+          >
+            <h3>{formatMessage(messages.deleteSiteConfirmationTitle)}</h3>
+            <div style={{ marginTop: '15px' }}>{formatMessage(messages.deleteSiteConfirmationMessage)}</div>
+          </AspectDialog>
         </Card>
       </section>
     </div>
@@ -86,12 +337,9 @@ const SiteForm = props => {
 }
 
 SiteForm.propTypes = {
-  formatMessage: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  onSiteTagChange: PropTypes.func.isRequired,
-  updateLatLongFromFormAddress: PropTypes.func.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
+  onLatLongChange: PropTypes.func.isRequired,
 }
 SiteForm.defaultProps = {
   siteTags: [],

@@ -30,10 +30,7 @@ class TruenatLogin extends SynchronousDataProcessor {
   async processRequest() {
     const { request } = this
     const { payload } = request
-    const deviceApiKeyAuthResult = await lookupUsingCredentials(
-      payload.Username,
-      payload.Password
-    )
+    const deviceApiKeyAuthResult = await lookupUsingCredentials(payload.Username, payload.Password)
     const deviceId = _.get(deviceApiKeyAuthResult, 'data.deviceId')
     if (deviceId) {
       await postPayloadFromDevice({

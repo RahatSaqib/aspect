@@ -6,17 +6,12 @@ import Select from 'react-select'
 import useI18n from '../../Hooks/i18n/useI18n'
 import { getAspectTheme } from './index.jsx'
 import { useAuthState } from '../../Providers/AuthProvider'
-import {
-  fetchCountries,
-  fetchStatesForCountry,
-} from '../../geography/GeographyRedux'
+import { fetchCountries, fetchStatesForCountry } from '../../geography/GeographyRedux'
 import messages from './messages'
 import ClearIndicator from './ClearIndicator'
 
 const getCountry = (geographyComposed, countryId) =>
-  geographyComposed
-    .getIn(['countriesForLocationSelector', 'items'])
-    .find(country => +country.get('id') === +countryId)
+  geographyComposed.getIn(['countriesForLocationSelector', 'items']).find(country => +country.get('id') === +countryId)
 const getStates = countryComposed => {
   if (countryComposed?.getIn(['children', 'lastRefreshed'])) {
     return countryComposed
@@ -41,10 +36,7 @@ const FilterByStateDropDown = props => {
    * 1 - get composed geography/country from the store
    */
   const geographyComposed = useSelector(({ geography }) => geography)
-  const countryComposed = useMemo(
-    () => getCountry(geographyComposed, countryId),
-    [geographyComposed, countryId]
-  )
+  const countryComposed = useMemo(() => getCountry(geographyComposed, countryId), [geographyComposed, countryId])
   /**
    * 2 - get and memoize states from current country object
    */
@@ -72,8 +64,7 @@ const FilterByStateDropDown = props => {
     props: { actionComponentProps: config, action },
   } = props
   const { selectorModifiers } = config
-  const { identifier, isClearable, isSearchable } =
-    selectorModifiers[0] || false
+  const { identifier, isClearable, isSearchable } = selectorModifiers[0] || false
 
   const handleChange = (val, type) => {
     const { action: selectAction } = type

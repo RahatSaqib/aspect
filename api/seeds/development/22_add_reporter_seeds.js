@@ -21,13 +21,8 @@ async function seed(knex) {
   )
 
   const resultDownload = await knex('ResultTreatmentStatusLog')
-  const reporterLoggedUser = await knex('RefreshToken as tf')
-    .distinct()
-    .select('tf.createdOn')
-  const reporterCreatedOn = _.map(
-    reporterLoggedUser,
-    loggedDetail => loggedDetail.createdOn
-  )
+  const reporterLoggedUser = await knex('RefreshToken as tf').distinct().select('tf.createdOn')
+  const reporterCreatedOn = _.map(reporterLoggedUser, loggedDetail => loggedDetail.createdOn)
 
   await Promise.each(resultDownload, results =>
     upsertSingle(knex, 'ResultDownloadLog', ['resultId'], {

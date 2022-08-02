@@ -2,10 +2,7 @@ import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { formatDate } from '../../shared/utils/dateFormat'
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 import styles from './DeviceApiKeyTableRow.css'
@@ -14,14 +11,7 @@ const cssClasses = classnames.bind(styles)
 
 const enhance = identity
 
-const DeviceApiKeyTableRow = ({
-  deviceApiKey,
-  disabled,
-  checked,
-  onSelectedChange,
-  onRevokedChange,
-  ...restProps
-}) => (
+const DeviceApiKeyTableRow = ({ deviceApiKey, disabled, checked, onSelectedChange, onRevokedChange, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell>
       <AspectCheckbox

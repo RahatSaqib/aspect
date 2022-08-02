@@ -17,11 +17,7 @@ export const getMenuItems = ({ formatMessage }, onSelect) => {
     </div>,
     groupedOptions({ formatMessage }).map(({ label, options }) => (
       <div key={label}>
-        <MenuItem
-          classes={{ root: cssClasses('menu-section-header') }}
-          dense
-          disabled
-        >
+        <MenuItem classes={{ root: cssClasses('menu-section-header') }} dense disabled>
           {label}
         </MenuItem>
         {options.map(({ id, name }) => {
@@ -36,11 +32,7 @@ export const getMenuItems = ({ formatMessage }, onSelect) => {
               onClick={() => onSelect(id)}
               title={title}
             >
-              <IconProvider
-                icon="BsBraces"
-                title={title}
-                className={cssClasses('menu-item-icon')}
-              />
+              <IconProvider icon="BsBraces" title={title} className={cssClasses('menu-item-icon')} />
               {name}
             </MenuItem>
           )

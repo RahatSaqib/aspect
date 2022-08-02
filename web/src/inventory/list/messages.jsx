@@ -88,8 +88,7 @@ const messages = defineMessages({
   },
   excludedLotInTransit: {
     id: 'pages.InventoryItemsList.inTransitFromSiteName',
-    defaultMessage:
-      '* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
+    defaultMessage: '* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
   },
   never: {
     id: 'pages.InventoryItemsList.never',
@@ -125,8 +124,7 @@ const messages = defineMessages({
   },
   inventoryOnMandatoryNote: {
     id: 'pages.InventoryItemsList.inventoryOnHand.mandatoryNote',
-    defaultMessage:
-      'This is a mandatory field its mandatory and must be at least 3 characters long',
+    defaultMessage: 'This is a mandatory field its mandatory and must be at least 3 characters long',
   },
   consumableReason: {
     id: 'pages.InventoryItemsList.inventoryOnHand.consumableReason',

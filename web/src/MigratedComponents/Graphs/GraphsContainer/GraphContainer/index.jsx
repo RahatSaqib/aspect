@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import Grid from '@material-ui/core/Grid'
 
@@ -13,31 +12,20 @@ import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
 import styles from '../GraphsContainer.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
-const GraphContainer = ({
-  assaysFromState,
-  classNames,
-  config,
-  size,
-  whiteListed,
-}) => {
+const GraphContainer = ({ assaysFromState, classNames, config, size, whiteListed }) => {
   const { title, id, selectorModifiers = false, isOwnerReady = true } = config
-  const { formatMessage: intlFormatMessage } = useIntl()
+  const { formatMessage: intlFormatMessage } = useI18n()
   const { graphType, graphRenderPermissions } = config
   const { innerSize, outerSize } = size
-  const {
-    identifier,
-    isClientSide,
-    component: ClientSideFilter,
-  } = selectorModifiers[0] || false
+  const { identifier, isClientSide, component: ClientSideFilter } = selectorModifiers[0] || false
   const [graphParams, setGraphParams] = useState(false)
   const [clientSideFilters, setClientSideFilters] = useState(false)
   const [clientSideFilterOptions, setClientSideFilterOptions] = useState(false)
-  const permissions = whiteListed
-    ? [...whiteListed, ...graphRenderPermissions]
-    : graphRenderPermissions
+  const permissions = whiteListed ? [...whiteListed, ...graphRenderPermissions] : graphRenderPermissions
 
   const updateFromActionComponent = ({ identifier, selectedOption }) =>
     setGraphParams(extractOptionValue(identifier, selectedOption))
@@ -56,9 +44,7 @@ const GraphContainer = ({
               innerSize={innerSize}
               justify="center"
               action={params =>
-                isClientSide
-                  ? updateGraphClientSide(params)
-                  : updateFromActionComponent({ ...params })
+                isClientSide ? updateGraphClientSide(params) : updateFromActionComponent({ ...params })
               }
               actionComponent={
                 isClientSide
@@ -77,11 +63,7 @@ const GraphContainer = ({
               name={id}
               classNames={classNames}
             >
-              <Grid
-                container
-                spacing={8}
-                className={cssClasses('graph__containerGrid')}
-              >
+              <Grid container spacing={8} className={cssClasses('graph__containerGrid')}>
                 {graphType &&
                   graphType.map(graph => {
                     const { api: { params: { flags = [] } = {} } = {} } = graph

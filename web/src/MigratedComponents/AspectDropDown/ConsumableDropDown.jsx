@@ -18,9 +18,7 @@ const config = {
   messages,
 }
 
-const ConsumableDropdown = ({ action }) => (
-  <AspectDropDown props={config} action={action} />
-)
+const ConsumableDropdown = ({ action }) => <AspectDropDown props={config} action={action} />
 
 ConsumableDropdown.propTypes = {
   action: PropTypes.func.isRequired,

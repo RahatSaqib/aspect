@@ -3,32 +3,19 @@ const { subDays } = require('date-fns')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const locales = require('date-fns/locale')
-const {
-  endOfMonth,
-  endOfYear,
-  startOfMonth,
-  subMonths,
-  addMonths,
-} = require('date-fns')
+const { endOfMonth, endOfYear, startOfMonth, subMonths, addMonths } = require('date-fns')
 
-const { getResultsForExport } = require('./service')
-const { knex } = require('../db')
-const { getUser } = require('../auth/service')
-const { getConstraints } = require('../auth/constraints')
-const {
-  exportData,
-  getMaxLimitPlaceHolders,
-  getBaseReplacements,
-} = require('../shared/excel')
+const { getResultsForExport } = require('../service')
+const { knex } = require('../../db')
+const { getUser } = require('../../auth/service')
+const { getConstraints } = require('../../auth/constraints')
+const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../../shared/excel')
 
-const { getAllAssaySchemas } = require('../assay/service')
+const { getAllAssaySchemas } = require('../../assay/service')
 
-const getPositiveCategoriesExternalIds = require('../resultCategory/service')
-const {
-  getGroupBy,
-  getClinicalIndicatorQueryForResultsTable,
-  processGroupedQuery,
-} = require('./service')
+const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
+const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
+const { getGroupBy, getClinicalIndicatorQueryForResultsTable, processGroupedQuery } = require('../service')
 
 /**
  * 'header' is for 1st row in CSV file,
@@ -62,17 +49,9 @@ async function getAllResultsForExport(auth, query) {
   query.size = query.maxNumberOfRecords || 50000
 
   // For performance issues this enforce to use the result_partner_endedOn_index Index, because it helps to reduce query time down to  60%
-  if (_.isNil(query.minDate))
-    query.minDate = subDays(
-      new Date(query.maxDate),
-      query.daysToSubstract || 360
-    )
+  if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 360)
 
-  const {
-    data,
-    extraColumns = [],
-    total,
-  } = await getResultsForExport(auth, query)
+  const { data, extraColumns = [], total } = await getResultsForExport(auth, query)
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
@@ -106,8 +85,7 @@ async function getAllResultsForExport(auth, query) {
     ...columnsFromAssaySchema,
     ...columnsFromResultForms,
   ]
-  if (extraColumns.length === 0)
-    columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
+  if (extraColumns.length === 0) columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
 
   const dataset = {
     ok: true,
@@ -133,8 +111,7 @@ async function getAllResultsForExport(auth, query) {
 // ----------------------------------------------------------------------------------------------
 async function exportResults(request, reply) {
   const { query, auth } = request
-  const { data, dynamicColumns, dataSelector, total } =
-    await getAllResultsForExport(auth, query)
+  const { data, dynamicColumns, dataSelector, total } = await getAllResultsForExport(auth, query)
   const sheetData = {
     data,
     dynamicColumns,
@@ -183,17 +160,11 @@ async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
 
 async function getColumnsFromResultForms({ partnerId }) {
   const columns = []
-  const forms = await knex('ResultForm')
-    .where('partnerId', partnerId)
-    .pluck('formSchema')
+  const forms = await knex('ResultForm').where('partnerId', partnerId).pluck('formSchema')
 
   _.forEach(forms, formSchema => {
     _.forEach(JSON.parse(formSchema).fields, (value, key) => {
-      if (
-        value &&
-        (_.isNil(value.excludeReport) || !value.excludeReport) &&
-        value.name
-      ) {
+      if (value && (_.isNil(value.excludeReport) || !value.excludeReport) && value.name) {
         columns.push({
           header: value.name,
           key: key.replace('.title', '').replace('.properties', ''),
@@ -212,11 +183,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
    *
    * select errors from Result table
    */
-  const filterUntilDate = (
-    queryBuilder,
-    untilDate,
-    fieldName = 'r.endedOn'
-  ) => {
+  const filterUntilDate = (queryBuilder, untilDate, fieldName = 'r.endedOn') => {
     if (untilDate) queryBuilder.where(`${fieldName}`, '<=', untilDate)
   }
   const items = await knex('Result as r')
@@ -234,14 +201,10 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
        * see list of all columns for CSV file in 2nd tab
        * of Excel file attached to https://ops.systemone.id/browse/ASP-1857
        */
-      knex.raw(
-        `ifnull(convert_tz(r.endedOn, '+00:00', tz.timeZone), r.endedOn) as dateTime`
-      ), // 1. Test Date/time in device time
+      knex.raw(`ifnull(convert_tz(r.endedOn, '+00:00', tz.timeZone), r.endedOn) as dateTime`), // 1. Test Date/time in device time
       'r.endedOn as actualDateTime', // 2. Actual Date/Time
       'r.instrumentSerial', // 3. Instrument Serial Number
-      knex.raw(
-        `ifnull(r.resultData ->> '$.systemName', d.configurationData ->> '$.systemName') as gxSystemName`
-      ), // 4. GX System Name
+      knex.raw(`ifnull(r.resultData ->> '$.systemName', d.configurationData ->> '$.systemName') as gxSystemName`), // 4. GX System Name
       'r.senderVersion as gxSoftwareVersion', // 5. GX Software Version
       'r.moduleSerial', // 6. Module Serial Number
       knex.raw(`r.resultData ->> '$.assay' as assay`), // 7. Assay
@@ -282,13 +245,9 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         .select(
           knex.raw('"System Log" as source'),
           'do.startedOn as dateTime',
-          knex.raw(
-            `convert_tz(do.startedOn, tz.timeZone, '+00:00') as actualDateTime`
-          ),
+          knex.raw(`convert_tz(do.startedOn, tz.timeZone, '+00:00') as actualDateTime`),
           knex.raw(`'-' as instrumentSerial`),
-          knex.raw(
-            `ifnull(d.configurationData ->> '$.systemName', '-') as gxSystemName`
-          ),
+          knex.raw(`ifnull(d.configurationData ->> '$.systemName', '-') as gxSystemName`),
           knex.raw(`'-' as gxSoftwareVersion`),
           knex.raw(`'-' as moduleSerial`),
           knex.raw(`'-' as assay`),
@@ -315,12 +274,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
   // eslint-disable-next-line no-constant-condition
   if ((_.some(items), { source: 'System Log' })) {
     // for hardware errors, we don't have senderversion or module serial, only module name -> get all serials by slot along with instrument serial and sender version by max result date
-    const missingFields = [
-      'r.moduleName',
-      'r.moduleSerial',
-      'r.instrumentSerial',
-      'r.senderVersion',
-    ]
+    const missingFields = ['r.moduleName', 'r.moduleSerial', 'r.instrumentSerial', 'r.senderVersion']
     const results = await knex('Result as r')
       .where('r.deviceId', deviceId)
       .modify(filterUntilDate, maxDate)
@@ -334,11 +288,7 @@ async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
         return r.endedOn <= i.dateTime
       })
       const moduleData = _.find(results, r => {
-        return (
-          r.endedOn <= i.dateTime &&
-          r.moduleSerial &&
-          r.moduleName === i.moduleName
-        )
+        return r.endedOn <= i.dateTime && r.moduleSerial && r.moduleName === i.moduleName
       })
 
       if (instrumentData) {
@@ -472,12 +422,7 @@ async function getReportWorkloadSummary(auth, query) {
   /**
    * get data
    */
-  const resultQuery = getClinicalIndicatorQueryForResultsTable(
-    dataConstraints,
-    assay,
-    groupBy,
-    query
-  )
+  const resultQuery = getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupBy, query)
 
   let data = await processGroupedQuery(resultQuery, groupBy)
   data = _.filter(data, it => !!it.state && it.state !== 'null')
@@ -511,10 +456,7 @@ async function getReportWorkloadSummary(auth, query) {
         acc[state][month][SECTION_KEY_MTB] += cnt
       }
       // count 'rrd'
-      if (
-        positiveResultCategories.includes(resultCategory1) &&
-        positiveResultCategories.includes(resultCategory2)
-      ) {
+      if (positiveResultCategories.includes(resultCategory1) && positiveResultCategories.includes(resultCategory2)) {
         acc[state][month][SECTION_KEY_RRD] += cnt
       }
       return acc
@@ -617,9 +559,7 @@ async function getReportWorkloadSummary(auth, query) {
 async function getReportWorkloadSummaryByQuarter(auth, query, options) {
   const { sharedResults, useNamedData } = options
   const result = sharedResults[useNamedData]
-  const dynamicColumns = result.dynamicColumns.filter(
-    it => it.type === 'quarter' || it.type === 'year'
-  )
+  const dynamicColumns = result.dynamicColumns.filter(it => it.type === 'quarter' || it.type === 'year')
 
   return {
     ...result,
@@ -647,4 +587,5 @@ module.exports = {
   getReportWorkloadSummary,
   getReportWorkloadSummaryByQuarter,
   getReportWorkloadSummaryByYear,
+  getReportXdrDevicesSummary,
 }

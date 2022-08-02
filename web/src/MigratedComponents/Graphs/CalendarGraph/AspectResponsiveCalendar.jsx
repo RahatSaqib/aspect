@@ -1,17 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import { ResponsiveCalendar } from '@nivo/calendar'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip } from '../GraphToolTip'
 
-import {
-  generateColorForValue,
-  generateMargin,
-  generateToolTip,
-  generateLegendIntl,
-} from '../Helpers/Formatters'
+import { generateColorForValue, generateMargin, generateToolTip, generateLegendIntl } from '../Helpers/Formatters'
 import messages from '../intlMessages'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const AspectResponsiveCalendar = ({
   assaysFromState,
@@ -23,16 +18,12 @@ const AspectResponsiveCalendar = ({
   keys,
   tickValuesYShape,
 }) => {
-  const { formatNumber: intlFormatNumber, formatMessage } = useIntl()
+  const { formatNumber: intlFormatNumber, formatMessage } = useI18n()
   const legends = displayLegend
     ? [
         {
           dataFrom: 'keys',
-          data:
-            keys &&
-            keys.map(k =>
-              generateLegendIntl(formatMessage, messages, k, assaysFromState)
-            ),
+          data: keys && keys.map(k => generateLegendIntl(formatMessage, messages, k, assaysFromState)),
           anchor: 'bottom-right',
           direction: 'row',
           justify: false,
@@ -78,15 +69,7 @@ const AspectResponsiveCalendar = ({
       colors={v => generateColorForValue(v)}
       margin={generateMargin(tickValuesYShape, displayLegend)}
       tooltip={v => (
-        <GraphToolTip
-          values={generateToolTip(
-            v,
-            culture,
-            displayMethod,
-            assaysFromState,
-            intlFormatNumber
-          )}
-        />
+        <GraphToolTip values={generateToolTip(v, culture, displayMethod, assaysFromState, intlFormatNumber)} />
       )}
       legends={legends}
     />
@@ -105,12 +88,7 @@ AspectResponsiveCalendar.propTypes = {
   displayMethod: PropTypes.oneOf(['percentage', 'actual']).isRequired,
   indexBy: PropTypes.string.isRequired,
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
-  tickValuesYShape: PropTypes.oneOf([
-    'bookends',
-    'clubsandwich',
-    'all',
-    'none',
-  ]),
+  tickValuesYShape: PropTypes.oneOf(['bookends', 'clubsandwich', 'all', 'none']),
 }
 
 export default AspectResponsiveCalendar

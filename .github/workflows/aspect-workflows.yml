@@ -45,7 +45,7 @@ jobs:
 
       - name: Lint code
         run: |
-          yarn api:lint
+          yarn api:lint --fix
 
   be-unit-test:
     name: "Unit Tests (API)"

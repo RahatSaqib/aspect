@@ -181,8 +181,7 @@ module.exports = {
         'FINAL RESULT': 'Incomplete: Not submitted 2 samples w/in 3 days',
         Levofloxacin: null,
         Moxifloxacin: null,
-        'Performed by':
-          'Kevin Joshua A. Alonzo, RMT         License #: 0072790',
+        'Performed by': 'Kevin Joshua A. Alonzo, RMT         License #: 0072790',
         Pyrazinamide: null,
         Streptomycin: null,
         'TBC Comments': null,
@@ -245,8 +244,7 @@ module.exports = {
         'Date and Time of Release of AFB Result': '2021-05-27T00:00:00.000Z',
         'Date and Time of Release of DST Result': null,
         'Date and Time of Release of TBC Result': null,
-        'Laboratory Test Performed Acid Fast Bacili Microscopy':
-          'Fluorescence Microscopy',
+        'Laboratory Test Performed Acid Fast Bacili Microscopy': 'Fluorescence Microscopy',
         GeneXpertSignedOffBy1: null,
         GeneXpertSignedOffBy2: null,
         GeneXpertSignedOffBy3: null,
@@ -278,8 +276,7 @@ module.exports = {
           smearDateCollected1: null,
           smearDateCollected2: null,
           smearDateCollected3: null,
-          laboratoryTechnician:
-            'Kevin Joshua A. Alonzo, RMT         License #: 0072790',
+          laboratoryTechnician: 'Kevin Joshua A. Alonzo, RMT         License #: 0072790',
         },
       },
     },
@@ -330,8 +327,7 @@ module.exports = {
         'Validated by': null,
         'Date Dispatch': null,
         'Date of Birth': '1971-10-11T00:00:00.000Z',
-        'GX Encoded by':
-          'Inoh Mark M. Amboy, RMT              License #: 0077748',
+        'GX Encoded by': 'Inoh Mark M. Amboy, RMT              License #: 0077748',
         'Laboratory No': 'D-21-0346',
         Requisitioner: 'Dr. Aguilas',
         'Specimen Type': 'CSF',
@@ -343,10 +339,8 @@ module.exports = {
         'Smear Result 3': null,
         'TB LAMP Result': null,
         'TBC Encoded by': null,
-        'GX Performed by':
-          'Inoh Mark M. Amboy, RMT              License #: 0077748',
-        'GX Validated by':
-          'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
+        'GX Performed by': 'Inoh Mark M. Amboy, RMT              License #: 0077748',
+        'GX Validated by': 'Roeus Vincent Arjay G. Reyes, RMT License #: 0060664',
         'DST Final Result': null,
         'DST Performed by': null,
         'DST Validated by': null,

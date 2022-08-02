@@ -23,9 +23,7 @@ async function sendSmsAdn(cellNumber, message, adn) {
     const response = await fetch(url, { method: 'POST', body: params })
     const data = await response.json()
     if (data.api_response_code !== 200)
-      throw new Error(
-        `sending sms throw adn api throw an error ${data.error.error_message}`
-      )
+      throw new Error(`sending sms throw adn api throw an error ${data.error.error_message}`)
     else return data
   } catch (err) {
     logger.error(err)

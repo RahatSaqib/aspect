@@ -5,11 +5,7 @@ const { partnerName } = require('./fixtures/partnerData')
 const bangladeshAverageCompletion = require('./fixtures/dashboardWidget')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
 
-  await upsertDashboardWidgets(knex, partnerId, bangladeshAverageCompletion, [
-    'bangladeshAverageCompletion',
-  ])
+  await upsertDashboardWidgets(knex, partnerId, bangladeshAverageCompletion, ['bangladeshAverageCompletion'])
 }

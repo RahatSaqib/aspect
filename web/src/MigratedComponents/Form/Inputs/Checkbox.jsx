@@ -26,9 +26,7 @@ const Checkbox = props => {
         }}
         // {...getFieldErrorProps(formik, id)}
       />
-      {error && helperText ? (
-        <FormHelperText error>{helperText}</FormHelperText>
-      ) : null}
+      {error && helperText ? <FormHelperText error>{helperText}</FormHelperText> : null}
     </FormControl>
   )
 }

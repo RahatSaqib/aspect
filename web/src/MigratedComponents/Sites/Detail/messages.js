@@ -71,6 +71,18 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldContact',
     defaultMessage: 'Site Contacts',
   },
+  fieldSiteType: {
+    id: 'pages.SiteDetail.fieldSiteType',
+    defaultMessage: 'Site Type',
+  },
+  fieldBelongTo: {
+    id: 'pages.SiteDetail.fieldBelongTo',
+    defaultMessage: 'Stock provider',
+  },
+  fieldNotes: {
+    id: 'pages.SiteDetail.fieldNotes',
+    defaultMessage: 'Notes',
+  },
   buttonSetBasedonAddress: {
     id: 'pages.SiteDetail.buttonSetBasedonAddress',
     defaultMessage: 'Set based on address',
@@ -109,8 +121,7 @@ export default defineMessages({
   },
   siteWithoutLocation: {
     id: 'pages.SiteDetail.siteWithoutLocation',
-    defaultMessage:
-      ' No location set to this site - Please, edit to assign the latitude and longitude fields.',
+    defaultMessage: ' No location set to this site - Please, edit to assign the latitude and longitude fields.',
   },
   cancel: {
     id: 'pages.SiteDetail.disable.cancel',

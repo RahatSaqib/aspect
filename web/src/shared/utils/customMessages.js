@@ -100,7 +100,7 @@ export function getCustomMessage(messages, key, user, params) {
   let message = messages[`${key}_${countryAbbreviation}`] // default Key can be 'state' or 'lga', in this case
 
   if (!message) {
-    message = messages[`${key}`] // if there's not a specific country for the provided key, we will try to get the default message
+    message = messages[key] // if there's not a specific country for the provided key, we will try to get the default message
   }
 
   if (!message) {

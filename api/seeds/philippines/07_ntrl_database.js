@@ -12,9 +12,7 @@ async function seed(knex) {
     })
     .first()
 
-  const { id: deviceTypeId } = await knex('DeviceType')
-    .where('externalId', 'PhilippinesNtrl')
-    .first('id')
+  const { id: deviceTypeId } = await knex('DeviceType').where('externalId', 'PhilippinesNtrl').first('id')
 
   let { id: ntrlDatabaseDeviceId } =
     (await knex('Device')
@@ -28,9 +26,7 @@ async function seed(knex) {
   if (ntrlDatabaseDeviceId) return
 
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,

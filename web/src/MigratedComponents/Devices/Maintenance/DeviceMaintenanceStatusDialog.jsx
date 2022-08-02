@@ -119,9 +119,7 @@ const FormDialog = ({
                 onDeviceMaintenanceStatusChange={onMaintenanceStatusChange}
                 floatingLabelText={formatMessage(messages.maintenanceStatus)}
                 fullWidth
-                helperText={
-                  meta.maintenanceStatus.touched && meta.maintenanceStatus.error
-                }
+                helperText={meta.maintenanceStatus.touched && meta.maintenanceStatus.error}
                 onlyManuallySetableStatuses
               />
             </div>

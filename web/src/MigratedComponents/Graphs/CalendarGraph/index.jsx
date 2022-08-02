@@ -3,14 +3,7 @@ import PropTypes from 'prop-types'
 import AspectResponsiveCalendar from './AspectResponsiveCalendar'
 
 const CalendarGraph = ({ data, keys, config, assaysFromState }) => {
-  const {
-    indexBy,
-    tickValuesYShape,
-    tickValuesXShape,
-    displayMethod,
-    displayLegend,
-    type,
-  } = config
+  const { indexBy, tickValuesYShape, tickValuesXShape, displayMethod, displayLegend, type } = config
 
   return (
     <AspectResponsiveCalendar

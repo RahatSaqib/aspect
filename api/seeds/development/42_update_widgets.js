@@ -6,14 +6,9 @@ const { upsertDashboardWidgets } = require('../common')
 
 async function seed(knex) {
   const partnerOneName = 'Partner One'
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerOneName })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: partnerOneName }).first('id')
 
-  dashboardWidget.stat = _.filter(
-    dashboardWidget.stat,
-    d => !d.partnerNames || d.partnerNames.includes(partnerOneName)
-  )
+  dashboardWidget.stat = _.filter(dashboardWidget.stat, d => !d.partnerNames || d.partnerNames.includes(partnerOneName))
 
   await upsertDashboardWidgets(knex, partnerId, dashboardWidget)
 }

@@ -2,14 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import AspectResponsivePie from './AspectResponsivePie'
 
-const PieGraph = ({
-  assaysFromState,
-  averages,
-  config,
-  data,
-  keys,
-  i18nKeys,
-}) => {
+const PieGraph = ({ assaysFromState, averages, config, data, keys, i18nKeys }) => {
   const { displayMethod, componentClasses } = config
   return (
     <AspectResponsivePie

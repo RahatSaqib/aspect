@@ -1,17 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 
 import ThemedLink from './ThemedLink'
 import messages from './messages'
 
 import styles from './index.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 export const LinkNavigation = ({ type, onClick, children }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const rawLinks = [
     {
       href: '/dashboard',

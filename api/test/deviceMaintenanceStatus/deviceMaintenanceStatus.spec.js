@@ -9,17 +9,11 @@ const find = require('lodash/find')
 const range = require('lodash/range')
 const { waitForIdle } = require('../utils/mqUtils')
 const server = require('../utils/testUtils')
-const {
-  createGxConnectTestContext,
-} = require('../deviceApi/geneXpert/gxconnect_utils')
-const {
-  getDeviceActivityPercentReport,
-} = require('../../src/deviceMaintenanceStatus/serviceReports')
+const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
+const { getDeviceActivityPercentReport } = require('../../src/deviceMaintenanceStatus/serviceReports')
 const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
-const {
-  allDeviceMaintenanceStatusToId,
-} = require('../../src/shared/dictionary')
+const { allDeviceMaintenanceStatusToId } = require('../../src/shared/dictionary')
 
 describe('Maintenance Reports', () => {
   let context
@@ -45,33 +39,30 @@ describe('Maintenance Reports', () => {
       ['2019-02-01', statuses.active],
     ]
 
-    await Promise.each(
-      statusByDay,
-      async ([day, deviceMaintenanceStatusId]) => {
-        const createdOn = new Date()
+    await Promise.each(statusByDay, async ([day, deviceMaintenanceStatusId]) => {
+      const createdOn = new Date()
 
-        if (deviceMaintenanceStatusId === statuses.active) {
-          // Creating results generates active dates
-          await context.createResultForThisDevice({
-            resultDetails: {
-              consumableLot: 'Lot 0',
-              moduleName: 'Module A',
-              moduleSerial: 'MOD-SER12345',
-              instrumentSerial: 'SER1-02349',
-              startedOn: day,
-              endedOn: day,
-              createdOn,
-            },
-          })
-        }
-        await knex('DeviceMaintenanceStatusLog').insert({
-          ...logEntryBase,
-          deviceMaintenanceStatusId,
-          day,
-          createdOn,
+      if (deviceMaintenanceStatusId === statuses.active) {
+        // Creating results generates active dates
+        await context.createResultForThisDevice({
+          resultDetails: {
+            consumableLot: 'Lot 0',
+            moduleName: 'Module A',
+            moduleSerial: 'MOD-SER12345',
+            instrumentSerial: 'SER1-02349',
+            startedOn: day,
+            endedOn: day,
+            createdOn,
+          },
         })
       }
-    )
+      await knex('DeviceMaintenanceStatusLog').insert({
+        ...logEntryBase,
+        deviceMaintenanceStatusId,
+        day,
+        createdOn,
+      })
+    })
 
     // await knex('DeviceMaintenanceStatusLog').insert({
     //   ...logEntryBase,
@@ -84,35 +75,25 @@ describe('Maintenance Reports', () => {
   async function getMaintenanceStatusOverTimeResponse(minDate, maxDate) {
     // Then, in the API we consider the same dates but in UTC (without conversion)
     return server
-      .get(
-        `${maintenanceOverTimePath}?minDate=${encodeURIComponent(
-          minDate
-        )}&maxDate=${encodeURIComponent(maxDate)}`
-      )
+      .get(`${maintenanceOverTimePath}?minDate=${encodeURIComponent(minDate)}&maxDate=${encodeURIComponent(maxDate)}`)
       .set('Authorization', `Bearer ${shared.token}`)
   }
 
   const evaluateCorrectDailyStatus = async (minDate, maxDate, assertions) => {
-    const maintenanceStatusOverTime =
-      await getMaintenanceStatusOverTimeResponse(minDate, maxDate)
+    const maintenanceStatusOverTime = await getMaintenanceStatusOverTimeResponse(minDate, maxDate)
     assert.equal(maintenanceStatusOverTime.status, 200)
     assert.typeOf(maintenanceStatusOverTime.body, 'Object')
     assert.property(maintenanceStatusOverTime.body, 'data')
     assert.typeOf(maintenanceStatusOverTime.body.data, 'array')
 
-    const device = find(
-      maintenanceStatusOverTime.body.data,
-      d => d.id === deviceId
-    )
+    const device = find(maintenanceStatusOverTime.body.data, d => d.id === deviceId)
     assert.isNotNull(device)
     assert.equal(device.latitude, 1)
     assert.equal(device.longitude, 5)
     assert.isAtLeast(device.totalResults, 1)
 
     assertions.forEach(({ day, ...fields }) => {
-      expect(
-        device.maintenanceStatusHistory.find(status => status.day.includes(day))
-      ).to.containSubset({
+      expect(device.maintenanceStatusHistory.find(status => status.day.includes(day))).to.containSubset({
         ...fields,
       })
     })
@@ -133,9 +114,7 @@ describe('Maintenance Reports', () => {
   before(async () => {
     shared.checkToken(server, maintenanceOverTimePath)
     statuses = await allDeviceMaintenanceStatusToId()
-    activeDeviceMaintenanceStatusExternalIds = await knex(
-      'DeviceMaintenanceStatus'
-    )
+    activeDeviceMaintenanceStatusExternalIds = await knex('DeviceMaintenanceStatus')
       .where('active', true)
       .pluck('externalId')
     ;({ id: personId } = await knex('Person').where({ name: 'Admin' }).first())
@@ -158,9 +137,7 @@ describe('Maintenance Reports', () => {
 
     const { id, siteId } = context.device
     deviceId = id
-    await knex('Site')
-      .where({ id: siteId })
-      .update({ latitude: 1, longitude: 5 })
+    await knex('Site').where({ id: siteId }).update({ latitude: 1, longitude: 5 })
 
     await insertMaintenanceStatusLogs()
   })
@@ -210,36 +187,32 @@ describe('Maintenance Reports', () => {
       - As the result's endedOn date is '2019-01-03T00:00:00.000Z' and we filter by >= 2019-01-03T03:00:00.000Z, we won't find any results
       - If the device is marked as Active, but no results were found for the user's timezone, then we consider the status = Unknown
       */
-      evaluateCorrectDailyStatus(
-        '2019-01-01T00:00:00.000-03:00',
-        '2019-01-31T00:00:00.000-03:00',
-        [
-          {
-            day: '2019-01-01',
-            maintenanceStatusExternalId: 'active',
-            maintenanceStatusI18nKey: 'active',
-            maintenanceStatusName: 'Active',
-          },
-          {
-            day: '2019-01-02',
-            maintenanceStatusExternalId: 'active',
-            maintenanceStatusI18nKey: 'active',
-            maintenanceStatusName: 'Active',
-          },
-          {
-            day: '2019-01-03',
-            maintenanceStatusExternalId: 'inactiveUnknown',
-            maintenanceStatusI18nKey: 'inactiveUnknown',
-            maintenanceStatusName: 'Unknown',
-          },
-          {
-            day: '2019-01-04',
-            maintenanceStatusExternalId: 'inactiveDownForRepair',
-            maintenanceStatusI18nKey: 'inactiveDownForRepair',
-            maintenanceStatusName: 'Down for Repair',
-          },
-        ]
-      ))
+      evaluateCorrectDailyStatus('2019-01-01T00:00:00.000-03:00', '2019-01-31T00:00:00.000-03:00', [
+        {
+          day: '2019-01-01',
+          maintenanceStatusExternalId: 'active',
+          maintenanceStatusI18nKey: 'active',
+          maintenanceStatusName: 'Active',
+        },
+        {
+          day: '2019-01-02',
+          maintenanceStatusExternalId: 'active',
+          maintenanceStatusI18nKey: 'active',
+          maintenanceStatusName: 'Active',
+        },
+        {
+          day: '2019-01-03',
+          maintenanceStatusExternalId: 'inactiveUnknown',
+          maintenanceStatusI18nKey: 'inactiveUnknown',
+          maintenanceStatusName: 'Unknown',
+        },
+        {
+          day: '2019-01-04',
+          maintenanceStatusExternalId: 'inactiveDownForRepair',
+          maintenanceStatusI18nKey: 'inactiveDownForRepair',
+          maintenanceStatusName: 'Down for Repair',
+        },
+      ]))
 
     /*
     For Z and positive timezones:
@@ -256,11 +229,7 @@ describe('Maintenance Reports', () => {
       ))
 
     it('should get the correct daily status for Z timezone', async () =>
-      evaluateCorrectDailyStatus(
-        '2019-01-01T00:00:00.000Z',
-        '2019-01-31T00:00:00.000Z',
-        assertionsForNotNegativeTz
-      ))
+      evaluateCorrectDailyStatus('2019-01-01T00:00:00.000Z', '2019-01-31T00:00:00.000Z', assertionsForNotNegativeTz))
   })
 
   const pathLastReported = '/api/device/maintenance-last-reported'
@@ -270,18 +239,13 @@ describe('Maintenance Reports', () => {
 
   describe('maintenance-last-reported', () => {
     it('should get the correct current status', async () => {
-      const lastReportedStatus = await server
-        .get(`${pathLastReported}`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const lastReportedStatus = await server.get(`${pathLastReported}`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(lastReportedStatus.status, 200)
       assert.typeOf(lastReportedStatus.body, 'Object')
       assert.property(lastReportedStatus.body, 'data')
       assert.typeOf(lastReportedStatus.body.data, 'array')
-      const tamagotchi = find(
-        lastReportedStatus.body.data,
-        d => d.id === deviceId
-      )
+      const tamagotchi = find(lastReportedStatus.body.data, d => d.id === deviceId)
       assert.isNotNull(tamagotchi)
       assert.equal(tamagotchi.latitude, 1)
       assert.equal(tamagotchi.longitude, 5)
@@ -292,11 +256,10 @@ describe('Maintenance Reports', () => {
   describe('device_activity_percent', () => {
     it('should balance with device active rate in /api/device/maintenance-over-time', async () => {
       // Status over time report
-      const maintenanceStatusOverTime =
-        await getMaintenanceStatusOverTimeResponse(
-          '2019-01-01T00:00:00.000Z',
-          '2019-01-31T00:00:00.000Z'
-        )
+      const maintenanceStatusOverTime = await getMaintenanceStatusOverTimeResponse(
+        '2019-01-01T00:00:00.000Z',
+        '2019-01-31T00:00:00.000Z'
+      )
 
       // Device activity percent report
       const deviceActivityPercentData = await getDeviceActivityPercentReport(
@@ -308,63 +271,48 @@ describe('Maintenance Reports', () => {
       )
 
       // Get only status over time report for Tamagotchi device
-      const tamagotchiMaintenanceStatusByDay =
-        maintenanceStatusOverTime.body.data.find(
-          device => device.id === deviceId
-        )
+      const tamagotchiMaintenanceStatusByDay = maintenanceStatusOverTime.body.data.find(
+        device => device.id === deviceId
+      )
       assert.isNotNull(tamagotchiMaintenanceStatusByDay)
 
       // Get only device activity percent report for Tamagotchi device
-      const tamagotchiActivityPercentReport =
-        deviceActivityPercentData.data.find(
-          deviceActivityPercentData => deviceActivityPercentData.id === deviceId
-        )
+      const tamagotchiActivityPercentReport = deviceActivityPercentData.data.find(
+        deviceActivityPercentData => deviceActivityPercentData.id === deviceId
+      )
       assert.isNotNull(tamagotchiActivityPercentReport)
 
-      const deviceActivityPercentForMonth =
-        tamagotchiActivityPercentReport['2019-01']
-      const maintenanceStatusHistoryForMonth =
-        tamagotchiMaintenanceStatusByDay.maintenanceStatusHistory.filter(
-          day => !day.isWeekend
-        )
+      const deviceActivityPercentForMonth = tamagotchiActivityPercentReport['2019-01']
+      const maintenanceStatusHistoryForMonth = tamagotchiMaintenanceStatusByDay.maintenanceStatusHistory.filter(
+        day => !day.isWeekend
+      )
 
-      const activeMaintenanceStatusHistoryForMonth =
-        maintenanceStatusHistoryForMonth.filter(
-          msh =>
-            !msh.isWeekend &&
-            ((msh.totalResults > 0 && msh.maintenanceStatusExternalId) ||
-              (activeDeviceMaintenanceStatusExternalIds.includes(
-                msh.maintenanceStatusExternalId
-              ) &&
-                msh.maintenanceStatusExternalId !== 'active'))
-        )
+      const activeMaintenanceStatusHistoryForMonth = maintenanceStatusHistoryForMonth.filter(
+        msh =>
+          !msh.isWeekend &&
+          ((msh.totalResults > 0 && msh.maintenanceStatusExternalId) ||
+            (activeDeviceMaintenanceStatusExternalIds.includes(msh.maintenanceStatusExternalId) &&
+              msh.maintenanceStatusExternalId !== 'active'))
+      )
       const activityPercentFromStatusOverTime = (
-        (activeMaintenanceStatusHistoryForMonth.length /
-          maintenanceStatusHistoryForMonth.length) *
+        (activeMaintenanceStatusHistoryForMonth.length / maintenanceStatusHistoryForMonth.length) *
         100
       ).toFixed(2)
-      expect(`${activityPercentFromStatusOverTime}%`).to.equal(
-        deviceActivityPercentForMonth
-      )
+      expect(`${activityPercentFromStatusOverTime}%`).to.equal(deviceActivityPercentForMonth)
     })
   })
 
   describe('Daily Status graph', () => {
     it('should have more than 1 day with same maintenance status', async () => {
-      await Promise.each(range(1, 2), async month =>
-        insertMaintenanceStatusLogs(subMonths(monthAgo, month))
+      await Promise.each(range(1, 2), async month => insertMaintenanceStatusLogs(subMonths(monthAgo, month)))
+      const maintenanceStatusOverTime = await getMaintenanceStatusOverTimeResponse(
+        '2019-01-01T00:00:00.000Z',
+        '2019-01-31T00:00:00.000Z'
       )
-      const maintenanceStatusOverTime =
-        await getMaintenanceStatusOverTimeResponse(
-          '2019-01-01T00:00:00.000Z',
-          '2019-01-31T00:00:00.000Z'
-        )
 
       const data = maintenanceStatusOverTime.body.data
         .find(device => device.id === deviceId)
-        .maintenanceStatusHistory.filter(
-          x => !!x.maintenanceStatusExternalId && x.daysInSameStatus > 1
-        )
+        .maintenanceStatusHistory.filter(x => !!x.maintenanceStatusExternalId && x.daysInSameStatus > 1)
 
       // more than 1 day is expected
       expect(data).to.have.lengthOf.above(1)

@@ -1,19 +1,13 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const { getPartnerByName } = require('../utils')
-const {
-  messageSeverityToId,
-  issueCategoryToId,
-  issueEventStatusToId,
-} = require('../../src/shared/dictionary')
+const { messageSeverityToId, issueCategoryToId, issueEventStatusToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByName(knex, 'Philippines')
   await knex('Partner').where('id', partnerId).update('plugin', 'philippines')
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
 
   const auditFields = {
     createdOn: now,
@@ -72,13 +66,9 @@ async function seed(knex) {
     updatedOn: auditFields.updatedOn,
   })
 
-  const { id: issueTypeResultUpdatedId } = await knex('IssueType')
-    .where('externalId', 'ResultUpdated')
-    .first('id')
+  const { id: issueTypeResultUpdatedId } = await knex('IssueType').where('externalId', 'ResultUpdated').first('id')
 
-  const { id: resultUpdatedIssueEventTriggerId } = await knex(
-    'IssueEventTrigger'
-  )
+  const { id: resultUpdatedIssueEventTriggerId } = await knex('IssueEventTrigger')
     .where('issueTypeId', issueTypeResultUpdatedId)
     .andWhere('issueEventStatusId', triggeredIssueEventStatusId)
     .andWhere('partnerId', partnerId)

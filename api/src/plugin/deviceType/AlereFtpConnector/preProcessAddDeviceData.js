@@ -17,12 +17,7 @@ async function preProcessAddDeviceData(context) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
-  const site = await getOrCreateSite(
-    knex,
-    device,
-    { deviceId: alereDevice.id, serial: alereDevice.serial },
-    now
-  )
+  const site = await getOrCreateSite(knex, device, { deviceId: alereDevice.id, serial: alereDevice.serial }, now)
   const { startedOn: firstTestDate } = (await knex
     .from('Result')
     .where('deviceId', alereDevice.id)
@@ -47,9 +42,7 @@ async function getOrCreateDevice(knex, payload, alereFtpConnectorDevice, now) {
   const { partnerId } = alereFtpConnectorDevice
   const deviceTypeExternalId = _.get(payload, 'type.id', null)
   if (!deviceTypeExternalId) {
-    throw Boom.badRequest(
-      'Must specify device type for data from an Alere FTP Connector'
-    )
+    throw Boom.badRequest('Must specify device type for data from an Alere FTP Connector')
   }
   const deviceSerialNumber = _.get(payload, 'result.instrument.serial', null)
   const deviceDetails = {
@@ -60,12 +53,7 @@ async function getOrCreateDevice(knex, payload, alereFtpConnectorDevice, now) {
   let matchingDevices = await findDevices(deviceDetails, knex)
 
   if (_.isEmpty(matchingDevices)) {
-    const site = await getOrCreateSite(
-      knex,
-      alereFtpConnectorDevice,
-      { serial: deviceSerialNumber },
-      now
-    )
+    const site = await getOrCreateSite(knex, alereFtpConnectorDevice, { serial: deviceSerialNumber }, now)
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       serial: deviceSerialNumber,
@@ -89,10 +77,7 @@ async function getOrCreateDevice(knex, payload, alereFtpConnectorDevice, now) {
   return matchingDevice
 }
 
-async function findDevices(
-  { deviceId, partnerId, serial, deviceTypeExternalId },
-  knex
-) {
+async function findDevices({ deviceId, partnerId, serial, deviceTypeExternalId }, knex) {
   return knex
     .from('Device as d')
     .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -131,12 +116,7 @@ async function findDevices(
     )
 }
 
-async function getOrCreateSite(
-  knex,
-  alereFtpConnectorDevice,
-  deviceDetails,
-  now
-) {
+async function getOrCreateSite(knex, alereFtpConnectorDevice, deviceDetails, now) {
   const { deviceId, serial } = deviceDetails
   const { partnerId, geographyId } = alereFtpConnectorDevice
   let matchingSites = []
@@ -154,9 +134,7 @@ async function getOrCreateSite(
         's.partnerId': partnerId,
       })
       .andWhere(function () {
-        this.where({ 's.name': serial })
-          .orWhere({ 's.shortName': serial })
-          .orWhere({ 's.externalId': serial })
+        this.where({ 's.name': serial }).orWhere({ 's.shortName': serial }).orWhere({ 's.externalId': serial })
       })
       .select()
   }

@@ -1,7 +1,5 @@
 const { assert } = require('chai')
-const {
-  humanDuration,
-} = require('../../../src/result/serviceReportEswatini/smsStatsReport')
+const { humanDuration } = require('../../../src/result/serviceReportEswatini/smsStatsReport')
 
 const min = 60
 const hour = 60 * min
@@ -13,10 +11,7 @@ describe('humanDuration', () => {
     assert.equal(humanDuration(5 * hour), '5 hours')
     assert.equal(humanDuration(24 * hour), '1 day')
     assert.equal(humanDuration(24 * hour + 5 * min), '1 day 5 minutes')
-    assert.equal(
-      humanDuration(24 * hour + hour + 9 * min),
-      '1 day 1 hour 9 minutes'
-    )
+    assert.equal(humanDuration(24 * hour + hour + 9 * min), '1 day 1 hour 9 minutes')
   })
 })
 

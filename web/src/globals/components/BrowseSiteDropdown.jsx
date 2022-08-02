@@ -65,8 +65,7 @@ const enhance = compose(
 
     return {
       theme,
-      isSingleSite:
-        sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
+      isSingleSite: sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
       source: sitesSelectList.items
         .map(item => ({
           value: item.get('id'),
@@ -80,11 +79,7 @@ const enhance = compose(
         })
         .toJS(),
       value: sitesSelectList.items
-        .find(
-          it => it.get('id') === filtersParams.get('siteId'),
-          null,
-          Immutable.Map()
-        )
+        .find(it => it.get('id') === filtersParams.get('siteId'), null, Immutable.Map())
         .get('id', ''),
     }
   })

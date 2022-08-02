@@ -12,10 +12,7 @@ import {
   sharedFields,
   InventoryAdjustmentDialogForm,
 } from './InventoryAdjustmentDialogForm'
-import {
-  withTodayProps,
-  withDateFormatProps,
-} from '../../shared/utils/dateFormat'
+import { withTodayProps, withDateFormatProps } from '../../shared/utils/dateFormat'
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -46,10 +43,7 @@ const messages = defineMessages({
   },
 })
 
-export function validate(
-  { consumableId, canExpire, expiresOn, toSiteId, quantity, dateAdjusted },
-  { intl }
-) {
+export function validate({ consumableId, canExpire, expiresOn, toSiteId, quantity, dateAdjusted }, { intl }) {
   const errors = {}
   if (!consumableId || consumableId <= 0) {
     errors.consumableId = intl.formatMessage(sharedMessages.consumableRequired)
@@ -99,8 +93,7 @@ const enhance = compose(
       const { inventoryItem, today } = nextProps
 
       // Every time the dialog opens or closes, we need to clean the form
-      if (this.props.isDialogActive !== nextProps.isDialogActive)
-        this.setState({ values: DEFAULT_VALUES })
+      if (this.props.isDialogActive !== nextProps.isDialogActive) this.setState({ values: DEFAULT_VALUES })
 
       if (this.props.inventoryItem !== inventoryItem) {
         // Re-initialize
@@ -109,9 +102,7 @@ const enhance = compose(
           ...DEFAULT_VALUES,
           lotNumber: inventoryItem.get('lotNumber') || DEFAULT_VALUES.lotNumber,
           canExpire: inventoryItem.get('canExpire') === 1,
-          expiresOn: inventoryItem.get('expiresOn')
-            ? new Date(inventoryItem.get('expiresOn'))
-            : null,
+          expiresOn: inventoryItem.get('expiresOn') ? new Date(inventoryItem.get('expiresOn')) : null,
           toSiteId: inventoryItem.get('siteId'),
           dateAdjusted: today,
         })
@@ -119,20 +110,14 @@ const enhance = compose(
     },
   }),
   connect((state, { values }) => ({
-    consumable: state.consumable.consumables.items.find(
-      c => c.get('id') === values.consumableId,
-      null,
-      EMPTY_MAP
-    ),
+    consumable: state.consumable.consumables.items.find(c => c.get('id') === values.consumableId, null, EMPTY_MAP),
   })),
   withProps(({ intl, consumable }) => ({
     currInventoryItem: null,
     consumable,
     labels: {
       dialogTitle: intl.formatMessage(messages.dialogTitle, {
-        consumableName:
-          consumable.get('name') ||
-          intl.formatMessage(messages.defaultConsumableName),
+        consumableName: consumable.get('name') || intl.formatMessage(messages.defaultConsumableName),
       }),
       quantity: intl.formatMessage(messages.quantity),
       dateAdjusted: intl.formatMessage(messages.dateAdjusted),

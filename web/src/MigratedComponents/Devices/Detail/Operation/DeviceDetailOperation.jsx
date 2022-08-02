@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { connect } from 'react-redux'
 import IconButton from '@material-ui/core/IconButton'
@@ -30,6 +30,7 @@ import {
 } from './DeviceOperationDataTable'
 
 import styles from '../DeviceDetail.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -114,44 +115,21 @@ const enhance = compose(
   },
   withHandlers({
     onInitialLoad:
-      ({
-        deviceId,
-        location,
-        fetchDeviceOperations,
-        sortCol,
-        sortDir,
-        pageAt,
-        pageSize,
-      }) =>
+      ({ deviceId, location, fetchDeviceOperations, sortCol, sortDir, pageAt, pageSize }) =>
       () => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           filtersParams.set('deviceId', deviceId)
-          fetchDeviceOperations(
-            filtersParams,
-            sortCol,
-            sortDir,
-            pageAt,
-            pageSize
-          )
+          fetchDeviceOperations(filtersParams, sortCol, sortDir, pageAt, pageSize)
         }
       },
 
     onExportClick:
       ({ location, exportResults, sortCol, sortDir, pageAt, pageSize }) =>
       formatType => {
-        const { sanitized, value: filtersParams } =
-          filtersFromLocation(location)
+        const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
-          exportResults(
-            filtersParams,
-            formatType,
-            sortCol,
-            sortDir,
-            pageAt,
-            pageSize
-          )
+          exportResults(filtersParams, formatType, sortCol, sortDir, pageAt, pageSize)
         }
       },
   }),
@@ -181,7 +159,7 @@ export const DeviceDetailOperation = ({
   pageSize,
   onExportClick,
 }) => {
-  const intl = useIntl()
+  const intl = useI18n()
   return (
     <div>
       <Helmet title={device.get('name')} />
@@ -191,24 +169,13 @@ export const DeviceDetailOperation = ({
             <Summary title="Firmware" description="TODO: 72.43.102" />
             <Summary
               title={intl.formatMessage(messages.requirePrinter)}
-              description={device.getIn([
-                'configurationData',
-                'requirePrinter',
-              ])}
+              description={device.getIn(['configurationData', 'requirePrinter'])}
             />
-            <Summary
-              title={intl.formatMessage(messages.hostId)}
-              description={device.get('hostId')}
-            />
-            <Summary
-              title={intl.formatMessage(messages.serialNumber)}
-              description={device.get('serial')}
-            />
+            <Summary title={intl.formatMessage(messages.hostId)} description={device.get('hostId')} />
+            <Summary title={intl.formatMessage(messages.serialNumber)} description={device.get('serial')} />
             <Summary
               title={intl.formatMessage(messages.firstApproved)}
-              description={`${device.get('approvedBy')} (${formatDate(
-                device.get('approvedOn', EMPTY_DATE)
-              )})`}
+              description={`${device.get('approvedBy')} (${formatDate(device.get('approvedOn', EMPTY_DATE))})`}
             />
           </div>
         </Card>
@@ -225,13 +192,9 @@ export const DeviceDetailOperation = ({
           </header>
           <div>
             <DataTableProgressBar disabled={!table.loading} />
-            {items.currentIdList.isEmpty() && (
-              <BrowseEmptyList navigate={navigate} location={location} />
-            )}
+            {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
             {!items.currentIdList.isEmpty() && (
-              <DeviceOperationDataTable
-                className={cssClasses('DeviceOperationDataTable')}
-              >
+              <DeviceOperationDataTable className={cssClasses('DeviceOperationDataTable')}>
                 <DeviceOperationDataTableHead
                   navigate={navigate}
                   location={location}
@@ -269,10 +232,7 @@ export const DeviceDetailOperation = ({
                         key={deviceOperation.get('id')}
                         intl={intl}
                         deviceOperation={deviceOperation}
-                        deviceOperationSchema={device.getIn([
-                          'deviceType',
-                          'deviceOperationSchema',
-                        ])}
+                        deviceOperationSchema={device.getIn(['deviceType', 'deviceOperationSchema'])}
                       />
                     ))}
                 </TableBody>

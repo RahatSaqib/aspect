@@ -1,20 +1,13 @@
 const { assert } = require('chai')
 
 const { createAlertTestContext } = require('./utils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
+const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 // get test context with created sample messageId
 const context = createAlertTestContext({ user: 'admin' })
 
 // action creators
-const {
-  alertMessageCreated,
-  alertMessageSent,
-} = require('../../src/alert/actions')
+const { alertMessageCreated, alertMessageSent } = require('../../src/alert/actions')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const { processDynamicMessage } = require('../../src/stringTemplate/service')
 
@@ -50,10 +43,7 @@ describe('Sending Alert via Message Queue', () => {
       assert.equal(msg.messageStatusId, messageStatusIdSent)
       // make sure generated message does not have unprocessed curly braces {{ }}
       const message = processDynamicMessage(msg.message)
-      assert(
-        !message.includes('{{') && !message.includes('}}'),
-        'Alert message template has not been parsed well'
-      )
+      assert(!message.includes('{{') && !message.includes('}}'), 'Alert message template has not been parsed well')
       assert.equal(message.indexOf('{{numberOfDays'), -1)
     }))
 })

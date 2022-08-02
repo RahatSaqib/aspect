@@ -6,10 +6,7 @@ import styles from './Shell.css'
 
 const cssClasses = classnames.bind(styles)
 
-const ShellFooter = ({ children }) =>
-  children ? (
-    <div className={cssClasses('shell__footer')}>{children}</div>
-  ) : null
+const ShellFooter = ({ children }) => (children ? <div className={cssClasses('shell__footer')}>{children}</div> : null)
 
 ShellFooter.defaultProps = {
   children: false,

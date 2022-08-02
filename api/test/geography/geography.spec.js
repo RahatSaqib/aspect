@@ -25,46 +25,28 @@ describe('Geography routes', () => {
             assert.property(res.body, 'data')
             assert.typeOf(res.body.data, 'array')
             assert.isAtLeast(res.body.data.length, 1)
-            const expectedCountriesInAlphabeticalOrder = _.orderBy(
-              res.body.data,
-              'name',
-              'asc'
-            )
+            const expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
             assert.isTrue(
               _.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder),
-              `Countries returned are not in alphabetical order ${JSON.stringify(
-                res.body.data
-              )}`
+              `Countries returned are not in alphabetical order ${JSON.stringify(res.body.data)}`
             )
             _.each(res.body.data, country => {
               assert.property(country, 'id')
               assert.property(country, 'name')
               assert.property(country, 'states')
-              const expectedStatesInAlphabeticalOrder = _.orderBy(
-                country.states,
-                'name',
-                'asc'
-              )
+              const expectedStatesInAlphabeticalOrder = _.orderBy(country.states, 'name', 'asc')
               assert.isTrue(
                 _.isEqual(country.states, expectedStatesInAlphabeticalOrder),
-                `States returned are not in alphabetical order ${JSON.stringify(
-                  country.states
-                )}`
+                `States returned are not in alphabetical order ${JSON.stringify(country.states)}`
               )
               _.each(country.states, state => {
                 assert.property(state, 'id')
                 assert.property(state, 'name')
                 assert.property(state, 'lgas')
-                const expectedLGAsInAlphabeticalOrder = _.orderBy(
-                  state.lgas,
-                  'name',
-                  'asc'
-                )
+                const expectedLGAsInAlphabeticalOrder = _.orderBy(state.lgas, 'name', 'asc')
                 assert.isTrue(
                   _.isEqual(state.lgas, expectedLGAsInAlphabeticalOrder),
-                  `LGAs returned are not in alphabetical order ${JSON.stringify(
-                    state.lgas
-                  )}`
+                  `LGAs returned are not in alphabetical order ${JSON.stringify(state.lgas)}`
                 )
                 _.each(country.lgas, lga => {
                   assert.property(lga, 'id')
@@ -96,16 +78,10 @@ describe('Geography routes', () => {
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'array')
               assert.isAtLeast(res.body.data.length, 1)
-              const expectedCountriesInAlphabeticalOrder = _.orderBy(
-                res.body.data,
-                'name',
-                'asc'
-              )
+              const expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
               assert.isTrue(
                 _.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder),
-                `Countries returned are not in alphabetical order ${JSON.stringify(
-                  res.body.data
-                )}`
+                `Countries returned are not in alphabetical order ${JSON.stringify(res.body.data)}`
               )
               _.each(res.body.data, country => {
                 assert.property(country, 'id')
@@ -123,10 +99,7 @@ describe('Geography routes', () => {
             .get('/api/geography/select-list')
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
-              const countryWithStates = _.find(
-                res.body.data,
-                country => country.name === 'United States'
-              )
+              const countryWithStates = _.find(res.body.data, country => country.name === 'United States')
               server
                 .get(`${path}/${countryWithStates.id}`)
                 .set('Authorization', `Bearer ${shared.token}`)
@@ -136,19 +109,10 @@ describe('Geography routes', () => {
                   assert.property(res.body, 'data')
                   assert.typeOf(res.body.data, 'array')
                   assert.isAtLeast(res.body.data.length, 1)
-                  const expectedCountriesInAlphabeticalOrder = _.orderBy(
-                    res.body.data,
-                    'name',
-                    'asc'
-                  )
+                  const expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
                   assert.isTrue(
-                    _.isEqual(
-                      res.body.data,
-                      expectedCountriesInAlphabeticalOrder
-                    ),
-                    `Countries returned are not in alphabetical order ${JSON.stringify(
-                      res.body.data
-                    )}`
+                    _.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder),
+                    `Countries returned are not in alphabetical order ${JSON.stringify(res.body.data)}`
                   )
                   _.each(res.body.data, country => {
                     assert.property(country, 'id')
@@ -176,18 +140,11 @@ describe('Geography routes', () => {
             .end((err, res) => {
               const countryWithStatesAndLGAs = _.find(
                 res.body.data,
-                country =>
-                  country.name === 'United States' &&
-                  _.some(country.states, state => state.lgas.length > 0)
+                country => country.name === 'United States' && _.some(country.states, state => state.lgas.length > 0)
               )
-              const stateWithLGAs = _.find(
-                countryWithStatesAndLGAs.states,
-                state => state.lgas.length > 0
-              )
+              const stateWithLGAs = _.find(countryWithStatesAndLGAs.states, state => state.lgas.length > 0)
               server
-                .get(
-                  `${path}/${countryWithStatesAndLGAs.id}/${stateWithLGAs.id}`
-                )
+                .get(`${path}/${countryWithStatesAndLGAs.id}/${stateWithLGAs.id}`)
                 .set('Authorization', `Bearer ${shared.token}`)
                 .end((err, res) => {
                   assert.equal(res.status, 200)
@@ -195,19 +152,10 @@ describe('Geography routes', () => {
                   assert.property(res.body, 'data')
                   assert.typeOf(res.body.data, 'array')
                   assert.isAtLeast(res.body.data.length, 1)
-                  const expectedCountriesInAlphabeticalOrder = _.orderBy(
-                    res.body.data,
-                    'name',
-                    'asc'
-                  )
+                  const expectedCountriesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
                   assert.isTrue(
-                    _.isEqual(
-                      res.body.data,
-                      expectedCountriesInAlphabeticalOrder
-                    ),
-                    `Countries returned are not in alphabetical order ${JSON.stringify(
-                      res.body.data
-                    )}`
+                    _.isEqual(res.body.data, expectedCountriesInAlphabeticalOrder),
+                    `Countries returned are not in alphabetical order ${JSON.stringify(res.body.data)}`
                   )
                   _.each(res.body.data, country => {
                     assert.property(country, 'id')
@@ -249,10 +197,7 @@ describe('Geography routes', () => {
           .get('/api/geography/select-list')
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
-            const countryWithStates = _.find(
-              res.body.data,
-              country => country.states.length > 0
-            )
+            const countryWithStates = _.find(res.body.data, country => country.states.length > 0)
             server
               .get(path + countryWithStates.id)
               .set('Authorization', `Bearer ${shared.token}`)
@@ -262,16 +207,10 @@ describe('Geography routes', () => {
                 assert.property(res.body, 'data')
                 assert.typeOf(res.body.data, 'array')
                 assert.isAtLeast(res.body.data.length, 1)
-                const expectedStatesInAlphabeticalOrder = _.orderBy(
-                  res.body.data,
-                  'name',
-                  'asc'
-                )
+                const expectedStatesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
                 assert.isTrue(
                   _.isEqual(res.body.data, expectedStatesInAlphabeticalOrder),
-                  `States returned are not in alphabetical order ${JSON.stringify(
-                    res.body.data
-                  )}`
+                  `States returned are not in alphabetical order ${JSON.stringify(res.body.data)}`
                 )
                 _.each(res.body.data, state => {
                   assert.property(state, 'id')
@@ -295,9 +234,7 @@ describe('Geography routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
             const stateWithLgas = _.find(
-              _.find(res.body.data, country =>
-                _.some(country.states, state => state.lgas.length > 0)
-              ).states,
+              _.find(res.body.data, country => _.some(country.states, state => state.lgas.length > 0)).states,
               state => state.lgas.length > 0
             )
             server
@@ -309,16 +246,10 @@ describe('Geography routes', () => {
                 assert.property(res.body, 'data')
                 assert.typeOf(res.body.data, 'array')
                 assert.isAtLeast(res.body.data.length, 1)
-                const expectedStatesInAlphabeticalOrder = _.orderBy(
-                  res.body.data,
-                  'name',
-                  'asc'
-                )
+                const expectedStatesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
                 assert.isTrue(
                   _.isEqual(res.body.data, expectedStatesInAlphabeticalOrder),
-                  `LGAs returned are not in alphabetical order ${JSON.stringify(
-                    res.body.data
-                  )}`
+                  `LGAs returned are not in alphabetical order ${JSON.stringify(res.body.data)}`
                 )
                 _.each(res.body.data, state => {
                   assert.property(state, 'id')

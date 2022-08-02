@@ -1,5 +1,5 @@
 import React from 'react'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
 import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
@@ -8,6 +8,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { oneOfType, object, array, string, number } from 'prop-types'
 import classnames from 'classnames/bind'
 import styles from '../DeviceDetail.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -26,17 +27,8 @@ const messages = defineMessages({
   },
 })
 
-const PerformanceBarChart = ({
-  data,
-  series,
-  color,
-  legend,
-  avgValue,
-  maxValue,
-  info,
-  dailyCapacity,
-}) => {
-  const intl = useIntl()
+const PerformanceBarChart = ({ data, series, color, legend, avgValue, maxValue, info, dailyCapacity }) => {
+  const intl = useI18n()
   return (
     <ResponsiveBar
       data={data}
@@ -97,29 +89,17 @@ const PerformanceBarChart = ({
           info === 'Error Rate'
             ? periodData.errorRate + periodData.exceededErrorRate
             : periodData.utilizationRate + periodData.exceededUtilizationRate
-        const totalResultsLabel = `${intl.formatMessage(
-          messages.totalResults
-        )} ${periodData.totalResult}`
+        const totalResultsLabel = `${intl.formatMessage(messages.totalResults)} ${periodData.totalResult}`
         const isoDate = parseISO(periodData.monthTested)
-        const businessDays = differenceInBusinessDays(
-          endOfMonth(isoDate),
-          startOfMonth(isoDate)
-        )
+        const businessDays = differenceInBusinessDays(endOfMonth(isoDate), startOfMonth(isoDate))
         const errorsCapacityLabel =
           info === 'Error Rate'
-            ? `${intl.formatMessage(messages.totalErrors)}: ${
-                periodData.errorCount
-              }`
-            : `${intl.formatMessage(messages.totalCapacity)}: ${
-                dailyCapacity * businessDays
-              }`
+            ? `${intl.formatMessage(messages.totalErrors)}: ${periodData.errorCount}`
+            : `${intl.formatMessage(messages.totalCapacity)}: ${dailyCapacity * businessDays}`
         return (
           <div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div
-                className={cssClasses('Performance--graph-tooltip-color')}
-                style={{ backgroundColor: color }}
-              />
+              <div className={cssClasses('Performance--graph-tooltip-color')} style={{ backgroundColor: color }} />
               {`% ${info}-- `}
             </div>
             <div>

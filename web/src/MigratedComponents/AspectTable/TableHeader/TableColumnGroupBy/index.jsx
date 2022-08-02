@@ -1,6 +1,5 @@
 import React from 'react'
 import { bool, func, number } from 'prop-types'
-import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
 
@@ -8,6 +7,7 @@ import messages from '../messages'
 import IconProvider from '../../../IconProvider'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -15,12 +15,8 @@ const cssClasses = classnames.bind(styles)
  * Component to allow rows to be grouped for this column
  */
 
-const TableColumnGroupBy = ({
-  headerIndex,
-  handleGroupByColumnToggle,
-  isGrouped,
-}) => {
-  const { formatMessage } = useIntl()
+const TableColumnGroupBy = ({ headerIndex, handleGroupByColumnToggle, isGrouped }) => {
+  const { formatMessage } = useI18n()
   return isGrouped ? (
     <IconButton
       onClick={e => handleGroupByColumnToggle(e, headerIndex)}
@@ -28,10 +24,7 @@ const TableColumnGroupBy = ({
       data-testid={`ungroup_${headerIndex}`}
       title={formatMessage(messages.unGroupByColumn)}
     >
-      <IconProvider
-        icon="FaCheckSquare"
-        className="tableheader__groupbybutton"
-      />
+      <IconProvider icon="FaCheckSquare" className="tableheader__groupbybutton" />
     </IconButton>
   ) : (
     <IconButton
@@ -40,10 +33,7 @@ const TableColumnGroupBy = ({
       data-testid={`group_${headerIndex}`}
       title={formatMessage(messages.groupByColumn)}
     >
-      <IconProvider
-        icon="FaRegCheckSquare"
-        className="tableheader__groupbybutton"
-      />
+      <IconProvider icon="FaRegCheckSquare" className="tableheader__groupbybutton" />
     </IconButton>
   )
 }

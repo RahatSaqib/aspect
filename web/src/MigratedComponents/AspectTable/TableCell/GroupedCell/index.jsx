@@ -1,15 +1,5 @@
 import React from 'react'
-import {
-  array,
-  bool,
-  func,
-  number,
-  object,
-  oneOfType,
-  shape,
-  string,
-} from 'prop-types'
-import { useIntl } from 'react-intl'
+import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
 
@@ -18,6 +8,7 @@ import IconProvider from '../../../IconProvider'
 import Cell from '../Cell'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -33,7 +24,7 @@ const GroupedCell = ({
   subRows: { length: subRowsLength },
   value,
 }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('tablecell__grouped')}>
       <IconButton
@@ -41,11 +32,7 @@ const GroupedCell = ({
         className={cssClasses('tablecell__expandbutton')}
         title={formatMessage(messages.expandRow)}
       >
-        {isExpanded ? (
-          <IconProvider icon="MdUnfoldLess" />
-        ) : (
-          <IconProvider icon="MdUnfoldMore" />
-        )}
+        {isExpanded ? <IconProvider icon="MdUnfoldLess" /> : <IconProvider icon="MdUnfoldMore" />}
       </IconButton>
       <Cell render={render} format={format} value={value} /> ({subRowsLength})
     </div>

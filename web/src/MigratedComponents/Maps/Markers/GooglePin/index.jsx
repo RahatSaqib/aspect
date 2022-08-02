@@ -13,21 +13,12 @@ import formatI18nMessage from '../../../../shared/i18n/formatterWeb'
 
 const cssClasses = classnames.bind(styles)
 
-const GooglePin = ({
-  position,
-  config,
-  id,
-  color,
-  info: { maintenanceStatusI18nKey, name },
-}) => {
+const GooglePin = ({ position, config, id, color, info: { maintenanceStatusI18nKey, name } }) => {
   const { size, click } = config
   const { formatMessage } = useI18n()
 
   return (
-    <OverlayView
-      position={position}
-      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-    >
+    <OverlayView position={position} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
       <div
         key={id}
         className={cssClasses('markers--google-pin')}
@@ -52,10 +43,10 @@ const GooglePin = ({
             )}`}
             placement="top"
           >
-            <IconProvider icon="FaMapMarkerAlt" title={false} />
+            <IconProvider icon="FaMapMarkerAlt" />
           </AspectTooltip>
         ) : (
-          <IconProvider icon="FaMapMarkerAlt" title={false} />
+          <IconProvider icon="FaMapMarkerAlt" />
         )}
       </div>
     </OverlayView>

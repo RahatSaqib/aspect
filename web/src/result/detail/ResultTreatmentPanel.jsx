@@ -7,11 +7,7 @@ import { compose, pure, withHandlers, withState } from 'recompose'
 import { defineMessages } from 'react-intl'
 
 import requirePermission from '../../components/shared/requirePermissions'
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionDetail,
-} from '../../components/shared/accordion'
+import { Accordion, AccordionHeader, AccordionDetail } from '../../components/shared/accordion'
 import CheckboxField from '../../components/shared/CheckboxField'
 import AspectButton from '../../components/shared/AspectButton'
 import ResultTreatmentNoteModal from './ResultTreatmentNoteModal'
@@ -79,12 +75,7 @@ const enhance = compose(
       },
   })
 )
-const ResultTreatmentPanel = ({
-  styles,
-  data,
-  intl: { formatMessage },
-  ...restProps
-}) => {
+const ResultTreatmentPanel = ({ styles, data, intl: { formatMessage }, ...restProps }) => {
   const treatmentCheckBoxList = [
     {
       id: 'OnTreatment',
@@ -109,41 +100,25 @@ const ResultTreatmentPanel = ({
           label={
             <div className={styles.Treatment}>
               {data.get('treatmentStatusInfo') && (
-                <PermIdentity
-                  className={styles[`${data.get('treatmentStatusInfo')}`]}
-                />
+                <PermIdentity className={styles[`${data.get('treatmentStatusInfo')}`]} />
               )}
 
               <div className={styles.TreatmentInfo}>
-                {!data.get('resultTreatmentStatus') && (
-                  <h4>{formatMessage(messages.notYetConfirmedOnTreatment)}</h4>
-                )}
+                {!data.get('resultTreatmentStatus') && <h4>{formatMessage(messages.notYetConfirmedOnTreatment)}</h4>}
                 {treatmentCheckBoxList.map(
                   treatmentStatus =>
-                    treatmentStatus.id ===
-                      data.get('resultTreatmentStatus') && (
+                    treatmentStatus.id === data.get('resultTreatmentStatus') && (
                       <h4>
                         {treatmentStatus.label}
                         {treatmentStatus.id !== 'AwaitingTreatment' && (
-                          <span>
-                            -{' '}
-                            {date(
-                              parseISO(
-                                data.get('resultTreatmentStatusCreatedOn')
-                              ),
-                              'dd/MM/yyyy'
-                            )}
-                          </span>
+                          <span>- {date(parseISO(data.get('resultTreatmentStatusCreatedOn')), 'dd/MM/yyyy')}</span>
                         )}
                       </h4>
                     )
                 )}
                 {data.get('endedOn') && (
                   <h3>
-                    {differenceInCalendarDays(
-                      new Date(),
-                      parseISO(data.get('endedOn'))
-                    )}
+                    {differenceInCalendarDays(new Date(), parseISO(data.get('endedOn')))}
                     &nbsp;{formatMessage(messages.days)}
                   </h3>
                 )}
@@ -153,9 +128,7 @@ const ResultTreatmentPanel = ({
         >
           <div className={styles.TreatmentLinkLayout}>
             <div>
-              <p className={styles.TreatmentCheckBoxLabel}>
-                {formatMessage(messages.linkedToTreatment)}
-              </p>
+              <p className={styles.TreatmentCheckBoxLabel}>{formatMessage(messages.linkedToTreatment)}</p>
               <div className={styles.TreatmentCheckBox}>
                 {treatmentCheckBoxList.map(
                   treatmentCheckbox =>
@@ -163,15 +136,8 @@ const ResultTreatmentPanel = ({
                       <CheckboxField
                         onChange={restProps.onTreatmentChange}
                         id={treatmentCheckbox.id}
-                        disabled={
-                          !restProps.userPermission.includes(
-                            'treatmentStatus:edit'
-                          )
-                        }
-                        checked={
-                          treatmentCheckbox.id ===
-                          data.get('resultTreatmentStatus')
-                        }
+                        disabled={!restProps.userPermission.includes('treatmentStatus:edit')}
+                        checked={treatmentCheckbox.id === data.get('resultTreatmentStatus')}
                         label={treatmentCheckbox.label}
                         className={styles.TreatmentCheckBox}
                       />
@@ -179,10 +145,7 @@ const ResultTreatmentPanel = ({
                 )}
               </div>
             </div>
-            <AspectButton
-              className={styles.LinkButton}
-              onClick={restProps.onToggleShown}
-            >
+            <AspectButton className={styles.LinkButton} onClick={restProps.onToggleShown}>
               {formatMessage(messages.addNote)}
             </AspectButton>
           </div>
@@ -195,18 +158,10 @@ const ResultTreatmentPanel = ({
               </div>
               {resultNotes.map(resultNote => (
                 <div className={styles.TreatmentNoteComment}>
-                  <div className={styles.TreatmentNoteBody}>
-                    {resultNote.text}
-                  </div>
+                  <div className={styles.TreatmentNoteBody}>{resultNote.text}</div>
                   <div className={styles.TreatmentNoteFooter}>
                     <span>Note added by: </span>
-                    <span>
-                      {' '}
-                      {`${resultNote.createdBy} - ${date(
-                        parseISO(resultNote.createdOn),
-                        'dd/MM/yyyy'
-                      )}`}{' '}
-                    </span>
+                    <span> {`${resultNote.createdBy} - ${date(parseISO(resultNote.createdOn), 'dd/MM/yyyy')}`} </span>
                   </div>
                 </div>
               ))}

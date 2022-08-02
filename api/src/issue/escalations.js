@@ -18,31 +18,19 @@ async function onEscalateIssues(action, { messageContext: context }) {
     alertMessageUpdateAfterIssueDataChanged,
   })
   return context.transact(async knex => {
-    const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(
-      knex,
-      action.issueId
-    )
+    const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(knex, action.issueId)
     if (_.isEmpty(openIssuesToCheck)) {
       return Promise.resolve()
     }
     return Promise.each(openIssuesToCheck, async issueEscalationTrigger => {
-      const shouldEscalate = await issueConditionsMet(
-        knex,
-        issueEscalationTrigger,
-        issueEscalationTrigger.conditions
-      )
+      const shouldEscalate = await issueConditionsMet(knex, issueEscalationTrigger, issueEscalationTrigger.conditions)
       if (shouldEscalate) {
         await knex('Issue')
           .where('id', issueEscalationTrigger.id)
           .update({ level: issueEscalationTrigger.escalateToLevel })
-        context.issueEscalated(
-          issueEscalationTrigger.id,
-          issueEscalationTrigger.escalateToLevel
-        )
+        context.issueEscalated(issueEscalationTrigger.id, issueEscalationTrigger.escalateToLevel)
       } else {
-        context.alertMessageUpdateAfterIssueDataChanged(
-          issueEscalationTrigger.id
-        )
+        context.alertMessageUpdateAfterIssueDataChanged(issueEscalationTrigger.id)
       }
     })
   })

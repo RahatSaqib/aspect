@@ -9,11 +9,7 @@ const {
   getLastDeviceOperationId,
   getDeviceFromApiKey,
 } = require('./utils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
+const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
@@ -200,10 +196,7 @@ describe('Device API routes', () => {
 
       const config2 = await getDeviceConfigurationData(knex, deviceId)
       const op2 = await getLastDeviceOperationData(knex, deviceId)
-      assert.deepEqual(
-        config2,
-        _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } })
-      )
+      assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } }))
       assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
     })
   })
@@ -251,10 +244,7 @@ describe('Device API routes', () => {
       assert.equal(newDevice.timezone, 'Hawaiian Standard Time')
       assert.equal(newDevice.serial, null)
 
-      const deviceLogs = await knex('DeviceApprovalLog as dl').where(
-        'dl.deviceId',
-        newDevice.id
-      )
+      const deviceLogs = await knex('DeviceApprovalLog as dl').where('dl.deviceId', newDevice.id)
       assert.isOk(deviceLogs)
       assert.propertyVal(newDevice, 'id', deviceLogs[0].deviceId)
       assert.isAtLeast(deviceLogs.length, 1)
@@ -271,9 +261,7 @@ describe('Device API routes', () => {
       // update last ping to a date earlier and greater than 7 days and ensure device marked as offline
       const last8Day = subDays(new Date(), 8)
 
-      await knex('Device as d')
-        .where('d.id', factDevice[0].deviceId)
-        .update({ lastPingOn: last8Day })
+      await knex('Device as d').where('d.id', factDevice[0].deviceId).update({ lastPingOn: last8Day })
 
       // Generate device offline facts and wait for offline action for new device
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))
@@ -281,10 +269,7 @@ describe('Device API routes', () => {
       await waitForOffline
       await waitForIdle()
 
-      const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
-        'fdf.deviceId',
-        newDevice.id
-      )
+      const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where('fdf.deviceId', newDevice.id)
       assert.equal(offlineFactDevice.offline, 1)
 
       const waitForOnline = waitForAction(deviceOnline(newDevice.id))
@@ -299,10 +284,7 @@ describe('Device API routes', () => {
       await waitForOnline
       await waitForIdle()
 
-      const [onlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
-        'fdf.deviceId',
-        newDevice.id
-      )
+      const [onlineFactDevice] = await knex('FactDeviceFlag as fdf').where('fdf.deviceId', newDevice.id)
       assert.equal(onlineFactDevice.offline, 0)
     })
 
@@ -364,9 +346,7 @@ describe('Device API routes', () => {
       const { apiKey, deviceAuth } = context
       assert.isOk(apiKey)
 
-      const [{ count: logLength1 }] = await knex('DeviceLog as dl').count(
-        'id as count'
-      )
+      const [{ count: logLength1 }] = await knex('DeviceLog as dl').count('id as count')
       const res = await server
         .post(devicePath)
         .set('Authorization', deviceAuth)
@@ -378,9 +358,7 @@ describe('Device API routes', () => {
 
       assert.equal(res.status, 400)
 
-      const [{ count: logLength2 }] = await knex('DeviceLog as dl').count(
-        'id as count'
-      )
+      const [{ count: logLength2 }] = await knex('DeviceLog as dl').count('id as count')
 
       assert.equal(logLength1 + 1, logLength2)
     })
@@ -389,9 +367,7 @@ describe('Device API routes', () => {
     it('should return json with the servers stats.', async () => {
       const { apiKey, deviceAuth } = context
       assert.isOk(apiKey)
-      const res = await server
-        .get(`${devicePath}/health-stats`)
-        .set('Authorization', deviceAuth)
+      const res = await server.get(`${devicePath}/health-stats`).set('Authorization', deviceAuth)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body.Countries, 'Array')

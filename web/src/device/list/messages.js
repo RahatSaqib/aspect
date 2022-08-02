@@ -16,17 +16,35 @@ export const messages = {
       id: 'pages.DeviceList.device',
       defaultMessage: 'Device',
     },
-    status: {
-      id: 'pages.DeviceList.status',
-      defaultMessage: 'Status',
+    site: {
+      id: 'pages.DeviceList.site',
+      defaultMessage: 'Site',
+    },
+    maintenanceStatus: {
+      id: 'pages.DeviceList.maintenanceStatus',
+      defaultMessage: 'Maintenance Status',
+    },
+    approvalStatus: {
+      id: 'pages.DeviceList.approvalStatus',
+      defaultMessage: 'Approval Status',
     },
     availabilityRate: {
       id: 'pages.DeviceList.availabilityRate',
       defaultMessage: 'Active',
     },
+    availabilityRateDescription: {
+      id: 'pages.DeviceList.availabilityRateDescription',
+      defaultMessage:
+        "Based on the last 30 days, represents the percentage of days when the device was reported as 'active' compared to the total number of working days",
+    },
     errorRate: {
       id: 'pages.DeviceList.errorRate',
       defaultMessage: 'Test failures',
+    },
+    errorRateDescription: {
+      id: 'pages.DeviceList.errorRateDescription',
+      defaultMessage:
+        'Based on the last 30 days, represents the percentage of results with errors compared to the total number of performed results',
     },
     issues: {
       id: 'pages.DeviceList.issues',
@@ -44,17 +62,25 @@ export const messages = {
       id: 'pages.DeviceList.lastSeen',
       defaultMessage: 'Last Seen',
     },
+    lastSeenDescription: {
+      id: 'pages.DeviceList.lastSeenDescription',
+      defaultMessage: 'Represents the last time when the connector application made a connection with Aspect',
+    },
     numberOfTests: {
       id: 'pages.DeviceList.numberOfTests',
       defaultMessage: 'Number of Tests',
     },
     lastMonth: {
       id: 'pages.DeviceList.lastMonth',
-      defaultMessage: 'Last 30 Days',
+      defaultMessage: '#Results (Preceding 30 Days)',
+    },
+    resultCountDescription: {
+      id: 'pages.DeviceList.resultCountDescription',
+      defaultMessage: 'Represents the number of results conducted from {startDate} to {endDate}',
     },
     thisMonth: {
       id: 'pages.DeviceList.thisMonth',
-      defaultMessage: 'Preceding 30 Days',
+      defaultMessage: '#Results (Last 30 Days)',
     },
     needsRepair: {
       id: 'pages.DeviceList.needsRepair',
@@ -114,6 +140,42 @@ export const messages = {
     issueCategoryConnectivityHealth: {
       id: 'pages.DeviceList.connectivityHealth',
       defaultMessage: 'Connectivity',
+    },
+    connectorStatus: {
+      id: 'pages.DeviceList.connectorStatus',
+      defaultMessage: 'Connector Status',
+    },
+    connectorVersion: {
+      id: 'pages.DeviceList.connectorVersion',
+      defaultMessage: 'Connector Version',
+    },
+    lastResultConductedOn: {
+      id: 'pages.DeviceList.lastResultConductedOn',
+      defaultMessage: 'Last Result Conducted On',
+    },
+    deviceStatus: {
+      id: 'pages.DeviceList.deviceStatus',
+      defaultMessage: 'Device Status',
+    },
+    online: {
+      id: 'pages.DeviceList.online',
+      defaultMessage: 'Online',
+    },
+    offline: {
+      id: 'pages.DeviceList.offline',
+      defaultMessage: 'Offline',
+    },
+    up: {
+      id: 'pages.DeviceList.up',
+      defaultMessage: 'Up',
+    },
+    down: {
+      id: 'pages.DeviceList.down',
+      defaultMessage: 'Down',
+    },
+    unknown: {
+      id: 'pages.DeviceList.unknown',
+      defaultMessage: 'Unknown',
     },
   }),
 }

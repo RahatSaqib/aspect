@@ -1,10 +1,6 @@
 const chai = require('chai')
 const { getCommCarePayload } = require('./commcare_utils')
-const {
-  createTestContext,
-  getDeviceFromApiKey,
-  getLastResult,
-} = require('../utils')
+const { createTestContext, getDeviceFromApiKey, getLastResult } = require('../utils')
 
 const server = require('../../utils/testUtils')
 
@@ -125,10 +121,7 @@ describe.skip('CommCare Result API routes', () => {
         age: 28,
         gender: 'male',
       })
-      const res = await server
-        .post(pluginPath)
-        .auth('commcare_test', apiKey.token)
-        .send(payload)
+      const res = await server.post(pluginPath).auth('commcare_test', apiKey.token).send(payload)
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
 
@@ -149,10 +142,7 @@ describe.skip('CommCare Result API routes', () => {
         gender: 'female',
       })
       payload.form.phone_number = '12345678'
-      const res2 = await server
-        .post(pluginPath)
-        .auth('commcare_test', apiKey.token)
-        .send(payload)
+      const res2 = await server.post(pluginPath).auth('commcare_test', apiKey.token).send(payload)
 
       assert.equal(res2.status, 200)
       assert.typeOf(res2.body, 'Object')
@@ -173,10 +163,7 @@ describe.skip('CommCare Result API routes', () => {
         age: 30,
         gender: 'male',
       })
-      const res3 = await server
-        .post(pluginPath)
-        .auth('commcare_test', apiKey.token)
-        .send(payload)
+      const res3 = await server.post(pluginPath).auth('commcare_test', apiKey.token).send(payload)
 
       assert.equal(res3.status, 200)
       assert.typeOf(res3.body, 'Object')

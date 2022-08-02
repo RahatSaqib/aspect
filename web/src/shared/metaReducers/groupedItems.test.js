@@ -8,18 +8,8 @@ describe('Grouped Items Reducer', () => {
   describe('When the Data Is Deep', () => {
     it('should flatten the nested structure', () => {
       const initialState = new Items()
-      const newState = receiveList(
-        initialState,
-        ['consumables', 'inventoryItems'],
-        nestedData
-      )
-      expect(
-        omit(
-          newState.getIn(['byId', 76]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
+      expect(omit(newState.getIn(['byId', 76]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -36,13 +26,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 53,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 75]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 75]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -59,13 +43,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-06-23T19:26:29.000Z',
         quantityOnHand: 34,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 79]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 79]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -82,13 +60,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-12-15T00:00:00.000Z',
         quantityOnHand: 18,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 78]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 78]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 39,
         siteName: 'Cuyahoga County Ohio #2',
         countryId: 3,
@@ -105,13 +77,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 8,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 77]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 77]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 39,
         siteName: 'Cuyahoga County Ohio #2',
         countryId: 3,
@@ -128,13 +94,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-02-27T09:17:09.000Z',
         quantityOnHand: 225,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 63]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 63]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 32,
         siteName: 'Wayne County Nebraska #2',
         countryId: 3,
@@ -151,13 +111,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-03-31T00:33:37.000Z',
         quantityOnHand: 860,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 61]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 61]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 32,
         siteName: 'Wayne County Nebraska #2',
         countryId: 3,
@@ -174,13 +128,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-04-31T00:33:37.000Z',
         quantityOnHand: 13,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 44]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 44]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -197,13 +145,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 24,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 45]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 45]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -220,13 +162,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 16,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 43]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 43]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -243,13 +179,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-03-23T14:21:28.000Z',
         quantityOnHand: 76,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 46]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 46]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -266,13 +196,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-05-01T00:00:00.000Z',
         quantityOnHand: 76,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 47]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 47]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 22,
         siteName: 'Suffolk County Massachusetts #3',
         countryId: 3,
@@ -289,13 +213,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-04-21T00:00:00.000Z',
         quantityOnHand: 76,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 35]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 35]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -312,13 +230,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-08-18T22:00:00.000Z',
         quantityOnHand: 931,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 36]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 36]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -335,13 +247,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-03-14T22:00:00.000Z',
         quantityOnHand: 693,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 39]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 39]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -358,13 +264,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 930,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 38]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 38]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -381,13 +281,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 92,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 37]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 37]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 16,
         siteName: 'Franklin County Massachusetts #1',
         countryId: 3,
@@ -408,11 +302,7 @@ describe('Grouped Items Reducer', () => {
 
     it('should generate rowSpans for each field based the nested structure', () => {
       const initialState = new Items()
-      const newState = receiveList(
-        initialState,
-        ['consumables', 'inventoryItems'],
-        nestedData
-      )
+      const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
       expect(newState.getIn(['byId', 76, 'rowSpans']).toJS()).toEqual({
         siteId: 3,
         siteName: 3,
@@ -706,14 +596,8 @@ describe('Grouped Items Reducer', () => {
 
     it('should generate visibleProperties for each field based the nested structure', () => {
       const initialState = new Items()
-      const newState = receiveList(
-        initialState,
-        ['consumables', 'inventoryItems'],
-        nestedData
-      )
-      expect(
-        newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
+      expect(newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'countryId',
@@ -730,9 +614,7 @@ describe('Grouped Items Reducer', () => {
         'stateName',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'expiresOn',
@@ -741,42 +623,12 @@ describe('Grouped Items Reducer', () => {
         'quantityOnHand',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort()
-      ).toEqual([
-        'consumableId',
-        'consumableName',
-        'countryId',
-        'countryName',
+      expect(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()).toEqual([
         'expiresOn',
         'id',
-        'lgaId',
-        'lgaName',
-        'manufacturer',
         'quantityOnHand',
-        'siteId',
-        'siteName',
-        'stateId',
-        'stateName',
-        'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort()
-      ).toEqual([
-        'consumableId',
-        'consumableName',
-        'expiresOn',
-        'id',
-        'manufacturer',
-        'quantityOnHand',
-        'unitShortName',
-      ])
-      expect(
-        newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'countryId',
@@ -793,12 +645,16 @@ describe('Grouped Items Reducer', () => {
         'stateName',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort()).toEqual([
+        'consumableId',
+        'consumableName',
+        'expiresOn',
+        'id',
+        'manufacturer',
+        'quantityOnHand',
+        'unitShortName',
+      ])
+      expect(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'countryId',
@@ -815,29 +671,12 @@ describe('Grouped Items Reducer', () => {
         'stateName',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 43, 'visibleProperties']).toJS().sort()
-      ).toEqual([
-        'consumableId',
-        'consumableName',
+      expect(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()).toEqual([
         'expiresOn',
         'id',
-        'manufacturer',
         'quantityOnHand',
-        'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 46, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 47, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'countryId',
@@ -854,12 +693,12 @@ describe('Grouped Items Reducer', () => {
         'stateName',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 43, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'expiresOn',
@@ -868,12 +707,53 @@ describe('Grouped Items Reducer', () => {
         'quantityOnHand',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 37, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 46, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 47, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort()).toEqual([
+        'consumableId',
+        'consumableName',
+        'countryId',
+        'countryName',
+        'expiresOn',
+        'id',
+        'lgaId',
+        'lgaName',
+        'manufacturer',
+        'quantityOnHand',
+        'siteId',
+        'siteName',
+        'stateId',
+        'stateName',
+        'unitShortName',
+      ])
+      expect(newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort()).toEqual([
+        'consumableId',
+        'consumableName',
+        'expiresOn',
+        'id',
+        'manufacturer',
+        'quantityOnHand',
+        'unitShortName',
+      ])
+      expect(newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 37, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'expiresOn',
@@ -886,57 +766,38 @@ describe('Grouped Items Reducer', () => {
 
     it('should return an item ID list that is in the same order as the deepest child IDs passed into it', () => {
       const idList = flattenDeep(
-        map(nestedData, site =>
-          map(site.consumables, consumable =>
-            map(consumable.inventoryItems, 'id')
-          )
-        )
+        map(nestedData, site => map(site.consumables, consumable => map(consumable.inventoryItems, 'id')))
       )
       const initialState = new Items()
-      const newState = receiveList(
-        initialState,
-        ['consumables', 'inventoryItems'],
-        nestedData
-      )
+      const newState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
 
       expect(newState.get('currentIdList').toJS()).toEqual(idList)
     })
 
     it('should not keep stale column visibility state when a new list is received', () => {
       const initialState = new Items()
-      const nextState = receiveList(
-        initialState,
-        ['consumables', 'inventoryItems'],
-        nestedData
-      )
+      const nextState = receiveList(initialState, ['consumables', 'inventoryItems'], nestedData)
       const dataSortedByQuantity = map(nestedData, site => {
         const siteWithConsumblesWithSortedItems = {
           ...site,
           consumables: map(site.consumables, consumable => {
             const consumableWithSortedItems = {
               ...consumable,
-              inventoryItems: sortBy(
-                consumable.inventoryItems,
-                'quantityOnHand'
-              ),
+              inventoryItems: sortBy(consumable.inventoryItems, 'quantityOnHand'),
             }
             return consumableWithSortedItems
           }),
         }
         return siteWithConsumblesWithSortedItems
       })
-      const newState = receiveList(
-        nextState,
-        ['consumables', 'inventoryItems'],
-        dataSortedByQuantity
-      )
+      const newState = receiveList(nextState, ['consumables', 'inventoryItems'], dataSortedByQuantity)
 
-      expect(
-        newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'expiresOn',
@@ -945,34 +806,12 @@ describe('Grouped Items Reducer', () => {
         'quantityOnHand',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()
-      ).toEqual([
-        'consumableId',
-        'consumableName',
-        'countryId',
-        'countryName',
+      expect(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()).toEqual([
         'expiresOn',
         'id',
-        'lgaId',
-        'lgaName',
-        'manufacturer',
         'quantityOnHand',
-        'siteId',
-        'siteName',
-        'stateId',
-        'stateName',
-        'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'countryId',
@@ -989,12 +828,12 @@ describe('Grouped Items Reducer', () => {
         'stateName',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 44, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 45, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'countryId',
@@ -1011,12 +850,34 @@ describe('Grouped Items Reducer', () => {
         'stateName',
         'unitShortName',
       ])
-      expect(
-        newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort()
-      ).toEqual(['expiresOn', 'id', 'quantityOnHand'])
-      expect(
-        newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort()
-      ).toEqual([
+      expect(newState.getIn(['byId', 35, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 36, 'visibleProperties']).toJS().sort()).toEqual([
+        'consumableId',
+        'consumableName',
+        'countryId',
+        'countryName',
+        'expiresOn',
+        'id',
+        'lgaId',
+        'lgaName',
+        'manufacturer',
+        'quantityOnHand',
+        'siteId',
+        'siteName',
+        'stateId',
+        'stateName',
+        'unitShortName',
+      ])
+      expect(newState.getIn(['byId', 39, 'visibleProperties']).toJS().sort()).toEqual([
+        'expiresOn',
+        'id',
+        'quantityOnHand',
+      ])
+      expect(newState.getIn(['byId', 38, 'visibleProperties']).toJS().sort()).toEqual([
         'consumableId',
         'consumableName',
         'expiresOn',
@@ -1260,13 +1121,7 @@ describe('Grouped Items Reducer', () => {
     it('should return the same data', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, [], flatData)
-      expect(
-        omit(
-          newState.getIn(['byId', 76]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 76]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -1283,13 +1138,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 53,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 75]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 75]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -1306,13 +1155,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-06-23T19:26:29.000Z',
         quantityOnHand: 34,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 79]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 79]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 38,
         siteName: 'Cuyahoga County Ohio #1',
         countryId: 3,
@@ -1329,13 +1172,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-12-15T00:00:00.000Z',
         quantityOnHand: 18,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 78]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 78]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 39,
         siteName: 'Cuyahoga County Ohio #2',
         countryId: 3,
@@ -1352,13 +1189,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: null,
         quantityOnHand: 8,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 77]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 77]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 39,
         siteName: 'Cuyahoga County Ohio #2',
         countryId: 3,
@@ -1375,13 +1206,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2017-02-27T09:17:09.000Z',
         quantityOnHand: 225,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 63]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 63]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 32,
         siteName: 'Wayne County Nebraska #2',
         countryId: 3,
@@ -1398,13 +1223,7 @@ describe('Grouped Items Reducer', () => {
         expiresOn: '2016-03-31T00:33:37.000Z',
         quantityOnHand: 860,
       })
-      expect(
-        omit(
-          newState.getIn(['byId', 61]).toJS(),
-          'rowSpans',
-          'visibleProperties'
-        )
-      ).toEqual({
+      expect(omit(newState.getIn(['byId', 61]).toJS(), 'rowSpans', 'visibleProperties')).toEqual({
         siteId: 32,
         siteName: 'Wayne County Nebraska #2',
         countryId: 3,
@@ -1551,27 +1370,13 @@ describe('Grouped Items Reducer', () => {
       const initialState = new Items()
       const newState = receiveList(initialState, [], flatData)
       const allProperties = Object.keys(flatData[0])
-      expect(
-        newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort()
-      ).toEqual(allProperties.sort())
-      expect(
-        newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()
-      ).toEqual(allProperties.sort())
-      expect(
-        newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()
-      ).toEqual(allProperties.sort())
-      expect(
-        newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort()
-      ).toEqual(allProperties.sort())
-      expect(
-        newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort()
-      ).toEqual(allProperties.sort())
-      expect(
-        newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()
-      ).toEqual(allProperties.sort())
-      expect(
-        newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()
-      ).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 76, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 75, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 79, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 78, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 77, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 63, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
+      expect(newState.getIn(['byId', 61, 'visibleProperties']).toJS().sort()).toEqual(allProperties.sort())
     })
 
     const flatData = [

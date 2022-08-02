@@ -22,14 +22,7 @@ const enhance = compose(
   )
 )
 
-export const Accordion = ({
-  children,
-  className,
-  disabled,
-  expanded,
-  handleExpandToggle,
-  ...restProps
-}) => {
+export const Accordion = ({ children, className, disabled, expanded, handleExpandToggle, ...restProps }) => {
   let header
   const newChildren = React.Children.map(children, child => {
     if (!React.isValidElement(child)) {

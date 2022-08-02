@@ -123,9 +123,7 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(totals1 + 1, totals2)
 
     // get stored deviceOperation entry and compare with sent data
-    const deviceOperation = await knex('DeviceOperation')
-      .orderBy('CreatedOn', 'desc')
-      .first()
+    const deviceOperation = await knex('DeviceOperation').orderBy('CreatedOn', 'desc').first()
     assert.equal(deviceOperation.deviceId, deviceId)
     assert.equal(
       format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
@@ -150,9 +148,7 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(totals1 + 2, totals2)
 
     // get stored deviceOperation entry and compare with sent data
-    const deviceOperation = await knex('DeviceOperation')
-      .orderBy('CreatedOn', 'desc')
-      .first()
+    const deviceOperation = await knex('DeviceOperation').orderBy('CreatedOn', 'desc').first()
     assert.equal(deviceOperation.deviceId, deviceId)
     assert.equal(
       format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
@@ -214,8 +210,7 @@ describe('Process GeneXpert Logs', () => {
     // initial count of deviceOperation entries
     const totals1 = await getTotalsOfDeviceOperation()
     // helper for getting date N days ago
-    const getDateDaysAgo = daysAgo =>
-      new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
+    const getDateDaysAgo = daysAgo => new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
 
     const logDatas = [
       {
@@ -345,9 +340,7 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(totals1 + logDatas.length, totals2)
 
     // get stored deviceOperation entry and compare with sent data
-    const deviceOperation = await knex('DeviceOperation')
-      .orderBy('id', 'desc')
-      .first()
+    const deviceOperation = await knex('DeviceOperation').orderBy('id', 'desc').first()
     assert.equal(deviceOperation.deviceId, deviceId)
     assert.equal(
       format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
@@ -363,8 +356,7 @@ describe('Process GeneXpert Logs', () => {
     // initial count of deviceOperation entries
     const totals1 = await getTotalsOfDeviceOperation()
     // helper for getting date N days ago
-    const getDateDaysAgo = daysAgo =>
-      new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
+    const getDateDaysAgo = daysAgo => new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
 
     const logDatas = [
       {
@@ -483,9 +475,7 @@ describe('Process GeneXpert Logs', () => {
     assert.equal(totals1 + logDatas.length, totals2)
 
     // get stored deviceOperation entry and compare with sent data
-    const deviceOperation = await knex('DeviceOperation')
-      .orderBy('id', 'desc')
-      .first()
+    const deviceOperation = await knex('DeviceOperation').orderBy('id', 'desc').first()
     assert.equal(deviceOperation.deviceId, deviceId)
     assert.equal(
       format(deviceOperation.startedOn, 'yyyy-MM-dd HH:mm:ss'),
@@ -500,8 +490,7 @@ describe('Process GeneXpert Logs', () => {
     assert.isOk(apiKey)
 
     // helper for getting date N days ago
-    const getDateDaysAgo = daysAgo =>
-      new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
+    const getDateDaysAgo = daysAgo => new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
 
     const logDatas = [
       {
@@ -615,8 +604,7 @@ describe('Process GeneXpert Logs', () => {
     const { apiKey, deviceAuth, deviceId } = context
     assert.isOk(apiKey)
     // helper for getting date N days ago
-    const getDateDaysAgo = daysAgo =>
-      new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
+    const getDateDaysAgo = daysAgo => new Date(format(subDays(new Date(), daysAgo), 'yyyy-MM-dd HH:mm:ss'))
 
     const logDatas = [
       {
@@ -726,9 +714,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     /**
      * check that device doesn't have a calibration defined
      */
-    deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    deviceMaintenance = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     assert.isUndefined(deviceMaintenance)
   })
   afterEach(context.afterEach)
@@ -748,9 +734,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     const res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
     // check that device now has calibration defined
-    deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    deviceMaintenance = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     assert.isUndefined(deviceMaintenance)
   })
 
@@ -764,9 +748,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     const res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
     // check that device now has calibration defined
-    deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    deviceMaintenance = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     assert.isDefined(deviceMaintenance)
   })
 
@@ -783,9 +765,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
     // check that device now has calibration defined
-    deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    deviceMaintenance = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     assert.isDefined(deviceMaintenance)
 
     /**
@@ -798,9 +778,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
     //
-    deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    deviceMaintenance = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     // current calibration date is NOT equal to what we've just posted
     assert.isTrue(deviceMaintenance.contextDate > logData.occurredOn)
     assert.equal(
@@ -823,9 +801,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
     // check that device now has calibration defined
-    deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    deviceMaintenance = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     assert.isDefined(deviceMaintenance)
 
     /**
@@ -838,13 +814,9 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
     //
-    deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    deviceMaintenance = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     // current calibration date is equal to what we've just posted
-    assert.isTrue(
-      deviceMaintenance.contextDate.getTime() === logData.occurredOn.getTime()
-    )
+    assert.isTrue(deviceMaintenance.contextDate.getTime() === logData.occurredOn.getTime())
   })
 
   it('should NOT create entry in DeviceMaintenance for log in the same date', async () => {
@@ -860,9 +832,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
     // check that device now has calibration defined
-    deviceMaintenance = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    deviceMaintenance = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     assert.isDefined(deviceMaintenance)
 
     /**
@@ -874,9 +844,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
     }
     res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
-    const deviceMaintenanceNew = await knex('DeviceMaintenance')
-      .where(getDeviceMaintenanceProps(deviceId))
-      .first()
+    const deviceMaintenanceNew = await knex('DeviceMaintenance').where(getDeviceMaintenanceProps(deviceId)).first()
     // see that API didn't duplicated entry per same device in same day
     assert.isTrue(deviceMaintenance.id === deviceMaintenanceNew.id)
   })

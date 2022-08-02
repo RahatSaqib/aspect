@@ -25,33 +25,24 @@ function findAllTests(directory) {
     if (fs.statSync(absolute).isDirectory()) {
       return findAllTests(absolute)
     }
-    if (
-      absolute.endsWith('.spec.js') &&
-      !/(findAllTests|\/data\/|\/helpers\/)/.test(absolute)
-    ) {
+    if (absolute.endsWith('.spec.js') && !/(findAllTests|\/data\/|\/helpers\/)/.test(absolute)) {
       tests.push(absolute.replace('api/test/', ''))
     }
   })
 }
 
 function isMocha(context) {
-  return ['afterEach', 'after', 'beforeEach', 'before', 'describe', 'it'].every(
-    functionName => {
-      return context[functionName] instanceof Function
-    }
-  )
+  return ['afterEach', 'after', 'beforeEach', 'before', 'describe', 'it'].every(functionName => {
+    return context[functionName] instanceof Function
+  })
 }
 
 function arrayAllTests({ path }) {
   if (!isMocha(global)) {
     findAllTests(path)
-    const matches = _.map(problemTests, string =>
-      _.remove(tests, test => new RegExp(`${string}\\b`, '').test(test))
-    )
+    const matches = _.map(problemTests, string => _.remove(tests, test => new RegExp(`${string}\\b`, '').test(test)))
     const chunks = _.concat(matches, [tests])
-    chunks.map(chunk =>
-      strings.push(`test/${chunk.length > 1 ? `{${chunk.join(',')}}` : chunk}`)
-    )
+    chunks.map(chunk => strings.push(`test/${chunk.length > 1 ? `{${chunk.join(',')}}` : chunk}`))
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(strings))
   }

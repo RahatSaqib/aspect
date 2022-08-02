@@ -22,14 +22,8 @@ describe('Device API Raw routes for cobas', () => {
       const now = new Date()
       const { id: userId } = await knex('User').first('id')
 
-      const cobasDeviceType = await knex
-        .from('DeviceType')
-        .where('externalId', 'COBAS4800')
-        .first()
-      const partner = await knex
-        .from('Partner')
-        .where('name', 'Partner One')
-        .first()
+      const cobasDeviceType = await knex.from('DeviceType').where('externalId', 'COBAS4800').first()
+      const partner = await knex.from('Partner').where('name', 'Partner One').first()
       const geography = await knex
         .from('Country as c')
         .join('Geography as g', 'g.countryId', 'c.id')
@@ -37,10 +31,7 @@ describe('Device API Raw routes for cobas', () => {
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
-      const approvedDeviceApproval = await knex
-        .from('DeviceApproval')
-        .where('token', 'approved')
-        .first()
+      const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
       const deviceCapacity = await knex('DeviceCapacity')
         .where({ deviceTypeId: cobasDeviceType.id })
         .where({ partnerId: partner.id })
@@ -103,10 +94,7 @@ describe('Device API Raw routes for cobas', () => {
       await knex('DeviceLog').where('deviceId', deviceId).delete()
 
       await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-      await knex('DeviceApiKey')
-        .where('token', validApiKeyToken)
-        .orWhere('deviceId', deviceId)
-        .delete()
+      await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
       await knex('Device').where('id', deviceId).delete()
       await knex('Site').where('id', siteId).delete()
     })
@@ -124,13 +112,9 @@ describe('Device API Raw routes for cobas', () => {
         .set('Authorization', `Bearer ${validApiKeyToken}`)
         .set('Content-type', 'application/json')
         .send(payload)
-      const deviceApiRawRecord = await knex('DeviceApiRaw')
-        .where({ id: response.body.deviceApiRawId })
-        .first()
+      const deviceApiRawRecord = await knex('DeviceApiRaw').where({ id: response.body.deviceApiRawId }).first()
       assert.equal(response.statusCode, 200)
-      expect(JSON.parse(deviceApiRawRecord.rawData).payload).to.deep.equal(
-        payload
-      )
+      expect(JSON.parse(deviceApiRawRecord.rawData).payload).to.deep.equal(payload)
       expect(response.body.deviceId).to.equal(deviceId)
       expect(response.body.deviceLogId).to.be.above(0)
     }))

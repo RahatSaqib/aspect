@@ -75,8 +75,7 @@ async function getReportDetails(auth, externalId) {
     )
     .first()
 
-  if (!report)
-    throw Boom.forbidden("You don't have access to the requested report")
+  if (!report) throw Boom.forbidden("You don't have access to the requested report")
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
@@ -229,14 +228,8 @@ function proxyGxReport(request, reply) {
   return proxyGxReportAsync(request)
     .then(resp => {
       reply(resp.body)
-        .header(
-          'Content-Type',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-        .header(
-          'Content-Disposition',
-          `attachment; filename="${request.params.reportName}.xlsx"`
-        )
+        .header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        .header('Content-Disposition', `attachment; filename="${request.params.reportName}.xlsx"`)
     })
     .catch(err => {
       logger.error(err)
@@ -282,9 +275,7 @@ async function proxyGxReportAsync(request) {
   const stateNames = _.uniq(_.map(sites, 'stateName'))
   const siteNames = _.uniq(_.map(sites, 'siteName'))
   if (stateNames.length !== 1 && !isAdmin) {
-    throw Boom.badRequest(
-      'Cannot find single assigned state for logged in user'
-    )
+    throw Boom.badRequest('Cannot find single assigned state for logged in user')
   }
   const [stateName] = stateNames.length === 1 ? stateNames : []
   const [deviceName] = siteNames.length === 1 ? siteNames : []

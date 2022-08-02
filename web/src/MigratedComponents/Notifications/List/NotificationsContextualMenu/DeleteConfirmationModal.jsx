@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import Button from '@material-ui/core/Button'
-import { useIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 import { useMutation } from 'react-query'
 import AspectDialog from '../../../../components/shared/AspectDialog'
@@ -8,15 +7,11 @@ import messages from './messages'
 
 import fetchWrapperForQueries from '../../../QueryFetch/index'
 import { NOTIFICATION_DELETE } from '../../../QueryFetch/Notification/index'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
-const DeleteConfirmationModal = ({
-  notificationId,
-  notificationName = '',
-  showDialog,
-  onClose,
-}) => {
+const DeleteConfirmationModal = ({ notificationId, notificationName = '', showDialog, onClose }) => {
   const [notificationData, setNotificationData] = useState({})
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const { mutate: deleteNotificationSubmit } = useMutation(
     ({ id }) => {
       const endpoint = `${NOTIFICATION_DELETE.ENDPOINT}${id}`
@@ -44,9 +39,7 @@ const DeleteConfirmationModal = ({
         <Button
           color="primary"
           variant="contained"
-          onClick={() =>
-            deleteNotificationSubmit({ id: notificationData.notificationId })
-          }
+          onClick={() => deleteNotificationSubmit({ id: notificationData.notificationId })}
         >
           {formatMessage(messages.yesDelete)}
         </Button>,

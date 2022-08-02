@@ -65,28 +65,12 @@ async function getConstraints(credentials) {
   const filterConstraints = jobContexts.map(getJobContextConstraint)
   if (filterConstraints.length) {
     constraints.$or = filterConstraints
-    if (
-      !setConstraints(constraints, filterConstraints, 'assay.id', [
-        'assay.id',
-        'result.assayId',
-      ])
-    ) {
-      if (
-        !setConstraints(constraints, filterConstraints, 'assayType.id', [
-          'assayType.id',
-          'assay.assayTypeId',
-        ])
-      ) {
-        setConstraints(constraints, filterConstraints, 'disease.id', [
-          'disease.id',
-          'assayType.diseaseId',
-        ])
+    if (!setConstraints(constraints, filterConstraints, 'assay.id', ['assay.id', 'result.assayId'])) {
+      if (!setConstraints(constraints, filterConstraints, 'assayType.id', ['assayType.id', 'assay.assayTypeId'])) {
+        setConstraints(constraints, filterConstraints, 'disease.id', ['disease.id', 'assayType.diseaseId'])
       }
     }
-    setConstraints(constraints, filterConstraints, 'deviceType.id', [
-      'deviceType.id',
-      'device.deviceTypeId',
-    ])
+    setConstraints(constraints, filterConstraints, 'deviceType.id', ['deviceType.id', 'device.deviceTypeId'])
   }
 
   return constraints
@@ -132,10 +116,7 @@ async function getContext({ userId, partnerId, jobFunctionId }) {
 function setConstraints(constraints, filterConstraints, getPath, setPaths) {
   let constraintSet = false
   if (!_.isEmpty(setPaths)) {
-    const constraintValues = getFilterConstraintValues(
-      filterConstraints,
-      getPath
-    )
+    const constraintValues = getFilterConstraintValues(filterConstraints, getPath)
     if (constraintValues) {
       setPaths.forEach(setPath => {
         if (!_.get(constraints, setPath)) {
@@ -149,15 +130,11 @@ function setConstraints(constraints, filterConstraints, getPath, setPaths) {
 }
 
 function getFilterConstraintValues(filterConstraints, path) {
-  const firstUnsetPropertyConstraint = filterConstraints.find(
-    fc => !_.get(fc, path)
-  )
+  const firstUnsetPropertyConstraint = filterConstraints.find(fc => !_.get(fc, path))
   if (firstUnsetPropertyConstraint) {
     return
   }
-  return _.uniq(
-    filterConstraints.filter(fc => !!_.get(fc, path)).map(fc => _.get(fc, path))
-  )
+  return _.uniq(filterConstraints.filter(fc => !!_.get(fc, path)).map(fc => _.get(fc, path)))
 }
 
 async function getJobConstraints(personId, jobFunctionId) {
@@ -263,9 +240,7 @@ function addPartnerConstraints(queryBuilder, constraints, { result, partner }) {
     if (result) aliases.push(`${result}.partnerId`)
 
     _.each(aliases, alias =>
-      queryBuilder.where(qb =>
-        qb.whereNull(`${alias}`).orWhere(`${alias}`, constraints.partner.id)
-      )
+      queryBuilder.where(qb => qb.whereNull(`${alias}`).orWhere(`${alias}`, constraints.partner.id))
     )
   }
 }
@@ -274,9 +249,7 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
   const { result: resultAlias } = aliases
   if (resultAlias) {
     if (_.get(constraints, 'assay.id')) {
-      queryBuilder.where(qb =>
-        isNullInOrEqual(qb, `${resultAlias}.assayId`, constraints.assay.id)
-      )
+      queryBuilder.where(qb => isNullInOrEqual(qb, `${resultAlias}.assayId`, constraints.assay.id))
     }
     if (!aliases.geography) {
       aliases.geography = alias('Geography')
@@ -288,11 +261,7 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
     }
     if ((constraints.disease || constraints.assayType) && !aliases.assay) {
       aliases.assay = alias('Assay')
-      queryBuilder.leftOuterJoin(
-        `Assay as ${aliases.assay}`,
-        `${resultAlias}.assayId`,
-        `${aliases.assay}.id`
-      )
+      queryBuilder.leftOuterJoin(`Assay as ${aliases.assay}`, `${resultAlias}.assayId`, `${aliases.assay}.id`)
     }
     if (constraints.disease && !aliases.assayType) {
       aliases.assayType = alias('AssayType')
@@ -303,42 +272,18 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
       )
     }
     if (_.get(constraints, 'disease.id')) {
-      queryBuilder.where(qb =>
-        isNullInOrEqual(
-          qb,
-          `${aliases.assayType}.diseaseId`,
-          constraints.disease.id
-        )
-      )
+      queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assayType}.diseaseId`, constraints.disease.id))
     }
     if (_.get(constraints, 'assayType.id')) {
-      queryBuilder.where(qb =>
-        isNullInOrEqual(
-          qb,
-          `${aliases.assay}.assayTypeId`,
-          constraints.assayType.id
-        )
-      )
+      queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assay}.assayTypeId`, constraints.assayType.id))
     }
   } else {
     if (aliases.assay && _.get(constraints, 'assayType.id')) {
-      queryBuilder.where(qb =>
-        isNullInOrEqual(
-          qb,
-          `${aliases.assay}.assayTypeId`,
-          constraints.assayType.id
-        )
-      )
+      queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assay}.assayTypeId`, constraints.assayType.id))
     }
     if (_.get(constraints, 'disease.id')) {
       if (aliases.assayType) {
-        queryBuilder.where(qb =>
-          isNullInOrEqual(
-            qb,
-            `${aliases.assayType}.diseaseId`,
-            constraints.disease.id
-          )
-        )
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assayType}.diseaseId`, constraints.disease.id))
       } else if (aliases.assay) {
         aliases.assayType = alias('AssayType')
         queryBuilder.leftOuterJoin(
@@ -346,13 +291,7 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
           `${aliases.assay}.assayTypeId`,
           `${aliases.assayType}.id`
         )
-        queryBuilder.where(qb =>
-          isNullInOrEqual(
-            qb,
-            `${aliases.assayType}.diseaseId`,
-            constraints.disease.id
-          )
-        )
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${aliases.assayType}.diseaseId`, constraints.disease.id))
       }
     }
   }
@@ -372,11 +311,7 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
   } else {
     if (site && !aliases.geography && !country) {
       aliases.geography = alias('Geography')
-      queryBuilder.leftOuterJoin(
-        `Geography as ${aliases.geography}`,
-        `${site}.geographyId`,
-        `${aliases.geography}.id`
-      )
+      queryBuilder.leftOuterJoin(`Geography as ${aliases.geography}`, `${site}.geographyId`, `${aliases.geography}.id`)
     }
 
     if (_.get(constraints, 'country.id')) {
@@ -393,22 +328,12 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
 
 function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
   let filterAlias = null
-  const {
-    device,
-    assay,
-    result,
-    showUnapprovedDevices = false,
-    showDecommissionedDevices = false,
-  } = aliases
+  const { device, assay, result, showUnapprovedDevices = false, showDecommissionedDevices = false } = aliases
 
   if (!result) {
     if (!aliases.site && device) {
       aliases.site = alias('Site')
-      queryBuilder.leftOuterJoin(
-        `Site as ${aliases.site}`,
-        `${device}.siteId`,
-        `${aliases.site}.id`
-      )
+      queryBuilder.leftOuterJoin(`Site as ${aliases.site}`, `${device}.siteId`, `${aliases.site}.id`)
     }
     if (aliases.site) {
       if (!aliases.partner) {
@@ -422,32 +347,20 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
     }
     if (_.get(constraints, 'deviceType.id')) {
       _.each(_.compact([device, assay]), item =>
-        queryBuilder.where(qb =>
-          isNullInOrEqual(qb, `${item}.deviceTypeId`, constraints.deviceType.id)
-        )
+        queryBuilder.where(qb => isNullInOrEqual(qb, `${item}.deviceTypeId`, constraints.deviceType.id))
       )
     }
   } else if (!aliases.site) {
     filterAlias = '__Site_filterDisabled'
-    queryBuilder.leftOuterJoin(
-      `Site as ${filterAlias}`,
-      `${result}.siteId`,
-      `${filterAlias}.id`
-    )
+    queryBuilder.leftOuterJoin(`Site as ${filterAlias}`, `${result}.siteId`, `${filterAlias}.id`)
   }
   if (aliases.site || filterAlias) {
     excludeDisabledSites(queryBuilder, aliases.site || filterAlias)
   }
   if (device && !showUnapprovedDevices) {
-    queryBuilder.leftOuterJoin(
-      `DeviceApproval as deviceApproval`,
-      `${device}.deviceApprovalId`,
-      `deviceApproval.id`
-    )
+    queryBuilder.leftOuterJoin(`DeviceApproval as deviceApproval`, `${device}.deviceApprovalId`, `deviceApproval.id`)
     queryBuilder.where(qb =>
-      qb
-        .where({ [`deviceApproval.token`]: 'approved' })
-        .orWhere(knex.raw('isnull(`deviceApproval`.`token`)'))
+      qb.where({ [`deviceApproval.token`]: 'approved' }).orWhere(knex.raw('isnull(`deviceApproval`.`token`)'))
     )
   }
   if (device && !showDecommissionedDevices) {
@@ -466,27 +379,18 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
     queryBuilder.where(qb =>
       qb
         .whereNull('deviceMaintenanceStatus.externalId')
-        .orWhereNot(
-          'deviceMaintenanceStatus.externalId',
-          'inactiveDecommissioned'
-        )
+        .orWhereNot('deviceMaintenanceStatus.externalId', 'inactiveDecommissioned')
     )
   }
 }
 
 function excludeDisabledSites(queryBuilder, alias) {
   queryBuilder.where(disabledSitesQueryBuilder => {
-    disabledSitesQueryBuilder
-      .whereNull(`${alias}.id`)
-      .orWhere(`${alias}.disabled`, knex.raw('?', 0))
+    disabledSitesQueryBuilder.whereNull(`${alias}.id`).orWhere(`${alias}.disabled`, knex.raw('?', 0))
   })
 }
 
-function addPersonConstraints(
-  queryBuilder,
-  constraints,
-  { allowAdminThrough = false, person }
-) {
+function addPersonConstraints(queryBuilder, constraints, { allowAdminThrough = false, person }) {
   if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.id`]: constraints.person.id })
   }
@@ -516,11 +420,7 @@ function addOrConstraints(
     for (const constraint of constraints.$or) {
       if (constraint.disease && assay && !disease && !assayType) {
         assayType = alias('AssayType')
-        queryBuilder.leftOuterJoin(
-          `AssayType as ${assayType}`,
-          `${assay}.assayTypeId`,
-          `${assayType}.id`
-        )
+        queryBuilder.leftOuterJoin(`AssayType as ${assayType}`, `${assay}.assayTypeId`, `${assayType}.id`)
       }
     }
 
@@ -621,11 +521,7 @@ function isNullInOrEqual(queryBuilder, columnName, value) {
       qb.orWhere(qb => {
         if (_.isArray(value) && value.length > 1) {
           qb.whereIn(columnName, value)
-        } else if (
-          _.isArray(value) &&
-          value.length === 1 &&
-          !_.isNil(value[0])
-        ) {
+        } else if (_.isArray(value) && value.length === 1 && !_.isNil(value[0])) {
           qb.where(columnName, value[0])
         } else {
           qb.where(columnName, value)
@@ -647,24 +543,15 @@ function addConstraintWithJobFunction({
 }) {
   if (alias && constraint) {
     queryBuilder.andWhere(qb => {
-      if (
-        jobFunctionAlias &&
-        jobFunctionConstraint &&
-        (!jobFunctionConstraint.isAdmin || !allowAdminThrough)
-      ) {
+      if (jobFunctionAlias && jobFunctionConstraint && (!jobFunctionConstraint.isAdmin || !allowAdminThrough)) {
         qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`)).andWhere(
-          _.mapKeys(
-            _.omit(jobFunctionConstraint, 'isAdmin'),
-            (v, k) => `${jobFunctionAlias}.${k}`
-          )
+          _.mapKeys(_.omit(jobFunctionConstraint, 'isAdmin'), (v, k) => `${jobFunctionAlias}.${k}`)
         )
       } else {
         qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
       }
       if (personAlias && personConstraint) {
-        qb.andWhere(
-          _.mapKeys(personConstraint, (v, k) => `${personAlias}.${k}`)
-        )
+        qb.andWhere(_.mapKeys(personConstraint, (v, k) => `${personAlias}.${k}`))
         if (allowAdminThrough) {
           qb.orWhere(`${jobFunctionAlias}.isAdmin`, true)
         }
@@ -675,10 +562,7 @@ function addConstraintWithJobFunction({
 
 // check for user permissions, pass in auth
 function canView(auth, flag) {
-  return _.some(
-    auth.credentials.permissions,
-    _.unary(_.partialRight(_.includes, flag))
-  )
+  return _.some(auth.credentials.permissions, _.unary(_.partialRight(_.includes, flag)))
 }
 
 function canViewSites(auth) {
@@ -699,21 +583,15 @@ function canViewInventories(auth) {
 
 function canEdit(auth, flag) {
   const requirePermissions = [`${flag}admin`, `${flag}edit`]
-  return (
-    _.intersection(auth.credentials.permissions, requirePermissions).length > 0
-  )
+  return _.intersection(auth.credentials.permissions, requirePermissions).length > 0
 }
 
 function canEditInventories(auth) {
   return canEdit(auth, 'inventory:')
 }
 
-const addPartnerQueryConstraints = (
-  queryBuilder,
-  { partner, country, geography, site, caseAlias }
-) => {
-  if (caseAlias && partner)
-    queryBuilder.where(`${caseAlias}.partnerId`, partner.id)
+const addPartnerQueryConstraints = (queryBuilder, { partner, country, geography, site, caseAlias }) => {
+  if (caseAlias && partner) queryBuilder.where(`${caseAlias}.partnerId`, partner.id)
   if (partner && !caseAlias) queryBuilder.where('r.partnerId', partner.id)
   if (site) queryBuilder.where(`r.partnerId`, partner.id)
   else if (geography) {

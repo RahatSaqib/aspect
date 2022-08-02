@@ -12,11 +12,7 @@ import TextField from '@material-ui/core/TextField'
 import enUS from 'date-fns/locale/en-US'
 import { useFormikContext } from 'formik'
 import useI18n from '../../../Hooks/i18n/useI18n'
-import {
-  formatDate,
-  formatDateTime,
-  getDateObject,
-} from '../../../shared/utils/dateFormat'
+import { formatDate, formatDateTime, getDateObject } from '../../../shared/utils/dateFormat'
 import { useAuthState } from '../../../Providers/AuthProvider'
 import messages from '../messages'
 import styles from './DatePicker.css'
@@ -25,11 +21,7 @@ import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 const cssClasses = classnames.bind(styles)
 
 const getDisplayValue = (value, showTimeSelect) => {
-  return value
-    ? showTimeSelect
-      ? formatDateTime(value)
-      : formatDate(value)
-    : null
+  return value ? (showTimeSelect ? formatDateTime(value) : formatDate(value)) : null
 }
 
 const AspectDatePickerBase = props => {
@@ -50,10 +42,7 @@ const AspectDatePickerBase = props => {
     getDateObject(
       transformTimezone || !value
         ? value
-        : formatDate(
-            new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' }),
-            'yyyy-MM-dd'
-          )
+        : formatDate(new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' }), 'yyyy-MM-dd')
     )
   )
 

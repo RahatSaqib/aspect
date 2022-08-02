@@ -2,11 +2,7 @@ import filter from 'lodash/filter'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
 
-function handleClientSideFilterState(
-  clientSideFilter,
-  graphState,
-  graphActions
-) {
+function handleClientSideFilterState(clientSideFilter, graphState, graphActions) {
   const {
     isClientSide,
     identifier,
@@ -20,8 +16,7 @@ function handleClientSideFilterState(
 
   if (isClientSide) {
     const { filterFunctions } = selectorModifiers[0] || false
-    const { filterFunction, shouldFilterOnServer } =
-      filter(filterFunctions, { id })[0] || false
+    const { filterFunction, shouldFilterOnServer } = filter(filterFunctions, { id })[0] || false
     const { val, selectAction } = clientSideFilters
     if (!isEmpty(i18nKeys) && !clientSideFilterOptions) {
       setClientSideFilterOptions({ keys: i18nKeys, assays: assaysFromState })
@@ -51,8 +46,7 @@ function handleClientSideFilterState(
           newData = filterFunction(formatRawData(), val)
           break
 
-        case ['remove-value', 'pop-value'].includes(selectAction) &&
-          val?.length > 0:
+        case ['remove-value', 'pop-value'].includes(selectAction) && val?.length > 0:
           newData = filterFunction(formatRawData(), val)
           break
 
@@ -60,8 +54,7 @@ function handleClientSideFilterState(
           newData = formatRawData()
           break
 
-        case ['remove-value', 'pop-value'].includes(selectAction) &&
-          val?.length < 1:
+        case ['remove-value', 'pop-value'].includes(selectAction) && val?.length < 1:
           newData = formatRawData()
           break
 

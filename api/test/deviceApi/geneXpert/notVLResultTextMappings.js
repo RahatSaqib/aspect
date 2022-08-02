@@ -1,9 +1,4 @@
-const getAssertionItem = (
-  assayExternalId,
-  resultText,
-  resultCategory1ExternalId,
-  resultCategory2ExternalId
-) => ({
+const getAssertionItem = (assayExternalId, resultText, resultCategory1ExternalId, resultCategory2ExternalId) => ({
   assayExternalId,
   resultText,
   resultCategory1ExternalId,
@@ -12,54 +7,14 @@ const getAssertionItem = (
 
 const gxEbola = [
   getAssertionItem('GxEbola', 'DETECTED|DETECTED|', 'Detected', 'Detected'),
-  getAssertionItem(
-    'GxEbola',
-    'DETECTED|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxEbola',
-    'Ebola GP DETECTED|Ebola NP NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxEbola',
-    'Ebola GP DÉTECTÉ|Ebola NP DÉTECTÉ|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxEbola',
-    'Ebola GP DÉTECTÉ|Ebola NP NON DÉTECTÉ|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxEbola',
-    'Ebola GP NON DÉTECTÉ|Ebola NP DÉTECTÉ|',
-    'NotDetected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxEbola',
-    'Ebola GP NON DÉTECTÉ|Ebola NP NON DÉTECTÉ|',
-    'NotDetected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxEbola',
-    'Ebola GP NOT DETECTED|Ebola NP DETECTED|',
-    'NotDetected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxEbola',
-    'Ebola GP NOT DETECTED|Ebola NP NOT DETECTED|',
-    'NotDetected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxEbola', 'DETECTED|NOT DETECTED|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxEbola', 'Ebola GP DETECTED|Ebola NP NOT DETECTED|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxEbola', 'Ebola GP DÉTECTÉ|Ebola NP DÉTECTÉ|', 'Detected', 'Detected'),
+  getAssertionItem('GxEbola', 'Ebola GP DÉTECTÉ|Ebola NP NON DÉTECTÉ|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxEbola', 'Ebola GP NON DÉTECTÉ|Ebola NP DÉTECTÉ|', 'NotDetected', 'Detected'),
+  getAssertionItem('GxEbola', 'Ebola GP NON DÉTECTÉ|Ebola NP NON DÉTECTÉ|', 'NotDetected', 'NotDetected'),
+  getAssertionItem('GxEbola', 'Ebola GP NOT DETECTED|Ebola NP DETECTED|', 'NotDetected', 'Detected'),
+  getAssertionItem('GxEbola', 'Ebola GP NOT DETECTED|Ebola NP NOT DETECTED|', 'NotDetected', 'NotDetected'),
   getAssertionItem('GxEbola', 'ERREUR', 'Error', null),
   getAssertionItem('GxEbola', 'ERREUR|ERREUR|', 'Error', 'Error'),
   getAssertionItem('GxEbola', 'ERROR', 'Error', null),
@@ -69,25 +24,10 @@ const gxEbola = [
   getAssertionItem('GxEbola', 'NO RESULT|NO RESULT|', 'NoResult', 'NoResult'),
   getAssertionItem('GxEbola', 'NON VALIDE', 'Invalid', null),
   getAssertionItem('GxEbola', 'NON VALIDE|NON VALIDE|', 'Invalid', 'Invalid'),
-  getAssertionItem(
-    'GxEbola',
-    'NOT DETECTED|DETECTED|',
-    'NotDetected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxEbola',
-    'NOT DETECTED|NOT DETECTED|',
-    'NotDetected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxEbola', 'NOT DETECTED|DETECTED|', 'NotDetected', 'Detected'),
+  getAssertionItem('GxEbola', 'NOT DETECTED|NOT DETECTED|', 'NotDetected', 'NotDetected'),
   getAssertionItem('GxEbola', 'PAS DE RÉSULTAT', 'NoResult', null),
-  getAssertionItem(
-    'GxEbola',
-    'Ebola GP DETECTED|Ebola NP DETECTED|',
-    'Detected',
-    'Detected'
-  ),
+  getAssertionItem('GxEbola', 'Ebola GP DETECTED|Ebola NP DETECTED|', 'Detected', 'Detected'),
   getAssertionItem('GxEbola', 'INVALID', 'Invalid', null),
 ]
 
@@ -121,156 +61,41 @@ const gxHiv1Qual = [
 const gxMtbRif = [
   // getAssertionItem('GxMtbRif', '??? ??????????', 'Error', null), EXCLUDED
   // getAssertionItem('GxMtbRif', '??????', 'Error', null), EXCLUDED
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO ALTO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO ALTO|NO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTADO ALTO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTADO ALTO|NO DETECTADO|', 'Detected', 'NotDetected'),
   // getAssertionItem('GxMtbRif', 'DETECTADO ALTO|Xpert MTB-RIF Assay G4|', 'Detected', null), EXCLUDED
   getAssertionItem('GxMtbRif', 'DETECTADO ALTO||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO BAIXO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO BAIXO|INDETERMINADO|',
-    'Detected',
-    'Indeterminate'
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTADO BAIXO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTADO BAIXO|INDETERMINADO|', 'Detected', 'Indeterminate'),
   getAssertionItem('GxMtbRif', 'DETECTADO BAIXO||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO BAJO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO BAJO|NO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO MEDIO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO MEDIO|NO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO MUITO BAIXO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO MUITO BAIXO|INDETERMINADO|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO MUITO BAIXO|NEGAT.|',
-    'Detected',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTADO BAJO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTADO BAJO|NO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'DETECTADO MEDIO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTADO MEDIO|NO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'DETECTADO MUITO BAIXO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTADO MUITO BAIXO|INDETERMINADO|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'DETECTADO MUITO BAIXO|NEGAT.|', 'Detected', null),
   getAssertionItem('GxMtbRif', 'DETECTADO MUITO BAIXO||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO MUY BAJO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO MUY BAJO|INDETERMINADO|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTADO MUY BAJO|NO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTADO MUY BAJO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTADO MUY BAJO|INDETERMINADO|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'DETECTADO MUY BAJO|NO DETECTADO|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'DETECTED HIGH|', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED HIGH|DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED HIGH|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTED HIGH|DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTED HIGH|NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'DETECTED HIGH|NOT DE|', 'Detected', null),
   getAssertionItem('GxMtbRif', 'DETECTED HIGH||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED LOW|DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED LOW|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTED LOW|DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTED LOW|NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'DETECTED LOW|NOT DETEC|', 'Detected', null),
   getAssertionItem('GxMtbRif', 'DETECTED LOW||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
   getAssertionItem('GxMtbRif', 'DETECTED MEDIUM|', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED MEDIUM|DETECTED|',
-    'Detected',
-    'Detected'
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTED MEDIUM|DETECTED|', 'Detected', 'Detected'),
   getAssertionItem('GxMtbRif', 'DETECTED MEDIUM|NEG|', 'Detected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED MEDIUM|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTED MEDIUM|NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'DETECTED MEDIUM||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED VERY LOW|DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED VERY LOW|INDETERMINATE|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'DETECTED VERY LOW|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'DETECTED VERY LOW|DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'DETECTED VERY LOW|INDETERMINATE|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'DETECTED VERY LOW|NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'DETECTED VERY LOW||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
   getAssertionItem('GxMtbRif', 'ERREUR', 'Error', null),
   getAssertionItem('GxMtbRif', 'ERRO', 'Error', null),
@@ -293,12 +118,7 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', 'ERROR|NOT DETECTED|', 'Error', null),
   getAssertionItem('GxMtbRif', 'ERROR|PASS|', 'Error', null),
   getAssertionItem('GxMtbRif', 'ERROR|POS|', 'Error', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'ERROR|Rif Resistance NOT DETECTED|',
-    'Error',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'ERROR|Rif Resistance NOT DETECTED|', 'Error', null),
   getAssertionItem('GxMtbRif', 'ERROR||', 'Error', null),
   getAssertionItem('GxMtbRif', '@label_result_error||', 'Error', null),
   getAssertionItem('GxMtbRif', 'ERRO|', 'Error', null),
@@ -326,276 +146,51 @@ const gxMtbRif = [
   // getAssertionItem('GxMtbRif', 'MTB ????????? ???????|Rif Resistance ?????????', 'Detected', 'Detected'), EXCLUDED (cases only happened in 2018)
   // getAssertionItem('GxMtbRif', 'MTB ????????? ??????|Rif Resistance ?? ?????????', 'Detected', 'NotDetected'), EXCLUDED (cases only happened in 2018)
   // getAssertionItem('GxMtbRif', 'MTB ????????? ??????|Rif Resistance ?????????', 'Detected', 'Detected'), EXCLUDED (cases only happened in 2018)
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO ALTO|Rif Resistance  NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO ALTO|Rif Resistance  NÃO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO ALTO|Rif Resistance DETECTADO',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO ALTO|Rif Resistance DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO ALTO|Rif Resistance NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO ALTO|Rif Resistance NÃO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO ALTO|Rif Resistance NO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO BAIXO|Rif Resistance  NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO BAIXO|Rif Resistance  NÃO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO BAIXO|Rif Resistance DETECTADO',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO BAIXO|Rif Resistance DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO BAIXO|Rif Resistance NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO BAIXO|Rif Resistance NÃO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO BAJO|Rif Resistance DETECTADO',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO BAJO|Rif Resistance NO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MÉDIO|Rif Resistance  NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MÉDIO|Rif Resistance  NÃO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MÉDIO|Rif Resistance DETECTADO',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MÉDIO|Rif Resistance DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MÉDIO|Rif Resistance NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MÉDIO|Rif Resistance NÃO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MEDIO|Rif Resistance NO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUITO BAIXO|Rif Resistance  NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUITO BAIXO|Rif Resistance  NÃO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUITO BAIXO|Rif Resistance DETECTADO',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUITO BAIXO|Rif Resistance DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUITO BAIXO|Rif Resistance INDETERMINADO',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUITO BAIXO|Rif Resistance INDETERMINADO|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUITO BAIXO|Rif Resistance NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUITO BAIXO|Rif Resistance NÃO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUY BAJO|Rif Resistance DETECTADO',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTADO MUY BAJO|Rif Resistance NO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ BAS|Rif Resistance DÉTECTÉ|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ BAS|Rif Resistance NON DÉTECTÉ',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ BAS|Rif Resistance NON DÉTECTÉ|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ ÉLEVÉ|Rif Resistance DÉTECTÉ|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ ÉLEVÉ|Rif Resistance NON DÉTECTÉ',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ ÉLEVÉ|Rif Resistance NON DÉTECTÉ|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ MOYEN|Rif Resistance DÉTECTÉ|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ MOYEN|Rif Resistance NON DÉTECTÉ',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ MOYEN|Rif Resistance NON DÉTECTÉ|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ TRÈS BAS|Rif Resistance DÉTECTÉ|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ TRÈS BAS|Rif Resistance INDÉTERMINÉ',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ TRÈS BAS|Rif Resistance NON DÉTECTÉ',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DÉTECTÉ TRÈS BAS|Rif Resistance NON DÉTECTÉ|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO ALTO|Rif Resistance  NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO ALTO|Rif Resistance  NÃO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO ALTO|Rif Resistance DETECTADO', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO ALTO|Rif Resistance DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO ALTO|Rif Resistance NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO ALTO|Rif Resistance NÃO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO ALTO|Rif Resistance NO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO BAIXO|Rif Resistance  NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO BAIXO|Rif Resistance  NÃO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO BAIXO|Rif Resistance DETECTADO', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO BAIXO|Rif Resistance DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO BAIXO|Rif Resistance NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO BAIXO|Rif Resistance NÃO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO BAJO|Rif Resistance DETECTADO', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO BAJO|Rif Resistance NO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MÉDIO|Rif Resistance  NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MÉDIO|Rif Resistance  NÃO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MÉDIO|Rif Resistance DETECTADO', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MÉDIO|Rif Resistance DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MÉDIO|Rif Resistance NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MÉDIO|Rif Resistance NÃO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MEDIO|Rif Resistance NO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUITO BAIXO|Rif Resistance  NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUITO BAIXO|Rif Resistance  NÃO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUITO BAIXO|Rif Resistance DETECTADO', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUITO BAIXO|Rif Resistance DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUITO BAIXO|Rif Resistance INDETERMINADO', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUITO BAIXO|Rif Resistance INDETERMINADO|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUITO BAIXO|Rif Resistance NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUITO BAIXO|Rif Resistance NÃO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUY BAJO|Rif Resistance DETECTADO', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTADO MUY BAJO|Rif Resistance NO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ BAS|Rif Resistance DÉTECTÉ|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ BAS|Rif Resistance NON DÉTECTÉ', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ BAS|Rif Resistance NON DÉTECTÉ|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ ÉLEVÉ|Rif Resistance DÉTECTÉ|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ ÉLEVÉ|Rif Resistance NON DÉTECTÉ', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ ÉLEVÉ|Rif Resistance NON DÉTECTÉ|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ MOYEN|Rif Resistance DÉTECTÉ|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ MOYEN|Rif Resistance NON DÉTECTÉ', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ MOYEN|Rif Resistance NON DÉTECTÉ|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ TRÈS BAS|Rif Resistance DÉTECTÉ|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ TRÈS BAS|Rif Resistance INDÉTERMINÉ', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ TRÈS BAS|Rif Resistance NON DÉTECTÉ', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DÉTECTÉ TRÈS BAS|Rif Resistance NON DÉTECTÉ|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'MTB DETECTED', 'Detected', null),
   // getAssertionItem('GxMtbRif', 'MTB DETECTED', 'Detected', 'Invalid'), EXCLUDED (special case)
   // getAssertionItem('GxMtbRif', 'MTB DETECTED', 'Detected', 'Error'), EXCLUDED (special case)
@@ -603,150 +198,35 @@ const gxMtbRif = [
   // getAssertionItem('GxMtbRif', 'MTB DETECTED', 'Detected', 'Detected'), EXCLUDED (special case)
   // getAssertionItem('GxMtbRif', 'MTB DETECTED HIGH|NO RESULT', 'NoResult', null), EXCLUDED (special case)
   getAssertionItem('GxMtbRif', 'MTB DETECTED HIGH|null', 'Detected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED HIGH|Rif Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED HIGH|Rif Resistance DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED HIGH|Rif Resistance INDETERMINATE',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED HIGH|Rif Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED HIGH|Rif Resistance NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED HIGH|Rif Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED HIGH|Rif Resistance DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED HIGH|Rif Resistance INDETERMINATE', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED HIGH|Rif Resistance NOT DETECTED', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED HIGH|Rif Resistance NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'MTB DETECTED LOW|null', 'Detected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED LOW|Rif Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED LOW|Rif Resistance DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED LOW|Rif Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED LOW|Rif Resistance NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED LOW|Rif Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED LOW|Rif Resistance DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED LOW|Rif Resistance NOT DETECTED', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED LOW|Rif Resistance NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'MTB DETECTED LOW||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED MEDIUM|NO RESULT',
-    'Detected',
-    'NoResult'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED MEDIUM|NO RESULT', 'Detected', 'NoResult'),
   getAssertionItem('GxMtbRif', 'MTB DETECTED MEDIUM|null', 'Detected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED MEDIUM|Rif Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED MEDIUM|Rif Resistance DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED MEDIUM|Rif Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED MEDIUM|Rif Resistance NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED MEDIUM|Rif Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED MEDIUM|Rif Resistance DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED MEDIUM|Rif Resistance NOT DETECTED', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED MEDIUM|Rif Resistance NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRif', 'MTB DETECTED MEDIUM||', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED VERY LOW|ERROR',
-    'Detected',
-    'Error'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|ERROR', 'Detected', 'Error'),
   getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|NA|', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED VERY LOW|NO RESULT',
-    'Detected',
-    'NoResult'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|NO RESULT', 'Detected', 'NoResult'),
   getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|null', 'Detected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED VERY LOW|Rif Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED VERY LOW|Rif Resistance DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED VERY LOW|Rif Resistance INDETERMINATE',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED VERY LOW|Rif Resistance INDETERMINATE|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED VERY LOW|Rif Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED VERY LOW|Rif Resistance NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED |Rif Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|Rif Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|Rif Resistance DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|Rif Resistance INDETERMINATE', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|Rif Resistance INDETERMINATE|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|Rif Resistance NOT DETECTED', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED VERY LOW|Rif Resistance NOT DETECTED|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED |Rif Resistance DETECTED', 'Detected', 'Detected'),
   getAssertionItem('GxMtbRif', 'MTB NÃO DETECTADO', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB NÃO DETECTADO||', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB NO DETECTADO', 'NotDetected', null),
@@ -754,154 +234,39 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', 'MTB NON DÉTECTÉ||', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB NOT DETECTED', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB NOT DETECTED |ERROR', 'NotDetected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB NOT DETECTED |INVALID',
-    'NotDetected',
-    null
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB NOT DETECTED |NO RESULT',
-    'NotDetected',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'MTB NOT DETECTED |INVALID', 'NotDetected', null),
+  getAssertionItem('GxMtbRif', 'MTB NOT DETECTED |NO RESULT', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB NOT DETECTED |null', 'NotDetected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB NOT DETECTED |Rif Resistance INDETERMINATE',
-    'NotDetected',
-    null
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB NOT DETECTED |Rif Resistance NOT DETECTED',
-    'NotDetected',
-    null
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB NOT DETECTED|Rif Resistance NOT DETECTED|',
-    'NotDetected',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'MTB NOT DETECTED |Rif Resistance INDETERMINATE', 'NotDetected', null),
+  getAssertionItem('GxMtbRif', 'MTB NOT DETECTED |Rif Resistance NOT DETECTED', 'NotDetected', null),
+  getAssertionItem('GxMtbRif', 'MTB NOT DETECTED|Rif Resistance NOT DETECTED|', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB NOT DETECTED||', 'NotDetected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB @label_result_not_detected||',
-    'NotDetected',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'MTB @label_result_not_detected||', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB НЕ ОБНАРУЖЕН', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'MTB НЕ ОБНАРУЖЕН||', 'NotDetected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance НЕ ОБНАРУЖЕН',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance НЕ ОБНАРУЖЕН|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance ОБНАРУЖЕН',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance ОБНАРУЖЕН|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН НИЗКИЙ|Rif Resistance НЕ ОБНАРУЖЕН',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН НИЗКИЙ|Rif Resistance НЕ ОБНАРУЖЕН|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН НИЗКИЙ|Rif Resistance ОБНАРУЖЕН',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН НИЗКИЙ|Rif Resistance ОБНАРУЖЕН|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance НЕ ОБНАРУЖЕН',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance НЕ ОБНАРУЖЕН|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance НЕОПРЕДЕЛЕННЫЙ',
-    'Detected',
-    'Indeterminate'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance НЕ ОБНАРУЖЕН', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance НЕ ОБНАРУЖЕН|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance ОБНАРУЖЕН', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance ОБНАРУЖЕН|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН НИЗКИЙ|Rif Resistance НЕ ОБНАРУЖЕН', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН НИЗКИЙ|Rif Resistance НЕ ОБНАРУЖЕН|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН НИЗКИЙ|Rif Resistance ОБНАРУЖЕН', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН НИЗКИЙ|Rif Resistance ОБНАРУЖЕН|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance НЕ ОБНАРУЖЕН', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance НЕ ОБНАРУЖЕН|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance НЕОПРЕДЕЛЕННЫЙ', 'Detected', 'Indeterminate'),
   getAssertionItem(
     'GxMtbRif',
     'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance НЕОПРЕДЕЛЕННЫЙ|',
     'Detected',
     'Indeterminate'
   ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance ОБНАРУЖЕН',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance ОБНАРУЖЕН|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН СРЕДНИЙ|Rif Resistance НЕ ОБНАРУЖЕН',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН СРЕДНИЙ|Rif Resistance НЕ ОБНАРУЖЕН|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН СРЕДНИЙ|Rif Resistance ОБНАРУЖЕН',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB ОБНАРУЖЕН СРЕДНИЙ|Rif Resistance ОБНАРУЖЕН|',
-    'Detected',
-    'Detected'
-  ),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance ОБНАРУЖЕН', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ|Rif Resistance ОБНАРУЖЕН|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН СРЕДНИЙ|Rif Resistance НЕ ОБНАРУЖЕН', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН СРЕДНИЙ|Rif Resistance НЕ ОБНАРУЖЕН|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН СРЕДНИЙ|Rif Resistance ОБНАРУЖЕН', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB ОБНАРУЖЕН СРЕДНИЙ|Rif Resistance ОБНАРУЖЕН|', 'Detected', 'Detected'),
   // getAssertionItem('GxMtbRif', 'MTB|DETECTED|', 'Error', null), EXCLUDED (not sure how to parse it)
   // getAssertionItem('GxMtbRif', 'MTB|ERROR|', 'Error', null), EXCLUDED (not sure how to parse it)
   // getAssertionItem('GxMtbRif', 'MTB|INVALID|', 'Error', null), EXCLUDED (not sure how to parse it)
@@ -914,12 +279,7 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', 'NO RESULT |ERROR', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT |NO RESULT', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT |null', 'NoResult', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'NO RESULT |Rif Resistance NOT DETECTED',
-    'NoResult',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'NO RESULT |Rif Resistance NOT DETECTED', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT|ERROR|', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT|INVALID|', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT|NEG|', 'NoResult', null),
@@ -927,12 +287,7 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', 'NO RESULT|NOT DETECTED|', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT|PASS|', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT|POS|', 'NoResult', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'NO RESULT|Rif Resistance NOT DETECTED|',
-    'NoResult',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'NO RESULT|Rif Resistance NOT DETECTED|', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NO RESULT||', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'NON VALIDE', 'Invalid', null),
   // getAssertionItem('GxMtbRif', 'NoResult', 'Error', null), EXCLUDED (not so many cases)
@@ -942,12 +297,7 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', 'NOT DETECTED|ERROR|', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'NOT DETECTED|INVALID|', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'NOT DETECTED|NEG|', 'NotDetected', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'NOT DETECTED|NOT DETECTED|',
-    'NotDetected',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'NOT DETECTED|NOT DETECTED|', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'NOT DETECTED|POS|', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'NOT DETECTED|ST|', 'NotDetected', null),
   getAssertionItem('GxMtbRif', 'NOT DETECTED||', 'NotDetected', null),
@@ -966,12 +316,7 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', 'SEM RESULTADO', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'SEM RESULTADO|NEGAT.|', 'NoResult', null),
   getAssertionItem('GxMtbRif', '@label_result_no_result||', 'NoResult', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'SEM RESULTADO|SEM RESULTADO|',
-    'NoResult',
-    null
-  ),
+  getAssertionItem('GxMtbRif', 'SEM RESULTADO|SEM RESULTADO|', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'SEM RESULTADO||', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'SIN RESULTADO', 'NoResult', null),
   // getAssertionItem('GxMtbRif', 'Trace DETECTED||', 'Trace', 'Indeterminate'), EXCLUDED (Should be GxMtbRifUltra)
@@ -983,94 +328,24 @@ const gxMtbRif = [
   getAssertionItem('GxMtbRif', '@label_result_invalid|', 'Invalid', null),
   getAssertionItem('GxMtbRif', 'NO RESULT|', 'NoResult', null),
   getAssertionItem('GxMtbRif', 'SEM RESULTADO|', 'NoResult', null),
-  getAssertionItem(
-    'GxMtbRif',
-    'SIN RESULTADO|SIN RESULTADO|',
-    'NoResult',
-    null
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED|Rif Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRif',
-    'MTB DETECTED|Rif Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRif', 'SIN RESULTADO|SIN RESULTADO|', 'NoResult', null),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED|Rif Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRif', 'MTB DETECTED|Rif Resistance NOT DETECTED', 'Detected', 'NotDetected'),
 ]
 
 const gxMtbRifUltra = [
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO ALTO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO ALTO|NO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO BAIXO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO BAIXO|INDETERMINADO|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO BAJO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO BAJO|NO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO MEDIO|NO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO MUITO BAIXO|DETECTADO|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO MUITO BAIXO|INDETERMINADO|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTADO MUY BAJO|NO DETECTADO|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO ALTO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO ALTO|NO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO BAIXO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO BAIXO|INDETERMINADO|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO BAJO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO BAJO|NO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO MEDIO|NO DETECTADO|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO MUITO BAIXO|DETECTADO|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO MUITO BAIXO|INDETERMINADO|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTADO MUY BAJO|NO DETECTADO|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRifUltra', 'DETECTED HIGH|', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED HIGH|DETECTED|',
-    'Detected',
-    'Detected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED HIGH|DETECTED|', 'Detected', 'Detected'),
 
   getAssertionItem(
     'GxMtbRifUltra',
@@ -1120,189 +395,39 @@ const gxMtbRifUltra = [
     'Trace Detected',
     'Indeterminate'
   ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED HIGH|INDETERMINATE|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED HIGH|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED HIGH|INDETERMINATE|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED HIGH|NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRifUltra', 'DETECTED LOW|', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED LOW|DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED LOW|INDETERMINATE|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED LOW|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED LOW|DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED LOW|INDETERMINATE|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED LOW|NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRifUltra', 'DETECTED MEDIUM|', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED MEDIUM|DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED MEDIUM|INDETERMINATE|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED MEDIUM|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED MEDIUM|DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED MEDIUM|INDETERMINATE|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED MEDIUM|NOT DETECTED|', 'Detected', 'NotDetected'),
   getAssertionItem('GxMtbRifUltra', 'DETECTED VERY LOW|', 'Detected', null), // Category 2 set as INDETERMINATE in GxAlert
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED VERY LOW|DETECTED|',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED VERY LOW|INDETERMINATE|',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'DETECTED VERY LOW|NOT DETECTED|',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTADO ALTO||RIF Resistance NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTADO ALTO||RIF Resistance NO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTADO BAIXO||RIF Resistance NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTADO BAJO||RIF Resistance NO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTADO MÉDIO||RIF Resistance NÃO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTADO MEDIO||RIF Resistance NO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTADO MUY BAJO||RIF Resistance NO DETECTADO',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED HIGH||RIF Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED HIGH||RIF Resistance INDETERMINATE',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED HIGH||RIF Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED LOW||RIF Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED LOW||RIF Resistance INDETERMINATE',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED LOW||RIF Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED MEDIUM||RIF Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED MEDIUM||RIF Resistance INDETERMINATE',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED VERY LOW||RIF Resistance DETECTED',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED VERY LOW||RIF Resistance INDETERMINATE',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB DETECTED VERY LOW||RIF Resistance NOT DETECTED',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED VERY LOW|DETECTED|', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED VERY LOW|INDETERMINATE|', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'DETECTED VERY LOW|NOT DETECTED|', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTADO ALTO||RIF Resistance NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTADO ALTO||RIF Resistance NO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTADO BAIXO||RIF Resistance NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTADO BAJO||RIF Resistance NO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTADO MÉDIO||RIF Resistance NÃO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTADO MEDIO||RIF Resistance NO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTADO MUY BAJO||RIF Resistance NO DETECTADO', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED HIGH||RIF Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED HIGH||RIF Resistance INDETERMINATE', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED HIGH||RIF Resistance NOT DETECTED', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED LOW||RIF Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED LOW||RIF Resistance INDETERMINATE', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED LOW||RIF Resistance NOT DETECTED', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED MEDIUM||RIF Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED MEDIUM||RIF Resistance INDETERMINATE', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED VERY LOW||RIF Resistance DETECTED', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED VERY LOW||RIF Resistance INDETERMINATE', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'MTB DETECTED VERY LOW||RIF Resistance NOT DETECTED', 'Detected', 'NotDetected'),
   getAssertionItem(
     'GxMtbRifUltra',
     'MTB Trace DETECTADO|RIF Resistance INDETERMINADO',
@@ -1321,42 +446,17 @@ const gxMtbRifUltra = [
     'Trace Detected',
     'Indeterminate'
   ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB ОБНАРУЖЕН ВЫСОКИЙ||RIF Resistance НЕ ОБНАРУЖЕН',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'MTB ОБНАРУЖЕН ВЫСОКИЙ||RIF Resistance НЕ ОБНАРУЖЕН', 'Detected', 'NotDetected'),
   getAssertionItem(
     'GxMtbRifUltra',
     'MTB ОБНАРУЖЕН ВЫСОКИЙ||RIF Resistance НЕОПРЕДЕЛЕННЫЙ',
     'Detected',
     'Indeterminate'
   ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB ОБНАРУЖЕН ВЫСОКИЙ||RIF Resistance ОБНАРУЖЕН',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB ОБНАРУЖЕН НИЗКИЙ||RIF Resistance НЕ ОБНАРУЖЕН',
-    'Detected',
-    'NotDetected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB ОБНАРУЖЕН НИЗКИЙ||RIF Resistance НЕОПРЕДЕЛЕННЫЙ',
-    'Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB ОБНАРУЖЕН НИЗКИЙ||RIF Resistance ОБНАРУЖЕН',
-    'Detected',
-    'Detected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'MTB ОБНАРУЖЕН ВЫСОКИЙ||RIF Resistance ОБНАРУЖЕН', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB ОБНАРУЖЕН НИЗКИЙ||RIF Resistance НЕ ОБНАРУЖЕН', 'Detected', 'NotDetected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB ОБНАРУЖЕН НИЗКИЙ||RIF Resistance НЕОПРЕДЕЛЕННЫЙ', 'Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'MTB ОБНАРУЖЕН НИЗКИЙ||RIF Resistance ОБНАРУЖЕН', 'Detected', 'Detected'),
   getAssertionItem(
     'GxMtbRifUltra',
     'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ||RIF Resistance НЕ ОБНАРУЖЕН',
@@ -1369,42 +469,17 @@ const gxMtbRifUltra = [
     'Detected',
     'Indeterminate'
   ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ||RIF Resistance ОБНАРУЖЕН',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB ОБНАРУЖЕН СРЕДНИЙ||RIF Resistance НЕ ОБНАРУЖЕН',
-    'Detected',
-    'NotDetected'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'MTB ОБНАРУЖЕН ОЧЕНЬ НИЗКИЙ||RIF Resistance ОБНАРУЖЕН', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'MTB ОБНАРУЖЕН СРЕДНИЙ||RIF Resistance НЕ ОБНАРУЖЕН', 'Detected', 'NotDetected'),
   getAssertionItem(
     'GxMtbRifUltra',
     'MTB ОБНАРУЖЕН СРЕДНИЙ||RIF Resistance НЕОПРЕДЕЛЕННЫЙ',
     'Detected',
     'Indeterminate'
   ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'MTB ОБНАРУЖЕН СРЕДНИЙ||RIF Resistance ОБНАРУЖЕН',
-    'Detected',
-    'Detected'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'Trace DETECTED|INDETERMINADO|',
-    'Trace Detected',
-    'Indeterminate'
-  ),
-  getAssertionItem(
-    'GxMtbRifUltra',
-    'Trace DETECTED|INDETERMINATE|',
-    'Trace Detected',
-    'Indeterminate'
-  ),
+  getAssertionItem('GxMtbRifUltra', 'MTB ОБНАРУЖЕН СРЕДНИЙ||RIF Resistance ОБНАРУЖЕН', 'Detected', 'Detected'),
+  getAssertionItem('GxMtbRifUltra', 'Trace DETECTED|INDETERMINADO|', 'Trace Detected', 'Indeterminate'),
+  getAssertionItem('GxMtbRifUltra', 'Trace DETECTED|INDETERMINATE|', 'Trace Detected', 'Indeterminate'),
 ]
 
 const gxMtbXdr = [
@@ -1491,33 +566,13 @@ const assayGxCovid19 = [
   getAssertionItem('assayGXCovid19', 'NO RESULT', 'NoResult', null),
   getAssertionItem('assayGXCovid19', 'NO RESULT|', 'NoResult', null),
   getAssertionItem('assayGXCovid19', 'POSITIVE|', 'Positive', null),
-  getAssertionItem(
-    'assayGXCovid19',
-    'PRESUMPTIVE POS|',
-    'PresumptivePositive',
-    null
-  ),
+  getAssertionItem('assayGXCovid19', 'PRESUMPTIVE POS|', 'PresumptivePositive', null),
   getAssertionItem('assayGXCovid19', 'SARS-CoV-2 NEGATIVE', 'Negative', null),
   getAssertionItem('assayGXCovid19', 'SARS-CoV-2 POSITIVE', 'Positive', null),
   // getAssertionItem('assayGXCovid19', 'SARS-CoV-2 PRESUMPTIVE POS', 'Error', null), EXCLUDED (incorrect)
-  getAssertionItem(
-    'assayGXCovid19',
-    'SARS-CoV-2 PRESUMPTIVE POS',
-    'PresumptivePositive',
-    null
-  ),
-  getAssertionItem(
-    'assayGXCovid19',
-    'SARS-CoV-2 ОТРИЦАТЕЛЬНЫЙ',
-    'Negative',
-    null
-  ),
-  getAssertionItem(
-    'assayGXCovid19',
-    'SARS-CoV-2 ПОЛОЖИТЕЛЬНЫЙ',
-    'Positive',
-    null
-  ),
+  getAssertionItem('assayGXCovid19', 'SARS-CoV-2 PRESUMPTIVE POS', 'PresumptivePositive', null),
+  getAssertionItem('assayGXCovid19', 'SARS-CoV-2 ОТРИЦАТЕЛЬНЫЙ', 'Negative', null),
+  getAssertionItem('assayGXCovid19', 'SARS-CoV-2 ПОЛОЖИТЕЛЬНЫЙ', 'Positive', null),
   // getAssertionItem('assayGXCovid19', 'SARS-CoV-2 ПРЕДПОЛ. ПОЛОЖ', 'Error', null), EXCLUDED (only happened one day)
   getAssertionItem('assayGXCovid19', 'НЕДЕЙСТВИТЕЛЬНЫЙ', 'Invalid', null),
   getAssertionItem('assayGXCovid19', 'НЕТ РЕЗУЛЬТАТА', 'NoResult', null),

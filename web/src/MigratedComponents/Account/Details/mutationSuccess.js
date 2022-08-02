@@ -1,7 +1,6 @@
 function mutationSuccess(queryData, response, navigate, type, outcome) {
   const ok = outcome
-  const updatedLogin =
-    response.canLogIn && queryData?.data?.canLogIn !== response.canLogIn
+  const updatedLogin = response.canLogIn && queryData?.data?.canLogIn !== response.canLogIn
   switch (true) {
     case type === 'add' && ok:
       navigate(`/browse/person/${response?.id}`)
@@ -22,11 +21,7 @@ function mutationSuccess(queryData, response, navigate, type, outcome) {
       break
 
     default:
-      throw new Error(
-        `Could not complete the operation. Type: ${type} | Status: ${
-          ok ? 'true' : 'false'
-        }`
-      )
+      throw new Error(`Could not complete the operation. Type: ${type} | Status: ${ok ? 'true' : 'false'}`)
   }
 }
 

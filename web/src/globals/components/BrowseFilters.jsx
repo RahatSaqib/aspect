@@ -4,11 +4,7 @@ import React from 'react'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import { connect } from 'react-redux'
 import BrowseNavDropdown from './BrowseNavDropdown'
-import {
-  getFilters,
-  mergeToFiltersParams,
-  reduceNavLinks,
-} from '../../filter/utils'
+import { getFilters, mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
 import FiltersBtnGroup from '../../filter/btnGroup/FiltersBtnGroup'
 import FiltersPanel from '../../filter/popover/FiltersPanel'
 import {
@@ -40,10 +36,7 @@ const enhance = compose(
       ({ navigate, location }) =>
       nextFilters => {
         const searchParams = new URLSearchParams(location.search)
-        const filtersParams = mergeToFiltersParams(
-          nextFilters,
-          new URLSearchParams(searchParams.get('filters') || '')
-        )
+        const filtersParams = mergeToFiltersParams(nextFilters, new URLSearchParams(searchParams.get('filters') || ''))
         searchParams.set('filters', filtersParams)
         searchParams.delete('pageAt')
         searchParams.delete('page')
@@ -60,9 +53,7 @@ const enhance = compose(
       ({ navigate, location }) =>
       (filterKey, index) => {
         const searchParams = new URLSearchParams(location.search)
-        const filtersParams = new URLSearchParams(
-          searchParams.get('filters') || ''
-        )
+        const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
 
         switch (filterKey) {
           case 'countryId':
@@ -90,6 +81,17 @@ const enhance = compose(
             if (!filtersParams.has(filterKey)) {
               filtersParams.delete('resultCategoryId')
               filtersParams.delete('resultCategory2Id')
+            }
+            break
+          }
+          case 'deviceMaintenanceStatusId': {
+            const values = filtersParams.getAll(filterKey)
+            filtersParams.delete(filterKey)
+            if (values.length > 1) {
+              values.splice(index || 0, 1)
+              values.forEach(value => {
+                filtersParams.append(filterKey, value)
+              })
             }
             break
           }
@@ -148,21 +150,11 @@ export const BrowseFilters = ({
       onRemoveFilterItem={onRemoveFilterItem}
       className={cssClasses('FiltersBtnGroup')}
     >
-      {showBrowseDropdown && (
-        <BrowseNavDropdown
-          navigate={navigate}
-          location={location}
-          source={reducedSource}
-        />
-      )}
+      {showBrowseDropdown && <BrowseNavDropdown navigate={navigate} location={location} source={reducedSource} />}
     </FiltersBtnGroup>
     {children}
 
-    <FiltersPanel
-      className={cssClasses('FiltersPanel')}
-      dateFormat={dateFormat}
-      {...restProps}
-    />
+    <FiltersPanel className={cssClasses('FiltersPanel')} dateFormat={dateFormat} {...restProps} />
   </div>
 )
 

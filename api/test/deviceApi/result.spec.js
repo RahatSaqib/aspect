@@ -35,20 +35,11 @@ const ASYNC_TEST_ACCEPTANCE_TIME = 250
 describe('Device Result API routes', () => {
   // Waits acceptance time and resolves promise with optional result
   function waitAsyncComplete(result) {
-    return new Promise(resolve =>
-      setTimeout(resolve, ASYNC_TEST_ACCEPTANCE_TIME)
-    )
-      .then(waitForIdle)
-      .then(() => result)
+    return new Promise(resolve => setTimeout(resolve, ASYNC_TEST_ACCEPTANCE_TIME)).then(waitForIdle).then(() => result)
   }
 
   const apiResultPath = '/api/result'
-  function setResultAsDeliverable(
-    context,
-    resultId,
-    changedOn,
-    testStatus = true
-  ) {
+  function setResultAsDeliverable(context, resultId, changedOn, testStatus = true) {
     const { clientAuth } = context
     const status = { externalId: 'Deliverable' }
     if (changedOn) status.updatedOn = changedOn.toISOString()
@@ -58,16 +49,11 @@ describe('Device Result API routes', () => {
       .send(status)
       .set('Authorization', clientAuth)
       .then(res => {
-        assert.equal(
-          res.status,
-          200,
-          res && res.body && res.body.message ? res.body.message : ''
-        )
+        assert.equal(res.status, 200, res && res.body && res.body.message ? res.body.message : '')
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
         assert.typeOf(res.body.data, 'Object')
-        if (testStatus)
-          assert.equal(res.body.data.resultWorkflowStatus, 'Ready for delivery')
+        if (testStatus) assert.equal(res.body.data.resultWorkflowStatus, 'Ready for delivery')
         return res
       })
   }
@@ -98,9 +84,7 @@ describe('Device Result API routes', () => {
         const clientSingleResultPath = `${apiResultPath}/`
         const clientPath = `${apiResultPath}?deviceId=${deviceId}&size=1000`
 
-        const getResultResponse1 = await server
-          .get(clientPath)
-          .set('Authorization', clientAuth)
+        const getResultResponse1 = await server.get(clientPath).set('Authorization', clientAuth)
         assert.equal(getResultResponse1.status, 200)
         assert.typeOf(getResultResponse1.body, 'Object')
         assert.property(getResultResponse1.body, 'data')
@@ -122,13 +106,10 @@ describe('Device Result API routes', () => {
           instrument: { serial: '1234567' },
           sample: { id: '29347293' },
         }
-        const postNewResultResponse1 = await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            name: deviceChangedName,
-            result: resultPayload,
-          })
+        const postNewResultResponse1 = await server.post(devicePath).set('Authorization', deviceAuth).send({
+          name: deviceChangedName,
+          result: resultPayload,
+        })
         assert.equal(postNewResultResponse1.status, 200)
         assert.typeOf(postNewResultResponse1.body, 'Object')
 
@@ -136,9 +117,7 @@ describe('Device Result API routes', () => {
         if (lastResultId && !resultIds.includes(lastResultId)) {
           resultIds.push(lastResultId)
         }
-        const getResultResponse2 = await server
-          .get(clientPath)
-          .set('Authorization', clientAuth)
+        const getResultResponse2 = await server.get(clientPath).set('Authorization', clientAuth)
         assert.equal(getResultResponse2.status, 200)
         assert.typeOf(getResultResponse2.body, 'Object')
         assert.property(getResultResponse2.body, 'data')
@@ -152,9 +131,7 @@ describe('Device Result API routes', () => {
         assert.typeOf(lastResult, 'Object')
         assert.equal(lastResult.id, lastResultId)
 
-        const result1 = await knex('Result as r')
-          .where({ id: lastResultId })
-          .first()
+        const result1 = await knex('Result as r').where({ id: lastResultId }).first()
 
         const tagsResult1 = await knex('Result as r')
           .join('ResultTag as rt', 'r.id', 'rt.resultId')
@@ -165,53 +142,37 @@ describe('Device Result API routes', () => {
         assert.equal(tagsResult1.length, 0)
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
 
-        const result1Type = await knex('ResultType as rt')
-          .where({ id: result1.resultTypeId })
-          .first('externalId')
+        const result1Type = await knex('ResultType as rt').where({ id: result1.resultTypeId }).first('externalId')
 
         assert.equal(result1Type.externalId, 'Patient')
 
-        const result1Source = await knex('ResultSource as rs')
-          .where({ id: result1.resultSourceId })
-          .first('externalId')
+        const result1Source = await knex('ResultSource as rs').where({ id: result1.resultSourceId }).first('externalId')
 
         assert.equal(result1Source.externalId, 'DiagnosticDevice')
 
         const result1Status = await knex('ResultWorkflowLog as rsl')
-          .join(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.id'
-          )
+          .join('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
           .where('rsl.id', result1.resultWorkflowStatusLogId)
           .first('rs.externalId')
 
         assert.equal(result1Status.externalId, 'OK')
 
-        const result1Sample = await knex('Sample as s')
-          .where({ id: result1.sampleId })
-          .first()
+        const result1Sample = await knex('Sample as s').where({ id: result1.sampleId }).first()
 
         assert.equal(result1.siteId, result1Sample.originSiteId)
         assert.equal(result1Sample.collectedOn, null)
         assert.equal(result1Sample.sampleTypeId, null)
 
-        const result1SampleSite = await knex('Site as s')
-          .where({ id: result1Sample.originSiteId })
-          .first()
+        const result1SampleSite = await knex('Site as s').where({ id: result1Sample.originSiteId }).first()
 
         assert.equal(result1.siteId, result1Sample.originSiteId)
 
-        const result1Assay = await knex('Assay as assay')
-          .where({ id: result1.assayId })
-          .first('externalId', 'name')
+        const result1Assay = await knex('Assay as assay').where({ id: result1.assayId }).first('externalId', 'name')
 
         assert.equal(result1Assay.externalId, 'DaktariHivVL')
         assert.equal(result1Assay.name, 'Daktari HIV-VL')
 
-        const [result1Category1, result1Category2] = await knex(
-          'ResultCategory as rt'
-        )
+        const [result1Category1, result1Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result1.resultCategory1, result1.resultCategory2])
           .select('externalId')
 
@@ -323,9 +284,7 @@ describe('Device Result API routes', () => {
           resultIds.push(lastResultId)
         }
 
-        const getResultResponse3 = await server
-          .get(clientPath)
-          .set('Authorization', clientAuth)
+        const getResultResponse3 = await server.get(clientPath).set('Authorization', clientAuth)
         assert.equal(getResultResponse3.status, 200)
         assert.typeOf(getResultResponse3.body, 'Object')
         assert.property(getResultResponse3.body, 'data')
@@ -334,9 +293,7 @@ describe('Device Result API routes', () => {
 
         assert.equal(getResultResponse3.body.data.length, initialDataLength + 2)
 
-        const result2 = await knex('Result as r')
-          .where({ 'r.id': lastResultId })
-          .first()
+        const result2 = await knex('Result as r').where({ 'r.id': lastResultId }).first()
         const tagsResult2 = await knex('Result as r')
           .join('ResultTag as rt', 'r.id', 'rt.resultId')
           .join('Tag as t', 'rt.tagid', 't.id')
@@ -358,10 +315,7 @@ describe('Device Result API routes', () => {
         assert.equal(result2.sampleGroup, 'Sample Group X-1')
         assert.equal(result2.sampleRunNumber, '10z')
         assert.equal(result2.consumableSerial, '132-44-222')
-        assert.deepEqual(
-          result2.consumableExpirationDate,
-          new Date('2014-03-01')
-        )
+        assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
         assert.equal(result2.consumableLot, '331-1')
         assert.equal(result2.instrumentSerial, '444-3')
         assert.equal(result2.moduleName, 'ModA')
@@ -402,57 +356,38 @@ describe('Device Result API routes', () => {
         })
         assert.equal(result2.senderVersion, '99-1')
         assert.equal(result2.senderOperator, 'Bob O')
-        assert.equal(
-          result2.notes,
-          'My Awesome notes about this Awesome result!, 123-12'
-        )
+        assert.equal(result2.notes, 'My Awesome notes about this Awesome result!, 123-12')
         assert.equal(result2.errorCode, '123')
         assert.equal(result2.errorNotes, 'Oh NOZE!')
 
-        const result2Type = await knex('ResultType as rt')
-          .where({ id: result2.resultTypeId })
-          .first('externalId')
+        const result2Type = await knex('ResultType as rt').where({ id: result2.resultTypeId }).first('externalId')
         assert.equal(result2Type.externalId, 'Study')
 
-        const result2Source = await knex('ResultSource as rs')
-          .where({ id: result2.resultSourceId })
-          .first('externalId')
+        const result2Source = await knex('ResultSource as rs').where({ id: result2.resultSourceId }).first('externalId')
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Status = await knex('ResultWorkflowLog as rsl')
-          .join(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.id'
-          )
+          .join('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
           .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 
-        const result2Assay = await knex('Assay as assay')
-          .where({ id: result2.assayId })
-          .first('externalId', 'name')
+        const result2Assay = await knex('Assay as assay').where({ id: result2.assayId }).first('externalId', 'name')
         assert.equal(result2Assay.externalId, 'DaktariHivVL')
         assert.equal(result2Assay.name, 'Daktari HIV-VL')
 
-        const result2Sample = await knex('Sample as s')
-          .where({ id: result2.sampleId })
-          .first()
+        const result2Sample = await knex('Sample as s').where({ id: result2.sampleId }).first()
         assert.notEqual(result2.siteId, result2Sample.originSiteId)
         assert.equal(result2SampleSite.id, result2Sample.originSiteId)
         assert.equal(result2Sample.externalId, `Sample${now}`)
 
-        const [result2Category1, result2Category2] = await knex(
-          'ResultCategory as rt'
-        )
+        const [result2Category1, result2Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result2.resultCategory1, result2.resultCategory2])
           .select('externalId')
         assert.equal(result2Category1.externalId, 'Detected')
         assert.equal(result2Category2.externalId, 'Indeterminate')
 
-        const [{ rawMessage: log2Raw, resultId: resultId2 }] = await knex(
-          'DeviceLog as dl'
-        )
+        const [{ rawMessage: log2Raw, resultId: resultId2 }] = await knex('DeviceLog as dl')
           .innerJoin('Result as r', 'r.id', 'dl.resultId')
           .where({ 'r.id': lastResultId })
           .select('rawMessage', 'resultId')
@@ -546,9 +481,7 @@ describe('Device Result API routes', () => {
             notes: 'Oh NOZE!',
           },
         })
-        const getResultResponse4 = await server
-          .get(clientSingleResultPath + resultId2)
-          .set('Authorization', clientAuth)
+        const getResultResponse4 = await server.get(clientSingleResultPath + resultId2).set('Authorization', clientAuth)
 
         assert.equal(getResultResponse4.status, 200)
         assert.typeOf(getResultResponse4.body, 'Object')
@@ -571,9 +504,7 @@ describe('Device Result API routes', () => {
         assert.equal(postNewResultResponse4.status, 200)
         assert.typeOf(postNewResultResponse4.body, 'Object')
 
-        const getResultResponse5 = await server
-          .get(`${devicePath}`)
-          .set('Authorization', deviceAuth)
+        const getResultResponse5 = await server.get(`${devicePath}`).set('Authorization', deviceAuth)
 
         assert.equal(getResultResponse5.status, 200)
         assert.typeOf(getResultResponse5.body, 'Object')
@@ -586,9 +517,7 @@ describe('Device Result API routes', () => {
         const { deviceId, clientAuth, deviceAuth, now } = context
         const clientPath = `${apiResultPath}?deviceId=${deviceId}&size=1000`
 
-        const getResultResponse1 = await server
-          .get(clientPath)
-          .set('Authorization', clientAuth)
+        const getResultResponse1 = await server.get(clientPath).set('Authorization', clientAuth)
         assert.equal(getResultResponse1.status, 200)
         assert.typeOf(getResultResponse1.body, 'Object')
         assert.property(getResultResponse1.body, 'data')
@@ -619,13 +548,10 @@ describe('Device Result API routes', () => {
             },
           },
         }
-        const postNewResultResponse = await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            name: 'Device Name',
-            result: resultPayload,
-          })
+        const postNewResultResponse = await server.post(devicePath).set('Authorization', deviceAuth).send({
+          name: 'Device Name',
+          result: resultPayload,
+        })
         assert.equal(postNewResultResponse.status, 200)
         assert.typeOf(postNewResultResponse.body, 'Object')
 
@@ -695,9 +621,7 @@ describe('Device Result API routes', () => {
           .leftJoin('Lga as l', 'g.lgaId', 'l.id')
           .where('r.id', lastResultId)
           .first('si.*', 'st.name as stateName', 'l.name as lgaName')
-        expect(updatedResultSampleOriginSite).to.containSubset(
-          expectedSampleOriginSite
-        )
+        expect(updatedResultSampleOriginSite).to.containSubset(expectedSampleOriginSite)
       }))
 
     it('should set result status with different updatedOn parameters', () =>
@@ -722,45 +646,28 @@ describe('Device Result API routes', () => {
 
         resultIds.push(await getLastResultId(knex, deviceId))
 
-        await setResultAsDeliverable(
-          context,
-          _.last(resultIds),
-          new Date(2010, 1, 1),
-          false
-        )
+        await setResultAsDeliverable(context, _.last(resultIds), new Date(2010, 1, 1), false)
 
         const result1 = await knex('Result as r')
           .where({ id: _.last(resultIds) })
           .first()
 
         const result1Status = await knex('ResultWorkflowLog as rsl')
-          .innerJoin(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.Id'
-          )
+          .innerJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.Id')
           .where('rsl.id', result1.resultWorkflowStatusLogId)
           .first('externalId')
 
         assert.equal(result1Status.externalId, 'OK')
 
         const now2 = new Date()
-        await setResultAsDeliverable(
-          context,
-          _.last(resultIds),
-          new Date(now2.setMinutes(now2.getMinutes() + 30))
-        )
+        await setResultAsDeliverable(context, _.last(resultIds), new Date(now2.setMinutes(now2.getMinutes() + 30)))
 
         const result2 = await knex('Result as r')
           .where({ id: _.last(resultIds) })
           .first()
 
         const result2Status = await knex('ResultWorkflowLog as rsl')
-          .innerJoin(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.Id'
-          )
+          .innerJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.Id')
           .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
 
@@ -791,27 +698,19 @@ describe('Device Result API routes', () => {
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
 
-        const result1 = await knex('Result as r')
-          .where({ id: resultIds[0] })
-          .first()
+        const result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
 
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
         assert.isNotOk(result1.errorCode)
 
         const result1Status = await knex('ResultWorkflowLog as rsl')
-          .innerJoin(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.Id'
-          )
+          .innerJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.Id')
           .where('rsl.id', result1.resultWorkflowStatusLogId)
           .first('externalId')
 
         assert.equal(result1Status.externalId, 'Deliverable')
 
-        const [result1Category1, result1Category2] = await knex(
-          'ResultCategory as rt'
-        )
+        const [result1Category1, result1Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result1.resultCategory1, result1.resultCategory2])
           .select('externalId')
         assert.equal(result1Category1.externalId, 'Success')
@@ -836,27 +735,19 @@ describe('Device Result API routes', () => {
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
 
-        const result2 = await knex('Result as r')
-          .where({ id: resultIds[1] })
-          .first()
+        const result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
 
         assert.deepEqual(JSON.parse(result2.resultData), { a: 'c' })
         assert.equal(result2.errorCode, '1')
 
         const result2Status = await knex('ResultWorkflowLog as rsl')
-          .innerJoin(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.Id'
-          )
+          .innerJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.Id')
           .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
 
         assert.equal(result2Status.externalId, 'Deliverable')
 
-        const [result2Category1, result2Category2] = await knex(
-          'ResultCategory as rt'
-        )
+        const [result2Category1, result2Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result2.resultCategory1, result2.resultCategory2])
           .select('externalId')
         assert.equal(result2Category1.externalId, 'Error')
@@ -880,25 +771,17 @@ describe('Device Result API routes', () => {
           })
         resultIds.push(await getLastResultId(knex, deviceId))
 
-        const result3 = await knex('Result as r')
-          .where({ id: resultIds[2] })
-          .first()
+        const result3 = await knex('Result as r').where({ id: resultIds[2] }).first()
         assert.deepEqual(JSON.parse(result3.resultData), { a: 'd' })
         assert.equal(result3.errorCode, '1')
 
         const result3Status = await knex('ResultWorkflowLog as rsl')
-          .innerJoin(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.Id'
-          )
+          .innerJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.Id')
           .where('rsl.id', result3.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result3Status.externalId, 'Error')
 
-        const [result3Category1, result3Category2] = await knex(
-          'ResultCategory as rt'
-        )
+        const [result3Category1, result3Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result3.resultCategory1, result3.resultCategory2])
           .select('externalId')
         assert.equal(result3Category1.externalId, 'Invalid')
@@ -923,25 +806,17 @@ describe('Device Result API routes', () => {
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
 
-        const result4 = await knex('Result as r')
-          .where({ id: resultIds[3] })
-          .first()
+        const result4 = await knex('Result as r').where({ id: resultIds[3] }).first()
         assert.deepEqual(JSON.parse(result4.resultData), { a: 'e' })
         assert.isNotOk(result4.errorCode)
 
         const result4Status = await knex('ResultWorkflowLog as rsl')
-          .innerJoin(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.Id'
-          )
+          .innerJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.Id')
           .where('rsl.id', result4.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result4Status.externalId, 'Deliverable')
 
-        const [result4Category1, result4Category2] = await knex(
-          'ResultCategory as rt'
-        )
+        const [result4Category1, result4Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result4.resultCategory1, result4.resultCategory2])
           .select('externalId')
         assert.equal(result4Category1.externalId, 'Detected')
@@ -975,9 +850,7 @@ describe('Device Result API routes', () => {
           })
         resultIds.push(await getLastResultId(knex, deviceId))
 
-        let result1 = await knex('Result as r')
-          .where({ id: resultIds[0] })
-          .first()
+        let result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
         assert.equal(result1.externalId, resultExternalIds[0])
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
         assert.isNotOk(result1.errorCode)
@@ -1020,15 +893,11 @@ describe('Device Result API routes', () => {
         assert.notEqual(lastResultId, resultIds[0])
         resultIds.push(lastResultId)
 
-        let result2 = await knex('Result as r')
-          .where({ id: resultIds[1] })
-          .first()
+        let result2 = await knex('Result as r').where({ id: resultIds[1] }).first()
         assert.equal(result2.externalId, resultExternalIds[1])
         assert.equal(initialCount + 2, await countResults())
 
-        const result1SampleSite = await knex('Site as s')
-          .where({ id: result1.siteId })
-          .first()
+        const result1SampleSite = await knex('Site as s').where({ id: result1.siteId }).first()
 
         const result2SampleSite = await knex('Site as s')
           .where('partnerId', result1SampleSite.partnerId)
@@ -1143,10 +1012,7 @@ describe('Device Result API routes', () => {
         assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
         assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30:00.000Z'))
         assert.equal(result2.consumableSerial, '132-44-222')
-        assert.deepEqual(
-          result2.consumableExpirationDate,
-          new Date('2014-03-01')
-        )
+        assert.deepEqual(result2.consumableExpirationDate, new Date('2014-03-01'))
         assert.equal(result2.consumableLot, '331-1')
         assert.equal(result2.instrumentSerial, '444-3')
         assert.equal(result2.moduleName, 'ModA')
@@ -1187,50 +1053,33 @@ describe('Device Result API routes', () => {
         })
         assert.equal(result2.senderVersion, '99-1')
         assert.equal(result2.senderOperator, 'Bob O')
-        assert.equal(
-          result2.notes,
-          'My Awesome notes about this Awesome result!'
-        )
+        assert.equal(result2.notes, 'My Awesome notes about this Awesome result!')
         assert.equal(result2.errorCode, '123')
         assert.equal(result2.errorNotes, 'Oh NOZE!')
 
-        const result2Type = await knex('ResultType as rt')
-          .where({ id: result2.resultTypeId })
-          .first('externalId')
+        const result2Type = await knex('ResultType as rt').where({ id: result2.resultTypeId }).first('externalId')
         assert.equal(result2Type.externalId, 'Study')
 
-        const result2Source = await knex('ResultSource as rs')
-          .where({ id: result2.resultSourceId })
-          .first('externalId')
+        const result2Source = await knex('ResultSource as rs').where({ id: result2.resultSourceId }).first('externalId')
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Status = await knex('ResultWorkflowLog as rsl')
-          .innerJoin(
-            'ResultWorkflowStatus as rs',
-            'rsl.resultWorkflowStatusId',
-            'rs.Id'
-          )
+          .innerJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.Id')
           .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 
-        const result2Assay = await knex('Assay as assay')
-          .where({ id: result2.assayId })
-          .first('externalId', 'name')
+        const result2Assay = await knex('Assay as assay').where({ id: result2.assayId }).first('externalId', 'name')
         assert.equal(result2Assay.externalId, 'DaktariHivVL')
         assert.equal(result2Assay.name, 'Daktari HIV-VL')
 
-        const result2Sample = await knex('Sample as s')
-          .where({ id: result2.sampleId })
-          .first()
+        const result2Sample = await knex('Sample as s').where({ id: result2.sampleId }).first()
 
         assert.notEqual(result2.siteId, result2Sample.originSiteId)
         assert.equal(result2SampleSite.id, result2Sample.originSiteId)
         assert.equal(result2Sample.externalId, `Sample${now}`)
 
-        const [result2Category1, result2Category2] = await knex(
-          'ResultCategory as rt'
-        )
+        const [result2Category1, result2Category2] = await knex('ResultCategory as rt')
           .whereIn('id', [result2.resultCategory1, result2.resultCategory2])
           .select('externalId')
         assert.equal(result2Category1.externalId, 'Detected')
@@ -1243,9 +1092,7 @@ describe('Device Result API routes', () => {
         const resultIds = []
         const opIds = []
 
-        const [{ count: initialLogLength }] = await knex('DeviceLog').count(
-          'id as count'
-        )
+        const [{ count: initialLogLength }] = await knex('DeviceLog').count('id as count')
 
         await server
           .get(devicePath)
@@ -1276,26 +1123,19 @@ describe('Device Result API routes', () => {
         assert.typeOf(res.body, 'Object')
 
         // The last reported instrument serial should be updated in the device table
-        const { lastInstrumentSerial } = await knex('Device')
-          .where({ id: deviceId })
-          .first()
+        const { lastInstrumentSerial } = await knex('Device').where({ id: deviceId }).first()
         assert.equal(lastInstrumentSerial, 'A NICE INSTRUMENT SERIAL')
 
         resultIds.push(await getLastResultId(knex, deviceId))
         opIds.push(await getLastDeviceOperationId(knex, deviceId))
 
-        const [{ count: logLength2 }] = await knex('DeviceLog').count(
-          'id as count'
-        )
+        const [{ count: logLength2 }] = await knex('DeviceLog').count('id as count')
         assert.equal(logLength2, initialLogLength + 1) // I add new devicelog for the current device
 
         const deviceLogResult2 = await knex('Result')
           .where({ id: resultIds[resultIds.length - 1] })
           .first()
-        const deviceLogConfig2 = await getDeviceConfigurationData(
-          knex,
-          deviceId
-        )
+        const deviceLogConfig2 = await getDeviceConfigurationData(knex, deviceId)
         const deviceLogOp2 = await knex('DeviceOperation')
           .where({ id: opIds[opIds.length - 1] })
           .first()
@@ -1334,10 +1174,7 @@ describe('Device Result API routes', () => {
         resultIds.push(await getLastResultId(knex, deviceId))
         opIds.push(await getLastDeviceOperationId(knex, deviceId))
 
-        const deviceLogConfig3 = await getDeviceConfigurationData(
-          knex,
-          deviceId
-        )
+        const deviceLogConfig3 = await getDeviceConfigurationData(knex, deviceId)
         const deviceLogOp3 = await knex('DeviceOperation')
           .where({ id: opIds[opIds.length - 1] })
           .first()
@@ -1362,9 +1199,7 @@ describe('Device Result API routes', () => {
       const resultIds = []
 
       afterEach(async () => {
-        const inventoryItemIds = await knex('InventoryLog')
-          .whereIn('resultId', resultIds)
-          .pluck('inventoryItemId')
+        const inventoryItemIds = await knex('InventoryLog').whereIn('resultId', resultIds).pluck('inventoryItemId')
         await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
         await knex('InventoryLog').whereIn('resultId', resultIds).delete()
         await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
@@ -1378,13 +1213,7 @@ describe('Device Result API routes', () => {
           const deviceWithNoDefaultReportableSiteId = await knex('Device as d')
             .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
             .whereNull('defaultReportableSiteId')
-            .first(
-              'd.id',
-              'd.siteId',
-              'dak.token',
-              'd.PartnerId',
-              'd.defaultReportableSiteId'
-            )
+            .first('d.id', 'd.siteId', 'dak.token', 'd.PartnerId', 'd.defaultReportableSiteId')
 
           const resultPayload = {
             startedOn: now,
@@ -1397,10 +1226,7 @@ describe('Device Result API routes', () => {
           }
           const response = await server
             .post(devicePath)
-            .set(
-              'Authorization',
-              `Bearer ${deviceWithNoDefaultReportableSiteId.token}`
-            )
+            .set('Authorization', `Bearer ${deviceWithNoDefaultReportableSiteId.token}`)
             .send({
               name: 'Device Name',
               result: resultPayload,
@@ -1408,22 +1234,14 @@ describe('Device Result API routes', () => {
           assert.equal(response.status, 200)
           assert.typeOf(response.body, 'Object')
 
-          const resultId = await getLastResultId(
-            knex,
-            deviceWithNoDefaultReportableSiteId.id
-          )
+          const resultId = await getLastResultId(knex, deviceWithNoDefaultReportableSiteId.id)
           if (resultId && !resultIds.includes(resultId)) {
             resultIds.push(resultId)
           }
-          const { reportableSiteId: resultReportableSiteId } = await knex(
-            'Result as r'
-          )
+          const { reportableSiteId: resultReportableSiteId } = await knex('Result as r')
             .where('r.id', resultId)
             .first('r.reportableSiteId')
-          assert.equal(
-            resultReportableSiteId,
-            deviceWithNoDefaultReportableSiteId.siteId
-          )
+          assert.equal(resultReportableSiteId, deviceWithNoDefaultReportableSiteId.siteId)
         }))
 
       it('should be set to the origin site of the result if specified if the device does not have a default reportable site', () =>
@@ -1433,12 +1251,7 @@ describe('Device Result API routes', () => {
           const deviceWithNoDefaultReportableSiteId = await knex('Device as d')
             .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
             .whereNull('defaultReportableSiteId')
-            .first(
-              'd.id',
-              'dak.token',
-              'd.PartnerId',
-              'd.defaultReportableSiteId'
-            )
+            .first('d.id', 'dak.token', 'd.PartnerId', 'd.defaultReportableSiteId')
 
           const reportableSiteExternalId = 'ReportableSite'
           const reportableSiteId = await createSite(knex, {
@@ -1462,10 +1275,7 @@ describe('Device Result API routes', () => {
           }
           const response = await server
             .post(devicePath)
-            .set(
-              'Authorization',
-              `Bearer ${deviceWithNoDefaultReportableSiteId.token}`
-            )
+            .set('Authorization', `Bearer ${deviceWithNoDefaultReportableSiteId.token}`)
             .send({
               name: 'Device Name',
               result: resultPayload,
@@ -1473,16 +1283,11 @@ describe('Device Result API routes', () => {
           assert.equal(response.status, 200)
           assert.typeOf(response.body, 'Object')
 
-          const resultId = await getLastResultId(
-            knex,
-            deviceWithNoDefaultReportableSiteId.id
-          )
+          const resultId = await getLastResultId(knex, deviceWithNoDefaultReportableSiteId.id)
           if (resultId && !resultIds.includes(resultId)) {
             resultIds.push(resultId)
           }
-          const { reportableSiteId: resultReportableSiteId } = await knex(
-            'Result as r'
-          )
+          const { reportableSiteId: resultReportableSiteId } = await knex('Result as r')
             .where('r.id', resultId)
             .first('r.reportableSiteId')
           assert.equal(resultReportableSiteId, reportableSiteId)
@@ -1520,10 +1325,7 @@ describe('Device Result API routes', () => {
           }
           const response = await server
             .post(devicePath)
-            .set(
-              'Authorization',
-              `Bearer ${deviceWithDefaultReportableSiteId.token}`
-            )
+            .set('Authorization', `Bearer ${deviceWithDefaultReportableSiteId.token}`)
             .send({
               name: 'Device Name',
               result: resultPayload,
@@ -1531,16 +1333,11 @@ describe('Device Result API routes', () => {
           assert.equal(response.status, 200)
           assert.typeOf(response.body, 'Object')
 
-          const resultId = await getLastResultId(
-            knex,
-            deviceWithDefaultReportableSiteId.id
-          )
+          const resultId = await getLastResultId(knex, deviceWithDefaultReportableSiteId.id)
           if (resultId && !resultIds.includes(resultId)) {
             resultIds.push(resultId)
           }
-          const { reportableSiteId: resultReportableSiteId } = await knex(
-            'Result as r'
-          )
+          const { reportableSiteId: resultReportableSiteId } = await knex('Result as r')
             .where('r.id', resultId)
             .first('r.reportableSiteId')
           assert.equal(resultReportableSiteId, reportableSiteId)
@@ -1554,12 +1351,7 @@ describe('Device Result API routes', () => {
             .join('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
             .whereNotNull('defaultReportableSiteId')
             .where('defaultReportableSiteId', '!=', 'siteId')
-            .first(
-              'd.id',
-              'dak.token',
-              'd.PartnerId',
-              'd.defaultReportableSiteId'
-            )
+            .first('d.id', 'dak.token', 'd.PartnerId', 'd.defaultReportableSiteId')
 
           const resultPayload = {
             startedOn: now,
@@ -1572,10 +1364,7 @@ describe('Device Result API routes', () => {
           }
           const response = await server
             .post(devicePath)
-            .set(
-              'Authorization',
-              `Bearer ${deviceWithDefaultReportableSiteId.token}`
-            )
+            .set('Authorization', `Bearer ${deviceWithDefaultReportableSiteId.token}`)
             .send({
               name: 'Device Name',
               result: resultPayload,
@@ -1583,22 +1372,14 @@ describe('Device Result API routes', () => {
           assert.equal(response.status, 200)
           assert.typeOf(response.body, 'Object')
 
-          const resultId = await getLastResultId(
-            knex,
-            deviceWithDefaultReportableSiteId.id
-          )
+          const resultId = await getLastResultId(knex, deviceWithDefaultReportableSiteId.id)
           if (resultId && !resultIds.includes(resultId)) {
             resultIds.push(resultId)
           }
-          const { reportableSiteId: resultReportableSiteId } = await knex(
-            'Result as r'
-          )
+          const { reportableSiteId: resultReportableSiteId } = await knex('Result as r')
             .where('r.id', resultId)
             .first('r.reportableSiteId')
-          assert.equal(
-            resultReportableSiteId,
-            deviceWithDefaultReportableSiteId.defaultReportableSiteId
-          )
+          assert.equal(resultReportableSiteId, deviceWithDefaultReportableSiteId.defaultReportableSiteId)
         }))
     })
 
@@ -1606,13 +1387,7 @@ describe('Device Result API routes', () => {
       function getFactResultsDevice(knex, deviceId) {
         return knex('FactResultsDevice')
           .where({ deviceId })
-          .select(
-            'deviceId',
-            'days',
-            'resultCount',
-            'resultsDeliveredCount',
-            'calculatedOn'
-          )
+          .select('deviceId', 'days', 'resultCount', 'resultsDeliveredCount', 'calculatedOn')
       }
 
       function getFactResultsDeviceByAssay(knex, deviceId, assayId) {
@@ -1622,47 +1397,21 @@ describe('Device Result API routes', () => {
           .select('deviceId', 'assayId', 'days', 'resultCount', 'calculatedOn')
       }
 
-      function getFactResultsDeviceByCategory1(
-        knex,
-        deviceId,
-        assayId,
-        resultCategory1
-      ) {
+      function getFactResultsDeviceByCategory1(knex, deviceId, assayId, resultCategory1) {
         return knex('FactResultsDeviceByCategory1')
           .where({ deviceId })
           .andWhere({ assayId })
           .andWhere({ resultCategory1 })
-          .select(
-            'deviceId',
-            'assayId',
-            'resultCategory1',
-            'days',
-            'resultCount',
-            'calculatedOn'
-          )
+          .select('deviceId', 'assayId', 'resultCategory1', 'days', 'resultCount', 'calculatedOn')
       }
 
-      function getFactResultsDeviceByCategory1And2(
-        knex,
-        deviceId,
-        assayId,
-        resultCategory1,
-        resultCategory2
-      ) {
+      function getFactResultsDeviceByCategory1And2(knex, deviceId, assayId, resultCategory1, resultCategory2) {
         return knex('FactResultsDeviceByCategory1And2')
           .where({ deviceId })
           .andWhere({ assayId })
           .andWhere({ resultCategory1 })
           .andWhere({ resultCategory2 })
-          .select(
-            'deviceId',
-            'assayId',
-            'resultCategory1',
-            'resultCategory2',
-            'days',
-            'resultCount',
-            'calculatedOn'
-          )
+          .select('deviceId', 'assayId', 'resultCategory1', 'resultCategory2', 'days', 'resultCount', 'calculatedOn')
       }
 
       it('should update the result counts in the facts-tables when a new result is reported', () =>
@@ -1674,9 +1423,7 @@ describe('Device Result API routes', () => {
             deviceId: context.deviceId,
           }
 
-          const { id: assayId } = await knex('Assay')
-            .where('externalId', resultDetails.assayExternalId)
-            .first('id')
+          const { id: assayId } = await knex('Assay').where('externalId', resultDetails.assayExternalId).first('id')
 
           const { id: resultCategory1 } = await knex('ResultCategory')
             .where('externalId', resultDetails.resultCategory1ExternalId)
@@ -1704,36 +1451,26 @@ describe('Device Result API routes', () => {
               return waitAsyncComplete(res)
             })
 
-          const factResultsDeviceBefore = await getFactResultsDevice(
+          const factResultsDeviceBefore = await getFactResultsDevice(knex, context.deviceId)
+
+          const factResultsDeviceByAssayBefore = await getFactResultsDeviceByAssay(knex, context.deviceId, assayId)
+
+          const factResultsDeviceByCategory1Before = await getFactResultsDeviceByCategory1(
             knex,
-            context.deviceId
+            context.deviceId,
+            assayId,
+            resultCategory1
           )
 
-          const factResultsDeviceByAssayBefore =
-            await getFactResultsDeviceByAssay(knex, context.deviceId, assayId)
-
-          const factResultsDeviceByCategory1Before =
-            await getFactResultsDeviceByCategory1(
-              knex,
-              context.deviceId,
-              assayId,
-              resultCategory1
-            )
-
-          const factResultsDeviceByCategory1And2Before =
-            await getFactResultsDeviceByCategory1And2(
-              knex,
-              context.deviceId,
-              assayId,
-              resultCategory1,
-              resultCategory2
-            )
-
-          assert.equal(
-            factResultsDeviceBefore.length,
-            7,
-            'There should be one entry per day in the device count table'
+          const factResultsDeviceByCategory1And2Before = await getFactResultsDeviceByCategory1And2(
+            knex,
+            context.deviceId,
+            assayId,
+            resultCategory1,
+            resultCategory2
           )
+
+          assert.equal(factResultsDeviceBefore.length, 7, 'There should be one entry per day in the device count table')
 
           await server
             .post(devicePostResultPath)
@@ -1754,30 +1491,24 @@ describe('Device Result API routes', () => {
               return waitAsyncComplete(res)
             })
 
-          const factResultsDeviceAfter = await getFactResultsDevice(
+          const factResultsDeviceAfter = await getFactResultsDevice(knex, context.deviceId)
+
+          const factResultsDeviceByAssayAfter = await getFactResultsDeviceByAssay(knex, context.deviceId, assayId)
+
+          const factResultsDeviceByCategory1After = await getFactResultsDeviceByCategory1(
             knex,
-            context.deviceId
+            context.deviceId,
+            assayId,
+            resultCategory1
           )
 
-          const factResultsDeviceByAssayAfter =
-            await getFactResultsDeviceByAssay(knex, context.deviceId, assayId)
-
-          const factResultsDeviceByCategory1After =
-            await getFactResultsDeviceByCategory1(
-              knex,
-              context.deviceId,
-              assayId,
-              resultCategory1
-            )
-
-          const factResultsDeviceByCategory1And2After =
-            await getFactResultsDeviceByCategory1And2(
-              knex,
-              context.deviceId,
-              assayId,
-              resultCategory1,
-              resultCategory2
-            )
+          const factResultsDeviceByCategory1And2After = await getFactResultsDeviceByCategory1And2(
+            knex,
+            context.deviceId,
+            assayId,
+            resultCategory1,
+            resultCategory2
+          )
 
           factResultsDeviceBefore.forEach(countBefore => {
             const countAfter = _.find(factResultsDeviceAfter, {
@@ -1874,25 +1605,16 @@ describe('Device Result API routes', () => {
             .andWhere('deviceId', context.deviceId)
             .first('id')
 
-          const factResultsDeviceBefore = await getFactResultsDevice(
-            knex,
-            context.deviceId
-          )
+          const factResultsDeviceBefore = await getFactResultsDevice(knex, context.deviceId)
 
-          const deliveredWorkflowStatusId = await resultWorkflowStatusToId(
-            'Delivered'
-          )
-          const [resultWorkflowStatusLogId] = await knex(
-            'ResultWorkflowLog'
-          ).insert({
+          const deliveredWorkflowStatusId = await resultWorkflowStatusToId('Delivered')
+          const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
             resultId,
             resultWorkflowStatusId: deliveredWorkflowStatusId,
             changedOn: new Date(),
             createdOn: new Date(),
           })
-          await knex('Result')
-            .where({ id: resultId })
-            .update({ resultWorkflowStatusLogId })
+          await knex('Result').where({ id: resultId }).update({ resultWorkflowStatusLogId })
 
           await server
             .post(devicePostResultPath)
@@ -1912,15 +1634,11 @@ describe('Device Result API routes', () => {
               return waitAsyncComplete(res)
             })
 
-          const factResultsDeviceAfter = await getFactResultsDevice(
-            knex,
-            context.deviceId
-          )
+          const factResultsDeviceAfter = await getFactResultsDevice(knex, context.deviceId)
 
-          const factResultsDeviceBefore30And60Days =
-            factResultsDeviceBefore.filter(factResultsDevice =>
-              [30, 60].includes(factResultsDevice.days)
-            )
+          const factResultsDeviceBefore30And60Days = factResultsDeviceBefore.filter(factResultsDevice =>
+            [30, 60].includes(factResultsDevice.days)
+          )
           factResultsDeviceBefore30And60Days.forEach(countBefore => {
             const countAfter = _.find(factResultsDeviceAfter, {
               days: countBefore.days,

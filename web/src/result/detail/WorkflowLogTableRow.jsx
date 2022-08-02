@@ -2,10 +2,7 @@ import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
 
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 
 import styles from '../../components/shared/DataTableRow.css'

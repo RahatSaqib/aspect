@@ -9,9 +9,7 @@ const cascadeFieldsOutputWithArray = require('./cascadeFieldsOutputWithArray.jso
 const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
 const gxConnectSchema = require('../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
 const validate = require('../../../jsonSchemas/validate')
-const {
-  transformPayloadWithFormsDefinition,
-} = require('../../../src/plugin/deviceType/customFields')
+const { transformPayloadWithFormsDefinition } = require('../../../src/plugin/deviceType/customFields')
 
 describe('Custom field mapper', () => {
   it('it generates the mapping between aspect dynamic forms and gxconnect expected json', () => {
@@ -235,8 +233,7 @@ describe('Custom field mapper', () => {
     })
 
     assert.equal(
-      mappingOutput.CustomFields.Fields[1].InputControlData.displayConditions[0]
-        .refId,
+      mappingOutput.CustomFields.Fields[1].InputControlData.displayConditions[0].refId,
       mappingOutput.CustomFields.Fields[0].Id
     )
   })

@@ -6,18 +6,14 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
-import { injectIntl, useIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import isEditable from '../../shared/selectors/isEditable'
-import {
-  fetchSingleSite,
-  updateSingleSiteFromForm,
-  updateLatLongFromFormAddress,
-  Site,
-} from '../SiteRedux'
+import { fetchSingleSite, updateSingleSiteFromForm, updateLatLongFromFormAddress, Site } from '../SiteRedux'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import { fetchSiteContacts } from '../../person/PersonRedux'
 
@@ -32,7 +28,7 @@ import styles from './SiteDetail.css'
 const cssClasses = classnames.bind(styles)
 
 export const SiteDetail = props => {
-  const intl = useIntl()
+  const intl = useI18n()
   const {
     updateSingleSiteFromForm,
     site,
@@ -111,9 +107,7 @@ export const SiteDetail = props => {
         </Routes>
       ) : null}
       <section className={cssClasses('Section', 'Section--first')}>
-        <Paper>
-          {hasSiteWithLocation() ? <SiteLocationFormMap site={site} /> : null}
-        </Paper>
+        <Paper>{hasSiteWithLocation() ? <SiteLocationFormMap site={site} /> : null}</Paper>
       </section>
     </div>
   )
@@ -123,10 +117,7 @@ const mapStateToProps = (state, ownProps) => {
   const { siteId } = ownProps.match.params
   const site = state.site.items.byId.get(siteId)
   const siteTags = state.tag.tags.getIn(['site', siteId], Immutable.List())
-  const siteContacts = state.person.siteContacts.getIn(
-    [siteId],
-    Immutable.List()
-  )
+  const siteContacts = state.person.siteContacts.getIn([siteId], Immutable.List())
   return {
     editable: isEditable(state.user, 'site'),
     site,

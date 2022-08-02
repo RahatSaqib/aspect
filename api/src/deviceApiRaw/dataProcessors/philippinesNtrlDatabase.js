@@ -50,10 +50,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
           ...baseValue,
         }
         Object.keys(sourceValue).forEach(sourceValueKey => {
-          mergedValue[sourceValueKey] = mergeDeep(
-            mergedValue[sourceValueKey],
-            sourceValue[sourceValueKey]
-          )
+          mergedValue[sourceValueKey] = mergeDeep(mergedValue[sourceValueKey], sourceValue[sourceValueKey])
         })
         return mergedValue
       }
@@ -65,16 +62,10 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     if (!result.resultCategory2) {
       result.resultCategory2 = resultCategories.Missing
     }
-    if (
-      resultOverwritePriority.indexOf(resultCategory1Id) <
-      resultOverwritePriority.indexOf(result.resultCategory1)
-    ) {
+    if (resultOverwritePriority.indexOf(resultCategory1Id) < resultOverwritePriority.indexOf(result.resultCategory1)) {
       result.resultCategory1 = resultCategory1Id
     }
-    if (
-      resultOverwritePriority.indexOf(resultCategory2Id) <
-      resultOverwritePriority.indexOf(result.resultCategory2)
-    ) {
+    if (resultOverwritePriority.indexOf(resultCategory2Id) < resultOverwritePriority.indexOf(result.resultCategory2)) {
       result.resultCategory2 = resultCategory2Id
     }
     if (remarks && (!result.notes || !result.notes.includes(remarks.trim()))) {
@@ -107,9 +98,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       })
       result.resultData = JSON.stringify(resultData)
       const resultPatientData = JSON.parse(result.patientData || '{}')
-      result.patientData = JSON.stringify(
-        mergeDeep(resultPatientData, patientData)
-      )
+      result.patientData = JSON.stringify(mergeDeep(resultPatientData, patientData))
       if (result.rawData && result.rawData.indexOf(rawMessage) === -1) {
         result.rawData += `\n${rawMessage}`
       } else if (!result.rawData) {
@@ -124,13 +113,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     } else {
       await knex('Result').where('id', result.id).update(result)
     }
-    const deviceLogId = await this.appendDeviceLog(
-      knex,
-      result.deviceId,
-      result.id,
-      rawMessage,
-      utcNow
-    )
+    const deviceLogId = await this.appendDeviceLog(knex, result.deviceId, result.id, rawMessage, utcNow)
     const resultWorkflowStatusLogId = await this.appendResultWorkflowLogs(
       knex,
       result,
@@ -143,9 +126,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       deviceLogId
     )
     if (resultWorkflowStatusLogId) {
-      await knex('Result')
-        .where('id', result.id)
-        .update({ resultWorkflowStatusLogId })
+      await knex('Result').where('id', result.id).update({ resultWorkflowStatusLogId })
     }
     this.messageContext.dispatch(resultUpdated(result.id, deviceLogId))
     this.response.resultIds = [...this.response.resultIds, result.id]
@@ -163,8 +144,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     deviceLogId
   ) {
     const resultWorkflowStatusId =
-      result.resultCategory1 === resultCategories.Missing &&
-      result.resultCategory2 === resultCategories.Missing
+      result.resultCategory1 === resultCategories.Missing && result.resultCategory2 === resultCategories.Missing
         ? resultWorkflowStatuses.Ordered
         : resultWorkflowStatuses.Processed
     const resultWorkflowLog = {
@@ -190,9 +170,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       resultWorkflowStatuses.OK,
     ]
     if (!result.resultWorkflowStatusLogId) {
-      ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(
-        resultWorkflowLog
-      )
+      ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
       this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
     } else {
       const existingResultWorkflowLog = await knex('ResultWorkflowLog')
@@ -201,13 +179,9 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       if (
         !existingResultWorkflowLog ||
         resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
-          resultWorkflowStatusPriority.indexOf(
-            existingResultWorkflowLog.resultWorkflowStatusId
-          )
+          resultWorkflowStatusPriority.indexOf(existingResultWorkflowLog.resultWorkflowStatusId)
       ) {
-        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(
-          resultWorkflowLog
-        )
+        ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
         this.messageContext.dispatch(resultLogged(result.id, deviceLogId))
       }
     }
@@ -217,8 +191,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       resultSignOff.laboratorySupervisor &&
       resultSignOff.laboratoryManager
     ) {
-      const mostRecentResultWorkflowStatusLogId =
-        resultWorkflowStatusLogId || result.resultWorkflowStatusLogId
+      const mostRecentResultWorkflowStatusLogId = resultWorkflowStatusLogId || result.resultWorkflowStatusLogId
       let mostRecentResultWorkflowLog = null
       if (mostRecentResultWorkflowStatusLogId) {
         mostRecentResultWorkflowLog = await knex('ResultWorkflowLog')
@@ -228,9 +201,7 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
       if (
         !mostRecentResultWorkflowLog ||
         resultWorkflowStatusPriority.indexOf(resultWorkflowStatuses.Validated) <
-          resultWorkflowStatusPriority.indexOf(
-            mostRecentResultWorkflowLog.resultWorkflowStatusId
-          )
+          resultWorkflowStatusPriority.indexOf(mostRecentResultWorkflowLog.resultWorkflowStatusId)
       ) {
         ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
           resultId: result.id,

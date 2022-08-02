@@ -24,17 +24,13 @@ describe('SiteDetailBackBar component', () => {
     const wrapper = mount(<SiteDetailBackBar {...props} />)
 
     it("should  have active 'Edit' link if user has edit rights", () => {
-      const editLink = wrapper
-        .find(AspectButton)
-        .filterWhere(link => link.text() === 'Edit')
+      const editLink = wrapper.find(AspectButton).filterWhere(link => link.text() === 'Edit')
       expect(editLink.prop('disabled')).toBe(false)
     })
 
     it("should disable 'Edit' link if user has no edit rights", () => {
       wrapper.setProps({ disabled: true })
-      const editLink = wrapper
-        .find(AspectButton)
-        .filterWhere(n => n.text() === 'Edit')
+      const editLink = wrapper.find(AspectButton).filterWhere(n => n.text() === 'Edit')
       expect(editLink.prop('disabled')).toBe(true)
     })
   })

@@ -2,7 +2,6 @@ const NotificationTypeCategory = require('../../fixtures/NotificationTypeCategor
 const { upsertFixture } = require('../../common/upsert_Fixture')
 
 module.exports = require('../../utils').seed(
-  async knex =>
-    upsertFixture(knex, NotificationTypeCategory, 'NotificationTypeCategory'),
+  async knex => upsertFixture(knex, NotificationTypeCategory, 'NotificationTypeCategory'),
   __filename
 )

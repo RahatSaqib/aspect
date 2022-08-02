@@ -1,10 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
-const {
-  formatDateOrDefault,
-  parseDateOrDefault,
-} = require('../../../shared/date')
+const { formatDateOrDefault, parseDateOrDefault } = require('../../../shared/date')
 const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
 const { postPayloadFromDevice } = require('../../../device/service')
@@ -58,9 +55,7 @@ class TruenatResult extends SynchronousDataProcessor {
         } = await getDeviceDetailsFromApiKey(knex, auth.credentials.token)
 
         if (!deviceId) {
-          throw Boom.badRequest(
-            'Invalid device API key: Cannot determine which device this came from'
-          )
+          throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
         }
 
         const {
@@ -101,26 +96,15 @@ class TruenatResult extends SynchronousDataProcessor {
           sampleTypeName
         )
         const sampleTypeId = await getSampleTypeId(sampleTypeName)
-        const sampleId = await getOrCreateSampleId(
-          knex,
-          sampleExternalId,
-          sampleTypeId,
-          deviceDefaultReportableSiteId
-        )
+        const sampleId = await getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, deviceDefaultReportableSiteId)
 
-        const resultCategory1 = await determineResultCategory1Id(
-          finalResult,
-          assay.externalId
-        )
+        const resultCategory1 = await determineResultCategory1Id(finalResult, assay.externalId)
 
         const resultTime = parseDateOrDefault(`${date} ${time}`, {
           formatString: 'yyyy-MM-dd HH-mm-ss',
           backupDate: utcNow,
         })
-        let resultExternalId = generateResultExternalId(
-          sampleExternalId,
-          resultTime
-        )
+        let resultExternalId = generateResultExternalId(sampleExternalId, resultTime)
         const existingResult = await knex('Result')
           .where({ externalId: resultExternalId, deviceId })
           .orWhere({ sampleId, siteId, assayId: assay.id })
@@ -167,10 +151,7 @@ class TruenatResult extends SynchronousDataProcessor {
           resultCategory1,
           senderOperator,
           notes,
-          reportableSiteId:
-            _.get(existingResult, 'reportableSiteId') ||
-            deviceDefaultReportableSiteId ||
-            siteId,
+          reportableSiteId: _.get(existingResult, 'reportableSiteId') || deviceDefaultReportableSiteId || siteId,
         }
         if (resultTime) {
           newResultDetails.startedOn = resultTime
@@ -312,21 +293,12 @@ function generateSampleExternalId(
 
 async function getSampleTypeId(sampleTypeName) {
   const sampleTypeIds = await allSampleTypeToId()
-  const sampleTypeId = sampleTypeMappings[sampleTypeName]
-    ? sampleTypeIds[sampleTypeMappings[sampleTypeName]]
-    : null
+  const sampleTypeId = sampleTypeMappings[sampleTypeName] ? sampleTypeIds[sampleTypeMappings[sampleTypeName]] : null
   return sampleTypeId
 }
 
-async function getOrCreateSampleId(
-  knex,
-  sampleExternalId,
-  sampleTypeId,
-  originSiteId
-) {
-  let { id: sampleId } =
-    (await knex('Sample').where('externalId', sampleExternalId).first('id')) ||
-    {}
+async function getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, originSiteId) {
+  let { id: sampleId } = (await knex('Sample').where('externalId', sampleExternalId).first('id')) || {}
   if (!sampleId) {
     ;[sampleId] = await knex('Sample').insert({
       externalId: sampleExternalId,
@@ -338,10 +310,7 @@ async function getOrCreateSampleId(
 }
 
 function generateResultExternalId(sampleExternalId, dateReceived) {
-  return `${sampleExternalId}_${formatDateOrDefault(
-    dateReceived,
-    'yyyyMMddhhmmss'
-  )}`
+  return `${sampleExternalId}_${formatDateOrDefault(dateReceived, 'yyyyMMddhhmmss')}`
 }
 
 async function determineResultCategory1Id(finalResult, assayExternalId) {
@@ -403,9 +372,7 @@ async function logResultWorkflow(
     resultWorkflowStatuses.OK,
   ]
   if (!currentResultWorkflowStatusLogId) {
-    ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(
-      resultWorkflowLog
-    )
+    ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
     messageContext.dispatch(resultLogged(resultId, deviceLogId))
   } else {
     const existingResultWorkflowLog = await knex('ResultWorkflowLog')
@@ -414,20 +381,14 @@ async function logResultWorkflow(
     if (
       !existingResultWorkflowLog ||
       resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
-        resultWorkflowStatusPriority.indexOf(
-          existingResultWorkflowLog.resultWorkflowStatusId
-        )
+        resultWorkflowStatusPriority.indexOf(existingResultWorkflowLog.resultWorkflowStatusId)
     ) {
-      ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(
-        resultWorkflowLog
-      )
+      ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
       messageContext.dispatch(resultLogged(resultId, deviceLogId))
     }
   }
   if (resultWorkflowStatusLogId) {
-    await knex('Result')
-      .where('id', resultId)
-      .update({ resultWorkflowStatusLogId })
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
   }
 }
 

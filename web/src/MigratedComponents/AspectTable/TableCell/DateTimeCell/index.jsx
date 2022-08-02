@@ -1,25 +1,21 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
-import { useIntl } from 'react-intl'
 
 import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 const DateTimeCellBase = ({ value, flagged, since }) => {
-  const { locale } = useIntl()
+  const { locale } = useI18n()
   if (!value) return null
   const { isPast, timeSince } = timeSinceFromUTC(value, locale)
   const dateFormatted = timeAndDate(value, 'yyyy-MM-dd hh:mm:ss')
   return (
-    <div
-      className={cssClasses(
-        `${isPast && flagged ? 'date__cell--past' : 'date__cell'}`
-      )}
-    >
+    <div className={cssClasses(`${isPast && flagged ? 'date__cell--past' : 'date__cell'}`)}>
       {since ? timeSince : dateFormatted}
     </div>
   )
@@ -58,9 +54,7 @@ DateTimeCell.propTypes = {
  * Component to render a date since cell
  */
 
-const DateTimeCellSince = ({ value }) => (
-  <DateTimeCellBase value={value} since />
-)
+const DateTimeCellSince = ({ value }) => <DateTimeCellBase value={value} since />
 
 DateTimeCellSince.defaultProps = {
   value: false,
@@ -78,9 +72,7 @@ DateTimeCellSince.propTypes = {
  * with an indicator for past dates
  */
 
-const DateTimeCellFlagged = ({ value }) => (
-  <DateTimeCellBase value={value} flagged since />
-)
+const DateTimeCellFlagged = ({ value }) => <DateTimeCellBase value={value} flagged since />
 
 DateTimeCell.defaultProps = {
   value: false,

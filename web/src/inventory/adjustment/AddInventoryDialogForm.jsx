@@ -10,10 +10,7 @@ import {
   connectConsumableFromInventoryItem,
   InventoryAdjustmentDialogForm,
 } from './InventoryAdjustmentDialogForm'
-import {
-  withTodayProps,
-  withDateFormatProps,
-} from '../../shared/utils/dateFormat'
+import { withTodayProps, withDateFormatProps } from '../../shared/utils/dateFormat'
 
 const messages = defineMessages({
   quantityRequired: {
@@ -38,10 +35,7 @@ const messages = defineMessages({
   },
 })
 
-export function validate(
-  { canExpire, expiresOn, toSiteId, quantity, dateAdjusted },
-  { intl }
-) {
+export function validate({ canExpire, expiresOn, toSiteId, quantity, dateAdjusted }, { intl }) {
   const errors = {}
   if (canExpire && !expiresOn) {
     errors.expiresOn = intl.formatMessage(sharedMessages.expiryDateRequired)
@@ -95,9 +89,7 @@ const enhance = compose(
         ...DEFAULT_VALUES,
         lotNumber: inventoryItem.get('lotNumber') || DEFAULT_VALUES.lotNumber,
         canExpire: inventoryItem.get('canExpire') === 1,
-        expiresOn: inventoryItem.get('expiresOn')
-          ? new Date(inventoryItem.get('expiresOn'))
-          : null,
+        expiresOn: inventoryItem.get('expiresOn') ? new Date(inventoryItem.get('expiresOn')) : null,
         toSiteId: inventoryItem.get('siteId'),
         dateAdjusted: today,
       })
@@ -113,8 +105,7 @@ const enhance = compose(
       quantity: intl.formatMessage(messages.quantity),
       dateAdjusted: intl.formatMessage(messages.dateAdjusted),
       nextQuantityStatus: intl.formatMessage(messages.nextQuantityStatus, {
-        nextQuantity:
-          inventoryItem.get('quantityOnHand', 0) + (values.quantity || 0),
+        nextQuantity: inventoryItem.get('quantityOnHand', 0) + (values.quantity || 0),
         unitShortName: consumable.get('unitShortName'),
       }),
     },

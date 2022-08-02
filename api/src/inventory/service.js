@@ -13,31 +13,19 @@ const {
   sortPageParams,
 } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const {
-  selectAssayConsumables,
-} = require('../consumable/assayConsumableService')
+const { selectAssayConsumables } = require('../consumable/assayConsumableService')
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { inventoryStockout, inventoryStockExpiring } = require('./actions')
-const {
-  auditInventoryStockout,
-  auditInventoryStockExpiring,
-} = require('../shared/utilsInventory')
+const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const { querySelectors, getInventoryLogBaseQuery } = require('./query/index')
 const { splitCsvWithTrim } = require('../shared/string')
-const {
-  findInventoryItem,
-  INVENTORY_ITEM_SELECT,
-  INVENTORY_COMMON_FIELDS,
-} = require('./queries/inventoryDbAccess')
+const { findInventoryItem, INVENTORY_ITEM_SELECT, INVENTORY_COMMON_FIELDS } = require('./queries/inventoryDbAccess')
 
 // Select for inventory grouped by site and consumable
-const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
-  ...INVENTORY_COMMON_FIELDS,
-  knex.raw('SUM(ii.quantityOnHand)'),
-]
+const INVENTORY_ITEM_SELECT_LIST_FIELDS = [...INVENTORY_COMMON_FIELDS, knex.raw('SUM(ii.quantityOnHand)')]
 
 const CONCATENATED_ID = `CONCAT(
   c.id,
@@ -73,9 +61,7 @@ const INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS = [
     "CONCAT(c.id, '-', s.id, '-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE '' END,'-'),'-', ifnull(CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE '' END,''),'-', ifnull(ii.inTransitFromSiteId,'')) as id"
   ),
 
-  ...INVENTORY_ITEM_SELECT.filter(
-    field => field !== 'ii.id' && field !== 'ii.quantityOnHand'
-  ),
+  ...INVENTORY_ITEM_SELECT.filter(field => field !== 'ii.id' && field !== 'ii.quantityOnHand'),
   knex.raw('SUM(ii.quantityOnHand) AS quantityOnHand'),
 ]
 
@@ -132,8 +118,7 @@ const STOCK_LEFT_FILTER_FIELDS = {
   },
 }
 const SUM_STOCK_LEFT_FILTER_FIELDS = {
-  hasStock: queryBuilder =>
-    queryBuilder.havingRaw('IFNULL(quantityOnHand, 0) <> 0'),
+  hasStock: queryBuilder => queryBuilder.havingRaw('IFNULL(quantityOnHand, 0) <> 0'),
 }
 
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
@@ -141,9 +126,7 @@ const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
 const SUPPLY_IN_STOCK_FIELDS = [
   'consumableId',
   'consumableName',
-  knex.raw(
-    'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft = 0 THEN true ELSE null END) as outOfStock'
-  ),
+  knex.raw('COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft = 0 THEN true ELSE null END) as outOfStock'),
   knex.raw(
     'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft BETWEEN 1 and 14 THEN true ELSE null END) as upTo14'
   ),
@@ -156,12 +139,8 @@ const SUPPLY_IN_STOCK_FIELDS = [
   knex.raw(
     'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft BETWEEN 91 and 180 THEN true ELSE null END) as upTo180'
   ),
-  knex.raw(
-    'COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft > 180 THEN true ELSE null END) as moreThan180'
-  ),
-  knex.raw(
-    'COUNT(CASE WHEN daysStockLeft IS NULL AND quantityOnHand IS NULL THEN true ELSE null END) as notRecorded'
-  ),
+  knex.raw('COUNT(CASE WHEN daysStockLeft IS NOT NULL AND daysStockLeft > 180 THEN true ELSE null END) as moreThan180'),
+  knex.raw('COUNT(CASE WHEN daysStockLeft IS NULL AND quantityOnHand IS NULL THEN true ELSE null END) as notRecorded'),
   knex.raw(
     'COUNT(CASE WHEN daysStockLeft IS NULL AND quantityOnHand IS NOT NULL THEN true ELSE null END) as noConsumption'
   ),
@@ -178,15 +157,9 @@ async function consumeInventoryForResult(
   knex
 ) {
   const now = new Date()
-  const assayConsumables = await selectAssayConsumables(
-    knex,
-    { partner: { id: partnerId } },
-    assayId
-  )
+  const assayConsumables = await selectAssayConsumables(knex, { partner: { id: partnerId } }, assayId)
 
-  const { id: testRunConsumableReasonId } = await findConsumableReason(
-    'Test Conducted'
-  )
+  const { id: testRunConsumableReasonId } = await findConsumableReason('Test Conducted')
 
   await Promise.all(
     _.map(assayConsumables, async assayConsumable => {
@@ -213,17 +186,15 @@ async function consumeInventoryForResult(
 
         // always try to find match whether we have consumables or not
         // If we have multiple, find best match for each one.
-        const matchingConsumables =
-          consumablesInResultData.length > 0 ? consumablesInResultData : [null]
+        const matchingConsumables = consumablesInResultData.length > 0 ? consumablesInResultData : [null]
         for (const matchingConsumable of matchingConsumables) {
           /* eslint-disable no-await-in-loop */
-          const matchingInventoryOnHand =
-            findInventoryItemMatchingConsumableInResultData(
-              matchingConsumable,
-              matchingInventoryItem,
-              testedOn,
-              now
-            )
+          const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
+            matchingConsumable,
+            matchingInventoryItem,
+            testedOn,
+            now
+          )
           // Log change
           await logInventoryChange({
             knex,
@@ -242,15 +213,9 @@ async function consumeInventoryForResult(
           })
           const inventoryItemUpdates = {}
 
-          inventoryItemUpdates.quantityOnHand = knex.raw(
-            `quantityOnHand - ${assayConsumable.quantity}`
-          )
+          inventoryItemUpdates.quantityOnHand = knex.raw(`quantityOnHand - ${assayConsumable.quantity}`)
 
-          await updateInventoryItem(
-            knex,
-            matchingInventoryOnHand.id,
-            inventoryItemUpdates
-          )
+          await updateInventoryItem(knex, matchingInventoryOnHand.id, inventoryItemUpdates)
         }
       }
     })
@@ -268,13 +233,7 @@ async function findOrCreateMatchingInventoryItem(
   const { lot, expirationDate } = _.get(consumablesInResultData, '[0]') || {}
 
   const { consumableId } = assayConsumable
-  const existingItem = await findInventoryItem(
-    siteId,
-    consumableId,
-    expirationDate,
-    lot,
-    false
-  )
+  const existingItem = await findInventoryItem(siteId, consumableId, expirationDate, lot, false)
 
   if (existingItem) {
     return existingItem
@@ -284,10 +243,7 @@ async function findOrCreateMatchingInventoryItem(
   // should always have at least consumableInResultData.length items
   // We can likely do this by moving the Or Create prior to the match function
   // if candidate items are empty!
-  const lotNumberInResultData =
-    strategy.indexOf('withLot') >= 0
-      ? _.get(consumablesInResultData, '[0].lot')
-      : null
+  const lotNumberInResultData = strategy.indexOf('withLot') >= 0 ? _.get(consumablesInResultData, '[0].lot') : null
 
   const newInventoryItemId = await upsertInventoryItem({
     knex,
@@ -299,18 +255,11 @@ async function findOrCreateMatchingInventoryItem(
     now,
   })
 
-  const newItem = await knex('InventoryItem')
-    .where({ id: newInventoryItemId })
-    .first()
+  const newItem = await knex('InventoryItem').where({ id: newInventoryItemId }).first()
   return newItem
 }
 
-function findInventoryItemMatchingConsumableInResultData(
-  consumable,
-  inventoryItem,
-  testedOn,
-  now
-) {
+function findInventoryItemMatchingConsumableInResultData(consumable, inventoryItem, testedOn, now) {
   if (!inventoryItem) {
     throw new Error('We should always have at least one candidate item.')
   }
@@ -328,12 +277,7 @@ function findInventoryItemMatchingConsumableInResultData(
 
   if (consumable != null) {
     // Exact match of expire on and lot number
-    if (
-      hasItemExpiresOn &&
-      hasItemLot &&
-      consumableExpiresOn != null &&
-      consumableLot != null
-    ) {
+    if (hasItemExpiresOn && hasItemLot && consumableExpiresOn != null && consumableLot != null) {
       if (inventoryItem.expiresOn != null) {
         const matchExpiresAndLotNumber =
           inventoryItem.lot != null &&
@@ -348,10 +292,7 @@ function findInventoryItemMatchingConsumableInResultData(
     // Exact match of expiration date
     if (hasItemExpiresOn && consumableExpiresOn != null) {
       if (inventoryItem.expiresOn != null) {
-        const matchExpires = _.isEqual(
-          consumableExpiresOn,
-          inventoryItem.expiresOn
-        )
+        const matchExpires = _.isEqual(consumableExpiresOn, inventoryItem.expiresOn)
         if (matchExpires) {
           return inventoryItem
         }
@@ -360,8 +301,7 @@ function findInventoryItemMatchingConsumableInResultData(
 
     // Exact match of lot number
     if (hasItemLot && consumableLot != null) {
-      const matchLot =
-        inventoryItem.lot != null && _.isEqual(consumableLot, inventoryItem.lot)
+      const matchLot = inventoryItem.lot != null && _.isEqual(consumableLot, inventoryItem.lot)
       if (matchLot) {
         return inventoryItem
       }
@@ -373,8 +313,7 @@ function findInventoryItemMatchingConsumableInResultData(
       let bestItemAbsDiff = null
       if (inventoryItem.expiresOn != null) {
         // ordered by expiresOn null last, so we have no more to check
-        const currentDiff =
-          inventoryItem.expiresOn.getTime() - consumableExpiresOn.getTime()
+        const currentDiff = inventoryItem.expiresOn.getTime() - consumableExpiresOn.getTime()
         const currentAbsDiff = Math.abs(currentDiff)
         if (bestItemAbsDiff == null || currentAbsDiff < bestItemAbsDiff) {
           // if we don't have a current best, or abs diff is smaller,
@@ -412,10 +351,7 @@ function findInventoryItemMatchingConsumableInResultData(
 }
 
 function filteredInventoryItemsBase(request, dataConstraints) {
-  const supplyInStockBase = getSupplyInStockBySiteAndConsumableBase(
-    request,
-    dataConstraints
-  )
+  const supplyInStockBase = getSupplyInStockBySiteAndConsumableBase(request, dataConstraints)
 
   const inventoryItemsQuery = query('Search Inventory Items')
     .from(supplyInStockBase.as('stock'))
@@ -423,10 +359,7 @@ function filteredInventoryItemsBase(request, dataConstraints) {
     .innerJoin('Consumable as c', 'stock.consumableId', 'c.id')
     .innerJoin('Unit as u', 'c.unit', 'u.id')
     .leftOuterJoin('FactInventoryConsumptionRate as ficr', builder => {
-      builder
-        .on('ficr.siteId', 's.id')
-        .andOn('ficr.consumableId', 'c.id')
-        .andOn('ficr.days', 1)
+      builder.on('ficr.siteId', 's.id').andOn('ficr.consumableId', 'c.id').andOn('ficr.days', 1)
     })
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as co', 'g.countryId', 'co.id')
@@ -438,11 +371,7 @@ function filteredInventoryItemsBase(request, dataConstraints) {
       hasStock: knex.raw('ii.quantityOnHand <> 0'),
       ...STOCK_LEFT_FILTER_FIELDS,
     })
-    .modify(
-      addConstraints,
-      dataConstraints,
-      INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
-    )
+    .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
 
   return inventoryItemsQuery
 }
@@ -465,18 +394,12 @@ function getInventoryLots(request, dataConstraints) {
       ...INVENTORY_ITEM_FILTER_FIELDS,
       ...SUM_STOCK_LEFT_FILTER_FIELDS,
     })
-    .modify(
-      addConstraints,
-      dataConstraints,
-      INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
-    )
+    .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
     .groupBy([
       knex.raw(CONCATENATED_ID),
 
       's.name',
-      knex.raw(
-        `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END`
-      ),
+      knex.raw(`CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END`),
       knex.raw(
         `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END`
       ),
@@ -518,10 +441,7 @@ async function listInventoryLog(request) {
   return listLog(request)
 }
 
-async function listLog(
-  request,
-  querySelector = querySelectors.INVENTORY_LOG_LIST
-) {
+async function listLog(request, querySelector = querySelectors.INVENTORY_LOG_LIST) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
@@ -535,10 +455,7 @@ async function listLog(
       siteName: 's.name',
       siteId: 's.id',
     })
-  const { total } = await inventoryLogQuery
-    .clone()
-    .count('il.id as total')
-    .first()
+  const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
   const data = await inventoryLogQuery
     .select(querySelector)
     .modify(sortPageParams, query, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
@@ -557,16 +474,10 @@ function getInventorySitesQuery(constraints, request) {
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftJoin('FactInventoryConsumptionRate as ficr', builder => {
-      builder
-        .on('s.id', 'ficr.siteId')
-        .andOn('c.id', 'ficr.consumableId')
-        .andOn(knex.raw('ficr.days = 1'))
+      builder.on('s.id', 'ficr.siteId').andOn('c.id', 'ficr.consumableId').andOn(knex.raw('ficr.days = 1'))
     })
     .leftJoin('InventoryItem as ii', builder => {
-      builder
-        .on('s.id', 'ii.siteId')
-        .andOn('c.id', 'ii.consumableId')
-        .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
+      builder.on('s.id', 'ii.siteId').andOn('c.id', 'ii.consumableId').andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
       // we are interested in unexpired yet as of today
       // .andOn(knex.raw('ii.expiresOn >= DATE(NOW())'))
     })
@@ -582,10 +493,8 @@ function getInventorySitesQuery(constraints, request) {
       ...SUM_STOCK_LEFT_FILTER_FIELDS,
     })
     .modify(builder => {
-      if (request.query.daysStockLeft === 'noConsumption')
-        builder.where('ficr.rate', 0).orWhereNull('ficr.rate')
-      else if (request.query.daysStockLeft === 'notRecorded')
-        builder.whereNull('ii.id')
+      if (request.query.daysStockLeft === 'noConsumption') builder.where('ficr.rate', 0).orWhereNull('ficr.rate')
+      else if (request.query.daysStockLeft === 'notRecorded') builder.whereNull('ii.id')
     })
     .modify(addConstraints, constraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
     .groupBy(['s.id', 'c.id', 'ficr.days'])
@@ -607,9 +516,7 @@ function getInventorySitesQuery(constraints, request) {
       'ficr.rate as dailyConsumptionRate',
       knex.raw('SUM(ii.quantityOnHand) as quantityOnHand'),
       knex.raw('COUNT(ii_transfer.id) as pendingTransfers'),
-      knex.raw(
-        'SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'
-      ),
+      knex.raw('SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'),
       knex.raw(
         `sum(
           case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end 
@@ -646,10 +553,7 @@ async function listInventory(request) {
   if (breakOutByLot) {
     ;({ total, data } = await listInventoryByLot(request, dataConstraints))
   } else {
-    ;({ total, data } = await listInventoryBySiteAndConsumable(
-      request,
-      dataConstraints
-    ))
+    ;({ total, data } = await listInventoryBySiteAndConsumable(request, dataConstraints))
   }
   return { ok: true, total, length: data.length, data }
 }
@@ -657,10 +561,7 @@ async function listInventory(request) {
 async function listInventoryByLot(request, dataConstraints) {
   const inventoryQuery = getInventoryLots(request, dataConstraints)
 
-  const getCount = knex
-    .from(inventoryQuery.clone().as('q'))
-    .count({ count: 'q.id' })
-    .first()
+  const getCount = knex.from(inventoryQuery.clone().as('q')).count({ count: 'q.id' }).first()
 
   const requestQuery = request.query
   if (requestQuery.sortCol) {
@@ -676,12 +577,7 @@ async function listInventoryByLot(request, dataConstraints) {
 
   const getItems = inventoryQuery
     .clone()
-    .modify(
-      sortPageParams,
-      requestQuery,
-      INVENTORY_ITEM_SORT_FIELDS.siteName,
-      INVENTORY_ITEM_SORT_FIELDS
-    )
+    .modify(sortPageParams, requestQuery, INVENTORY_ITEM_SORT_FIELDS.siteName, INVENTORY_ITEM_SORT_FIELDS)
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -711,11 +607,7 @@ async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const [{ total }] = await inventoryQuery.clone().count('id as total')
 
   // sorting and pagination
-  inventoryQuery = inventoryQuery.modify(
-    sortPageParams,
-    request.query,
-    'siteName'
-  )
+  inventoryQuery = inventoryQuery.modify(sortPageParams, request.query, 'siteName')
 
   const inventorySites = await inventoryQuery
 
@@ -741,16 +633,7 @@ function getDaysStockLeftRanges(key) {
   }
 }
 
-const siteFields = [
-  'siteId',
-  'siteName',
-  'countryId',
-  'stateId',
-  'lgaId',
-  'countryName',
-  'stateName',
-  'lgaName',
-]
+const siteFields = ['siteId', 'siteName', 'countryId', 'stateId', 'lgaId', 'countryName', 'stateName', 'lgaName']
 const inventoryItemFields = [
   'consumableId',
   'consumableName',
@@ -789,20 +672,14 @@ async function listInventoryGroupedBySite(request) {
     requestQuery.sortCol = sortCols.join(',')
   }
 
-  const inventoryItemsQuery = filteredInventoryItemsBase(
-    request,
-    dataConstraints
-  ).modify(
+  const inventoryItemsQuery = filteredInventoryItemsBase(request, dataConstraints).modify(
     sortParams,
     requestQuery,
     INVENTORY_ITEM_SORT_FIELDS.siteName,
     INVENTORY_ITEM_SORT_FIELDS
   )
 
-  const getSiteCount = inventoryItemsQuery
-    .clone()
-    .countDistinct('s.id as count')
-    .first()
+  const getSiteCount = inventoryItemsQuery.clone().countDistinct('s.id as count').first()
 
   const getSiteIds = inventoryItemsQuery
     .clone()
@@ -810,10 +687,7 @@ async function listInventoryGroupedBySite(request) {
     .select('s.id as siteId')
     .modify(pageParams, requestQuery)
 
-  const [{ count: total }, sitesData] = await Promise.all([
-    getSiteCount,
-    getSiteIds,
-  ])
+  const [{ count: total }, sitesData] = await Promise.all([getSiteCount, getSiteIds])
   const siteIdsOnPage = sitesData.map(({ siteId }) => siteId)
 
   let fieldsToSelect
@@ -825,17 +699,12 @@ async function listInventoryGroupedBySite(request) {
       'stock.stockLeft',
       'ficr.rate as dailyConsumptionRate',
     ]
-  } else
-    fieldsToSelect = INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS.filter(
-      x => x !== 'ii.id'
-    )
+  } else fieldsToSelect = INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS.filter(x => x !== 'ii.id')
 
-  const inventoryItems = await inventoryItemsQuery
-    .whereIn('s.id', siteIdsOnPage)
-    .select([
-      // except 'ii.id'
-      ...fieldsToSelect,
-    ])
+  const inventoryItems = await inventoryItemsQuery.whereIn('s.id', siteIdsOnPage).select([
+    // except 'ii.id'
+    ...fieldsToSelect,
+  ])
 
   const sites = _.uniqBy(
     _.map(inventoryItems, inventoryItem => _.pick(inventoryItem, siteFields)),
@@ -845,9 +714,7 @@ async function listInventoryGroupedBySite(request) {
     const siteItems = _.filter(inventoryItems, { siteId: siteRecord.siteId })
     return {
       ...siteRecord,
-      inventoryItems: _.map(siteItems, siteItem =>
-        _.pick(siteItem, inventoryItemFields)
-      ),
+      inventoryItems: _.map(siteItems, siteItem => _.pick(siteItem, inventoryItemFields)),
     }
   })
 
@@ -861,19 +728,11 @@ async function listInventoryGroupedBySite(request) {
 
 function getSupplyInStockBySiteAndConsumableBase(request, dataConstraints) {
   // group by siteId and consumableId, and return different counts
-  const baseWithCalculatedFields =
-    getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
-      request,
-      dataConstraints
-    )
+  const baseWithCalculatedFields = getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(request, dataConstraints)
   const supplyInStockBase = knex
     .from(baseWithCalculatedFields.as('t2'))
     .groupBy(['consumableId', 'siteId'])
-    .select([
-      ...SUPPLY_IN_STOCK_FIELDS,
-      knex.raw('MAX(daysUnexpired) as stockLeft'),
-      'siteId',
-    ])
+    .select([...SUPPLY_IN_STOCK_FIELDS, knex.raw('MAX(daysUnexpired) as stockLeft'), 'siteId'])
   return supplyInStockBase
 }
 
@@ -883,10 +742,7 @@ function getSupplyInStockBySiteAndConsumableBase(request, dataConstraints) {
  * @param {*} request
  * @param {*} dataConstraints
  */
-function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
-  request,
-  dataConstraints
-) {
+function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(request, dataConstraints) {
   const baseInventoryItemsBySiteGeography = query(
     'Join Consumable with Inventory Items, Site Details, and Geography Details'
   )
@@ -906,10 +762,7 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
           .as('DistTable')
       },
       function () {
-        this.on('DistTable.siteId', 's.id').andOn(
-          'DistTable.deviceTypeId',
-          'dt.id'
-        )
+        this.on('DistTable.siteId', 's.id').andOn('DistTable.deviceTypeId', 'dt.id')
       }
     )
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -918,9 +771,7 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     // dailyRate
     .leftOuterJoin('FactInventoryConsumptionRate as rate1', function () {
-      this.on('rate1.siteId', 's.id')
-        .andOn('rate1.consumableId', 'c.id')
-        .andOn('rate1.days', 1)
+      this.on('rate1.siteId', 's.id').andOn('rate1.consumableId', 'c.id').andOn('rate1.days', 1)
     })
     .modify(filterParams, request.query, {
       ...INVENTORY_ITEM_FILTER_FIELDS,
@@ -936,9 +787,7 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
       'c.name as consumableName',
       's.id as siteId',
       'ii.quantityOnHand',
-      knex.raw(
-        'CASE WHEN ii.quantityOnHand IS NOT NULL THEN ii.expiresOn ELSE NULL END as expirationDate'
-      ),
+      knex.raw('CASE WHEN ii.quantityOnHand IS NOT NULL THEN ii.expiresOn ELSE NULL END as expirationDate'),
       // expiresInDays - when inventory expires, in days
       knex.raw(`
         CASE
@@ -973,10 +822,7 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
               .as('DistTable')
           },
           function () {
-            this.on('DistTable.siteId', 's.id').andOn(
-              'DistTable.deviceTypeId',
-              'dt.id'
-            )
+            this.on('DistTable.siteId', 's.id').andOn('DistTable.deviceTypeId', 'dt.id')
           }
         )
         .leftOuterJoin('InventoryItem as ii', function () {
@@ -1009,11 +855,9 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
     ])
   // -----------------
   // add couple of calculated fields - daysUnexpired, wasted
-  const baseWithCalculatedFields = knex
-    .from(baseInventoryItemsBySiteGeography.as('t1'))
-    .select(
-      't1.*',
-      knex.raw(`
+  const baseWithCalculatedFields = knex.from(baseInventoryItemsBySiteGeography.as('t1')).select(
+    't1.*',
+    knex.raw(`
       CASE
         WHEN quantityOnHand IS NULL THEN NULL
         WHEN quantityOnHand <= 0 THEN 0
@@ -1022,7 +866,7 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
         ELSE expiresInDays
       END AS daysUnexpired
       `),
-      knex.raw(`
+    knex.raw(`
       CASE
         WHEN quantityOnHand IS NULL THEN NULL
         WHEN quantityOnHand <= 0 THEN 0
@@ -1035,7 +879,7 @@ function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
         ELSE 0
       END AS wasted
       `)
-    )
+  )
   return baseWithCalculatedFields
 }
 
@@ -1053,10 +897,7 @@ async function getDaysByLocation(request) {
       dataConstraints
     )
   */
-  const baseWithCalculatedFields = getInventorySitesQuery(
-    dataConstraints,
-    request
-  )
+  const baseWithCalculatedFields = getInventorySitesQuery(dataConstraints, request)
 
   // -----------------
   // group by location fields and consumableId, and return different counts
@@ -1108,16 +949,7 @@ async function getInventoryItems(inventoryItemIds) {
 async function addInventory(request) {
   const {
     auth,
-    payload: {
-      toSiteId,
-      consumableId,
-      expiresOn,
-      lotNumber,
-      quantity,
-      reasonId,
-      dateAdjusted,
-      notes,
-    },
+    payload: { toSiteId, consumableId, expiresOn, lotNumber, quantity, reasonId, dateAdjusted, notes },
   } = request
 
   // get MQ context and bind few action creators
@@ -1189,9 +1021,7 @@ async function removeInventory(request) {
   const fromSite = await getSite(fromSiteId, dataConstraints)
 
   if (!fromSite) {
-    return Boom.forbidden(
-      'You are not permitted to remove inventory from this site'
-    )
+    return Boom.forbidden('You are not permitted to remove inventory from this site')
   }
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
@@ -1221,16 +1051,7 @@ async function removeInventory(request) {
 async function transferInventory(request) {
   const {
     auth,
-    payload: {
-      fromSiteId,
-      toSiteId,
-      consumableId,
-      expiresOn,
-      lotNumber,
-      quantity,
-      dateAdjusted,
-      notes,
-    },
+    payload: { fromSiteId, toSiteId, consumableId, expiresOn, lotNumber, quantity, dateAdjusted, notes },
   } = request
 
   // get MQ context and bind few action creators
@@ -1246,36 +1067,21 @@ async function transferInventory(request) {
   const toSite = await getSite(toSiteId, dataConstraints)
 
   if (!toSite) {
-    return Boom.forbidden(
-      'You are not permitted to transfer inventory to this site'
-    )
+    return Boom.forbidden('You are not permitted to transfer inventory to this site')
   }
 
   const fromSite = await getSite(fromSiteId, dataConstraints)
 
   if (!fromSite) {
-    return Boom.forbidden(
-      'You are not permitted to transfer inventory from this site'
-    )
+    return Boom.forbidden('You are not permitted to transfer inventory from this site')
   }
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
 
-  const sourceInventoryItem = await findInventoryItem(
-    fromSiteId,
-    consumableId,
-    expiresOn,
-    lotNumber
-  )
+  const sourceInventoryItem = await findInventoryItem(fromSiteId, consumableId, expiresOn, lotNumber)
 
-  const destinationInventoryItem = await findInventoryItem(
-    toSiteId,
-    consumableId,
-    expiresOn,
-    lotNumber,
-    fromSiteId
-  )
+  const destinationInventoryItem = await findInventoryItem(toSiteId, consumableId, expiresOn, lotNumber, fromSiteId)
   let destinationInventoryItemId = -1
   let sourceInventoryItemId = -1
   await transact(async knex => {
@@ -1292,9 +1098,7 @@ async function transferInventory(request) {
       inTransitFromSiteId: fromSiteId,
     })
 
-    const { id: transferSentConsumableReasonId } = await findConsumableReason(
-      'Transfer Sent'
-    )
+    const { id: transferSentConsumableReasonId } = await findConsumableReason('Transfer Sent')
 
     sourceInventoryItemId = await upsertInventoryItem({
       knex,
@@ -1348,16 +1152,7 @@ async function transferInventory(request) {
 async function receiveInventory(request) {
   const {
     auth,
-    payload: {
-      fromSiteId,
-      toSiteId,
-      consumableId,
-      expiresOn,
-      lotNumber,
-      quantity,
-      dateAdjusted,
-      notes,
-    },
+    payload: { fromSiteId, toSiteId, consumableId, expiresOn, lotNumber, quantity, dateAdjusted, notes },
   } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
@@ -1370,22 +1165,11 @@ async function receiveInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const sourceInventoryItem = await findInventoryItem(
-    toSiteId,
-    consumableId,
-    expiresOn,
-    lotNumber,
-    fromSiteId
-  )
+  const sourceInventoryItem = await findInventoryItem(toSiteId, consumableId, expiresOn, lotNumber, fromSiteId)
   if (_.isEmpty(sourceInventoryItem)) {
     return Boom.notFound('Could not find source item')
   }
-  const destinationInventoryItem = await findInventoryItem(
-    toSiteId,
-    consumableId,
-    expiresOn,
-    lotNumber
-  )
+  const destinationInventoryItem = await findInventoryItem(toSiteId, consumableId, expiresOn, lotNumber)
   let destinationInventoryItemId = -1
   await transact(async knex => {
     destinationInventoryItemId = await upsertInventoryItem({
@@ -1400,8 +1184,7 @@ async function receiveInventory(request) {
       userId: currentlyLoggedInUser.id,
     })
 
-    const { id: transferReceivedConsumableReasonId } =
-      await findConsumableReason('Transfer Received')
+    const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
 
     await logInventoryChange({
       knex,
@@ -1465,12 +1248,7 @@ async function changeInventoryQuantity({
   userId,
   messageContext,
 }) {
-  const inventoryItem = await findInventoryItem(
-    siteId,
-    consumableId,
-    expiresOn,
-    lotNumber
-  )
+  const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber)
   let inventoryItemId = -1
   await transact(async knex => {
     inventoryItemId = await upsertInventoryItem({
@@ -1514,13 +1292,7 @@ async function changeInventoryQuantity({
   return inventoryItemId
 }
 
-async function checkOpenedStockIssues({
-  knex,
-  siteId,
-  consumableId,
-  now,
-  messageContext,
-}) {
+async function checkOpenedStockIssues({ knex, siteId, consumableId, now, messageContext }) {
   // same query as in onFactCheckInventoryStock() in /src/inventory/service.js, but with additional 'where' for ii.siteId and ii.consumableId
   // this is just for getting dueDaysInventoryStockout and dueDaysInventoryStockExpiring values
   const [site] = await knex('InventoryItem as ii')
@@ -1537,9 +1309,7 @@ async function checkOpenedStockIssues({
       'ii.siteId',
       'ii.consumableId',
       knex.raw('MAX(p.dueDaysInventoryStockout) as dueDaysInventoryStockout'),
-      knex.raw(
-        'MAX(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring'
-      )
+      knex.raw('MAX(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring')
     )
   // notice that 'rate' field in table FactInventoryConsumptionRate stores total number of
   // tests during corresponding 'days'. So for actual rate you should do rate/days, but
@@ -1581,14 +1351,7 @@ async function checkOpenedStockIssues({
   }
 }
 
-async function checkStockoutIssues({
-  knex,
-  siteId,
-  consumableId,
-  dailyRate,
-  dueDays,
-  messageContext,
-}) {
+async function checkStockoutIssues({ knex, siteId, consumableId, dailyRate, dueDays, messageContext }) {
   // see if need to trigger issue - call same func as scheduler
   await auditInventoryStockout({
     knex,
@@ -1601,14 +1364,7 @@ async function checkStockoutIssues({
   })
 }
 
-async function checkStockExpiringIssues({
-  knex,
-  siteId,
-  consumableId,
-  dailyRate,
-  dueDays,
-  messageContext,
-}) {
+async function checkStockExpiringIssues({ knex, siteId, consumableId, dailyRate, dueDays, messageContext }) {
   // see if need to trigger issue - call same func as scheduler
   await auditInventoryStockExpiring({
     knex,
@@ -1691,9 +1447,7 @@ async function upsertInventoryItem({
       expiresOn,
       lotNumber,
       siteId,
-      quantityOnHand: _.isUndefined(quantityOnHand)
-        ? knex.raw(`quantityOnHand + (${quantity})`)
-        : quantityOnHand,
+      quantityOnHand: _.isUndefined(quantityOnHand) ? knex.raw(`quantityOnHand + (${quantity})`) : quantityOnHand,
       updatedOn: now,
       updatedBy: userId,
     })
@@ -1704,9 +1458,7 @@ async function upsertInventoryItem({
 async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   const updateValues = {}
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
-    updateValues.expiresOn = inventoryItemValues.expiresOn
-      ? parseDateOrDefault(inventoryItemValues.expiresOn)
-      : null
+    updateValues.expiresOn = inventoryItemValues.expiresOn ? parseDateOrDefault(inventoryItemValues.expiresOn) : null
   }
   if (typeof inventoryItemValues.lotNumber !== 'undefined') {
     updateValues.lotNumber = inventoryItemValues.lotNumber
@@ -1740,9 +1492,7 @@ async function insertInventoryItem(knex, inventoryItemValues) {
     insertValues.lotNumber = inventoryItemValues.lotNumber
   }
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
-    insertValues.expiresOn = inventoryItemValues.expiresOn
-      ? parseDateOrDefault(inventoryItemValues.expiresOn)
-      : null
+    insertValues.expiresOn = inventoryItemValues.expiresOn ? parseDateOrDefault(inventoryItemValues.expiresOn) : null
   }
   if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
     insertValues.quantityOnHand = inventoryItemValues.quantityOnHand

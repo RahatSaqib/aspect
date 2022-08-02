@@ -1,13 +1,10 @@
 const { formatDuration, intervalToDuration } = require('date-fns')
 const { knex, filterDateRangeParams, filterParams } = require('../../db')
 const { getBaseQuery, modifiers } = require('../query')
-const {
-  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
-} = require('../query/querySelectors')
+const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query/querySelectors')
 
 async function getResultStatsData(dataConstraints, params) {
-  const { mtbDetected, mtbNotDetected, mtbInvalid, mtbError, mtbNoResult } =
-    SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
+  const { mtbDetected, mtbNotDetected, mtbInvalid, mtbError, mtbNoResult } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
 
   const data = await getBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.resultCategory1)
@@ -43,12 +40,8 @@ async function getSmsStatsData(dataConstraints, params) {
     .modify(filterDateRangeParams, params, 'r.endedOn')
     .count('sms.id as totalSmsForPeriod')
     .first({
-      smsWithResultCount: knex.raw(
-        'IFNULL(SUM(CASE WHEN sms.resultId IS NOT NULL THEN 1 ELSE 0 END),0)'
-      ),
-      smsWithNoResultCount: knex.raw(
-        'IFNULL(SUM(CASE WHEN sms.resultId IS NULL THEN 1 ELSE 0 END),0)'
-      ),
+      smsWithResultCount: knex.raw('IFNULL(SUM(CASE WHEN sms.resultId IS NOT NULL THEN 1 ELSE 0 END),0)'),
+      smsWithNoResultCount: knex.raw('IFNULL(SUM(CASE WHEN sms.resultId IS NULL THEN 1 ELSE 0 END),0)'),
       averageTATSampleCollectionRegistration: knex.raw(
         "IFNULL(ROUND(AVG(CASE WHEN s.collectedOn IS NOT NULL AND r.startedOn IS NOT NULL THEN TIMESTAMPDIFF(SECOND, s.collectedOn, r.startedOn) ELSE NULL END ),2),'-')"
       ),
@@ -60,15 +53,9 @@ async function getSmsStatsData(dataConstraints, params) {
       ),
     })
 
-  data.averageTATSampleCollectionRegistrationText = humanDuration(
-    data.averageTATSampleCollectionRegistration
-  )
-  data.averageTATSampleCollectionResultSentText = humanDuration(
-    data.averageTATSampleCollectionResultSent
-  )
-  data.averageTATResultDateResultSentText = humanDuration(
-    data.averageTATResultDateResultSent
-  )
+  data.averageTATSampleCollectionRegistrationText = humanDuration(data.averageTATSampleCollectionRegistration)
+  data.averageTATSampleCollectionResultSentText = humanDuration(data.averageTATSampleCollectionResultSent)
+  data.averageTATResultDateResultSentText = humanDuration(data.averageTATResultDateResultSent)
   return data
 }
 
@@ -79,8 +66,7 @@ async function getSmsStatsData(dataConstraints, params) {
 function humanDuration(seconds) {
   const secondsNum = parseInt(seconds, 10)
   const seconsInMonth = 2678400
-  if (Number.isNaN(secondsNum) || secondsNum <= 0 || secondsNum > seconsInMonth)
-    return '-'
+  if (Number.isNaN(secondsNum) || secondsNum <= 0 || secondsNum > seconsInMonth) return '-'
   const duration = intervalToDuration({ start: 0, end: secondsNum * 1000 })
 
   const cleanDuration = {

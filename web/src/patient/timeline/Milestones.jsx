@@ -88,13 +88,7 @@ const messages = defineMessages({
   },
 })
 
-const TimelineGenericPatientMilestone = ({
-  title,
-  details,
-  link,
-  expand,
-  color,
-}) => {
+const TimelineGenericPatientMilestone = ({ title, details, link, expand, color }) => {
   const [expanded, setExpanded] = useState(expand)
   return (
     <Accordion
@@ -109,10 +103,7 @@ const TimelineGenericPatientMilestone = ({
       <AccordionSummary expandIcon={expanded ? <span>-</span> : <span>+</span>}>
         <div style={{ width: '100%' }}>
           <div className={cssClasses('Summary__Title')}>{title.key}</div>
-          <div
-            className={cssClasses('Summary__Description')}
-            style={{ bottom: 0 }}
-          >
+          <div className={cssClasses('Summary__Description')} style={{ bottom: 0 }}>
             {title.value}
           </div>
         </div>
@@ -123,12 +114,8 @@ const TimelineGenericPatientMilestone = ({
             {details &&
               details.map(item => (
                 <li>
-                  <span className={cssClasses('Summary__Title')}>
-                    {item.key}
-                  </span>
-                  <span className={cssClasses('Summary__Description')}>
-                    {item.value}
-                  </span>
+                  <span className={cssClasses('Summary__Title')}>{item.key}</span>
+                  <span className={cssClasses('Summary__Description')}>{item.value}</span>
                 </li>
               ))}
           </ul>
@@ -136,10 +123,7 @@ const TimelineGenericPatientMilestone = ({
       </AccordionDetails>
       {link && (
         <AccordionActions style={{ width: '100%', marginRight: 10 }}>
-          <Link
-            to={link.to}
-            className={cssClasses('Summary__Description__Link')}
-          >
+          <Link to={link.to} className={cssClasses('Summary__Description__Link')}>
             {link.text}
           </Link>
         </AccordionActions>
@@ -160,10 +144,7 @@ const TimelineItemResult = ({ result, intl, expand }) => {
     },
     {
       key: intl.formatMessage(messages.resultEndedOn),
-      value: format(
-        parseISO(result.get('resultEndedOn')),
-        'yyyy-MM-dd HH:mm:ss'
-      ),
+      value: format(parseISO(result.get('resultEndedOn')), 'yyyy-MM-dd HH:mm:ss'),
     },
     {
       key: intl.formatMessage(messages.notes),
@@ -226,10 +207,7 @@ const TimelineItemSample = ({ sample, intl, expand }) => {
     },
     {
       key: intl.formatMessage(messages.sampleCollectedOn),
-      value: format(
-        parseISO(sample.get('sampleCollectedOn')),
-        'yyyy-MM-dd HH:mm:ss'
-      ),
+      value: format(parseISO(sample.get('sampleCollectedOn')), 'yyyy-MM-dd HH:mm:ss'),
     },
     {
       key: intl.formatMessage(messages.sampleType),
@@ -257,10 +235,7 @@ const TimelineItemTreatment = ({ treatment, intl, expand }) => {
   const detailsFields = [
     {
       key: intl.formatMessage(messages.resultTreatmentStatusLogDate),
-      value: format(
-        parseISO(treatment.get('followUpCreatedOn')),
-        'yyyy-MM-dd HH:mm:ss'
-      ),
+      value: format(parseISO(treatment.get('followUpCreatedOn')), 'yyyy-MM-dd HH:mm:ss'),
     },
     {
       key: intl.formatMessage(messages.date),
@@ -280,15 +255,9 @@ const TimelineItemTreatment = ({ treatment, intl, expand }) => {
   )
 }
 const Milestones = ({ item, intl, expand }) => {
-  if (item.get('type') === 'Sample')
-    return <TimelineItemSample sample={item} intl={intl} expand={expand} />
-  if (item.get('type') === 'Result')
-    return <TimelineItemResult result={item} intl={intl} expand={expand} />
-  if (item.get('type') === 'Treatment')
-    return (
-      <TimelineItemTreatment treatment={item} intl={intl} expand={expand} />
-    )
-  if (item.get('type') === 'Outcome')
-    return <TimelineItemFollowUp fu={item} intl={intl} expand={expand} />
+  if (item.get('type') === 'Sample') return <TimelineItemSample sample={item} intl={intl} expand={expand} />
+  if (item.get('type') === 'Result') return <TimelineItemResult result={item} intl={intl} expand={expand} />
+  if (item.get('type') === 'Treatment') return <TimelineItemTreatment treatment={item} intl={intl} expand={expand} />
+  if (item.get('type') === 'Outcome') return <TimelineItemFollowUp fu={item} intl={intl} expand={expand} />
 }
 export default Milestones

@@ -59,8 +59,7 @@ const geneXpertDevices = {
   },
   sortOrder: 0,
   externalId: 'geneXpertDevices',
-  description:
-    'The number of approved GeneXpert devices (excluding decommissioned devices).',
+  description: 'The number of approved GeneXpert devices (excluding decommissioned devices).',
   descriptionI18nKey: 'geneXpertDevices',
   dashboards: {
     operational: {
@@ -107,8 +106,7 @@ const devicesTitle = {
   },
   sortOrder: 1,
   externalId: 'devicesTitle',
-  description:
-    'The number of approved lab devices (excluding decommissioned devices)',
+  description: 'The number of approved lab devices (excluding decommissioned devices)',
   descriptionI18nKey: 'devicesDescription',
   dashboards: {
     home: {},
@@ -332,6 +330,48 @@ const utilizationRate = {
   },
 }
 
+const activeDevicesCnt = {
+  jobFunctions: ['all'],
+  icon: 'MdCheck',
+  title: 'Current Active/Online Devices',
+  titleI18nKey: 'activeDevicesCntTitle',
+  subTitle: null,
+  subTitleI18nKey: null,
+  sqlForIndicator: `SELECT SUM(dms.active) as cnt
+  FROM Device AS d
+  INNER JOIN DeviceMaintenanceStatusLog AS dmsl ON d.deviceMaintenanceStatusLogId = dmsl.id
+  INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
+  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
+  INNER JOIN Site AS s ON s.id = d.siteId
+  INNER JOIN Partner AS p ON s.partnerId = p.id
+  LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+  WHERE dtc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join("','")}')`,
+  sqlForStatUnit: `SELECT SUM(CASE WHEN (d.lastPingOn BETWEEN DATE_ADD(NOW(), INTERVAL -1 DAY) AND NOW()) THEN 1 ELSE 0 END) as cnt
+  FROM Device AS d
+  INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
+  INNER JOIN Site AS s ON s.id = d.siteId
+  INNER JOIN Partner AS p ON s.partnerId = p.id
+  LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+  WHERE dtc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join("','")}')`,
+  statUnit: 'of {unit} online',
+  statUnitI18nKey: 'ofOnlineDevices',
+  link: '/browse/device',
+  linkParams: {
+    deviceMaintenanceStatusId: ['active', 'reportedActive'],
+  },
+  sortOrder: 1,
+  externalId: 'activeDevicesCnt',
+  description: `Scoped to the last 24 hours, shows the number of devices that uploaded at least 1 test or were manually set es 'reported active', compared to the number of devices that pinged to Aspect at least 1 time (active vs online).`,
+  descriptionI18nKey: 'activeDevicesCntDescription',
+  dashboards: {
+    operational: {
+      groupI18nKey: WIDGET_GROUP_KEYS.CONNECTIVITY,
+    },
+  },
+}
+
 const activeDevices = {
   jobFunctions: ['all'],
   icon: 'MdCheck',
@@ -538,8 +578,7 @@ const deviceDaysActive = {
   link: '/operational-data#deviceStatus',
   sortOrder: 2,
   externalId: 'deviceDaysActive',
-  description:
-    'Average number of days each device has been active, excluding weekends.',
+  description: 'Average number of days each device has been active, excluding weekends.',
   descriptionI18nKey: 'deviceDaysActiveDescription',
   dashboards: {
     operational: {
@@ -806,8 +845,7 @@ const gxPositiveResultsNotified = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   sortOrder: 7,
-  description:
-    "The percentage of positive GeneXpert's results that were notified via SMS or email.",
+  description: "The percentage of positive GeneXpert's results that were notified via SMS or email.",
   descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
   link: '/operational-data#resultsTransmitted',
   dashboards: {
@@ -1155,8 +1193,7 @@ const averageRecipientsOfEmail = {
   link: '/operational-data#resultsTransmitted',
   sortOrder: 9,
   externalId: 'averageRecipientsOfEmail',
-  description:
-    'The average number of email recipients per positive GeneXpert result.',
+  description: 'The average number of email recipients per positive GeneXpert result.',
   descriptionI18nKey: 'averageRecipientsOfEmailDescription',
   dashboards: {
     operational: {
@@ -1216,8 +1253,7 @@ const averageRecipientsOfSms = {
   link: '/operational-data#resultsTransmitted',
   sortOrder: 10,
   externalId: 'averageRecipientsOfSms',
-  description:
-    'The average number of SMS recipients per positive GeneXpert result.',
+  description: 'The average number of SMS recipients per positive GeneXpert result.',
   descriptionI18nKey: 'averageRecipientsOfSmsDescription',
   dashboards: {
     operational: {
@@ -1267,8 +1303,7 @@ const averageLengthOfSms = {
   link: '/browse/notification',
   sortOrder: 11,
   externalId: 'averageLengthOfSms',
-  description:
-    'The average number of characters in SMS messages sent about positive GeneXpert results.',
+  description: 'The average number of characters in SMS messages sent about positive GeneXpert results.',
   descriptionI18nKey: 'averageLengthOfSmsDescription',
   dashboards: {
     operational: {
@@ -1568,8 +1603,7 @@ const numberOfDevicesExperiencingServiceInterruption = {
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
   description: `The number of devices experiencing service interruption on this and the previous month. A device has a service interruption when it is flagged as "Down for repair" for it maintenance status.`,
-  descriptionI18nKey:
-    'numberOfDevicesExperiencingServiceInterruptionDescription',
+  descriptionI18nKey: 'numberOfDevicesExperiencingServiceInterruptionDescription',
   dashboards: {
     operational: {
       groupI18nKey: WIDGET_GROUP_KEYS.SERVICE,
@@ -2069,6 +2103,7 @@ module.exports = {
     dashboardWidgetValidResultsPc,
     utilizationRate,
     activeDevices,
+    activeDevicesCnt,
     stockouts,
     deviceDaysActive,
     errorRate,

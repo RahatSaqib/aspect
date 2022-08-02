@@ -4,9 +4,14 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/extend-expect'
 
 import { Default } from '../stories/TablePagination.stories'
+import { I18nProvider } from '../../../../Providers/I18nProvider/index'
 
 it('renders buttons in correct states', () => {
-  const { getByRole } = render(<Default {...Default.args} />)
+  const { getByRole } = render(
+    <I18nProvider>
+      <Default {...Default.args} />
+    </I18nProvider>
+  )
   expect(getByRole('button', { name: /first/i })).toBeDisabled()
   expect(getByRole('button', { name: /previous/i })).toBeDisabled()
   expect(getByRole('button', { name: /next/i })).toBeEnabled()
@@ -14,36 +19,44 @@ it('renders buttons in correct states', () => {
 })
 
 it('renders correct "Now Showing" counts', () => {
-  const { getByTestId } = render(<Default {...Default.args} />)
-  expect(getByTestId('now-showing')).toHaveTextContent(
-    'Showing 1-10 of 90 notifications'
+  const { getByTestId } = render(
+    <I18nProvider>
+      <Default {...Default.args} />
+    </I18nProvider>
   )
+  expect(getByTestId('now-showing')).toHaveTextContent('Showing 1-10 of 90 notifications')
 })
 
 it('update row count and verify correct values', () => {
-  const { getByRole, getByTestId } = render(<Default {...Default.args} />)
-  userEvent.click(getByRole('button', { name: /25/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent(
-    'Showing 1-25 of 90 notifications'
+  const { getByRole, getByTestId } = render(
+    <I18nProvider>
+      <Default {...Default.args} />
+    </I18nProvider>
   )
+  userEvent.click(getByRole('button', { name: /25/i }))
+  expect(getByTestId('now-showing')).toHaveTextContent('Showing 1-25 of 90 notifications')
 })
 
 it('update page selector and verify correct values', () => {
-  const { getByRole, getByTestId } = render(<Default {...Default.args} />)
-  userEvent.click(getByRole('button', { name: /next/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent(
-    'Showing 11-20 of 90 notifications'
+  const { getByRole, getByTestId } = render(
+    <I18nProvider>
+      <Default {...Default.args} />
+    </I18nProvider>
   )
+  userEvent.click(getByRole('button', { name: /next/i }))
+  expect(getByTestId('now-showing')).toHaveTextContent('Showing 11-20 of 90 notifications')
   expect(getByRole('button', { name: /first/i })).toBeEnabled()
   expect(getByRole('button', { name: /previous/i })).toBeEnabled()
 })
 
 it('go to last page and verify correct values and states', () => {
-  const { getByRole, getByTestId } = render(<Default {...Default.args} />)
-  userEvent.click(getByRole('button', { name: /last/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent(
-    'Showing 81-90 of 90 notifications'
+  const { getByRole, getByTestId } = render(
+    <I18nProvider>
+      <Default {...Default.args} />
+    </I18nProvider>
   )
+  userEvent.click(getByRole('button', { name: /last/i }))
+  expect(getByTestId('now-showing')).toHaveTextContent('Showing 81-90 of 90 notifications')
   expect(getByRole('button', { name: /next/i })).toBeDisabled()
   expect(getByRole('button', { name: /last/i })).toBeDisabled()
 })
