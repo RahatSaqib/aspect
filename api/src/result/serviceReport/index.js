@@ -5,16 +5,17 @@ const dateFormat = require('date-fns/format')
 const locales = require('date-fns/locale')
 const { endOfMonth, endOfYear, startOfMonth, subMonths, addMonths } = require('date-fns')
 
-const { getResultsForExport } = require('./service')
-const { knex } = require('../db')
-const { getUser } = require('../auth/service')
-const { getConstraints } = require('../auth/constraints')
-const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../shared/excel')
+const { getResultsForExport } = require('../service')
+const { knex } = require('../../db')
+const { getUser } = require('../../auth/service')
+const { getConstraints } = require('../../auth/constraints')
+const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../../shared/excel')
 
-const { getAllAssaySchemas } = require('../assay/service')
+const { getAllAssaySchemas } = require('../../assay/service')
 
-const getPositiveCategoriesExternalIds = require('../resultCategory/service')
-const { getGroupBy, getClinicalIndicatorQueryForResultsTable, processGroupedQuery } = require('./service')
+const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
+const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
+const { getGroupBy, getClinicalIndicatorQueryForResultsTable, processGroupedQuery } = require('../service')
 
 /**
  * 'header' is for 1st row in CSV file,
@@ -586,4 +587,5 @@ module.exports = {
   getReportWorkloadSummary,
   getReportWorkloadSummaryByQuarter,
   getReportWorkloadSummaryByYear,
+  getReportXdrDevicesSummary,
 }

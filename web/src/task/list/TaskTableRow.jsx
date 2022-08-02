@@ -24,6 +24,8 @@ const TaskTableRow = ({ messages, task, ...restProps }) => {
           alertType={
             messages[task.get('issueStatusI18nKey')]
               ? formatMessage(messages[task.get('issueStatusI18nKey')])
+              : messages[task.get('issueCategoryExternalId')]
+              ? formatMessage(messages[task.get('issueCategoryExternalId')])
               : task.get('issueStatus')
           }
         />
@@ -36,7 +38,11 @@ const TaskTableRow = ({ messages, task, ...restProps }) => {
             shakespeare={task.get('issueCategoryExternalId').toString().toLowerCase() === 'reagenthealth'}
             mountain={task.get('issueCategoryExternalId').toString().toLowerCase() === 'datahealth'}
             brink={task.get('issueCategoryExternalId').toString().toLowerCase() === 'connectivityhealth'}
-            label={task.get('issueCategoryI18nKey') ? formatMessage(messages[task.get('issueCategoryI18nKey')]) : false}
+            label={
+              task.get('issueCategoryI18nKey')
+                ? formatMessage(messages[task.get('issueCategoryI18nKey')])
+                : formatMessage(messages[task.get('issueCategoryExternalId')])
+            }
           />
           <span className={cssClasses('Message__Subject')}>{addEllipsis(task.get('title'))}</span>
           <span className={cssClasses('Message__Text')}>{task.get('message')}</span>

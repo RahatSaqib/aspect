@@ -496,8 +496,10 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   knex,
   assayExternalIds,
   overridePatientDataSchema,
-  overrideResultDataSchema
+  overrideResultDataSchema,
+  partnerData = {}
 ) {
+  const { consumableStrategies } = partnerData
   let geneXpertPatientDataSchema
   if (overridePatientDataSchema) geneXpertPatientDataSchema = overridePatientDataSchema
   else geneXpertPatientDataSchema = gxPatientDataSchema
@@ -561,7 +563,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       null,
       null
     )
-    await upsertConsumables(knex, true, ['GxHcv'])
+    await upsertConsumables(knex, true, ['GxHcv'], consumableStrategies)
   }
   if (_.includes(assayExternalIds, 'GxMtbRif')) {
     await createAssay(
@@ -581,7 +583,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
-    await upsertConsumables(knex, true, ['GxMtbRif'])
+    await upsertConsumables(knex, true, ['GxMtbRif'], consumableStrategies)
   }
   if (_.includes(assayExternalIds, 'GxMtbXdr')) {
     await createAssay(
@@ -601,7 +603,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Drug Resistance',
       'resultCategoryDrugResistance'
     )
-    await upsertConsumables(knex, true, ['GxMtbXdr'])
+    await upsertConsumables(knex, true, ['GxMtbXdr'], consumableStrategies)
   }
   if (_.includes(assayExternalIds, 'GxMtbRifUltra')) {
     await createAssay(
@@ -621,7 +623,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'Rif',
       'resultCategoryRif'
     )
-    await upsertConsumables(knex, true, ['GxMtbRifUltra'])
+    await upsertConsumables(knex, true, ['GxMtbRifUltra'], consumableStrategies)
   }
   if (_.includes(assayExternalIds, 'GxHiv1Vl')) {
     await createAssay(
@@ -639,7 +641,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
-    await upsertConsumables(knex, true, ['GxHiv1Vl'])
+    await upsertConsumables(knex, true, ['GxHiv1Vl'], consumableStrategies)
   }
   if (_.includes(assayExternalIds, 'GxHiv1Qual')) {
     await createAssay(
@@ -657,7 +659,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'HIV',
       'resultCategoryHiv'
     )
-    await upsertConsumables(knex, true, ['GxHiv1Qual'])
+    await upsertConsumables(knex, true, ['GxHiv1Qual'], consumableStrategies)
   }
   if (_.includes(assayExternalIds, 'GxEbola')) {
     await createAssay(
@@ -675,7 +677,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'GP',
       'resultCategoryEbolaGp'
     )
-    await upsertConsumables(knex, true, ['GxEbola'])
+    await upsertConsumables(knex, true, ['GxEbola'], consumableStrategies)
   }
   if (_.includes(assayExternalIds, 'assayGXCovid19')) {
     await createAssay(
@@ -693,7 +695,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
       'COVID-19',
       'resultCategoryCovid19'
     )
-    await upsertConsumables(knex, true, ['assayGXCovid19'])
+    await upsertConsumables(knex, true, ['assayGXCovid19'], consumableStrategies)
   }
 
   await utils.updateAssayResultCategoryTreatmentEmphasize(knex)
@@ -1108,7 +1110,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
     }
   })
 
-  await upsertGeneXpertDeviceTypeAndAssays(knex, geneXpertAssayExternalIds, patientDataSchema)
+  await upsertGeneXpertDeviceTypeAndAssays(knex, geneXpertAssayExternalIds, patientDataSchema, null, partnerData)
   returnValue.patientDataSchema = patientDataSchema
   const gxAlertAssayDataMappings = {
     GxMtbRif: 'GeneXpert TB/RIF Result',

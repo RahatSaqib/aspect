@@ -84,6 +84,17 @@ const enhance = compose(
             }
             break
           }
+          case 'deviceMaintenanceStatusId': {
+            const values = filtersParams.getAll(filterKey)
+            filtersParams.delete(filterKey)
+            if (values.length > 1) {
+              values.splice(index || 0, 1)
+              values.forEach(value => {
+                filtersParams.append(filterKey, value)
+              })
+            }
+            break
+          }
           default:
             filtersParams.delete(filterKey)
             break

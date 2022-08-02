@@ -18,6 +18,8 @@ import formatI18nMessage from '../../shared/i18n/formatterWeb'
 const DeviceMaintenanceStatusSelectField = ({
   onDeviceMaintenanceStatusChange,
   value,
+  allItemText,
+  multiple,
   onlyManuallySetableStatuses,
   ...restProps
 }) => {
@@ -44,14 +46,13 @@ const DeviceMaintenanceStatusSelectField = ({
     }
   }, [data, dispatch, isError])
 
+  const onChange = ({ target: { value } }) => {
+    onDeviceMaintenanceStatusChange(value.includes('all') ? undefined : value)
+  }
+
   return (
-    <SelectField
-      {...restProps}
-      value={value}
-      onChange={({ target: { value } }) => {
-        onDeviceMaintenanceStatusChange(value)
-      }}
-    >
+    <SelectField {...restProps} value={value} onChange={onChange} multiple={multiple}>
+      {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {maintenanceStatuses
         ? maintenanceStatuses.map(ms => (
             <MenuItem key={ms.externalId} value={ms.externalId}>
@@ -65,12 +66,16 @@ const DeviceMaintenanceStatusSelectField = ({
 
 DeviceMaintenanceStatusSelectField.defaultProps = {
   value: '',
+  allItemText: '',
   onlyManuallySetableStatuses: false,
+  multiple: false,
 }
 
 DeviceMaintenanceStatusSelectField.propTypes = {
   onDeviceMaintenanceStatusChange: PropTypes.oneOfType([PropTypes.func]).isRequired,
-  value: PropTypes.oneOfType([PropTypes.string]),
+  multiple: PropTypes.oneOfType([PropTypes.bool]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  allItemText: PropTypes.oneOfType([PropTypes.string]),
   onlyManuallySetableStatuses: PropTypes.oneOfType([PropTypes.bool]),
 }
 

@@ -38,6 +38,8 @@ import ErrorBoundary from '../../MigratedComponents/ErrorBoundary'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './FiltersPanel.css'
+import ConnectorStatusSelectField from '../resource/ConnectorStatusSelectField'
+import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
 
 const cssClasses = classnames.bind(styles)
 
@@ -155,6 +157,12 @@ const enhance = compose(
       deviceApprovalId =>
         onChangeFilters({
           deviceApprovalId,
+        }),
+    onConnectorStatusChange:
+      ({ onChangeFilters }) =>
+      connectorStatus =>
+        onChangeFilters({
+          connectorStatus,
         }),
     onDeviceTypeChange:
       ({ onChangeFilters }) =>
@@ -522,6 +530,22 @@ const messages = {
       id: 'filter.popover.contactStatusHint',
       defaultMessage: 'Select contact status...',
     },
+    selectConnectorStatus: {
+      id: 'filter.popover.selectConnectorStatus',
+      defaultMessage: 'Select connector status...',
+    },
+    connectorStatus: {
+      id: 'filter.popover.connectorStatus',
+      defaultMessage: 'Connector Status',
+    },
+    selectDeviceStatus: {
+      id: 'filter.popover.selectDeviceStatus',
+      defaultMessage: 'Select Device status...',
+    },
+    deviceStatus: {
+      id: 'filter.popover.deviceStatus',
+      defaultMessage: 'Device Status',
+    },
   }),
 }
 
@@ -553,6 +577,7 @@ export const FiltersPanel = ({
   onWorkflowStatusIdChange,
   onTreatmentStatusChange,
   onDeviceApprovalIdChange,
+  onConnectorStatusChange,
   onResultCategoryGroupChange,
   onDeviceMaintenanceStatusIdChange,
   onDeviceTypeChange,
@@ -971,6 +996,30 @@ export const FiltersPanel = ({
                 />
               </div>
             )}
+            {config.connectorStatus && (
+              <div className={cssClasses('Control')}>
+                <ConnectorStatusSelectField
+                  value={filters.connectorStatus}
+                  onConnectorStatusChange={onConnectorStatusChange}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectConnectorStatus)}
+                  floatingLabelText={formatMessage(messages.connectorStatus)}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.deviceStatus && (
+              <div className={cssClasses('Control')}>
+                <DeviceStatusSelectField
+                  value={filters.deviceMaintenanceStatusId}
+                  onDeviceMaintenanceStatusChange={onDeviceMaintenanceStatusIdChange}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectDeviceStatus)}
+                  floatingLabelText={formatMessage(messages.deviceStatus)}
+                  autoWidth
+                />
+              </div>
+            )}
             {config.deviceType && (
               <div className={cssClasses('Control')}>
                 <DeviceTypeSelectField
@@ -988,6 +1037,8 @@ export const FiltersPanel = ({
             {config.deviceMaintenanceStatus && (
               <div className={cssClasses('Control')}>
                 <DeviceMaintenanceStatusSelectField
+                  multiple
+                  allItemText={formatMessage(messages.all)}
                   value={filters.deviceMaintenanceStatusId}
                   onDeviceMaintenanceStatusChange={onDeviceMaintenanceStatusIdChange}
                   floatingLabelFixed
