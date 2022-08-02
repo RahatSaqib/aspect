@@ -201,7 +201,6 @@ async function createNotifications(knex, action, context) {
     evaluationMethods[notificationTypeCategoryId],
     filterCondition
   )
-  console.log('evaluationMethods', evaluationMethods[notificationTypeCategoryId], policies)
   // for each job function, find all policies with maximum constrained level,
   // since we are ordered by, max level at first position and filter all with same
   let jobFunctionId = null
@@ -209,7 +208,7 @@ async function createNotifications(knex, action, context) {
   const { jobFunctions = [], persons = [], sendToClinician = false, sendToPatient = false } = filterCondition || {}
   if (policies) {
     const [firstPolicy] = policies
-    console.log('firstPolicy', firstPolicy, sendToPatient, sendToClinician)
+
     if (firstPolicy && (sendToClinician || sendToPatient)) {
       const nonPersonsToNotify = _.filter(
         [
@@ -243,7 +242,6 @@ async function createNotifications(knex, action, context) {
       })
     }
     await Promise.each(policies, async policy => {
-      console.log('asdasd', policy.jobFunctionId, sendToPatient, sendToClinician, persons)
       if (_.isNil(policy.jobFunctionId) && _.isEmpty(jobFunctions) && _.isEmpty(persons)) {
         await createNotificationIfNotCreatedAlready(action, { policy, now }, { messageContext: context, knex })
       } else {

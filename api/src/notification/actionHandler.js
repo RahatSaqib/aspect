@@ -34,6 +34,7 @@ function resultBased() {
   return async (action, { messageContext: context }) =>
     context.run(async knex => {
       const conditionsToEvaluate = await getConditionsToEvaluate(knex)
+
       await Promise.each(
         conditionsToEvaluate,
         async ({ filterCondition, notificationTypeCategoryId, notificationTypeId }) =>
@@ -41,7 +42,7 @@ function resultBased() {
             knex,
             {
               resultId: action.resultId,
-              filterCondition,
+              filterCondition: JSON.parse(filterCondition),
               notificationTypeCategoryId,
               notificationTypeId,
             },
