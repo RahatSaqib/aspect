@@ -1,21 +1,20 @@
 import React from 'react'
 import MenuItem from '@material-ui/core/MenuItem'
-import Select from '@material-ui/core/Select'
-import InputLabel from '@material-ui/core/InputLabel'
+import TextField from '@material-ui/core/TextField'
 import { timezones } from '../../filter/hardcoded'
 
-const TimezoneSelect = ({ name, label, disabled, fullWidth, defaultTimezoneText, value, onChange }) => {
+const TimezoneSelect = ({ name, label, disabled, width, defaultTimezoneText, value, onChange }) => {
   const timezoneData = defaultTimezoneText ? [{ id: null, name: defaultTimezoneText }].concat(timezones) : timezones
 
   return (
-    <>
-      <InputLabel id={label}>{label}</InputLabel>
-      <Select
+    <span style={{ width }}>
+      <TextField
+        select
         name={name}
         label={label}
         variant="standard"
         disabled={disabled}
-        fullWidth={fullWidth}
+        style={{ width: '98%', marginRight: '1%', marginLeft: '1%', marginTop: '16px' }}
         value={value}
         onChange={e => onChange(e.target.value)}
       >
@@ -24,8 +23,8 @@ const TimezoneSelect = ({ name, label, disabled, fullWidth, defaultTimezoneText,
             {zone.name}
           </MenuItem>
         ))}
-      </Select>
-    </>
+      </TextField>
+    </span>
   )
 }
 

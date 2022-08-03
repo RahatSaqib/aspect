@@ -83,6 +83,14 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldNotes',
     defaultMessage: 'Notes',
   },
+  fieldEndingHours: {
+    id: 'pages.SiteDetail.fieldEndingHours',
+    defaultMessage: 'Hours of Operation End',
+  },
+  fieldStartingHours: {
+    id: 'pages.SiteDetail.fieldStartingHours',
+    defaultMessage: 'Hours of Operation Start',
+  },
   buttonSetBasedonAddress: {
     id: 'pages.SiteDetail.buttonSetBasedonAddress',
     defaultMessage: 'Set based on address',

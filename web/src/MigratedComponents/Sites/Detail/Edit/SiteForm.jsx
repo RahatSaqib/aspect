@@ -8,6 +8,9 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
+import MenuItem from '@material-ui/core/MenuItem'
+import times from 'lodash/times'
+import padStart from 'lodash/padStart'
 import messages from '../messages'
 import { Site } from '../../../../site/SiteRedux'
 import { getLatLongFromAddress, convertToFloat } from '../../../../site/utils/address'
@@ -223,7 +226,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               name="belongsTo"
               width="33%"
               label={formatMessage(messages.fieldBelongTo)}
-              value={editSite.parentWarehouseId}
+              value={editSite.parentWarehouseId || ''}
               onChange={parentWarehouseId => setEditSite({ ...editSite, parentWarehouseId })}
             />
           </div>
@@ -270,14 +273,48 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               </AspectButton>
             </div>
           </div>
-          <div className={cssClasses('container', 'coordinate')}>
+          <div className={cssClasses('container')}>
             <TimezoneSelect
               name="timezone"
               label={formatMessage(messages.fieldTimeZone)}
-              fullWidth
+              width="33%"
               onChange={timezone => setEditSite({ ...editSite, timezone })}
               value={editSite.timezone || ''}
             />
+            <span style={{ width: '33%' }}>
+              <TextField
+                select
+                label={formatMessage(messages.fieldStartingHours)}
+                variant="standard"
+                style={{ width: '98%', marginRight: '1%', marginLeft: '1%', marginTop: '16px' }}
+                value={editSite.hoursStart}
+                onChange={e => setEditSite({ ...editSite, hoursStart: e.target.value })}
+              >
+                {times(24, hour => (
+                  <MenuItem key={hour} value={hour}>
+                    {`${padStart(hour, 2, '0')}:00`}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </span>
+            <span style={{ width: '33%' }}>
+              <TextField
+                select
+                label={formatMessage(messages.fieldEndingHours)}
+                variant="standard"
+                style={{ width: '98%', marginRight: '1%', marginLeft: '1%', marginTop: '16px' }}
+                value={editSite.hoursEnd}
+                onChange={e => setEditSite({ ...editSite, hoursEnd: e.target.value })}
+              >
+                {times(24, hour => (
+                  <MenuItem key={hour} value={hour}>
+                    {`${padStart(hour, 2, '0')}:00`}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </span>
+          </div>
+          <div className={cssClasses('container')}>
             <ReadOnlyField
               label={formatMessage(messages.fieldTags)}
               value={siteTags}

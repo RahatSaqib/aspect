@@ -3,26 +3,24 @@ import { SITE_KEY, SITE_KEY_BY_ID_ENDPOINT } from './siteKeys.js'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { replaceRouteParams } from '../../MigratedComponents/QueryFetch/Helpers'
 
-const updateSiteById = async (site, siteId) =>
-  fetchWrapperForQueries({
+const updateSiteById = async (site, siteId) => {
+  const submitSite = { ...site }
+  delete submitSite.id
+  delete submitSite.country
+  delete submitSite.createdOn
+  delete submitSite.devices
+  delete submitSite.lga
+  delete submitSite.siteType
+  delete submitSite.state
+  delete submitSite.totalDevices
+  delete submitSite.geographyId
+
+  return fetchWrapperForQueries({
     endpoint: replaceRouteParams(SITE_KEY_BY_ID_ENDPOINT, { siteId }),
     method: 'PUT',
-    params: {
-      name: site.name,
-      shortName: site.shortName,
-      externalId: site.externalId,
-      timezone: site.timezone,
-      countryId: site.countryId,
-      stateId: site.stateId,
-      lgaId: site.lgaId,
-      street1: site.street1,
-      street2: site.street2,
-      city: site.city,
-      zip: site.zip,
-      latitude: site.latitude,
-      longitude: site.longitude,
-    },
+    params: { ...submitSite },
   })
+}
 
 const useUpdateSite = siteId => {
   const queryClient = useQueryClient()

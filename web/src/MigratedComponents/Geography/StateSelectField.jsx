@@ -2,8 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MenuItem from '@material-ui/core/MenuItem'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import Select from '@material-ui/core/Select'
-import InputLabel from '@material-ui/core/InputLabel'
+import TextField from '@material-ui/core/TextField'
 import useStatesByCountry from '../../Hooks/geography/useStatesByCountry'
 
 const StateSelectField = ({ allItemText, countryId, stateId, onStateIdChange, floatingLabelText }) => {
@@ -16,23 +15,21 @@ const StateSelectField = ({ allItemText, countryId, stateId, onStateIdChange, fl
   return isStateLoading ? (
     <LinearProgress />
   ) : (
-    <>
-      <InputLabel id={floatingLabelText}>{floatingLabelText}</InputLabel>
-      <Select
-        variant="standard"
-        value={stateId}
-        onChange={handleSelectFieldChange}
-        labelId={floatingLabelText}
-        style={{ width: '98%', margin: '0 1%' }}
-      >
-        {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
-        {(states || []).map(s => (
-          <MenuItem key={s.id} value={s.id}>
-            {s.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </>
+    <TextField
+      select
+      variant="standard"
+      value={stateId}
+      onChange={handleSelectFieldChange}
+      labelId={floatingLabelText}
+      style={{ width: '98%', margin: '0 1%' }}
+    >
+      {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
+      {(states || []).map(s => (
+        <MenuItem key={s.id} value={s.id}>
+          {s.name}
+        </MenuItem>
+      ))}
+    </TextField>
   )
 }
 
