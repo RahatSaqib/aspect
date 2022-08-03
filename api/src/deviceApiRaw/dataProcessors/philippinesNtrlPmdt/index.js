@@ -195,7 +195,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
           const { encodedResult } = mappedResultData
-          // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
           const assayBdMgitAstId = await assayToId('assayBdMgitAst')
           const assayGenericDstId = await assayToId('assayGenericDst')
           const externalId = `${site.externalId}_${samples[0].externalId}_DST`
@@ -206,13 +205,19 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             .orWhere(queryBuilder => {
               queryBuilder
                 .whereIn('sampleId', sampleIds)
-                .whereIn('assayId', [assayBdMgitAstId, assayGenericDstId])
+                .whereIn(
+                  'assayId',
+                  [assayBdMgitAstId, assayGenericDstId].filter(a => !!a)
+                )
                 .andWhere('siteId', site.id)
             })
             .first()) || {
             ...baseNewResult,
             externalId,
-            assayId: (encodedResult.methodUsed || '').indexOf('MGIT') > -1 ? assayBdMgitAstId : assayGenericDstId,
+            assayId:
+              !assayGenericDstId || (encodedResult.methodUsed || '').indexOf('MGIT') > -1
+                ? assayBdMgitAstId
+                : assayGenericDstId,
             sampleId: samples[0].id,
             startedOn:
               encodedResult.dateTransferredToDst ||
@@ -331,7 +336,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
           const { encodedResult } = mappedResultData
-          // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
           const cultureSamples = []
@@ -356,7 +360,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               ...baseNewResult,
               externalId,
               assayId:
-                (encodedResult.methodUsed1 || '').indexOf('MGIT') > -1 ? assayBdMgitGndId : assayGenericCultureId,
+                !assayGenericCultureId || (encodedResult.methodUsed1 || '').indexOf('MGIT') > -1
+                  ? assayBdMgitGndId
+                  : assayGenericCultureId,
               sampleId: cultureSample.id,
               reportableSiteId,
               startedOn: encodedResult.dateReleased,
