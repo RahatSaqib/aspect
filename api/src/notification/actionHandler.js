@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const { createNotifications } = require('./service')
 const { issueEscalated } = require('../issue/actions')
-
+const { cache } = require('./notificationCache')
 // eslint-disable-next-line no-unused-vars
 function issueBased() {
   return async (action, { messageContext: context }) => {
@@ -23,20 +23,12 @@ function issueBased() {
   }
 }
 
-async function getConditionsToEvaluate(knex, notificationCategory = 'resultBased') {
-  return knex('NotificationTypeCategory as ntc')
-    .join('NotificationType as nt', 'nt.notificationTypeCategoryId', 'ntc.id')
-    .where('ntc.externalId', notificationCategory)
-    .distinct('nt.filterCondition', 'nt.id as notificationTypeId', 'ntc.externalId as notificationTypeCategoryId')
-}
-
 function resultBased() {
   return async (action, { messageContext: context }) =>
     context.run(async knex => {
-      const conditionsToEvaluate = await getConditionsToEvaluate(knex)
-
+      const notificationCache = cache(knex)
       await Promise.each(
-        conditionsToEvaluate,
+        await notificationCache.getCacheValue(),
         async ({ filterCondition, notificationTypeCategoryId, notificationTypeId }) =>
           createNotifications(
             knex,
