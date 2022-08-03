@@ -27,6 +27,7 @@ import AspectDialog from '../../../../components/shared/AspectDialog'
 import PermissionsProvider from '../../../../Providers/PermissionsProvider'
 import useI18n from '../../../../Hooks/i18n/useI18n'
 import useDeleteSite from '../../../../Hooks/site/useDeleteSite'
+import useCreateSite from '../../../../Hooks/site/useCreateSite'
 import SiteTypeSelect from './SiteTypeSelect'
 
 const cssClasses = classnames.bind(styles)
@@ -39,10 +40,12 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
   const { mutate: updateSite } = useUpdateSite(site.id)
   const { mutate: updateTags } = useUpdateTagByTypeAndId('site', site.id)
   const { mutate: deleteSite } = useDeleteSite(site.id)
+  const { mutate: createSite } = useCreateSite()
 
   const [editSite, setEditSite] = useState({ ...site })
 
   const isPristine = isEqual(site, editSite)
+  const isNew = site.id === 0
 
   const updateSiteLatLong = async address => {
     getLatLongFromAddress(address).then(({ lat, lng }) => {
@@ -61,7 +64,12 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
         address: editSite.address,
       })
     }
-    return updateSite(editSite)
+    if (isNew) {
+      createSite(editSite)
+    } else {
+      updateSite(editSite)
+    }
+    navigate(-1)
   }
 
   const handleDelete = () => {
@@ -86,7 +94,11 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               margin="normal"
               fullWidth
               value={editSite.name}
-              onChange={e => setEditSite({ ...editSite, name: e.target.value })}
+              onChange={e =>
+                isNew
+                  ? setEditSite({ ...editSite, name: e.target.value, externalId: e.target.value })
+                  : setEditSite({ ...editSite, name: e.target.value })
+              }
               error={!isPristine && isEmpty(editSite.name)}
               helperText={!isPristine && isEmpty(editSite.name) && `${formatMessage(messages.fieldName)} is required`}
             />
@@ -120,7 +132,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               label={formatMessage(messages.fieldSiteType)}
               value={editSite.siteTypeId}
               onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
-              disabled
+              disabled={!isNew}
             />
             <TextField
               className={cssClasses('container__field')}
@@ -174,17 +186,18 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
                   lgaId: location.lga.id,
                   lga: location.lga.name,
                 })
-                updateSiteLatLong({
-                  country: location.country.name,
-                  state: location.state.name,
-                  lga: location.lga.name,
-                  city: editSite.city,
-                  address: editSite.street1,
-                })
+                if (!isNew) {
+                  updateSiteLatLong({
+                    country: location.country.name,
+                    state: location.state.name,
+                    lga: location.lga.name,
+                    city: editSite.city,
+                    address: editSite.street1,
+                  })
+                }
               }}
             />
           </div>
-          {/*  */}
           <div className={cssClasses('container')}>
             <TextField
               className={cssClasses('container__field')}
@@ -314,13 +327,15 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               </TextField>
             </span>
           </div>
-          <div className={cssClasses('container')}>
-            <ReadOnlyField
-              label={formatMessage(messages.fieldTags)}
-              value={siteTags}
-              format={v => <SiteTagInput qryId={editSite.id} onTagChange={tags => updateTags(tags)} value={v} />}
-            />
-          </div>
+          {isNew ? null : (
+            <div className={cssClasses('container')}>
+              <ReadOnlyField
+                label={formatMessage(messages.fieldTags)}
+                value={siteTags}
+                format={v => <SiteTagInput qryId={editSite.id} onTagChange={tags => updateTags(tags)} value={v} />}
+              />
+            </div>
+          )}
           <div className={cssClasses('container', 'coordinate')}>
             <TextField
               label={formatMessage(messages.fieldNotes)}
@@ -332,24 +347,26 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
             />
           </div>
           <Button color="secondary" variant="contained" onClick={handleSubmit} disabled={isPristine}>
-            {formatMessage(messages.buttonUpdate)}
+            {isNew ? formatMessage(messages.buttonCreate) : formatMessage(messages.buttonUpdate)}
           </Button>
-          <PermissionsProvider permissions={['site:admin']}>
-            <Button
-              disabled={!isPristine}
-              style={{
-                marginLeft: '1rem',
-                backgroundColor: !isPristine ? 'rgba(0, 0, 0, 0.08)' : 'red',
-                color: 'white',
-              }}
-              type="button"
-              color="error"
-              variant="contained"
-              onClick={handleDeletePrompt}
-            >
-              {formatMessage(messages.buttonDelete)}
-            </Button>
-          </PermissionsProvider>
+          {isNew ? null : (
+            <PermissionsProvider permissions={['site:admin']}>
+              <Button
+                disabled={!isPristine}
+                style={{
+                  marginLeft: '1rem',
+                  backgroundColor: !isPristine ? 'rgba(0, 0, 0, 0.08)' : 'red',
+                  color: 'white',
+                }}
+                type="button"
+                color="error"
+                variant="contained"
+                onClick={handleDeletePrompt}
+              >
+                {formatMessage(messages.buttonDelete)}
+              </Button>
+            </PermissionsProvider>
+          )}
 
           <AspectDialog
             actions={[
@@ -374,12 +391,38 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
 }
 
 SiteForm.propTypes = {
-  site: PropTypes.objectOf(Site).isRequired,
+  site: PropTypes.objectOf(Site),
   siteTags: PropTypes.arrayOf(PropTypes.object),
-  onLatLongChange: PropTypes.func.isRequired,
+  onLatLongChange: PropTypes.func,
 }
 SiteForm.defaultProps = {
   siteTags: [],
+  site: {
+    id: 0,
+    name: '',
+    shortName: '',
+    externalId: '',
+    state: '',
+    lga: '',
+    country: '',
+    createdOn: '',
+    countryId: '',
+    stateId: '',
+    lgaId: '',
+    timezone: '',
+    city: '',
+    zip: '',
+    street1: '',
+    street2: '',
+    longitude: 0,
+    latitude: 0,
+    siteTypeId: 1,
+    hoursStart: 9,
+    hoursEnd: 18,
+    notes: '',
+    parentWarehouseId: 3,
+  },
+  onLatLongChange: () => {},
 }
 
 export default SiteForm

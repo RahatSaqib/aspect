@@ -20,7 +20,7 @@ const CountrySelectField = ({ allItemText, countryId, onCountryIdChange, floatin
       variant="standard"
       value={countryId}
       onChange={handleSelectFieldChange}
-      labelId={floatingLabelText}
+      label={floatingLabelText}
       style={{ width: '98%', margin: '0 1%' }}
     >
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}

@@ -84,7 +84,7 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
       dateIn.toLocaleString(locale, {
         timeZone: validTimeZone,
       }),
-    formatMessage: (stringIn, values = {}, fallback = `!! I18N ID not set !! ${stringIn}`) =>
+    formatMessage: (stringIn, values = {}, fallback = `!! I18N ID not set !!`) =>
       !stringIn ? fallback : formatMessage(stringIn, values),
     timezone: validTimeZone,
     ...rest,

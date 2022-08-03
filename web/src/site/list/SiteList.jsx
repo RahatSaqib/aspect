@@ -27,6 +27,7 @@ import { SITE_LIST } from '../../MigratedComponents/QueryFetch/Site/index'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './SiteList.css'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(styles)
 
@@ -79,6 +80,10 @@ export const messages = {
     latestInventoryUpdate: {
       id: 'pages.SiteList.latestInventoryUpdate',
       defaultMessage: 'Latest Inventory Update',
+    },
+    createSite: {
+      id: 'pages.SiteList.createSite',
+      defaultMessage: 'Create Site',
     },
   }),
 }
@@ -238,7 +243,20 @@ export const SiteList = ({
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.sitesTitle)} />
       <NavTitle title={formatMessage(messages.sitesTitle)} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+      <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+        <AspectButton
+          type="button"
+          color="primary"
+          variant="contained"
+          browseButton
+          onClick={event => {
+            event.stopPropagation()
+            navigate('/browse/site/create')
+          }}
+        >
+          {formatMessage(messages.createSite)}
+        </AspectButton>
+      </BrowseFilters>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={siteList} />
         {!siteList && <BrowseEmptyList navigate={navigate} location={location} />}

@@ -48,7 +48,6 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
           onCountryIdChange={updateCountry}
           countryId={selectedCountry.id}
           errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
-          // errorText={meta.touched && meta.error}
           tabIndex="0"
           aria-haspopup
           floatingLabelText={formatMessage(messages.country)}
@@ -61,7 +60,6 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
           stateId={selectedState.id}
           countryId={selectedCountry.id}
           errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
-          // errorText={meta.touched && meta.error}
           tabIndex="0"
           aria-haspopup
           floatingLabelText={getCustomMessage(messages, 'state', user)}
@@ -75,7 +73,6 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
           stateId={selectedState.id}
           lgaId={selectedLga.id}
           errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
-          // errorText={meta.touched && meta.error}
           tabIndex="0"
           aria-haspopup
           floatingLabelText={getCustomMessage(messages, 'lga', user)}
@@ -86,23 +83,4 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
   )
 }
 
-// function mapStateToProps(state, ownProps) {
-//   const { formName, countryIdFieldName, stateIdFieldName, lgaIdFieldName } = ownProps
-//   const selectedCountryId = state.getIn(['form', formName, 'values', countryIdFieldName])
-//   const selectedStateId = state.getIn(['form', formName, 'values', stateIdFieldName])
-//   const selectedLgaId = state.getIn(['form', formName, 'values', lgaIdFieldName])
-//   return {
-//     countries: state.getIn(['geography', 'countriesForLocationSelector']),
-//     selectedCountryId,
-//     selectedStateId,
-//     selectedLgaId,
-//     user: state.user,
-//   }
-// }
-
-// function mapDispatchToProps(dispatch) {
-//   return bindActionCreators({ changeFieldValue }, dispatch)
-// }
-
-// export default flowRight(injectIntl, connect(mapStateToProps, mapDispatchToProps))(LocationSelector)
 export default LocationSelector

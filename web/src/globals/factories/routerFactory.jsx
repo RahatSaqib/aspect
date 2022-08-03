@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import memoize from 'lodash/memoize'
@@ -47,6 +48,7 @@ import License from '../../auth/license/License'
 import ClinicalHistory from '../../patient/ClinicalHistory'
 import CaseDetails from '../../case/details/CaseDetails'
 import Welcome from '../../MigratedComponents/Welcome'
+import SiteForm from '../../MigratedComponents/Sites/Detail/Edit/SiteForm'
 
 function useHashAndScroll() {
   const location = useLocation()
@@ -128,6 +130,7 @@ const renderReporterList = loggedInFactory(ReporterList)
 const renderResultList = loggedInFactory(ResultList)
 const renderResultDetail = loggedInFactory(ResultDetail)
 const renderSiteList = loggedInFactory(SiteList)
+const renderSiteForm = loggedInFactory(SiteForm)
 const renderSiteDetail = loggedInFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
@@ -142,14 +145,7 @@ const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
 
 const renderRedirectToHomePage = () => {
-  return (
-    <Navigate
-      replace
-      to={{
-        pathname: '/',
-      }}
-    />
-  )
+  return <Navigate replace to={{ pathname: '/' }} />
 }
 
 const isLoggedInAndOnLogin = ({ isLoggedOut, loggedOutReason, location }) => {
@@ -185,11 +181,8 @@ const AppRoutes = ({ props: outerProps }) => {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const props = {
-    ...outerProps,
-    location,
-    navigate,
-  }
+  const props = { ...outerProps, location, navigate }
+
   const getElement = (props, permissions, render) => {
     return <RenderTo render={render} props={props} permissions={permissions} />
   }
@@ -207,54 +200,70 @@ const AppRoutes = ({ props: outerProps }) => {
         <Route path="/reset-password">{renderResetPassword(props)}</Route>
 
         <Route path="/license">{renderRedirectToLoginOr(props) || renderLicense(props)}</Route>
+
         <Route path="/dashboard" element={getElement(props, ['dashboard:summary'], renderLoadableStatus)} />
+
         <Route path="/task-list" element={getElement(props, ['task'], renderTaskList)} />
         <Route path="/task-list/aggre-list" element={getElement(props, ['task'], renderTaskAggre)} />
         <Route path="/task-list/:taskId" element={getElement(props, ['task'], renderTaskDetail)} />
+
         <Route path="/operational-data/*" element={getElement(props, ['operationalData'], renderOperationalData)} />
+
         <Route path="/account-details/current/*" element={getElement(props, ['account'], renderAccountDetails)} />
 
         <Route path="/demo/device/:deviceId" element={getElement(props, ['deviceDemo'], renderDeviceDemo)} />
+
         <Route
           path="/clinical-indicators"
           element={getElement(props, ['clinicalIndicators:view'], renderClinicalIndicators)}
         />
+
         <Route path="/reports" element={getElement(props, ['report'], renderReports)} />
 
         <Route path="/manage" element={getElement(props, ['manage'], renderManage)} />
 
         <Route path="/browse" element={getElement(props, ['browse'], renderRedirectToBrowse)} />
-        <Route path="/browse/device" element={getElement(props, ['browse', 'device'], renderDeviceList)} />
 
+        <Route path="/browse/device" element={getElement(props, ['browse', 'device'], renderDeviceList)} />
         <Route
           path="/browse/device/:deviceId/*"
           element={getElement(props, ['browse', 'device'], renderDeviceDetail)}
         />
+
         <Route path="/browse/case/:caseId" element={getElement(props, ['browse', 'case:edit'], renderCaseDetails)} />
+        <Route path="/browse/case" element={getElement(props, ['browse', 'case'], renderCaseList)} />
+
         <Route
           path="/browse/patient/:patientId"
           element={getElement(props, ['browse', 'patient:edit'], renderClinicalHistory)}
         />
+
         <Route
           path="/browse/deviceApiKey"
           element={getElement(props, ['browse', 'deviceApiKey'], renderDeviceApiKeyList)}
         />
-        <Route path="/browse/case" element={getElement(props, ['browse', 'case'], renderCaseList)} />
+
         <Route path="/browse/router" element={getElement(props, ['browse', 'router'], renderRouterList)} />
         <Route path="/browse/router/:routerId" element={getElement(props, ['browse', 'router'], renderRouterDetail)} />
+
         <Route path="/browse/reporter" element={getElement(props, ['browse', 'reporter'], renderReporterList)} />
+
         <Route path="/browse/result" element={getElement(props, ['browse', 'result'], renderResultList)} />
         <Route
           path="/browse/result/:resultId/*"
           element={getElement(props, ['browse', 'result:edit'], renderResultDetail)}
         />
+
         <Route path="/browse/site" element={getElement(props, ['browse', 'site'], renderSiteList)} />
+        <Route path="/browse/site/create" element={getElement(props, ['browse', 'site'], renderSiteForm)} />
         <Route path="/browse/site/:siteId/*" element={getElement(props, ['browse', 'site'], renderSiteDetail)} />
+
         <Route path="/browse/person" element={getElement(props, ['browse', 'person'], renderPersonList)} />
         <Route
           path="/browse/person/:personId/*"
           element={getElement(props, ['browse', 'person:edit'], renderPersonDetail)}
         />
+
         <Route
           path="/browse/inventory/*"
           element={getElement(props, ['browse', 'inventory'], renderInventoryContainer)}
@@ -272,8 +281,11 @@ const AppRoutes = ({ props: outerProps }) => {
           path="/browse/notification/:notificationId/history"
           element={getElement(props, ['browse', 'notification'], renderNotificationDetailHistory)}
         />
+
         <Route path="/browse/report" element={getElement(props, ['browse', 'report'], renderNotFound)} />
+
         <Route path="/welcome" element={getElement(props, [], renderWelcome)} />
+
         <Route>{renderNotFound(props)}</Route>
       </Routes>
     </RoutesPermissionProvider>

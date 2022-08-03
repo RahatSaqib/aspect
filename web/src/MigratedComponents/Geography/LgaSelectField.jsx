@@ -17,7 +17,7 @@ const LgaSelectField = ({ allItemText, lgaId, stateId, onLgaIdChange, floatingLa
   ) : (
     <TextField
       select
-      labelId={floatingLabelText}
+      label={floatingLabelText}
       variant="standard"
       value={lgaId}
       onChange={handleSelectFieldChange}

@@ -103,6 +103,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.buttonDelete',
     defaultMessage: 'DELETE',
   },
+  buttonCreate: {
+    id: 'pages.SiteDetail.buttonCreate',
+    defaultMessage: 'CREATE',
+  },
   fieldNoContact: {
     id: 'pages.SiteDetail.fieldNoContact',
     defaultMessage: 'No contacts assigned to site',
