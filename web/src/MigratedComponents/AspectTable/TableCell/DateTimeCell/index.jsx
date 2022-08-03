@@ -1,16 +1,16 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
-import { useIntl } from 'react-intl'
 
 import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 const DateTimeCellBase = ({ value, flagged, since }) => {
-  const { locale } = useIntl()
+  const { locale } = useI18n()
   if (!value) return null
   const { isPast, timeSince } = timeSinceFromUTC(value, locale)
   const dateFormatted = timeAndDate(value, 'yyyy-MM-dd hh:mm:ss')

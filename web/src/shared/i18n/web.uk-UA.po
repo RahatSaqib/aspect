@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-26T17:32:05.652Z\n"
+"POT-Creation-Date: 2022-07-27T14:37:31.707Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,21 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1.1\n"
+
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. #Results (Last 30 Days)
+#: extracted_strings.json
+msgid "#Results (Last 30 Days)"
+msgstr "#Результати (останні 30 днів)"
+
+#. [pages.DeviceList.lastMonth]
+#. defaultMessage is:
+#. #Results (Preceding 30 Days)
+#: extracted_strings.json
+msgid "#Results (Preceding 30 Days)"
+msgstr "#Результати (за попередні 30 днів)"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -31,6 +45,9 @@ msgid "(New quantity on hand: {nextQuantity} {unitShortName})"
 msgstr "(Нова кількість на руках: {nextQuantity} {unitShortName})"
 
 #. [pages.InventoryItemsList.inTransitFromSiteName]
+#. defaultMessage is:
+#. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
+#. [pages.InventoryLog.inTransitFromSiteName]
 #. defaultMessage is:
 #. * excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit
 #: extracted_strings.json
@@ -395,6 +412,9 @@ msgid "Address 2"
 msgstr "Адреса 2"
 
 #. [pages.InventoryItemsList.adjust]
+#. defaultMessage is:
+#. Adjust
+#. [pages.InventoryLog.adjust]
 #. defaultMessage is:
 #. Adjust
 #: extracted_strings.json
@@ -794,7 +814,17 @@ msgstr "Тип аналізу:"
 msgid "Assay is required"
 msgstr "Потрібен аналіз"
 
+#. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove]
+#. defaultMessage is:
+#. Asserted inventory on hand
+#: extracted_strings.json
+msgid "Asserted inventory on hand"
+msgstr "Заявлений інвентар на руках"
+
 #. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
+#. defaultMessage is:
+#. Asserted zero inventory
+#. [pages.InventoryLog.ConsumableReason_AssertedZeroInventory]
 #. defaultMessage is:
 #. Asserted zero inventory
 #: extracted_strings.json
@@ -1022,6 +1052,9 @@ msgstr "BD MGIT AST"
 msgid "BD MGIT GND"
 msgstr "BD MGIT GND"
 
+#. [pages.InventoryItemsList.inventoryOnHand.backButton]
+#. defaultMessage is:
+#. Back
 #. [button_Back]
 #. defaultMessage is:
 #. Back
@@ -1038,6 +1071,28 @@ msgstr "Назад"
 #: extracted_strings.json
 msgid "Back to Login Page"
 msgstr "Повернутися на сторінку входу"
+
+#. [pages.DeviceList.availabilityRateDescription]
+#. defaultMessage is:
+#. Based on the last 30 days, represents the percentage of days when the device was reported as 'active' compared to the total number of working days
+#: extracted_strings.json
+msgid ""
+"Based on the last 30 days, represents the percentage of days when the device "
+"was reported as 'active' compared to the total number of working days"
+msgstr ""
+"На основі останніх 30 днів відображає відсоток днів, коли пристрій було "
+"повідомлено як «активний», порівняно із загальною кількістю робочих днів"
+
+#. [pages.DeviceList.errorRateDescription]
+#. defaultMessage is:
+#. Based on the last 30 days, represents the percentage of results with errors compared to the total number of performed results
+#: extracted_strings.json
+msgid ""
+"Based on the last 30 days, represents the percentage of results with errors "
+"compared to the total number of performed results"
+msgstr ""
+"На основі останніх 30 днів відображає відсоток результатів із помилками "
+"порівняно із загальною кількістю виконаних результатів"
 
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
@@ -1226,6 +1281,9 @@ msgid "Cancel"
 msgstr "Відміна"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
+#. defaultMessage is:
+#. Captured
+#. [pages.InventoryLog.ConsumableReason_Captured]
 #. defaultMessage is:
 #. Captured
 #: extracted_strings.json
@@ -1565,9 +1623,19 @@ msgstr "Здоров’я зв’язку"
 #. [pages.InventoryItemsList.consumableName]
 #. defaultMessage is:
 #. Consumable
+#. [pages.InventoryLog.consumableName]
+#. defaultMessage is:
+#. Consumable
 #: extracted_strings.json
 msgid "Consumable"
 msgstr "Витратні"
+
+#. [pages.InventoryItemsList.inventoryOnHand.consumableReason]
+#. defaultMessage is:
+#. Consumable Reason
+#: extracted_strings.json
+msgid "Consumable Reason"
+msgstr "Витратна причина"
 
 #. [forms.formItem.consumableSerial]
 #. defaultMessage is:
@@ -1649,10 +1717,10 @@ msgstr "Контакти"
 
 #. [pages.ReportIndex.MTB_Detected_RR_Detected_description]
 #. defaultMessage is:
-#. Contains all MTB Detected/RR Detected cases
+#. Contains all MTB Detected/Rif Detected cases
 #: extracted_strings.json
-msgid "Contains all MTB Detected/RR Detected cases"
-msgstr "Виявлено MTB Виявлено RIF"
+msgid "Contains all MTB Detected/Rif Detected cases"
+msgstr "Містить усі випадки MTB Detected/Rif Detected"
 
 #. [legends.Unknown.resultCategoryContaminated]
 #. defaultMessage is:
@@ -1899,6 +1967,13 @@ msgstr "Критичні помилки за пристроєм"
 msgid "Culture"
 msgstr "Культура"
 
+#. [component.Widget.activeDevicesCntTitle]
+#. defaultMessage is:
+#. Current Active Devices
+#: extracted_strings.json
+msgid "Current Active Devices"
+msgstr "Поточні активні пристрої"
+
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
 #. Current Network Status
@@ -2000,6 +2075,9 @@ msgstr "Daktari HIV-VL"
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Damage]
 #. defaultMessage is:
 #. Damage
+#. [pages.InventoryLog.ConsumableReason_Damage]
+#. defaultMessage is:
+#. Damage
 #: extracted_strings.json
 msgid "Damage"
 msgstr "Пошкодження"
@@ -2038,6 +2116,9 @@ msgstr "Здоров’я даних"
 #. defaultMessage is:
 #. Date
 #. [filter.popover.date]
+#. defaultMessage is:
+#. Date
+#. [pages.InventoryLog.date]
 #. defaultMessage is:
 #. Date
 #. [pages.Milestones.date]
@@ -2105,6 +2186,9 @@ msgstr "День"
 #. defaultMessage is:
 #. Days Stock Left
 #. [pages.InventoryItemsList.daysStockLeft]
+#. defaultMessage is:
+#. Days Stock Left
+#. [pages.InventoryLog.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
 #: extracted_strings.json
@@ -3136,6 +3220,9 @@ msgstr "Придатний до"
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Expired]
 #. defaultMessage is:
 #. Expired
+#. [pages.InventoryLog.ConsumableReason_Expired]
+#. defaultMessage is:
+#. Expired
 #: extracted_strings.json
 msgid "Expired"
 msgstr "Закінчився"
@@ -3143,11 +3230,17 @@ msgstr "Закінчився"
 #. [pages.InventoryItemsList.expiresIn]
 #. defaultMessage is:
 #. Expires
+#. [pages.InventoryLog.expiresIn]
+#. defaultMessage is:
+#. Expires
 #: extracted_strings.json
 msgid "Expires"
 msgstr "Завершується"
 
 #. [pages.InventoryItemsList.expiresOn]
+#. defaultMessage is:
+#. Expires On
+#. [pages.InventoryLog.expiresOn]
 #. defaultMessage is:
 #. Expires On
 #: extracted_strings.json
@@ -3251,6 +3344,20 @@ msgstr "Помилка експорту витратних матеріалів"
 #: extracted_strings.json
 msgid "FLQ Resistance"
 msgstr "Опір FLQ"
+
+#. [legends.Unknown.FQRPercent]
+#. defaultMessage is:
+#. FQ-R %
+#: extracted_strings.json
+msgid "FQ-R %"
+msgstr "FQ-R %"
+
+#. [legends.Unknown.FqrDetected]
+#. defaultMessage is:
+#. FQ-R Detected
+#: extracted_strings.json
+msgid "FQ-R Detected"
+msgstr "FQ-R виявлено"
 
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
@@ -4012,6 +4119,9 @@ msgstr ""
 #. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
 #. defaultMessage is:
 #. Imported
+#. [pages.InventoryLog.ConsumableReason_Imported]
+#. defaultMessage is:
+#. Imported
 #: extracted_strings.json
 msgid "Imported"
 msgstr "Імпортується"
@@ -4058,10 +4168,12 @@ msgstr "Включіть ВСІ результати, пов’язані з і�
 
 #. [pages.ReportIndex.Critical_Errors_By_Device_description]
 #. defaultMessage is:
-#. Includes a list of devices that had at least 2 critical errors
+#. Includes a list of GeneXpert devices that had at least 2 critical errors
 #: extracted_strings.json
-msgid "Includes a list of devices that had at least 2 critical errors"
-msgstr "Включає перелік пристроїв, які мали принаймні 2 критичні помилки"
+msgid ""
+"Includes a list of GeneXpert devices that had at least 2 critical errors"
+msgstr ""
+"Включає список пристроїв GeneXpert, які мали принаймні 2 критичні помилки"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -4079,6 +4191,13 @@ msgstr "Безрезультатно"
 #: extracted_strings.json
 msgid "Incorrect username or password"
 msgstr "Неправильне ім'я користувача або пароль"
+
+#. [pages.InventoryItemsList.resultQuantityOnHand]
+#. defaultMessage is:
+#. Increase/Decrease
+#: extracted_strings.json
+msgid "Increase/Decrease"
+msgstr "Збільшення/Зменшення"
 
 #. [legends.Unknown.resultCategoryIndeterminate]
 #. defaultMessage is:
@@ -4212,7 +4331,20 @@ msgstr "Склад"
 msgid "Inventory Item"
 msgstr "Тип картриджу"
 
+#. [pages.InventoryDashboard.inventoryLogTitle]
+#. defaultMessage is:
+#. Inventory Log
+#. [pages.InventoryLog.inventoryLogTitle]
+#. defaultMessage is:
+#. Inventory Log
+#: extracted_strings.json
+msgid "Inventory Log"
+msgstr "Журнал інвентаризації"
+
 #. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
+#. defaultMessage is:
+#. Inventory levels have been adjusted successfully
+#. [pages.InventoryLog.inventoryAdjustedSuccessfully]
 #. defaultMessage is:
 #. Inventory levels have been adjusted successfully
 #: extracted_strings.json
@@ -4220,6 +4352,9 @@ msgid "Inventory levels have been adjusted successfully"
 msgstr "Рівні запасів успішно відрегульовані"
 
 #. [pages.InventoryItemsList.inventoryItemsTitle]
+#. defaultMessage is:
+#. Inventory on Hand
+#. [pages.InventoryItemsList.inventoryOnHand]
 #. defaultMessage is:
 #. Inventory on Hand
 #: extracted_strings.json
@@ -4377,9 +4512,6 @@ msgid "Last"
 msgstr "Останній"
 
 #. [component.Widget.last30Days]
-#. defaultMessage is:
-#. Last 30 Days
-#. [pages.DeviceList.lastMonth]
 #. defaultMessage is:
 #. Last 30 Days
 #. [pages.dateRangeSelector.last30Days]
@@ -4811,6 +4943,9 @@ msgstr "Довгота"
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Lost]
 #. defaultMessage is:
 #. Lost
+#. [pages.InventoryLog.ConsumableReason_Lost]
+#. defaultMessage is:
+#. Lost
 #: extracted_strings.json
 msgid "Lost"
 msgstr "Втрачений"
@@ -4831,6 +4966,9 @@ msgstr "Лот"
 #. [pages.InventoryItemsList.lotNumber]
 #. defaultMessage is:
 #. Lot Number
+#. [pages.InventoryLog.lotNumber]
+#. defaultMessage is:
+#. Lot Number
 #: extracted_strings.json
 msgid "Lot Number"
 msgstr "Номер партії"
@@ -4849,6 +4987,9 @@ msgstr "Низький запас"
 msgid "MTB"
 msgstr "MTB"
 
+#. [legends.Unknown.MtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [resultCategoryGroup.gxMtbRifMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -5056,6 +5197,13 @@ msgstr "MTB Без результату"
 msgid "MTB Not Detected"
 msgstr "MTB не виявлено"
 
+#. [pages.Status.TB.mtbDetectedTrendsInQuarterTitle.title]
+#. defaultMessage is:
+#. MTB Positivity In Quarters
+#: extracted_strings.json
+msgid "MTB Positivity In Quarters"
+msgstr "Позитив MTB у кварталах"
+
 #. [resultCategoryGroup.gxMtbRifUltraMtbTraceDetected]
 #. defaultMessage is:
 #. MTB Trace Detected
@@ -5065,6 +5213,27 @@ msgstr "MTB не виявлено"
 #: extracted_strings.json
 msgid "MTB Trace Detected"
 msgstr "Виявлено трасування MTB"
+
+#. [legends.Unknown.MTBPercent]
+#. defaultMessage is:
+#. MTB%
+#: extracted_strings.json
+msgid "MTB%"
+msgstr "MTB%"
+
+#. [legends.Unknown.MTBPlus]
+#. defaultMessage is:
+#. MTB+
+#: extracted_strings.json
+msgid "MTB+"
+msgstr "MTB+"
+
+#. [pages.Status.TB.mtbDetectedTrendsInYear.title]
+#. defaultMessage is:
+#. MTB+ Trends In Year
+#: extracted_strings.json
+msgid "MTB+ Trends In Year"
+msgstr "Тенденції MTB+ за рік"
 
 #. [filter.AssayTypeSelectField.assayTypeMtbRif]
 #. defaultMessage is:
@@ -5334,6 +5503,9 @@ msgstr "Негативні"
 #. [pages.InventoryItemsList.never]
 #. defaultMessage is:
 #. Never
+#. [pages.InventoryLog.never]
+#. defaultMessage is:
+#. Never
 #: extracted_strings.json
 msgid "Never"
 msgstr "Ніколи"
@@ -5361,6 +5533,13 @@ msgstr "Нове повідомлення"
 #: extracted_strings.json
 msgid "New Password"
 msgstr "Новий пароль"
+
+#. [pages.InventoryItemsList.newQuantityOnHand]
+#. defaultMessage is:
+#. New Quantity On Hand
+#: extracted_strings.json
+msgid "New Quantity On Hand"
+msgstr "Нова кількість в наявності"
 
 #. [pages.ResultList.newResult]
 #. defaultMessage is:
@@ -5409,6 +5588,9 @@ msgstr "Немає"
 #. defaultMessage is:
 #. No Consumption
 #. [pages.InventoryItemsList.noConsumption]
+#. defaultMessage is:
+#. No Consumption
+#. [pages.InventoryLog.noConsumption]
 #. defaultMessage is:
 #. No Consumption
 #: extracted_strings.json
@@ -5608,6 +5790,9 @@ msgstr "Неможливо"
 #. [pages.InventoryItemsList.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
+#. [pages.InventoryLog.notRecorded]
+#. defaultMessage is:
+#. Not Recorded
 #: extracted_strings.json
 msgid "Not Recorded"
 msgstr "Не записано"
@@ -5640,6 +5825,9 @@ msgstr "Примітка"
 #. defaultMessage is:
 #. Notes
 #. [pages.InventoryAdjustmentDialogForm.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.InventoryLog.notes]
 #. defaultMessage is:
 #. Notes
 #. [pages.ContactDetails.notes]
@@ -6509,13 +6697,6 @@ msgstr "Передано позитивні результати тесту"
 msgid "Positives"
 msgstr "Позитиви"
 
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. Preceding 30 Days
-#: extracted_strings.json
-msgid "Preceding 30 Days"
-msgstr "Попередні 30 днів"
-
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -6599,6 +6780,9 @@ msgstr "Профіль"
 #. [pages.InventoryItemsList.projectedWaste]
 #. defaultMessage is:
 #. Projected stock waste
+#. [pages.InventoryLog.projectedWaste]
+#. defaultMessage is:
+#. Projected stock waste
 #: extracted_strings.json
 msgid "Projected stock waste"
 msgstr "Прогнозований запас відходів"
@@ -6667,6 +6851,13 @@ msgstr "Контроль якості"
 msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
 
+#. [pages.InventoryLog.quantity]
+#. defaultMessage is:
+#. Quantity
+#: extracted_strings.json
+msgid "Quantity"
+msgstr "Кількість"
+
 #. [pages.ReceiveInventoryDialogForm.quantity]
 #. defaultMessage is:
 #. Quantity Received
@@ -6726,6 +6917,34 @@ msgstr "Опір RIF"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Кількість позитивних результатів"
 
+#. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
+#. defaultMessage is:
+#. RRD In Quarters
+#: extracted_strings.json
+msgid "RRD In Quarters"
+msgstr "RRD в кварталах"
+
+#. [pages.Status.TB.rifDetectedTrendsInYear.title]
+#. defaultMessage is:
+#. RRD Trends In Year
+#: extracted_strings.json
+msgid "RRD Trends In Year"
+msgstr "Тенденції RRD за рік"
+
+#. [legends.Unknown.RRDHash]
+#. defaultMessage is:
+#. RRD#
+#: extracted_strings.json
+msgid "RRD#"
+msgstr "RRD #"
+
+#. [legends.Unknown.RRDPercent]
+#. defaultMessage is:
+#. RRD%
+#: extracted_strings.json
+msgid "RRD%"
+msgstr "RRD%"
+
 #. [pages.ResultList.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
@@ -6760,6 +6979,9 @@ msgstr "Здоров’я реагенту"
 #. defaultMessage is:
 #. Reason
 #. [pages.InventoryAdjustmentDialogForm.reason]
+#. defaultMessage is:
+#. Reason
+#. [pages.InventoryLog.reason]
 #. defaultMessage is:
 #. Reason
 #. [pages.DailyStatusDialog.reason]
@@ -6959,6 +7181,24 @@ msgstr "Звітність з"
 #: extracted_strings.json
 msgid "Reports"
 msgstr "Звіти"
+
+#. [pages.DeviceList.lastSeenDescription]
+#. defaultMessage is:
+#. Represents the last time when the GxConnect application made a connection with Aspect
+#: extracted_strings.json
+msgid ""
+"Represents the last time when the GxConnect application made a connection "
+"with Aspect"
+msgstr "Позначає час останнього підключення програми GxConnect до Aspect"
+
+#. [pages.DeviceList.resultCountDescription]
+#. defaultMessage is:
+#. Represents the number of results conducted from {startDate} to {endDate}
+#: extracted_strings.json
+msgid ""
+"Represents the number of results conducted from {startDate} to {endDate}"
+msgstr ""
+"Представляє кількість результатів, отриманих з {startDate} до {endDate}"
 
 #. [pages.ResetPassword.adminHelpHeader]
 #. defaultMessage is:
@@ -7405,6 +7645,17 @@ msgstr "Мізерний"
 msgid "Scanty (1-9/100)"
 msgstr "Мізерний (1-9 / 100)"
 
+#. [component.Widget.activeDevicesCntDescription]
+#. defaultMessage is:
+#. Scoped to the last 24 hours, shows the number of devices that uploaded tests (Active), compared to the number of devices that pinged to Aspect (Online).
+#: extracted_strings.json
+msgid ""
+"Scoped to the last 24 hours, shows the number of devices that uploaded tests "
+"(Active), compared to the number of devices that pinged to Aspect (Online)."
+msgstr ""
+"За останні 24 години показує кількість пристроїв, які завантажили тести "
+"(активні), порівняно з кількістю пристроїв, які пінгували до Aspect (онлайн)."
+
 #. [errorResponseMessages.fetchAssayTypes.GET.400.title]
 #. defaultMessage is:
 #. Searching Assay Types Failed
@@ -7620,6 +7871,13 @@ msgstr "Виберіть Причина"
 #: extracted_strings.json
 msgid "Select Result Category ..."
 msgstr "Виберіть категорію результатів ..."
+
+#. [filter.clientSideFilterSelect.selectState]
+#. defaultMessage is:
+#. Select State
+#: extracted_strings.json
+msgid "Select State"
+msgstr "Виберіть грамаду"
 
 #. [pages.dateRangeSelector.selectWeek]
 #. defaultMessage is:
@@ -8104,6 +8362,9 @@ msgstr ""
 #. [pages.InventoryItemsList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# supply} other {# supplies} }
+#. [pages.InventoryLog.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# supply} other {# supplies} }
 #: extracted_strings.json
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
@@ -8229,6 +8490,9 @@ msgstr "Ідентифікатор сайту"
 #. defaultMessage is:
 #. Site Name
 #. [pages.InventoryItemsList.siteName]
+#. defaultMessage is:
+#. Site Name
+#. [pages.InventoryLog.siteName]
 #. defaultMessage is:
 #. Site Name
 #: extracted_strings.json
@@ -8386,6 +8650,9 @@ msgstr "Запаси"
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Stolen]
 #. defaultMessage is:
 #. Stolen
+#. [pages.InventoryLog.ConsumableReason_Stolen]
+#. defaultMessage is:
+#. Stolen
 #: extracted_strings.json
 msgid "Stolen"
 msgstr "Вкрадене"
@@ -8443,6 +8710,9 @@ msgstr "Успіху"
 msgid "Successfully"
 msgstr "Успішно"
 
+#. [pages.InventoryDashboard.SuppliesTabTitle]
+#. defaultMessage is:
+#. Supplies
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
 #. Supplies
@@ -8644,6 +8914,13 @@ msgstr "Тест розпочато у"
 msgid "Test Updated"
 msgstr "Тест оновлено"
 
+#. [pages.InventoryLog.ConsumableReason_TestConducted]
+#. defaultMessage is:
+#. Test conducted
+#: extracted_strings.json
+msgid "Test conducted"
+msgstr "Випробування проведено"
+
 #. [pages.DeviceList.errorRate]
 #. defaultMessage is:
 #. Test failures
@@ -8657,6 +8934,13 @@ msgstr "Невдалі тести"
 #: extracted_strings.json
 msgid "Test history"
 msgstr "Історія випробувань"
+
+#. [pages.Status.TB.testingTrendsInYear.title]
+#. defaultMessage is:
+#. Testing Trends In Year
+#: extracted_strings.json
+msgid "Testing Trends In Year"
+msgstr "Тестування тенденцій року"
 
 #. [component.Widget.dashboardWidgetUnitTests]
 #. defaultMessage is:
@@ -8699,21 +8983,15 @@ msgstr "Тести проходять між ними"
 #. defaultMessage is:
 #. The average custom fields completion percent in the current month. The calculation is based on the comparative between the completed score of each result's custom fields and total score of the fields assigned to the assay
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The average custom fields completion percent in the current month. Each "
-#| "custom field has a score assigned, and the completion percent is based on "
-#| "the comparative between the completed score of each result and total "
-#| "score of the fields assigned to the assay"
 msgid ""
 "The average custom fields completion percent in the current month. The "
 "calculation is based on the comparative between the completed score of each "
 "result's custom fields and total score of the fields assigned to the assay"
 msgstr ""
-"Середній відсоток заповнення спеціальних полів у поточному місяці. Кожному "
-"спеціальному полю призначається оцінка, а відсоток завершення базується на "
-"порівнянні між завершеною оцінкою кожного результату та загальною оцінкою "
-"полів, призначених для аналізу."
+"Середній відсоток заповнення спеціальних полів у поточному місяці. "
+"Розрахунок ґрунтується на порівнянні між заповненою оцінкою кожного "
+"спеціального поля результату та загальною оцінкою полів, призначених для "
+"аналізу"
 
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
@@ -9353,6 +9631,15 @@ msgstr "Цей електронний лист не дійсний"
 msgid "This field is required"
 msgstr "Це поле є обов`язковим для заповнення"
 
+#. [pages.InventoryItemsList.inventoryOnHand.mandatoryNote]
+#. defaultMessage is:
+#. This is a mandatory field its mandatory and must be at least 3 characters long
+#: extracted_strings.json
+msgid ""
+"This is a mandatory field its mandatory and must be at least 3 characters "
+"long"
+msgstr "Це обов’язкове поле, воно має містити щонайменше 3 символи"
+
 #. [pages.PersonList.disabled.disabledOn]
 #. defaultMessage is:
 #. This person was disabled on
@@ -9579,6 +9866,13 @@ msgstr "Вибрати все"
 msgid "Topic"
 msgstr "Тема"
 
+#. [legends.Unknown.Total]
+#. defaultMessage is:
+#. Total
+#: extracted_strings.json
+msgid "Total"
+msgstr "Всього"
+
 #. [performance.barChart.capacity]
 #. defaultMessage is:
 #. Total Capacity
@@ -9616,6 +9910,13 @@ msgstr "Загальна кількість помилок"
 msgid "Total Results"
 msgstr "Всього результатів"
 
+#. [legends.Unknown.TotalTests]
+#. defaultMessage is:
+#. Total Tests
+#: extracted_strings.json
+msgid "Total Tests"
+msgstr "Всього тестів"
+
 #. [pages.Notifications.table.totalTriggersHeader]
 #. defaultMessage is:
 #. Total Triggers
@@ -9632,6 +9933,20 @@ msgstr "Всього тригерів"
 #: extracted_strings.json
 msgid "Trace Detected"
 msgstr "Виявлено слід"
+
+#. [pages.InventoryLog.ConsumableReason_TransferReceived]
+#. defaultMessage is:
+#. Tranfer received from {refSiteName}
+#: extracted_strings.json
+msgid "Tranfer received from {refSiteName}"
+msgstr "Отримано переказ від {refSiteName}"
+
+#. [pages.InventoryLog.ConsumableReason_TransferSent]
+#. defaultMessage is:
+#. Tranfer sent to {refSiteName}
+#: extracted_strings.json
+msgid "Tranfer sent to {refSiteName}"
+msgstr "Переказ надіслано до {refSiteName}"
 
 #. [pages.transferResult.buttonTransfer]
 #. defaultMessage is:
@@ -10164,6 +10479,13 @@ msgstr "Протягом 2 годин після тестування"
 msgid "Workflow Status"
 msgstr "Статус робочого процесу"
 
+#. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
+#. defaultMessage is:
+#. XDR FLQ Resistance
+#: extracted_strings.json
+msgid "XDR FLQ Resistance"
+msgstr "Опір XDR FLQ"
+
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
 #. Xpert HCV Viral Load Cartridge
@@ -10647,6 +10969,9 @@ msgstr "н/д"
 msgid "name/email includes \"{contactNameOrEmail}\""
 msgstr "ім’я / електронна адреса містить \"{contactNameOrEmail}\""
 
+#. [pages.InventoryItemsList.inventoryOnNote]
+#. defaultMessage is:
+#. notes
 #. [pages.DeviceDetailProfile.notes]
 #. defaultMessage is:
 #. notes
@@ -10688,6 +11013,13 @@ msgstr "кількість надісланих текстових повідо�
 #: extracted_strings.json
 msgid "of {unit} currently reported"
 msgstr "з {unit} наразі повідомлено"
+
+#. [component.Widget.ofOnlineDevices]
+#. defaultMessage is:
+#. of {unit} online devices
+#: extracted_strings.json
+msgid "of {unit} online devices"
+msgstr "з {unit} онлайн-пристроїв"
 
 #. [component.Widget.ofTotalModules]
 #. defaultMessage is:

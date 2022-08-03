@@ -20,6 +20,7 @@ const admin = {
     'report_custom_fields_completion',
     'inventory_log',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -154,6 +155,7 @@ const manager = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -244,6 +246,7 @@ const regionalOfficer = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -337,6 +340,7 @@ const labUser = {
     'device_utilization_per_day',
     'module_activity_report',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -430,6 +434,7 @@ const clinician = {
     'device_utilization_per_day',
     'module_activity_report',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -574,6 +579,7 @@ const ntp = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -961,6 +967,7 @@ const labSupervisor = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -1037,6 +1044,7 @@ const medTech = {
     'all_results',
     'device_utilization_per_day',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -1114,6 +1122,7 @@ const dataViewer = {
     'device_utilization_per_day',
     'module_activity_report',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -1193,6 +1202,7 @@ const labAdmin = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {

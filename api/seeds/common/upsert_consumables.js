@@ -40,16 +40,24 @@ const upsertConsumableAssay = async (knex, whitelistedConsumablesFixture) => {
  * @param {object} knex
  * @param {boolean} allowInserts If false, only updates will be executed
  * @param {array} assayWhitelist The array of assays external ids which consumables will be upserted
+ * @param {object} strategyOverrides A dictionary of strategies by consumable external id. Ex.: { GxMtbRifCartridge: 'withExpirationDateStrategy' }
  */
-module.exports = async (knex, allowInserts = true, assayWhitelist = []) => {
+module.exports = async (knex, allowInserts = true, assayWhitelist = [], strategyOverrides = {}) => {
   const consumablesFixture = await getConsumables()
 
   if (assayWhitelist.length === 0) assayWhitelist = await knex('Assay').pluck('externalId')
 
   // Upsert Consumable table, only whitelisted
-  const whitelistedConsumablesFixture = consumablesFixture.filter(
+  let whitelistedConsumablesFixture = consumablesFixture.filter(
     ({ assays }) => assays.filter(a => includes(assayWhitelist, a.externalId)).length > 0
   )
+
+  // Assign strategies
+  whitelistedConsumablesFixture = whitelistedConsumablesFixture.map(c => {
+    if (strategyOverrides[c.externalId]) return { ...c, strategy: strategyOverrides[c.externalId] }
+    return c
+  })
+
   const consumablesToUpsert = await Promise.map(whitelistedConsumablesFixture, async c => {
     if (!c.unit) {
       c.unit = await unitToId('Piece')

@@ -1,9 +1,11 @@
+const _ = require('lodash')
 const { subMonths } = require('date-fns')
 
 const { addConstraints, getConstraints } = require('../../auth/constraints')
-const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { getDatesFromQuery } = require('../../shared/date')
+const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
+const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 
 /**
  * **************************************
@@ -36,7 +38,7 @@ const countXdr = value =>
 /**
  * getReportXdrDevicesSummary
  */
-async function getReportXdrDevicesSummary(auth, query) {
+module.exports = async (auth, query) => {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const dates = getDatesFromQuery(query)
@@ -49,6 +51,18 @@ async function getReportXdrDevicesSummary(auth, query) {
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
 
+  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
+
+  // ----------------
+  const mtbDetected = `
+    JSON_SEARCH(
+      r.resultData ->> '$.detectedResistance[*]',
+      'one',
+      'MTB'
+    ) IS NOT NULL
+    OR
+    r.resultCategory1 IN (${positiveResultCategories})
+  `
   const countsBase = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
@@ -75,7 +89,7 @@ async function getReportXdrDevicesSummary(auth, query) {
       totalPmdtSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
       totalXdrSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
       cntAll: knex.raw('DISTINCT r.id'),
-      cnt_mtb: countXdr('MTB'),
+      cnt_mtb: counter('r.id', mtbDetected),
       cnt_inh: countXdr('INH'),
       cnt_flq: countXdr('FLQ'),
       cnt_amk: countXdr('AMK'),
@@ -118,8 +132,4 @@ async function getReportXdrDevicesSummary(auth, query) {
     length: data.length,
     data,
   }
-}
-
-module.exports = {
-  getReportXdrDevicesSummary,
 }

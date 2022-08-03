@@ -6,7 +6,7 @@ import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
-import { injectIntl, defineMessages, useIntl } from 'react-intl'
+import { injectIntl, defineMessages } from 'react-intl'
 import isNil from 'lodash/isNil'
 
 import Paper from '@material-ui/core/Paper'
@@ -28,6 +28,7 @@ import ShellContent from '../../Shell/Content'
 import AspectButton from '../../../components/shared/AspectButton'
 
 import styles from './SiteDetail.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -58,7 +59,7 @@ export const SiteDetail = props => {
     location,
   } = props
   const { siteId } = useParams()
-  const intl = useIntl()
+  const intl = useI18n()
   const { editable, site, siteTags, siteContacts, user } = useSelector(state => {
     const site = state.site.items.byId.get(siteId)
     const siteTags = state.tag.tags.getIn(['site', siteId], Immutable.List())

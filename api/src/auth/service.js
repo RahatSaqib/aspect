@@ -763,4 +763,5 @@ module.exports = {
   getGeographyAccess,
   getUserJobFunctions,
   getPersonByPersonId,
+  getDisplayPreferences,
 }

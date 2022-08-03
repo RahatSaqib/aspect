@@ -55,23 +55,27 @@ const buildMessagesFromI18nKeys = item => {
 }
 
 const buildWidgetToLinkParams = (link, linkParams) => {
+  const params = new URLSearchParams()
   const inParams = JSON.parse(linkParams)
-  if (inParams && Object.keys(inParams).length !== 0 && inParams.constructor === Object) {
-    let tempParams = {}
-    for (const [key, value] of Object.entries(omit(inParams, ['permissions']))) {
-      switch (true) {
-        case key === 'dateRange':
-          tempParams = { ...tempParams, ...buildDateRange(value) }
-          break
 
-        default:
-          tempParams[key] = value
-          break
+  if (!inParams || Object.keys(inParams).length === 0 || inParams instanceof Object === false) {
+    return link
+  }
+
+  for (const [key, value] of Object.entries(omit(inParams, ['permissions']))) {
+    if (key === 'dateRange') {
+      for (const [key, value] of Object.entries(buildDateRange(value))) {
+        params.append(key, value)
+      }
+    } else {
+      const values = value instanceof Array ? value : [value]
+      for (const singleValue of values) {
+        params.append(key, singleValue)
       }
     }
-    return `${link}?filters=${encodeURIComponent(new URLSearchParams(tempParams).toString())}`
   }
-  return link
+
+  return `${link}?filters=${encodeURIComponent(params.toString())}`
 }
 
 const buildDateRange = term => {

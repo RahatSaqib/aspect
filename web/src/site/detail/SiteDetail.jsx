@@ -6,10 +6,11 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
-import { injectIntl, useIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import isEditable from '../../shared/selectors/isEditable'
 import { fetchSingleSite, updateSingleSiteFromForm, updateLatLongFromFormAddress, Site } from '../SiteRedux'
@@ -27,7 +28,7 @@ import styles from './SiteDetail.css'
 const cssClasses = classnames.bind(styles)
 
 export const SiteDetail = props => {
-  const intl = useIntl()
+  const intl = useI18n()
   const {
     updateSingleSiteFromForm,
     site,

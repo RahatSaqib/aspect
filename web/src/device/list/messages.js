@@ -16,9 +16,17 @@ export const messages = {
       id: 'pages.DeviceList.device',
       defaultMessage: 'Device',
     },
-    status: {
-      id: 'pages.DeviceList.status',
-      defaultMessage: 'Status',
+    site: {
+      id: 'pages.DeviceList.site',
+      defaultMessage: 'Site',
+    },
+    maintenanceStatus: {
+      id: 'pages.DeviceList.maintenanceStatus',
+      defaultMessage: 'Maintenance Status',
+    },
+    approvalStatus: {
+      id: 'pages.DeviceList.approvalStatus',
+      defaultMessage: 'Approval Status',
     },
     availabilityRate: {
       id: 'pages.DeviceList.availabilityRate',
@@ -56,7 +64,7 @@ export const messages = {
     },
     lastSeenDescription: {
       id: 'pages.DeviceList.lastSeenDescription',
-      defaultMessage: 'Represents the last time when the GxConnect application made a connection with Aspect',
+      defaultMessage: 'Represents the last time when the connector application made a connection with Aspect',
     },
     numberOfTests: {
       id: 'pages.DeviceList.numberOfTests',
@@ -64,11 +72,15 @@ export const messages = {
     },
     lastMonth: {
       id: 'pages.DeviceList.lastMonth',
-      defaultMessage: '#Results (Last 30 Days)',
+      defaultMessage: '#Results (Preceding 30 Days)',
+    },
+    resultCountDescription: {
+      id: 'pages.DeviceList.resultCountDescription',
+      defaultMessage: 'Represents the number of results conducted from {startDate} to {endDate}',
     },
     thisMonth: {
       id: 'pages.DeviceList.thisMonth',
-      defaultMessage: '#Results (Preceding 30 Days)',
+      defaultMessage: '#Results (Last 30 Days)',
     },
     needsRepair: {
       id: 'pages.DeviceList.needsRepair',
@@ -128,6 +140,42 @@ export const messages = {
     issueCategoryConnectivityHealth: {
       id: 'pages.DeviceList.connectivityHealth',
       defaultMessage: 'Connectivity',
+    },
+    connectorStatus: {
+      id: 'pages.DeviceList.connectorStatus',
+      defaultMessage: 'Connector Status',
+    },
+    connectorVersion: {
+      id: 'pages.DeviceList.connectorVersion',
+      defaultMessage: 'Connector Version',
+    },
+    lastResultConductedOn: {
+      id: 'pages.DeviceList.lastResultConductedOn',
+      defaultMessage: 'Last Result Conducted On',
+    },
+    deviceStatus: {
+      id: 'pages.DeviceList.deviceStatus',
+      defaultMessage: 'Device Status',
+    },
+    online: {
+      id: 'pages.DeviceList.online',
+      defaultMessage: 'Online',
+    },
+    offline: {
+      id: 'pages.DeviceList.offline',
+      defaultMessage: 'Offline',
+    },
+    up: {
+      id: 'pages.DeviceList.up',
+      defaultMessage: 'Up',
+    },
+    down: {
+      id: 'pages.DeviceList.down',
+      defaultMessage: 'Down',
+    },
+    unknown: {
+      id: 'pages.DeviceList.unknown',
+      defaultMessage: 'Unknown',
     },
   }),
 }

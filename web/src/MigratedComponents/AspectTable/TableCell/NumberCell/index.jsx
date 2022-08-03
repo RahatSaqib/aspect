@@ -1,13 +1,12 @@
 import React from 'react'
 import { number } from 'prop-types'
-import { useIntl } from 'react-intl'
-
+import useI18n from '../../../../Hooks/i18n/useI18n'
 /**
  * Component to render a numbered cell
  */
 
 const NumberCell = ({ value }) => {
-  const { formatNumber } = useIntl()
+  const { formatNumber } = useI18n()
   return <div>{formatNumber(value)}</div>
 }
 

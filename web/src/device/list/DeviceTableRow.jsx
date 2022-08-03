@@ -11,6 +11,7 @@ import { formatRelative } from '../../shared/utils/dateFormat'
 
 import styles from './DeviceTableRow.css'
 import stylesShared from '../../components/shared/DataTableRow.css'
+import StatusIcon from '../../components/shared/StatusIcon'
 
 const cssClasses = classnames.bind(styles)
 const sharedCssClasses = classnames.bind(stylesShared)
@@ -24,6 +25,7 @@ const Rate = ({ intl, it, messageId, threshold }) => (
     ) : (
       <ColoredNumber number={it.rate} formatNumberStyle="percent" error={threshold && it.rate > threshold} />
     )}
+    <br />
     <span className={cssClasses('Rate__hover')}>{intl.formatMessage(messageId, it)}</span>
   </span>
 )
@@ -31,18 +33,32 @@ const Rate = ({ intl, it, messageId, threshold }) => (
 const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { errorRateThreshold }, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses('TableRow', restProps.className)}>
     <TableCell>{device.get('name')}</TableCell>
-    <TableCell>{intl.formatMessage(messages[device.get('statusI18nKey')])}</TableCell>
+    <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
     <TableCell>
-      <Rate intl={intl} it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />
+      {device.get('approvalStatusI18nKey') ? intl.formatMessage(messages[device.get('approvalStatusI18nKey')]) : 'N/A'}
     </TableCell>
     <TableCell>
-      <Rate
-        intl={intl}
-        it={device.get('error').toJS()}
-        threshold={errorRateThreshold}
-        messageId={messages.errorOfTotal}
+      <StatusIcon
+        title={intl.formatMessage(messages[device.get('deviceStatus')])}
+        status={
+          device.get('deviceStatus') === 'up' ? 'success' : device.get('deviceStatus') === 'down' ? 'error' : 'warning'
+        }
       />
     </TableCell>
+    <TableCell>
+      {device.get('maintenanceStatusI18nKey')
+        ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
+        : 'N/A'}
+    </TableCell>
+    <TableCell>{formatRelative(device.get('lastResultConductedOn'))}</TableCell>
+    <TableCell>
+      <StatusIcon
+        title={intl.formatMessage(messages[device.get('connectorStatus')])}
+        status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
+      />
+    </TableCell>
+    <TableCell>{formatRelative(device.get('lastPingOn'))}</TableCell>
+    <TableCell hiddenOn="lg">{device.get('connectorVersion')}</TableCell>
     <TableCell className={cssClasses('TableCell--alerts')}>
       {device.get('issueCategories').map(it => (
         <ColoredButton
@@ -58,10 +74,24 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
         />
       ))}
     </TableCell>
-    <TableCell>{formatRelative(device.get('createdOn'))}</TableCell>
-    <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
-    <TableCell numeric>{intl.formatNumber(device.get('resultCountLastMonth'))}</TableCell>
-    <TableCell numeric>{intl.formatNumber(device.get('resultCountThisMonth'))}</TableCell>
+    <TableCell hiddenOn="lg">
+      <Rate intl={intl} it={device.get('availability').toJS()} messageId={messages.availabilityOfDays} />
+    </TableCell>
+    <TableCell hiddenOn="lg">
+      <Rate
+        intl={intl}
+        it={device.get('error').toJS()}
+        threshold={errorRateThreshold}
+        messageId={messages.errorOfTotal}
+      />
+    </TableCell>
+    <TableCell hiddenOn="lg">{formatRelative(device.get('createdOn'))}</TableCell>
+    <TableCell hiddenOn="lg" numeric>
+      {intl.formatNumber(device.get('resultCountLastMonth'))}
+    </TableCell>
+    <TableCell hiddenOn="lg" numeric>
+      {intl.formatNumber(device.get('resultCountThisMonth'))}
+    </TableCell>
   </TableRow>
 )
 
