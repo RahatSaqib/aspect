@@ -97,7 +97,11 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         mgitResultTypeCode === 'AST_MGIT'
           ? [allAssayIds.assayBdMgitAst, allAssayIds.assayGenericDst].filter(a => !!a)
           : [allAssayIds.assayBdMgitGnd, allAssayIds.assayGenericCulture].filter(a => !!a)
-
+      if (_.isEmpty(assayIds)) {
+        throw Boom.notImplemented(
+          `No supported assays exist for ${mgitResultTypeCode} BD MGIT results on this instance of Aspect`
+        )
+      }
       // Use test status to determine workflow status and result category 1:
       const mgitTestStatus = getAstmField(astm, 'R,4,1,1')
       let resultCategory1 = null

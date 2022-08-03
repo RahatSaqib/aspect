@@ -197,6 +197,9 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const { encodedResult } = mappedResultData
           const assayBdMgitAstId = await assayToId('assayBdMgitAst')
           const assayGenericDstId = await assayToId('assayGenericDst')
+          if (!assayBdMgitAstId && !assayGenericDstId) {
+            throw Boom.notImplemented('MGIT AST & TB DST Assays are not currently supported on this instance of Aspect')
+          }
           const externalId = `${site.externalId}_${samples[0].externalId}_DST`
           const resultSignOff = this.getResultSignOff('DST', payload)
 
@@ -338,6 +341,11 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
           const { encodedResult } = mappedResultData
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
+          if (!assayBdMgitGndId && !assayGenericCultureId) {
+            throw Boom.notImplemented(
+              'MGIT GND & Generic Culture Assays are not currently supported on this instance of Aspect'
+            )
+          }
           const cultureSamples = []
           if (encodedResult.result1) {
             cultureSamples.push(samples[0])
