@@ -208,7 +208,6 @@ async function createNotifications(knex, action, context) {
   const { jobFunctions = [], persons = [], sendToClinician = false, sendToPatient = false } = filterCondition || {}
   if (policies) {
     const [firstPolicy] = policies
-
     if (firstPolicy && (sendToClinician || sendToPatient)) {
       const nonPersonsToNotify = _.filter(
         [
