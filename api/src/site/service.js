@@ -44,6 +44,8 @@ const SELECT_SHOW_FIELDS = [
   's.geographyId',
   's.siteTypeId',
   't.name as siteType',
+  's.hoursStart',
+  's.hoursEnd',
 ]
 
 async function listSites(request) {
