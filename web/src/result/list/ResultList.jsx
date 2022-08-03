@@ -8,11 +8,11 @@ import filter from 'lodash/filter'
 import identity from 'lodash/identity'
 import isEmpty from 'lodash/isEmpty'
 import Immutable from 'immutable'
-import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import { useQuery } from 'react-query'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../shared/metaReducers/table'
@@ -303,7 +303,7 @@ export const ResultListWithProps = ({
 
 const ResultList = () => {
   // >>>>>> Hooks <<<<<<
-  const intl = useIntl()
+  const intl = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
   const {

@@ -2,7 +2,7 @@ import flowRight from 'lodash/flowRight'
 import fromPairs from 'lodash/fromPairs'
 import React, { useState, useEffect } from 'react'
 
-import { useIntl, defineMessages } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { Helmet } from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import classnames from 'classnames/bind'
@@ -20,6 +20,7 @@ import ReportCard from './ReportCard'
 import { useAuthState } from '../../Providers/AuthProvider'
 import { showError } from '../../appNotification/AppNotificationRedux'
 import messages from './messages'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import styles from './ReportIndex.css'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
@@ -49,7 +50,7 @@ const filtersFromLocation = composeSanitizer(
 const ReportIndex = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const intl = useIntl()
+  const intl = useI18n()
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()

@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import { useDispatch } from 'react-redux'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
@@ -25,6 +25,7 @@ import { DEVICE_DETAIL, DEVICE_PERFORMANCE } from '../../QueryFetch/Device/index
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../device/DeviceRedux'
 
 import styles from './DeviceDetail.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -55,7 +56,7 @@ export const DeviceDetail = props => {
   const searchParams = new URLSearchParams(location.search)
   const navigate = useNavigate()
   const { deviceId } = useParams()
-  const intl = useIntl()
+  const intl = useI18n()
   const queryClient = useQueryClient()
 
   const { data: { device = {}, devicePerformance = {} } = {}, isLoading } = useQuery(

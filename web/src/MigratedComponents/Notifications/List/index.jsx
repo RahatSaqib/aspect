@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { Helmet } from 'react-helmet'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import classnames from 'classnames/bind'
 
@@ -19,6 +19,7 @@ import { NOTIFICATION_LIST } from '../../QueryFetch/Notification'
 import { baseConfig, getCreateNotificationMenuProps } from './config'
 
 import styles from '../Notifications.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -39,7 +40,7 @@ const FILTERS_CONFIG = [
 ]
 
 const NotificationList = () => {
-  const intl = useIntl()
+  const intl = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
   const query = useUrlQuery(location.search)

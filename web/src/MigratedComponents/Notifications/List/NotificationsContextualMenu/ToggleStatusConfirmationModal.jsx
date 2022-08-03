@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Button from '@material-ui/core/Button'
-import { useIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 import { useMutation } from 'react-query'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import messages from './messages'
 
@@ -17,7 +17,7 @@ const ToggleStatusConfirmationModal = ({
   onClose,
 }) => {
   const [notificationData, setNotificationData] = useState({})
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const { mutate: toggleStatusNotificationSubmit } = useMutation(
     ({ id }) => {
       const endpoint = `${NOTIFICATION_DETAIL.ENDPOINT}/${id}/change-status`

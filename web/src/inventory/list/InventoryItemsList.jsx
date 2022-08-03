@@ -4,7 +4,6 @@ import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React, { useEffect, useCallback, useState, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useIntl } from 'react-intl'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
@@ -12,6 +11,7 @@ import TableBody from '@material-ui/core/TableBody'
 import Switch from '@material-ui/core/Switch'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
+import useI18n from '../../Hooks/i18n/useI18n'
 import { useAuthState } from '../../Providers/AuthProvider'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
@@ -360,7 +360,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
   const queryClient = useQueryClient()
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
-  const intl = useIntl()
+  const intl = useI18n()
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()

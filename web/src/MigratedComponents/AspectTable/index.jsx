@@ -4,7 +4,6 @@ import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
 
 import fetchWrapperForQueries from '../QueryFetch'
@@ -23,6 +22,7 @@ import {
 import { getFilters, sanitizeFiltersStringBy } from '../../filter/utils'
 
 import styles from './Table.css'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -128,7 +128,7 @@ const toRelocate = (navigate, location, currentState, newState, setStates) => {
 }
 // ------------------------------------
 const AspectTable = ({ baseConfig, FILTERS_CONFIG, consts: CONSTS, onClickRow }) => {
-  const intl = useIntl()
+  const intl = useI18n()
   const config = useMemo(() => baseConfig(intl), [baseConfig, intl])
   const navigate = useNavigate()
   const { ...routeParams } = useParams()

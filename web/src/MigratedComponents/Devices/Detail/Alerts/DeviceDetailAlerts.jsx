@@ -2,13 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 import TaskList from '../../../../task/list/TaskList'
 
 import styles from '../DeviceDetail.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -16,7 +16,7 @@ const enhance = identity
 
 export const DeviceDetailAlerts = ({ navigate, location, device }) => {
   const { deviceId = false } = useParams()
-  const intl = useIntl()
+  const intl = useI18n()
   const deviceName = device.get('name')
   return (
     <div>

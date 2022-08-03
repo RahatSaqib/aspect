@@ -1,6 +1,5 @@
 import React from 'react'
 import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
-import { useIntl } from 'react-intl'
 import IconButton from '@material-ui/core/IconButton'
 import classnames from 'classnames/bind'
 
@@ -9,6 +8,7 @@ import IconProvider from '../../../IconProvider'
 import Cell from '../Cell'
 
 import styles from '../../Table.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -24,7 +24,7 @@ const GroupedCell = ({
   subRows: { length: subRowsLength },
   value,
 }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('tablecell__grouped')}>
       <IconButton

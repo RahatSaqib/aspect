@@ -1,17 +1,17 @@
 import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
-import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import AspectVertMenu from '../../../AspectVertMenu'
 import messages from './messages'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
 import { NOTIFICATION_LIST } from '../../../QueryFetch/Notification/index'
 import ToggleStatusConfirmationModal from './ToggleStatusConfirmationModal'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const { id, typeCategory, name, enabled, totalTriggers } = item
   const queryClient = useQueryClient()
   const refreshList = () => {

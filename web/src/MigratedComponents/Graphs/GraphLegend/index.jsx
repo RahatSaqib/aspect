@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Fragment, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import { BoxLegendSvg } from '@nivo/legends'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
@@ -13,6 +12,7 @@ import AspectLink from '../../AspectLink'
 
 import messages from '../GraphsContainer/messages'
 import styles from './GraphLegend.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -40,7 +40,7 @@ GraphLegend.propTypes = {
 }
 
 const PieInnerLegend = ({ averages, data }) => {
-  const { formatMessage: intlFormatMessage } = useIntl()
+  const { formatMessage: intlFormatMessage } = useI18n()
   const { title, key, subTitle, showTotal = false, totalDisplayMethod = false, notation = 'standard' } = averages
   const [average, setAverage] = useState(0)
   const prevData = usePrevious(data)

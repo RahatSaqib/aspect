@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
-import { useIntl } from 'react-intl'
 import MenuItem from '@material-ui/core/MenuItem'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 import SelectField from '../../components/shared/SelectField'
 import messages from './i18n/resultTreatmentStatusMessages'
@@ -59,7 +59,7 @@ export function TreatmentSelectField({
   resultTreatmentStatusList,
   ...restProps
 }) {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   return (
     <SelectField {...restProps} value={restProps.value}>
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}

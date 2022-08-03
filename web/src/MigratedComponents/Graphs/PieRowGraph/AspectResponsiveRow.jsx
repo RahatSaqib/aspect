@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { useIntl } from 'react-intl'
 import classnames from 'classnames/bind'
 import map from 'lodash/map'
 import AspectTooltip from '../../../components/shared/AspectTooltip'
@@ -9,11 +8,12 @@ import AspectResponsivePie from '../PieGraph/AspectResponsivePie'
 import messages from './messages'
 
 import styles from './PieRowGraph.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 const AspectResponsiveRow = ({ data, componentClasses }) => {
-  const { formatMessage: intlFormatMessage } = useIntl()
+  const { formatMessage: intlFormatMessage } = useI18n()
 
   const headings = graphData => map(graphData[0], 'heading')
   const getRowKey = rowIndex => `row-${rowIndex}`

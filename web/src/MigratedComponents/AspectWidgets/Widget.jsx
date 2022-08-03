@@ -1,7 +1,6 @@
 import React from 'react'
 import { bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 import Card from '@material-ui/core/Card'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
@@ -13,6 +12,7 @@ import WidgetAlert from './Alerts'
 import messages from './messages'
 
 import styles from './Widgets.css'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -42,7 +42,7 @@ const AspectWidget = ({
     alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const translator = { formatMessage, messages }
   const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : null
   const titleText = translate(titleI18nKey, title, translator)
