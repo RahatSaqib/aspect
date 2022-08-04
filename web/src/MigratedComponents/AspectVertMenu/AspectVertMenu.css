@@ -2,8 +2,12 @@
   padding: 15px 20px 15px 20px;
 }
 
+.menu-item-icon {
+  padding-top: 5px;
+}
+
 .divider {
-  width: 90%;
+  width: 100%;
   margin: auto;
   background-color: rgba(127, 127, 127, 0.5) !important;
 }
