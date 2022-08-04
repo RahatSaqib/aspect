@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 const fs = require('fs')
 const uuid = require('node-uuid')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
