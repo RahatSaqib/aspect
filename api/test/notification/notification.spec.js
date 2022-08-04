@@ -4,7 +4,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
-
+const NotificationCache = require('../../src/notification/notificationCache')
 const config = require('../../src/config')
 const server = require('../utils/testUtils')
 const { dispatchAndWaitForAction, waitForIdle, createMessageContext } = require('../utils/mqUtils')
@@ -251,6 +251,10 @@ describe('Result Notifications triggers', () => {
       await knex('PersonTag').where('TagId', '>=', inserted).delete()
       await knex('Tag').whereIn('title', ['oneTag', 'secondTag', 'thirdTag']).delete()
     })
+    beforeEach(async () => {
+      const notificationCache = NotificationCache.getInstance(knex)
+      notificationCache.refreshCache()
+    })
     afterEach(async () =>
       knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
     )
@@ -262,11 +266,10 @@ describe('Result Notifications triggers', () => {
         .distinct('resultId', 'notificationTypeId', 'personId')
       assert.equal(notificationsBefore.length, 0)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(2000)
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
-
       assert.equal(notifications.length, 1)
     })
 

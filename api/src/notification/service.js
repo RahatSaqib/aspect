@@ -194,7 +194,6 @@ async function listNotifications(request) {
 async function createNotifications(knex, action, context) {
   const now = new Date()
   const { filterCondition = null, notificationTypeCategoryId = 'issueBased' } = action
-
   const policies = await getNotificationPolicy(
     knex,
     action,
@@ -206,7 +205,8 @@ async function createNotifications(knex, action, context) {
   let jobFunctionId = null
   let jobFunctionLevel = null
   const { jobFunctions = [], persons = [], sendToClinician = false, sendToPatient = false } = filterCondition || {}
-  if (policies) {
+
+  if (!_.isEmpty(policies)) {
     const [firstPolicy] = policies
     if (firstPolicy && (sendToClinician || sendToPatient)) {
       const nonPersonsToNotify = _.filter(
@@ -367,7 +367,6 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
     .modify(extraConditionsFunction, extraConditions, aliases)
     .where('nt.enabled', true)
     .distinct(selectColums.concat(extraFields))
-
   return records
 }
 

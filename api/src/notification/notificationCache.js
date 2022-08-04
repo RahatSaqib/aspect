@@ -1,10 +1,11 @@
 const NodeCache = require('node-cache')
 // stdTTL is the default time-to-live for each cache entry
 const stdTTL = 60 * 60 * 6 // 6 hours
+const notificationCacheKey = 'allResultBasedNotifications'
 class NotificationCache {
-  constructor(knex) {
+  constructor(knex, ttl = stdTTL) {
     this.knex = knex
-    this.notificationCache = new NodeCache({ stdTTL })
+    this.notificationCache = new NodeCache({ stdTTL: ttl, useClones: false })
   }
 
   async getConditionsToEvaluate(notificationCategory = 'resultBased') {
@@ -22,43 +23,43 @@ class NotificationCache {
   // destroy the cache
   async destroyCache() {
     this.notificationCache.destroy()
-    notificationCache = null
+    this.notificationCache = null
   }
 
   // refresh the cache
   async refreshCache() {
-    const conditionsToEvaluate = await this.getConditionsToEvaluate()
-    this.setCacheValue(conditionsToEvaluate)
-    return conditionsToEvaluate
+    this.notificationCache.flushAll()
+    this.notificationCache.del(notificationCacheKey)
+    return this.getCacheValue()
   }
 
   // set the cache key and value
   async setCacheValue(value) {
-    this.notificationCache.set('allResultBasedNotifications', value)
+    this.notificationCache.set(notificationCacheKey, value)
   }
 
   // return the cache value
   async getCacheValue() {
-    let notificationsType = this.notificationCache.get('allResultBasedNotifications')
+    let notificationsType = this.notificationCache.get(notificationCacheKey)
+
     if (!notificationsType) {
-      notificationsType = this.refreshCache()
+      notificationsType = await this.getConditionsToEvaluate()
     }
+
     return notificationsType
   }
 }
 
-let notificationCache = null
 // singleton pattern for cache  to avoid multiple instances
-async function getNotificationCache(knex) {
-  if (notificationCache == null) {
-    notificationCache = new NotificationCache(knex)
-    // refresh the cache
-    notificationCache.refreshCache()
+// singleton pattern class
+class NotificationCacheSingleton {
+  static getInstance(knex) {
+    if (!NotificationCacheSingleton.instance) {
+      NotificationCacheSingleton.instance = new NotificationCache(knex)
+    }
+    return NotificationCacheSingleton.instance
   }
-  return notificationCache
 }
 
 //
-module.exports = {
-  chache: getNotificationCache,
-}
+module.exports = NotificationCacheSingleton
