@@ -418,7 +418,6 @@ async function renderExcelTemplate({
               if (normalizer) normalizedValues = normalizer(dataRow)
               else normalizedValues = dataRow
 
-              // valuesInDynamicColumns = dynamicColumns.map(column => normalizedValues[column.key])
               const rowData = _.reduce(
                 dynamicColumns,
                 (acc, column) => {
@@ -1038,69 +1037,6 @@ async function exportData(request, reply, sheetData, scope, options) {
   })
   return respondFile({ dataBuffer, extension, fileNamePrefix: scope, reply })
 }
-
-/**
- * this is old func to add dynamic columns for non-stream processing
- */
-// // ----------------------------------------------------------------------------------------------
-// function addColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
-//   const lastPredefinedCellNumber = headerRow.cellCount
-//   const lastPredefinedCellStyle = getCellStyle(headerRow.getCell(lastPredefinedCellNumber))
-
-//   // keep styles of all predefined cells in 1st header rows
-//   const cellStyles = []
-//   const headerRowCells = []
-//   headerRow.eachCell((cell, cellNumber) => {
-//     headerRowCells.push({
-//       cell,
-//       cellNumber,
-//       totalMerged: 1,
-//     })
-
-//     let { value } = cell
-//     if (cellNumber > 1) {
-//       const isMerged = cell !== cell.master
-//       if (isMerged) {
-//         const masterCell = headerRowCells.find(c => c.cell === cell.master)
-//         if (masterCell) {
-//           masterCell.totalMerged += 1
-//         }
-//       }
-//       value = isMerged ? undefined : value
-//     }
-//     cellStyles.push({ ...cell.style, value })
-//   })
-
-//   // get existing values
-//   const headerRowValues = []
-//   headerRow.eachCell(cell => headerRowValues.push(cell.value))
-
-//   // update row
-//   headerRow.values = [...headerRowValues, ...columns.map(column => column.header)]
-//   headerRow.commit()
-
-//   // loop all cells and merge cells (if needed) and set styles
-//   headerRow.eachCell((cell, cellNumber) => {
-//     const cellStyle = cellNumber <= lastPredefinedCellNumber ? cellStyles[cellNumber - 1] : lastPredefinedCellStyle
-
-//     if (cellNumber <= lastPredefinedCellNumber) {
-//       const refCell = headerRowCells.find(c => c.cellNumber === cellNumber)
-//       const { totalMerged } = refCell
-//       if (totalMerged > 1) {
-//         // merge by start row, start column, end row, end column (equivalent to K10:M12)
-//         worksheet.unMergeCells(cell.row, cellNumber, cell.row, cellNumber + totalMerged - 1)
-//         worksheet.mergeCells(cell.row, cellNumber, cell.row, cellNumber + totalMerged - 1)
-//       }
-//     } else if (totalHeaderRows > 1) {
-//       // merge by start row, start column, end row, end column (equivalent to K10:M12)
-//       worksheet.mergeCells(cell.row, cellNumber, cell.row + totalHeaderRows - 1, cellNumber)
-//     }
-
-//     if (cell === cell.master) {
-//       setCellStyle(cell, cellStyle)
-//     }
-//   })
-// }
 
 // ----------------------------------------------------------------------------------------------
 function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
