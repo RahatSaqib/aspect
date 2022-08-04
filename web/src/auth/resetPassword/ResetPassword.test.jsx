@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'

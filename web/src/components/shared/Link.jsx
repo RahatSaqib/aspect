@@ -21,6 +21,7 @@ const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
       disabled={disabled}
       {...restProps}
       onClick={onClick || onLinkClick}
+      // eslint-disable-next-line security/detect-non-literal-fs-filename
       className={classNames(theme.link, {
         [theme.active]: new RegExp(`^${restProps.href}`).test(location.pathname),
       })}
