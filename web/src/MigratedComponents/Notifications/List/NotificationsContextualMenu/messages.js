@@ -17,6 +17,14 @@ const messages = defineMessages({
     id: 'contextualMenu.notifications.viewLog.title',
     defaultMessage: 'View Log',
   },
+  enableStatusTitle: {
+    id: 'contextualMenu.notifications.enable.status.title',
+    defaultMessage: 'Enable',
+  },
+  disableStatusTitle: {
+    id: 'contextualMenu.notifications.disable.status.title',
+    defaultMessage: 'Disable',
+  },
   deleteTitle: {
     id: 'contextualMenu.notifications.delete.title',
     defaultMessage: 'Delete (Only 0 triggers)',
@@ -24,6 +32,18 @@ const messages = defineMessages({
   yesDelete: {
     id: 'contextualMenu.notifications.yesDelete',
     defaultMessage: 'Yes, delete it',
+  },
+  yes: {
+    id: 'contextualMenu.notifications.yes',
+    defaultMessage: 'Yes',
+  },
+  toggleStatusModalTitle: {
+    id: 'contextualMenu.notifications.toggleStatusModalTitle',
+    defaultMessage: 'Toggle status confirmation',
+  },
+  areYouSureToToggleStatus: {
+    id: 'contextualMenu.notifications.areYouSureToToggleStatus',
+    defaultMessage: 'Are you sure to toggle notification status?',
   },
   cancel: {
     id: 'contextualMenu.notifications.cancel',

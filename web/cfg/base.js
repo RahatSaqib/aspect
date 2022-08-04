@@ -126,9 +126,9 @@ module.exports = NODE_ENV => {
          * see options - https://github.com/jantimon/html-webpack-plugin#options
          */
         inject: true,
-        template: 'src/template/index.html',
+        template: 'src/index.html',
         filename: 'index.html',
-        favicon: path.join(__dirname, '../src/template/favicon.png'),
+        favicon: path.join(__dirname, '../src/assets/favicon.png'),
       }),
       new SpriteLoaderPlugin(),
       new WebpackManifestPlugin(),

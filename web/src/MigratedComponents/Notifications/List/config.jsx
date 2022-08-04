@@ -223,6 +223,16 @@ export const baseConfig = ({ formatMessage, formatNumber }) => ({
         return formatMessage(messages.no)
       },
     },
+    {
+      key: 'enabled',
+      label: formatMessage(messages.status),
+      disableHide: true,
+      disableGroupBy: true,
+      width: 5,
+      format: ({ value }) => {
+        return <input type="checkbox" checked={value} disabled />
+      },
+    },
   ],
   columnOrder: {
     allow: false,
