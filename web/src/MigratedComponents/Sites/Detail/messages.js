@@ -123,6 +123,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.actionAdd',
     defaultMessage: 'Add',
   },
+  actionSave: {
+    id: 'pages.SiteDetail.actionSave',
+    defaultMessage: 'Save',
+  },
   actionUpdate: {
     id: 'pages.SiteDetail.actionUpdate',
     defaultMessage: 'Update',

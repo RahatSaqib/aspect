@@ -30,7 +30,7 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
             format={v => <ContactTagInput siteId={id} value={v} />}
           />
           <Button variant="contained" onClick={() => setEdit(false)}>
-            {formatMessage(messages.actionChange)}
+            {formatMessage(messages.actionSave)}
           </Button>
         </div>
       ) : (
