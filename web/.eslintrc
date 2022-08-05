@@ -1,10 +1,6 @@
 {
   "plugins": ["prettier", "react", "react-hooks", "small-import", "lodash"],
-  "extends": [
-    "airbnb",
-    "plugin:prettier/recommended",
-    "plugin:lodash/canonical"
-  ],
+  "extends": ["airbnb", "plugin:prettier/recommended", "plugin:lodash/canonical", "plugin:security/recommended"],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 2019,
@@ -26,10 +22,7 @@
     "no-console": [
       "error",
       {
-        "allow": [
-          "warn",
-          "error"
-        ]
+        "allow": ["warn", "error"]
       }
     ],
     "func-names": "off",
@@ -77,7 +70,7 @@
         "parser": "babel",
         "semi": false,
         "singleQuote": true,
-        "trailingComma": "es5",   
+        "trailingComma": "es5",
         "printWidth": 120
       }
     ],
@@ -135,12 +128,19 @@
     "lodash/prefer-lodash-typecheck": "off",
     "lodash/path-style": "off",
     "lodash/prefer-immutable-method": "off",
-    "no-restricted-imports": ["error", {
-      "paths": [{ 
-        "name": "react-intl",
-        "importNames": ["useIntl"],
-        "message": "Use 'useI18n' from Hooks folder instead."
-      }]
-    }]
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "react-intl",
+            "importNames": ["useIntl"],
+            "message": "Use 'useI18n' from Hooks folder instead."
+          }
+        ]
+      }
+    ],
+    "security/detect-object-injection": "off",
+    "security/detect-non-literal-regexp": "off"
   }
 }
