@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
@@ -47,10 +47,14 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
   const isPristine = isEqual(site, editSite)
   const isNew = site.id === 0
 
+  useEffect(
+    () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
+    [editSite.latitude, editSite.longitude, onLatLongChange]
+  )
+
   const updateSiteLatLong = async address => {
     getLatLongFromAddress(address).then(({ lat, lng }) => {
       setEditSite({ ...editSite, latitude: convertToFloat(lat, 6), longitude: convertToFloat(lng, 6) })
-      onLatLongChange({ lat: convertToFloat(lat, 6), lng: convertToFloat(lng, 6) })
     })
   }
 
@@ -253,7 +257,6 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               value={editSite.longitude}
               onChange={e => {
                 setEditSite({ ...editSite, longitude: e.target.value })
-                onLatLongChange({ lat: editSite.latitude, lng: Number(e.target.value) })
               }}
             />
             <TextField
@@ -265,7 +268,6 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               value={editSite.latitude}
               onChange={e => {
                 setEditSite({ ...editSite, latitude: e.target.value })
-                onLatLongChange({ lat: Number(e.target.value), lng: editSite.longitude })
               }}
             />
             <div className={cssClasses('coordinate__button')}>
