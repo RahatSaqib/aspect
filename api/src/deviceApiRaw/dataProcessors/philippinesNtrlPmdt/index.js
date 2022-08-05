@@ -32,14 +32,11 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
   }
 
   static async canProcessRequest(request) {
-    const { payload } = request
-    if (!payload) {
-      return false
-    }
-    const payloadKeys = Object.keys(payload)
-    return (
-      expectedKeys.every(expectedKey => payloadKeys.includes(expectedKey)) &&
-      (payload.database.indexOf('PMDT') === 0 || payload.table.indexOf('RECORDS_WITH_SIGN_OFFS_PMDT') === 0)
+    return PhilippinesNtrlDatabase.isRequestFromNtrlDatabase(
+      request,
+      expectedKeys,
+      'PMDT',
+      'RECORDS_WITH_SIGN_OFFS_PMDT'
     )
   }
 

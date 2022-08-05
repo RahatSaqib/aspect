@@ -4,6 +4,7 @@ const Boom = require('boom')
 const { transact } = require('../../../db')
 const { getDateOrDefault, parseDateOrDefault, dateEqual } = require('../../../shared/date')
 const { deviceSeen } = require('../../../device/actions')
+const PhilippinesNtrlDatabase = require('../philippinesNtrlDatabase')
 const {
   sampleTypeToId,
   assayToId,
@@ -12,11 +13,10 @@ const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
 } = require('../../../shared/dictionary')
-const PhilippinesNtrlDatabase = require('../philippinesNtrlDatabase')
 const expectedKeys = require('./expectedKeys')
 const dateKeys = require('./dateKeys')
-const { sampleTypeMapping, mapPatientData, resultDataMappings } = require('./mappings')
 const { getResultDateOrDefault } = require('../common/utils')
+const { mapPatientData, sampleTypeMapping, resultDataMappings } = require('./mappings')
 const { testTypes } = require('../common/mapping')
 
 class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
@@ -27,14 +27,11 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
   }
 
   static async canProcessRequest(request) {
-    const { payload } = request
-    if (!payload) {
-      return false
-    }
-    const payloadKeys = Object.keys(payload)
-    return (
-      expectedKeys.every(expectedKey => payloadKeys.includes(expectedKey)) &&
-      (payload.database.indexOf('RITM') === 0 || payload.table.indexOf('RECORDS_WITH_SIGN_OFFS_RITM') === 0)
+    return PhilippinesNtrlDatabase.isRequestFromNtrlDatabase(
+      request,
+      expectedKeys,
+      'RITM',
+      'RECORDS_WITH_SIGN_OFFS_RITM'
     )
   }
 
