@@ -28,6 +28,7 @@ import useI18n from '../../../Hooks/i18n/useI18n'
 import useDeleteSite from '../../../Hooks/site/useDeleteSite'
 import useCreateSite from '../../../Hooks/site/useCreateSite'
 import SiteTypeSelect from './SiteTypeSelect'
+import SiteListSelect from '../../../MigratedComponents/SiteListSelect'
 
 const cssClasses = classnames.bind(styles)
 
@@ -238,7 +239,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               value={editSite.zip}
               onChange={e => setEditSite({ ...editSite, zip: e.target.value })}
             />
-            <SiteTypeSelect
+            <SiteListSelect
               name="belongsTo"
               width="33%"
               label={formatMessage(messages.fieldBelongTo)}

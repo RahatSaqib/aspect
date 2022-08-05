@@ -6,7 +6,7 @@ import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import IconProvider from '../../IconProvider'
 
-import usePrevious from '../../../Hooks/CustomHooks'
+import usePrevious from '../../../Hooks/usePrevious'
 import { getAverageFromData } from '../Helpers/Formatters'
 import AspectLink from '../../AspectLink'
 

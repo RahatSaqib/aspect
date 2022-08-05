@@ -14,7 +14,10 @@ const useDeleteSite = siteId => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation(() => deleteSiteById(siteId), {
-    onSuccess: () => queryClient.invalidateQueries([SITE_KEY, siteId]),
+    onSuccess: () => {
+      queryClient.invalidateQueries([SITE_KEY, siteId])
+      queryClient.invalidateQueries([SITE_KEY, 'list'])
+    },
   })
 
   return mutation

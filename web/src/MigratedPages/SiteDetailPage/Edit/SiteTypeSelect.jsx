@@ -23,9 +23,9 @@ const SiteTypeSelect = ({ name, label, value, onChange, width, disabled }) => {
           onChange={e => onChange(e.target.value)}
           style={{ width: '98%', marginRight: '1%', marginLeft: '1%', marginTop: '16px' }}
         >
-          {(siteType || []).map(zone => (
-            <MenuItem key={zone.id} value={zone.id}>
-              {zone.name}
+          {(siteType || []).map(site => (
+            <MenuItem key={site.id} value={site.id}>
+              {site.name}
             </MenuItem>
           ))}
         </TextField>
