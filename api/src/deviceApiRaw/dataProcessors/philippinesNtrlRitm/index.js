@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { transact } = require('../../../db')
 const { getDateOrDefault, parseDateOrDefault, dateEqual } = require('../../../shared/date')
 const { deviceSeen } = require('../../../device/actions')
