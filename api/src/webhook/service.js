@@ -174,16 +174,22 @@ async function finalizeWebhookMessage(webhookMessageId, messageContext) {
 }
 
 async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
-  const { personId } = await knex('WebhookMessage').where('id', webhookMessageId).first('personId')
+  const { personId, resultId } = await knex('WebhookMessage')
+    .where('id', webhookMessageId)
+    .first('personId', 'resultId')
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('WebhookMessage as m')
     .innerJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.webhookMessageId', 'm.id')
     .modify(queryBuilder => {
-      queryBuilder.modify(addDataSourceToQuery, {
-        message: 'm',
-        notification: 'n',
-      })
+      queryBuilder.modify(
+        addDataSourceToQuery,
+        {
+          message: 'm',
+          notification: 'n',
+        },
+        resultId
+      )
       if (dataConstraints) {
         queryBuilder.modify(addConstraints, dataConstraints, {
           assay: 'a',

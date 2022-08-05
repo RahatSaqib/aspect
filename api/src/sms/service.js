@@ -96,14 +96,14 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
 }
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
-  const { personId } = await knex('SmsMessage').where('id', smsMessageId).first('personId')
+  const { personId, resultId } = await knex('SmsMessage').where('id', smsMessageId).first('personId', 'resultId')
 
   const dataConstraints = await getConstraints({ personId })
 
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
-    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, resultId)
     .modify(queryBuilder => {
       if (!_.isEmpty(dataConstraints)) {
         queryBuilder.modify(addConstraints, dataConstraints, {
