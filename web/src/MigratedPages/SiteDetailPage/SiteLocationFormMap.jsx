@@ -5,7 +5,7 @@ import React from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import SiteMap from './SiteMap'
 import styles from './SiteLocationFormMap.css'
-import useI18n from '../../../Hooks/i18n/useI18n'
+import useI18n from '../../Hooks/i18n/useI18n'
 
 const messages = defineMessages({
   findingLocation: {

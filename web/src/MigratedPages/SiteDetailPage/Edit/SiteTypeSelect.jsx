@@ -2,7 +2,7 @@ import React from 'react'
 import MenuItem from '@material-ui/core/MenuItem'
 import TextField from '@material-ui/core/TextField'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import useSiteType from '../../../../Hooks/site/useSiteType'
+import useSiteType from '../../../Hooks/site/useSiteType'
 
 const SiteTypeSelect = ({ name, label, value, onChange, width, disabled }) => {
   const { isLoading: isSiteTypeLoading, data: siteType } = useSiteType()

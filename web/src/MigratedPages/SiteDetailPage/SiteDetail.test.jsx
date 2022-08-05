@@ -6,9 +6,9 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import * as reactRedux from 'react-redux'
 
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { Site } from '../../../site/SiteRedux'
+import { Site } from '../../site/SiteRedux'
 import { SiteDetail } from './SiteDetail'
-import { I18nProvider } from '../../../Providers/I18nProvider/index'
+import { I18nProvider } from '../../Providers/I18nProvider/index'
 
 const SiteDetailComponent = props => (
   <QueryClientProvider client={new QueryClient()}>

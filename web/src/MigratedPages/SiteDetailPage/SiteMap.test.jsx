@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 
-import SiteMap from './SiteMap'
+import SiteMap from './Detail/SiteMap'
 
 describe('SiteMap Component', () => {
   const props = {

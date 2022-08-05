@@ -12,22 +12,21 @@ import MenuItem from '@material-ui/core/MenuItem'
 import times from 'lodash/times'
 import padStart from 'lodash/padStart'
 import messages from '../messages'
-import { Site } from '../../../../site/SiteRedux'
-import { getLatLongFromAddress, convertToFloat } from '../../../../site/utils/address'
+import { getLatLongFromAddress, convertToFloat } from '../../../site/utils/address'
 
 import styles from '../SiteDetail.css'
-import useUpdateSite from '../../../../Hooks/site/useUpdateSite'
-import useUpdateTagByTypeAndId from '../../../../Hooks/tag/useUpdateTagByTypeAndId'
-import LocationSelector from '../../../LocationSelector'
-import TimezoneSelect from '../../../TimezoneSelect'
-import SiteTagInput from '../../../SiteTagInput'
-import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
-import AspectButton from '../../../../components/shared/AspectButton'
-import AspectDialog from '../../../../components/shared/AspectDialog'
-import PermissionsProvider from '../../../../Providers/PermissionsProvider'
-import useI18n from '../../../../Hooks/i18n/useI18n'
-import useDeleteSite from '../../../../Hooks/site/useDeleteSite'
-import useCreateSite from '../../../../Hooks/site/useCreateSite'
+import useUpdateSite from '../../../Hooks/site/useUpdateSite'
+import useUpdateTagByTypeAndId from '../../../Hooks/tag/useUpdateTagByTypeAndId'
+import LocationSelector from '../../../MigratedComponents/LocationSelector'
+import TimezoneSelect from '../../../MigratedComponents/TimezoneSelect'
+import SiteTagInput from '../../../MigratedComponents/SiteTagInput'
+import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
+import AspectButton from '../../../components/shared/AspectButton'
+import AspectDialog from '../../../components/shared/AspectDialog'
+import PermissionsProvider from '../../../Providers/PermissionsProvider'
+import useI18n from '../../../Hooks/i18n/useI18n'
+import useDeleteSite from '../../../Hooks/site/useDeleteSite'
+import useCreateSite from '../../../Hooks/site/useCreateSite'
 import SiteTypeSelect from './SiteTypeSelect'
 
 const cssClasses = classnames.bind(styles)
@@ -393,7 +392,8 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
 }
 
 SiteForm.propTypes = {
-  site: PropTypes.objectOf(Site),
+  // eslint-disable-next-line react/forbid-prop-types
+  site: PropTypes.object,
   siteTags: PropTypes.arrayOf(PropTypes.object),
   onLatLongChange: PropTypes.func,
 }

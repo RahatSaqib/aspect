@@ -29,7 +29,6 @@ import DeviceDetail from '../../MigratedComponents/Devices/Detail/DeviceDetail'
 import DeviceApiKeyList from '../../deviceApiKey/list/DeviceApiKeyList'
 import CaseList from '../../case/list/CaseList'
 import SiteList from '../../site/list/SiteList'
-import SiteDetail from '../../MigratedComponents/Sites/Detail/SiteDetail'
 import PersonList from '../../person/list/PersonList'
 import PersonDetail from '../../person/detail/PersonDetail'
 import ResultList from '../../result/list/ResultList'
@@ -48,7 +47,8 @@ import License from '../../auth/license/License'
 import ClinicalHistory from '../../patient/ClinicalHistory'
 import CaseDetails from '../../case/details/CaseDetails'
 import Welcome from '../../MigratedComponents/Welcome'
-import SiteForm from '../../MigratedComponents/Sites/Detail/Edit/SiteForm'
+// Migrated Pages
+import SiteDetail, { EditSite } from '../../MigratedPages/SiteDetailPage'
 
 function useHashAndScroll() {
   const location = useLocation()
@@ -130,7 +130,7 @@ const renderReporterList = loggedInFactory(ReporterList)
 const renderResultList = loggedInFactory(ResultList)
 const renderResultDetail = loggedInFactory(ResultDetail)
 const renderSiteList = loggedInFactory(SiteList)
-const renderSiteForm = loggedInFactory(SiteForm)
+const renderEditSite = loggedInFactory(EditSite)
 const renderSiteDetail = loggedInFactory(SiteDetail)
 const renderPersonList = loggedInFactory(PersonList)
 const renderPersonDetail = loggedInDetailFactory(PersonDetail)
@@ -255,7 +255,7 @@ const AppRoutes = ({ props: outerProps }) => {
         />
 
         <Route path="/browse/site" element={getElement(props, ['browse', 'site'], renderSiteList)} />
-        <Route path="/browse/site/create" element={getElement(props, ['browse', 'site'], renderSiteForm)} />
+        <Route path="/browse/site/create" element={getElement(props, ['browse', 'site'], renderEditSite)} />
         <Route path="/browse/site/:siteId/*" element={getElement(props, ['browse', 'site'], renderSiteDetail)} />
 
         <Route path="/browse/person" element={getElement(props, ['browse', 'person'], renderPersonList)} />

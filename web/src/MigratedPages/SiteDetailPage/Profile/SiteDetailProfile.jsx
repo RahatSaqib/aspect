@@ -5,12 +5,11 @@ import Card from '@material-ui/core/Card'
 
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
-import { Site } from '../../../../site/SiteRedux'
-import Summary from '../../../../globals/components/Summary'
-import { getCustomMessage, commonDefinitions } from '../../../../shared/utils/customMessages'
+import Summary from '../../../globals/components/Summary'
+import { getCustomMessage, commonDefinitions } from '../../../shared/utils/customMessages'
 
 import styles from '../SiteDetail.css'
-import useContactBySite from '../../../../Hooks/person/useContactBySite'
+import useContactBySite from '../../../Hooks/person/useContactBySite'
 
 const cssClasses = classnames.bind(styles)
 
@@ -74,7 +73,8 @@ SiteDetailProfile.defaultProps = {
 
 SiteDetailProfile.propTypes = {
   formatMessage: PropTypes.func.isRequired,
-  site: PropTypes.objectOf(Site).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  site: PropTypes.object.isRequired,
   disabled: PropTypes.bool.isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
   user: PropTypes.oneOfType([PropTypes.object]).isRequired,

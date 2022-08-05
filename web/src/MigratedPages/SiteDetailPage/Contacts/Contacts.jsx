@@ -7,11 +7,11 @@ import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 
 // Our own imports
 import messages from '../messages'
-import { Unit } from '../../../../components/pureGrids'
-import { ReadOnlyField } from '../../../../components/shared/ReadOnlyFields'
+import { Unit } from '../../../components/pureGrids'
+import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
 
-import styles from '../../../../globals/components/Summary.css'
-import ContactTagInput from '../../../ContactTagInput/ContactTagInput'
+import styles from '../../../globals/components/Summary.css'
+import ContactTagInput from '../../../MigratedComponents/ContactTagInput/ContactTagInput'
 
 const cssClasses = classnames.bind(styles)
 
