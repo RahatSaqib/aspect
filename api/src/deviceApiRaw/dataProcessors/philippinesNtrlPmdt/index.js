@@ -218,7 +218,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
             ...baseNewResult,
             externalId,
             assayId:
-              !assayGenericDstId || (encodedResult.methodUsed || '').indexOf('MGIT') > -1
+              !assayGenericDstId || (encodedResult.methodUsed || '').includes('MGIT')
                 ? assayBdMgitAstId
                 : assayGenericDstId,
             sampleId: samples[0].id,
@@ -368,7 +368,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
               ...baseNewResult,
               externalId,
               assayId:
-                !assayGenericCultureId || (encodedResult.methodUsed1 || '').indexOf('MGIT') > -1
+                !assayGenericCultureId || (encodedResult.methodUsed1 || '').includes('MGIT')
                   ? assayBdMgitGndId
                   : assayGenericCultureId,
               sampleId: cultureSample.id,
