@@ -1,9 +1,10 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { transact } = require('../../../db')
 const { getDateOrDefault, parseDateOrDefault, dateEqual } = require('../../../shared/date')
 const { deviceSeen } = require('../../../device/actions')
+const PhilippinesNtrlDatabase = require('../philippinesNtrlDatabase')
 const {
   sampleTypeToId,
   assayToId,
@@ -12,11 +13,10 @@ const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
 } = require('../../../shared/dictionary')
-const PhilippinesNtrlDatabase = require('../philippinesNtrlDatabase')
 const expectedKeys = require('./expectedKeys')
 const dateKeys = require('./dateKeys')
-const { sampleTypeMapping, mapPatientData, resultDataMappings } = require('./mappings')
 const { getResultDateOrDefault } = require('../common/utils')
+const { mapPatientData, sampleTypeMapping, resultDataMappings } = require('./mappings')
 const { testTypes } = require('../common/mapping')
 
 class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
@@ -27,14 +27,11 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
   }
 
   static async canProcessRequest(request) {
-    const { payload } = request
-    if (!payload) {
-      return false
-    }
-    const payloadKeys = Object.keys(payload)
-    return (
-      expectedKeys.every(expectedKey => payloadKeys.includes(expectedKey)) &&
-      (payload.database.indexOf('RITM') === 0 || payload.table.indexOf('RECORDS_WITH_SIGN_OFFS_RITM') === 0)
+    return PhilippinesNtrlDatabase.isRequestFromNtrlDatabase(
+      request,
+      expectedKeys,
+      'RITM',
+      'RECORDS_WITH_SIGN_OFFS_RITM'
     )
   }
 
@@ -207,9 +204,11 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             resultCategories.NotDetected,
             resultCategories.Missing,
           ]
-          // TODO: Update MGIT Data processor to lookup results for assayGenericDst as well
           const assayBdMgitAstId = await assayToId('assayBdMgitAst')
           const assayGenericDstId = await assayToId('assayGenericDst')
+          if (!assayBdMgitAstId && !assayGenericDstId) {
+            throw Boom.notImplemented('MGIT AST & TB DST Assays are not currently supported on this instance of Aspect')
+          }
           const externalId = `${site.externalId}_${samples[0].externalId}_DST`
           const resultSignOff = this.getResultSignOff('DST', payload)
           const performedOn = getResultDateOrDefault(patientData, encodedResult)
@@ -218,13 +217,19 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
             .orWhere(queryBuilder => {
               queryBuilder
                 .whereIn('sampleId', sampleIds)
-                .whereIn('assayId', [assayBdMgitAstId, assayGenericDstId])
+                .whereIn(
+                  'assayId',
+                  [assayBdMgitAstId, assayGenericDstId].filter(a => !!a)
+                )
                 .andWhere('siteId', site.id)
             })
             .first()) || {
             ...baseNewResult,
             externalId,
-            assayId: (encodedResult.methodUsed || '').indexOf('MGIT') > -1 ? assayBdMgitAstId : assayGenericDstId,
+            assayId:
+              !assayGenericDstId || (encodedResult.methodUsed || '').includes('MGIT')
+                ? assayBdMgitAstId
+                : assayGenericDstId,
             sampleId: samples[0].id,
             startedOn: performedOn,
             endedOn: performedOn,
@@ -323,9 +328,13 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         if (isPayloadValid(payload)) {
           const mappedResultData = mapResultData(payload)
           const { encodedResult } = mappedResultData
-          // TODO: Update MGIT Data processor to lookup results for assayGenericCulture as well
           const assayBdMgitGndId = await assayToId('assayBdMgitGnd')
           const assayGenericCultureId = await assayToId('assayGenericCulture')
+          if (!assayBdMgitGndId && !assayGenericCultureId) {
+            throw Boom.notImplemented(
+              'MGIT GND & Generic Culture Assays are not currently supported on this instance of Aspect'
+            )
+          }
           const cultureSamples = []
           if (encodedResult.result1) {
             cultureSamples.push(samples[0])
@@ -373,7 +382,9 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
               ...baseNewResult,
               externalId,
               assayId:
-                (encodedResult.methodUsed1 || '').indexOf('MGIT') > -1 ? assayBdMgitGndId : assayGenericCultureId,
+                !assayGenericCultureId || (encodedResult.methodUsed1 || '').includes('MGIT')
+                  ? assayBdMgitGndId
+                  : assayGenericCultureId,
               sampleId: cultureSample.id,
               reportableSiteId,
               startedOn: performedOn,

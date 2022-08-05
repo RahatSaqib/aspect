@@ -51,7 +51,7 @@ module.exports = {
   },
   amqp: {
     url: process.env['amqp.url'],
-    name: process.env['amqp.name'] || 'aspect',
+    name: `${process.env['amqp.name'] || 'aspect'}${process.env['scheduler.enabled'] === 'true' ? '' : '_for_testing'}`,
   },
   swagger: {
     enabled: process.env['swagger.enabled'] === 'true',
