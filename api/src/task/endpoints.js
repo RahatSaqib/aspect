@@ -6,7 +6,7 @@ const routes = [
   {
     method: 'GET',
     path: '/task',
-    handler: asyncHandler(listTasks),
+    handler: listTasks,
     config: {
       description: 'Task List',
       notes: 'Pageable and sortable list of tasks',
@@ -88,8 +88,8 @@ const routes = [
                 id: Joi.number().required().description('The id of the alert message'),
                 site: Joi.string().required().description('The site name'),
                 siteId: Joi.number().description('The site Id'),
-                deviceId: Joi.number().description('The device Id'),
-                device: Joi.string().description('The device name'),
+                deviceId: Joi.number().optional().allow(null).description('The device Id'),
+                device: Joi.string().optional().allow(null, '').description('The device name'),
                 issueStatus: Joi.string().required().description('The name of the issue status'),
                 issueStatusId: Joi.number().required().description('The id of the issue status'),
                 issueCategory: Joi.string().required().description('The name of the issue category'),

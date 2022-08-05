@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
-import { defineMessages, useIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { connect } from 'react-redux'
 import IconButton from '@material-ui/core/IconButton'
@@ -30,6 +30,7 @@ import {
 } from './DeviceOperationDataTable'
 
 import styles from '../DeviceDetail.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -158,7 +159,7 @@ export const DeviceDetailOperation = ({
   pageSize,
   onExportClick,
 }) => {
-  const intl = useIntl()
+  const intl = useI18n()
   return (
     <div>
       <Helmet title={device.get('name')} />

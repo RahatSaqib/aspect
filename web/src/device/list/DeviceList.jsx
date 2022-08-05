@@ -1,7 +1,6 @@
 import flowRight from 'lodash/flowRight'
 import isEmpty from 'lodash/isEmpty'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Immutable from 'immutable'
@@ -33,6 +32,7 @@ import messages from './messages'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 
 import styles from './DeviceList.css'
+import useI18n from '../../Hooks/i18n/useI18n'
 import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 
 const cssClasses = classnames.bind(styles)
@@ -269,7 +269,7 @@ export const DeviceListWithProps = ({
 
 export const DeviceList = () => {
   // >>>>>> Hooks <<<<<<
-  const intl = useIntl()
+  const intl = useI18n()
   const navigate = useNavigate()
   const {
     jwt: { permissions: userPermissions },

@@ -1,5 +1,4 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
 import { PropTypes } from 'prop-types'
 
 import classnames from 'classnames/bind'
@@ -8,11 +7,12 @@ import IconProvider from '../../IconProvider'
 import format from './messages'
 
 import styles from './alerts.css'
+import useI18n from '../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 const WidgetAlert = ({ alert }) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
   const explanation = format(formatMessage, alert)
   return (
     <AspectTooltip title={explanation} className={cssClasses('summary_widgetAlertTooltip')}>

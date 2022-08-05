@@ -1,6 +1,5 @@
 import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import Button from '@material-ui/core/Button'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
@@ -12,12 +11,13 @@ import messages from './messages'
 import { MODE, getFormConfig } from './utils'
 import styles from './DailyStatusDialog.css'
 import { getISOFromString } from '../../../../components/shared/DateTimeInput/utils/date'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 export const DailyStatusDialog = ({ data = {}, isOpen, onCancel, onSubmit, statuses, title, deviceName }) => {
   const [mode, setMode] = useState(MODE.EDITING)
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useI18n()
 
   useEffect(() => {
     if (isOpen) {

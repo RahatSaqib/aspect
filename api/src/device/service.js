@@ -152,7 +152,7 @@ async function getListDevices(query, auth) {
       }
       if (query.connectorStatus) {
         queryBuilder.whereIn(
-          knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END'),
+          knex.raw('CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END'),
           query.connectorStatus
         )
       }
@@ -268,7 +268,9 @@ async function getListDevices(query, auth) {
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
       'd.lastSeenOn as deviceLastSeenOn',
-      knex.raw('CASE WHEN DATEDIFF(NOW(), d.lastPingOn) < 1 THEN "online" ELSE "offline" END AS connectorStatus'),
+      knex.raw(
+        'CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END AS connectorStatus'
+      ),
       knex.raw('IFNULL(d.ConfigurationData ->> "$.gxConnectVersion", "N/A") AS connectorVersion'),
       knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
       knex.raw(`CASE 

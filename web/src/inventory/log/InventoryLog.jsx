@@ -1,10 +1,10 @@
 import classnames from 'classnames/bind'
 import React, { useEffect } from 'react'
-import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import PropTypes from 'prop-types'
+import useI18n from '../../Hooks/i18n/useI18n'
 import { useAuthState } from '../../Providers/AuthProvider'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../shared/selectors/searchParams'
@@ -161,7 +161,7 @@ export const InventoryLogWithProps = ({
 
 const InventoryLog = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
-  const intl = useIntl()
+  const intl = useI18n()
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()

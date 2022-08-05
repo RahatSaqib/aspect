@@ -107,7 +107,7 @@ const rawPayloadPlugin = {
   },
 }
 
-const queueName = config.scheduler.enabled ? config.amqp.name : `${config.amqp.name}_for_testing`
+const queueName = config.amqp.name
 
 const messageQueuePlugin = {
   name: 'messageQueue',

@@ -1,16 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import { useIntl } from 'react-intl'
 
 import TaskList from '../../../../task/list/TaskList'
 
 import styles from '../SiteDetail.css'
+import useI18n from '../../../../Hooks/i18n/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
 const SiteDetailAlert = ({ navigate, location, siteId }) => {
-  const intl = useIntl()
+  const intl = useI18n()
   // const { siteId } = params
 
   return (

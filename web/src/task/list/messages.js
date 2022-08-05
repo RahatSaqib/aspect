@@ -5,30 +5,12 @@ const messages = defineMessages({
     id: 'pages.TaskList.title',
     defaultMessage: 'Tasks',
   },
-  topic: {
-    id: 'pages.TaskList.topic',
-    defaultMessage: 'Topic',
-  },
-  site: {
-    id: 'pages.TaskList.site',
-    defaultMessage: 'Site',
-  },
-  time: {
-    id: 'pages.TaskList.time',
-    defaultMessage: 'Time',
-  },
+
   alertCount: {
     id: 'pages.TaskList.alertCount',
     defaultMessage: `{alertCount, plural,
       one {# alert}
       other {# alerts}
-    }`,
-  },
-  paginatorStatus: {
-    id: 'pages.TaskList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# task}
-      other {# tasks}
     }`,
   },
   issueStatusInactive: {
@@ -64,16 +46,32 @@ const messages = defineMessages({
     id: 'pages.TaskList.issueCategoryDeviceHealth',
     defaultMessage: 'Device Health',
   },
+  DeviceHealth: {
+    id: 'pages.TaskList.DeviceHealth',
+    defaultMessage: 'Device Health',
+  },
   issueCategoryReagentHealth: {
     id: 'pages.TaskList.issueCategoryReagentHealth',
+    defaultMessage: 'Reagent Health',
+  },
+  ReagentHealth: {
+    id: 'pages.TaskList.ReagentHealth',
     defaultMessage: 'Reagent Health',
   },
   issueCategoryDataHealth: {
     id: 'pages.TaskList.issueCategoryDataHealth',
     defaultMessage: 'Data Health',
   },
+  DataHealth: {
+    id: 'pages.TaskList.dataHealth',
+    defaultMessage: 'Data Health',
+  },
   issueCategoryConnectivityHealth: {
     id: 'pages.TaskList.issueCategoryConnectivityHealth',
+    defaultMessage: 'Connectivity Health',
+  },
+  ConnectivityHealth: {
+    id: 'pages.TaskList.ConnectivityHealth',
     defaultMessage: 'Connectivity Health',
   },
   taskListOptionsAllTopics: {
@@ -95,6 +93,29 @@ const messages = defineMessages({
   taskListOptionsConnectivity: {
     id: 'pages.TaskList.taskListOptionsConnectivity',
     defaultMessage: 'Connectivity',
+  },
+  taskAggreTitle: {
+    id: 'pages.TaskAggre.title',
+    defaultMessage: 'Task',
+  },
+  topic: {
+    id: 'pages.TaskList.topic',
+    defaultMessage: 'Topic',
+  },
+  site: {
+    id: 'pages.TaskList.site',
+    defaultMessage: 'Site',
+  },
+  time: {
+    id: 'pages.TaskList.time',
+    defaultMessage: 'Time',
+  },
+  paginatorStatus: {
+    id: 'pages.TaskList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# task}
+      other {# tasks}
+    }`,
   },
 })
 
