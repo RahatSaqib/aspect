@@ -72,7 +72,7 @@ describe('Issue based Notifications triggers', () => {
   })
 })
 
-describe('Result Notifications triggers', () => {
+describe.only('Result Notifications triggers', () => {
   let results = []
   let ntId
   let messageContext
@@ -101,6 +101,8 @@ describe('Result Notifications triggers', () => {
       .count('* as notificationsPerType')
       .first()
     assert.equal(notificationsPerType, 1)
+    const notificationCache = NotificationCache.getInstance(knex)
+    notificationCache.refreshCache()
     messageContext = await createMessageContext()
   }
   const removeTestContext = async () => {
@@ -251,10 +253,10 @@ describe('Result Notifications triggers', () => {
       await knex('PersonTag').where('TagId', '>=', inserted).delete()
       await knex('Tag').whereIn('title', ['oneTag', 'secondTag', 'thirdTag']).delete()
     })
-    beforeEach(async () => {
-      const notificationCache = NotificationCache.getInstance(knex)
-      notificationCache.refreshCache()
-    })
+    // beforeEach(async () => {
+    //   const notificationCache = NotificationCache.getInstance(knex)
+    //   notificationCache.refreshCache()
+    // })
     afterEach(async () =>
       knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
     )
