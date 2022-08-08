@@ -48,7 +48,7 @@ import ClinicalHistory from '../../patient/ClinicalHistory'
 import CaseDetails from '../../case/details/CaseDetails'
 import Welcome from '../../MigratedComponents/Welcome'
 // Migrated Pages
-import SiteDetail, { EditSite } from '../../MigratedPages/SiteDetailPage'
+import SiteDetail, { EditSite } from '../../Pages/SiteDetailPage'
 
 function useHashAndScroll() {
   const location = useLocation()
