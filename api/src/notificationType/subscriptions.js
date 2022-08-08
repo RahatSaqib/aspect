@@ -11,7 +11,7 @@ const subscriptions = [
 async function onNotificationTypeCreated(notificationTypeId, { messageContext }) {
   return messageContext.run(async knex => {
     const notificationCache = NotificationCache.getInstance(knex)
-    await notificationCache.refeshCache()
+    await notificationCache.refreshCache()
   })
 }
 
