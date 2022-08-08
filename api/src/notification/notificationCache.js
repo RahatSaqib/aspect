@@ -44,6 +44,7 @@ class NotificationCache {
 
     if (!notificationsType) {
       notificationsType = await this.getConditionsToEvaluate()
+      this.setCacheValue(notificationsType)
     }
 
     return notificationsType
