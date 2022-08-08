@@ -290,11 +290,6 @@ const utilizationPerInstrumentDayReport = {
       moduleName: 'deviceMaintenanceStatus/serviceReports',
       functionName: 'getDeviceUtilizationPerDayReport',
     },
-    {
-      sortOrder: 0,
-      moduleName: 'deviceMaintenanceStatus/serviceReports',
-      functionName: 'getDeviceUtilizationPerDayReportPercentage',
-    },
   ],
 }
 

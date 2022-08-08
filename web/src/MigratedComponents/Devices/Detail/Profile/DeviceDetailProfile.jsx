@@ -379,7 +379,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.connectivity)}
               description={formatMessage(messages.lastSeen, {
-                lastSeen: formatRelative(device.get('lastSeen')),
+                lastSeen: formatRelative(device.get('lastPingOn')),
               })}
             />
             <Summary

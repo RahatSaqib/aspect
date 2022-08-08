@@ -78,6 +78,15 @@ const messagesResult = defineMessages({
     id: 'pages.transferResult.successMessageButton',
     defaultMessage: 'After clicking the OK button below, you will be redirected to the list of results.',
   },
+
+  customFields: {
+    id: 'pages.resultEdit.customFields',
+    defaultMessage: 'Custom Fields',
+  },
+  noCustomFieldsDefined: {
+    id: 'pages.resultEdit.noCustomFieldsDefined',
+    defaultMessage: 'No Custom Fields Defined',
+  },
 })
 
 export default {

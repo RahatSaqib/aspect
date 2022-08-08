@@ -12,6 +12,18 @@ class PhilippinesNtrlDatabase extends SynchronousDataProcessor {
     this.response = {}
   }
 
+  static isRequestFromNtrlDatabase(request, expectedKeys, databasePrefix, signOffViewName) {
+    const { payload } = request
+    if (!payload) {
+      return false
+    }
+    const payloadKeys = Object.keys(payload)
+    return (
+      expectedKeys.every(expectedKey => payloadKeys.includes(expectedKey)) &&
+      (payload.database.startsWith(databasePrefix) || payload.table.startsWith(signOffViewName))
+    )
+  }
+
   async getResponse() {
     return Promise.resolve(this.response)
   }

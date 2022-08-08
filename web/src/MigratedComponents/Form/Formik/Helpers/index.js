@@ -182,6 +182,7 @@ const createValidationSchema = (fields, intlFormatMessage) => {
           case type === 'matches' && Array.isArray(constraint):
             validator = validator[type](
               ...[
+                // eslint-disable-next-line security/detect-non-literal-regexp
                 new RegExp(`(${constraint.join('|')})`, 'gi'),
                 intlFormatMessage(messages[messageId], {
                   options: constraint.join(', '),

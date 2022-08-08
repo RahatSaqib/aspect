@@ -48,7 +48,7 @@ function getMustacheTokensInString(inputString) {
   return inputString.match(/{{\s*[\w.[\]\s]+\s*}}/g)
 }
 
-function addDataSourceToQuery(queryBuilder, aliases) {
+function addDataSourceToQuery(queryBuilder, aliases, resultId) {
   // TODO generalize to other aliases and make joined tables and field names unique
   // similar to auth/constraints
   const { message, notification } = aliases
@@ -67,7 +67,13 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Geography as rg', `r.geographyId`, 'rg.id')
       .leftJoin('Country as rc', `rg.countryId`, 'rc.id')
       .leftJoin('Site as rs', 'r.reportableSiteId', 'rs.id')
-      .leftJoin('Assay as a', `r.assayId`, 'a.id')
+      .leftJoin('Assay as a', assayJoin => {
+        if (resultId) {
+          assayJoin.on('r.assayId', 'a.id')
+        } else {
+          assayJoin.on('dt.id', 'a.deviceTypeId')
+        }
+      })
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
       .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')

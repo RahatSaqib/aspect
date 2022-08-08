@@ -128,6 +128,10 @@ export const messages = defineMessages({
     id: 'pages.Notification.type.OnlineDate',
     defaultMessage: 'Online Date',
   },
+  status: {
+    id: 'pages.Notification.status',
+    defaultMessage: 'Status',
+  },
 
   // values for notifications list
   issueBased: {

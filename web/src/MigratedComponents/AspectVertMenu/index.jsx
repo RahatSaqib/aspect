@@ -13,9 +13,10 @@ import styles from './AspectVertMenu.css'
 
 const cssClasses = classnames.bind(styles)
 
-const AspectVertMenuItem = ({ icon, disabled = false, text, action, params, separator = false, onClick }) => (
+const AspectVertMenuItem = ({ icon, color, disabled = false, text, action, params, separator = false, onClick }) => (
   <Fragment>
     <MenuItem
+      style={{ color }}
       disabled={disabled}
       onClick={() => {
         if (onClick) {
@@ -32,7 +33,7 @@ const AspectVertMenuItem = ({ icon, disabled = false, text, action, params, sepa
       className={cssClasses('menu-item')}
     >
       {icon && (
-        <ListItemIcon>
+        <ListItemIcon className={cssClasses('menu-item-icon')} style={{ color }}>
           <IconProvider icon={icon} />
         </ListItemIcon>
       )}
@@ -57,6 +58,7 @@ AspectVertMenuItem.defaultProps = {
   separator: false,
   params: null,
   onClick: null,
+  color: null,
 }
 
 AspectVertMenuItem.propTypes = {
@@ -67,6 +69,7 @@ AspectVertMenuItem.propTypes = {
   onClick: PropTypes.func,
   params: PropTypes.oneOfType([PropTypes.object]),
   separator: PropTypes.bool,
+  color: PropTypes.string,
 }
 
 AspectVertMenu.defaultProps = {

@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-possible-timing-attacks */
 module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')

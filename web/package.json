@@ -8,7 +8,6 @@
     "node": "14"
   },
   "scripts": {
-    "styleguide": "styleguidist server",
     "start": "webpack serve --config cfg/dev.js --open --hot",
     "start:fresh": "yarn && yarn start",
     "start:ci": "webpack serve --config cfg/dev.js",
@@ -124,6 +123,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.1-rc.0-next-aa8f2bdbc-20211215",
+    "eslint-plugin-security": "^1.5.0",
     "eslint-plugin-small-import": "^1.0.0",
     "expect.js": "^0.3.1",
     "favicons": "^6.2.2",
@@ -153,7 +153,6 @@
     "prettier": "^2.7.1",
     "react-intl-po": "^2.2.2",
     "react-is": "^17.0.2",
-    "react-styleguidist": "^11.1.7",
     "react-test-renderer": "^17.0.2",
     "redux-logger": "^3.0.6",
     "sinon": "^11.1.2",
