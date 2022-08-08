@@ -42,6 +42,16 @@ async function getBaseReports() {
             assayId: assayIds.GxMtbRif,
           },
         },
+        {
+          moduleName: 'device/service',
+          functionName: 'getErrorCodesByDeviceReport',
+          query: {
+            sortCol: 'name',
+            sortDir: 'asc',
+            hasResults: 1,
+            assayId: assayIds.GxMtbRif,
+          },
+        },
       ],
     },
     {

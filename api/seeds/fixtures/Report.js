@@ -85,6 +85,17 @@ const criticalErrorsByDevice = {
         deviceTypeId: 'CepheidGeneXpert',
       },
     },
+    {
+      sortOrder: 1,
+      moduleName: 'device/service',
+      functionName: 'getErrorCodesByDeviceReport',
+      query: {
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
+        deviceTypeId: 'CepheidGeneXpert',
+      },
+    },
   ],
 }
 
