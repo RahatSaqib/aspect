@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { commonDefinitions } from '../../shared/utils/customMessages'
+import { commonDefinitions } from '../../shared/utils/customMessages.js'
 import deviceStatusMessages from '../../shared/messages/deviceStatusMessages'
 import deviceApprovalMessages from '../../shared/messages/deviceApprovalMessages'
 
@@ -8,9 +8,26 @@ export const messages = {
   ...deviceApprovalMessages,
   ...commonDefinitions,
   ...defineMessages({
+    button_Merge: {
+      id: 'pages.DeviceList.merge',
+      defaultMessage: 'Merge',
+    },
+    mergeDeviceActionDescription: {
+      id: 'pages.DeviceList.mergeDeviceActionDescription',
+      defaultMessage:
+        'Select as many devices as you want to merge, select the target device and click the Merge button.',
+    },
     devicesTitle: {
       id: 'pages.DeviceList.devicesTitle',
       defaultMessage: 'Devices',
+    },
+    sourceDevices: {
+      id: 'pages.DeviceList.sourceDevices',
+      defaultMessage: 'Source devices',
+    },
+    targetDevice: {
+      id: 'pages.DeviceList.targetDevice',
+      defaultMessage: 'Target device',
     },
     device: {
       id: 'pages.DeviceList.device',
@@ -128,6 +145,10 @@ export const messages = {
     issueCategoryConnectivityHealth: {
       id: 'pages.DeviceList.connectivityHealth',
       defaultMessage: 'Connectivity',
+    },
+    mergeDevices: {
+      id: 'pages.DeviceList.mergeDevices',
+      defaultMessage: 'Merge Devices',
     },
   }),
 }

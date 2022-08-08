@@ -692,7 +692,7 @@ const routes = [
   {
     method: 'POST',
     path: '/device/mergedevices',
-    handler: asyncHandler(mergeDevices),
+    handler: mergeDevices,
     config: {
       description: 'Merges two devices',
       notes: 'Move all unique source results to target device. Deletes source device',

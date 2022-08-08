@@ -1,32 +1,32 @@
 const Boom = require('@hapi/boom')
-const { knex } = require('../../db')
-const validate = require('./mergeDevicesValidator')
-const { getUserFromCredentials } = require('../../auth/constraints')
+const { knex } = require('../db')
+const { getUserFromCredentials } = require('../auth/constraints')
+const { deviceApprovalToId } = require('../shared/dictionary')
 
 module.exports = async function ({ payload, auth }) {
+  return mergeDevices({ payload, auth })
+}
+
+async function mergeDevices({ payload, auth }) {
   // const payloadWithGeographyId = await transformGeographyFromUpdates(params)
   const devicesToMerge = await getDevicesToMerge(payload)
 
   await validate(devicesToMerge)
 
-  const user = await getUserFromCredentials(auth.credentials)
+  // const user = await getUserFromCredentials(auth.credentials)
 
   // TODO: Handle transaction
 
   // 4. Issues and notifications should be merged.
-  await mergeIssuesFromDuplicatedResults(devicesToMerge) // TODO: Test
-  await updateDeviceOnRemainingIssues(devicesToMerge) // TODO: Test
+  await mergeIssuesFromDuplicatedResults(devicesToMerge)
+  await updateDeviceOnRemainingIssues(devicesToMerge)
 
   // 1. Results not repeated for both devices will be assigned to the definitive one.
-  console.log('\x1b[1;36m', '🚀 ➜ file: index.js ➜ line 33 ➜ mergeNotRepeatedResults', 'mergeNotRepeatedResults')
-  await mergeNotRepeatedResults(devicesToMerge)
+  await mergeNonRepeatedResults(devicesToMerge)
+
   // 3. Results from point 2 should be deleted from notifications, ResultDownloadLog, DeviceLog,
   await deleteRemainingNotifications(devicesToMerge.sourceDevice.id)
-  console.log(
-    '\x1b[1;36m',
-    '🚀 ➜ file: index.js ➜ line 36 ➜ deleteRemainingNotifications',
-    'deleteRemainingNotifications'
-  )
+
   await deleteRemainingDeviceLog(devicesToMerge.sourceDevice.id)
   await deleteRemainingResultDownloadLog(devicesToMerge.sourceDevice.id)
   // 2. Results repeated in both should be deleted from the device that will disappear
@@ -41,10 +41,11 @@ module.exports = async function ({ payload, auth }) {
   await deleteDeviceFromDeviceSim(devicesToMerge.sourceDevice.id)
   await deleteDeviceFromDeviceTag(devicesToMerge.sourceDevice.id)
   await deleteDeviceFromFactTables(devicesToMerge.sourceDevice.id)
+
   // // 6. Finally, remove the device.
   await deleteDevice(devicesToMerge.sourceDevice.id)
 
-  return { ok: true }
+  return { ok: true, data: {} }
 }
 
 async function getDevicesToMerge({ sourceDeviceId, targetDeviceId }) {
@@ -87,7 +88,7 @@ async function updateDeviceOnRemainingIssues(devicesToMerge) {
     .update('deviceId', devicesToMerge.targetDevice.id)
 }
 
-async function mergeNotRepeatedResults(devicesToMerge) {
+async function mergeNonRepeatedResults(devicesToMerge) {
   await knex('Result as sourceResults')
     .where({ deviceId: devicesToMerge.sourceDevice.id })
     .whereNotIn('sourceResults.externalId', getRepeatedResultsQuery('sourceResults', devicesToMerge.targetDevice.id))
@@ -149,5 +150,25 @@ async function deleteDeviceFromFactTables(deviceId) {
 }
 
 async function deleteDevice(deviceId) {
+  console.log('\x1b[1;36m', '🚀 ➜ file: mergeDevices.js ➜ line 152 ➜ deviceId', deviceId)
   await knex('Device').where('id', deviceId).del()
+}
+
+const validate = async devicesToMerge => {
+  await validateDeviceIsNotActive(devicesToMerge.sourceDevice)
+  await validateSameSite(devicesToMerge)
+}
+
+async function validateDeviceIsNotActive(sourceDevice) {
+  const deviceApprovedId = await deviceApprovalToId('approved')
+
+  if (sourceDevice.deviceApprovalId === deviceApprovedId) {
+    throw Boom.badData(`An active device cannot be merged. Change the approval status first.`)
+  }
+}
+
+async function validateSameSite({ sourceDevice: { siteId: sourceSiteId }, targetDevice: { siteId: targetSiteId } }) {
+  if (sourceSiteId !== targetSiteId) {
+    throw Boom.badData('Cannot merge devices from different sites')
+  }
 }

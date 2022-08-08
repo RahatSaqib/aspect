@@ -9,6 +9,13 @@ import { Helmet } from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 import { useQuery } from 'react-query'
 
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Autocomplete from '@material-ui/core/Autocomplete'
+import TextField from '@material-ui/core/TextField'
 import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'
 
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../filter/utils'
@@ -26,11 +33,12 @@ import getExportableFile from '../DeviceQueries'
 import ExportListButton from '../../MigratedComponents/AspectExportListButton'
 import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
 import { DEVICE_LIST } from '../../MigratedComponents/QueryFetch/Device/index'
-import messages from './messages'
+import messages from './messages.js'
 
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch/index'
 
 import styles from './DeviceList.css'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(styles)
 
@@ -153,11 +161,23 @@ export const DeviceListWithProps = ({
   displayPreferences,
   onRowClick,
   onAlertClick,
+  isMergeDeviceModalOpen,
+  setMergeDeviceModalOpen,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
-    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
+    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
+      <AspectButton
+        onClick={() => setMergeDeviceModalOpen(true)}
+        type="button"
+        color="primary"
+        variant="contained"
+        browseButton
+      >
+        {intl.formatMessage(messages.mergeDevices)}
+      </AspectButton>
+    </BrowseFilters>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
       <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
@@ -201,6 +221,49 @@ export const DeviceListWithProps = ({
         />
       )}
     </DataTableCard>
+    <Dialog open={isMergeDeviceModalOpen} onClose={() => setMergeDeviceModalOpen(false)}>
+      <DialogTitle>{intl.formatMessage(messages.mergeDevices)}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{intl.formatMessage(messages.mergeDeviceActionDescription)}</DialogContentText>
+        <Autocomplete
+          multiple
+          options={[
+            { id: 1, title: 'Daktari Cuyahoga, OH' },
+            { id: 2, title: 'Wayne County Ohio GeneXpert' },
+          ]}
+          getOptionLabel={option => option.title}
+          renderInput={params => (
+            <TextField
+              {...params}
+              variant="standard"
+              label={intl.formatMessage(messages.sourceDevices)}
+              placeholder={intl.formatMessage(messages.sourceDevices)}
+            />
+          )}
+        />
+        <Autocomplete
+          options={[
+            { id: 1, title: 'Daktari Cuyahoga, OH' },
+            { id: 2, title: 'Wayne County Ohio GeneXpert' },
+          ]}
+          getOptionLabel={option => option.title}
+          renderInput={params => (
+            <TextField
+              {...params}
+              variant="standard"
+              label={intl.formatMessage(messages.targetDevice)}
+              placeholder={intl.formatMessage(messages.targetDevice)}
+            />
+          )}
+        />
+      </DialogContent>
+      <DialogActions>
+        <AspectButton onClick={() => setMergeDeviceModalOpen(false)}>
+          {intl.formatMessage(messages.button_Cancel)}
+        </AspectButton>
+        <AspectButton>{intl.formatMessage(messages.button_Merge)}</AspectButton>
+      </DialogActions>
+    </Dialog>
   </div>
 )
 
@@ -218,6 +281,7 @@ export const DeviceList = () => {
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(new Table())
   const [total, setTotal] = useState()
+  const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState()
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
 
@@ -321,6 +385,8 @@ export const DeviceList = () => {
     displayPreferences,
     onRowClick,
     onAlertClick,
+    isMergeDeviceModalOpen,
+    setMergeDeviceModalOpen,
   }
   return <DeviceListWithProps {...baseProps} />
 }

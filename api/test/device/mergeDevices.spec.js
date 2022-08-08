@@ -55,6 +55,8 @@ describe.only('Merge Devices', () => {
     targetDeviceId = device2.id
     targetSiteId = device2.siteId
 
+    await setSameSiteForSeededDevices(sourceSiteId, targetDeviceId)
+
     const resultDetails = {
       consumableLot: 'Test Lot',
       moduleName: 'Module A',
@@ -65,7 +67,6 @@ describe.only('Merge Devices', () => {
       errorNotes: null,
       resultCategory1: resultCategoryDetected,
     }
-
     await sourceDeviceContext.createResultForThisDevice({
       resultDetails,
     })
@@ -105,8 +106,6 @@ describe.only('Merge Devices', () => {
       .whereIn('deviceId', [sourceDeviceId, targetDeviceId])
       .select('id', 'deviceId', 'externalId')
 
-    console.log('\x1b[1;36m', '🚀 ➜ file: mergeDevices.spec.js ➜ line 106 ➜ results', results)
-
     const res = await server
       .post(path)
       .send({ sourceDeviceId, targetDeviceId })
@@ -124,6 +123,10 @@ describe.only('Merge Devices', () => {
 async function setSourceDeviceInactive() {
   const deviceApprovalAssignedId = await deviceApprovalToId('assigned')
   await knex('Device').where('id', sourceDeviceId).update({ deviceApprovalId: deviceApprovalAssignedId })
+}
+
+async function setSameSiteForSeededDevices(sourceSiteId, targetDeviceId) {
+  await knex('Device').where('id', targetDeviceId).update({ siteId: sourceSiteId })
 }
 
 async function setSourceFirstResultAsDuplicateInTarget() {
