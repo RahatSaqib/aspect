@@ -99,8 +99,9 @@ describe('Result Notifications triggers', () => {
       .where({ partnerId: 1, notificationTypeCategoryId })
       .count('* as notificationsPerType')
       .first()
-    assert.equal(notificationsPerType, 1)    
+    assert.equal(notificationsPerType, 1)
     messageContext = await createMessageContext()
+    // the cache should be reseted just for the test and because we are manually inserting data directly into the db.
     await server.post('/api/notification/clearcache').set('Authorization', `Bearer${shared.token}`)
   }
   const removeTestContext = async () => {
@@ -251,7 +252,7 @@ describe('Result Notifications triggers', () => {
       await knex('PersonTag').where('TagId', '>=', inserted).delete()
       await knex('Tag').whereIn('title', ['oneTag', 'secondTag', 'thirdTag']).delete()
     })
-    
+
     afterEach(async () =>
       knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
     )

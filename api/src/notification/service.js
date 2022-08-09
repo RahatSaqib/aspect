@@ -20,8 +20,8 @@ const {
 const logger = require('../shared/logger')
 const NotificationCache = require('./notificationCache')
 
-function clearCache() {
-  NotificationCache.getInstance(knex).refreshCache()
+async function clearCache() {
+  return NotificationCache.getInstance(knex).refreshCache()
 }
 
 const evaluationMethods = {
