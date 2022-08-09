@@ -43,10 +43,11 @@ export class CountrySelectField extends PureComponent {
       ...restProps
     } = this.props
 
+    const allCountries = allItemText ? [{ id: 'all', name: allItemText }, ...countries.items] : [...countries.items]
+
     return (
       <SelectField {...restProps} value={countryId} onChange={this.handleSelectFieldChange}>
-        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {countries.items.map(c => (
+        {(allCountries || []).map(c => (
           <MenuItem key={c.id} value={c.id}>
             {c.name}
           </MenuItem>
