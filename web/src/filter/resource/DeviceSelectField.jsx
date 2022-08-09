@@ -6,7 +6,7 @@ import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from '
 import { connect } from 'react-redux'
 
 // Material-UI
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 import SelectField from '../../components/shared/SelectField'
 import { fetchDevicesForSelectList } from '../../device/DeviceRedux'
 

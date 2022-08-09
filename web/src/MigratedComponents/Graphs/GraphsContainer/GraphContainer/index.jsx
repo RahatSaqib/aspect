@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import Grid from '@material-ui/core/Grid'
+import Grid from '@mui/material/Grid'
 
 import AspectCard from '../../../AspectCard'
 import GraphRender from '../../GraphRender'

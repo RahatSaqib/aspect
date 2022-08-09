@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import isArray from 'lodash/isArray'
 
-import { withStyles } from '@material-ui/styles'
-import TextField from '@material-ui/core/TextField'
-import MenuItem from '@material-ui/core/MenuItem'
+import { withStyles } from '@mui/styles'
+import TextField from '@mui/material/TextField'
+import MenuItem from '@mui/material/MenuItem'
+import isEmpty from 'lodash/isEmpty'
 
 const styles = theme => ({
   label: {
@@ -34,17 +35,16 @@ const getSelectedValue = (value, children, multiple) => {
     normalizedValue = isArray(value) ? value : [value]
   }
 
-  return React.Children.count(children) === 0 ||
-    /** list of MenuItem's doesn't contain 'value' */
-    !React.Children.toArray(children).find(menuItem => {
-      if (multiple) {
-        return normalizedValue.includes(menuItem.props?.value)
-      }
+  const noChildren = React.Children.count(children) === 0
+  /** list of MenuItem's contain 'value' */
+  const containsValue = React.Children.toArray(children).find(menuItem => {
+    if (multiple) {
+      return normalizedValue.includes(!!menuItem && menuItem.props && menuItem.props.value)
+    }
 
-      return menuItem.props?.value === normalizedValue
-    })
-    ? emptyValue
-    : normalizedValue
+    return !!menuItem && menuItem.props && menuItem.props.value === normalizedValue
+  })
+  return noChildren || !containsValue ? emptyValue : normalizedValue
 }
 
 const SelectField = ({
@@ -97,11 +97,11 @@ const SelectField = ({
       onChange={onChange}
       {...restProps}
     >
-      {!!hintText && (
+      {!isEmpty(hintText) ? (
         <MenuItem value="" className={classesMap.emptyMenuItem}>
           <span className={classesMap.placeholder}>{hintText}</span>
         </MenuItem>
-      )}
+      ) : null}
       {children}
     </TextField>
   )

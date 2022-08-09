@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
+import TableBody from '@mui/material/TableBody'
 
 import Immutable from 'immutable'
 import { useNavigate, useLocation } from 'react-router-dom'

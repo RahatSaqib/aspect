@@ -1,8 +1,8 @@
 import React from 'react'
 import { bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import classnames from 'classnames/bind'
-import Card from '@material-ui/core/Card'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import Card from '@mui/material/Card'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import AspectLink from '../AspectLink'
 import AspectTooltip from '../../components/shared/AspectTooltip'

@@ -2,7 +2,7 @@ import React from 'react'
 import { IntlProvider } from 'react-intl'
 import { mount, shallow } from 'enzyme'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { createTheme, ThemeProvider } from '@material-ui/core/styles'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 import translation from '../shared/i18n/translation'
 import { I18nProvider } from '../Providers/I18nProvider'

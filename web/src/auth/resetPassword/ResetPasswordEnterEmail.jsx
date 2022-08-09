@@ -1,8 +1,8 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withState, pure } from 'recompose'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 
 import validateEmailAddress from '../../shared/utils/validate'
 import recomposeForm from '../../components/recomposeForm'

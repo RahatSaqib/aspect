@@ -4,8 +4,8 @@ import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
 
-import FormControl from '@material-ui/core/FormControl'
-import FormHelperText from '@material-ui/core/FormHelperText'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
 import { useFormikContext } from 'formik'
 
 import AspectDropDown from '../../AspectDropDown'

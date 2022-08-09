@@ -7,8 +7,8 @@ import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 import isNil from 'lodash/isNil'
 
-import Paper from '@material-ui/core/Paper'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import Paper from '@mui/material/Paper'
+import LinearProgress from '@mui/material/LinearProgress'
 import Shell from '../../MigratedComponents/Shell'
 
 // eslint-disable-next-line import/no-named-default

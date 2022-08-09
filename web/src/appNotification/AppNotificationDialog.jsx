@@ -7,11 +7,11 @@ import flowRight from 'lodash/flowRight'
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl'
 
 // Material-UI
-import Button from '@material-ui/core/Button'
-import ErrorIcon from '@material-ui/icons/Error'
-import WarningIcon from '@material-ui/icons/Warning'
-import InfoIcon from '@material-ui/icons/Info'
-import { lightBlue, orange, red } from '@material-ui/core/colors'
+import Button from '@mui/material/Button'
+import ErrorIcon from '@mui/icons-material/Error'
+import WarningIcon from '@mui/icons-material/Warning'
+import InfoIcon from '@mui/icons-material/Info'
+import { lightBlue, orange, red } from '@mui/material/colors'
 
 // Our own imports
 import AspectDialog from '../components/shared/AspectDialog'

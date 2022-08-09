@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import Grid from '@material-ui/core/Grid'
+import Grid from '@mui/material/Grid'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import styles from './Form.css'

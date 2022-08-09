@@ -2,9 +2,9 @@ import PropTypes from 'prop-types'
 import React, { cloneElement, createElement, Children, Component, isValidElement } from 'react'
 import classNames from 'classnames'
 
-import { withStyles } from '@material-ui/styles'
-import AppBar from '@material-ui/core/AppBar'
-import Tabs from '@material-ui/core/Tabs'
+import { withStyles } from '@mui/styles'
+import AppBar from '@mui/material/AppBar'
+import Tabs from '@mui/material/Tabs'
 
 const styles = () => ({
   container: {

@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import { array, arrayOf, number, oneOfType, string } from 'prop-types'
 import classnames from 'classnames/bind'
 import AspectTooltip from '../../../../components/shared/AspectTooltip'

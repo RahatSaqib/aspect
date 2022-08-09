@@ -3,8 +3,8 @@ import flowRight from 'lodash/flowRight'
 import { defineMessages } from 'react-intl'
 
 import classnames from 'classnames/bind'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 import DeviceMaintenanceStatusSelectField from '../../../filter/resource/DeviceMaintenanceStatusSelectField'
 import recomposeForm from '../../../components/recomposeForm'
 

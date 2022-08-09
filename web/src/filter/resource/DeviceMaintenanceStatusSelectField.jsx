@@ -1,19 +1,28 @@
 // Imports from packages
 import { useQuery } from 'react-query'
-import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 
 // Material-UI
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 
+import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import SelectField from '../../components/shared/SelectField'
 import fetchWrapperForQueries from '../../MigratedComponents/QueryFetch'
 import { DEVICE_STATUS } from '../../MigratedComponents/QueryFetch/Device/index'
-import { types } from '../../MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
 import useI18n from '../../Hooks/i18n/useI18n'
 import messages from '../../shared/messages/deviceStatusMessages'
 import formatI18nMessage from '../../shared/i18n/formatterWeb'
+import { types } from '../../MigratedComponents/Devices/Maintenance/DeviceMaintenanceStatusRedux'
+// TODO: move to HOOKS folder
+const getMaintenanceStatus = async onlyManuallySetableStatuses =>
+  fetchWrapperForQueries({
+    endpoint: DEVICE_STATUS.ENDPOINT,
+    params: { onlyManuallySet: onlyManuallySetableStatuses },
+  }).then(response => response.data)
+
+const useMaintenanceStatus = onlyManuallySetableStatuses =>
+  useQuery([DEVICE_STATUS.KEY, onlyManuallySetableStatuses], () => getMaintenanceStatus(onlyManuallySetableStatuses))
 
 const DeviceMaintenanceStatusSelectField = ({
   onDeviceMaintenanceStatusChange,
@@ -24,42 +33,34 @@ const DeviceMaintenanceStatusSelectField = ({
   ...restProps
 }) => {
   const { formatMessage } = useI18n()
-  const { data, isError } = useQuery([DEVICE_STATUS.KEY, onlyManuallySetableStatuses], async () => {
-    return fetchWrapperForQueries({
-      endpoint: DEVICE_STATUS.ENDPOINT,
-      params: { onlyManuallySet: onlyManuallySetableStatuses },
-    })
-  })
-
-  const [maintenanceStatuses, setMaintenanceStatuses] = useState(false)
+  const { data: maintenanceStatuses, isLoading } = useMaintenanceStatus(onlyManuallySetableStatuses)
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (data && !isError) {
-      const items = data.data
-      setMaintenanceStatuses(items)
+    if (maintenanceStatuses) {
       dispatch({
         type: types.RECEIVE_DEVICE_MAINTENCE_STATUS,
-        items,
+        items: maintenanceStatuses,
         lastRefreshed: new Date(),
       })
     }
-  }, [data, dispatch, isError])
+  }, [dispatch, maintenanceStatuses])
 
   const onChange = ({ target: { value } }) => {
     onDeviceMaintenanceStatusChange(value.includes('all') ? undefined : value)
   }
 
-  return (
+  const list = allItemText
+    ? [...(maintenanceStatuses || []), { externalId: 'all', i18nKey: allItemText }]
+    : maintenanceStatuses || []
+
+  return isLoading ? null : (
     <SelectField {...restProps} value={value} onChange={onChange} multiple={multiple}>
-      {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-      {maintenanceStatuses
-        ? maintenanceStatuses.map(ms => (
-            <MenuItem key={ms.externalId} value={ms.externalId}>
-              {formatI18nMessage(messages, formatMessage, ms.i18nKey, ms.i18nKey)}
-            </MenuItem>
-          ))
-        : null}
+      {list.map(ms => (
+        <MenuItem key={ms.externalId} value={ms.externalId}>
+          {formatI18nMessage(messages, formatMessage, ms.i18nKey, ms.i18nKey)}
+        </MenuItem>
+      ))}
     </SelectField>
   )
 }

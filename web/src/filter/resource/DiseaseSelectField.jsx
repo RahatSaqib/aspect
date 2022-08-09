@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 
 import messages from './i18n/diseaseMessages'
 import SelectField from '../../components/shared/SelectField'

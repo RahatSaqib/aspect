@@ -8,7 +8,7 @@ const { updateSubscription: updateHandlersSubscription } = require('../../src/su
 let sharedQueue = null
 async function queueConnect() {
   if (sharedQueue == null) {
-    sharedQueue = await createMessageQueue(`${config.amqp.name}_for_testing`)
+    sharedQueue = await createMessageQueue(`${config.amqp.name}`)
   }
   return sharedQueue
 }

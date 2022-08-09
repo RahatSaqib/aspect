@@ -1,4 +1,4 @@
-import { orange } from '@material-ui/core/colors'
+import { orange } from '@mui/material/colors'
 
 export default () => ({
   MuiMenuItem: {

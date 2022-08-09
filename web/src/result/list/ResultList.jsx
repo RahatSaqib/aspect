@@ -10,7 +10,7 @@ import isEmpty from 'lodash/isEmpty'
 import Immutable from 'immutable'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
+import TableBody from '@mui/material/TableBody'
 import { useQuery } from 'react-query'
 import useI18n from '../../Hooks/i18n/useI18n'
 

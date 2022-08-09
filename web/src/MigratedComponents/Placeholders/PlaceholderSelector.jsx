@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import IconButton from '@material-ui/core/IconButton'
-import Menu from '@material-ui/core/Menu'
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
 
 import useI18n from '../../Hooks/i18n/useI18n'
 import IconProvider from '../IconProvider'

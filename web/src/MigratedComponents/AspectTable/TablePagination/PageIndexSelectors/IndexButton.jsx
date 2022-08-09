@@ -1,6 +1,6 @@
 import React from 'react'
 import { bool, func, oneOf, string } from 'prop-types'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import classnames from 'classnames/bind'
 
 import IconProvider from '../../../IconProvider'

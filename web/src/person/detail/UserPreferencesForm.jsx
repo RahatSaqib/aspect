@@ -1,9 +1,9 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, pure } from 'recompose'
-import Button from '@material-ui/core/Button'
-import MenuItem from '@material-ui/core/MenuItem'
-import TextField from '@material-ui/core/TextField'
+import Button from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
 
 import recomposeForm from '../../components/recomposeForm'
 import FlagIcon from '../../components/shared/flagIcon/FlagIcon'

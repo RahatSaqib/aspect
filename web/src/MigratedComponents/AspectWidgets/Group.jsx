@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import Card from '@material-ui/core/Card'
+import Card from '@mui/material/Card'
 import orderBy from 'lodash/orderBy'
 
 import { Unit } from '../../components/pureGrids'

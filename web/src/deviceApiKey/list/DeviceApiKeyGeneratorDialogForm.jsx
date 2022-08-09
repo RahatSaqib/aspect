@@ -7,8 +7,8 @@ import { connect } from 'react-redux'
 import { defineMessages, injectIntl } from 'react-intl'
 
 // Material-UI
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 
 // Our own imports
 import recomposeForm, { errorProps } from '../../components/recomposeForm'

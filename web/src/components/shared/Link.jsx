@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import MUILink from '@material-ui/core/Link'
+import MUILink from '@mui/material/Link'
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'
 
 const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
@@ -21,6 +21,7 @@ const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
       disabled={disabled}
       {...restProps}
       onClick={onClick || onLinkClick}
+      // eslint-disable-next-line security/detect-non-literal-fs-filename
       className={classNames(theme.link, {
         [theme.active]: new RegExp(`^${restProps.href}`).test(location.pathname),
       })}

@@ -1,9 +1,9 @@
 import React from 'react'
 import { bool, func } from 'prop-types'
 import classnames from 'classnames/bind'
-import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Tooltip from '@material-ui/core/Tooltip'
+import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
+import Tooltip from '@mui/material/Tooltip'
 import { defineMessages } from 'react-intl'
 
 import IconProvider from '../../IconProvider'

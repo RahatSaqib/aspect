@@ -6,7 +6,7 @@ import map from 'lodash/map'
 import isNumber from 'lodash/isNumber'
 import unset from 'lodash/unset'
 import { useMutation, useQuery } from 'react-query'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import Create from './Create'
 import Update from './Update'

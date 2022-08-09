@@ -1,7 +1,7 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import { MdKeyboardArrowLeft } from 'react-icons/md'
 
 import styles from './DetailBackBar.css'

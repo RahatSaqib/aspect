@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
-import { withStyles } from '@material-ui/styles'
-import TableCell from '@material-ui/core/TableCell'
+import { withStyles } from '@mui/styles'
+import TableCell from '@mui/material/TableCell'
 
 import styles from './DataTableRowStyle'
 

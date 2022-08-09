@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { array, number, object, oneOfType, string } from 'prop-types'
-import Button from '@material-ui/core/Button'
-import Popover from '@material-ui/core/Popover'
+import Button from '@mui/material/Button'
+import Popover from '@mui/material/Popover'
 import classnames from 'classnames/bind'
 
 import IconProvider from '../../../IconProvider'

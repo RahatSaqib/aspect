@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import Card from '@material-ui/core/Card'
+import Card from '@mui/material/Card'
 import { FaArrowUp } from 'react-icons/fa'
 import { fetchTask } from '../TaskRedux'
 

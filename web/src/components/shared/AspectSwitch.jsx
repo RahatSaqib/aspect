@@ -1,8 +1,8 @@
 import React from 'react'
-import Switch from '@material-ui/core/Switch'
-import Typography from '@material-ui/core/Typography'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { withStyles } from '@material-ui/styles'
+import Switch from '@mui/material/Switch'
+import Typography from '@mui/material/Typography'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import { withStyles } from '@mui/styles'
 
 const styles = theme => ({
   colorBar: {},

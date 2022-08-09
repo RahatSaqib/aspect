@@ -1,8 +1,8 @@
 import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
 
 describe('UserPreferencesForm module', () => {
   const { UserPreferencesForm } = require('./UserPreferencesForm')

@@ -1,6 +1,6 @@
 import React from 'react'
 import { bool, func, string } from 'prop-types'
-import TableSortLabel from '@material-ui/core/TableSortLabel'
+import TableSortLabel from '@mui/material/TableSortLabel'
 import classnames from 'classnames/bind'
 
 import styles from '../../Table.css'

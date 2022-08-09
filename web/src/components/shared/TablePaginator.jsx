@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import useI18n from '../../Hooks/i18n/useI18n'
 

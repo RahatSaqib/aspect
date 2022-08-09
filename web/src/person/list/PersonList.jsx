@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect, useSelector } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
+import TableBody from '@mui/material/TableBody'
 
 import { getCustomMessage, commonDefinitions } from '../../shared/utils/customMessages'
 import { makeSortPageSelector, makeSearchParamsSanitizer, composeSanitizer } from '../../shared/selectors/searchParams'

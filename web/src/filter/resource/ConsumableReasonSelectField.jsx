@@ -4,7 +4,7 @@ import React from 'react'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { connect } from 'react-redux'
 
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchConsumableReasons } from '../../consumable/ConsumableRedux'

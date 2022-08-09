@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 
 // Material-UI
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 
 const VALUE_LOAD_MORE = 'VALUE_LOAD_MORE'
 const VALUE_LOADING_MORE = 'VALUE_LOADING_MORE'

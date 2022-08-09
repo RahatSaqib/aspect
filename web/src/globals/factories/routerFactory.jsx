@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import memoize from 'lodash/memoize'
 import head from 'lodash/head'
-import Paper from '@material-ui/core/Paper'
+import Paper from '@mui/material/Paper'
 import { compose } from 'recompose'
 
 import { RoutesPermissionProvider } from '../../Providers/RoutePermissions'

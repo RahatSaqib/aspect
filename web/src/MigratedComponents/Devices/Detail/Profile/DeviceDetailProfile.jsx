@@ -4,11 +4,11 @@ import flowRight from 'lodash/flowRight'
 import classnames from 'classnames/bind'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { connect } from 'react-redux'
-import Button from '@material-ui/core/Button'
-import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
-import Card from '@material-ui/core/Card'
-import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
+import Card from '@mui/material/Card'
+import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import resultMessages from '../../../../result/list/messages.js'
 import {
   makeSortPageSelector,
@@ -379,7 +379,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.connectivity)}
               description={formatMessage(messages.lastSeen, {
-                lastSeen: formatRelative(device.get('lastSeen')),
+                lastSeen: formatRelative(device.get('lastPingOn')),
               })}
             />
             <Summary

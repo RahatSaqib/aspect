@@ -1,9 +1,5 @@
 {
-  "extends": [
-    "airbnb-base",
-    "plugin:prettier/recommended",
-    "plugin:lodash/canonical"
-  ],
+  "extends": ["airbnb-base", "plugin:prettier/recommended", "plugin:lodash/canonical", "plugin:security/recommended"],
   "plugins": ["prettier", "lodash", "no-only-tests"],
   "parser": "babel-eslint",
   "parserOptions": {
@@ -24,10 +20,7 @@
     "no-console": [
       "error",
       {
-        "allow": [
-          "warn",
-          "error"
-        ]
+        "allow": ["warn", "error"]
       }
     ],
     "func-names": "off",
@@ -39,10 +32,7 @@
     "no-only-tests/no-only-tests": "warn",
     "no-promise-executor-return": "off",
     "import/no-named-as-default-member": "off",
-    "max-classes-per-file": [
-      "error",
-      3
-    ],
+    "max-classes-per-file": ["error", 3],
     "max-len": [
       "error",
       {
@@ -141,6 +131,11 @@
     "lodash/prefer-filter": "off",
     "lodash/collection-return": "off",
     "lodash/prefer-compact": "off",
-    "lodash/prefer-some": "off"
+    "lodash/prefer-some": "off",
+    "security/detect-object-injection": "off",
+    "security/detect-non-literal-regexp": "off",
+    "security/detect-unsafe-regex": "off",
+    "security/detect-non-literal-require": "off",
+    "security/detect-non-literal-fs-filename": "off"
   }
 }

@@ -7,7 +7,7 @@ import { compose, withProps, withHandlers, lifecycle, setPropTypes } from 'recom
 import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
+import TableBody from '@mui/material/TableBody'
 import { useQuery } from 'react-query'
 
 import { getCustomMessage, commonDefinitions } from '../../shared/utils/customMessages'

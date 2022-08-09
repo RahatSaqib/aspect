@@ -1,10 +1,11 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
-import LinearProgress from '@material-ui/core/LinearProgress'
-import Stepper from '@material-ui/core/Stepper'
-import StepLabel from '@material-ui/core/StepLabel'
-import StepContent from '@material-ui/core/StepContent'
+import LinearProgress from '@mui/material/LinearProgress'
+import Stepper from '@mui/material/Stepper'
+import StepLabel from '@mui/material/StepLabel'
+import StepContent from '@mui/material/StepContent'
 
 import { Hidden } from '../../components/pureGrids'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'

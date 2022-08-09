@@ -6,7 +6,7 @@ import { compose, pure, setPropTypes } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
 
 // Material-UI
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 
 // Our own imports
 import recomposeForm from '../../components/recomposeForm'

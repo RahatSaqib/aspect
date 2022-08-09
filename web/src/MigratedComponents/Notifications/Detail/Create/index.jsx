@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import useI18n from '../../../../Hooks/i18n/useI18n'
 import { FormikProvider } from '../../../Form/Formik/Context'

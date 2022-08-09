@@ -2,7 +2,7 @@ import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Route } from 'react-router-dom'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import LinearProgress from '@mui/material/LinearProgress'
 
 import { AccountDetailsData } from '../AccountRedux'
 

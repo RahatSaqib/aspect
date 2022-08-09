@@ -2,8 +2,8 @@ import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
-import LinearProgress from '@material-ui/core/LinearProgress'
-import Button from '@material-ui/core/Button'
+import LinearProgress from '@mui/material/LinearProgress'
+import Button from '@mui/material/Button'
 import { Login } from './Login'
 
 describe('Login component', () => {

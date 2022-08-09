@@ -2,7 +2,7 @@
 import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import React from 'react'
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 import { injectIntl, defineMessages } from 'react-intl'
 
 import SelectField from '../../components/shared/SelectField'
@@ -51,7 +51,7 @@ const getCurrentValue = value => {
 
 const DeviceStatusSelectField = props => {
   const handleChange = ({ target: { value } }) => {
-    props.onDeviceMaintenanceStatusChange(options[value])
+    props.onDeviceMaintenanceStatusChange(value.includes('all') ? undefined : options[value])
   }
 
   const value = getCurrentValue(props.value)
@@ -60,7 +60,7 @@ const DeviceStatusSelectField = props => {
 
   return (
     <SelectField {...restProps} value={value} onChange={handleChange}>
-      <MenuItem value={undefined}>{props.intl.formatMessage(messages.optionAll)}</MenuItem>
+      <MenuItem value="all">{props.intl.formatMessage(messages.optionAll)}</MenuItem>
       <MenuItem value="up" style={{ color: '#99D25D' }}>
         {props.intl.formatMessage(messages.optionUp)}
       </MenuItem>

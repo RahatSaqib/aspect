@@ -1,6 +1,6 @@
 import React from 'react'
-import MenuItem from '@material-ui/core/MenuItem'
-import TextField from '@material-ui/core/TextField'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
 import { timezones } from '../../filter/hardcoded'
 
 const TimezoneSelect = ({ name, label, disabled, width, defaultTimezoneText, value, onChange }) => {

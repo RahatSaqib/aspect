@@ -1,6 +1,6 @@
 import React from 'react'
 import { bool, func, oneOfType, array } from 'prop-types'
-import TableCell from '@material-ui/core/TableCell'
+import TableCell from '@mui/material/TableCell'
 
 import TableColumnHeader from '../TableColumnHeader'
 import TableColumnOrderButtons from '../TableColumnOrderButtons'

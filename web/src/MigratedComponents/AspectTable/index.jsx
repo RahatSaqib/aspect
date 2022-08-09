@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { func, array, object, oneOfType } from 'prop-types'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
 

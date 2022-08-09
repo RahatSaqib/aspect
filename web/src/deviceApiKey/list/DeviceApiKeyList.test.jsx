@@ -5,7 +5,7 @@ import { makeItems } from '../../shared/metaReducers/items'
 import { makeTable } from '../../shared/metaReducers/table'
 import ExportListButton from '../../globals/components/ExportListButton'
 
-jest.mock('@material-ui/core/Checkbox', () => 'StubCheckbox')
+jest.mock('@mui/material/Checkbox', () => 'StubCheckbox')
 
 describe('Device Api Key List module', () => {
   const { DeviceApiKeyList } = require('./DeviceApiKeyList')
