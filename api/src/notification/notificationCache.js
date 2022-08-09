@@ -46,10 +46,6 @@ class NotificationCache {
       notificationsType = await this.getConditionsToEvaluate()
       this.setCacheValue(notificationsType)
     }
-    console.log(
-      '🚀 ~ file: notificationCache.js ~ line 52 ~ NotificationCache ~ getCacheValue ~ notificationsType',
-      notificationsType
-    )
 
     return this.getConditionsToEvaluate() // notificationsType
   }

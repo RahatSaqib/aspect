@@ -72,7 +72,7 @@ describe('Issue based Notifications triggers', () => {
   })
 })
 
-describe.only('Result Notifications triggers', () => {
+describe('Result Notifications triggers', () => {
   let results = []
   let ntId
   let messageContext
@@ -102,7 +102,7 @@ describe.only('Result Notifications triggers', () => {
       .first()
     assert.equal(notificationsPerType, 1)
     const notificationCache = NotificationCache.getInstance(knex)
-    notificationCache.refreshCache()
+    await notificationCache.refreshCache()
     messageContext = await createMessageContext()
   }
   const removeTestContext = async () => {
