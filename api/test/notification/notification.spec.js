@@ -4,7 +4,6 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
-const NotificationCache = require('../../src/notification/notificationCache')
 const config = require('../../src/config')
 const server = require('../utils/testUtils')
 const { dispatchAndWaitForAction, waitForIdle, createMessageContext } = require('../utils/mqUtils')
@@ -100,10 +99,9 @@ describe('Result Notifications triggers', () => {
       .where({ partnerId: 1, notificationTypeCategoryId })
       .count('* as notificationsPerType')
       .first()
-    assert.equal(notificationsPerType, 1)
-    const notificationCache = NotificationCache.getInstance(knex)
-    await notificationCache.refreshCache()
+    assert.equal(notificationsPerType, 1)    
     messageContext = await createMessageContext()
+    await server.post('/api/notification/clearcache').set('Authorization', `Bearer${shared.token}`)
   }
   const removeTestContext = async () => {
     await Promise.each(['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'], table =>
@@ -253,10 +251,7 @@ describe('Result Notifications triggers', () => {
       await knex('PersonTag').where('TagId', '>=', inserted).delete()
       await knex('Tag').whereIn('title', ['oneTag', 'secondTag', 'thirdTag']).delete()
     })
-    // beforeEach(async () => {
-    //   const notificationCache = NotificationCache.getInstance(knex)
-    //   notificationCache.refreshCache()
-    // })
+    
     afterEach(async () =>
       knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
     )
@@ -272,7 +267,7 @@ describe('Result Notifications triggers', () => {
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
-      assert.equal(notifications.length, 1)
+      assert.equal(notifications.length, 1, 'Only one notification should exists')
     })
 
     it('Should create or not a result based notification filtering by JobFunction and tags', async () => {
@@ -452,6 +447,7 @@ describe('Result Notifications triggers', () => {
     })
   })
 })
+
 describe('Notification routes', () => {
   const path = '/api/notification'
   let ntId

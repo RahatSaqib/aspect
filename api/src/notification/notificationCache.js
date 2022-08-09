@@ -4,8 +4,9 @@ const stdTTL = 60 * 60 * 6 // 6 hours
 const notificationCacheKey = 'allResultBasedNotifications'
 class NotificationCache {
   constructor(knex, ttl = stdTTL) {
+    this.marker = Math.random()
     this.knex = knex
-    this.notificationCache = new NodeCache({ stdTTL: ttl, useClones: false })
+    this.notificationCache = new NodeCache({ stdTTL: ttl })
   }
 
   async getConditionsToEvaluate(notificationCategory = 'resultBased') {
@@ -44,6 +45,7 @@ class NotificationCache {
 
     if (!notificationsType) {
       notificationsType = await this.getConditionsToEvaluate()
+
       this.setCacheValue(notificationsType)
     }
 
@@ -62,5 +64,4 @@ class NotificationCacheSingleton {
   }
 }
 
-//
 module.exports = NotificationCacheSingleton

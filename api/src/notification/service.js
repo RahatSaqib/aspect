@@ -18,6 +18,11 @@ const {
   notificationTypeCategoryToId,
 } = require('../shared/dictionary')
 const logger = require('../shared/logger')
+const NotificationCache = require('./notificationCache')
+
+function clearCache() {
+  NotificationCache.getInstance(knex).refreshCache()
+}
 
 const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
@@ -1091,4 +1096,5 @@ module.exports = {
   saveNotification,
   deleteNotification,
   saveStatusNotification,
+  clearCache,
 }

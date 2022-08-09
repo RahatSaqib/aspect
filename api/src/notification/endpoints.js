@@ -8,6 +8,7 @@ const {
   saveNotification,
   deleteNotification,
   saveStatusNotification,
+  clearCache,
 } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
@@ -19,6 +20,16 @@ const {
 } = require('./validations')
 
 const routes = [
+  {
+    method: 'POST',
+    path: '/notification/clearcache',
+    handler: clearCache,
+    config: {
+      description: 'Clear Notification Cache',
+      notes: 'Clear Notification Cache',
+      auth: { scope: ['notification'] },
+    },
+  },
   {
     method: 'GET',
     path: '/notification',
