@@ -47,7 +47,7 @@ class NotificationCache {
       this.setCacheValue(notificationsType)
     }
 
-    return this.getConditionsToEvaluate() // notificationsType
+    return notificationsType
   }
 }
 
