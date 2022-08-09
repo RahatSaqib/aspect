@@ -7,11 +7,11 @@ import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 // Material-UI
-import LinearProgress from '@material-ui/core/LinearProgress'
-import MenuItem from '@material-ui/core/MenuItem'
-import Paper from '@material-ui/core/Paper'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import LinearProgress from '@mui/material/LinearProgress'
+import MenuItem from '@mui/material/MenuItem'
+import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 
 // Our own imports
 import { fetchDemoDevice, postDemoDeviceResult } from '../DemoRedux'

@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
 import styles from '../DailyStatus.css'
 

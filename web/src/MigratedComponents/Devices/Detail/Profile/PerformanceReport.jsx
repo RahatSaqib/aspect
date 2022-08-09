@@ -1,7 +1,7 @@
 import React from 'react'
 import { oneOfType, object, string, number } from 'prop-types'
 import classnames from 'classnames/bind'
-import Card from '@material-ui/core/Card'
+import Card from '@mui/material/Card'
 import useI18n from '../../../../Hooks/i18n/useI18n'
 import PerformanceBarChart from './PerformanceBarChart'
 import styles from '../DeviceDetail.css'

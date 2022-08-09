@@ -1,6 +1,6 @@
 import React from 'react'
 import { array, func, oneOfType } from 'prop-types'
-import Chip from '@material-ui/core/Chip'
+import Chip from '@mui/material/Chip'
 import classnames from 'classnames/bind'
 
 import messages from '../messages'

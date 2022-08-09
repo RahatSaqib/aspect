@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 
 import AspectDialog from '../../../../components/shared/AspectDialog'
 import formConfig from './formConfig'

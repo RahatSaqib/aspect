@@ -6,9 +6,9 @@ import { FormattedMessage } from 'react-intl'
 import { Helmet } from 'react-helmet'
 
 // Material-UI
-import IconButton from '@material-ui/core/IconButton'
-import ActionHome from '@material-ui/icons/Home'
-import ActionBack from '@material-ui/icons/KeyboardArrowLeft'
+import IconButton from '@mui/material/IconButton'
+import ActionHome from '@mui/icons-material/Home'
+import ActionBack from '@mui/icons-material/KeyboardArrowLeft'
 
 import styles from './NotFound.css'
 

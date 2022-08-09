@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 
 import { defineMessages } from 'react-intl'
 import { Helmet } from 'react-helmet'
-import Grid from '@material-ui/core/Grid'
+import Grid from '@mui/material/Grid'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'

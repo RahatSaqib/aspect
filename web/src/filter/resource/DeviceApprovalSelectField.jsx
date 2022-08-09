@@ -4,7 +4,7 @@ import omit from 'lodash/omit'
 import flowRight from 'lodash/flowRight'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 import Immutable from 'immutable'
 import messages from '../../shared/messages/deviceApprovalMessages'
 

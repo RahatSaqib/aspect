@@ -2,7 +2,7 @@ import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import messages from './messages'
 
 describe('ResetPasswordEnterPassword module', () => {

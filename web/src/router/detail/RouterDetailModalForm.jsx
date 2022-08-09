@@ -6,9 +6,9 @@ import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router-dom'
 
 // Material-UI
-import Button from '@material-ui/core/Button'
-import ExitToApp from '@material-ui/icons/ExitToApp'
-import TextField from '@material-ui/core/TextField'
+import Button from '@mui/material/Button'
+import ExitToApp from '@mui/icons-material/ExitToApp'
+import TextField from '@mui/material/TextField'
 
 // Our own imports
 import recomposeForm, { errorProps } from '../../components/recomposeForm'

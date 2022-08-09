@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import SelectField from '../../components/shared/SelectField'

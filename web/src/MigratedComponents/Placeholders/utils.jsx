@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 
 import groupedOptions from './config'
 import IconProvider from '../IconProvider'

@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import daysStockLeftOptions from './daysStockLeftOptions'

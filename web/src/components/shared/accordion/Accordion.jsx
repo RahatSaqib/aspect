@@ -1,7 +1,7 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withStateHandlers } from 'recompose'
-import Card from '@material-ui/core/Card'
+import Card from '@mui/material/Card'
 
 import styles from './Accordion.css'
 

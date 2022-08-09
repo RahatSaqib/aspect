@@ -23,8 +23,8 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { injectIntl } from 'react-intl'
 // Material-UI
-import MenuItem from '@material-ui/core/MenuItem'
-import Divider from '@material-ui/core/Divider'
+import MenuItem from '@mui/material/MenuItem'
+import Divider from '@mui/material/Divider'
 
 // Our own imports
 import SelectField from '../../components/shared/SelectField'

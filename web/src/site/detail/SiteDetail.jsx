@@ -8,8 +8,8 @@ import { Helmet } from 'react-helmet'
 import classnames from 'classnames/bind'
 import { injectIntl } from 'react-intl'
 
-import Paper from '@material-ui/core/Paper'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import Paper from '@mui/material/Paper'
+import LinearProgress from '@mui/material/LinearProgress'
 import useI18n from '../../Hooks/i18n/useI18n'
 
 import isEditable from '../../shared/selectors/isEditable'

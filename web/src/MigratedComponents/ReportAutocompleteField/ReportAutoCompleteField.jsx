@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Autocomplete, TextField } from '@material-ui/core'
+import { Autocomplete, TextField } from '@mui/material'
 import { useQuery } from 'react-query'
 import { defineMessages } from 'react-intl'
 import fetchWrapperForQueries from '../QueryFetch'

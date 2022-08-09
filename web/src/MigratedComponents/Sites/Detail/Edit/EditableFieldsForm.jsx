@@ -10,9 +10,9 @@ import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 
 // Material-UI
-import LinearProgress from '@material-ui/core/LinearProgress'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import LinearProgress from '@mui/material/LinearProgress'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 
 // Our own imports
 import { deleteSingleSite } from '../../../../site/SiteRedux'

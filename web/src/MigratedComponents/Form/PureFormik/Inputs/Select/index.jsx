@@ -1,8 +1,8 @@
 import React from 'react'
 import startCase from 'lodash/startCase'
 import filter from 'lodash/filter'
-import TextField from '@material-ui/core/TextField'
-import Autocomplete from '@material-ui/core/Autocomplete'
+import TextField from '@mui/material/TextField'
+import Autocomplete from '@mui/material/Autocomplete'
 
 /**
  * this component should not contain **ANY**

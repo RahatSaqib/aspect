@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
 import classnames from 'classnames/bind'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import isFunction from 'lodash/isFunction'
 import { useFormikContext } from 'formik'
 import { useNavigate, useLocation } from 'react-router-dom'

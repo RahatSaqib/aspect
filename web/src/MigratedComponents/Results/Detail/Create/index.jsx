@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import AspectForm from '../../../Form'
 import FormActions from '../../../Form/formActions'

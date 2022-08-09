@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import classnames from 'classnames/bind'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import get from 'lodash/get'
 
 import { gotoWithReturnUrl } from '../../../../shared/utils/browser'

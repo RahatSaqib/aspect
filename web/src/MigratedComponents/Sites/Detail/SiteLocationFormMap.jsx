@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { reduxForm, formValueSelector } from 'redux-form/immutable'
 import { connect } from 'react-redux'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import { latLng, address } from '../../../shared/selectors/site'
 import { isValidLatLng, isValidFullAddress, formatFullAddressToAddressQuery } from '../../../site/utils/address'

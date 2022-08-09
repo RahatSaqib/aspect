@@ -5,7 +5,7 @@ import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import Select, { components } from 'react-select'
 import { defineMessages } from 'react-intl'
-import TextField from '@material-ui/core/TextField'
+import TextField from '@mui/material/TextField'
 
 import get from 'lodash/get'
 import find from 'lodash/find'

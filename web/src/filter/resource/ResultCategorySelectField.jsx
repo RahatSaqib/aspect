@@ -6,7 +6,7 @@ import flowRight from 'lodash/flowRight'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Immutable from 'immutable'
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 
 import messages from './i18n/generalMessages'
 import SelectField from '../../components/shared/SelectField'

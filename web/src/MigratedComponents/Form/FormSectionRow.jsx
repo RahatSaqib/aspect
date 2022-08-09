@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import Grid from '@material-ui/core/Grid'
-import IconButton from '@material-ui/core/IconButton'
+import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
 import uniqueId from 'lodash/uniqueId'
 
 import useI18n from '../../Hooks/i18n/useI18n'

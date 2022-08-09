@@ -1,7 +1,7 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import Card from '@material-ui/core/Card'
+import Card from '@mui/material/Card'
 
 import styles from './DataTableCard.css'
 

@@ -8,8 +8,8 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 
 // Material-UI
-import Paper from '@material-ui/core/Paper'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import Paper from '@mui/material/Paper'
+import LinearProgress from '@mui/material/LinearProgress'
 
 import ContactDetailsFormFormik from '../../MigratedComponents/Account/Details'
 

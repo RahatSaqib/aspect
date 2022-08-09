@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { compose, pure, setPropTypes, mapProps, lifecycle } from 'recompose'
 
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 
 import SelectField from '../../components/shared/SelectField'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'

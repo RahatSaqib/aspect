@@ -1,5 +1,5 @@
 import React from 'react'
-import PermIdentity from '@material-ui/icons/PermIdentity'
+import PermIdentity from '@mui/icons-material/PermIdentity'
 import { format as date } from 'date-fns/format'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import parseISO from 'date-fns/parseISO'

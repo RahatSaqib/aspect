@@ -2,7 +2,7 @@ import noop from 'lodash/noop'
 import React from 'react'
 import { mount } from 'enzyme'
 import Immutable from 'immutable'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import LinearProgress from '@mui/material/LinearProgress'
 import * as reactRedux from 'react-redux'
 
 import { Site } from '../../../site/SiteRedux'

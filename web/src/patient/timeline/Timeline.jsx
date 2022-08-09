@@ -1,7 +1,7 @@
 import React from 'react'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import Grid from '@material-ui/core/Grid'
+import Grid from '@mui/material/Grid'
 import classnames from 'classnames/bind'
 
 import styles from './Timeline.css'

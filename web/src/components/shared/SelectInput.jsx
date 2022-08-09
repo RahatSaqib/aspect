@@ -1,7 +1,7 @@
 import map from 'lodash/map'
 import React from 'react'
 import { Field } from 'redux-form/immutable'
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem from '@mui/material/MenuItem'
 import classNames from 'classnames'
 
 import SelectField from './SelectField'

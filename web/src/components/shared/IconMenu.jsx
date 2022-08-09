@@ -1,10 +1,10 @@
 import React, { Children, cloneElement, isValidElement, useState } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import IconButton from '@material-ui/core/IconButton'
-import Menu from '@material-ui/core/Menu'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
-import { withStyles } from '@material-ui/styles'
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { withStyles } from '@mui/styles'
 
 const styles = theme => ({
   iconButton: {

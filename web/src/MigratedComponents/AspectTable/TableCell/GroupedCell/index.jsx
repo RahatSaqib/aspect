@@ -1,6 +1,6 @@
 import React from 'react'
 import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
-import IconButton from '@material-ui/core/IconButton'
+import IconButton from '@mui/material/IconButton'
 import classnames from 'classnames/bind'
 
 import messages from '../messages'

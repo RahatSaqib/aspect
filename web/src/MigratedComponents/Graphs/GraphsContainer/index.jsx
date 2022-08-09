@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import Grid from '@material-ui/core/Grid'
+import Grid from '@mui/material/Grid'
 import GraphContainer from './GraphContainer'
 import { validateGraphConfig } from '../Helpers/Formatters'
 import { isAllowedGroupsWithoutAssays, getWhitelistedAssays } from '../../../shared/utils/graph'

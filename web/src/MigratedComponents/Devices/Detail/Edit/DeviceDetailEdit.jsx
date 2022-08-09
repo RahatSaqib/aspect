@@ -7,7 +7,7 @@ import Immutable from 'immutable'
 import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Card from '@material-ui/core/Card'
+import Card from '@mui/material/Card'
 import { Helmet } from 'react-helmet'
 
 import recomposeForm from '../../../../components/recomposeForm'

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
+import TableBody from '@mui/material/TableBody'
 import { useQuery } from 'react-query'
 
 import format from 'date-fns/format'
