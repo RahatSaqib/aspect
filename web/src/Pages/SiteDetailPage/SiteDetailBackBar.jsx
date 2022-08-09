@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 import React from 'react'
-import AspectButton from '../../../components/shared/AspectButton'
-import DetailBackBar from '../../../globals/components/DetailBackBar'
+import AspectButton from '../../components/shared/AspectButton'
+import DetailBackBar from '../../globals/components/DetailBackBar'
 
 const messages = defineMessages({
   profile: {

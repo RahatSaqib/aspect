@@ -1,7 +1,8 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import { SiteDetailBackBar } from './Detail/SiteDetailBackBar'
+import { SiteDetailBackBar } from './SiteDetailBackBar'
 import AspectButton from '../../components/shared/AspectButton'
+// import AspectButton from '../../components/shared/AspectButton'
 
 describe('SiteDetailBackBar component', () => {
   const props = {
