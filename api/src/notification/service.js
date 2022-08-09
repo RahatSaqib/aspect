@@ -18,6 +18,11 @@ const {
   notificationTypeCategoryToId,
 } = require('../shared/dictionary')
 const logger = require('../shared/logger')
+const NotificationCache = require('./notificationCache')
+
+async function clearCache() {
+  return NotificationCache.getInstance(knex).refreshCache()
+}
 
 const evaluationMethods = {
   issueBased: () => true, // this will be developed once we move the issue based notification to the ui
@@ -195,7 +200,6 @@ async function listNotifications(request) {
 async function createNotifications(knex, action, context) {
   const now = new Date()
   const { filterCondition = null, notificationTypeCategoryId = 'issueBased' } = action
-
   const policies = await getNotificationPolicy(
     knex,
     action,
@@ -207,7 +211,8 @@ async function createNotifications(knex, action, context) {
   let jobFunctionId = null
   let jobFunctionLevel = null
   const { jobFunctions = [], persons = [], sendToClinician = false, sendToPatient = false } = filterCondition || {}
-  if (policies) {
+
+  if (!_.isEmpty(policies)) {
     const [firstPolicy] = policies
     if (firstPolicy && (sendToClinician || sendToPatient)) {
       const nonPersonsToNotify = _.filter(
@@ -368,7 +373,6 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
     .modify(extraConditionsFunction, extraConditions, aliases)
     .where('nt.enabled', true)
     .distinct(selectColums.concat(extraFields))
-
   return records
 }
 
@@ -1059,7 +1063,12 @@ async function deleteNotification(request) {
 }
 
 async function saveStatusNotification(request) {
-  const { auth, params, payload } = request
+  const {
+    auth,
+    params,
+    plugins: { messageContext },
+    payload,
+  } = request
   const { id } = params
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
@@ -1077,7 +1086,8 @@ async function saveStatusNotification(request) {
   if (!ok) {
     return Boom.internal(`Can not save notification: ${error}`)
   }
-
+  if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
+  messageContext.notificationTypeCreated(notificationTypeId)
   return { ok: true, notificationTypeId }
 }
 
@@ -1092,4 +1102,5 @@ module.exports = {
   saveNotification,
   deleteNotification,
   saveStatusNotification,
+  clearCache,
 }
