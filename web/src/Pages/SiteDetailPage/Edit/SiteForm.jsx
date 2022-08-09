@@ -73,13 +73,13 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
     } else {
       updateSite(editSite)
     }
-    navigate(-1)
+    navigate('/browse/site')
   }
 
   const handleDelete = () => {
     deleteSite()
     setShowConfirmation(false)
-    navigate(-2)
+    navigate('/browse/site')
   }
 
   function handleDeletePrompt() {
