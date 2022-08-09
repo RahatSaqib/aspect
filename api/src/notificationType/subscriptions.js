@@ -9,10 +9,7 @@ const subscriptions = [
 ]
 
 async function onNotificationTypeCreated(notificationTypeId, { messageContext }) {
-  return messageContext.run(async knex => {
-    const notificationCache = NotificationCache.getInstance(knex)
-    await notificationCache.refreshCache()
-  })
+  return messageContext.run(async knex => NotificationCache.getInstance(knex).refreshCache())
 }
 
 module.exports = { subscriptions }

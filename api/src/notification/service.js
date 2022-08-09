@@ -1063,7 +1063,12 @@ async function deleteNotification(request) {
 }
 
 async function saveStatusNotification(request) {
-  const { auth, params, payload } = request
+  const {
+    auth,
+    params,
+    plugins: { messageContext },
+    payload,
+  } = request
   const { id } = params
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
@@ -1081,7 +1086,8 @@ async function saveStatusNotification(request) {
   if (!ok) {
     return Boom.internal(`Can not save notification: ${error}`)
   }
-
+  if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
+  messageContext.notificationTypeCreated(notificationTypeId)
   return { ok: true, notificationTypeId }
 }
 

@@ -225,7 +225,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/notification/{id}/change-status',
-    handler: asyncHandler(saveStatusNotification),
+    handler: saveStatusNotification,
     config: {
       description: 'Update Notification status',
       notes: 'Returns ok: true when notification was updated successfully',
