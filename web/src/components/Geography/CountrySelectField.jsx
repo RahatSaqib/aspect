@@ -5,7 +5,7 @@ import LinearProgress from '@mui/material/LinearProgress'
 import TextField from '@mui/material/TextField'
 import useCountries from '../../hooks/geography/useCountries'
 
-const CountrySelectField = ({ allItemText, countryId, onCountryIdChange, floatingLabelText }) => {
+const CountrySelectField = ({ allItemText, countryId, onCountryIdChange, floatingLabelText, error, helperText }) => {
   const { isLoading: isCountryLoading, data: countries } = useCountries()
 
   const handleSelectFieldChange = ({ target: { value } }) => {
@@ -16,6 +16,8 @@ const CountrySelectField = ({ allItemText, countryId, onCountryIdChange, floatin
     <LinearProgress />
   ) : (
     <TextField
+      error={error}
+      helperText={error ? helperText : null}
       select
       variant="standard"
       value={countryId}
@@ -40,10 +42,14 @@ CountrySelectField.propTypes = {
   onCountryIdChange: PropTypes.func,
   countryId: PropTypes.string,
   floatingLabelText: PropTypes.string.isRequired,
+  error: PropTypes.bool,
+  helperText: PropTypes.string,
 }
 
 CountrySelectField.defaultProps = {
   allItemText: null,
   onCountryIdChange: () => {},
   countryId: '',
+  error: false,
+  helperText: null,
 }

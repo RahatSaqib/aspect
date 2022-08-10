@@ -8,7 +8,7 @@ import messages from './messages'
 import styles from './styles'
 import useI18n from '../../hooks/i18n/useI18n'
 
-const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
+const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validators }) => {
   const { formatMessage } = useI18n()
   const [selectedCountry, setSelectedCountry] = useState({ id: countryId, name: '' })
   const [selectedState, setSelectedState] = useState({ id: stateId, name: '' })
@@ -47,7 +47,8 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
         <CountrySelectField
           onCountryIdChange={updateCountry}
           countryId={selectedCountry.id}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
+          error={validators.country.error}
+          helperText={formatMessage(messages.countryRequired)}
           tabIndex="0"
           aria-haspopup
           floatingLabelText={formatMessage(messages.country)}
@@ -59,7 +60,6 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
           onStateIdChange={updateState}
           stateId={selectedState.id}
           countryId={selectedCountry.id}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
           tabIndex="0"
           aria-haspopup
           floatingLabelText={getCustomMessage(messages, 'state', user)}
@@ -72,7 +72,6 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange }) => {
           countryId={selectedCountry.id}
           stateId={selectedState.id}
           lgaId={selectedLga.id}
-          errorStyle={{ float: 'left', whiteSpace: 'nowrap', textOverflow: 'visible' }}
           tabIndex="0"
           aria-haspopup
           floatingLabelText={getCustomMessage(messages, 'lga', user)}

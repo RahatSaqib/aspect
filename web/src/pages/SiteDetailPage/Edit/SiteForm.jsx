@@ -86,6 +86,8 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
     setShowConfirmation(true)
   }
 
+  const isError = !isPristine && (isEmpty(editSite.name) || isEmpty(editSite.shortName) || isEmpty(editSite.countryId))
+
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
@@ -180,6 +182,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               countryId={editSite.countryId}
               stateId={editSite.stateId}
               lgaId={editSite.lgaId}
+              validators={{ country: { error: !isPristine && isEmpty(editSite.countryId), helperText: 'is required' } }}
               onChange={location => {
                 setEditSite({
                   ...editSite,
@@ -348,7 +351,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               onChange={e => setEditSite({ ...editSite, notes: e.target.value })}
             />
           </div>
-          <Button color="secondary" variant="contained" onClick={handleSubmit} disabled={isPristine}>
+          <Button color="secondary" variant="contained" onClick={handleSubmit} disabled={isPristine || isError}>
             {isNew ? formatMessage(messages.buttonCreate) : formatMessage(messages.buttonUpdate)}
           </Button>
           {isNew ? null : (

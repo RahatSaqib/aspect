@@ -8,6 +8,9 @@ import MenuItem from '@mui/material/MenuItem'
 import SelectField from '../../shared/SelectField'
 import { fetchCountriesForLocationSelector, LazyLoadItems } from '../../../store/GeographyRedux'
 
+/**
+ * @deprecated
+ */
 export class CountrySelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
