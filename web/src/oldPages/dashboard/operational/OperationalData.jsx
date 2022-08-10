@@ -6,28 +6,17 @@ import { Helmet } from 'react-helmet'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import find from 'lodash/find'
-import { defineMessages } from 'react-intl'
 
 import OperationalDashBoard from './OperationalDashBoard'
 import OperationalDailyStatus from './OperationalDailyStatus'
 
 import styles from './OperationalData.css'
 import useI18n from '../../../hooks/i18n/useI18n'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
 const currentTabStyle = (currentTab, index) => (currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive')
-
-const messages = defineMessages({
-  operationalDashboardTitle: {
-    id: 'pages.OperationalDashboard.operationalDashboardTitle',
-    defaultMessage: 'Dashboard',
-  },
-  dailyStatusTitle: {
-    id: 'pages.OperationalDashboard.dailyStatusTitle',
-    defaultMessage: 'Daily Status',
-  },
-})
 
 export const OperationalData = () => {
   const { formatMessage } = useI18n()
@@ -49,7 +38,7 @@ export const OperationalData = () => {
 
   return (
     <div className={cssClasses('Container')}>
-      <Helmet title="Operational Data" />
+      <Helmet title={formatMessage(messages.title)} />
       <div className={cssClasses('tabs__container')}>
         <Tabs
           indicatorColor="primary"
