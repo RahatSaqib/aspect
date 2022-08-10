@@ -104,6 +104,7 @@ async function getAllResultsForExport(auth, query) {
       { key: 'errorCode', header: 'Error Code' },
       { key: 'resultWorkflowStatus', header: 'Workflow Status' },
       { key: 'resultTreatmentStatus', header: 'Treatment Status' },
+      { key: 'patientId', header: 'Patient Id' },
     ],
     dataSelector: (
       dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.

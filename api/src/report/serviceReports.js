@@ -13,7 +13,6 @@ const {
   getBaseReplacements,
   getMaxLimitPlaceHolders,
   getAdministrativeDivisionLabelPlaceHolders,
-  renderExcelTemplateToCsv,
   renderExcelTemplate,
   streamExcelTemplate,
   respondFile,
@@ -67,7 +66,16 @@ async function getSheetData(request, sheet, sharedResults) {
   logger.debug(`Report moduleName='${moduleName}', functionName='${functionName}'`, RELABEL_EXCEL)
 
   const result = await dataFunc(auth, query, { sharedResults, useNamedData })
-  const { ok, data, total, errorMessage, dynamicColumns = [], dataSelector = null, sections = [] } = result
+  const {
+    ok,
+    data,
+    total,
+    errorMessage,
+    dynamicColumns = [],
+    fixedColumns = [],
+    dataSelector = null,
+    sections = [],
+  } = result
 
   if (nameOfSharedData) {
     sharedResults[nameOfSharedData] = result
@@ -77,7 +85,7 @@ async function getSheetData(request, sheet, sharedResults) {
   logger.debug(`Worksheet data - total=${total}, list size=${listSize}'`, RELABEL_EXCEL)
 
   if (ok) {
-    return { data, total, dynamicColumns, dataSelector, sections }
+    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections }
   }
 
   return Boom.preconditionFailed(`Error in function ${functionName} of module ${moduleName} - ${errorMessage}`)
@@ -289,7 +297,6 @@ async function renderExcelFile(params) {
 async function streamToCsv(dataset, reply, fileName) {
   const csvStream = csv.format({ headers: true })
   const worksheetData = dataset[0]
-  console.log('🚀 ~ file: serviceReports.js ~ line 290 ~ streamToCsv ~ worksheetData', worksheetData)
 
   const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
   /**
@@ -297,7 +304,7 @@ async function streamToCsv(dataset, reply, fileName) {
    */
   if (data.length > 0) {
     _.forEach(data, row => {
-      const rowNormalized = transformRow(row, [...dynamicColumns, ...fixedColumns], dataSelector)
+      const rowNormalized = transformRow(row, [...fixedColumns, ...dynamicColumns], dataSelector)
       csvStream.write(rowNormalized)
     })
   } else {
@@ -308,7 +315,7 @@ async function streamToCsv(dataset, reply, fileName) {
     .response(csvStream)
     .encoding('binary')
     .type('stream/octet-stream')
-    .header('content-disposition', `attachment; filename=${fileName}.csv;`)
+    .header('content-disposition', `attachment; filename=${fileName}-${new Date().toISOString()}.csv;`)
 }
 
 function transformRow(row, columns, dataSelector) {
