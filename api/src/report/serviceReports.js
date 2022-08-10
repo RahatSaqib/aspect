@@ -4,7 +4,7 @@ const Stream = require('stream')
 const _ = require('lodash')
 const { subDays } = require('date-fns')
 const { formatInTimeZone } = require('date-fns-tz')
-
+const csv = require('fast-csv')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
 const { getReportDetails, listReports } = require('./service')
@@ -147,6 +147,7 @@ async function getAllSheetsData(request, sheets) {
     const {
       data,
       dynamicColumns,
+      fixedColumns,
       total = null,
       dataSelector = null,
       sections,
@@ -159,6 +160,7 @@ async function getAllSheetsData(request, sheets) {
     dataSet[sheetIndex] = {
       data,
       dynamicColumns,
+      fixedColumns,
       sections,
       dataSelector,
       total,
@@ -233,22 +235,8 @@ async function createReport(request, reply) {
   ]
 
   if (extension === 'csv') {
-    const dataBuffer = await renderExcelTemplateToCsv({
-      countryAbbreviation,
-      culture,
-      templateFolderPath: templateFolderPath || externalId,
-      data,
-      replacements,
-    })
-
-    return respondFile({
-      dataBuffer,
-      extension,
-      fileNamePrefix: fileName,
-      reply,
-    })
+    return streamToCsv(data, reply, fileName)
   }
-
   const renderParams = {
     countryAbbreviation,
     culture,
@@ -296,6 +284,39 @@ async function renderExcelFile(params) {
     fileNamePrefix: fileName,
     reply,
   })
+}
+
+async function streamToCsv(dataset, reply, fileName) {
+  const csvStream = csv.format({ headers: true })
+  const worksheetData = dataset[0]
+  console.log('🚀 ~ file: serviceReports.js ~ line 290 ~ streamToCsv ~ worksheetData', worksheetData)
+
+  const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
+  /**
+   * replace base placeholders, i.e. <Dates>, <States>, etc in the header
+   */
+  if (data.length > 0) {
+    _.forEach(data, row => {
+      const rowNormalized = transformRow(row, [...dynamicColumns, ...fixedColumns], dataSelector)
+      csvStream.write(rowNormalized)
+    })
+  } else {
+    csvStream.write(defaultNoDataMessage)
+  }
+  csvStream.end()
+  return reply
+    .response(csvStream)
+    .encoding('binary')
+    .type('stream/octet-stream')
+    .header('content-disposition', `attachment; filename=${fileName}.csv;`)
+}
+
+function transformRow(row, columns, dataSelector) {
+  const rowNormalized = {}
+  const value = dataSelector ? dataSelector(row) : row
+  columns.forEach(({ key, header }) => (rowNormalized[header] = value[key]))
+
+  return rowNormalized
 }
 
 function renderExcelStream(params) {

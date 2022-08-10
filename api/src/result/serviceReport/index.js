@@ -85,6 +85,7 @@ async function getAllResultsForExport(auth, query) {
     ...columnsFromAssaySchema,
     ...columnsFromResultForms,
   ]
+
   if (extraColumns.length === 0) columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
 
   const dataset = {
@@ -93,6 +94,17 @@ async function getAllResultsForExport(auth, query) {
     length: _.get(data, 'length', 0),
     data,
     dynamicColumns: columns,
+    fixedColumns: [
+      { key: 'endedOn', header: 'Test Date' },
+      { key: 'stateName', header: 'Sample State' },
+      { key: 'siteName', header: 'Sample Site' },
+      { key: 'sampleId', header: 'Sample ID' },
+      { key: 'deviceName', header: 'Device' },
+      { key: 'assayName', header: 'Assay' },
+      { key: 'errorCode', header: 'Error Code' },
+      { key: 'resultWorkflowStatus', header: 'Workflow Status' },
+      { key: 'resultTreatmentStatus', header: 'Treatment Status' },
+    ],
     dataSelector: (
       dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
     ) =>
@@ -111,10 +123,11 @@ async function getAllResultsForExport(auth, query) {
 // ----------------------------------------------------------------------------------------------
 async function exportResults(request, reply) {
   const { query, auth } = request
-  const { data, dynamicColumns, dataSelector, total } = await getAllResultsForExport(auth, query)
+  const { data, dynamicColumns, dataSelector, fixedColumns = [], total } = await getAllResultsForExport(auth, query)
   const sheetData = {
     data,
     dynamicColumns,
+    fixedColumns,
     total,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',

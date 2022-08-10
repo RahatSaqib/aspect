@@ -106,16 +106,6 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/report',
-    handler: asyncHandler(listReports),
-    config: {
-      description: 'Report List',
-      notes: 'Pageable and sortable list of reports',
-      ...listReportBaseConfig(),
-    },
-  },
-  {
-    method: 'GET',
     path: '/report/export',
     handler: exportReports,
     config: {
