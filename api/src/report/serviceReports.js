@@ -295,20 +295,21 @@ async function renderExcelFile(params) {
 }
 
 async function streamToCsv(dataset, reply, fileName) {
-  const csvStream = csv.format({ headers: true })
   const worksheetData = dataset[0]
 
   const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
   /**
    * replace base placeholders, i.e. <Dates>, <States>, etc in the header
    */
+  const csvStream = csv.format({ headers: data.length > 0 })
+
   if (data.length > 0) {
     _.forEach(data, row => {
       const rowNormalized = transformRow(row, [...fixedColumns, ...dynamicColumns], dataSelector)
       csvStream.write(rowNormalized)
     })
   } else {
-    csvStream.write(defaultNoDataMessage)
+    csvStream.write({ data: defaultNoDataMessage })
   }
   csvStream.end()
   return reply
