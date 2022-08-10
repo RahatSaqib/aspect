@@ -5,7 +5,7 @@ const commonPayload = {
   shortName: Joi.string().required(),
   externalId: Joi.string().allow('', null),
   notes: Joi.string().allow('', null),
-  countryId: Joi.number().integer().positive().allow('', null),
+  countryId: Joi.number().required().integer().positive(),
   stateId: Joi.number().integer().positive().allow('', null),
   lgaId: Joi.number().integer().positive().allow('', null),
   street1: Joi.string().allow('', null),
@@ -35,5 +35,6 @@ const postSchema = {
     ...commonPayload,
   },
 }
+
 
 module.exports = { postSchema, updateSchema }

@@ -36,6 +36,7 @@ function filterNotNeededParameters(payload) {
       'hoursEnd',
       'siteTypeId',
       'parentWarehouseId',
+      'externalId',
     ]),
     {
       timezoneId: isEmpty(payload.timezone) ? null : payload.timezone,
