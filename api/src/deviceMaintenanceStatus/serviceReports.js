@@ -210,12 +210,7 @@ async function getDeviceUtilizationPerDayReport(auth, query) {
   }
 }
 
-async function getDeviceUtilizationPerDayReportPercentage(auth, query) {
-  return getDeviceUtilizationPerDayReport(auth, query, 'percent')
-}
-
 module.exports = {
   getDeviceActivityPercentReport,
   getDeviceUtilizationPerDayReport,
-  getDeviceUtilizationPerDayReportPercentage,
 }

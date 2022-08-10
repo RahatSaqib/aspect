@@ -123,6 +123,10 @@ const getAdministrativeDivisionLabelPlaceHolders = async ({ partnerId }) => {
       placeholder: '<LgasLabel>',
       value: getLabel('lgasLabel', 'LGAs'),
     },
+    {
+      placeholder: '<SitesLabel>',
+      value: getLabel('sitesLabel', 'Sites'),
+    },
   ]
 }
 

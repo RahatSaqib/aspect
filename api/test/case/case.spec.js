@@ -27,7 +27,7 @@ function assertPropsOnList(res) {
   assert.property(res.body.data[0], 'updatedOn')
 }
 
-describe('case/service', () => {
+describe.skip('case/service', () => {
   let partnerId = null
   let diseaseId = null
   let accessToken = null
