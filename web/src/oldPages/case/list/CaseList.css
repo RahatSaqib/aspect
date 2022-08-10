@@ -1,0 +1,7 @@
+.Container {
+  padding: 10px;
+}
+
+.CaseDataTable {
+  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.css';
+}

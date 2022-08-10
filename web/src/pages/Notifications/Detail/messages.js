@@ -1,0 +1,440 @@
+import { defineMessages } from 'react-intl'
+import assayMessages from '../../../utils/messages/assay'
+import resultCategoryMessages from '../../../utils/messages/resultCategory'
+
+export default defineMessages({
+  titleNew: {
+    id: 'pages.NotificationDetail.New.title',
+    defaultMessage: 'New Notification',
+  },
+  titleEdit: {
+    id: 'pages.NotificationDetail.Edit.title',
+    defaultMessage: 'Edit Notification',
+  },
+  save: {
+    id: 'pages.NotificationDetail.save',
+    defaultMessage: 'Save',
+  },
+  sendToPatient: {
+    id: 'pages.Notifications.sendToPatient',
+    defaultMessage: 'Send to patient',
+  },
+
+  // --------------------------------------------------------------
+  // Sections
+  // --------------------------------------------------------------
+  notificationType: {
+    id: 'pages.NotificationDetail.notificationType',
+    defaultMessage: 'Notification Type',
+  },
+  notificationTypeEnable: {
+    id: 'pages.NotificationDetail.notificationTypeEnable',
+    defaultMessage: 'Enable this notification',
+  },
+  enable: {
+    id: 'pages.NotificationDetail.enable',
+    defaultMessage: 'Enable',
+  },
+  whenResultIs: {
+    id: 'pages.NotificationDetail.whenResultIs',
+    defaultMessage: 'When the result is',
+  },
+  fromThisDevice: {
+    id: 'pages.NotificationDetail.fromThisDevice',
+    defaultMessage: 'From this device',
+  },
+  send: {
+    id: 'pages.NotificationDetail.send',
+    defaultMessage: 'Send',
+  },
+  toAnyOfTheseJobFunctions: {
+    id: 'pages.NotificationDetail.toAnyOfTheseJobFunctions',
+    defaultMessage: 'To any of these Job Functions',
+  },
+
+  // --------------------------------------------------------------
+  notificationTitle: {
+    id: 'pages.NotificationDetail.notificationTitle',
+    defaultMessage: 'Notification Title',
+  },
+
+  // --------------------------------------------------------------
+  // section "When the result is"
+  // --------------------------------------------------------------
+  assayTitle: {
+    id: 'pages.NotificationDetail.assayTitle',
+    defaultMessage: 'Assay',
+  },
+  assayPlaceholder: {
+    id: 'pages.NotificationDetail.assayPlaceholder',
+    defaultMessage: 'Select Assay ...',
+  },
+  resultTitle: {
+    id: 'pages.NotificationDetail.resultTitle',
+    defaultMessage: 'Result',
+  },
+  resultPlaceholder: {
+    id: 'pages.NotificationDetail.resultPlaceholder',
+    defaultMessage: 'Select Result Category ...',
+  },
+
+  // --------------------------------------------------------------
+  // section "From this device"
+  // --------------------------------------------------------------
+  //  Device Area Level
+  SelectAreaTitle: {
+    id: 'pages.NotificationDetail.SelectAreaTitle',
+    defaultMessage: 'Device Area Level',
+  },
+  SelectAreaPlaceholder: {
+    id: 'pages.NotificationDetail.SelectAreaPlaceholder',
+    defaultMessage: 'Choose Device Level ...',
+  },
+  AreaNational: {
+    id: 'pages.NotificationDetail.Area.National',
+    defaultMessage: 'National',
+  },
+  AreaState: {
+    id: 'pages.NotificationDetail.Area.State',
+    defaultMessage: 'State',
+  },
+  AreaLGA: {
+    id: 'pages.NotificationDetail.Area.LGA',
+    defaultMessage: 'LGA',
+  },
+  AreaLaboratory: {
+    id: 'pages.NotificationDetail.Area.Laboratory',
+    defaultMessage: 'Laboratory',
+  },
+  SelectLevel: {
+    id: 'pages.NotificationDetail.SelectLevel',
+    defaultMessage: 'Select Level',
+  },
+
+  // device area items
+  SelectNationalTitle: {
+    id: 'pages.NotificationDetail.SelectNationalTitle',
+    defaultMessage: 'Device Country',
+  },
+  SelectStateTitle: {
+    id: 'pages.NotificationDetail.SelectStateTitle',
+    defaultMessage: 'Device State',
+  },
+  SelectLgaTitle: {
+    id: 'pages.NotificationDetail.SelectLgaTitle',
+    defaultMessage: 'Device LGA',
+  },
+  SelectLabTitle: {
+    id: 'pages.NotificationDetail.SelectLabTitle',
+    defaultMessage: 'Device Lab',
+  },
+  SelectNationalPlaceholder: {
+    id: 'pages.NotificationDetail.SelectNationalPlaceholder',
+    defaultMessage: 'Choose Country ...',
+  },
+  SelectStatePlaceholder: {
+    id: 'pages.NotificationDetail.SelectStatePlaceholder',
+    defaultMessage: 'Choose States ...',
+  },
+  SelectLgaPlaceholder: {
+    id: 'pages.NotificationDetail.SelectLgaPlaceholder',
+    defaultMessage: `Choose LGA's ...`,
+  },
+  SelectLabPlaceholder: {
+    id: 'pages.NotificationDetail.SelectLabPlaceholder',
+    defaultMessage: 'Choose Labs ...',
+  },
+
+  // --------------------------------------------------------------
+  // section "Send"
+  // --------------------------------------------------------------
+  email: {
+    id: 'pages.NotificationDetail.email',
+    defaultMessage: 'Email',
+  },
+  emailSubject: {
+    id: 'pages.NotificationDetail.emailSubject',
+    defaultMessage: 'Email Subject',
+  },
+  emailBody: {
+    id: 'pages.NotificationDetail.emailBody',
+    defaultMessage: 'Email Body',
+  },
+  sms: {
+    id: 'pages.NotificationDetail.sms',
+    defaultMessage: 'SMS',
+  },
+  smsBody: {
+    id: 'pages.NotificationDetail.smsBody',
+    defaultMessage: 'SMS Body',
+  },
+  smsBodyLimit: {
+    id: 'pages.NotificationDetail.smsBodyLimit',
+    defaultMessage: 'Sms message should not be longer than 144 characters',
+  },
+  web: {
+    id: 'pages.NotificationDetail.web',
+    defaultMessage: 'Web',
+  },
+  webUrl: {
+    id: 'pages.NotificationDetail.webUrl',
+    defaultMessage: 'Web Url',
+  },
+  webUrlInvalid: {
+    id: 'pages.NotificationDetail.webUrlInvalid',
+    defaultMessage: 'Please enter a valid url',
+  },
+  webBody: {
+    id: 'pages.NotificationDetail.webBody',
+    defaultMessage: 'Web Body',
+  },
+  required: {
+    id: 'forms.required',
+    defaultMessage: 'Required',
+  },
+
+  // --------------------------------------------------------------
+  // section "To any of these contacts"
+  // --------------------------------------------------------------
+  toNationalContacts: {
+    id: 'pages.NotificationDetail.toNationalContacts',
+    defaultMessage: 'National Contacts',
+  },
+  jobFunctionTags: {
+    id: 'pages.NotificationDetail.jobFunctionTags',
+    defaultMessage: 'Select contacts with any of the following tags',
+  },
+  jobFunctionAtLeastOneNeeded: {
+    id: 'pages.NotificationDetail.jobFunctionAtLeastOneNeeded',
+    defaultMessage: 'Please select at least one Job Function',
+  },
+  toStateContacts: {
+    id: 'pages.NotificationDetail.toStateContacts',
+    defaultMessage: 'State Contacts',
+  },
+  toLgaContacts: {
+    id: 'pages.NotificationDetail.toLgaContacts',
+    defaultMessage: 'LGA Contacts',
+  },
+  toLaboratoryContacts: {
+    id: 'pages.NotificationDetail.toLabContacts',
+    defaultMessage: 'Laboratory Contacts',
+  },
+
+  // --------------------------------------------------------------
+  site: {
+    id: 'forms.formSectionHeader.site',
+    defaultMessage: 'Site',
+  },
+  device: {
+    id: 'forms.formSectionHeader.device',
+    defaultMessage: 'Device',
+  },
+
+  date: {
+    id: 'forms.formSectionHeader.date',
+    defaultMessage: 'Date',
+  },
+  sample: {
+    id: 'forms.formSectionHeader.sample',
+    defaultMessage: 'Sample',
+  },
+  patient: {
+    id: 'forms.formSectionHeader.patient',
+    defaultMessage: 'Patient',
+  },
+  technicalDetails: {
+    id: 'forms.formSectionHeader.technicalDetails',
+    defaultMessage: 'Technical Details',
+  },
+
+  transferResult: {
+    id: 'pages.resultEdit.transferResult',
+    defaultMessage: 'Transfer Result',
+  },
+  header: {
+    id: 'pages.transferResult.header',
+    defaultMessage: 'Transfer Result',
+  },
+  titleSites: {
+    id: 'pages.transferResult.titleSites',
+    defaultMessage: 'Transfer to Clinic',
+  },
+  hint: {
+    id: 'pages.transferResult.hint',
+    defaultMessage: 'Enter clinic name',
+  },
+  enterComment: {
+    id: 'pages.transferResult.enterComment',
+    defaultMessage: 'Enter a comment',
+  },
+  buttonCancel: {
+    id: 'pages.transferResult.buttonCancel',
+    defaultMessage: 'Cancel',
+  },
+  buttonTransfer: {
+    id: 'pages.transferResult.buttonTransfer',
+    defaultMessage: 'Transfer',
+  },
+  includeAllResults: {
+    id: 'pages.transferResult.includeAllResults',
+    defaultMessage: 'Include ALL results related to Patient ID',
+  },
+  processing: {
+    id: 'pages.transferResult.processing',
+    defaultMessage: 'Processing ...',
+  },
+  note: {
+    id: 'pages.transferResult.note',
+    defaultMessage: `
+      Please notice that above field 'Transfer to Clinic' lists all clinics, even those
+      which you may not have access to.
+      In a such case - by transferring this result you won't
+      be able to edit this result record any more, and your
+      action cannot be undone.
+    `,
+  },
+  successOk: {
+    id: 'pages.transferResult.successOk',
+    defaultMessage: `OK`,
+  },
+  successHeader: {
+    id: 'pages.transferResult.successHeader',
+    defaultMessage: `
+      Result Transfer Completed
+    `,
+  },
+  successMessagePatient: {
+    id: 'pages.transferResult.successMessagePatient',
+    defaultMessage: 'Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"',
+  },
+  successMessageButton: {
+    id: 'pages.transferResult.successMessageButton',
+    defaultMessage: 'After clicking the OK button below, you will be redirected to the list of results.',
+  },
+
+  // --------------------------------------------------------------
+  fieldName: {
+    id: 'pages.NotificationDetail.fieldName',
+    defaultMessage: 'Name',
+  },
+  fieldShortName: {
+    id: 'pages.NotificationDetail.fieldShortName',
+    defaultMessage: 'ShortName',
+  },
+  fieldFacilityCode: {
+    id: 'pages.NotificationDetail.fieldFacilityCode',
+    defaultMessage: 'Facility Code',
+  },
+  fieldExternalId: {
+    id: 'pages.NotificationDetail.fieldExternalId',
+    defaultMessage: 'Site ID',
+  },
+  fieldTimeZone: {
+    id: 'pages.NotificationDetail.fieldTimeZone',
+    defaultMessage: 'Time Zone',
+  },
+  fieldState: {
+    id: 'pages.NotificationDetail.fieldState',
+    defaultMessage: 'State',
+  },
+  fieldCountry: {
+    id: 'pages.NotificationDetail.fieldCountry',
+    defaultMessage: 'Country',
+  },
+  fieldLGA: {
+    id: 'pages.NotificationDetail.fieldLGA',
+    defaultMessage: 'LGA',
+  },
+  fieldAddress: {
+    id: 'pages.NotificationDetail.fieldAddress',
+    defaultMessage: 'Address',
+  },
+  fieldAddress2: {
+    id: 'pages.NotificationDetail.fieldAddress2',
+    defaultMessage: 'Address 2',
+  },
+  fieldCity: {
+    id: 'pages.NotificationDetail.fieldCity',
+    defaultMessage: 'City',
+  },
+  fieldZip: {
+    id: 'pages.NotificationDetail.fieldZip',
+    defaultMessage: 'Zip',
+  },
+  fieldLongitude: {
+    id: 'pages.NotificationDetail.fieldLongitude',
+    defaultMessage: 'Longitude',
+  },
+  fieldLatitude: {
+    id: 'pages.NotificationDetail.fieldLatitude',
+    defaultMessage: 'Latitude',
+  },
+  fieldTags: {
+    id: 'pages.NotificationDetail.fieldTags',
+    defaultMessage: 'Tags',
+  },
+  fieldDevices: {
+    id: 'pages.NotificationDetail.fieldDevices',
+    defaultMessage: 'Devices',
+  },
+  fieldContact: {
+    id: 'pages.NotificationDetail.fieldContact',
+    defaultMessage: 'Site Contacts',
+  },
+  buttonSetBasedonAddress: {
+    id: 'pages.NotificationDetail.buttonSetBasedonAddress',
+    defaultMessage: 'Set based on address',
+  },
+  buttonUpdate: {
+    id: 'pages.NotificationDetail.buttonUpdate',
+    defaultMessage: 'UPDATE',
+  },
+  fieldNoContact: {
+    id: 'pages.NotificationDetail.fieldNoContact',
+    defaultMessage: 'No contacts assigned to site',
+  },
+  fieldNoMatch: {
+    id: 'pages.NotificationDetail.fieldNoMatch',
+    defaultMessage: 'No matching results found',
+  },
+  fieldNoMatchTags: {
+    id: 'pages.NotificationDetail.fieldNoMatchTags',
+    defaultMessage: 'Press enter to add tag',
+  },
+  fieldPersonSendToSpecific: {
+    id: 'pages.Notifications.fieldPersonSendToSpecific',
+    defaultMessage: 'Send to a specific person',
+  },
+  optionPersonRoleSet: {
+    id: 'pages.Notifications.optionPersonRoleSet',
+    defaultMessage: 'Selectable',
+  },
+  optionPersonRoleNotSet: {
+    id: 'pages.Notifications.optionPersonRoleNotSet',
+    defaultMessage: 'Currently not selectable - missing role',
+  },
+  personsSelectLabel: {
+    id: 'pages.NotificationDetail.personsSelectLabel',
+    defaultMessage: 'To an individual person',
+  },
+  selectPersonOption: {
+    id: 'pages.NotificationDetail.selectPersonOption',
+    defaultMessage: 'Select the person or persons',
+  },
+  actionAdd: {
+    id: 'pages.NotificationDetail.actionAdd',
+    defaultMessage: 'Add',
+  },
+  actionUpdate: {
+    id: 'pages.NotificationDetail.actionUpdate',
+    defaultMessage: 'Update',
+  },
+  actionChange: {
+    id: 'pages.NotificationDetail.actionChange',
+    defaultMessage: 'Change',
+  },
+
+  ...assayMessages,
+  ...resultCategoryMessages,
+})
