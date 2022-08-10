@@ -370,6 +370,15 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
             </PermissionsProvider>
           )}
 
+          <Button
+            style={{ marginLeft: '1rem' }}
+            type="button"
+            variant="contained"
+            onClick={() => navigate('/browse/site')}
+          >
+            {formatMessage(messages.buttonBack)}
+          </Button>
+
           <AspectDialog
             actions={[
               <Button color="primary" onClick={() => setShowConfirmation(false)}>
@@ -423,7 +432,7 @@ SiteForm.defaultProps = {
     hoursStart: 9,
     hoursEnd: 18,
     notes: '',
-    parentWarehouseId: 3,
+    parentWarehouseId: null,
   },
   onLatLongChange: () => {},
 }

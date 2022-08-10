@@ -107,6 +107,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.buttonCreate',
     defaultMessage: 'CREATE',
   },
+  buttonBack: {
+    id: 'pages.SiteDetail.buttonBack',
+    defaultMessage: 'BACK',
+  },
   fieldNoContact: {
     id: 'pages.SiteDetail.fieldNoContact',
     defaultMessage: 'No contacts assigned to site',
