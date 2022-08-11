@@ -36,5 +36,4 @@ const postSchema = {
   },
 }
 
-
 module.exports = { postSchema, updateSchema }

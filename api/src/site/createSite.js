@@ -36,7 +36,6 @@ module.exports = async function (request) {
   }
 
   const [insertedId] = await knex('Site').insert(values)
-  console.log('\x1b[1;36m', '🚀 ➜ file: createSite.js ➜ line 34 ➜ insertedId', insertedId)
 
   return { ok: true, data: { id: insertedId } }
 }

@@ -5,5 +5,5 @@ async function getSiteTypes() {
 }
 
 module.exports = {
-  getSiteTypes
+  getSiteTypes,
 }

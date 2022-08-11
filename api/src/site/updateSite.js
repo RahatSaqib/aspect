@@ -10,7 +10,7 @@ module.exports = async function (request) {
   const { auth, params, payload } = request
 
   const siteParams = await normalizeParameters(payload)
-  
+
   try {
     await validate(params.siteId, auth.credentials, siteParams)
   } catch (error) {
@@ -31,7 +31,6 @@ async function normalizeParameters(payload) {
   const payloadWithGeographyId = await transformGeographyFromUpdates(payload)
   return normalizeSiteParameters(payloadWithGeographyId)
 }
-
 
 const validate = async (siteId, credentials, site) => {
   await validateConstraints(siteId, credentials)
