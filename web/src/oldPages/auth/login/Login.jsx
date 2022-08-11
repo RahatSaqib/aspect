@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 import { compose } from 'recompose'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import { defineMessages, injectIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Button from '@mui/material/Button'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -19,32 +19,10 @@ import { loginStart } from '../../../store/AuthRedux'
 import Reason from './Reason'
 import { reasonTypes } from '../loggedOutReasons'
 
+import messages from './messages'
 import styles from './Login.css'
 
 const cssClasses = classnames.bind(styles)
-
-const messages = defineMessages({
-  title: {
-    id: 'pages.Login.title',
-    defaultMessage: 'Login',
-  },
-  user: {
-    id: 'pages.Login.user',
-    defaultMessage: 'Username',
-  },
-  password: {
-    id: 'pages.Login.password',
-    defaultMessage: 'Password',
-  },
-  login: {
-    id: 'pages.Login.login',
-    defaultMessage: 'Login',
-  },
-  resetPasswordLink: {
-    id: 'pages.Login.resetPasswordLink',
-    defaultMessage: 'Forgot Password?',
-  },
-})
 
 const enhance = compose(
   injectIntl,
@@ -124,7 +102,7 @@ const AspectLogo = () => (
 
 export const Login = ({ intl, location, form, meta, values, onUserChange, onPasswordChange, handleSubmit }) => (
   <div className={cssClasses('Background')}>
-    <Helmet title="Login" />
+    <Helmet title={intl.formatMessage(messages.title)} />
     <div>
       <Unit sm="1-24" md="1-6" lg="1-3" xl="1-3" />
       <Unit sm="11-12" md="2-3" lg="1-3" xl="1-3">

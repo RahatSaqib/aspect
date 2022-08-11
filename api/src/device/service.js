@@ -271,7 +271,7 @@ async function getListDevices(query, auth) {
       knex.raw(
         'CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END AS connectorStatus'
       ),
-      knex.raw('IFNULL(d.ConfigurationData ->> "$.gxConnectVersion", "N/A") AS connectorVersion'),
+      knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS connectorVersion'),
       knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
       knex.raw(`CASE 
         WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'

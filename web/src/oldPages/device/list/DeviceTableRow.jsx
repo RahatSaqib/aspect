@@ -35,7 +35,9 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     <TableCell>{device.get('name')}</TableCell>
     <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
     <TableCell>
-      {device.get('approvalStatusI18nKey') ? intl.formatMessage(messages[device.get('approvalStatusI18nKey')]) : 'N/A'}
+      {device.get('approvalStatusI18nKey')
+        ? intl.formatMessage(messages[device.get('approvalStatusI18nKey')])
+        : intl.formatMessage(messages.notAvailable)}
     </TableCell>
     <TableCell>
       <StatusIcon
@@ -48,7 +50,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
     <TableCell>
       {device.get('maintenanceStatusI18nKey')
         ? intl.formatMessage(messages[device.get('maintenanceStatusI18nKey')])
-        : 'N/A'}
+        : intl.formatMessage(messages.notAvailable)}
     </TableCell>
     <TableCell>{formatRelative(device.get('lastResultConductedOn'))}</TableCell>
     <TableCell>
@@ -58,7 +60,9 @@ const DeviceTableRow = ({ intl, device, onAlertClick, displayPreferences: { erro
       />
     </TableCell>
     <TableCell>{formatRelative(device.get('lastPingOn'))}</TableCell>
-    <TableCell hiddenOn="lg">{device.get('connectorVersion')}</TableCell>
+    <TableCell hiddenOn="lg">
+      {device.get('connectorVersion') ? device.get('connectorVersion') : intl.formatMessage(messages.notAvailable)}
+    </TableCell>
     <TableCell className={cssClasses('TableCell--alerts')}>
       {device.get('issueCategories').map(it => (
         <ColoredButton
