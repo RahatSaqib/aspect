@@ -262,7 +262,7 @@ const Status = () => {
 
   return (
     <div className={cssClasses('Container')} style={{ marginBottom }}>
-      <Helmet title="Status" />
+      <Helmet title={formatMessage(messages.statusTitle)} />
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown location={location} />
       </div>

@@ -13,6 +13,8 @@ import { isCountryFilterHidden } from '../utils'
 import useI18n from '../../../hooks/i18n/useI18n'
 import styles from './FiltersBtnGroup.css'
 import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
+import deviceApprovalMessages from '../../../utils/messages/deviceApprovalMessages'
+import deviceStatusMessages from '../../../utils/messages/deviceStatusMessages'
 
 const cssClasses = classnames.bind(styles)
 
@@ -20,6 +22,8 @@ const EMPTY_CONTEXT = null
 const EMPTY_MAP = Immutable.Map()
 
 const messages = defineMessages({
+  ...deviceStatusMessages,
+  ...deviceApprovalMessages,
   dateFrom: {
     id: 'filter.btnGroup.dateFrom',
     defaultMessage: 'since {date}',
@@ -496,9 +500,13 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
     deviceApprovalId: makeButton((deviceApprovalId, { deviceApprovalItems }) =>
       formatMessage(messages.withDeviceApproval, {
-        deviceApprovalName: deviceApprovalItems
-          .find(it => it.get('id') === deviceApprovalId, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        deviceApprovalName: formatMessage(
+          messages[
+            `deviceApproval${deviceApprovalItems
+              .find(it => it.get('id') === deviceApprovalId, EMPTY_CONTEXT, EMPTY_MAP)
+              .get('name')}`
+          ]
+        ),
       })
     ),
     deviceMaintenanceStatusId: (filterKey, props) => {
@@ -510,11 +518,9 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         : [deviceMaintenanceStatusId]
 
       return deviceMaintenanceStatusIds.map((deviceMaintenanceStatusId, index) =>
-        makeButton((__, { deviceMaintenanceStatusItems }) =>
+        makeButton(() =>
           formatMessage(messages.withDeviceMaintenanceStatus, {
-            deviceMaintenanceStatusName: deviceMaintenanceStatusItems
-              .find(it => it.get('externalId') === deviceMaintenanceStatusId, EMPTY_CONTEXT, EMPTY_MAP)
-              .get('name'),
+            deviceMaintenanceStatusName: formatMessage(messages[deviceMaintenanceStatusId]),
           })
         )(filterKey, props, index)
       )

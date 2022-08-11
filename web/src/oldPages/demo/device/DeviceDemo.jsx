@@ -14,10 +14,13 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 
 // Our own imports
+import { injectIntl } from 'react-intl'
 import { fetchDemoDevice, postDemoDeviceResult } from '../../../store/DemoRedux'
 
 import { Unit } from '../../../oldComponents/pureGrids'
 import ReadOnlyFields from '../../../oldComponents/shared/ReadOnlyFields'
+
+import messages from './messages'
 import styles from './DeviceDemo.css'
 
 const enhance = compose(
@@ -25,6 +28,7 @@ const enhance = compose(
     const { deviceId } = useParams()
     return <WrapperComponent {...props} deviceId={deviceId} />
   },
+  injectIntl,
   connect(
     (state, props) => ({
       device: state.demo.deviceItems.byId.get(props.deviceId),
@@ -187,7 +191,7 @@ export class DeviceDemo extends PureComponent {
   render() {
     return (
       <div className={styles.Container}>
-        <Helmet title="Demo Device" />
+        <Helmet title={this.props.intl.formatMessage(messages.title)} />
         <Paper>
           {this.renderProgress()}
           {this.renderContent()}

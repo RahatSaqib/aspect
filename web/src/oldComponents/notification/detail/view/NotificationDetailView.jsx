@@ -15,6 +15,7 @@ import NotificationDetailBackBar from '../NotificationDetailBackBar'
 import { NotificationDeliveryDataTable, NotificationDeliveryDataTableRow } from './NotificationDeliveryDataTable'
 import AspectButton from '../../../components/shared/AspectButton'
 
+import messages from './messages.js'
 import styles from '../../../components/Notifications/Detail/NotificationDetail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -44,13 +45,13 @@ export const NotificationDetailView = ({
   // --- injected by recompose ---
 }) => (
   <div>
-    <Helmet title="TB MTB+ Rif+ in Western Region" />
+    <Helmet title={intl.formatMessage(messages.title)} />
     <NotificationDetailBackBar
       intl={intl}
       navigate={navigate}
       location={location}
       // match={match}
-      title="TB MTB+ Rif+ in Western Region"
+      title={intl.formatMessage(messages.title)}
     />
     <section className={cssClasses('Section', 'Section--first')}>
       <Card className={cssClasses('Card')}>
@@ -59,7 +60,7 @@ export const NotificationDetailView = ({
           <TextField
             fullWidth
             margin="normal"
-            placeholder="TB MTB+ Rif+ in Western Region"
+            placeholder={intl.formatMessage(messages.title)}
             InputProps={{
               className: cssClasses('Input__inputElement'),
             }}
@@ -146,7 +147,7 @@ export const NotificationDetailView = ({
           <TextField
             fullWidth
             margin="normal"
-            placeholder="TB MTB+ Rif+ in Western Region"
+            placeholder={intl.formatMessage(messages.title)}
             InputProps={{
               className: cssClasses('Input__inputElement'),
             }}
@@ -409,7 +410,7 @@ export const NotificationDetailView = ({
           <TextField
             fullWidth
             margin="normal"
-            defaultValue="TB MTB+ Rif+ in Western Region"
+            defaultValue={intl.formatMessage(messages.title)}
             InputProps={{
               className: cssClasses('Input__inputElement'),
             }}

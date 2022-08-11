@@ -34,7 +34,7 @@ import DeviceApiKeyList from '../../oldPages/deviceApiKey/list/DeviceApiKeyList'
 
 import InventoryContainer from '../../oldPages/inventory/InventoryContainer'
 
-import NotFound from '../../oldPages/notFound/NotFound'
+import NotFound from '../../pages/NotFound/NotFound'
 
 import ClinicalHistory from '../../oldPages/patient/ClinicalHistory'
 
@@ -292,7 +292,7 @@ const AppRoutes = ({ props: outerProps }) => {
         />
         <Route path="/browse/report" element={getElement(props, ['browse', 'report'], renderNotFound)} />
         <Route path="/welcome" element={getElement(props, [], renderWelcome)} />
-        <Route>{renderNotFound(props)}</Route>
+        <Route path="*" element={getElement(props, [], renderNotFound)} />
       </Routes>
     </RoutesPermissionProvider>
   )

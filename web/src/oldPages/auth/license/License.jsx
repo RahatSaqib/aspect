@@ -5,7 +5,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { defineMessages, injectIntl } from 'react-intl'
+import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
@@ -14,24 +14,10 @@ import { Unit } from '../../../oldComponents/pureGrids'
 
 import { fetchLicense, userRequestedLogout, acceptLicenseStart } from '../../../store/AuthRedux'
 
+import messages from './messages'
 import styles from './License.css'
 
 const cssClasses = classnames.bind(styles)
-
-const messages = defineMessages({
-  title: {
-    id: 'pages.License.title',
-    defaultMessage: 'License',
-  },
-  accept: {
-    id: 'pages.License.accept',
-    defaultMessage: 'I Accept',
-  },
-  doNotAccept: {
-    id: 'pages.License.doNotAccept',
-    defaultMessage: 'I Do Not Accept',
-  },
-})
 
 const enhance = compose(
   injectIntl,
@@ -87,7 +73,7 @@ const AspectLogo = () => (
 
 export const License = ({ intl, licenseContent, onDoNotAcceptClick, onAcceptClick }) => (
   <div className={cssClasses('Background')}>
-    <Helmet title="License" />
+    <Helmet title={intl.formatMessage(messages.title)} />
     <div>
       <Unit sm="1-24" md="1-12" lg="1-12" xl="1-6" />
       <Unit sm="11-12" md="5-6" lg="5-6" xl="2-3">
