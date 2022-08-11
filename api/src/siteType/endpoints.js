@@ -3,7 +3,7 @@ const getSiteTypes = require('./getSiteTypes')
 const routes = [
   {
     method: 'GET',
-    path: '/site/sitetype',
+    path: '/sitetype',
     handler: getSiteTypes,
     config: {
       description: 'Site Type List',

@@ -12,7 +12,7 @@ import useI18n from '../../../hooks/i18n/useI18n'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import CustomBarGraphLegend from './CustomBarGraphLegend'
-import useGraphClickThrough from '../hooks/useGraphClickThrough'
+import useGraphClickThrough from '../Hooks/useGraphClickThrough'
 import messages from '../intlMessages'
 import {
   formatValuesForGraphs,

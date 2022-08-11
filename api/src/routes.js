@@ -17,7 +17,7 @@ function addClientRoutes(server) {
   server.route(require('./geography/endpoints').routes.map(decorateClientAPI()))
   server.route(require('./person/endpoints').routes.map(decorateClientAPI('person')))
   server.route(require('./site/endpoints').routes.map(decorateClientAPI('site')))
-  server.route(require('./site/siteType/endpoints').routes.map(decorateClientAPI('siteType')))
+  server.route(require('./siteType/endpoints').routes.map(decorateClientAPI('siteType')))
   server.route(require('./result/endpoints').routes.map(decorateClientAPI('result')))
   server.route(require('./report/endpoints').routes.map(decorateClientAPI('report')))
   server.route(require('./partner/endpoints').routes.map(decorateClientAPI('partner')))

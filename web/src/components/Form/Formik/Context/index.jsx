@@ -4,7 +4,7 @@ import { FormikProvider as FormikProviderBase, useFormik } from 'formik'
 
 import DisplayFormikState from '../Helpers/debug'
 import { sanitizeFormValues } from '../Helpers'
-import useFormConfig from '../../hooks/useFormConfig'
+import useFormConfig from '../../Hooks/useFormConfig'
 
 export const FormikProvider = ({ config, children }) => {
   const debug = false

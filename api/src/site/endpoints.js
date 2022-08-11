@@ -4,7 +4,7 @@ const { asyncHandler, validateDateRangeParams, validateSortPageParams } = requir
 const createSite = require('./createSite')
 const updateSite = require('./updateSite')
 const { listSites, showSite, listSitesForSelectList, listSitesWithReporters, disableSite } = require('./service')
-const { postSchema, updateSchema } = require('./requestValidation')
+const { postSchema, updateSchema } = require('./common/validation')
 
 const { exportSites, exportReporters } = require('./serviceReports')
 
