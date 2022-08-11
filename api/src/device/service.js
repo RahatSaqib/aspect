@@ -830,6 +830,49 @@ async function getDevicesForReport(auth, query) {
   return result
 }
 
+async function getErrorCodesByDeviceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const getCount = deviceQuery.clone().count('d.id as count').first()
+  const getItems = deviceQuery
+    .clone()
+    .leftJoin('Result as r', 'r.deviceId', 'd.id')
+    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .groupBy('d.id')
+    .select({
+      name: 'd.name',
+      error_5011: knex.raw("SUM(CASE WHEN r.errorCode = '5011' THEN 1 ELSE 0 END)"),
+      error_5007: knex.raw("SUM(CASE WHEN r.errorCode = '5007' THEN 1 ELSE 0 END)"),
+      error_5006: knex.raw("SUM(CASE WHEN r.errorCode = '5006' THEN 1 ELSE 0 END)"),
+      error_2008: knex.raw("SUM(CASE WHEN r.errorCode = '2008' THEN 1 ELSE 0 END)"),
+      error_2005: knex.raw("SUM(CASE WHEN r.errorCode = '2005' THEN 1 ELSE 0 END)"),
+      error_2037: knex.raw("SUM(CASE WHEN r.errorCode = '2037' THEN 1 ELSE 0 END)"),
+      error_2025: knex.raw("SUM(CASE WHEN r.errorCode = '2025' THEN 1 ELSE 0 END)"),
+      error_2022: knex.raw("SUM(CASE WHEN r.errorCode = '2022' THEN 1 ELSE 0 END)"),
+      mtbNoResult: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END), 0)"),
+      mtbInvalid: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END), 0)"),
+    })
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  const result = {
+    ok: true,
+    total,
+    length: data.length,
+    data,
+    dataSelector: ({ name, ...dataRow }) => {
+      return {
+        name,
+        ...dataRow,
+        total: Object.values(dataRow).reduce((a, b) => a + b),
+      }
+    },
+  }
+
+  return result
+}
+
 async function getDevicesForRifResistanceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
@@ -1652,6 +1695,7 @@ module.exports = {
   updateDeviceMaintenance,
   getDevicePerformance,
   getDevicesForReport,
+  getErrorCodesByDeviceReport,
   getDevicesForRifResistanceReport,
   getDeviceByDeviceId,
   onDeviceMaintenanceStatusLogged,
