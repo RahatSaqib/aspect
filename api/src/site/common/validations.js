@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi')
 
-const commonPayload = {
+const entitySchema = {
   name: Joi.string().required(),
   shortName: Joi.string().required(),
   externalId: Joi.string().allow('', null),
@@ -26,13 +26,13 @@ const updateSchema = {
     siteId: Joi.number().integer().positive().description('Site id').required(),
   },
   payload: {
-    ...commonPayload,
+    ...entitySchema,
   },
 }
 
 const postSchema = {
   payload: {
-    ...commonPayload,
+    ...entitySchema,
   },
 }
 

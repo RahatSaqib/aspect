@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const { knex } = require('../db')
 const { transformGeographyFromUpdates } = require('../geography/service')
-const { normalizeSiteParameters } = require('./common/index')
+const { normalizeSiteParameters } = require('./common/logic')
 const { getUserFromCredentials } = require('../auth/constraints')
 const { getExistingSite } = require('./common/db')
 
