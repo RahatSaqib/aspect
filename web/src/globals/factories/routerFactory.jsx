@@ -292,7 +292,7 @@ const AppRoutes = ({ props: outerProps }) => {
         />
         <Route path="/browse/report" element={getElement(props, ['browse', 'report'], renderNotFound)} />
         <Route path="/welcome" element={getElement(props, [], renderWelcome)} />
-        <Route>{renderNotFound(props)}</Route>
+        <Route path="*" element={getElement(props, [], renderNotFound)} />
       </Routes>
     </RoutesPermissionProvider>
   )
