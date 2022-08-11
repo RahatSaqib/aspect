@@ -13,9 +13,9 @@ import { FaUser } from 'react-icons/fa'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
-import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
-import requirePermissions from '../../../components/shared/requirePermissions'
-import IconMenu from '../../../components/shared/IconMenu'
+import { closeDrawer, userRequestedLogout } from '../../../store/AuthRedux'
+import requirePermissions from '../../../oldComponents/shared/requirePermissions'
+import IconMenu from '../../../oldComponents/shared/IconMenu'
 
 import styles from './index.css'
 

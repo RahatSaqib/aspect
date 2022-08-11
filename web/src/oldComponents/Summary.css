@@ -1,0 +1,30 @@
+@import '../globals/variables.css';
+
+.Summary {
+  padding-bottom: 10px;
+}
+
+.Summary__Title {
+  line-height: 24px;
+  color: var(--aspect-color-grey-3);
+}
+
+.Summary__Description {
+  padding-right: 10px;
+  display: inline-block;
+  color: var(--aspect-color-grey-2);
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.Summary__Description__Link {
+  margin: 0 5px;
+}
+
+.Summary__Description__Action {
+  margin-left: 20px;
+}
+
+.Summary__Tags__Wrap > div {
+  max-width: calc(100% - 100px);
+  display: inline-block;
+}

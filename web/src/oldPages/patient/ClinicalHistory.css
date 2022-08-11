@@ -1,0 +1,50 @@
+@import '../../globals/variables.css';
+
+.Section {
+  padding: 10px var(--aspect-detail-horizontal-padding);
+}
+
+.Section--first {
+  padding-top: 20px;
+}
+
+.Section__Content {
+  padding: 20px;
+}
+
+[data-graph-container] {
+  display: flex;
+}
+
+[data-utilization-graph] {
+  margin-right: 20px;
+}
+
+[data-graph-container] {
+  text-align: center;
+}
+
+[data-panel-title] {
+  font-size: 1.5rem;
+  color: var(--aspect-color-grey-2);
+}
+
+.Header {
+  padding-bottom: 20px;
+  display: flex;
+}
+
+.Header__Title {
+  flex-grow: 1;
+  color: var(--aspect-color-grey-2);
+  font-size: 24px;
+}
+
+.Header__Actions {
+  margin-left: 20px;
+}
+
+.Form__Actions {
+  padding: 20px 0;
+  text-align: right;
+}

@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import { useNavigate } from 'react-router-dom'
 
 import ConfluenceIcon from './ConfluenceIcon'
-import { toggleDrawer } from '../../../auth/AuthRedux'
+import { toggleDrawer } from '../../../store/AuthRedux'
 
 import styles from './index.css'
 

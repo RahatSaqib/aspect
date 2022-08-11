@@ -6,49 +6,67 @@ import head from 'lodash/head'
 import Paper from '@mui/material/Paper'
 import { compose } from 'recompose'
 
-import { RoutesPermissionProvider } from '../../Providers/RoutePermissions'
+import { RoutesPermissionProvider } from '../../providers/RoutePermissions'
 import history from '../../history'
 import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'
 import loggedInDetailFactory from './loggedInFactory/detailFactory'
-import { reduceNavLinks } from '../../filter/utils'
-import { navigations } from '../components/BrowseFilters'
-import { isPermittedUser } from '../../components/shared/requirePermissions'
+import { reduceNavLinks } from '../../oldComponents/filter/utils'
+import { navigations } from '../../oldComponents/BrowseFilters'
+import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 
 // "Pages"
-import LoadableLogin from '../../auth/login/LoadableLogin'
-import ResetPassword from '../../auth/resetPassword/ResetPassword'
-import LoadableStatus from '../../dashboard/status/LoadableStatus'
-import TaskList from '../../task/list/TaskList'
-import TaskAggre from '../../task/aggre/TaskAggre'
-import TaskDetail from '../../task/detail/TaskDetail'
-import OperationalData from '../../dashboard/operational/OperationalData'
-import DeviceDemo from '../../demo/device/DeviceDemo'
-import DeviceList from '../../device/list/DeviceList'
-import DeviceDetail from '../../MigratedComponents/Devices/Detail/DeviceDetail'
-import DeviceApiKeyList from '../../deviceApiKey/list/DeviceApiKeyList'
-import CaseList from '../../case/list/CaseList'
-import SiteList from '../../site/list/SiteList'
-import PersonList from '../../person/list/PersonList'
-import PersonDetail from '../../person/detail/PersonDetail'
-import ResultList from '../../result/list/ResultList'
-import ResultDetail from '../../MigratedComponents/Results/Detail'
-import NotificationList from '../../MigratedComponents/Notifications/List'
-import NotificationDetail from '../../MigratedComponents/Notifications/Detail'
-import NotificationDetailHistory from '../../MigratedComponents/Notifications/Detail/NotificationDetailHistory'
-import ReportIndex from '../../report/page/ReportIndex'
-import AccountDetails from '../../account/detail/AccountDetails'
-import InventoryContainer from '../../inventory/InventoryContainer'
-import RouterList from '../../router/list/RouterList'
-import RouterDetail from '../../router/detail/RouterDetail'
-import ReporterList from '../../reporter/list/ReporterList'
-import NotFound from '../../error/notFound/NotFound'
-import License from '../../auth/license/License'
-import ClinicalHistory from '../../patient/ClinicalHistory'
-import CaseDetails from '../../case/details/CaseDetails'
-import Welcome from '../../MigratedComponents/Welcome'
-// Migrated Pages
-import SiteDetail, { EditSite } from '../../Pages/SiteDetailPage'
+import AccountDetails from '../../oldPages/account/detail/AccountDetails'
+import LoadableLogin from '../../oldPages/auth/login/LoadableLogin'
+import ResetPassword from '../../oldPages/auth/resetPassword/ResetPassword'
+import License from '../../oldPages/auth/license/License'
+
+import CaseList from '../../oldPages/case/list/CaseList'
+import CaseDetails from '../../oldPages/case/details/CaseDetails'
+
+import LoadableStatus from '../../oldPages/dashboard/status/LoadableStatus'
+import OperationalData from '../../oldPages/dashboard/operational/OperationalData'
+
+import DeviceDemo from '../../oldPages/demo/device/DeviceDemo'
+
+import DeviceList from '../../oldPages/device/list/DeviceList'
+
+import DeviceApiKeyList from '../../oldPages/deviceApiKey/list/DeviceApiKeyList'
+
+import InventoryContainer from '../../oldPages/inventory/InventoryContainer'
+
+import NotFound from '../../oldPages/notFound/NotFound'
+
+import ClinicalHistory from '../../oldPages/patient/ClinicalHistory'
+
+import PersonList from '../../oldPages/person/list/PersonList'
+import PersonDetail from '../../oldPages/person/detail/PersonDetail'
+
+import ReportIndex from '../../oldPages/report/page/ReportIndex'
+
+import ReporterList from '../../oldPages/reporter/list/ReporterList'
+
+import ResultList from '../../oldPages/result/list/ResultList'
+
+import RouterList from '../../oldPages/router/list/RouterList'
+import RouterDetail from '../../oldPages/router/detail/RouterDetail'
+
+import SiteList from '../../oldPages/site/list/SiteList'
+
+import TaskList from '../../oldPages/task/list/TaskList'
+import TaskAggre from '../../oldPages/task/aggre/TaskAggre'
+import TaskDetail from '../../oldPages/task/detail/TaskDetail'
+
+///
+// import SiteDetail from '../../components/Sites/Detail/SiteDetail'
+import SiteDetail, { EditSite } from '../../pages/SiteDetailPage'
+
+import DeviceDetail from '../../pages/Devices/Detail/DeviceDetail'
+import NotificationList from '../../pages/Notifications/List'
+import NotificationDetail from '../../pages/Notifications/Detail'
+import NotificationDetailHistory from '../../pages/Notifications/Detail/NotificationDetailHistory'
+import ResultDetail from '../../pages/Results/Detail'
+import Welcome from '../../pages/Welcome'
 
 function useHashAndScroll() {
   const location = useLocation()

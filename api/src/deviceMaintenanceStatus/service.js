@@ -7,7 +7,7 @@ const isNil = require('lodash/isNil')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { knex } = require('../db')
+const { knex, filterParams } = require('../db')
 const {
   getArrayOfDaysInRange,
   getOffsetFromIsoDateString,
@@ -130,6 +130,11 @@ async function getDeviceStatusOverTime(auth, query) {
       result: 'r',
       site: 's',
       device: 'd',
+    })
+    .modify(filterParams, query, {
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
     })
     .where('dtc.hasResults', 1)
     .where('dt.externalId', 'CepheidGeneXpert')

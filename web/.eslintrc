@@ -135,7 +135,7 @@
           {
             "name": "react-intl",
             "importNames": ["useIntl"],
-            "message": "Use 'useI18n' from Hooks folder instead."
+            "message": "Use 'useI18n' from hooks/ folder instead."
           }
         ]
       }
