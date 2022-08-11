@@ -3,6 +3,8 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
   errorUnauthorized,
+  errorConflict,
+  errorEntity,
 } from '../../error/CommonErrorNotifications'
 
 const defaultErrors = () => ({
@@ -19,6 +21,22 @@ const defaultErrors = () => ({
       title: {
         id: 'queryFetch.errorResponseMessages.GET.403.title',
         defaultMessage: 'Access denied',
+      },
+    })
+  ),
+  409: errorConflict(
+    defineMessages({
+      title: {
+        id: 'queryFetch.errorResponseMessages.GET.409.title',
+        defaultMessage: ' data',
+      },
+    })
+  ),
+  422: errorEntity(
+    defineMessages({
+      title: {
+        id: 'queryFetch.errorResponseMessages.GET.422.title',
+        defaultMessage: 'Invalid data',
       },
     })
   ),
