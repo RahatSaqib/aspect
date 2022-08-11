@@ -1,5 +1,5 @@
-import { useMutation } from 'react-query'
-import { SITE_KEY_SITE_CREATE_ENDPOINT } from './siteKeys.js'
+import { useMutation, useQueryClient } from 'react-query'
+import { SITE_KEY, SITE_KEY_SITE_CREATE_ENDPOINT } from './siteKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 
 const createSite = async site => {
@@ -22,7 +22,11 @@ const createSite = async site => {
 }
 
 const useCreateSite = () => {
-  const mutation = useMutation(data => createSite(data))
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation(data => createSite(data), {
+    onSuccess: () => queryClient.invalidateQueries([SITE_KEY, 'list']),
+  })
 
   return mutation
 }
