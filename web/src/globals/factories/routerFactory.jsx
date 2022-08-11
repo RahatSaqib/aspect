@@ -232,7 +232,7 @@ const AppRoutes = ({ props: outerProps }) => {
         <Route path="/operational-data/*" element={getElement(props, ['operationalData'], renderOperationalData)} />
         <Route path="/account-details/current/*" element={getElement(props, ['account'], renderAccountDetails)} />
 
-        <Route path="/demo/device/:deviceId" element={getElement(props, [], renderDeviceDemo)} />
+        <Route path="/demo/device/:deviceId" element={getElement(props, ['deviceDemo'], renderDeviceDemo)} />
         <Route
           path="/clinical-indicators"
           element={getElement(props, ['clinicalIndicators:view'], renderClinicalIndicators)}
