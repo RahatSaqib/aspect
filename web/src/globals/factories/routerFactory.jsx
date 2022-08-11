@@ -34,7 +34,7 @@ import DeviceApiKeyList from '../../oldPages/deviceApiKey/list/DeviceApiKeyList'
 
 import InventoryContainer from '../../oldPages/inventory/InventoryContainer'
 
-import NotFound from '../../oldPages/notFound/NotFound'
+import NotFound from '../../pages/NotFound/NotFound'
 
 import ClinicalHistory from '../../oldPages/patient/ClinicalHistory'
 
