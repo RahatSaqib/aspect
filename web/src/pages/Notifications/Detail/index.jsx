@@ -17,7 +17,7 @@ import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import JOBFUNCTIONS_LIST from '../../../components/QueryFetch/JobFunctions/index'
 import { getReturnUrl, useUrlQuery } from '../../../components/AspectTable/Helpers'
 import getFormConfig from '../Forms/editConfig'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 const AspectNotificationDetails = () => {
   const intl = useI18n()

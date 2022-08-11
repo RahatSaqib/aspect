@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
 import classnames from 'classnames/bind'
 
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import DailyStatusFilters from '../../Graphs/DailyStatus/DailyStatusFilters'
 import useDailyStatus from '../../Graphs/DailyStatus/Helpers/useDailyStatus'
 import { DEVICE_STATUS_LAST_REPORTED } from '../../QueryFetch/Device'

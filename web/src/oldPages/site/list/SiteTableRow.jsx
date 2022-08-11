@@ -5,7 +5,7 @@ import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../o
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import { messages } from './SiteList'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 

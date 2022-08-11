@@ -12,7 +12,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import TableBody from '@mui/material/TableBody'
 import { useQuery } from 'react-query'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import getExportableFile from '../ResultQueries'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'

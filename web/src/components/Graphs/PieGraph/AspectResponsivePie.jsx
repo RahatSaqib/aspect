@@ -9,7 +9,7 @@ import { generateColorForValue, generateToolTip, percentageOrActualForPie } from
 import { GraphToolTip } from '../GraphToolTip'
 
 import styles from './PieGraph.css'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

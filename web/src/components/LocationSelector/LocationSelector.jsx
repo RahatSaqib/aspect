@@ -6,7 +6,7 @@ import LgaSelectField from '../Geography/LgaSelectField'
 import { getCustomMessage } from '../../utils/utils/customMessages'
 import messages from './messages'
 import styles from './styles'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validators }) => {
   const { formatMessage } = useI18n()

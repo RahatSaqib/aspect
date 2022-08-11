@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@mui/material/CircularProgress'
 
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 import { FormikProvider } from '../../../../components/Form/Formik/Context'
 
 import AspectForm from '../../../../components/Form'

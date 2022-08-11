@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar'
 import PropTypes from 'prop-types'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClose, recipients = [] }) => {
   const [notificationData] = useState(recipients)

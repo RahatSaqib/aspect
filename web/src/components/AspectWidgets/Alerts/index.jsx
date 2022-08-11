@@ -7,7 +7,7 @@ import IconProvider from '../../IconProvider'
 import format from './messages'
 
 import styles from './alerts.css'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

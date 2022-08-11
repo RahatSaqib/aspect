@@ -8,7 +8,7 @@ import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import messages from '../../intlMessages'
 
 import styles from './CustomLegend.css'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

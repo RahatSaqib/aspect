@@ -12,7 +12,7 @@ import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
 import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
 import styles from '../GraphsContainer.css'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import classnames from 'classnames/bind'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 import styles from './ColoredNumber.css'
 

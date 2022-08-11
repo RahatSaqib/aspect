@@ -5,7 +5,7 @@ import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
 
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 import messages from '../messages'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import { getDayTitle } from '../Helpers'

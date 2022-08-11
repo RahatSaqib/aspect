@@ -8,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip'
 import PermissionsProvider from '../../../providers/PermissionsProvider'
 
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import formatters from '../formatters'
 import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
 

@@ -4,7 +4,7 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Input from '@mui/material/Input'
 import { withStyles } from '@mui/styles'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 const styles = theme => ({
   root: {

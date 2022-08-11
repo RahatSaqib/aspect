@@ -5,7 +5,7 @@ import classnames from 'classnames/bind'
 
 import IconProvider from '../../../IconProvider'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 import styles from './GooglePin.css'
 import messages from '../../../../utils/messages/deviceStatusMessages'

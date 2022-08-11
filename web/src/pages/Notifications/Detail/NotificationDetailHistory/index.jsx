@@ -7,7 +7,7 @@ import Button from '@mui/material/Button'
 import get from 'lodash/get'
 
 import { gotoWithReturnUrl } from '../../../../utils/utils/browser'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 import Shell from '../../../../components/Shell'
 import ShellHeader from '../../../../components/Shell/Header'
 import ShellContent from '../../../../components/Shell/Content'

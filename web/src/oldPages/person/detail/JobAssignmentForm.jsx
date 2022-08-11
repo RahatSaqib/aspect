@@ -22,7 +22,7 @@ import AssayTypeSelectField from '../../../oldComponents/filter/resource/AssayTy
 import AssaySelectField from '../../../oldComponents/filter/resource/AssaySelectField'
 
 import PersonAssignments from './PersonAssignments'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from './PersonDetail.css'
 

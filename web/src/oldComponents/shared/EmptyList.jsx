@@ -3,7 +3,7 @@ import React from 'react'
 import Button from '@mui/material/Button'
 import { defineMessages } from 'react-intl'
 
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 const messages = defineMessages({
   noResultsTitle: {

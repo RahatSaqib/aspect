@@ -27,7 +27,7 @@ import useSite from '../../hooks/site/useSite'
 import useTagByTypeAndId from '../../hooks/tag/useTagByTypeAndId'
 import ErrorBoundary from '../../components/ErrorBoundary'
 import TaskList from '../../oldPages/task/list/TaskList'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

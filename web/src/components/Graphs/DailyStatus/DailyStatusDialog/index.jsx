@@ -11,7 +11,7 @@ import messages from './messages'
 import { MODE, getFormConfig } from './utils'
 import styles from './DailyStatusDialog.css'
 import { getISOFromString } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

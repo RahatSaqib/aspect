@@ -5,7 +5,7 @@ import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
 import Button from '@mui/material/Button'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 import styles from './TablePaginator.css'
 

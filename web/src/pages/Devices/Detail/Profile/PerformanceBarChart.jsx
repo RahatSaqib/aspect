@@ -8,7 +8,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { oneOfType, object, array, string, number } from 'prop-types'
 import classnames from 'classnames/bind'
 import styles from '../DeviceDetail.css'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

@@ -36,7 +36,7 @@ import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import messages from './messages'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 import PerformanceReport from './PerformanceReport'
 
 import styles from '../DeviceDetail.css'

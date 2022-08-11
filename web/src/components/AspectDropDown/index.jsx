@@ -20,7 +20,7 @@ import keys from 'lodash/keys'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
 
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 import fetchWrapperForQueries from '../QueryFetch'
 import UI_CONSTS from '../../globals/consts/UI'
 

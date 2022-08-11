@@ -1,6 +1,6 @@
 import React from 'react'
 import MenuItem from '@mui/material/MenuItem'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import SelectField from '../../shared/SelectField'
 import messages from './messages'
 

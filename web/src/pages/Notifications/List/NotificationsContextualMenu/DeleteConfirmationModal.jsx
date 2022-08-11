@@ -7,7 +7,7 @@ import messages from './messages'
 
 import fetchWrapperForQueries from '../../../../components/QueryFetch/index'
 import { NOTIFICATION_DELETE } from '../../../../components/QueryFetch/Notification/index'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 const DeleteConfirmationModal = ({ notificationId, notificationName = '', showDialog, onClose }) => {
   const [notificationData, setNotificationData] = useState({})

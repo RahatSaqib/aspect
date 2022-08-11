@@ -25,7 +25,7 @@ import { DEVICE_DETAIL, DEVICE_PERFORMANCE } from '../../../components/QueryFetc
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 
 import styles from './DeviceDetail.css'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

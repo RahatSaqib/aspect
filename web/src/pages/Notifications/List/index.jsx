@@ -19,7 +19,7 @@ import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
 import { baseConfig, getCreateNotificationMenuProps } from './config'
 
 import styles from '../Notifications.css'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

@@ -8,7 +8,7 @@ import isFunction from 'lodash/isFunction'
 import { ResponsiveBar } from '@nivo/bar'
 import classnames from 'classnames/bind'
 
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import CustomBarGraphLegend from './CustomBarGraphLegend'

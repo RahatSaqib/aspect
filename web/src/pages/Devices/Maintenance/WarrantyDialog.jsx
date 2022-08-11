@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
 import { withDateFormatProps } from '../../../utils/utils/dateFormat'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 const messages = defineMessages({
   dialogTitle: {

@@ -9,7 +9,7 @@ import SelectField from '../../../shared/SelectField'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import RESULT_CATEGORY_GROUP_SELECT_LIST from '../../../../components/QueryFetch/ResultCategoryGroup'
 import { types } from '../../../../store/ResultCategoryGroupSelectFieldRedux'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 import styles from '../../popover/FiltersPanel.css'
 

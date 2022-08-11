@@ -9,7 +9,7 @@ import CheckIcon from '@mui/icons-material/Check'
 
 import { useMutation } from 'react-query'
 import ErrorIcon from '@mui/icons-material/Error'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import messages from './messages'
 import {

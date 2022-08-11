@@ -28,7 +28,7 @@ import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTa
 import ExportListButton from '../../../oldComponents/ExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { SITE_LIST } from '../../../components/QueryFetch/Site/index'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from './SiteList.css'
 import AspectButton from '../../../oldComponents/shared/AspectButton'

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Button from '@mui/material/Button'
 import { useFormikContext } from 'formik'
 
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 import { MODE } from './utils'
 import messages from './messages'
 
