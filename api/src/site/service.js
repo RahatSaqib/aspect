@@ -47,7 +47,6 @@ const SELECT_SHOW_FIELDS = [
   's.hoursEnd',
   's.notes',
   's.parentWarehouseId',
-  't.name as siteType',
   's.hoursStart',
   's.hoursEnd',
 ]
@@ -133,6 +132,7 @@ function getSite(siteId, dataConstraints) {
     .where('s.id', siteId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .first(SELECT_SHOW_FIELDS)
+    .select('t.name as siteType')
 }
 
 async function showSite(request) {
