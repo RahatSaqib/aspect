@@ -9,7 +9,7 @@ import DeviceMaintenanceStatusSelectField from '../../../oldComponents/filter/re
 import recomposeForm from '../../../oldComponents/recomposeForm'
 
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from './BaseDialog.css'
 

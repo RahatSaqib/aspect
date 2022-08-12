@@ -29,6 +29,33 @@ export function errorUnauthorized(messageDescriptors, messageValues) {
   }
 }
 
+export function errorConflict(messageDescriptors, messageValues) {
+  return {
+    severity: 'error',
+    ...defineMessages({
+      resolution: {
+        id: 'errorResponseMessages.common.conflict.resolution',
+        defaultMessage: `There is a conflict between this request and the existent data in the system. Please review, try again, or contact your administrator for help.`,
+      },
+    }),
+    ...messageDescriptors,
+    messageValues,
+  }
+}
+
+export function errorEntity(messageDescriptors, messageValues) {
+  return {
+    severity: 'error',
+    ...defineMessages({
+      resolution: {
+        id: 'errorResponseMessages.common.entity.resolution',
+        defaultMessage: `Invalid data. Please review, try again, or contact your administrator for help.`,
+      },
+    }),
+    ...messageDescriptors,
+    messageValues,
+  }
+}
 export function errorForbidden(messageDescriptors, messageValues) {
   return {
     severity: 'error',

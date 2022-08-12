@@ -11,7 +11,7 @@ import TableBody from '@mui/material/TableBody'
 import Switch from '@mui/material/Switch'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import { useAuthState } from '../../../providers/AuthProvider'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import {

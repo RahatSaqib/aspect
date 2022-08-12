@@ -31,7 +31,7 @@ import { receiveList, Items } from '../../../utils/metaReducers/items'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import messages from './messages'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import { i18nWrapper } from '../../../providers/I18nProvider'
 
 import styles from './ReporterList.css'

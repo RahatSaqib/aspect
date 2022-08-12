@@ -11,7 +11,7 @@ import OperationalDashBoard from './OperationalDashBoard'
 import OperationalDailyStatus from './OperationalDailyStatus'
 
 import styles from './OperationalData.css'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)

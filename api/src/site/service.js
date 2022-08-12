@@ -34,7 +34,7 @@ const SELECT_SHOW_FIELDS = [
   'g.countryId',
   'g.stateId',
   'g.lgaId',
-  's.timezoneId as timezone', // FIXME?
+  's.timezoneId as timezone',
   's.city',
   's.zip',
   's.street1',
@@ -42,6 +42,13 @@ const SELECT_SHOW_FIELDS = [
   's.longitude',
   's.latitude',
   's.geographyId',
+  's.siteTypeId',
+  's.hoursStart',
+  's.hoursEnd',
+  's.notes',
+  's.parentWarehouseId',
+  's.hoursStart',
+  's.hoursEnd',
 ]
 
 async function listSites(request) {
@@ -119,11 +126,13 @@ function getSite(siteId, dataConstraints) {
   return knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .join('SiteType as t', 't.id', 's.siteTypeId')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('s.id', siteId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .first(SELECT_SHOW_FIELDS)
+    .select('t.name as siteType')
 }
 
 async function showSite(request) {

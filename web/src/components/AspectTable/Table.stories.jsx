@@ -3,7 +3,7 @@ import { IntlProvider } from 'react-intl'
 import AspectTableCore from './TableCore'
 
 import { mockDatafetch } from './Helpers'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 const totalDataCount = 87
 const { data } = mockDatafetch(totalDataCount)

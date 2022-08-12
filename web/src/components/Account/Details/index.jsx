@@ -15,7 +15,7 @@ import itemsConfig from './config'
 import fetchWrapperForQueries from '../../QueryFetch'
 import AspectPureFormik from '../../Form/PureFormik'
 import { getInitialValues } from '../../Form/PureFormik/Helpers'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import Loading from '../../../oldComponents/Loading.jsx'
 import { FormSubmit } from './FormSubmit'
 import mutationSuccess from './mutationSuccess'
@@ -220,12 +220,7 @@ const ContactDetailsFormFormik = () => {
 
   const mutation = useMutation(
     ({ values, endpoint, method, customErrorNotifications }) => {
-      return fetchWrapperForQueries({
-        endpoint,
-        method,
-        params: { ...values },
-        customErrorNotifications,
-      })
+      return fetchWrapperForQueries({ endpoint, method, params: { ...values }, customErrorNotifications })
     },
     {
       onError: error => {

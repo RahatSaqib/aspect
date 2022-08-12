@@ -20,7 +20,7 @@ import ReportCard from './ReportCard'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { showError } from '../../../store/AppNotificationRedux'
 import messages from './messages'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from './ReportIndex.css'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'

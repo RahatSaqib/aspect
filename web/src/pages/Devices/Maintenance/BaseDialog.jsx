@@ -9,7 +9,7 @@ import InputLabel from '@mui/material/InputLabel'
 
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from './BaseDialog.css'
 

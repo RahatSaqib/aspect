@@ -1,6 +1,6 @@
 import { aspectFetch } from '../../utils/utils/fetch'
 import defaultErrors from './errors'
-import { buildBodyParams, buildEndpointAndQueryString } from './Helpers'
+import { buildEndpointAndQueryString } from './Helpers'
 
 const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customErrorNotifications = {} }) => {
   if (!endpoint) throw new Error(`You need to specify the 'endpoint' property`)
@@ -10,7 +10,7 @@ const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customE
     case 'POST':
     case 'PUT':
     case 'PATCH':
-      body = buildBodyParams(endpoint, params)
+      body = JSON.stringify(params)
       break
     case 'DELETE':
     case 'GET':

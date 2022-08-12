@@ -7,7 +7,7 @@ import messages from './messages'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
 import { NOTIFICATION_LIST } from '../../../../components/QueryFetch/Notification/index'
 import ToggleStatusConfirmationModal from './ToggleStatusConfirmationModal'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()

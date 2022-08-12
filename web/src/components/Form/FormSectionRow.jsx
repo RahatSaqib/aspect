@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton'
 import uniqueId from 'lodash/uniqueId'
 
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
 import FormItem from './FormItem'
 import messagesBase from './messages'

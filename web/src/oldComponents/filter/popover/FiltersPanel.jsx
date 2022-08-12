@@ -35,7 +35,7 @@ import DaysStockLeftSelectField from '../hardcoded/daysStockLeftSelectField'
 import EnabledDisabledPersonsSelectField from '../hardcoded/toggleDisabledEnabledPersons'
 import ReportAutoCompleteField from '../../../components/ReportAutocompleteField'
 import ErrorBoundary from '../../../components/ErrorBoundary'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from './FiltersPanel.css'
 import ConnectorStatusSelectField from '../resource/ConnectorStatusSelectField'

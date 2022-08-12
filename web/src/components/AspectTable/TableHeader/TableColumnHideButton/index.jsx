@@ -7,7 +7,7 @@ import messages from '../messages'
 import IconProvider from '../../../IconProvider'
 
 import styles from '../../Table.css'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

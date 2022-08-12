@@ -20,7 +20,7 @@ import Popper from '@mui/material/Popper'
 import { formatWithLocale } from '../../../utils/utils/dateFormat'
 import AspectButton from '../AspectButton'
 import messages from './messages'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import {
   since,

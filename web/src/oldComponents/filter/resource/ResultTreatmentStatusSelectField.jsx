@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import { connect } from 'react-redux'
 import MenuItem from '@mui/material/MenuItem'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import SelectField from '../../shared/SelectField'
 import messages from './i18n/resultTreatmentStatusMessages'

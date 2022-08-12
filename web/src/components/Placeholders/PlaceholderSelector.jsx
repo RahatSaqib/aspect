@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
 import { getMenuItems } from './utils'
 import messages from './messages'

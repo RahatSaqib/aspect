@@ -6,7 +6,7 @@ import classnames from 'classnames/bind'
 import styles from './InventoryContainer.css'
 import InventoryItemsList from './list/InventoryItemsList'
 import InventoryLog from './log/InventoryLog'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

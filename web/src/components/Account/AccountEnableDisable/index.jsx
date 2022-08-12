@@ -10,7 +10,7 @@ import { DataTableCell as TableCell } from '../../../oldComponents/shared/tableB
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import fetchWrapperForQueries from '../../QueryFetch'
 import { fetchPersons } from '../../../store/PersonRedux'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import messages from './messages'
 
 const IconContainer = ({ icon: Icon, style, action }) => (

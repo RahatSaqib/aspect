@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem'
 import SelectField from '../../shared/SelectField'
 import daysStockLeftOptions from './daysStockLeftOptions'
 import messages from './messages'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 export default ({ allItemText, onChange, value, ...restProps }) => {
   const handleSelectFieldChange = ({ target: { value } }) => {

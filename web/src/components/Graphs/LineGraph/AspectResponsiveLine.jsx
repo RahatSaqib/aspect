@@ -7,7 +7,7 @@ import sortBy from 'lodash/sortBy'
 import { ResponsiveLine } from '@nivo/line'
 import classnames from 'classnames/bind'
 
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
 import messages from '../intlMessages'

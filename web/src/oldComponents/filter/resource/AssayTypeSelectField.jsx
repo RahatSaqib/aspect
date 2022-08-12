@@ -9,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem'
 
 import SelectField from '../../shared/SelectField'
 import { fetchAssayTypes } from '../../../store/AssayTypeRedux'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 const messages = defineMessages({
   assayTypeCD4: {

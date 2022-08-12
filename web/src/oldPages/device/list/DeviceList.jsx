@@ -36,7 +36,7 @@ import messages from './messages'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 
 import styles from './DeviceList.css'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
 
 const cssClasses = classnames.bind(styles)

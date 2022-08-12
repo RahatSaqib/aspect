@@ -10,7 +10,7 @@ import ShellHeader from '../../../../components/Shell/Header'
 import ShellContent from '../../../../components/Shell/Content'
 import ShellFooter from '../../../../components/Shell/Footer'
 
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 import { FormikProvider } from '../../../../components/Form/Formik/Context'
 import { getFormConfigWithData } from '../utils'
 

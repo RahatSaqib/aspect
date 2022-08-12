@@ -7,7 +7,7 @@ import pullAt from 'lodash/pullAt'
 import isEqual from 'lodash/isEqual'
 import cloneDeep from 'lodash/cloneDeep'
 import startCase from 'lodash/startCase'
-import useI18n from '../../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../../hooks/useI18n'
 import messages from '../../messages'
 
 const PureChip = props => {

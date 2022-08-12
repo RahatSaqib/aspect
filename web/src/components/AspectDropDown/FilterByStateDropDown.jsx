@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { oneOfType, object } from 'prop-types'
 import Select from 'react-select'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 import { getAspectTheme } from './index.jsx'
 import { useAuthState } from '../../providers/AuthProvider'
 import { fetchCountries, fetchStatesForCountry } from '../../store/GeographyRedux'

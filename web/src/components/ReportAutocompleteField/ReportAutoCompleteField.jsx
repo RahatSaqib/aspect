@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { defineMessages } from 'react-intl'
 import fetchWrapperForQueries from '../QueryFetch'
 import { REPORT_SELECT_LIST } from '../QueryFetch/Report/index'
-import useI18n from '../../hooks/i18n/useI18n'
+import useI18n from '../../hooks/useI18n'
 
 const messages = {
   ...defineMessages({

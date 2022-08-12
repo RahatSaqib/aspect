@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 import { useMutation } from 'react-query'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 

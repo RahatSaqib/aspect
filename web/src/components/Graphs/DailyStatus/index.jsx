@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classnames from 'classnames/bind'
 
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import DailyStatusFilters from './DailyStatusFilters'
 import DailyStatusClinic from './DailyStatusClinic'

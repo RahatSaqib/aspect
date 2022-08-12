@@ -30,7 +30,7 @@ import inventoryStatusGraphs from '../../../components/Graphs/GraphConfiguration
 import deviceStatusGraphs from '../../../components/Graphs/GraphConfigurations/DeviceStatus'
 import testsPerFormedGraphs from '../../../components/Graphs/GraphConfigurations/TestsPerformed'
 import tbTrendGraphs from '../../../components/Graphs/GraphConfigurations/Trends'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import {
   GRAPHS_SORTED_BY_TOTAL_RESULTS,
   GRAPHS_TREND_IN_YEARS,

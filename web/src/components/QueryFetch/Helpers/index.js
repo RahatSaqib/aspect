@@ -17,11 +17,4 @@ function replaceRouteParams(route, routeParams) {
   return newRoute
 }
 
-const buildBodyParams = (endpoint, params) => {
-  switch (endpoint) {
-    default:
-      return JSON.stringify(params)
-  }
-}
-
-export { buildBodyParams, buildEndpointAndQueryString, replaceRouteParams }
+export { buildEndpointAndQueryString, replaceRouteParams }

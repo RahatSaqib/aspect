@@ -5,7 +5,7 @@ import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import CloseIcon from '@mui/icons-material/RemoveCircle'
 import { mergeToFiltersParams } from '../../../oldComponents/filter/utils'
 import messages from './messages'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from './PersonDetail.css'
 

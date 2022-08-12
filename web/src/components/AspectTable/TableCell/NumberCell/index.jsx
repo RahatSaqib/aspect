@@ -1,6 +1,6 @@
 import React from 'react'
 import { number } from 'prop-types'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 /**
  * Component to render a numbered cell
  */

@@ -5,7 +5,7 @@ import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 
-import useI18n from '../hooks/i18n/useI18n'
+import useI18n from '../hooks/useI18n'
 import StyledDropdown from './shared/StyledDropdown'
 import { fetchSitesForSelectList } from '../store/SiteRedux'
 import { mergeToFiltersParams } from './filter/utils'

@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
 import { useMutation } from 'react-query'
 
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import Create from './Create'
 import Update from './Update'

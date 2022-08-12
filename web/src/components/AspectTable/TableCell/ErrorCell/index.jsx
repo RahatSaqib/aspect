@@ -6,7 +6,7 @@ import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import NotificationDetailModal from '../../../../pages/Notifications/Detail/NotificationDetailHistory/NotificationDetailModal'
 import IconProvider from '../../../IconProvider/index'
 import styles from './ErrorCell.css'
-import useI18n from '../../../../hooks/i18n/useI18n'
+import useI18n from '../../../../hooks/useI18n'
 import messages from '../../../../pages/Notifications/Detail/NotificationDetailHistory/messages'
 
 const cssClasses = classnames.bind(styles)

@@ -7,7 +7,7 @@ import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 
 import messages from './messages'
 import PersonAssignment from './PersonAssignmentItem'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import styles from './PersonDetail.css'
 
 const cssClasses = classnames.bind(styles)

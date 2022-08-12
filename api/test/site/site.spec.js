@@ -113,14 +113,17 @@ describe('Site routes', () => {
       let geo = {}
       let siteTypeLabId
       let newSiteParams
-      const newSiteName = 'New Site'
+      const dummyName = 'New Site Name'
+      const dummyShortName = 'New Site'
+      const dummyExternalId = 'New Site ext id'
       before(async () => {
         geo = await knex('Geography').whereNotNull('lgaId').first('id', 'countryId', 'stateId', 'lgaId')
         ;({ siteTypeLabId } = await knex('SiteType').where('externalId', 'lab').first('id as siteTypeLabId'))
 
         newSiteParams = {
-          name: newSiteName,
-          shortName: newSiteName,
+          name: dummyName,
+          shortName: dummyShortName,
+          externalId: dummyExternalId,
           notes: 'Notes',
           countryId: geo.countryId,
           stateId: geo.stateId,
@@ -164,9 +167,9 @@ describe('Site routes', () => {
         const insertedSite = await knex('Site').where('id', siteId).first()
 
         expect(insertedSite).to.containSubset({
-          name: newSiteName,
-          shortName: newSiteName,
-          externalId: newSiteName,
+          name: dummyName,
+          shortName: dummyShortName,
+          externalId: dummyExternalId,
           notes: 'Notes',
           geographyId: geo.id,
           city: 'city',
@@ -183,10 +186,10 @@ describe('Site routes', () => {
 
       it('Should reject create a duplicate site ', async () => {
         const [exisingSiteId] = await knex('Site').insert({
-          name: newSiteName,
-          shortName: newSiteName,
+          name: dummyName,
+          shortName: dummyShortName,
+          externalId: dummyExternalId,
           siteTypeId: siteTypeLabId,
-          externalId: newSiteName,
         })
 
         insertedSites.push(exisingSiteId)
@@ -196,7 +199,7 @@ describe('Site routes', () => {
           .send(newSiteParams)
           .set('Authorization', `Bearer${shared.token}`)
 
-        assert.equal(createDuplicatedSiteResponse.status, 422)
+        assert.equal(createDuplicatedSiteResponse.status, 409)
       })
     })
 
@@ -261,10 +264,12 @@ describe('Site routes', () => {
           'totalDevices',
           'devices',
           'contacts',
+          'siteType',
         ])
+        const params = { ...newSiteData, street2: newStreet2 }
         const updateSiteResponse = await server
           .put(`${path}/${siteId}`)
-          .send({ ...newSiteData, street2: newStreet2 })
+          .send(params)
           .set('Authorization', `Bearer${shared.token}`)
         assert.equal(updateSiteResponse.status, 200)
         assert.typeOf(updateSiteResponse.body, 'Object')

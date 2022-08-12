@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import messages from '../../device/list/messages'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 

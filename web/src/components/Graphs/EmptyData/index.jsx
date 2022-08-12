@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 
 import styles from './GraphPlaceholders.css'
-import useI18n from '../../../hooks/i18n/useI18n'
+import useI18n from '../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
