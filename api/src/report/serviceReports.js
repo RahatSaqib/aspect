@@ -301,7 +301,10 @@ async function streamToCsv(dataset, reply, fileName) {
   /**
    * replace base placeholders, i.e. <Dates>, <States>, etc in the header
    */
-  const csvStream = csv.format({ headers: data.length > 0 })
+  const csvStream = csv.format({
+    headers: data.length > 0,
+    writeBOM: true,
+  })
 
   if (data.length > 0) {
     _.forEach(data, row => {
