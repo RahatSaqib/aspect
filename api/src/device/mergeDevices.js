@@ -16,7 +16,7 @@ async function mergeDevices({ payload, auth }) {
   // const user = await getUserFromCredentials(auth.credentials)
 
   // TODO: Handle transaction
-
+  await deleteDeviceFromDeviceApiKey(devicesToMerge.sourceDevice.id)
   // 4. Issues and notifications should be merged.
   await mergeIssuesFromDuplicatedResults(devicesToMerge)
   await updateDeviceOnRemainingIssues(devicesToMerge)
@@ -24,6 +24,7 @@ async function mergeDevices({ payload, auth }) {
   // 1. Results not repeated for both devices will be assigned to the definitive one.
   await mergeNonRepeatedResults(devicesToMerge)
 
+  await deleteRemainingIssues(devicesToMerge.sourceDevice.id)
   // 3. Results from point 2 should be deleted from notifications, ResultDownloadLog, DeviceLog,
   await deleteRemainingNotifications(devicesToMerge.sourceDevice.id)
 
@@ -37,7 +38,6 @@ async function mergeDevices({ payload, auth }) {
   await deleteDeviceFromDeviceMaintenance(devicesToMerge.sourceDevice.id)
   await deleteDeviceFromDeviceApprovalLog(devicesToMerge.sourceDevice.id)
   await deleteDeviceFromDeviceApiRaw(devicesToMerge.sourceDevice.id)
-  await deleteDeviceFromDeviceApiKey(devicesToMerge.sourceDevice.id)
   await deleteDeviceFromDeviceSim(devicesToMerge.sourceDevice.id)
   await deleteDeviceFromDeviceTag(devicesToMerge.sourceDevice.id)
   await deleteDeviceFromFactTables(devicesToMerge.sourceDevice.id)
@@ -51,7 +51,6 @@ async function mergeDevices({ payload, auth }) {
 async function getDevicesToMerge({ sourceDeviceId, targetDeviceId }) {
   const sourceDevice = await knex('Device').where('id', sourceDeviceId).first('id', 'deviceApprovalId', 'siteId')
   const targetDevice = await knex('Device').where('id', targetDeviceId).first('id', 'siteId')
-  console.log('\x1b[1;36m', '🚀 ➜ file: index.js ➜ line 55 ➜ sourceDevice, targetDevice', sourceDevice, targetDevice)
   return { sourceDevice, targetDevice }
 }
 
@@ -88,6 +87,14 @@ async function updateDeviceOnRemainingIssues(devicesToMerge) {
     .update('deviceId', devicesToMerge.targetDevice.id)
 }
 
+async function deleteRemainingNotifications(deviceId) {
+  await knex('Notification').whereIn('resultId', knex('Result').where('deviceId', deviceId).select('id')).del()
+}
+
+async function deleteRemainingIssues(deviceId) {
+  await knex('Issue').where('deviceId', deviceId).del()
+}
+
 async function mergeNonRepeatedResults(devicesToMerge) {
   await knex('Result as sourceResults')
     .where({ deviceId: devicesToMerge.sourceDevice.id })
@@ -99,10 +106,6 @@ async function mergeNonRepeatedResults(devicesToMerge) {
     .update({ deviceId: devicesToMerge.targetDevice.id })
 }
 
-async function deleteRemainingNotifications(deviceId) {
-  await knex('Notification').whereIn('resultId', knex('Result').where('deviceId', deviceId).select('id')).del()
-}
-
 async function deleteRemainingResultDownloadLog(deviceId) {
   await knex('ResultDownloadLog').whereIn('resultId', knex('Result').where('deviceId', deviceId).select('id')).del()
 }
@@ -112,15 +115,26 @@ async function deleteRemainingDeviceLog(deviceId) {
 }
 
 async function deleteRepeatedResults(deviceId) {
-  await knex('Result').where('deviceId', deviceId).del()
+  const deletedRepeatedResults = await knex('Result').where('deviceId', deviceId).del()
+  console.log('\x1b[1;36m', '🚀 ➜ file: mergeDevices.js ➜ line 115 ➜ what', deletedRepeatedResults)
 }
 
 async function deleteDeviceFromDeviceOperation(deviceId) {
-  await knex('DeviceOperation').where('deviceId', deviceId).del()
+  const deleteDeviceFromDeviceOperation = await knex('DeviceOperation').where('deviceId', deviceId).del()
+  console.log(
+    '\x1b[1;36m',
+    '🚀 ➜ file: mergeDevices.js ➜ line 120 ➜ deleteDeviceFromDeviceOperation',
+    deleteDeviceFromDeviceOperation
+  )
 }
 
 async function deleteDeviceFromDeviceMaintenance(deviceId) {
-  await knex('DeviceMaintenance').where('deviceId', deviceId).del()
+  const DeletedDeviceMaintenance = await knex('DeviceMaintenance').where('deviceId', deviceId).del()
+  console.log(
+    '\x1b[1;36m',
+    '🚀 ➜ file: mergeDevices.js ➜ line 129 ➜ DeviceMaintenanceDeleted',
+    DeletedDeviceMaintenance
+  )
 }
 
 async function deleteDeviceFromDeviceApprovalLog(deviceId) {
@@ -146,7 +160,13 @@ async function deleteDeviceFromDeviceTag(deviceId) {
 }
 
 async function deleteDeviceFromFactTables(deviceId) {
-  // TODO: Implement
+  await knex('FactDeviceExternalSource').where({ deviceId }).del()
+  await knex('FactDeviceFlag').where({ deviceId }).del()
+  await knex('FactResultsDevice').where({ deviceId }).del()
+  await knex('FactResultsDeviceByAssay').where({ deviceId }).del()
+  await knex('FactResultsDeviceByCategory1').where({ deviceId }).del()
+  await knex('FactResultsDeviceByCategory1And2').where({ deviceId }).del()
+  await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).del()
 }
 
 async function deleteDevice(deviceId) {
