@@ -10,12 +10,22 @@ import ButtonSave from './ButtonSave'
 import messages from './messages'
 import { MODE, getFormConfig } from './utils'
 import styles from './DailyStatusDialog.css'
+import SiteInfo from './SiteInfo'
 import { getISOFromString } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
-export const DailyStatusDialog = ({ data = {}, isOpen, onCancel, onSubmit, statuses, title, deviceName }) => {
+export const DailyStatusDialog = ({
+  data = {},
+  isOpen,
+  onCancel,
+  onSubmit,
+  statuses,
+  title,
+  deviceName,
+  siteProps,
+}) => {
   const [mode, setMode] = useState(MODE.EDITING)
   const { formatMessage } = useI18n()
 
@@ -67,6 +77,8 @@ export const DailyStatusDialog = ({ data = {}, isOpen, onCancel, onSubmit, statu
           <div className={cssClasses('Form__controls')}>
             <AspectForm config={config} />
           </div>
+
+          <SiteInfo {...siteProps} />
         </div>
       </AspectDialog>
     </FormikProvider>

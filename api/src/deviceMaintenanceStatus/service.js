@@ -16,6 +16,7 @@ const {
   getISODateUserTimeZoneField,
 } = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
+const { getPeopleBase } = require('../shared/utilsPerson')
 
 function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
   const minDateStatus = startOfDayUtc(new Date(minDate))
@@ -143,13 +144,17 @@ async function getDeviceStatusOverTime(auth, query) {
       'd.id',
       'd.name',
       'd.shortName',
+      'd.siteId',
       'dcap.dailyCapacity as deviceCapacity',
       's.longitude',
       's.latitude',
+      's.hoursStart',
+      's.hoursEnd',
       knex.raw('COUNT(r.id) as totalResults')
     )
 
   const deviceIds = uniq(devices.map(({ id }) => id))
+  const siteIds = uniq(devices.map(({ siteId }) => siteId))
 
   let devicesByDay = await knex('Device as d')
     .leftJoin('Result as r', joinQuery => {
@@ -187,6 +192,29 @@ async function getDeviceStatusOverTime(auth, query) {
     )
   statusData = groupListBy(statusData, 'deviceId', 'day')
 
+  /**
+   * get persons for all related sites
+   */
+  const persons = await getPeopleBase()
+    .leftJoin('Geography as jcg', 'jc.geographyId', 'jcg.id')
+    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
+    .whereIn('s.id', siteIds)
+    .orderBy('p.name')
+    .groupBy('p.id')
+    .select(
+      'p.id as personId',
+      'p.name',
+      'p.email',
+      'p.phone',
+      'p.cell',
+      'p.disabled',
+      'p.disabledOn',
+      's.id as siteId'
+    )
+
+  /**
+   * define `data` to return
+   */
   let data = []
   devices.forEach(device => {
     const maintenanceStatusHistory = []
@@ -276,9 +304,21 @@ async function getDeviceStatusOverTime(auth, query) {
     // process remaining days with same status
     setDaysInSameStatus(indicesInSameStatus)
 
+    const siteContacts = persons
+      .filter(({ siteId }) => device.siteId === siteId)
+      .map(({ personId, name, email, phone, cell, disabled, disabledOn }) => ({
+        personId,
+        name,
+        email,
+        phone: uniq([phone, cell].filter(it => !!it)),
+        disabled: disabled === 1,
+        disabledOn,
+      }))
+
     data.push({
       ...device,
       maintenanceStatusHistory,
+      siteContacts,
     })
   })
   data = orderBy(data, ['name'])
