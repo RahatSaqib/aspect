@@ -145,11 +145,11 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       } = props
       const assayIds = isArray(assayId) ? assayId : [assayId]
       return assayIds.map((__, index) =>
-        makeButton(value => assayItems.find(it => it.get('id') === value, EMPTY_CONTEXT, EMPTY_MAP).get('name'))(
-          filterKey,
-          props,
-          index
-        )
+        makeButton(value =>
+          formatMessage(
+            messages[assayItems.find(it => it.get('id') === value, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')]
+          )
+        )(filterKey, props, index)
       )
     },
     diseaseId: makeButton((diseaseId, { diseaseItems }) =>

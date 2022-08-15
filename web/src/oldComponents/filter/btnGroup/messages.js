@@ -2,10 +2,12 @@ import { defineMessages } from 'react-intl'
 
 import deviceApprovalMessages from '../../../utils/messages/deviceApprovalMessages'
 import deviceStatusMessages from '../../../utils/messages/deviceStatusMessages'
+import assayTranslations from '../../../utils/messages/assay'
 
 export const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
+  ...assayTranslations,
   ...defineMessages({
     dateFrom: {
       id: 'filter.btnGroup.dateFrom',
