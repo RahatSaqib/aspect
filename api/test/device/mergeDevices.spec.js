@@ -1,8 +1,12 @@
 const { expect, assert } = require('chai')
 const { subDays } = require('date-fns')
-const { deviceApprovalToId } = require('../../src/shared/dictionary')
+const {
+  deviceMaintenanceTypeToId,
+  deviceApprovalToId,
+  resultCategoryToId,
+  assayToId,
+} = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
-const { resultCategoryToId } = require('../../src/shared/dictionary')
 const shared = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
@@ -17,12 +21,11 @@ let repeatedSourceResultId
 let uniqueSourceResultId
 let repeatedTargetResultId
 
-describe.only('Merge Devices', () => {
+describe('Merge Devices', () => {
   before(async () => {
     shared.checkToken(server, path)
   })
 
-  // const deviceSeedHelper = new DeviceSeedHelper()
   const sourceDeviceContext = createGxConnectTestContext(server, {
     countryCode: 'US',
     adminUsername: 'admin',
@@ -178,7 +181,8 @@ async function seedDeviceOperation() {
 }
 
 async function seedDeviceMaintenance() {
-  const deviceMaintenanceTypeId = 1 // TODO: read from db
+  const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+
   await knex('DeviceMaintenance').insert({
     deviceId: sourceDeviceId,
     deviceMaintenanceTypeId,
@@ -190,8 +194,9 @@ async function seedDeviceMaintenance() {
 }
 
 async function seedIssue(device, resultId) {
-  const issueTypeId = 1 // TODO: read from db
-  const issueStatusId = 2 // TODO: read from db
+  const { id: issueTypeId } = await knex('IssueType').first('id')
+
+  const { id: issueStatusId } = await knex('IssueStatus').first('id')
 
   const [issueId] = await knex('Issue').insert({
     issueTypeId,
@@ -208,7 +213,8 @@ async function seedIssue(device, resultId) {
 }
 
 async function seedNotification(issueId, resultId) {
-  const notificationTypeId = 1 // TODO: read from db
+  const { id: notificationTypeId } = await knex('NotificationType').first('id')
+
   const [notificationId] = await knex('Notification').insert({
     notificationTypeId,
     issueId,
@@ -262,8 +268,8 @@ async function seedFactTables(deviceId) {
     calculatedOn: new Date(),
   })
 
-  const assayId = 1 // TODO: read from db
-  const resultCategory1 = 1 // TODO: read from db
+  const assayId = await assayToId('GeneXpert MTB/XDR')
+  const resultCategory1 = await resultCategoryToId('Detected')
 
   knex('FactResultsDeviceByAssay').insert({
     deviceId,

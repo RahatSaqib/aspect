@@ -183,7 +183,7 @@ async function validatePersmissions(devicesToMerge, credentials) {
 
   const devices = await devicesQuery
   if (devices.length !== 2) {
-    throw Boom.unauthorized(`You don't have permission to merge this devices.`)
+    throw Boom.forbidden(`You don't have permission to merge this devices.`)
   }
 }
 
