@@ -106,7 +106,7 @@ describe('Merge Devices', () => {
   it('If source device is active should throw validation', async () => {
     const res = await server
       .post(path)
-      .send({ sourceDeviceId, targetDeviceId: targetDevice.id })
+      .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
       .set('Authorization', `Bearer${shared.token}`)
     expect(res.statusCode).to.equal(422)
   })
@@ -118,8 +118,9 @@ describe('Merge Devices', () => {
 
     const res = await server
       .post(path)
-      .send({ sourceDeviceId, targetDeviceId: targetDevice.id })
+      .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
       .set('Authorization', `Bearer${shared.token}`)
+
     expect(res.statusCode).to.equal(200)
 
     const sourceDevices = await knex('Device').where('id', sourceDeviceId)

@@ -699,7 +699,7 @@ const routes = [
       auth: { scope: ['device:edit'] },
       validate: {
         payload: {
-          sourceDeviceId: Joi.number().description('Source device Id').required(),
+          sourceDevicesIds: Joi.array().items(Joi.number()).description('Source devices Ids').required(),
           targetDeviceId: Joi.number().description('Target device Id').required(),
         },
       },
