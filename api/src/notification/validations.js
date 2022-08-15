@@ -143,6 +143,10 @@ const resultBasedNotificationPayload = Joi.object({
     .description('Checked job functions'),
 }).or('sendToPatient', 'jobFunctions', 'persons')
 
+const changeNotificationStatusPayload = Joi.object({
+  enabled: Joi.bool().required(),
+})
+
 const saveNotificationResponse = {
   options: {
     allowUnknown: false,
@@ -157,5 +161,6 @@ module.exports = {
   listNotificationsBaseConfig,
   optionsForSendXXX,
   resultBasedNotificationPayload,
+  changeNotificationStatusPayload,
   saveNotificationResponse,
 }

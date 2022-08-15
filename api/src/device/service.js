@@ -58,6 +58,7 @@ const SELECT_LIST_FIELDS = [
   'da.name as approval',
   'dms.externalId as maintenanceStatus',
   'dms.i18nKey as maintenanceStatusI18nKey',
+  'da.i18nKey as approvalStatusI18nKey',
   'dms.name as maintenanceStatusName',
   'dms.active as maintenanceStatusActive',
   'dms.manuallySet as maintenanceStatusManuallySet',
@@ -149,6 +150,12 @@ async function getListDevices(query, auth) {
       if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
         queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
       }
+      if (query.connectorStatus) {
+        queryBuilder.whereIn(
+          knex.raw('CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END'),
+          query.connectorStatus
+        )
+      }
     })
     .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     .modify(queryBuilder => {
@@ -205,24 +212,14 @@ async function getListDevices(query, auth) {
   // get rows
   const getItems = deviceQuery
     .clone()
-    .modify(sortPageParams, query, 'name')
-    .groupBy('d.id')
-    .select([
-      ...getSelectListFields(userTimeOffset, {
-        lastSeenField: `CASE WHEN dms.active = 1 THEN GREATEST(dmsl.day, d.lastSeenOn) ELSE d.lastSeenOn END`,
-      }),
-      'frd30.resultCount as resultCountThisMonth',
-      knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
-      'frd30Errors.resultCount as thisMonthErrors',
-      knex.raw('IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'),
-      knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
-      knex.raw('count(distinct dmslActivity.day) as totalDays'),
-      knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
-      'issues.categories as issueCategories',
-      'dms.active as isDeviceActive',
-      'dmsl.day as dmslDay',
-      'd.lastSeenOn as deviceLastSeenOn',
-    ])
+    .leftJoin(
+      knex('Result as resDevice')
+        .select('deviceId', knex.raw('max(resDevice.endedOn) as lastResultConductedOn'))
+        .groupBy('deviceId')
+        .as('deviceResult'),
+      'd.id',
+      'deviceResult.deviceId'
+    )
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')
         .select('deviceId', 'day', knex.raw('max(s.active) as active'))
@@ -254,6 +251,33 @@ async function getListDevices(query, auth) {
       'issues.deviceId',
       'd.id'
     )
+    .modify(sortPageParams, query, 'name')
+    .groupBy('d.id')
+    .select([
+      ...getSelectListFields(userTimeOffset, {
+        lastSeenField: `CASE WHEN dms.active = 1 THEN GREATEST(dmsl.day, d.lastSeenOn) ELSE d.lastSeenOn END`,
+      }),
+      'frd30.resultCount as resultCountThisMonth',
+      knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
+      'frd30Errors.resultCount as thisMonthErrors',
+      knex.raw('IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'),
+      knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
+      knex.raw('count(distinct dmslActivity.day) as totalDays'),
+      knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
+      'issues.categories as issueCategories',
+      'dms.active as isDeviceActive',
+      'dmsl.day as dmslDay',
+      'd.lastSeenOn as deviceLastSeenOn',
+      knex.raw(
+        'CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END AS connectorStatus'
+      ),
+      knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS connectorVersion'),
+      knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
+      knex.raw(`CASE 
+        WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
+        WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
+        ELSE 'down' END AS 'deviceStatus'`),
+    ])
     .distinct()
 
   // return result when both queries are finished
@@ -806,6 +830,49 @@ async function getDevicesForReport(auth, query) {
   return result
 }
 
+async function getErrorCodesByDeviceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const getCount = deviceQuery.clone().count('d.id as count').first()
+  const getItems = deviceQuery
+    .clone()
+    .leftJoin('Result as r', 'r.deviceId', 'd.id')
+    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .groupBy('d.id')
+    .select({
+      name: 'd.name',
+      error_5011: knex.raw("SUM(CASE WHEN r.errorCode = '5011' THEN 1 ELSE 0 END)"),
+      error_5007: knex.raw("SUM(CASE WHEN r.errorCode = '5007' THEN 1 ELSE 0 END)"),
+      error_5006: knex.raw("SUM(CASE WHEN r.errorCode = '5006' THEN 1 ELSE 0 END)"),
+      error_2008: knex.raw("SUM(CASE WHEN r.errorCode = '2008' THEN 1 ELSE 0 END)"),
+      error_2005: knex.raw("SUM(CASE WHEN r.errorCode = '2005' THEN 1 ELSE 0 END)"),
+      error_2037: knex.raw("SUM(CASE WHEN r.errorCode = '2037' THEN 1 ELSE 0 END)"),
+      error_2025: knex.raw("SUM(CASE WHEN r.errorCode = '2025' THEN 1 ELSE 0 END)"),
+      error_2022: knex.raw("SUM(CASE WHEN r.errorCode = '2022' THEN 1 ELSE 0 END)"),
+      mtbNoResult: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END), 0)"),
+      mtbInvalid: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END), 0)"),
+    })
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  const result = {
+    ok: true,
+    total,
+    length: data.length,
+    data,
+    dataSelector: ({ name, ...dataRow }) => {
+      return {
+        name,
+        ...dataRow,
+        total: Object.values(dataRow).reduce((a, b) => a + b),
+      }
+    },
+  }
+
+  return result
+}
+
 async function getDevicesForRifResistanceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
@@ -824,7 +891,7 @@ async function getDevicesForRifResistanceReport(auth, query) {
     .groupBy(['d.id'])
 
   // get total count for paging
-  const getCount = deviceQuery.clone().count('d.id as count').first()
+  const getCount = deviceQuery.clone().count('d.id as count')
 
   const queryResults = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -1628,6 +1695,7 @@ module.exports = {
   updateDeviceMaintenance,
   getDevicePerformance,
   getDevicesForReport,
+  getErrorCodesByDeviceReport,
   getDevicesForRifResistanceReport,
   getDeviceByDeviceId,
   onDeviceMaintenanceStatusLogged,

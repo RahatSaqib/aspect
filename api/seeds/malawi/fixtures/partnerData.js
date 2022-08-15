@@ -21,7 +21,7 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
-  plugin: '',
+  plugin: 'malawi',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,

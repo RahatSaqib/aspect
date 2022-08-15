@@ -3,12 +3,11 @@ const QUEUE_TIMEOUT_TIME = 4000
 
 const { createMessageQueue } = require('../../src/mq')
 const config = require('../../src/config')
-const { updateSubscription: updateHandlersSubscription } = require('../../src/subscriptions')
 
 let sharedQueue = null
 async function queueConnect() {
   if (sharedQueue == null) {
-    sharedQueue = await createMessageQueue(`${config.amqp.name}_for_testing`)
+    sharedQueue = await createMessageQueue(`${config.amqp.name}`)
   }
   return sharedQueue
 }
@@ -22,12 +21,6 @@ async function queuePurge() {
 async function subscribe(subscriptionName, subscription) {
   const queue = await queueConnect()
   await queue.subscribe(subscriptionName, subscription)
-}
-
-async function updateSubscription(subscriptorKey) {
-  const queue = await queueConnect()
-  await queue.unsubscribe(subscriptorKey)
-  await updateHandlersSubscription(queue, subscriptorKey)
 }
 
 async function createMessageContext() {
@@ -61,5 +54,4 @@ module.exports = {
   waitForIdle,
   dispatchAndWaitForAction,
   subscribe,
-  updateSubscription,
 }

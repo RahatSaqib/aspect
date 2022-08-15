@@ -1,3 +1,24 @@
+const xdrDevicesSummary = {
+  name: 'Summary table for XDR devices',
+  description: 'Lists sites/devices grouped by province showing main XDR parameters',
+  i18nKey: 'xdrDevicesSummary',
+  externalId: 'xdr_devices_summary', // folder name in /templates
+  i18nKeyDescription: 'xdrDevicesSummaryDescription',
+  fileName: 'XdrDevicesSummary',
+  exportCsv: false,
+  sortOrder: 101,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/serviceReport',
+      functionName: 'getReportXdrDevicesSummary',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 const mtbDetectedRRDetected = {
   name: 'MTB Detected RR Detected',
   description: 'Contains all MTB Detected/Rif Detected cases',
@@ -57,6 +78,17 @@ const criticalErrorsByDevice = {
       sortOrder: 0,
       moduleName: 'device/service',
       functionName: 'getDevicesForReport',
+      query: {
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
+        deviceTypeId: 'CepheidGeneXpert',
+      },
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'device/service',
+      functionName: 'getErrorCodesByDeviceReport',
       query: {
         sortCol: 'name',
         sortDir: 'asc',
@@ -269,11 +301,6 @@ const utilizationPerInstrumentDayReport = {
       moduleName: 'deviceMaintenanceStatus/serviceReports',
       functionName: 'getDeviceUtilizationPerDayReport',
     },
-    {
-      sortOrder: 0,
-      moduleName: 'deviceMaintenanceStatus/serviceReports',
-      functionName: 'getDeviceUtilizationPerDayReportPercentage',
-    },
   ],
 }
 
@@ -418,4 +445,5 @@ module.exports = {
   inventoryLog,
   moduleStatusReport,
   tbWorkloadSummary,
+  xdrDevicesSummary,
 }

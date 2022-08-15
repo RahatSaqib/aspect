@@ -1,0 +1,132 @@
+@import '../../../globals/variables.css';
+
+.Section {
+  padding: 10px var(--aspect-detail-horizontal-padding);
+}
+
+.Section--first {
+  padding-top: 20px;
+}
+
+.Section__Content {
+  padding: 20px;
+}
+
+[data-graph-container] {
+  display: flex;
+}
+
+[data-utilization-graph] {
+  margin-right: 20px;
+}
+
+[data-graph-container] {
+  text-align: center;
+}
+
+[data-panel-title] {
+  font-size: 1.5rem;
+  color: var(--aspect-color-grey-2);
+}
+
+.Graph_Container {
+  width: 50%;
+  padding: 5px 10px;
+  font-size: var(--aspect-font-size-sm);
+}
+
+.Graph_Container > div {
+  height: 350px;
+  padding-bottom: 20px;
+}
+
+.Graph_Legend {
+  margin-top: -60px;
+  display: flex;
+  justify-content: center;
+}
+
+.Graph_Legend > div {
+  margin-right: 10px;
+  display: flex;
+}
+
+.Graph_Legend div > div {
+  margin-top: 3px;
+  width: 28px;
+  height: 11px;
+  margin-right: 5px;
+}
+
+[data-utilization-rate-legend] div {
+  background-color: var(--aspect-color-shakespeare);
+}
+
+[data-utilization-rate-average-legend] div {
+  background-color: var(--aspect-color-ship-cove);
+}
+
+[data-utilization-rate-above-average-legend] div {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--aspect-color-shakespeare),
+    var(--aspect-color-shakespeare) 5px,
+    var(--aspect-color-shakespeare) 5px,
+    var(--aspect-color-white) 7px
+  );
+}
+
+[data-error-rate-legend] div {
+  background-color: var(--aspect-color-mandy);
+}
+
+[data-error-rate-average-legend] div {
+  background-color: var(--aspect-color-ship-cove);
+}
+
+[data-error-rate-above-average-legend] div {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--aspect-color-mandy),
+    var(--aspect-color-mandy) 5px,
+    var(--aspect-color-mandy) 5px,
+    var(--aspect-color-white) 7px
+  );
+}
+
+.Header {
+  padding-bottom: 20px;
+  display: flex;
+}
+
+.Header__Title {
+  flex-grow: 1;
+  color: var(--aspect-color-grey-2);
+  font-size: 24px;
+}
+
+.Header__Actions {
+  margin-left: 20px;
+}
+
+.Form__Actions {
+  padding: 20px 0;
+  text-align: right;
+}
+
+.ResultDataTable,
+.DeviceOperationDataTable {
+  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.css';
+}
+
+.DelayShowingProgressCircular {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  padding-left: -50%;
+}
+
+.deviceSummary__container {
+  display: flex;
+  justify-content: flex-start;
+}

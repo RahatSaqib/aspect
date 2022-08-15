@@ -125,7 +125,7 @@ async function getDeviceActivityPercentReport(auth, query) {
   return dataset
 }
 
-async function getDeviceUtilizationPerDayReport(auth, query, mode) {
+async function getDeviceUtilizationPerDayReport(auth, query) {
   const { maxDate = new Date(), minDate } = query
   if (!minDate) {
     query.minDate = subDays(maxDate, 30).toISOString()
@@ -148,6 +148,14 @@ async function getDeviceUtilizationPerDayReport(auth, query, mode) {
     return {
       key: day,
       header: format(date, 'yyyy-MM-dd'),
+      subHeaders: [
+        {
+          text: '#',
+        },
+        {
+          text: '%',
+        },
+      ],
     }
   })
 
@@ -163,18 +171,22 @@ async function getDeviceUtilizationPerDayReport(auth, query, mode) {
         if (!isWeekend || totalResults > 0) {
           cntWorkingDays += 1
         }
-        if (mode === 'percent') {
-          /**
-           * cell value is plain object which must have 1 mandatory prop `value`
-           * and may have 1 optional prop `style`
-           */
-          acc[day] = {
+        /**
+         * cell value is plain object which must have 1 mandatory prop `value`
+         * and may have 1 optional prop `style`
+         */
+        acc[day] = [
+          // item for 1st subHeader `#`
+          {
+            value: totalResults,
+          },
+          // item for 2nd subHeader `%`
+          {
             value: deviceCapacity && deviceCapacity > 0 ? totalResults / deviceCapacity : 'N/A',
             style: { numFmt: '0.00%' },
-          }
-        } else {
-          acc[day] = totalResults
-        }
+          },
+        ]
+
         return acc
       },
       {}
@@ -198,12 +210,7 @@ async function getDeviceUtilizationPerDayReport(auth, query, mode) {
   }
 }
 
-async function getDeviceUtilizationPerDayReportPercentage(auth, query) {
-  return getDeviceUtilizationPerDayReport(auth, query, 'percent')
-}
-
 module.exports = {
   getDeviceActivityPercentReport,
   getDeviceUtilizationPerDayReport,
-  getDeviceUtilizationPerDayReportPercentage,
 }

@@ -1,0 +1,460 @@
+import flowRight from 'lodash/flowRight'
+import isEmpty from 'lodash/isEmpty'
+import classnames from 'classnames/bind'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import Immutable from 'immutable'
+import { Helmet } from 'react-helmet'
+import TableBody from '@mui/material/TableBody'
+import { useQuery } from 'react-query'
+import format from 'date-fns/format'
+import subDays from 'date-fns/subDays'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Autocomplete from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../../utils/selectors/searchParams'
+
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+
+import { useAuthState } from '../../../providers/AuthProvider'
+import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
+import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
+import NavTitle from '../../../oldComponents/NavTitle'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import getExportableFile from '../DeviceQueries'
+import ExportListButton from '../../../components/AspectExportListButton'
+import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
+import { DEVICE_LIST } from '../../../components/QueryFetch/Device/index'
+import messages from './messages'
+
+import fetchWrapperForQueries from '../../../components/QueryFetch/index'
+
+import styles from './DeviceList.css'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
+import useI18n from '../../../hooks/useI18n'
+import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
+
+const cssClasses = classnames.bind(styles)
+
+const FILTERS_CONFIG = [
+  {
+    assayId: true,
+    requiredPermissions: [],
+  },
+  { geography: true, requiredPermissions: [] },
+  { state: true, requiredPermissions: [] },
+  { lga: true, requiredPermissions: [] },
+  {
+    siteName: true,
+    requiredPermissions: ['site:view'],
+  },
+  {
+    deviceName: true,
+    requiredPermissions: ['device'],
+  },
+  {
+    deviceStatus: true,
+    requiredPermissions: [],
+  },
+  {
+    deviceMaintenanceStatus: true,
+    requiredPermissions: [],
+  },
+  {
+    deviceType: true,
+    requiredPermissions: [],
+  },
+  {
+    deviceApproval: true,
+    requiredPermissions: [],
+  },
+  {
+    issueTypeId: true,
+    requiredPermissions: [],
+  },
+  {
+    connectorStatus: true,
+    requiredPermissions: [],
+  },
+]
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: [
+    'name',
+    'siteName',
+    'maintenanceStatusI18nKey',
+    'approvalStatusI18nKey',
+    'availabilityRate',
+    'errorRate',
+    'createdOn',
+    'lastPingOn',
+    'resultCountLastMonth',
+    'resultCountThisMonth',
+    'deviceStatus',
+    'connectorVersion',
+    'lastResultConductedOn',
+  ],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
+  searchSanitizer
+)
+
+const { dateFormat } = getAspectDisplayPreferences().toJS()
+
+const getColumns = intl => [
+  {
+    key: 'name',
+    label: intl.formatMessage(messages.device),
+    sortable: true,
+  },
+  {
+    key: 'siteName',
+    label: intl.formatMessage(messages.site),
+    sortable: true,
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'approvalStatusI18nKey',
+    label: intl.formatMessage(messages.approvalStatus),
+    sortable: true,
+  },
+  {
+    key: 'deviceStatus',
+    label: intl.formatMessage(messages.deviceStatus),
+    sortable: true,
+  },
+  {
+    key: 'maintenanceStatusI18nKey', // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
+    label: intl.formatMessage(messages.maintenanceStatus),
+    sortable: true,
+  },
+  {
+    key: 'lastResultConductedOn',
+    label: intl.formatMessage(messages.lastResultConductedOn),
+    sortable: true,
+  },
+  {
+    key: 'connectorStatus',
+    sortable: false,
+    label: intl.formatMessage(messages.connectorStatus),
+  },
+  {
+    key: 'lastPingOn',
+    sortable: true,
+    label: intl.formatMessage(messages.lastSeen),
+    tooltip: intl.formatMessage(messages.lastSeenDescription),
+  },
+  {
+    key: 'connectorVersion',
+    sortable: true,
+    label: intl.formatMessage(messages.connectorVersion),
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'issueCategory',
+    label: intl.formatMessage(messages.issueCategory),
+  },
+  {
+    key: 'availabilityRate',
+    label: intl.formatMessage(messages.availabilityRate),
+    sortable: false,
+    tooltip: intl.formatMessage(messages.availabilityRateDescription),
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'errorRate',
+    label: intl.formatMessage(messages.errorRate),
+    sortable: false,
+    tooltip: intl.formatMessage(messages.errorRateDescription),
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'createdOn',
+    sortable: true,
+    label: intl.formatMessage(messages.reportingFor),
+    hiddenOn: 'lg',
+  },
+  {
+    key: 'resultCountLastMonth',
+    sortable: true,
+    label: intl.formatMessage(messages.lastMonth),
+    hiddenOn: 'lg',
+    tooltip: intl.formatMessage(messages.resultCountDescription, {
+      startDate: format(subDays(new Date(), 60 + 1), dateFormat),
+      endDate: format(subDays(new Date(), 30 + 1), dateFormat),
+    }),
+  },
+  {
+    key: 'resultCountThisMonth',
+    sortable: true,
+    label: intl.formatMessage(messages.thisMonth),
+    hiddenOn: 'lg',
+    tooltip: intl.formatMessage(messages.resultCountDescription, {
+      startDate: format(subDays(new Date(), 30), dateFormat),
+      endDate: format(new Date(), dateFormat),
+    }),
+  },
+]
+
+export const DeviceListWithProps = ({
+  intl,
+  navigate,
+  location,
+  isLoading,
+  items,
+  sortCol,
+  sortDir,
+  reducedFilters,
+  onExportClick,
+  columns,
+  total,
+  pageAt,
+  pageSize,
+  displayPreferences,
+  onRowClick,
+  onAlertClick,
+  isMergeDeviceModalOpen,
+  setMergeDeviceModalOpen,
+}) => (
+  <div className={cssClasses('Container')}>
+    <Helmet title={intl.formatMessage(messages.devicesTitle)} />
+    <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
+    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
+      <AspectButton
+        onClick={() => setMergeDeviceModalOpen(true)}
+        type="button"
+        color="primary"
+        variant="contained"
+        browseButton
+      >
+        {intl.formatMessage(messages.mergeDevices)}
+      </AspectButton>
+    </BrowseFilters>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
+      <DataTableProgressBar disabled={!isLoading} />
+      <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
+      {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
+      {!items.currentIdList.isEmpty() && (
+        <DeviceDataTable className={cssClasses('DeviceDataTable')}>
+          <DeviceDataTableHead
+            navigate={navigate}
+            location={location}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
+            columns={columns}
+          />
+          <TableBody>
+            {!items.currentIdList.isEmpty() &&
+              items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(device => (
+                  <DeviceDataTableRow
+                    key={device.get('id')}
+                    intl={intl}
+                    device={device}
+                    onClick={onRowClick}
+                    onAlertClick={onAlertClick}
+                    displayPreferences={displayPreferences}
+                    data-device-id={device.get('id')}
+                  />
+                ))}
+          </TableBody>
+        </DeviceDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
+        <BrowseTablePaginator
+          navigate={navigate}
+          location={location}
+          intl={intl}
+          paginatorStatus={messages.paginatorStatus}
+          total={total}
+          pageAt={pageAt}
+          pageSize={pageSize}
+        />
+      )}
+    </DataTableCard>
+    <Dialog open={isMergeDeviceModalOpen} onClose={() => setMergeDeviceModalOpen(false)}>
+      <DialogTitle>{intl.formatMessage(messages.mergeDevices)}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{intl.formatMessage(messages.mergeDeviceActionDescription)}</DialogContentText>
+        <Autocomplete
+          multiple
+          options={[
+            { id: 1, title: 'Daktari Cuyahoga, OH' },
+            { id: 2, title: 'Wayne County Ohio GeneXpert' },
+          ]}
+          getOptionLabel={option => option.title}
+          renderInput={params => (
+            <TextField
+              {...params}
+              variant="standard"
+              label={intl.formatMessage(messages.sourceDevices)}
+              placeholder={intl.formatMessage(messages.sourceDevices)}
+            />
+          )}
+        />
+        <Autocomplete
+          options={[
+            { id: 1, title: 'Daktari Cuyahoga, OH' },
+            { id: 2, title: 'Wayne County Ohio GeneXpert' },
+          ]}
+          getOptionLabel={option => option.title}
+          renderInput={params => (
+            <TextField
+              {...params}
+              variant="standard"
+              label={intl.formatMessage(messages.targetDevice)}
+              placeholder={intl.formatMessage(messages.targetDevice)}
+            />
+          )}
+        />
+      </DialogContent>
+      <DialogActions>
+        <AspectButton onClick={() => setMergeDeviceModalOpen(false)}>
+          {intl.formatMessage(messages.button_Cancel)}
+        </AspectButton>
+        <AspectButton>{intl.formatMessage(messages.button_Merge)}</AspectButton>
+      </DialogActions>
+    </Dialog>
+  </div>
+)
+
+export const DeviceList = () => {
+  // >>>>>> hooks/ <<<<<<
+  const intl = useI18n()
+  const navigate = useNavigate()
+  const {
+    jwt: { permissions: userPermissions },
+    displayPreferences,
+  } = useAuthState()
+  const location = useLocation()
+
+  // >>>>>> Local state <<<<<<
+  const [items, setItems] = useState(new Items())
+  const [table, setTable] = useState(new Table())
+  const [total, setTotal] = useState()
+  const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState()
+  const [filters, setFilters] = useState()
+  const [pagination, setPagination] = useState({})
+
+  // >>>>>> Constants <<<<<<
+  const { sortCol, sortDir, page, size } = pagination
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
+  const params = { ...pagination, ...filters }
+
+  const onRowClick = ({
+    currentTarget: {
+      dataset: { deviceId },
+    },
+  }) => navigate(`/browse/device/${deviceId}`)
+
+  const onAlertClick = event => {
+    event.stopPropagation()
+    const {
+      currentTarget: {
+        dataset: { deviceId },
+      },
+    } = event
+    navigate(`/browse/device/${deviceId}/alerts`)
+  }
+
+  // >>>>>> Queries <<<<<<
+  const {
+    data = false,
+    isError,
+    error,
+    isLoading,
+  } = useQuery(
+    [DEVICE_LIST.KEY, { params }],
+    async () =>
+      fetchWrapperForQueries({
+        endpoint: DEVICE_LIST.ENDPOINT,
+        params: { ...params, hasResults: 1 },
+      }),
+    { enabled: !isEmpty(params) }
+  )
+
+  // >>>>>> Lifecycles <<<<<<
+  useEffect(() => {
+    if (!isLoading && data) {
+      const { data: list, total: totalItems } = data
+      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
+      setTotal(totalItems)
+      setTable(receiveTableItems(table, totalItems))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
+  useEffect(() => {
+    const { sanitized, value: searchParams } = searchSanitizer(location)
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
+    if (sanitized || filtersSanitized) {
+      searchParams.set('filters', filtersParams)
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
+    }
+
+    const sortPage = makeSortPageSelector({
+      sortCol: 'name',
+    })
+    const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
+    setFilters(getFilters(filtersParams))
+    setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location])
+
+  // >>>>>> Callbacks <<<<<<
+  const onExportClick = formatType => {
+    const { sanitized, value: filtersParams } = filtersFromLocation(location)
+    if (!sanitized) {
+      return getExportableFile(filtersParams, formatType, sortCol, sortDir, 0, total, 'devices')
+    }
+  }
+
+  if (isError) {
+    throw new Error(error)
+  }
+
+  const baseProps = {
+    intl,
+    navigate,
+    location,
+    isLoading,
+    items,
+    sortCol,
+    sortDir,
+    columns: getColumns(intl),
+    reducedFilters,
+    onExportClick,
+    table,
+    total,
+    pageAt: page,
+    pageSize: size,
+    displayPreferences,
+    onRowClick,
+    onAlertClick,
+    isMergeDeviceModalOpen,
+    setMergeDeviceModalOpen,
+  }
+  return <DeviceListWithProps {...baseProps} />
+}
+
+export default DeviceList

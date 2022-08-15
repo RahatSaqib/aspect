@@ -3,14 +3,14 @@ import React from 'react'
 import { compose, pure } from 'recompose'
 import { Helmet } from 'react-helmet'
 
-import IdleDialog from '../../../idle/components/IdleDialog'
-import AppNotificationSnackBar from '../../../appNotification/AppNotificationSnackBar'
-import AppNotificationDialog from '../../../appNotification/AppNotificationDialog'
+import IdleDialog from '../../../oldComponents/IdleDialog'
+import AppNotificationSnackBar from '../../../oldComponents/appNotification/AppNotificationSnackBar'
+import AppNotificationDialog from '../../../oldComponents/appNotification/AppNotificationDialog'
 import intlScrollToTopOnUpdateFactory from '../intlScrollToTopOnUpdateFactory'
 import ConnectedNavDrawer from './ConnectedNavDrawer'
 import VerticalAppBar from './VerticalAppBar'
 import HorizontalAppBar from './HorizontalAppBar'
-import Footer from '../../../MigratedComponents/Footer'
+import Footer from '../../../components/Footer'
 
 import styles from './index.css'
 

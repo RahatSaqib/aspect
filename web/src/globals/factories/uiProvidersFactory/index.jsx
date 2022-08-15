@@ -1,6 +1,6 @@
 import React from 'react'
-import { ThemeProvider } from '@material-ui/core/styles'
-import { jssPreset } from '@material-ui/styles'
+import { ThemeProvider } from '@mui/material/styles'
+import { jssPreset } from '@mui/styles'
 import { create } from 'jss'
 import { JssProvider } from 'react-jss'
 

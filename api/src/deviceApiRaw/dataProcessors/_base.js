@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
+const config = require('../../config')
 const { createSalt, encrypt } = require('../../shared/encryption')
 const { deviceApiRawStatusToId } = require('../../shared/dictionary')
 const { knex } = require('../../db')
@@ -252,10 +253,12 @@ class DataProcessor {
     await Promise.each(this.listenerEndpoints, async (listenerEndpoint, index) =>
       Promise.each(Object.keys(listenerEndpoint.actions), async type => {
         const action = listenerEndpoint.actions[type]
-        const queueName = `aspect_deviceApiRaw_${index}_actions_${type}`
+        const queueName = `${config.amqp.name}_deviceApiRaw_${index}_actions_${type}`
         const topic = `aspect.actions.${type}.${action.bindingKey}`
         if (this.messageContext.queue.channel.consumers[action.consumerTag]) {
           this.messageContext.queue.unsubscribe(queueName, topic, action.consumerTag)
+          this.messageContext.queue.channel.unbindQueue(queueName, 'aspect', topic)
+          this.messageContext.queue.channel.cancel(action.consumerTag)
           await Promise.each(_.range(1, 100), async waitMs => {
             if (!_.isNil(this.messageContext.queue.channel.consumers[action.consumerTag])) {
               await Promise.delay(waitMs)

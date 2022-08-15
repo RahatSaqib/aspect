@@ -71,6 +71,11 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
         category: Joi.string().description('Filter for device type category'),
         type: Joi.string().description('Filter for device type'),
         name: Joi.string().allow('').description('Filter for device name'),
+        connectorStatus: Joi.array()
+          .items(Joi.string())
+          .single()
+          .allow(null)
+          .description('Filter for connector status'),
         siteName: Joi.string().allow('').description('Filter for site name'),
         siteId: Joi.number().allow(null).description('Filter for site Id'),
         siteExternalId: Joi.string().allow('').description('Filter for facility code'),
@@ -81,8 +86,11 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
         ...validateSortPageParams(
           // TODO: Add 'availabilityRate' Sort Page Param
           'name',
+          'siteName',
           'state',
           'statusI18nKey',
+          'maintenanceStatusI18nKey',
+          'approvalStatusI18nKey',
           'errorRate',
           'createdOn',
           'lastSeen',
@@ -92,7 +100,10 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           'deliveredLastMonth',
           'deliveredThisMonth',
           'acknowledgedRatio',
-          'totalFlagged'
+          'totalFlagged',
+          'deviceStatus',
+          'connectorVersion',
+          'lastResultConductedOn'
         ),
       },
     },
@@ -117,7 +128,11 @@ function listDevicesBaseResponse() {
               id: Joi.number().required().description('The ID of the device'),
               name: Joi.string().required().description('The name of the device'),
               shortName: Joi.string().allow('', null).description('The short name of the device'),
+              deviceStatus: Joi.string().allow('', null).description('The connector status'),
+              connectorStatus: Joi.string().allow('', null).description('The connector status'),
+              connectorVersion: Joi.string().allow('', null).description('The connector version'),
               createdOn: Joi.date().required().description('When the device was added to the database'),
+              lastResultConductedOn: Joi.date().allow(null).description('When the device generate last result'),
               lastPingOn: Joi.date().allow(null).description('When the device last pinged'),
               lastSeen: Joi.date()
                 .allow(null)
@@ -130,6 +145,9 @@ function listDevicesBaseResponse() {
               approval: Joi.string().required().description('The current approval status of the device'),
               status: Joi.string().required().description('The current status of the device'),
               statusI18nKey: Joi.string().required().description('The i18n key for the name of the status'),
+              approvalStatusI18nKey: Joi.string()
+                .allow('', null)
+                .description('The i18n key for the name of the approval status'),
               maintenanceStatus: Joi.string()
                 .allow('', null)
                 .description('The current maintenance status of the device'),
@@ -644,6 +662,9 @@ const routes = [
                 type: Joi.string().allow('', null).description('The type of the device'),
                 siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
                 approval: Joi.string().required().description('The current approval status of the device'),
+                approvalStatusI18nKey: Joi.string()
+                  .allow('', null)
+                  .description('The i18n key for the name of the approval status'),
                 maintenanceStatus: Joi.string().allow('', null).description('The maintenance status of the device'),
                 maintenanceStatusI18nKey: Joi.string()
                   .allow('', null)

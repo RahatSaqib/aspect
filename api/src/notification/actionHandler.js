@@ -1,14 +1,15 @@
 const Promise = require('bluebird')
 const { createNotifications } = require('./service')
 const { issueEscalated } = require('../issue/actions')
-
+const NotificationCache = require('./notificationCache')
 // eslint-disable-next-line no-unused-vars
-function issueBased(methodsToExecute) {
+function issueBased() {
   return async (action, { messageContext: context }) => {
     // eslint-disable-next-line no-unused-vars
     return context.transact(async knex => {
       const { issueId } = action
-      /// IMPORTANT NOTE: THE ISSUE ESCALATED METHOD WAS MAINTENED ONLY FOR BACKWARD COMPATIBILITY. WE NEED TO REFACTOR THIS TO HAVE THE SAME LOGIC AS RESULT BASED NOTIFICATION.
+      /// IMPORTANT NOTE: THE ISSUE ESCALATED METHOD WAS MAINTENED ONLY FOR BACKWARD COMPATIBILITY. WE NEED TO REFACTOR THIS
+      /// TO HAVE THE SAME LOGIC AS RESULT BASED NOTIFICATION.
 
       // Trigger escalation logic for level 1 as soon as issue is created,
       // higher levels handled in escalateIssues in escalations.js
@@ -18,42 +19,28 @@ function issueBased(methodsToExecute) {
       // if logic is shared and avoids potential race condition.
       context.bindActionCreators({ issueEscalated })
       context.issueEscalated(issueId, 1)
-
-      // TODO: The next lines are going to be usefull once the issuebased notifications will be well implemented.
-      // await Promise.each(
-      //   methodsToExecute,
-      //   async ({ filterCondition, notificationTypeCategoryId }) =>
-      //     createNotifications(
-      //       knex,
-      //       {
-      //         issueId: action.issueId,
-      //         filterCondition,
-      //         notificationTypeCategoryId,
-      //       },
-      //       context
-      //     )
-      // )
     })
   }
 }
 
-function resultBased(methodsToExecute) {
+function resultBased() {
   return async (action, { messageContext: context }) =>
     context.run(async knex => {
+      const notificationCache = NotificationCache.getInstance(knex)
+      const conditionsToEvaluate = await notificationCache.getCacheValue()
       await Promise.each(
-        methodsToExecute,
-        async ({ filterCondition, notificationTypeCategoryId, notificationTypeId }) => {
-          return createNotifications(
+        conditionsToEvaluate,
+        async ({ filterCondition, notificationTypeCategoryId, notificationTypeId }) =>
+          createNotifications(
             knex,
             {
               resultId: action.resultId,
-              filterCondition,
+              filterCondition: JSON.parse(filterCondition),
               notificationTypeCategoryId,
               notificationTypeId,
             },
             context
           )
-        }
       )
     })
 }

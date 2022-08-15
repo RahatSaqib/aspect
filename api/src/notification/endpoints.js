@@ -7,6 +7,8 @@ const {
   getNotification,
   saveNotification,
   deleteNotification,
+  saveStatusNotification,
+  clearCache,
 } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
@@ -14,9 +16,20 @@ const {
   listNotificationsBaseConfig,
   resultBasedNotificationPayload,
   saveNotificationResponse,
+  changeNotificationStatusPayload,
 } = require('./validations')
 
 const routes = [
+  {
+    method: 'POST',
+    path: '/notification/clearcache',
+    handler: clearCache,
+    config: {
+      description: 'Clear Notification Cache',
+      notes: 'Clear Notification Cache',
+      auth: { scope: ['notification'] },
+    },
+  },
   {
     method: 'GET',
     path: '/notification',
@@ -49,6 +62,7 @@ const routes = [
                 personsCount: Joi.number(),
                 typeCategory: Joi.string(),
                 lastTriggeredOn: Joi.date().iso().allow(null),
+                enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
               })
             ),
         }),
@@ -206,6 +220,23 @@ const routes = [
           notificationId: Joi.number().integer().positive().required(),
         },
       },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/notification/{id}/change-status',
+    handler: saveStatusNotification,
+    config: {
+      description: 'Update Notification status',
+      notes: 'Returns ok: true when notification was updated successfully',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        payload: changeNotificationStatusPayload,
+        params: {
+          id: Joi.string().description('Item id depending on payload.notificationType').required(),
+        },
+      },
+      response: saveNotificationResponse,
     },
   },
 ]
