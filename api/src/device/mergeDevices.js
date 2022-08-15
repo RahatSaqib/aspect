@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const { sr } = require('date-fns/locale')
 const { knex } = require('../db')
-const { getUserFromCredentials } = require('../auth/constraints')
+const { addConstraints, getConstraints } = require('../auth/constraints')
 const { deviceApprovalToId } = require('../shared/dictionary')
 
 module.exports = async function ({ payload, auth }) {
@@ -9,12 +9,16 @@ module.exports = async function ({ payload, auth }) {
 }
 
 async function mergeDevices({ payload, auth }) {
-  // const payloadWithGeographyId = await transformGeographyFromUpdates(params)
   const devicesToMerge = await getDevicesToMerge(payload)
 
-  await validate(devicesToMerge)
-
-  // const user = await getUserFromCredentials(auth.credentials)
+  try {
+    await validate(devicesToMerge, auth.credentials)
+  } catch (error) {
+    if (error instanceof Boom.Boom) {
+      return error
+    }
+    throw error
+  }
 
   // TODO: Handle transaction
   await deleteDeviceFromDeviceApiKey(devicesToMerge.sourceDevice.id)
@@ -46,7 +50,7 @@ async function mergeDevices({ payload, auth }) {
   // // 6. Finally, remove the device.
   await deleteDevice(devicesToMerge.sourceDevice.id)
 
-  return { ok: true, data: {} }
+  return { ok: true }
 }
 
 async function getDevicesToMerge({ sourceDeviceId, targetDeviceId }) {
@@ -163,9 +167,24 @@ async function deleteDevice(deviceId) {
   await knex('Device').where('id', deviceId).del()
 }
 
-const validate = async devicesToMerge => {
+const validate = async (devicesToMerge, credentials) => {
+  await validatePersmissions(devicesToMerge, credentials)
   await validateDeviceIsNotActive(devicesToMerge.sourceDevice)
   await validateSameSite(devicesToMerge)
+}
+
+async function validatePersmissions(devicesToMerge, credentials) {
+  const dataConstraints = await getConstraints(credentials)
+  const devicesQuery = knex('Device as d')
+    .whereIn('d.id', [devicesToMerge.sourceDevice.id, devicesToMerge.targetDevice.id])
+    .join('Site as s', 'd.siteId', 's.id')
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .select('d.id')
+
+  const devices = await devicesQuery
+  if (devices.length !== 2) {
+    throw Boom.unauthorized(`You don't have permission to merge this devices.`)
+  }
 }
 
 async function validateDeviceIsNotActive(sourceDevice) {

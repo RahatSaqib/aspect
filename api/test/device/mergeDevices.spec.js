@@ -17,7 +17,7 @@ let repeatedSourceResultId
 let uniqueSourceResultId
 let repeatedTargetResultId
 
-describe('Merge Devices', () => {
+describe.only('Merge Devices', () => {
   before(async () => {
     shared.checkToken(server, path)
   })
@@ -90,10 +90,8 @@ describe('Merge Devices', () => {
   })
 
   afterEach(async () => {
-    await knex('Sample').where('originSiteId', '>', 16).select('id', 'originSiteId')
     await knex('Notification').where({ issueId: issueIdOnRepeatedSourceResult }).del()
     await knex('Issue').where({ deviceId: targetDevice.id }).del()
-    await knex('Result').where('siteId', '>', 19).delete('id', 'sampleId', 'siteId')
     await knex('DeviceApiKey').where('siteId', targetSiteId).orWhere({ deviceId: targetDevice.id }).del()
     await knex('Result').where('deviceId', targetDevice.id).del()
     await knex('Sample').where('originSiteId', targetSiteId).del()
