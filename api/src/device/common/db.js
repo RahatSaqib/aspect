@@ -1,6 +1,6 @@
 const { knex } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
-// Merge Device feature
+
 async function getSourceDevices(sourceDevicesIds) {
   return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'deviceApprovalId', 'siteId')
 }
@@ -121,7 +121,6 @@ async function deleteDeviceFromFactTables(deviceId, trknex) {
 }
 
 async function deleteDevice(deviceId, trknex) {
-  console.log('\x1b[1;36m', '🚀 ➜ file: db.js ➜ line 124 ➜ deviceId', deviceId)
   await trknex('Device').where('id', deviceId).del()
 }
 module.exports = {

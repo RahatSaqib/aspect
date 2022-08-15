@@ -526,7 +526,7 @@ async function listMaintenanceStatuses(request) {
 
 async function listDevicesForSelectList(request) {
   const { query, auth } = request
-
+  const showUnapprovedDevices = query.showUnapprovedDevices ?? false
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -534,7 +534,7 @@ async function listDevicesForSelectList(request) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
+    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g', showUnapprovedDevices })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'd.partnerId',

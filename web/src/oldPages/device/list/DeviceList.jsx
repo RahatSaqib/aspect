@@ -45,9 +45,10 @@ import styles from './DeviceList.css'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import useI18n from '../../../hooks/useI18n'
 import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
+import useDevice from '../../../hooks/device/useDevice'
+import useMergeDevices from '../../../hooks/device/useMergeDevices'
 
 const cssClasses = classnames.bind(styles)
-
 const FILTERS_CONFIG = [
   {
     assayId: true,
@@ -229,6 +230,12 @@ export const DeviceListWithProps = ({
   onAlertClick,
   isMergeDeviceModalOpen,
   setMergeDeviceModalOpen,
+  deviceList,
+  mergeDevices,
+  sourceDevicesIds,
+  setSourceDevicesIds,
+  targetDeviceId,
+  setTargetDeviceId,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
@@ -293,11 +300,9 @@ export const DeviceListWithProps = ({
         <DialogContentText>{intl.formatMessage(messages.mergeDeviceActionDescription)}</DialogContentText>
         <Autocomplete
           multiple
-          options={[
-            { id: 1, title: 'Daktari Cuyahoga, OH' },
-            { id: 2, title: 'Wayne County Ohio GeneXpert' },
-          ]}
-          getOptionLabel={option => option.title}
+          onChange={(_, values) => setSourceDevicesIds(values.map(v => +v.key))}
+          options={deviceList || []}
+          getOptionLabel={option => option.value}
           renderInput={params => (
             <TextField
               {...params}
@@ -308,11 +313,9 @@ export const DeviceListWithProps = ({
           )}
         />
         <Autocomplete
-          options={[
-            { id: 1, title: 'Daktari Cuyahoga, OH' },
-            { id: 2, title: 'Wayne County Ohio GeneXpert' },
-          ]}
-          getOptionLabel={option => option.title}
+          onChange={(_, value) => setTargetDeviceId(+value.key)}
+          options={deviceList?.filter(o => !sourceDevicesIds.includes(o.key)) || []}
+          getOptionLabel={option => option.value}
           renderInput={params => (
             <TextField
               {...params}
@@ -327,7 +330,14 @@ export const DeviceListWithProps = ({
         <AspectButton onClick={() => setMergeDeviceModalOpen(false)}>
           {intl.formatMessage(messages.button_Cancel)}
         </AspectButton>
-        <AspectButton>{intl.formatMessage(messages.button_Merge)}</AspectButton>
+        <AspectButton
+          onClick={() => {
+            mergeDevices({ sourceDevicesIds, targetDeviceId })
+            setMergeDeviceModalOpen(false)
+          }}
+        >
+          {intl.formatMessage(messages.button_Merge)}
+        </AspectButton>
       </DialogActions>
     </Dialog>
   </div>
@@ -335,6 +345,8 @@ export const DeviceListWithProps = ({
 
 export const DeviceList = () => {
   // >>>>>> hooks/ <<<<<<
+  const { data: deviceList } = useDevice('', '', '', true)
+  const { mutate: mergeDevices } = useMergeDevices()
   const intl = useI18n()
   const navigate = useNavigate()
   const {
@@ -347,6 +359,9 @@ export const DeviceList = () => {
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(new Table())
   const [total, setTotal] = useState()
+  const [sourceDevicesIds, setSourceDevicesIds] = useState([])
+  const [targetDeviceId, setTargetDeviceId] = useState()
+
   const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState()
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
@@ -453,6 +468,14 @@ export const DeviceList = () => {
     onAlertClick,
     isMergeDeviceModalOpen,
     setMergeDeviceModalOpen,
+    deviceList,
+    mergeDevices,
+    sourceDevicesIds,
+    targetDeviceId,
+    sourceDevicesIds,
+    setSourceDevicesIds,
+    targetDeviceId,
+    setTargetDeviceId,
   }
   return <DeviceListWithProps {...baseProps} />
 }

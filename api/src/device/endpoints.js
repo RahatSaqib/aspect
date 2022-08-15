@@ -23,6 +23,7 @@ const mergeDevices = require('./mergeDevices')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { taskTracker } = require('../scheduler/taskTracker')
+const { mergeDevicesSchema } = require('./common/validations')
 
 function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
@@ -408,8 +409,9 @@ const routes = [
   {
     method: 'GET',
     path: '/device/select-list',
-    handler: asyncHandler(listDevicesForSelectList),
+    handler: listDevicesForSelectList,
     config: {
+      auth: { scope: ['device:view'] },
       description: 'Device for Select List',
       notes: "List of device ID's and names",
       validate: {
@@ -417,6 +419,7 @@ const routes = [
           countryId: Joi.number().allow('').description('Country ID'),
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
+          showUnapprovedDevices: Joi.bool().optional().default(false).description('Show unapproved devices'),
         },
       },
     },
@@ -715,15 +718,10 @@ const routes = [
     path: '/device/mergedevices',
     handler: mergeDevices,
     config: {
-      description: 'Merges two devices',
-      notes: 'Move all unique source results to target device. Deletes source device',
       auth: { scope: ['device:edit'] },
-      validate: {
-        payload: {
-          sourceDevicesIds: Joi.array().items(Joi.number()).description('Source devices Ids').required(),
-          targetDeviceId: Joi.number().description('Target device Id').required(),
-        },
-      },
+      description: 'Merges two devices',
+      notes: 'Move all unique source results to target device. Deletes source device.',
+      validate: mergeDevicesSchema,
     },
   },
 ]
