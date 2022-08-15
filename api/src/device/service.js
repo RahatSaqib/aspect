@@ -849,6 +849,9 @@ async function getErrorCodesByDeviceReport(auth, query) {
       error_2037: knex.raw("SUM(CASE WHEN r.errorCode = '2037' THEN 1 ELSE 0 END)"),
       error_2025: knex.raw("SUM(CASE WHEN r.errorCode = '2025' THEN 1 ELSE 0 END)"),
       error_2022: knex.raw("SUM(CASE WHEN r.errorCode = '2022' THEN 1 ELSE 0 END)"),
+      error_other: knex.raw(
+        "SUM(CASE WHEN r.errorCode IS NOT NULL AND r.errorCode NOT IN ('5011', '5007', '5006', '2008', '2005', '2037', '2025', '2022') THEN 1 ELSE 0 END)"
+      ),
       mtbNoResult: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END), 0)"),
       mtbInvalid: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END), 0)"),
     })
