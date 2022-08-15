@@ -1,4 +1,5 @@
 const Boom = require('@hapi/boom')
+const { sr } = require('date-fns/locale')
 const { knex } = require('../db')
 const { getUserFromCredentials } = require('../auth/constraints')
 const { deviceApprovalToId } = require('../shared/dictionary')
@@ -65,15 +66,15 @@ function getRepeatedResultsQuery(sourceResultTableAlias, targetDeviceId) {
 }
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge) {
-  knex('Issue as i')
-    .update('r.deviceId', devicesToMerge.targetDevice.id)
-    .update('r.resultId', knex.raw('pivot.targetResultId'))
+  await knex('Issue as i')
+    .update('i.deviceId', devicesToMerge.targetDevice.id)
+    .update('i.resultId', knex.raw('pivot.targetResultId'))
     .join(
       knex('Result as sr')
         .join('Result as tr', 'sr.externalId', 'tr.externalId')
         .where('sr.deviceId', devicesToMerge.sourceDevice.id)
         .where('tr.deviceId', devicesToMerge.targetDevice.id)
-        .select('sr.id sourceResultId, tr.id targetResultId, sr.externalId')
+        .select({ sourceResultId: 'sr.id', targetResultId: 'tr.id', externalId: 'sr.externalId' })
         .as('pivot'),
       'i.resultId',
       'pivot.sourceResultId'
@@ -115,26 +116,15 @@ async function deleteRemainingDeviceLog(deviceId) {
 }
 
 async function deleteRepeatedResults(deviceId) {
-  const deletedRepeatedResults = await knex('Result').where('deviceId', deviceId).del()
-  console.log('\x1b[1;36m', '🚀 ➜ file: mergeDevices.js ➜ line 115 ➜ what', deletedRepeatedResults)
+  await knex('Result').where('deviceId', deviceId).del()
 }
 
 async function deleteDeviceFromDeviceOperation(deviceId) {
-  const deleteDeviceFromDeviceOperation = await knex('DeviceOperation').where('deviceId', deviceId).del()
-  console.log(
-    '\x1b[1;36m',
-    '🚀 ➜ file: mergeDevices.js ➜ line 120 ➜ deleteDeviceFromDeviceOperation',
-    deleteDeviceFromDeviceOperation
-  )
+  await knex('DeviceOperation').where('deviceId', deviceId).del()
 }
 
 async function deleteDeviceFromDeviceMaintenance(deviceId) {
-  const DeletedDeviceMaintenance = await knex('DeviceMaintenance').where('deviceId', deviceId).del()
-  console.log(
-    '\x1b[1;36m',
-    '🚀 ➜ file: mergeDevices.js ➜ line 129 ➜ DeviceMaintenanceDeleted',
-    DeletedDeviceMaintenance
-  )
+  await knex('DeviceMaintenance').where('deviceId', deviceId).del()
 }
 
 async function deleteDeviceFromDeviceApprovalLog(deviceId) {
@@ -170,7 +160,6 @@ async function deleteDeviceFromFactTables(deviceId) {
 }
 
 async function deleteDevice(deviceId) {
-  console.log('\x1b[1;36m', '🚀 ➜ file: mergeDevices.js ➜ line 152 ➜ deviceId', deviceId)
   await knex('Device').where('id', deviceId).del()
 }
 

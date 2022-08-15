@@ -1,4 +1,4 @@
-const { expect } = require('chai')
+const { expect, assert } = require('chai')
 const { subDays } = require('date-fns')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
@@ -12,7 +12,10 @@ let sourceSiteId
 let sourceDeviceId
 let targetSiteId
 let targetDevice
-let issueId
+let issueIdOnRepeatedSourceResult
+let repeatedSourceResultId
+let uniqueSourceResultId
+let repeatedTargetResultId
 
 describe('Merge Devices', () => {
   before(async () => {
@@ -24,7 +27,7 @@ describe('Merge Devices', () => {
     countryCode: 'US',
     adminUsername: 'admin',
     adminPassword: 'test07',
-    deviceName: `Device 1`,
+    deviceName: `Source Device`,
     macAddress: `d1mac`,
     hostId: `hostId`,
     deviceSerialNumber: `d1serial`,
@@ -33,7 +36,7 @@ describe('Merge Devices', () => {
     countryCode: 'US',
     adminUsername: 'admin',
     adminPassword: 'test07',
-    deviceName: `Device 2`,
+    deviceName: `Target Device`,
     macAddress: `d2mac`,
     hostId: `host`,
     deviceSerialNumber: `d2serial`,
@@ -65,33 +68,38 @@ describe('Merge Devices', () => {
       resultCategory1: resultCategoryDetected,
     }
 
-    const firstSourceResultId = await sourceDeviceContext.createResultForThisDevice({
+    repeatedSourceResultId = await sourceDeviceContext.createResultForThisDevice({
       resultDetails,
     })
 
-    await targetDeviceContext.createResultForThisDevice({
+    repeatedTargetResultId = await targetDeviceContext.createResultForThisDevice({
+      resultDetails,
+    })
+
+    uniqueSourceResultId = await sourceDeviceContext.createResultForThisDevice({
       resultDetails,
     })
 
     await seedDeviceOperation()
     await seedDeviceMaintenance()
-    issueId = await seedIssue(sourceSiteId)
-    await seedNotification(issueId, firstSourceResultId)
+    issueIdOnRepeatedSourceResult = await seedIssue(sourceDevice, repeatedSourceResultId)
+    await seedIssue(sourceDevice, uniqueSourceResultId)
+    await seedIssue(sourceDevice)
+    await seedNotification(issueIdOnRepeatedSourceResult, uniqueSourceResultId)
     await seedFactTables(sourceSiteId)
-    await sourceDeviceContext.createResultForThisDevice({
-      resultDetails,
-    })
   })
 
   afterEach(async () => {
+    await knex('Sample').where('originSiteId', '>', 16).select('id', 'originSiteId')
+    await knex('Notification').where({ issueId: issueIdOnRepeatedSourceResult }).del()
+    await knex('Issue').where({ deviceId: targetDevice.id }).del()
+    await knex('Result').where('siteId', '>', 19).delete('id', 'sampleId', 'siteId')
     await knex('DeviceApiKey').where('siteId', targetSiteId).orWhere({ deviceId: targetDevice.id }).del()
-    await knex('Notification').where({ issueId }).del()
-    await knex('Issue').where({ id: issueId }).del()
     await knex('Result').where('deviceId', targetDevice.id).del()
+    await knex('Sample').where('originSiteId', targetSiteId).del()
     await knex('DeviceLog').where('deviceId', targetDevice.id).del()
     await knex('DeviceApprovalLog').where('deviceId', targetDevice.id).del()
     await knex('Device').where('id', targetDevice.id).del()
-    await knex('Sample').where('originSiteId', targetSiteId).del()
   })
 
   it('If source device is active should throw validation', async () => {
@@ -103,34 +111,65 @@ describe('Merge Devices', () => {
   })
 
   it.only('Devices should be correctly merged', async () => {
-    // TODO: tune seeding so the devices belongs to the same site, then enable same site validation on mergeDevicesValidator.js
     await setSourceDeviceInactive()
-    await setSourceFirstResultAsDuplicateInTarget(targetDevice.id)
+    await setSourceFirstResultAsDuplicateInTarget(targetDevice.id, repeatedSourceResultId)
     await setSamplesToTargetSite()
-    // const issuesQuery = knex('Result')
-    //   .whereIn('deviceId', [sourceDeviceId, targetDevice.id])
-    //   .select('id', 'deviceId', 'externalId')
-    // const issues = await issuesQuery
-
-    // console.log('\x1b[1;36m', '🚀 ➜ issueId ➜ line 103 ➜ issues', issues)
-    const results = await knex('Result')
-      .whereIn('deviceId', [sourceDeviceId, targetDevice.id])
-      .select('id', 'deviceId', 'externalId')
 
     const res = await server
       .post(path)
       .send({ sourceDeviceId, targetDeviceId: targetDevice.id })
       .set('Authorization', `Bearer${shared.token}`)
-
     expect(res.statusCode).to.equal(200)
 
     const sourceDevices = await knex('Device').where('id', sourceDeviceId)
     expect(sourceDevices).to.have.lengthOf(0, 'Source device should be deleted')
 
-    const targetResults = await knex('Result').where('deviceId', targetDevice.id).select('id')
+    const targetResults = (await knex('Result').where('deviceId', targetDevice.id).select('id')).map(r => r.id)
     expect(targetResults).to.have.lengthOf(2, 'Target device should have 2 results')
+    expect(targetResults).to.have.members(
+      [repeatedTargetResultId, uniqueSourceResultId],
+      'Repeated source result should not be present in target device'
+    )
+
+    const targetIssues = await knex('Issue').where('deviceId', targetDevice.id).select('id', 'deviceId', 'resultId')
+    expect(targetIssues).to.have.lengthOf(3, 'All issues are now in target device')
+    expect(targetIssues.find(i => i.id === issueIdOnRepeatedSourceResult).resultId).to.be.equal(
+      repeatedTargetResultId,
+      'Issues on repeated source result should be in target repeated result'
+    )
+
+    await assertFactTables(sourceDeviceId)
   })
 })
+
+async function assertFactTables(deviceId) {
+  const dataInFactDeviceExternalSource = await knex('FactDeviceExternalSource').where({ deviceId }).select('deviceId')
+  assert.equal(dataInFactDeviceExternalSource.length, 0, 'FactDeviceExternalSource should be empty')
+
+  const dataInFactDeviceFlag = await knex('FactDeviceFlag').where({ deviceId }).select('deviceId')
+  assert.equal(dataInFactDeviceFlag.length, 0, 'FactDeviceFlag should be empty')
+
+  const dataInFactResultsDevice = await knex('FactResultsDevice').where({ deviceId }).select('deviceId')
+  assert.equal(dataInFactResultsDevice.length, 0, 'FactResultsDevice should be empty')
+
+  const dataInFactResultsDeviceByAssay = await knex('FactResultsDeviceByAssay').where({ deviceId }).select('deviceId')
+  assert.equal(dataInFactResultsDeviceByAssay.length, 0, 'FactResultsDeviceByAssay should be empty')
+
+  const dataInFactResultsDeviceByCategory1 = await knex('FactResultsDeviceByCategory1')
+    .where({ deviceId })
+    .select('deviceId')
+  assert.equal(dataInFactResultsDeviceByCategory1.length, 0, 'FactResultsDeviceByCategory1 should be empty')
+
+  const dataInFactResultsDeviceByCategory1And2 = await knex('FactResultsDeviceByCategory1And2')
+    .where({ deviceId })
+    .select('deviceId')
+  assert.equal(dataInFactResultsDeviceByCategory1And2.length, 0, 'FactResultsDeviceByCategory1And2 should be empty')
+
+  const dataInFactResultsDeviceByTimeFrame = await knex('FactResultsDeviceByTimeFrame')
+    .where({ deviceId })
+    .select('deviceId')
+  assert.equal(dataInFactResultsDeviceByTimeFrame.length, 0, 'FactResultsDeviceByTimeFrame should be empty')
+}
 
 async function seedDeviceOperation() {
   await knex('DeviceOperation').insert({
@@ -152,17 +191,17 @@ async function seedDeviceMaintenance() {
   })
 }
 
-async function seedIssue(deviceId, resultId) {
+async function seedIssue(device, resultId) {
   const issueTypeId = 1 // TODO: read from db
   const issueStatusId = 2 // TODO: read from db
 
   const [issueId] = await knex('Issue').insert({
     issueTypeId,
     issueStatusId,
-    partnerId: targetDevice.partnerId,
-    geographyId: targetDevice.geographyId,
-    siteId: targetDevice.siteId,
-    deviceId,
+    partnerId: device.partnerId,
+    geographyId: device.geographyId,
+    siteId: device.siteId,
+    deviceId: device.id,
     resultId,
     level: 1,
     createdOn: new Date(),
@@ -190,10 +229,9 @@ async function setSameSiteForSeededDevices(sourceSiteId, targetDeviceId) {
   await knex('Device').where('id', targetDeviceId).update({ siteId: sourceSiteId })
 }
 
-async function setSourceFirstResultAsDuplicateInTarget(targetDeviceId) {
+async function setSourceFirstResultAsDuplicateInTarget(targetDeviceId, resultToForceId) {
   const targetResult = await knex('Result').where('deviceId', targetDeviceId).first('id', 'externalId')
-  const { id: sourceFirstResultId } = await knex('Result').where('deviceId', sourceDeviceId).first('id')
-  await knex('Result').where('id', sourceFirstResultId).update({ externalId: targetResult.externalId })
+  await knex('Result').where('id', resultToForceId).update({ externalId: targetResult.externalId })
 }
 
 async function setSamplesToTargetSite() {
