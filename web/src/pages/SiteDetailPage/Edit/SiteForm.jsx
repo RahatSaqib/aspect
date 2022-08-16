@@ -29,11 +29,13 @@ import useDeleteSite from '../../../hooks/site/useDeleteSite'
 import useCreateSite from '../../../hooks/site/useCreateSite'
 import SiteTypeSelect from './SiteTypeSelect'
 import SiteListSelect from '../../../components/SiteListSelect'
+import { useAuthState } from '../../../providers/AuthProvider'
 
 const cssClasses = classnames.bind(styles)
 
 const SiteForm = ({ site, siteTags, onLatLongChange }) => {
   const { formatMessage } = useI18n()
+  const user = useAuthState()
   const navigate = useNavigate()
   const [showConfirmation, setShowConfirmation] = useState(false)
 
@@ -54,7 +56,11 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
 
   const updateSiteLatLong = async address => {
     getLatLongFromAddress(address).then(({ lat, lng }) => {
-      setEditSite({ ...editSite, latitude: convertToFloat(lat, 6), longitude: convertToFloat(lng, 6) })
+      setEditSite(originalSite => ({
+        ...originalSite,
+        latitude: convertToFloat(lat, 6),
+        longitude: convertToFloat(lng, 6),
+      }))
     })
   }
 
@@ -69,11 +75,10 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
       })
     }
     if (isNew) {
-      createSite(editSite)
+      createSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}`) })
     } else {
-      updateSite(editSite)
+      updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}`) })
     }
-    navigate('/browse/site')
   }
 
   const handleDelete = () => {
@@ -138,7 +143,6 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               label={formatMessage(messages.fieldSiteType)}
               value={editSite.siteTypeId}
               onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
-              disabled={!isNew}
             />
             <TextField
               className={cssClasses('container__field')}
@@ -179,9 +183,10 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
           </div>
           <div className={cssClasses('container')}>
             <LocationSelector
-              countryId={editSite.countryId}
-              stateId={editSite.stateId}
-              lgaId={editSite.lgaId}
+              user={user}
+              countryId={editSite.countryId || ''}
+              stateId={editSite.stateId || ''}
+              lgaId={editSite.lgaId || ''}
               validators={{ country: { error: !isPristine && isEmpty(editSite.countryId), helperText: 'is required' } }}
               onChange={location => {
                 setEditSite({
