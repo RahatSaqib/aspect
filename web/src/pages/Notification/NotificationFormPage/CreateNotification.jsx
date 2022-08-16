@@ -3,22 +3,19 @@ import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
 import CircularProgress from '@mui/material/CircularProgress'
 
-import useI18n from '../../../../hooks/useI18n'
-import { FormikProvider } from '../../../../components/Form/Formik/Context'
+import useI18n from '../../../hooks/useI18n'
+import { FormikProvider } from '../../../components/Form/Formik/Context'
 
-import AspectForm from '../../../../components/Form'
-import FormActions from '../../../../components/Form/formActions'
-import Shell from '../../../../components/Shell'
-import ShellHeader from '../../../../components/Shell/Header'
-import ShellContent from '../../../../components/Shell/Content'
-import ShellFooter from '../../../../components/Shell/Footer'
-import { getFormConfigWithData } from '../utils'
-import validationSchema from '../../Forms/validation'
+import AspectForm from '../../../components/Form'
+import FormActions from '../../../components/Form/formActions'
+import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
+import { getFormConfigWithData } from './utils'
+import validationSchema from './Forms/validation'
 
-const AspectNotificationDetail = ({ notificationType, jobFunctions, onSubmit }) => {
+const AspectNotificationDetail = ({ jobFunctions, onSubmit }) => {
   const intl = useI18n()
   const [formConfig] = useState(
-    getFormConfigWithData(intl, jobFunctions, notificationType, '', validationSchema(intl.formatMessage), false, null)
+    getFormConfigWithData(intl, jobFunctions, '', '', validationSchema(intl.formatMessage), false, null)
   )
   return (
     <Shell>
@@ -40,7 +37,6 @@ const AspectNotificationDetail = ({ notificationType, jobFunctions, onSubmit }) 
 }
 
 AspectNotificationDetail.propTypes = {
-  notificationType: PropTypes.string.isRequired,
   jobFunctions: PropTypes.arrayOf(PropTypes.object).isRequired,
   onSubmit: PropTypes.func.isRequired,
 }

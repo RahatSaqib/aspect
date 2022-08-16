@@ -51,7 +51,44 @@ export default defineMessages({
     id: 'pages.NotificationDetail.toAnyOfTheseJobFunctions',
     defaultMessage: 'To any of these Job Functions',
   },
-
+  // Notification for Results
+  notificationTypeResultBased: {
+    id: 'pages.NotificationDetail.type.ResultBased',
+    defaultMessage: 'Result Based',
+  },
+  notificationTypeTestUpdated: {
+    id: 'pages.Notification.type.TestUpdated',
+    defaultMessage: 'Test Updated',
+  },
+  // Notification for Devices
+  notificationTypeOffline: {
+    id: 'pages.Notification.type.Offline',
+    defaultMessage: 'Offline',
+  },
+  notificationTypeReport: {
+    id: 'pages.Notification.type.Report',
+    defaultMessage: 'Report',
+  },
+  notificationTypeLowInventory: {
+    id: 'pages.Notification.type.LowInventory',
+    defaultMessage: 'Low Inventory',
+  },
+  notificationTypeCalibration: {
+    id: 'pages.Notification.type.Calibration',
+    defaultMessage: 'Calibration',
+  },
+  notificationTypeModule: {
+    id: 'pages.Notification.type.Module',
+    defaultMessage: 'Module',
+  },
+  notificationTypeCriticalError: {
+    id: 'pages.Notification.type.CriticalError',
+    defaultMessage: 'Critical Error',
+  },
+  notificationTypeOnlineDate: {
+    id: 'pages.Notification.type.OnlineDate',
+    defaultMessage: 'Online Date',
+  },
   // --------------------------------------------------------------
   notificationTitle: {
     id: 'pages.NotificationDetail.notificationTitle',

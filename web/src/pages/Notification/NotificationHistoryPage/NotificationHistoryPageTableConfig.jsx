@@ -17,12 +17,8 @@
  * contextualMenu: 'function|component' [self defined, optional]
  */
 import messages from './messages'
-import { DateTimeCell } from '../../../../components/AspectTable/TableCell/DateTimeCell'
-import {
-  EmailCell,
-  SMSCell,
-  WebhookCell,
-} from '../../../../components/AspectTable/TableCell/ErrorCell/NotificationCells.jsx'
+import { DateTimeCell } from '../../../components/AspectTable/TableCell/DateTimeCell'
+import { EmailCell, SMSCell, WebhookCell } from './ErrorCell/NotificationCells.jsx'
 
 const baseConfig = ({ formatMessage }) => {
   return {

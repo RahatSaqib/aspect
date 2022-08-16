@@ -5,10 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 import AspectForm from '../../../../components/Form'
 import FormActions from '../../../../components/Form/formActions'
-import Shell from '../../../../components/Shell'
-import ShellHeader from '../../../../components/Shell/Header'
-import ShellContent from '../../../../components/Shell/Content'
-import ShellFooter from '../../../../components/Shell/Footer'
+import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../../components/Shell'
 
 import useI18n from '../../../../hooks/useI18n'
 import { FormikProvider } from '../../../../components/Form/Formik/Context'

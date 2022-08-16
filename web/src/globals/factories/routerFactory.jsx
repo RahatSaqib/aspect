@@ -58,14 +58,12 @@ import TaskAggre from '../../oldPages/task/aggre/TaskAggre'
 import TaskDetail from '../../oldPages/task/detail/TaskDetail'
 
 ///
-// import SiteDetail from '../../components/Sites/Detail/SiteDetail'
-import SiteDetail, { EditSite } from '../../pages/SiteDetailPage'
-
 import DeviceDetail from '../../pages/Devices/Detail/DeviceDetail'
-import NotificationList from '../../pages/Notifications/List'
-import NotificationDetail from '../../pages/Notifications/Detail'
-import NotificationDetailHistory from '../../pages/Notifications/Detail/NotificationDetailHistory'
+import NotificationList from '../../pages/Notification/NotificationListPage'
+import NotificationDetail from '../../pages/Notification/NotificationFormPage'
+import NotificationDetailHistory from '../../pages/Notification/NotificationHistoryPage'
 import ResultDetail from '../../pages/Results/Detail'
+import SiteDetail, { EditSite } from '../../pages/SiteDetailPage'
 import Welcome from '../../pages/Welcome'
 
 function useHashAndScroll() {
@@ -292,7 +290,7 @@ const AppRoutes = ({ props: outerProps }) => {
           element={getElement(props, ['browse', 'notification'], renderNotificationList)}
         />
         <Route
-          path="/browse/notification/:notificationId"
+          path="/browse/notification/create"
           element={getElement(props, ['browse', 'notification:edit'], renderNotificationDetail)}
         />
         <Route

@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  createNotification: {
+    id: 'pages.NotificationList.createNotification',
+    defaultMessage: 'Create Notification',
+  },
+  notificationsTitle: {
+    id: 'pages.NotificationList.title',
+    defaultMessage: 'Notifications',
+  },
   notificationsTableName: {
     id: 'pages.Notifications.table.notificationsTableName',
     defaultMessage: 'notification',
@@ -88,45 +96,6 @@ export const messages = defineMessages({
   notificationCreateGroupForDevices: {
     id: 'pages.Notifications.table.createButton.group.forDevices',
     defaultMessage: 'Notification for Devices',
-  },
-
-  // Notification for Results
-  notificationTypeResultBased: {
-    id: 'pages.Notification.type.ResultBased',
-    defaultMessage: 'Result Based',
-  },
-  notificationTypeTestUpdated: {
-    id: 'pages.Notification.type.TestUpdated',
-    defaultMessage: 'Test Updated',
-  },
-  // Notification for Devices
-  notificationTypeOffline: {
-    id: 'pages.Notification.type.Offline',
-    defaultMessage: 'Offline',
-  },
-  notificationTypeReport: {
-    id: 'pages.Notification.type.Report',
-    defaultMessage: 'Report',
-  },
-  notificationTypeLowInventory: {
-    id: 'pages.Notification.type.LowInventory',
-    defaultMessage: 'Low Inventory',
-  },
-  notificationTypeCalibration: {
-    id: 'pages.Notification.type.Calibration',
-    defaultMessage: 'Calibration',
-  },
-  notificationTypeModule: {
-    id: 'pages.Notification.type.Module',
-    defaultMessage: 'Module',
-  },
-  notificationTypeCriticalError: {
-    id: 'pages.Notification.type.CriticalError',
-    defaultMessage: 'Critical Error',
-  },
-  notificationTypeOnlineDate: {
-    id: 'pages.Notification.type.OnlineDate',
-    defaultMessage: 'Online Date',
   },
   status: {
     id: 'pages.Notification.status',

@@ -1,7 +1,7 @@
 import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
 import React from 'react'
-import messages from '../../device/list/messages'
+import messages from './messages'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import useI18n from '../../../hooks/useI18n'
 

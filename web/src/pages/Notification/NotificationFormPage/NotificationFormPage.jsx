@@ -1,71 +1,27 @@
-import React, { Fragment, useEffect, useState } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import React from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
 import reduce from 'lodash/reduce'
 import map from 'lodash/map'
-import isNumber from 'lodash/isNumber'
 import unset from 'lodash/unset'
-import { useMutation, useQuery } from 'react-query'
 import CircularProgress from '@mui/material/CircularProgress'
 
-import Create from './Create'
+import Create from './CreateNotification'
 import Update from './Update'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
-import { NOTIFICATION_DETAIL } from '../../../components/QueryFetch/Notification'
-import './Detail.css'
-import fetchWrapperForQueries from '../../../components/QueryFetch/index'
-import JOBFUNCTIONS_LIST from '../../../components/QueryFetch/JobFunctions/index'
-import { getReturnUrl, useUrlQuery } from '../../../components/AspectTable/Helpers'
-import getFormConfig from '../Forms/editConfig'
+import './NotificationFormPage.css'
+import getFormConfig from './Forms/editConfig'
 import useI18n from '../../../hooks/useI18n'
+import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
+import useSaveNotification from '../../../hooks/notification/saveNotifiaction'
 
-const AspectNotificationDetails = () => {
+const NotificationFormPage = () => {
   const intl = useI18n()
   const { notificationId } = useParams()
   const navigate = useNavigate()
-  const { search } = useLocation()
-  const query = useUrlQuery(search)
 
-  const {
-    isError,
-    data: { data } = [],
-    error,
-  } = useQuery(JOBFUNCTIONS_LIST.KEY, async () => fetchWrapperForQueries({ endpoint: JOBFUNCTIONS_LIST.ENDPOINT }))
-
-  if (isError) {
-    throw new Error(error)
-  }
-  const [jobFunctions, setJobFunctions] = useState(undefined)
-
-  useEffect(() => {
-    if (data) {
-      const mergedJobFunctions = [...data[0].jobFunctions]
-      setJobFunctions(mergedJobFunctions)
-    }
-  }, [data, intl])
-
-  const { mutate: submitNotification } = useMutation(
-    ({ values, id }) => {
-      let endpoint = NOTIFICATION_DETAIL.ENDPOINT
-      if (id) {
-        endpoint += `/${id}`
-      }
-
-      return fetchWrapperForQueries({
-        endpoint,
-        method: id ? 'PUT' : 'POST',
-        params: {
-          ...values,
-        },
-      })
-    },
-    {
-      onSuccess: () => {
-        const path = getReturnUrl(query.get('returnUrl'), `/browse/notification`)
-        navigate(path)
-      },
-    }
-  )
+  const { data: jobFunctions, isLoading } = useJobFunctions()
+  const { mutate: submitNotification } = useSaveNotification()
 
   const id = isNaN(notificationId) ? undefined : Number(notificationId)
 
@@ -126,22 +82,16 @@ const AspectNotificationDetails = () => {
       delete values.areaItemsLab
     }
     submitNotification({ values, id })
+    navigate('/browse/notification')
   }
 
-  if (!jobFunctions) return <CircularProgress />
-  return (
-    <Fragment>
-      {isNaN(+notificationId) ? (
-        <Create
-          jobFunctions={jobFunctions}
-          onSubmit={onSubmit}
-          notificationType={isNumber(notificationId) ? +notificationId : notificationId}
-        />
-      ) : (
-        <Update jobFunctions={jobFunctions} onSubmit={onSubmit} notificationId={id} />
-      )}
-    </Fragment>
+  return isLoading ? (
+    <CircularProgress />
+  ) : isNaN(+notificationId) ? (
+    <Create jobFunctions={jobFunctions} onSubmit={onSubmit} />
+  ) : (
+    <Update jobFunctions={jobFunctions} onSubmit={onSubmit} notificationId={id} />
   )
 }
 
-export default AspectNotificationDetails
+export default NotificationFormPage

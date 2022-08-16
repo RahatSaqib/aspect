@@ -3,13 +3,14 @@ import Button from '@mui/material/Button'
 import { array, arrayOf, number, oneOfType, string } from 'prop-types'
 import classnames from 'classnames/bind'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import NotificationDetailModal from '../../../../pages/Notifications/Detail/NotificationDetailHistory/NotificationDetailModal'
-import IconProvider from '../../../IconProvider/index'
+import NotificationDetailModal from './NotificationDetailModal'
+import IconProvider from '../../../../components/IconProvider/index'
 import styles from './ErrorCell.css'
 import useI18n from '../../../../hooks/useI18n'
-import messages from '../../../../pages/Notifications/Detail/NotificationDetailHistory/messages'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
+
 const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value }) => {
   const { formatMessage } = useI18n()
   const [modalConfiguration, setModalConfiguration] = useState({

@@ -73,3 +73,7 @@
 .full-width-100pc {
   width: 100%;
 }
+.min-width-100pc {
+  min-width: 100% !important;
+  flex-basis: 100% !important;
+}

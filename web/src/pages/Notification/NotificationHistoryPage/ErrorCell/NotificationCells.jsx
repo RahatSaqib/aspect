@@ -1,5 +1,5 @@
 import React from 'react'
-import ErrorCell from './index'
+import ErrorCell from './ErrorCell'
 
 const WebhookCell = ({ item: { webhookSent, webhookWithErrors, webhookPending, webhookRecipients }, value }) => (
   <ErrorCell
