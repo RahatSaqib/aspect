@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import Immutable from 'immutable'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { MemoryRouter, Route } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 import { RoutesPermissionProvider } from '../../../providers/RoutePermissions'
 import AspectLink from '../index'
@@ -64,10 +64,13 @@ const Template = ({ to, Permissions: permissions, ...rest }) => {
       <MemoryRouter>
         <RoutesPermissionProvider>
           <Fragment>
-            <Route exact path="/browse/site" element={<RenderTo permissions={['browse', 'site']} />} />
-            <Route path="/browse/site/:siteId" element={<RenderTo permissions={['browse', 'site:edit']} />} />
-            <Route exact path="/browse/person" element={<RenderTo permissions={['browse', 'person']} />} />
-            <Route path="/browse/person/:personId" element={<RenderTo permissions={['browse', 'person:edit']} />} />
+            <Routes>
+              <Route exact path="/browse/site" element={<RenderTo permissions={['browse', 'site']} />} />
+              <Route path="/browse/site/:siteId" element={<RenderTo permissions={['browse', 'site:edit']} />} />
+              <Route exact path="/browse/person" element={<RenderTo permissions={['browse', 'person']} />} />
+              <Route path="/browse/person/:personId" element={<RenderTo permissions={['browse', 'person:edit']} />} />
+              <Route path="*" element={<div>Not Found</div>} />
+            </Routes>
             <AspectLink {...rest} to={to}>
               Link
             </AspectLink>

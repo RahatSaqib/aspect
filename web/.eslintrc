@@ -17,6 +17,7 @@
     "jest": true
   },
   "rules": {
+    "default-param-last": "off",
     "consistent-return": "off",
     "class-methods-use-this": "off",
     "no-console": [
@@ -83,7 +84,7 @@
         "skipUndeclared": true
       }
     ],
-    "react/forbid-prop-types": "warn",
+    "react/forbid-prop-types": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "no-unused-vars": [
@@ -99,6 +100,8 @@
     "react/jsx-fragments": "off",
     "react/state-in-constructor": "off",
     "react/jsx-curly-newline": "off",
+    "react/jsx-no-bind": "off",
+    "react/no-array-index-key": "off",
     "import/no-cycle": "off",
     "require-yield": "off",
     "padding-line-between-statements": [

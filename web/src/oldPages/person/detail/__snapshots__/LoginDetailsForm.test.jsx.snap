@@ -39,9 +39,11 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       }
       intl={
         Object {
+          "$t": [Function],
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
           "formatDate": [Function],
           "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
@@ -68,6 +70,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
           "locale": "en",
           "messages": Object {},
           "onError": [Function],
+          "onWarn": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
         }
@@ -213,9 +216,11 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       intl={
         Object {
+          "$t": [Function],
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
           "formatDate": [Function],
           "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
@@ -242,6 +247,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           "locale": "en",
           "messages": Object {},
           "onError": [Function],
+          "onWarn": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
         }
@@ -387,9 +393,11 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       intl={
         Object {
+          "$t": [Function],
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
           "formatDate": [Function],
           "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
@@ -416,6 +424,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           "locale": "en",
           "messages": Object {},
           "onError": [Function],
+          "onWarn": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
         }
@@ -561,9 +570,11 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       }
       intl={
         Object {
+          "$t": [Function],
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
           "formatDate": [Function],
           "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
@@ -590,6 +601,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           "locale": "en",
           "messages": Object {},
           "onError": [Function],
+          "onWarn": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
         }
@@ -735,9 +747,11 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       }
       intl={
         Object {
+          "$t": [Function],
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
           "formatDate": [Function],
           "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
@@ -764,6 +778,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
           "locale": "en",
           "messages": Object {},
           "onError": [Function],
+          "onWarn": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
         }
@@ -909,9 +924,11 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       }
       intl={
         Object {
+          "$t": [Function],
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
           "formatDate": [Function],
           "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
@@ -938,6 +955,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
           "locale": "en",
           "messages": Object {},
           "onError": [Function],
+          "onWarn": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
         }

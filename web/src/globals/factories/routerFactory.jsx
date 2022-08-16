@@ -91,6 +91,10 @@ const makeRenderRedirectToLoginWithReason = memoize((reason, location) => (
   <Navigate replace to="/login" state={{ referrer: location, reason }} />
 ))
 
+const getElement = (props, permissions, render) => {
+  return <RenderTo render={render} props={props} permissions={permissions} />
+}
+
 const renderRedirectToLoginOr = ({ isLoggedOut, loggedOutReason, location }) => {
   return (isLoggedOut || loggedOutReason === 'idle') && makeRenderRedirectToLoginWithReason(loggedOutReason, location)
 }
@@ -116,7 +120,8 @@ const renderRedirectToDashboard = ({ location, permissions }) => {
 }
 
 const renderRedirectToNotFound = (props, requiredPermission) => {
-  if (!isPermittedUser(props.permissions, { required: requiredPermission })) return renderNotFound
+  if (!isPermittedUser(props.permissions, { required: requiredPermission }))
+    return getElement(props, [], renderNotFound)
 }
 
 const renderRedirectToBrowse = ({ permissions }) => {
@@ -201,23 +206,20 @@ const AppRoutes = ({ props: outerProps }) => {
 
   const props = { ...outerProps, location, navigate }
 
-  const getElement = (props, permissions, render) => {
-    return <RenderTo render={render} props={props} permissions={permissions} />
-  }
-
   useHashAndScroll()
   return (
     <RoutesPermissionProvider>
       <Routes>
         <Route path="/" element={getElement(props, null, renderRedirectToDashboard)} />
 
-        <Route path="/login">
-          {isLoggedInAndOnLogin(props) ? renderRedirectToHomePage(props) : renderLoadableLogin(props)}
-        </Route>
+        <Route
+          path="/login"
+          element={isLoggedInAndOnLogin(props) ? renderRedirectToHomePage(props) : renderLoadableLogin(props)}
+        />
 
-        <Route path="/reset-password">{renderResetPassword(props)}</Route>
+        <Route path="/reset-password" element={renderResetPassword(props)} />
 
-        <Route path="/license">{renderRedirectToLoginOr(props) || renderLicense(props)}</Route>
+        <Route path="/license" element={renderRedirectToLoginOr(props) || renderLicense(props)} />
 
         <Route path="/dashboard" element={getElement(props, ['dashboard:summary'], renderLoadableStatus)} />
 
