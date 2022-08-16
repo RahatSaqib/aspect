@@ -6,7 +6,6 @@ const {
   getSourceDevices,
   getTargetDevice,
   mergeIssuesFromDuplicatedResults,
-  updateDeviceOnRemainingIssues,
   mergeNonRepeatedResults,
   getDevicesIdsCheckingConstraints,
 } = require('./common/db')
@@ -37,7 +36,6 @@ module.exports = async function ({ payload, auth }) {
 
 async function mergeDevices(devicesToMerge, trknex) {
   await mergeIssuesFromDuplicatedResults(devicesToMerge, trknex)
-  await updateDeviceOnRemainingIssues(devicesToMerge, trknex)
   await mergeNonRepeatedResults(devicesToMerge, trknex)
   await deleteDevice(devicesToMerge.sourceDevice.id, trknex)
 }
