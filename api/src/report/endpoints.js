@@ -1,29 +1,8 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
+const { asyncHandler, validateDateRangeParams } = require('../routes')
 const { getReports, proxyGxReport } = require('./service')
-const { createReport, exportReports } = require('./serviceReports')
+const { createReport } = require('./serviceReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
-
-function listReportBaseConfig() {
-  return {
-    auth: { scope: ['report:view'] },
-    validate: {
-      query: {
-        format: Joi.string().allow('').description('File format for exporting data'),
-        contactNameOrEmail: Joi.string().allow('').description('Filter for report name'),
-        ...validateSortPageParams(
-          'name',
-          'deploymentName',
-          'moduleSerial',
-          'dateOfError',
-          'error',
-          'totalTestsRun',
-          'totalErrors'
-        ),
-      },
-    },
-  }
-}
 
 function requestBaseQuery() {
   const { minDate, maxDate } = validateDateRangeParams()
@@ -104,16 +83,7 @@ const routes = [
       },
     },
   },
-  {
-    method: 'GET',
-    path: '/report/export',
-    handler: exportReports,
-    config: {
-      description: 'Export Report List into Excel or CSV',
-      notes: 'Filtered and sorted list of Report',
-      ...listReportBaseConfig(),
-    },
-  },
+
   {
     method: 'GET',
     path: '/report/{fileName}',

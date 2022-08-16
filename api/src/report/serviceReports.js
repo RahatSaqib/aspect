@@ -7,10 +7,8 @@ const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
-const { getReportDetails, listReports } = require('./service')
+const { getReportDetails } = require('./service')
 const {
-  exportData,
-  getBaseReplacements,
   getMaxLimitPlaceHolders,
   getAdministrativeDivisionLabelPlaceHolders,
   renderExcelTemplate,
@@ -394,19 +392,6 @@ function renderExcelStream(params) {
   })
 }
 
-// ----------------------------------------------------------------------------------------------
-async function exportReports(request, reply) {
-  const { data } = await listReports(request)
-  const sheetData = {
-    data,
-    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
-    defaultNoDataMessage: 'No data',
-  }
-  return exportData(request, reply, sheetData, 'reports', {
-    replacements: [...getBaseReplacements(), ...getMaxLimitPlaceHolders()],
-  })
-}
 module.exports = {
   createReport,
-  exportReports,
 }
