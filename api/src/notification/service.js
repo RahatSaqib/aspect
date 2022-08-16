@@ -210,7 +210,6 @@ async function createNotifications(knex, action, context) {
   )
 
   const { jobFunctions = [], persons = [], sendToClinician = false, sendToPatient = false } = filterCondition || {}
-  console.log('🚀 ~ file: service.js ~ line 216 ~ createNotifications ~ jobFunctions', jobFunctions)
 
   if (!_.isEmpty(policies)) {
     const [firstPolicy] = policies
@@ -252,6 +251,7 @@ async function createNotifications(knex, action, context) {
       } else {
         const tags = await getTagsByPolicy(knex, policy)
         const people = await getPeopleToNotify(knex, policy, tags, jobFunctions, persons)
+
         await sendNotificationsToPeople(knex, context, people, policy, action)
       }
     })

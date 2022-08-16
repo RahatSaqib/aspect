@@ -1,12 +1,12 @@
 const _ = require('lodash')
-const { addDays, subDays } = require('date-fns')
+const { subDays } = require('date-fns')
 const { assert, expect } = require('chai')
 const subHours = require('date-fns/subHours')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { knex } = require('../../src/db')
 const { createMessageContext, waitForIdle, dispatchAndWaitForAction, waitForAction } = require('../utils/mqUtils')
-const { processUsingHandlebarsSyntax } = require('../../src/stringTemplate/service')
+
 // action creators
 const { inventoryStockout, inventoryStockExpiring } = require('../../src/inventory/actions')
 const { escalateIssues } = require('../../src/issue/actions')
@@ -22,10 +22,7 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 
-const USER_LU_NAME_PREFIX = 'myanmar_lab'
-const USER_RO_NAME_PREFIX = 'myanmar_ro'
-
-describe.only('Inventory Stock Issues Endpoint', () => {
+describe('Inventory Stock Issues Endpoint', () => {
   const partnerName = 'Myanmar'
   const countryAbbreviation = 'MM'
 
@@ -135,7 +132,7 @@ describe.only('Inventory Stock Issues Endpoint', () => {
   // trigger base issues
   // ---------------------------------------------------------------------------
   // Stockout
-  it.only('should create Stockout issue', async () => {
+  it('should create Stockout issue', async () => {
     const stockoutIssueId = await triggerInitialIssue({
       knex,
       ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
@@ -212,9 +209,6 @@ describe.only('Inventory Stock Issues Endpoint', () => {
       const notificationsIssue = await getIssueNotifications(knex, issueId)
       expect(notificationsIssue).to.containSubset([
         {
-          NotificationType: {
-            level: 2,
-          },
           Notification: {
             issueId,
             personId: baseProps.siteRegionalOfficer.id,
@@ -267,9 +261,6 @@ describe.only('Inventory Stock Issues Endpoint', () => {
       const notificationsIssue = await getIssueNotifications(knex, issueId)
       expect(notificationsIssue).to.containSubset([
         {
-          NotificationType: {
-            level: 2,
-          },
           Notification: {
             issueId,
             personId: baseProps.siteRegionalOfficer.id,
@@ -292,7 +283,6 @@ async function triggerInitialIssue({
   issueType,
   dispatch,
   actionCreator,
-  displayPreferences,
 }) {
   const TO_BE_WASTED = 100
 
@@ -309,8 +299,6 @@ async function triggerInitialIssue({
   // wait for MQ to handle
   await waitForAction(action)
   await waitForIdle(2000) // 2sec to let MQ handle all and save 1 LU and 2 RO's notifications
-
-  // get latest issue for curent (siteId, issueType)
   const issue = await knex('Issue as i')
     .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
@@ -339,65 +327,17 @@ async function triggerInitialIssue({
   // get issue notifications sorted by Job Function
   const notifications = await knex('Notification as n')
     .join('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
-    .join('JobFunction as jf', 'jf.id', 'nt.jobFunctionId')
     .join('Person as p', 'p.id', 'n.personId')
     .join('User as u', 'u.id', 'p.userId')
     .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
+
     .where({
       'n.issueId': issue.id,
-      'nt.level': 1,
     })
-    .orderBy('jf.name') // Lab User, Regional Officer
-    .orderBy('nt.createdOn') // items are in same order as they happen
-    .select(
-      'nt.name as notificationTypeName',
-      'u.name as userName',
-      'jf.name as jobFunction',
-      'nt.level',
-      'nt.canAcknowledge',
-      'am.message as alertMessage'
-    )
+    .select('nt.name as notificationTypeName', 'u.name as userName', 'am.message as alertMessage')
 
   // should have 3 entries - 1 LU and 2 RO's
   expect(notifications.length).to.equal(3)
-  const notifLU = _.find(notifications, { jobFunction: 'Lab User' })
-  const notifRO = _.find(
-    notifications,
-    notification =>
-      notification.notificationTypeName.indexOf('RO View') === -1 && notification.jobFunction === 'Regional Officer'
-  )
-  const notifLUROView = _.find(
-    notifications,
-    notification =>
-      notification.notificationTypeName.indexOf('RO View') > 0 && notification.jobFunction === 'Regional Officer'
-  )
-
-  // helper func for asserting similar things for each notification
-  const assertNotification = (notification, userNamePrefix, jobFunction, level, canAcknowledge) => {
-    expect(notification.userName).to.include(userNamePrefix)
-    assert.equal(notification.jobFunction, jobFunction)
-    assert.equal(notification.level, level)
-    assert.equal(notification.canAcknowledge, canAcknowledge)
-  }
-
-  assertNotification(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
-  const ack = issueType === 'InventoryStockout' ? 1 : 0
-  assertNotification(notifRO, USER_RO_NAME_PREFIX, 'Regional Officer', 1, ack)
-  assertNotification(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
-
-  // check alert message
-  if (issueType === 'InventoryStockout') {
-    const date = addDays(new Date(), daysDue)
-    assert.equal(
-      notifLU.alertMessage,
-      processUsingHandlebarsSyntax(`Stock-out expected {{formatDate date}} - Order Stock.`, {
-        date,
-        displayPreferences,
-      })
-    )
-  }
-
-  //
   const action2 = JSON.parse(issue.data)
   const consumableId2 = action2.consumableId
   const daysDue2 = action2.daysDue

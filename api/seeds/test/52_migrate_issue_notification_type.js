@@ -16,7 +16,7 @@ async function seed(knex) {
           jobFunctions: [
             {
               tags: [],
-              jobfunctionId,
+              jobFunctionId: jobfunctionId,
             },
           ],
         }),
