@@ -75,7 +75,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
       })
     }
     if (isNew) {
-      createSite(editSite, { onSuccess: data => navigate(`/browse/site/${data.data.id}`) })
+      createSite(editSite, { onSuccess: newId => navigate(`/browse/site/${newId}`) })
     } else {
       updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}`) })
     }
