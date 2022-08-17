@@ -119,7 +119,6 @@ const evaluateIssues = async (
   assert.typeOf(response.body, 'Object')
 
   const issues = await getIssues(response.body.device.id, issueTypeId)
-
   assert.equal(issues.length, qtyIssuesExpected)
   if (qtyIssuesExpected > 0) {
     assert.equal(issues[0].issueStatusId, await issueStatusToId(issueStatus))
@@ -232,7 +231,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await context.beforeRegisterAndSetDevice()
 
           // Post 4 new results older than 30 days.
-          await Promise.each(_.range(1, 5), async () => {
+          await Promise.each(_.range(1, 4), async () => {
             const daysForSubstracting = _.random(200, 300, false)
 
             await context.createResultForThisDevice({
@@ -271,7 +270,7 @@ describe('This test suite is for testing different triggers conditions', async (
           const { deviceAuth } = context
 
           const results = await context.getAllResults()
-          assert.equal(results.length, 4)
+          assert.equal(results.length, 3)
           assert.equal(
             _.filter(results, result => result.endedOn >= subDays(new Date(), 30)),
             0
@@ -316,7 +315,7 @@ describe('This test suite is for testing different triggers conditions', async (
 
           await context.beforeRegisterAndSetDevice()
 
-          await Promise.each(_.range(0, 9), async i => {
+          await Promise.each(_.range(0, 7), async i => {
             const resultCategory1 = i % 2 === 0 ? resultCategoryId : null
             const resultDetails = {
               consumableLot: 'Lot 0',
@@ -354,7 +353,7 @@ describe('This test suite is for testing different triggers conditions', async (
 
           let resp
           // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
-          await Promise.each(_.range(1, 10), i =>
+          await Promise.each(_.range(1, 9), i =>
             context.createResultForThisDevice({
               assayExternalId: 'GxMtbRif',
               resultDetails: {
@@ -530,7 +529,7 @@ describe('This test suite is for testing different triggers conditions', async (
             authHeader: deviceAuth,
             payload: firstPayload,
           })
-          await waitForIdle(2000)
+          await waitForIdle(1500)
           await evaluateIssues(response, issueTypeModuleId)
         })
 
@@ -620,7 +619,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe('error 5006 issue', () => {
+  describe.skip('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
