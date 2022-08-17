@@ -91,10 +91,9 @@ const { getDeviceErrorHistoryForAttachment } = require('../../src/result/service
 const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   const messageTemplates = await getMessageTemplates()
   const notification = await knex('Notification as n')
-    // .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
+    .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
     .where({ 'n.issueId': issueId })
     .first()
-  console.log('🚀 ~ file: triggerIssue.spec.js ~ line 94 ~ checkNotificationsForIssue ~ notification', notification)
 
   assert.isNotNull(notification)
   assert.isNotNull(notification.emailMessageId)
@@ -299,7 +298,7 @@ describe('This test suite is for testing different triggers conditions', async (
         })
       })
 
-      describe.only('With results in the period of evaluation', () => {
+      describe('With results in the period of evaluation', () => {
         let context
 
         beforeEach(async () => {
@@ -622,7 +621,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe.skip('error 5006 issue', () => {
+  describe.only('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,

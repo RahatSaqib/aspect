@@ -318,12 +318,7 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
           .join('Issue as i', joinBuilder =>
             // If issue is escalated past configured level, send again
             // on escalation to maximum configured level
-            joinBuilder
-              .on('i.issueTypeId', 'nt.issueTypeId')
-              .andOn('i.partnerId', 'nt.partnerId')
-              // I will try to remove this condition because the escalation it is something we are not
-              // going to use anymore in this way
-              .andOn('i.level', '>=', 'nt.level')
+            joinBuilder.on('i.issueTypeId', 'nt.issueTypeId').andOn('i.partnerId', 'nt.partnerId')
           )
           .leftJoin('Geography as g', 'i.geographyId', 'g.id')
           .where({ 'i.id': issueId })
