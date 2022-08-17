@@ -4,7 +4,7 @@ const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
 const { getExistingSiteExcludingCurrent, updateSite, checkSiteAccess } = require('./common/db')
 
-module.exports = async function (request, h) {
+module.exports = async function (request) {
   const { auth, params, payload } = request
 
   const siteParams = await normalizeParameters(payload)

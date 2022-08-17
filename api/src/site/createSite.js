@@ -1,5 +1,4 @@
 const Boom = require('@hapi/boom')
-const { error } = require('winston')
 const { knex } = require('../db')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
