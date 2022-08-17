@@ -1,12 +1,10 @@
 const Boom = require('@hapi/boom')
-const { knex } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
-const { showSite } = require('./service')
-const { getExistingSiteExcludingCurrent } = require('./common/db')
+const { getExistingSiteExcludingCurrent, updateSite, checkSiteAccess } = require('./common/db')
 
-module.exports = async function (request) {
+module.exports = async function (request, h) {
   const { auth, params, payload } = request
 
   const siteParams = await normalizeParameters(payload)
@@ -22,9 +20,7 @@ module.exports = async function (request) {
 
   await updateSite(params.siteId, siteParams)
 
-  const site = await showSite(request)
-
-  return site
+  return params.siteId
 }
 
 async function normalizeParameters(payload) {
@@ -34,17 +30,13 @@ async function normalizeParameters(payload) {
 
 const validate = async (siteId, credentials, site) => {
   await validateConstraints(siteId, credentials)
-
   await validateNonRepeatedSite(siteId, site)
 }
 
 async function validateConstraints(siteId, credentials) {
   const dataConstraints = await getConstraints(credentials)
 
-  const checkSite = await knex('Site as s')
-    .where('s.id', siteId)
-    .modify(addConstraints, dataConstraints, { site: 's' })
-    .first('s.id')
+  const checkSite = await checkSiteAccess(siteId, dataConstraints)
 
   if (!checkSite) {
     throw Boom.notFound('Site not found')
@@ -55,14 +47,10 @@ async function validateNonRepeatedSite(siteId, { name, shortName, externalId }) 
   const existingSite = await getExistingSiteExcludingCurrent(siteId, name, shortName, externalId)
 
   if (existingSite) {
-    let message = name === existingSite.name ? `A site with the name (${name}) already exists.\n` : ''
-    message += shortName === existingSite.shortName ? `A site with the shortName (${shortName}) already exists.\n` : ''
-    message += externalId === existingSite.externalId ? `A site with site Id (${externalId}) already exists.\n` : ''
+    let message = name === existingSite.name ? `A site with the name '${name}' already exists. \n` : ''
+    message += shortName === existingSite.shortName ? `A site with the shortName '${shortName}' already exists. \n` : ''
+    message += externalId === existingSite.externalId ? `A site with siteId '${externalId}' already exists. \n` : ''
 
     throw Boom.conflict(message)
   }
-}
-
-async function updateSite(siteId, params) {
-  await knex('Site as s').where('s.id', siteId).update(params)
 }

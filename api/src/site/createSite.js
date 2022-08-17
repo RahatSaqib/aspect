@@ -1,4 +1,5 @@
 const Boom = require('@hapi/boom')
+const { error } = require('winston')
 const { knex } = require('../db')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
@@ -35,9 +36,9 @@ module.exports = async function (request) {
     updatedBy: user.id,
   }
 
-  const [insertedId] = await knex('Site').insert(values)
+  const [newId] = await knex('Site').insert(values)
 
-  return { ok: true, data: { id: insertedId } }
+  return newId
 }
 
 async function normalizeParameters(payload) {
