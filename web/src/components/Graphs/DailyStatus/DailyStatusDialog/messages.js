@@ -33,6 +33,30 @@ const messages = defineMessages({
     id: 'pages.DailyStatusDialog.cancel',
     defaultMessage: 'Cancel',
   },
+  siteWorkingHours: {
+    id: 'pages.DailyStatusDialog.siteWorkingHours',
+    defaultMessage: 'Site Working Hours',
+  },
+  siteWorkingHoursFrom: {
+    id: 'pages.DailyStatusDialog.siteWorkingHoursFrom',
+    defaultMessage: 'From',
+  },
+  siteWorkingHoursTo: {
+    id: 'pages.DailyStatusDialog.siteWorkingHoursTo',
+    defaultMessage: 'To',
+  },
+  siteWorkingHoursUnknown: {
+    id: 'pages.DailyStatusDialog.siteWorkingHoursUnknown',
+    defaultMessage: 'Unknown',
+  },
+  siteContacts: {
+    id: 'pages.DailyStatusDialog.siteContacts',
+    defaultMessage: 'Site Contacts',
+  },
+  noSiteContacts: {
+    id: 'pages.DailyStatusDialog.noSiteContacts',
+    defaultMessage: 'No Contacts defined for this site',
+  },
 })
 
 export default messages

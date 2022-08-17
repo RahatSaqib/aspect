@@ -141,7 +141,9 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
    * Notice that date range is _continuous dates with SAME status
    */
   const getDeviceDayDetails = ({ day, deviceId }) => {
-    const { maintenanceStatusHistory, shortName } = devicesDaily.find(({ id }) => +id === +deviceId)
+    const { maintenanceStatusHistory, shortName, siteContacts, hoursStart, hoursEnd } = devicesDaily.find(
+      ({ id }) => +id === +deviceId
+    )
     const { maintenanceStatusExternalId, maintenanceStatusNotes: note } = maintenanceStatusHistory.find(
       it => it.day === day
     )
@@ -159,6 +161,11 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
     return {
       deviceId,
       deviceName: shortName,
+      siteProps: {
+        siteContacts,
+        hoursStart,
+        hoursEnd,
+      },
       day, // day clicked (formatted as "YYYY-MM-DD")
       periodWithSameStatus: {
         startedOn,

@@ -35,6 +35,9 @@ const routes = [
               latitude: Joi.number().allow(null).description('The latitude where the device is allocated'),
               totalResults: Joi.number().description('The number of results performed by the device in the date range'),
               deviceCapacity: Joi.number().allow(null).description('Daily capacity of the device'),
+              siteId: Joi.number().description('The siteId of the device'),
+              hoursStart: Joi.number().allow(null).description('The site starting hour'),
+              hoursEnd: Joi.number().allow(null).description('The site end hour'),
               maintenanceStatusHistory: Joi.array()
                 .items(
                   Joi.object().keys({
@@ -55,6 +58,18 @@ const routes = [
                   })
                 )
                 .description('The maintenance status of the device in each day of the date range'),
+              siteContacts: Joi.array()
+                .items(
+                  Joi.object().keys({
+                    personId: Joi.number().required().description('Person Id'),
+                    name: Joi.string().required().description('Person name'),
+                    email: Joi.string().allow(null).description('Person email'),
+                    phone: Joi.array().items(Joi.string()),
+                    disabled: Joi.bool().allow(null).description('Flag if Person is disabled'),
+                    disabledOn: Joi.date().allow(null).description('The date when Person was disabled, if any'),
+                  })
+                )
+                .description(`Device's Site contacts`),
             })
           ),
         }),
