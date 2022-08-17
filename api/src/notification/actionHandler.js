@@ -15,12 +15,6 @@ async function analyzeNotifications(context, action) {
     const conditionsToEvaluate = !_.isNil(issueId)
       ? await notificationCache.getCacheValueIssueNotification()
       : await notificationCache.getCacheValueResultNotification()
-    console.log(
-      '🚀 ~ file: actionHandler.js ~ line 14 ~ analyzeNotifications ~ conditionsToEvaluate',
-      issueId,
-      issueTypeId,
-      _.filter(conditionsToEvaluate, condition => (issueTypeId ? condition.issueTypeId === issueTypeId : true))
-    )
 
     await Promise.each(
       _.filter(conditionsToEvaluate, condition => (issueTypeId ? condition.issueTypeId === issueTypeId : true)),

@@ -121,7 +121,6 @@ const evaluateIssues = async (
   const issues = await getIssues(response.body.device.id, issueTypeId)
 
   assert.equal(issues.length, qtyIssuesExpected)
-  console.log('🚀 ~ file: triggerIssue.spec.js ~ line 125 ~ issues', issues)
   if (qtyIssuesExpected > 0) {
     assert.equal(issues[0].issueStatusId, await issueStatusToId(issueStatus))
     if (issueStatus === 'Active') await checkNotificationsForIssue(issues[0].id, issueTypeId)
@@ -340,7 +339,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await context.cleanUp()
         })
 
-        it.only(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
+        it(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
           errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
@@ -611,7 +610,7 @@ describe('This test suite is for testing different triggers conditions', async (
       })
     })
   }
-  describe.only('Invalid results', () => {
+  describe('Invalid results', () => {
     testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
       null,
@@ -621,7 +620,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe.only('error 5006 issue', () => {
+  describe('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,

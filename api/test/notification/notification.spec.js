@@ -20,7 +20,7 @@ const { assert } = chai
 
 const { filterConditionWithAssay, filterConditionWithJf, baseFilterCondition } = require('./fitlerCondtions')
 
-describe.only('Issue based Notifications triggers', () => {
+describe('Issue based Notifications triggers', () => {
   let insertedIssueId = null
   before(async () => {
     const resultSample = await knex('Result').first()

@@ -246,17 +246,11 @@ async function createNotifications(knex, action, context) {
       })
     }
     await Promise.each(policies, async policy => {
-      console.log('🚀 ~ file: service.js ~ line 249 ~ createNotifications ~ policies', policies)
       if (_.isEmpty(jobFunctions) && _.isEmpty(persons)) {
-        console.log(
-          '🚀 ~ file: service.js ~ line 250 ~ createNotifications ~ _.isEmpty(jobFunctions) && _.isEmpty(persons)',
-          _.isEmpty(jobFunctions) && _.isEmpty(persons)
-        )
         await createNotificationIfNotCreatedAlready(action, { policy, now }, { messageContext: context, knex })
       } else {
         const tags = await getTagsByPolicy(knex, policy)
         const people = await getPeopleToNotify(knex, policy, tags, jobFunctions, persons)
-        console.log('🚀 ~ file: service.js ~ line 255 ~ createNotifications ~ people', people)
 
         await sendNotificationsToPeople(knex, context, people, policy, action)
       }
