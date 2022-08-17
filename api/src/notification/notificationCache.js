@@ -14,7 +14,12 @@ class NotificationCache {
     return this.knex('NotificationTypeCategory as ntc')
       .join('NotificationType as nt', 'nt.notificationTypeCategoryId', 'ntc.id')
       .where('ntc.externalId', notificationCategory)
-      .distinct('nt.filterCondition', 'nt.id as notificationTypeId', 'ntc.externalId as notificationTypeCategoryId')
+      .distinct(
+        'nt.filterCondition',
+        'nt.id as notificationTypeId',
+        'ntc.externalId as notificationTypeCategoryId',
+        'nt.issueTypeId'
+      )
   }
 
   // flush the cache
@@ -34,7 +39,7 @@ class NotificationCache {
     this.notificationCache.del(notificationResultCacheKey)
     this.notificationCache.del(notificationIssueCacheKey)
     this.getCacheValueIssueNotification()
-    return this.getResultCacheValueNotifications()
+    return this.getCacheValueResultNotification()
   }
 
   // set the cache key and value
@@ -43,7 +48,7 @@ class NotificationCache {
   }
 
   // return the cache value
-  async getResultCacheValueNotifications() {
+  async getCacheValueResultNotification() {
     return this.getCacheValue(notificationResultCacheKey)
   }
 

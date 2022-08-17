@@ -102,6 +102,20 @@ async function analyzeCategories(
   ) {
     action.options.data.errorCodes = errorCodes
     action.options.data.resultCategoryId = resultCategoryId
+    console.log(
+      action,
+      await analyzeWithQuery(knex, action, threshold, below, daysPeriod, minResults, builder =>
+        builder.first(
+          knex.raw(
+            `sum(case when resultCategory1=? ${
+              errorCodes && errorCodes.length > 0 ? ` OR errorcode in(${errorCodes.join(',')})` : ``
+            } then 1 else 0 end) as resultsWithErrors, count(id) as totalResults`,
+            categoryToCompare
+          ),
+          knex.raw(`sum(case when moduleSerial='${moduleSerial}' then 1 else 0 end) as qtyOnSameModule`)
+        )
+      )
+    )
     return analyzeWithQuery(knex, action, threshold, below, daysPeriod, minResults, builder =>
       builder.first(
         knex.raw(

@@ -91,9 +91,10 @@ const { getDeviceErrorHistoryForAttachment } = require('../../src/result/service
 const checkNotificationsForIssue = async (issueId, issueTypeId) => {
   const messageTemplates = await getMessageTemplates()
   const notification = await knex('Notification as n')
-    .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
+    // .join('EmailMessage as em', 'n.emailmessageId', 'em.id')
     .where({ 'n.issueId': issueId })
     .first()
+  console.log('🚀 ~ file: triggerIssue.spec.js ~ line 94 ~ checkNotificationsForIssue ~ notification', notification)
 
   assert.isNotNull(notification)
   assert.isNotNull(notification.emailMessageId)
@@ -119,7 +120,9 @@ const evaluateIssues = async (
   assert.typeOf(response.body, 'Object')
 
   const issues = await getIssues(response.body.device.id, issueTypeId)
+
   assert.equal(issues.length, qtyIssuesExpected)
+  console.log('🚀 ~ file: triggerIssue.spec.js ~ line 125 ~ issues', issues)
   if (qtyIssuesExpected > 0) {
     assert.equal(issues[0].issueStatusId, await issueStatusToId(issueStatus))
     if (issueStatus === 'Active') await checkNotificationsForIssue(issues[0].id, issueTypeId)
@@ -231,7 +234,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await context.beforeRegisterAndSetDevice()
 
           // Post 4 new results older than 30 days.
-          await Promise.each(_.range(1, 4), async () => {
+          await Promise.each(_.range(1, 5), async () => {
             const daysForSubstracting = _.random(200, 300, false)
 
             await context.createResultForThisDevice({
@@ -270,7 +273,7 @@ describe('This test suite is for testing different triggers conditions', async (
           const { deviceAuth } = context
 
           const results = await context.getAllResults()
-          assert.equal(results.length, 3)
+          assert.equal(results.length, 4)
           assert.equal(
             _.filter(results, result => result.endedOn >= subDays(new Date(), 30)),
             0
@@ -296,7 +299,7 @@ describe('This test suite is for testing different triggers conditions', async (
         })
       })
 
-      describe('With results in the period of evaluation', () => {
+      describe.only('With results in the period of evaluation', () => {
         let context
 
         beforeEach(async () => {
@@ -315,7 +318,7 @@ describe('This test suite is for testing different triggers conditions', async (
 
           await context.beforeRegisterAndSetDevice()
 
-          await Promise.each(_.range(0, 7), async i => {
+          await Promise.each(_.range(0, 9), async i => {
             const resultCategory1 = i % 2 === 0 ? resultCategoryId : null
             const resultDetails = {
               consumableLot: 'Lot 0',
@@ -338,7 +341,7 @@ describe('This test suite is for testing different triggers conditions', async (
           await context.cleanUp()
         })
 
-        it(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
+        it.only(`should create one issue LOT for random module and one MODULE issue for fixed module repeated in the same device ${
           errorCode ? `error ${errorCode}` : `category ${resultCategoryExternalId}`
         }`, async () => {
           /**
@@ -353,7 +356,7 @@ describe('This test suite is for testing different triggers conditions', async (
 
           let resp
           // Post 4 new results with lot (shouldn't trigger another issue if the previous message generated one.)
-          await Promise.each(_.range(1, 9), i =>
+          await Promise.each(_.range(1, 10), i =>
             context.createResultForThisDevice({
               assayExternalId: 'GxMtbRif',
               resultDetails: {
@@ -529,7 +532,7 @@ describe('This test suite is for testing different triggers conditions', async (
             authHeader: deviceAuth,
             payload: firstPayload,
           })
-          await waitForIdle(1500)
+          await waitForIdle(2000)
           await evaluateIssues(response, issueTypeModuleId)
         })
 
@@ -609,7 +612,7 @@ describe('This test suite is for testing different triggers conditions', async (
       })
     })
   }
-  describe('Invalid results', () => {
+  describe.only('Invalid results', () => {
     testCategoriesAndErrorCodes(
       'Too Many Invalid Results',
       null,

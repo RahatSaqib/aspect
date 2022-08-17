@@ -78,12 +78,21 @@ function onIssueEvent(actionParametersList) {
                 }) || {}
               )
             : false
+          console.log(
+            '🚀 ~ file: service.js ~ line 72 ~ return ~ shouldSuppressEventTriggering',
+            shouldSuppressEventTriggering
+          )
           if (!shouldSuppressEventTriggering) {
             const shouldTriggerEvent = await actionConditionsMet(
               knex,
               action,
               partnerId,
               JSON.parse(triggerConditions).conditions
+            )
+            console.log(
+              '🚀 ~ file: service.js ~ line 92 ~ return ~ shouldTriggerEvent',
+              JSON.parse(triggerConditions).conditions,
+              shouldTriggerEvent
             )
             logger.debug(
               {
@@ -96,6 +105,7 @@ function onIssueEvent(actionParametersList) {
             if (shouldTriggerEvent) {
               const now = new Date()
               const openIssue = await findOpenIssue(knex, issueType, action, JSON.parse(filterIssueCondition))
+              console.log('🚀 ~ file: service.js ~ line 104 ~ return ~ openIssue', openIssue)
               logger.debug(
                 {
                   action_type: action.type,
@@ -142,8 +152,9 @@ function onIssueEvent(actionParametersList) {
                   { reLabel: 'issues:onIssueEvent' }
                 )
                 issue = await createNewIssue(knex, issueType, action)
+                console.log('🚀 ~ file: service.js ~ line 151 ~ return ~ Createissue', issue)
                 if (issue != null) {
-                  context.issueCreated(issue.id)
+                  context.issueCreated(issue.id, issue.issueTypeId)
                 }
               }
 
@@ -298,6 +309,7 @@ async function createNewIssue(knex, issueType, action) {
   // Everything is fine, create new issue
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
+  issue.issueTypeId = issueTypeId
 
   await knex('IssueStatusLog').insert({
     issueId,

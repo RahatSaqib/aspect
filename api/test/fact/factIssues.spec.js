@@ -167,25 +167,16 @@ describe('Fact based issues', () => {
 
       let notifications = await knex('Notification as n')
         .join('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
-        .join('JobFunction as jf', 'jf.id', 'nt.jobFunctionId')
         .join('Person as p', 'p.id', 'n.personId')
         .join('User as u', 'u.id', 'p.userId')
         .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
         .where({ 'n.issueId': issueId })
-        .orderBy('jf.name')
-        .select(
-          'u.name as userName',
-          'jf.name as jobFunction',
-          'nt.level',
-          'nt.canAcknowledge',
-          'am.message as alertMessage'
-        )
+        .select('u.name as userName', 'nt.level', 'nt.canAcknowledge', 'am.message as alertMessage')
 
       expect(notifications).to.have.length(2)
       let [notificationLU, notificationRO] = notifications
       expect(notificationLU).to.containSubset({
         userName: USER_LU,
-        jobFunction: 'Lab User',
         level: issues[0].level,
         canAcknowledge: 1,
       })
@@ -195,7 +186,6 @@ describe('Fact based issues', () => {
       )
       expect(notificationRO).to.containSubset({
         userName: USER_RO,
-        jobFunction: 'Regional Officer',
         level: issues[0].level,
         canAcknowledge: 0,
       })
@@ -272,15 +262,13 @@ describe('Fact based issues', () => {
 
       notifications = await knex('Notification as n')
         .join('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
-        .join('JobFunction as jf', 'jf.id', 'nt.jobFunctionId')
         .join('Person as p', 'p.id', 'n.personId')
         .join('User as u', 'u.id', 'p.userId')
         .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
         .where({ 'n.issueId': issues[1].id })
-        .orderBy('jf.name')
         .select(
           'u.name as userName',
-          'jf.name as jobFunction',
+
           'nt.level',
           'nt.canAcknowledge',
           'am.message as alertMessage'
@@ -290,13 +278,11 @@ describe('Fact based issues', () => {
       ;[notificationLU, notificationRO] = notifications
       expect(notificationLU).to.containSubset({
         userName: USER_LU,
-        jobFunction: 'Lab User',
         level: issues[1].level,
         canAcknowledge: 1,
       })
       expect(notificationRO).to.containSubset({
         userName: USER_RO,
-        jobFunction: 'Regional Officer',
         level: issues[1].level,
         canAcknowledge: 0,
       })
