@@ -19,6 +19,44 @@ const filterConditionWithAssay = {
   ],
   deviceLevelId: 'lga',
 }
+const filterConditionWithJfForDevice = {
+  areaItems: [
+    {
+      label: 'Wayne',
+      value: '12',
+    },
+  ],
+  jobFunctions: [
+    {
+      tags: [],
+      jobFunctionId: '1',
+    },
+    {
+      tags: [],
+      jobFunctionId: '2',
+    },
+  ],
+  deviceLevelId: 'lga',
+}
+const filterConditionWithJfForDeviceNotWayneCounty = {
+  areaItems: [
+    {
+      label: 'Kale',
+      value: '59',
+    },
+  ],
+  jobFunctions: [
+    {
+      tags: [],
+      jobFunctionId: '1',
+    },
+    {
+      tags: [],
+      jobFunctionId: '2',
+    },
+  ],
+  deviceLevelId: 'lga',
+}
 const filterConditionWithJf = {
   result: [
     {
@@ -88,4 +126,6 @@ module.exports = {
   filterConditionWithAssay,
   filterConditionWithJf,
   baseFilterCondition,
+  filterConditionWithJfForDevice,
+  filterConditionWithJfForDeviceNotWayneCounty,
 }

@@ -619,7 +619,7 @@ describe('This test suite is for testing different triggers conditions', async (
     )
   })
 
-  describe.skip('error 5006 issue', () => {
+  describe('error 5006 issue', () => {
     testCategoriesAndErrorCodes(
       'Probes check Too High',
       5006,
