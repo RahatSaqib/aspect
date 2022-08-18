@@ -14,170 +14,172 @@ exports[`AccountDetails module AccountDetails component should shallow render co
   />
   <Routes>
     <Route
-      path=""
-    >
-      <div>
-        <AccountDetailsBackBar
-          accountDetails={
-            Immutable.Record {
-              "contactDetails": Immutable.Record {
-                "id": null,
-                "name": null,
-                "title": null,
-                "email": null,
-                "email2": null,
-                "phone": null,
-                "cell": null,
-                "countryId": null,
-                "stateId": null,
-                "lgaId": null,
-                "zip": null,
-                "notes": null,
-                "lastPartnerId": null,
-                "canLogIn": false,
-              },
-              "loginDetails": Immutable.Record {
-                "id": null,
-                "username": null,
-                "newPassword": null,
-                "confirmNewPassword": null,
-                "currentPassword": null,
-                "partnerId": null,
-                "jobFunctions": Immutable.List [],
-                "userLockedOut": null,
-                "email": null,
-              },
-              "userPreferences": Immutable.Record {
-                "id": null,
-                "timezone": null,
-                "culture": null,
-              },
+      element={
+        <div>
+          <AccountDetailsBackBar
+            accountDetails={
+              Immutable.Record {
+                "contactDetails": Immutable.Record {
+                  "id": null,
+                  "name": null,
+                  "title": null,
+                  "email": null,
+                  "email2": null,
+                  "phone": null,
+                  "cell": null,
+                  "countryId": null,
+                  "stateId": null,
+                  "lgaId": null,
+                  "zip": null,
+                  "notes": null,
+                  "lastPartnerId": null,
+                  "canLogIn": false,
+                },
+                "loginDetails": Immutable.Record {
+                  "id": null,
+                  "username": null,
+                  "newPassword": null,
+                  "confirmNewPassword": null,
+                  "currentPassword": null,
+                  "partnerId": null,
+                  "jobFunctions": Immutable.List [],
+                  "userLockedOut": null,
+                  "email": null,
+                },
+                "userPreferences": Immutable.Record {
+                  "id": null,
+                  "timezone": null,
+                  "culture": null,
+                },
+              }
             }
-          }
-          fetchAccountDetails={[Function]}
-          formatMessage={[Function]}
-          intl={
-            Object {
-              "formatMessage": [Function],
-            }
-          }
-          loading={false}
-          location={
-            Object {
-              "pathname": "",
-            }
-          }
-          navigate={[Function]}
-          params={Object {}}
-          saveContactDetails={[Function]}
-          saveLoginDetails={[Function]}
-          saveUserPreferences={[Function]}
-          saving={false}
-          showAcknowledgement={[Function]}
-          title={null}
-        />
-        <ForwardRef(Paper)
-          className="AddMargin"
-        >
-          <ContactDetailsFormFormik />
-        </ForwardRef(Paper)>
-      </div>
-    </Route>
-    <Route
-      path="system-access-control"
-    >
-      <div>
-        <AccountDetailsBackBar
-          accountDetails={
-            Immutable.Record {
-              "contactDetails": Immutable.Record {
-                "id": null,
-                "name": null,
-                "title": null,
-                "email": null,
-                "email2": null,
-                "phone": null,
-                "cell": null,
-                "countryId": null,
-                "stateId": null,
-                "lgaId": null,
-                "zip": null,
-                "notes": null,
-                "lastPartnerId": null,
-                "canLogIn": false,
-              },
-              "loginDetails": Immutable.Record {
-                "id": null,
-                "username": null,
-                "newPassword": null,
-                "confirmNewPassword": null,
-                "currentPassword": null,
-                "partnerId": null,
-                "jobFunctions": Immutable.List [],
-                "userLockedOut": null,
-                "email": null,
-              },
-              "userPreferences": Immutable.Record {
-                "id": null,
-                "timezone": null,
-                "culture": null,
-              },
-            }
-          }
-          fetchAccountDetails={[Function]}
-          formatMessage={[Function]}
-          intl={
-            Object {
-              "formatMessage": [Function],
-            }
-          }
-          loading={false}
-          location={
-            Object {
-              "pathname": "",
-            }
-          }
-          navigate={[Function]}
-          params={Object {}}
-          saveContactDetails={[Function]}
-          saveLoginDetails={[Function]}
-          saveUserPreferences={[Function]}
-          saving={false}
-          showAcknowledgement={[Function]}
-          title={null}
-        />
-        <ForwardRef(Paper)
-          className="AddMargin"
-        >
-          <pure(lifecycle(recomposeForm(withHandlers(LoginDetailsForm))))
-            canModify={false}
-            closeCurrentPasswordInputDialog={[Function]}
-            currentPasswordInputDialogOpen={false}
+            fetchAccountDetails={[Function]}
+            formatMessage={[Function]}
             intl={
               Object {
                 "formatMessage": [Function],
               }
             }
             loading={false}
-            loginDetails={
-              Immutable.Record {
-                "id": null,
-                "username": null,
-                "newPassword": null,
-                "confirmNewPassword": null,
-                "currentPassword": null,
-                "partnerId": null,
-                "jobFunctions": Immutable.List [],
-                "userLockedOut": null,
-                "email": null,
+            location={
+              Object {
+                "pathname": "",
               }
             }
-            onSubmit={[Function]}
-            openCurrentPasswordInputDialog={[Function]}
+            navigate={[Function]}
+            params={Object {}}
+            saveContactDetails={[Function]}
+            saveLoginDetails={[Function]}
+            saveUserPreferences={[Function]}
+            saving={false}
+            showAcknowledgement={[Function]}
+            title={null}
           />
-        </ForwardRef(Paper)>
-      </div>
-    </Route>
+          <ForwardRef(Paper)
+            className="AddMargin"
+          >
+            <ContactDetailsFormFormik />
+          </ForwardRef(Paper)>
+        </div>
+      }
+      path=""
+    />
+    <Route
+      element={
+        <div>
+          <AccountDetailsBackBar
+            accountDetails={
+              Immutable.Record {
+                "contactDetails": Immutable.Record {
+                  "id": null,
+                  "name": null,
+                  "title": null,
+                  "email": null,
+                  "email2": null,
+                  "phone": null,
+                  "cell": null,
+                  "countryId": null,
+                  "stateId": null,
+                  "lgaId": null,
+                  "zip": null,
+                  "notes": null,
+                  "lastPartnerId": null,
+                  "canLogIn": false,
+                },
+                "loginDetails": Immutable.Record {
+                  "id": null,
+                  "username": null,
+                  "newPassword": null,
+                  "confirmNewPassword": null,
+                  "currentPassword": null,
+                  "partnerId": null,
+                  "jobFunctions": Immutable.List [],
+                  "userLockedOut": null,
+                  "email": null,
+                },
+                "userPreferences": Immutable.Record {
+                  "id": null,
+                  "timezone": null,
+                  "culture": null,
+                },
+              }
+            }
+            fetchAccountDetails={[Function]}
+            formatMessage={[Function]}
+            intl={
+              Object {
+                "formatMessage": [Function],
+              }
+            }
+            loading={false}
+            location={
+              Object {
+                "pathname": "",
+              }
+            }
+            navigate={[Function]}
+            params={Object {}}
+            saveContactDetails={[Function]}
+            saveLoginDetails={[Function]}
+            saveUserPreferences={[Function]}
+            saving={false}
+            showAcknowledgement={[Function]}
+            title={null}
+          />
+          <ForwardRef(Paper)
+            className="AddMargin"
+          >
+            <pure(lifecycle(recomposeForm(withHandlers(LoginDetailsForm))))
+              canModify={false}
+              closeCurrentPasswordInputDialog={[Function]}
+              currentPasswordInputDialogOpen={false}
+              intl={
+                Object {
+                  "formatMessage": [Function],
+                }
+              }
+              loading={false}
+              loginDetails={
+                Immutable.Record {
+                  "id": null,
+                  "username": null,
+                  "newPassword": null,
+                  "confirmNewPassword": null,
+                  "currentPassword": null,
+                  "partnerId": null,
+                  "jobFunctions": Immutable.List [],
+                  "userLockedOut": null,
+                  "email": null,
+                }
+              }
+              onSubmit={[Function]}
+              openCurrentPasswordInputDialog={[Function]}
+            />
+          </ForwardRef(Paper)>
+        </div>
+      }
+      path="system-access-control"
+    />
   </Routes>
 </div>
 `;

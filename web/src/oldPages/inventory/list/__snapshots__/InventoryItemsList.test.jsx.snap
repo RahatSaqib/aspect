@@ -11,21 +11,14 @@ exports[`InventoryItemList module InventoryItemList component should render corr
         "subscribe": [Function],
         Symbol(Symbol.observable): [Function],
       },
-      "subscription": Subscription {
+      "subscription": Object {
+        "addNestedSub": [Function],
+        "getListeners": [Function],
         "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "dispatch": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-          Symbol(Symbol.observable): [Function],
-        },
-        "unsubscribe": null,
+        "isSubscribed": [Function],
+        "notifyNestedSubs": [Function],
+        "trySubscribe": [Function],
+        "tryUnsubscribe": [Function],
       },
     }
   }
@@ -36,9 +29,11 @@ exports[`InventoryItemList module InventoryItemList component should render corr
       dispatch={[Function]}
       intl={
         Object {
+          "$t": [Function],
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
           "formatDate": [Function],
           "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
@@ -65,6 +60,7 @@ exports[`InventoryItemList module InventoryItemList component should render corr
           "locale": "en",
           "messages": Object {},
           "onError": [Function],
+          "onWarn": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
         }

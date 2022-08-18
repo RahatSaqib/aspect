@@ -41,9 +41,11 @@ exports[`App Notification SnackBar component should shallow render correctly 1`]
   hideAppNotification={[Function]}
   intl={
     Object {
+      "$t": [Function],
       "defaultFormats": Object {},
       "defaultLocale": "en",
       "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
       "formatDate": [Function],
       "formatDateTimeRange": [Function],
       "formatDateToParts": [Function],
@@ -70,6 +72,7 @@ exports[`App Notification SnackBar component should shallow render correctly 1`]
       "locale": "en",
       "messages": Object {},
       "onError": [Function],
+      "onWarn": [Function],
       "textComponent": Symbol(react.fragment),
       "timeZone": undefined,
     }

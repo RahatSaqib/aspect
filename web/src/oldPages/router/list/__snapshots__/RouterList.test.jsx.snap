@@ -16,9 +16,11 @@ exports[`RouterList should render RouterList correctly without export button 1`]
     config={Array []}
     intl={
       Object {
+        "$t": [Function],
         "defaultFormats": Object {},
         "defaultLocale": "en",
         "defaultRichTextElements": undefined,
+        "fallbackOnEmptyString": true,
         "formatDate": [Function],
         "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
@@ -45,6 +47,7 @@ exports[`RouterList should render RouterList correctly without export button 1`]
         "locale": "en",
         "messages": Object {},
         "onError": [Function],
+        "onWarn": [Function],
         "textComponent": Symbol(react.fragment),
         "timeZone": undefined,
       }

@@ -17,9 +17,11 @@ exports[`Result List component should shallow render correctly when filter for a
     config={[MockFunction]}
     intl={
       Object {
+        "$t": [Function],
         "defaultFormats": Object {},
         "defaultLocale": "en",
         "defaultRichTextElements": undefined,
+        "fallbackOnEmptyString": true,
         "formatDate": [Function],
         "formatDateTimeRange": [Function],
         "formatDateToParts": [Function],
@@ -46,6 +48,7 @@ exports[`Result List component should shallow render correctly when filter for a
         "locale": "en",
         "messages": Object {},
         "onError": [Function],
+        "onWarn": [Function],
         "textComponent": Symbol(react.fragment),
         "timeZone": undefined,
       }
