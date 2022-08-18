@@ -127,8 +127,7 @@ describe.only('Merge Devices', () => {
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
       .set('Authorization', `Bearer${shared.token}`)
-
-    expect(res.statusCode).to.equal(200)
+      .expect(200)
 
     const sourceDevices = await knex('Device').where('id', sourceDeviceId)
     expect(sourceDevices).to.have.lengthOf(0, 'Source device should be deleted')
