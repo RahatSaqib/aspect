@@ -68,7 +68,7 @@ const ToggleStatusConfirmationModal = ({
 ToggleStatusConfirmationModal.propTypes = {
   notificationId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   notificationName: PropTypes.string,
-  notificationEnabled: PropTypes.number,
+  notificationEnabled: PropTypes.bool,
   showDialog: PropTypes.bool,
   onClose: PropTypes.func,
 }

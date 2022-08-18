@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
 import isArray from 'lodash/isArray'
@@ -99,6 +100,10 @@ function fromThisDeviceSection(formatMessage) {
     id: 'fromThisDevice',
     label: 'fromThisDevice',
     labelI18nKey: 'fromThisDevice',
+    visibleIf: values =>
+      ['resultBased', 'moduleReplaced', 'moduleDisabled', 'moduleUnused', 'instrumentReplaced'].includes(
+        values.notificationType
+      ),
     rows: [
       {
         id: 10,
@@ -132,7 +137,10 @@ const whenResultIsSection = formatMessage => {
     id: 'whenResultIs',
     label: 'whenResultIs',
     labelI18nKey: 'whenResultIs',
-    // visibleIf: values => values.notificationTypeName === 'resultBased',
+    visibleIf: values =>
+      ['resultBased', 'moduleReplaced', 'moduleDisabled', 'moduleUnused', 'instrumentReplaced'].includes(
+        values.notificationType
+      ),
     rows: [
       {
         id: 'result',
@@ -218,10 +226,7 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
             {
               id: 'enabled',
               controlType: { component: 'checkbox' },
-              classNames: {
-                controlContainer: cssClasses('checkbox-container'),
-                itemContainer: cssClasses('checkbox-item-container'),
-              },
+              classNames: checkboxClassNames,
               initialValue: true,
               label: '',
             },
@@ -238,24 +243,72 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
         {
           id: 0,
           items: [
-            { id: 'notificationType', visibleIf: () => false },
             {
-              id: 'notificationTypeName',
+              id: 'notificationType',
               controlType: {
                 component: 'select',
                 hideIfNoOptions: false,
                 options: [
-                  { value: 'resultBased', label: formatMessage(messages.notificationTypeResultBased) },
-                  { value: 'low-inventory', label: formatMessage(messages.notificationTypeLowInventory) },
-                  { value: 'stock-expiring', label: formatMessage(messages.notificationTypeStockExpiring) },
-                  { value: 'offline', label: formatMessage(messages.notificationTypeOffline) },
-                  { value: 'no-result', label: formatMessage(messages.notificationTypeNoResult) },
-                  { value: 'calibration', label: formatMessage(messages.notificationTypeCalibration) },
-                  // { value: 'test-updated', label: formatMessage(messages.notificationTypeTestUpdated) },
-                  // { value: 'report', label: formatMessage(messages.notificationTypeReport) },
-                  // { value: 'module', label: formatMessage(messages.notificationTypeModule) },
-                  // { value: 'critical-error', label: formatMessage(messages.notificationTypeCriticalError) },
-                  // { value: 'online-date', label: formatMessage(messages.notificationTypeOnlineDate) },
+                  {
+                    label: formatMessage(messages.notificationCreateGroupForResults),
+                    options: [
+                      {
+                        value: 'resultBased',
+                        label: formatMessage(messages.notificationTypeResultBased),
+                        icon: 'AiOutlineSolution',
+                      },
+                      {
+                        value: 'no-result',
+                        label: formatMessage(messages.notificationTypeNoResult),
+                        icon: 'AiOutlineFileExclamation',
+                      },
+                      // { value: 'test-updated', label: formatMessage(messages.notificationTypeTestUpdated), icon: 'AiOutlineShake', },
+                    ],
+                  },
+                  {
+                    label: formatMessage(messages.notificationCreateGroupForDevices),
+                    options: [
+                      {
+                        value: 'offline',
+                        label: formatMessage(messages.notificationTypeOffline),
+                        icon: 'AiOutlineApi',
+                      },
+                      // { value: 'report', label: formatMessage(messages.notificationTypeReport), icon: 'AiOutlineBarChart', },
+                      {
+                        value: 'low-inventory',
+                        label: formatMessage(messages.notificationTypeLowInventory),
+                        icon: 'AiOutlineDashboard',
+                      },
+                      {
+                        value: 'calibration',
+                        label: formatMessage(messages.notificationTypeCalibration),
+                        icon: 'AiOutlineTool',
+                      },
+                      {
+                        value: 'moduleReplaced',
+                        label: formatMessage(messages.notificationTypeModuleReplaced),
+                        icon: 'AiOutlineSwap',
+                      },
+                      {
+                        value: 'moduleDisabled',
+                        label: formatMessage(messages.notificationTypeModuleDisabled),
+                        icon: 'AiOutlineBlock',
+                      },
+                      {
+                        value: 'moduleUnused',
+                        label: formatMessage(messages.notificationTypeModuleUnused),
+                        icon: 'AiOutlineExclamation',
+                      },
+                      {
+                        value: 'instrumentReplaced',
+                        label: formatMessage(messages.notificationTypeInstrumentReplaced),
+                        icon: 'AiOutlineTool',
+                      },
+                      // { value: 'module', label: formatMessage(messages.notificationTypeModule), icon: 'AiOutlineBlock', },
+                      // { value: 'critical-error', label: formatMessage(messages.notificationTypeCriticalError), icon: 'AiOutlineInfoCircle', },
+                      // { value: 'online-date', label: formatMessage(messages.notificationTypeOnlineDate), icon: 'AiOutlineCalendar', },
+                    ],
+                  },
                 ],
                 placeholder: formatMessage(messages.notificationType),
               },
@@ -277,8 +330,8 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
       ],
     },
     // depende ?
-    whenResultIsSection(formatMessage),
-    fromThisDeviceSection(formatMessage),
+    whenResultIsSection(formatMessage), // only for resultBased
+    fromThisDeviceSection(formatMessage), // only for resultBased
 
     // send (sms/email/web)
     {

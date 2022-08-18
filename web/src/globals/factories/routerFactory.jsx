@@ -290,7 +290,7 @@ const AppRoutes = ({ props: outerProps }) => {
           element={getElement(props, ['browse', 'notification'], renderNotificationList)}
         />
         <Route
-          path="/browse/notification/create"
+          path="/browse/notification/:notificationId"
           element={getElement(props, ['browse', 'notification:edit'], renderNotificationDetail)}
         />
         <Route

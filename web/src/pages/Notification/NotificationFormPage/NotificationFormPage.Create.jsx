@@ -1,13 +1,11 @@
-import React from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import isNaN from 'lodash/isNaN'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import reduce from 'lodash/reduce'
 import map from 'lodash/map'
 import unset from 'lodash/unset'
 import CircularProgress from '@mui/material/CircularProgress'
 
-import Create from './CreateNotification'
-import Update from './Update'
+import { FaNotesMedical } from 'react-icons/fa'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import './NotificationFormPage.css'
 import getFormConfig from './Forms/editConfig'
@@ -15,15 +13,27 @@ import useI18n from '../../../hooks/useI18n'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import useSaveNotification from '../../../hooks/notification/saveNotifiaction'
 
+import { FormikProvider } from '../../../components/Form/Formik/Context'
+
+import AspectForm from '../../../components/Form'
+import FormActions from '../../../components/Form/formActions'
+import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
+import { getFormConfigWithData } from './utils'
+import validationSchema from './Forms/validation'
+
 const NotificationFormPage = () => {
   const intl = useI18n()
-  const { notificationId } = useParams()
   const navigate = useNavigate()
-
+  const [formConfig, setFormConfig] = useState(false)
   const { data: jobFunctions, isLoading } = useJobFunctions()
   const { mutate: submitNotification } = useSaveNotification()
 
-  const id = isNaN(notificationId) ? undefined : Number(notificationId)
+  useEffect(() => {
+    if (jobFunctions) {
+      const form = getFormConfigWithData(intl, jobFunctions, '', validationSchema(intl.formatMessage), false, null)
+      setFormConfig(form)
+    }
+  }, [intl, jobFunctions])
 
   const onSubmit = formik => {
     const specificPersonId = 'specificPerson'
@@ -81,16 +91,24 @@ const NotificationFormPage = () => {
       values.areaItems = values.areaItemsLab
       delete values.areaItemsLab
     }
-    submitNotification({ values, id })
+    submitNotification({ values, id: undefined })
     navigate('/browse/notification')
   }
 
-  return isLoading ? (
+  return isLoading || !formConfig ? (
     <CircularProgress />
-  ) : isNaN(+notificationId) ? (
-    <Create jobFunctions={jobFunctions} onSubmit={onSubmit} />
   ) : (
-    <Update jobFunctions={jobFunctions} onSubmit={onSubmit} notificationId={id} />
+    <Shell>
+      <FormikProvider config={formConfig}>
+        <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
+          <FormActions config={formConfig} onSubmit={onSubmit} />
+        </ShellHeader>
+        <ShellContent>
+          <AspectForm config={formConfig} />
+        </ShellContent>
+        <ShellFooter />
+      </FormikProvider>
+    </Shell>
   )
 }
 

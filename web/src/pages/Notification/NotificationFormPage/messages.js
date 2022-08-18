@@ -52,15 +52,27 @@ export default defineMessages({
     defaultMessage: 'To any of these Job Functions',
   },
   // Notification for Results
+  notificationCreateGroupForResults: {
+    id: 'pages.Notifications.group.forResults',
+    defaultMessage: 'Notification for Results',
+  },
   notificationTypeResultBased: {
     id: 'pages.NotificationDetail.type.ResultBased',
     defaultMessage: 'Result Based',
+  },
+  notificationTypeNoResult: {
+    id: 'pages.NotificationDetail.type.NoResult',
+    defaultMessage: 'No Result',
   },
   notificationTypeTestUpdated: {
     id: 'pages.Notification.type.TestUpdated',
     defaultMessage: 'Test Updated',
   },
   // Notification for Devices
+  notificationCreateGroupForDevices: {
+    id: 'pages.Notifications.group.forDevices',
+    defaultMessage: 'Notification for Devices',
+  },
   notificationTypeOffline: {
     id: 'pages.Notification.type.Offline',
     defaultMessage: 'Offline',
@@ -81,6 +93,18 @@ export default defineMessages({
     id: 'pages.Notification.type.Module',
     defaultMessage: 'Module',
   },
+  notificationTypeModuleReplaced: {
+    id: 'pages.Notification.type.ModuleReplaced',
+    defaultMessage: 'Module Replaced',
+  },
+  notificationTypeModuleDisabled: {
+    id: 'pages.Notification.type.ModuleDisabled',
+    defaultMessage: 'Module Disabled',
+  },
+  notificationTypeModuleUnused: {
+    id: 'pages.Notification.type.ModuleUnused',
+    defaultMessage: 'Module Unused',
+  },
   notificationTypeCriticalError: {
     id: 'pages.Notification.type.CriticalError',
     defaultMessage: 'Critical Error',
@@ -88,6 +112,10 @@ export default defineMessages({
   notificationTypeOnlineDate: {
     id: 'pages.Notification.type.OnlineDate',
     defaultMessage: 'Online Date',
+  },
+  notificationTypeInstrumentReplaced: {
+    id: 'pages.Notification.type.InstrumentReplaced',
+    defaultMessage: 'Instrument Replaced',
   },
   // --------------------------------------------------------------
   notificationTitle: {

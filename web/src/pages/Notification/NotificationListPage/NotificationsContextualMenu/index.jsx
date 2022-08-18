@@ -9,6 +9,10 @@ import { NOTIFICATION_LIST } from '../../../../components/QueryFetch/Notificatio
 import ToggleStatusConfirmationModal from './ToggleStatusConfirmationModal'
 import useI18n from '../../../../hooks/useI18n'
 
+const initialToggleStatus = { showDialog: false, notificationId: 0, notificationEnabled: false }
+
+const initialDeleteStatus = { showDialog: false, notificationId: 0 }
+
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useI18n()
@@ -18,16 +22,9 @@ const NotificationsContextualMenu = ({ item }) => {
     queryClient.invalidateQueries(NOTIFICATION_LIST.KEY)
   }
 
-  const [toggleStatusNotificationModalConfig, setToggleStatusNotificationModalConfig] = useState({
-    showDialog: false,
-    notificationId: 0,
-    notificationEnabled: false,
-  })
+  const [toggleStatusNotificationModalConfig, setToggleStatusNotificationModalConfig] = useState(initialToggleStatus)
 
-  const [deleteNotificationModalConfig, setDeleteNotificationModalConfig] = useState({
-    showDialog: false,
-    notificationId: 0,
-  })
+  const [deleteNotificationModalConfig, setDeleteNotificationModalConfig] = useState(initialDeleteStatus)
 
   const getItemActions = navigate => [
     {
@@ -83,14 +80,14 @@ const NotificationsContextualMenu = ({ item }) => {
       <ToggleStatusConfirmationModal
         {...toggleStatusNotificationModalConfig}
         onClose={() => {
-          setToggleStatusNotificationModalConfig({})
+          setToggleStatusNotificationModalConfig(initialToggleStatus)
           refreshList()
         }}
       />
       <DeleteConfirmationModal
         {...deleteNotificationModalConfig}
         onClose={() => {
-          setDeleteNotificationModalConfig({})
+          setDeleteNotificationModalConfig(initialDeleteStatus)
           refreshList()
         }}
       />

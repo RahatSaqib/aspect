@@ -23,7 +23,17 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
 const validationSchema = formatMessage =>
   Yup.object()
     .shape({
-      notificationType: Yup.string().oneOf(['resultBased', 'issueBased']),
+      notificationType: Yup.string().oneOf([
+        'resultBased',
+        'no-result',
+        'offline',
+        'low-inventory',
+        'calibration',
+        'moduleReplaced',
+        'moduleDisabled',
+        'moduleUnused',
+        'instrumentReplaced',
+      ]),
       name: Yup.string().required(formatMessage(messages.notificationNameRequired)),
       result: Yup.array()
         .of(
@@ -44,11 +54,7 @@ const validationSchema = formatMessage =>
         .min(1, formatMessage(messages.assayRequired)),
       deviceLevelId: Yup.string().required().oneOf(['national', 'state', 'lga', 'lab']),
       areaItemsState: Yup.array()
-        .of(
-          Yup.object().shape({
-            value: Yup.string().required(),
-          })
-        )
+        .of(Yup.object().shape({ value: Yup.string().required() }))
         .when('deviceLevelId', {
           is: 'state',
           then: Yup.array()
@@ -57,11 +63,7 @@ const validationSchema = formatMessage =>
           otherwise: Yup.array().min(0),
         }),
       areaItemsLGA: Yup.array()
-        .of(
-          Yup.object().shape({
-            value: Yup.string().required(),
-          })
-        )
+        .of(Yup.object().shape({ value: Yup.string().required() }))
         .when('deviceLevelId', {
           is: 'lga',
           then: Yup.array()
@@ -70,11 +72,7 @@ const validationSchema = formatMessage =>
           otherwise: Yup.array().min(0),
         }),
       areaItemsLab: Yup.array()
-        .of(
-          Yup.object().shape({
-            value: Yup.string().required(),
-          })
-        )
+        .of(Yup.object().shape({ value: Yup.string().required() }))
         .when('deviceLevelId', {
           is: 'lab',
           then: Yup.array()
@@ -99,12 +97,7 @@ const validationSchema = formatMessage =>
           Yup.object().shape({
             jobFunctionId: Yup.string().required(),
             checked: Yup.boolean().required(),
-            tags: Yup.array().of(
-              Yup.object().shape({
-                label: Yup.string(),
-                value: Yup.number().required(),
-              })
-            ),
+            tags: Yup.array().of(Yup.object().shape({ label: Yup.string(), value: Yup.number().required() })),
           })
         ),
       persons: Yup.array().required(),
