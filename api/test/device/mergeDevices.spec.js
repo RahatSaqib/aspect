@@ -16,7 +16,7 @@ let repeatedSourceResultId
 let uniqueSourceResultId
 let repeatedTargetResultId
 
-describe.only('Merge Devices', () => {
+describe('Merge Devices', () => {
   before(async () => shared.checkToken(server, path))
 
   const sourceDeviceContext = createGxConnectTestContext(server, {
@@ -85,7 +85,9 @@ describe.only('Merge Devices', () => {
   })
 
   afterEach(async () => {
-    await knex('Notification').where({ issueId: issueIdOnRepeatedSourceResult }).del()
+    await knex('Notification')
+      .whereIn('issueId', knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).select('id'))
+      .del()
     await knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceApiKey')
       .where('siteId', targetSiteId)
