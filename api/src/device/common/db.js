@@ -2,7 +2,7 @@ const { knex } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
 async function getSourceDevices(sourceDevicesIds) {
-  return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'deviceApprovalId', 'siteId')
+  return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId')
 }
 
 async function getTargetDevice(targetDeviceId) {

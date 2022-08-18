@@ -1,7 +1,6 @@
 const Boom = require('@hapi/boom')
 const { transact } = require('../db')
 const { getConstraints } = require('../auth/constraints')
-const { deviceApprovalToId } = require('../shared/dictionary')
 const {
   getSourceDevices,
   getTargetDevice,
@@ -65,15 +64,19 @@ async function validatePersmissions(devicesToMerge, credentials) {
 }
 
 async function validateDeviceIsNotActive(sourceDevices) {
-  const deviceApprovedId = await deviceApprovalToId('approved')
-
-  if (sourceDevices.some(d => d.deviceApprovalId === deviceApprovedId)) {
-    throw Boom.badData(`An active device cannot be merged. Change the approval status first.`)
+  if (sourceDevices.some(d => lessThan24HsFrom(d.lastPingOn))) {
+    throw Boom.badData(
+      `All devices to be merged must have been disconnected for at least 24 hours. Select only inactive devices and try again.`
+    )
   }
+}
+
+function lessThan24HsFrom(lastPingOn) {
+  return (new Date() - lastPingOn) / 1000 / 60 / 60 / 24 < 1
 }
 
 async function validateSameSite({ sourceDevices, targetDevice }) {
   if (sourceDevices.some(sourceDevice => sourceDevice.siteId !== targetDevice.siteId)) {
-    throw Boom.badData('Cannot merge devices from different sites')
+    throw Boom.badData('Cannot merge devices from different sites.')
   }
 }

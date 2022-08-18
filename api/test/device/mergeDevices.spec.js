@@ -1,11 +1,6 @@
 const { expect, assert } = require('chai')
 const { subDays } = require('date-fns')
-const {
-  deviceMaintenanceTypeToId,
-  deviceApprovalToId,
-  resultCategoryToId,
-  assayToId,
-} = require('../../src/shared/dictionary')
+const { deviceMaintenanceTypeToId, resultCategoryToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
 const server = require('../utils/testUtils')
@@ -21,7 +16,7 @@ let repeatedSourceResultId
 let uniqueSourceResultId
 let repeatedTargetResultId
 
-describe('Merge Devices', () => {
+describe.only('Merge Devices', () => {
   before(async () => shared.checkToken(server, path))
 
   const sourceDeviceContext = createGxConnectTestContext(server, {
@@ -87,22 +82,34 @@ describe('Merge Devices', () => {
     await seedIssue(sourceDevice, uniqueSourceResultId)
     await seedIssue(sourceDevice)
     await seedNotification(issueIdOnRepeatedSourceResult, uniqueSourceResultId)
-    await seedFactTables(sourceSiteId)
   })
 
   afterEach(async () => {
     await knex('Notification').where({ issueId: issueIdOnRepeatedSourceResult }).del()
-    await knex('Issue').where({ deviceId: targetDevice.id }).del()
-    await knex('DeviceApiKey').where('siteId', targetSiteId).orWhere({ deviceId: targetDevice.id }).del()
-    await knex('Result').where('deviceId', targetDevice.id).del()
-    await knex('Sample').where('originSiteId', targetSiteId).del()
-    await knex('DeviceLog').where('deviceId', targetDevice.id).del()
-    await knex('DeviceApprovalLog').where('deviceId', targetDevice.id).del()
+    await knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('DeviceApiKey')
+      .where('siteId', targetSiteId)
+      .orWhereIn('deviceId', [sourceDeviceId, targetDevice.id])
+      .del()
+    await knex('Result').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('Sample').whereIn('originSiteId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('DeviceLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    const deleteFactTablesPromises = [
+      knex('FactDeviceExternalSource').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
+      knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
+      knex('FactResultsDevice').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
+      knex('FactResultsDeviceByAssay').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
+      knex('FactResultsDeviceByCategory1').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
+      knex('FactResultsDeviceByCategory1And2').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
+      knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
+    ]
+    await Promise.all(deleteFactTablesPromises)
     await knex('Device').where('id', targetDevice.id).del()
   })
 
-  it('If source device is active should throw validation', async () => {
-    const res = await server
+  it('If source device is pings in the last 24 hs should throw validation', async () => {
+    await server
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
       .set('Authorization', `Bearer${shared.token}`)
@@ -110,7 +117,7 @@ describe('Merge Devices', () => {
   })
 
   it('Devices should be correctly merged', async () => {
-    await setSourceDeviceInactive()
+    await setSourceDeviceInactiveForLast24Hs()
     await setSourceFirstResultAsDuplicateInTarget(targetDevice.id, repeatedSourceResultId)
     await setSamplesToTargetSite()
 
@@ -223,9 +230,10 @@ async function seedNotification(issueId, resultId) {
   return notificationId
 }
 
-async function setSourceDeviceInactive() {
-  const deviceApprovalAssignedId = await deviceApprovalToId('assigned')
-  await knex('Device').where('id', sourceDeviceId).update({ deviceApprovalId: deviceApprovalAssignedId })
+async function setSourceDeviceInactiveForLast24Hs() {
+  await knex('Device')
+    .where('id', sourceDeviceId)
+    .update({ lastPingOn: subDays(new Date(), 5) })
 }
 
 async function setSameSiteForSeededDevices(sourceSiteId, targetDeviceId) {
@@ -239,68 +247,4 @@ async function setSourceFirstResultAsDuplicateInTarget(targetDeviceId, resultToF
 
 async function setSamplesToTargetSite() {
   await knex('Sample').where('originSiteId', sourceSiteId).update({ originSiteId: targetSiteId })
-}
-
-async function seedFactTables(deviceId) {
-  const assayId = await assayToId('GeneXpert MTB/XDR')
-  const resultCategory1 = await resultCategoryToId('Detected')
-
-  const promises = [
-    knex('FactDeviceExternalSource').insert({ deviceId, sourceName: 'mergeDevice', updatedOn: new Date() }),
-    knex('FactDeviceFlag').insert({
-      deviceId,
-      offline: 0,
-      noResults: 1,
-      service: 0,
-      calibration: 0,
-      errorRate: 0,
-      qcProblem: 0,
-      lowInventory: 0,
-      outOfInventory: 0,
-      expiringInventory: 0,
-      expiringWarranty: 0,
-      updatedOn: new Date(),
-      maintenance: 0,
-    }),
-    knex('FactResultsDevice').insert({
-      deviceId,
-      days: 1,
-      resultCount: 1,
-      calculatedOn: new Date(),
-    }),
-
-    knex('FactResultsDeviceByAssay').insert({
-      deviceId,
-      days: 1,
-      assayId,
-      resultCount: 1,
-      calculatedOn: new Date(),
-    }),
-    knex('FactResultsDeviceByCategory1').insert({
-      deviceId,
-      days: 1,
-      assayId,
-      resultCategory1,
-      resultCount: 1,
-      calculatedOn: new Date(),
-    }),
-    knex('FactResultsDeviceByCategory1And2').insert({
-      deviceId,
-      days: 1,
-      assayId,
-      resultCategory1,
-      resultCount: 1,
-      calculatedOn: new Date(),
-    }),
-    knex('FactResultsDeviceByTimeFrame').insert({
-      deviceId,
-      timeFrame: 'time frame',
-      startedOn: new Date(),
-      assayId,
-      resultCategory1,
-      resultCount: 1,
-      calculatedOn: new Date(),
-    }),
-  ]
-  await Promise.all(promises)
 }
