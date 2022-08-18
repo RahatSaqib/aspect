@@ -22,14 +22,6 @@ import {
   composeSanitizer,
 } from '../../../utils/selectors/searchParams'
 
-import format from 'date-fns/format'
-import subDays from 'date-fns/subDays'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../../utils/selectors/searchParams'
-
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 
 import { useAuthState } from '../../../providers/AuthProvider'
