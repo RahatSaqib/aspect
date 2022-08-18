@@ -16,7 +16,7 @@ let repeatedSourceResultId
 let uniqueSourceResultId
 let repeatedTargetResultId
 
-describe('Merge Devices', () => {
+describe.only('Merge Devices', () => {
   before(async () => shared.checkToken(server, path))
 
   const sourceDeviceContext = createGxConnectTestContext(server, {
@@ -198,6 +198,7 @@ async function seedDeviceMaintenance() {
     contextDate: new Date(),
     current: 1,
     createdOn: new Date(),
+    updatedOn: new Date(),
   })
 }
 
@@ -216,6 +217,7 @@ async function seedIssue(device, resultId) {
     resultId,
     level: 1,
     createdOn: new Date(),
+    updatedOn: new Date(),
   })
   return issueId
 }
