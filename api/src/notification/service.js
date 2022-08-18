@@ -191,7 +191,6 @@ async function listNotifications(request) {
         ELSE CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END END) as ${column}Count`
     )
   }
-
   const getCount = knex.count('* as count').from(notificationQuery.clone().as('mainQuery')).first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

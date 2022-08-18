@@ -228,8 +228,10 @@ describe('Result Notifications triggers', () => {
     resultCategory1 = await resultCategoryToId('Detected')
     results = await knex('Result as r')
       .join('Geography as g', 'r.geographyId', 'g.id')
+      .join('Device as d', 'd.id', 'r.deviceId')
+      .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
       .join('Lga as l', 'g.lgaId', 'l.id')
-      .where({ partnerId: 1 })
+      .where({ 'r.partnerId': 1, 'dt.externalId': 'DaktariVirology' })
       .whereNotExists(knex('Notification as n').whereRaw('n.resultId = r.id').select())
       .distinct('r.*', 'l.name as lgaName')
     assert.isAtLeast(results.length, 1)
@@ -357,6 +359,7 @@ describe('Result Notifications triggers', () => {
     it('should create a result based notification for particular jobFunctions', async () => {
       const resultId = insertedResultDetected
       assert.isNotNull(resultId)
+
       const notificationsBefore = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
@@ -445,7 +448,7 @@ describe('Result Notifications triggers', () => {
     it('should create a result based notification for particular person and job function', async () => {
       const resultId = insertedResultDetected
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(2000)
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
@@ -478,7 +481,7 @@ describe('Result Notifications triggers', () => {
       const resultId = insertedResultDetected
       assert.isNotNull(resultId)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(2000)
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
@@ -567,6 +570,13 @@ describe('Notification routes', () => {
       notificationTypeCategoryId: await notificationTypeCategoryToId('resultBased'),
       filterCondition: JSON.stringify({
         persons: [{ personId: `${personId}`, checked: true }],
+        jobFunctions: [
+          {
+            jobFunctionId: '1',
+            checked: true,
+            tags: [],
+          },
+        ],
       }),
       messageTypeId: messageType.id,
     })
@@ -626,8 +636,6 @@ describe('Notification routes', () => {
   })
 
   it('GET - With jobFunctionId', async () => {
-    await knex('NotificationType').where({ id: ntId }).update({ filterCondition: null, jobFunctionId: 1 })
-
     const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
     assert.equal(res.status, 200)
@@ -635,6 +643,7 @@ describe('Notification routes', () => {
     assert.property(res.body, 'data')
     assert.typeOf(res.body.data, 'array')
     assert.isAtLeast(res.body.data.length, 1)
+
     const [{ jobFunctions, jobFunctionsCount }] = res.body.data.filter(n => n.id === ntId)
     assert.equal(jobFunctions, 'Admin')
     assert.equal(jobFunctionsCount, 1)

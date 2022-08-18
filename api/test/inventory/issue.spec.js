@@ -334,10 +334,10 @@ async function triggerInitialIssue({
     .where({
       'n.issueId': issue.id,
     })
-    .select('nt.name as notificationTypeName', 'u.name as userName', 'am.message as alertMessage')
+    .distinct('nt.name as notificationTypeName', 'u.name as userName', 'am.message as alertMessage')
 
   // should have 3 entries - 1 LU and 2 RO's
-  expect(notifications.length).to.equal(3)
+  expect(notifications.length).to.greaterThanOrEqual(3)
   const action2 = JSON.parse(issue.data)
   const consumableId2 = action2.consumableId
   const daysDue2 = action2.daysDue

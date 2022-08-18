@@ -43,8 +43,8 @@ class NotificationCache {
   }
 
   // set the cache key and value
-  async setCacheValue(value) {
-    this.notificationCache.set(notificationResultCacheKey, value)
+  async setCacheValue(key, value) {
+    this.notificationCache.set(key, value)
   }
 
   // return the cache value
@@ -61,7 +61,7 @@ class NotificationCache {
           ? await this.getConditionsToEvaluate('issueBased')
           : await this.getConditionsToEvaluate()
 
-      this.setCacheValue(notificationsType, notificationkey)
+      this.setCacheValue(notificationkey, notificationsType)
     }
 
     return notificationsType
