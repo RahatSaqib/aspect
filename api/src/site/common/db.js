@@ -1,4 +1,5 @@
 const { knex } = require('../../db')
+const { addConstraints } = require('../../auth/constraints')
 
 async function getExistingSite(name, shortName, externalId) {
   return knex('Site')
@@ -13,4 +14,11 @@ async function getExistingSiteExcludingCurrent(siteId, name, shortName, external
     .first('name', 'shortName', 'externalId')
 }
 
-module.exports = { getExistingSite, getExistingSiteExcludingCurrent }
+async function updateSite(siteId, params) {
+  await knex('Site as s').where('s.id', siteId).update(params)
+}
+
+async function checkSiteAccess(siteId, dataConstraints) {
+  return knex('Site as s').where('s.id', siteId).modify(addConstraints, dataConstraints, { site: 's' }).first('s.id')
+}
+module.exports = { getExistingSite, getExistingSiteExcludingCurrent, updateSite, checkSiteAccess }

@@ -40,12 +40,14 @@ const DailyStatus = () => {
   const onClickDay = ({ day, deviceId }) => {
     const {
       deviceName,
+      siteProps,
       periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
       note,
     } = getDeviceDayDetails({ day, deviceId })
     setDialogState({
       isOpen: true,
       deviceName,
+      siteProps,
       data: {
         day, // day clicked (formatted as "YYYY-MM-DD")
         startedOn,
@@ -121,6 +123,7 @@ const DailyStatus = () => {
           <DailyStatusDialog
             data={dialogState.data}
             deviceName={dialogState.deviceName}
+            siteProps={dialogState.siteProps}
             isOpen={dialogState.isOpen}
             onCancel={onHideDailyStatusDialog}
             onSubmit={onDailyStatusSubmit}

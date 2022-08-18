@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-11T01:11:04.733Z\n"
+"POT-Creation-Date: 2022-08-15T16:19:42.347Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -308,10 +308,10 @@ msgstr "Reconhecendo o problema falhado"
 #. [component.Widget.activeDevicesTitle]
 #. defaultMessage is:
 #. Active
-#. [pages.shared.deviceStatus.active]
+#. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
-#. [pages.DeviceList.availabilityRate]
+#. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
 #. Active
 #. [pages.TaskList.issueStatusActive]
@@ -1023,6 +1023,13 @@ msgstr "Tempo médio para substituir o módulo desativado"
 msgid "Awaiting Treatment"
 msgstr "Aguardando tratamento"
 
+#. [pages.SiteDetail.buttonBack]
+#. defaultMessage is:
+#. BACK
+#: extracted_strings.json
+msgid "BACK"
+msgstr "ANTERIOR"
+
 #. [legends.Unknown.assayBdMgitAst]
 #. defaultMessage is:
 #. BD MGIT AST
@@ -1168,6 +1175,13 @@ msgstr "COVID-19 Teste Genérico"
 msgid "COVID-19 Test"
 msgstr "Teste COVID-19"
 
+#. [pages.SiteDetail.buttonCreate]
+#. defaultMessage is:
+#. CREATE
+#: extracted_strings.json
+msgid "CREATE"
+msgstr "CRIAR"
+
 #. [pages.ListExport.exportCsv]
 #. defaultMessage is:
 #. CSV
@@ -1223,13 +1237,13 @@ msgstr "Calibração passada devido"
 msgid "Can't be edited"
 msgstr "Não pode ser editado"
 
+#. [pages.SiteDetail.disable.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [button_Cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.PersonList.disabled.cancel]
-#. defaultMessage is:
-#. Cancel
-#. [pages.SiteDetail.disable.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.ResetPassword.cancel]
@@ -1263,9 +1277,6 @@ msgstr "Não pode ser editado"
 #. defaultMessage is:
 #. Cancel
 #. [pages.DailyStatusDialog.cancel]
-#. defaultMessage is:
-#. Cancel
-#. [pages.DeviceDetail.delete.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.Notifications.table.cancel]
@@ -1583,13 +1594,13 @@ msgstr "Conectado"
 #. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
-#. [pages.shared.deviceStatus.inactiveConnectivity]
-#. defaultMessage is:
-#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivityHealth]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.shared.deviceStatus.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.SiteList.issueCategoryConnectivityHealth]
@@ -1615,10 +1626,10 @@ msgstr "Conectividade"
 msgid "Connectivity Health"
 msgstr "Conectividade Saúde"
 
-#. [filter.popover.connectorStatus]
+#. [pages.DeviceList.connectorStatus]
 #. defaultMessage is:
 #. Connector Status
-#. [pages.DeviceList.connectorStatus]
+#. [filter.popover.connectorStatus]
 #. defaultMessage is:
 #. Connector Status
 #: extracted_strings.json
@@ -1886,6 +1897,13 @@ msgstr "País"
 msgid "Country Average"
 msgstr "País Média"
 
+#. [pages.LocationSelector.countryRequired]
+#. defaultMessage is:
+#. Country is required
+#: extracted_strings.json
+msgid "Country is required"
+msgstr "O País é obrigatório"
+
 #. [component.Widget.unusedModulesDescription]
 #. defaultMessage is:
 #. Counts devices that didn't use all available module bays for running the most recent 20 results. This can indicate a faulty module
@@ -1941,6 +1959,13 @@ msgstr "Covid 19"
 #: extracted_strings.json
 msgid "Create"
 msgstr "Criar"
+
+#. [pages.SiteList.createSite]
+#. defaultMessage is:
+#. Create Site
+#: extracted_strings.json
+msgid "Create Site"
+msgstr "Criar site"
 
 #. [pages.DeviceApiKeyList.createdOn]
 #. defaultMessage is:
@@ -2336,13 +2361,13 @@ msgstr "Detectado"
 #. [placeholder.device]
 #. defaultMessage is:
 #. Device
-#. [filter.popover.deviceName]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.deviceHealth]
+#. defaultMessage is:
+#. Device
+#. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceApiKeyList.deviceId]
@@ -2492,10 +2517,10 @@ msgstr "Dispositivo Serial"
 msgid "Device State"
 msgstr "Estado do dispositivo"
 
-#. [filter.popover.deviceStatus]
+#. [pages.DeviceList.deviceStatus]
 #. defaultMessage is:
 #. Device Status
-#. [pages.DeviceList.deviceStatus]
+#. [filter.popover.deviceStatus]
 #. defaultMessage is:
 #. Device Status
 #: extracted_strings.json
@@ -2555,10 +2580,10 @@ msgstr "Tipo de dispositivo"
 #. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
-#. [pages.SiteDetail.fieldDevices]
+#. [pages.DeviceList.devicesTitle]
 #. defaultMessage is:
 #. Devices
-#. [pages.DeviceList.devicesTitle]
+#. [pages.SiteDetail.fieldDevices]
 #. defaultMessage is:
 #. Devices
 #. [pages.NotificationDetail.fieldDevices]
@@ -2689,10 +2714,10 @@ msgstr "Quer desactivar"
 msgid "Do you want to enable"
 msgstr "Deseja habilitar"
 
-#. [pages.DeviceStatusSelectField.down]
+#. [pages.DeviceList.down]
 #. defaultMessage is:
 #. Down
-#. [pages.DeviceList.down]
+#. [pages.DeviceStatusSelectField.down]
 #. defaultMessage is:
 #. Down
 #: extracted_strings.json
@@ -2771,10 +2796,10 @@ msgstr "Resistência ETH"
 msgid "Ebola"
 msgstr "Ebola"
 
-#. [button_Edit]
+#. [pages.SiteDetail.edit]
 #. defaultMessage is:
 #. Edit
-#. [pages.SiteDetail.edit]
+#. [button_Edit]
 #. defaultMessage is:
 #. Edit
 #. [pages.NotificationDetail.edit]
@@ -4105,6 +4130,20 @@ msgstr "ID do Anfitrião"
 msgid "Hours"
 msgstr "Horas"
 
+#. [pages.SiteDetail.fieldEndingHours]
+#. defaultMessage is:
+#. Hours of Operation End
+#: extracted_strings.json
+msgid "Hours of Operation End"
+msgstr "Horas de Funcionamento Fim"
+
+#. [pages.SiteDetail.fieldStartingHours]
+#. defaultMessage is:
+#. Hours of Operation Start
+#: extracted_strings.json
+msgid "Hours of Operation Start"
+msgstr "Horas de início de funcionamento"
+
 #. [pages.License.accept]
 #. defaultMessage is:
 #. I Accept
@@ -4358,6 +4397,24 @@ msgstr "ID do site inválido"
 msgid "Invalid credentials. Please, login again."
 msgstr "Credenciais inválidas. Por favor faça login novamente."
 
+#. [queryFetch.errorResponseMessages.GET.422.title]
+#. defaultMessage is:
+#. Invalid data
+#: extracted_strings.json
+msgid "Invalid data"
+msgstr "Dados inválidos"
+
+#. [errorResponseMessages.common.entity.resolution]
+#. defaultMessage is:
+#. Invalid data. Please review, try again, or contact your administrator for help.
+#: extracted_strings.json
+msgid ""
+"Invalid data. Please review, try again, or contact your administrator for "
+"help."
+msgstr ""
+"Dados inválidos. Por favor, reveja, tente novamente, ou contacte o seu "
+"administrador para obter ajuda."
+
 #. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message]
 #. defaultMessage is:
 #. Invalid username or password
@@ -4488,10 +4545,10 @@ msgstr "Resistência KAN"
 msgid "Key"
 msgstr "Chave"
 
-#. [pages.common.lga]
+#. [pages.SiteDetail.fieldLGA]
 #. defaultMessage is:
 #. LGA
-#. [pages.SiteDetail.fieldLGA]
+#. [pages.common.lga]
 #. defaultMessage is:
 #. LGA
 #. [pages.NotificationDetail.Area.LGA]
@@ -5318,10 +5375,10 @@ msgstr "MTB/Rif"
 msgid "MagNA Pure-96 COVID-19"
 msgstr "MagNA Pure-96 COVID-19"
 
-#. [filter.popover.deviceMaintenanceStatus]
+#. [pages.DeviceList.maintenanceStatus]
 #. defaultMessage is:
 #. Maintenance Status
-#. [pages.DeviceList.maintenanceStatus]
+#. [filter.popover.deviceMaintenanceStatus]
 #. defaultMessage is:
 #. Maintenance Status
 #. [pages.DeviceDetailProfile.maintenance]
@@ -5897,6 +5954,9 @@ msgstr "Nota"
 #. [placeholder.result.notes]
 #. defaultMessage is:
 #. Notes
+#. [pages.SiteDetail.fieldNotes]
+#. defaultMessage is:
+#. Notes
 #. [pages.InventoryAdjustmentDialogForm.notes]
 #. defaultMessage is:
 #. Notes
@@ -6037,13 +6097,13 @@ msgstr ""
 msgid "OK"
 msgstr "OK"
 
+#. [pages.DeviceList.offline]
+#. defaultMessage is:
+#. Offline
 #. [filter.btnGroup.offline]
 #. defaultMessage is:
 #. Offline
 #. [pages.connectorStatusSelectField.offline]
-#. defaultMessage is:
-#. Offline
-#. [pages.DeviceList.offline]
 #. defaultMessage is:
 #. Offline
 #. [pages.Notification.type.Offline]
@@ -6087,13 +6147,13 @@ msgstr "Antigos"
 msgid "On Treatment"
 msgstr "Sobre o tratamento"
 
+#. [pages.DeviceList.online]
+#. defaultMessage is:
+#. Online
 #. [filter.btnGroup.online]
 #. defaultMessage is:
 #. Online
 #. [pages.connectorStatusSelectField.online]
-#. defaultMessage is:
-#. Online
-#. [pages.DeviceList.online]
 #. defaultMessage is:
 #. Online
 #: extracted_strings.json
@@ -6780,13 +6840,13 @@ msgstr "Resultados positivos dos testes transmitidos"
 msgid "Positives"
 msgstr "Positivos"
 
+#. [pages.SiteDetail.fieldNoMatchTags]
+#. defaultMessage is:
+#. Press enter to add tag
 #. [pages.Contacts.editContact]
 #. defaultMessage is:
 #. Press enter to add tag
 #. [forms.Chips.createTags]
-#. defaultMessage is:
-#. Press enter to add tag
-#. [pages.SiteDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
 #. [pages.UserPreferences.fieldNoMatchTags]
@@ -7676,6 +7736,9 @@ msgstr "Tipo de amostra:"
 msgid "Sample collection site"
 msgstr "Local de coleta de amostras"
 
+#. [pages.SiteDetail.actionSave]
+#. defaultMessage is:
+#. Save
 #. [pages.Contacts.save]
 #. defaultMessage is:
 #. Save
@@ -8503,10 +8566,10 @@ msgstr "Terminar Sessão"
 #. [placeholder.site]
 #. defaultMessage is:
 #. Site
-#. [filter.popover.siteName]
+#. [pages.DeviceList.site]
 #. defaultMessage is:
 #. Site
-#. [pages.DeviceList.site]
+#. [filter.popover.siteName]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceApiKeyList.siteId]
@@ -8597,6 +8660,13 @@ msgstr "ID do Site"
 msgid "Site Name"
 msgstr "Nome do Site"
 
+#. [pages.SiteDetail.fieldSiteType]
+#. defaultMessage is:
+#. Site Type
+#: extracted_strings.json
+msgid "Site Type"
+msgstr "Tipo de sítio"
+
 #. [pages.TaskDetail.siteContact]
 #. defaultMessage is:
 #. Site contact
@@ -8682,10 +8752,10 @@ msgstr "A hora de início não pode ser posterior à hora de término"
 #. [pages.LocationSelector.state]
 #. defaultMessage is:
 #. State
-#. [pages.common.state]
+#. [pages.SiteDetail.fieldState]
 #. defaultMessage is:
 #. State
-#. [pages.SiteDetail.fieldState]
+#. [pages.common.state]
 #. defaultMessage is:
 #. State
 #. [pages.NotificationDetail.Area.State]
@@ -8740,6 +8810,13 @@ msgstr "Status"
 #: extracted_strings.json
 msgid "Stock not recorded"
 msgstr "Estoque não registrado"
+
+#. [pages.SiteDetail.fieldBelongTo]
+#. defaultMessage is:
+#. Stock provider
+#: extracted_strings.json
+msgid "Stock provider"
+msgstr "Fornecimento em estoque"
 
 #. [component.Widget.StockoutsTitle]
 #. defaultMessage is:
@@ -9222,13 +9299,6 @@ msgstr ""
 "O dispositivo não se conecta ao Aspect há vários dias. Pode estar executando "
 "testes, mas os testes não foram carregados para Aspect ainda."
 
-#. [pages.DeviceDetail.delete.deletedOn]
-#. defaultMessage is:
-#. The device was permanently deleted
-#: extracted_strings.json
-msgid "The device was permanently deleted"
-msgstr "O dispositivo foi permanentemente apagado"
-
 #. [component.Widget.errorRateDescription]
 #. defaultMessage is:
 #. The error rate is calculated by counting all errors in the tests conducted in the month and dividing that number by the total tests carried out of all devices.
@@ -9604,6 +9674,18 @@ msgstr "O {representing} é menor que  {comparedTo}"
 msgid "The {representing} is one of {comparedTo}"
 msgstr "O {representing} é um dos {comparedTo}"
 
+#. [errorResponseMessages.common.conflict.resolution]
+#. defaultMessage is:
+#. There is a conflict between this request and the existent data in the system. Please review, try again, or contact your administrator for help.
+#: extracted_strings.json
+msgid ""
+"There is a conflict between this request and the existent data in the "
+"system. Please review, try again, or contact your administrator for help."
+msgstr ""
+"Existe um conflito entre este pedido e os dados existentes no sistema. Por "
+"favor, reveja, tente novamente, ou contacte o seu administrador para obter "
+"ajuda."
+
 #. [errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message]
 #. defaultMessage is:
 #. There was a conflict with your credentials. Please, contact an administrator for support.
@@ -9805,18 +9887,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "This username is unavailable"
 msgstr "Este nome de usuário não está disponível"
-
-#. [pages.DeviceDetail.delete.deleteDevicePrompt]
-#. defaultMessage is:
-#. This will delete this device. All results generated by this device will be erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?
-#: extracted_strings.json
-msgid ""
-"This will delete this device. All results generated by this device will be "
-"erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?"
-msgstr ""
-"Isto irá apagar este dispositivo. Todos os resultados gerados por este "
-"dispositivo serão apagados. ESTA ACÇÃO NÃO PODE SER DESFEITA. Gostaria de "
-"continuar?"
 
 #. [pages.PersonList.disabled.disableUser]
 #. defaultMessage is:
@@ -10230,6 +10300,9 @@ msgstr "Coluna não agrupada"
 #. [legends.Unknown.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
+#. [pages.DeviceList.unknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -10239,9 +10312,6 @@ msgstr "Coluna não agrupada"
 #. [pages.DeviceStatusSelectField.unknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.DeviceList.unknown]
-#. defaultMessage is:
-#. Unknown
 #. [pages.deviceDetail.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -10249,10 +10319,10 @@ msgstr "Coluna não agrupada"
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#. [pages.DeviceStatusSelectField.up]
+#. [pages.DeviceList.up]
 #. defaultMessage is:
 #. Up
-#. [pages.DeviceList.up]
+#. [pages.DeviceStatusSelectField.up]
 #. defaultMessage is:
 #. Up
 #: extracted_strings.json
@@ -10614,10 +10684,10 @@ msgstr "Relatório de atividades do Xpert Test"
 msgid "Year"
 msgstr "Ano"
 
-#. [pages.PersonList.disabled.yes]
+#. [pages.SiteDetail.disable.yes]
 #. defaultMessage is:
 #. Yes
-#. [pages.SiteDetail.disable.yes]
+#. [pages.PersonList.disabled.yes]
 #. defaultMessage is:
 #. Yes
 #. [pages.PersonList.confirm]
@@ -10627,9 +10697,6 @@ msgstr "Ano"
 #. defaultMessage is:
 #. Yes
 #. [pages.NotificationList.yes]
-#. defaultMessage is:
-#. Yes
-#. [pages.DeviceDetail.delete.yes]
 #. defaultMessage is:
 #. Yes
 #. [contextualMenu.notifications.yes]
@@ -10919,6 +10986,13 @@ msgstr "comprimento médio de SMS"
 #: extracted_strings.json
 msgid "average time to replace disabled modules"
 msgstr "tempo médio para substituir módulos desativados"
+
+#. [queryFetch.errorResponseMessages.GET.409.title]
+#. defaultMessage is:
+#. data
+#: extracted_strings.json
+msgid "data"
+msgstr "Dados"
 
 #. [pages.resultTreatmentPanel.days]
 #. defaultMessage is:
@@ -11260,6 +11334,13 @@ msgstr "o status do tratamento é  {treatmentStatusName}"
 msgid "type is {deviceTypeName}"
 msgstr "tipo é {deviceTypeName}"
 
+#. [server.userFriendly.message]
+#. defaultMessage is:
+#. undefined
+#: extracted_strings.json
+msgid "undefined"
+msgstr "indefinido"
+
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
@@ -11451,6 +11532,17 @@ msgstr "{unit} calibrações totais"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
+
+#~ msgid "The device was permanently deleted"
+#~ msgstr "O dispositivo foi permanentemente apagado"
+
+#~ msgid ""
+#~ "This will delete this device. All results generated by this device will "
+#~ "be erased. THIS ACTION CANNOT BE UNDONE. Would you like to continue?"
+#~ msgstr ""
+#~ "Isto irá apagar este dispositivo. Todos os resultados gerados por este "
+#~ "dispositivo serão apagados. ESTA ACÇÃO NÃO PODE SER DESFEITA. Gostaria de "
+#~ "continuar?"
 
 #~ msgid "All device calibrations up to date"
 #~ msgstr "Todas as calibrações do dispositivo atualizadas"

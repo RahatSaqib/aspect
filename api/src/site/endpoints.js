@@ -152,7 +152,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/site/{siteId}',
-    handler: asyncHandler(updateSite),
+    handler: updateSite,
     config: {
       description: 'Update Site Detail',
       notes: 'Detail of a site',
