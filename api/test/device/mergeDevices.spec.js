@@ -22,9 +22,7 @@ let uniqueSourceResultId
 let repeatedTargetResultId
 
 describe('Merge Devices', () => {
-  before(async () => {
-    shared.checkToken(server, path)
-  })
+  before(async () => shared.checkToken(server, path))
 
   const sourceDeviceContext = createGxConnectTestContext(server, {
     countryCode: 'US',
@@ -108,10 +106,10 @@ describe('Merge Devices', () => {
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
       .set('Authorization', `Bearer${shared.token}`)
-    expect(res.statusCode).to.equal(422)
+      .expect(422)
   })
 
-  it.only('Devices should be correctly merged', async () => {
+  it('Devices should be correctly merged', async () => {
     await setSourceDeviceInactive()
     await setSourceFirstResultAsDuplicateInTarget(targetDevice.id, repeatedSourceResultId)
     await setSamplesToTargetSite()
@@ -244,67 +242,65 @@ async function setSamplesToTargetSite() {
 }
 
 async function seedFactTables(deviceId) {
-  knex('FactDeviceExternalSource').insert({ deviceId, sourceName: 'mergeDevice', updatedOn: new Date() })
-
-  knex('FactDeviceFlag').insert({
-    deviceId,
-    offline: 0,
-    noResults: 1,
-    service: 0,
-    calibration: 0,
-    errorRate: 0,
-    qcProblem: 0,
-    lowInventory: 0,
-    outOfInventory: 0,
-    expiringInventory: 0,
-    expiringWarranty: 0,
-    updatedOn: new Date(),
-    maintenance: 0,
-  })
-
-  knex('FactResultsDevice').insert({
-    deviceId,
-    days: 1,
-    resultCount: 1,
-    calculatedOn: new Date(),
-  })
-
   const assayId = await assayToId('GeneXpert MTB/XDR')
   const resultCategory1 = await resultCategoryToId('Detected')
 
-  knex('FactResultsDeviceByAssay').insert({
-    deviceId,
-    days: 1,
-    assayId,
-    resultCount: 1,
-    calculatedOn: new Date(),
-  })
+  const promises = [
+    knex('FactDeviceExternalSource').insert({ deviceId, sourceName: 'mergeDevice', updatedOn: new Date() }),
+    knex('FactDeviceFlag').insert({
+      deviceId,
+      offline: 0,
+      noResults: 1,
+      service: 0,
+      calibration: 0,
+      errorRate: 0,
+      qcProblem: 0,
+      lowInventory: 0,
+      outOfInventory: 0,
+      expiringInventory: 0,
+      expiringWarranty: 0,
+      updatedOn: new Date(),
+      maintenance: 0,
+    }),
+    knex('FactResultsDevice').insert({
+      deviceId,
+      days: 1,
+      resultCount: 1,
+      calculatedOn: new Date(),
+    }),
 
-  knex('FactResultsDeviceByCategory1').insert({
-    deviceId,
-    days: 1,
-    assayId,
-    resultCategory1,
-    resultCount: 1,
-    calculatedOn: new Date(),
-  })
-
-  knex('FactResultsDeviceByCategory1And2').insert({
-    deviceId,
-    days: 1,
-    assayId,
-    resultCategory1,
-    resultCount: 1,
-    calculatedOn: new Date(),
-  })
-
-  knex('FactResultsDeviceByTimeFrame').insert({
-    deviceId,
-    timeFrame: 'time frame',
-    startedOn: new Date(),
-    assayId,
-    resultCategory1,
-    resultCount: 1,
-    calculatedOn: new Date(),
-  })
+    knex('FactResultsDeviceByAssay').insert({
+      deviceId,
+      days: 1,
+      assayId,
+      resultCount: 1,
+      calculatedOn: new Date(),
+    }),
+    knex('FactResultsDeviceByCategory1').insert({
+      deviceId,
+      days: 1,
+      assayId,
+      resultCategory1,
+      resultCount: 1,
+      calculatedOn: new Date(),
+    }),
+    knex('FactResultsDeviceByCategory1And2').insert({
+      deviceId,
+      days: 1,
+      assayId,
+      resultCategory1,
+      resultCount: 1,
+      calculatedOn: new Date(),
+    }),
+    knex('FactResultsDeviceByTimeFrame').insert({
+      deviceId,
+      timeFrame: 'time frame',
+      startedOn: new Date(),
+      assayId,
+      resultCategory1,
+      resultCount: 1,
+      calculatedOn: new Date(),
+    }),
+  ]
+  await Promise.all(promises)
 }
