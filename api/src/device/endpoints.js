@@ -23,7 +23,6 @@ const mergeDevices = require('./mergeDevices')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { taskTracker } = require('../scheduler/taskTracker')
-const { mergeDevicesSchema } = require('./common/validations')
 
 function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
@@ -721,7 +720,12 @@ const routes = [
       auth: { scope: ['device:edit'] },
       description: 'Merges two devices',
       notes: 'Move all unique source results to target device. Deletes source device.',
-      validate: mergeDevicesSchema,
+      validate: {
+        payload: {
+          sourceDevicesIds: Joi.array().items(Joi.number()).description('Source devices Ids').required(),
+          targetDeviceId: Joi.number().description('Target device Id').required(),
+        },
+      },
     },
   },
 ]

@@ -19,7 +19,7 @@ const getDeviceSelectList = async (countryId, partnerId, siteId, showUnapprovedD
   )
 }
 
-const useDevice = (countryId, partnerId, siteId, showUnapprovedDevices) =>
+const useDeviceForSelect = (countryId, partnerId, siteId, showUnapprovedDevices) =>
   useQuery([DEVICE_KEY, 'list'], () => getDeviceSelectList(countryId, partnerId, siteId, showUnapprovedDevices))
 
-export default useDevice
+export default useDeviceForSelect

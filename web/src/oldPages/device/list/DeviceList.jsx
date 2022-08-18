@@ -45,7 +45,7 @@ import styles from './DeviceList.css'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import useI18n from '../../../hooks/useI18n'
 import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
-import useDevice from '../../../hooks/device/useDevice'
+import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
 
 const cssClasses = classnames.bind(styles)
@@ -345,7 +345,7 @@ export const DeviceListWithProps = ({
 
 export const DeviceList = () => {
   // >>>>>> hooks/ <<<<<<
-  const { data: deviceList } = useDevice('', '', '', true)
+  const { data: deviceList } = useDeviceForSelect('', '', '', true)
   const { mutate: mergeDevices } = useMergeDevices()
   const intl = useI18n()
   const navigate = useNavigate()
@@ -472,9 +472,7 @@ export const DeviceList = () => {
     mergeDevices,
     sourceDevicesIds,
     targetDeviceId,
-    sourceDevicesIds,
     setSourceDevicesIds,
-    targetDeviceId,
     setTargetDeviceId,
   }
   return <DeviceListWithProps {...baseProps} />
