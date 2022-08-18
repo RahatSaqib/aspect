@@ -88,7 +88,6 @@ const FILTERS_CONFIG = [
   { lga: true, requiredPermissions: [] },
   { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
-  { revoked: true, requiredPermissions: [] },
   { assayId: true, requiredPermissions: ['assay:view'] },
 ]
 
