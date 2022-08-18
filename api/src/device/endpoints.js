@@ -408,7 +408,7 @@ const routes = [
   {
     method: 'GET',
     path: '/device/select-list',
-    handler: listDevicesForSelectList,
+    handler: asyncHandler(listDevicesForSelectList),
     config: {
       auth: { scope: ['device:view'] },
       description: 'Device for Select List',
