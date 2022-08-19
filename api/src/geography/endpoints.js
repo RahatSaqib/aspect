@@ -7,6 +7,7 @@ const {
   stateSelectListForUser,
   lgaSelectList,
 } = require('./service')
+const getLevelByUserSelectList = require('./getLevelByUserSelectList')
 
 const routes = [
   {
@@ -113,6 +114,16 @@ const routes = [
           stateId: Joi.number().description('State ID').required(),
         },
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/geography/level-by-user-select-list',
+    handler: getLevelByUserSelectList,
+    config: {
+      auth: false,
+      description: 'Get levels by user',
+      notes: 'levels and Names',
     },
   },
 ]
