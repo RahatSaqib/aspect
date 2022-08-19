@@ -436,7 +436,9 @@ function getOptionByValue(data, requestedValue, idKey) {
     if (isArray(data)) {
       const simpleListFind = data.find(option => option[idKey] === requestedValue)
       // options can be nested/grouped: ie {label:'a', options:[{label:'a1',name:'a1'}]}
-      const groupedListFind = data.flatMap(o => o.options).find(option => option[idKey] === requestedValue)
+      const groupedListFind = data
+        .flatMap(o => o.options)
+        .find(option => option !== undefined && option[idKey] === requestedValue)
       return simpleListFind || groupedListFind
     }
 

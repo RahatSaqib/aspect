@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
 import isArray from 'lodash/isArray'
@@ -101,7 +100,7 @@ function fromThisDeviceSection(formatMessage) {
     label: 'fromThisDevice',
     labelI18nKey: 'fromThisDevice',
     visibleIf: values =>
-      ['resultBased', 'moduleReplaced', 'moduleDisabled', 'moduleUnused', 'instrumentReplaced'].includes(
+      ['resultBased', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced'].includes(
         values.notificationType
       ),
     rows: [
@@ -138,7 +137,7 @@ const whenResultIsSection = formatMessage => {
     label: 'whenResultIs',
     labelI18nKey: 'whenResultIs',
     visibleIf: values =>
-      ['resultBased', 'moduleReplaced', 'moduleDisabled', 'moduleUnused', 'instrumentReplaced'].includes(
+      ['resultBased', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced'].includes(
         values.notificationType
       ),
     rows: [
@@ -248,6 +247,7 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
               controlType: {
                 component: 'select',
                 hideIfNoOptions: false,
+                /* eslint-disable prettier/prettier */
                 options: [
                   {
                     label: formatMessage(messages.notificationCreateGroupForResults),
@@ -258,7 +258,7 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
                         icon: 'AiOutlineSolution',
                       },
                       {
-                        value: 'no-result',
+                        value: 'DeviceNoResults',
                         label: formatMessage(messages.notificationTypeNoResult),
                         icon: 'AiOutlineFileExclamation',
                       },
@@ -269,13 +269,13 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
                     label: formatMessage(messages.notificationCreateGroupForDevices),
                     options: [
                       {
-                        value: 'offline',
+                        value: 'DeviceOffline',
                         label: formatMessage(messages.notificationTypeOffline),
                         icon: 'AiOutlineApi',
                       },
                       // { value: 'report', label: formatMessage(messages.notificationTypeReport), icon: 'AiOutlineBarChart', },
                       {
-                        value: 'low-inventory',
+                        value: 'InventoryStockout',
                         label: formatMessage(messages.notificationTypeLowInventory),
                         icon: 'AiOutlineDashboard',
                       },
@@ -285,22 +285,22 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
                         icon: 'AiOutlineTool',
                       },
                       {
-                        value: 'moduleReplaced',
+                        value: 'ModuleReplaced',
                         label: formatMessage(messages.notificationTypeModuleReplaced),
                         icon: 'AiOutlineSwap',
                       },
                       {
-                        value: 'moduleDisabled',
+                        value: 'ModuleDisabled',
                         label: formatMessage(messages.notificationTypeModuleDisabled),
                         icon: 'AiOutlineBlock',
                       },
                       {
-                        value: 'moduleUnused',
+                        value: 'UnusedModules',
                         label: formatMessage(messages.notificationTypeModuleUnused),
                         icon: 'AiOutlineExclamation',
                       },
                       {
-                        value: 'instrumentReplaced',
+                        value: 'InstrumentReplaced',
                         label: formatMessage(messages.notificationTypeInstrumentReplaced),
                         icon: 'AiOutlineTool',
                       },
@@ -310,6 +310,7 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
                     ],
                   },
                 ],
+                /* eslint-enable prettier/prettier */
                 placeholder: formatMessage(messages.notificationType),
               },
               classNames: {
@@ -329,10 +330,9 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
         },
       ],
     },
-    // depende ?
-    whenResultIsSection(formatMessage), // only for resultBased
-    fromThisDeviceSection(formatMessage), // only for resultBased
-
+    // notification type based
+    whenResultIsSection(formatMessage), // only for ['resultBased', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
+    fromThisDeviceSection(formatMessage), // only for ['resultBased', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     // send (sms/email/web)
     {
       id: 'send',
@@ -492,7 +492,7 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
                       })
                     )
                   }
-                  return options?.length ? options : null
+                  return options?.length ? options : []
                 },
               },
               classNames: {
