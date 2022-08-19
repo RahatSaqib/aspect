@@ -78,27 +78,36 @@ export const SiteDetail = ({ navigate, location }) => {
           {isLoading ? <LinearProgress /> : null}
           {!isLoading ? (
             <Routes>
-              <Route path="">
-                <SiteDetailProfile
-                  formatMessage={intl.formatMessage}
-                  disabled={!editable}
-                  site={site}
-                  siteTags={siteTags}
-                  user={user}
-                />
-              </Route>
-              <Route path="alerts">
-                <section className={cssClasses('Section', 'Section--first')}>
-                  <TaskList intl={intl} navigate={navigate} location={location} filterOptions={{ siteId }} />
-                </section>
-              </Route>
-              <Route path="edit">
-                {editable ? (
-                  <SiteForm site={site} siteTags={siteTags} onLatLongChange={setLatLong} />
-                ) : (
-                  <Navigate replace to={location} />
-                )}
-              </Route>
+              <Route
+                path=""
+                element={
+                  <SiteDetailProfile
+                    formatMessage={intl.formatMessage}
+                    disabled={!editable}
+                    site={site}
+                    siteTags={siteTags}
+                    user={user}
+                  />
+                }
+              />
+              <Route
+                path="alerts"
+                element={
+                  <section className={cssClasses('Section', 'Section--first')}>
+                    <TaskList intl={intl} navigate={navigate} location={location} filterOptions={{ siteId }} />
+                  </section>
+                }
+              />
+              <Route
+                path="edit"
+                element={
+                  editable ? (
+                    <SiteForm site={site} siteTags={siteTags} onLatLongChange={setLatLong} />
+                  ) : (
+                    <Navigate replace to={location} />
+                  )
+                }
+              />
             </Routes>
           ) : null}
           <section className={cssClasses('Section', 'Section--first')}>

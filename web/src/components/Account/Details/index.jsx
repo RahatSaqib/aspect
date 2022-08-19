@@ -165,7 +165,7 @@ const ContactDetailsFormFormik = () => {
         break
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personId, type])
+  }, [])
 
   useEffect(() => {
     const baseSubmit = {

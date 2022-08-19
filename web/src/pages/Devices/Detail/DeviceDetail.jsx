@@ -172,38 +172,50 @@ export const DeviceDetail = props => {
       <ShellContent>
         {device.id && (
           <Routes>
-            <Route path="">
-              <DeviceDetailProfile
-                {...props}
-                dateRange={dateRange}
-                onDateRangeChange={onDateRangeChange}
-                device={Immutable.fromJS(device)}
-                devicePerformance={Immutable.fromJS(devicePerformance)}
-                disabled={!editable}
-                updateSingleDevice={updateDevice}
-                onMaintenanceSubmit={onMaintenanceSubmit}
-                onCalibrationSubmit={onCalibrationSubmit}
-                onWarrantySubmit={onWarrantySubmit}
-              />
-            </Route>
-            <Route path="operation">
-              <DeviceDetailOperation intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
-            </Route>
-            <Route path="alerts">
-              <DeviceDetailAlerts intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
-            </Route>
-            <Route path="edit">
-              {editable ? (
-                <DeviceDetailEdit
+            <Route
+              path=""
+              element={
+                <DeviceDetailProfile
                   {...props}
+                  dateRange={dateRange}
+                  onDateRangeChange={onDateRangeChange}
                   device={Immutable.fromJS(device)}
-                  editable={editable}
+                  devicePerformance={Immutable.fromJS(devicePerformance)}
+                  disabled={!editable}
                   updateSingleDevice={updateDevice}
+                  onMaintenanceSubmit={onMaintenanceSubmit}
+                  onCalibrationSubmit={onCalibrationSubmit}
+                  onWarrantySubmit={onWarrantySubmit}
                 />
-              ) : (
-                <Navigate replace to="." />
-              )}
-            </Route>
+              }
+            />
+            <Route
+              path="operation"
+              element={
+                <DeviceDetailOperation intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
+              }
+            />
+            <Route
+              path="alerts"
+              element={
+                <DeviceDetailAlerts intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
+              }
+            />
+            <Route
+              path="edit"
+              element={
+                editable ? (
+                  <DeviceDetailEdit
+                    {...props}
+                    device={Immutable.fromJS(device)}
+                    editable={editable}
+                    updateSingleDevice={updateDevice}
+                  />
+                ) : (
+                  <Navigate replace to="." />
+                )
+              }
+            />
           </Routes>
         )}
         {isLoading && (

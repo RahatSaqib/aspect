@@ -60,12 +60,8 @@ export const OperationalData = () => {
         </Tabs>
       </div>
       <Routes>
-        <Route path="">
-          <OperationalDashBoard />
-        </Route>
-        <Route path="daily-status">
-          <OperationalDailyStatus />
-        </Route>
+        <Route path="" element={<OperationalDashBoard />} />
+        <Route path="daily-status" element={<OperationalDailyStatus />} />
       </Routes>
     </div>
   )

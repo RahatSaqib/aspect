@@ -155,14 +155,13 @@ describe('Site routes', () => {
           .send(newSiteParams)
           .set('Authorization', `Bearer${shared.token}`)
 
-        const siteId = createSiteResponse?.body?.data?.id
+        const siteId = createSiteResponse?.body
         if (siteId) {
           insertedSites.push(siteId)
         }
 
         assert.equal(createSiteResponse.status, 200, createSiteResponse.body.message)
-        assert.typeOf(createSiteResponse.body, 'Object')
-        assert.typeOf(createSiteResponse.body.data.id, 'Number')
+        assert.typeOf(createSiteResponse.body, 'Number')
 
         const insertedSite = await knex('Site').where('id', siteId).first()
 
@@ -272,44 +271,14 @@ describe('Site routes', () => {
           .send(params)
           .set('Authorization', `Bearer${shared.token}`)
         assert.equal(updateSiteResponse.status, 200)
-        assert.typeOf(updateSiteResponse.body, 'Object')
-        assert.property(updateSiteResponse.body, 'data')
-        assert.typeOf(updateSiteResponse.body.data, 'Object')
-        const siteFieldNames = [
-          'id',
-          'name',
-          'shortName',
-          'state',
-          'lga',
-          'country',
-          'createdOn',
-          'totalDevices',
-          'countryId',
-          'stateId',
-          'lgaId',
-          'timezone',
-          'city',
-          'zip',
-          'street1',
-          'street2',
-          'longitude',
-        ]
-        _.each(siteFieldNames, fieldName => {
-          assert.property(updateSiteResponse.body.data, fieldName)
-        })
-        // check the updated property
-        assert.equal(updateSiteResponse.body.data.street2, newStreet2)
+        assert.typeOf(updateSiteResponse.body, 'Number')
 
         // make sure the data has persisted
         const getSiteResponse = await server.get(`/api/site/${siteId}`).set('Authorization', `Bearer${shared.token}`)
         assert.equal(getSiteResponse.body.data.street2, newStreet2)
 
         // Clean Up: Update street2 with the original street address
-        const updateSiteResponse2 = await server
-          .put(`${path}/${siteId}`)
-          .send({ ...newSiteData, street2: originalStreet2 })
-          .set('Authorization', `Bearer${shared.token}`)
-        assert.equal(updateSiteResponse2.body.data.street2, originalStreet2)
+        await knex('Site').where('id', siteId).update({ street2: originalStreet2 })
       })
     })
 

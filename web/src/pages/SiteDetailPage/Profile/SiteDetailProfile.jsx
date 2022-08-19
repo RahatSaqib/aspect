@@ -33,8 +33,8 @@ const SiteDetailProfile = ({ site, siteTags, formatMessage, disabled, user }) =>
       ),
     },
     { label: getCustomMessage(messages, 'state', user), value: site.state },
-    { label: formatMessage(messages.fieldCity), value: site.city },
     { label: getCustomMessage(messages, 'lga', user), value: site.lga },
+    { label: formatMessage(messages.fieldCity), value: site.city },
     {
       label: formatMessage(messages.fieldDevices),
       value:

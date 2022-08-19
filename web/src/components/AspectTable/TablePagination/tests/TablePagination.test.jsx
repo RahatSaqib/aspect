@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/extend-expect'
 
@@ -27,36 +27,42 @@ it('renders correct "Now Showing" counts', () => {
   expect(getByTestId('now-showing')).toHaveTextContent('Showing 1-10 of 90 notifications')
 })
 
-it('update row count and verify correct values', () => {
+it('update row count and verify correct values', async () => {
   const { getByRole, getByTestId } = render(
     <I18nProvider>
       <Default {...Default.args} />
     </I18nProvider>
   )
   userEvent.click(getByRole('button', { name: /25/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent('Showing 1-25 of 90 notifications')
+  await waitFor(() => {
+    expect(getByTestId('now-showing')).toHaveTextContent('Showing 1-25 of 90 notifications')
+  })
 })
 
-it('update page selector and verify correct values', () => {
+it('update page selector and verify correct values', async () => {
   const { getByRole, getByTestId } = render(
     <I18nProvider>
       <Default {...Default.args} />
     </I18nProvider>
   )
   userEvent.click(getByRole('button', { name: /next/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent('Showing 11-20 of 90 notifications')
-  expect(getByRole('button', { name: /first/i })).toBeEnabled()
-  expect(getByRole('button', { name: /previous/i })).toBeEnabled()
+  await waitFor(() => {
+    expect(getByTestId('now-showing')).toHaveTextContent('Showing 11-20 of 90 notifications')
+    expect(getByRole('button', { name: /first/i })).toBeEnabled()
+    expect(getByRole('button', { name: /previous/i })).toBeEnabled()
+  })
 })
 
-it('go to last page and verify correct values and states', () => {
+it('go to last page and verify correct values and states', async () => {
   const { getByRole, getByTestId } = render(
     <I18nProvider>
       <Default {...Default.args} />
     </I18nProvider>
   )
   userEvent.click(getByRole('button', { name: /last/i }))
-  expect(getByTestId('now-showing')).toHaveTextContent('Showing 81-90 of 90 notifications')
-  expect(getByRole('button', { name: /next/i })).toBeDisabled()
-  expect(getByRole('button', { name: /last/i })).toBeDisabled()
+  await waitFor(() => {
+    expect(getByTestId('now-showing')).toHaveTextContent('Showing 81-90 of 90 notifications')
+    expect(getByRole('button', { name: /next/i })).toBeDisabled()
+    expect(getByRole('button', { name: /last/i })).toBeDisabled()
+  })
 })

@@ -12,14 +12,6 @@ const messages = {
       id: 'pages.LocationSelector.countryRequired',
       defaultMessage: 'Country is required',
     },
-    state: {
-      id: 'pages.LocationSelector.state',
-      defaultMessage: 'State',
-    },
-    lga: {
-      id: 'pages.LocationSelector.lga',
-      defaultMessage: 'Area',
-    },
   }),
 }
 

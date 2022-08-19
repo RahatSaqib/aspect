@@ -33,12 +33,8 @@ const enhance = compose(
 export const NotificationDetail = props => (
   <div>
     <Routes>
-      <Route path="">
-        <NotificationDetailView {...props} />
-      </Route>
-      <Route path="history">
-        <NotificationDetailHistory {...props} />
-      </Route>
+      <Route path="" element={<NotificationDetailView {...props} />} />
+      <Route path="history" element={<NotificationDetailHistory {...props} />} />
     </Routes>
   </div>
 )

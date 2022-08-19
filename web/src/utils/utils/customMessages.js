@@ -35,6 +35,10 @@ export const commonDefinitions = defineMessages({
     id: 'pages.common.state_PK',
     defaultMessage: 'Province/Region',
   },
+  state_BD: {
+    id: 'pages.common.state_BD',
+    defaultMessage: 'Division',
+  },
   lga: {
     id: 'pages.common.lga',
     defaultMessage: 'LGA',
@@ -70,10 +74,6 @@ export const commonDefinitions = defineMessages({
   lga_MW: {
     id: 'pages.common.lga_MW',
     defaultMessage: 'District',
-  },
-  state_BD: {
-    id: 'pages.common.state_BD',
-    defaultMessage: 'Division',
   },
   button_Edit: {
     id: 'button_Edit',
