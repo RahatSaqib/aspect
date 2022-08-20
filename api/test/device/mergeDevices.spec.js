@@ -16,7 +16,7 @@ let repeatedSourceResultId
 let uniqueSourceResultId
 let repeatedTargetResultId
 
-describe.only('Merge Devices', () => {
+describe('Merge Devices', () => {
   before(async () => shared.checkToken(server, path))
 
   const sourceDeviceContext = createGxConnectTestContext(server, {
