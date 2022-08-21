@@ -121,7 +121,7 @@ const routes = [
     path: '/geography/level-by-user-select-list',
     handler: getLevelByUserSelectList,
     config: {
-      auth: false,
+      auth: { scope: ['notification'] },
       description: 'Get levels by user',
       notes: 'levels and Names',
     },
