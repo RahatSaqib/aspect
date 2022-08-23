@@ -37,10 +37,10 @@ const NotificationFormPage = () => {
 
   const onSubmit = formik => {
     const specificPersonId = 'specificPerson'
-    const formConfig = getFormConfig(intl.formatMessage, formik.values.notificationType, jobFunctions, true)
+    const formConfig = getFormConfig(intl.formatMessage, jobFunctions, false)
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
-    values.notificationCategory = formik.values.notificationType === 'resultBased' ? 'resultBased' : 'issueBased'
+    // values.notificationCategory = formik.values.notificationType === 'resultBased' ? 'resultBased' : 'issueBased'
     values.notificationType = formik.values.notificationType
     values.jobFunctions.map((jf, index) => {
       jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
@@ -92,8 +92,12 @@ const NotificationFormPage = () => {
       values.areaItems = values.areaItemsLab
       delete values.areaItemsLab
     }
-    submitNotification({ values, id: undefined })
-    navigate('/browse/notification')
+    submitNotification(
+      { values, id: undefined },
+      {
+        onSuccess: () => navigate('/browse/notification'),
+      }
+    )
   }
 
   return isLoading || !formConfig ? (
