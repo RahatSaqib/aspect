@@ -38,16 +38,13 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
     items: [{ id: 'save', text: formatMessage(messages.save), action: 'save' }],
   },
   sections: [
-    // notification header (enabled/type)
-    ...notificationTypeSection(formatMessage),
-    // notification type based
+    ...notificationTypeSection(formatMessage), // notification header (enabled/type)
     resultBasedSection(formatMessage), // only for ['resultBased']
-    siteBasedSection(formatMessage), // only for ['InventoryStockout','InventoryStockExpiring']
-    deviceBasedSection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
+    geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage), // only for ['InventoryStockout']
     stockExpiringSection(formatMessage), // only for ['InventoryStockExpiring']
-    // notification footer (sending options)
-    ...sendSection(formatMessage, jobFunctions),
+    calibrationSection(formatMessage), // only for ['calibration']
+    ...sendSection(formatMessage, jobFunctions), // notification footer (sending options)
   ],
 })
 
@@ -311,57 +308,11 @@ const resultBasedSection = formatMessage => {
   }
 }
 
-const siteBasedSection = formatMessage => {
-  return {
-    id: 'whenSiteIs',
-    label: 'whenSiteIs',
-    labelI18nKey: 'whenSiteIs',
-    visibleIf: values => ['InventoryStockout', 'InventoryStockExpiring'].includes(values.notificationType),
-    rows: [
-      {
-        id: 'site',
-        items: [
-          {
-            id: 'siteId',
-            controlType: {
-              component: 'select',
-              endpoint: SITE_ALL.ENDPOINT,
-              hideIfNoOptions: false,
-              queryKey: SITE_ALL.KEY,
-              normalizeLoadedData: response => {
-                const { ok, data } = response
-                return ok === true ? data.map(({ id, name }) => ({ label: name, value: id })) : []
-              },
-              placeholder: formatMessage(messages.sitePlaceholder),
-            },
-            classNames: {
-              itemContainer: cssClasses('min-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
-            },
-            labelI18nKey: 'siteTitle',
-          },
-        ],
-      },
-    ],
-  }
-}
-
-const deviceBasedSection = formatMessage => {
+const geographySection = formatMessage => {
   return {
     id: 'fromThisDevice',
     label: 'from',
     labelI18nKey: 'from',
-    visibleIf: values =>
-      [
-        'DeviceNoResults',
-        'DeviceOffline',
-        'calibration',
-        'ModuleReplaced',
-        'ModuleDisabled',
-        'UnusedModules',
-        'InstrumentReplaced',
-      ].includes(values.notificationType),
     rows: [
       {
         id: 10,
@@ -474,6 +425,78 @@ const stockExpiringSection = formatMessage => {
         items: [
           {
             id: 'stockExpiring',
+            label: formatMessage(messages.stockExpiring),
+            initialValue: ['30'],
+            type: 'readOnly',
+            controlType: {
+              component: 'select',
+              // endpoint: PERSON_SELECT_LIST.ENDPOINT,
+              hideIfNoOptions: false,
+              // queryKey: PERSON_SELECT_LIST.KEY,
+              options: [{ value: '30', label: '30' }],
+              // normalizeLoadedData: (response, formik) => {
+              //   const { values, setFieldValue } = formik
+              //   function makeLabel(name, state) {
+              //     const stateLabel = isEmpty(state) ? '' : ` (${state})`
+              //     return `${name} ${stateLabel}`
+              //   }
+              //   const { ok, data } = response
+              //   const options = [
+              //     { label: formatMessage(messages.optionPersonRoleSet), options: [] },
+              //     { label: formatMessage(messages.optionPersonRoleNotSet), options: [] },
+              //   ]
+              //   if (ok === true) {
+              //     const selected = intersectionBy(data, values.persons, 'id')
+              //     if (selected?.length) {
+              //       const initialValues = []
+              //       map(selected, ({ id, name, state }) =>
+              //         initialValues.push({ label: makeLabel(name, state), value: id, grouped: true })
+              //       )
+              //       values.persons = initialValues
+              //       setFieldValue('persons', initialValues)
+              //     }
+              //     const withJob = filter(data, item => !isEmpty(item.level))
+              //     const withoutJob = xor(data, withJob)
+              //     map(withJob, ({ id, name, state }) =>
+              //       options[0].options.push({ label: makeLabel(name, state), value: id, grouped: true })
+              //     )
+              //     map(withoutJob, ({ name, state }) =>
+              //       options[1].options.push({
+              //         label: makeLabel(name, state),
+              //         value: null,
+              //         disabled: true,
+              //         grouped: true,
+              //       })
+              //     )
+              //   }
+              //   return options?.length ? options : []
+              // },
+            },
+            classNames: {
+              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
+            },
+            labelI18nKey: 'daysOfInventoryLeft',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const calibrationSection = formatMessage => {
+  return {
+    id: 'stockExpiring',
+    label: 'stockExpiring',
+    labelI18nKey: 'stockExpiring',
+    visibleIf: values => ['calibration'].includes(values.notificationType),
+    rows: [
+      {
+        id: 81,
+        items: [
+          {
+            id: 'calibration',
             label: formatMessage(messages.stockExpiring),
             initialValue: ['30/60/90'],
             type: 'readOnly',
