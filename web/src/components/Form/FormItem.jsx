@@ -70,11 +70,7 @@ const FormItem = ({
         id={id}
         input={type}
         controlType={{ ...controlType, subRowIndex }}
-        label={`${getLabel({
-          ...i18nTools,
-          labelI18nKey,
-          label,
-        })}${isRequired ? '*' : ''}`}
+        label={`${getLabel({ ...i18nTools, labelI18nKey, label })}${isRequired ? '*' : ''}`}
         link={link}
         placeholder={getFormattedString(placeholder, i18nTools, ' - ')}
         className={cssClasses('form__sectionItemInput', {
@@ -91,9 +87,7 @@ const FormItem = ({
             !toggleEdit || type === 'readOnly' || (disabledIf && disabledIf(formik.values, toggleEdit, subRowIndex)),
           disableUnderline: !toggleEdit || type === 'readOnly',
         }}
-        InputLabelProps={{
-          shrink: true,
-        }}
+        InputLabelProps={{ shrink: true }}
         formik={formik}
         validate={validate}
       />

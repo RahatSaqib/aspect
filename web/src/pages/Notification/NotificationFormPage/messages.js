@@ -39,9 +39,29 @@ export default defineMessages({
     id: 'pages.NotificationDetail.whenResultIs',
     defaultMessage: 'When the result is',
   },
-  fromThisDevice: {
-    id: 'pages.NotificationDetail.fromThisDevice',
-    defaultMessage: 'From this device',
+  whenSiteIs: {
+    id: 'pages.NotificationDetail.whenSiteIs',
+    defaultMessage: 'When site is',
+  },
+  from: {
+    id: 'pages.NotificationDetail.from',
+    defaultMessage: 'From...',
+  },
+  whenDeviceHasLessThan: {
+    id: 'pages.NotificationDetail.whenDeviceHasLessThan',
+    defaultMessage: 'When device has less than...',
+  },
+  daysOfInventoryLeft: {
+    id: 'pages.NotificationDetail.daysOfInventoryLeft',
+    defaultMessage: 'Days of inventory left',
+  },
+  stockExpiring: {
+    id: 'pages.NotificationDetail.stockExpiring',
+    defaultMessage: 'When stock is...',
+  },
+  stockExpiringDays: {
+    id: 'pages.NotificationDetail.stockExpiringDays',
+    defaultMessage: 'Expiring in days',
   },
   send: {
     id: 'pages.NotificationDetail.send',
@@ -60,38 +80,35 @@ export default defineMessages({
     id: 'pages.NotificationDetail.type.ResultBased',
     defaultMessage: 'Result Based',
   },
-  notificationTypeNoResult: {
-    id: 'pages.NotificationDetail.type.NoResult',
-    defaultMessage: 'No Result',
+  // Notification for Site
+  notificationCreateGroupForSite: {
+    id: 'pages.Notifications.group.forSite',
+    defaultMessage: 'Notification for Site',
   },
-  notificationTypeTestUpdated: {
-    id: 'pages.Notification.type.TestUpdated',
-    defaultMessage: 'Test Updated',
+  notificationTypeLowInventory: {
+    id: 'pages.Notification.type.LowInventory',
+    defaultMessage: 'Low Inventory',
+  },
+  notificationTypeExpiring: {
+    id: 'pages.Notification.type.InventoryExpiring',
+    defaultMessage: 'Inventory Expiring',
   },
   // Notification for Devices
   notificationCreateGroupForDevices: {
     id: 'pages.Notifications.group.forDevices',
     defaultMessage: 'Notification for Devices',
   },
+  notificationTypeNoResult: {
+    id: 'pages.NotificationDetail.type.NoResult',
+    defaultMessage: 'No Result',
+  },
   notificationTypeOffline: {
     id: 'pages.Notification.type.Offline',
     defaultMessage: 'Offline',
   },
-  notificationTypeReport: {
-    id: 'pages.Notification.type.Report',
-    defaultMessage: 'Report',
-  },
-  notificationTypeLowInventory: {
-    id: 'pages.Notification.type.LowInventory',
-    defaultMessage: 'Low Inventory',
-  },
   notificationTypeCalibration: {
     id: 'pages.Notification.type.Calibration',
     defaultMessage: 'Calibration',
-  },
-  notificationTypeModule: {
-    id: 'pages.Notification.type.Module',
-    defaultMessage: 'Module',
   },
   notificationTypeModuleReplaced: {
     id: 'pages.Notification.type.ModuleReplaced',
@@ -105,6 +122,18 @@ export default defineMessages({
     id: 'pages.Notification.type.ModuleUnused',
     defaultMessage: 'Module Unused',
   },
+  notificationTypeInstrumentReplaced: {
+    id: 'pages.Notification.type.InstrumentReplaced',
+    defaultMessage: 'Instrument Replaced',
+  },
+  notificationTypeReport: {
+    id: 'pages.Notification.type.Report',
+    defaultMessage: 'Report',
+  },
+  notificationTypeModule: {
+    id: 'pages.Notification.type.Module',
+    defaultMessage: 'Module',
+  },
   notificationTypeCriticalError: {
     id: 'pages.Notification.type.CriticalError',
     defaultMessage: 'Critical Error',
@@ -113,14 +142,21 @@ export default defineMessages({
     id: 'pages.Notification.type.OnlineDate',
     defaultMessage: 'Online Date',
   },
-  notificationTypeInstrumentReplaced: {
-    id: 'pages.Notification.type.InstrumentReplaced',
-    defaultMessage: 'Instrument Replaced',
-  },
   // --------------------------------------------------------------
   notificationTitle: {
     id: 'pages.NotificationDetail.notificationTitle',
     defaultMessage: 'Notification Title',
+  },
+  // --------------------------------------------------------------
+  // section "When site is"
+  // --------------------------------------------------------------
+  siteTitle: {
+    id: 'pages.NotificationDetail.siteTitle',
+    defaultMessage: 'Site',
+  },
+  sitePlaceholder: {
+    id: 'pages.NotificationDetail.sitePlaceholder',
+    defaultMessage: 'Select Site...',
   },
 
   // --------------------------------------------------------------

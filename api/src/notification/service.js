@@ -16,6 +16,7 @@ const {
   messageStatusToId,
   messageSeverityToId,
   notificationTypeCategoryToId,
+  issueTypeToId,
 } = require('../shared/dictionary')
 const logger = require('../shared/logger')
 const NotificationCache = require('./notificationCache')
@@ -776,10 +777,10 @@ const validateFilterCondition = async filterCondition => {
   return true
 }
 
-async function saveNotificationType({ id: notificationTypeId, partnerId, userId, payload, issueTypeId = null }) {
+async function saveNotificationType({ id: notificationTypeId, partnerId, userId, payload }) {
   const fileContentTypeId = await fileContentTypeToId('applicationJson')
   const messageSeverityId = await messageSeverityToId('Alert')
-  const notificationTypeCategoryId = await notificationTypeCategoryToId('resultBased')
+
   const {
     areaItems,
     deviceLevelId,
@@ -800,8 +801,14 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     webBody,
     webUrl,
     enabled,
+    issueTypeId: issueTypeExternalId,
+    notificationType: notificationTypeExternalId,
   } = payload
+  const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeExternalId)
+  const issueTypeId = await issueTypeToId(issueTypeExternalId)
+
   const now = new Date()
+
   const auditFields = {
     createdOn: now,
     createdBy: userId,

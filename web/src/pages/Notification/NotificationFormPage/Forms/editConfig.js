@@ -27,6 +27,30 @@ const checkboxClassNames = {
   controlContainer: cssClasses('checkbox-container'),
 }
 
+const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
+  title: isEdit
+    ? formatMessage(messages.titleEdit, 'Edit Notification')
+    : formatMessage(messages.titleNew, 'New Notification'),
+  icon: 'document',
+  actions: {
+    default: 'save',
+    helpers: '',
+    items: [{ id: 'save', text: formatMessage(messages.save), action: 'save' }],
+  },
+  sections: [
+    // notification header (enabled/type)
+    ...notificationTypeSection(formatMessage),
+    // notification type based
+    resultBasedSection(formatMessage), // only for ['resultBased']
+    siteBasedSection(formatMessage), // only for ['InventoryStockout','InventoryStockExpiring']
+    deviceBasedSection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
+    lowInventorySection(formatMessage), // only for ['InventoryStockout']
+    stockExpiringSection(formatMessage), // only for ['InventoryStockExpiring']
+    // notification footer (sending options)
+    ...sendSection(formatMessage, jobFunctions),
+  ],
+})
+
 function stateSelectOptions(data) {
   const stateOptions = reduce(
     data,
@@ -94,52 +118,137 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
   }
 }
 
-function fromThisDeviceSection(formatMessage) {
-  return {
-    id: 'fromThisDevice',
-    label: 'fromThisDevice',
-    labelI18nKey: 'fromThisDevice',
-    visibleIf: values =>
-      ['resultBased', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced'].includes(
-        values.notificationType
-      ),
-    rows: [
-      {
-        id: 10,
-        items: [
-          {
-            id: 'deviceLevelId',
-            controlType: {
-              component: 'select',
-              hideIfNoOptions: false,
-              options: [
-                { label: formatMessage(messages.AreaNational), value: 'national' },
-                { label: formatMessage(messages.AreaState), value: 'state' },
-                { label: formatMessage(messages.AreaLGA), value: 'lga' },
-                { label: formatMessage(messages.AreaLaboratory), value: 'lab' },
-              ],
-              placeholder: formatMessage(messages.SelectAreaPlaceholder),
+const notificationTypeSection = formatMessage => {
+  return [
+    // notification enabled
+    {
+      id: 'section_notificationType_disable',
+      label: 'Enable',
+      labelI18nKey: 'notificationTypeEnable',
+      rows: [
+        {
+          id: 0,
+          items: [
+            {
+              id: 'enabled',
+              controlType: { component: 'checkbox' },
+              classNames: checkboxClassNames,
+              initialValue: true,
+              label: '',
             },
-            label: formatMessage(messages.SelectAreaTitle),
-          },
-          { id: 'areaItemsState', ...sharedAreaItemsConfig(formatMessage, stateSelectOptions, 'state') },
-          { id: 'areaItemsLGA', ...sharedAreaItemsConfig(formatMessage, lgaSelectOptions, 'lga') },
-          { id: 'areaItemsLab', ...sharedAreaItemsConfig(formatMessage, labSelectOptions, 'lab') },
-        ],
-      },
-    ],
-  }
+          ],
+        },
+      ],
+    },
+    // notification type/name
+    {
+      id: 'section_notificationType',
+      label: 'Notification Type',
+      labelI18nKey: 'notificationType',
+      rows: [
+        {
+          id: 0,
+          items: [
+            {
+              id: 'notificationType',
+              controlType: {
+                component: 'select',
+                hideIfNoOptions: false,
+                options: [
+                  {
+                    label: formatMessage(messages.notificationCreateGroupForResults),
+                    options: [
+                      {
+                        value: 'resultBased',
+                        label: formatMessage(messages.notificationTypeResultBased),
+                        icon: 'AiOutlineSolution',
+                      },
+                    ],
+                  },
+                  {
+                    label: formatMessage(messages.notificationCreateGroupForSite),
+                    options: [
+                      {
+                        value: 'InventoryStockout',
+                        label: formatMessage(messages.notificationTypeLowInventory),
+                        icon: 'AiOutlineDashboard',
+                      },
+                      {
+                        value: 'InventoryStockExpiring',
+                        label: formatMessage(messages.notificationTypeExpiring),
+                        icon: 'AiOutlineDashboard',
+                      },
+                    ],
+                  },
+                  {
+                    label: formatMessage(messages.notificationCreateGroupForDevices),
+                    options: [
+                      {
+                        value: 'DeviceNoResults',
+                        label: formatMessage(messages.notificationTypeNoResult),
+                        icon: 'AiOutlineFileExclamation',
+                      },
+                      {
+                        value: 'DeviceOffline',
+                        label: formatMessage(messages.notificationTypeOffline),
+                        icon: 'AiOutlineApi',
+                      },
+                      {
+                        value: 'calibration',
+                        label: formatMessage(messages.notificationTypeCalibration),
+                        icon: 'AiOutlineTool',
+                      },
+                      {
+                        value: 'ModuleReplaced',
+                        label: formatMessage(messages.notificationTypeModuleReplaced),
+                        icon: 'AiOutlineSwap',
+                      },
+                      {
+                        value: 'ModuleDisabled',
+                        label: formatMessage(messages.notificationTypeModuleDisabled),
+                        icon: 'AiOutlineBlock',
+                      },
+                      {
+                        value: 'UnusedModules',
+                        label: formatMessage(messages.notificationTypeModuleUnused),
+                        icon: 'AiOutlineExclamation',
+                      },
+                      {
+                        value: 'InstrumentReplaced',
+                        label: formatMessage(messages.notificationTypeInstrumentReplaced),
+                        icon: 'AiOutlineTool',
+                      },
+                    ],
+                  },
+                ],
+                placeholder: formatMessage(messages.notificationType),
+              },
+              classNames: {
+                itemContainer: cssClasses('min-width-100pc', 'tags-container'),
+                controlContainer: cssClasses('full-width-100pc'),
+                item: cssClasses('full-width-100pc'),
+              },
+              labelI18nKey: 'notificationType',
+            },
+            {
+              id: 'name',
+              controlType: { component: 'textField' },
+              fullWidth: true,
+              labelI18nKey: 'notificationTitle',
+            },
+          ],
+        },
+      ],
+    },
+  ]
 }
 
-const whenResultIsSection = formatMessage => {
+const resultBasedSection = formatMessage => {
   return {
     id: 'whenResultIs',
     label: 'whenResultIs',
     labelI18nKey: 'whenResultIs',
-    visibleIf: values =>
-      ['resultBased', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced'].includes(
-        values.notificationType
-      ),
+    visibleIf: values => ['resultBased'].includes(values.notificationType),
     rows: [
       {
         id: 'result',
@@ -202,137 +311,231 @@ const whenResultIsSection = formatMessage => {
   }
 }
 
-const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
-  title: isEdit
-    ? formatMessage(messages.titleEdit, 'Edit Notification')
-    : formatMessage(messages.titleNew, 'New Notification'),
-  icon: 'document',
-  actions: {
-    default: 'save',
-    helpers: '',
-    items: [{ id: 'save', text: formatMessage(messages.save), action: 'save' }],
-  },
-  sections: [
-    // notification enabled
-    {
-      id: 'section_notificationType_disable',
-      label: 'Enable',
-      labelI18nKey: 'notificationTypeEnable',
-      rows: [
-        {
-          id: 0,
-          items: [
-            {
-              id: 'enabled',
-              controlType: { component: 'checkbox' },
-              classNames: checkboxClassNames,
-              initialValue: true,
-              label: '',
-            },
-          ],
-        },
-      ],
-    },
-    // notification type/name
-    {
-      id: 'section_notificationType',
-      label: 'Notification Type',
-      labelI18nKey: 'notificationType',
-      rows: [
-        {
-          id: 0,
-          items: [
-            {
-              id: 'notificationType',
-              controlType: {
-                component: 'select',
-                hideIfNoOptions: false,
-                /* eslint-disable prettier/prettier */
-                options: [
-                  {
-                    label: formatMessage(messages.notificationCreateGroupForResults),
-                    options: [
-                      {
-                        value: 'resultBased',
-                        label: formatMessage(messages.notificationTypeResultBased),
-                        icon: 'AiOutlineSolution',
-                      },
-                      {
-                        value: 'DeviceNoResults',
-                        label: formatMessage(messages.notificationTypeNoResult),
-                        icon: 'AiOutlineFileExclamation',
-                      },
-                      // { value: 'test-updated', label: formatMessage(messages.notificationTypeTestUpdated), icon: 'AiOutlineShake', },
-                    ],
-                  },
-                  {
-                    label: formatMessage(messages.notificationCreateGroupForDevices),
-                    options: [
-                      {
-                        value: 'DeviceOffline',
-                        label: formatMessage(messages.notificationTypeOffline),
-                        icon: 'AiOutlineApi',
-                      },
-                      // { value: 'report', label: formatMessage(messages.notificationTypeReport), icon: 'AiOutlineBarChart', },
-                      {
-                        value: 'InventoryStockout',
-                        label: formatMessage(messages.notificationTypeLowInventory),
-                        icon: 'AiOutlineDashboard',
-                      },
-                      {
-                        value: 'calibration',
-                        label: formatMessage(messages.notificationTypeCalibration),
-                        icon: 'AiOutlineTool',
-                      },
-                      {
-                        value: 'ModuleReplaced',
-                        label: formatMessage(messages.notificationTypeModuleReplaced),
-                        icon: 'AiOutlineSwap',
-                      },
-                      {
-                        value: 'ModuleDisabled',
-                        label: formatMessage(messages.notificationTypeModuleDisabled),
-                        icon: 'AiOutlineBlock',
-                      },
-                      {
-                        value: 'UnusedModules',
-                        label: formatMessage(messages.notificationTypeModuleUnused),
-                        icon: 'AiOutlineExclamation',
-                      },
-                      {
-                        value: 'InstrumentReplaced',
-                        label: formatMessage(messages.notificationTypeInstrumentReplaced),
-                        icon: 'AiOutlineTool',
-                      },
-                      // { value: 'module', label: formatMessage(messages.notificationTypeModule), icon: 'AiOutlineBlock', },
-                      // { value: 'critical-error', label: formatMessage(messages.notificationTypeCriticalError), icon: 'AiOutlineInfoCircle', },
-                      // { value: 'online-date', label: formatMessage(messages.notificationTypeOnlineDate), icon: 'AiOutlineCalendar', },
-                    ],
-                  },
-                ],
-                /* eslint-enable prettier/prettier */
-                placeholder: formatMessage(messages.notificationType),
+const siteBasedSection = formatMessage => {
+  return {
+    id: 'whenSiteIs',
+    label: 'whenSiteIs',
+    labelI18nKey: 'whenSiteIs',
+    visibleIf: values => ['InventoryStockout', 'InventoryStockExpiring'].includes(values.notificationType),
+    rows: [
+      {
+        id: 'site',
+        items: [
+          {
+            id: 'siteId',
+            controlType: {
+              component: 'select',
+              endpoint: SITE_ALL.ENDPOINT,
+              hideIfNoOptions: false,
+              queryKey: SITE_ALL.KEY,
+              normalizeLoadedData: response => {
+                const { ok, data } = response
+                return ok === true ? data.map(({ id, name }) => ({ label: name, value: id })) : []
               },
-              classNames: {
-                itemContainer: cssClasses('min-width-100pc', 'tags-container'),
-                controlContainer: cssClasses('full-width-100pc'),
-                item: cssClasses('full-width-100pc'),
-              },
-              labelI18nKey: 'notificationType',
+              placeholder: formatMessage(messages.sitePlaceholder),
             },
-            {
-              id: 'name',
-              controlType: { component: 'textField' },
-              fullWidth: true,
-              labelI18nKey: 'notificationTitle',
+            classNames: {
+              itemContainer: cssClasses('min-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
             },
-          ],
-        },
-      ],
-    },
-    // notification type based
-    whenResultIsSection(formatMessage), // only for ['resultBased', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
-    fromThisDeviceSection(formatMessage), // only for ['resultBased', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
+            labelI18nKey: 'siteTitle',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const deviceBasedSection = formatMessage => {
+  return {
+    id: 'fromThisDevice',
+    label: 'from',
+    labelI18nKey: 'from',
+    visibleIf: values =>
+      [
+        'DeviceNoResults',
+        'DeviceOffline',
+        'calibration',
+        'ModuleReplaced',
+        'ModuleDisabled',
+        'UnusedModules',
+        'InstrumentReplaced',
+      ].includes(values.notificationType),
+    rows: [
+      {
+        id: 10,
+        items: [
+          {
+            id: 'deviceLevelId',
+            controlType: {
+              component: 'select',
+              hideIfNoOptions: false,
+              options: [
+                { label: formatMessage(messages.AreaNational), value: 'national' },
+                { label: formatMessage(messages.AreaState), value: 'state' },
+                { label: formatMessage(messages.AreaLGA), value: 'lga' },
+                { label: formatMessage(messages.AreaLaboratory), value: 'lab' },
+              ],
+              placeholder: formatMessage(messages.SelectAreaPlaceholder),
+            },
+            label: formatMessage(messages.SelectAreaTitle),
+          },
+          { id: 'areaItemsState', ...sharedAreaItemsConfig(formatMessage, stateSelectOptions, 'state') },
+          { id: 'areaItemsLGA', ...sharedAreaItemsConfig(formatMessage, lgaSelectOptions, 'lga') },
+          { id: 'areaItemsLab', ...sharedAreaItemsConfig(formatMessage, labSelectOptions, 'lab') },
+        ],
+      },
+    ],
+  }
+}
+
+const lowInventorySection = formatMessage => {
+  return {
+    id: 'whenDeviceHasLessThan',
+    label: 'whenDeviceHasLessThan',
+    labelI18nKey: 'whenDeviceHasLessThan',
+    visibleIf: values => ['InventoryStockout'].includes(values.notificationType),
+    rows: [
+      {
+        id: 81,
+        items: [
+          {
+            id: 'daysOfInventoryLeft',
+            label: formatMessage(messages.daysOfInventoryLeft),
+            initialValue: ['90'],
+            type: 'readOnly',
+            controlType: {
+              component: 'select',
+              // endpoint: PERSON_SELECT_LIST.ENDPOINT,
+              hideIfNoOptions: false,
+              // queryKey: PERSON_SELECT_LIST.KEY,
+              options: [{ value: '90', label: '90' }],
+              // normalizeLoadedData: (response, formik) => {
+              //   const { values, setFieldValue } = formik
+              //   function makeLabel(name, state) {
+              //     const stateLabel = isEmpty(state) ? '' : ` (${state})`
+              //     return `${name} ${stateLabel}`
+              //   }
+              //   const { ok, data } = response
+              //   const options = [
+              //     { label: formatMessage(messages.optionPersonRoleSet), options: [] },
+              //     { label: formatMessage(messages.optionPersonRoleNotSet), options: [] },
+              //   ]
+              //   if (ok === true) {
+              //     const selected = intersectionBy(data, values.persons, 'id')
+              //     if (selected?.length) {
+              //       const initialValues = []
+              //       map(selected, ({ id, name, state }) =>
+              //         initialValues.push({ label: makeLabel(name, state), value: id, grouped: true })
+              //       )
+              //       values.persons = initialValues
+              //       setFieldValue('persons', initialValues)
+              //     }
+              //     const withJob = filter(data, item => !isEmpty(item.level))
+              //     const withoutJob = xor(data, withJob)
+              //     map(withJob, ({ id, name, state }) =>
+              //       options[0].options.push({ label: makeLabel(name, state), value: id, grouped: true })
+              //     )
+              //     map(withoutJob, ({ name, state }) =>
+              //       options[1].options.push({
+              //         label: makeLabel(name, state),
+              //         value: null,
+              //         disabled: true,
+              //         grouped: true,
+              //       })
+              //     )
+              //   }
+              //   return options?.length ? options : []
+              // },
+            },
+            classNames: {
+              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
+            },
+            labelI18nKey: 'daysOfInventoryLeft',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const stockExpiringSection = formatMessage => {
+  return {
+    id: 'stockExpiring',
+    label: 'stockExpiring',
+    labelI18nKey: 'stockExpiring',
+    visibleIf: values => ['InventoryStockExpiring'].includes(values.notificationType),
+    rows: [
+      {
+        id: 81,
+        items: [
+          {
+            id: 'stockExpiring',
+            label: formatMessage(messages.stockExpiring),
+            initialValue: ['30/60/90'],
+            type: 'readOnly',
+            controlType: {
+              component: 'select',
+              // endpoint: PERSON_SELECT_LIST.ENDPOINT,
+              hideIfNoOptions: false,
+              // queryKey: PERSON_SELECT_LIST.KEY,
+              options: [{ value: '30/60/90', label: '30/60/90' }],
+              // normalizeLoadedData: (response, formik) => {
+              //   const { values, setFieldValue } = formik
+              //   function makeLabel(name, state) {
+              //     const stateLabel = isEmpty(state) ? '' : ` (${state})`
+              //     return `${name} ${stateLabel}`
+              //   }
+              //   const { ok, data } = response
+              //   const options = [
+              //     { label: formatMessage(messages.optionPersonRoleSet), options: [] },
+              //     { label: formatMessage(messages.optionPersonRoleNotSet), options: [] },
+              //   ]
+              //   if (ok === true) {
+              //     const selected = intersectionBy(data, values.persons, 'id')
+              //     if (selected?.length) {
+              //       const initialValues = []
+              //       map(selected, ({ id, name, state }) =>
+              //         initialValues.push({ label: makeLabel(name, state), value: id, grouped: true })
+              //       )
+              //       values.persons = initialValues
+              //       setFieldValue('persons', initialValues)
+              //     }
+              //     const withJob = filter(data, item => !isEmpty(item.level))
+              //     const withoutJob = xor(data, withJob)
+              //     map(withJob, ({ id, name, state }) =>
+              //       options[0].options.push({ label: makeLabel(name, state), value: id, grouped: true })
+              //     )
+              //     map(withoutJob, ({ name, state }) =>
+              //       options[1].options.push({
+              //         label: makeLabel(name, state),
+              //         value: null,
+              //         disabled: true,
+              //         grouped: true,
+              //       })
+              //     )
+              //   }
+              //   return options?.length ? options : []
+              // },
+            },
+            classNames: {
+              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
+            },
+            labelI18nKey: 'daysOfInventoryLeft',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const sendSection = (formatMessage, jobFunctions) => {
+  return [
     // send (sms/email/web)
     {
       id: 'send',
@@ -595,7 +798,7 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
         ),
       ],
     },
-  ],
-})
+  ]
+}
 
 export default getFormConfig

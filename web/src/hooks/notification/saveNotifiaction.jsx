@@ -20,10 +20,3 @@ const useSaveNotification = () => {
 }
 
 export default useSaveNotification
-
-// const { mutate: submitNotification } = useMutation(({ values, id }) => {}, {
-//   onSuccess: () => {
-//     const path = getReturnUrl(query.get('returnUrl'), `/browse/notification`)
-//     navigate(path)
-//   },
-// })

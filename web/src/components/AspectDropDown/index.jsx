@@ -208,8 +208,9 @@ const LabelValue = ({ selectOptions, defaultSelectedOption, keyMapping }) => {
   if (options) {
     if (isArray(options)) {
       text = options.map(({ label }) => label).join('; ')
+    } else {
+      text = options.label
     }
-    text = options.label
   }
 
   return (

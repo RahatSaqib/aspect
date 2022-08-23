@@ -25,14 +25,15 @@ const validationSchema = formatMessage =>
     .shape({
       notificationType: Yup.string().oneOf([
         'resultBased',
-        'no-result',
-        'offline',
-        'low-inventory',
+        'InventoryStockout',
+        'InventoryStockExpiring',
+        'DeviceNoResults',
+        'DeviceOffline',
         'calibration',
-        'moduleReplaced',
-        'moduleDisabled',
-        'moduleUnused',
-        'instrumentReplaced',
+        'ModuleReplaced',
+        'ModuleDisabled',
+        'UnusedModules',
+        'InstrumentReplaced',
       ]),
       name: Yup.string().required(formatMessage(messages.notificationNameRequired)),
       result: Yup.array()
