@@ -5,8 +5,12 @@ import messages from './messages'
 import styles from './DailyStatusDialog.css'
 import useI18n from '../../../../hooks/useI18n'
 import IconProvider from '../../../IconProvider/index'
+import { i18nWrapper } from '../../../../providers/I18nProvider'
 
+const { format } = i18nWrapper()
 const cssClasses = classnames.bind(styles)
+
+const workingHoursFormat = 'p' // Long localized time
 
 export const SiteInfo = ({ siteContacts, hoursStart, hoursEnd }) => {
   const { formatMessage } = useI18n()
@@ -18,11 +22,15 @@ export const SiteInfo = ({ siteContacts, hoursStart, hoursEnd }) => {
         <div className={cssClasses('Form__bottom-prop')} style={{ marginLeft: 0 }}>
           <div className={cssClasses('Form__bottom-prop-name')}>{formatMessage(messages.siteWorkingHoursFrom)}:</div>
           <div className={cssClasses('Form__bottom-prop-value')}>
-            {hoursStart || formatMessage(messages.siteWorkingHoursUnknown)}
+            {hoursStart
+              ? format(new Date(2000, 1, 1, hoursStart, 0), workingHoursFormat)
+              : formatMessage(messages.siteWorkingHoursUnknown)}
           </div>
           <div className={cssClasses('Form__bottom-prop-name')}>{formatMessage(messages.siteWorkingHoursTo)}:</div>
           <div className={cssClasses('Form__bottom-prop-value')}>
-            {hoursEnd || formatMessage(messages.siteWorkingHoursUnknown)}
+            {hoursEnd
+              ? format(new Date(2000, 1, 1, hoursEnd, 0), workingHoursFormat)
+              : formatMessage(messages.siteWorkingHoursUnknown)}
           </div>
         </div>
       </div>
