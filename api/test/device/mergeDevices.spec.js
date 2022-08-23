@@ -123,7 +123,7 @@ describe('Merge Devices', () => {
     await setSourceFirstResultAsDuplicateInTarget(targetDevice.id, repeatedSourceResultId)
     await setSamplesToTargetSite()
 
-    const res = await server
+    await server
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
       .set('Authorization', `Bearer${shared.token}`)
