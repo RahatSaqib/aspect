@@ -25,7 +25,7 @@ async function clearCache() {
 }
 
 const evaluationMethods = {
-  issueBased: issueConditionsMet, // this will be developed once we move the issue based notification to the ui
+  issueBased: issueConditionsMet,
   resultBased: resultConditionsMet,
 }
 function resultCategoryFilters(queryBuilder, filterConditions, tblResultAlias) {
@@ -162,6 +162,7 @@ async function listNotifications(request) {
     })
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
+
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.id')
 
@@ -181,7 +182,8 @@ async function listNotifications(request) {
       knex.raw(`GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`),
       columnCount('alert'),
       knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
-      'ntc.externalId as typeCategory'
+      'ntc.externalId as typeCategory',
+      'filterCondition'
     )
 
   function columnCount(column) {
@@ -191,11 +193,47 @@ async function listNotifications(request) {
         ELSE CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END END) as ${column}Count`
     )
   }
+
   const getCount = knex.count('* as count').from(notificationQuery.clone().as('mainQuery')).first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  return { ok: true, total, data, length: data.length }
+  const stateConstraints = dataConstraints.$or.filter(c => c.geography?.stateId).map(c => c.geography.stateId)
+  let filteredData = data
+  if (stateConstraints.length) {
+    filteredData = data.filter(
+      d =>
+        d.filterCondition.deviceLevelId === 'state' &&
+        d.filterCondition.areaItems.map(s => +s.value).some(filterStateId => stateConstraints.includes(filterStateId))
+    )
+  }
+  const lgaConstraints = dataConstraints.$or.filter(c => c.geography?.lgaId).map(c => c.geography.lgaId)
+  if (lgaConstraints.length) {
+    filteredData = data.filter(
+      d =>
+        d.filterCondition.deviceLevelId === 'lga' &&
+        d.filterCondition.areaItems.map(s => +s.value).some(filterLgaId => stateConstraints.includes(filterLgaId))
+    )
+  }
+
+  const siteConstraints = dataConstraints.$or.filter(c => c.site?.id).map(c => c.site.id)
+  if (siteConstraints.length) {
+    filteredData = data.filter(
+      d =>
+        d.filterCondition.deviceLevelId === 'site' &&
+        d.filterCondition.areaItems.map(s => +s.value).some(filterSiteId => stateConstraints.includes(filterSiteId))
+    )
+  }
+
+  for (const r of filteredData) {
+    delete r.filterCondition
+  }
+  // Extract to a method
+  // Refactor all to use case
+  // Check for waterfall to lower level (can I get a cross join of states.where('id',filterStateId).join Lga join Sites,
+  // and later check with that for lga and sites in filterCondition...?? )
+  // Handle pagination (remove from query and handle client side?)
+  return { ok: true, total, data: filteredData, length: filteredData.length }
 }
 
 async function createNotifications(knex, action, context) {
