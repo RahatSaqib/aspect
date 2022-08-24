@@ -24,7 +24,9 @@ async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
       'pivot.sourceResultId'
     )
     .where('i.id', '>', 0)
+}
 
+async function mergeDeviceLevelIssues(devicesToMerge, trknex) {
   await trknex('Issue')
     .where('deviceId', devicesToMerge.sourceDevice.id)
     .update('deviceId', devicesToMerge.targetDevice.id)
@@ -125,6 +127,7 @@ module.exports = {
   getSourceDevices,
   getTargetDevice,
   mergeIssuesFromDuplicatedResults,
+  mergeDeviceLevelIssues,
   deleteNotifications,
   deleteIssues,
   mergeNonRepeatedResults,

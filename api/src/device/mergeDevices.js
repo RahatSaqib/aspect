@@ -5,6 +5,7 @@ const {
   getSourceDevices,
   getTargetDevice,
   mergeIssuesFromDuplicatedResults,
+  mergeDeviceLevelIssues,
   mergeNonRepeatedResults,
   getDevicesIdsCheckingConstraints,
 } = require('./common/db')
@@ -14,14 +15,7 @@ const { deleteDevice } = require('./common/logic')
 module.exports = async function ({ payload, auth }) {
   const devices = await getDevicesToMerge(payload)
 
-  try {
-    await validate(devices, auth.credentials)
-  } catch (error) {
-    if (error instanceof Boom.Boom) {
-      return error
-    }
-    throw error
-  }
+  await validate(devices, auth.credentials)
 
   await transact(async trknex =>
     Promise.all(
@@ -35,6 +29,7 @@ module.exports = async function ({ payload, auth }) {
 
 async function mergeDevices(devicesToMerge, trknex) {
   await mergeIssuesFromDuplicatedResults(devicesToMerge, trknex)
+  await mergeDeviceLevelIssues(devicesToMerge, trknex)
   await mergeNonRepeatedResults(devicesToMerge, trknex)
   await deleteDevice(devicesToMerge.sourceDevice.id, trknex)
 }
