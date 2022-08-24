@@ -28,6 +28,7 @@ describe('Merge Devices', () => {
     hostId: `hostId`,
     deviceSerialNumber: `d1serial`,
   })
+
   const targetDeviceContext = createGxConnectTestContext(server, {
     countryCode: 'US',
     adminUsername: 'admin',
@@ -38,7 +39,7 @@ describe('Merge Devices', () => {
     deviceSerialNumber: `d2serial`,
   })
 
-  beforeEach(async () => {
+  before(async () => {
     const resultCategoryDetected = await resultCategoryToId('Detected')
     await sourceDeviceContext.beforeRegisterAndSetDevice()
     const { device: sourceDevice } = sourceDeviceContext
@@ -84,19 +85,21 @@ describe('Merge Devices', () => {
     await seedNotification(issueIdOnRepeatedSourceResult, uniqueSourceResultId)
   })
 
-  afterEach(async () => {
+  after(async () => {
     await knex('Notification')
       .whereIn('issueId', knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).select('id'))
       .del()
     await knex('Issue').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceApiKey')
-      .where('siteId', targetSiteId)
+      .whereIn('siteId', [targetSiteId, sourceSiteId])
       .orWhereIn('deviceId', [sourceDeviceId, targetDevice.id])
       .del()
     await knex('Result').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
-    await knex('Sample').whereIn('originSiteId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('Sample').whereIn('originSiteId', [sourceSiteId, targetSiteId]).del()
     await knex('DeviceLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('DeviceApprovalLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('DeviceMaintenance').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
+    await knex('DeviceOperation').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     const deleteFactTablesPromises = [
       knex('FactDeviceExternalSource').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
       knex('FactDeviceFlag').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
@@ -107,7 +110,8 @@ describe('Merge Devices', () => {
       knex('FactResultsDeviceByTimeFrame').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del(),
     ]
     await Promise.all(deleteFactTablesPromises)
-    await knex('Device').where('id', targetDevice.id).del()
+    await knex('Device').whereIn('id', [targetDevice.id, sourceDeviceId]).del()
+    await knex('Site').whereIn('id', [targetSiteId, sourceSiteId]).del()
   })
 
   it('If source device is pings in the last 24 hs should throw validation', async () => {
