@@ -30,7 +30,7 @@ const NotificationFormPage = () => {
 
   useEffect(() => {
     if (jobFunctions) {
-      const form = getFormConfigWithData(intl, jobFunctions, '', validationSchema(intl.formatMessage), false, null)
+      const form = getFormConfigWithData(intl, jobFunctions, validationSchema(intl.formatMessage), false, null)
       setFormConfig(form)
     }
   }, [intl, jobFunctions])

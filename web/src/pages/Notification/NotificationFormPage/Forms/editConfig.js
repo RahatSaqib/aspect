@@ -487,13 +487,13 @@ const stockExpiringSection = formatMessage => {
 
 const calibrationSection = formatMessage => {
   return {
-    id: 'stockExpiring',
-    label: 'stockExpiring',
-    labelI18nKey: 'stockExpiring',
+    id: 'calibration',
+    label: 'calibration',
+    labelI18nKey: 'calibration',
     visibleIf: values => ['calibration'].includes(values.notificationType),
     rows: [
       {
-        id: 81,
+        id: 181,
         items: [
           {
             id: 'calibration',

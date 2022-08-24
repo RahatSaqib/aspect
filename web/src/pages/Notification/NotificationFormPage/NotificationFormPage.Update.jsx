@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import isNaN from 'lodash/isNaN'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import reduce from 'lodash/reduce'
 import map from 'lodash/map'
 import unset from 'lodash/unset'
 import CircularProgress from '@mui/material/CircularProgress'
 
 import { FaNotesMedical } from 'react-icons/fa'
-import { useQuery } from 'react-query'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import './NotificationFormPage.css'
 import getFormConfig from './Forms/editConfig'
@@ -19,10 +17,9 @@ import { FormikProvider } from '../../../components/Form/Formik/Context'
 import AspectForm from '../../../components/Form'
 import FormActions from '../../../components/Form/formActions'
 import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
-import { NOTIFICATION_DETAIL } from '../../../components/QueryFetch/Notification'
-import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { getFormConfigWithData } from './utils'
 import validationSchema from './Forms/validation'
+import useNotification from '../../../hooks/notification/useNotification'
 
 function buildAreaItems(id, target, data) {
   switch (true) {
@@ -37,30 +34,20 @@ function buildAreaItems(id, target, data) {
   }
 }
 
-const NotificationFormPage = () => {
+const NotificationFormPage = ({ id }) => {
+  const notificationId = Number(id)
   const intl = useI18n()
-  let { notificationId } = useParams()
   const navigate = useNavigate()
   const [formConfig, setFormConfig] = useState(false)
 
-  const { data: jobFunctions, isLoading } = useJobFunctions()
+  const { data: jobFunctions } = useJobFunctions()
   const { mutate: submitNotification } = useSaveNotification()
 
-  notificationId = isNaN(notificationId) ? undefined : Number(notificationId)
-
-  const { data: values, isLoading: notificationLoading } = useQuery(
-    [NOTIFICATION_DETAIL.KEY, { notificationId }],
-    async ({ queryKey: [, { notificationId }] }) =>
-      fetchWrapperForQueries({
-        endpoint: `${NOTIFICATION_DETAIL.ENDPOINT}/${notificationId}`,
-      })
-  )
-
-  useEffect(() => {
-    if (values) {
-      const { data: responseData } = values
-      const { notificationType, name, emailSubject, emailBody, smsBody, webUrl, webBody, filterCondition, enabled } =
-        responseData
+  useNotification(notificationId, {
+    enabled: !!intl && !!jobFunctions,
+    onSuccess: data => {
+      const { notificationType, name, emailSubject, emailBody } = data
+      const { smsBody, webUrl, webBody, filterCondition, enabled } = data
 
       const filter = JSON.parse(filterCondition)
       const newValues = {
@@ -69,13 +56,19 @@ const NotificationFormPage = () => {
         emailSubject,
         emailBody,
         sendEmail: filter.sendEmail,
-        smsBody,
         sendSms: filter.sendSms,
+        sendWeb: filter.sendWeb,
+        smsBody,
         webUrl,
         webBody,
-        sendWeb: filter.sendWeb,
         sendToPatient: filter.sendToPatient,
         enabled: !!enabled,
+        persons: map(filter?.persons, p => `${p.personId}`),
+        deviceLevelId: filter.deviceLevelId,
+        areaItemsState: buildAreaItems(filter.deviceLevelId, 'state', filter.areaItems),
+        areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
+        areaItemsLab: buildAreaItems(filter.deviceLevelId, 'lab', filter.areaItems),
+        result: filter.result,
         /**
          * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
          * to make sure all items in array are located in their positions
@@ -88,41 +81,18 @@ const NotificationFormPage = () => {
           return {
             jobFunctionId: jf.id,
             checked: !!jfSaved,
-            tags: jfSaved
-              ? jfSaved.tags.map(tag => ({
-                  ...tag,
-                  value: `${tag.value}`, // should be string
-                }))
-              : [],
+            tags: jfSaved ? jfSaved.tags.map(tag => ({ ...tag, value: `${tag.value}` })) : [],
           }
         }),
-        persons: map(filter?.persons, ({ checked, personId }) => ({
-          checked,
-          id: `${personId}`, // should be string
-        })),
-        deviceLevelId: filter.deviceLevelId,
-        areaItemsState: buildAreaItems(filter.deviceLevelId, 'state', filter.areaItems),
-        areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
-        areaItemsLab: buildAreaItems(filter.deviceLevelId, 'lab', filter.areaItems),
-        result: filter.result,
       }
+      const form = getFormConfigWithData(intl, jobFunctions, validationSchema(intl.formatMessage), true, newValues)
+      setFormConfig(form)
+    },
+  })
 
-      setFormConfig(
-        getFormConfigWithData(
-          intl,
-          jobFunctions,
-          newValues.notificationType,
-          validationSchema(intl.formatMessage),
-          true,
-          newValues
-        )
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [notificationLoading, values])
   const onSubmit = formik => {
     const specificPersonId = 'specificPerson'
-    const formConfig = getFormConfig(intl.formatMessage, formik.values.notificationType, jobFunctions, true)
+    const formConfig = getFormConfig(intl.formatMessage, jobFunctions, true)
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
     values.notificationType = formik.values.notificationType
@@ -138,7 +108,7 @@ const NotificationFormPage = () => {
       formik.values.persons,
       (acc, curr) => {
         ;(acc || ((acc = []) && curr?.length)).push({
-          personId: curr?.value,
+          personId: curr,
           checked: true,
         })
         return acc
@@ -176,15 +146,14 @@ const NotificationFormPage = () => {
       values.areaItems = values.areaItemsLab
       delete values.areaItemsLab
     }
-    submitNotification({ values, id: notificationId })
-    navigate('/browse/notification')
+    submitNotification({ values, id: notificationId }, { onSuccess: () => navigate('/browse/notification') })
   }
 
-  return isLoading || notificationLoading ? (
+  return !formConfig ? (
     <CircularProgress />
   ) : (
     <Shell>
-      <FormikProvider config={formConfig}>
+      <FormikProvider config={formConfig} debug>
         <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
           <FormActions config={formConfig} onSubmit={onSubmit} />
         </ShellHeader>

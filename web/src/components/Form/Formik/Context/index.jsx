@@ -6,8 +6,7 @@ import DisplayFormikState from '../Helpers/debug'
 import { sanitizeFormValues } from '../Helpers'
 import useFormConfig from '../../Hooks/useFormConfig'
 
-export const FormikProvider = ({ config, children }) => {
-  const debug = false
+export const FormikProvider = ({ config, children, debug }) => {
   const { actions, validationSchema = null } = config
   const [toggleEdit, setToggleEdit] = useState(actions.default === 'save')
   const { meta, registerVisibleFields, updateField } = useFormConfig(config)
