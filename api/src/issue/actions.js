@@ -17,13 +17,14 @@ const types = {
  *
  * issueId is required.
  */
-function issueCreated(issueId) {
+function issueCreated(issueId, issueTypeId) {
   if (!issueId) {
     throw new Error('Must specify issueId')
   }
   return {
     type: types.ISSUE_CREATED,
     issueId,
+    issueTypeId,
   }
 }
 
