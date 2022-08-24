@@ -11,7 +11,7 @@ async function filterByJobFunction(auth) {
   const countryLevel = { name: 'Country', id: 'country' }
   const stateLevel = { name: 'State', id: 'state' }
   const lgaLevel = { name: 'LGA', id: 'lga' }
-  const siteLevel = { name: 'Site', id: 'site' }
+  const siteLevel = { name: 'Laboratory', id: 'lab' }
 
   let level = []
 
