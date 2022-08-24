@@ -199,11 +199,12 @@ async function listNotifications(request) {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const stateConstraints = dataConstraints.$or.filter(c => c.geography?.stateId).map(c => c.geography.stateId)
+
   let filteredData = data
   if (stateConstraints.length) {
     filteredData = data.filter(
       d =>
-        d.filterCondition.deviceLevelId === 'state' &&
+        d.filterCondition?.deviceLevelId === 'state' &&
         d.filterCondition.areaItems.map(s => +s.value).some(filterStateId => stateConstraints.includes(filterStateId))
     )
   }
@@ -211,17 +212,18 @@ async function listNotifications(request) {
   if (lgaConstraints.length) {
     filteredData = data.filter(
       d =>
-        d.filterCondition.deviceLevelId === 'lga' &&
-        d.filterCondition.areaItems.map(s => +s.value).some(filterLgaId => stateConstraints.includes(filterLgaId))
+        d.filterCondition?.deviceLevelId === 'lga' &&
+        d.filterCondition.areaItems.map(s => +s.value).some(filterLgaId => lgaConstraints.includes(filterLgaId))
     )
   }
-
+  // site Constraints
   const siteConstraints = dataConstraints.$or.filter(c => c.site?.id).map(c => c.site.id)
+  console.log('\x1b[1;36m', '🚀 ➜ file: service.js ➜ line 224 ➜ siteConstraints', siteConstraints)
   if (siteConstraints.length) {
     filteredData = data.filter(
       d =>
-        d.filterCondition.deviceLevelId === 'site' &&
-        d.filterCondition.areaItems.map(s => +s.value).some(filterSiteId => stateConstraints.includes(filterSiteId))
+        d.filterCondition?.deviceLevelId === 'lab' &&
+        d.filterCondition.areaItems.map(s => +s.value).some(filterSiteId => siteConstraints.includes(filterSiteId))
     )
   }
 
