@@ -16,6 +16,7 @@ const {
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
+const { formatInTimeZone } = require('date-fns-tz')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -206,6 +207,12 @@ function getWellFormattedDateStringWithTimezone(dateTime) {
   return format(dateTime, 'yyyy-MM-dd HH:mm:ss.SSSxxx').replace(' ', 'T')
 }
 
+// Return Wed Aug 24 2022 02:25:32 GMT-4
+function getFormattedDateTimeWithTimezone(dateTime, timezone) {
+  timezone = timezone || 'Etc/UTC'
+  return formatInTimeZone(dateTime, timezone, 'E MMM dd yyyy HH:mm:ss O')
+}
+
 /**
  * Retrieves the user timezone from the Person table in the database.
  * @param {knex} knex - Knex instance
@@ -299,6 +306,7 @@ module.exports = {
   getDateTimeProjectionInUserTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
+  getFormattedDateTimeWithTimezone,
   getDatesFromQuery,
   getOffsetFromTimeZone,
   getOffsetFromIsoDateString,
