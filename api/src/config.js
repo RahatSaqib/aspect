@@ -51,7 +51,7 @@ module.exports = {
   },
   amqp: {
     url: process.env['amqp.url'],
-    name: process.env['amqp.name'] || 'aspect',
+    name: `${process.env['amqp.name'] || 'aspect'}${process.env['scheduler.enabled'] === 'true' ? '' : '_for_testing'}`,
   },
   swagger: {
     enabled: process.env['swagger.enabled'] === 'true',
@@ -96,9 +96,7 @@ module.exports = {
   scheduler: {
     enabled: process.env['scheduler.enabled'] === 'true',
     cron: {
-      logDeviceMaintenanceStatus:
-        process.env['scheduler.cron.logDeviceMaintenanceStatus'] ||
-        '0 18 * * *',
+      logDeviceMaintenanceStatus: process.env['scheduler.cron.logDeviceMaintenanceStatus'] || '0 18 * * *',
     },
   },
   encryption: {
@@ -145,10 +143,7 @@ function configureOptional(config) {
   // set knex seeds
   const seedsDirectory = process.env['seeds.directory']
   if (seedsDirectory) {
-    if (
-      !_.includes(seedsDirectory, '/test') &&
-      !_.includes(seedsDirectory, '/development')
-    )
+    if (!_.includes(seedsDirectory, '/test') && !_.includes(seedsDirectory, '/development'))
       config.seeds = { directory: [seedsDirectory, './seeds/zz_shared/'] }
     else config.seeds = { directory: [seedsDirectory] }
   }

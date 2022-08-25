@@ -5,20 +5,14 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 describe('result/service', () => {
-  function createFakeKnex({
-    getResultByResultId = {},
-    assay = {},
-    assayForm = {},
-  } = {}) {
+  function createFakeKnex({ getResultByResultId = {}, assay = {}, assayForm = {} } = {}) {
     const fakeKnexFunction = tableName => {
       let firstResult = {}
       let selectResult = []
       if (tableName === 'Assay as a') {
         firstResult = _.cloneDeep(assay)
       } else if (tableName === 'Result as r') {
-        selectResult = _.isEmpty(getResultByResultId)
-          ? []
-          : [_.cloneDeep(getResultByResultId)]
+        selectResult = _.isEmpty(getResultByResultId) ? [] : [_.cloneDeep(getResultByResultId)]
       } else if (tableName === 'ResultForm') {
         firstResult = _.cloneDeep(assayForm)
       } else if (tableName === 'Device') {
@@ -176,9 +170,7 @@ describe('result/service', () => {
       const requestWithResultFormData = basicRequest({
         payload: { expertInterpretation: 'Positive' },
       })
-      const response = await resultService.updateFormData(
-        requestWithResultFormData
-      )
+      const response = await resultService.updateFormData(requestWithResultFormData)
 
       assert.equal(response.output.statusCode, 400)
       assert.equal(
@@ -223,9 +215,7 @@ describe('result/service', () => {
           payload: { someUndefinedField: 'A value for the field' },
         })
       )
-      let response = await resultService.updateFormData(
-        requestWithResultFormData
-      )
+      let response = await resultService.updateFormData(requestWithResultFormData)
       assert.equal(response.output.statusCode, 400)
       assert.equal(
         response.output.payload.message,
@@ -282,15 +272,9 @@ describe('result/service', () => {
           params: { resultId: 1234 },
         })
       )
-      const response = await resultService.updateFormData(
-        requestWithResultFormData
-      )
+      const response = await resultService.updateFormData(requestWithResultFormData)
 
-      assert.isTrue(
-        requestWithResultFormData.plugins.messageContext.resultUpdated.calledWith(
-          1234
-        )
-      )
+      assert.isTrue(requestWithResultFormData.plugins.messageContext.resultUpdated.calledWith(1234))
       assert.isOk(response.ok)
     })
 
@@ -327,14 +311,8 @@ describe('result/service', () => {
           params: { resultId: 5678 },
         })
       )
-      const response = await resultService.updateFormData(
-        requestWithResultFormData
-      )
-      assert.isTrue(
-        requestWithResultFormData.plugins.messageContext.resultUpdated.calledWith(
-          5678
-        )
-      )
+      const response = await resultService.updateFormData(requestWithResultFormData)
+      assert.isTrue(requestWithResultFormData.plugins.messageContext.resultUpdated.calledWith(5678))
       assert.isOk(response.ok)
     })
 
@@ -376,9 +354,7 @@ describe('result/service', () => {
             },
           })
         )
-        const response = await resultService.updateFormData(
-          requestWithResultFormData
-        )
+        const response = await resultService.updateFormData(requestWithResultFormData)
         assert.equal(response.output.statusCode, 400)
         assert.equal(
           response.output.payload.message,
@@ -422,9 +398,7 @@ describe('result/service', () => {
             },
           })
         )
-        let response = await resultService.updateFormData(
-          requestWithResultFormDataValuesInArray
-        )
+        let response = await resultService.updateFormData(requestWithResultFormDataValuesInArray)
         assert.equal(response.output.statusCode, 400)
         assert.equal(
           response.output.payload.message,
@@ -439,9 +413,7 @@ describe('result/service', () => {
             },
           })
         )
-        response = await resultService.updateFormData(
-          requestWithResultFormDataValueInArray
-        )
+        response = await resultService.updateFormData(requestWithResultFormDataValueInArray)
         assert.equal(response.output.statusCode, 400)
         assert.equal(
           response.output.payload.message,
@@ -509,14 +481,8 @@ describe('result/service', () => {
             resultService.knex
           )
         )
-        const response = await resultService.updateFormData(
-          requestWithBlankResultFormData
-        )
-        assert.isTrue(
-          requestWithBlankResultFormData.plugins.messageContext.resultUpdated.calledWith(
-            567
-          )
-        )
+        const response = await resultService.updateFormData(requestWithBlankResultFormData)
+        assert.isTrue(requestWithBlankResultFormData.plugins.messageContext.resultUpdated.calledWith(567))
         assert.isOk(response.ok)
       })
     })
@@ -585,14 +551,9 @@ describe('result/service', () => {
     it('should return a 404 response when the result cannot be found', async () => {
       const resultService = resultServiceWithFakes()
 
-      const response = await resultService.updateResult(
-        basicRequest(resultUpdatePayload())
-      )
+      const response = await resultService.updateResult(basicRequest(resultUpdatePayload()))
       assert.equal(response.output.statusCode, 404)
-      assert.equal(
-        response.output.payload.message,
-        'This result does not exist or you do not have access.'
-      )
+      assert.equal(response.output.payload.message, 'This result does not exist or you do not have access.')
     })
 
     it('should return a 404 response when the site cannot be found', async () => {
@@ -600,14 +561,9 @@ describe('result/service', () => {
         getResultByResultId: basicResultForUpdate(),
       })
 
-      const response = await resultService.updateResult(
-        basicRequest(resultUpdatePayload())
-      )
+      const response = await resultService.updateResult(basicRequest(resultUpdatePayload()))
       assert.equal(response.output.statusCode, 404)
-      assert.equal(
-        response.output.payload.message,
-        'This site does not exist or you do not have access.'
-      )
+      assert.equal(response.output.payload.message, 'This site does not exist or you do not have access.')
     })
 
     it('should return a 404 response when the assay cannot be found', async () => {
@@ -621,14 +577,9 @@ describe('result/service', () => {
         }
       )
 
-      const response = await resultService.updateResult(
-        basicRequest(resultUpdatePayload())
-      )
+      const response = await resultService.updateResult(basicRequest(resultUpdatePayload()))
       assert.equal(response.output.statusCode, 404)
-      assert.equal(
-        response.output.payload.message,
-        'This assay does not exist or you do not have access.'
-      )
+      assert.equal(response.output.payload.message, 'This assay does not exist or you do not have access.')
     })
 
     it('should return a 400 response when the selected result does not apply to the assay', async () => {
@@ -642,14 +593,9 @@ describe('result/service', () => {
         }
       )
 
-      const response = await resultService.updateResult(
-        basicRequest(resultUpdatePayload({ resultCategory1: 99 }))
-      )
+      const response = await resultService.updateResult(basicRequest(resultUpdatePayload({ resultCategory1: 99 })))
       assert.equal(response.output.statusCode, 400)
-      assert.equal(
-        response.output.payload.message,
-        'The selected result is not valid for this assay.'
-      )
+      assert.equal(response.output.payload.message, 'The selected result is not valid for this assay.')
     })
 
     it('should return a 404 response when the device cannot be found', async () => {
@@ -667,10 +613,7 @@ describe('result/service', () => {
         basicRequest(resultUpdatePayload({ resultCategory1: 1, deviceId: 99 }))
       )
       assert.equal(response.output.statusCode, 404)
-      assert.equal(
-        response.output.payload.message,
-        'This device does not exist or you do not have access.'
-      )
+      assert.equal(response.output.payload.message, 'This device does not exist or you do not have access.')
     })
 
     it('should return a 400 response when the result was originally reported by a device and user tries to change result categories or start/end dates', async () => {
@@ -687,9 +630,7 @@ describe('result/service', () => {
       )
 
       const response = await resultService.updateResult(
-        basicRequest(
-          resultUpdatePayload({ resultCategory1: 2, resultCategory2: 2 })
-        )
+        basicRequest(resultUpdatePayload({ resultCategory1: 2, resultCategory2: 2 }))
       )
       // assert.equal(response.output.statusCode, 400)
       assert.equal(
@@ -714,14 +655,9 @@ describe('result/service', () => {
     it('should return a 404 response when the site cannot be found', async () => {
       const resultService = resultServiceWithFakes({})
 
-      const response = await resultService.createResult(
-        basicRequest(resultCreatePayload())
-      )
+      const response = await resultService.createResult(basicRequest(resultCreatePayload()))
       assert.equal(response.output.statusCode, 404)
-      assert.equal(
-        response.output.payload.message,
-        'This site does not exist or you do not have access.'
-      )
+      assert.equal(response.output.payload.message, 'This site does not exist or you do not have access.')
     })
 
     it('should return a 404 response when the assay cannot be found', async () => {
@@ -733,14 +669,9 @@ describe('result/service', () => {
         }
       )
 
-      const response = await resultService.createResult(
-        basicRequest(resultCreatePayload())
-      )
+      const response = await resultService.createResult(basicRequest(resultCreatePayload()))
       assert.equal(response.output.statusCode, 404)
-      assert.equal(
-        response.output.payload.message,
-        'This assay does not exist or you do not have access.'
-      )
+      assert.equal(response.output.payload.message, 'This assay does not exist or you do not have access.')
     })
 
     it('should return a 400 response when the selected result does not apply to the assay', async () => {
@@ -752,14 +683,9 @@ describe('result/service', () => {
         }
       )
 
-      const response = await resultService.createResult(
-        basicRequest(resultCreatePayload({ resultCategory1: 99 }))
-      )
+      const response = await resultService.createResult(basicRequest(resultCreatePayload({ resultCategory1: 99 })))
       assert.equal(response.output.statusCode, 400)
-      assert.equal(
-        response.output.payload.message,
-        'The selected result is not valid for this assay.'
-      )
+      assert.equal(response.output.payload.message, 'The selected result is not valid for this assay.')
     })
 
     it('should return a 404 response when the device cannot be found', async () => {
@@ -775,10 +701,7 @@ describe('result/service', () => {
         basicRequest(resultCreatePayload({ resultCategory1: 1, deviceId: 99 }))
       )
       assert.equal(response.output.statusCode, 404)
-      assert.equal(
-        response.output.payload.message,
-        'This device does not exist or you do not have access.'
-      )
+      assert.equal(response.output.payload.message, 'This device does not exist or you do not have access.')
     })
   })
 })

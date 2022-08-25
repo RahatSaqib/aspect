@@ -2,8 +2,7 @@ const _ = require('lodash')
 
 const getRawValue = value => {
   // If value is a string and represents a percentage, then return only the number
-  if (typeof value === 'string' && /^\d+(\.\d+)?%$/.test(value))
-    return parseInt(value.replace('%', ''), 10)
+  if (typeof value === 'string' && /^\d+(\.\d+)?%$/.test(value)) return parseInt(value.replace('%', ''), 10)
 
   return value
 }
@@ -20,8 +19,7 @@ const setAlertValueOnWidget = widget => {
 
   let comparedTo = null
   // If 'comparedTo' is a string, at first we assume it represents a field
-  if (typeof alert.comparedTo === 'string')
-    alert.comparedTo = getValue(widget, alert.comparedTo) || alert.comparedTo
+  if (typeof alert.comparedTo === 'string') alert.comparedTo = getValue(widget, alert.comparedTo) || alert.comparedTo
 
   comparedTo = getRawValue(alert.comparedTo)
 
@@ -35,9 +33,7 @@ const setAlertValueOnWidget = widget => {
       display = dependencyValue < comparedTo
       break
     case 'between':
-      display =
-        dependencyValue > alert.comparedTo[0] &&
-        dependencyValue < alert.comparedTo[1]
+      display = dependencyValue > alert.comparedTo[0] && dependencyValue < alert.comparedTo[1]
       break
     case 'containedIn':
       display = _.includes(alert.comparedTo, dependencyValue)

@@ -1,18 +1,8 @@
 const { knex, filterParams, sortPageParams } = require('../db')
 
-const SELECT_LIST_FIELDS = [
-  'p.id',
-  'p.name',
-  'p.partnerTypeId',
-  'pt.name as partnerTypeName',
-]
+const SELECT_LIST_FIELDS = ['p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName']
 
-const SELECT_SHOW_FIELDS = [
-  'p.id',
-  'p.name',
-  'p.partnerTypeId',
-  'pt.name as partnerTypeName',
-]
+const SELECT_SHOW_FIELDS = ['p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName']
 
 async function listPartners(request) {
   const { query } = request

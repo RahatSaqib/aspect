@@ -3,10 +3,7 @@ const { listInventory, listLog } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { knex } = require('../db')
 const { INVENTORY_LOG_LIST } = require('./query/querySelectors')
-const {
-  getOffsetFromIsoDateString,
-  getDateTimeProjectionInUserTimeZone,
-} = require('../shared/date')
+const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
 
 async function exportSupplies(request, reply) {
   const { query } = request
@@ -25,9 +22,7 @@ async function exportSupplies(request, reply) {
     defaultNoDataMessage: 'No data',
   }
 
-  const scope = query.breakOutByLot
-    ? 'supplies-by-lot'
-    : 'supplies-by-site-and-consumable'
+  const scope = query.breakOutByLot ? 'supplies-by-lot' : 'supplies-by-site-and-consumable'
 
   return exportData(request, reply, sheetData, scope, {
     replacements: getBaseReplacements(),
@@ -43,11 +38,7 @@ async function inventoryLog(auth, query) {
     { auth, query },
     {
       ...INVENTORY_LOG_LIST,
-      createdOn: getDateTimeProjectionInUserTimeZone(
-        knex,
-        'il.createdOn',
-        offset
-      ),
+      createdOn: getDateTimeProjectionInUserTimeZone(knex, 'il.createdOn', offset),
     }
   )
   return {

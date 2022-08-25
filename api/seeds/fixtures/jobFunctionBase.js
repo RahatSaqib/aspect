@@ -20,6 +20,7 @@ const admin = {
     'report_custom_fields_completion',
     'inventory_log',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -154,6 +155,7 @@ const manager = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -244,6 +246,7 @@ const regionalOfficer = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -337,6 +340,7 @@ const labUser = {
     'device_utilization_per_day',
     'module_activity_report',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -430,6 +434,7 @@ const clinician = {
     'device_utilization_per_day',
     'module_activity_report',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -574,6 +579,7 @@ const ntp = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -961,6 +967,7 @@ const labSupervisor = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -1037,6 +1044,7 @@ const medTech = {
     'all_results',
     'device_utilization_per_day',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -1114,6 +1122,7 @@ const dataViewer = {
     'device_utilization_per_day',
     'module_activity_report',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -1193,6 +1202,7 @@ const labAdmin = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'xdr_devices_summary',
   ],
   permissions: [
     {
@@ -1219,27 +1229,13 @@ const labAdmin = {
 }
 
 const concatUniqOrderedArray = (arr1, arr2, sortedFunction = _.identity) =>
-  _.compact(
-    _.sortBy(
-      _.uniq(_.concat(arr1, arr2)),
-      arr1 && arr2 ? sortedFunction : _.identity
-    )
-  )
+  _.compact(_.sortBy(_.uniq(_.concat(arr1, arr2)), arr1 && arr2 ? sortedFunction : _.identity))
 
 const mergeJobFunctions = (jf1, jf2) => {
-  if (jf1.name && jf2.name && jf1.name !== jf2.name)
-    throw new Error('The jobfunction names should be equals')
-  const plainObject = _.merge(
-    {},
-    _.omit(jf1, ['reports', 'permissions']),
-    _.omit(jf2, ['reports', 'permissions'])
-  )
+  if (jf1.name && jf2.name && jf1.name !== jf2.name) throw new Error('The jobfunction names should be equals')
+  const plainObject = _.merge({}, _.omit(jf1, ['reports', 'permissions']), _.omit(jf2, ['reports', 'permissions']))
   const reports = concatUniqOrderedArray(jf1.reports, jf2.reports)
-  const permissions = concatUniqOrderedArray(
-    jf1.permissions,
-    jf2.permissions,
-    obj => [obj.module, obj.activity]
-  )
+  const permissions = concatUniqOrderedArray(jf1.permissions, jf2.permissions, obj => [obj.module, obj.activity])
 
   const finalJobFunction = { ...plainObject }
 
@@ -1252,10 +1248,7 @@ const mergeJobFunctions = (jf1, jf2) => {
       (result, curr) => {
         const lastPermission = _.last(result)
         if (!lastPermission) result.push(curr)
-        else if (
-          modulesToNotReduce.includes(lastPermission.module) ||
-          lastPermission.module !== curr.module
-        )
+        else if (modulesToNotReduce.includes(lastPermission.module) || lastPermission.module !== curr.module)
           result.push(curr)
         return result
       },

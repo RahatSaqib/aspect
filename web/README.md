@@ -33,7 +33,7 @@ yarn test
 yarn test:no-coverage
 
 # Run a single unit test by appending file to test
-yarn test:single (example: `yarn test: single src/MigratedComponents/AspectTable/TableHeader/Tests/TableHeaders.test.jsx`)
+yarn test:single (example: `yarn test: single src/components/AspectTable/TableHeader/Tests/TableHeaders.test.jsx`)
 
 # Lint all files in src (also automatically done AFTER tests are run)
 yarn lint
@@ -88,9 +88,9 @@ To avoid inserting bad and duplicated keys we are not going to merge these files
 2. `yarn run updatemessages:start`
 3. Create or update `.po` files. See below.
 4. `yarn run updatemessages:end`
-5. Commit stuff in `src/shared/i18n/**/*`
+5. Commit stuff in `src/utils/i18n/**/*`
 
-In step 3, you'll need to create or update `.po` files inside `src/shared/i18n` folder. The `.po` files store translations for each locale.
+In step 3, you'll need to create or update `.po` files inside `src/utils/i18n` folder. The `.po` files store translations for each locale.
 
 Creating a `.po` file means adding new locale support.
 
@@ -102,15 +102,15 @@ Updating `.po` files means updating existing translations with newly added messa
 2. Click `Create new translation`
 3. Select `diff.pot` from the file dialog
 4. Select language of the translation from the dropdown
-5. When done, click `File > Save`. Set filename to `web.${LOCALE_NAME}.po` and store it under `src/shared/i18n` folder.
+5. When done, click `File > Save`. Set filename to `web.${LOCALE_NAME}.po` and store it under `src/utils/i18n` folder.
 
 ### Update `.po` files
 
 1. Open [Poedit](https://poedit.net)
 2. Click `Edit a translation`
-3. Select `src/shared/i18n/web.${LOCALE_NAME}.po` from the file dialog
+3. Select `src/utils/i18n/web.${LOCALE_NAME}.po` from the file dialog
 4. Click `Catalog > Update from POT file`
-5. Select `src/shared/i18n/diff.pot` from the file dialog
+5. Select `src/utils/i18n/diff.pot` from the file dialog
 6. Update translations for each items inside the window
 7. When done, click `File > Save`
 
@@ -120,7 +120,7 @@ This is useful for sharing a CSV with a translator so they can easily edit it.
 To create a CSV of all Portuguese translations:
 
 ```bash
-po2csv src/shared/i18n/web.pt-PT.po portuguese.csv
+po2csv src/utils/i18n/web.pt-PT.po portuguese.csv
 ```
 
 #### Using existing GxAlert translations when adding a new new language
@@ -170,22 +170,10 @@ Also update vendorPackages in dist.js to make sure that vendor packages are bund
 ## Storybook
 
 ```bash
-# Run styleguide
 yarn storybook
 ```
 
 To view storybook, visit <http://localhost:8001/>.
-
-## Styleguide [DEPRECATED]
-
-TO BE REMOVED: Once Storybook has been adopted fully, this will be removed. See Issue: <https://github.com/SystemOneId/aspect/issues/1546>
-
-To view styleguides, visit <http://localhost:6060/>.
-
-```bash
-# Run styleguide
-yarn styleguide
-```
 
 ## Updating snapshots
 

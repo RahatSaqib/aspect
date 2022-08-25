@@ -7,18 +7,18 @@ import { IntlProvider } from 'react-intl'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
-import translation from '../../shared/i18n/translation'
-import { getTimezoneById } from '../../shared/utils/timezone'
-import RefreshToken from '../../auth/login/RefreshToken'
-import { reasonTypes } from '../../auth/loggedOutReasons'
-import { refreshStart } from '../../auth/AuthRedux'
-import IdleDetection from '../../idle/components/IdleDetection'
+import translation from '../../utils/i18n/translation'
+import { getTimezoneById } from '../../utils/utils/timezone'
+import RefreshToken from '../../oldPages/auth/login/RefreshToken'
+import { reasonTypes } from '../../oldPages/auth/loggedOutReasons'
+import { refreshStart } from '../../store/AuthRedux'
+import IdleDetection from '../../oldComponents/IdleDetection'
 import LocalStorage from '../sideEffects/LocalStorage'
-import { actions as idleActions } from '../../idle/IdleRedux'
+import { actions as idleActions } from '../../store/IdleRedux'
 import uiProvidersFactory from './uiProvidersFactory'
 import routerFactory from './routerFactory'
-import { AuthProvider } from '../../Providers/AuthProvider'
-import { I18nProvider } from '../../Providers/I18nProvider'
+import { AuthProvider } from '../../providers/AuthProvider'
+import { I18nProvider } from '../../providers/I18nProvider'
 
 const queryClient = new QueryClient()
 
@@ -63,8 +63,7 @@ const mapStateToProps = state => {
 
   const jwtExp = state.user.jwt.exp
   if (isNumber(jwtExp) && state.globals.lastServerResponseTime) {
-    const isExpired =
-      jwtExp < state.globals.lastServerResponseTime.getTime() / 1000
+    const isExpired = jwtExp < state.globals.lastServerResponseTime.getTime() / 1000
     if (isExpired) {
       isLoggedOut = true
       loggedOutReason = reasonTypes.expiredJWT
@@ -134,11 +133,7 @@ export const appFactory = compose(
         <I18nProvider>
           <div id="I-am-reactroot">
             <RefreshToken refreshStart={refreshStart} />
-            <IdleDetection
-              isLoggedOut={restProps.isLoggedOut}
-              idleStart={idleStart}
-              idleStop={idleStop}
-            />
+            <IdleDetection isLoggedOut={restProps.isLoggedOut} idleStart={idleStart} idleStop={idleStop} />
             <LocalStorage
               access={access}
               refresh={refresh}
@@ -149,9 +144,7 @@ export const appFactory = compose(
               drawerOpen={drawerOpen}
             />
             <QueryClientProvider client={queryClient}>
-              {process.env.NODE_ENV !== 'production' ? (
-                <ReactQueryDevtools initialIsOpen />
-              ) : null}
+              {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
 
               {render(restProps)}
             </QueryClientProvider>
@@ -160,9 +153,7 @@ export const appFactory = compose(
       </IntlProvider>
     )
 
-    return React.createFactory(
-      connect(mapStateToProps, mapDispatchToProps)(App)
-    )
+    return React.createFactory(connect(mapStateToProps, mapDispatchToProps)(App))
   },
   routerFactory
 )

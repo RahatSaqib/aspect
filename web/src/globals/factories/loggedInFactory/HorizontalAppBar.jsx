@@ -3,19 +3,19 @@ import React from 'react'
 import { defineMessages, injectIntl } from 'react-intl'
 import { compose } from 'recompose'
 import { connect } from 'react-redux'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import MenuItem from '@material-ui/core/MenuItem'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import IconButton from '@mui/material/IconButton'
+import MenuItem from '@mui/material/MenuItem'
 import { useNavigate } from 'react-router-dom'
 
 import { FaUser } from 'react-icons/fa'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
-import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
-import requirePermissions from '../../../components/shared/requirePermissions'
-import IconMenu from '../../../components/shared/IconMenu'
+import { closeDrawer, userRequestedLogout } from '../../../store/AuthRedux'
+import requirePermissions from '../../../oldComponents/shared/requirePermissions'
+import IconMenu from '../../../oldComponents/shared/IconMenu'
 
 import styles from './index.css'
 
@@ -43,36 +43,22 @@ const enhance = compose(
 const HorizontalAppBar = ({ closeDrawer, userRequestedLogout, intl }) => {
   const navigate = useNavigate()
   const navigateRoot = () => navigate('/')
-  const navigateCurrentAccountDetails = () =>
-    navigate('/account-details/current')
+  const navigateCurrentAccountDetails = () => navigate('/account-details/current')
 
   const Account = requirePermissions({
     permissions: ['account:edit'],
-  })(() => (
-    <MenuItem onClick={navigateCurrentAccountDetails}>
-      {intl.formatMessage(messages.accountDetails)}
-    </MenuItem>
-  ))
+  })(() => <MenuItem onClick={navigateCurrentAccountDetails}>{intl.formatMessage(messages.accountDetails)}</MenuItem>)
   return (
-    <AppBar
-      className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')}
-      color="inherit"
-    >
+    <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')} color="inherit">
       <Toolbar>
-        <IconButton
-          className={cssClasses('AppBar__leftIcon')}
-          aria-label="Logo"
-          onClick={navigateRoot}
-        >
+        <IconButton className={cssClasses('AppBar__leftIcon')} aria-label="Logo" onClick={navigateRoot}>
           <ConfluenceIcon />
         </IconButton>
 
         <LinkNavigation type="horizontal" onClick={closeDrawer} />
         <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
           <Account />
-          <MenuItem onClick={userRequestedLogout}>
-            {intl.formatMessage(messages.signOut)}
-          </MenuItem>
+          <MenuItem onClick={userRequestedLogout}>{intl.formatMessage(messages.signOut)}</MenuItem>
         </IconMenu>
       </Toolbar>
     </AppBar>

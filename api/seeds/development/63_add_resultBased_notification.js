@@ -14,21 +14,14 @@ const { getPeopleBase } = require('../../src/shared/utilsPerson')
 async function seed(knex) {
   const now = new Date()
 
-  const { id: partnerId } = await knex('Partner')
-    .where('name', partnerName)
-    .first()
-  const notificationTypeCategoryId = await notificationTypeCategoryToId(
-    'resultBased'
-  )
+  const { id: partnerId } = await knex('Partner').where('name', partnerName).first()
+  const notificationTypeCategoryId = await notificationTypeCategoryToId('resultBased')
   const messageStatusId = await messageStatusToId('Sent')
   const {
     id: messageTypeId,
     emailTemplateId,
     smsTemplateId,
-  } = await knex('MessageType')
-    .whereNotNull('emailTemplateId')
-    .whereNotNull('smsTemplateId')
-    .first()
+  } = await knex('MessageType').whereNotNull('emailTemplateId').whereNotNull('smsTemplateId').first()
   const credentials = {
     scope: ['notification', 'person'],
     name: 'admin',
@@ -49,10 +42,7 @@ async function seed(knex) {
 
   const resultTypeId = await resultTypeToId('Patient')
   const assayId = await assayToId('assayBdMgitAst')
-  const resultIds = await knex('Result')
-    .where({ partnerId, assayId, resultTypeId })
-    .limit(2)
-    .pluck('id')
+  const resultIds = await knex('Result').where({ partnerId, assayId, resultTypeId }).limit(2).pluck('id')
 
   await Promise.all(
     _.map(resultIds, async (resultId, index) => {

@@ -1,35 +1,17 @@
 const _ = require('lodash')
-const {
-  createFetch,
-  base,
-  method,
-  params,
-  header,
-  body,
-} = require('http-client')
-const {
-  webhookMessagePending,
-  webhookMessageSent,
-  webhookMessageError,
-} = require('./actions')
+const { createFetch, base, method, params, header, body } = require('http-client')
+const { webhookMessagePending, webhookMessageSent, webhookMessageError } = require('./actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { messageStatusToId } = require('../shared/dictionary')
-const {
-  addDataSourceToQuery,
-  processUsingDataSourceQuery,
-} = require('../stringTemplate/service')
+const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 
-async function onWebhookMessageCreated(
-  { webhookMessageId },
-  { messageContext }
-) {
+async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
 
   return context.transact(async knex => {
-    const { payload, url, headers, params, fileName } =
-      await createWebhookMessageFromTemplate(knex, webhookMessageId)
+    const { payload, url, headers, params, fileName } = await createWebhookMessageFromTemplate(knex, webhookMessageId)
     const now = new Date()
     const messageStatusId = await messageStatusToId('Pending')
 
@@ -56,18 +38,13 @@ async function onWebhookMessageCreated(
       messageUpdates.fileReferenceId = fileReferenceId
     }
 
-    await knex('WebhookMessage')
-      .where({ id: webhookMessageId })
-      .update(messageUpdates)
+    await knex('WebhookMessage').where({ id: webhookMessageId }).update(messageUpdates)
 
     context.webhookMessagePending(webhookMessageId)
   })
 }
 
-async function onWebhookMessagePending(
-  { webhookMessageId },
-  { messageContext }
-) {
+async function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     webhookMessageSent,
     webhookMessageError,
@@ -98,9 +75,7 @@ async function onWebhookMessagePending(
         fetchArgs.push(base(message.urlBase))
       }
       if (message.headers != null) {
-        _.forEach(JSON.parse(message.headers), (value, key) =>
-          fetchArgs.push(header(key, value))
-        )
+        _.forEach(JSON.parse(message.headers), (value, key) => fetchArgs.push(header(key, value)))
       }
       if (message.params != null) {
         fetchArgs.push(params(JSON.parse(message.params)))
@@ -112,10 +87,7 @@ async function onWebhookMessagePending(
       let webhookError = false
       let fileStream = null
       if (message.fileReferenceId != null) {
-        fileStream = await createStreamFromFileReference(
-          knex,
-          message.fileReferenceId
-        )
+        fileStream = await createStreamFromFileReference(knex, message.fileReferenceId)
         if (fileStream == null) {
           webhookError = true
         }
@@ -139,10 +111,7 @@ async function onWebhookMessagePending(
           }
           if (message.okResponseSuccessRegex) {
             webhookError = !(
-              messageUpdates.response &&
-              new RegExp(message.okResponseSuccessRegex, 'im').test(
-                messageUpdates.response
-              )
+              messageUpdates.response && new RegExp(message.okResponseSuccessRegex, 'im').test(messageUpdates.response)
             )
           } else {
             webhookError = !resp.ok
@@ -167,9 +136,7 @@ async function onWebhookMessagePending(
           })
         }
       }
-      await knex('WebhookMessage')
-        .where({ id: webhookMessageId })
-        .update(messageUpdates)
+      await knex('WebhookMessage').where({ id: webhookMessageId }).update(messageUpdates)
 
       if (messageUpdates.messageStatusId === messageStatusIdSent) {
         context.webhookMessageSent(webhookMessageId)
@@ -207,18 +174,22 @@ async function finalizeWebhookMessage(webhookMessageId, messageContext) {
 }
 
 async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
-  const { personId } = await knex('WebhookMessage')
+  const { personId, resultId } = await knex('WebhookMessage')
     .where('id', webhookMessageId)
-    .first('personId')
+    .first('personId', 'resultId')
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('WebhookMessage as m')
     .innerJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.webhookMessageId', 'm.id')
     .modify(queryBuilder => {
-      queryBuilder.modify(addDataSourceToQuery, {
-        message: 'm',
-        notification: 'n',
-      })
+      queryBuilder.modify(
+        addDataSourceToQuery,
+        {
+          message: 'm',
+          notification: 'n',
+        },
+        resultId
+      )
       if (dataConstraints) {
         queryBuilder.modify(addConstraints, dataConstraints, {
           assay: 'a',
@@ -247,11 +218,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'tmpl.params as paramsTemplate'
     )
 
-  const message = await processUsingDataSourceQuery(data, [
-    'payloadTemplate',
-    'urlTemplate',
-    'fileNameTemplate',
-  ])
+  const message = await processUsingDataSourceQuery(data, ['payloadTemplate', 'urlTemplate', 'fileNameTemplate'])
   // TODO replace template values of header/params
   message.headers = data.headersTemplate
   message.params = data.paramsTemplate

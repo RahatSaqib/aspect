@@ -1,8 +1,5 @@
 const { assert } = require('chai')
-const {
-  processUsingHandlebarsSyntax,
-  getMustacheTokensInString,
-} = require('../../src/stringTemplate/service')
+const { processUsingHandlebarsSyntax, getMustacheTokensInString } = require('../../src/stringTemplate/service')
 
 describe('stringTemplate/service/', () => {
   describe('processUsingHandleBarsSyntax', () => {
@@ -17,10 +14,7 @@ describe('stringTemplate/service/', () => {
         token2: 'value for token 2',
         'last token': 'the value for the last token',
       }
-      const processedString = processUsingHandlebarsSyntax(
-        templateString,
-        dataObject
-      )
+      const processedString = processUsingHandlebarsSyntax(templateString, dataObject)
       assert.equal(
         processedString,
         'This a template that has a few handlebars tokens:\n' +
@@ -41,10 +35,7 @@ describe('stringTemplate/service/', () => {
         token2: 'value for token 2',
         'last token': 'the value for the last token',
       }
-      const processedString = processUsingHandlebarsSyntax(
-        templateString,
-        dataObject
-      )
+      const processedString = processUsingHandlebarsSyntax(templateString, dataObject)
       assert.equal(
         processedString,
         'This a template that has a few handlebars tokens:\n' +
@@ -66,17 +57,10 @@ describe('stringTemplate/service/', () => {
           propertyValue: 'nested property value',
         },
         anotherNestedObject: {
-          tokens: [
-            'token 0 value',
-            'token 1 value',
-            { veryLastValue: 'very last value' },
-          ],
+          tokens: ['token 0 value', 'token 1 value', { veryLastValue: 'very last value' }],
         },
       }
-      const processedString = processUsingHandlebarsSyntax(
-        templateString,
-        dataObject
-      )
+      const processedString = processUsingHandlebarsSyntax(templateString, dataObject)
       assert.equal(
         processedString,
         'This a template that has a few handlebars tokens:\n' +

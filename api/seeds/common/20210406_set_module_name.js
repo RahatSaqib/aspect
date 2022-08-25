@@ -1,9 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const {
-  getModuleNameForResult,
-} = require('../../src/plugin/deviceType/gxUtils')
+const { getModuleNameForResult } = require('../../src/plugin/deviceType/gxUtils')
 
 module.exports = async knex => {
   const results = await knex('Result as r')
@@ -16,12 +14,7 @@ module.exports = async knex => {
     .max('r.startedOn as startedOn')
 
   await Promise.each(results, async result => {
-    result.moduleName = await getModuleNameForResult(
-      result.deviceId,
-      result.moduleSerial,
-      result.startedOn,
-      knex
-    )
+    result.moduleName = await getModuleNameForResult(result.deviceId, result.moduleSerial, result.startedOn, knex)
   })
 
   await Promise.each(

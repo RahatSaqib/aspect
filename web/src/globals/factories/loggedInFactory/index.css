@@ -51,11 +51,11 @@
 }
 
 .AppBar__appBar--xs {
-  composes: pure-visible-xs from '../../../components/pureGrids/pure-grids-responsive-min.css';
+  composes: pure-visible-xs from '../../../oldComponents/pureGrids/pure-grids-responsive-min.css';
 }
 
 .AppBar__appBar--sm {
-  composes: pure-hidden-xs from '../../../components/pureGrids/pure-grids-responsive-min.css';
+  composes: pure-hidden-xs from '../../../oldComponents/pureGrids/pure-grids-responsive-min.css';
 }
 
 .ConfluenceIcon {

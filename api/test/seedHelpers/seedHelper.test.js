@@ -25,12 +25,8 @@ describe('Seed helpers unit functions', () => {
 
   describe('jobFunctions Helpers', () => {
     it('Should throw exception for trying to merge 2 different jobFunctions', () => {
-      expect(() => mergeJobFunctions(admin, { name: 'otherName' })).to.throw(
-        'The jobfunction names should be equals'
-      )
-      expect(() => mergeJobFunctions({ name: 'otherName' }, admin)).to.throw(
-        'The jobfunction names should be equals'
-      )
+      expect(() => mergeJobFunctions(admin, { name: 'otherName' })).to.throw('The jobfunction names should be equals')
+      expect(() => mergeJobFunctions({ name: 'otherName' }, admin)).to.throw('The jobfunction names should be equals')
     })
     it('Should merge 2 different jobFunctions with the same name', () => {
       assert.deepEqual(mergeJobFunctions(admin, admin2), {

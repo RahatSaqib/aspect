@@ -2,14 +2,14 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose } from 'recompose'
 import { connect } from 'react-redux'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import IconButton from '@mui/material/IconButton'
+import MenuIcon from '@mui/icons-material/Menu'
 import { useNavigate } from 'react-router-dom'
 
 import ConfluenceIcon from './ConfluenceIcon'
-import { toggleDrawer } from '../../../auth/AuthRedux'
+import { toggleDrawer } from '../../../store/AuthRedux'
 
 import styles from './index.css'
 
@@ -26,16 +26,9 @@ const VerticalAppBar = ({ toggleDrawer }) => {
   const navigateRoot = () => navigate('/')
 
   return (
-    <AppBar
-      className={cssClasses('AppBar__appBar', 'AppBar__appBar--xs')}
-      color="inherit"
-    >
+    <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--xs')} color="inherit">
       <Toolbar className={cssClasses('VerticalAppBar')}>
-        <IconButton
-          className={cssClasses('AppBar__leftIcon')}
-          aria-label="Menu"
-          onClick={toggleDrawer}
-        >
+        <IconButton className={cssClasses('AppBar__leftIcon')} aria-label="Menu" onClick={toggleDrawer}>
           <MenuIcon fontSize="large" />
         </IconButton>
         <IconButton aria-label="Logo" onClick={navigateRoot}>

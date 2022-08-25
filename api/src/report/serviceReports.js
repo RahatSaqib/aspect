@@ -4,15 +4,13 @@ const Stream = require('stream')
 const _ = require('lodash')
 const { subDays } = require('date-fns')
 const { formatInTimeZone } = require('date-fns-tz')
-
+const csv = require('fast-csv')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
-const { getReportDetails, listReports } = require('./service')
+const { getReportDetails } = require('./service')
 const {
-  exportData,
-  getBaseReplacements,
   getMaxLimitPlaceHolders,
-  renderExcelTemplateToCsv,
+  getAdministrativeDivisionLabelPlaceHolders,
   renderExcelTemplate,
   streamExcelTemplate,
   respondFile,
@@ -55,22 +53,15 @@ async function getSheetData(request, sheet, sharedResults) {
   try {
     endpointModule = require(`../${moduleName}`) //eslint-disable-line
   } catch (error) {
-    return Boom.preconditionFailed(
-      `Can not load module ${moduleName}: ${error.toString()}`
-    )
+    return Boom.preconditionFailed(`Can not load module ${moduleName}: ${error.toString()}`)
   }
 
   const dataFunc = endpointModule[functionName]
   if (!dataFunc) {
-    return Boom.preconditionFailed(
-      `Can not find function ${functionName} in module ${moduleName}`
-    )
+    return Boom.preconditionFailed(`Can not find function ${functionName} in module ${moduleName}`)
   }
 
-  logger.debug(
-    `Report moduleName='${moduleName}', functionName='${functionName}'`,
-    RELABEL_EXCEL
-  )
+  logger.debug(`Report moduleName='${moduleName}', functionName='${functionName}'`, RELABEL_EXCEL)
 
   const result = await dataFunc(auth, query, { sharedResults, useNamedData })
   const {
@@ -79,6 +70,7 @@ async function getSheetData(request, sheet, sharedResults) {
     total,
     errorMessage,
     dynamicColumns = [],
+    fixedColumns = [],
     dataSelector = null,
     sections = [],
   } = result
@@ -88,41 +80,28 @@ async function getSheetData(request, sheet, sharedResults) {
   }
 
   const listSize = _.isPlainObject(data) ? data?.rows?.length : data?.length
-  logger.debug(
-    `Worksheet data - total=${total}, list size=${listSize}'`,
-    RELABEL_EXCEL
-  )
+  logger.debug(`Worksheet data - total=${total}, list size=${listSize}'`, RELABEL_EXCEL)
 
   if (ok) {
-    return { data, total, dynamicColumns, dataSelector, sections }
+    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections }
   }
 
-  return Boom.preconditionFailed(
-    `Error in function ${functionName} of module ${moduleName} - ${errorMessage}`
-  )
+  return Boom.preconditionFailed(`Error in function ${functionName} of module ${moduleName} - ${errorMessage}`)
 }
 
 // ----------------------------------------------------------------------------------------------
-function getDateRangeString({
-  minDate,
-  maxDate,
-  timeZone = 'America/New_York',
-}) {
+function getDateRangeString({ minDate, maxDate, timeZone = 'America/New_York' }) {
   const dateFormat = 'dd-MM-yyyy'
   if (!minDate && !maxDate) {
     return 'all'
   }
   const dates = []
   if (minDate) {
-    dates.push(
-      minDate ? formatInTimeZone(new Date(minDate), timeZone, dateFormat) : ''
-    )
+    dates.push(minDate ? formatInTimeZone(new Date(minDate), timeZone, dateFormat) : '')
   }
   dates.push(' — ') // long dash
   if (maxDate) {
-    dates.push(
-      maxDate ? formatInTimeZone(new Date(maxDate), timeZone, dateFormat) : ''
-    )
+    dates.push(maxDate ? formatInTimeZone(new Date(maxDate), timeZone, dateFormat) : '')
   }
   return dates.join('')
 }
@@ -174,6 +153,7 @@ async function getAllSheetsData(request, sheets) {
     const {
       data,
       dynamicColumns,
+      fixedColumns,
       total = null,
       dataSelector = null,
       sections,
@@ -186,6 +166,7 @@ async function getAllSheetsData(request, sheets) {
     dataSet[sheetIndex] = {
       data,
       dynamicColumns,
+      fixedColumns,
       sections,
       dataSelector,
       total,
@@ -204,18 +185,14 @@ async function getAllSheetsData(request, sheets) {
 async function createReport(request, reply) {
   const { auth, query, params } = request
   const { externalId, templateFolderPath } = params
-  const { sheets, fileName, exportExcel } = await getReportDetails(
-    auth,
-    externalId
-  )
+  const { sheets, fileName, exportExcel } = await getReportDetails(auth, externalId)
   const user = await getUser(auth.credentials.name)
-  const { countryAbbreviation, culture, userName } = user
+  const { countryAbbreviation, culture, partnerId, userName } = user
   const email = user.email || '-'
   const cell = user.cell || '-'
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
-  const extension =
-    (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
+  const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
 
   if (_.isNil(query.minDate)) {
     query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
@@ -225,6 +202,10 @@ async function createReport(request, reply) {
   if (Boom.isBoom(data)) {
     throw data
   }
+
+  const administrativeDivisionLabelPlaceHolders = await getAdministrativeDivisionLabelPlaceHolders({
+    partnerId,
+  })
 
   const replacements = [
     {
@@ -256,25 +237,12 @@ async function createReport(request, reply) {
       value: userName,
     },
     ...getMaxLimitPlaceHolders(),
+    ...administrativeDivisionLabelPlaceHolders,
   ]
 
   if (extension === 'csv') {
-    const dataBuffer = await renderExcelTemplateToCsv({
-      countryAbbreviation,
-      culture,
-      templateFolderPath: templateFolderPath || externalId,
-      data,
-      replacements,
-    })
-
-    return respondFile({
-      dataBuffer,
-      extension,
-      fileNamePrefix: fileName,
-      reply,
-    })
+    return streamToCsv(data, reply, fileName)
   }
-
   const renderParams = {
     countryAbbreviation,
     culture,
@@ -324,9 +292,46 @@ async function renderExcelFile(params) {
   })
 }
 
+async function streamToCsv(dataset, reply, fileName) {
+  const worksheetData = dataset[0]
+
+  const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
+  /**
+   * replace base placeholders, i.e. <Dates>, <States>, etc in the header
+   */
+  const csvStream = csv.format({
+    headers: data.length > 0,
+    writeBOM: true,
+  })
+
+  if (data.length > 0) {
+    _.forEach(data, row => {
+      const rowNormalized = transformRow(row, [...fixedColumns, ...dynamicColumns], dataSelector)
+      csvStream.write(rowNormalized)
+    })
+  } else {
+    csvStream.write({ data: defaultNoDataMessage })
+  }
+  csvStream.end()
+  return reply
+    .response(csvStream)
+    .encoding('binary')
+    .type('stream/octet-stream')
+    .header('content-disposition', `attachment; filename=${fileName}-${new Date().toISOString()}.csv;`)
+}
+
+function transformRow(row, columns, dataSelector) {
+  const rowNormalized = {}
+  const value = dataSelector ? dataSelector(row) : row
+  columns.forEach(({ key, header }) => (rowNormalized[header] = value[key]))
+
+  return rowNormalized
+}
+
 function renderExcelStream(params) {
   const stream = new Stream.PassThrough()
   const {
+    countryAbbreviation,
     culture,
     templateFolderPath,
     externalId,
@@ -347,6 +352,7 @@ function renderExcelStream(params) {
       streamExcelTemplate({
         stream,
         culture,
+        countryAbbreviation,
         templateFolderPath: templateFolderPath || externalId,
         data,
         replacements,
@@ -386,19 +392,6 @@ function renderExcelStream(params) {
   })
 }
 
-// ----------------------------------------------------------------------------------------------
-async function exportReports(request, reply) {
-  const { data } = await listReports(request)
-  const sheetData = {
-    data,
-    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
-    defaultNoDataMessage: 'No data',
-  }
-  return exportData(request, reply, sheetData, 'reports', {
-    replacements: [...getBaseReplacements(), ...getMaxLimitPlaceHolders()],
-  })
-}
 module.exports = {
   createReport,
-  exportReports,
 }

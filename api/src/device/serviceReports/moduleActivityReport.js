@@ -47,16 +47,12 @@ async function getModuleActivityReportData(minDate, dataConstraints, query) {
       'd.name as deviceName',
       knex.raw(`ifnull(r.moduleName, 'N/A') as moduleName`),
       'r.moduleSerial',
-      knex.raw('d.lastSeenOn as lastSeen'),
+      knex.raw('d.lastPingOn as lastSeen'),
       'i.lastIssue',
       'i.dateLastIssue',
     ])
     .groupBy('r.deviceId', 'r.moduleName')
-    .orderBy([
-      { column: 'lastSeen', order: 'desc' },
-      'r.deviceId',
-      'r.moduleName',
-    ])
+    .orderBy([{ column: 'lastSeen', order: 'desc' }, 'r.deviceId', 'r.moduleName'])
 
     .modify(addConstraints, dataConstraints, {
       device: 'd',

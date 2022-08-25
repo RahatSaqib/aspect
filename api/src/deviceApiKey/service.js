@@ -5,11 +5,7 @@ const addMinutes = require('date-fns/addMinutes')
 const { promisify } = require('util')
 
 const { knex, filterParams, sortPageParams } = require('../db')
-const {
-  getCellsByValue,
-  generateExcelFile,
-  generateCsvFile,
-} = require('../shared/io')
+const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
 const { randomToken, groupToken } = require('../deviceApi/apiKey')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
@@ -47,6 +43,7 @@ async function listDeviceApiKeys(request) {
       partnerId: 'dak.partnerId',
       siteName: 's.name',
       deviceName: 'd.name',
+      revoked: 'dak.revoked',
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -162,30 +159,9 @@ async function exportDeviceApiKeys(request) {
     })
   } else if (query.format === 'csv') {
     const items = devices.data
-    const columnNames = [
-      'Created On',
-      'Key',
-      'Partner',
-      'Country',
-      'Site',
-      'Device',
-      'Revoked',
-    ]
-    const fieldNames = [
-      'createdOn',
-      'token',
-      'partner',
-      'country',
-      'site',
-      'device',
-      'revoked',
-    ]
-    result = await generateCsvFile(
-      'deviceApiKeys.csv',
-      items,
-      columnNames,
-      fieldNames
-    )
+    const columnNames = ['Created On', 'Key', 'Partner', 'Country', 'Site', 'Device', 'Revoked']
+    const fieldNames = ['createdOn', 'token', 'partner', 'country', 'site', 'device', 'revoked']
+    result = await generateCsvFile('deviceApiKeys.csv', items, columnNames, fieldNames)
   }
 
   return result
@@ -246,8 +222,7 @@ async function assignDeviceApiKeys(request) {
 
   if (payload.deviceId) {
     // If deviceId is set, we need to ensure that only one key is assigned to the device
-    if (payload.deviceApiKeyIds.length > 1)
-      throw new Error('When deviceId is set, only one key can be assigned')
+    if (payload.deviceApiKeyIds.length > 1) throw new Error('When deviceId is set, only one key can be assigned')
 
     // Revoke the other keys assigned to it
     await knex('DeviceApiKey')
@@ -282,11 +257,9 @@ async function assignDeviceApiKeys(request) {
 async function revokeDeviceApiKey(request) {
   const { params, payload } = request
 
-  const updatedCount = await knex('DeviceApiKey')
-    .where('id', params.deviceApiKeyId)
-    .update({
-      revoked: payload.revoked,
-    })
+  const updatedCount = await knex('DeviceApiKey').where('id', params.deviceApiKeyId).update({
+    revoked: payload.revoked,
+  })
 
   if (updatedCount !== 1) {
     return Boom.badRequest()
@@ -303,13 +276,9 @@ async function revokeDeviceApiKey(request) {
 
 async function lookupUsingCredentials(username, password) {
   const nowTime = new Date().getTime()
-  const deviceApiKey = await knex('DeviceApiKey')
-    .where('username', username)
-    .first()
+  const deviceApiKey = await knex('DeviceApiKey').where('username', username).first()
   const pwResult = deviceApiKey
-    ? await bcryptCompare(password, _.get(deviceApiKey, 'password')).catch(
-        () => false
-      )
+    ? await bcryptCompare(password, _.get(deviceApiKey, 'password')).catch(() => false)
     : false
   if (!deviceApiKey || !pwResult) {
     return {

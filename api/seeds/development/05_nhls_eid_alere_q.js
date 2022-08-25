@@ -32,9 +32,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'nhls_eid' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'nhls_eid' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -102,9 +100,7 @@ async function seed(knex) {
   })
 
   // insert SA NHLS Alere q Connector device
-  const [southAfricaNhlsAlereFtpConnectorDeviceId] = await knex(
-    'Device'
-  ).insert({
+  const [southAfricaNhlsAlereFtpConnectorDeviceId] = await knex('Device').insert({
     name: 'South Africa NHLS Alere FTP Connector',
     shortName: 'SA NHLS Alere FTP',
     deviceTypeId: deviceTypes.AlereFtpConnector.id,
@@ -133,23 +129,19 @@ async function seed(knex) {
     .innerJoin('State as s', 's.id', 'g.stateId')
     .where({ 'g.countryId': southAfricaCountry.id })
     .select('g.countryId', 'l.id', 'l.name', 's.name as stateName')
-  const provincesByName = southAfricaProvinces.reduce(
-    (provinceMemo, province) => {
-      provinceMemo[province.name.toLowerCase()] = province
-      const provinceDistricts = _.filter(southAfricaDistricts, {
-        stateName: province.name,
-      })
-      if (provinceDistricts) {
-        provinceMemo[province.name.toLowerCase()].districts =
-          provinceDistricts.reduce((districtMemo, district) => {
-            districtMemo[district.name.toLowerCase()] = district
-            return districtMemo
-          }, {})
-      }
-      return provinceMemo
-    },
-    {}
-  )
+  const provincesByName = southAfricaProvinces.reduce((provinceMemo, province) => {
+    provinceMemo[province.name.toLowerCase()] = province
+    const provinceDistricts = _.filter(southAfricaDistricts, {
+      stateName: province.name,
+    })
+    if (provinceDistricts) {
+      provinceMemo[province.name.toLowerCase()].districts = provinceDistricts.reduce((districtMemo, district) => {
+        districtMemo[district.name.toLowerCase()] = district
+        return districtMemo
+      }, {})
+    }
+    return provinceMemo
+  }, {})
 
   const siteIds = {}
   await Promise.all(
@@ -229,24 +221,14 @@ async function seed(knex) {
     ...auditFields,
   })
 
-  await upsertJobFunctionFixture(
-    knex,
-    jobFunctionsFixtureSouthAfrica,
-    partnerId
-  )
-  const [jobFunctionIdAdmin] = await knex('JobFunction')
-    .where({ externalId: 'admin', partnerId })
-    .pluck('id')
+  await upsertJobFunctionFixture(knex, jobFunctionsFixtureSouthAfrica, partnerId)
+  const [jobFunctionIdAdmin] = await knex('JobFunction').where({ externalId: 'admin', partnerId }).pluck('id')
   const [jobFunctionIdRegionalOfficer] = await knex('JobFunction')
     .where({ externalId: 'regionalOfficer', partnerId })
     .pluck('id')
-  const [jobFunctionIdLabUser] = await knex('JobFunction')
-    .where({ externalId: 'labUser', partnerId })
-    .pluck('id')
+  const [jobFunctionIdLabUser] = await knex('JobFunction').where({ externalId: 'labUser', partnerId }).pluck('id')
 
-  const [jobIdAdmin] = await knex('Job').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
-  ])
+  const [jobIdAdmin] = await knex('Job').insert([{ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
   await knex('JobContext').insert({
     jobId: jobIdAdmin,
     geographyId: southAfricaGeographyId,
@@ -550,10 +532,7 @@ async function seed(knex) {
     patientDataSchema,
   })
 
-  await upsertConsumables(knex, true, [
-    'assayAlereQHiv12Detect',
-    'assayAlereQHiv12VLPlasma',
-  ])
+  await upsertConsumables(knex, true, ['assayAlereQHiv12Detect', 'assayAlereQHiv12VLPlasma'])
 
   const geneXpertHiv1VlFormSchema = {
     fields: {
@@ -637,12 +616,8 @@ async function seed(knex) {
     sendChangesOn: 'submit',
   })
 
-  const { id: assayGeneXpertHiv1VlId } = await knex('Assay')
-    .where({ externalId: 'GxHiv1Vl' })
-    .first('id')
-  const { id: assayGeneXpertHiv1QualId } = await knex('Assay')
-    .where({ externalId: 'GxHiv1Qual' })
-    .first('id')
+  const { id: assayGeneXpertHiv1VlId } = await knex('Assay').where({ externalId: 'GxHiv1Vl' }).first('id')
+  const { id: assayGeneXpertHiv1QualId } = await knex('Assay').where({ externalId: 'GxHiv1Qual' }).first('id')
 
   await knex('ResultForm').insert([
     {
@@ -679,11 +654,8 @@ async function seed(knex) {
     })
     .first('id', 'serial')
 
-  const { OK: resultWorkflowStatusOKId, Error: resultWorkflowStatusErrorId } =
-    await allResultWorkflowStatusToId()
-  const resultSourceDiagnosticDeviceId = await resultSourceToId(
-    'DiagnosticDevice'
-  )
+  const { OK: resultWorkflowStatusOKId, Error: resultWorkflowStatusErrorId } = await allResultWorkflowStatusToId()
+  const resultSourceDiagnosticDeviceId = await resultSourceToId('DiagnosticDevice')
   const resultTypePatientId = await resultTypeToId('Patient')
 
   const {
@@ -1125,9 +1097,7 @@ async function seed(knex) {
         reason: 'Device API Update',
         operator: result.senderOperator,
       })
-      await knex('Result')
-        .where('id', resultId)
-        .update({ resultWorkflowStatusLogId: lastLogId })
+      await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId: lastLogId })
     },
     { concurrency: config.db.connectionLimit }
   )
@@ -2126,14 +2096,8 @@ async function seed(knex) {
     })
 
     if (!_.isEmpty(person.tags)) {
-      const tagsInDatabase = await knex('Tag')
-        .whereIn('title', person.tags)
-        .andWhere('partnerId', partnerId)
-        .select()
-      const tagsToInsert = _.filter(
-        _.uniq(person.tags),
-        tagTitle => !_.some(tagsInDatabase, { title: tagTitle })
-      )
+      const tagsInDatabase = await knex('Tag').whereIn('title', person.tags).andWhere('partnerId', partnerId).select()
+      const tagsToInsert = _.filter(_.uniq(person.tags), tagTitle => !_.some(tagsInDatabase, { title: tagTitle }))
       await Promise.each(tagsToInsert, async tagToInsert => {
         const [tagId] = await knex('Tag').insert({
           title: tagToInsert,
@@ -2146,18 +2110,12 @@ async function seed(knex) {
         })
       })
 
-      const personTagsInDatabase = await knex('PersonTag').where(
-        'personId',
-        personId
-      )
+      const personTagsInDatabase = await knex('PersonTag').where('personId', personId)
       const tagsToAppendToPerson = _.filter(
         tagsInDatabase,
-        tagInDatabase =>
-          !_.some(personTagsInDatabase, { tagId: tagInDatabase.id })
+        tagInDatabase => !_.some(personTagsInDatabase, { tagId: tagInDatabase.id })
       )
-      await Promise.each(tagsToAppendToPerson, async tag =>
-        knex('PersonTag').insert({ tagId: tag.id, personId })
-      )
+      await Promise.each(tagsToAppendToPerson, async tag => knex('PersonTag').insert({ tagId: tag.id, personId }))
     }
     const [jobId] = await knex('Job').insert({
       personId,

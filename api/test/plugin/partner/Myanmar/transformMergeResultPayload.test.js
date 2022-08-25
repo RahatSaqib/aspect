@@ -3,19 +3,15 @@ const proxyquire = require('proxyquire')
 const { expect } = require('chai')
 
 describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in Myanmar', () => {
-  const transformMergeResultPayload = proxyquire(
-    '../../../../src/plugin/partner/Myanmar/transformMergeResultPayload',
-    {
-      '../../../shared/dictionary': {
-        sampleTypeToId: async () => {},
-        deviceTypeToPlugin: async () => Promise.resolve(''),
-      },
-      '../../registration': {
-        loadPlugin: async () =>
-          Promise.resolve(async ({ payload }) => Promise.resolve(payload)),
-      },
-    }
-  )
+  const transformMergeResultPayload = proxyquire('../../../../src/plugin/partner/Myanmar/transformMergeResultPayload', {
+    '../../../shared/dictionary': {
+      sampleTypeToId: async () => {},
+      deviceTypeToPlugin: async () => Promise.resolve(''),
+    },
+    '../../registration': {
+      loadPlugin: async () => Promise.resolve(async ({ payload }) => Promise.resolve(payload)),
+    },
+  })
 
   describe('Parse Notes', () => {
     it('Should populate patient HIV status, Gender, Age, Phone Number and Reason for Test', async () =>
@@ -113,8 +109,7 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in Mya
             },
           },
           {
-            notes:
-              '65,M,Yes,HIV-,Dx,Neg,Kan Gyi Su,Baye Pauk,Shwe Pyi Thar,LPA TSP,Relapse.',
+            notes: '65,M,Yes,HIV-,Dx,Neg,Kan Gyi Su,Baye Pauk,Shwe Pyi Thar,LPA TSP,Relapse.',
             expectedPayload: {
               patient: {
                 hivStatus: 'HIV Negative',

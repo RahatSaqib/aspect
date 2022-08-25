@@ -1,9 +1,5 @@
 const _ = require('lodash')
-const {
-  mergeResult,
-  getResult,
-  addResultWorkflowLogIfChanged,
-} = require('../../../deviceApi/result')
+const { mergeResult, getResult, addResultWorkflowLogIfChanged } = require('../../../deviceApi/result')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const DEVICE_TYPE_CHAI = 'CHAILIMS'
@@ -57,51 +53,29 @@ async function purgePreviousResults(knex, actions, deviceId, now) {
         changedOn: now,
       })
 
-      await knex('Result')
-        .where({ id: resultId })
-        .update({ resultWorkflowStatusLogId: lastLogId })
+      await knex('Result').where({ id: resultId }).update({ resultWorkflowStatusLogId: lastLogId })
       actions.resultUpdated(resultId)
     })
   )
 }
 
-async function generateHistoricalResults(
-  knex,
-  actions,
-  deviceId,
-  siteId,
-  now = new Date()
-) {
+async function generateHistoricalResults(knex, actions, deviceId, siteId, now = new Date()) {
   const partner = await knex('Site as s')
     .join('Partner as p', 's.partnerId', 'p.id')
     .where({ 's.id': siteId })
-    .first(
-      'p.deviceLogHistoryDays',
-      'p.autoAcknowledgeOlderThanDays',
-      'p.numberToLeaveUnacknowledged'
-    )
-  const {
-    deviceLogHistoryDays,
-    autoAcknowledgeOlderThanDays,
-    numberToLeaveUnacknowledged,
-  } = partner
+    .first('p.deviceLogHistoryDays', 'p.autoAcknowledgeOlderThanDays', 'p.numberToLeaveUnacknowledged')
+  const { deviceLogHistoryDays, autoAcknowledgeOlderThanDays, numberToLeaveUnacknowledged } = partner
 
   if (deviceLogHistoryDays == null) {
     return
   }
 
-  const historyCutoff = new Date(
-    +new Date() - deviceLogHistoryDays * millisInDay
-  )
+  const historyCutoff = new Date(+new Date() - deviceLogHistoryDays * millisInDay)
 
   const sourceResults = await knex('DeviceLog as dl')
     .join('Result as r', 'dl.resultId', 'r.id')
     .join('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
-    .join(
-      'ResultWorkflowStatus as rws',
-      'rwsl.resultWorkflowStatusId',
-      'rws.id'
-    )
+    .join('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
     .join('Device as d', 'dl.deviceId', 'd.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sm', 'r.sampleId', 'sm.id')
@@ -113,22 +87,14 @@ async function generateHistoricalResults(
     .where('dl.createdOn', '>=', historyCutoff)
     .whereIn('rws.externalId', MERGEABLE_CHAI_IDS)
     .orderBy('r.endedOn', 'asc')
-    .distinct(
-      'r.id as resultId',
-      'sm.id as sampleId',
-      'r.endedOn as resultEndedOn',
-      'd.name as deviceName'
-    )
+    .distinct('r.id as resultId', 'sm.id as sampleId', 'r.endedOn as resultEndedOn', 'd.name as deviceName')
 
   const autoAcknowledgeOlderThan = autoAcknowledgeOlderThanDays
     ? new Date(+new Date() - autoAcknowledgeOlderThanDays * millisInDay)
     : null
-  const autoAcknowledgeMaxIndex =
-    sourceResults.length - numberToLeaveUnacknowledged
+  const autoAcknowledgeMaxIndex = sourceResults.length - numberToLeaveUnacknowledged
 
-  const acknowledgedStatusId = await resultWorkflowStatusToId(
-    ACKNOWLEDGED_EXTERNALID
-  )
+  const acknowledgedStatusId = await resultWorkflowStatusToId(ACKNOWLEDGED_EXTERNALID)
 
   let index = -1
 
@@ -167,12 +133,7 @@ async function mergeResultAndUpdateWorkflowStatus(
   const payload = reporterResultFromChaiResult(sourceResult)
   payload.workflow = { status: { id: DELIVERABLE_EXTERNALID } }
 
-  const { processedResult, existingResult } = await mergeResult(
-    knex,
-    deviceId,
-    payload,
-    { sampleId, now }
-  )
+  const { processedResult, existingResult } = await mergeResult(knex, deviceId, payload, { sampleId, now })
   await addResultWorkflowLogIfChanged(
     knex,
     payload,

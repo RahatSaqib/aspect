@@ -9,10 +9,7 @@ const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-const {
-  definePluginVariables,
-  customPropertiesVariables,
-} = require('./variables')
+const { definePluginVariables, customPropertiesVariables } = require('./variables')
 
 const postcssPlugins = () => [
   pxToRem({
@@ -50,9 +47,7 @@ module.exports = NODE_ENV => {
         {
           test: /\.css$/,
           use: [
-            NODE_ENV === 'development'
-              ? 'style-loader'
-              : MiniCssExtractPlugin.loader,
+            NODE_ENV === 'development' ? 'style-loader' : MiniCssExtractPlugin.loader,
             {
               loader: 'css-loader',
               options: {
@@ -131,9 +126,9 @@ module.exports = NODE_ENV => {
          * see options - https://github.com/jantimon/html-webpack-plugin#options
          */
         inject: true,
-        template: 'src/template/index.html',
+        template: 'src/index.html',
         filename: 'index.html',
-        favicon: path.join(__dirname, '../src/template/favicon.png'),
+        favicon: path.join(__dirname, '../src/assets/favicon.png'),
       }),
       new SpriteLoaderPlugin(),
       new WebpackManifestPlugin(),

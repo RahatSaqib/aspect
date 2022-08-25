@@ -14,6 +14,7 @@ const {
 } = require('../fact/actions')
 const { escalateIssues, resolveIssues } = require('../issue/actions')
 const { logDeviceMaintenanceStatus } = require('../device/actions')
+const { tryToContinueUnprocessedRawData } = require('../deviceApiRaw/actions')
 const config = require('../config')
 
 function startScheduler(queue) {
@@ -31,6 +32,7 @@ function startScheduler(queue) {
     logDeviceMaintenanceStatus,
     factFillCustomFieldsCompletionStatsLast30Days,
     factCheckCompletionRatePerSite,
+    tryToContinueUnprocessedRawData,
   })
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
@@ -40,11 +42,9 @@ function startScheduler(queue) {
   dispatcher.factFillCustomFieldsCompletionStatsLast30Days()
   dispatcher.resolveIssues()
 
-  cron.schedule(
-    '30 00 * * *',
-    dispatcher.factFillCustomFieldsCompletionStatsLast30Days
-  ) // daily at 00:30 am
+  cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
+  cron.schedule('0 2 * * *', dispatcher.tryToContinueUnprocessedRawData) // daily at 2 am
   cron.schedule('10 */6 * * *', dispatcher.factGenerateResultCounts) // run every six hours, 30 minmutes past the hour
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
   cron.schedule('15 * * * *', dispatcher.factDataCategoryLowCheck) // every hour at 15th minute
@@ -69,17 +69,13 @@ function startScheduler(queue) {
     dispatchCheckUptimeRobot()
   }
 
-  cron.schedule(
-    config.scheduler.cron.logDeviceMaintenanceStatus,
-    dispatcher.logDeviceMaintenanceStatus
-  ) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
+  cron.schedule(config.scheduler.cron.logDeviceMaintenanceStatus, dispatcher.logDeviceMaintenanceStatus) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
 }
 
 function createActionDispatcher(queue, actionCreators) {
   const dispatcher = {}
   _.each(actionCreators, (creator, name) => {
-    dispatcher[name] = () =>
-      dispatchActionToQueue(queue, `aspect_scheduler_${name}`, creator())
+    dispatcher[name] = () => dispatchActionToQueue(queue, `aspect_scheduler_${name}`, creator())
   })
   return dispatcher
 }

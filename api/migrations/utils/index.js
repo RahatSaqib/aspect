@@ -1,25 +1,13 @@
 // Adds createdOn, createdBy
 function addCreateFields(table) {
   table.dateTime('createdOn').notNullable()
-  table
-    .integer('createdBy')
-    .notNullable()
-    .unsigned()
-    .index()
-    .references('id')
-    .inTable('User')
+  table.integer('createdBy').notNullable().unsigned().index().references('id').inTable('User')
 }
 
 // Adds updatedOn, updatedBy
 function addUpdateFields(table) {
   table.dateTime('updatedOn').notNullable()
-  table
-    .integer('updatedBy')
-    .notNullable()
-    .unsigned()
-    .index()
-    .references('id')
-    .inTable('User')
+  table.integer('updatedBy').notNullable().unsigned().index().references('id').inTable('User')
 }
 
 function addAuditFields(table) {
@@ -38,10 +26,7 @@ function addUpdateFieldsNullable(table) {
   table.integer('updatedBy').unsigned().index().references('id').inTable('User')
 }
 
-function addTimestamps(
-  table,
-  { nullable = false, update = true } = { nullable: false, update: true }
-) {
+function addTimestamps(table, { nullable = false, update = true } = { nullable: false, update: true }) {
   if (nullable) {
     table.dateTime('createdOn')
     if (update) {

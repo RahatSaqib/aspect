@@ -19,14 +19,7 @@ const subscribers = {
   patient: require('./patient/endpoints').subscriptions,
 }
 async function addSubscriptions(queue) {
-  await Promise.each(_.keys(subscribers), async key =>
-    queue.subscribe(key, subscribers[key])
-  )
+  await Promise.each(_.keys(subscribers), async key => queue.subscribe(key, subscribers[key]))
 }
 
-async function updateSubscription(queue, subscriptionKey) {
-  if (subscribers[subscriptionKey]) {
-    await queue.subscribe(subscriptionKey, subscribers[subscriptionKey])
-  } else throw new Error('Subscription key not defined')
-}
-module.exports = { addSubscriptions, updateSubscription }
+module.exports = { addSubscriptions }

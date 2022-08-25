@@ -1,8 +1,4 @@
-async function getDeviceSeenOn({
-  knex,
-  device: { id: deviceId, deviceType },
-  now,
-}) {
+async function getDeviceSeenOn({ knex, device: { id: deviceId, deviceType }, now }) {
   if (deviceType === 'AlereFtpConnector') {
     return now
   }

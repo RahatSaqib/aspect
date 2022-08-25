@@ -1,6 +1,6 @@
 import React from 'react'
 import { IntlProvider } from 'react-intl'
-import { ThemeProvider } from '@material-ui/core/styles'
+import { ThemeProvider } from '@mui/material/styles'
 
 import aspectTheme from '../src/theme/variables'
 

@@ -32,10 +32,7 @@ describe('Scheduler task tracker', () => {
         Delete two random days executed from the task scheduler log and from device maintenance status
       */
       await knex('SchedulerTaskExecutionLog')
-        .whereIn('processingDate', [
-          sampleDate1.processingDate,
-          sampleDate2.processingDate,
-        ])
+        .whereIn('processingDate', [sampleDate1.processingDate, sampleDate2.processingDate])
         .del()
       await knex('SchedulerTaskExecutionLog')
         .where('processingDate', sampleDate3.processingDate)
@@ -56,11 +53,7 @@ describe('Scheduler task tracker', () => {
        */
       const noSchedulerTaskRecords = await knex('SchedulerTaskExecutionLog')
         .where('success', true)
-        .whereIn('processingDate', [
-          sampleDate1.processingDate,
-          sampleDate2.processingDate,
-          sampleDate3.processingDate,
-        ])
+        .whereIn('processingDate', [sampleDate1.processingDate, sampleDate2.processingDate, sampleDate3.processingDate])
         .select()
       const noMaintenanceLogRecords = await knex('DeviceMaintenanceStatusLog')
         .whereIn(
@@ -83,11 +76,7 @@ describe('Scheduler task tracker', () => {
 
       const withSchedulerTaskRecords = await knex('SchedulerTaskExecutionLog')
         .where('success', true)
-        .whereIn('processingDate', [
-          sampleDate1.processingDate,
-          sampleDate2.processingDate,
-          sampleDate3.processingDate,
-        ])
+        .whereIn('processingDate', [sampleDate1.processingDate, sampleDate2.processingDate, sampleDate3.processingDate])
         .select()
       const withMaintenanceLogRecords = await knex('DeviceMaintenanceStatusLog')
         .whereIn(
@@ -116,10 +105,8 @@ describe('Scheduler task tracker', () => {
     }
     const subscription = {
       actions: {
-        UNEXISTING_TEST_MESSAGE: async (action, context) =>
-          taskTracker(myTinyFunc2, action, context),
-        UNEXISTING_TEST_MESSAGE2: async (action, context) =>
-          taskTracker(myTinyFunc1, action, context),
+        UNEXISTING_TEST_MESSAGE: async (action, context) => taskTracker(myTinyFunc2, action, context),
+        UNEXISTING_TEST_MESSAGE2: async (action, context) => taskTracker(myTinyFunc1, action, context),
       },
     }
     before(async () => {

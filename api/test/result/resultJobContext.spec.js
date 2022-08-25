@@ -17,9 +17,7 @@ describe('Result route Job constraints', () => {
   const resultIdsToRemove = []
 
   after(async () => {
-    await Promise.each(resultIdsToRemove, async resultId =>
-      knex('Result').where('id', resultId).del()
-    )
+    await Promise.each(resultIdsToRemove, async resultId => knex('Result').where('id', resultId).del())
   })
 
   describe('Assay based', () => {
@@ -52,12 +50,8 @@ describe('Result route Job constraints', () => {
 
     before(async () => {
       shared.checkToken(server, path)
-      const { id: partnerId } = await knex('Partner')
-        .where('name', partnerName)
-        .first('id')
-      const otherUserId = (
-        await knex('User').where('name', '<>', 'admin').first('id')
-      ).id
+      const { id: partnerId } = await knex('Partner').where('name', partnerName).first('id')
+      const otherUserId = (await knex('User').where('name', '<>', 'admin').first('id')).id
       await Promise.each(_.range(0, 15), async () => {
         resultIdsToRemove.push(
           await createResult(
@@ -85,10 +79,7 @@ describe('Result route Job constraints', () => {
           },
         ]
       )
-      bdMgitGndClinicianAuthAccessToken = await getAccessToken(
-        bdMgitGndClinicianUsername,
-        bdMgitGndClinicianPassword
-      )
+      bdMgitGndClinicianAuthAccessToken = await getAccessToken(bdMgitGndClinicianUsername, bdMgitGndClinicianPassword)
 
       await Promise.each(_.range(0, 15), async () => {
         resultIdsToRemove.push(
@@ -137,22 +128,13 @@ describe('Result route Job constraints', () => {
           )
         )
       })
-      gxEbolaClinicianUserId = await createUser(
-        partnerName,
-        'US',
-        gxEbolaClinicianUsername,
-        gxEbolaClinicianPassword,
-        [
-          {
-            jobFunctionExternalId: 'clinician',
-            assayExternalId: assayGxEbolaExternalId,
-          },
-        ]
-      )
-      gxEbolaClinicianAuthAccessToken = await getAccessToken(
-        gxEbolaClinicianUsername,
-        gxEbolaClinicianPassword
-      )
+      gxEbolaClinicianUserId = await createUser(partnerName, 'US', gxEbolaClinicianUsername, gxEbolaClinicianPassword, [
+        {
+          jobFunctionExternalId: 'clinician',
+          assayExternalId: assayGxEbolaExternalId,
+        },
+      ])
+      gxEbolaClinicianAuthAccessToken = await getAccessToken(gxEbolaClinicianUsername, gxEbolaClinicianPassword)
       bothAssaysClinicianUserId = await createUser(
         'Partner One',
         'US',
@@ -214,9 +196,7 @@ describe('Result route Job constraints', () => {
       const gxEbolaUserResultsResponse = await server
         .get(path)
         .set('Authorization', `Bearer ${gxEbolaClinicianAuthAccessToken}`)
-      const { name: gxEbolaAssayName } = await knex('Assay')
-        .where('externalId', assayGxEbolaExternalId)
-        .first()
+      const { name: gxEbolaAssayName } = await knex('Assay').where('externalId', assayGxEbolaExternalId).first()
       assert.isAtLeast(gxEbolaUserResultsResponse.body.total, 1)
       const bothAssaysUserResultsResponse = await server
         .get(path)
@@ -227,14 +207,10 @@ describe('Result route Job constraints', () => {
       assert.typeOf(bothAssaysUserResultsResponse.body.data, 'array')
       assert.equal(
         bothAssaysUserResultsResponse.body.total,
-        daktariHivVlUserResultsResponse.body.total +
-          gxEbolaUserResultsResponse.body.total
+        daktariHivVlUserResultsResponse.body.total + gxEbolaUserResultsResponse.body.total
       )
       bothAssaysUserResultsResponse.body.data.forEach(result => {
-        assert.include(
-          [gxEbolaAssayName, daktariHivVlAssayName],
-          result.assayName
-        )
+        assert.include([gxEbolaAssayName, daktariHivVlAssayName], result.assayName)
       })
       assert.property(bothAssaysUserResultsResponse.body, 'total')
       assert.typeOf(bothAssaysUserResultsResponse.body.extraColumns, 'array')
@@ -258,12 +234,8 @@ describe('Result route Job constraints', () => {
 
     before(async () => {
       shared.checkToken(server, path)
-      const { id: partnerId } = await knex('Partner')
-        .where('name', partnerName)
-        .first('id')
-      const otherUserId = (
-        await knex('User').where('name', '<>', 'admin').first('id')
-      ).id
+      const { id: partnerId } = await knex('Partner').where('name', partnerName).first('id')
+      const otherUserId = (await knex('User').where('name', '<>', 'admin').first('id')).id
       await Promise.each(_.range(0, 15), async () => {
         resultIdsToRemove.push(
           await createResult(
@@ -335,12 +307,8 @@ describe('Result route Job constraints', () => {
     after(async () => removeUser(bothDiseasesClinicianUserId))
 
     it("should constrain results returned based on the user's job context", async () => {
-      const { name: diseaseHivName } = await knex('Disease')
-        .where('externalId', diseaseHivExternalId)
-        .first()
-      const { name: diseaseCovid19Name } = await knex('Disease')
-        .where('externalId', diseaseCovid19ExternalId)
-        .first()
+      const { name: diseaseHivName } = await knex('Disease').where('externalId', diseaseHivExternalId).first()
+      const { name: diseaseCovid19Name } = await knex('Disease').where('externalId', diseaseCovid19ExternalId).first()
       const bothDiseasesUserResultsResponse = await server
         .get(path)
         .set('Authorization', `Bearer ${bothDiseasesClinicianAuthAccessToken}`)
@@ -349,36 +317,23 @@ describe('Result route Job constraints', () => {
       assert.property(bothDiseasesUserResultsResponse.body, 'data')
       assert.typeOf(bothDiseasesUserResultsResponse.body.data, 'array')
       assert.isAtLeast(bothDiseasesUserResultsResponse.body.data.length, 5)
-      await Promise.each(
-        bothDiseasesUserResultsResponse.body.data,
-        async result => {
-          assert.include(
-            [diseaseHivName, diseaseCovid19Name],
-            result.diseaseName
-          )
-          const { reportableSiteExternalId, diseaseExternalId } = await knex(
-            'Result as r'
-          )
-            .join('Site as rs', 'r.reportableSiteId', 'rs.id')
-            .join('Assay as a', 'r.assayId', 'a.id')
-            .join('AssayType as at', 'a.assayTypeId', 'at.id')
-            .join('Disease as dis', 'at.diseaseId', 'dis.id')
-            .where('r.id', result.id)
-            .first(
-              'rs.externalId as reportableSiteExternalId',
-              'dis.externalId as diseaseExternalId'
-            )
-          const expectedReportableSiteExternalId =
-            result.diseaseName === diseaseHivName
-              ? hivSiteExternalId
-              : covid19SiteExternalId
-          assert.equal(
-            reportableSiteExternalId,
-            expectedReportableSiteExternalId,
-            `The user can see a ${diseaseExternalId} result from ${reportableSiteExternalId} when they only have permissions to view ${diseaseHivExternalId} results from ${hivSiteExternalId} and ${diseaseCovid19ExternalId} results from ${covid19SiteExternalId}`
-          )
-        }
-      )
+      await Promise.each(bothDiseasesUserResultsResponse.body.data, async result => {
+        assert.include([diseaseHivName, diseaseCovid19Name], result.diseaseName)
+        const { reportableSiteExternalId, diseaseExternalId } = await knex('Result as r')
+          .join('Site as rs', 'r.reportableSiteId', 'rs.id')
+          .join('Assay as a', 'r.assayId', 'a.id')
+          .join('AssayType as at', 'a.assayTypeId', 'at.id')
+          .join('Disease as dis', 'at.diseaseId', 'dis.id')
+          .where('r.id', result.id)
+          .first('rs.externalId as reportableSiteExternalId', 'dis.externalId as diseaseExternalId')
+        const expectedReportableSiteExternalId =
+          result.diseaseName === diseaseHivName ? hivSiteExternalId : covid19SiteExternalId
+        assert.equal(
+          reportableSiteExternalId,
+          expectedReportableSiteExternalId,
+          `The user can see a ${diseaseExternalId} result from ${reportableSiteExternalId} when they only have permissions to view ${diseaseHivExternalId} results from ${hivSiteExternalId} and ${diseaseCovid19ExternalId} results from ${covid19SiteExternalId}`
+        )
+      })
       assert.property(bothDiseasesUserResultsResponse.body, 'total')
       assert.typeOf(bothDiseasesUserResultsResponse.body.extraColumns, 'array')
     })

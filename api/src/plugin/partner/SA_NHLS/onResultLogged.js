@@ -10,13 +10,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     const result = await knex('Result as r')
       .join('Sample as s', 'r.sampleId', 's.id')
       .where({ 'r.id': resultId })
-      .first(
-        'r.formData',
-        'r.patientData',
-        'r.endedOn',
-        'r.sampleId',
-        's.collectedOn'
-      )
+      .first('r.formData', 'r.patientData', 'r.endedOn', 'r.sampleId', 's.collectedOn')
     if (result) {
       const { formData, patientData, endedOn, sampleId, collectedOn } = result
       const resultUpdates = {}
@@ -38,18 +32,12 @@ async function onResultLogged({ resultId }, { messageContext }) {
         patientDataObject.hospitalNumber = formDataObject.hospitalNumber
         resultUpdates.patientData = JSON.stringify(patientDataObject)
 
-        const formDataTimeInstrumentResulted = parseDateOrDefault(
-          formDataObject.timeInstrumentResulted,
-          endedOn
-        )
+        const formDataTimeInstrumentResulted = parseDateOrDefault(formDataObject.timeInstrumentResulted, endedOn)
         if (formDataTimeInstrumentResulted !== endedOn) {
           resultUpdates.endedOn = formDataTimeInstrumentResulted
         }
 
-        const formDataTimeSampleTaken = parseDateOrDefault(
-          formDataObject.timeSampleTaken,
-          collectedOn
-        )
+        const formDataTimeSampleTaken = parseDateOrDefault(formDataObject.timeSampleTaken, collectedOn)
         if (formDataTimeSampleTaken !== collectedOn && sampleId) {
           sampleUpdates.collectedOn = formDataTimeSampleTaken
         }

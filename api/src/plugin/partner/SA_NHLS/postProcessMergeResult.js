@@ -2,12 +2,7 @@ const _ = require('lodash')
 const alereFtpConnectorPostProcessMergeResult = require('../../deviceType/AlereFtpConnector/postProcessMergeResult')
 
 async function postProcessMergeResult(context, result, previousResult) {
-  const alereFtpConnectorPluginResult =
-    await alereFtpConnectorPostProcessMergeResult(
-      context,
-      result,
-      previousResult
-    )
+  const alereFtpConnectorPluginResult = await alereFtpConnectorPostProcessMergeResult(context, result, previousResult)
 
   const { knex } = context
 
@@ -23,16 +18,9 @@ async function postProcessMergeResult(context, result, previousResult) {
       'a.externalId as assayExternalId',
       's.externalId as siteExternalId'
     )
-  const positiveResultCategories = [
-    'Detected',
-    'Trace Detected',
-    'LessThan1000',
-    'MoreThan1000',
-  ]
+  const positiveResultCategories = ['Detected', 'Trace Detected', 'LessThan1000', 'MoreThan1000']
   const resultIsPositive =
-    positiveResultCategories.includes(
-      resultDetails.resultCategory1ExternalId
-    ) ||
+    positiveResultCategories.includes(resultDetails.resultCategory1ExternalId) ||
     positiveResultCategories.includes(resultDetails.resultCategory2ExternalId)
   const positiveResultTagTitle =
     resultDetails.assayExternalId === 'assayAlereQHiv12Detect'
@@ -41,17 +29,12 @@ async function postProcessMergeResult(context, result, previousResult) {
       ? 'HIV-VL>50'
       : null
   if (resultIsPositive && positiveResultTagTitle) {
-    const existingResultTags = await knex('ResultTag')
-      .where('resultId', result.id)
-      .select()
-    const partnerTags = await knex('Tag')
-      .where('partnerId', result.partnerId)
-      .select('id', 'title')
+    const existingResultTags = await knex('ResultTag').where('resultId', result.id).select()
+    const partnerTags = await knex('Tag').where('partnerId', result.partnerId).select('id', 'title')
 
     const positiveResultTag = _.find(
       partnerTags,
-      partnerTag =>
-        partnerTag.title.toLowerCase() === positiveResultTagTitle.toLowerCase()
+      partnerTag => partnerTag.title.toLowerCase() === positiveResultTagTitle.toLowerCase()
     )
 
     const resultAlreadyTaggedPositive = _.some(existingResultTags, {

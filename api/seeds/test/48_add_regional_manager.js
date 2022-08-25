@@ -12,9 +12,7 @@ module.exports = require('../utils').seed(async knex => {
       name: partnerName,
     })
     .first('id as partnerOneId')
-  const { adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id as adminId')
+  const { adminId } = await knex('User').where({ name: 'admin' }).first('id as adminId')
   const {
     id: geographyId,
     countryId,

@@ -1,7 +1,4 @@
-const {
-  allAssayToId,
-  allResultCategoryToId,
-} = require('../../src/shared/dictionary')
+const { allAssayToId, allResultCategoryToId } = require('../../src/shared/dictionary')
 
 async function getBaseReports() {
   const assayIds = await allAssayToId()
@@ -30,8 +27,7 @@ async function getBaseReports() {
     },
     {
       name: 'Critical Errors By Device',
-      description:
-        'Includes a list of devices that had at least 2 critical errors',
+      description: 'Includes a list of devices that had at least 2 critical errors',
       i18nKey: 'Critical_Errors_By_Device',
       externalId: 'critical_errors_by_device',
       fileName: 'DevicesWithErrors',
@@ -46,12 +42,21 @@ async function getBaseReports() {
             assayId: assayIds.GxMtbRif,
           },
         },
+        {
+          moduleName: 'device/service',
+          functionName: 'getErrorCodesByDeviceReport',
+          query: {
+            sortCol: 'name',
+            sortDir: 'asc',
+            hasResults: 1,
+            assayId: assayIds.GxMtbRif,
+          },
+        },
       ],
     },
     {
       name: 'RIF Resistance Rate (%positive results)',
-      description:
-        'Listing RIF Resistance Rate for all facilities, ranked highest to lowest',
+      description: 'Listing RIF Resistance Rate for all facilities, ranked highest to lowest',
       i18nKey: 'RIF_Resistance_Rate',
       externalId: 'rif_resistance_rate',
       fileName: 'RifResistanceRate',

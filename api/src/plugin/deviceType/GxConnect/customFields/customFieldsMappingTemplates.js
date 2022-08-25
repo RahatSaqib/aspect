@@ -89,12 +89,9 @@ const baseMapper = aspectFields => {
      *  value  ->  text
      *  order  ->  displayOrder
      */
-    'fields[].items[].key':
-      'CustomFields.Fields[].InputControlData.options[].value',
-    'fields[].items[].value':
-      'CustomFields.Fields[].InputControlData.options[].text',
-    'fields[].items[].order':
-      'CustomFields.Fields[].InputControlData.options[].displayOrder',
+    'fields[].items[].key': 'CustomFields.Fields[].InputControlData.options[].value',
+    'fields[].items[].value': 'CustomFields.Fields[].InputControlData.options[].text',
+    'fields[].items[].order': 'CustomFields.Fields[].InputControlData.options[].displayOrder',
 
     'fields[].validation[].min': {
       key: 'CustomFields.Fields[].InputControlData.minValue',
@@ -110,8 +107,7 @@ const baseMapper = aspectFields => {
     },
     'fields[].filters': {
       key: 'CustomFields.Fields[].InputControlData.filters',
-      transform: sourceValue =>
-        translateCondition(sourceValue, aspectFields, true),
+      transform: sourceValue => translateCondition(sourceValue, aspectFields, true),
     },
     'fields[].items[]': {
       key: 'CustomFields.Fields[].InputControlData.options[]',
@@ -135,9 +131,7 @@ const transformItemsToOptions = (source, sourceObject, destinationValue) => {
    * - if they differ - exit
    */
   const srcFirst = sourceObject.fields.find(({ items }) => !!items)
-  const srcThis = sourceObject.fields.find(({ items }) =>
-    _.isEqual(items, source)
-  )
+  const srcThis = sourceObject.fields.find(({ items }) => _.isEqual(items, source))
   if (srcFirst !== srcThis) {
     return null
   }
@@ -185,17 +179,9 @@ const translateCondition = (sourceValue, aspectFields) => {
   const map = _.map(sourceValue, elem => {
     if (elem.operator && !elem.refId) {
       const field = {
-        operator:
-          elem.operator === '==='
-            ? '='
-            : elem.operator === '!=='
-            ? '!='
-            : elem.operator,
+        operator: elem.operator === '===' ? '=' : elem.operator === '!==' ? '!=' : elem.operator,
         refId: _.get(
-          _.find(
-            aspectFields.fields,
-            ({ name: fieldName }) => fieldName === elem.propToCompare
-          ),
+          _.find(aspectFields.fields, ({ name: fieldName }) => fieldName === elem.propToCompare),
           'id'
         ),
       }

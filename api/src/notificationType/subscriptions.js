@@ -1,6 +1,4 @@
-const {
-  subscriptions: notificationSubscriptions,
-} = require('../notification/endpoints')
+const NotificationCache = require('../notification/notificationCache')
 
 const subscriptions = [
   {
@@ -10,13 +8,8 @@ const subscriptions = [
   },
 ]
 
-async function onNotificationTypeCreated(
-  notificationTypeId,
-  { messageContext }
-) {
-  return messageContext.run(async () =>
-    messageContext.queue.subscribe('notification', notificationSubscriptions)
-  )
+async function onNotificationTypeCreated(notificationTypeId, { messageContext }) {
+  return messageContext.run(async knex => NotificationCache.getInstance(knex).refreshCache())
 }
 
 module.exports = { subscriptions }

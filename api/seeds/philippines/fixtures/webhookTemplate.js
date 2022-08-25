@@ -154,9 +154,7 @@ const itisWebhookTemplate = {
     `/PATIENT_MIDDLE_NAME/{{urlEncode (defaultTo result.patient.middleInitialOrName 'NULL')}}` +
     `/PATIENT_AGE/{{defaultTo (extractValueFromRegexCaptureGroup result.patient.age expression='^(\\d*)(.*)$' groupNumber=1) 'NULL'}}` +
     `/PATIENT_ADDRESS/{{urlEncode (defaultTo result.patient.address 'NULL')}}` +
-    `/SEX/{{defaultTo (mapValue result.patient.sex '${JSON.stringify(
-      genderValueMap
-    )}') 'NULL'}}` +
+    `/SEX/{{defaultTo (mapValue result.patient.sex '${JSON.stringify(genderValueMap)}') 'NULL'}}` +
     `/PATIENT_MOBILE_NUMBER/{{urlEncode (defaultTo (coalesce result.patient.phone (customFieldValueFromLabel result.data.customFieldData 'Patient Phone')) 'NULL')}}` +
     `/PATIENT_LANDLINE_NUMBER/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient\\'s Landline No.') 'NULL')}}` +
     `/PATIENT_EMAIL/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient\\'s Email Address') 'NULL')}}` +
@@ -177,9 +175,7 @@ const itisWebhookTemplate = {
     `/REGISTRATION_GROUP/{{urlEncode (defaultTo (mapValue result.patient.registrationGroup '${JSON.stringify(
       registrationGroupCodes
     )}') '938616')}}` +
-    `/SPECIMEN_TYPE/{{defaultTo (mapValue result.sample.data.type '${JSON.stringify(
-      specimenTypeCodes
-    )}') 'NULL'}}` +
+    `/SPECIMEN_TYPE/{{defaultTo (mapValue result.sample.data.type '${JSON.stringify(specimenTypeCodes)}') 'NULL'}}` +
     `/REPEAT_COLLECTION/{{defaultTo (mapValue result.sample.data.repeatCollection '${JSON.stringify(
       repeatCollectionCodes
     )}') 'NULL'}}` +
@@ -190,9 +186,7 @@ const itisWebhookTemplate = {
     `/VISUAL_APPEARANCE/{{defaultTo (mapValue result.sample.data.appearance '${JSON.stringify(
       visualAppearanceCodes
     )}') 'NULL'}}` +
-    `/EXAM_TYPE/{{defaultTo (mapValue result.assay.id '${JSON.stringify(
-      examTypes
-    )}') 'NULL'}}` +
+    `/EXAM_TYPE/{{defaultTo (mapValue result.assay.id '${JSON.stringify(examTypes)}') 'NULL'}}` +
     `/EXAM_RESULT/` +
     `{{#if (eq result.assay.id 'assaySmear')}}` +
     `%7B%22RESULT%22%3A%22{{defaultTo (mapValue result.category1.id '${JSON.stringify(

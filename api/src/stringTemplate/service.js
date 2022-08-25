@@ -21,10 +21,7 @@ handlebars.registerHelper('escapeLines', escapeLines)
 handlebars.registerHelper('urlEncode', urlEncode)
 handlebars.registerHelper('tryMergeResultCategories', tryMergeResultCategories)
 handlebars.registerHelper('isRegexMatch', isRegexMatch)
-handlebars.registerHelper(
-  'extractValueFromRegexCaptureGroup',
-  extractValueFromRegexCaptureGroup
-)
+handlebars.registerHelper('extractValueFromRegexCaptureGroup', extractValueFromRegexCaptureGroup)
 handlebars.registerHelper('toInt', toInt)
 handlebars.registerHelper('maxViralLoadValue', maxViralLoadValue)
 handlebars.registerHelper({
@@ -37,10 +34,7 @@ handlebars.registerHelper({
   and: (...rest) => Array.prototype.slice.call(rest).every(Boolean),
   or: (...rest) => Array.prototype.slice.call(rest, 0, -1).some(Boolean),
 })
-handlebars.registerHelper(
-  'customFieldValueFromLabel',
-  customFieldValueFromLabel
-)
+handlebars.registerHelper('customFieldValueFromLabel', customFieldValueFromLabel)
 handlebars.registerHelper('coalesce', coalesce)
 
 // See unit tests for examples
@@ -54,7 +48,7 @@ function getMustacheTokensInString(inputString) {
   return inputString.match(/{{\s*[\w.[\]\s]+\s*}}/g)
 }
 
-function addDataSourceToQuery(queryBuilder, aliases) {
+function addDataSourceToQuery(queryBuilder, aliases, resultId) {
   // TODO generalize to other aliases and make joined tables and field names unique
   // similar to auth/constraints
   const { message, notification } = aliases
@@ -73,7 +67,13 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Geography as rg', `r.geographyId`, 'rg.id')
       .leftJoin('Country as rc', `rg.countryId`, 'rc.id')
       .leftJoin('Site as rs', 'r.reportableSiteId', 'rs.id')
-      .leftJoin('Assay as a', `r.assayId`, 'a.id')
+      .leftJoin('Assay as a', assayJoin => {
+        if (resultId) {
+          assayJoin.on('r.assayId', 'a.id')
+        } else {
+          assayJoin.on('dt.id', 'a.deviceTypeId')
+        }
+      })
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
       .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')
@@ -96,9 +96,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
         knex.raw('coalesce(c.countryCode,rc.countryCode) as countryCode'),
-        knex.raw(
-          'coalesce(c.abbreviation,rc.abbreviation) as countryAbbreviation'
-        ),
+        knex.raw('coalesce(c.abbreviation,rc.abbreviation) as countryAbbreviation'),
         'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
@@ -135,11 +133,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
     queryBuilder
       .leftJoin('Issue as i', `${notification}.issueId`, 'i.id')
       .leftJoin('IssueType as it', `i.issueTypeId`, 'it.id')
-      .leftJoin(
-        'NotificationType as nt',
-        `${notification}.notificationTypeId`,
-        'nt.id'
-      )
+      .leftJoin('NotificationType as nt', `${notification}.notificationTypeId`, 'nt.id')
       .select(
         'i.createdOn as issueCreatedOn',
         'i.dueOn as issueDueOn',
@@ -351,14 +345,9 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
 async function getBaseDataSource(data) {
   const d = data || {}
   const { loadPlugin } = require('../plugin/registration')
-  const { displayPreferences = {} } = await loadPlugin(
-    [d.partnerPlugin],
-    'settings'
-  )
+  const { displayPreferences = {} } = await loadPlugin([d.partnerPlugin], 'settings')
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
-  const isHardwareIssue = d.issueTypeExternalId
-    ? d.issueTypeExternalId.indexOf('Hardware') === 0
-    : false
+  const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   return {
     country: {
       name: d.countryName,
@@ -478,16 +467,13 @@ function processUsingDynamicHelpers(template, ds) {
    */
   const dynamicTemplate = template.replace(
     /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
-    (str, match) =>
-      `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
+    (str, match) => `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
   )
   let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
 
   if (dynamicTemplate !== template) {
     message = processUsingHandlebarsSyntax(
-      message
-        .replace(/\${openMustaches}/g, '{{')
-        .replace(/\${closeMustaches}/g, '}}'),
+      message.replace(/\${openMustaches}/g, '{{').replace(/\${closeMustaches}/g, '}}'),
       ds
     )
   }
@@ -517,11 +503,7 @@ function isoDate(date) {
 }
 
 function getArgumentFromOptions(options, keyInOptionsHash) {
-  if (
-    ['string', 'number', 'undefined', 'null', 'boolean', 'symbol'].includes(
-      typeof options
-    )
-  ) {
+  if (['string', 'number', 'undefined', 'null', 'boolean', 'symbol'].includes(typeof options)) {
     return options
   }
   return _.get(options, ['hash', keyInOptionsHash])
@@ -532,8 +514,7 @@ function formatDate(date, options) {
     return date
   }
   const dateFormat =
-    getArgumentFromOptions(options, 'formatString') ||
-    _.get(this, 'displayPreferences.dateFormat', 'yyyy-MM-dd')
+    getArgumentFromOptions(options, 'formatString') || _.get(this, 'displayPreferences.dateFormat', 'yyyy-MM-dd')
   return formatDateOrDefault(date, dateFormat)
 }
 
@@ -541,23 +522,15 @@ function formatPhone(phoneNumber, options) {
   if (_.isNil(phoneNumber) || !phoneNumber.replace(/\s/, '')) {
     return ''
   }
-  const countryDialingCode = `${
-    getArgumentFromOptions(options, 'dialingCode') || ''
-  }`.replace(/[\s-\\+]/, '')
+  const countryDialingCode = `${getArgumentFromOptions(options, 'dialingCode') || ''}`.replace(/[\s-\\+]/, '')
   let sanitizedPhoneNumber = phoneNumber.replace(/[\s-]/, '')
   if (countryDialingCode) {
     if (sanitizedPhoneNumber.indexOf(countryDialingCode) === 0) {
-      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
-        countryDialingCode.length
-      )
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(countryDialingCode.length)
     } else if (sanitizedPhoneNumber.indexOf(`0${countryDialingCode}`) === 0) {
-      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
-        countryDialingCode.length + 1
-      )
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(countryDialingCode.length + 1)
     } else if (sanitizedPhoneNumber.indexOf(`00${countryDialingCode}`) === 0) {
-      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(
-        countryDialingCode.length + 2
-      )
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(countryDialingCode.length + 2)
     }
     if (sanitizedPhoneNumber.indexOf('0') === 0) {
       sanitizedPhoneNumber = sanitizedPhoneNumber.substr(1)
@@ -580,11 +553,7 @@ function toLowerCase(stringValue) {
 }
 
 function safeString(value) {
-  if (
-    _.isNil(value) ||
-    value instanceof handlebars.SafeString ||
-    typeof value !== 'string'
-  ) {
+  if (_.isNil(value) || value instanceof handlebars.SafeString || typeof value !== 'string') {
     return value
   }
   return new handlebars.SafeString(value)
@@ -659,10 +628,7 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
     'NoResult',
   ]
   for (let i = 0; i < orderedPriorityCategories.length; i++) {
-    const foundPriorityCategory = priorityResult(
-      resultCategories,
-      orderedPriorityCategories[i]
-    )
+    const foundPriorityCategory = priorityResult(resultCategories, orderedPriorityCategories[i])
     if (foundPriorityCategory) {
       return foundPriorityCategory
     }
@@ -714,13 +680,8 @@ function extractNumericViralLoadValue(value) {
     return { numericValue: raw, text: raw.toString() }
   }
   if (typeof raw === 'string') {
-    const numericStringValue = (
-      rawValue(extractValueFromRegexCaptureGroup(raw, '([\\d|\\s|\\.]+)')) || ''
-    ).trim()
-    const numericStringValueWithoutWhiteSpace = numericStringValue.replace(
-      /\s/,
-      ''
-    )
+    const numericStringValue = (rawValue(extractValueFromRegexCaptureGroup(raw, '([\\d|\\s|\\.]+)')) || '').trim()
+    const numericStringValueWithoutWhiteSpace = numericStringValue.replace(/\s/, '')
     const numericValue = parseFloat(numericStringValueWithoutWhiteSpace)
     if (!Number.isNaN(numericValue)) {
       if (isRegexMatch(raw, '>[\\d|\\s|\\.]+')) {

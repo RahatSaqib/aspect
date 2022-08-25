@@ -2,19 +2,14 @@ module.exports = {
   'a.h lacson stc': 'A.H. Lacson STC',
   'a.h. lacson stc': 'A.H. Lacson STC',
   'abra provincial hospital': 'Abra Provincial Hospital',
-  'adela serra ty memorial medical center stc':
-    'Adela Serra Ty Memorial Medical Center STC',
+  'adela serra ty memorial medical center stc': 'Adela Serra Ty Memorial Medical Center STC',
   'adnph-pmdt': 'Agusan Del Norte Provincial Hospital PMDT-STC',
-  'agusan del norte provincial hospital':
-    'Agusan Del Norte Provincial Hospital PMDT-STC',
-  'agusan del norte provincial hospital pmdt-stc':
-    'Agusan Del Norte Provincial Hospital PMDT-STC',
-  'allied care experts medical center baypointe':
-    'Allied Care Experts Medical Center Baypointe',
+  'agusan del norte provincial hospital': 'Agusan Del Norte Provincial Hospital PMDT-STC',
+  'agusan del norte provincial hospital pmdt-stc': 'Agusan Del Norte Provincial Hospital PMDT-STC',
+  'allied care experts medical center baypointe': 'Allied Care Experts Medical Center Baypointe',
   'amai pakpak medical center': 'Amai Pakpak Medical Center',
   'amma jadsac district hospital': 'Amma Jadsac District Hospital',
-  'angeles university foundation medical center':
-    'Angeles University Foundation Medical Center',
+  'angeles university foundation medical center': 'Angeles University Foundation Medical Center',
   'antipolo city health office': 'IVA - ANTIPOLO CHO',
   'antipolo-stc': 'IVA - ANTIPOLO CHO',
   'apari district hospital': 'Aparri Provincial Hospital STC',
@@ -36,12 +31,9 @@ module.exports = {
   'bacoor city health office pmdt stc': 'Bacoor City Health Office PMDT STC',
   'bacoor. cho': 'Bacoor City Health Office PMDT STC',
   'baguio general hospital': 'Baguio General Hospital & Medical Center',
-  'baguio general hospital & medical center':
-    'Baguio General Hospital & Medical Center',
-  'baguio general hospital and medical center':
-    'Baguio General Hospital & Medical Center',
-  'baguio general hospital medical center':
-    'Baguio General Hospital & Medical Center',
+  'baguio general hospital & medical center': 'Baguio General Hospital & Medical Center',
+  'baguio general hospital and medical center': 'Baguio General Hospital & Medical Center',
+  'baguio general hospital medical center': 'Baguio General Hospital & Medical Center',
   'balasan municipal health office': 'Balasan Municipal Health Office',
   'baliuag district  hosp.': 'Baliuag District Hospital PMDT STC',
   'baliuag district hosp.': 'Baliuag District Hospital PMDT STC',
@@ -51,8 +43,7 @@ module.exports = {
   'bamban 2': 'Bamban 2',
   'bantay municipal health office': 'Bantay Municipal Health Office',
   'baoor cho': 'Bacoor City Health Office PMDT STC',
-  'baras medicare and community hospital':
-    'Baras Medicare and Community Hospital',
+  'baras medicare and community hospital': 'Baras Medicare and Community Hospital',
   'baras medicare community hospital': 'Baras Medicare and Community Hospital',
   'basud mho': 'Basud MHO STC',
   'basud mho pmdt stc': 'Basud MHO STC',
@@ -62,8 +53,7 @@ module.exports = {
   'bataan general hospital': 'Bataan General Hospital',
   'batac city health office': 'Batac City Health Office',
   'batangas medical center pmdt tc': 'IVA - BATANGAS MEDICAL CTR',
-  'batasan hills super health center pmdt stc':
-    'Batasan Hills Super Health Center PMDT STC',
+  'batasan hills super health center pmdt stc': 'Batasan Hills Super Health Center PMDT STC',
   begh: 'BeGH',
   'belmonte health center pmdt': 'Belmonte Health Center PMDT',
   bghmc: 'Baguio General Hospital & Medical Center',
@@ -73,8 +63,7 @@ module.exports = {
   'bicol medical center': 'Bicol Medical Center',
   'bicol regional general hospital & geriotic medical center':
     'Bicol Regional General Hospital & Geriotic Medical Center',
-  'bicol regional training and teaching hospital':
-    'Bicol Regional Training and Teaching Hospital',
+  'bicol regional training and teaching hospital': 'Bicol Regional Training and Teaching Hospital',
   'bicol sanitarium': 'Bicol Sanitarium',
   'binguet gen. hosp.': 'Binguet Gen. Hosp.',
   'bislig district hospital stc': 'Bislig District Hospital STC',
@@ -87,16 +76,13 @@ module.exports = {
   'bondo peninsula district hosp.': 'IVA - BONDOC PENINSULA DISTRICT HOSPITAL',
   'bondoc peninsula dist. hosp.': 'IVA - BONDOC PENINSULA DISTRICT HOSPITAL',
   'bondoc peninsula district': 'IVA - BONDOC PENINSULA DISTRICT HOSPITAL',
-  'bondoc peninsula district hopistal':
-    'IVA - BONDOC PENINSULA DISTRICT HOSPITAL',
+  'bondoc peninsula district hopistal': 'IVA - BONDOC PENINSULA DISTRICT HOSPITAL',
   'bondoc peninsula district hosp.': 'IVA - BONDOC PENINSULA DISTRICT HOSPITAL',
-  'bondoc peninsula district hospital':
-    'IVA - BONDOC PENINSULA DISTRICT HOSPITAL',
+  'bondoc peninsula district hospital': 'IVA - BONDOC PENINSULA DISTRICT HOSPITAL',
   'bontoc general hospital': 'Bontoc General Hospital',
   brggmc: 'Bicol Regional General Hospital & Geriotic Medical Center',
   brghgmc: 'Bicol Regional General Hospital & Geriotic Medical Center',
-  'brghgmc - bicol sanitarium':
-    'Bicol Regional General Hospital & Geriotic Medical Center',
+  'brghgmc - bicol sanitarium': 'Bicol Regional General Hospital & Geriotic Medical Center',
   'brgy 310 health center': 'BRGY 310 Health Center',
   'bs pmdt': 'BS PMDT',
   'bukidnon provincial medical center': 'Bukidnon Provincial Medical Center',
@@ -108,8 +94,7 @@ module.exports = {
   'cadiz city health office': 'Cadiz City Health Office',
   'cadiz city health ofice': 'Cadiz City Health Office',
   'cadiz city hhealth office': 'Cadiz City Health Office',
-  'cagayan valley medical center pmdt stc':
-    'Cagayan Valley Medical Center PMDT STC',
+  'cagayan valley medical center pmdt stc': 'Cagayan Valley Medical Center PMDT STC',
   'cainta municipal hospital - ppmd unit': 'IVA - CAINTA PPMD/PMDT',
   'cainta ppmd': 'IVA - CAINTA PPMD/PMDT',
   'calamba cho': 'IVA - CALAMBA CHO',
@@ -118,8 +103,7 @@ module.exports = {
   'calbayog city health office': 'Calbayog City Health Office',
   'caraga regional hospital pmdt tc': 'Caraga Regional Hospital PMDT TC',
   ccho: 'IVA - CALAMBA CHO',
-  'ccity of san fernando pampanga  rhu i':
-    'City Of San Fernando Pampanga  RHU I',
+  'ccity of san fernando pampanga  rhu i': 'City Of San Fernando Pampanga  RHU I',
   'cdh stc': 'CDH STC',
   'cdhu tb dots': 'CDUH TB DOTS CENTER',
   cduh: 'CDUH TB DOTS CENTER',
@@ -132,8 +116,7 @@ module.exports = {
   'cebu provincial hospital carcar city': "Cebu Doctor's University Hospital",
   'cebu tb reference lab': 'Cebu Tuberculosis Reference Laboratory',
   'cebu tb reference lab.': 'Cebu Tuberculosis Reference Laboratory',
-  'cebu tuberculosis reference laboratory':
-    'Cebu Tuberculosis Reference Laboratory',
+  'cebu tuberculosis reference laboratory': 'Cebu Tuberculosis Reference Laboratory',
   'cebu velez gen. hosp': 'Cebu Velez General Hosp.',
   'cebu velez gen. hosp.': 'Cebu Velez General Hosp.',
   'cebu velez general hosp.': 'Cebu Velez General Hosp.',
@@ -146,30 +129,22 @@ module.exports = {
   'chunghua hospital': 'Chong Hua Hospital',
   'city of san fernando pamoanga': 'City Of San Fernando Pampanga',
   'city of san fernando pampanga': 'City Of San Fernando Pampanga',
-  'city of san fernando pampanga  rhu i':
-    'City Of San Fernando Pampanga  RHU I',
+  'city of san fernando pampanga  rhu i': 'City Of San Fernando Pampanga  RHU I',
   'city of san fernando pampanga 2': 'City Of San Fernando Pampanga RHU II',
   'city of san fernando pampanga rhu': 'City Of San Fernando Pampanga  RHU I',
   'city of san fernando pampanga rhu 2': 'City Of San Fernando Pampanga RHU II',
   'city of san fernando pampanga rhu i': 'City Of San Fernando Pampanga  RHU I',
-  'city of san fernando pampanga rhu ii':
-    'City Of San Fernando Pampanga RHU II',
+  'city of san fernando pampanga rhu ii': 'City Of San Fernando Pampanga RHU II',
   'city of san fernando pampanga rhu2': 'City Of San Fernando Pampanga RHU II',
   'city of san fernando panpanga': 'City Of San Fernando Pampanga',
-  'claro m recto memorial district hopsital pmdt':
-    'IVA - CLARO M. RECTO MEM . DIST. HOSP',
-  'claro m recto memorial district hosp.':
-    'IVA - CLARO M. RECTO MEM . DIST. HOSP',
-  'claro m recto memorial district hospital':
-    'IVA - CLARO M. RECTO MEM . DIST. HOSP',
+  'claro m recto memorial district hopsital pmdt': 'IVA - CLARO M. RECTO MEM . DIST. HOSP',
+  'claro m recto memorial district hosp.': 'IVA - CLARO M. RECTO MEM . DIST. HOSP',
+  'claro m recto memorial district hospital': 'IVA - CLARO M. RECTO MEM . DIST. HOSP',
   'claro m. recto district hosp.': 'IVA - CLARO M. RECTO MEM . DIST. HOSP',
-  'claro m. recto memorial district hosp.':
-    'IVA - CLARO M. RECTO MEM . DIST. HOSP',
-  'claro m. recto memorial district hospital':
-    'IVA - CLARO M. RECTO MEM . DIST. HOSP',
+  'claro m. recto memorial district hosp.': 'IVA - CLARO M. RECTO MEM . DIST. HOSP',
+  'claro m. recto memorial district hospital': 'IVA - CLARO M. RECTO MEM . DIST. HOSP',
   'claro m. recto memorial hosp.': 'IVA - CLARO M. RECTO MEM . DIST. HOSP',
-  'claro m. recto memorial med. center':
-    'IVA - CLARO M. RECTO MEM . DIST. HOSP',
+  'claro m. recto memorial med. center': 'IVA - CLARO M. RECTO MEM . DIST. HOSP',
   'concepcion district hospital': 'III - CONCEPCION DISTRICT HOSP.',
   'corazon aquino hc': 'Corazon Aquino Health Center',
   'corazon aquino health center': 'Corazon Aquino Health Center',
@@ -186,21 +161,15 @@ module.exports = {
   'crmc tb center': 'CRMC TB Center',
   'crmc tb dots': 'CRMC TB Center',
   'csfp rhu': 'CSFP RHU',
-  'datu halun sakilan memorial hospital':
-    'Datu Halun Sakilan Memorial Hospital',
-  'davao del sur provincial hospital':
-    'Davao Del Sur Provincial Hospital PMDT STC',
-  'davao del sur provincial hospital pmdt stc':
-    'Davao Del Sur Provincial Hospital PMDT STC',
-  'davao regional medical center pmdt stc':
-    'Davao Del Sur Provincial Hospital PMDT STC',
+  'datu halun sakilan memorial hospital': 'Datu Halun Sakilan Memorial Hospital',
+  'davao del sur provincial hospital': 'Davao Del Sur Provincial Hospital PMDT STC',
+  'davao del sur provincial hospital pmdt stc': 'Davao Del Sur Provincial Hospital PMDT STC',
+  'davao regional medical center pmdt stc': 'Davao Del Sur Provincial Hospital PMDT STC',
   dcmmh: 'DCMMH',
-  'de la salle health sciences institute tc':
-    'IVA - DE LA SALLE HEALTH SCIENCES INSTITUTE',
+  'de la salle health sciences institute tc': 'IVA - DE LA SALLE HEALTH SCIENCES INSTITUTE',
   deccsmh: 'DECCSMH STC',
   'deccsmh stc': 'DECCSMH STC',
-  'democrito o. plaza memorial hospital':
-    'Democrito O. Plaza Memorial Hospital',
+  'democrito o. plaza memorial hospital': 'Democrito O. Plaza Memorial Hospital',
   'dimasalang hc': 'Dimasalang HC',
   'dimasalang idots': 'Dimasalang HC',
   'dinalupihan rural health unit ii': 'Dinalupihan Rural Health Unit II',
@@ -208,45 +177,31 @@ module.exports = {
   'dingras district hospital pmdt stc': 'Dingras District Hospital PMDT STC',
   'dioneda g. maglinte': 'Dioneda G. Maglinte',
   djprh: 'DJPRH',
-  'don emilio del valle memorial hospital pmdt stc':
-    'Don Emilio del Valle Memorial Hospital PMDT STC',
+  'don emilio del valle memorial hospital pmdt stc': 'Don Emilio del Valle Memorial Hospital PMDT STC',
   'doña nena health center': 'Doña Nena Health Center',
   'dr. amado diaz provencial foundation hospital stc (dadpfh)':
     'Dr. Amado Diaz Provencial Foundation Hospital STC (DADPFH)',
-  'dr. antonio l. valle sr. memorial hc':
-    'Dr. Antonio L. Valle Sr. Memorial Health Center PMDT STC',
-  'dr. antonio l. valle sr. memorial health center':
-    'Dr. Antonio L. Valle Sr. Memorial Health Center PMDT STC',
+  'dr. antonio l. valle sr. memorial hc': 'Dr. Antonio L. Valle Sr. Memorial Health Center PMDT STC',
+  'dr. antonio l. valle sr. memorial health center': 'Dr. Antonio L. Valle Sr. Memorial Health Center PMDT STC',
   'dr. antonio l. valle sr. memorial health center pmdt stc':
     'Dr. Antonio L. Valle Sr. Memorial Health Center PMDT STC',
-  'dr. antonio l. velle sr. memorial hc':
-    'Dr. Antonio L. Valle Sr. Memorial Health Center PMDT STC',
-  'dr. elvira manaloto-lagrosa health center pmdt stc':
-    'Dr. Elvira Manaloto-Lagrosa Health Center PMDT STC',
-  'dr. emigdio c. cruz sr. memorial hosp.':
-    'Dr. Emigdio C. Cruz Sr. Memorial Hosp.',
-  'dr. jorge p. royeca hospital (djrph)':
-    'Dr. Jorge P. Royeca Hospital (DJRPH)',
-  'dr. jose n. rodriguez memorial hospital pmdt tc':
-    'Dr. Jose N. Rodriguez Memorial Hospital PMDT TC',
-  'dr. jose rizal memorial hospital - pmdt stc':
-    'Dr. Jose Rizal Memorial Hospital - PMDT STC',
-  'dr. pablo o. torre memorial hospital pmdt tc':
-    'Dr. Pablo O. Torre Memorial Hospital PMDT TC',
-  'dr. paulino j. garcia memorial research and medical center':
-    'III - Dr. PJGMRMC STC',
-  'dr. paulino j. garcia memorial researcha and medical center':
-    'III - Dr. PJGMRMC STC',
-  'dr. rafael s. tumbokon memorial hospital pmdt stc':
-    'Dr. Rafael S. Tumbokon Memorial Hospital PMDT STC',
+  'dr. antonio l. velle sr. memorial hc': 'Dr. Antonio L. Valle Sr. Memorial Health Center PMDT STC',
+  'dr. elvira manaloto-lagrosa health center pmdt stc': 'Dr. Elvira Manaloto-Lagrosa Health Center PMDT STC',
+  'dr. emigdio c. cruz sr. memorial hosp.': 'Dr. Emigdio C. Cruz Sr. Memorial Hosp.',
+  'dr. jorge p. royeca hospital (djrph)': 'Dr. Jorge P. Royeca Hospital (DJRPH)',
+  'dr. jose n. rodriguez memorial hospital pmdt tc': 'Dr. Jose N. Rodriguez Memorial Hospital PMDT TC',
+  'dr. jose rizal memorial hospital - pmdt stc': 'Dr. Jose Rizal Memorial Hospital - PMDT STC',
+  'dr. pablo o. torre memorial hospital pmdt tc': 'Dr. Pablo O. Torre Memorial Hospital PMDT TC',
+  'dr. paulino j. garcia memorial research and medical center': 'III - Dr. PJGMRMC STC',
+  'dr. paulino j. garcia memorial researcha and medical center': 'III - Dr. PJGMRMC STC',
+  'dr. rafael s. tumbokon memorial hospital pmdt stc': 'Dr. Rafael S. Tumbokon Memorial Hospital PMDT STC',
   'dr. rigmdmc': 'Dr. RIGMDMC',
   'drhu ii': 'DRHU II',
   dsph: 'DSPH',
   'e. aldana health center': 'E. Aldana Health Center',
   'east avenue medical center': 'East Avenue Medical Center PMDT STC',
   'east avenue medical center pmdt stc': 'East Avenue Medical Center PMDT STC',
-  'eastern samar provincial hospital pmdt stc':
-    'Eastern Samar Provincial Hospital PMDT STC',
+  'eastern samar provincial hospital pmdt stc': 'Eastern Samar Provincial Hospital PMDT STC',
   'el nido rural health unit': 'El Nido Rural Health Unit',
   'elias aldana health center': 'ELIAS ALDANA HEALTH CENTER',
   'endoscopi unit': 'Endoscopy Unit',
@@ -255,41 +210,27 @@ module.exports = {
   eswl: 'ESWL',
   'eversley childs sanitarium tc': 'Eversley Childs Sanitarium TC',
   'gabmmc-stc': 'Gat Andres Bonifacio Memorial Medical Center PMDT STC',
-  'gat andres bonifacio memorial medical center pmdt stc':
-    'Gat Andres Bonifacio Memorial Medical Center PMDT STC',
+  'gat andres bonifacio memorial medical center pmdt stc': 'Gat Andres Bonifacio Memorial Medical Center PMDT STC',
   gcgmh: 'GCGMH',
-  'gen. emilio aguinaldo memorial hospital pmdt stc':
-    'Gen. Emilio Aguinaldo Memorial Hospital PMDT STC',
+  'gen. emilio aguinaldo memorial hospital pmdt stc': 'Gen. Emilio Aguinaldo Memorial Hospital PMDT STC',
   'gen. mariano alvarez rhu': 'Gen. Mariano Alvarez RHU',
   'gen. mariano alvarez rhu ii': 'Gen. Mariano Alvarez RHU II',
   'gen. mariano alvrez rhu ii': 'Gen. Mariano Alvarez RHU II',
-  'general emiliio aguinaldo memorial hospital pmdt stc':
-    'General Emilio Aguinaldo Memorial Hospital PMDT STC',
-  'general emilio aguinaldo memorial hospital pmdt stc':
-    'General Emilio Aguinaldo Memorial Hospital PMDT STC',
-  'general emilio aguinaldomemorial hospital':
-    'General Emilio Aguinaldo Memorial Hospital PMDT STC',
+  'general emiliio aguinaldo memorial hospital pmdt stc': 'General Emilio Aguinaldo Memorial Hospital PMDT STC',
+  'general emilio aguinaldo memorial hospital pmdt stc': 'General Emilio Aguinaldo Memorial Hospital PMDT STC',
+  'general emilio aguinaldomemorial hospital': 'General Emilio Aguinaldo Memorial Hospital PMDT STC',
   'general mariano alvarez rhu2 pmdt stc': 'Gen. Mariano Alvarez RHU II',
-  'gilberto d. teodoro memorial hosp.':
-    'Gilberto O. Teodoro Memorial Hospital Tarlac',
-  'gilberto o teodoro memorial hosp.':
-    'Gilberto O. Teodoro Memorial Hospital Tarlac',
-  'gilberto o. teodoro memorial hosp.':
-    'Gilberto O. Teodoro Memorial Hospital Tarlac',
-  'gilberto o. teodoro memorial hospital':
-    'Gilberto O. Teodoro Memorial Hospital Tarlac',
-  'gilberto o. teodoro memorial hospital tarlac':
-    'Gilberto O. Teodoro Memorial Hospital Tarlac',
-  'gilberto teodoro memorial hosp.':
-    'Gilberto O. Teodoro Memorial Hospital Tarlac',
+  'gilberto d. teodoro memorial hosp.': 'Gilberto O. Teodoro Memorial Hospital Tarlac',
+  'gilberto o teodoro memorial hosp.': 'Gilberto O. Teodoro Memorial Hospital Tarlac',
+  'gilberto o. teodoro memorial hosp.': 'Gilberto O. Teodoro Memorial Hospital Tarlac',
+  'gilberto o. teodoro memorial hospital': 'Gilberto O. Teodoro Memorial Hospital Tarlac',
+  'gilberto o. teodoro memorial hospital tarlac': 'Gilberto O. Teodoro Memorial Hospital Tarlac',
+  'gilberto teodoro memorial hosp.': 'Gilberto O. Teodoro Memorial Hospital Tarlac',
   'gingoog city health office': 'Gingoog City Health Office',
   'gotmh  pmdt stc': 'GOTMH  PMDT STC',
-  'gov. celestino gallares memorial hosp.':
-    'Governor Celestino Gallares Memorial Hospital PMDT STC',
-  'governor celestino gallares memorial hospital':
-    'Governor Celestino Gallares Memorial Hospital PMDT STC',
-  'governor celestino gallares memorial hospital pmdt stc':
-    'Governor Celestino Gallares Memorial Hospital PMDT STC',
+  'gov. celestino gallares memorial hosp.': 'Governor Celestino Gallares Memorial Hospital PMDT STC',
+  'governor celestino gallares memorial hospital': 'Governor Celestino Gallares Memorial Hospital PMDT STC',
+  'governor celestino gallares memorial hospital pmdt stc': 'Governor Celestino Gallares Memorial Hospital PMDT STC',
   'grace park health center pmdt stc': 'Grace Park Health Center PMDT STC',
   'guimba community hosp.': 'Guimba Community Hospital PMDT STC',
   'guimba community hospital pmdt stc': 'Guimba Community Hospital PMDT STC',
@@ -306,18 +247,15 @@ module.exports = {
   'iba  rural health unit': 'IBA Rural Health Unit',
   'iba rural health unit': 'IBA Rural Health Unit',
   idh: 'IDH',
-  'iligan society of internists pmdt stc':
-    'Iligan Society of Internists PMDT STC',
-  'ilocos training and regional medical center- pmdt tc':
-    'Ilocos Training and Regional Medical Center- PMDT TC',
+  'iligan society of internists pmdt stc': 'Iligan Society of Internists PMDT STC',
+  'ilocos training and regional medical center- pmdt tc': 'Ilocos Training and Regional Medical Center- PMDT TC',
   imho: 'IMHO',
   'imus cho  i': 'Imus City Health Office I - PMDT STC',
   'imus cho i': 'Imus City Health Office I - PMDT STC',
   'imus city health office': 'Imus City Health Office I - PMDT STC',
   'imus city health office 1': 'Imus City Health Office I - PMDT STC',
   'imus city health office i': 'Imus City Health Office I - PMDT STC',
-  'imus city health office i - pmdt stc':
-    'Imus City Health Office I - PMDT STC',
+  'imus city health office i - pmdt stc': 'Imus City Health Office I - PMDT STC',
   'iom manila health center': 'IOM Manila Health Center',
   'iom mhc': 'IOM Manila Health Center',
   'iom- mhc': 'IOM Manila Health Center',
@@ -329,34 +267,24 @@ module.exports = {
   jbdaph: 'JBDAPH PMDT STC',
   'jbdaph pmdt stc': 'JBDAPH PMDT STC',
   'jonife m. casupanan': 'Jonife M. Casupanan',
-  'jose b. lingad memorial regional hospital stc':
-    "III - JOSE B. LINGAD MEM REG'L HOSP.",
+  'jose b. lingad memorial regional hospital stc': "III - JOSE B. LINGAD MEM REG'L HOSP.",
   'jose fabella hc': 'Jose Fabella HC',
-  'josefina belmonte duran albay prov. hosp.':
-    'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
-  'josefina belmonte duran albay provincial':
-    'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
+  'josefina belmonte duran albay prov. hosp.': 'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
+  'josefina belmonte duran albay provincial': 'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
   'josefina belmonte duran albay provincial hosp pmdt stc':
     'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
-  'josefina belmonte duran albay provincial hosp pmdtstc':
-    'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
-  'josefina belmonte duran albay provincial hosp.':
-    'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
-  'josefina belmonte duran albay provincial hospital':
-    'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
+  'josefina belmonte duran albay provincial hosp pmdtstc': 'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
+  'josefina belmonte duran albay provincial hosp.': 'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
+  'josefina belmonte duran albay provincial hospital': 'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
   'josefina belmonte duran albay provincial hospital pmdt':
     'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
   'josefina belmonte duran albay provincial hospital pmdt stc':
     'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
-  'josefina belmonte duran albay stc':
-    'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
-  'josefina belmontye duran albay provincial hospital':
-    'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
-  'josefna belmonte duran albay provincial hospital':
-    'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
+  'josefina belmonte duran albay stc': 'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
+  'josefina belmontye duran albay provincial hospital': 'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
+  'josefna belmonte duran albay provincial hospital': 'Josefina Belmonte Duran Albay Provincial Hospital PMDT STC',
   'jsmmc remal center': 'JSMMC REMAL CENTER',
-  'kabalikat sa kalusugan mdrtb half way housing facility':
-    'Kabalikat Sa Kalusugan MDRTB Half Way Housing Facility',
+  'kabalikat sa kalusugan mdrtb half way housing facility': 'Kabalikat Sa Kalusugan MDRTB Half Way Housing Facility',
   'kalinga provincial hospital': 'Kalinga Provincial Hospital',
   'karuhatan health center': 'Karuhatan Health Center',
   'kolambongan rhu': 'Kolambungan RHU PMDT STC',
@@ -389,16 +317,13 @@ module.exports = {
   'mactan doctors hosp.': 'Mactan Doctors Hosp.',
   'maguindanao provincial hospital': 'Maguindanao Provincial Hospital',
   'manolo fortich rhu': 'Manolo Fortich RHU',
-  'margosatubig regional hospital pmdt stc':
-    'Margosatubig Regional Hospital PMDT STC',
+  'margosatubig regional hospital pmdt stc': 'Margosatubig Regional Hospital PMDT STC',
   'maria aurora community hospital': 'Maria Aurora Community Hospital',
-  'mariano marcos memorial hosp. and med. center':
-    'Mariano Marcos Memorial Hosp. and Med. Center',
+  'mariano marcos memorial hosp. and med. center': 'Mariano Marcos Memorial Hosp. and Med. Center',
   'marikina cough center': 'Marikina Cough Center',
   'masambong hc': 'Masambong Health Center',
   'masambong health center': 'Masambong Health Center',
-  'masbate provincial hospital pmdt stc':
-    'Masbate Provincial Hospital PMDT STC',
+  'masbate provincial hospital pmdt stc': 'Masbate Provincial Hospital PMDT STC',
   'mati city health office': 'Mati City Health Office',
   'mauban mho': 'Mauban Rural Health Unit PMDT STC',
   'mauban rhu': 'Mauban Rural Health Unit PMDT STC',
@@ -411,12 +336,9 @@ module.exports = {
   'mcu-hsw': 'MCU-HSW',
   'mendero med. center': 'Mendero Med. Center',
   'mis. occ. prov. hosp.': 'Misamis Occidental Provincial Hospital PMDT',
-  'misamis occidental prov. hosp.':
-    'Misamis Occidental Provincial Hospital PMDT',
-  'misamis occidental provincial hospital':
-    'Misamis Occidental Provincial Hospital PMDT',
-  'misamis occidental provincial hospital pmdt':
-    'Misamis Occidental Provincial Hospital PMDT',
+  'misamis occidental prov. hosp.': 'Misamis Occidental Provincial Hospital PMDT',
+  'misamis occidental provincial hospital': 'Misamis Occidental Provincial Hospital PMDT',
+  'misamis occidental provincial hospital pmdt': 'Misamis Occidental Provincial Hospital PMDT',
   'moncada rhu': 'III - MONCADA CTR',
   'moonwalk health center pmdt stc': 'Moonwalk Health Center PMDT STC',
   'mrh stc': 'MRH STC',
@@ -431,40 +353,27 @@ module.exports = {
   'narra municipal health office': 'Narra Municipal Health Office',
   'nasugbu rural health unit': 'IVA - NASUGBU RHU',
   ndch: 'NDCH',
-  'negros occidental provincial hospital':
-    'Negros Occidental Provincial Hospital',
-  'negros oriental chest clinic and dispensary':
-    'Negros Oriental Chest Clinic and Dispensary',
-  'negros oriental povincial hospital pmdt stc':
-    'Negros Occidental Provincial Hospital',
+  'negros occidental provincial hospital': 'Negros Occidental Provincial Hospital',
+  'negros oriental chest clinic and dispensary': 'Negros Oriental Chest Clinic and Dispensary',
+  'negros oriental povincial hospital pmdt stc': 'Negros Occidental Provincial Hospital',
   'neurosurgery- ctrl': 'Neurosurgery- CTRL',
   'new bilibid prison hospital': 'New Bilibid Prison Hospital',
-  'north daang hari super health center':
-    'North Daang Hari Super Health Center PMDT STC',
-  'north daang hari super health center pmdt stc':
-    'North Daang Hari Super Health Center PMDT STC',
+  'north daang hari super health center': 'North Daang Hari Super Health Center PMDT STC',
+  'north daang hari super health center pmdt stc': 'North Daang Hari Super Health Center PMDT STC',
   'north samar provinvial hospital': 'Northern Samar Provincial Hospital',
   'northern  samar provinvial hospital': 'Northern Samar Provincial Hospital',
-  'northern mindanao tb reference center':
-    'Northern Mindanao TB Reference Center',
+  'northern mindanao tb reference center': 'Northern Mindanao TB Reference Center',
   'northern samar prov. hosp.': 'Northern Samar Provincial Hospital',
   'northern samar provincial hospital': 'Northern Samar Provincial Hospital',
   'northern samar provinvial hospital': 'Northern Samar Provincial Hospital',
-  'occidental mindoro provincial hospital':
-    'Occidental Mindoro Provincial Hospital',
+  'occidental mindoro provincial hospital': 'Occidental Mindoro Provincial Hospital',
   omsdh: 'OMSDH',
-  'oriental mindoro provincial hospital':
-    'Oriental Mindoro Provincial Hospital',
-  'oriental mindoro south district hospital':
-    'Oriental Mindoro Southern District Hospital PMDT STC',
-  'oriental mindoro southern dh':
-    'Oriental Mindoro Southern District Hospital PMDT STC',
-  'oriental mindoro southern district hospita pmdt stc':
-    'Oriental Mindoro Southern District Hospital PMDT STC',
-  'oriental mindoro southern district hospital':
-    'Oriental Mindoro Southern District Hospital PMDT STC',
-  'oriental mindoro southern district hospital pmdt stc':
-    'Oriental Mindoro Southern District Hospital PMDT STC',
+  'oriental mindoro provincial hospital': 'Oriental Mindoro Provincial Hospital',
+  'oriental mindoro south district hospital': 'Oriental Mindoro Southern District Hospital PMDT STC',
+  'oriental mindoro southern dh': 'Oriental Mindoro Southern District Hospital PMDT STC',
+  'oriental mindoro southern district hospita pmdt stc': 'Oriental Mindoro Southern District Hospital PMDT STC',
+  'oriental mindoro southern district hospital': 'Oriental Mindoro Southern District Hospital PMDT STC',
+  'oriental mindoro southern district hospital pmdt stc': 'Oriental Mindoro Southern District Hospital PMDT STC',
   ormph: 'ORMPH',
   ormsdh: 'ORMSDH',
   orph: 'ORPH',
@@ -489,8 +398,7 @@ module.exports = {
   'pangasinan prov. hosp': 'Pangasinan Provincial Hospital PMDT STC',
   'pangasinan prov. hosp.': 'Pangasinan Provincial Hospital PMDT STC',
   'pangasinan provincial hospital': 'Pangasinan Provincial Hospital PMDT STC',
-  'pangasinan provincial hospital pmdt stc':
-    'Pangasinan Provincial Hospital PMDT STC',
+  'pangasinan provincial hospital pmdt stc': 'Pangasinan Provincial Hospital PMDT STC',
   'pangasinan rhu': 'Pangasinan RHU',
   'pangasinanprov. hosp.': 'Pangasinan Provincial Hospital PMDT STC',
   'pangil rural health unit': 'IVA - PANGIL RHU',
@@ -511,8 +419,7 @@ module.exports = {
   'passi city health office': 'Passi City Health Office',
   pcdh: 'PCDH',
   perpetual: 'Perpetual Succour Hosp. Public Private Mix Dots',
-  'perpetual succour hosp. public private mix dots':
-    'Perpetual Succour Hosp. Public Private Mix Dots',
+  'perpetual succour hosp. public private mix dots': 'Perpetual Succour Hosp. Public Private Mix Dots',
   'philippines tuberculosis society, inc., negros occ. pmdt tc':
     'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
   'philippines tuberculosis society, inc., negros occ.pmdt tc':
@@ -537,18 +444,13 @@ module.exports = {
   'pph pmdt stc': 'PPH PMDT STC',
   psh: 'PSH',
   'psh-ppmd': 'PSH-PPMD',
-  'ptsi noccd':
-    'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
-  'ptsi tayuman':
-    'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
-  'ptsi tayuman pmdt':
-    'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
+  'ptsi noccd': 'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
+  'ptsi tayuman': 'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
+  'ptsi tayuman pmdt': 'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
   'ptsi-negros occidental chest clinic and dispensery':
     'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
-  'ptsi-tayuman':
-    'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
-  'ptsi-tyuman':
-    'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
+  'ptsi-tayuman': 'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
+  'ptsi-tyuman': 'Philippines Tuberculosis Society, Inc., Negros Occidental PMDT TC',
   qpmc: 'IVA - QUEZON MED CTR',
   'quezon city jail pmdt stc': 'Quezon City Jail PMDT STC',
   'quezon medical center': 'IVA - QUEZON MED CTR',
@@ -559,36 +461,26 @@ module.exports = {
   'quirino memorial med. center.': 'Quirino Memorial Medical Center PMDT STC',
   'quirino memorial medical': 'Quirino Memorial Medical Center PMDT STC',
   'quirino memorial medical center': 'Quirino Memorial Medical Center PMDT STC',
-  'quirino memorial medical center pmdt stc':
-    'Quirino Memorial Medical Center PMDT STC',
+  'quirino memorial medical center pmdt stc': 'Quirino Memorial Medical Center PMDT STC',
   'quirino prov. med. center': 'Quirino Memorial Medical Center PMDT STC',
   'quirino province medical center': 'Quirino Memorial Medical Center PMDT STC',
   r2tmc: 'R2TMC',
-  'rafael lazatin memorial center':
-    'Rafael Lazatin Memorial Medical Center PMDT STC',
-  'rafael lazatin memorial med. center':
-    'Rafael Lazatin Memorial Medical Center PMDT STC',
-  'rafael lazatin memorial medical center':
-    'Rafael Lazatin Memorial Medical Center PMDT STC',
-  'rafael lazatin memorial medical center - pmdt':
-    'Rafael Lazatin Memorial Medical Center PMDT STC',
-  'rafael lazatin memorial medical center pmdt stc':
-    'Rafael Lazatin Memorial Medical Center PMDT STC',
-  'rafael lazatin memorial medical center -pmdt stc':
-    'Rafael Lazatin Memorial Medical Center PMDT STC',
-  'rafael lazatin meorial medical center':
-    'Rafael Lazatin Memorial Medical Center PMDT STC',
+  'rafael lazatin memorial center': 'Rafael Lazatin Memorial Medical Center PMDT STC',
+  'rafael lazatin memorial med. center': 'Rafael Lazatin Memorial Medical Center PMDT STC',
+  'rafael lazatin memorial medical center': 'Rafael Lazatin Memorial Medical Center PMDT STC',
+  'rafael lazatin memorial medical center - pmdt': 'Rafael Lazatin Memorial Medical Center PMDT STC',
+  'rafael lazatin memorial medical center pmdt stc': 'Rafael Lazatin Memorial Medical Center PMDT STC',
+  'rafael lazatin memorial medical center -pmdt stc': 'Rafael Lazatin Memorial Medical Center PMDT STC',
+  'rafael lazatin meorial medical center': 'Rafael Lazatin Memorial Medical Center PMDT STC',
   'rau baganga': 'RAU Baganga',
   'rcho stc': 'RCHO STC',
   'rcho stl': 'RCHO STC',
   'reggion 1 medical center pmdt stc': 'Region 1 Medical Center PMDT STC',
   'region 1 medical center pmdt stc': 'Region 1 Medical Center PMDT STC',
   'region 2 medical center pmdt stc': 'Region 2 Medical Center PMDT STC',
-  'region 2 trauma & medical center pmdt stc':
-    'Region 2 Medical Center PMDT STC',
+  'region 2 trauma & medical center pmdt stc': 'Region 2 Medical Center PMDT STC',
   'region 2 trauma and medical center': 'Region 2 Medical Center PMDT STC',
-  'region 2 trauma and medical center pmdt stc':
-    'Region 2 Medical Center PMDT STC',
+  'region 2 trauma and medical center pmdt stc': 'Region 2 Medical Center PMDT STC',
   'region ii trauma and medical center': 'Region 2 Medical Center PMDT STC',
   'rhu 2 isabela': 'RHU 2 Isabela',
   'rhu 3 lubao': 'RHU 3 Lubao',
@@ -600,8 +492,7 @@ module.exports = {
   rmmmh: 'RMMMH',
   'rodriguez rural health': 'IVA - RODRIGUEZ RHU',
   'rodriguez rural health unit pmdt stc': 'IVA - RODRIGUEZ RHU',
-  'rogaciano m. mercado memorial hospital':
-    'III - ROGACIANO M. MERCADO MEM HOSP.',
+  'rogaciano m. mercado memorial hospital': 'III - ROGACIANO M. MERCADO MEM HOSP.',
   'romana pangan district hosp.': 'Romana Pangan District Hospital STC',
   'romana pangan district hospital': 'Romana Pangan District Hospital STC',
   'romana pangan district hospital stc': 'Romana Pangan District Hospital STC',
@@ -617,34 +508,24 @@ module.exports = {
   'san fernando rural health unit i': 'San Fernando Rural Health Unit I',
   'san fernando rural health unit ii': 'San Fernando Rural Health Unit II',
   'san jose city general hospital': 'III - SAN JOSE CITY GEN. HOSP.',
-  'san jose del monte  city health center':
-    'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
+  'san jose del monte  city health center': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
   'san jose del monte chc iv': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
   'san jose del monte cho': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
-  'san jose del monte city hc iv':
-    'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
-  'san jose del monte city health ccenter rural health unit pmdt stc':
-    'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
-  'san jose del monte city health center':
-    'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
-  "san jose del monte city health center'":
-    'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
-  'san jose del monte city health center iv':
-    'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
-  'san jose del monte cuty health center':
-    'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
-  'san jose del monter city health center':
-    'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
+  'san jose del monte city hc iv': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
+  'san jose del monte city health ccenter rural health unit pmdt stc': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
+  'san jose del monte city health center': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
+  "san jose del monte city health center'": 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
+  'san jose del monte city health center iv': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
+  'san jose del monte cuty health center': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
+  'san jose del monter city health center': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
   'san jose delmonte chc iv': 'III - OSPITAL NG LUNGSOD NG SAN JOSE DEL MONTE',
   'san jose rural health unit pmdt stc': 'San Jose Rural Health Unit PMDT STC',
   'san juan rural health unit': 'IVA - SAN JUAN RHU',
   'san juan rural health unit pmdt stc': 'IVA - SAN JUAN RHU',
   'san lan lazaro hospital pmdt tc': 'San Lazaro Hospital PMDT TC',
   'san lazaro hospital pmdt tc': 'San Lazaro Hospital PMDT TC',
-  'san lazaro ruiz womens hospital pmdt stc':
-    'San Lazaro Ruiz Womens Hospital PMDT STC',
-  "san lorenzo ruiz women's hospital":
-    'San Lazaro Ruiz Womens Hospital PMDT STC',
+  'san lazaro ruiz womens hospital pmdt stc': 'San Lazaro Ruiz Womens Hospital PMDT STC',
+  "san lorenzo ruiz women's hospital": 'San Lazaro Ruiz Womens Hospital PMDT STC',
   'san mateo super health center': 'IVA - SAN MATEO SUPER HEALTH CTR',
   'san mateo super health center pmdt stc': 'IVA - SAN MATEO SUPER HEALTH CTR',
   'san miguel district hosp.': 'III - SAN MIGUEL DISTRICT HOSP.',
@@ -658,8 +539,7 @@ module.exports = {
   'santolan health center': 'Santolan Super HC',
   'santolan stc': 'Santolan Super HC',
   'santolan super hc': 'Santolan Super HC',
-  'schistosomiasis control and research hospital':
-    'Schistosomiasis Control and Research Hospital',
+  'schistosomiasis control and research hospital': 'Schistosomiasis Control and Research Hospital',
   scrh: 'Schistosomiasis Control and Research Hospital',
   'sebaste rhu': 'Sebaste RHU PMDT STC',
   'sebaste rhu pmdt stc': 'Sebaste RHU PMDT STC',
@@ -676,10 +556,8 @@ module.exports = {
   'southern isabela general hospital': 'Southern Isabela General Hospital',
   'southern isabela medical': 'Southern Isabela General Hospital',
   'southern isabela medical center': 'Southern Isabela General Hospital',
-  'southern palawan provincial hospital':
-    'Southern Palawan Provincial Hospital',
-  'southern philippines medical center pmdt tc':
-    'Southern Philippines Medical Center PMDT TC',
+  'southern palawan provincial hospital': 'Southern Palawan Provincial Hospital',
+  'southern philippines medical center pmdt tc': 'Southern Philippines Medical Center PMDT TC',
   'spmc-pmdt': 'SPMC-PMDT',
   spph: 'SPPH',
   'st. vincent gen. hosp.': 'St. Vincent Gen. Hosp.',
@@ -687,8 +565,7 @@ module.exports = {
   'sta.rosa city health office': 'IVA - STA ROSA CHO1',
   'subic rhu': 'Subic Rural Health Unit',
   'subic rural health unit': 'Subic Rural Health Unit',
-  'sultan kudarat provincial hospital pmdt stc':
-    'Sultan Kudarat Provincial Hospital PMDT STC',
+  'sultan kudarat provincial hospital pmdt stc': 'Sultan Kudarat Provincial Hospital PMDT STC',
   'sulu provincial hospital stc': 'Sulu Provincial Hospital STC',
   'super batasan': 'Super Batasan',
   svga: 'SVGA',
@@ -703,21 +580,17 @@ module.exports = {
   'tarlac city health center': 'Tarlac City Health Center',
   'tarlac provincial hospital': 'III - TARLAC PROV. HOSP.',
   'tejeros health center makati': 'Tejeros Health Center Makati',
-  'teresita l. jalandoni provincial hospital pmdt stc':
-    'Teresita L. Jalandoni Provincial Hospital PMDT STC',
+  'teresita l. jalandoni provincial hospital pmdt stc': 'Teresita L. Jalandoni Provincial Hospital PMDT STC',
   'the medical city iloilo pcu4': 'The medical City Iloilo PCU4',
   tliph: 'TLIPH',
   'tondo  health center pmdt stc': 'Tondo Foreshore Health Center PMDT STC',
-  'tondo foreshore health center pmdt stc':
-    'Tondo Foreshore Health Center PMDT STC',
+  'tondo foreshore health center pmdt stc': 'Tondo Foreshore Health Center PMDT STC',
   'tondo hc': 'Tondo Foreshore Health Center PMDT STC',
   'tondo health center': 'Tondo Foreshore Health Center PMDT STC',
-  'tropical disease foundation pmdt stc':
-    'Tropical Disease Foundation PMDT STC',
+  'tropical disease foundation pmdt stc': 'Tropical Disease Foundation PMDT STC',
   'tumana health center': 'Tumana Health Center',
   'tunasan health center': 'Tunasan Health Center',
-  'united doctors of st. camillus  de lellies hosp.':
-    'United Doctors Of St. Camillus  De Lellies Hosp.',
+  'united doctors of st. camillus  de lellies hosp.': 'United Doctors Of St. Camillus  De Lellies Hosp.',
   'university of cebu  med. center': 'University of Cebu Medical Center',
   'university of cebu medical center': 'University of Cebu Medical Center',
   'up prime tb dots clinic': 'UP Prime TB DOTS CLINIC',
@@ -728,8 +601,7 @@ module.exports = {
   'vcj-bjmp': 'VCJ-BJMP',
   'vcmc - annex v': 'VCMC - Annex V',
   'veterans regional hospital': 'Veterans Regional Hospital',
-  'vicente sotto memorial medical center stc':
-    'Vicente Sotto Memorial Medical Center STC',
+  'vicente sotto memorial medical center stc': 'Vicente Sotto Memorial Medical Center STC',
   'victor larobis': 'Victor Larobis',
   'visayas community med. center': 'Visayas community Medical Center',
   'visayas community medical center': 'Visayas community Medical Center',
@@ -753,17 +625,13 @@ module.exports = {
   'west rembo health center pmdt': 'West Rembo Health Center PMDT STC',
   'west rembo health center pmdt stc': 'West Rembo Health Center PMDT STC',
   'west rembo stc': 'West Rembo Health Center PMDT STC',
-  'western pangasinan district hospital':
-    'Western Pangasinan District Hospital PMDT STC',
-  'western pangasinan district hospital pmdt stc':
-    'Western Pangasinan District Hospital PMDT STC',
+  'western pangasinan district hospital': 'Western Pangasinan District Hospital PMDT STC',
+  'western pangasinan district hospital pmdt stc': 'Western Pangasinan District Hospital PMDT STC',
   'western visayas medical center tc': 'Western Visayas Medical Center TC',
   'wvmc pmdt': 'Western Visayas Medical Center TC',
   'wvmc -pmdt': 'Western Visayas Medical Center TC',
-  'xavier university community health care center pmdt tc':
-    'Xavier University Community Health Care Center PMDT TC',
-  'zamboanga city medical center pmdt tc':
-    'Zamboanga City Medical Center PMDT TC',
+  'xavier university community health care center pmdt tc': 'Xavier University Community Health Care Center PMDT TC',
+  'zamboanga city medical center pmdt tc': 'Zamboanga City Medical Center PMDT TC',
   'City of Malolos Health OfficeV': 'City of Malolos Health OfficeV',
   'Premiere Medical Center': 'Premiere Medical Center',
   'La Paz Rural Health Unit (RHU) II': 'La Paz Rural Health Unit (RHU) II',

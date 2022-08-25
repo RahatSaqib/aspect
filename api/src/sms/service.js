@@ -1,13 +1,7 @@
 const _ = require('lodash')
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
-const {
-  allMessageStatusToId,
-  messageStatusToId,
-} = require('../shared/dictionary')
-const {
-  addDataSourceToQuery,
-  processUsingDataSourceQuery,
-} = require('../stringTemplate/service')
+const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
+const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
 const { normalizePhoneNumber } = require('../shared/phoneNormalization')
@@ -55,10 +49,7 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
 // -----------------------------
 // onSmsMessageReadyForSending - event handler for SMS_MESSAGE_READY_FOR_SENDING
 // -----------------------------
-async function onSmsMessageReadyForSending(
-  { smsMessageId },
-  { messageContext }
-) {
+async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     smsMessageSent,
   })
@@ -85,8 +76,7 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   const { sendSms } = require('./smsUtil')
 
   // assume status is 'Sent'
-  const { Sent: messageStatusIdSent, Error: messageStatusIdError } =
-    await allMessageStatusToId()
+  const { Sent: messageStatusIdSent, Error: messageStatusIdError } = await allMessageStatusToId()
   let messageStatusId = messageStatusIdSent
 
   // send sms
@@ -106,16 +96,14 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
 }
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
-  const { personId } = await knex('SmsMessage')
-    .where('id', smsMessageId)
-    .first('personId')
+  const { personId, resultId } = await knex('SmsMessage').where('id', smsMessageId).first('personId', 'resultId')
 
   const dataConstraints = await getConstraints({ personId })
 
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
-    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, resultId)
     .modify(queryBuilder => {
       if (!_.isEmpty(dataConstraints)) {
         queryBuilder.modify(addConstraints, dataConstraints, {
@@ -142,11 +130,7 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
       'tmpl.phoneNumber as phoneNumberTemplate',
       knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
     )
-  return processUsingDataSourceQuery(data, [
-    'messageTemplate',
-    'phoneNumberTemplate',
-    'countryAbbreviation',
-  ])
+  return processUsingDataSourceQuery(data, ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'])
 }
 
 module.exports = {

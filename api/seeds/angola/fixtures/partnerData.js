@@ -21,6 +21,16 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
+  consumableStrategies: {
+    GxHCVCartridge: 'withExpirationDateStrategy',
+    GxMtbRifCartridge: 'withExpirationDateStrategy',
+    GxMtbXdrCartridge: 'withExpirationDateStrategy',
+    GxMtbRifUltraCartridge: 'withExpirationDateStrategy',
+    GxHiv1VlCartridge: 'withExpirationDateStrategy',
+    GxHiv1QualCartridge: 'withExpirationDateStrategy',
+    GxEbolaCartridge: 'withExpirationDateStrategy',
+    assayGXCovid19Cartridge: 'withExpirationDateStrategy',
+  },
   plugin: '',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,

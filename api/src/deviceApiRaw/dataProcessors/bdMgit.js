@@ -45,14 +45,10 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
     this.response = { deviceApiRawId: this.id }
     await transact(async knex => {
-      const { deviceId } = await knex('DeviceApiKey')
-        .where('token', auth.credentials.token)
-        .first('deviceId')
+      const { deviceId } = await knex('DeviceApiKey').where('token', auth.credentials.token).first('deviceId')
       const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
-        throw Boom.badRequest(
-          'Invalid device API key: Cannot determine which device this came from'
-        )
+        throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
       }
 
       this.response.deviceId = deviceId
@@ -70,9 +66,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
       this.response.deviceLogId = deviceLogId
 
-      await knex('Device')
-        .where({ id: deviceId })
-        .update({ lastSeenOn: now, updatedOn: now })
+      await knex('Device').where({ id: deviceId }).update({ lastSeenOn: now, updatedOn: now })
       this.messageContext.dispatch(deviceSeen(deviceId))
 
       if (!this.request.payload) {
@@ -94,19 +88,20 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       //   - AST_MGIT is an assay used to detect the resistance/susceptibility to various sets of antibiotics
       const mgitResultTypeCode = getAstmField(astm, 'R,3,1,4')
 
-      if (
-        mgitResultTypeCode !== 'GND_MGIT' &&
-        mgitResultTypeCode !== 'AST_MGIT'
-      ) {
+      if (mgitResultTypeCode !== 'GND_MGIT' && mgitResultTypeCode !== 'AST_MGIT') {
         throw Boom.badRequest(`Unknown result type: ${mgitResultTypeCode}`)
       }
 
       const allAssayIds = await allAssayToId()
       const assayIds =
         mgitResultTypeCode === 'AST_MGIT'
-          ? [allAssayIds.assayBdMgitAst, allAssayIds.assayGenericDst]
-          : [allAssayIds.assayBdMgitGnd, allAssayIds.assayGenericCulture]
-
+          ? [allAssayIds.assayBdMgitAst, allAssayIds.assayGenericDst].filter(a => !!a)
+          : [allAssayIds.assayBdMgitGnd, allAssayIds.assayGenericCulture].filter(a => !!a)
+      if (_.isEmpty(assayIds)) {
+        throw Boom.notImplemented(
+          `No supported assays exist for ${mgitResultTypeCode} BD MGIT results on this instance of Aspect`
+        )
+      }
       // Use test status to determine workflow status and result category 1:
       const mgitTestStatus = getAstmField(astm, 'R,4,1,1')
       let resultCategory1 = null
@@ -151,13 +146,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       const site = await knex('Site as s')
         .join('Device as d', 's.id', 'd.siteId')
         .where('d.id', deviceId)
-        .first(
-          's.id',
-          's.partnerId',
-          's.geographyId',
-          's.longitude',
-          's.latitude'
-        )
+        .first('s.id', 's.partnerId', 's.geographyId', 's.longitude', 's.latitude')
 
       const device = await knex('Device').where('id', deviceId).first()
 
@@ -166,9 +155,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         externalId: mgitAccessionNumber || null,
         originSiteId: site ? site.id : null,
       }
-      const existingSample = await knex('Sample')
-        .where('externalId', sampleFields.externalId)
-        .first()
+      const existingSample = await knex('Sample').where('externalId', sampleFields.externalId).first()
       let sampleId = null
       if (existingSample) {
         sampleId = existingSample.id
@@ -187,9 +174,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
           this.where('deviceId', deviceId).andWhere('externalId', externalId)
         })
         .orWhere(function () {
-          this.where('sampleId', sampleId)
-            .whereIn('assayId', assayIds)
-            .andWhere('siteId', site.id)
+          this.where('sampleId', sampleId).whereIn('assayId', assayIds).andWhere('siteId', site.id)
         })
         .first()
       // build up result data field:
@@ -295,10 +280,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       // Save workflow status
       let newStatus = false
       if (result && result.resultWorkflowStatusLogId) {
-        const log = await knex('ResultWorkflowLog').where(
-          'id',
-          result.resultWorkflowStatusLogId
-        )
+        const log = await knex('ResultWorkflowLog').where('id', result.resultWorkflowStatusLogId)
 
         newStatus = log.resultWorkflowStatusId !== resultWorkflowStatusId
       }
@@ -311,9 +293,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
           createdOn: now,
         })
 
-        await knex('Result')
-          .where('id', resultId)
-          .update('resultWorkflowStatusLogId', logId)
+        await knex('Result').where('id', resultId).update('resultWorkflowStatusLogId', logId)
       }
 
       await knex('DeviceLog').where('id', deviceLogId).update({ resultId })

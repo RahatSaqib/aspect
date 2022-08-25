@@ -1,39 +1,8 @@
 const Joi = require('@hapi/joi')
-const {
-  asyncHandler,
-  validateDateRangeParams,
-  validateSortPageParams,
-} = require('../routes')
-const { getReports, listReports, proxyGxReport } = require('./service')
-const { createReport, exportReports } = require('./serviceReports')
-const {
-  validateAllGeographyFilterParams,
-} = require('../geography/requestValidation')
-
-function listReportBaseConfig() {
-  return {
-    auth: { scope: ['report:view'] },
-    validate: {
-      query: {
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
-        contactNameOrEmail: Joi.string()
-          .allow('')
-          .description('Filter for report name'),
-        ...validateSortPageParams(
-          'name',
-          'deploymentName',
-          'moduleSerial',
-          'dateOfError',
-          'error',
-          'totalTestsRun',
-          'totalErrors'
-        ),
-      },
-    },
-  }
-}
+const { asyncHandler, validateDateRangeParams } = require('../routes')
+const { getReports, proxyGxReport } = require('./service')
+const { createReport } = require('./serviceReports')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
 function requestBaseQuery() {
   const { minDate, maxDate } = validateDateRangeParams()
@@ -55,9 +24,7 @@ function responseBaseReports() {
       allowUnknown: false,
     },
     schema: Joi.object().keys({
-      ok: Joi.bool()
-        .required()
-        .description('False if there was some sort of error'),
+      ok: Joi.bool().required().description('False if there was some sort of error'),
       total: Joi.number().required(),
       data: Joi.array()
         .required()
@@ -65,25 +32,13 @@ function responseBaseReports() {
         .items(
           Joi.object().keys({
             name: Joi.string().required().description('Report name'),
-            description: Joi.string()
-              .required()
-              .description('Report description'),
-            externalId: Joi.string()
-              .required()
-              .description('Report unique externalId'),
+            description: Joi.string().required().description('Report description'),
+            externalId: Joi.string().required().description('Report unique externalId'),
             sortOrder: Joi.number().required().description('Report sort order'),
-            i18nKey: Joi.string()
-              .allow(null)
-              .description('the i18n key of the report title'),
-            i18nKeyDescription: Joi.string()
-              .allow(null)
-              .description('the i18n key of the report description'),
-            exportExcel: Joi.number()
-              .allow(null)
-              .description('Flag to allow export to excel'),
-            exportCsv: Joi.number()
-              .allow(null)
-              .description('Flag to allow export to csv'),
+            i18nKey: Joi.string().allow(null).description('the i18n key of the report title'),
+            i18nKeyDescription: Joi.string().allow(null).description('the i18n key of the report description'),
+            exportExcel: Joi.number().allow(null).description('Flag to allow export to excel'),
+            exportCsv: Joi.number().allow(null).description('Flag to allow export to csv'),
           })
         ),
     }),
@@ -115,44 +70,20 @@ const routes = [
     handler: createReport,
     config: {
       description: 'Report Excel file',
-      notes:
-        'Returns Excel file generated from template corresponding to externalId',
+      notes: 'Returns Excel file generated from template corresponding to externalId',
       auth: { scope: ['report:view'] },
       validate: {
         query: {
           ...requestBaseQuery(),
-          format: Joi.string()
-            .allow('', null, 'xlsx', 'csv')
-            .description('File format for exporting data'),
+          format: Joi.string().allow('', null, 'xlsx', 'csv').description('File format for exporting data'),
         },
         params: {
-          externalId: Joi.string()
-            .description('Value of externalId in table Report')
-            .required(),
+          externalId: Joi.string().description('Value of externalId in table Report').required(),
         },
       },
     },
   },
-  {
-    method: 'GET',
-    path: '/report',
-    handler: asyncHandler(listReports),
-    config: {
-      description: 'Report List',
-      notes: 'Pageable and sortable list of reports',
-      ...listReportBaseConfig(),
-    },
-  },
-  {
-    method: 'GET',
-    path: '/report/export',
-    handler: exportReports,
-    config: {
-      description: 'Export Report List into Excel or CSV',
-      notes: 'Filtered and sorted list of Report',
-      ...listReportBaseConfig(),
-    },
-  },
+
   {
     method: 'GET',
     path: '/report/{fileName}',

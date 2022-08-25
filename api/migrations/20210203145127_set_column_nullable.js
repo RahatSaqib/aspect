@@ -10,23 +10,11 @@ async function up(knex) {
      */
     tbl.dropForeign('createdBy')
     tbl.dropIndex('createdBy')
-    tbl
-      .integer('createdBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
-      .alter()
+    tbl.integer('createdBy').unsigned().index().references('id').inTable('User').alter()
 
     tbl.dropForeign('updatedBy')
     tbl.dropIndex('updatedBy')
-    tbl
-      .integer('updatedBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
-      .alter()
+    tbl.integer('updatedBy').unsigned().index().references('id').inTable('User').alter()
   })
 }
 
@@ -39,24 +27,10 @@ async function down(knex) {
 
     tbl.dropForeign('createdBy')
     tbl.dropIndex('createdBy')
-    tbl
-      .integer('createdBy')
-      .unsigned()
-      .index()
-      .notNullable()
-      .references('id')
-      .inTable('User')
-      .alter()
+    tbl.integer('createdBy').unsigned().index().notNullable().references('id').inTable('User').alter()
 
     tbl.dropForeign('updatedBy')
     tbl.dropIndex('updatedBy')
-    tbl
-      .integer('updatedBy')
-      .unsigned()
-      .index()
-      .notNullable()
-      .references('id')
-      .inTable('User')
-      .alter()
+    tbl.integer('updatedBy').unsigned().index().notNullable().references('id').inTable('User').alter()
   })
 }

@@ -11,6 +11,13 @@ const DEFAULT_SETTINGS = {
     dayMonthFormat: 'MM/dd',
     utilizationRateThreshold: 0.8,
     errorRateThreshold: 0.05,
+
+    stateLabel: 'State',
+    statesLabel: 'States',
+    countyLabel: 'County',
+    countiesLabel: 'Counties',
+    lgaLabel: 'LGA',
+    lgasLabel: 'LGAs',
   },
 }
 
@@ -72,6 +79,7 @@ const plugins = {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
   },
   malawi: {
+    settings: require('./partner/Malawi/settings'),
     transformNewDevicePayload: require('./partner/Malawi/transformNewDevicePayload'),
     preProcessGetResult: require('./partner/Malawi/preProcessGetResult'),
     postProcessMergeResult: require('./partner/Malawi/postProcessMergeResult'),
@@ -109,11 +117,7 @@ const plugins = {
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
   alereftpconnector: {
-    handlerOptions: merge(
-      {},
-      DEFAULT_HANDLER_OPTIONS,
-      require('./deviceType/AlereFtpConnector/handlerOptions')
-    ),
+    handlerOptions: merge({}, DEFAULT_HANDLER_OPTIONS, require('./deviceType/AlereFtpConnector/handlerOptions')),
     getDeviceSeenOn: require('./deviceType/AlereFtpConnector/getDeviceSeenOn'),
     preProcessAddDeviceData: require('./deviceType/AlereFtpConnector/preProcessAddDeviceData'),
     preProcessMergeResult: require('./deviceType/AlereFtpConnector/preProcessMergeResult'),
@@ -142,6 +146,7 @@ const plugins = {
     issueTriggers: require('./partner/Philippines/issueTriggers'),
     issueResolutions: require('./partner/Philippines/issueResolutionConditions'),
     transformMergeResultPayload: require('./partner/Philippines/transformMergeResultPayload'),
+    settings: require('./partner/Philippines/settings'),
   },
   pakistan: {
     settings: require('./partner/Pakistan/settings'),
@@ -380,4 +385,5 @@ async function onPatientUpdated(/* { patientId }, { messageContext } */) {
 
 module.exports = {
   loadPlugin,
+  DEFAULT_SETTINGS,
 }

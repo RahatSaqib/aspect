@@ -1,7 +1,6 @@
 const resultsDrTb10A10BCovid = {
   name: 'Report on Xpert MTB/RIF and Covid',
-  description:
-    'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results',
+  description: 'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results',
   i18nKey: 'reportDrTb10a10bCovid',
   externalId: 'results_10a_10b_covid', // folder name in /templates
   i18nKeyDescription: 'reportDrTb10a10bCovidDescription',
@@ -29,8 +28,7 @@ const resultsDrTb10A10BCovid = {
 
 const resultsDrTb10A10BCovidNtpUse = {
   name: 'Report on Xpert MTB/RIF and Covid - NTP Use',
-  description:
-    'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results- NTP Use',
+  description: 'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results- NTP Use',
   i18nKey: 'reportDrTb10a10bCovidNtpUse',
   externalId: 'results_10a_10b_covid_ntp_use', // folder name in /templates
   i18nKeyDescription: 'reportDrTb10a10bCovidDescriptionNtpUse',

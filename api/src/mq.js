@@ -42,9 +42,7 @@ class MessageQueue {
   async purge() {
     if (this.channel) {
       logger.debug(`purge ${this.name}`, { reLabel: 'aspect:mq:purge' })
-      return Promise.all(
-        this.queues.map(queue => this.channel.purgeQueue(queue))
-      )
+      return Promise.all(this.queues.map(queue => this.channel.purgeQueue(queue)))
     }
   }
 
@@ -68,9 +66,7 @@ class MessageQueue {
       throw new Error('Actions must be object with string type')
     }
     const message = JSON.stringify(action)
-    const topic = bindingKey
-      ? `aspect.actions.${action.type}.${bindingKey}`
-      : `aspect.actions.${action.type}`
+    const topic = bindingKey ? `aspect.actions.${action.type}.${bindingKey}` : `aspect.actions.${action.type}`
     logger.debug(`dispatch ${this.name} ${message}`, {
       reLabel: 'aspect:mq:dispatch',
     })
@@ -152,10 +148,7 @@ class MessageQueue {
       reLabel: 'aspect:mq:subscribe',
     })
     const queueOptions = messageTtl ? { messageTtl } : undefined
-    const { queue } = await this.channel.assertQueue(
-      subscribeName,
-      queueOptions
-    )
+    const { queue } = await this.channel.assertQueue(subscribeName, queueOptions)
 
     if (!this.queues.includes(queue)) this.queues.push(queue)
     await this.channel.bindQueue(queue, exchange, topic)
@@ -282,9 +275,7 @@ class MessageQueue {
        * we need to make sure our awaitable action (i.e. `predicate`)
        * exactly match emitted one.
        */
-      const awaitableAction = _.isPlainObject(predicate)
-        ? JSON.parse(JSON.stringify(predicate))
-        : predicate
+      const awaitableAction = _.isPlainObject(predicate) ? JSON.parse(JSON.stringify(predicate)) : predicate
       const check = _.iteratee(awaitableAction)
       const checkedListener = action => {
         if (check(action)) {
@@ -378,17 +369,11 @@ class MessageContext {
 
     if (this.transaction) {
       // Queue actions until transaction committed
-      logger.debug(
-        `dispatch delay ${this.id} ${JSON.stringify(action)} for ${bindingKey}`,
-        { reLabel: 'aspect:mq' }
-      )
+      logger.debug(`dispatch delay ${this.id} ${JSON.stringify(action)} for ${bindingKey}`, { reLabel: 'aspect:mq' })
       this.actions.push({ action, bindingKey })
     } else {
       // transaction complete, dispatch to MQ
-      logger.debug(
-        `dispatch ${this.id} ${JSON.stringify(action)} for ${bindingKey}`,
-        { reLabel: 'aspect:mq' }
-      )
+      logger.debug(`dispatch ${this.id} ${JSON.stringify(action)} for ${bindingKey}`, { reLabel: 'aspect:mq' })
       this.queue.dispatch(action, bindingKey)
     }
   }
@@ -417,9 +402,7 @@ class MessageContext {
     }
     logger.debug(`commit ${this.id}`, { reLabel: 'aspect:mq' })
     this.transaction = null
-    this.actions.forEach(({ action, bindingKey }) =>
-      this.dispatch(action, bindingKey)
-    )
+    this.actions.forEach(({ action, bindingKey }) => this.dispatch(action, bindingKey))
     this.isFinalState = true
   }
 

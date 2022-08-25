@@ -1,7 +1,4 @@
-const {
-  totalDaysUnexpiredInventoryItemsLast,
-  isStockEmpty,
-} = require('../../../shared/utilsInventory')
+const { totalDaysUnexpiredInventoryItemsLast, isStockEmpty } = require('../../../shared/utilsInventory')
 
 async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
   const { partnerId, siteId, consumableId } = issue
@@ -20,9 +17,7 @@ async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
     .where({ siteId, consumableId, days: 1 })
     .first('rate')) || { rate: 0 }
   // read threshold
-  const { dueDaysInventoryStockout: dueDays } = await knex('Partner')
-    .where({ id: partnerId })
-    .first()
+  const { dueDaysInventoryStockout: dueDays } = await knex('Partner').where({ id: partnerId }).first()
   // use same func as when checking to trigger issue
   const days = await totalDaysUnexpiredInventoryItemsLast({
     knex,

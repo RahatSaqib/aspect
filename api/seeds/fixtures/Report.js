@@ -1,3 +1,24 @@
+const xdrDevicesSummary = {
+  name: 'Summary table for XDR devices',
+  description: 'Lists sites/devices grouped by province showing main XDR parameters',
+  i18nKey: 'xdrDevicesSummary',
+  externalId: 'xdr_devices_summary', // folder name in /templates
+  i18nKeyDescription: 'xdrDevicesSummaryDescription',
+  fileName: 'XdrDevicesSummary',
+  exportCsv: false,
+  sortOrder: 101,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/serviceReport',
+      functionName: 'getReportXdrDevicesSummary',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 const mtbDetectedRRDetected = {
   name: 'MTB Detected RR Detected',
   description: 'Contains all MTB Detected/Rif Detected cases',
@@ -14,10 +35,7 @@ const mtbDetectedRRDetected = {
       query: {
         sortCol: 'endedOn',
         sortDir: 'desc',
-        resultCategoryGroupId: [
-          'GxMtbRifMtbDetectedRifDetected',
-          'GxMtbRifUltraMtbDetectedRifDetected',
-        ],
+        resultCategoryGroupId: ['GxMtbRifMtbDetectedRifDetected', 'GxMtbRifUltraMtbDetectedRifDetected'],
       },
     },
   ],
@@ -49,8 +67,7 @@ const allResults = {
 }
 const criticalErrorsByDevice = {
   name: 'Critical Errors By Device',
-  description:
-    'Includes a list of GeneXpert devices that had at least 2 critical errors',
+  description: 'Includes a list of GeneXpert devices that had at least 2 critical errors',
   i18nKey: 'Critical_Errors_By_Device',
   i18nKeyDescription: 'Critical_Errors_By_Device_description',
   externalId: 'critical_errors_by_device',
@@ -68,13 +85,23 @@ const criticalErrorsByDevice = {
         deviceTypeId: 'CepheidGeneXpert',
       },
     },
+    {
+      sortOrder: 1,
+      moduleName: 'device/service',
+      functionName: 'getErrorCodesByDeviceReport',
+      query: {
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
+        deviceTypeId: 'CepheidGeneXpert',
+      },
+    },
   ],
 }
 
 const rifResistanceRate = {
   name: 'RIF Resistance Rate (%positive results)',
-  description:
-    'Listing MTB/Rif and MTB/Rif Ultra Resistance Rate for all GeneXpert devices, ranked highest to lowest',
+  description: 'Listing MTB/Rif and MTB/Rif Ultra Resistance Rate for all GeneXpert devices, ranked highest to lowest',
   i18nKey: 'RIF_Resistance_Rate',
   externalId: 'rif_resistance_rate',
   i18nKeyDescription: 'RIF_Resistance_Rate_description',
@@ -194,8 +221,7 @@ const deviceActivityPercent = {
 
 const moduleSwaps = {
   name: 'Module Swaps',
-  description:
-    'This report shows all module swaps in devices. The report will show you by default the last 12 months',
+  description: 'This report shows all module swaps in devices. The report will show you by default the last 12 months',
   i18nKey: 'moduleSwapsReport',
   externalId: 'module_swaps',
   fileName: 'moduleSwaps',
@@ -217,8 +243,7 @@ const moduleSwaps = {
 
 const deviceCalibrationReport = {
   name: 'Device Calibration Report',
-  description:
-    'All devices along with the last calibration date and when next calibration is due',
+  description: 'All devices along with the last calibration date and when next calibration is due',
   i18nKey: 'Device_Calibration_Report',
   i18nKeyDescription: 'Device_Calibration_Report_description',
   externalId: 'device_calibration_report',
@@ -276,11 +301,6 @@ const utilizationPerInstrumentDayReport = {
       moduleName: 'deviceMaintenanceStatus/serviceReports',
       functionName: 'getDeviceUtilizationPerDayReport',
     },
-    {
-      sortOrder: 0,
-      moduleName: 'deviceMaintenanceStatus/serviceReports',
-      functionName: 'getDeviceUtilizationPerDayReportPercentage',
-    },
   ],
 }
 
@@ -324,8 +344,7 @@ const moduleStatusReport = {
 
 const reportCustomFieldsCompletion = {
   name: 'Percent of custom fields completion for the MTB form',
-  description:
-    'Lists one row per site and shows the percentage of completion of each MTB custom field',
+  description: 'Lists one row per site and shows the percentage of completion of each MTB custom field',
   i18nKey: 'reportCustomFieldsCompletion',
   externalId: 'report_custom_fields_completion', // folder name in /templates
   i18nKeyDescription: 'reportCustomFieldsCompletionDescription',
@@ -367,8 +386,7 @@ const inventoryLog = {
 
 const tbWorkloadSummary = {
   name: 'Report of TB Workload Summary',
-  description:
-    'Summary of TB Workload grouped by month, quarter and year for all regions',
+  description: 'Summary of TB Workload grouped by month, quarter and year for all regions',
   i18nKey: 'reportTBWorkloadSummary',
   externalId: 'tb_workload_summary', // folder name in /templates
   i18nKeyDescription: 'reportTBWorkloadSummaryDescription',
@@ -427,4 +445,5 @@ module.exports = {
   inventoryLog,
   moduleStatusReport,
   tbWorkloadSummary,
+  xdrDevicesSummary,
 }

@@ -1,21 +1,13 @@
 const { assert } = require('chai')
 
 const { createSmsTestContext } = require('./utils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
+const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 const { knex } = require('../../src/db')
 // get test context with created sample messageId
 
 // action creators
-const {
-  smsMessageCreated,
-  smsMessageReadyForSending,
-  smsMessageSent,
-} = require('../../src/sms/actions')
+const { smsMessageCreated, smsMessageReadyForSending, smsMessageSent } = require('../../src/sms/actions')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const config = require('../../src/config')
 
@@ -54,10 +46,7 @@ describe('Sending SMS via Message Queue to Contact', () => {
     const msg = await knex('SmsMessage').where('id', messageId).first()
     assert.equal(msg.messageStatusId, messageStatusIdSent)
     // make sure generated message does not have unprocessed curly braces {{ }}
-    assert(
-      !msg.message.includes('{{') && !msg.message.includes('}}'),
-      'Sms message template has not been parsed well'
-    )
+    assert(!msg.message.includes('{{') && !msg.message.includes('}}'), 'Sms message template has not been parsed well')
   })
 })
 describe('Sending SMS via Message Queue to Patient, clinician or any other contact type', () => {
@@ -95,9 +84,6 @@ describe('Sending SMS via Message Queue to Patient, clinician or any other conta
     const msg = await knex('SmsMessage').where('id', messageId).first()
     assert.equal(msg.messageStatusId, messageStatusIdSent)
     // make sure generated message does not have unprocessed curly braces {{ }}
-    assert(
-      !msg.message.includes('{{') && !msg.message.includes('}}'),
-      'Sms message template has not been parsed well'
-    )
+    assert(!msg.message.includes('{{') && !msg.message.includes('}}'), 'Sms message template has not been parsed well')
   })
 })

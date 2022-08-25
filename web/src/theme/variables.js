@@ -1,5 +1,5 @@
-import { createTheme } from '@material-ui/core/styles'
-import { cyan, lightGreen, orange } from '@material-ui/core/colors'
+import { createTheme } from '@mui/material/styles'
+import { cyan, lightGreen, orange } from '@mui/material/colors'
 import { customPropertiesVariables } from '../../cfg/variables'
 
 const theme = createTheme({
@@ -54,8 +54,7 @@ const themedColors = {
   text: customPropertiesVariables['--aspect-color-white'],
   primary: customPropertiesVariables['--ming'], // '--aspect-color-chill-blue-primary'
   secondary: customPropertiesVariables['--aspect-button-accent-color'],
-  buttonBorderRadius:
-    customPropertiesVariables['--aspect-button-border-radius'],
+  buttonBorderRadius: customPropertiesVariables['--aspect-button-border-radius'],
 }
 
 export default {

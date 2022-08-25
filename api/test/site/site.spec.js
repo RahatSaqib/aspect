@@ -24,16 +24,12 @@ describe('Site routes', () => {
 
     after(async () => {
       // return the test site to its original state
-      await knex('Site')
-        .where('id', siteIdToDisable)
-        .update({ disabled: 0, disabledBy: null, disabledOn: null })
+      await knex('Site').where('id', siteIdToDisable).update({ disabled: 0, disabledBy: null, disabledOn: null })
     })
 
     describe('GET', () => {
       it('should return a list of sites when using valid token', async () => {
-        const res = await server
-          .get(path)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
@@ -48,9 +44,7 @@ describe('Site routes', () => {
         siteId = res.body.data[0].id
       })
       it('should return a list of sites for filling a select list', async () => {
-        const res = await server
-          .get(`${path}/select-list/all`)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(`${path}/select-list/all`).set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
@@ -67,9 +61,7 @@ describe('Site routes', () => {
         assert.property(res.body.data[0], 'externalId')
       })
       it('should return a list of sites for filling a select list in Reporter app, with a limited set of fields', async () => {
-        const res = await server
-          .get(`${path}/select-list/reporter`)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(`${path}/select-list/reporter`).set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
@@ -87,9 +79,7 @@ describe('Site routes', () => {
         assert.notProperty(res.body.data[0], 'externalId')
       })
       it('should return a single site when using a valid token', async () => {
-        const res = await server
-          .get(`${path}/${siteId}`)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(`${path}/${siteId}`).set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
         assert.typeOf(res.body, 'Object')
@@ -123,18 +113,17 @@ describe('Site routes', () => {
       let geo = {}
       let siteTypeLabId
       let newSiteParams
-      const newSiteName = 'New Site'
+      const dummyName = 'New Site Name'
+      const dummyShortName = 'New Site'
+      const dummyExternalId = 'New Site ext id'
       before(async () => {
-        geo = await knex('Geography')
-          .whereNotNull('lgaId')
-          .first('id', 'countryId', 'stateId', 'lgaId')
-        ;({ siteTypeLabId } = await knex('SiteType')
-          .where('externalId', 'lab')
-          .first('id as siteTypeLabId'))
+        geo = await knex('Geography').whereNotNull('lgaId').first('id', 'countryId', 'stateId', 'lgaId')
+        ;({ siteTypeLabId } = await knex('SiteType').where('externalId', 'lab').first('id as siteTypeLabId'))
 
         newSiteParams = {
-          name: newSiteName,
-          shortName: newSiteName,
+          name: dummyName,
+          shortName: dummyShortName,
+          externalId: dummyExternalId,
           notes: 'Notes',
           countryId: geo.countryId,
           stateId: geo.stateId,
@@ -166,25 +155,20 @@ describe('Site routes', () => {
           .send(newSiteParams)
           .set('Authorization', `Bearer${shared.token}`)
 
-        const siteId = createSiteResponse?.body?.data?.id
+        const siteId = createSiteResponse?.body
         if (siteId) {
           insertedSites.push(siteId)
         }
 
-        assert.equal(
-          createSiteResponse.status,
-          200,
-          createSiteResponse.body.message
-        )
-        assert.typeOf(createSiteResponse.body, 'Object')
-        assert.typeOf(createSiteResponse.body.data.id, 'Number')
+        assert.equal(createSiteResponse.status, 200, createSiteResponse.body.message)
+        assert.typeOf(createSiteResponse.body, 'Number')
 
         const insertedSite = await knex('Site').where('id', siteId).first()
 
         expect(insertedSite).to.containSubset({
-          name: newSiteName,
-          shortName: newSiteName,
-          externalId: newSiteName,
+          name: dummyName,
+          shortName: dummyShortName,
+          externalId: dummyExternalId,
           notes: 'Notes',
           geographyId: geo.id,
           city: 'city',
@@ -201,10 +185,10 @@ describe('Site routes', () => {
 
       it('Should reject create a duplicate site ', async () => {
         const [exisingSiteId] = await knex('Site').insert({
-          name: newSiteName,
-          shortName: newSiteName,
+          name: dummyName,
+          shortName: dummyShortName,
+          externalId: dummyExternalId,
           siteTypeId: siteTypeLabId,
-          externalId: newSiteName,
         })
 
         insertedSites.push(exisingSiteId)
@@ -214,7 +198,7 @@ describe('Site routes', () => {
           .send(newSiteParams)
           .set('Authorization', `Bearer${shared.token}`)
 
-        assert.equal(createDuplicatedSiteResponse.status, 422)
+        assert.equal(createDuplicatedSiteResponse.status, 409)
       })
     })
 
@@ -242,11 +226,7 @@ describe('Site routes', () => {
           .get(`/api/site/${siteIdToDisable}`)
           .set('Authorization', `Bearer${shared.token}`)
 
-        assert.equal(
-          getDisableSiteResponse.status,
-          404,
-          'disabled site should not be retrieved anymore'
-        )
+        assert.equal(getDisableSiteResponse.status, 404, 'disabled site should not be retrieved anymore')
 
         const disableASiteAlreadyDisabledReponse = await server
           .put(`${path}/disable/${siteIdToDisable}`)
@@ -266,11 +246,7 @@ describe('Site routes', () => {
           .send()
           .set('Authorization', `Bearer${shared.token}`)
 
-        assert.equal(
-          disableANonExistentSiteReponse.status,
-          404,
-          'disable a non existent site should return a 404'
-        )
+        assert.equal(disableANonExistentSiteReponse.status, 404, 'disable a non existent site should return a 404')
       })
     })
 
@@ -287,52 +263,22 @@ describe('Site routes', () => {
           'totalDevices',
           'devices',
           'contacts',
+          'siteType',
         ])
+        const params = { ...newSiteData, street2: newStreet2 }
         const updateSiteResponse = await server
           .put(`${path}/${siteId}`)
-          .send({ ...newSiteData, street2: newStreet2 })
+          .send(params)
           .set('Authorization', `Bearer${shared.token}`)
         assert.equal(updateSiteResponse.status, 200)
-        assert.typeOf(updateSiteResponse.body, 'Object')
-        assert.property(updateSiteResponse.body, 'data')
-        assert.typeOf(updateSiteResponse.body.data, 'Object')
-        const siteFieldNames = [
-          'id',
-          'name',
-          'shortName',
-          'state',
-          'lga',
-          'country',
-          'createdOn',
-          'totalDevices',
-          'countryId',
-          'stateId',
-          'lgaId',
-          'timezone',
-          'city',
-          'zip',
-          'street1',
-          'street2',
-          'longitude',
-        ]
-        _.each(siteFieldNames, fieldName => {
-          assert.property(updateSiteResponse.body.data, fieldName)
-        })
-        // check the updated property
-        assert.equal(updateSiteResponse.body.data.street2, newStreet2)
+        assert.typeOf(updateSiteResponse.body, 'Number')
 
         // make sure the data has persisted
-        const getSiteResponse = await server
-          .get(`/api/site/${siteId}`)
-          .set('Authorization', `Bearer${shared.token}`)
+        const getSiteResponse = await server.get(`/api/site/${siteId}`).set('Authorization', `Bearer${shared.token}`)
         assert.equal(getSiteResponse.body.data.street2, newStreet2)
 
         // Clean Up: Update street2 with the original street address
-        const updateSiteResponse2 = await server
-          .put(`${path}/${siteId}`)
-          .send({ ...newSiteData, street2: originalStreet2 })
-          .set('Authorization', `Bearer${shared.token}`)
-        assert.equal(updateSiteResponse2.body.data.street2, originalStreet2)
+        await knex('Site').where('id', siteId).update({ street2: originalStreet2 })
       })
     })
 
@@ -389,9 +335,7 @@ describe('Site routes', () => {
 
         await Promise.each(tags, tag => knex('Tag').where({ id: tag.id }).del())
 
-        await Promise.each(sites, site =>
-          knex('Site').where({ id: site.id }).del()
-        )
+        await Promise.each(sites, site => knex('Site').where({ id: site.id }).del())
       })
 
       describe('GET', () => {

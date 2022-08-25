@@ -1,14 +1,10 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
-const {
-  clientTypes,
-  revokeUsersToken,
-  lockedOutUser,
-} = require('../auth/service')
+const { clientTypes, revokeUsersToken, lockedOutUser } = require('../auth/service')
 const { getPeopleBase } = require('../shared/utilsPerson')
 
 async function listPeople(request) {
@@ -32,10 +28,7 @@ async function listPeople(request) {
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .where(qb => {
       if (dataConstraints.partner.id) {
-        qb.whereNull('p.partnerId').orWhere(
-          'p.partnerId',
-          dataConstraints.partner.id
-        )
+        qb.whereNull('p.partnerId').orWhere('p.partnerId', dataConstraints.partner.id)
       }
     })
     .where(qb => {
@@ -46,14 +39,10 @@ async function listPeople(request) {
 
   switch (geographicLevel) {
     case 'state':
-      personQuery.andWhere(qb =>
-        qb.whereNotNull('jcg.stateId').whereNull('jcg.lgaId')
-      )
+      personQuery.andWhere(qb => qb.whereNotNull('jcg.stateId').whereNull('jcg.lgaId'))
       break
     case 'lga':
-      personQuery.andWhere(qb =>
-        qb.whereNotNull('jcg.lgaId').whereNull('jc.siteId')
-      )
+      personQuery.andWhere(qb => qb.whereNotNull('jcg.lgaId').whereNull('jc.siteId'))
       break
     case 'lab':
       personQuery.andWhere(qb => qb.whereNotNull('jc.siteId'))
@@ -67,10 +56,7 @@ async function listPeople(request) {
   }
 
   // get total count for paging
-  const getCount = personQuery
-    .clone()
-    .select(knex.raw('count(distinct p.id) as total'))
-    .first()
+  const getCount = personQuery.clone().select(knex.raw('count(distinct p.id) as total')).first()
 
   const getJobFunctionNames = knex('Job as j')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
@@ -149,9 +135,7 @@ async function assignContact(request) {
   let { jobId } = personDetails
 
   if (!jobId) {
-    const { id: jobFunctionIdDefault } = await knex('JobFunction')
-      .where({ name: 'Lab User' })
-      .first('id')
+    const { id: jobFunctionIdDefault } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
     ;[jobId] = await knex('Job').insert({
       personId: personDetails.id,
       jobFunctionId: jobFunctionIdDefault,
@@ -223,11 +207,7 @@ async function validateContact(request) {
 
   const site = await getSite(siteId, dataConstraints)
 
-  const personDetails = await getPersonDetails(id).modify(
-    addConstraints,
-    dataConstraints,
-    { geography: 'g' }
-  )
+  const personDetails = await getPersonDetails(id).modify(addConstraints, dataConstraints, { geography: 'g' })
 
   return {
     siteId,
@@ -315,9 +295,7 @@ async function savePerson(request, updatablePersonFields) {
   })
 
   // TODO: check access level permissions
-  const currentlyLoggedInUser = await userService.getUser(
-    request.auth.credentials.name
-  )
+  const currentlyLoggedInUser = await userService.getUser(request.auth.credentials.name)
 
   const personDetails = await getPersonDetails(params.personId)
   if (_.isEmpty(personDetails)) {
@@ -327,11 +305,7 @@ async function savePerson(request, updatablePersonFields) {
   const changedFields = _.reduce(
     payload,
     (result, value, key) => {
-      if (
-        _.includes(updatablePersonFields, key) &&
-        key in personDetails &&
-        personDetails[key] !== value
-      ) {
+      if (_.includes(updatablePersonFields, key) && key in personDetails && personDetails[key] !== value) {
         result[key] = value
       }
       return result
@@ -341,10 +315,7 @@ async function savePerson(request, updatablePersonFields) {
 
   const changedPersonFields = await transformGeographyFromUpdates(changedFields)
   if (!_.isEmpty(changedPersonFields)) {
-    if (
-      changedFields.countryId &&
-      personDetails.lastCountryId !== changedFields.countryId
-    ) {
+    if (changedFields.countryId && personDetails.lastCountryId !== changedFields.countryId) {
       changedPersonFields.lastCountryId = changedFields.countryId
     }
 
@@ -374,9 +345,7 @@ async function createPerson(request) {
     }
   })
 
-  const currentlyLoggedInUser = await userService.getUser(
-    request.auth.credentials.name
-  )
+  const currentlyLoggedInUser = await userService.getUser(request.auth.credentials.name)
 
   const changedFields = {
     // 'payload' contains at least one required field - 'name'
@@ -442,12 +411,7 @@ async function listRefreshTokens(request) {
     .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
   const getCount = knex
-    .from(
-      tokenQuery
-        .clone()
-        .select(knex.raw("CONCAT(p.name, ':', r.clientName) as id"))
-        .as('reporterIds')
-    )
+    .from(tokenQuery.clone().select(knex.raw("CONCAT(p.name, ':', r.clientName) as id")).as('reporterIds'))
     .countDistinct('id as count')
     .first()
 
@@ -469,48 +433,22 @@ async function listRefreshTokens(request) {
     .leftJoin('ResultDownloadLog as rdl', queryBuilder => {
       queryBuilder.on('rdl.createdBy', 'r.userId')
       if (query.minDate) {
-        queryBuilder.andOn(
-          'rdl.createdOn',
-          '>=',
-          knex.raw('?', [query.minDate])
-        )
+        queryBuilder.andOn('rdl.createdOn', '>=', knex.raw('?', [query.minDate]))
       }
       if (query.maxDate) {
-        queryBuilder.andOn(
-          'rdl.createdOn',
-          '<=',
-          knex.raw('?', [query.maxDate])
-        )
+        queryBuilder.andOn('rdl.createdOn', '<=', knex.raw('?', [query.maxDate]))
       }
     })
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
-    .leftJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'rtsl.id',
-      'rt.treatmentStatusLogId'
-    )
-    .leftJoin(
-      'ResultTreatmentStatus as rts',
-      'rts.id',
-      'rtsl.resultTreatmentStatusId'
-    )
-    .leftJoin(
-      'ResultWorkflowLog as rwl',
-      'rwl.id',
-      'rt.resultWorkflowStatusLogId'
-    )
-    .leftJoin(
-      'ResultWorkflowStatus as rws',
-      'rws.id',
-      'rwl.resultWorkflowStatusId'
-    )
+    .leftJoin('ResultTreatmentStatusLog as rtsl', 'rtsl.id', 'rt.treatmentStatusLogId')
+    .leftJoin('ResultTreatmentStatus as rts', 'rts.id', 'rtsl.resultTreatmentStatusId')
+    .leftJoin('ResultWorkflowLog as rwl', 'rwl.id', 'rt.resultWorkflowStatusLogId')
+    .leftJoin('ResultWorkflowStatus as rws', 'rws.id', 'rwl.resultWorkflowStatusId')
     .leftJoin('ResultCategoryAssay as rca', queryBuilder => {
-      queryBuilder
-        .on('rca.resultCategoryId', 'rt.resultCategory1')
-        .andOn('rca.assayId', 'rt.assayId')
+      queryBuilder.on('rca.resultCategoryId', 'rt.resultCategory1').andOn('rca.assayId', 'rt.assayId')
     })
     .groupBy('p.name', 'r.clientName')
     .select(
@@ -532,9 +470,7 @@ async function listRefreshTokens(request) {
         "sum(case when rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end) as totalOnTreatment"
       ),
       knex.raw('count(distinct rdl.resultId) as delivered'),
-      knex.raw(
-        "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
-      )
+      knex.raw("sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp")
     )
     .distinct()
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -544,11 +480,9 @@ async function listRefreshTokens(request) {
 
 async function updateRefreshToken(request) {
   const { params, payload } = request
-  const selectedToken = await knex('RefreshToken')
-    .where('clientId', params.refreshTokenId)
-    .update({
-      revoked: payload.revoked,
-    })
+  const selectedToken = await knex('RefreshToken').where('clientId', params.refreshTokenId).update({
+    revoked: payload.revoked,
+  })
 
   if (selectedToken !== 1) {
     return Boom.notFound()

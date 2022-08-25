@@ -14,9 +14,7 @@ async function seed(knex) {
     .whereRaw(`(do.data ->> '$.details.Calibrations[0]') IS NOT NULL`)
     .select('do.deviceId', 'do.startedOn', 'do.data')
   if (deviceOperations.length > 0) {
-    const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId(
-      'calibration'
-    )
+    const deviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
 
     // process all DeviceOperation entries with specified Calibrations array
     await Promise.all(
@@ -26,12 +24,7 @@ async function seed(knex) {
          * `addDeviceDataWithContext` from `api/src/deviceApi/service.js`
          */
         const payload = { startedOn, data: JSON.parse(data) }
-        return shouldLogDeviceCalibration(
-          knex,
-          deviceId,
-          payload,
-          deviceMaintenanceTypeId
-        )
+        return shouldLogDeviceCalibration(knex, deviceId, payload, deviceMaintenanceTypeId)
       })
     )
   }

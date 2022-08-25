@@ -3,7 +3,6 @@ const jobFunctionFixture = require('../shared/fixtures/jobFunctions')
 const { partnerName } = require('./fixtures/partnerData')
 
 module.exports = require('../../utils').seed(
-  async knex =>
-    updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName),
+  async knex => updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName),
   __filename
 )

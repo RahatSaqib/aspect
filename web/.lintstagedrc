@@ -1,5 +1,5 @@
 {
-  "web/{cfg,src}/!(date-fns-locales)/**/*.{js,jsx}": [
+  "!(src/providers/I18nProvider/date-fns-locales)/**/*.{js,jsx}": [
     "eslint --fix --max-warnings 0",
     "prettier --write"
   ]
