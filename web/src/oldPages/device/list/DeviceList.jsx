@@ -14,6 +14,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import Typography from '@mui/material/Typography'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import {
@@ -236,6 +237,8 @@ export const DeviceListWithProps = ({
   setSourceDevicesIds,
   targetDeviceId,
   setTargetDeviceId,
+  isConfirmationVisible,
+  setConfirmationVisible,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
@@ -296,49 +299,94 @@ export const DeviceListWithProps = ({
     </DataTableCard>
     <Dialog open={isMergeDeviceModalOpen} onClose={() => setMergeDeviceModalOpen(false)}>
       <DialogTitle>{intl.formatMessage(messages.mergeDevices)}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{intl.formatMessage(messages.mergeDeviceActionDescription)}</DialogContentText>
-        <Autocomplete
-          multiple
-          onChange={(_, values) => setSourceDevicesIds(values.map(v => +v.key))}
-          options={deviceList || []}
-          getOptionLabel={option => option.value}
-          renderInput={params => (
-            <TextField
-              {...params}
-              variant="standard"
-              label={intl.formatMessage(messages.sourceDevices)}
-              placeholder={intl.formatMessage(messages.sourceDevices)}
+      {!isConfirmationVisible ? (
+        <>
+          <DialogContent>
+            <DialogContentText>{intl.formatMessage(messages.mergeDeviceActionDescription)}</DialogContentText>
+            <Autocomplete
+              multiple
+              onChange={(_, values) => setSourceDevicesIds(values.map(v => +v.key))}
+              options={deviceList || []}
+              getOptionLabel={option => option.value}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label={intl.formatMessage(messages.sourceDevices)}
+                  placeholder={intl.formatMessage(messages.sourceDevices)}
+                />
+              )}
             />
-          )}
-        />
-        <Autocomplete
-          onChange={(_, value) => setTargetDeviceId(+value.key)}
-          options={deviceList?.filter(o => !sourceDevicesIds.includes(o.key)) || []}
-          getOptionLabel={option => option.value}
-          renderInput={params => (
-            <TextField
-              {...params}
-              variant="standard"
-              label={intl.formatMessage(messages.targetDevice)}
-              placeholder={intl.formatMessage(messages.targetDevice)}
+            <Autocomplete
+              onChange={(_, value) => setTargetDeviceId(+value.key)}
+              options={deviceList?.filter(o => !sourceDevicesIds.includes(+o.key)) || []}
+              getOptionLabel={option => option.value}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label={intl.formatMessage(messages.targetDevice)}
+                  placeholder={intl.formatMessage(messages.targetDevice)}
+                />
+              )}
             />
-          )}
-        />
-      </DialogContent>
-      <DialogActions>
-        <AspectButton onClick={() => setMergeDeviceModalOpen(false)}>
-          {intl.formatMessage(messages.button_Cancel)}
-        </AspectButton>
-        <AspectButton
-          onClick={() => {
-            mergeDevices({ sourceDevicesIds, targetDeviceId })
-            setMergeDeviceModalOpen(false)
-          }}
-        >
-          {intl.formatMessage(messages.button_Merge)}
-        </AspectButton>
-      </DialogActions>
+          </DialogContent>
+          <DialogActions>
+            <AspectButton
+              onClick={() => {
+                setSourceDevicesIds([])
+                setTargetDeviceId(null)
+                setMergeDeviceModalOpen(false)
+              }}
+            >
+              {intl.formatMessage(messages.button_Cancel)}
+            </AspectButton>
+            <AspectButton
+              disabled={!sourceDevicesIds.length > 0 || !targetDeviceId}
+              onClick={() => {
+                setConfirmationVisible(true)
+              }}
+            >
+              {intl.formatMessage(messages.button_Merge)}
+            </AspectButton>
+          </DialogActions>
+        </>
+      ) : (
+        <>
+          <DialogTitle>
+            <Typography variant="body1">
+              {
+                <span
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: intl.formatMessage(messages.mergeDevicesConfirmationTitle) }}
+                />
+              }
+            </Typography>
+          </DialogTitle>
+          <DialogContent>{intl.formatMessage(messages.confirmToProceed)}</DialogContent>
+          <DialogActions>
+            <AspectButton
+              onClick={() => {
+                setSourceDevicesIds([])
+                setTargetDeviceId(null)
+                setConfirmationVisible(false)
+              }}
+            >
+              {intl.formatMessage(messages.button_Cancel)}
+            </AspectButton>
+            <AspectButton
+              onClick={() => {
+                mergeDevices({ sourceDevicesIds, targetDeviceId })
+                setSourceDevicesIds([])
+                setTargetDeviceId(null)
+                setMergeDeviceModalOpen(false)
+              }}
+            >
+              {intl.formatMessage(messages.buttonConfirmMerge)}
+            </AspectButton>
+          </DialogActions>
+        </>
+      )}
     </Dialog>
   </div>
 )
@@ -362,7 +410,8 @@ export const DeviceList = () => {
   const [sourceDevicesIds, setSourceDevicesIds] = useState([])
   const [targetDeviceId, setTargetDeviceId] = useState()
 
-  const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState()
+  const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false)
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
 
@@ -474,6 +523,8 @@ export const DeviceList = () => {
     targetDeviceId,
     setSourceDevicesIds,
     setTargetDeviceId,
+    isConfirmationVisible,
+    setConfirmationVisible,
   }
   return <DeviceListWithProps {...baseProps} />
 }

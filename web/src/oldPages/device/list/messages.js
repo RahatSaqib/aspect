@@ -17,6 +17,27 @@ export const messages = {
       defaultMessage:
         'Select as many devices as you want to merge, select the target device and click the Merge button.',
     },
+    mergeDevicesConfirmationTitle: {
+      id: 'pages.DeviceList.mergeDevicesConfirmationTitle',
+      defaultMessage: `<p>This process will perform the following actions:</P>
+      <p><br/>
+        <ul>
+        <li>• Results not repeated between devices will moved to target device.</li>
+        <li>• Issues and Notifications from duplicated results will be moved to target results.</li>
+        <li>• Device issues not related to results, like inventory issues, will be moved to target device.</li>
+        <li>• Source devices will be deleted from Aspect.</li>
+        <ul>
+      <p>
+      `,
+    },
+    confirmToProceed: {
+      id: 'pages.DeviceList.areYouSure',
+      defaultMessage: 'Confirm to proceed.',
+    },
+    buttonConfirmMerge: {
+      id: 'pages.DeviceList.buttonConfirmMerge',
+      defaultMessage: 'Confirm',
+    },
     devicesTitle: {
       id: 'pages.DeviceList.devicesTitle',
       defaultMessage: 'Devices',
