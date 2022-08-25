@@ -44,19 +44,9 @@ const DailyStatus = () => {
       periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
       note,
     } = getDeviceDayDetails({ day, deviceId })
-    setDialogState({
-      isOpen: true,
-      deviceName,
-      siteProps,
-      data: {
-        day, // day clicked (formatted as "YYYY-MM-DD")
-        startedOn,
-        endedOn,
-        deviceId,
-        maintenanceStatusExternalId,
-        note,
-      },
-    })
+    // day clicked (formatted as "YYYY-MM-DD")
+    const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note }
+    setDialogState({ isOpen: true, deviceName, siteProps, data })
   }
 
   const onHideDailyStatusDialog = () => {
@@ -96,10 +86,7 @@ const DailyStatus = () => {
       innerSize={12}
       justify="center"
       action={params => updateFromActionComponent({ ...params })}
-      actionComponent={{
-        component: CardSelectors,
-        props: selectorModifiers,
-      }}
+      actionComponent={{ component: CardSelectors, props: selectorModifiers }}
       name="dailyStatus"
     >
       {!devicesIsLoading && !deviceStatusesIsLoading ? (
@@ -120,15 +107,16 @@ const DailyStatus = () => {
             />
           ))}
 
-          <DailyStatusDialog
-            data={dialogState.data}
-            deviceName={dialogState.deviceName}
-            siteProps={dialogState.siteProps}
-            isOpen={dialogState.isOpen}
-            onCancel={onHideDailyStatusDialog}
-            onSubmit={onDailyStatusSubmit}
-            statuses={allStatuses}
-          />
+          {dialogState.isOpen ? (
+            <DailyStatusDialog
+              data={dialogState.data}
+              deviceName={dialogState.deviceName}
+              siteProps={dialogState.siteProps}
+              onCancel={onHideDailyStatusDialog}
+              onSubmit={onDailyStatusSubmit}
+              statuses={allStatuses}
+            />
+          ) : null}
         </div>
       ) : (
         <Loading className={cssClasses('dailyStatus__spinner')} />

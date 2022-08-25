@@ -1,5 +1,5 @@
 import classnames from 'classnames/bind'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Button from '@mui/material/Button'
 
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
@@ -16,24 +16,9 @@ import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
-export const DailyStatusDialog = ({
-  data = {},
-  isOpen,
-  onCancel,
-  onSubmit,
-  statuses,
-  title,
-  deviceName,
-  siteProps,
-}) => {
+export const DailyStatusDialog = ({ data = {}, onCancel, onSubmit, statuses, title, deviceName, siteProps }) => {
   const [mode, setMode] = useState(MODE.EDITING)
   const { formatMessage } = useI18n()
-
-  useEffect(() => {
-    if (isOpen) {
-      setMode(MODE.EDITING)
-    }
-  }, [isOpen])
 
   const onSaveChanges = (deviceId, values) => {
     setMode(MODE.SAVING)
@@ -66,7 +51,7 @@ export const DailyStatusDialog = ({
           root: cssClasses('reset-overflow'),
         }}
         maxWidth="xs"
-        open={isOpen}
+        open
         onClose={onCancel}
         title={title || formatMessage(messages.title)}
       >
