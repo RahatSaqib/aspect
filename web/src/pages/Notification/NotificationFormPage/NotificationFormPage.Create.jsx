@@ -20,6 +20,7 @@ import FormActions from '../../../components/Form/formActions'
 import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
 import { getFormConfigWithData } from './utils'
 import validationSchema from './Forms/validation'
+import usePartner from '../../../hooks/partner/usePartner'
 
 const NotificationFormPage = () => {
   const intl = useI18n()
@@ -27,17 +28,18 @@ const NotificationFormPage = () => {
   const [formConfig, setFormConfig] = useState(false)
   const { data: jobFunctions, isLoading } = useJobFunctions()
   const { mutate: submitNotification } = useSaveNotification()
+  const { data: partner, isLoading: partnerLoading } = usePartner()
 
   useEffect(() => {
-    if (jobFunctions) {
-      const form = getFormConfigWithData(intl, jobFunctions, validationSchema(intl.formatMessage), false, null)
+    if (jobFunctions && partner) {
+      const form = getFormConfigWithData(intl, jobFunctions, partner, validationSchema(intl.formatMessage), false, null)
       setFormConfig(form)
     }
-  }, [intl, jobFunctions])
+  }, [intl, jobFunctions, partner, partnerLoading])
 
   const onSubmit = formik => {
     const specificPersonId = 'specificPerson'
-    const formConfig = getFormConfig(intl.formatMessage, jobFunctions, false)
+    const formConfig = getFormConfig(intl.formatMessage, jobFunctions, partner, false)
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
     // values.notificationCategory = formik.values.notificationType === 'resultBased' ? 'resultBased' : 'issueBased'

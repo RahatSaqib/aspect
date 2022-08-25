@@ -27,7 +27,7 @@ const checkboxClassNames = {
   controlContainer: cssClasses('checkbox-container'),
 }
 
-const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
+const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
   title: isEdit
     ? formatMessage(messages.titleEdit, 'Edit Notification')
     : formatMessage(messages.titleNew, 'New Notification'),
@@ -41,8 +41,8 @@ const getFormConfig = (formatMessage, jobFunctions, isEdit) => ({
     ...notificationTypeSection(formatMessage), // notification header (enabled/type)
     resultBasedSection(formatMessage), // only for ['resultBased']
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
-    lowInventorySection(formatMessage), // only for ['InventoryStockout']
-    stockExpiringSection(formatMessage), // only for ['InventoryStockExpiring']
+    lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
+    stockExpiringSection(formatMessage, partner), // only for ['InventoryStockExpiring']
     calibrationSection(formatMessage), // only for ['calibration']
     ...sendSection(formatMessage, jobFunctions), // notification footer (sending options)
   ],
@@ -319,15 +319,14 @@ const geographySection = formatMessage => {
         items: [
           {
             id: 'deviceLevelId',
+            initialValue: true,
             controlType: {
               component: 'select',
+              endpoint: '/geography/level-by-user-select-list',
               hideIfNoOptions: false,
-              options: [
-                { label: formatMessage(messages.AreaNational), value: 'national' },
-                { label: formatMessage(messages.AreaState), value: 'state' },
-                { label: formatMessage(messages.AreaLGA), value: 'lga' },
-                { label: formatMessage(messages.AreaLaboratory), value: 'lab' },
-              ],
+              queryKey: 'GEOGRAPHY_LEVEL',
+              normalizeLoadedData: response =>
+                response.map(i => ({ label: formatMessage(messages[`Area${i.name}`]), value: i.id })),
               placeholder: formatMessage(messages.SelectAreaPlaceholder),
             },
             label: formatMessage(messages.SelectAreaTitle),
@@ -341,7 +340,7 @@ const geographySection = formatMessage => {
   }
 }
 
-const lowInventorySection = formatMessage => {
+const lowInventorySection = (formatMessage, partner) => {
   return {
     id: 'whenDeviceHasLessThan',
     label: 'whenDeviceHasLessThan',
@@ -354,51 +353,12 @@ const lowInventorySection = formatMessage => {
           {
             id: 'daysOfInventoryLeft',
             label: formatMessage(messages.daysOfInventoryLeft),
-            initialValue: ['90'],
+            initialValue: [`${partner.dueDaysInventoryStockout}`],
             type: 'readOnly',
             controlType: {
               component: 'select',
-              // endpoint: PERSON_SELECT_LIST.ENDPOINT,
               hideIfNoOptions: false,
-              // queryKey: PERSON_SELECT_LIST.KEY,
-              options: [{ value: '90', label: '90' }],
-              // normalizeLoadedData: (response, formik) => {
-              //   const { values, setFieldValue } = formik
-              //   function makeLabel(name, state) {
-              //     const stateLabel = isEmpty(state) ? '' : ` (${state})`
-              //     return `${name} ${stateLabel}`
-              //   }
-              //   const { ok, data } = response
-              //   const options = [
-              //     { label: formatMessage(messages.optionPersonRoleSet), options: [] },
-              //     { label: formatMessage(messages.optionPersonRoleNotSet), options: [] },
-              //   ]
-              //   if (ok === true) {
-              //     const selected = intersectionBy(data, values.persons, 'id')
-              //     if (selected?.length) {
-              //       const initialValues = []
-              //       map(selected, ({ id, name, state }) =>
-              //         initialValues.push({ label: makeLabel(name, state), value: id, grouped: true })
-              //       )
-              //       values.persons = initialValues
-              //       setFieldValue('persons', initialValues)
-              //     }
-              //     const withJob = filter(data, item => !isEmpty(item.level))
-              //     const withoutJob = xor(data, withJob)
-              //     map(withJob, ({ id, name, state }) =>
-              //       options[0].options.push({ label: makeLabel(name, state), value: id, grouped: true })
-              //     )
-              //     map(withoutJob, ({ name, state }) =>
-              //       options[1].options.push({
-              //         label: makeLabel(name, state),
-              //         value: null,
-              //         disabled: true,
-              //         grouped: true,
-              //       })
-              //     )
-              //   }
-              //   return options?.length ? options : []
-              // },
+              options: [{ value: `${partner.dueDaysInventoryStockout}`, label: `${partner.dueDaysInventoryStockout}` }],
             },
             classNames: {
               itemContainer: cssClasses('max-width-100pc', 'tags-container'),
@@ -413,7 +373,7 @@ const lowInventorySection = formatMessage => {
   }
 }
 
-const stockExpiringSection = formatMessage => {
+const stockExpiringSection = (formatMessage, partner) => {
   return {
     id: 'stockExpiring',
     label: 'stockExpiring',
@@ -426,58 +386,24 @@ const stockExpiringSection = formatMessage => {
           {
             id: 'stockExpiring',
             label: formatMessage(messages.stockExpiring),
-            initialValue: ['30'],
+            initialValue: [`${partner.dueDaysInventoryStockExpiring}`],
             type: 'readOnly',
             controlType: {
               component: 'select',
-              // endpoint: PERSON_SELECT_LIST.ENDPOINT,
               hideIfNoOptions: false,
-              // queryKey: PERSON_SELECT_LIST.KEY,
-              options: [{ value: '30', label: '30' }],
-              // normalizeLoadedData: (response, formik) => {
-              //   const { values, setFieldValue } = formik
-              //   function makeLabel(name, state) {
-              //     const stateLabel = isEmpty(state) ? '' : ` (${state})`
-              //     return `${name} ${stateLabel}`
-              //   }
-              //   const { ok, data } = response
-              //   const options = [
-              //     { label: formatMessage(messages.optionPersonRoleSet), options: [] },
-              //     { label: formatMessage(messages.optionPersonRoleNotSet), options: [] },
-              //   ]
-              //   if (ok === true) {
-              //     const selected = intersectionBy(data, values.persons, 'id')
-              //     if (selected?.length) {
-              //       const initialValues = []
-              //       map(selected, ({ id, name, state }) =>
-              //         initialValues.push({ label: makeLabel(name, state), value: id, grouped: true })
-              //       )
-              //       values.persons = initialValues
-              //       setFieldValue('persons', initialValues)
-              //     }
-              //     const withJob = filter(data, item => !isEmpty(item.level))
-              //     const withoutJob = xor(data, withJob)
-              //     map(withJob, ({ id, name, state }) =>
-              //       options[0].options.push({ label: makeLabel(name, state), value: id, grouped: true })
-              //     )
-              //     map(withoutJob, ({ name, state }) =>
-              //       options[1].options.push({
-              //         label: makeLabel(name, state),
-              //         value: null,
-              //         disabled: true,
-              //         grouped: true,
-              //       })
-              //     )
-              //   }
-              //   return options?.length ? options : []
-              // },
+              options: [
+                {
+                  value: `${partner.dueDaysInventoryStockExpiring}`,
+                  label: `${partner.dueDaysInventoryStockExpiring}`,
+                },
+              ],
             },
             classNames: {
               itemContainer: cssClasses('max-width-100pc', 'tags-container'),
               controlContainer: cssClasses('full-width-100pc'),
               item: cssClasses('full-width-100pc'),
             },
-            labelI18nKey: 'daysOfInventoryLeft',
+            labelI18nKey: 'daysStockExpiring',
           },
         ],
       },

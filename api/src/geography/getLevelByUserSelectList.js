@@ -8,7 +8,7 @@ module.exports = function ({ auth }) {
 async function filterByJobFunction(auth) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const countryLevel = { name: 'Country', id: 'country' }
+  const countryLevel = { name: 'National', id: 'national' }
   const stateLevel = { name: 'State', id: 'state' }
   const lgaLevel = { name: 'LGA', id: 'lga' }
   const siteLevel = { name: 'Laboratory', id: 'lab' }

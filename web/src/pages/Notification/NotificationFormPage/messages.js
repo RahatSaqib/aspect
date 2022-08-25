@@ -59,7 +59,7 @@ export default defineMessages({
     id: 'pages.NotificationDetail.stockExpiring',
     defaultMessage: 'When stock is...',
   },
-  stockExpiringDays: {
+  daysStockExpiring: {
     id: 'pages.NotificationDetail.stockExpiringDays',
     defaultMessage: 'Expiring in days',
   },

@@ -2,8 +2,8 @@ import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../.
 import getFormConfig from './Forms/editConfig'
 import messages from './messages'
 
-export const getFormConfigWithData = (intl, jobFunctions, validationSchema, isEdit, values) => {
-  const formSchema = getFormConfig(intl.formatMessage, jobFunctions, isEdit)
+export const getFormConfigWithData = (intl, jobFunctions, partner, validationSchema, isEdit, values) => {
+  const formSchema = getFormConfig(intl.formatMessage, jobFunctions, partner, isEdit)
   const initialValues = getInitialValuesFromFormConfig(formSchema, values)
 
   const formWithData = {

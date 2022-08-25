@@ -20,6 +20,7 @@ import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../componen
 import { getFormConfigWithData } from './utils'
 import validationSchema from './Forms/validation'
 import useNotification from '../../../hooks/notification/useNotification'
+import usePartner from '../../../hooks/partner/usePartner'
 
 function buildAreaItems(id, target, data) {
   switch (true) {
@@ -41,10 +42,11 @@ const NotificationFormPage = ({ id }) => {
   const [formConfig, setFormConfig] = useState(false)
 
   const { data: jobFunctions } = useJobFunctions()
+  const { data: partner } = usePartner()
   const { mutate: submitNotification } = useSaveNotification()
 
   useNotification(notificationId, {
-    enabled: !!intl && !!jobFunctions,
+    enabled: !!intl && !!jobFunctions && !!partner,
     onSuccess: data => {
       const { notificationType, name, emailSubject, emailBody } = data
       const { smsBody, webUrl, webBody, filterCondition, enabled } = data
@@ -85,14 +87,21 @@ const NotificationFormPage = ({ id }) => {
           }
         }),
       }
-      const form = getFormConfigWithData(intl, jobFunctions, validationSchema(intl.formatMessage), true, newValues)
+      const form = getFormConfigWithData(
+        intl,
+        jobFunctions,
+        partner,
+        validationSchema(intl.formatMessage),
+        true,
+        newValues
+      )
       setFormConfig(form)
     },
   })
 
   const onSubmit = formik => {
     const specificPersonId = 'specificPerson'
-    const formConfig = getFormConfig(intl.formatMessage, jobFunctions, true)
+    const formConfig = getFormConfig(intl.formatMessage, jobFunctions, partner, true)
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
     values.notificationType = formik.values.notificationType
