@@ -308,6 +308,11 @@ export const DeviceListWithProps = ({
               onChange={(_, values) => setSourceDevicesIds(values.map(v => +v.key))}
               options={deviceList || []}
               getOptionLabel={option => option.value}
+              renderOption={(props, option) => (
+                <li {...props} key={option.key}>
+                  {option.value}
+                </li>
+              )}
               renderInput={params => (
                 <TextField
                   {...params}
@@ -321,6 +326,11 @@ export const DeviceListWithProps = ({
               onChange={(_, value) => setTargetDeviceId(+value.key)}
               options={deviceList?.filter(o => !sourceDevicesIds.includes(+o.key)) || []}
               getOptionLabel={option => option.value}
+              renderOption={(props, option) => (
+                <li {...props} key={option.key}>
+                  {option.value}
+                </li>
+              )}
               renderInput={params => (
                 <TextField
                   {...params}
@@ -379,6 +389,7 @@ export const DeviceListWithProps = ({
                 mergeDevices({ sourceDevicesIds, targetDeviceId })
                 setSourceDevicesIds([])
                 setTargetDeviceId(null)
+                setConfirmationVisible(false)
                 setMergeDeviceModalOpen(false)
               }}
             >
