@@ -10,14 +10,19 @@ async function getTargetDevice(targetDeviceId) {
 }
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
+  const {
+    sourceDevice: { id: sourceDeviceId },
+    targetDevice: { id: targetDeviceId },
+  } = devicesToMerge
+
   await trknex('Issue as i')
-    .update('i.deviceId', devicesToMerge.targetDevice.id)
+    .update('i.deviceId', targetDeviceId)
     .update('i.resultId', trknex.raw('pivot.targetResultId'))
     .join(
       knex('Result as sr')
         .join('Result as tr', 'sr.externalId', 'tr.externalId')
-        .where('sr.deviceId', devicesToMerge.sourceDevice.id)
-        .where('tr.deviceId', devicesToMerge.targetDevice.id)
+        .where('sr.deviceId', sourceDeviceId)
+        .where('tr.deviceId', targetDeviceId)
         .select({ sourceResultId: 'sr.id', targetResultId: 'tr.id', externalId: 'sr.externalId' })
         .as('pivot'),
       'i.resultId',
@@ -27,28 +32,34 @@ async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
 }
 
 async function mergeDeviceLevelIssues(devicesToMerge, trknex) {
-  await trknex('Issue')
-    .where('deviceId', devicesToMerge.sourceDevice.id)
-    .update('deviceId', devicesToMerge.targetDevice.id)
+  const {
+    sourceDevice: { id: sourceDeviceId },
+    targetDevice: { id: targetDeviceId },
+  } = devicesToMerge
+
+  await trknex('Issue').where('deviceId', sourceDeviceId).update('deviceId', targetDeviceId)
 }
 
 async function mergeNonRepeatedResults(devicesToMerge, trknex) {
+  const {
+    sourceDevice: { id: sourceDeviceId },
+    targetDevice: { id: targetDeviceId },
+  } = devicesToMerge
+
   const repeatedResultsQuery = trknex(
     trknex('Result')
-      .where('deviceID', devicesToMerge.targetDevice.id)
+      .where('deviceID', targetDeviceId)
       .where('externalId', knex.raw(`sourceResults.externalId`))
       .select('externalId')
       .as('t')
   ).select('t.externalId')
 
   await trknex('Result as sourceResults')
-    .where({ deviceId: devicesToMerge.sourceDevice.id })
+    .where({ deviceId: sourceDeviceId })
     .whereNotIn('sourceResults.externalId', repeatedResultsQuery)
-    .update('deviceId', devicesToMerge.targetDevice.id)
+    .update('deviceId', targetDeviceId)
 
-  await trknex('DeviceLog')
-    .where({ deviceId: devicesToMerge.sourceDevice.id })
-    .update({ deviceId: devicesToMerge.targetDevice.id })
+  await trknex('DeviceLog').where({ deviceId: sourceDeviceId }).update({ deviceId: targetDeviceId })
 }
 
 async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) {
