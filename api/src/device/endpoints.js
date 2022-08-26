@@ -419,6 +419,7 @@ const routes = [
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
           showUnapprovedDevices: Joi.bool().optional().default(false).description('Show unapproved devices'),
+          onlyResultDevices: Joi.bool().optional().default(false).description('Show only devices that process results'),
         },
       },
     },
@@ -719,7 +720,7 @@ const routes = [
     config: {
       auth: { scope: ['device:edit'] },
       description: 'Merges two devices',
-      notes: 'Move all unique source results to target device. Deletes source device.',
+      notes: 'Move all relevant data to target device. Deletes source devices.',
       validate: {
         payload: {
           sourceDevicesIds: Joi.array().items(Joi.number()).description('Source devices Ids').required(),

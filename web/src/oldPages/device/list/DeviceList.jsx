@@ -48,6 +48,7 @@ import useI18n from '../../../hooks/useI18n'
 import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
 import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
+import { target } from '../../../../../api/seeds/development/fixtures/myanmarDashboardWidget'
 
 const cssClasses = classnames.bind(styles)
 const FILTERS_CONFIG = [
@@ -239,6 +240,11 @@ export const DeviceListWithProps = ({
   setTargetDeviceId,
   isConfirmationVisible,
   setConfirmationVisible,
+  siteToMergeDevices,
+  setSiteToMergeDevices,
+  clearMergeDialog,
+  deviceTypeToMerge,
+  setDeviceTypeToMerge,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
@@ -303,10 +309,27 @@ export const DeviceListWithProps = ({
         <>
           <DialogContent>
             <DialogContentText>{intl.formatMessage(messages.mergeDeviceActionDescription)}</DialogContentText>
+
             <Autocomplete
               multiple
-              onChange={(_, values) => setSourceDevicesIds(values.map(v => +v.key))}
-              options={deviceList || []}
+              onChange={(_, values) => {
+                const newSourceValues = values.map(v => +v.key)
+                const newSourceSiteId = deviceList.find(o => o.key === values[0]?.key)?.siteId || null
+                const newDeviceTypeToMergeId = deviceList.find(o => o.key === values[0]?.key)?.deviceTypeId || null
+
+                setSourceDevicesIds(newSourceValues)
+                setSiteToMergeDevices(newSourceSiteId)
+                setSiteToMergeDevices(newSourceSiteId)
+                setDeviceTypeToMerge(newDeviceTypeToMergeId)
+              }}
+              options={
+                deviceList?.filter(
+                  o =>
+                    +o.key !== targetDeviceId &&
+                    (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
+                    (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
+                ) || []
+              }
               getOptionLabel={option => option.value}
               renderOption={(props, option) => (
                 <li {...props} key={option.key}>
@@ -322,9 +345,19 @@ export const DeviceListWithProps = ({
                 />
               )}
             />
+
             <Autocomplete
-              onChange={(_, value) => setTargetDeviceId(+value.key)}
-              options={deviceList?.filter(o => !sourceDevicesIds.includes(+o.key)) || []}
+              onChange={(_, value) => {
+                setTargetDeviceId(+value?.key || null)
+              }}
+              options={
+                deviceList?.filter(
+                  o =>
+                    !sourceDevicesIds.includes(+o.key) &&
+                    (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
+                    (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
+                ) || []
+              }
               getOptionLabel={option => option.value}
               renderOption={(props, option) => (
                 <li {...props} key={option.key}>
@@ -344,8 +377,7 @@ export const DeviceListWithProps = ({
           <DialogActions>
             <AspectButton
               onClick={() => {
-                setSourceDevicesIds([])
-                setTargetDeviceId(null)
+                clearMergeDialog()
                 setMergeDeviceModalOpen(false)
               }}
             >
@@ -377,9 +409,7 @@ export const DeviceListWithProps = ({
           <DialogActions>
             <AspectButton
               onClick={() => {
-                setSourceDevicesIds([])
-                setTargetDeviceId(null)
-                setConfirmationVisible(false)
+                setMergeDeviceModalOpen(false)
               }}
             >
               {intl.formatMessage(messages.button_Cancel)}
@@ -387,9 +417,7 @@ export const DeviceListWithProps = ({
             <AspectButton
               onClick={() => {
                 mergeDevices({ sourceDevicesIds, targetDeviceId })
-                setSourceDevicesIds([])
-                setTargetDeviceId(null)
-                setConfirmationVisible(false)
+                clearMergeDialog()
                 setMergeDeviceModalOpen(false)
               }}
             >
@@ -404,7 +432,7 @@ export const DeviceListWithProps = ({
 
 export const DeviceList = () => {
   // >>>>>> hooks/ <<<<<<
-  const { data: deviceList } = useDeviceForSelect('', '', '', true)
+  const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
   const intl = useI18n()
   const navigate = useNavigate()
@@ -413,6 +441,13 @@ export const DeviceList = () => {
     displayPreferences,
   } = useAuthState()
   const location = useLocation()
+  const clearMergeDialog = () => {
+    setSourceDevicesIds([])
+    setTargetDeviceId(null)
+    setSiteToMergeDevices(null)
+    setDeviceTypeToMerge(null)
+    setConfirmationVisible(false)
+  }
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
@@ -423,6 +458,8 @@ export const DeviceList = () => {
 
   const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
   const [isConfirmationVisible, setConfirmationVisible] = useState(false)
+  const [siteToMergeDevices, setSiteToMergeDevices] = useState()
+  const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
 
@@ -536,6 +573,11 @@ export const DeviceList = () => {
     setTargetDeviceId,
     isConfirmationVisible,
     setConfirmationVisible,
+    siteToMergeDevices,
+    setSiteToMergeDevices,
+    clearMergeDialog,
+    deviceTypeToMerge,
+    setDeviceTypeToMerge,
   }
   return <DeviceListWithProps {...baseProps} />
 }

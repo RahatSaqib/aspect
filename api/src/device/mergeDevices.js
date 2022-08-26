@@ -41,9 +41,11 @@ async function getDevicesToMerge({ sourceDevicesIds, targetDeviceId }) {
 }
 
 const validate = async (devicesToMerge, credentials) => {
+  validateDifferentDevices(devicesToMerge)
+  validateDeviceIsNotActive(devicesToMerge.sourceDevices)
+  validateSameSite(devicesToMerge)
+  validateDeviceType(devicesToMerge)
   await validatePersmissions(devicesToMerge, credentials)
-  await validateDeviceIsNotActive(devicesToMerge.sourceDevices)
-  await validateSameSite(devicesToMerge)
 }
 
 async function validatePersmissions(devicesToMerge, credentials) {
@@ -58,10 +60,10 @@ async function validatePersmissions(devicesToMerge, credentials) {
   }
 }
 
-async function validateDeviceIsNotActive(sourceDevices) {
+function validateDeviceIsNotActive(sourceDevices) {
   if (sourceDevices.some(d => lessThan24HsFrom(d.lastPingOn))) {
     throw Boom.badData(
-      `All devices to be merged must have been disconnected for at least 24 hours. Select only inactive devices and try again.`
+      `All devices to be merged must have been offline for at least 24 hours. Select only inactive devices and try again.`
     )
   }
 }
@@ -70,8 +72,20 @@ function lessThan24HsFrom(lastPingOn) {
   return (new Date() - lastPingOn) / 1000 / 60 / 60 / 24 < 1
 }
 
-async function validateSameSite({ sourceDevices, targetDevice }) {
+function validateDifferentDevices({ sourceDevices, targetDevice }) {
+  if (sourceDevices.some(sourceDevice => sourceDevice.id === targetDevice.id)) {
+    throw Boom.badData('Cannot merge a device into itself.')
+  }
+}
+
+function validateSameSite({ sourceDevices, targetDevice }) {
   if (sourceDevices.some(sourceDevice => sourceDevice.siteId !== targetDevice.siteId)) {
     throw Boom.badData('Cannot merge devices from different sites.')
+  }
+}
+
+function validateDeviceType({ sourceDevices, targetDevice }) {
+  if (sourceDevices.some(sourceDevice => sourceDevice.deviceTypeId !== targetDevice.deviceTypeId)) {
+    throw Boom.badData('Cannot merge different type of devices.')
   }
 }

@@ -525,13 +525,17 @@ async function listMaintenanceStatuses(request) {
 }
 
 async function listDevicesForSelectList(request) {
-  const { query, auth } = request
-  const showUnapprovedDevices = query.showUnapprovedDevices ?? false
+  const {
+    query,
+    query: { showUnapprovedDevices, onlyResultDevices },
+    auth,
+  } = request
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const devices = await knex('Device as d')
+  const devicesQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g', showUnapprovedDevices })
@@ -543,7 +547,11 @@ async function listDevicesForSelectList(request) {
     .whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     .orderBy(['d.name'], 'asc')
     .select('d.id', 'd.name', 'd.serial as deviceSerial', 'd.siteId', 'd.deviceTypeId', 'dt.name as deviceType')
+  if (onlyResultDevices) {
+    devicesQuery.where('dtc.hasResults', 1)
+  }
 
+  const devices = await devicesQuery
   return { ok: true, data: devices }
 }
 
