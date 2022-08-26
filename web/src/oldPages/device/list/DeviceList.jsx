@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import TableBody from '@mui/material/TableBody'
-import { useQuery } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 import format from 'date-fns/format'
 import subDays from 'date-fns/subDays'
 import Dialog from '@mui/material/Dialog'
@@ -48,7 +48,6 @@ import useI18n from '../../../hooks/useI18n'
 import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
 import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
-import { target } from '../../../../../api/seeds/development/fixtures/myanmarDashboardWidget'
 
 const cssClasses = classnames.bind(styles)
 const FILTERS_CONFIG = [
@@ -245,6 +244,8 @@ export const DeviceListWithProps = ({
   clearMergeDialog,
   deviceTypeToMerge,
   setDeviceTypeToMerge,
+  params,
+  queryClient,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
@@ -316,9 +317,7 @@ export const DeviceListWithProps = ({
                 const newSourceValues = values.map(v => +v.key)
                 const newSourceSiteId = deviceList.find(o => o.key === values[0]?.key)?.siteId || null
                 const newDeviceTypeToMergeId = deviceList.find(o => o.key === values[0]?.key)?.deviceTypeId || null
-
                 setSourceDevicesIds(newSourceValues)
-                setSiteToMergeDevices(newSourceSiteId)
                 setSiteToMergeDevices(newSourceSiteId)
                 setDeviceTypeToMerge(newDeviceTypeToMergeId)
               }}
@@ -416,7 +415,10 @@ export const DeviceListWithProps = ({
             </AspectButton>
             <AspectButton
               onClick={() => {
-                mergeDevices({ sourceDevicesIds, targetDeviceId })
+                mergeDevices(
+                  { sourceDevicesIds, targetDeviceId },
+                  { onSuccess: () => queryClient.invalidateQueries([DEVICE_LIST.KEY, { params }]) }
+                )
                 clearMergeDialog()
                 setMergeDeviceModalOpen(false)
               }}
@@ -462,6 +464,7 @@ export const DeviceList = () => {
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
+  const queryClient = useQueryClient()
 
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
@@ -578,6 +581,8 @@ export const DeviceList = () => {
     clearMergeDialog,
     deviceTypeToMerge,
     setDeviceTypeToMerge,
+    params,
+    queryClient,
   }
   return <DeviceListWithProps {...baseProps} />
 }
