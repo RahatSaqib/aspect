@@ -104,7 +104,6 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
     }
 
     const siteConstraints = dataConstraints.$or.filter(c => c.site).map(c => c.site.id)
-    console.log('\x1b[1;36m', '🚀 ➜ file: db.js ➜ line 107 ➜ siteConstraints', siteConstraints)
     if (siteConstraints.length > 0) {
       siteConstraints.map(siteId =>
         qb.orWhere(b => {
