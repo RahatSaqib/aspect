@@ -4,7 +4,7 @@ import LineGraph from '../../LineGraph'
 import BarGraph from '../../BarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 import FilterByStateDropDown from '../../../AspectDropDown/FilterByStateDropDown'
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
 import AxisRightLayer from '../../BarGraph/AxisRightLayer'
 

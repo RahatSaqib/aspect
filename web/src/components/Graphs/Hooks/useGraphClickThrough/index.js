@@ -15,8 +15,8 @@ import keys from 'lodash/keys'
 
 import ASSAY_LIST from '../../../QueryFetch/Assay'
 import fetchWrapperForQueries from '../../../QueryFetch'
-import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import { negateTimeZoneOffset } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 
 const { treatmentStatus } = GRAPH_CONSTS

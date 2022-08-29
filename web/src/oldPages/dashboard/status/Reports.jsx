@@ -10,7 +10,7 @@ import endOfYear from 'date-fns/endOfYear'
 import startOfYear from 'date-fns/startOfYear'
 import formatDate from 'date-fns/format'
 import config from '../../../config'
-import { getAspectAccess } from '../../../globals/sideEffects/LocalStorage'
+import { getAspectAccess } from '../../../utils/LocalStorage'
 
 import Title from './Title'
 import Icon from '../../../oldComponents/shared/icon/Icon'

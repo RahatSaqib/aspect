@@ -22,7 +22,7 @@ import accountDetailsMessages from './messages'
 import personDetailsMessages from '../../person/detail/messages'
 import { ContactDetails, LoginDetails, UserPreferences } from '../../../store/PersonRedux'
 import AccountDetailsBackBar from './AccountDetailsBackBar'
-import { setTimezoneId, setCurrentCulture } from '../../../globals/sideEffects/LocalStorage'
+import { setTimezoneId, setCurrentCulture } from '../../../utils/LocalStorage'
 import ContactDetailsFormFormik from '../../../components/Account/Details'
 
 const enhance = compose(

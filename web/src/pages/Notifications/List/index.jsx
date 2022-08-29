@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import classnames from 'classnames/bind'
 
 import AspectDropDown from '../../../components/AspectDropDown'
-import UI_CONSTS from '../../../globals/consts/UI'
+import UI_CONSTS from '../../../utils/consts/UI'
 import NavTitle from '../../../oldComponents/NavTitle'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import { reduceFiltersConfig } from '../../../oldComponents/filter/utils'

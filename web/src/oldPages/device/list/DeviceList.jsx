@@ -37,7 +37,7 @@ import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 
 import styles from './DeviceList.css'
 import useI18n from '../../../hooks/useI18n'
-import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 
 const cssClasses = classnames.bind(styles)
 

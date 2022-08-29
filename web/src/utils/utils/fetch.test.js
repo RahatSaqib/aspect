@@ -1,5 +1,5 @@
 describe('aspectFetch module', () => {
-  jest.mock('../../globals/sideEffects/LocalStorage')
+  jest.mock('../../utils/LocalStorage')
   const { aspectFetch } = require('./fetch')
 
   describe('aspectFetch function', () => {

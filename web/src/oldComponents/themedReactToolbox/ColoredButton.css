@@ -1,4 +1,4 @@
-@import '../../globals/variables.css';
+@import '../../theme/variables.css';
 
 .ColoredButton--ship-cove.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-ship-cove);

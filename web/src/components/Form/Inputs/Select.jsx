@@ -9,7 +9,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import { useFormikContext } from 'formik'
 
 import AspectDropDown from '../../AspectDropDown'
-import UI_CONSTS from '../../../globals/consts/UI'
+import UI_CONSTS from '../../../utils/consts/UI'
 
 const getPlaceholder = (placeholder, formik) => {
   if (isFunction(placeholder)) {
