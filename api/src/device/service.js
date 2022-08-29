@@ -776,16 +776,15 @@ function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = fals
 }
 
 // ---------------------------------
-// get devices with different aggregations for reports
+// helper func for 2 worksheets in `Critical Errors by Device` report
 // ---------------------------------
-async function getDevicesForReport(auth, query) {
+async function getBasicsForDevicesReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
 
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   const queryResults = knex('Result as r')
     .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .modify(addConstraints, dataConstraints, {
@@ -793,8 +792,23 @@ async function getDevicesForReport(auth, query) {
       sample: 'sa',
     })
     .whereRaw('sa.originSiteId = d.siteId')
-    .where('r.deviceId', 'd.id')
+    .whereRaw('r.deviceId = d.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
+
+  return {
+    getCount,
+    queryResults,
+    deviceQuery,
+    resultCategoryIds,
+  }
+}
+
+// ---------------------------------
+// get devices with different aggregations for reports
+// ---------------------------------
+async function getDevicesForReport(auth, query) {
+  const { getCount, queryResults, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(auth, query)
+  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
 
   // get rows
   const getItems = deviceQuery
@@ -832,30 +846,40 @@ async function getDevicesForReport(auth, query) {
 }
 
 async function getErrorCodesByDeviceReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-  const getCount = deviceQuery.clone().count('d.id as count').first()
+  const { getCount, queryResults, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(auth, query)
+
   const getItems = deviceQuery
     .clone()
-    .leftJoin('Result as r', 'r.deviceId', 'd.id')
-    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .groupBy('d.id')
-    .select({
-      name: 'd.name',
-      error_5011: knex.raw("SUM(CASE WHEN r.errorCode = '5011' THEN 1 ELSE 0 END)"),
-      error_5007: knex.raw("SUM(CASE WHEN r.errorCode = '5007' THEN 1 ELSE 0 END)"),
-      error_5006: knex.raw("SUM(CASE WHEN r.errorCode = '5006' THEN 1 ELSE 0 END)"),
-      error_2008: knex.raw("SUM(CASE WHEN r.errorCode = '2008' THEN 1 ELSE 0 END)"),
-      error_2005: knex.raw("SUM(CASE WHEN r.errorCode = '2005' THEN 1 ELSE 0 END)"),
-      error_2037: knex.raw("SUM(CASE WHEN r.errorCode = '2037' THEN 1 ELSE 0 END)"),
-      error_2025: knex.raw("SUM(CASE WHEN r.errorCode = '2025' THEN 1 ELSE 0 END)"),
-      error_2022: knex.raw("SUM(CASE WHEN r.errorCode = '2022' THEN 1 ELSE 0 END)"),
-      error_other: knex.raw(
-        "SUM(CASE WHEN r.errorCode IS NOT NULL AND r.errorCode NOT IN ('5011', '5007', '5006', '2008', '2005', '2037', '2025', '2022') THEN 1 ELSE 0 END)"
-      ),
-      mtbNoResult: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'NoResult' THEN 1 ELSE 0 END), 0)"),
-      mtbInvalid: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Invalid' THEN 1 ELSE 0 END), 0)"),
-    })
+    .modify(sortPageParams, query, 'name')
+    .select([
+      'd.name',
+      queryResults.clone().where('r.errorCode', '5011').countDistinct('r.id').as('error_5011'),
+      queryResults.clone().where('r.errorCode', '5007').countDistinct('r.id').as('error_5007'),
+      queryResults.clone().where('r.errorCode', '5006').countDistinct('r.id').as('error_5006'),
+      queryResults.clone().where('r.errorCode', '2008').countDistinct('r.id').as('error_2008'),
+      queryResults.clone().where('r.errorCode', '2005').countDistinct('r.id').as('error_2005'),
+      queryResults.clone().where('r.errorCode', '2037').countDistinct('r.id').as('error_2037'),
+      queryResults.clone().where('r.errorCode', '2025').countDistinct('r.id').as('error_2025'),
+      queryResults.clone().where('r.errorCode', '2022').countDistinct('r.id').as('error_2022'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.Error)
+        .whereRaw(
+          `(
+            r.errorCode IS NULL 
+            OR 
+            r.errorCode NOT IN ('5011', '5007', '5006', '2008', '2005', '2037', '2025', '2022')
+          )`
+        )
+        .countDistinct('r.id')
+        .as('error_other'),
+      queryResults
+        .clone()
+        .where('r.resultCategory1', resultCategoryIds.NoResult)
+        .countDistinct('r.id')
+        .as('mtbNoResult'),
+      queryResults.clone().where('r.resultCategory1', resultCategoryIds.Invalid).countDistinct('r.id').as('mtbInvalid'),
+    ])
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
