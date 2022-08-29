@@ -1,8 +1,8 @@
 const Joi = require('@hapi/joi')
 const { getNotificationTriggerSubscriptions } = require('./subscriptions')
 const { asyncHandler, validateSortPageParams } = require('../routes')
+const listNotifications = require('./listNotifications')
 const {
-  listNotifications,
   getNotifications,
   getNotification,
   saveNotification,

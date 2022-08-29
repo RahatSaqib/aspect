@@ -2,7 +2,7 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays } = require('date-fns')
-const { knex, filterParams, filterDateRangeParams, sortPageParams, transact } = require('../db')
+const { knex, sortPageParams, transact } = require('../db')
 const { getUser } = require('../auth/service')
 const { getJobConstraints, addConstraints, getConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
@@ -117,126 +117,6 @@ function resultConditionsMet(queryBuilder, filterCondition, aliases) {
 
 function issueConditionsMet(queryBuilder, filterCondition, aliases) {
   geographyFilters(queryBuilder, filterCondition, aliases)
-}
-
-async function listNotifications(request) {
-  const { query, auth } = request
-
-  const subquery = knex('NotificationType as nti')
-    .leftOuterJoin('JobFunction AS jf', leftBuilder =>
-      leftBuilder.on(
-        knex.raw(
-          `JSON_SEARCH(
-              nti.filterCondition->>'$.jobFunctions[*].jobFunctionId',
-              'one',
-              jf.id
-            ) IS NOT NULL
-          `
-        )
-      )
-    )
-    .leftOuterJoin('Person AS per', leftBuilder =>
-      leftBuilder.on(
-        knex.raw(
-          ` JSON_SEARCH(
-            nti.filterCondition->>'$.persons[*].personId',
-            'one',
-            per.id
-          ) IS NOT NULL`
-        )
-      )
-    )
-    .distinct('nti.id AS notificationTypeId', 'per.name AS personName', 'per.id as personId', 'jf.name AS jfName')
-
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const notificationQuery = knex('NotificationType as nt')
-    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
-    .leftOuterJoin('Notification as n', 'nt.id', 'n.notificationTypeId')
-    .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
-    .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
-    .where(builder => {
-      builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
-    })
-    .modify(filterParams, query, {
-      notificationName: 'nt.name',
-    })
-    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
-    .modify(addConstraints, dataConstraints, { partner: 'p' })
-
-    .max('n.createdOn as lastTriggeredOn')
-    .groupBy('nt.id')
-
-  const getItems = notificationQuery
-    .clone()
-    .leftOuterJoin(subquery.as('filters'), 'nt.id', 'filters.notificationTypeId')
-    .modify(sortPageParams, query, 'nt.name')
-    .select(
-      'nt.id as id',
-      'nt.name',
-      'nt.enabled',
-      knex.raw(`count(distinct n.id) as totalTriggers`),
-      columnCount('alert'),
-      knex.raw('COUNT(DISTINCT filters.jfName) as jobFunctionsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT filters.jfName SEPARATOR ', ') as jobFunctions`),
-      knex.raw('COUNT(DISTINCT filters.personName) as personsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`),
-      columnCount('alert'),
-      knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
-      'ntc.externalId as typeCategory',
-      'filterCondition'
-    )
-
-  function columnCount(column) {
-    return knex.raw(
-      `SUM(CASE
-        WHEN m.${column}TemplateId IS NULL THEN 0
-        ELSE CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END END) as ${column}Count`
-    )
-  }
-
-  const getCount = knex.count('* as count').from(notificationQuery.clone().as('mainQuery')).first()
-
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const stateConstraints = dataConstraints.$or.filter(c => c.geography?.stateId).map(c => c.geography.stateId)
-
-  let filteredData = data
-  if (stateConstraints.length) {
-    filteredData = data.filter(
-      d =>
-        d.filterCondition?.deviceLevelId === 'state' &&
-        d.filterCondition.areaItems.map(s => +s.value).some(filterStateId => stateConstraints.includes(filterStateId))
-    )
-  }
-  const lgaConstraints = dataConstraints.$or.filter(c => c.geography?.lgaId).map(c => c.geography.lgaId)
-  if (lgaConstraints.length) {
-    filteredData = data.filter(
-      d =>
-        d.filterCondition?.deviceLevelId === 'lga' &&
-        d.filterCondition.areaItems.map(s => +s.value).some(filterLgaId => lgaConstraints.includes(filterLgaId))
-    )
-  }
-  // site Constraints
-  const siteConstraints = dataConstraints.$or.filter(c => c.site?.id).map(c => c.site.id)
-  console.log('\x1b[1;36m', '🚀 ➜ file: service.js ➜ line 224 ➜ siteConstraints', siteConstraints)
-  if (siteConstraints.length) {
-    filteredData = data.filter(
-      d =>
-        d.filterCondition?.deviceLevelId === 'lab' &&
-        d.filterCondition.areaItems.map(s => +s.value).some(filterSiteId => siteConstraints.includes(filterSiteId))
-    )
-  }
-
-  for (const r of filteredData) {
-    delete r.filterCondition
-  }
-  // Extract to a method
-  // Refactor all to use case
-  // Check for waterfall to lower level (can I get a cross join of states.where('id',filterStateId).join Lga join Sites,
-  // and later check with that for lga and sites in filterCondition...?? )
-  // Handle pagination (remove from query and handle client side?)
-  return { ok: true, total, data: filteredData, length: filteredData.length }
 }
 
 async function createNotifications(knex, action, context) {
@@ -1122,7 +1002,6 @@ async function saveStatusNotification(request) {
 }
 
 module.exports = {
-  listNotifications,
   getNotifications,
   getNotification,
   createNotifications,
