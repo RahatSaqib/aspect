@@ -718,7 +718,7 @@ const routes = [
     path: '/device/mergedevices',
     handler: mergeDevices,
     config: {
-      auth: { scope: ['device:edit'] },
+      auth: { scope: ['device:admin'] },
       description: 'Merges two devices',
       notes: 'Move all relevant data to target device. Deletes source devices.',
       validate: {

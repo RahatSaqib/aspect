@@ -14,8 +14,8 @@ export const messages = {
     },
     mergeDeviceActionDescription: {
       id: 'pages.DeviceList.mergeDeviceActionDescription',
-      defaultMessage:
-        'Select as many devices as you want to merge, select the target device and click the Merge button.',
+      defaultMessage: `<p>Select as many devices as you want to merge, select the target device and click the Merge button.</p>
+        <p><strong>The devices should be of the same Site and Device Type, and also source devices have to be offline for more than 24 Hs.<strong></p>`,
     },
     mergeDevicesConfirmationTitle: {
       id: 'pages.DeviceList.mergeDevicesConfirmationTitle',
@@ -27,7 +27,11 @@ export const messages = {
         <li>• Device issues not related to results, like inventory issues, will be moved to target device.</li>
         <li>• Source devices will be deleted from Aspect.</li>
         <ul>
-      <p>
+      </p>
+      <br/>
+      <p style="color: red;">
+        **IMPORTANT:** This action is unreversible!
+      </p>
       `,
     },
     confirmToProceed: {

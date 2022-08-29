@@ -48,6 +48,7 @@ import useI18n from '../../../hooks/useI18n'
 import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
 import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
+import PermissionsProvider from '../../../providers/PermissionsProvider/index'
 
 const cssClasses = classnames.bind(styles)
 const FILTERS_CONFIG = [
@@ -251,15 +252,17 @@ export const DeviceListWithProps = ({
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
     <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
-      <AspectButton
-        onClick={() => setMergeDeviceModalOpen(true)}
-        type="button"
-        color="primary"
-        variant="contained"
-        browseButton
-      >
-        {intl.formatMessage(messages.mergeDevices)}
-      </AspectButton>
+      <PermissionsProvider permissions={['device:admin']}>
+        <AspectButton
+          onClick={() => setMergeDeviceModalOpen(true)}
+          type="button"
+          color="primary"
+          variant="contained"
+          browseButton
+        >
+          {intl.formatMessage(messages.mergeDevices)}
+        </AspectButton>
+      </PermissionsProvider>
     </BrowseFilters>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
@@ -309,7 +312,14 @@ export const DeviceListWithProps = ({
       {!isConfirmationVisible ? (
         <>
           <DialogContent>
-            <DialogContentText>{intl.formatMessage(messages.mergeDeviceActionDescription)}</DialogContentText>
+            {
+              <DialogContentText>
+                <span
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: intl.formatMessage(messages.mergeDeviceActionDescription) }}
+                />
+              </DialogContentText>
+            }
 
             <Autocomplete
               multiple
@@ -382,6 +392,7 @@ export const DeviceListWithProps = ({
             >
               {intl.formatMessage(messages.button_Cancel)}
             </AspectButton>
+
             <AspectButton
               disabled={!sourceDevicesIds.length > 0 || !targetDeviceId}
               onClick={() => {
