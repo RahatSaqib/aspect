@@ -189,85 +189,94 @@ export class PersonDetail extends PureComponent {
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         <Routes>
-          <Route path="">
-            {editable ? (
+          <Route
+            path=""
+            element={
+              editable ? (
+                <div>
+                  {!isNew && !person && <LinearProgress />}
+                  {loading && <LinearProgress />}
+                  <PermissionsProvider permissions={['person:edit']}>
+                    <PersonDetailBackBar
+                      formatMessage={formatMessage}
+                      {...this.props}
+                      isNew={isNew}
+                      title={isNew ? 'Add Contact' : person && person.get('name')}
+                      canUserLoggedIn={!isNew && canLogIn}
+                    />
+                    <Paper className={styles.ContactDetailsForm}>
+                      <ContactDetailsFormFormik />
+                    </Paper>
+                  </PermissionsProvider>
+                </div>
+              ) : (
+                <Navigate replace to={location.pathname} />
+              )
+            }
+          />
+          <Route
+            path="system-access-control"
+            element={
               <div>
-                {!isNew && !person && <LinearProgress />}
                 {loading && <LinearProgress />}
+
                 <PermissionsProvider permissions={['person:edit']}>
                   <PersonDetailBackBar
                     formatMessage={formatMessage}
                     {...this.props}
                     isNew={isNew}
-                    title={isNew ? 'Add Contact' : person && person.get('name')}
+                    title={person && person.get('name')}
                     canUserLoggedIn={!isNew && canLogIn}
                   />
-                  <Paper className={styles.ContactDetailsForm}>
-                    <ContactDetailsFormFormik />
-                  </Paper>
                 </PermissionsProvider>
+
+                <Paper className={styles.ContactDetailsForm}>
+                  <LoginDetailsForm
+                    intl={intl}
+                    loading={loading}
+                    shouldPrefill={shouldPrefill}
+                    emailValue={emailValue}
+                    loginDetails={loginDetails}
+                    onSubmit={this.saveLoginDetails}
+                  />
+                </Paper>
               </div>
-            ) : (
-              <Navigate replace to={location.pathname} />
-            )}
-          </Route>
-          <Route path="system-access-control">
-            <div>
-              {loading && <LinearProgress />}
+            }
+          />
+          <Route
+            path="job-assignment"
+            element={
+              <div>
+                {loading && <LinearProgress />}
 
-              <PermissionsProvider permissions={['person:edit']}>
-                <PersonDetailBackBar
-                  formatMessage={formatMessage}
-                  {...this.props}
-                  isNew={isNew}
-                  title={person && person.get('name')}
-                  canUserLoggedIn={!isNew && canLogIn}
-                />
-              </PermissionsProvider>
+                <PermissionsProvider permissions={['person:edit']}>
+                  <PersonDetailBackBar
+                    formatMessage={formatMessage}
+                    {...this.props}
+                    isNew={isNew}
+                    title={person && person.get('name')}
+                    canUserLoggedIn={!isNew && canLogIn}
+                  />
+                </PermissionsProvider>
 
-              <Paper className={styles.ContactDetailsForm}>
-                <LoginDetailsForm
-                  intl={intl}
-                  loading={loading}
-                  shouldPrefill={shouldPrefill}
-                  emailValue={emailValue}
-                  loginDetails={loginDetails}
-                  onSubmit={this.saveLoginDetails}
-                />
-              </Paper>
-            </div>
-          </Route>
-          <Route path="job-assignment">
-            <div>
-              {loading && <LinearProgress />}
-
-              <PermissionsProvider permissions={['person:edit']}>
-                <PersonDetailBackBar
-                  formatMessage={formatMessage}
-                  {...this.props}
-                  isNew={isNew}
-                  title={person && person.get('name')}
-                  canUserLoggedIn={!isNew && canLogIn}
-                />
-              </PermissionsProvider>
-
-              <Paper className={styles.ContactDetailsForm}>
-                <JobAssignmentForm
-                  intl={intl}
-                  loading={loading}
-                  contactDetails={contactDetails}
-                  shouldPrefill={shouldPrefill}
-                  emailValue={emailValue}
-                  countryId={user.get('countryId')}
-                  onSubmit={this.addAssignment}
-                  onDeleteAssignment={this.deleteAssignment}
-                  jobFunctions={jobFunctions}
-                  assignments={assignments}
-                  loadedAssignments={loadedAssignments}
-                />
-              </Paper>
-            </div>
-          </Route>
+                <Paper className={styles.ContactDetailsForm}>
+                  <JobAssignmentForm
+                    intl={intl}
+                    loading={loading}
+                    contactDetails={contactDetails}
+                    shouldPrefill={shouldPrefill}
+                    emailValue={emailValue}
+                    countryId={user.get('countryId')}
+                    onSubmit={this.addAssignment}
+                    onDeleteAssignment={this.deleteAssignment}
+                    jobFunctions={jobFunctions}
+                    assignments={assignments}
+                    loadedAssignments={loadedAssignments}
+                  />
+                </Paper>
+              </div>
+            }
+          />
         </Routes>
       </div>
     )

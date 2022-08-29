@@ -8,7 +8,7 @@ import GraphRender from '../../GraphRender'
 import CardSelectors from '../../CardSelectors'
 import PermissionsProvider from '../../../../providers/PermissionsProvider'
 
-import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
+import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
 import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
 import styles from '../GraphsContainer.css'

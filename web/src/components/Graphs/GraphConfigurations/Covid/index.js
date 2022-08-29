@@ -3,8 +3,8 @@ import PieGraph from '../../PieGraph'
 import CalendarGraph from '../../CalendarGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
-import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
+import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },

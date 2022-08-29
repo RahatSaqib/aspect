@@ -11,21 +11,14 @@ exports[`InventoryLog module InventoryLog component should render correctly 1`] 
         "subscribe": [Function],
         Symbol(Symbol.observable): [Function],
       },
-      "subscription": Subscription {
+      "subscription": Object {
+        "addNestedSub": [Function],
+        "getListeners": [Function],
         "handleChangeWrapper": [Function],
-        "listeners": Object {
-          "notify": [Function],
-        },
-        "onStateChange": [Function],
-        "parentSub": undefined,
-        "store": Object {
-          "dispatch": [Function],
-          "getState": [Function],
-          "replaceReducer": [Function],
-          "subscribe": [Function],
-          Symbol(Symbol.observable): [Function],
-        },
-        "unsubscribe": null,
+        "isSubscribed": [Function],
+        "notifyNestedSubs": [Function],
+        "trySubscribe": [Function],
+        "tryUnsubscribe": [Function],
       },
     }
   }
@@ -35,9 +28,11 @@ exports[`InventoryLog module InventoryLog component should render correctly 1`] 
       dispatch={[Function]}
       intl={
         Object {
+          "$t": [Function],
           "defaultFormats": Object {},
           "defaultLocale": "en",
           "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
           "formatDate": [Function],
           "formatDateTimeRange": [Function],
           "formatDateToParts": [Function],
@@ -64,6 +59,7 @@ exports[`InventoryLog module InventoryLog component should render correctly 1`] 
           "locale": "en",
           "messages": Object {},
           "onError": [Function],
+          "onWarn": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
         }

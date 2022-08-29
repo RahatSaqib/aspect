@@ -40,8 +40,8 @@ import values from 'lodash/values'
 
 import { i18nWrapper } from '../../../../providers/I18nProvider'
 import messages from '../messages'
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
-import { getAspectDisplayPreferences } from '../../../../globals/sideEffects/LocalStorage'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
+import { getAspectDisplayPreferences } from '../../../../utils/LocalStorage'
 
 const now = new Date()
 export const since = new Date(getYear(subtractYears(now, 10)), 0, 1)

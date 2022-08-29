@@ -7,8 +7,8 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import { MemoryRouter } from 'react-router-dom'
 
-import { AuthProvider } from '../../../providers/AuthProvider'
-import { I18nProvider } from '../../../providers/I18nProvider'
+import { AuthProvider } from '../../providers/AuthProvider'
+import { I18nProvider } from '../../providers/I18nProvider'
 import { LinkNavigation } from './LinkNavigation'
 
 const initialState = {

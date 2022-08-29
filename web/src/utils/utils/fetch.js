@@ -13,7 +13,7 @@ import { showError } from '../../store/AppNotificationRedux'
 import { setLastServerResponseTime } from '../../store/GlobalsRedux'
 
 import config from '../../config'
-import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
+import { getAspectAccess } from '../LocalStorage'
 
 export const aspectFetchFile = createFetch(
   base(config.aspectApi),

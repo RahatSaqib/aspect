@@ -5,7 +5,7 @@ import subMonths from 'date-fns/subMonths'
 import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import AspectDropDown from '../../../AspectDropDown'
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
