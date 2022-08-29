@@ -793,6 +793,7 @@ async function getDevicesForReport(auth, query) {
       sample: 'sa',
     })
     .whereRaw('sa.originSiteId = d.siteId')
+    .where('r.deviceId', 'd.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
   // get rows
