@@ -167,7 +167,7 @@ const NotificationFormPage = ({ id }) => {
     <CircularProgress />
   ) : (
     <Shell>
-      <FormikProvider config={formConfig} debug>
+      <FormikProvider config={formConfig}>
         <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
           <FormActions config={formConfig} onSubmit={onSubmit} />
         </ShellHeader>
