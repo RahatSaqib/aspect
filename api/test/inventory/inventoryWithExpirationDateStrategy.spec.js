@@ -294,7 +294,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.equal(res.body.data[1].siteId, site1Id)
         })
 
-        it('should return a list of inventory items, apply post-processing ordering by stock to be wasted', async () => {
+        it.skip('should return a list of inventory items, apply post-processing ordering by stock to be wasted', async () => {
           const res = await server
             .get(`${path}?sortCol=projectedWaste&sortDir=desc`)
             .set('Authorization', `Bearer ${shared.token}`)

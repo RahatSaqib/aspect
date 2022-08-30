@@ -8,9 +8,55 @@ export const messages = {
   ...deviceApprovalMessages,
   ...commonDefinitions,
   ...defineMessages({
+    button_Merge: {
+      id: 'pages.DeviceList.merge',
+      defaultMessage: 'Merge',
+    },
+    mergeDeviceActionDescription: {
+      id: 'pages.DeviceList.mergeDeviceActionDescription',
+      defaultMessage: `<p>Select as many devices as you want to merge, select the target device and click the Merge button.</p>
+        <p><strong>The devices should be of the same Site and Device Type, and also source devices have to be offline for more than 24 Hs.<strong></p>`,
+    },
+    mergeDevicesConfirmationTitle: {
+      id: 'pages.DeviceList.mergeDevicesConfirmationTitle',
+      defaultMessage: `<p>This process will perform the following actions:</P>
+      <p><br/>
+        <ul>
+        <li>• Results not repeated between devices will moved to target device.</li>
+        <li>• Issues and Notifications from duplicated results will be moved to target results.</li>
+        <li>• Device issues not related to results, like inventory issues, will be moved to target device.</li>
+        <li>• Source devices will be deleted from Aspect.</li>
+        <ul>
+      </p>
+      <br/>
+      <p style="color: red;">
+        **IMPORTANT:** This action is unreversible!
+      </p>
+      `,
+    },
+    confirmToProceed: {
+      id: 'pages.DeviceList.areYouSure',
+      defaultMessage: 'Confirm to proceed.',
+    },
+    buttonConfirmMerge: {
+      id: 'pages.DeviceList.buttonConfirmMerge',
+      defaultMessage: 'Confirm',
+    },
     devicesTitle: {
       id: 'pages.DeviceList.devicesTitle',
       defaultMessage: 'Devices',
+    },
+    sourceDevices: {
+      id: 'pages.DeviceList.sourceDevices',
+      defaultMessage: 'Source devices',
+    },
+    targetDevice: {
+      id: 'pages.DeviceList.targetDevice',
+      defaultMessage: 'Target device',
+    },
+    mergeDevices: {
+      id: 'pages.DeviceList.mergeDevices',
+      defaultMessage: 'Merge Devices',
     },
     device: {
       id: 'pages.DeviceList.device',
