@@ -11,8 +11,9 @@ const {
 } = require('./common/db')
 
 const { deleteDevice } = require('./common/logic')
+const { factGenerateResultCounts } = require('../fact/actions')
 
-module.exports = async function ({ payload, auth }) {
+module.exports = async function ({ payload, plugins: { messageContext }, auth }) {
   const devices = await getDevicesToMerge(payload)
 
   await validate(devices, auth.credentials)
@@ -24,6 +25,10 @@ module.exports = async function ({ payload, auth }) {
       )
     )
   )
+  const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts })
+
+  await eventContext.factGenerateResultCounts(devices.targetDevice.id)
+
   return { ok: true }
 }
 
