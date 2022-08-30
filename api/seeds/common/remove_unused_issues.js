@@ -24,6 +24,7 @@ module.exports = async function cleanIssueTypes(knex, adminUserName, partnerName
     if (!_.includes(configuredIssues, issueType.externalId)) {
       const issuesToDelete = await knex('Issue').where({ issueTypeId: issueType.id }).pluck('id as issueId')
 
+      if (_.compact(issuesToDelete).length === 0) return
       const notifications = await knex('Notification')
         .whereIn('issueId', issuesToDelete)
         .select(
@@ -94,7 +95,7 @@ module.exports = async function cleanIssueTypes(knex, adminUserName, partnerName
       })
       .first('id as jobFunctionAdminId'))
 
-  await Promise.each(Object.values(configuredIssues), async externalId =>
-    addIssue(knex, externalId, [jobFunctionAdminId], partnerName, adminUserName)
-  )
+  await Promise.each(Object.values(configuredIssues), async externalId => {
+    return addIssue(knex, externalId, [jobFunctionAdminId], partnerName, adminUserName)
+  })
 }
