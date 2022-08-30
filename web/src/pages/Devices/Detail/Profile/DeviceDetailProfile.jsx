@@ -258,11 +258,6 @@ const DeviceDetailProfile = ({
       sortable: true,
     },
     {
-      key: 'resultText',
-      label: formatMessage(messages.resultText),
-      sortable: true,
-    },
-    {
       key: 'errorCode',
       label: formatMessage(messages.errorCode),
       sortable: true,
@@ -277,6 +272,12 @@ const DeviceDetailProfile = ({
       key: 'patientId',
       label: formatMessage(messages.patientId),
       sortable: true,
+    },
+    {
+      key: 'resultText',
+      label: formatMessage(messages.resultText),
+      sortable: false,
+      formatter: () => true,
     },
   ]
 
