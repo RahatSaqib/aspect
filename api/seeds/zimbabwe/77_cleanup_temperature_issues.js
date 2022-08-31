@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const addIssue = require('../common/add_issue')
 
 const { partnerName, adminUserName } = require('./fixtures/partnerData')
 const { issueTypeToId } = require('../../src/shared/dictionary')
@@ -13,8 +12,7 @@ module.exports = require('../utils').seed(async knex => {
     .first('p.id as partnerId', 'per.userId as adminId')
 
   const issueTypeId = await issueTypeToId('HardwareTemperatureErrors')
-  await knex('IssueEventTrigger').where({ issueTypeId }).delete()
-  await addIssue(knex, 'HardwareTemperatureErrors', ['admin', 'systemOne', 'deviceMaker'], partnerName, adminUserName)
+
   const issuesToRemoveTrigger = await knex('IssueType')
     .whereIn('externalId', [
       'externalId',
