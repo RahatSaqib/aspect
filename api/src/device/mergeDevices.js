@@ -7,6 +7,7 @@ const {
   mergeIssuesFromDuplicatedResults,
   mergeDeviceLevelIssues,
   mergeNonRepeatedResults,
+  mergeMessages,
   getDevicesIdsCheckingConstraints,
 } = require('./common/db')
 
@@ -25,6 +26,7 @@ module.exports = async function ({ payload, plugins: { messageContext }, auth })
       )
     )
   )
+
   const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts })
 
   await eventContext.factGenerateResultCounts(devices.targetDevice.id)
@@ -36,6 +38,7 @@ async function mergeDevices(devicesToMerge, trknex) {
   await mergeIssuesFromDuplicatedResults(devicesToMerge, trknex)
   await mergeDeviceLevelIssues(devicesToMerge, trknex)
   await mergeNonRepeatedResults(devicesToMerge, trknex)
+  await mergeMessages(devicesToMerge, trknex)
   await deleteDevice(devicesToMerge.sourceDevice.id, trknex)
 }
 
