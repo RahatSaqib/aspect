@@ -119,18 +119,43 @@ async function getListDevices(query, auth) {
   const loggedUserName = auth.credentials.name
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
   const resultCategoryErrorId = await resultCategoryToId('Error')
-
+  const { assayId } = query
+  const assayFilter = assayId ? (_.isArray(assayId) ? assayId.join(',') : assayId) : null
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('FactResultsDevice as frd30', function () {
-      this.on('d.id', 'frd30.deviceId').andOn('frd30.days', 30)
+    .modify(builder => {
+      builder
+        .leftJoin(
+          knex('FactResultsDeviceByAssay as fact')
+            .where('fact.days', 30)
+            .modify(filter => {
+              if (assayFilter) filter.whereRaw('fact.assayId in (?)', assayFilter)
+            })
+            .groupBy('deviceId')
+            .select('fact.deviceId', knex.raw('sum(resultCount) as resultCount'))
+
+            .as('frd30'),
+          'frd30.deviceId',
+          'd.id'
+        )
+        .leftJoin(
+          knex('FactResultsDeviceByAssay as fact')
+            .where('fact.days', 60)
+            .modify(filter => {
+              if (assayFilter) filter.whereRaw('fact.assayId in (?)', assayFilter)
+            })
+            .groupBy('deviceId')
+            .select('fact.deviceId', knex.raw('sum(resultCount) as resultCount'))
+
+            .as('frd60'),
+          'frd60.deviceId',
+          'd.id'
+        )
     })
-    .leftJoin('FactResultsDevice as frd60', function () {
-      this.on('d.id', 'frd60.deviceId').andOn('frd60.days', 60)
-    })
+
     .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function () {
       this.on('d.id', 'frd30Errors.deviceId')
         .andOn('frd30Errors.days', 30)
@@ -260,8 +285,6 @@ async function getListDevices(query, auth) {
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
-      knex.raw('IFNULL(frd60.resultsDeliveredCount, 0) - IFNULL(frd30.resultsDeliveredCount, 0) as deliveredLastMonth'),
-      knex.raw('IFNULL(frd30.resultsDeliveredCount, 0) as deliveredThisMonth'),
       knex.raw('count(distinct dmslActivity.day) as totalDays'),
       knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
       'issues.categories as issueCategories',
@@ -332,6 +355,7 @@ async function getListDevices(query, auth) {
 // ---------------------------------
 async function listDevices(request) {
   const { query, auth } = request
+
   // get dataset for current query params (sorting, filtering and pagination) and auth constraints
 
   const result = await getListDevices(query, auth)
