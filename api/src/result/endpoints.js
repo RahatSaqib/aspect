@@ -403,7 +403,9 @@ const routes = [
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False if there was some sort of error'),
           total: Joi.number().required().description('The total number of results that match the given filters'),
+          awaitingTreatment: Joi.number().required().description('The total number of awaiting treatments'),
           length: Joi.number().required().description('The number of results included in this response'),
+          nextPage: Joi.number().allow(false, false).description('Next page to call for more records'),
           data: Joi.array()
             .required()
             .description('The results')

@@ -48,6 +48,7 @@ const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
 const { createFormObject } = require('../forms/service')
 const { GRAPH_FLAGS } = require('../shared/constants')
+const { getPageParams } = require('../routes')
 
 async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
@@ -274,6 +275,7 @@ async function listResults(request) {
 async function getDownloadResultsList(query, auth, setDelivered = false) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
+  const { size } = getPageParams(query)
 
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -373,6 +375,13 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
+  // get total awaiting treatment count
+  const getAwaitingTreatment = resultQuery
+    .clone()
+    .countDistinct('r.id as count')
+    .whereNot('rc1.name', 'Not Detected')
+    .first()
+
   // get rows
   const getItems = resultQuery
     .clone()
@@ -389,6 +398,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'd.name as deviceName',
       'rc1.externalId as resultCategory1ExternalId',
       'rc2.externalId as resultCategory2ExternalId',
+      'rc1.name as rcDetect',
       'r.patientData',
       'r.resultData',
       'dis.externalid as diseaseExternalId',
@@ -411,9 +421,12 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'rslog.createdOn as transferredOn',
       'ptr.name as transferredBy'
     )
-
   // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const [{ count: total }, data, { count: awaitingTreatment }] = await Promise.all([
+    getCount,
+    getItems,
+    getAwaitingTreatment,
+  ])
 
   // get follow ups for all results in the response for performance (filter later)
   const followUps = await knex('ResultFollowUp as rfu')
@@ -523,10 +536,19 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     diseaseExternalId: d.diseaseExternalId,
     diseaseName: d.diseaseName,
   }))
+
+  // total pages calulation
+  const totalPages = Math.ceil(total / size) - 1
+
+  // Next page available or not calculation
+  const nextPage = query.page < totalPages ? query.page + 1 : false
+
   const result = {
     ok: true,
     total,
+    awaitingTreatment,
     length: transformedData.length,
+    nextPage,
     data: transformedData,
   }
 
