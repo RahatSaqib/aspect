@@ -2,11 +2,11 @@ const { knex } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
 async function getSourceDevices(sourceDevicesIds) {
-  return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId')
+  return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId', 'deviceTypeId')
 }
 
 async function getTargetDevice(targetDeviceId) {
-  return knex('Device').where('id', targetDeviceId).first('id', 'siteId')
+  return knex('Device').where('id', targetDeviceId).first('id', 'siteId', 'deviceTypeId')
 }
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
