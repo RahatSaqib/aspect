@@ -17,8 +17,8 @@ const {
 
 async function deleteDevice(deviceId, trknex) {
   await deleteDeviceFromDeviceApiKey(deviceId, trknex)
-  await deleteIssues(deviceId, trknex)
   await deleteNotifications(deviceId, trknex)
+  await deleteIssues(deviceId, trknex)
   await deleteDeviceLog(deviceId, trknex)
   await deleteResultDownloadLog(deviceId, trknex)
   await deleteRepeatedResults(deviceId, trknex)

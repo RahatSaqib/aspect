@@ -37,7 +37,7 @@ async function mergeDeviceLevelIssues(devicesToMerge, trknex) {
     targetDevice: { id: targetDeviceId },
   } = devicesToMerge
 
-  await trknex('Issue').where('deviceId', sourceDeviceId).update('deviceId', targetDeviceId)
+  await trknex('Issue').where('deviceId', sourceDeviceId).whereNull('resultId').update('deviceId', targetDeviceId)
 }
 
 async function mergeNonRepeatedResults(devicesToMerge, trknex) {
@@ -73,6 +73,7 @@ async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) 
 // Delete device
 async function deleteNotifications(deviceId, trknex) {
   await trknex('Notification').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  await trknex('Notification').whereIn('issueId', trknex('Issue').where('deviceId', deviceId).select('id')).del()
 }
 
 async function deleteIssues(deviceId, trknex) {
