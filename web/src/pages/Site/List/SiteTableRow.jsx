@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
-import { messages } from './SiteList'
+import messages from './messages'
 import { formatRelative } from '../../../utils/utils/dateFormat'
 import useI18n from '../../../hooks/useI18n'
 

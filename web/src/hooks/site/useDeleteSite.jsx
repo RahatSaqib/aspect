@@ -17,6 +17,7 @@ const useDeleteSite = siteId => {
     onSuccess: () => {
       queryClient.invalidateQueries([SITE_KEY, siteId])
       queryClient.invalidateQueries([SITE_KEY, 'list'])
+      queryClient.invalidateQueries([SITE_KEY, 'table'])
     },
   })
 

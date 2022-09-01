@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from 'react-query'
-import { SITE_KEY, SITE_KEY_SITE_CREATE_ENDPOINT } from './siteKeys.js'
+import { SITE_KEY, SITE_KEY_SITE_ENDPOINT } from './siteKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 
 const createSite = async site => {
@@ -15,7 +15,7 @@ const createSite = async site => {
   delete submitSite.geographyId
 
   return fetchWrapperForQueries({
-    endpoint: SITE_KEY_SITE_CREATE_ENDPOINT,
+    endpoint: SITE_KEY_SITE_ENDPOINT,
     method: 'POST',
     params: { ...submitSite },
   })
@@ -25,7 +25,10 @@ const useCreateSite = () => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation(data => createSite(data), {
-    onSuccess: () => queryClient.invalidateQueries([SITE_KEY, 'list']),
+    onSuccess: () => {
+      queryClient.invalidateQueries([SITE_KEY, 'list'])
+      queryClient.invalidateQueries([SITE_KEY, 'table'])
+    },
   })
 
   return mutation

@@ -26,7 +26,11 @@ const useUpdateSite = siteId => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation(data => updateSiteById(data, siteId), {
-    onSuccess: () => queryClient.invalidateQueries([SITE_KEY, siteId]),
+    onSuccess: () => {
+      queryClient.invalidateQueries([SITE_KEY, siteId])
+      queryClient.invalidateQueries([SITE_KEY, 'list'])
+      queryClient.invalidateQueries([SITE_KEY, 'table'])
+    },
   })
 
   return mutation

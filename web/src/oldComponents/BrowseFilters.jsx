@@ -40,13 +40,7 @@ const enhance = compose(
         searchParams.set('filters', filtersParams)
         searchParams.delete('pageAt')
         searchParams.delete('page')
-        navigate(
-          {
-            ...location,
-            search: `?${searchParams.toString()}`,
-          },
-          { replace: true }
-        )
+        navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
       },
 
     onRemoveFilterItem:
@@ -103,13 +97,7 @@ const enhance = compose(
         searchParams.set('filters', filtersParams)
         searchParams.delete('sortCol')
 
-        navigate(
-          {
-            ...location,
-            search: `?${searchParams.toString()}`,
-          },
-          { replace: true }
-        )
+        navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
       },
   }),
   connect(

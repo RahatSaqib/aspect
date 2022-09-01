@@ -5,11 +5,11 @@ import Card from '@mui/material/Card'
 
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
-import Summary from '../../../oldComponents/Summary'
-import { getCustomMessage, commonDefinitions } from '../../../utils/utils/customMessages'
+import Summary from '../../../../oldComponents/Summary'
+import { getCustomMessage, commonDefinitions } from '../../../../utils/utils/customMessages'
 
 import styles from '../SiteDetail.css'
-import useContactBySite from '../../../hooks/person/useContactBySite'
+import useContactBySite from '../../../../hooks/person/useContactBySite'
 
 const cssClasses = classnames.bind(styles)
 

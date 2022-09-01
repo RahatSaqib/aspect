@@ -9,25 +9,25 @@ import isNil from 'lodash/isNil'
 
 import Paper from '@mui/material/Paper'
 import LinearProgress from '@mui/material/LinearProgress'
-import Shell from '../../components/Shell'
+import Shell from '../../../components/Shell'
 
 // eslint-disable-next-line import/no-named-default
-import { default as canEdit } from '../../utils/selectors/isEditable'
+import { default as canEdit } from '../../../utils/selectors/isEditable'
 
 import messages from './messages'
 import SiteDetailProfile from './Profile/SiteDetailProfile'
 import SiteForm from './Edit/SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
-import ShellHeader from '../../components/Shell/Header'
-import ShellContent from '../../components/Shell/Content'
-import AspectButton from '../../oldComponents/shared/AspectButton'
+import ShellHeader from '../../../components/Shell/Header'
+import ShellContent from '../../../components/Shell/Content'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 
 import styles from './SiteDetail.css'
-import useSite from '../../hooks/site/useSite'
-import useTagByTypeAndId from '../../hooks/tag/useTagByTypeAndId'
-import ErrorBoundary from '../../components/ErrorBoundary'
-import TaskList from '../../oldPages/task/list/TaskList'
-import useI18n from '../../hooks/useI18n'
+import useSite from '../../../hooks/site/useSite'
+import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
+import ErrorBoundary from '../../../components/ErrorBoundary'
+import TaskList from '../../../oldPages/task/list/TaskList'
+import useI18n from '../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

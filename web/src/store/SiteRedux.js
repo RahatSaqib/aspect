@@ -14,7 +14,7 @@ import {
 import { receivedExportResponse } from './GlobalsRedux'
 import { receiveItem, Items, receiveListWithSet } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
-import { getLatLongFromAddress, convertToFloat } from '../oldPages/site/utils/address'
+import { getLatLongFromAddress, convertToFloat } from '../pages/Site/Detail/Edit/address'
 import { getFilters } from '../oldComponents/filter/utils'
 
 export const types = {

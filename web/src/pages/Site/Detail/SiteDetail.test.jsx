@@ -5,9 +5,9 @@ import Immutable from 'immutable'
 import LinearProgress from '@mui/material/LinearProgress'
 import * as reactRedux from 'react-redux'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { Site } from '../../store/SiteRedux'
+import { Site } from '../../../store/SiteRedux'
 import { SiteDetail } from './SiteDetail'
-import { I18nProvider } from '../../providers/I18nProvider/index'
+import { I18nProvider } from '../../../providers/I18nProvider/index'
 
 const SiteDetailComponent = props => (
   <QueryClientProvider client={new QueryClient()}>
