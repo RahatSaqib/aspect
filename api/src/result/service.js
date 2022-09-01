@@ -379,7 +379,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
   const getAwaitingTreatment = resultQuery
     .clone()
     .countDistinct('r.id as count')
-    .whereNot('rc1.name', 'Not Detected')
+    .whereNot('rc1.externalId', 'NotDetected')
     .first()
 
   // get rows
@@ -398,7 +398,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
       'd.name as deviceName',
       'rc1.externalId as resultCategory1ExternalId',
       'rc2.externalId as resultCategory2ExternalId',
-      'rc1.name as rcDetect',
       'r.patientData',
       'r.resultData',
       'dis.externalid as diseaseExternalId',
