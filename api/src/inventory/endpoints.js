@@ -2,7 +2,6 @@ const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const {
-  listInventory,
   listInventoryGroupedBySite,
   addInventory,
   removeInventory,
@@ -12,69 +11,15 @@ const {
   modifyInventoryOnHand,
   listInventoryLog,
 } = require('./service')
-
+const listInventory = require('./listInventory')
 const { exportSupplies } = require('./serviceReports')
-
-const inventoryFilters = {
-  siteId: Joi.number().integer().positive().allow('', null),
-  consumableId: Joi.number().integer().positive().allow('', null),
-  consumableExternalId: Joi.string().optional().allow('', null).description('The external id of the consumable item'),
-  siteName: Joi.string().allow('', null),
-  lotNumber: Joi.string().allow('', null),
-  daysStockLeft: Joi.string().allow('', null),
-  breakOutByLot: Joi.bool().allow(null),
-  hasStock: Joi.bool().allow(null),
-}
-
-const adjustInventoryCommonPayloadFields = {
-  consumableId: Joi.number().positive().required(),
-  lotNumber: Joi.string().max(255).allow('', null),
-  expiresOn: Joi.string(),
-  quantity: Joi.number().positive().required(),
-  notes: Joi.string().max(2000).allow('', null),
-}
-
-const removeInventoryCommonPayloadFields = {
-  ...adjustInventoryCommonPayloadFields,
-  fromSiteId: Joi.number().integer().positive().required(),
-  reasonId: Joi.number().integer().positive().required(),
-}
-
-const modifyInventoryCommonPayloadFields = {
-  siteId: Joi.number().integer().positive().required(),
-  consumableId: Joi.number().integer().positive().required(),
-  quantity: Joi.number().required(),
-  lotNumber: Joi.string().max(255).optional().allow('', null),
-  expiresOn: Joi.date().optional().allow('', null),
-  notes: Joi.string().max(2000).required(),
-}
-
-function listSuppliesBaseConfig() {
-  return {
-    auth: { scope: ['inventory:view', 'operationalData:view'] },
-    validate: {
-      query: {
-        format: Joi.string().allow('').description('File format for exporting data'),
-        ...inventoryFilters,
-        ...validateAllGeographyFilterParams(),
-        ...validateDateRangeParams(),
-        ...validateSortPageParams(
-          'consumableName',
-          'manufacturer',
-          'siteName',
-          'countryName',
-          'stateName',
-          'lgaName',
-          'lotNumber',
-          'quantityOnHand',
-          'expiresOn',
-          'daysStockLeft',
-          'dailyConsumptionRate'
-        ),
-      },
-    },
-  }
-}
+const {
+  listSuppliesBaseConfig,
+  adjustInventoryCommonPayloadFields,
+  removeInventoryCommonPayloadFields,
+  modifyInventoryCommonPayloadFields,
+  inventoryFilters,
+} = require('./requestValidation')
 
 const routes = [
   {

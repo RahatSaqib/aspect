@@ -20,9 +20,9 @@ const { getSite } = require('../site/service')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { inventoryStockout, inventoryStockExpiring } = require('./actions')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
-const { querySelectors, getInventoryLogBaseQuery } = require('./query/index')
+
 const { splitCsvWithTrim } = require('../shared/string')
-const { findInventoryItem, getInventorySitesQuery } = require('./common/db')
+const { findInventoryItem, getInventorySitesQuery, getInventoryLogBaseQuery } = require('./common/db')
 const {
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
@@ -33,6 +33,7 @@ const {
   SUPPLY_IN_STOCK_FIELDS,
   INVENTORY_ITEM_SELECT,
   STOCK_LEFT_FILTER_FIELDS,
+  INVENTORY_LOG_LIST,
 } = require('./common/queryConstants')
 
 async function consumeInventoryForResult(
@@ -269,7 +270,7 @@ async function listInventoryLog(request) {
   return listLog(request)
 }
 
-async function listLog(request, querySelector = querySelectors.INVENTORY_LOG_LIST) {
+async function listLog(request, querySelector = INVENTORY_LOG_LIST) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)

@@ -173,6 +173,4 @@ function getDaysStockLeftRanges(key) {
   }
 }
 
-module.exports = {
-  listInventory,
-}
+module.exports = listInventory
