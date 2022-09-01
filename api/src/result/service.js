@@ -536,7 +536,7 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     diseaseName: d.diseaseName,
   }))
 
-  // total pages calulation
+  // total pages calculation (zero based)
   const totalPages = Math.ceil(total / size) - 1
 
   // Next page available or not calculation
