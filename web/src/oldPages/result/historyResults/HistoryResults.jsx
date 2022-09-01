@@ -17,6 +17,7 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 
 import cssStyles from './HistoryResults.css'
+import { i18nWrapper } from '../../../providers/I18nProvider/index'
 
 const cssClasses = classnames.bind(cssStyles)
 const styles = require('../../../oldComponents/shared/DataTableRow.css')
@@ -35,66 +36,103 @@ export const Results = ({
   columns,
   onExportClick,
   onRowClick,
-}) => (
-  <section className={cssClasses('Section')}>
-    <Card className={cssClasses('Section__Content')}>
-      <header className={cssClasses('Header')}>
-        <div className={cssClasses('Header__Title')}>{`${title}`}</div>
-        {onExportClick && (
-          <div className={cssClasses('Header__Actions')}>
-            <IconButton onClick={onExportClick}>
-              <MdFileDownload />
-            </IconButton>
-          </div>
-        )}
-      </header>
-      <div>
-        <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-        {!items.currentIdList.isEmpty() && (
-          <Table className={cssClasses('ResultDataTable')}>
-            <DataTableHead
+}) => {
+  const { formatMessage } = i18nWrapper()
+
+  return (
+    <section className={cssClasses('Section')}>
+      <Card className={cssClasses('Section__Content')}>
+        <header className={cssClasses('Header')}>
+          <div className={cssClasses('Header__Title')}>{`${title}`}</div>
+          {onExportClick && (
+            <div className={cssClasses('Header__Actions')}>
+              <IconButton onClick={onExportClick}>
+                <MdFileDownload />
+              </IconButton>
+            </div>
+          )}
+        </header>
+        <div>
+          <DataTableProgressBar disabled={!table.loading} />
+          {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
+          {!items.currentIdList.isEmpty() && (
+            <Table className={cssClasses('ResultDataTable')}>
+              <DataTableHead
+                navigate={navigate}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={columns.map(column => omit(column, ['formatter']))}
+              />
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(result => (
+                    <TableRow key={result.get('id')} onClick={onRowClick} data-result-id={result.get('id')}>
+                      {columns &&
+                        map(
+                          columns.filter(col => col.key !== 'resultText'),
+                          elem => (
+                            <TableCell key={`${result.get('id')}-${elem.key}`} hiddenOn={elem.hiddenOn || 'sm'}>
+                              {elem.tooltip && result.get(elem.key) && (
+                                <Tooltip title={result.get(elem.tooltip)} disableInteractive>
+                                  <PermIdentity className={styles[`${result.get(elem.key)}`]} />
+                                </Tooltip>
+                              )}
+                              {!elem.tooltip &&
+                                (elem.formatter ? elem.formatter(result.get(elem.key)) : result.get(elem.key))}
+                            </TableCell>
+                          )
+                        )}
+
+                      <TableCell>
+                        {`${formatMessage(
+                          messages[result.get('resultCategory1Titlei18nKey')],
+                          null,
+                          result.get('resultCategory1Title')
+                        )}:${formatMessage(
+                          messages[result.get('resultCategory1I18nKey')],
+                          null,
+                          result.get('resultCategory1Name')
+                        )}`}
+                        {result.get('resultCategory2I18nKey') &&
+                          result.get('resultCategory2Titlei18nKey') &&
+                          ` | ${formatMessage(
+                            messages[result.get('resultCategory2Titlei18nKey')],
+                            null,
+                            result.get('resultCategory2Title')
+                          )}:${formatMessage(
+                            messages[result.get('resultCategory2I18nKey')],
+                            null,
+                            result.get('resultCategory2Name')
+                          )}`}
+                        {result.get('resultCategory2I18nKey') &&
+                          !result.get('resultCategory2Titlei18nKey') &&
+                          ` | ${formatMessage(
+                            messages[result.get('resultCategory2I18nKey')],
+                            null,
+                            result.get('resultCategory2Name')
+                          )}`}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          )}
+          {!items.currentIdList.isEmpty() && (
+            <BrowseTablePaginator
               navigate={navigate}
               location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={columns.map(column => omit(column, ['formatter']))}
+              paginatorStatus={messages.paginatorStatus}
+              total={table.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
             />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(result => (
-                  <TableRow key={result.get('id')} onClick={onRowClick} data-result-id={result.get('id')}>
-                    {columns &&
-                      map(columns, elem => (
-                        <TableCell key={`${result.get('id')}-${elem.key}`} hiddenOn={elem.hiddenOn || 'sm'}>
-                          {elem.tooltip && result.get(elem.key) && (
-                            <Tooltip title={result.get(elem.tooltip)} disableInteractive>
-                              <PermIdentity className={styles[`${result.get(elem.key)}`]} />
-                            </Tooltip>
-                          )}
-                          {!elem.tooltip &&
-                            (elem.formatter ? elem.formatter(result.get(elem.key)) : result.get(elem.key))}
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
-        )}
-      </div>
-    </Card>
-  </section>
-)
+          )}
+        </div>
+      </Card>
+    </section>
+  )
+}
 
 export default Results

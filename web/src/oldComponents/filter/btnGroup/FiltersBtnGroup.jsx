@@ -11,7 +11,7 @@ import isArray from 'lodash/isArray'
 import { isCountryFilterHidden } from '../utils'
 import useI18n from '../../../hooks/useI18n'
 import styles from './FiltersBtnGroup.css'
-import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)

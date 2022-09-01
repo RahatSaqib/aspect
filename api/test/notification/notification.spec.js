@@ -419,6 +419,77 @@ describe('Result Notifications triggers', () => {
     })
   })
 
+  describe('SMS notification timezone test', () => {
+    const inserted = null
+    let smsTemplateId = null
+    let messageTypeId = null
+    let backupResult = null
+    let backupSample = null
+    before(async () => {
+      await createTestContext({
+        ...filterConditionWithJf,
+        sendSms: true,
+      })
+      ;[smsTemplateId] = await knex('SmsTemplate').insert({
+        message:
+          'A new Rif case detected on {{site.name}} GeneXpert site started on {{result.startedOn}} and tested on {{result.endedOn}}. Sample collected on {{result.sample.collectedOn}}.',
+        createdBy: 1,
+        updatedBy: 1,
+        phoneNumber: '{{ person.cell }}',
+      })
+      ;[messageTypeId] = await knex('MessageType').insert({
+        messageSeverityId: 2,
+        alertTemplateId: null,
+        smsTemplateId,
+        webhookTemplateId: null,
+        pushNotificationTemplateId: null,
+      })
+      backupResult = await knex('Result').where('id', insertedResultDetected).first()
+      backupSample = await knex('Sample').where('id', backupResult.sampleId).first()
+      await knex('Result').where('id', insertedResultDetected).update({
+        startedOn: '2021-09-10 12:21:25.000',
+        endedOn: '2099-09-14 20:58:17.000',
+      })
+      await knex('Sample').where('id', backupResult.sampleId).update({
+        collectedOn: '2021-08-25 14:24:01.000',
+      })
+      await knex('NotificationType').where('id', ntId).update({ messageTypeId })
+    })
+    after(async () => {
+      await removeTestContext()
+      await knex('PersonTag').where('TagId', '>=', inserted).delete()
+      await knex('Tag').whereIn('title', ['oneTag', 'secondTag', 'thirdTag']).delete()
+      await knex('MessageType').where('id', messageTypeId).delete()
+      await knex('SmsMessage').where('smsTemplateId', smsTemplateId).delete()
+      await knex('SmsTemplate').where('id', smsTemplateId).delete()
+      await knex('Result').where('id', insertedResultDetected).update(backupResult)
+      await knex('Sample').where('id', backupResult.sampleId).update(backupSample)
+    })
+
+    afterEach(async () =>
+      knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
+    )
+    it('should create a result based notification for particular jobFunctions', async () => {
+      const resultId = insertedResultDetected
+      assert.isNotNull(resultId)
+      const notificationsBefore = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntId })
+        .distinct('resultId', 'notificationTypeId', 'personId')
+      assert.equal(notificationsBefore.length, 0)
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(2000)
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
+      const smsMessages = await knex('SmsMessage').where({ smsTemplateId }).select()
+      assert.equal(notifications.length, 1, 'Only one notification should exists')
+      assert.equal(smsMessages.length, 1, 'Only one sms message should exists')
+      assert.equal(
+        smsMessages[0].message,
+        'A new Rif case detected on Wayne County Ohio GeneXpert site started on Fri Sep 10 2021 08:21:25 GMT-4 and tested on Mon Sep 14 2099 16:58:17 GMT-4. Sample collected on Wed Aug 25 2021 10:24:01 GMT-4.',
+        'All the dates should be localized GMT-4 (New York)'
+      )
+    })
+  })
+
   describe('Filter by Person', () => {
     let adminId
     let managerId

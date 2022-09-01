@@ -32,6 +32,10 @@ const admin = {
       activity: 'edit',
     },
     {
+      module: 'device',
+      activity: 'admin',
+    },
+    {
       module: 'case',
       activity: 'edit',
     },

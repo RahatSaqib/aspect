@@ -22,7 +22,7 @@ import sortBy from 'lodash/sortBy'
 
 import useI18n from '../../hooks/useI18n'
 import fetchWrapperForQueries from '../QueryFetch'
-import UI_CONSTS from '../../globals/consts/UI'
+import UI_CONSTS from '../../utils/consts/UI'
 import IconProvider from '../IconProvider'
 
 import styles from './Dropdown.css'

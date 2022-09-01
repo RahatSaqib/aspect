@@ -6,10 +6,17 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import Immutable from 'immutable'
 import { Helmet } from 'react-helmet'
 import TableBody from '@mui/material/TableBody'
-import { useQuery } from 'react-query'
-
+import { useQuery, useQueryClient } from 'react-query'
 import format from 'date-fns/format'
 import subDays from 'date-fns/subDays'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Typography from '@mui/material/Typography'
+import Autocomplete from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -36,11 +43,14 @@ import messages from './messages'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 
 import styles from './DeviceList.css'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 import useI18n from '../../../hooks/useI18n'
-import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
+import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
+import useMergeDevices from '../../../hooks/device/useMergeDevices'
+import PermissionsProvider from '../../../providers/PermissionsProvider/index'
 
 const cssClasses = classnames.bind(styles)
-
 const FILTERS_CONFIG = [
   {
     assayId: true,
@@ -220,11 +230,40 @@ export const DeviceListWithProps = ({
   displayPreferences,
   onRowClick,
   onAlertClick,
+  isMergeDeviceModalOpen,
+  setMergeDeviceModalOpen,
+  deviceList,
+  mergeDevices,
+  sourceDevicesIds,
+  setSourceDevicesIds,
+  targetDeviceId,
+  setTargetDeviceId,
+  isConfirmationVisible,
+  setConfirmationVisible,
+  siteToMergeDevices,
+  setSiteToMergeDevices,
+  clearMergeDialog,
+  deviceTypeToMerge,
+  setDeviceTypeToMerge,
+  params,
+  queryClient,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
-    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
+    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
+      <PermissionsProvider permissions={['device:admin']}>
+        <AspectButton
+          onClick={() => setMergeDeviceModalOpen(true)}
+          type="button"
+          color="primary"
+          variant="contained"
+          browseButton
+        >
+          {intl.formatMessage(messages.mergeDevices)}
+        </AspectButton>
+      </PermissionsProvider>
+    </BrowseFilters>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
       <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
@@ -268,11 +307,146 @@ export const DeviceListWithProps = ({
         />
       )}
     </DataTableCard>
+    <Dialog open={isMergeDeviceModalOpen} onClose={() => setMergeDeviceModalOpen(false)}>
+      <DialogTitle>{intl.formatMessage(messages.mergeDevices)}</DialogTitle>
+      {!isConfirmationVisible ? (
+        <>
+          <DialogContent>
+            {
+              <DialogContentText>
+                <span
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: intl.formatMessage(messages.mergeDeviceActionDescription) }}
+                />
+              </DialogContentText>
+            }
+
+            <Autocomplete
+              multiple
+              onChange={(_, values) => {
+                const newSourceValues = values.map(v => +v.key)
+                const newSourceSiteId = deviceList.find(o => o.key === values[0]?.key)?.siteId || null
+                const newDeviceTypeToMergeId = deviceList.find(o => o.key === values[0]?.key)?.deviceTypeId || null
+                setSourceDevicesIds(newSourceValues)
+                setSiteToMergeDevices(newSourceSiteId)
+                setDeviceTypeToMerge(newDeviceTypeToMergeId)
+              }}
+              options={
+                deviceList?.filter(
+                  o =>
+                    +o.key !== targetDeviceId &&
+                    (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
+                    (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
+                ) || []
+              }
+              getOptionLabel={option => option.value}
+              renderOption={(props, option) => (
+                <li {...props} key={option.key}>
+                  {option.value}
+                </li>
+              )}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label={intl.formatMessage(messages.sourceDevices)}
+                  placeholder={intl.formatMessage(messages.sourceDevices)}
+                />
+              )}
+            />
+
+            <Autocomplete
+              onChange={(_, value) => {
+                setTargetDeviceId(+value?.key || null)
+              }}
+              options={
+                deviceList?.filter(
+                  o =>
+                    !sourceDevicesIds.includes(+o.key) &&
+                    (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
+                    (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
+                ) || []
+              }
+              getOptionLabel={option => option.value}
+              renderOption={(props, option) => (
+                <li {...props} key={option.key}>
+                  {option.value}
+                </li>
+              )}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label={intl.formatMessage(messages.targetDevice)}
+                  placeholder={intl.formatMessage(messages.targetDevice)}
+                />
+              )}
+            />
+          </DialogContent>
+          <DialogActions>
+            <AspectButton
+              onClick={() => {
+                clearMergeDialog()
+                setMergeDeviceModalOpen(false)
+              }}
+            >
+              {intl.formatMessage(messages.button_Cancel)}
+            </AspectButton>
+
+            <AspectButton
+              disabled={!sourceDevicesIds.length > 0 || !targetDeviceId}
+              onClick={() => {
+                setConfirmationVisible(true)
+              }}
+            >
+              {intl.formatMessage(messages.button_Merge)}
+            </AspectButton>
+          </DialogActions>
+        </>
+      ) : (
+        <>
+          <DialogTitle>
+            <Typography variant="body1">
+              {
+                <span
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: intl.formatMessage(messages.mergeDevicesConfirmationTitle) }}
+                />
+              }
+            </Typography>
+          </DialogTitle>
+          <DialogContent>{intl.formatMessage(messages.confirmToProceed)}</DialogContent>
+          <DialogActions>
+            <AspectButton
+              onClick={() => {
+                setMergeDeviceModalOpen(false)
+              }}
+            >
+              {intl.formatMessage(messages.button_Cancel)}
+            </AspectButton>
+            <AspectButton
+              onClick={() => {
+                mergeDevices(
+                  { sourceDevicesIds, targetDeviceId },
+                  { onSuccess: () => queryClient.invalidateQueries([DEVICE_LIST.KEY, { params }]) }
+                )
+                clearMergeDialog()
+                setMergeDeviceModalOpen(false)
+              }}
+            >
+              {intl.formatMessage(messages.buttonConfirmMerge)}
+            </AspectButton>
+          </DialogActions>
+        </>
+      )}
+    </Dialog>
   </div>
 )
 
 export const DeviceList = () => {
   // >>>>>> hooks/ <<<<<<
+  const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true })
+  const { mutate: mergeDevices } = useMergeDevices()
   const intl = useI18n()
   const navigate = useNavigate()
   const {
@@ -280,13 +454,28 @@ export const DeviceList = () => {
     displayPreferences,
   } = useAuthState()
   const location = useLocation()
+  const clearMergeDialog = () => {
+    setSourceDevicesIds([])
+    setTargetDeviceId(null)
+    setSiteToMergeDevices(null)
+    setDeviceTypeToMerge(null)
+    setConfirmationVisible(false)
+  }
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(new Table())
   const [total, setTotal] = useState()
+  const [sourceDevicesIds, setSourceDevicesIds] = useState([])
+  const [targetDeviceId, setTargetDeviceId] = useState()
+
+  const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false)
+  const [siteToMergeDevices, setSiteToMergeDevices] = useState()
+  const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
+  const queryClient = useQueryClient()
 
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
@@ -388,6 +577,23 @@ export const DeviceList = () => {
     displayPreferences,
     onRowClick,
     onAlertClick,
+    isMergeDeviceModalOpen,
+    setMergeDeviceModalOpen,
+    deviceList,
+    mergeDevices,
+    sourceDevicesIds,
+    targetDeviceId,
+    setSourceDevicesIds,
+    setTargetDeviceId,
+    isConfirmationVisible,
+    setConfirmationVisible,
+    siteToMergeDevices,
+    setSiteToMergeDevices,
+    clearMergeDialog,
+    deviceTypeToMerge,
+    setDeviceTypeToMerge,
+    params,
+    queryClient,
   }
   return <DeviceListWithProps {...baseProps} />
 }

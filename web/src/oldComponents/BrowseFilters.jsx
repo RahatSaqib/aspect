@@ -13,7 +13,7 @@ import {
   closeExportConfirmation,
   beginListExportProcessing,
 } from '../store/FilterRedux'
-import { getAspectDisplayPreferences } from '../globals/sideEffects/LocalStorage'
+import { getAspectDisplayPreferences } from '../utils/LocalStorage'
 
 import styles from './BrowseFilters.css'
 

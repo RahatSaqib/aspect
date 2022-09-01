@@ -8,7 +8,7 @@ import startOfDay from 'date-fns/startOfDay'
 import format from 'date-fns/format'
 import { withProps } from 'recompose'
 
-import { getAspectDisplayPreferences, getTimezoneId } from '../../globals/sideEffects/LocalStorage'
+import { getAspectDisplayPreferences, getTimezoneId } from '../LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
 import { i18nWrapper } from '../../providers/I18nProvider'

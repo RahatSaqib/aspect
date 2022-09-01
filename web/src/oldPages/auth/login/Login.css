@@ -1,6 +1,6 @@
 /*Login page styles*/
 
-@import '../../../globals/variables.css';
+@import '../../../theme/variables.css';
 
 .Background {
   composes: PreLogin__Background from '../../../oldComponents/shared/Shared.css';

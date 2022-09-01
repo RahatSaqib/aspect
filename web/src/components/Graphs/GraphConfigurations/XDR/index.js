@@ -2,8 +2,8 @@ import BarGraph from '../../BarGraph'
 import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
 
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
-import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
+import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
 
 import { FqrToMtbPercentageLine } from './Layers'
 import AxisRightLayer from '../../BarGraph/AxisRightLayer'

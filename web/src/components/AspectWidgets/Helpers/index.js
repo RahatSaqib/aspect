@@ -7,7 +7,7 @@ import omit from 'lodash/omit'
 
 import { getTimePeriod, getAllDaysInCurrentMonth } from '../../../oldComponents/shared/DateTimeInput/utils/date'
 
-import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
+import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 
 /**
  * Order of widget groups - values must correspond to

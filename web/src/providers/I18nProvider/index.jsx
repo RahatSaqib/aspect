@@ -16,7 +16,7 @@ import viLocale from 'date-fns/locale/vi'
 import tgLocale from './date-fns-locales/tg-TJ'
 import translation from '../../utils/i18n/translation'
 import ErrorBoundary from '../../components/ErrorBoundary'
-import { getCurrentCulture } from '../../globals/sideEffects/LocalStorage'
+import { getCurrentCulture } from '../../utils/LocalStorage'
 
 const I18nContext = createContext()
 

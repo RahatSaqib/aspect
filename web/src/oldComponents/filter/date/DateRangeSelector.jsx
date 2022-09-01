@@ -31,7 +31,7 @@ import SelectField from '../../shared/SelectField'
 import DateTimeInput from '../../shared/DateTimeInput'
 import FormGroup from '../../themedReactToolbox/FormGroup'
 import PropTypeOf from '../../../utils/types'
-import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 
 import styles from './DateRangeSelector.css'
 import messages from './messages'

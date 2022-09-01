@@ -1,4 +1,4 @@
-@import '../../variables.css';
+@import '../../theme/variables.css';
 
 /* Shared */
 .icon {
@@ -51,11 +51,11 @@
 }
 
 .AppBar__appBar--xs {
-  composes: pure-visible-xs from '../../../oldComponents/pureGrids/pure-grids-responsive-min.css';
+  composes: pure-visible-xs from '../pureGrids/pure-grids-responsive-min.css';
 }
 
 .AppBar__appBar--sm {
-  composes: pure-hidden-xs from '../../../oldComponents/pureGrids/pure-grids-responsive-min.css';
+  composes: pure-hidden-xs from '..//pureGrids/pure-grids-responsive-min.css';
 }
 
 .ConfluenceIcon {
