@@ -1,6 +1,7 @@
 const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { validateDateRangeParams, validateSortPageParams } = require('../routes')
+const { REGEX_ISODATESTRING } = require('../shared/date')
 
 const inventoryFilters = {
   siteId: Joi.number().integer().positive().allow('', null),
@@ -12,7 +13,8 @@ const inventoryFilters = {
   breakOutByLot: Joi.bool().allow(null),
   hasStock: Joi.bool().allow(null),
   onlyTransfers: Joi.bool().allow(null).optional(),
-  expirationDate: Joi.date().optional().allow('', null),
+  minExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('From Date'),
+  maxExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('To Date'),
 }
 
 const adjustInventoryCommonPayloadFields = {

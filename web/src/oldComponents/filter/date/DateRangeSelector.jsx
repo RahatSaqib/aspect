@@ -45,12 +45,16 @@ export class DateRangeSelector extends PureComponent {
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
     dateFormat: PropTypes.string,
+    minFilterName: PropTypes.string,
+    maxFilterName: PropTypes.string,
   }
 
   static defaultProps = {
     minDate: null,
     maxDate: null,
     dateFormat: 'yyyy-MM-dd',
+    minFilterName: 'minDate',
+    maxFilterName: 'maxDate',
   }
 
   state = {
@@ -255,14 +259,32 @@ export class DateRangeSelector extends PureComponent {
     ]
   }
 
+  getMinFilterName() {
+    const { minFilterName } = this.props
+    return minFilterName
+  }
+
+  getMaxFilterName() {
+    const { maxFilterName } = this.props
+    return maxFilterName
+  }
+
   getMinDate() {
-    const { minDate } = this.props
+    const minDate = this.props[this.getMinFilterName()]
     return minDate && new Date(minDate)
   }
 
   getMaxDate() {
-    const { maxDate } = this.props
+    const maxDate = this.props[this.getMaxFilterName()]
+
     return maxDate && new Date(maxDate)
+  }
+
+  getValues(minDate, maxDate) {
+    const values = {}
+    if (minDate) values[this.getMinFilterName()] = minDate
+    if (maxDate) values[this.getMaxFilterName()] = maxDate
+    return values
   }
 
   handleMaxDateChange = date => {
@@ -270,20 +292,18 @@ export class DateRangeSelector extends PureComponent {
   }
 
   handleMinDateChange = date => {
-    this.props.onChangeDate({ minDate: date.toJSON() })
+    this.props.onChangeDate(this.getValues(date.toJSON()))
   }
 
   handleDateRangeChange = ({ target: { value } }) => {
-    this.props.onChangeDate(
-      value ? { minDate: value.minDate.toJSON(), maxDate: value.maxDate.toJSON() } : { minDate: null, maxDate: null }
-    )
+    this.props.onChangeDate(value ? this.getValues(value.minDate.toJSON(), value.maxDate.toJSON()) : this.getValues())
   }
 
   handleRangeModeChange = ({ target: { value } }) => {
     this.setState({
       rangeMode: value,
     })
-    this.props.onChangeDate({ minDate: null, maxDate: null })
+    this.props.onChangeDate(this.getValues())
   }
 
   render() {
@@ -312,10 +332,7 @@ export class DateRangeSelector extends PureComponent {
       custom: '',
     }[this.state.rangeMode]
 
-    const selectedValue = find(dropDownSelectItems, {
-      minDate: this.getMinDate(),
-      maxDate: this.getMaxDate(),
-    })
+    const selectedValue = find(dropDownSelectItems, this.getValues(this.getMinDate(), this.getMaxDate()))
 
     const restProps = omit(this.props, [
       'floatingLabelText',

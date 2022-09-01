@@ -17,6 +17,14 @@ export const messages = {
       id: 'filter.btnGroup.dateTo',
       defaultMessage: 'until {date}',
     },
+    expDateFrom: {
+      id: 'filter.btnGroup.expDateFrom',
+      defaultMessage: 'Exp. since {date}',
+    },
+    expDateTo: {
+      id: 'filter.btnGroup.expDateTo',
+      defaultMessage: 'Exp. until {date}',
+    },
     partnerId: {
       id: 'filter.btnGroup.partnerId',
       defaultMessage: 'partner "{partnerName}"',

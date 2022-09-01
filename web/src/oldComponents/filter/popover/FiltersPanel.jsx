@@ -7,6 +7,7 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 import Modal from '@mui/material/Modal'
 import Card from '@mui/material/Card'
 import { connect } from 'react-redux'
+import addYears from 'date-fns/addYears'
 import messages from './messages'
 import { getCustomMessage } from '../../../utils/utils/customMessages'
 import { isCountryFilterHidden } from '../utils'
@@ -72,6 +73,10 @@ const enhance = compose(
       dateValues =>
         onChangeFilters(dateValues),
     onExpirationDateChange:
+      ({ onChangeFilters }) =>
+      dateValues =>
+        onChangeFilters(dateValues),
+    onChange:
       ({ onChangeFilters }) =>
       dateValues =>
         onChangeFilters(dateValues),
@@ -799,7 +804,9 @@ export const FiltersPanel = ({
                 onChangeDate={onExpirationDateChange}
                 controlClassName={cssClasses('Control')}
                 minDate={filters.minDate}
-                maxDate={filters.maxDate}
+                maxDate={addYears(new Date(), 10)}
+                minFilterName="minExpirationDate"
+                maxFilterName="maxExpirationDate"
                 dateFormat={dateFormat}
                 autoOk
               />

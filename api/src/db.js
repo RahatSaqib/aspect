@@ -75,15 +75,15 @@ function filterParams(queryBuilder, params, filters) {
 
 // extracts the parameters related to filtering from the candidate
 // params and modifies the query builder with the filter modifications
-function filterDateRangeParams(queryBuilder, params, dateColumnName) {
-  if (params.minDate && params.minDate.toString() !== 'Invalid Date') {
-    queryBuilder.where(dateColumnName, '>=', params.minDate)
+
+function filterDateRangeParams(queryBuilder, params, dateColumnName, dateParamName = 'Date') {
+  if (params[`min${dateParamName}`] && params[`min${dateParamName}`].toString() !== 'Invalid Date') {
+    queryBuilder.where(dateColumnName, '>=', params[`min${dateParamName}`])
   }
-  if (params.maxDate && params.minDate.toString() !== 'Invalid Date') {
-    queryBuilder.where(dateColumnName, '<', params.maxDate)
+  if (params[`max${dateParamName}`] && params[`max${dateParamName}`].toString() !== 'Invalid Date') {
+    queryBuilder.where(dateColumnName, '<', params[`max${dateParamName}`])
   }
 }
-
 // helper function for run, transact and migration
 const makeBlockRunner = block => blockArg =>
   block(blockArg).catch(err => {

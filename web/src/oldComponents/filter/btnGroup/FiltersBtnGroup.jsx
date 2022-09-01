@@ -70,6 +70,8 @@ const filtersOrdering = {
   lgaId: 3,
   minDate: 18,
   maxDate: 19,
+  minExpirationDate: 40,
+  maxExpirationDate: 41,
   partnerId: 8,
   patientOrResearchId: 10,
   sampleId: 9,
@@ -193,6 +195,16 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
     maxDate: makeButton(date =>
       formatMessage(messages.dateTo, {
+        date: format(new Date(date), dateFormat),
+      })
+    ),
+    minExpirationDate: makeButton(date =>
+      formatMessage(messages.expDateFrom, {
+        date: format(new Date(date), dateFormat),
+      })
+    ),
+    maxExpirationDate: makeButton(date =>
+      formatMessage(messages.expDateTo, {
         date: format(new Date(date), dateFormat),
       })
     ),

@@ -1,5 +1,35 @@
 const { knex } = require('../../db')
 
+const INVENTORY_COMMON_FIELDS = [
+  'c.id as consumableId',
+  'c.name as consumableName',
+  'c.manufacturer',
+  'c.canExpire',
+  'u.shortName as unitShortName',
+  's.id as siteId',
+  's.name as siteName',
+  'g.countryId',
+  'g.stateId',
+  'g.lgaId',
+  'co.name as countryName',
+  'st.name as stateName',
+  'l.name as lgaName',
+]
+const INVENTORY_ITEM_SELECT = [
+  ...INVENTORY_COMMON_FIELDS,
+  'ii.quantityOnHand',
+  'ii.updatedOn',
+  'ii.id',
+  knex.raw(
+    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
+  ),
+  knex.raw(
+    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
+  ),
+
+  'itfs.name as inTransitFromSiteName',
+  'ii.inTransitFromSiteId',
+]
 const INVENTORY_LOG_LIST = {
   createdOn: 'il.createdOn',
   consumableName: 'c.name',
@@ -123,38 +153,6 @@ const SUPPLY_IN_STOCK_FIELDS = [
   knex.raw(
     'COUNT(CASE WHEN daysStockLeft IS NULL AND quantityOnHand IS NOT NULL THEN true ELSE null END) as noConsumption'
   ),
-]
-
-const INVENTORY_COMMON_FIELDS = [
-  'c.id as consumableId',
-  'c.name as consumableName',
-  'c.manufacturer',
-  'c.canExpire',
-  'u.shortName as unitShortName',
-  's.id as siteId',
-  's.name as siteName',
-  'g.countryId',
-  'g.stateId',
-  'g.lgaId',
-  'co.name as countryName',
-  'st.name as stateName',
-  'l.name as lgaName',
-]
-
-const INVENTORY_ITEM_SELECT = [
-  ...INVENTORY_COMMON_FIELDS,
-  'ii.quantityOnHand',
-  'ii.updatedOn',
-  'ii.id',
-  knex.raw(
-    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'withlot')>0 THEN ii.lotNumber ELSE null END AS lotNumber`
-  ),
-  knex.raw(
-    `CASE WHEN c.strategy IS NOT NULL AND INSTR(c.strategy,'expirationDate')>0 THEN ii.expiresOn ELSE null END AS expiresOn`
-  ),
-
-  'itfs.name as inTransitFromSiteName',
-  'ii.inTransitFromSiteId',
 ]
 
 module.exports = {

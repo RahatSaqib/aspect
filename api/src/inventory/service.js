@@ -2,16 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { parseDateOrDefault } = require('../shared/date')
-const {
-  knex,
-  transact,
-  query,
-  filterParams,
-  filterDateRangeParams,
-  pageParams,
-  sortParams,
-  sortPageParams,
-} = require('../db')
+const { knex, transact, query, filterParams, filterDateRangeParams, pageParams, sortParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { selectAssayConsumables } = require('../consumable/assayConsumableService')
 const { findConsumableReason } = require('../consumable/consumableService')
@@ -22,18 +13,17 @@ const { inventoryStockout, inventoryStockExpiring } = require('./actions')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 
 const { splitCsvWithTrim } = require('../shared/string')
-const { findInventoryItem, getInventorySitesQuery, getInventoryLogBaseQuery } = require('./common/db')
+const { findInventoryItem, getInventorySitesQuery } = require('./common/db')
 const {
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
   INVENTORY_ITEM_SELECT_LIST_FIELDS,
   INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
-  INVENTORY_LOG_SORT_FIELDS,
+
   INVENTORY_ITEM_FILTER_FIELDS,
   SUPPLY_IN_STOCK_FIELDS,
   INVENTORY_ITEM_SELECT,
   STOCK_LEFT_FILTER_FIELDS,
-  INVENTORY_LOG_LIST,
 } = require('./common/queryConstants')
 
 async function consumeInventoryForResult(
@@ -264,31 +254,6 @@ function filteredInventoryItemsBase(request, dataConstraints) {
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
 
   return inventoryItemsQuery
-}
-
-async function listInventoryLog(request) {
-  return listLog(request)
-}
-
-async function listLog(request, querySelector = INVENTORY_LOG_LIST) {
-  const { auth, query } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-  const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
-    .modify(filterDateRangeParams, query, 'il.createdOn')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      consumableId: 'c.id',
-      consumableExternalId: 'c.externalId',
-      siteName: 's.name',
-      siteId: 's.id',
-    })
-  const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
-  const data = await inventoryLogQuery
-    .select(querySelector)
-    .modify(sortPageParams, query, 'il.createdOn', INVENTORY_LOG_SORT_FIELDS)
-  return { ok: true, total, length: data.length, data }
 }
 
 const siteFields = ['siteId', 'siteName', 'countryId', 'stateId', 'lgaId', 'countryName', 'stateName', 'lgaName']
@@ -1231,7 +1196,5 @@ module.exports = {
   receiveInventory,
   selectInventoryStockAtSite,
   getDaysByLocation,
-  listLog,
   modifyInventoryOnHand,
-  listInventoryLog,
 }

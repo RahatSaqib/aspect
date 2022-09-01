@@ -9,9 +9,9 @@ const {
   receiveInventory,
   getDaysByLocation,
   modifyInventoryOnHand,
-  listInventoryLog,
 } = require('./service')
 const listInventory = require('./listInventory')
+const listInventoryLog = require('./inventoryLog')
 const { exportSupplies } = require('./serviceReports')
 const {
   listSuppliesBaseConfig,
