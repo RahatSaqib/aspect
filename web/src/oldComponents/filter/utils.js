@@ -313,6 +313,7 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
             case 'onlyDisease':
               result.onlyDisease = true
               break
+
             case 'onlyReportableResults':
               result.onlyReportableResults = true
               break
@@ -355,7 +356,14 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
             case 'contactStatus':
               result.contactStatus = true
               break
+            case 'onlyTransfers':
+              result.onlyTransfers = true
+              break
+            case 'expirationDate':
+              result.expirationDate = true
+              break
             default:
+              break
           }
         })
       }

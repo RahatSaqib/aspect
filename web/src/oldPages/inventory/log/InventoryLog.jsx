@@ -35,6 +35,18 @@ const FILTERS_CONFIG = [
     date: true,
     requiredPermissions: [],
   },
+  {
+    onlyTransfers: true,
+    requiredPermissions: [],
+  },
+  {
+    lotNumber: true,
+    requiredPermissions: [],
+  },
+  {
+    expirationDate: true,
+    requiredPermissions: [],
+  },
 ]
 
 const availableSortCol = [

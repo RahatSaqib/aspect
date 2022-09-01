@@ -97,6 +97,7 @@ const filtersOrdering = {
   onlyReportableResults: 23,
   onlyTreatmentRequired: 33,
   onlyDownloadedByReporter: 35,
+  onlyTransfers: 36,
   onlyEverTransferred: 34,
   issueTypeId: 24,
   daysStockLeft: 31,
@@ -373,6 +374,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     onlyDownloadedByReporter: makeButton(() => formatMessage(messages.onlyDownloadedByReporter)),
     onlyEverTransferred: makeButton(() => formatMessage(messages.onlyEverTransferred)),
     onlyTreatmentRequired: makeButton(() => formatMessage(messages.onlyTreatmentRequired)),
+    onlyTransfers: makeButton(() => formatMessage(messages.onlyTransfers)),
     issueTypeId: makeButton(issueTypeId =>
       formatMessage(messages.deviceIssueType, {
         issueTypeId: startCase(issueTypeId),

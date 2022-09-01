@@ -125,6 +125,10 @@ export const messages = {
       id: 'filter.btnGroup.onlyReportableResults',
       defaultMessage: 'Show Only Reportable Results',
     },
+    onlyTransfers: {
+      id: 'filter.btnGroup.onlyTransfers',
+      defaultMessage: 'Show Only Transfers',
+    },
     onlyDownloadedByReporter: {
       id: 'filter.btnGroup.onlyDownloadedByReporter',
       defaultMessage: 'Show Only Results Downloaded By Reporter',
