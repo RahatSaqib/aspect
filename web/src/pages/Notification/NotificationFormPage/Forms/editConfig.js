@@ -319,7 +319,7 @@ const geographySection = formatMessage => {
         items: [
           {
             id: 'deviceLevelId',
-            initialValue: true,
+            initialValue: 'national',
             controlType: {
               component: 'select',
               endpoint: '/geography/level-by-user-select-list',
