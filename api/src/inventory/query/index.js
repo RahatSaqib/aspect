@@ -1,5 +1,5 @@
 const { addConstraints } = require('../../auth/constraints')
-const querySelectors = require('./querySelectors')
+const querySelectors = require('../common/queryConstants')
 
 const getInventoryLogBaseQuery = (knex, dataConstraints) =>
   knex('InventoryLog as il')
