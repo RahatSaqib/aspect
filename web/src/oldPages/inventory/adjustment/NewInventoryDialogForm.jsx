@@ -1,18 +1,17 @@
-import pick from 'lodash/pick'
-import identity from 'lodash/identity'
 import Immutable from 'immutable'
-import { compose, withProps, lifecycle, pure } from 'recompose'
+import identity from 'lodash/identity'
+import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
-
+import { compose, withProps, lifecycle, pure } from 'recompose'
 import recomposeForm from '../../../oldComponents/recomposeForm'
+import { withTodayProps, withDateFormatProps } from '../../../utils/utils/dateFormat'
 import {
   SHARED_DEFAULT_VALUES,
   sharedMessages,
   sharedFields,
   InventoryAdjustmentDialogForm,
 } from './InventoryAdjustmentDialogForm'
-import { withTodayProps, withDateFormatProps } from '../../../utils/utils/dateFormat'
 
 const EMPTY_MAP = Immutable.Map()
 

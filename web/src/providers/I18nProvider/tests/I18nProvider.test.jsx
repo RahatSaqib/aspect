@@ -1,15 +1,14 @@
 import React, { Fragment } from 'react'
+import '@testing-library/jest-dom/extend-expect'
+import { render, screen } from '@testing-library/react'
+import subDays from 'date-fns/subDays'
 import IntlPolyfill from 'intl'
 import 'intl/locale-data/jsonp/de'
 import 'intl/locale-data/jsonp/ru'
 import 'intl/locale-data/jsonp/fr'
 import 'intl/locale-data/jsonp/uk'
 import 'intl/locale-data/jsonp/en'
-import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
 import MockDate from 'mockdate'
-import subDays from 'date-fns/subDays'
-
 import { i18nWrapper } from '../index'
 
 const ComponentWrapper = ({ locale: passedLocale, timezone: passedTimezone }) => {

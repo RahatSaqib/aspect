@@ -1,16 +1,16 @@
 // This is the entry point for our app
 import 'whatwg-fetch'
 import 'url-search-params-polyfill'
-import { render } from 'react-dom'
+import React from 'react'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
-import React from 'react'
+import { render } from 'react-dom'
+import App from './App'
 import config from './config'
-import store from './store/store'
 import { hydrateFromLocalStorage, refreshStart } from './store/AuthRedux'
+import store from './store/store'
 import './index.css'
 import { getAspectHydrateData } from './utils/LocalStorage'
-import App from './App'
 
 // Sentry initiaization at the top level of application. I activated it only for production ENV
 if (config.sentry && process.env.NODE_ENV === 'production') {

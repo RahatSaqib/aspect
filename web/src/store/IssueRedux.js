@@ -1,7 +1,6 @@
 import { defineMessages } from 'react-intl'
-
-import { aspectFetch } from '../utils/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   RECEIVE_UPDATED_SINGLE_ISSUE: 'RECEIVE_UPDATED_SINGLE_ISSUE',

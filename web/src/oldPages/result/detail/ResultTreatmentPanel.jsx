@@ -1,15 +1,14 @@
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
-import { format as date } from 'date-fns/format'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import { format as date } from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import { compose, pure, withHandlers, withState } from 'recompose'
 import { defineMessages } from 'react-intl'
-
-import requirePermission from '../../components/shared/requirePermissions'
+import { compose, pure, withHandlers, withState } from 'recompose'
 import { Accordion, AccordionHeader, AccordionDetail } from '../../components/shared/accordion'
-import CheckboxField from '../../components/shared/CheckboxField'
 import AspectButton from '../../components/shared/AspectButton'
+import CheckboxField from '../../components/shared/CheckboxField'
+import requirePermission from '../../components/shared/requirePermissions'
 import ResultTreatmentNoteModal from './ResultTreatmentNoteModal'
 
 const messages = defineMessages({

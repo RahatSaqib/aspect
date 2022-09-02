@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
-import { SITE_KEY, SITE_KEY_BY_ID_ENDPOINT } from './siteKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { SITE_KEY, SITE_KEY_BY_ID_ENDPOINT } from './siteKeys.js'
 
 const updateSiteById = async (site, siteId) => {
   const submitSite = { ...site }

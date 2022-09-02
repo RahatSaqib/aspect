@@ -1,11 +1,9 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import times from 'lodash/times'
-
-import { DailyStatusClinicDay, DayBlock } from '../DailyStatusClinicDay'
-
+import PropTypes from 'prop-types'
 import styles from '../DailyStatus.css'
+import { DailyStatusClinicDay, DayBlock } from '../DailyStatusClinicDay'
 
 const cssClasses = classnames.bind(styles)
 

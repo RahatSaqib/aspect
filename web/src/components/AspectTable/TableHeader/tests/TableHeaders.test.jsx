@@ -2,9 +2,8 @@ import React from 'react'
 import { render, within, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/extend-expect'
-
-import { Default } from '../../Table.stories'
 import { I18nProvider } from '../../../../providers/I18nProvider'
+import { Default } from '../../Table.stories'
 
 describe('test headers and sortable states', () => {
   it('should render 4 columns in the correct order', () => {

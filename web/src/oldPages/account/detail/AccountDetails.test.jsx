@@ -1,9 +1,8 @@
-import noop from 'lodash/noop'
 import React from 'react'
-import { shallow } from 'enzyme'
-import { Route } from 'react-router-dom'
 import LinearProgress from '@mui/material/LinearProgress'
-
+import { shallow } from 'enzyme'
+import noop from 'lodash/noop'
+import { Route } from 'react-router-dom'
 import { AccountDetailsData } from '../../../store/AccountRedux'
 
 describe('AccountDetails module', () => {

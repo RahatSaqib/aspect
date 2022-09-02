@@ -1,9 +1,8 @@
 import React, { Fragment, useMemo, useState } from 'react'
-import max from 'lodash/max'
-import { line } from 'd3-shape'
-import { scaleLinear } from 'd3-scale'
 import classnames from 'classnames/bind'
-
+import { scaleLinear } from 'd3-scale'
+import { line } from 'd3-shape'
+import max from 'lodash/max'
 import { filterColour, getColorIdByFieldName } from '../Helpers/Formatters'
 import styles from './AspectResponsiveBar.css'
 

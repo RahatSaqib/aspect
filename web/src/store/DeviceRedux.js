@@ -1,19 +1,19 @@
 import { stringify } from 'querystring'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
-import { aspectFetchFile, aspectFetch } from '../utils/utils/fetch'
 import { getFilters, mergeToFiltersParams } from '../oldComponents/filter/utils'
+import { getDateObject } from '../oldComponents/shared/DateTimeInput/utils/date'
 import {
   filterFieldsRejectedError,
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../utils/error/CommonErrorNotifications'
-import { receivedExportResponse } from './GlobalsRedux'
 import { receiveItem, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
-import { getDateObject } from '../oldComponents/shared/DateTimeInput/utils/date'
+import { aspectFetchFile, aspectFetch } from '../utils/utils/fetch'
+import { receivedExportResponse } from './GlobalsRedux'
 
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',

@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
+import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
-import Grid from '@mui/material/Grid'
-import ListItemText from '@mui/material/ListItemText'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
+import ListItemText from '@mui/material/ListItemText'
 import Typography from '@mui/material/Typography'
-import Avatar from '@mui/material/Avatar'
 import PropTypes from 'prop-types'
+import useI18n from '../../../../hooks/useI18n'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
-import useI18n from '../../../../hooks/useI18n'
 
 const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClose, recipients = [] }) => {
   const [notificationData] = useState(recipients)

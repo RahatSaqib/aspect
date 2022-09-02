@@ -1,13 +1,12 @@
 import filter from 'lodash/filter'
 import forOwn from 'lodash/forOwn'
-import omit from 'lodash/omit'
 import max from 'lodash/max'
+import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import round from 'lodash/round'
 import sum from 'lodash/sum'
 import sumBy from 'lodash/sumBy'
 import values from 'lodash/values'
-
 import { filterColour } from './index'
 
 const calcPercentageForGraphs = (value, total, precision = 4) => ((value / total) * 100).toFixed(precision)

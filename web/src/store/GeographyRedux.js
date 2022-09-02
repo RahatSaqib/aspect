@@ -1,8 +1,8 @@
-import { defineMessages } from 'react-intl'
-import map from 'lodash/map'
 import Immutable from 'immutable'
-import { aspectFetch } from '../utils/utils/fetch'
+import map from 'lodash/map'
+import { defineMessages } from 'react-intl'
 import { errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR: 'REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR',

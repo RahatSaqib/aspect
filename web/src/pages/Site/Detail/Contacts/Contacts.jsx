@@ -1,17 +1,14 @@
-import PropTypes from 'prop-types'
 import React, { useState, Fragment } from 'react'
-import classnames from 'classnames/bind'
-import { Link } from 'react-router-dom'
 import Button from '@mui/material/Button'
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
-
-// Our own imports
+import { Link } from 'react-router-dom'
+import ContactTagInput from '../../../components/ContactTagInput/ContactTagInput'
+import { Unit } from '../../../oldComponents/pureGrids'
+import { ReadOnlyField } from '../../../oldComponents/shared/ReadOnlyFields'
+import styles from '../../../oldComponents/Summary.css'
 import messages from '../messages'
-import { Unit } from '../../../../oldComponents/pureGrids'
-import { ReadOnlyField } from '../../../../oldComponents/shared/ReadOnlyFields'
-
-import styles from '../../../../oldComponents/Summary.css'
-import ContactTagInput from '../../../../components/ContactTagInput/ContactTagInput'
 
 const cssClasses = classnames.bind(styles)
 

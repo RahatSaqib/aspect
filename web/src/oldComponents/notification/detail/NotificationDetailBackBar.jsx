@@ -1,10 +1,9 @@
-import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
-import { compose, withHandlers } from 'recompose'
 import PropTypes from 'prop-types'
-
-import AspectButton from '../../shared/AspectButton'
+import { defineMessages, injectIntl } from 'react-intl'
+import { compose, withHandlers } from 'recompose'
 import DetailBackBar from '../../DetailBackBar'
+import AspectButton from '../../shared/AspectButton'
 
 const messages = defineMessages({
   view: {

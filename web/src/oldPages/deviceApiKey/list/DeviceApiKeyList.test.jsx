@@ -1,9 +1,9 @@
-import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
+import Immutable from 'immutable'
+import ExportListButton from '../../../oldComponents/ExportListButton'
 import { makeItems } from '../../../utils/metaReducers/items'
 import { makeTable } from '../../../utils/metaReducers/table'
-import ExportListButton from '../../../oldComponents/ExportListButton'
 
 jest.mock('@mui/material/Checkbox', () => 'StubCheckbox')
 

@@ -1,9 +1,8 @@
-import { compose, mapProps, defaultProps } from 'recompose'
-import { defineMessages } from 'react-intl'
 import endOfDay from 'date-fns/endOfDay'
 import startOfDay from 'date-fns/startOfDay'
 import subtractDays from 'date-fns/subDays'
-
+import { defineMessages } from 'react-intl'
+import { compose, mapProps, defaultProps } from 'recompose'
 import StyledDropdown from './shared/StyledDropdown'
 
 const messages = defineMessages({

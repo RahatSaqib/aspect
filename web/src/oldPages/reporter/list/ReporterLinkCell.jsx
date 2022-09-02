@@ -1,8 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-
 import AspectLink from '../../../components/AspectLink'
-
 import styles from './ReporterList.css'
 
 const cssClasses = classnames.bind(styles)

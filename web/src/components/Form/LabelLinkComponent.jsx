@@ -1,9 +1,8 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-import IconProvider from '../IconProvider'
+import PropTypes from 'prop-types'
 import AspectLink from '../AspectLink'
-
+import IconProvider from '../IconProvider'
 import styles from './LabelLinkComponent.css'
 
 const cssClasses = classnames.bind(styles)

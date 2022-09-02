@@ -1,25 +1,22 @@
 import React, { Fragment } from 'react'
+import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
-import classnames from 'classnames/bind'
-
 import AspectDropDown from '../../../components/AspectDropDown'
-import UI_CONSTS from '../../../utils/consts/UI'
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
-import { reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import { useAuthState } from '../../../providers/AuthProvider'
-
-import Shell from '../../../components/Shell'
-import ShellContent from '../../../components/Shell/Content'
 import AspectTable from '../../../components/AspectTable'
 import { useUrlQuery } from '../../../components/AspectTable/Helpers'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
-import { baseConfig, getCreateNotificationMenuProps } from './config'
-
-import styles from '../Notifications.css'
+import Shell from '../../../components/Shell'
+import ShellContent from '../../../components/Shell/Content'
 import useI18n from '../../../hooks/useI18n'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import { reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import NavTitle from '../../../oldComponents/NavTitle'
+import { useAuthState } from '../../../providers/AuthProvider'
+import UI_CONSTS from '../../../utils/consts/UI'
+import styles from '../Notifications.css'
+import { baseConfig, getCreateNotificationMenuProps } from './config'
 
 const cssClasses = classnames.bind(styles)
 

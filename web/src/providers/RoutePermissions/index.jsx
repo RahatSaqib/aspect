@@ -1,9 +1,8 @@
 import React, { createContext, useContext } from 'react'
-import { useSelector } from 'react-redux'
-import { matchPath } from 'react-router-dom'
 import filter from 'lodash/filter'
 import get from 'lodash/get'
-
+import { useSelector } from 'react-redux'
+import { matchPath } from 'react-router-dom'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 
 const RoutesPermissionContext = createContext()

@@ -1,11 +1,9 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
+import TextField from '@mui/material/TextField'
+import { withStyles } from '@mui/styles'
 import noop from 'lodash/noop'
 import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
-import { withStyles } from '@mui/styles'
-// Material-UI
-import TextField from '@mui/material/TextField'
 
 const styles = () => ({
   root: {

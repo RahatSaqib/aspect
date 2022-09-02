@@ -1,11 +1,10 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-
-import messages from './messages'
-import styles from './DailyStatusDialog.css'
+import classnames from 'classnames/bind'
 import useI18n from '../../../../hooks/useI18n'
-import IconProvider from '../../../IconProvider/index'
 import { i18nWrapper } from '../../../../providers/I18nProvider'
+import IconProvider from '../../../IconProvider/index'
+import styles from './DailyStatusDialog.css'
+import messages from './messages'
 
 const { format } = i18nWrapper()
 const cssClasses = classnames.bind(styles)

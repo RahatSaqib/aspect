@@ -1,12 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
-
-import ThemedLink from './ThemedLink'
-import messages from './messages'
-
-import styles from './index.css'
+import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
+import styles from './index.css'
+import messages from './messages'
+import ThemedLink from './ThemedLink'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,16 +1,16 @@
-import { useQuery, useQueryClient } from 'react-query'
 import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
+import { useQuery, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
-import { SITE_KEY } from './siteKeys.js'
 import { getFilters } from '../../oldComponents/filter/utils'
-import { aspectFetch } from '../../utils/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
+import { SITE_KEY } from './siteKeys.js'
 
 const getDownload = async (filtersParams, sortCol, sortDir, page, pageSize, fileFormat) => {
   const filters = getFilters(filtersParams)

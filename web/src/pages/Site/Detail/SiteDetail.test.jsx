@@ -1,13 +1,13 @@
-import noop from 'lodash/noop'
 import React from 'react'
+import LinearProgress from '@mui/material/LinearProgress'
 import { mount } from 'enzyme'
 import Immutable from 'immutable'
-import LinearProgress from '@mui/material/LinearProgress'
-import * as reactRedux from 'react-redux'
+import noop from 'lodash/noop'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { Site } from '../../../store/SiteRedux'
+import * as reactRedux from 'react-redux'
+import { I18nProvider } from '../../providers/I18nProvider/index'
+import { Site } from '../../store/SiteRedux'
 import { SiteDetail } from './SiteDetail'
-import { I18nProvider } from '../../../providers/I18nProvider/index'
 
 const SiteDetailComponent = props => (
   <QueryClientProvider client={new QueryClient()}>

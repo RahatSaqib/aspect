@@ -1,13 +1,13 @@
-import difference from 'lodash/difference'
-import zipObject from 'lodash/zipObject'
-import head from 'lodash/head'
-import flattenDeep from 'lodash/flattenDeep'
-import map from 'lodash/map'
-import without from 'lodash/without'
-import isEmpty from 'lodash/isEmpty'
-import omit from 'lodash/omit'
-import drop from 'lodash/drop'
 import Immutable from 'immutable'
+import difference from 'lodash/difference'
+import drop from 'lodash/drop'
+import flattenDeep from 'lodash/flattenDeep'
+import head from 'lodash/head'
+import isEmpty from 'lodash/isEmpty'
+import map from 'lodash/map'
+import omit from 'lodash/omit'
+import without from 'lodash/without'
+import zipObject from 'lodash/zipObject'
 
 function rowSpans(item, excludeProperties, numberOfChildren) {
   const includedProperties = difference(Object.keys(item), excludeProperties)

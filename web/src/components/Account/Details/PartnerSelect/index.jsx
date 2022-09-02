@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import isEqual from 'lodash/isEqual'
 import map from 'lodash/map'
 import set from 'lodash/set'
-import isEqual from 'lodash/isEqual'
-import fetchWrapperForQueries from '../../../QueryFetch'
+import { useQuery } from 'react-query'
 import { PureSelect } from '../../../Form/PureFormik/Inputs'
+import fetchWrapperForQueries from '../../../QueryFetch'
 
 const PartnerSelect = props => {
   const PARTNER_LIST = {

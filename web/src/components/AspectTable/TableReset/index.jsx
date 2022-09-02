@@ -1,15 +1,13 @@
 import React from 'react'
-import { bool, func } from 'prop-types'
-import classnames from 'classnames/bind'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import Tooltip from '@mui/material/Tooltip'
+import classnames from 'classnames/bind'
+import { bool, func } from 'prop-types'
 import { defineMessages } from 'react-intl'
-
-import IconProvider from '../../IconProvider'
-
-import styles from '../Table.css'
 import useI18n from '../../../hooks/useI18n'
+import IconProvider from '../../IconProvider'
+import styles from '../Table.css'
 
 const cssClasses = classnames.bind(styles)
 

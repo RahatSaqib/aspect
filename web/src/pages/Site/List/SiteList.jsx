@@ -1,30 +1,29 @@
-import flowRight from 'lodash/flowRight'
-import classnames from 'classnames/bind'
 import React, { useState, useEffect } from 'react'
-import { Helmet } from 'react-helmet'
-import TableBody from '@mui/material/TableBody'
 import LinearProgress from '@mui/material/LinearProgress'
-import { getCustomMessage } from '../../../utils/utils/customMessages'
+import TableBody from '@mui/material/TableBody'
+import classnames from 'classnames/bind'
+import flowRight from 'lodash/flowRight'
+import { Helmet } from 'react-helmet'
+import useSites from '../../../hooks/site/useSites'
+import useSitesDownload from '../../../hooks/site/useSitesDownload'
+import useI18n from '../../../hooks/useI18n'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import ExportListButton from '../../../oldComponents/ExportListButton'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import NavTitle from '../../../oldComponents/NavTitle'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
+import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import { useAuthState } from '../../../providers/AuthProvider/index'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../utils/selectors/searchParams'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
-import ExportListButton from '../../../oldComponents/ExportListButton'
-import useI18n from '../../../hooks/useI18n'
-
-import styles from './SiteList.css'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
+import { getCustomMessage } from '../../../utils/utils/customMessages'
 import messages from './messages'
-import useSites from '../../../hooks/site/useSites'
-import { useAuthState } from '../../../providers/AuthProvider/index'
-import useSitesDownload from '../../../hooks/site/useSitesDownload'
+import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
+import styles from './SiteList.css'
 
 const cssClasses = classnames.bind(styles)
 

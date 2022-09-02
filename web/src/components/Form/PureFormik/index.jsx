@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { Formik, Form, FastField } from 'formik'
-import { object } from 'yup'
 import map from 'lodash/map'
+import { object } from 'yup'
 import { getValidation } from './Helpers'
 
 /**

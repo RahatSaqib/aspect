@@ -1,8 +1,7 @@
-import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
+import Immutable from 'immutable'
 import * as reactRedux from 'react-redux'
-
 import { groupByPermissionTypes, isPermittedUser, requirePermissions } from './requirePermissions'
 
 describe('requirePermissions', () => {

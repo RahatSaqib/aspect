@@ -1,12 +1,12 @@
-import PropTypes from 'prop-types'
 import React, { memo, useState, useEffect } from 'react'
-import getDisplayName from 'react-display-name'
-import { useStore } from 'react-redux'
 import constant from 'lodash/constant'
 import flowRight from 'lodash/flowRight'
 import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
+import PropTypes from 'prop-types'
+import getDisplayName from 'react-display-name'
+import { useStore } from 'react-redux'
 
 export const MATCH_TYPE = {
   // exact match of the item in userPermissions (i.e. 'result:edit') and item in requestedPermissions (i.e. 'result:edit')

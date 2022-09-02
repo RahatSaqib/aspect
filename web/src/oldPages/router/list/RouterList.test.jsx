@@ -1,11 +1,10 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
-
-import { RouterList } from './RouterList'
 import ExportListButton from '../../../oldComponents/ExportListButton'
 import { Items } from '../../../utils/metaReducers/items'
 import { Table } from '../../../utils/metaReducers/table'
+import { RouterList } from './RouterList'
 
 describe('RouterList', () => {
   const props = {

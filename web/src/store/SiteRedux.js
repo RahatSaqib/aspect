@@ -1,21 +1,20 @@
 import { stringify } from 'querystring'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { formValueSelector, change as changeForm } from 'redux-form/immutable'
-
-import { aspectFetch } from '../utils/utils/fetch'
+import { getFilters } from '../oldComponents/filter/utils'
+import { getLatLongFromAddress, convertToFloat } from '../oldPages/site/utils/address'
 import {
   filterFieldsRejectedError,
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../utils/error/CommonErrorNotifications'
-import { receivedExportResponse } from './GlobalsRedux'
 import { receiveItem, Items, receiveListWithSet } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
-import { getLatLongFromAddress, convertToFloat } from '../pages/Site/Detail/Edit/address'
-import { getFilters } from '../oldComponents/filter/utils'
+import { aspectFetch } from '../utils/utils/fetch'
+import { receivedExportResponse } from './GlobalsRedux'
 
 export const types = {
   REQUEST_SITES: 'REQUEST_SITES',

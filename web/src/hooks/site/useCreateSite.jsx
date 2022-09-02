@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
-import { SITE_KEY, SITE_KEY_SITE_ENDPOINT } from './siteKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
+import { SITE_KEY, SITE_KEY_SITE_ENDPOINT } from './siteKeys.js'
 
 const createSite = async site => {
   const submitSite = { ...site }

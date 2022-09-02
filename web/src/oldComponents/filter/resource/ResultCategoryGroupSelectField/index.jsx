@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
-import { useDispatch } from 'react-redux'
 import MenuItem from '@mui/material/MenuItem'
 import classnames from 'classnames/bind'
-
-import messages from './messages'
-import SelectField from '../../../shared/SelectField'
+import { useQuery } from 'react-query'
+import { useDispatch } from 'react-redux'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import RESULT_CATEGORY_GROUP_SELECT_LIST from '../../../../components/QueryFetch/ResultCategoryGroup'
-import { types } from '../../../../store/ResultCategoryGroupSelectFieldRedux'
 import useI18n from '../../../../hooks/useI18n'
-
+import { types } from '../../../../store/ResultCategoryGroupSelectFieldRedux'
+import SelectField from '../../../shared/SelectField'
 import styles from '../../popover/FiltersPanel.css'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,21 +1,19 @@
 import React, { Fragment } from 'react'
+import Button from '@mui/material/Button'
+import classnames from 'classnames/bind'
+import get from 'lodash/get'
 import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
-import classnames from 'classnames/bind'
-import Button from '@mui/material/Button'
-import get from 'lodash/get'
-
-import { gotoWithReturnUrl } from '../../../../utils/utils/browser'
-import useI18n from '../../../../hooks/useI18n'
-import Shell from '../../../../components/Shell'
-import ShellHeader from '../../../../components/Shell/Header'
-import ShellContent from '../../../../components/Shell/Content'
 import AspectTable from '../../../../components/AspectTable'
 import { NOTIFICATION_HISTORY } from '../../../../components/QueryFetch/Notification'
-import baseConfig from './config'
-
+import Shell from '../../../../components/Shell'
+import ShellContent from '../../../../components/Shell/Content'
+import ShellHeader from '../../../../components/Shell/Header'
+import useI18n from '../../../../hooks/useI18n'
+import { gotoWithReturnUrl } from '../../../../utils/utils/browser'
 import styles from '../NotificationDetail.css'
+import baseConfig from './config'
 
 const cssClasses = classnames.bind(styles)
 

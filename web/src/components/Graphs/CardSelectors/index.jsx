@@ -1,8 +1,7 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import Grid from '@mui/material/Grid'
 import classnames from 'classnames/bind'
-
+import PropTypes from 'prop-types'
 import styles from './CardSelectors.css'
 
 const cssClasses = classnames.bind(styles)

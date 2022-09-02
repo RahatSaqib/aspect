@@ -1,8 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
-
+import { createIntl } from 'react-intl'
 import PersonTableRow from './PersonTableRow'
 
 describe('PersonTableRow component', () => {

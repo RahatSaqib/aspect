@@ -1,7 +1,6 @@
-import classnames from 'classnames/bind'
 import React from 'react'
+import classnames from 'classnames/bind'
 import { FaLongArrowAltDown, FaLongArrowAltUp } from 'react-icons/fa'
-
 import styles from './Indicator.css'
 
 const cssClasses = classnames.bind(styles)

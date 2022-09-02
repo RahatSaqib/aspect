@@ -1,9 +1,8 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
 import Button from '@mui/material/Button'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import { MdKeyboardArrowLeft } from 'react-icons/md'
-
 import styles from './DetailBackBar.css'
 
 const cssClasses = classnames.bind(styles)

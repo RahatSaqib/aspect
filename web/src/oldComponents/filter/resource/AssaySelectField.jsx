@@ -1,18 +1,15 @@
-// Imports from packages
-import omit from 'lodash/omit'
-import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import Immutable from 'immutable'
 import MenuItem from '@mui/material/MenuItem'
-
-import SelectField from '../../shared/SelectField'
-import { fetchAssays } from '../../../store/AssayRedux'
-
-import messages from '../../../utils/messages/assay'
+import Immutable from 'immutable'
+import flowRight from 'lodash/flowRight'
+import omit from 'lodash/omit'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { I18nContext } from '../../../providers/I18nProvider'
+import { fetchAssays } from '../../../store/AssayRedux'
+import messages from '../../../utils/messages/assay'
+import SelectField from '../../shared/SelectField'
 
 export class AssaySelectField extends PureComponent {
   static propTypes = {

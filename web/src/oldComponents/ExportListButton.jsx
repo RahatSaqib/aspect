@@ -1,13 +1,12 @@
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
-import Popover from '@mui/material/Popover'
-import IconButton from '@mui/material/IconButton'
 import React from 'react'
-import { compose, withState, withHandlers } from 'recompose'
-import { connect } from 'react-redux'
-import classnames from 'classnames/bind'
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
+import IconButton from '@mui/material/IconButton'
 import LinearProgress from '@mui/material/LinearProgress'
+import Popover from '@mui/material/Popover'
+import classnames from 'classnames/bind'
+import { connect } from 'react-redux'
+import { compose, withState, withHandlers } from 'recompose'
 import { onStartDownloading } from '../store/GlobalsRedux'
-
 import styles from './ExportListButton.css'
 
 const cssClasses = classnames.bind(styles)
