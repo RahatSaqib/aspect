@@ -8,7 +8,12 @@ import useI18n from '../../../hooks/useI18n'
 import { useAuthState } from '../../../providers/AuthProvider'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import {
+  getFilters,
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+  setFiltersForLast30Days,
+} from '../../../oldComponents/filter/utils'
 import NavTitle from '../../../oldComponents/NavTitle'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -160,6 +165,7 @@ export const InventoryLogWithProps = ({
             navigate={navigate}
             location={location}
             intl={intl}
+            pageSizeButtonKeys={[10, 25, 50, 100]}
             paginatorStatus={messages.paginatorStatus}
             total={total}
             pageAt={pageAt}
@@ -182,6 +188,7 @@ const InventoryLog = ({ navigate, location }) => {
   const sortPage = makeSortPageSelector({
     sortCol: 'createdOn',
     sortDir: 'desc',
+    pageSize: 50,
   })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({
@@ -190,6 +197,9 @@ const InventoryLog = ({ navigate, location }) => {
     dependencies: {},
   })
   const { value: searchParams } = searchSanitizer(location, {})
+
+  setFiltersForLast30Days(searchParams)
+
   const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
   const filters = getFilters(filtersParams)
 
@@ -213,6 +223,8 @@ const InventoryLog = ({ navigate, location }) => {
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location, {})
+    setFiltersForLast30Days(searchParams)
+
     const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
       searchParams.get('filters') || '',
       {}
