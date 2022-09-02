@@ -2,7 +2,7 @@ import React from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
-import useI18n from '../../hooks/useI18n'
+import useI18n from '../../../hooks/useI18n'
 import styles from './SiteLocationFormMap.css'
 import SiteMap from './SiteMap'
 

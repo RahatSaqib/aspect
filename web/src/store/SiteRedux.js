@@ -4,7 +4,7 @@ import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import { formValueSelector, change as changeForm } from 'redux-form/immutable'
 import { getFilters } from '../oldComponents/filter/utils'
-import { getLatLongFromAddress, convertToFloat } from '../oldPages/site/utils/address'
+import { getLatLongFromAddress, convertToFloat } from '../pages/Site/Detail/Edit/address'
 import {
   filterFieldsRejectedError,
   errorNotFound,
