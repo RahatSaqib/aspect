@@ -1,15 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import Card from '@mui/material/Card'
-
-import Contacts from '../Contacts/Contacts'
-import localMessages from '../messages'
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
+import useContactBySite from '../../../hooks/person/useContactBySite'
 import Summary from '../../../oldComponents/Summary'
 import { getCustomMessage, commonDefinitions } from '../../../utils/utils/customMessages'
-
+import Contacts from '../Contacts/Contacts'
+import localMessages from '../messages'
 import styles from '../SiteDetail.css'
-import useContactBySite from '../../../hooks/person/useContactBySite'
 
 const cssClasses = classnames.bind(styles)
 

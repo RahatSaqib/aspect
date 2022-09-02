@@ -1,3 +1,4 @@
+import format from 'date-fns/format'
 import chunk from 'lodash/chunk'
 import filter from 'lodash/filter'
 import first from 'lodash/first'
@@ -9,8 +10,6 @@ import sortBy from 'lodash/sortBy'
 import sumBy from 'lodash/sumBy'
 import times from 'lodash/times'
 import uniqBy from 'lodash/uniqBy'
-import format from 'date-fns/format'
-
 import graphColorMap from '../Variables'
 import {
   calcPercentageSplitBar,

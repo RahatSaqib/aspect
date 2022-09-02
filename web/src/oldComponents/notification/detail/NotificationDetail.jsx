@@ -1,10 +1,10 @@
 import React from 'react'
-import { compose, withHandlers, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Routes, Route } from 'react-router-dom'
-import NotificationDetailView from './view/NotificationDetailView'
+import { compose, withHandlers, lifecycle } from 'recompose'
+import { bindActionCreators } from 'redux'
 import NotificationDetailHistory from './history/NotificationDetailHistory'
+import NotificationDetailView from './view/NotificationDetailView'
 
 const enhance = compose(
   connect(

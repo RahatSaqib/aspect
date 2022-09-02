@@ -1,12 +1,10 @@
 import React from 'react'
-import { array, oneOfType, string } from 'prop-types'
 import classnames from 'classnames/bind'
 import isString from 'lodash/isString'
-
-import messages from '../messages'
-
-import styles from '../../Table.css'
+import { array, oneOfType, string } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
+import styles from '../../Table.css'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,28 +1,24 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { func, array, object, oneOfType } from 'prop-types'
-import { useQuery } from 'react-query'
-import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
-
-import fetchWrapperForQueries from '../QueryFetch'
-import ErrorBoundary from '../ErrorBoundary'
-
-import AspectTableCore from './TableCore'
-
-import { allowOnlyAPIKeys, determineSortDirection, getColumnIdFromFilterKey, removeNullFromCollection } from './Helpers'
-import { replaceRouteParams } from '../QueryFetch/Helpers'
+import { func, array, object, oneOfType } from 'prop-types'
+import { useQuery } from 'react-query'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
+import useI18n from '../../hooks/useI18n'
+import { getFilters, sanitizeFiltersStringBy } from '../../oldComponents/filter/utils'
 import {
   DEFAULT_PAGE_AT,
   DEFAULT_PAGE_SIZE,
   makeSearchParamsSanitizer,
   makeSortPageSelector,
 } from '../../utils/selectors/searchParams'
-import { getFilters, sanitizeFiltersStringBy } from '../../oldComponents/filter/utils'
-
+import ErrorBoundary from '../ErrorBoundary'
+import fetchWrapperForQueries from '../QueryFetch'
+import { replaceRouteParams } from '../QueryFetch/Helpers'
+import { allowOnlyAPIKeys, determineSortDirection, getColumnIdFromFilterKey, removeNullFromCollection } from './Helpers'
 import styles from './Table.css'
-import useI18n from '../../hooks/useI18n'
+import AspectTableCore from './TableCore'
 
 const cssClasses = classnames.bind(styles)
 

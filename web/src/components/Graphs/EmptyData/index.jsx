@@ -1,10 +1,9 @@
 import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
-
-import styles from './GraphPlaceholders.css'
 import useI18n from '../../../hooks/useI18n'
+import styles from './GraphPlaceholders.css'
 
 const cssClasses = classnames.bind(styles)
 

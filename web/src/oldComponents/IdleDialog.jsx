@@ -1,9 +1,8 @@
-import PropTypes from 'prop-types'
-// Imports from packages
 import React from 'react'
-import { compose, setPropTypes } from 'recompose'
-import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import { defineMessages, injectIntl } from 'react-intl'
+import { connect } from 'react-redux'
+import { compose, setPropTypes } from 'recompose'
 import AspectDialog from './shared/AspectDialog'
 
 const messages = defineMessages({

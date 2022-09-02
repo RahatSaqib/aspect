@@ -1,15 +1,14 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
-import noop from 'lodash/noop'
 import React from 'react'
-import { shallow } from 'enzyme'
 import LinearProgress from '@mui/material/LinearProgress'
-import Stepper from '@mui/material/Stepper'
-import StepLabel from '@mui/material/StepLabel'
 import StepContent from '@mui/material/StepContent'
-
+import StepLabel from '@mui/material/StepLabel'
+import Stepper from '@mui/material/Stepper'
+import { shallow } from 'enzyme'
+import noop from 'lodash/noop'
 import { Hidden } from '../../../oldComponents/pureGrids'
-import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
 
 describe('ResetPassword module', () => {
   const { ResetPassword } = require('./ResetPassword')

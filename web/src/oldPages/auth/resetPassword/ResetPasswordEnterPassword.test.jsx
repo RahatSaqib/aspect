@@ -1,8 +1,8 @@
-import noop from 'lodash/noop'
 import React from 'react'
-import { shallow } from 'enzyme'
-import { createIntl } from 'react-intl'
 import Button from '@mui/material/Button'
+import { shallow } from 'enzyme'
+import noop from 'lodash/noop'
+import { createIntl } from 'react-intl'
 import messages from './messages'
 
 describe('ResetPasswordEnterPassword module', () => {

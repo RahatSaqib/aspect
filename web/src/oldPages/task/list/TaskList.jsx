@@ -1,29 +1,29 @@
+import React from 'react'
+import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
-import pickBy from 'lodash/pickBy'
 import identity from 'lodash/identity'
 import isEqual from 'lodash/isEqual'
-import classnames from 'classnames/bind'
-import React from 'react'
+import pickBy from 'lodash/pickBy'
 import PropTypes from 'prop-types'
-import { compose, withProps, withHandlers, lifecycle, setPropTypes, defaultProps } from 'recompose'
-import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
+import { connect } from 'react-redux'
+import { compose, withProps, withHandlers, lifecycle, setPropTypes, defaultProps } from 'recompose'
+import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import { sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
+import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import StyledDropdown from '../../../oldComponents/shared/StyledDropdown'
+import { i18nWrapper } from '../../../providers/I18nProvider/index'
+import { fetchTasks } from '../../../store/TaskRedux'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../utils/selectors/searchParams'
-import { sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
-import StyledDropdown from '../../../oldComponents/shared/StyledDropdown'
-import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { fetchTasks } from '../../../store/TaskRedux'
-import { TaskDataTable, TaskDataTableHead, TaskDataTableRow } from './TaskDataTable'
 import messages from './messages'
+import { TaskDataTable, TaskDataTableHead, TaskDataTableRow } from './TaskDataTable'
 import styles from './TaskList.css'
-import { i18nWrapper } from '../../../providers/I18nProvider/index'
 
 const cssClasses = classnames.bind(styles)
 

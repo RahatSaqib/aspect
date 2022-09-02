@@ -1,10 +1,9 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import Checkbox from '@mui/material/Checkbox'
-import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
-
+import FormGroup from '@mui/material/FormGroup'
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import styles from '../DailyStatus.css'
 
 const cssClasses = classnames.bind(styles)

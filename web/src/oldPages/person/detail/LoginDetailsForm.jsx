@@ -1,14 +1,13 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
+import classnames from 'classnames/bind'
+import { compose, lifecycle, withHandlers, pure } from 'recompose'
+import recomposeForm from '../../../oldComponents/recomposeForm'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import AspectSwitch from '../../../oldComponents/shared/AspectSwitch'
 import StrongPasswordInput from '../../../oldComponents/shared/StrongPasswordInput'
-import recomposeForm from '../../../oldComponents/recomposeForm'
 import messages from './messages'
-
 import styles from './PersonDetail.css'
 
 const cssClasses = classnames.bind(styles)

@@ -1,8 +1,7 @@
-import classNames from 'classnames'
 import React from 'react'
-import { withStyles } from '@mui/styles'
 import TableRow from '@mui/material/TableRow'
-
+import { withStyles } from '@mui/styles'
+import classNames from 'classnames'
 import styles from './DataTableRowStyle'
 
 const DataTableRow = ({ classes, className, children, ...restProps }) => (

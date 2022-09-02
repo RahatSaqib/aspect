@@ -1,19 +1,16 @@
-// Imports from packages
-import { useQuery } from 'react-query'
-import PropTypes from 'prop-types'
-
-// Material-UI
-import MenuItem from '@mui/material/MenuItem'
-
 import React, { useEffect } from 'react'
+import MenuItem from '@mui/material/MenuItem'
+import PropTypes from 'prop-types'
+import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
-import SelectField from '../../shared/SelectField'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { DEVICE_STATUS } from '../../../components/QueryFetch/Device/index'
 import useI18n from '../../../hooks/useI18n'
-import messages from '../../../utils/messages/deviceStatusMessages'
-import formatI18nMessage from '../../../utils/i18n/formatterWeb'
 import { types } from '../../../store/DeviceMaintenanceStatusRedux'
+import formatI18nMessage from '../../../utils/i18n/formatterWeb'
+import messages from '../../../utils/messages/deviceStatusMessages'
+import SelectField from '../../shared/SelectField'
+
 // TODO: move to HOOKS folder
 const getMaintenanceStatus = async onlyManuallySetableStatuses =>
   fetchWrapperForQueries({

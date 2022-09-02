@@ -1,13 +1,12 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import { FaExclamationTriangle } from 'react-icons/fa'
 import useI18n from '../../../hooks/useI18n'
-import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import AlertType from '../../../oldComponents/shared/AlertType'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-
 import styles from './TaskTableRow.css'
 
 const cssClasses = classnames.bind(styles)

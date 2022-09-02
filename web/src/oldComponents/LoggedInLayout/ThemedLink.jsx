@@ -1,11 +1,9 @@
 import React from 'react'
+import classnames from 'classnames/bind'
 import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
-
 import PermissionsProvider from '../../providers/PermissionsProvider'
 import Link from '../shared/Link'
-
 import styles from './index.css'
 
 const cssClasses = classnames.bind(styles)

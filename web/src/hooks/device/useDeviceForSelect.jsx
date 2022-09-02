@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
-import { DEVICE_KEY, DEVICE_KEY_DEVICE_LIST_ENDPOINT } from './deviceKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { DEVICE_KEY, DEVICE_KEY_DEVICE_LIST_ENDPOINT } from './deviceKeys.js'
 
 const getDeviceSelectList = async (countryId, partnerId, siteId, showUnapprovedDevices, onlyResultDevices) => {
   return fetchWrapperForQueries({

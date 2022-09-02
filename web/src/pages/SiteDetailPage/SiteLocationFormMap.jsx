@@ -1,11 +1,10 @@
-// Imports from packages
-import { defineMessages } from 'react-intl'
-import PropTypes from 'prop-types'
 import React from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
-import SiteMap from './SiteMap'
-import styles from './SiteLocationFormMap.css'
+import PropTypes from 'prop-types'
+import { defineMessages } from 'react-intl'
 import useI18n from '../../hooks/useI18n'
+import styles from './SiteLocationFormMap.css'
+import SiteMap from './SiteMap'
 
 const messages = defineMessages({
   findingLocation: {

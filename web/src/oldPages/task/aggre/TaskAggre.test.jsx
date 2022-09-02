@@ -1,9 +1,9 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { createIntl } from 'react-intl'
-import { TaskAggre } from './TaskAggre'
+import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { Items } from '../../../utils/metaReducers/items'
 import { Table } from '../../../utils/metaReducers/table'
+import { TaskAggre } from './TaskAggre'
 
 describe('TaskAggre module', () => {
   const props = {

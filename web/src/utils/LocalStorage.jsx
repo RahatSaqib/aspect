@@ -1,8 +1,8 @@
 import window from 'global/window'
-import isString from 'lodash/isString'
-import identity from 'lodash/identity'
-import isUndefined from 'lodash/isUndefined'
 import Immutable from 'immutable'
+import identity from 'lodash/identity'
+import isString from 'lodash/isString'
+import isUndefined from 'lodash/isUndefined'
 import { compose, pure, lifecycle } from 'recompose'
 
 const { localStorage } = window

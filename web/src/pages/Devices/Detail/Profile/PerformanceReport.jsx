@@ -1,11 +1,11 @@
 import React from 'react'
-import { oneOfType, object, string, number } from 'prop-types'
-import classnames from 'classnames/bind'
 import Card from '@mui/material/Card'
+import classnames from 'classnames/bind'
+import { oneOfType, object, string, number } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
-import PerformanceBarChart from './PerformanceBarChart'
 import styles from '../DeviceDetail.css'
 import messages from './messages'
+import PerformanceBarChart from './PerformanceBarChart'
 
 const cssClasses = classnames.bind(styles)
 

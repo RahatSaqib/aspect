@@ -1,14 +1,12 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import find from 'lodash/find'
-
-import { getColorIdByFieldName } from '../../Helpers/Formatters'
-import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import messages from '../../intlMessages'
-
-import styles from './CustomLegend.css'
+import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
+import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
+import { getColorIdByFieldName } from '../../Helpers/Formatters'
+import messages from '../../intlMessages'
+import styles from './CustomLegend.css'
 
 const cssClasses = classnames.bind(styles)
 

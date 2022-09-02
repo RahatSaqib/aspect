@@ -1,17 +1,12 @@
-// Imports from packages
-import omit from 'lodash/omit'
-import flowRight from 'lodash/flowRight'
-import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-
-// Material-UI
 import MenuItem from '@mui/material/MenuItem'
-
-// Our imports
-import SelectField from '../../shared/SelectField'
+import flowRight from 'lodash/flowRight'
+import omit from 'lodash/omit'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { fetchConsumables, ConsumableItems } from '../../../store/ConsumableRedux'
+import SelectField from '../../shared/SelectField'
 
 export class ConsumableSelectField extends PureComponent {
   static propTypes = {

@@ -1,5 +1,4 @@
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
-
 import getFormConfig from '../Forms/editConfig'
 import getValidationSchema from '../Forms/validation'
 import messages from './messages'

@@ -1,8 +1,8 @@
 import { defineMessages } from 'react-intl'
-import { commonDefinitions } from '../../../utils/utils/customMessages'
+import resultCategoryAssayMessages from '../../../oldPages/result/list/messages'
 import resultCategoryMessages from '../../../utils/messages/resultCategory'
 import resultCategoryTypeMessages from '../../../utils/messages/resultCategoryType'
-import resultCategoryAssayMessages from '../../../oldPages/result/list/messages'
+import { commonDefinitions } from '../../../utils/utils/customMessages'
 
 const messagesResult = defineMessages({
   site: {

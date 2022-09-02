@@ -1,10 +1,9 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
-import { formatDate } from '../../../utils/utils/dateFormat'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
-
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import { formatDate } from '../../../utils/utils/dateFormat'
 import styles from './DeviceApiKeyTableRow.css'
 
 const cssClasses = classnames.bind(styles)

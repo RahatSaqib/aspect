@@ -1,15 +1,13 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, lifecycle, pure } from 'recompose'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-
+import classnames from 'classnames/bind'
+import { compose, lifecycle, pure } from 'recompose'
+import { timezones, languages } from '../../../oldComponents/filter/hardcoded'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import FlagIcon from '../../../oldComponents/shared/flagIcon/FlagIcon'
-import { timezones, languages } from '../../../oldComponents/filter/hardcoded'
 import messages from './messages'
-
 import styles from './PersonDetail.css'
 
 const cssClasses = classnames.bind(styles)

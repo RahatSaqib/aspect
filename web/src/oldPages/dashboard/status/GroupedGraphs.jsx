@@ -1,8 +1,7 @@
 import React, { memo } from 'react'
-
-import PermissionsProvider from '../../../providers/PermissionsProvider'
 import ErrorBoundary from '../../../components/ErrorBoundary'
 import GraphsContainer from '../../../components/Graphs/GraphsContainer'
+import PermissionsProvider from '../../../providers/PermissionsProvider'
 
 const GroupedGraphs = ({ assays, classNames, graphs, groupName, onGraphSettled, isOwnerReady }) => {
   return graphs && assays?.length

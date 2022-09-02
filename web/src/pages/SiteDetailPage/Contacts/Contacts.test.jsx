@@ -1,6 +1,6 @@
 import React from 'react'
-import { mount } from 'enzyme'
 import Button from '@mui/material/Button'
+import { mount } from 'enzyme'
 import Contacts from './Contacts'
 
 describe('Contacts Component', () => {

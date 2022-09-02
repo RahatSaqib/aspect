@@ -1,4 +1,3 @@
-// Imports from packages
 import { defineMessages } from 'react-intl'
 import { commonDefinitions } from '../../../utils/utils/customMessages'
 

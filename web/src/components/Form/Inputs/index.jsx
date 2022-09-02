@@ -1,12 +1,11 @@
 import React from 'react'
-
-import AspectTextField from './TextField'
-import AspectTextArea from './TextArea'
-import PlaceholderTextField from './PlaceholderTextField'
-import PlaceholderTextArea from './PlaceholderTextArea'
-import { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone } from './DatePicker'
-import AspectSelect from './Select'
 import Checkbox from './Checkbox'
+import { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone } from './DatePicker'
+import PlaceholderTextArea from './PlaceholderTextArea'
+import PlaceholderTextField from './PlaceholderTextField'
+import AspectSelect from './Select'
+import AspectTextArea from './TextArea'
+import AspectTextField from './TextField'
 
 const Inputs = {
   textArea: AspectTextArea,

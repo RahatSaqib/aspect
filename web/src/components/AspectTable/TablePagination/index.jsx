@@ -1,11 +1,9 @@
 import React from 'react'
-import { array, bool, func, number, oneOfType, string } from 'prop-types'
 import classnames from 'classnames/bind'
-
-import PageSizeSelectors from './PageSizeSelectors'
-import PageIndexSelectors from './PageIndexSelectors'
-
+import { array, bool, func, number, oneOfType, string } from 'prop-types'
 import styles from '../Table.css'
+import PageIndexSelectors from './PageIndexSelectors'
+import PageSizeSelectors from './PageSizeSelectors'
 
 const cssClasses = classnames.bind(styles)
 

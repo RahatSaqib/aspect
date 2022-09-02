@@ -1,17 +1,16 @@
 import { stringify } from 'querystring'
-import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
+import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-
-import { aspectFetch } from '../utils/utils/fetch'
+import fetchWrapperForQueries from '../components/QueryFetch/index'
+import { getFilters } from '../oldComponents/filter/utils'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 import { receivedFileResponse } from './GlobalsRedux'
-import fetchWrapperForQueries from '../components/QueryFetch/index'
-import { getFilters } from '../oldComponents/filter/utils'
 
 export const types = {
   REQUEST_REPORTS: 'REQUEST_REPORTS',

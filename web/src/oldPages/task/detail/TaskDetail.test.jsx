@@ -1,7 +1,6 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { createIntl } from 'react-intl'
-
+import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { TaskDetail } from './TaskDetail'
 
 describe('TaskDetail module', () => {

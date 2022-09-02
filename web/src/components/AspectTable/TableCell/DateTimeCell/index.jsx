@@ -1,11 +1,9 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
-
-import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
-
-import styles from '../../Table.css'
 import useI18n from '../../../../hooks/useI18n'
+import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
+import styles from '../../Table.css'
 
 const cssClasses = classnames.bind(styles)
 

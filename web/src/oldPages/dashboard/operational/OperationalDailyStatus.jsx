@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react'
-
-import PermissionsProvider from '../../../providers/PermissionsProvider'
 import ErrorBoundary from '../../../components/ErrorBoundary'
 import DailyStatus from '../../../components/Graphs/DailyStatus'
 import DailyStatusMap from '../../../components/Maps/DailyStatus'
+import PermissionsProvider from '../../../providers/PermissionsProvider'
 
 export const OperationalDailyStatus = () => {
   return (
