@@ -129,7 +129,7 @@ const sanitizerByConfigKey = {
 }
 
 export const setFiltersForLast30Days = searchParams => {
-  const filtersParams = new URLSearchParams(searchParams.get('filters'))
+  const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
   if (!filtersParams.has('minDate') && !filtersParams.has('maxDate')) {
     const now = new Date()
     const last30DaysStart = subtractDays(now, 30)

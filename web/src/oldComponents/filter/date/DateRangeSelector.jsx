@@ -74,13 +74,11 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.today)} (${formatDayMonthFunc(now)})`,
-        minDate: startOfDay(now),
-        maxDate: endOfDay(now),
+        ...this.getValues(startOfDay(now), endOfDay(now)),
       },
       {
         label: `${formatMessage(messages.yesterday)} (${formatDayMonthFunc(yesterday)})`,
-        minDate: startOfDay(yesterday),
-        maxDate: endOfDay(yesterday),
+        ...this.getValues(startOfDay(yesterday), endOfDay(yesterday)),
       },
       ...map(daysBeforeYesterday, day => {
         const selectItem = {
@@ -89,8 +87,7 @@ export class DateRangeSelector extends PureComponent {
             day: '2-digit',
             month: '2-digit',
           }),
-          minDate: startOfDay(day),
-          maxDate: endOfDay(day),
+          ...this.getValues(startOfDay(day), endOfDay(day)),
         }
         return selectItem
       }),
@@ -115,30 +112,26 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.last7Days)}`,
-        minDate: startOfDay(last7DaysStart),
-        maxDate: endOfDay(now),
+        ...this.getValues(startOfDay(last7DaysStart), endOfDay(now)),
       },
       {
         label: `${formatMessage(messages.thisWeek)} (${formatDayMonthFunc(thisWeekStart)} - ${formatDayMonthFunc(
           thisWeekEnd
         )})`,
-        minDate: thisWeekStart,
-        maxDate: thisWeekEnd,
+        ...this.getValues(thisWeekStart, thisWeekEnd),
       },
       {
         label: `${formatMessage(messages.lastWeek)} (${formatDayMonthFunc(lastWeekStart)} - ${formatDayMonthFunc(
           lastWeekEnd
         )})`,
-        minDate: lastWeekStart,
-        maxDate: lastWeekEnd,
+        ...this.getValues(lastWeekStart, lastWeekEnd),
       },
       ...map(weeksBeforeLast, dayInWeek => {
         const weekStart = startOfWeek(dayInWeek)
         const weekEnd = endOfWeek(dayInWeek)
         return {
           label: `${formatDayMonthFunc(weekStart)} - ${formatDayMonthFunc(weekEnd)}`,
-          minDate: startOfDay(weekStart),
-          maxDate: endOfDay(weekEnd),
+          ...this.getValues(startOfDay(weekStart), endOfDay(weekEnd)),
         }
       }),
     ]
@@ -162,30 +155,26 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.last30Days)}`,
-        minDate: startOfDay(last30DaysStart),
-        maxDate: endOfDay(now),
+        ...this.getValues(startOfDay(last30DaysStart), endOfDay(now)),
       },
       {
         label: `${formatMessage(messages.thisMonth)} (${formatDayMonthFunc(thisMonthStart)} - ${formatDayMonthFunc(
           thisMonthEnd
         )})`,
-        minDate: thisMonthStart,
-        maxDate: thisMonthEnd,
+        ...this.getValues(thisMonthStart, thisMonthEnd),
       },
       {
         label: `${formatMessage(messages.lastMonth)} (${formatDayMonthFunc(lastMonthStart)} - ${formatDayMonthFunc(
           lastMonthEnd
         )})`,
-        minDate: lastMonthStart,
-        maxDate: lastMonthEnd,
+        ...this.getValues(lastMonthStart, lastMonthEnd),
       },
       ...map(monthsBeforeLast, dayInMonth => {
         const monthStart = startOfMonth(dayInMonth)
         const monthEnd = endOfMonth(dayInMonth)
         return {
           label: formatDate(monthStart, { month: 'long', year: 'numeric' }),
-          minDate: startOfDay(monthStart),
-          maxDate: endOfDay(monthEnd),
+          ...this.getValues(startOfDay(monthStart), endOfDay(monthEnd)),
         }
       }),
     ]
@@ -205,8 +194,7 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.thisQuarter)}`,
-        minDate: startOfDay(thisQuarterStart),
-        maxDate: endOfDay(thisQuarterEnd),
+        ...this.getValues(startOfDay(thisQuarterStart), endOfDay(thisQuarterEnd)),
       },
       ...map(previousQuarters, dayInQuarter => {
         const quarterStart = startOfQuarter(dayInQuarter)
@@ -215,8 +203,7 @@ export class DateRangeSelector extends PureComponent {
           label: `${formatMessage(messages.quarter)} ${getQuarter(dayInQuarter)} ${formatDate(dayInQuarter, {
             year: 'numeric',
           })}`,
-          minDate: startOfDay(quarterStart),
-          maxDate: endOfDay(quarterEnd),
+          ...this.getValues(startOfDay(quarterStart), endOfDay(quarterEnd)),
         }
       }),
     ]
@@ -239,21 +226,18 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.thisYear)} (${formatDate(thisYearStart, { year: 'numeric' })})`,
-        minDate: thisYearStart,
-        maxDate: thisYearEnd,
+        ...this.getValues(thisYearStart, thisYearEnd),
       },
       {
         label: `${formatMessage(messages.lastYear)} (${formatDate(lastYearStart, { year: 'numeric' })})`,
-        minDate: lastYearStart,
-        maxDate: lastYearEnd,
+        ...this.getValues(lastYearStart, lastYearEnd),
       },
       ...map(yearsBeforeLast, dayInYear => {
         const yearStart = startOfYear(dayInYear)
         const yearEnd = endOfYear(dayInYear)
         return {
           label: formatDate(yearStart, { year: 'numeric' }),
-          minDate: startOfDay(yearStart),
-          maxDate: endOfDay(yearEnd),
+          ...this.getValues(startOfDay(yearStart), endOfDay(yearEnd)),
         }
       }),
     ]
@@ -288,7 +272,7 @@ export class DateRangeSelector extends PureComponent {
   }
 
   handleMaxDateChange = date => {
-    this.props.onChangeDate({ maxDate: endOfDay(date).toJSON() })
+    this.props.onChangeDate(this.getValues(null, endOfDay(date).toJSON()))
   }
 
   handleMinDateChange = date => {

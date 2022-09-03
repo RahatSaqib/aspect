@@ -1,5 +1,5 @@
 import classnames from 'classnames/bind'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@mui/material/TableBody'
@@ -48,10 +48,10 @@ const FILTERS_CONFIG = [
     lotNumber: true,
     requiredPermissions: [],
   },
-  {
-    expirationDate: true,
-    requiredPermissions: [],
-  },
+  // {
+  //   expirationDate: true,
+  //   requiredPermissions: [],
+  // },
 ]
 
 const availableSortCol = [
@@ -183,7 +183,7 @@ const InventoryLog = ({ navigate, location }) => {
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
-
+  const { requestParams, setRequestParams } = useState({})
   // >>>>>> Structuring data <<<<<<
   const sortPage = makeSortPageSelector({
     sortCol: 'createdOn',
@@ -196,34 +196,33 @@ const InventoryLog = ({ navigate, location }) => {
     availableSortCol,
     dependencies: {},
   })
-  const { value: searchParams } = searchSanitizer(location, {})
-
-  setFiltersForLast30Days(searchParams)
-
-  const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
-  const filters = getFilters(filtersParams)
 
   // >>>>>> Defining queries <<<<<<
-  const params = {
-    sortCol,
-    sortDir,
-    page: pageAt,
-    size: pageSize,
-    ...filters,
-  }
-
+  useEffect(() => {
+    const { value: searchParams } = searchSanitizer(location, {})
+    const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
+    const filters = getFilters(filtersParams)
+    setFiltersForLast30Days(searchParams)
+    setRequestParams({
+      sortCol,
+      sortDir,
+      page: pageAt,
+      size: pageSize,
+      ...filters,
+    })
+  }, [])
   const {
     isError,
     isLoading,
     data = false,
     error,
-  } = useQuery([INVENTORY_LOG.KEY, params, filters], async () =>
-    fetchWrapperForQueries({ endpoint: INVENTORY_LOG.ENDPOINT, params })
+  } = useQuery([INVENTORY_LOG.KEY, requestParams], async () =>
+    fetchWrapperForQueries({ endpoint: INVENTORY_LOG.ENDPOINT, params: requestParams })
   )
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location, {})
-    setFiltersForLast30Days(searchParams)
+    // setFiltersForLast30Days(searchParams)
 
     const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
       searchParams.get('filters') || '',
@@ -231,7 +230,6 @@ const InventoryLog = ({ navigate, location }) => {
     )
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-
       navigate(
         {
           ...location,
