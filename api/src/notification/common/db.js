@@ -35,9 +35,6 @@ async function getListNotifications(query, credentials) {
     .leftOuterJoin('Notification as n', 'nt.id', 'n.notificationTypeId')
     .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
-    .where(builder => {
-      builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
-    })
     .modify(filterParams, query, {
       notificationName: 'nt.name',
     })

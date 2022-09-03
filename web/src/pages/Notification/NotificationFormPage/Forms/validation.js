@@ -36,23 +36,27 @@ const validationSchema = formatMessage =>
         'InstrumentReplaced',
       ]),
       name: Yup.string().required(formatMessage(messages.notificationNameRequired)),
-      result: Yup.array()
-        .of(
-          Yup.object().shape({
-            assayId: Yup.string().required(),
-            resultCategoryId: Yup.array()
-              .of(
-                Yup.object().shape({
-                  label: Yup.string().required(),
-                  value: Yup.string().required(),
-                  scope: Yup.string().required().oneOf(['ResultCategories', 'ResultCategoryGroups']),
-                })
-              )
-              .required()
-              .min(1, formatMessage(messages.resultCategoryRequired)),
-          })
-        )
-        .min(1, formatMessage(messages.assayRequired)),
+      result: Yup.array().when('notificationType', {
+        is: 'resultBased',
+        then: Yup.array()
+          .of(
+            Yup.object().shape({
+              assayId: Yup.string().required(),
+              resultCategoryId: Yup.array()
+                .required()
+                .min(1, formatMessage(messages.resultCategoryRequired))
+                .of(
+                  Yup.object().shape({
+                    label: Yup.string().required(),
+                    value: Yup.string().required(),
+                    scope: Yup.string().required().oneOf(['ResultCategories', 'ResultCategoryGroups']),
+                  })
+                ),
+            })
+          )
+          .min(1, formatMessage(messages.assayRequired)),
+        otherwise: Yup.array().notRequired(),
+      }),
       deviceLevelId: Yup.string().required().oneOf(['national', 'state', 'lga', 'lab']),
       areaItemsState: Yup.array()
         .of(Yup.object().shape({ value: Yup.string().required() }))

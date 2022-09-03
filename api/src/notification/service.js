@@ -704,7 +704,7 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     webBody,
     webUrl,
     enabled,
-    issueTypeId: issueTypeExternalId,
+    issueType: issueTypeExternalId,
     notificationType: notificationTypeExternalId,
   } = payload
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeExternalId)
@@ -726,6 +726,7 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
       persons,
       sendToPatient,
     })
+
     if (filterConditionValidation !== true) return filterConditionValidation
 
     /**
@@ -741,6 +742,7 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           .join(''),
         ...auditFields,
       })
+
     const insertSmsTemplate = async () =>
       knex('SmsTemplate').insert({
         message: smsBody,
@@ -929,28 +931,24 @@ async function saveNotification(request) {
   const { id } = params
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
-  const { notificationType } = payload
-  if (notificationType === 'resultBased') {
-    const result = await saveNotificationType({
-      id,
-      partnerId,
-      userId,
-      payload,
-    })
 
-    if (result instanceof Boom.Boom) return result
+  const result = await saveNotificationType({
+    id,
+    partnerId,
+    userId,
+    payload,
+  })
 
-    const { ok, notificationTypeId, error } = result
-    if (!ok) {
-      return Boom.internal(`Can not save notification: ${error}`)
-    }
-    if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
-    messageContext.notificationTypeCreated(notificationTypeId)
+  if (result instanceof Boom.Boom) return result
 
-    return { ok: true, notificationTypeId }
+  const { ok, notificationTypeId, error } = result
+  if (!ok) {
+    return Boom.internal(`Can not save notification: ${error}`)
   }
+  if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
+  messageContext.notificationTypeCreated(notificationTypeId)
 
-  return { ok: false, notificationTypeId: -1 }
+  return { ok: true, notificationTypeId }
 }
 
 async function deleteNotification(request) {
