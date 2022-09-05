@@ -4,6 +4,7 @@ import { useQuery } from 'react-query'
 import { Helmet } from 'react-helmet'
 import TableBody from '@mui/material/TableBody'
 import PropTypes from 'prop-types'
+import isEmpty from 'lodash/isEmpty'
 import useI18n from '../../../hooks/useI18n'
 import { useAuthState } from '../../../providers/AuthProvider'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
@@ -48,10 +49,10 @@ const FILTERS_CONFIG = [
     lotNumber: true,
     requiredPermissions: [],
   },
-  // {
-  //   expirationDate: true,
-  //   requiredPermissions: [],
-  // },
+  {
+    expirationDate: true,
+    requiredPermissions: [],
+  },
 ]
 
 const availableSortCol = [
@@ -183,53 +184,43 @@ const InventoryLog = ({ navigate, location }) => {
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
-  const { requestParams, setRequestParams } = useState({})
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
+  const [firstLoad, setFirstLoad] = useState(true)
+  const [requestParams, setRequestParams] = useState({})
   // >>>>>> Structuring data <<<<<<
+
+  const {
+    isError,
+    isLoading,
+    data = false,
+    error,
+  } = useQuery(
+    [INVENTORY_LOG.KEY, requestParams],
+    async () => fetchWrapperForQueries({ endpoint: INVENTORY_LOG.ENDPOINT, params: requestParams }),
+    {
+      enable: !isEmpty(requestParams),
+    }
+  )
   const sortPage = makeSortPageSelector({
     sortCol: 'createdOn',
     sortDir: 'desc',
     pageSize: 50,
   })
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
+
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({
     location,
     availableSortCol,
     dependencies: {},
   })
 
-  // >>>>>> Defining queries <<<<<<
   useEffect(() => {
+    // >>>>>> Defining queries <<<<<<
     const { value: searchParams } = searchSanitizer(location, {})
     const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
-    const filters = getFilters(filtersParams)
-    setFiltersForLast30Days(searchParams)
-    setRequestParams({
-      sortCol,
-      sortDir,
-      page: pageAt,
-      size: pageSize,
-      ...filters,
-    })
-  }, [])
-  const {
-    isError,
-    isLoading,
-    data = false,
-    error,
-  } = useQuery([INVENTORY_LOG.KEY, requestParams], async () =>
-    fetchWrapperForQueries({ endpoint: INVENTORY_LOG.ENDPOINT, params: requestParams })
-  )
-
-  useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location, {})
-    // setFiltersForLast30Days(searchParams)
-
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
-      searchParams.get('filters') || '',
-      {}
-    )
-    if (sanitized || filtersSanitized) {
-      searchParams.set('filters', filtersParams)
+    searchParams.set('filters', filtersParams)
+    if (firstLoad) {
+      setFiltersForLast30Days(searchParams)
+      setFirstLoad(false)
       navigate(
         {
           ...location,
@@ -238,7 +229,16 @@ const InventoryLog = ({ navigate, location }) => {
         { replace: true }
       )
     }
-  }, [location, navigate])
+
+    const filters = getFilters(filtersParams)
+    setRequestParams({
+      sortCol,
+      sortDir,
+      page: pageAt,
+      size: pageSize,
+      ...filters,
+    })
+  }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize])
 
   if (isError) throw new Error(error)
 
@@ -249,12 +249,8 @@ const InventoryLog = ({ navigate, location }) => {
     reducedFilters,
     isLoading,
     data,
-    sortCol,
-    sortDir,
-    pageAt,
-    pageSize,
+    ...{ sortCol, sortDir, pageAt, pageSize, ...requestParams },
   }
-
   return <InventoryLogWithProps {...props} />
 }
 

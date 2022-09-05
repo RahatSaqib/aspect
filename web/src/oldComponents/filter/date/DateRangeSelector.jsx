@@ -42,8 +42,8 @@ export class DateRangeSelector extends PureComponent {
     onChangeDate: PropTypes.func.isRequired,
     floatingLabelText: PropTypes.string.isRequired,
     controlClassName: PropTypes.string.isRequired,
-    minDate: PropTypes.string,
-    maxDate: PropTypes.string,
+    minDate: PropTypes.any,
+    maxDate: PropTypes.any,
     dateFormat: PropTypes.string,
     minFilterName: PropTypes.string,
     maxFilterName: PropTypes.string,
@@ -280,7 +280,11 @@ export class DateRangeSelector extends PureComponent {
   }
 
   handleDateRangeChange = ({ target: { value } }) => {
-    this.props.onChangeDate(value ? this.getValues(value.minDate.toJSON(), value.maxDate.toJSON()) : this.getValues())
+    this.props.onChangeDate(
+      value
+        ? this.getValues(value[this.getMinFilterName()].toJSON(), value[this.getMaxFilterName()].toJSON())
+        : this.getValues()
+    )
   }
 
   handleRangeModeChange = ({ target: { value } }) => {
@@ -389,7 +393,9 @@ export class DateRangeSelector extends PureComponent {
                   >
                     {dropDownSelectItems.map(dropDownSelectItem => (
                       <MenuItem
-                        key={`${dropDownSelectItem.minDate.getTime()}-${dropDownSelectItem.maxDate.getTime()}`}
+                        key={`${dropDownSelectItem[this.getMinFilterName()].getTime()}-${dropDownSelectItem[
+                          this.getMaxFilterName()
+                        ].getTime()}`}
                         value={dropDownSelectItem}
                       >
                         {dropDownSelectItem.label}
