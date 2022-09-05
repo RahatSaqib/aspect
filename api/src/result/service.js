@@ -547,8 +547,11 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     total,
     awaitingTreatment,
     length: transformedData.length,
-    nextPage,
     data: transformedData,
+  }
+
+  if (nextPage) {
+    result.nextPage = nextPage
   }
 
   return result

@@ -108,6 +108,8 @@ describe('Result download routes', () => {
       assertReporterResultDownloadResponse(response)
       assert.isAtLeast(response.body.total, 0)
       assert.equal(response.body.length, 0)
+      assert.isAtLeast(response.body.awaitingTreatment, 0)
+      assert.isAtLeast(response.body.nextPage, 0)
 
       assert.typeOf(response.body.data, 'array')
       assert.equal(response.body.data.length, 0)
