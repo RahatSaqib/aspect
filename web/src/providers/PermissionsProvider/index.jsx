@@ -1,10 +1,8 @@
 import React, { Fragment, memo } from 'react'
-import PropTypes from 'prop-types'
 import flowRight from 'lodash/flowRight'
-
-import { useAuthState } from '../AuthProvider'
-
+import PropTypes from 'prop-types'
 import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../../oldComponents/shared/requirePermissions'
+import { useAuthState } from '../AuthProvider'
 
 export const isGraphPermitted = ({
   auth,

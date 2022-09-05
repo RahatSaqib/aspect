@@ -1,14 +1,12 @@
+import React from 'react'
+import MenuItem from '@mui/material/MenuItem'
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
-import React from 'react'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { compose, pure, setPropTypes, mapProps, lifecycle } from 'recompose'
-
-import MenuItem from '@mui/material/MenuItem'
-
-import SelectField from '../../shared/SelectField'
+import { bindActionCreators } from 'redux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../../store/JobRedux'
+import SelectField from '../../shared/SelectField'
 
 const enhance = compose(
   pure,

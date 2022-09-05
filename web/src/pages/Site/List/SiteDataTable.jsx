@@ -1,5 +1,4 @@
 import Table from '@mui/material/Table'
-
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import SiteTableRow from './SiteTableRow'
 

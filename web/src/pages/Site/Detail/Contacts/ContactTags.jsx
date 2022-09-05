@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
 import Immutable from 'immutable'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import { fetchAvailablePersons, fetchUpdateSiteContacts } from '../../../../store/PersonRedux'

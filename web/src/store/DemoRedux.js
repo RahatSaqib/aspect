@@ -1,11 +1,8 @@
-import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-
-import { aspectFetch } from '../utils/utils/fetch'
-
+import { defineMessages } from 'react-intl'
 import { errorNotFound, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
-
 import { receiveItem, Items } from '../utils/metaReducers/items'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   DEMO_REQUEST_DEVICE: 'DEMO_REQUEST_DEVICE',

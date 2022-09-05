@@ -1,13 +1,13 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import Immutable from 'immutable'
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
 import { createIntl } from 'react-intl'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import { AuthProvider } from '../../../providers/AuthProvider'
 import { Items } from '../../../utils/metaReducers/items'
 import { Table } from '../../../utils/metaReducers/table'
 // import ExportListButton from '../../globals/components/ExportListButton'
-import { AuthProvider } from '../../../providers/AuthProvider'
 
 const initialState = {
   permissions: null,

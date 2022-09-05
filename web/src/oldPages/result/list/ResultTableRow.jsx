@@ -1,18 +1,16 @@
-import partial from 'lodash/partial'
-import isNumber from 'lodash/isNumber'
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import Tooltip from '@mui/material/Tooltip'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
-
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
+import isNumber from 'lodash/isNumber'
+import partial from 'lodash/partial'
 import useI18n from '../../../hooks/useI18n'
-import formatters from '../formatters'
-import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
-
 import styles from '../../../oldComponents/shared/DataTableRow.css'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import PermissionsProvider from '../../../providers/PermissionsProvider'
+import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
+import formatters from '../formatters'
 
 const cssClasses = classnames.bind(styles)
 

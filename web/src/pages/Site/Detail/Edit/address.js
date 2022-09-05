@@ -1,7 +1,7 @@
 /* global google */
 import isNumber from 'lodash/isNumber'
-import some from 'lodash/some'
 import isString from 'lodash/isString'
+import some from 'lodash/some'
 
 let geocoder = null
 function getGeoCoder() {

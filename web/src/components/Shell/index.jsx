@@ -1,9 +1,8 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
-import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-
+import Grid from '@mui/material/Grid'
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import styles from './Shell.css'
 
 const cssClasses = classnames.bind(styles)

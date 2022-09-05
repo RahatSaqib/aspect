@@ -1,8 +1,8 @@
-import Immutable from 'immutable'
 import React from 'react'
+import Immutable from 'immutable'
 import { createIntl } from 'react-intl'
-import { SummaryStatus } from './SummaryStatus'
 import { shallowWithQuery } from '../../../__setup__/common'
+import { SummaryStatus } from './SummaryStatus'
 
 describe('Summary Status component', () => {
   const props = {

@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react'
+import isObject from 'lodash/isObject'
 import { string, object, number, oneOfType } from 'prop-types'
 import { Link } from 'react-router-dom'
-import isObject from 'lodash/isObject'
-
 import { useUserIsPermitted } from '../../providers/RoutePermissions'
 
 /**

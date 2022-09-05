@@ -1,14 +1,12 @@
 import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import map from 'lodash/map'
+import PropTypes from 'prop-types'
+import useI18n from '../../../hooks/useI18n'
 import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
-
 import AspectResponsivePie from '../PieGraph/AspectResponsivePie'
 import messages from './messages'
-
 import styles from './PieRowGraph.css'
-import useI18n from '../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

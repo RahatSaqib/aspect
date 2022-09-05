@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useFormikContext } from 'formik'
-import { useQuery } from 'react-query'
 import filter from 'lodash/filter'
 import map from 'lodash/map'
-import fetchWrapperForQueries from '../../../QueryFetch'
+import { useQuery } from 'react-query'
 import { PureSelect } from '../../../Form/PureFormik/Inputs'
+import fetchWrapperForQueries from '../../../QueryFetch'
 
 const StateSelect = props => {
   const [country, setCountry] = useState()

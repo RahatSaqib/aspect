@@ -1,26 +1,25 @@
+import React from 'react'
+import PermIdentity from '@mui/icons-material/PermIdentity'
+import Card from '@mui/material/Card'
+import IconButton from '@mui/material/IconButton'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import Tooltip from '@mui/material/Tooltip'
+import classnames from 'classnames/bind'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
-import classnames from 'classnames/bind'
-import React from 'react'
-import IconButton from '@mui/material/IconButton'
-import Card from '@mui/material/Card'
 import { MdFileDownload } from 'react-icons/md'
-import TableBody from '@mui/material/TableBody'
-import Table from '@mui/material/Table'
-import PermIdentity from '@mui/icons-material/PermIdentity'
-import Tooltip from '@mui/material/Tooltip'
-import messages from '../list/messages'
-import DataTableHead from '../../../oldComponents/shared/tableHead'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-
-import cssStyles from './HistoryResults.css'
+import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { i18nWrapper } from '../../../providers/I18nProvider/index'
+import messages from '../list/messages'
+import cssStyles from './HistoryResults.css'
 
 const cssClasses = classnames.bind(cssStyles)
-const styles = require('../../../oldComponents/shared/DataTableRow.css')
 
 export const Results = ({
   navigate,

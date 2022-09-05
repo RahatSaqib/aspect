@@ -1,33 +1,28 @@
-import PropTypes from 'prop-types'
 import React, { useEffect, useState } from 'react'
+import LinearProgress from '@mui/material/LinearProgress'
+import Paper from '@mui/material/Paper'
+import classnames from 'classnames/bind'
+import isNil from 'lodash/isNil'
+import PropTypes from 'prop-types'
+import { Helmet } from 'react-helmet'
+import { defineMessages } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
-import classnames from 'classnames/bind'
-import { defineMessages } from 'react-intl'
-import isNil from 'lodash/isNil'
-
-import Paper from '@mui/material/Paper'
-import LinearProgress from '@mui/material/LinearProgress'
-import Shell from '../../components/Shell'
-
-// eslint-disable-next-line import/no-named-default
-import { default as canEdit } from '../../utils/selectors/isEditable'
-
+import ErrorBoundary from '../../../components/ErrorBoundary'
+import Shell from '../../../components/Shell'
+import ShellContent from '../../../components/Shell/Content'
+import ShellHeader from '../../../components/Shell/Header'
+import useSite from '../../../hooks/site/useSite'
+import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
+import useI18n from '../../../hooks/useI18n'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
+import TaskList from '../../../oldPages/task/list/TaskList'
+import { default as canEdit } from '../../../utils/selectors/isEditable' // eslint-disable-line import/no-named-default
+import SiteForm from './Edit/SiteForm'
 import messages from './messages'
 import SiteDetailProfile from './Profile/SiteDetailProfile'
-import SiteForm from './Edit/SiteForm'
-import SiteLocationFormMap from './SiteLocationFormMap'
-import ShellHeader from '../../components/Shell/Header'
-import ShellContent from '../../components/Shell/Content'
-import AspectButton from '../../oldComponents/shared/AspectButton'
-
 import styles from './SiteDetail.css'
-import useSite from '../../hooks/site/useSite'
-import useTagByTypeAndId from '../../hooks/tag/useTagByTypeAndId'
-import ErrorBoundary from '../../components/ErrorBoundary'
-import TaskList from '../../oldPages/task/list/TaskList'
-import useI18n from '../../hooks/useI18n'
+import SiteLocationFormMap from './SiteLocationFormMap'
 
 const cssClasses = classnames.bind(styles)
 

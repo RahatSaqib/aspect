@@ -1,18 +1,16 @@
 import React from 'react'
-import { bool, func, number, object, oneOfType, shape, string } from 'prop-types'
-import classnames from 'classnames/bind'
 import Card from '@mui/material/Card'
 import CircularProgress from '@mui/material/CircularProgress'
-
-import AspectLink from '../AspectLink'
-import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
-import IconProvider from '../IconProvider'
-import { buildWidgetToLinkParams, translate } from './Helpers'
-import WidgetAlert from './Alerts'
-import messages from './messages'
-
-import styles from './Widgets.css'
+import classnames from 'classnames/bind'
+import { bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import useI18n from '../../hooks/useI18n'
+import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
+import AspectLink from '../AspectLink'
+import IconProvider from '../IconProvider'
+import WidgetAlert from './Alerts'
+import { buildWidgetToLinkParams, translate } from './Helpers'
+import messages from './messages'
+import styles from './Widgets.css'
 
 const cssClasses = classnames.bind(styles)
 

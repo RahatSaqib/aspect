@@ -1,7 +1,7 @@
 import React from 'react'
+import LinearProgress from '@mui/material/LinearProgress'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import LinearProgress from '@mui/material/LinearProgress'
 import useSiteList from '../../hooks/site/useSiteList'
 
 const SiteListSelect = ({ name, label, value, onChange, width, disabled }) => {

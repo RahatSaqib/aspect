@@ -1,7 +1,7 @@
-import Immutable from 'immutable'
 import React from 'react'
-import { createIntl } from 'react-intl'
 import { shallow } from 'enzyme'
+import Immutable from 'immutable'
+import { createIntl } from 'react-intl'
 import DetailPanel, { DetailGroup } from './DetailPanel'
 
 describe('DetailPanel module', () => {

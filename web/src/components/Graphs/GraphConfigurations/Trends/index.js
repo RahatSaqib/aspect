@@ -1,12 +1,11 @@
 import reduce from 'lodash/reduce'
-
-import LineGraph from '../../LineGraph'
-import BarGraph from '../../BarGraph'
-import { getTimePeriod } from '../../Helpers/Formatters'
-import FilterByStateDropDown from '../../../AspectDropDown/FilterByStateDropDown'
 import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
-import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
+import FilterByStateDropDown from '../../../AspectDropDown/FilterByStateDropDown'
+import BarGraph from '../../BarGraph'
 import AxisRightLayer from '../../BarGraph/AxisRightLayer'
+import { getTimePeriod } from '../../Helpers/Formatters'
+import LineGraph from '../../LineGraph'
+import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },

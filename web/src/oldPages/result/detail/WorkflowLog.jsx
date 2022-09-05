@@ -1,18 +1,16 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle, pure } from 'recompose'
-import { defineMessages } from 'react-intl'
 import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
-import Typography from '@mui/material/Typography'
+import CardHeader from '@mui/material/CardHeader'
 import TableBody from '@mui/material/TableBody'
-
-import TablePaginator from '../../components/shared/TablePaginator'
+import Typography from '@mui/material/Typography'
+import classnames from 'classnames/bind'
+import { defineMessages } from 'react-intl'
+import { compose, withHandlers, lifecycle, pure } from 'recompose'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
-import { WorkflowLogDataTable, WorkflowLogDataTableHead, WorkflowLogDataTableRow } from './WorkflowLogDataTable'
-
+import TablePaginator from '../../components/shared/TablePaginator'
 import styles from './WorkflowLog.css'
+import { WorkflowLogDataTable, WorkflowLogDataTableHead, WorkflowLogDataTableRow } from './WorkflowLogDataTable'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,6 +1,5 @@
 import { compose, mapProps, defaultProps } from 'recompose'
 import { defineMessages } from 'react-intl'
-
 import StyledDropdown from './shared/StyledDropdown'
 import { setFiltersForLast30Days } from './filter/utils'
 

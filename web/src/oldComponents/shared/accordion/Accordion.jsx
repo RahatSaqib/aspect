@@ -1,8 +1,7 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withStateHandlers } from 'recompose'
 import Card from '@mui/material/Card'
-
+import classnames from 'classnames/bind'
+import { compose, withStateHandlers } from 'recompose'
 import styles from './Accordion.css'
 
 const cssClasses = classnames.bind(styles)

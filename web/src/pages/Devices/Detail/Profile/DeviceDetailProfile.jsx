@@ -1,27 +1,23 @@
 import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
-import flowRight from 'lodash/flowRight'
-import classnames from 'classnames/bind'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { connect } from 'react-redux'
+import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
-import Card from '@mui/material/Card'
-import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
-import resultMessages from '../../../../oldPages/result/list/messages.js'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../../../utils/selectors/searchParams'
-import { formatRelative } from '../../../../utils/utils/dateFormat'
-import { useAuthState } from '../../../../providers/AuthProvider'
+import classnames from 'classnames/bind'
+import flowRight from 'lodash/flowRight'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import useI18n from '../../../../hooks/useI18n'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/filter/utils'
-import Results from '../../../../oldPages/result/historyResults/HistoryResults'
-import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import { fetchResults, exportResults } from '../../../../store/ResultRedux'
+import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
+import requirePermissions from '../../../../oldComponents/shared/requirePermissions'
+import Summary from '../../../../oldComponents/Summary'
+import Results from '../../../../oldPages/result/historyResults/HistoryResults'
+import resultMessages from '../../../../oldPages/result/list/messages.js'
+import { useAuthState } from '../../../../providers/AuthProvider'
 import { tokens } from '../../../../store/DeviceApprovalRedux'
 import {
   showDialog,
@@ -30,16 +26,19 @@ import {
   updateDeviceMaintenanceStatus,
   exportDeviceLogs,
 } from '../../../../store/DeviceRedux'
-import Summary from '../../../../oldComponents/Summary'
-import requirePermissions from '../../../../oldComponents/shared/requirePermissions'
+import { fetchResults, exportResults } from '../../../../store/ResultRedux'
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../../../utils/selectors/searchParams'
+import { formatRelative } from '../../../../utils/utils/dateFormat'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
-import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
-import messages from './messages'
-import useI18n from '../../../../hooks/useI18n'
-import PerformanceReport from './PerformanceReport'
-
+import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import styles from '../DeviceDetail.css'
+import messages from './messages'
+import PerformanceReport from './PerformanceReport'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,12 +1,10 @@
-// Imports from packages
-import isString from 'lodash/isString'
-import reduce from 'lodash/reduce'
-import omit from 'lodash/omit'
-import keys from 'lodash/keys'
-import PropTypes from 'prop-types'
 import React from 'react'
+import isString from 'lodash/isString'
+import keys from 'lodash/keys'
+import omit from 'lodash/omit'
+import reduce from 'lodash/reduce'
+import PropTypes from 'prop-types'
 import { compose, setPropTypes, pure } from 'recompose'
-
 import styles from './pure-grids-responsive-min.css'
 
 const pureGridPropTypes = {

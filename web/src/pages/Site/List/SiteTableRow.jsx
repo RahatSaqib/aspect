@@ -1,13 +1,12 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
+import useI18n from '../../../hooks/useI18n'
+import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
-import { messages } from './SiteList'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-import useI18n from '../../../hooks/useI18n'
-
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import messages from './SiteList'
 
 const cssClasses = classnames.bind(styles)
 

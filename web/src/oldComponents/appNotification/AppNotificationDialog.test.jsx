@@ -1,9 +1,8 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
-
-import { AppNotificationDialog } from './AppNotificationDialog'
 import { hideAppNotification, Error, showMoreDetails } from '../../store/AppNotificationRedux'
+import { AppNotificationDialog } from './AppNotificationDialog'
 
 describe('App Notification Dialog component', () => {
   const appNotification = new Error()

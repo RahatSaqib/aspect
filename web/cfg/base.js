@@ -1,14 +1,13 @@
 const path = require('path')
-const webpack = require('webpack')
-const pxToRem = require('postcss-pxtorem')
-const cssImport = require('postcss-import')
-const cssNext = require('postcss-cssnext')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-
+const cssNext = require('postcss-cssnext')
+const cssImport = require('postcss-import')
+const pxToRem = require('postcss-pxtorem')
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
+const webpack = require('webpack')
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const { definePluginVariables, customPropertiesVariables } = require('./variables')
 
 const postcssPlugins = () => [

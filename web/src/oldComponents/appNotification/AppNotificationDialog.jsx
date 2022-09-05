@@ -1,23 +1,18 @@
-import PropTypes from 'prop-types'
-// Imports from packages
 import React, { PureComponent } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import flowRight from 'lodash/flowRight'
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl'
-
-// Material-UI
-import Button from '@mui/material/Button'
 import ErrorIcon from '@mui/icons-material/Error'
-import WarningIcon from '@mui/icons-material/Warning'
 import InfoIcon from '@mui/icons-material/Info'
+import WarningIcon from '@mui/icons-material/Warning'
+import Button from '@mui/material/Button'
 import { lightBlue, orange, red } from '@mui/material/colors'
-
-// Our own imports
-import AspectDialog from '../shared/AspectDialog'
+import flowRight from 'lodash/flowRight'
+import PropTypes from 'prop-types'
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { hideAppNotification, Error } from '../../store/AppNotificationRedux'
-import styles from './AppNotificationDialog.css'
 import PropTypeOf from '../../utils/types'
+import AspectDialog from '../shared/AspectDialog'
+import styles from './AppNotificationDialog.css'
 
 const genericMessages = defineMessages({
   title: {

@@ -1,8 +1,7 @@
-import identity from 'lodash/identity'
 import React from 'react'
 import Button from '@mui/material/Button'
+import identity from 'lodash/identity'
 import { defineMessages } from 'react-intl'
-
 import useI18n from '../../hooks/useI18n'
 
 const messages = defineMessages({

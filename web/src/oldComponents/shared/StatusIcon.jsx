@@ -1,9 +1,8 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import identity from 'lodash/identity'
-
 import CircleIcon from '@mui/icons-material/Circle'
 import { Tooltip } from '@mui/material/index'
+import identity from 'lodash/identity'
+import PropTypes from 'prop-types'
 
 const enhance = identity
 

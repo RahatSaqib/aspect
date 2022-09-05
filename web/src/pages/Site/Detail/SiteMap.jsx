@@ -1,6 +1,5 @@
-import PropTypes from 'prop-types'
-// Imports from packages
 import React from 'react'
+import PropTypes from 'prop-types'
 import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
 
 // Render a site position marker in a map

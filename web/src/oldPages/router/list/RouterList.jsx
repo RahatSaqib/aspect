@@ -1,29 +1,27 @@
-import flowRight from 'lodash/flowRight'
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { Helmet } from 'react-helmet'
 import TableBody from '@mui/material/TableBody'
-
+import classnames from 'classnames/bind'
+import flowRight from 'lodash/flowRight'
+import { Helmet } from 'react-helmet'
+import { defineMessages, injectIntl } from 'react-intl'
+import { connect } from 'react-redux'
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { bindActionCreators } from 'redux'
+import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import ExportListButton from '../../../oldComponents/ExportListButton'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import NavTitle from '../../../oldComponents/NavTitle'
+import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import { fetchRouters, exportRouters } from '../../../store/RouterRedux'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../utils/selectors/searchParams'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
-import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { fetchRouters, exportRouters } from '../../../store/RouterRedux'
 import { RouterDataTable, RouterDataTableHead, RouterDataTableRow } from './RouterDataTable'
-import ExportListButton from '../../../oldComponents/ExportListButton'
-
 import styles from './RouterList.css'
 
 const cssClasses = classnames.bind(styles)

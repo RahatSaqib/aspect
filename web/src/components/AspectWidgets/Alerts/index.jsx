@@ -1,13 +1,11 @@
 import React from 'react'
-import { PropTypes } from 'prop-types'
-
 import classnames from 'classnames/bind'
+import { PropTypes } from 'prop-types'
+import useI18n from '../../../hooks/useI18n'
 import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
 import IconProvider from '../../IconProvider'
-import format from './messages'
-
 import styles from './alerts.css'
-import useI18n from '../../../hooks/useI18n'
+import format from './messages'
 
 const cssClasses = classnames.bind(styles)
 

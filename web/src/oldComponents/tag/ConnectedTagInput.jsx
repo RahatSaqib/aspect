@@ -1,12 +1,11 @@
-import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
+import Immutable from 'immutable'
 import _fp from 'lodash/fp'
 import pick from 'lodash/pick'
-import Immutable from 'immutable'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-
-import TagInput from '../shared/TagInput'
 import { fetchPossibleTags } from '../../store/TagRedux'
+import TagInput from '../shared/TagInput'
 
 const ConnectedTagInput = ({ qryId, qryType, tags, maxTags, value, onTagChange, fetchPossibleTags, ...restProps }) => {
   useEffect(() => {

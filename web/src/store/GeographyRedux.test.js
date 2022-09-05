@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
-import map from 'lodash/map'
 import find from 'lodash/find'
+import map from 'lodash/map'
 import sinon from 'sinon'
 import geography, { types, LazyLoadItems, LazyLoadParent, LazyLoadChild } from './GeographyRedux'
 

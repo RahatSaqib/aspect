@@ -1,4 +1,3 @@
-// Imports from packages
 import { defineMessages } from 'react-intl'
 
 // Define all messages for /site/detail page

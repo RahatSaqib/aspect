@@ -1,14 +1,14 @@
 import React from 'react'
-import { defineMessages } from 'react-intl'
-import startOfMonth from 'date-fns/startOfMonth'
-import endOfMonth from 'date-fns/endOfMonth'
-import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
-import parseISO from 'date-fns/parseISO'
 import { ResponsiveBar } from '@nivo/bar'
-import { oneOfType, object, array, string, number } from 'prop-types'
 import classnames from 'classnames/bind'
-import styles from '../DeviceDetail.css'
+import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
+import endOfMonth from 'date-fns/endOfMonth'
+import parseISO from 'date-fns/parseISO'
+import startOfMonth from 'date-fns/startOfMonth'
+import { oneOfType, object, array, string, number } from 'prop-types'
+import { defineMessages } from 'react-intl'
 import useI18n from '../../../../hooks/useI18n'
+import styles from '../DeviceDetail.css'
 
 const cssClasses = classnames.bind(styles)
 

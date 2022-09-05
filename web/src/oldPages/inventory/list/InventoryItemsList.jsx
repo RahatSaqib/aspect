@@ -1,40 +1,33 @@
+import React, { useEffect, useCallback, useState, useMemo } from 'react'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
+import Switch from '@mui/material/Switch'
+import TableBody from '@mui/material/TableBody'
+import classnames from 'classnames/bind'
+import Immutable from 'immutable'
 import flowRight from 'lodash/flowRight'
 import omit from 'lodash/omit'
-import Immutable from 'immutable'
-import classnames from 'classnames/bind'
-import React, { useEffect, useCallback, useState, useMemo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { Helmet } from 'react-helmet'
-import TableBody from '@mui/material/TableBody'
-
-import Switch from '@mui/material/Switch'
-import FormGroup from '@mui/material/FormGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import useI18n from '../../../hooks/useI18n'
-import { useAuthState } from '../../../providers/AuthProvider'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { useSelector, useDispatch } from 'react-redux'
+import ErrorBoundary from '../../../components/ErrorBoundary/index'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../../utils/selectors/searchParams'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import CheckboxField from '../../../oldComponents/shared/CheckboxField'
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
+import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import ExportListButton from '../../../oldComponents/ExportListButton'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import NavTitle from '../../../oldComponents/NavTitle'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
+import CheckboxField from '../../../oldComponents/shared/CheckboxField'
+import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import requirePermissions from '../../../oldComponents/shared/requirePermissions'
+import { useAuthState } from '../../../providers/AuthProvider'
+import PermissionsProvider from '../../../providers/PermissionsProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
-import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
-import NewInventoryDialogForm from '../adjustment/NewInventoryDialogForm'
-import AddInventoryDialogForm from '../adjustment/AddInventoryDialogForm'
-import ReceiveInventoryDialogForm from '../adjustment/ReceiveInventoryDialogForm'
-import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
-import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import {
   types,
   hideAdjustInventoryDialog,
@@ -46,15 +39,20 @@ import {
   receiveInventoryItems,
   showNewInventoryDialog,
 } from '../../../store/InventoryRedux'
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../../utils/selectors/searchParams'
+import AddInventoryDialogForm from '../adjustment/AddInventoryDialogForm'
+import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
+import NewInventoryDialogForm from '../adjustment/NewInventoryDialogForm'
+import ReceiveInventoryDialogForm from '../adjustment/ReceiveInventoryDialogForm'
+import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
+import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
-import requirePermissions from '../../../oldComponents/shared/requirePermissions'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
-import messages from './messages'
-
 import styles from './InventoryItemsList.css'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
-import ErrorBoundary from '../../../components/ErrorBoundary/index'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 

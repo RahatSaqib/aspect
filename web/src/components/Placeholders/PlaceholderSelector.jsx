@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
-import classnames from 'classnames/bind'
-import PropTypes from 'prop-types'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
-
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
-import { getMenuItems } from './utils'
 import messages from './messages'
 import styles from './Placeholders.css'
+import { getMenuItems } from './utils'
 
 const cssClasses = classnames.bind(styles)
 

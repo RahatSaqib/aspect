@@ -1,3 +1,4 @@
+import buildMarkersForDailyStatus from '../Helpers'
 import {
   devicesDaily,
   visibleStatusesAll,
@@ -7,7 +8,6 @@ import {
   visibleOnlyActiveExpected,
   visibleOnlyDownForRepairExpected,
 } from './mocks'
-import buildMarkersForDailyStatus from '../Helpers'
 
 describe('DailyStatusMaps', () => {
   it('should not filter any results out', () => {
