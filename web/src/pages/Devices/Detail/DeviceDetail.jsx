@@ -1,29 +1,26 @@
 import React, { useCallback } from 'react'
-// import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
+import LinearProgress from '@mui/material/LinearProgress'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
-import { DEVICE_DETAIL, DEVICE_PERFORMANCE } from '../../../components/QueryFetch/Device/index'
-import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import Shell from '../../../components/Shell'
 import ShellContent from '../../../components/Shell/Content'
 import ShellHeader from '../../../components/Shell/Header'
+import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
+import useDevice from '../../../hooks/device/useDevice'
+import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
+import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { DelayShowingProgressCircular } from '../../../oldComponents/shared/DelayShowingProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
 import DeviceDetailAlerts from './Alerts/DeviceDetailAlerts'
-import styles from './DeviceDetail.css'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
-
-const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   profile: {
@@ -55,23 +52,18 @@ export const DeviceDetail = props => {
   const intl = useI18n()
   const queryClient = useQueryClient()
 
-  const { data: { device = {}, devicePerformance = {} } = {}, isLoading } = useQuery(
-    [DEVICE_DETAIL.KEY, { deviceId }],
-    async () => {
-      const { data: device = false } = await fetchWrapperForQueries({
-        endpoint: `${DEVICE_DETAIL.ENDPOINT}/${deviceId}`,
-      })
-      const devicePerformance = await fetchWrapperForQueries({
-        endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
-        params: searchParams,
-      })
-      return { device, devicePerformance }
-    }
+  const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
+  const { isLoading: isDeviceTagsLoading, data: deviceTags } = useTagByTypeAndId('device', deviceId)
+  const { isLoading: isDevicePerformanceLoading, data: devicePerformance } = useDevicePerformance(
+    deviceId,
+    searchParams
   )
+
+  const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = useCallback(() => {
-    queryClient.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
+    queryClient.invalidateQueries([DEVICE_KEY, deviceId])
   }, [deviceId, queryClient])
 
   const { mutate: updateDevice } = useMutation(({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)), {
@@ -135,7 +127,7 @@ export const DeviceDetail = props => {
 
   return (
     <Shell>
-      <ShellHeader title={device.name ? device.name : 'Devices'}>
+      <ShellHeader title={device ? device.name : 'Devices'}>
         {[
           {
             label: intl.formatMessage(messages.profile),
@@ -168,7 +160,9 @@ export const DeviceDetail = props => {
         ))}
       </ShellHeader>
       <ShellContent>
-        {device.id && (
+        {isLoading ? (
+          <LinearProgress />
+        ) : (
           <Routes>
             <Route
               path=""
@@ -203,12 +197,7 @@ export const DeviceDetail = props => {
               path="edit"
               element={
                 editable ? (
-                  <DeviceDetailEdit
-                    {...props}
-                    device={Immutable.fromJS(device)}
-                    editable={editable}
-                    updateSingleDevice={updateDevice}
-                  />
+                  <DeviceDetailEdit device={device} deviceTags={deviceTags} editable={editable} />
                 ) : (
                   <Navigate replace to="." />
                 )
@@ -216,20 +205,9 @@ export const DeviceDetail = props => {
             />
           </Routes>
         )}
-        {isLoading && (
-          <DelayShowingProgressCircular
-            className={cssClasses('DelayShowingProgressCircular')}
-            disabled={false}
-            variant="indeterminate"
-          />
-        )}
       </ShellContent>
     </Shell>
   )
 }
-
-// DeviceDetail.propTypes = {
-//   match: PropTypes.oneOfType([PropTypes.object]).isRequired,
-// }
 
 export default DeviceDetail
