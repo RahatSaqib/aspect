@@ -1,24 +1,8 @@
-import classnames from 'classnames/bind'
 import React, { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
-import { Helmet } from 'react-helmet'
-
 import TableBody from '@mui/material/TableBody'
 import classnames from 'classnames/bind'
-import PropTypes from 'prop-types'
 import isEmpty from 'lodash/isEmpty'
-import useI18n from '../../../hooks/useI18n'
-import { useAuthState } from '../../../providers/AuthProvider'
-import fetchWrapperForQueries from '../../../components/QueryFetch'
-import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-  setFiltersForLast30Days,
-} from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
@@ -27,7 +11,12 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import {
+  getFilters,
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+  setFiltersForLast30Days,
+} from '../../../oldComponents/filter/utils'
 import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
