@@ -5,8 +5,8 @@ import Immutable from 'immutable'
 import noop from 'lodash/noop'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import * as reactRedux from 'react-redux'
-import { I18nProvider } from '../../providers/I18nProvider/index'
-import { Site } from '../../store/SiteRedux'
+import { I18nProvider } from '../../../providers/I18nProvider/index'
+import { Site } from '../../../store/SiteRedux'
 import { SiteDetail } from './SiteDetail'
 
 const SiteDetailComponent = props => (

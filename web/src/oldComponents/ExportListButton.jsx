@@ -11,12 +11,8 @@ import styles from './ExportListButton.css'
 
 const cssClasses = classnames.bind(styles)
 
-const mapStateToProps = state => ({
-  downloadStarted: state.getIn(['globals', 'downloadStarted']),
-})
-const mapDispatchToProps = dispatch => ({
-  startDownloading: () => dispatch(onStartDownloading()),
-})
+const mapStateToProps = state => ({ downloadStarted: state.getIn(['globals', 'downloadStarted']) })
+const mapDispatchToProps = dispatch => ({ startDownloading: () => dispatch(onStartDownloading()) })
 
 const enhance = compose(
   connect(mapStateToProps, mapDispatchToProps),
@@ -66,31 +62,19 @@ export const ExportListButton = ({
       <Popover
         id="simple-popover"
         open={Boolean(anchorEl)}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         anchorEl={anchorEl}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
         onClose={onPopoverClose}
       >
-        <ol
-          style={{
-            listStyleType: 'none',
-            padding: '5px',
-            margin: '5px 30px 5px 30px',
-          }}
-        >
+        <ol style={{ listStyleType: 'none', padding: '5px', margin: '5px 30px 5px 30px' }}>
           <li>
-            <button type="button" className={cssClasses('Reports_Button')} inverse onClick={onMyExport} id="xlsx">
+            <button type="button" className={cssClasses('Reports_Button')} onClick={onMyExport} id="xlsx">
               Excel
             </button>
           </li>
           <li>
-            <button type="button" className={cssClasses('Reports_Button')} inverse onClick={onMyExport} id="csv">
+            <button type="button" className={cssClasses('Reports_Button')} onClick={onMyExport} id="csv">
               CSV
             </button>
           </li>

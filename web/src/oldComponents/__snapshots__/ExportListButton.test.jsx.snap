@@ -48,7 +48,6 @@ exports[`ExportListButton should shallow render export list correctly 1`] = `
         <button
           className="Reports_Button"
           id="xlsx"
-          inverse={true}
           onClick={[Function]}
           type="button"
         >
@@ -59,7 +58,6 @@ exports[`ExportListButton should shallow render export list correctly 1`] = `
         <button
           className="Reports_Button"
           id="csv"
-          inverse={true}
           onClick={[Function]}
           type="button"
         >
