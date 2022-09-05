@@ -12,7 +12,7 @@ const {
 } = require('./common/db')
 
 const { deleteDevice } = require('./common/logic')
-const { factGenerateResultCounts } = require('../fact/actions')
+const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('../fact/actions')
 
 module.exports = async function ({ payload, plugins: { messageContext }, auth }) {
   const devices = await getDevicesToMerge(payload)
@@ -27,9 +27,10 @@ module.exports = async function ({ payload, plugins: { messageContext }, auth })
     )
   )
 
-  const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts })
+  const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts, factGenerateDeviceConnectivity })
 
   await eventContext.factGenerateResultCounts(devices.targetDevice.id)
+  await eventContext.factGenerateDeviceConnectivity(devices.targetDevice.id)
 
   return { ok: true }
 }
