@@ -24,7 +24,7 @@ export const messages = {
         <ul>
         <li>• Results not repeated between devices will moved to target device.</li>
         <li>• Issues and Notifications from duplicated results will be moved to target results.</li>
-        <li>• Device issues not related to results, like inventory issues, will be moved to target device.</li>
+        <li>• Device issues not related to results, like Device Offline, will be moved to target device.</li>
         <li>• Source devices will be deleted from Aspect.</li>
         <ul>
       </p>

@@ -250,7 +250,10 @@ export const DeviceListWithProps = ({
     <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
       <PermissionsProvider permissions={['device:admin']}>
         <AspectButton
-          onClick={() => setMergeDeviceModalOpen(true)}
+          onClick={() => {
+            setConfirmationVisible(false)
+            setMergeDeviceModalOpen(true)
+          }}
           type="button"
           color="primary"
           variant="contained"
@@ -416,6 +419,7 @@ export const DeviceListWithProps = ({
             <AspectButton
               onClick={() => {
                 setMergeDeviceModalOpen(false)
+                setConfirmationVisible(false)
               }}
             >
               {intl.formatMessage(messages.button_Cancel)}

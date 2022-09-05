@@ -3,7 +3,8 @@ const {
   deleteIssues,
   deleteResultDownloadLog,
   deleteDeviceLog,
-  deleteRepeatedResults,
+  deleteMessages,
+  deleteResults,
   deleteDeviceFromDeviceOperation,
   deleteDeviceFromDeviceMaintenance,
   deleteDeviceFromDeviceApprovalLog,
@@ -12,16 +13,18 @@ const {
   deleteDeviceFromDeviceSim,
   deleteDeviceFromDeviceTag,
   deleteDeviceFromFactTables,
+  deleteDeviceSiteHistory,
   deleteDevice: deleteDeviceFromDb,
 } = require('./db')
 
 async function deleteDevice(deviceId, trknex) {
   await deleteDeviceFromDeviceApiKey(deviceId, trknex)
-  await deleteIssues(deviceId, trknex)
   await deleteNotifications(deviceId, trknex)
+  await deleteIssues(deviceId, trknex)
   await deleteDeviceLog(deviceId, trknex)
   await deleteResultDownloadLog(deviceId, trknex)
-  await deleteRepeatedResults(deviceId, trknex)
+  await deleteMessages(deviceId, trknex)
+  await deleteResults(deviceId, trknex)
   await deleteDeviceFromDeviceOperation(deviceId, trknex)
   await deleteDeviceFromDeviceMaintenance(deviceId, trknex)
   await deleteDeviceFromDeviceApprovalLog(deviceId, trknex)
@@ -29,6 +32,7 @@ async function deleteDevice(deviceId, trknex) {
   await deleteDeviceFromDeviceSim(deviceId, trknex)
   await deleteDeviceFromDeviceTag(deviceId, trknex)
   await deleteDeviceFromFactTables(deviceId, trknex)
+  await deleteDeviceSiteHistory(deviceId, trknex)
   await deleteDeviceFromDb(deviceId, trknex)
 }
 

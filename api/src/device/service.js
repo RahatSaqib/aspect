@@ -235,7 +235,7 @@ async function getListDevices(query, auth) {
       knex('Issue as i')
         .select('i.deviceId', knex.raw('GROUP_CONCAT(DISTINCT ic.i18nKey) as categories'))
         .innerJoin('Notification as n', 'n.issueId', 'i.id')
-        .innerJoin('AlertMessage as a', 'a.id', 'n.alertMessageId')
+        .leftJoin('AlertMessage as a', 'a.id', 'n.alertMessageId')
         .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
         .innerJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
         .leftOuterJoin('IssueCategory as ic', leftBuilder =>
