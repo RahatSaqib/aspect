@@ -5,7 +5,7 @@ const {
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
-} = require('./common/queryConstants')
+} = require('./common/querySelectors')
 const { knex, sortPageParams, filterParams, filterDateRangeParams, query } = require('../db')
 const { addConstraints, getConstraints } = require('../auth/constraints')
 const { getInventorySitesQuery } = require('./common/db')

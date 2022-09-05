@@ -1,7 +1,7 @@
 const { getConstraints } = require('../auth/constraints')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../db')
 const { getInventoryLogBaseQuery } = require('./common/db')
-const { INVENTORY_LOG_LIST, INVENTORY_LOG_SORT_FIELDS } = require('./common/queryConstants')
+const { INVENTORY_LOG_LIST, INVENTORY_LOG_SORT_FIELDS } = require('./common/querySelectors')
 
 module.exports = async function (request, response, querySelector = INVENTORY_LOG_LIST) {
   const { auth, query } = request

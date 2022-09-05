@@ -6,7 +6,7 @@ const {
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
-} = require('./queryConstants')
+} = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
 
 async function getConsumableStrategy(consumableId) {

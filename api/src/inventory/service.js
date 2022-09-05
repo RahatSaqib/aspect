@@ -24,7 +24,7 @@ const {
   SUPPLY_IN_STOCK_FIELDS,
   INVENTORY_ITEM_SELECT,
   STOCK_LEFT_FILTER_FIELDS,
-} = require('./common/queryConstants')
+} = require('./common/querySelectors')
 
 async function consumeInventoryForResult(
   resultId,

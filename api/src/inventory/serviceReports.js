@@ -2,7 +2,7 @@ const { format } = require('date-fns')
 const { listInventory, listLog } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { knex } = require('../db')
-const { INVENTORY_LOG_LIST } = require('./common/queryConstants')
+const { INVENTORY_LOG_LIST } = require('./common/querySelectors')
 const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
 
 async function exportSupplies(request, reply) {
