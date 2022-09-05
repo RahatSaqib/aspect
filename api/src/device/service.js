@@ -126,36 +126,32 @@ async function getListDevices(query, auth) {
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .modify(builder => {
-      builder
-        .leftJoin(
-          knex('FactResultsDeviceByAssay as fact')
-            .where('fact.days', 30)
-            .modify(filter => {
-              if (assayFilter) filter.whereRaw('fact.assayId in (?)', assayFilter)
-            })
-            .groupBy('deviceId')
-            .select('fact.deviceId', knex.raw('sum(resultCount) as resultCount'))
+    .leftJoin(
+      knex('FactResultsDeviceByAssay as fact')
+        .where('fact.days', 30)
+        .modify(filter => {
+          if (assayFilter) filter.whereRaw('fact.assayId in (?)', assayFilter)
+        })
+        .groupBy('deviceId')
+        .select('fact.deviceId', knex.raw('sum(resultCount) as resultCount'))
 
-            .as('frd30'),
-          'frd30.deviceId',
-          'd.id'
-        )
-        .leftJoin(
-          knex('FactResultsDeviceByAssay as fact')
-            .where('fact.days', 60)
-            .modify(filter => {
-              if (assayFilter) filter.whereRaw('fact.assayId in (?)', assayFilter)
-            })
-            .groupBy('deviceId')
-            .select('fact.deviceId', knex.raw('sum(resultCount) as resultCount'))
+        .as('frd30'),
+      'frd30.deviceId',
+      'd.id'
+    )
+    .leftJoin(
+      knex('FactResultsDeviceByAssay as fact')
+        .where('fact.days', 60)
+        .modify(filter => {
+          if (assayFilter) filter.whereRaw('fact.assayId in (?)', assayFilter)
+        })
+        .groupBy('deviceId')
+        .select('fact.deviceId', knex.raw('sum(resultCount) as resultCount'))
 
-            .as('frd60'),
-          'frd60.deviceId',
-          'd.id'
-        )
-    })
-
+        .as('frd60'),
+      'frd60.deviceId',
+      'd.id'
+    )
     .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function () {
       this.on('d.id', 'frd30Errors.deviceId')
         .andOn('frd30Errors.days', 30)
