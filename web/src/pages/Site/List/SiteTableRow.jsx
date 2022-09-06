@@ -6,7 +6,7 @@ import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-import messages from './SiteList'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
