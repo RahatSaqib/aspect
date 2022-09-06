@@ -358,7 +358,7 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
 }
 
 async function findDevices(availableDeviceDetails, knex) {
-  const { deviceId, partnerId, hostId, deviceSerialNumber, countryCode, deviceIdFromGxAlertSource } =
+  const { deviceId, partnerId, hostId, deviceSerialNumber, macAddress, countryCode, deviceIdFromGxAlertSource } =
     availableDeviceDetails
   const fields = [
     'd.id',
@@ -409,6 +409,45 @@ async function findDevices(availableDeviceDetails, knex) {
           .andWhere('d.serial', deviceSerialNumber)
           .andWhere('c.abbreviation', countryCode)
           .select(fields)
+      }
+      if (_.isEmpty(matchingDevices) && hostId) {
+        matchingDevices = await deviceQuery
+          .clone()
+          .where('d.partnerId', partnerId)
+          .andWhere('d.hostId', hostId)
+          .andWhere('c.abbreviation', countryCode)
+          .select(fields)
+        // There are multiple devices using this Host ID
+        //  therefore the Host ID cannot be used as a device identifier
+        if (matchingDevices.length > 1) {
+          matchingDevices = []
+        }
+      }
+      if (_.isEmpty(matchingDevices) && deviceSerialNumber) {
+        matchingDevices = await deviceQuery
+          .clone()
+          .where('d.partnerId', partnerId)
+          .andWhere('d.serial', deviceSerialNumber)
+          .andWhere('c.abbreviation', countryCode)
+          .select(fields)
+        // There are multiple devices using this computer name
+        //  therefore the device serial number cannot be used as a device identifier
+        if (matchingDevices.length > 1) {
+          matchingDevices = []
+        }
+      }
+      if (_.isEmpty(matchingDevices) && macAddress && macAddress !== 'MAC') {
+        matchingDevices = await deviceQuery
+          .clone()
+          .where('d.partnerId', partnerId)
+          .andWhere('d.macAddress', macAddress)
+          .andWhere('c.abbreviation', countryCode)
+          .select(fields)
+        // There are multiple devices using this MAC address
+        //  therefore the MAC address cannot be used as a device identifier
+        if (matchingDevices.length > 1) {
+          matchingDevices = []
+        }
       }
     }
   }
