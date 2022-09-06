@@ -367,6 +367,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.geographyId',
     'd.name',
     'd.serial',
+    'd.hostId',
     'd.macAddress',
     'd.configurationData',
     'd.lastSeenOn',
@@ -393,60 +394,59 @@ async function findDevices(availableDeviceDetails, knex) {
   }
   let matchingDevices = []
   if (partnerId) {
+    const partnerDeviceQuery = deviceQuery.clone().where('d.partnerId', partnerId)
     if (deviceIdFromGxAlertSource) {
-      matchingDevices = await deviceQuery
+      matchingDevices = await partnerDeviceQuery
         .clone()
-        .whereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`)
-        .andWhere('d.partnerId', partnerId)
+        .andWhereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`)
         .select(fields)
     }
     if (_.isEmpty(matchingDevices) && countryCode) {
+      const partnerCountryDeviceQuery = partnerDeviceQuery.clone().andWhere('c.abbreviation', countryCode)
       if (hostId && deviceSerialNumber) {
-        matchingDevices = await deviceQuery
+        matchingDevices = await partnerCountryDeviceQuery
           .clone()
-          .where('d.partnerId', partnerId)
           .andWhere('d.hostId', hostId)
           .andWhere('d.serial', deviceSerialNumber)
-          .andWhere('c.abbreviation', countryCode)
           .select(fields)
       }
-      if (_.isEmpty(matchingDevices) && hostId) {
-        matchingDevices = await deviceQuery
-          .clone()
-          .where('d.partnerId', partnerId)
-          .andWhere('d.hostId', hostId)
-          .andWhere('c.abbreviation', countryCode)
-          .select(fields)
-        // There are multiple devices using this Host ID
-        //  therefore the Host ID cannot be used as a device identifier
-        if (matchingDevices.length > 1) {
-          matchingDevices = []
+      if (hostId) {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.hostId', hostId).select(fields)
+          // There are multiple devices using this Host ID
+          //  therefore the Host ID cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.hostId === hostId)
         }
       }
-      if (_.isEmpty(matchingDevices) && deviceSerialNumber) {
-        matchingDevices = await deviceQuery
-          .clone()
-          .where('d.partnerId', partnerId)
-          .andWhere('d.serial', deviceSerialNumber)
-          .andWhere('c.abbreviation', countryCode)
-          .select(fields)
-        // There are multiple devices using this computer name
-        //  therefore the device serial number cannot be used as a device identifier
-        if (matchingDevices.length > 1) {
-          matchingDevices = []
+      if (deviceSerialNumber) {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery
+            .clone()
+            .andWhere('d.serial', deviceSerialNumber)
+            .select(fields)
+          // There are multiple devices using this computer name
+          //  therefore the device serial number cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.serial === deviceSerialNumber)
         }
       }
-      if (_.isEmpty(matchingDevices) && macAddress && macAddress !== 'MAC') {
-        matchingDevices = await deviceQuery
-          .clone()
-          .where('d.partnerId', partnerId)
-          .andWhere('d.macAddress', macAddress)
-          .andWhere('c.abbreviation', countryCode)
-          .select(fields)
-        // There are multiple devices using this MAC address
-        //  therefore the MAC address cannot be used as a device identifier
-        if (matchingDevices.length > 1) {
-          matchingDevices = []
+      if (macAddress && macAddress !== 'MAC') {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.macAddress', macAddress).select(fields)
+          // There are multiple devices using this MAC address
+          //  therefore the MAC address cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.macAddress === macAddress)
         }
       }
     }
