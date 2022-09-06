@@ -62,6 +62,16 @@ async function seed(knex) {
         resultsWithErrors: 4,
       },
     },
+    {
+      issueTypeId: await issueTypeToId('ModuleDisabled'),
+      data: {
+        moduleName: 'Module A',
+        oldResultId: 98843,
+        newModuleSerial: '666498',
+        instrumentSerial: '805058',
+        replacedModuleSerial: '645076',
+      },
+    },
   ]
 
   const issueStatusId = await issueStatusToId('Active')
@@ -72,7 +82,7 @@ async function seed(knex) {
     .select('d.partnerId', 'd.geographyId', 'd.siteId', 'd.deviceId')
 
   // seed one issue type some time in the last two months for every 6th GeneXpert device:
-  const issues = _.sampleSize(devices, devices.length / 6).map(d => {
+  const issues = _.sampleSize(devices, devices.length / 3).map(d => {
     const issueData = _.sample(issueDatas)
     const randomDate = subDays(now, _.random(1, 60))
 
