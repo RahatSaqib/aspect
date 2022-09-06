@@ -36,6 +36,7 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
           : current.utilizationRate + current.exceededUtilizationRate,
       payload.utilizationRateAvg
     )
+
     maxErrorRate = payload.data.reduce(
       (prev, current) =>
         prev > current.errorRate + current.exceededErrorRate ? prev : current.errorRate + current.exceededErrorRate,
@@ -79,7 +80,7 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
       <Card className={cssClasses('Section')}>
         <p data-panel-title>{formatMessage(messages.performanceTitle)}</p>
         <div data-graph-container>
-          {data && data[0].utilizationRate !== null && (
+          {data && data.shift() && data[0].utilizationRate !== null && (
             <div className={cssClasses('Graph_Container')} data-utilization-graph>
               {data && (
                 <div>
