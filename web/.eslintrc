@@ -98,6 +98,7 @@
     ],
     "security/detect-object-injection": "off",
     "security/detect-non-literal-regexp": "off",
+    "import/prefer-default-export": "off",
     "import/no-duplicates": [ "error", { "considerQueryString": true } ],
     "import/order": [
       "error",
