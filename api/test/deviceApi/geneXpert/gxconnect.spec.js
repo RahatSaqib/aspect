@@ -486,80 +486,225 @@ describe('Device API routes for GxConnect Devices', () => {
     })
 
     describe('when the device serial of the device changes', () => {
+      const newDeviceSerialNumber = 'Cepheid-PC-123'
       describe('and device API key changes', () => {
-        const firstContext = createGxConnectTestContext(server, {
-          countryCode,
-          adminUsername,
-          adminPassword,
-          deviceName,
-          macAddress,
-          hostId,
-          deviceSerialNumber,
+        describe(', the MAC address changes and the host ID remains the name', () => {
+          const firstContext = createGxConnectTestContext(server, {
+            countryCode,
+            adminUsername,
+            adminPassword,
+            deviceName,
+            macAddress,
+            hostId,
+            deviceSerialNumber,
+          })
+          before(firstContext.beforeRegisterAndSetDevice)
+          after(firstContext.afterCleanUp)
+          const newMacAddress = 'MAC00000FAKE222'
+          it('should update the device with the new MAC address and device serial', () =>
+            firstContext.runTest(async knex => {
+              // Check that device exists with MAC Address and Instrument Serial
+              const firstDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+                .join('Device as d', 'dak.DeviceId', 'd.id')
+                .where({ 'dak.token': firstContext.apiKey })
+                .first('dak.token', 'd.serial')
+              assert.equal(firstDeviceUniqueIdentifiers.serial, deviceSerialNumber)
+
+              // Single device exists, now generate a new API key
+              const secondContext = createGxConnectTestContext(server, {
+                countryCode,
+                adminUsername,
+                adminPassword,
+                deviceName,
+                macAddress: newMacAddress,
+                hostId,
+                deviceSerialNumber: newDeviceSerialNumber,
+              })
+
+              await secondContext.registerAndSetDevice()
+
+              await secondContext.runTestInline(async knex => {
+                assert.notEqual(secondContext.apiKey, firstContext.apiKey)
+
+                const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
+                  .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
+                  .select('dak.deviceId', 'dak.revoked')
+
+                // Check that old is still active
+                assert.deepEqual(firstDeviceApiKeyStatus, [
+                  {
+                    deviceId: firstDeviceApiKeyStatus[0].deviceId,
+                    revoked: 1,
+                  },
+                ])
+
+                // Check that the device exists with the new Device
+                // Serial linked to the new device API key
+                const secondDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+                  .join('Device as d', 'dak.DeviceId', 'd.id')
+                  .where({ 'dak.token': secondContext.apiKey })
+                  .select('d.macAddress', 'd.hostId', 'd.serial', 'd.id', 'dak.revoked')
+                assert.deepEqual(secondDeviceUniqueIdentifiers, [
+                  {
+                    macAddress: newMacAddress,
+                    hostId,
+                    serial: newDeviceSerialNumber,
+                    id: secondContext.device.id,
+                    revoked: 0,
+                  },
+                ])
+              })
+
+              await secondContext.cleanUp()
+            }))
         })
 
-        before(firstContext.beforeRegisterAndSetDevice)
-        after(firstContext.afterCleanUp)
-
-        it('should create a new device with the new serial and assign it with a new API key', () =>
-          firstContext.runTest(async knex => {
-            // Check that device exists with MAC Address and Instrument Serial
-            const firstDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
-              .join('Device as d', 'dak.DeviceId', 'd.id')
-              .where({ 'dak.token': firstContext.apiKey })
-              .first('dak.token', 'd.serial')
-            assert.equal(firstDeviceUniqueIdentifiers.serial, deviceSerialNumber)
-
-            // Single device exists, now generate a new API key
-            const newDeviceSerialNumber = 'Cepheid-PC-123'
-            const secondContext = createGxConnectTestContext(server, {
-              countryCode,
-              adminUsername,
-              adminPassword,
-              deviceName,
-              macAddress,
-              hostId,
-              deviceSerialNumber: newDeviceSerialNumber,
-            })
-
-            await secondContext.registerAndSetDevice()
-
-            await secondContext.runTestInline(async knex => {
-              assert.notEqual(secondContext.apiKey, firstContext.apiKey)
-
-              const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
-                .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
-                .select('dak.deviceId', 'dak.revoked')
-
-              // Check that old API key no longer associated with a device and is revoked
-              assert.deepEqual(firstDeviceApiKeyStatus, [
-                {
-                  deviceId: firstDeviceApiKeyStatus[0].deviceId,
-                  revoked: 0,
-                },
-              ])
-
-              // Check that the device exists with the new Device
-              // Serial linked to the new device API key
-              const secondDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+        describe(', the Host ID changes and the MAC address remains the name', () => {
+          const firstContext = createGxConnectTestContext(server, {
+            countryCode,
+            adminUsername,
+            adminPassword,
+            deviceName,
+            macAddress,
+            hostId,
+            deviceSerialNumber,
+          })
+          before(firstContext.beforeRegisterAndSetDevice)
+          after(firstContext.afterCleanUp)
+          const newHostId = 'NEW-Expert-3'
+          it('should update the device with the new Host ID and device serial', () =>
+            firstContext.runTest(async knex => {
+              // Check that device exists with MAC Address and Instrument Serial
+              const firstDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
                 .join('Device as d', 'dak.DeviceId', 'd.id')
-                .where({ 'dak.token': secondContext.apiKey })
-                .select('d.macAddress', 'd.hostId', 'd.serial', 'd.id', 'dak.revoked')
-              assert.deepEqual(secondDeviceUniqueIdentifiers, [
-                {
-                  macAddress,
-                  hostId,
-                  serial: newDeviceSerialNumber,
-                  id: secondContext.device.id,
-                  revoked: 0,
-                },
-              ])
+                .where({ 'dak.token': firstContext.apiKey })
+                .first('dak.token', 'd.serial')
+              assert.equal(firstDeviceUniqueIdentifiers.serial, deviceSerialNumber)
 
-              // Check that the devices are different (one API key per device
-              assert.notEqual(secondDeviceUniqueIdentifiers[0].id, firstDeviceApiKeyStatus[0].deviceId)
-            })
+              // Single device exists, now generate a new API key
+              const secondContext = createGxConnectTestContext(server, {
+                countryCode,
+                adminUsername,
+                adminPassword,
+                deviceName,
+                macAddress,
+                hostId: newHostId,
+                deviceSerialNumber: newDeviceSerialNumber,
+              })
 
-            await secondContext.cleanUp()
-          }))
+              await secondContext.registerAndSetDevice()
+
+              await secondContext.runTestInline(async knex => {
+                assert.notEqual(secondContext.apiKey, firstContext.apiKey)
+
+                const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
+                  .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
+                  .select('dak.deviceId', 'dak.revoked')
+
+                // Check that old is still active
+                assert.deepEqual(firstDeviceApiKeyStatus, [
+                  {
+                    deviceId: firstDeviceApiKeyStatus[0].deviceId,
+                    revoked: 1,
+                  },
+                ])
+
+                // Check that the device exists with the new Device
+                // Serial linked to the new device API key
+                const secondDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+                  .join('Device as d', 'dak.DeviceId', 'd.id')
+                  .where({ 'dak.token': secondContext.apiKey })
+                  .select('d.macAddress', 'd.hostId', 'd.serial', 'd.id', 'dak.revoked')
+                assert.deepEqual(secondDeviceUniqueIdentifiers, [
+                  {
+                    macAddress,
+                    hostId: newHostId,
+                    serial: newDeviceSerialNumber,
+                    id: secondContext.device.id,
+                    revoked: 0,
+                  },
+                ])
+              })
+
+              await secondContext.cleanUp()
+            }))
+        })
+
+        describe('and the host ID & MAC address are different', () => {
+          const firstContext = createGxConnectTestContext(server, {
+            countryCode,
+            adminUsername,
+            adminPassword,
+            deviceName,
+            macAddress,
+            hostId,
+            deviceSerialNumber,
+          })
+          before(firstContext.beforeRegisterAndSetDevice)
+          after(firstContext.afterCleanUp)
+          const newMacAddress = 'MAC00000FAKE444'
+          const newHostId = 'NEW-Expert-4'
+
+          it('should create a new device with the new serial and assign it with a new API key', () =>
+            firstContext.runTest(async knex => {
+              // Check that device exists with MAC Address and Instrument Serial
+              const firstDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+                .join('Device as d', 'dak.DeviceId', 'd.id')
+                .where({ 'dak.token': firstContext.apiKey })
+                .first('dak.token', 'd.serial')
+              assert.equal(firstDeviceUniqueIdentifiers.serial, deviceSerialNumber)
+
+              // Single device exists, now generate a new API key
+              const secondContext = createGxConnectTestContext(server, {
+                countryCode,
+                adminUsername,
+                adminPassword,
+                deviceName,
+                macAddress: newMacAddress,
+                hostId: newHostId,
+                deviceSerialNumber: newDeviceSerialNumber,
+              })
+
+              await secondContext.registerAndSetDevice()
+
+              await secondContext.runTestInline(async knex => {
+                assert.notEqual(secondContext.apiKey, firstContext.apiKey)
+
+                const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
+                  .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
+                  .select('dak.deviceId', 'dak.revoked')
+
+                // Check that old API key no longer associated with a device and is revoked
+                assert.deepEqual(firstDeviceApiKeyStatus, [
+                  {
+                    deviceId: firstDeviceApiKeyStatus[0].deviceId,
+                    revoked: 0,
+                  },
+                ])
+
+                // Check that the device exists with the new Device
+                // Serial linked to the new device API key
+                const secondDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
+                  .join('Device as d', 'dak.DeviceId', 'd.id')
+                  .where({ 'dak.token': secondContext.apiKey })
+                  .select('d.macAddress', 'd.hostId', 'd.serial', 'd.id', 'dak.revoked')
+                assert.deepEqual(secondDeviceUniqueIdentifiers, [
+                  {
+                    macAddress: newMacAddress,
+                    hostId: newHostId,
+                    serial: newDeviceSerialNumber,
+                    id: secondContext.device.id,
+                    revoked: 0,
+                  },
+                ])
+
+                // Check that the devices are different (one API key per device
+                assert.notEqual(secondDeviceUniqueIdentifiers[0].id, firstDeviceApiKeyStatus[0].deviceId)
+              })
+
+              await secondContext.cleanUp()
+            }))
+        })
       })
 
       describe('but device API key remains the same', () => {
