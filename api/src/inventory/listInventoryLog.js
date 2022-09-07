@@ -6,6 +6,6 @@ module.exports = async function (request) {
   const { auth, query } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
-  const { total, data } = getInventoryLog(query, dataConstraints)
+  const { total, data } = await getInventoryLog(query, dataConstraints)
   return { ok: true, total, length: data.length, data }
 }
