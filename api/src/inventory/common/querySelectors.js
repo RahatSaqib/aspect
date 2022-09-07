@@ -1,5 +1,33 @@
 const { knex } = require('../../db')
 
+const CONCATENATED_ID = `CONCAT(
+  c.id,
+  '-',
+  s.id,
+  '-',
+  IFNULL(
+    CASE
+      WHEN c.strategy IS NOT NULL
+      AND INSTR(c.strategy, 'expirationDate') > 0
+      THEN ii.expiresOn
+      ELSE ''
+    END,
+    '-'
+  ),
+  '-',
+  IFNULL(
+    CASE
+      WHEN c.strategy IS NOT NULL
+      AND INSTR(c.strategy, 'withlot') > 0
+      THEN ii.lotNumber
+      ELSE ''
+    END,
+    ''
+  ),
+  '-',
+  IFNULL(ii.inTransitFromSiteId, '')
+)`
+
 const INVENTORY_COMMON_FIELDS = [
   'c.id as consumableId',
   'c.name as consumableName',
@@ -169,4 +197,5 @@ module.exports = {
   INVENTORY_ITEM_SELECT,
   INVENTORY_COMMON_FIELDS,
   STOCK_LEFT_FILTER_FIELDS,
+  CONCATENATED_ID,
 }

@@ -73,8 +73,13 @@ function filterParams(queryBuilder, params, filters) {
   })
 }
 
-// extracts the parameters related to filtering from the candidate
-// params and modifies the query builder with the filter modifications
+/**
+ *
+ * @param {*} queryBuilder
+ * @param {*} params This are the URL params received for applying in the query
+ * @param {*} dateColumnName Because we can have other fields for date like for example expirationdate or endedon
+ * @param {*} dateParamName This is how the date max and min are named in the url
+ */
 
 function filterDateRangeParams(queryBuilder, params, dateColumnName, dateParamName = 'Date') {
   if (params[`min${dateParamName}`] && params[`min${dateParamName}`].toString() !== 'Invalid Date') {

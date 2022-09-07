@@ -11,7 +11,7 @@ const {
   modifyInventoryOnHand,
 } = require('./service')
 const listInventory = require('./listInventory')
-const listInventoryLog = require('./inventoryLog')
+const listInventoryLog = require('./listInventoryLog')
 const { exportSupplies } = require('./serviceReports')
 const {
   listSuppliesBaseConfig,

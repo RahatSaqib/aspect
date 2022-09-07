@@ -69,11 +69,11 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.today)} (${formatDayMonthFunc(now)})`,
-        ...this.getValues(startOfDay(now), endOfDay(now)),
+        ...this.getDateRange(startOfDay(now), endOfDay(now)),
       },
       {
         label: `${formatMessage(messages.yesterday)} (${formatDayMonthFunc(yesterday)})`,
-        ...this.getValues(startOfDay(yesterday), endOfDay(yesterday)),
+        ...this.getDateRange(startOfDay(yesterday), endOfDay(yesterday)),
       },
       ...map(daysBeforeYesterday, day => {
         const selectItem = {
@@ -82,7 +82,7 @@ export class DateRangeSelector extends PureComponent {
             day: '2-digit',
             month: '2-digit',
           }),
-          ...this.getValues(startOfDay(day), endOfDay(day)),
+          ...this.getDateRange(startOfDay(day), endOfDay(day)),
         }
         return selectItem
       }),
@@ -107,26 +107,26 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.last7Days)}`,
-        ...this.getValues(startOfDay(last7DaysStart), endOfDay(now)),
+        ...this.getDateRange(startOfDay(last7DaysStart), endOfDay(now)),
       },
       {
         label: `${formatMessage(messages.thisWeek)} (${formatDayMonthFunc(thisWeekStart)} - ${formatDayMonthFunc(
           thisWeekEnd
         )})`,
-        ...this.getValues(thisWeekStart, thisWeekEnd),
+        ...this.getDateRange(thisWeekStart, thisWeekEnd),
       },
       {
         label: `${formatMessage(messages.lastWeek)} (${formatDayMonthFunc(lastWeekStart)} - ${formatDayMonthFunc(
           lastWeekEnd
         )})`,
-        ...this.getValues(lastWeekStart, lastWeekEnd),
+        ...this.getDateRange(lastWeekStart, lastWeekEnd),
       },
       ...map(weeksBeforeLast, dayInWeek => {
         const weekStart = startOfWeek(dayInWeek)
         const weekEnd = endOfWeek(dayInWeek)
         return {
           label: `${formatDayMonthFunc(weekStart)} - ${formatDayMonthFunc(weekEnd)}`,
-          ...this.getValues(startOfDay(weekStart), endOfDay(weekEnd)),
+          ...this.getDateRange(startOfDay(weekStart), endOfDay(weekEnd)),
         }
       }),
     ]
@@ -150,26 +150,26 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.last30Days)}`,
-        ...this.getValues(startOfDay(last30DaysStart), endOfDay(now)),
+        ...this.getDateRange(startOfDay(last30DaysStart), endOfDay(now)),
       },
       {
         label: `${formatMessage(messages.thisMonth)} (${formatDayMonthFunc(thisMonthStart)} - ${formatDayMonthFunc(
           thisMonthEnd
         )})`,
-        ...this.getValues(thisMonthStart, thisMonthEnd),
+        ...this.getDateRange(thisMonthStart, thisMonthEnd),
       },
       {
         label: `${formatMessage(messages.lastMonth)} (${formatDayMonthFunc(lastMonthStart)} - ${formatDayMonthFunc(
           lastMonthEnd
         )})`,
-        ...this.getValues(lastMonthStart, lastMonthEnd),
+        ...this.getDateRange(lastMonthStart, lastMonthEnd),
       },
       ...map(monthsBeforeLast, dayInMonth => {
         const monthStart = startOfMonth(dayInMonth)
         const monthEnd = endOfMonth(dayInMonth)
         return {
           label: formatDate(monthStart, { month: 'long', year: 'numeric' }),
-          ...this.getValues(startOfDay(monthStart), endOfDay(monthEnd)),
+          ...this.getDateRange(startOfDay(monthStart), endOfDay(monthEnd)),
         }
       }),
     ]
@@ -189,7 +189,7 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.thisQuarter)}`,
-        ...this.getValues(startOfDay(thisQuarterStart), endOfDay(thisQuarterEnd)),
+        ...this.getDateRange(startOfDay(thisQuarterStart), endOfDay(thisQuarterEnd)),
       },
       ...map(previousQuarters, dayInQuarter => {
         const quarterStart = startOfQuarter(dayInQuarter)
@@ -198,7 +198,7 @@ export class DateRangeSelector extends PureComponent {
           label: `${formatMessage(messages.quarter)} ${getQuarter(dayInQuarter)} ${formatDate(dayInQuarter, {
             year: 'numeric',
           })}`,
-          ...this.getValues(startOfDay(quarterStart), endOfDay(quarterEnd)),
+          ...this.getDateRange(startOfDay(quarterStart), endOfDay(quarterEnd)),
         }
       }),
     ]
@@ -221,64 +221,64 @@ export class DateRangeSelector extends PureComponent {
     return [
       {
         label: `${formatMessage(messages.thisYear)} (${formatDate(thisYearStart, { year: 'numeric' })})`,
-        ...this.getValues(thisYearStart, thisYearEnd),
+        ...this.getDateRange(thisYearStart, thisYearEnd),
       },
       {
         label: `${formatMessage(messages.lastYear)} (${formatDate(lastYearStart, { year: 'numeric' })})`,
-        ...this.getValues(lastYearStart, lastYearEnd),
+        ...this.getDateRange(lastYearStart, lastYearEnd),
       },
       ...map(yearsBeforeLast, dayInYear => {
         const yearStart = startOfYear(dayInYear)
         const yearEnd = endOfYear(dayInYear)
         return {
           label: formatDate(yearStart, { year: 'numeric' }),
-          ...this.getValues(startOfDay(yearStart), endOfDay(yearEnd)),
+          ...this.getDateRange(startOfDay(yearStart), endOfDay(yearEnd)),
         }
       }),
     ]
   }
 
-  getMinFilterName() {
+  getMinDateFilterName() {
     const { minFilterName } = this.props
     return minFilterName
   }
 
-  getMaxFilterName() {
+  getMaxDateFilterName() {
     const { maxFilterName } = this.props
     return maxFilterName
   }
 
   getMinDate() {
-    const minDate = this.props[this.getMinFilterName()]
+    const minDate = this.props[this.getMinDateFilterName()]
     return minDate && new Date(minDate)
   }
 
   getMaxDate() {
-    const maxDate = this.props[this.getMaxFilterName()]
+    const maxDate = this.props[this.getMaxDateFilterName()]
 
     return maxDate && new Date(maxDate)
   }
 
-  getValues(minDate, maxDate) {
+  getDateRange(minDate, maxDate) {
     const values = {}
-    if (minDate) values[this.getMinFilterName()] = minDate
-    if (maxDate) values[this.getMaxFilterName()] = maxDate
+    if (minDate) values[this.getMinDateFilterName()] = minDate
+    if (maxDate) values[this.getMaxDateFilterName()] = maxDate
     return values
   }
 
   handleMaxDateChange = date => {
-    this.props.onChangeDate(this.getValues(null, endOfDay(date).toJSON()))
+    this.props.onChangeDate(this.getDateRange(null, endOfDay(date).toJSON()))
   }
 
   handleMinDateChange = date => {
-    this.props.onChangeDate(this.getValues(date.toJSON()))
+    this.props.onChangeDate(this.getDateRange(date.toJSON()))
   }
 
   handleDateRangeChange = ({ target: { value } }) => {
     this.props.onChangeDate(
       value
-        ? this.getValues(value[this.getMinFilterName()].toJSON(), value[this.getMaxFilterName()].toJSON())
-        : this.getValues()
+        ? this.getDateRange(value[this.getMinDateFilterName()].toJSON(), value[this.getMaxDateFilterName()].toJSON())
+        : this.getDateRange()
     )
   }
 
@@ -286,7 +286,7 @@ export class DateRangeSelector extends PureComponent {
     this.setState({
       rangeMode: value,
     })
-    this.props.onChangeDate(this.getValues())
+    this.props.onChangeDate(this.getDateRange())
   }
 
   render() {
@@ -315,7 +315,7 @@ export class DateRangeSelector extends PureComponent {
       custom: '',
     }[this.state.rangeMode]
 
-    const selectedValue = find(dropDownSelectItems, this.getValues(this.getMinDate(), this.getMaxDate()))
+    const selectedValue = find(dropDownSelectItems, this.getDateRange(this.getMinDate(), this.getMaxDate()))
 
     const restProps = omit(this.props, [
       'floatingLabelText',
@@ -388,8 +388,8 @@ export class DateRangeSelector extends PureComponent {
                   >
                     {dropDownSelectItems.map(dropDownSelectItem => (
                       <MenuItem
-                        key={`${dropDownSelectItem[this.getMinFilterName()].getTime()}-${dropDownSelectItem[
-                          this.getMaxFilterName()
+                        key={`${dropDownSelectItem[this.getMinDateFilterName()].getTime()}-${dropDownSelectItem[
+                          this.getMaxDateFilterName()
                         ].getTime()}`}
                         value={dropDownSelectItem}
                       >
