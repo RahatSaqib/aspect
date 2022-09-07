@@ -1,16 +1,16 @@
 import React, { useRef, useState } from 'react'
-import PropTypes from 'prop-types'
-import deburr from 'lodash/deburr'
-import some from 'lodash/some'
-import Downshift from 'downshift'
-import { withStyles } from '@mui/styles'
-import Chip from '@mui/material/Chip'
 import ClearIcon from '@mui/icons-material/Clear'
+import Chip from '@mui/material/Chip'
 import Grid from '@mui/material/Grid'
 import Input from '@mui/material/Input'
 import MenuItem from '@mui/material/MenuItem'
 import Paper from '@mui/material/Paper'
 import Popper from '@mui/material/Popper'
+import { withStyles } from '@mui/styles'
+import Downshift from 'downshift'
+import deburr from 'lodash/deburr'
+import some from 'lodash/some'
+import PropTypes from 'prop-types'
 
 const styles = theme => ({
   container: {

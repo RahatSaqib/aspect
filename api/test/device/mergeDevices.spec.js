@@ -126,7 +126,6 @@ describe('Merge Devices', () => {
     await setSourceDeviceInactiveForLast24Hs()
     await setSourceFirstResultAsDuplicateInTarget(targetDevice.id, repeatedSourceResultId)
     await setSamplesToTargetSite()
-
     await server
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
@@ -144,7 +143,12 @@ describe('Merge Devices', () => {
     )
 
     const targetIssues = await knex('Issue').where('deviceId', targetDevice.id).select('id', 'deviceId', 'resultId')
-    expect(targetIssues).to.have.lengthOf(3, 'All issues are now in target device')
+
+    expect(targetIssues).to.have.lengthOf(
+      2,
+      'All issues from with only device or pointing to merged results are now in target device'
+    )
+
     expect(targetIssues.find(i => i.id === issueIdOnRepeatedSourceResult).resultId).to.be.equal(
       repeatedTargetResultId,
       'Issues on repeated source result should be in target repeated result'

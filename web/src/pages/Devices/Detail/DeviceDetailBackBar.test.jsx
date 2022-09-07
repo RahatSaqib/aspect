@@ -1,8 +1,8 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import { DeviceDetailBackBar } from './DeviceDetailBackBar'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { DetailBackBar } from '../../../oldComponents/DetailBackBar'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
+import { DeviceDetailBackBar } from './DeviceDetailBackBar'
 
 describe('DeviceDetailBackBar component', () => {
   const props = {

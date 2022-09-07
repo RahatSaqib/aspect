@@ -1,24 +1,19 @@
 import React, { Fragment, useMemo, useEffect } from 'react'
-import { array, number, object, oneOfType, shape } from 'prop-types'
-import isNil from 'lodash/isNil'
-
-import { useColumnOrder, useExpanded, useFilters, useGroupBy, usePagination, useSortBy, useTable } from 'react-table'
-
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-
+import isNil from 'lodash/isNil'
+import { array, number, object, oneOfType, shape } from 'prop-types'
+import { useColumnOrder, useExpanded, useFilters, useGroupBy, usePagination, useSortBy, useTable } from 'react-table'
 import { bool } from 'yup'
-import TableHiddenColumns from './TableHeader/TableHiddenColumns'
-import TableHeaderRow from './TableHeader/TableHeaderRow'
+import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
 import TableBodyRow from './TableBody/TableBodyRow'
-
+import TableHeaderRow from './TableHeader/TableHeaderRow'
+import TableHiddenColumns from './TableHeader/TableHiddenColumns'
 import AspectTablePagination from './TablePagination'
 import AspectTableReset from './TableReset'
-
-import { buildColumnsFromData, getCurrentColumnIndexAndShift } from './Helpers'
 
 const AspectTableCore = ({
   config,

@@ -105,10 +105,10 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
     to = null,
     email,
     email2,
-  } = await knex('EmailMessage as m')
+  } = (await knex('EmailMessage as m')
     .leftJoin('Person as p', 'm.personId', 'p.id')
     .where({ 'm.id': emailMessageId })
-    .first('m.personId', 'm.resultId', 'm.to', 'p.email', 'p.email2')
+    .first('m.personId', 'm.resultId', 'm.to', 'p.email', 'p.email2')) || {}
 
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('EmailMessage as m')

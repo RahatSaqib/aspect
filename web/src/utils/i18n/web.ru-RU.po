@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-15T16:19:42.347Z\n"
+"POT-Creation-Date: 2022-09-02T16:37:46.110Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -135,6 +135,43 @@ msgstr "< 40 cp/mL"
 msgid "< 550 cp/mL"
 msgstr "< 550 cp/mL"
 
+#. [pages.DeviceList.mergeDeviceActionDescription]
+#. defaultMessage is:
+#. <p>Select as many devices as you want to merge, select the target device and click the Merge button.</p> <p><strong>The devices should be of the same Site and Device Type, and also source devices have to be offline for more than 24 Hs.<strong></p>
+#: extracted_strings.json
+msgid ""
+"<p>Select as many devices as you want to merge, select the target device and "
+"click the Merge button.</p> <p><strong>The devices should be of the same "
+"Site and Device Type, and also source devices have to be offline for more "
+"than 24 Hs.<strong></p>"
+msgstr ""
+"<p>Выберите столько устройств, сколько хотите объединить, выберите целевое "
+"устройство и нажмите кнопку «Объединить».</p> <p><strong>Устройства должны "
+"относиться к одному сайту и типу устройства, а исходные устройства должны "
+"иметь быть в автономном режиме более 24 часов.<strong></p>"
+
+#. [pages.DeviceList.mergeDevicesConfirmationTitle]
+#. defaultMessage is:
+#. <p>This process will perform the following actions:</P> <p><br/> <ul> <li>• Results not repeated between devices will moved to target device.</li> <li>• Issues and Notifications from duplicated results will be moved to target results.</li> <li>• Device issues not related to results, like inventory issues, will be moved to target device.</li> <li>• Source devices will be deleted from Aspect.</li> <ul> </p> <br/> <p style="color: red;"> **IMPORTANT:** This action is unreversible! </p>
+#: extracted_strings.json
+msgid ""
+"<p>This process will perform the following actions:</P> <p><br/> <ul> <li>• "
+"Results not repeated between devices will moved to target device.</li> <li>• "
+"Issues and Notifications from duplicated results will be moved to target "
+"results.</li> <li>• Device issues not related to results, like inventory "
+"issues, will be moved to target device.</li> <li>• Source devices will be "
+"deleted from Aspect.</li> <ul> </p> <br/> <p style=\"color: red;\"> "
+"**IMPORTANT:** This action is unreversible! </p>"
+msgstr ""
+"<p>Этот процесс выполнит следующие действия:</P> <p><br/> <ul> <li>• "
+"Результаты, не повторяющиеся между устройствами, будут перемещены на целевое "
+"устройство.</li> <li>• Проблемы и Уведомления о повторяющихся результатах "
+"будут перемещены в целевые результаты.</li> <li>• Проблемы с устройством, не "
+"связанные с результатами, например проблемы с инвентарем, будут перемещены "
+"на целевое устройство.</li> <li>• Исходные устройства будут удалены. из "
+"Аспекта.</li> <ul> </p> <br/> <p style=“color: red;”> **ВАЖНО:** Это "
+"действие необратимо! </p>"
+
 #. [legends.Unknown.moreThan180]
 #. defaultMessage is:
 #. >6 Months
@@ -195,6 +232,20 @@ msgstr "Требуется имя пользователя"
 #: extracted_strings.json
 msgid "AMK Resistance"
 msgstr "АМК Сопротивление"
+
+#. [months.april]
+#. defaultMessage is:
+#. APR
+#: extracted_strings.json
+msgid "APR"
+msgstr "апреля"
+
+#. [months.august]
+#. defaultMessage is:
+#. AUG
+#: extracted_strings.json
+msgid "AUG"
+msgstr "август"
 
 #. [legends.Unknown.assayAbbottM2000DBSHivVL]
 #. defaultMessage is:
@@ -311,10 +362,10 @@ msgstr "Признание проблемы не удалось"
 #. [component.Widget.activeDevicesTitle]
 #. defaultMessage is:
 #. Active
-#. [pages.DeviceList.availabilityRate]
+#. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
 #. Active
-#. [pages.shared.deviceStatus.active]
+#. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
 #. [pages.TaskList.issueStatusActive]
@@ -754,13 +805,6 @@ msgid ""
 msgstr ""
 "Вы уверены, что хотите удалить этот сайт? Это действие предназначено только "
 "для тестовых сайтов, все данные сайта будут потеряны."
-
-#. [pages.LocationSelector.lga]
-#. defaultMessage is:
-#. Area
-#: extracted_strings.json
-msgid "Area"
-msgstr "Площадь"
 
 #. [errorResponseMessages.generic.title]
 #. defaultMessage is:
@@ -1545,6 +1589,9 @@ msgstr "Комментарий ВИЧ"
 msgid "Configuration"
 msgstr "Конфигурация"
 
+#. [pages.DeviceList.buttonConfirmMerge]
+#. defaultMessage is:
+#. Confirm
 #. [pages.resultTreatmentPanel.confirm]
 #. defaultMessage is:
 #. Confirm
@@ -1561,6 +1608,13 @@ msgstr "Подтвердить"
 #: extracted_strings.json
 msgid "Confirm New Password"
 msgstr "Подтвердите новый пароль"
+
+#. [pages.DeviceList.areYouSure]
+#. defaultMessage is:
+#. Confirm to proceed.
+#: extracted_strings.json
+msgid "Confirm to proceed."
+msgstr "Подтвердите, чтобы продолжить."
 
 #. [legends.Unknown.Confirmed]
 #. defaultMessage is:
@@ -1596,13 +1650,13 @@ msgstr "Подключено"
 #. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
+#. [pages.shared.deviceStatus.inactiveConnectivity]
+#. defaultMessage is:
+#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivityHealth]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.shared.deviceStatus.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.SiteList.issueCategoryConnectivityHealth]
@@ -1628,10 +1682,10 @@ msgstr "Связь"
 msgid "Connectivity Health"
 msgstr "Состояние подключения"
 
-#. [pages.DeviceList.connectorStatus]
+#. [filter.popover.connectorStatus]
 #. defaultMessage is:
 #. Connector Status
-#. [filter.popover.connectorStatus]
+#. [pages.DeviceList.connectorStatus]
 #. defaultMessage is:
 #. Connector Status
 #: extracted_strings.json
@@ -2062,6 +2116,13 @@ msgstr "Настраиваемые поля"
 msgid "Custom Fields Average Completion"
 msgstr "Пользовательские поля Среднее заполнение"
 
+#. [months.december]
+#. defaultMessage is:
+#. DEC
+#: extracted_strings.json
+msgid "DEC"
+msgstr "Декабрь"
+
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
 #. DELETE
@@ -2363,13 +2424,13 @@ msgstr "Обнаружен"
 #. [placeholder.device]
 #. defaultMessage is:
 #. Device
+#. [filter.popover.deviceName]
+#. defaultMessage is:
+#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.deviceHealth]
-#. defaultMessage is:
-#. Device
-#. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceApiKeyList.deviceId]
@@ -2519,10 +2580,10 @@ msgstr "Последовательный порт устройства"
 msgid "Device State"
 msgstr "Состояние устройства"
 
-#. [pages.DeviceList.deviceStatus]
+#. [filter.popover.deviceStatus]
 #. defaultMessage is:
 #. Device Status
-#. [filter.popover.deviceStatus]
+#. [pages.DeviceList.deviceStatus]
 #. defaultMessage is:
 #. Device Status
 #: extracted_strings.json
@@ -2582,10 +2643,10 @@ msgstr "Тип устройства"
 #. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
-#. [pages.DeviceList.devicesTitle]
+#. [pages.SiteDetail.fieldDevices]
 #. defaultMessage is:
 #. Devices
-#. [pages.SiteDetail.fieldDevices]
+#. [pages.DeviceList.devicesTitle]
 #. defaultMessage is:
 #. Devices
 #. [pages.NotificationDetail.fieldDevices]
@@ -2692,10 +2753,10 @@ msgstr "Заболевание"
 msgid "District"
 msgstr "Район"
 
-#. [pages.common.lga_CM]
+#. [pages.common.state_BD]
 #. defaultMessage is:
 #. Division
-#. [pages.common.state_BD]
+#. [pages.common.lga_CM]
 #. defaultMessage is:
 #. Division
 #: extracted_strings.json
@@ -2716,10 +2777,10 @@ msgstr "Хотите ли вы отключить"
 msgid "Do you want to enable"
 msgstr "Хотите ли вы включить"
 
-#. [pages.DeviceList.down]
+#. [pages.DeviceStatusSelectField.down]
 #. defaultMessage is:
 #. Down
-#. [pages.DeviceStatusSelectField.down]
+#. [pages.DeviceList.down]
 #. defaultMessage is:
 #. Down
 #: extracted_strings.json
@@ -3419,6 +3480,13 @@ msgstr "Сайты экспорта не работают"
 msgid "Exporting Supplies Failed"
 msgstr "Экспортные поставки Ошибки"
 
+#. [months.february]
+#. defaultMessage is:
+#. FEB
+#: extracted_strings.json
+msgid "FEB"
+msgstr "февраль"
+
 #. [results.categoryTypeFLQResistanceI18nKey]
 #. defaultMessage is:
 #. FLQ Resistance
@@ -3577,6 +3645,13 @@ msgstr "За {period}"
 #: extracted_strings.json
 msgid "Forgot Password?"
 msgstr "Забыли пароль?"
+
+#. [pages.DailyStatusDialog.siteWorkingHoursFrom]
+#. defaultMessage is:
+#. From
+#: extracted_strings.json
+msgid "From"
+msgstr "Из"
 
 #. [pages.InventoryAdjustmentDialogForm.fromSiteName]
 #. defaultMessage is:
@@ -4509,6 +4584,27 @@ msgstr "Вопросы"
 msgid "It might have been deleted or renamed"
 msgstr "Он мог быть удалён или переименован"
 
+#. [months.january]
+#. defaultMessage is:
+#. JAN
+#: extracted_strings.json
+msgid "JAN"
+msgstr "январь"
+
+#. [months.july]
+#. defaultMessage is:
+#. JUL
+#: extracted_strings.json
+msgid "JUL"
+msgstr "июль"
+
+#. [months.june]
+#. defaultMessage is:
+#. JUN
+#: extracted_strings.json
+msgid "JUN"
+msgstr "июнь"
+
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
 #. Job
@@ -5101,6 +5197,20 @@ msgstr "Номер партии"
 msgid "Low Inventory"
 msgstr "Низкая инвентаризация"
 
+#. [months.march]
+#. defaultMessage is:
+#. MAR
+#: extracted_strings.json
+msgid "MAR"
+msgstr "марш"
+
+#. [months.may]
+#. defaultMessage is:
+#. MAY
+#: extracted_strings.json
+msgid "MAY"
+msgstr "май"
+
 #. [pages.ResultList.resultCategoryMtb]
 #. defaultMessage is:
 #. MTB
@@ -5376,10 +5486,10 @@ msgstr "МТБ/Риф"
 msgid "MagNA Pure-96 COVID-19"
 msgstr "Магна Чистый-96 КОВИД-19"
 
-#. [pages.DeviceList.maintenanceStatus]
+#. [filter.popover.deviceMaintenanceStatus]
 #. defaultMessage is:
 #. Maintenance Status
-#. [filter.popover.deviceMaintenanceStatus]
+#. [pages.DeviceList.maintenanceStatus]
 #. defaultMessage is:
 #. Maintenance Status
 #. [pages.DeviceDetailProfile.maintenance]
@@ -5423,6 +5533,20 @@ msgstr "Организовать"
 #: extracted_strings.json
 msgid "Manually set by {username} ({updatedDate})"
 msgstr "Вручную устанавливается {username} ({updatedDate})"
+
+#. [pages.DeviceList.merge]
+#. defaultMessage is:
+#. Merge
+#: extracted_strings.json
+msgid "Merge"
+msgstr "Объединить"
+
+#. [pages.DeviceList.mergeDevices]
+#. defaultMessage is:
+#. Merge Devices
+#: extracted_strings.json
+msgid "Merge Devices"
+msgstr "Объединить устройства"
 
 #. [legends.Unknown.resultCategoryMissing]
 #. defaultMessage is:
@@ -5550,6 +5674,13 @@ msgstr "Нет данных"
 #: extracted_strings.json
 msgid "NOTE:"
 msgstr "ПРИМЕЧАНИЕ:"
+
+#. [months.november]
+#. defaultMessage is:
+#. NOV
+#: extracted_strings.json
+msgid "NOV"
+msgstr "ноябрь"
 
 #. [pages.ResultList.resultCategoryEbolaNp]
 #. defaultMessage is:
@@ -5720,6 +5851,13 @@ msgstr "Нет"
 #: extracted_strings.json
 msgid "No Consumption"
 msgstr "Нет потребления"
+
+#. [pages.DailyStatusDialog.noSiteContacts]
+#. defaultMessage is:
+#. No Contacts defined for this site
+#: extracted_strings.json
+msgid "No Contacts defined for this site"
+msgstr "Для этого сайта не определены контакты"
 
 #. [pages.resultEdit.noCustomFieldsDefined]
 #. defaultMessage is:
@@ -6086,6 +6224,13 @@ msgstr ""
 "Количество результатов за последние 30 дней, деленное на суточную "
 "производительность прибора, умноженное на 30 дней"
 
+#. [months.october]
+#. defaultMessage is:
+#. OCT
+#: extracted_strings.json
+msgid "OCT"
+msgstr "октябрь"
+
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
@@ -6099,13 +6244,13 @@ msgstr ""
 msgid "OK"
 msgstr "ОК"
 
-#. [pages.DeviceList.offline]
-#. defaultMessage is:
-#. Offline
 #. [filter.btnGroup.offline]
 #. defaultMessage is:
 #. Offline
 #. [pages.connectorStatusSelectField.offline]
+#. defaultMessage is:
+#. Offline
+#. [pages.DeviceList.offline]
 #. defaultMessage is:
 #. Offline
 #. [pages.Notification.type.Offline]
@@ -6149,13 +6294,13 @@ msgstr "Старее"
 msgid "On Treatment"
 msgstr "На лечении"
 
-#. [pages.DeviceList.online]
-#. defaultMessage is:
-#. Online
 #. [filter.btnGroup.online]
 #. defaultMessage is:
 #. Online
 #. [pages.connectorStatusSelectField.online]
+#. defaultMessage is:
+#. Online
+#. [pages.DeviceList.online]
 #. defaultMessage is:
 #. Online
 #: extracted_strings.json
@@ -7613,6 +7758,13 @@ msgstr "Маршрутизаторы"
 msgid "SARS-CoV-2 (COVID-19)"
 msgstr "SARS-CoV-2 (COVID-19)"
 
+#. [months.september]
+#. defaultMessage is:
+#. SEP
+#: extracted_strings.json
+msgid "SEP"
+msgstr "сентябрь"
+
 #. [pages.NotificationDetail.sms]
 #. defaultMessage is:
 #. SMS
@@ -8572,10 +8724,10 @@ msgstr "Выйти"
 #. [placeholder.site]
 #. defaultMessage is:
 #. Site
-#. [pages.DeviceList.site]
+#. [filter.popover.siteName]
 #. defaultMessage is:
 #. Site
-#. [filter.popover.siteName]
+#. [pages.DeviceList.site]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceApiKeyList.siteId]
@@ -8610,6 +8762,9 @@ msgstr "Сайт"
 #. defaultMessage is:
 #. Site Contacts
 #. [pages.NotificationDetail.fieldContact]
+#. defaultMessage is:
+#. Site Contacts
+#. [pages.DailyStatusDialog.siteContacts]
 #. defaultMessage is:
 #. Site Contacts
 #: extracted_strings.json
@@ -8673,6 +8828,13 @@ msgstr "Название сайта"
 msgid "Site Type"
 msgstr "Тип анализа"
 
+#. [pages.DailyStatusDialog.siteWorkingHours]
+#. defaultMessage is:
+#. Site Working Hours
+#: extracted_strings.json
+msgid "Site Working Hours"
+msgstr "Время работы сайта"
+
 #. [pages.TaskDetail.siteContact]
 #. defaultMessage is:
 #. Site contact
@@ -8731,6 +8893,13 @@ msgstr "В теле SMS-сообщения должно быть не более
 msgid "Sms message should not be longer than 144 characters"
 msgstr "SMS-сообщение не должно быть длиннее 144 символов"
 
+#. [pages.DeviceList.sourceDevices]
+#. defaultMessage is:
+#. Source devices
+#: extracted_strings.json
+msgid "Source devices"
+msgstr "Исходные устройства"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -8753,9 +8922,6 @@ msgid "Start time cannot be after End time"
 msgstr "Время начала не может быть позже времени окончания"
 
 #. [forms.formItem.state]
-#. defaultMessage is:
-#. State
-#. [pages.LocationSelector.state]
 #. defaultMessage is:
 #. State
 #. [pages.SiteDetail.fieldState]
@@ -9004,6 +9170,13 @@ msgstr "Метки"
 #: extracted_strings.json
 msgid "Target"
 msgstr "Цель"
+
+#. [pages.DeviceList.targetDevice]
+#. defaultMessage is:
+#. Target device
+#: extracted_strings.json
+msgid "Target device"
+msgstr "Целевое устройство"
 
 #. [pages.TaskDetail.title]
 #. defaultMessage is:
@@ -9951,6 +10124,13 @@ msgstr "Время не может быть больше текущего вре
 msgid "Title"
 msgstr "Заголовок"
 
+#. [pages.DailyStatusDialog.siteWorkingHoursTo]
+#. defaultMessage is:
+#. To
+#: extracted_strings.json
+msgid "To"
+msgstr "Кому"
+
 #. [reporters.delivered]
 #. defaultMessage is:
 #. To Reporter
@@ -10308,9 +10488,6 @@ msgstr "Колонна Разгруппы"
 #. [legends.Unknown.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.DeviceList.unknown]
-#. defaultMessage is:
-#. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -10320,6 +10497,12 @@ msgstr "Колонна Разгруппы"
 #. [pages.DeviceStatusSelectField.unknown]
 #. defaultMessage is:
 #. Unknown
+#. [pages.DeviceList.unknown]
+#. defaultMessage is:
+#. Unknown
+#. [pages.DailyStatusDialog.siteWorkingHoursUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.deviceDetail.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -10327,10 +10510,10 @@ msgstr "Колонна Разгруппы"
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#. [pages.DeviceList.up]
+#. [pages.DeviceStatusSelectField.up]
 #. defaultMessage is:
 #. Up
-#. [pages.DeviceStatusSelectField.up]
+#. [pages.DeviceList.up]
 #. defaultMessage is:
 #. Up
 #: extracted_strings.json
@@ -11543,6 +11726,9 @@ msgstr "{unit} суммарные калибровки"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
+
+#~ msgid "Area"
+#~ msgstr "Площадь"
 
 #~ msgid "The device was permanently deleted"
 #~ msgstr "Устройство было безвозвратно удалено"

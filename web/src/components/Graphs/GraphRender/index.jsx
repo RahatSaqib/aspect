@@ -1,25 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import { oneOfType, array, object, bool, string, func } from 'prop-types'
-import reduce from 'lodash/reduce'
-import sortBy from 'lodash/sortBy'
-import { useQuery } from 'react-query'
 import CircularProgress from '@mui/material/CircularProgress'
-import classnames from 'classnames/bind'
 import Grid from '@mui/material/Grid'
+import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import isObject from 'lodash/isObject'
-import messages from '../intlMessages'
+import reduce from 'lodash/reduce'
+import sortBy from 'lodash/sortBy'
+import { oneOfType, array, object, bool, string, func } from 'prop-types'
+import { useQuery } from 'react-query'
+import { useAuthState } from '../../../providers/AuthProvider'
 import fetchWrapperForQueries from '../../QueryFetch'
+import EmptyGraph from '../EmptyData'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
   prepAssaysForParams,
   prepParamsForEndPoint,
 } from '../Helpers/Formatters'
-
-import EmptyGraph from '../EmptyData'
-import { useAuthState } from '../../../providers/AuthProvider'
+import messages from '../intlMessages'
 import handleClientSideFilterState from './ClientSideFilters'
 import styles from './GraphRender.css'
 

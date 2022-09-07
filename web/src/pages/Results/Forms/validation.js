@@ -1,7 +1,6 @@
-import * as Yup from 'yup'
 import isInteger from 'lodash/isInteger'
 import toNumber from 'lodash/toNumber'
-
+import * as Yup from 'yup'
 import messages from './validationMessages'
 
 const getValidationSchema = formatMessage =>

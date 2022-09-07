@@ -1,8 +1,8 @@
 import React from 'react'
 import map from 'lodash/map'
 import languages from '../../../../oldComponents/filter/hardcoded/languages'
-import { PureSelect } from '../../../Form/PureFormik/Inputs'
 import FlagIcon from '../../../../oldComponents/shared/flagIcon/FlagIcon'
+import { PureSelect } from '../../../Form/PureFormik/Inputs'
 
 const RenderOption = props => {
   const { option } = props

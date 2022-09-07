@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
-import { NOTIFICATION_KEY, NOTIFICATION_KEY_ENDPOINT } from './notificationKeys'
 import fetchWrapperForQueries from '../../components/QueryFetch'
+import { NOTIFICATION_KEY, NOTIFICATION_KEY_ENDPOINT } from './notificationKeys'
 
 const saveNotification = async ({ values, id }) =>
   fetchWrapperForQueries({

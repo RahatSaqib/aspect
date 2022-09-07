@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 import { useMutation } from 'react-query'
+import fetchWrapperForQueries from '../../../../components/QueryFetch/index'
+import { NOTIFICATION_DETAIL } from '../../../../components/QueryFetch/Notification/index'
 import useI18n from '../../../../hooks/useI18n'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
-
-import fetchWrapperForQueries from '../../../../components/QueryFetch/index'
-import { NOTIFICATION_DETAIL } from '../../../../components/QueryFetch/Notification/index'
 
 const ToggleStatusConfirmationModal = ({
   notificationId,

@@ -7,12 +7,14 @@ const {
   mergeIssuesFromDuplicatedResults,
   mergeDeviceLevelIssues,
   mergeNonRepeatedResults,
+  mergeMessages,
   getDevicesIdsCheckingConstraints,
 } = require('./common/db')
 
 const { deleteDevice } = require('./common/logic')
+const { factGenerateResultCounts, factGenerateDeviceConnectivity } = require('../fact/actions')
 
-module.exports = async function ({ payload, auth }) {
+module.exports = async function ({ payload, plugins: { messageContext }, auth }) {
   const devices = await getDevicesToMerge(payload)
 
   await validate(devices, auth.credentials)
@@ -24,6 +26,12 @@ module.exports = async function ({ payload, auth }) {
       )
     )
   )
+
+  const eventContext = messageContext.bindActionCreators({ factGenerateResultCounts, factGenerateDeviceConnectivity })
+
+  await eventContext.factGenerateResultCounts(devices.targetDevice.id)
+  await eventContext.factGenerateDeviceConnectivity(devices.targetDevice.id)
+
   return { ok: true }
 }
 
@@ -31,6 +39,7 @@ async function mergeDevices(devicesToMerge, trknex) {
   await mergeIssuesFromDuplicatedResults(devicesToMerge, trknex)
   await mergeDeviceLevelIssues(devicesToMerge, trknex)
   await mergeNonRepeatedResults(devicesToMerge, trknex)
+  await mergeMessages(devicesToMerge, trknex)
   await deleteDevice(devicesToMerge.sourceDevice.id, trknex)
 }
 

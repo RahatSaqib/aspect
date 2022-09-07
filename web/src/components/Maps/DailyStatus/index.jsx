@@ -1,17 +1,15 @@
 import React, { Fragment } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
 import classnames from 'classnames/bind'
-
 import useI18n from '../../../hooks/useI18n'
+import AspectCard from '../../AspectCard'
 import DailyStatusFilters from '../../Graphs/DailyStatus/DailyStatusFilters'
 import useDailyStatus from '../../Graphs/DailyStatus/Helpers/useDailyStatus'
 import { DEVICE_STATUS_LAST_REPORTED } from '../../QueryFetch/Device'
-import AspectCard from '../../AspectCard'
 import AspectMap from '../index'
+import styles from './DailyStatusMap.css'
 import buildMarkersForDailyStatus from './Helpers'
 import messages from './messages'
-
-import styles from './DailyStatusMap.css'
 
 const cssClasses = classnames.bind(styles)
 

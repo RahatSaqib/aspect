@@ -1,31 +1,24 @@
 import React, { useCallback } from 'react'
-// import PropTypes from 'prop-types'
+import LinearProgress from '@mui/material/LinearProgress'
 import Immutable from 'immutable'
-import classnames from 'classnames/bind'
-import { useDispatch } from 'react-redux'
 import { defineMessages } from 'react-intl'
-
+import { useMutation, useQueryClient } from 'react-query'
+import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
-
+import { Shell, ShellHeader, ShellContent } from '../../../components/Shell'
+import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
+import useDevice from '../../../hooks/device/useDevice'
+import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
+import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
+import useI18n from '../../../hooks/useI18n'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { useAuthState } from '../../../providers/AuthProvider'
+import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
-import { DelayShowingProgressCircular } from '../../../oldComponents/shared/DelayShowingProgressBar'
-import DeviceDetailProfile from './Profile/DeviceDetailProfile'
-import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailAlerts from './Alerts/DeviceDetailAlerts'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
-
-import { Shell, ShellHeader, ShellContent } from '../../../components/Shell'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
-import fetchWrapperForQueries from '../../../components/QueryFetch/index'
-import { DEVICE_DETAIL, DEVICE_PERFORMANCE } from '../../../components/QueryFetch/Device/index'
-import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
-
-import styles from './DeviceDetail.css'
-import useI18n from '../../../hooks/useI18n'
-
-const cssClasses = classnames.bind(styles)
+import DeviceDetailOperation from './Operation/DeviceDetailOperation'
+import DeviceDetailProfile from './Profile/DeviceDetailProfile'
 
 const messages = defineMessages({
   profile: {
@@ -57,23 +50,18 @@ export const DeviceDetail = props => {
   const intl = useI18n()
   const queryClient = useQueryClient()
 
-  const { data: { device = {}, devicePerformance = {} } = {}, isLoading } = useQuery(
-    [DEVICE_DETAIL.KEY, { deviceId }],
-    async () => {
-      const { data: device = false } = await fetchWrapperForQueries({
-        endpoint: `${DEVICE_DETAIL.ENDPOINT}/${deviceId}`,
-      })
-      const devicePerformance = await fetchWrapperForQueries({
-        endpoint: `${DEVICE_PERFORMANCE.ENDPOINT}/${deviceId}`,
-        params: searchParams,
-      })
-      return { device, devicePerformance }
-    }
+  const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
+  const { isLoading: isDeviceTagsLoading, data: deviceTags } = useTagByTypeAndId('device', deviceId)
+  const { isLoading: isDevicePerformanceLoading, data: devicePerformance } = useDevicePerformance(
+    deviceId,
+    searchParams
   )
+
+  const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
 
   // onSuccess - reset key to re-run query for device
   const onSuccess = useCallback(() => {
-    queryClient.invalidateQueries([DEVICE_DETAIL.KEY, { deviceId }])
+    queryClient.invalidateQueries([DEVICE_KEY, deviceId])
   }, [deviceId, queryClient])
 
   const { mutate: updateDevice } = useMutation(({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)), {
@@ -137,20 +125,11 @@ export const DeviceDetail = props => {
 
   return (
     <Shell>
-      <ShellHeader title={device.name ? device.name : 'Devices'}>
+      <ShellHeader title={device ? device.name : 'Devices'}>
         {[
-          {
-            label: intl.formatMessage(messages.profile),
-            path: `/browse/device/${deviceId}`,
-          },
-          {
-            label: intl.formatMessage(messages.alerts),
-            path: `/browse/device/${deviceId}/alerts`,
-          },
-          {
-            label: intl.formatMessage(messages.edit),
-            path: `/browse/device/${deviceId}/edit`,
-          },
+          { label: intl.formatMessage(messages.profile), path: `/browse/device/${deviceId}` },
+          { label: intl.formatMessage(messages.alerts), path: `/browse/device/${deviceId}/alerts` },
+          { label: intl.formatMessage(messages.edit), path: `/browse/device/${deviceId}/edit` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}
@@ -170,7 +149,9 @@ export const DeviceDetail = props => {
         ))}
       </ShellHeader>
       <ShellContent>
-        {device.id && (
+        {isLoading ? (
+          <LinearProgress />
+        ) : (
           <Routes>
             <Route
               path=""
@@ -205,12 +186,7 @@ export const DeviceDetail = props => {
               path="edit"
               element={
                 editable ? (
-                  <DeviceDetailEdit
-                    {...props}
-                    device={Immutable.fromJS(device)}
-                    editable={editable}
-                    updateSingleDevice={updateDevice}
-                  />
+                  <DeviceDetailEdit device={device} deviceTags={deviceTags} editable={editable} />
                 ) : (
                   <Navigate replace to="." />
                 )
@@ -218,20 +194,9 @@ export const DeviceDetail = props => {
             />
           </Routes>
         )}
-        {isLoading && (
-          <DelayShowingProgressCircular
-            className={cssClasses('DelayShowingProgressCircular')}
-            disabled={false}
-            variant="indeterminate"
-          />
-        )}
       </ShellContent>
     </Shell>
   )
 }
-
-// DeviceDetail.propTypes = {
-//   match: PropTypes.oneOfType([PropTypes.object]).isRequired,
-// }
 
 export default DeviceDetail

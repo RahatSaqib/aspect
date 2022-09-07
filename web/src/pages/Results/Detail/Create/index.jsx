@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
-import CircularProgress from '@mui/material/CircularProgress'
-
 import AspectForm from '../../../../components/Form'
 import FormActions from '../../../../components/Form/formActions'
-import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../../components/Shell'
-
-import useI18n from '../../../../hooks/useI18n'
 import { FormikProvider } from '../../../../components/Form/Formik/Context'
+import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../../components/Shell'
+import useI18n from '../../../../hooks/useI18n'
 import { getFormConfigWithData } from '../utils'
 
 const AspectResultDetail = ({ onSubmit }) => {

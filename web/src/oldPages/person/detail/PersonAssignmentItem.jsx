@@ -1,12 +1,11 @@
 import React from 'react'
-import classnames from 'classnames/bind'
-import { Link } from 'react-router-dom'
-import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import CloseIcon from '@mui/icons-material/RemoveCircle'
+import classnames from 'classnames/bind'
+import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
+import useI18n from '../../../hooks/useI18n'
 import { mergeToFiltersParams } from '../../../oldComponents/filter/utils'
 import messages from './messages'
-import useI18n from '../../../hooks/useI18n'
-
 import styles from './PersonDetail.css'
 
 const cssClasses = classnames.bind(styles)

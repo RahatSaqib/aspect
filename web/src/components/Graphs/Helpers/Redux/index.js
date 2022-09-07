@@ -1,5 +1,5 @@
-import omit from 'lodash/omit'
 import isEmpty from 'lodash/isEmpty'
+import omit from 'lodash/omit'
 
 const onRequested = (action, mutState, cb) => {
   if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {

@@ -1,22 +1,20 @@
 import React, { createContext } from 'react'
-// eslint-disable-next-line no-restricted-imports
-import { createIntl, useIntl } from 'react-intl'
-import { DateTime } from 'luxon'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import deLocale from 'date-fns/locale/de'
 import usLocale from 'date-fns/locale/en-US'
+import esLocale from 'date-fns/locale/es'
 import frLocale from 'date-fns/locale/fr'
 import ptLocale from 'date-fns/locale/pt'
 import ruLocale from 'date-fns/locale/ru'
 import ukLocale from 'date-fns/locale/uk'
-import esLocale from 'date-fns/locale/es'
 import viLocale from 'date-fns/locale/vi'
-
-import tgLocale from './date-fns-locales/tg-TJ'
-import translation from '../../utils/i18n/translation'
+import { DateTime } from 'luxon'
+import { createIntl, useIntl } from 'react-intl' // eslint-disable-line no-restricted-imports
 import ErrorBoundary from '../../components/ErrorBoundary'
+import translation from '../../utils/i18n/translation'
 import { getCurrentCulture } from '../../utils/LocalStorage'
+import tgLocale from './date-fns-locales/tg-TJ'
 
 const I18nContext = createContext()
 

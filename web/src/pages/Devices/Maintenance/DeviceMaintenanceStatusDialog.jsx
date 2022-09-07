@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import flowRight from 'lodash/flowRight'
-import { defineMessages } from 'react-intl'
-
-import classnames from 'classnames/bind'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
+import classnames from 'classnames/bind'
+import flowRight from 'lodash/flowRight'
+import { defineMessages } from 'react-intl'
+import useI18n from '../../../hooks/useI18n'
 import DeviceMaintenanceStatusSelectField from '../../../oldComponents/filter/resource/DeviceMaintenanceStatusSelectField'
 import recomposeForm from '../../../oldComponents/recomposeForm'
-
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-import useI18n from '../../../hooks/useI18n'
-
 import styles from './BaseDialog.css'
 
 const cssClasses = classnames.bind(styles)

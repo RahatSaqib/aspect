@@ -1,8 +1,8 @@
 import React from 'react'
-import { useQuery } from 'react-query'
 import map from 'lodash/map'
-import fetchWrapperForQueries from '../../../QueryFetch'
+import { useQuery } from 'react-query'
 import { PureSelect } from '../../../Form/PureFormik/Inputs'
+import fetchWrapperForQueries from '../../../QueryFetch'
 
 const CountrySelect = props => {
   const COUNTRIES_LIST = {

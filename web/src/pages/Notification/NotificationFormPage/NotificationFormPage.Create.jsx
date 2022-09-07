@@ -1,26 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import reduce from 'lodash/reduce'
-import map from 'lodash/map'
-import unset from 'lodash/unset'
 import CircularProgress from '@mui/material/CircularProgress'
-
+import map from 'lodash/map'
+import reduce from 'lodash/reduce'
+import unset from 'lodash/unset'
 import { FaNotesMedical } from 'react-icons/fa'
-import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
+import { useNavigate } from 'react-router-dom'
 import './NotificationFormPage.css'
-import getFormConfig from './Forms/editConfig'
-import useI18n from '../../../hooks/useI18n'
-import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
-import useSaveNotification from '../../../hooks/notification/saveNotifiaction'
-
-import { FormikProvider } from '../../../components/Form/Formik/Context'
-
 import AspectForm from '../../../components/Form'
 import FormActions from '../../../components/Form/formActions'
+import { FormikProvider } from '../../../components/Form/Formik/Context'
+import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
-import { getFormConfigWithData } from './utils'
-import validationSchema from './Forms/validation'
+import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
+import useSaveNotification from '../../../hooks/notification/saveNotifiaction'
 import usePartner from '../../../hooks/partner/usePartner'
+import useI18n from '../../../hooks/useI18n'
+import getFormConfig from './Forms/editConfig'
+import validationSchema from './Forms/validation'
+import { getFormConfigWithData } from './utils'
 
 const NotificationFormPage = () => {
   const intl = useI18n()

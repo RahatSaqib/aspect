@@ -1,30 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
-import { useQuery } from 'react-query'
-import Select, { components as originalComponents } from 'react-select'
-import { defineMessages } from 'react-intl'
 import TextField from '@mui/material/TextField'
-
-import get from 'lodash/get'
+import classnames from 'classnames/bind'
 import find from 'lodash/find'
+import get from 'lodash/get'
+import intersectionWith from 'lodash/intersectionWith'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
-import intersectionWith from 'lodash/intersectionWith'
 import keys from 'lodash/keys'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
-
+import PropTypes from 'prop-types'
+import { defineMessages } from 'react-intl'
+import { useQuery } from 'react-query'
+import Select, { components as originalComponents } from 'react-select'
 import useI18n from '../../hooks/useI18n'
-import fetchWrapperForQueries from '../QueryFetch'
 import UI_CONSTS from '../../utils/consts/UI'
 import IconProvider from '../IconProvider'
-
+import fetchWrapperForQueries from '../QueryFetch'
 import styles from './Dropdown.css'
 
 const SelectComponent = ({

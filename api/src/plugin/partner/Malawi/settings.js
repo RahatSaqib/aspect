@@ -6,8 +6,8 @@ const settings = {
     utilizationRateThreshold: 0.9,
     errorRateThreshold: 0.03,
 
-    stateLabel: 'State',
-    statesLabel: 'States',
+    stateLabel: 'Zone',
+    statesLabel: 'Zones',
     countyLabel: 'District',
     countiesLabel: 'Districts',
     lgaLabel: 'District',

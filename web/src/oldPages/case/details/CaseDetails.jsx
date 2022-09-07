@@ -1,6 +1,5 @@
 import React from 'react'
 import { FaNotesMedical } from 'react-icons/fa'
-
 import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
 
 const CaseDetails = () => (

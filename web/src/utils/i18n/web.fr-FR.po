@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-15T16:19:42.347Z\n"
+"POT-Creation-Date: 2022-09-02T16:37:46.110Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -134,6 +134,44 @@ msgstr "< 40 cp/mL"
 msgid "< 550 cp/mL"
 msgstr "< 550 cp/mL"
 
+#. [pages.DeviceList.mergeDeviceActionDescription]
+#. defaultMessage is:
+#. <p>Select as many devices as you want to merge, select the target device and click the Merge button.</p> <p><strong>The devices should be of the same Site and Device Type, and also source devices have to be offline for more than 24 Hs.<strong></p>
+#: extracted_strings.json
+msgid ""
+"<p>Select as many devices as you want to merge, select the target device and "
+"click the Merge button.</p> <p><strong>The devices should be of the same "
+"Site and Device Type, and also source devices have to be offline for more "
+"than 24 Hs.<strong></p>"
+msgstr ""
+"<p>Sélectionnez autant d’appareils que vous souhaitez fusionner, "
+"sélectionnez l’appareil cible et cliquez sur le bouton Fusionner.</p> "
+"<p><strong>Les appareils doivent être du même site et du même type "
+"d’appareil, et les appareils sources ont également être hors ligne pendant "
+"plus de 24 heures.<strong></p>"
+
+#. [pages.DeviceList.mergeDevicesConfirmationTitle]
+#. defaultMessage is:
+#. <p>This process will perform the following actions:</P> <p><br/> <ul> <li>• Results not repeated between devices will moved to target device.</li> <li>• Issues and Notifications from duplicated results will be moved to target results.</li> <li>• Device issues not related to results, like inventory issues, will be moved to target device.</li> <li>• Source devices will be deleted from Aspect.</li> <ul> </p> <br/> <p style="color: red;"> **IMPORTANT:** This action is unreversible! </p>
+#: extracted_strings.json
+msgid ""
+"<p>This process will perform the following actions:</P> <p><br/> <ul> <li>• "
+"Results not repeated between devices will moved to target device.</li> <li>• "
+"Issues and Notifications from duplicated results will be moved to target "
+"results.</li> <li>• Device issues not related to results, like inventory "
+"issues, will be moved to target device.</li> <li>• Source devices will be "
+"deleted from Aspect.</li> <ul> </p> <br/> <p style=\"color: red;\"> "
+"**IMPORTANT:** This action is unreversible! </p>"
+msgstr ""
+"<p>Ce processus effectuera les actions suivantes :</P> <p><br/> <ul> "
+"<li>• Les résultats non répétés entre les appareils seront déplacés vers "
+"l’appareil cible.</li> <li>• Problèmes et Les notifications des résultats en "
+"double seront déplacées vers les résultats cibles.</li> <li>• Les problèmes "
+"d’appareil non liés aux résultats, tels que les problèmes d’inventaire, "
+"seront déplacés vers l’appareil cible.</li> <li>• Les appareils sources "
+"seront supprimés d’Aspect.</li> <ul> </p> <br/> <p style=“color: red;”> "
+"**IMPORTANT :** Cette action est irréversible ! </p>"
+
 #. [legends.Unknown.moreThan180]
 #. defaultMessage is:
 #. >6 Months
@@ -194,6 +232,20 @@ msgstr "Un nom d'utilisateur est requis"
 #: extracted_strings.json
 msgid "AMK Resistance"
 msgstr "Résistance AMK"
+
+#. [months.april]
+#. defaultMessage is:
+#. APR
+#: extracted_strings.json
+msgid "APR"
+msgstr "avril"
+
+#. [months.august]
+#. defaultMessage is:
+#. AUG
+#: extracted_strings.json
+msgid "AUG"
+msgstr "août"
 
 #. [legends.Unknown.assayAbbottM2000DBSHivVL]
 #. defaultMessage is:
@@ -310,10 +362,10 @@ msgstr "Échec de la reconnaissance du problème"
 #. [component.Widget.activeDevicesTitle]
 #. defaultMessage is:
 #. Active
-#. [pages.DeviceList.availabilityRate]
+#. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
 #. Active
-#. [pages.shared.deviceStatus.active]
+#. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
 #. [pages.TaskList.issueStatusActive]
@@ -766,13 +818,6 @@ msgid ""
 msgstr ""
 "Êtes-vous sûr de vouloir supprimer ce site ? Cette action est destinée "
 "uniquement aux sites de test, toutes les données du site seront perdues."
-
-#. [pages.LocationSelector.lga]
-#. defaultMessage is:
-#. Area
-#: extracted_strings.json
-msgid "Area"
-msgstr "Surface"
 
 #. [errorResponseMessages.generic.title]
 #. defaultMessage is:
@@ -1558,6 +1603,9 @@ msgstr "CommCare VIH"
 msgid "Configuration"
 msgstr "Configuration"
 
+#. [pages.DeviceList.buttonConfirmMerge]
+#. defaultMessage is:
+#. Confirm
 #. [pages.resultTreatmentPanel.confirm]
 #. defaultMessage is:
 #. Confirm
@@ -1574,6 +1622,13 @@ msgstr "Confirmer"
 #: extracted_strings.json
 msgid "Confirm New Password"
 msgstr "Confirmer le nouveau mot de passe"
+
+#. [pages.DeviceList.areYouSure]
+#. defaultMessage is:
+#. Confirm to proceed.
+#: extracted_strings.json
+msgid "Confirm to proceed."
+msgstr "Confirmez pour continuer."
 
 #. [legends.Unknown.Confirmed]
 #. defaultMessage is:
@@ -1609,13 +1664,13 @@ msgstr "Connecté"
 #. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
+#. [pages.shared.deviceStatus.inactiveConnectivity]
+#. defaultMessage is:
+#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivityHealth]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.shared.deviceStatus.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.SiteList.issueCategoryConnectivityHealth]
@@ -1641,10 +1696,10 @@ msgstr "Connectivité"
 msgid "Connectivity Health"
 msgstr "Connectivité Santé"
 
-#. [pages.DeviceList.connectorStatus]
+#. [filter.popover.connectorStatus]
 #. defaultMessage is:
 #. Connector Status
-#. [filter.popover.connectorStatus]
+#. [pages.DeviceList.connectorStatus]
 #. defaultMessage is:
 #. Connector Status
 #: extracted_strings.json
@@ -2075,6 +2130,13 @@ msgstr "Champs personnalisés"
 msgid "Custom Fields Average Completion"
 msgstr "Champs personnalisés Achèvement moyen"
 
+#. [months.december]
+#. defaultMessage is:
+#. DEC
+#: extracted_strings.json
+msgid "DEC"
+msgstr "décembre"
+
 #. [pages.SiteDetail.buttonDelete]
 #. defaultMessage is:
 #. DELETE
@@ -2376,13 +2438,13 @@ msgstr "Détecté"
 #. [placeholder.device]
 #. defaultMessage is:
 #. Device
+#. [filter.popover.deviceName]
+#. defaultMessage is:
+#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.deviceHealth]
-#. defaultMessage is:
-#. Device
-#. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceApiKeyList.deviceId]
@@ -2532,10 +2594,10 @@ msgstr "Numéro de série"
 msgid "Device State"
 msgstr "État du dispositif"
 
-#. [pages.DeviceList.deviceStatus]
+#. [filter.popover.deviceStatus]
 #. defaultMessage is:
 #. Device Status
-#. [filter.popover.deviceStatus]
+#. [pages.DeviceList.deviceStatus]
 #. defaultMessage is:
 #. Device Status
 #: extracted_strings.json
@@ -2595,10 +2657,10 @@ msgstr "Type d'appareil"
 #. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
-#. [pages.DeviceList.devicesTitle]
+#. [pages.SiteDetail.fieldDevices]
 #. defaultMessage is:
 #. Devices
-#. [pages.SiteDetail.fieldDevices]
+#. [pages.DeviceList.devicesTitle]
 #. defaultMessage is:
 #. Devices
 #. [pages.NotificationDetail.fieldDevices]
@@ -2705,10 +2767,10 @@ msgstr "Maladie"
 msgid "District"
 msgstr "District"
 
-#. [pages.common.lga_CM]
+#. [pages.common.state_BD]
 #. defaultMessage is:
 #. Division
-#. [pages.common.state_BD]
+#. [pages.common.lga_CM]
 #. defaultMessage is:
 #. Division
 #: extracted_strings.json
@@ -2729,10 +2791,10 @@ msgstr "Voulez-vous désactiver"
 msgid "Do you want to enable"
 msgstr "Voulez-vous activer"
 
-#. [pages.DeviceList.down]
+#. [pages.DeviceStatusSelectField.down]
 #. defaultMessage is:
 #. Down
-#. [pages.DeviceStatusSelectField.down]
+#. [pages.DeviceList.down]
 #. defaultMessage is:
 #. Down
 #: extracted_strings.json
@@ -3432,6 +3494,13 @@ msgstr "Échec de l'exportation de sites"
 msgid "Exporting Supplies Failed"
 msgstr "L'exportation de fournitures a échoué"
 
+#. [months.february]
+#. defaultMessage is:
+#. FEB
+#: extracted_strings.json
+msgid "FEB"
+msgstr "février"
+
 #. [results.categoryTypeFLQResistanceI18nKey]
 #. defaultMessage is:
 #. FLQ Resistance
@@ -3590,6 +3659,13 @@ msgstr "Pour {period}"
 #: extracted_strings.json
 msgid "Forgot Password?"
 msgstr "Mot de passe oublié?"
+
+#. [pages.DailyStatusDialog.siteWorkingHoursFrom]
+#. defaultMessage is:
+#. From
+#: extracted_strings.json
+msgid "From"
+msgstr "De"
 
 #. [pages.InventoryAdjustmentDialogForm.fromSiteName]
 #. defaultMessage is:
@@ -4522,6 +4598,27 @@ msgstr "Problèmes"
 msgid "It might have been deleted or renamed"
 msgstr "Il a peut-être été supprimé ou renommé"
 
+#. [months.january]
+#. defaultMessage is:
+#. JAN
+#: extracted_strings.json
+msgid "JAN"
+msgstr "janvier"
+
+#. [months.july]
+#. defaultMessage is:
+#. JUL
+#: extracted_strings.json
+msgid "JUL"
+msgstr "juillet"
+
+#. [months.june]
+#. defaultMessage is:
+#. JUN
+#: extracted_strings.json
+msgid "JUN"
+msgstr "juin"
+
 #. [pages.UserPreferences.job]
 #. defaultMessage is:
 #. Job
@@ -5114,6 +5211,20 @@ msgstr "Numéro de lot"
 msgid "Low Inventory"
 msgstr "Faible inventaire"
 
+#. [months.march]
+#. defaultMessage is:
+#. MAR
+#: extracted_strings.json
+msgid "MAR"
+msgstr "mars"
+
+#. [months.may]
+#. defaultMessage is:
+#. MAY
+#: extracted_strings.json
+msgid "MAY"
+msgstr "mai"
+
 #. [pages.ResultList.resultCategoryMtb]
 #. defaultMessage is:
 #. MTB
@@ -5389,10 +5500,10 @@ msgstr "MTB/Rif"
 msgid "MagNA Pure-96 COVID-19"
 msgstr "MagNA Pure-96 COVID-19"
 
-#. [pages.DeviceList.maintenanceStatus]
+#. [filter.popover.deviceMaintenanceStatus]
 #. defaultMessage is:
 #. Maintenance Status
-#. [filter.popover.deviceMaintenanceStatus]
+#. [pages.DeviceList.maintenanceStatus]
 #. defaultMessage is:
 #. Maintenance Status
 #. [pages.DeviceDetailProfile.maintenance]
@@ -5436,6 +5547,20 @@ msgstr "Gérer"
 #: extracted_strings.json
 msgid "Manually set by {username} ({updatedDate})"
 msgstr "Réglé manuellement par {username} ({updatedDate})"
+
+#. [pages.DeviceList.merge]
+#. defaultMessage is:
+#. Merge
+#: extracted_strings.json
+msgid "Merge"
+msgstr "Merge"
+
+#. [pages.DeviceList.mergeDevices]
+#. defaultMessage is:
+#. Merge Devices
+#: extracted_strings.json
+msgid "Merge Devices"
+msgstr "Fusionner les appareils"
 
 #. [legends.Unknown.resultCategoryMissing]
 #. defaultMessage is:
@@ -5563,6 +5688,13 @@ msgstr "N/D"
 #: extracted_strings.json
 msgid "NOTE:"
 msgstr "NOTE:"
+
+#. [months.november]
+#. defaultMessage is:
+#. NOV
+#: extracted_strings.json
+msgid "NOV"
+msgstr "novembre"
 
 #. [pages.ResultList.resultCategoryEbolaNp]
 #. defaultMessage is:
@@ -5733,6 +5865,13 @@ msgstr "Non"
 #: extracted_strings.json
 msgid "No Consumption"
 msgstr "Pas de consommation"
+
+#. [pages.DailyStatusDialog.noSiteContacts]
+#. defaultMessage is:
+#. No Contacts defined for this site
+#: extracted_strings.json
+msgid "No Contacts defined for this site"
+msgstr "Aucun contact défini pour ce site"
 
 #. [pages.resultEdit.noCustomFieldsDefined]
 #. defaultMessage is:
@@ -6099,6 +6238,13 @@ msgstr ""
 "Nombre de résultats dans les 30 derniers jours divisé par la capacité "
 "quotidienne de l'instrument multipliée par 30 jours"
 
+#. [months.october]
+#. defaultMessage is:
+#. OCT
+#: extracted_strings.json
+msgid "OCT"
+msgstr "octobre"
+
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
@@ -6112,13 +6258,13 @@ msgstr ""
 msgid "OK"
 msgstr "OK"
 
-#. [pages.DeviceList.offline]
-#. defaultMessage is:
-#. Offline
 #. [filter.btnGroup.offline]
 #. defaultMessage is:
 #. Offline
 #. [pages.connectorStatusSelectField.offline]
+#. defaultMessage is:
+#. Offline
+#. [pages.DeviceList.offline]
 #. defaultMessage is:
 #. Offline
 #. [pages.Notification.type.Offline]
@@ -6162,13 +6308,13 @@ msgstr "Plus âgée"
 msgid "On Treatment"
 msgstr "Sur le traitement"
 
-#. [pages.DeviceList.online]
-#. defaultMessage is:
-#. Online
 #. [filter.btnGroup.online]
 #. defaultMessage is:
 #. Online
 #. [pages.connectorStatusSelectField.online]
+#. defaultMessage is:
+#. Online
+#. [pages.DeviceList.online]
 #. defaultMessage is:
 #. Online
 #: extracted_strings.json
@@ -7624,6 +7770,13 @@ msgstr "Routeurs"
 msgid "SARS-CoV-2 (COVID-19)"
 msgstr "SRAS-CoV-2 (COVID-19)"
 
+#. [months.september]
+#. defaultMessage is:
+#. SEP
+#: extracted_strings.json
+msgid "SEP"
+msgstr "septembre"
+
 #. [pages.NotificationDetail.sms]
 #. defaultMessage is:
 #. SMS
@@ -8583,10 +8736,10 @@ msgstr "Se déconnecter"
 #. [placeholder.site]
 #. defaultMessage is:
 #. Site
-#. [pages.DeviceList.site]
+#. [filter.popover.siteName]
 #. defaultMessage is:
 #. Site
-#. [filter.popover.siteName]
+#. [pages.DeviceList.site]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceApiKeyList.siteId]
@@ -8621,6 +8774,9 @@ msgstr "Site"
 #. defaultMessage is:
 #. Site Contacts
 #. [pages.NotificationDetail.fieldContact]
+#. defaultMessage is:
+#. Site Contacts
+#. [pages.DailyStatusDialog.siteContacts]
 #. defaultMessage is:
 #. Site Contacts
 #: extracted_strings.json
@@ -8684,6 +8840,13 @@ msgstr "Nom du site"
 msgid "Site Type"
 msgstr "Type de site"
 
+#. [pages.DailyStatusDialog.siteWorkingHours]
+#. defaultMessage is:
+#. Site Working Hours
+#: extracted_strings.json
+msgid "Site Working Hours"
+msgstr "Heures de travail du site"
+
 #. [pages.TaskDetail.siteContact]
 #. defaultMessage is:
 #. Site contact
@@ -8742,6 +8905,13 @@ msgstr "Le corps du SMS ne doit pas contenir plus de 144 caractères"
 msgid "Sms message should not be longer than 144 characters"
 msgstr "Le message SMS ne doit pas dépasser 144 caractères"
 
+#. [pages.DeviceList.sourceDevices]
+#. defaultMessage is:
+#. Source devices
+#: extracted_strings.json
+msgid "Source devices"
+msgstr "Appareils sources"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -8764,9 +8934,6 @@ msgid "Start time cannot be after End time"
 msgstr "L’heure de début ne peut pas être postérieure à l’heure de fin"
 
 #. [forms.formItem.state]
-#. defaultMessage is:
-#. State
-#. [pages.LocationSelector.state]
 #. defaultMessage is:
 #. State
 #. [pages.SiteDetail.fieldState]
@@ -9015,6 +9182,13 @@ msgstr "Mots clés"
 #: extracted_strings.json
 msgid "Target"
 msgstr "Cibler"
+
+#. [pages.DeviceList.targetDevice]
+#. defaultMessage is:
+#. Target device
+#: extracted_strings.json
+msgid "Target device"
+msgstr "Dispositif cible"
 
 #. [pages.TaskDetail.title]
 #. defaultMessage is:
@@ -9975,6 +10149,13 @@ msgstr "L’heure ne peut pas être supérieure à l’heure actuelle"
 msgid "Title"
 msgstr "Titre"
 
+#. [pages.DailyStatusDialog.siteWorkingHoursTo]
+#. defaultMessage is:
+#. To
+#: extracted_strings.json
+msgid "To"
+msgstr "À"
+
 #. [reporters.delivered]
 #. defaultMessage is:
 #. To Reporter
@@ -10333,9 +10514,6 @@ msgstr "Colonne des dégroupés"
 #. [legends.Unknown.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
-#. [pages.DeviceList.unknown]
-#. defaultMessage is:
-#. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -10345,6 +10523,12 @@ msgstr "Colonne des dégroupés"
 #. [pages.DeviceStatusSelectField.unknown]
 #. defaultMessage is:
 #. Unknown
+#. [pages.DeviceList.unknown]
+#. defaultMessage is:
+#. Unknown
+#. [pages.DailyStatusDialog.siteWorkingHoursUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.deviceDetail.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -10352,10 +10536,10 @@ msgstr "Colonne des dégroupés"
 msgid "Unknown"
 msgstr "Inconnu"
 
-#. [pages.DeviceList.up]
+#. [pages.DeviceStatusSelectField.up]
 #. defaultMessage is:
 #. Up
-#. [pages.DeviceStatusSelectField.up]
+#. [pages.DeviceList.up]
 #. defaultMessage is:
 #. Up
 #: extracted_strings.json
@@ -11577,6 +11761,9 @@ msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
 
+#~ msgid "Area"
+#~ msgstr "Surface"
+
 #~ msgid "The device was permanently deleted"
 #~ msgstr "L'appareil a été définitivement supprimé"
 
@@ -11996,9 +12183,6 @@ msgstr ""
 
 #~ msgid "device management"
 #~ msgstr "gestion d'appareils"
-
-#~ msgid "devices"
-#~ msgstr "dispositifs"
 
 #~ msgid "discard Consumables"
 #~ msgstr "jeter les consommables"

@@ -1,7 +1,6 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
-
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import styles from './index.css'
 
 const cssClasses = classnames.bind(styles)

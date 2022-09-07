@@ -2,11 +2,11 @@ const { knex } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
 async function getSourceDevices(sourceDevicesIds) {
-  return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId')
+  return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId', 'deviceTypeId')
 }
 
 async function getTargetDevice(targetDeviceId) {
-  return knex('Device').where('id', targetDeviceId).first('id', 'siteId')
+  return knex('Device').where('id', targetDeviceId).first('id', 'siteId', 'deviceTypeId')
 }
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
@@ -37,7 +37,7 @@ async function mergeDeviceLevelIssues(devicesToMerge, trknex) {
     targetDevice: { id: targetDeviceId },
   } = devicesToMerge
 
-  await trknex('Issue').where('deviceId', sourceDeviceId).update('deviceId', targetDeviceId)
+  await trknex('Issue').where('deviceId', sourceDeviceId).whereNull('resultId').update('deviceId', targetDeviceId)
 }
 
 async function mergeNonRepeatedResults(devicesToMerge, trknex) {
@@ -62,6 +62,32 @@ async function mergeNonRepeatedResults(devicesToMerge, trknex) {
   await trknex('DeviceLog').where({ deviceId: sourceDeviceId }).update({ deviceId: targetDeviceId })
 }
 
+async function mergeMessages(devicesToMerge, trknex) {
+  const {
+    sourceDevice: { id: sourceDeviceId },
+    targetDevice: { id: targetDeviceId },
+  } = devicesToMerge
+
+  const messagesToMergeFilter = qb =>
+    qb
+      .where({ deviceId: sourceDeviceId })
+      .where(qb =>
+        qb
+          .whereIn('m.resultId', knex('Result as r').where('r.deviceId', targetDeviceId).select('id'))
+          .orWhereNull('m.resultId')
+      )
+
+  await trknex('AlertMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
+
+  await trknex('EmailMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
+
+  await trknex('PushNotificationMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
+
+  await trknex('SmsMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
+
+  await trknex('WebhookMessage as m').modify(messagesToMergeFilter).update('deviceId', targetDeviceId)
+}
+
 async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) {
   return knex('Device as d')
     .whereIn('d.id', allDevicesIds)
@@ -73,6 +99,7 @@ async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) 
 // Delete device
 async function deleteNotifications(deviceId, trknex) {
   await trknex('Notification').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  await trknex('Notification').whereIn('issueId', trknex('Issue').where('deviceId', deviceId).select('id')).del()
 }
 
 async function deleteIssues(deviceId, trknex) {
@@ -87,7 +114,14 @@ async function deleteDeviceLog(deviceId, trknex) {
   await trknex('DeviceLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
 }
 
-async function deleteRepeatedResults(deviceId, trknex) {
+async function deleteMessages(deviceId, trknex) {
+  await trknex('EmailMessage').where('deviceId', deviceId).del()
+  await trknex('PushNotificationMessage').where('deviceId', deviceId).del()
+  await trknex('SmsMessage').where('deviceId', deviceId).del()
+  await trknex('WebhookMessage').where('deviceId', deviceId).del()
+}
+
+async function deleteResults(deviceId, trknex) {
   await trknex('Result').where('deviceId', deviceId).del()
 }
 
@@ -131,9 +165,14 @@ async function deleteDeviceFromFactTables(deviceId, trknex) {
   await trknex('FactResultsDeviceByTimeFrame').where({ deviceId }).del()
 }
 
+async function deleteDeviceSiteHistory(deviceId, trknex) {
+  await trknex('DeviceSiteHistory').where('id', deviceId).del()
+}
+
 async function deleteDevice(deviceId, trknex) {
   await trknex('Device').where('id', deviceId).del()
 }
+
 module.exports = {
   getSourceDevices,
   getTargetDevice,
@@ -142,9 +181,11 @@ module.exports = {
   deleteNotifications,
   deleteIssues,
   mergeNonRepeatedResults,
+  mergeMessages,
   getDevicesIdsCheckingConstraints,
   deleteResultDownloadLog,
-  deleteRepeatedResults,
+  deleteMessages,
+  deleteResults,
   deleteDeviceLog,
   deleteDeviceFromDeviceOperation,
   deleteDeviceFromDeviceMaintenance,
@@ -154,5 +195,6 @@ module.exports = {
   deleteDeviceFromDeviceSim,
   deleteDeviceFromDeviceTag,
   deleteDeviceFromFactTables,
+  deleteDeviceSiteHistory,
   deleteDevice,
 }

@@ -1,14 +1,13 @@
 import React, { useEffect, useMemo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-
 import { oneOfType, object } from 'prop-types'
+import { useSelector, useDispatch } from 'react-redux'
 import Select from 'react-select'
 import useI18n from '../../hooks/useI18n'
-import { getAspectTheme } from './index.jsx'
 import { useAuthState } from '../../providers/AuthProvider'
 import { fetchCountries, fetchStatesForCountry } from '../../store/GeographyRedux'
-import messages from './messages'
 import ClearIndicator from './ClearIndicator'
+import { getAspectTheme } from './index.jsx'
+import messages from './messages'
 
 const getCountry = (geographyComposed, countryId) =>
   geographyComposed.getIn(['countriesForLocationSelector', 'items']).find(country => +country.get('id') === +countryId)

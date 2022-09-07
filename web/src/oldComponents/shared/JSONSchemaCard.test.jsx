@@ -1,9 +1,8 @@
-import Immutable from 'immutable'
 import React from 'react'
 import { shallow } from 'enzyme'
-
-import { ReadOnlyField } from './ReadOnlyFields'
+import Immutable from 'immutable'
 import JSONSchemaCard, { PropertiesSchemaCard } from './JSONSchemaCard'
+import { ReadOnlyField } from './ReadOnlyFields'
 
 describe('JSONSchemaCard module', () => {
   describe('PropertiesSchemaCard testInstance', () => {

@@ -1,14 +1,13 @@
-import PropTypes from 'prop-types'
 import React, { Fragment } from 'react'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import Divider from '@mui/material/Divider'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import Divider from '@mui/material/Divider'
 import classnames from 'classnames/bind'
-import IconProvider from '../IconProvider'
+import PropTypes from 'prop-types'
 import IconMenu from '../../oldComponents/shared/IconMenu'
-
+import IconProvider from '../IconProvider'
 import styles from './AspectVertMenu.css'
 
 const cssClasses = classnames.bind(styles)

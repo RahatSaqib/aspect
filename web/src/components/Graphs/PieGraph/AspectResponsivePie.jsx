@@ -1,15 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import { ResponsivePie } from '@nivo/pie'
-import { PieInnerLegend, PieInnerLegendSolid, PieInnerLegendDoughNut } from '../GraphLegend'
-import messages from '../intlMessages'
-import { generateColorForValue, generateToolTip, percentageOrActualForPie } from '../Helpers/Formatters'
-
-import { GraphToolTip } from '../GraphToolTip'
-
-import styles from './PieGraph.css'
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import useI18n from '../../../hooks/useI18n'
+import { PieInnerLegend, PieInnerLegendSolid, PieInnerLegendDoughNut } from '../GraphLegend'
+import { GraphToolTip } from '../GraphToolTip'
+import { generateColorForValue, generateToolTip, percentageOrActualForPie } from '../Helpers/Formatters'
+import messages from '../intlMessages'
+import styles from './PieGraph.css'
 
 const cssClasses = classnames.bind(styles)
 

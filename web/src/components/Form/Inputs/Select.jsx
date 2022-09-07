@@ -1,15 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import get from 'lodash/get'
-import isArray from 'lodash/isArray'
-import isFunction from 'lodash/isFunction'
-
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import { useFormikContext } from 'formik'
-
-import AspectDropDown from '../../AspectDropDown'
+import get from 'lodash/get'
+import isArray from 'lodash/isArray'
+import isFunction from 'lodash/isFunction'
+import PropTypes from 'prop-types'
 import UI_CONSTS from '../../../utils/consts/UI'
+import AspectDropDown from '../../AspectDropDown'
 
 const getPlaceholder = (placeholder, formik) => {
   if (isFunction(placeholder)) {

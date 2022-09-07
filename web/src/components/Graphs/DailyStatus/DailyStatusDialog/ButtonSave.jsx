@@ -1,11 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import Button from '@mui/material/Button'
 import { useFormikContext } from 'formik'
-
+import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
-import { MODE } from './utils'
 import messages from './messages'
+import { MODE } from './utils'
 
 export const ButtonSave = ({ onClick, deviceId, mode }) => {
   const { formatMessage } = useI18n()

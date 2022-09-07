@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
 import * as Sentry from '@sentry/react'
+import PropTypes from 'prop-types'
 import IconProvider from '../IconProvider'
 
 const ErrorIcon = () => <IconProvider icon="FaExclamationCircle" className="errorBoundary__error" />

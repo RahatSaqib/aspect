@@ -1,23 +1,20 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { defineMessages, injectIntl } from 'react-intl'
-import { compose } from 'recompose'
-import { connect } from 'react-redux'
 import AppBar from '@mui/material/AppBar'
-import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
 import MenuItem from '@mui/material/MenuItem'
-import { useNavigate } from 'react-router-dom'
-
+import Toolbar from '@mui/material/Toolbar'
+import classnames from 'classnames/bind'
 import { FaUser } from 'react-icons/fa'
-
-import ConfluenceIcon from './ConfluenceIcon'
-import LinkNavigation from './LinkNavigation'
+import { defineMessages, injectIntl } from 'react-intl'
+import { connect } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { compose } from 'recompose'
 import { closeDrawer, userRequestedLogout } from '../../store/AuthRedux'
-import requirePermissions from '../shared/requirePermissions'
 import IconMenu from '../shared/IconMenu'
-
+import requirePermissions from '../shared/requirePermissions'
+import ConfluenceIcon from './ConfluenceIcon'
 import styles from './index.css'
+import LinkNavigation from './LinkNavigation'
 
 const messages = defineMessages({
   accountDetails: {

@@ -1,11 +1,10 @@
-import Immutable from 'immutable'
 import React from 'react'
-import sinon from 'sinon'
 import { shallow } from 'enzyme'
-
+import Immutable from 'immutable'
+import sinon from 'sinon'
+import { mountWithTheme } from '../../../__setup__/common'
 import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../../store/GeographyRedux'
 import SelectField from '../../shared/SelectField'
-import { mountWithTheme } from '../../../__setup__/common'
 
 describe('StateSelectField module', () => {
   const { StateSelectField } = require('./StateSelectField')

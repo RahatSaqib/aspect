@@ -1,11 +1,11 @@
-import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 import pick from 'lodash/pick'
+import { defineMessages } from 'react-intl'
 import { SubmissionError } from 'redux-form/immutable'
+import { errorPleaseTryAgainInAFewMinutes, inlineWarning } from '../utils/error/CommonErrorNotifications'
 import { getClientName } from '../utils/utils/browser'
 import { aspectFetch } from '../utils/utils/fetch'
 import { ContactDetails, LoginDetails, UserPreferences } from './PersonRedux'
-import { errorPleaseTryAgainInAFewMinutes, inlineWarning } from '../utils/error/CommonErrorNotifications'
 
 export const types = {
   REQUEST_ACCOUNT_DETAILS: 'REQUEST_ACCOUNT_DETAILS',

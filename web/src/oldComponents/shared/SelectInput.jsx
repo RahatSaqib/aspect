@@ -1,9 +1,8 @@
-import map from 'lodash/map'
 import React from 'react'
-import { Field } from 'redux-form/immutable'
 import MenuItem from '@mui/material/MenuItem'
 import classNames from 'classnames'
-
+import map from 'lodash/map'
+import { Field } from 'redux-form/immutable'
 import SelectField from './SelectField'
 import styles from './Shared.css'
 

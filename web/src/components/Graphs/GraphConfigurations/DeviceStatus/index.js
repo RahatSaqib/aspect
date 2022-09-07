@@ -1,8 +1,7 @@
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
+import AspectDropDown from '../../../AspectDropDown'
 import BarGraph from '../../BarGraph'
 import { getPreviousPeriod, dateRangeOptions } from '../../Helpers/Formatters'
-import AspectDropDown from '../../../AspectDropDown'
-
-import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 
 const {
   DATE_RANGE_OPTIONS,

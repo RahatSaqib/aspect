@@ -1,7 +1,7 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import classNames from 'classnames'
 import MUILink from '@mui/material/Link'
+import classNames from 'classnames'
+import PropTypes from 'prop-types'
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'
 
 const Link = ({ label, theme, disabled, onClick, ...restProps }) => {

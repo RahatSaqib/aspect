@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
-import { TAG_KEY, TAG_KEY_BY_TYPE_AND_ID_ENDPOINT } from './tagKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { TAG_KEY, TAG_KEY_BY_TYPE_AND_ID_ENDPOINT } from './tagKeys.js'
 
 const getContactsBySiteId = async (type, id) =>
   fetchWrapperForQueries({

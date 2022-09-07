@@ -1,13 +1,13 @@
 import React, { Fragment, useState } from 'react'
 import Button from '@mui/material/Button'
-import { array, arrayOf, number, oneOfType, string } from 'prop-types'
 import classnames from 'classnames/bind'
-import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import NotificationDetailModal from './NotificationDetailModal'
+import { array, arrayOf, number, oneOfType, string } from 'prop-types'
 import IconProvider from '../../../../components/IconProvider/index'
-import styles from './ErrorCell.css'
 import useI18n from '../../../../hooks/useI18n'
+import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
+import styles from './ErrorCell.css'
 import messages from './messages'
+import NotificationDetailModal from './NotificationDetailModal'
 
 const cssClasses = classnames.bind(styles)
 

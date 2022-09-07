@@ -1,9 +1,9 @@
 import React from 'react'
-import { useParams, useLocation, matchPath } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
-import messages from './messages'
+import { useParams, useLocation, matchPath } from 'react-router-dom'
 import DetailBackBar from '../../../oldComponents/DetailBackBar'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
+import messages from './messages'
 
 const PersonDetailBackBar = ({ canLogIn = false, formatMessage, navigate, title, disabled }) => {
   const params = useParams()

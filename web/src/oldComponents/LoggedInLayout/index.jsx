@@ -1,15 +1,13 @@
-import classnames from 'classnames/bind'
 import React from 'react'
+import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
-
-import IdleDialog from '../IdleDialog'
-import AppNotificationSnackBar from '../appNotification/AppNotificationSnackBar'
-import AppNotificationDialog from '../appNotification/AppNotificationDialog'
-import HorizontalAppBar from './HorizontalAppBar'
 import Footer from '../../components/Footer'
-
-import styles from './index.css'
 import useI18n from '../../hooks/useI18n'
+import AppNotificationDialog from '../appNotification/AppNotificationDialog'
+import AppNotificationSnackBar from '../appNotification/AppNotificationSnackBar'
+import IdleDialog from '../IdleDialog'
+import HorizontalAppBar from './HorizontalAppBar'
+import styles from './index.css'
 
 const cssClasses = classnames.bind(styles)
 

@@ -18,12 +18,12 @@
  * contextualMenu: 'function|component' [self defined, optional]
  */
 import React from 'react'
-import messages from './messages'
-import tableMessages from '../../../components/AspectTable/TableCell/messages'
 import { timeClassification, totalItemCount, translate } from '../../../components/AspectTable/Helpers'
 import ContactsCell from '../../../components/AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../../components/AspectTable/TableCell/DateTimeCell'
+import tableMessages from '../../../components/AspectTable/TableCell/messages'
 import NumberCell from '../../../components/AspectTable/TableCell/NumberCell'
+import messages from './messages'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
 
 const tableConfig = ({ formatMessage, formatNumber }) => ({

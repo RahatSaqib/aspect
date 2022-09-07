@@ -1,11 +1,9 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
-
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
+import styles from '../../components/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import { formatDate } from '../../utils/utils/dateFormat'
-
-import styles from '../../components/shared/DataTableRow.css'
 
 const cssClasses = classnames.bind(styles)
 
