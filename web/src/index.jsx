@@ -38,13 +38,6 @@ if (!window.Intl) {
   require('intl/locale-data/jsonp/en.js')
 }
 
-if (process.env.NODE_ENV === 'development') {
-  const whyDidYouRender = require('@welldone-software/why-did-you-render')
-  whyDidYouRender(React, {
-    trackAllPureComponents: false,
-  })
-}
-
 const renderApp = () => render(<App store={store} />, document.getElementById('app'))
 
 // let's see if we can get culture from local storage
