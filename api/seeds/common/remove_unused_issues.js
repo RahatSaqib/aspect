@@ -22,45 +22,58 @@ module.exports = async function cleanIssueTypes(knex, adminUserName, partnerName
 
   await Promise.each(issueTypes, async issueType => {
     if (!_.includes(configuredIssues, issueType.externalId)) {
-      const issuesToDelete = await knex('Issue')
-        .where({ issueTypeId: issueType.id })
-        .select('id as issueId', 'resultId', 'deviceId')
-      const filteredResults = _.reduce(
-        issuesToDelete,
-        (issues, value, key) => {
-          if (value.resultId) issues[key] = value.resultId
-          return issues
-        },
-        []
-      )
-      const filteredDevices = _.reduce(
-        issuesToDelete,
-        (devices, value, key) => {
-          if (value.deviceId) devices[key] = value.deviceId
-          return devices
-        },
-        []
-      )
-      await knex('Notification')
+      const issuesToDelete = await knex('Issue').where({ issueTypeId: issueType.id }).pluck('id as issueId')
+
+      if (_.compact(issuesToDelete).length === 0) return
+      const notifications = await knex('Notification')
+        .whereIn('issueId', issuesToDelete)
+        .select(
+          'id',
+          'alertMessageId',
+          'emailMessageId',
+          'smsMessageId',
+          'pushNotificationMessageId',
+          'webhookMessageId'
+        )
+
+      await knex('EmailMessage')
         .whereIn(
-          'issueId',
-          _.map(issuesToDelete, issue => issue.issueId)
+          'id',
+          _.map(notifications, n => n.emailMessageId)
         )
         .delete()
-      await knex('EmailMessage').whereIn('resultId', filteredResults).orWhereIn('deviceId', filteredDevices).delete()
-      await knex('AlertMessage').whereIn('resultId', filteredResults).orWhereIn('deviceId', filteredDevices).delete()
-      await knex('SmsMessage').whereIn('resultId', filteredResults).orWhereIn('deviceId', filteredDevices).delete()
-      await knex('PushNotificationMessage')
-        .whereIn('resultId', filteredResults)
-        .orWhereIn('deviceId', filteredDevices)
+      await knex('AlertMessage')
+        .whereIn(
+          'id',
+          _.map(notifications, n => n.alertMessageId)
+        )
         .delete()
-      await knex('WebhookMessage').whereIn('resultId', filteredResults).orWhereIn('deviceId', filteredDevices).delete()
+      await knex('SmsMessage')
+        .whereIn(
+          'id',
+          _.map(notifications, n => n.smsMessageId)
+        )
+        .delete()
+      await knex('PushNotificationMessage')
+        .whereIn(
+          'id',
+          _.map(notifications, n => n.pushNotificationMessageId)
+        )
+        .delete()
+      await knex('WebhookMessage')
+        .whereIn(
+          'id',
+          _.map(notifications, n => n.webhookMessageId)
+        )
+        .delete()
+      await knex('Notification').whereIn('issueId', issuesToDelete).delete()
       await knex('Issue')
         .whereIn(
           'id',
           _.map(issuesToDelete, issue => issue.issueId)
         )
         .delete()
+
       await knex('IssueEventTrigger').where({ issueTypeId: issueType.id }).delete()
       await knex('IssueResolutionTrigger').where({ issueTypeId: issueType.id }).delete()
       await knex('NotificationType').where({ issueTypeId: issueType.id }).delete()
@@ -82,7 +95,7 @@ module.exports = async function cleanIssueTypes(knex, adminUserName, partnerName
       })
       .first('id as jobFunctionAdminId'))
 
-  await Promise.each(Object.values(configuredIssues), async externalId =>
-    addIssue(knex, externalId, [jobFunctionAdminId], partnerName, adminUserName)
-  )
+  await Promise.each(Object.values(configuredIssues), async externalId => {
+    return addIssue(knex, externalId, [jobFunctionAdminId], partnerName, adminUserName)
+  })
 }

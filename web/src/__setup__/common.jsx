@@ -1,11 +1,10 @@
 import React from 'react'
-import { IntlProvider } from 'react-intl'
-import { mount, shallow } from 'enzyme'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-
-import translation from '../utils/i18n/translation'
+import { mount, shallow } from 'enzyme'
+import { IntlProvider } from 'react-intl'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { I18nProvider } from '../providers/I18nProvider'
+import translation from '../utils/i18n/translation'
 
 const queryClient = new QueryClient()
 

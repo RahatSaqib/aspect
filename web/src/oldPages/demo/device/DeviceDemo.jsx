@@ -1,27 +1,21 @@
-import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes } from 'recompose'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { Helmet } from 'react-helmet'
-import { useParams } from 'react-router-dom'
-
-// Material-UI
+import Button from '@mui/material/Button'
 import LinearProgress from '@mui/material/LinearProgress'
 import MenuItem from '@mui/material/MenuItem'
 import Paper from '@mui/material/Paper'
-import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-
-// Our own imports
+import PropTypes from 'prop-types'
+import { Helmet } from 'react-helmet'
 import { injectIntl } from 'react-intl'
-import { fetchDemoDevice, postDemoDeviceResult } from '../../../store/DemoRedux'
-
+import { connect } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { compose, setPropTypes } from 'recompose'
+import { bindActionCreators } from 'redux'
 import { Unit } from '../../../oldComponents/pureGrids'
 import ReadOnlyFields from '../../../oldComponents/shared/ReadOnlyFields'
-
-import messages from './messages'
+import { fetchDemoDevice, postDemoDeviceResult } from '../../../store/DemoRedux'
 import styles from './DeviceDemo.css'
+import messages from './messages'
 
 const enhance = compose(
   WrapperComponent => props => {

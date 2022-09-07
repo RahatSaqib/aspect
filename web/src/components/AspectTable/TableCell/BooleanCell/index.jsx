@@ -1,7 +1,6 @@
 import React from 'react'
 import { number, oneOfType, bool, string } from 'prop-types'
 import { defineMessages } from 'react-intl'
-
 import useI18n from '../../../../hooks/useI18n'
 
 const messages = defineMessages({

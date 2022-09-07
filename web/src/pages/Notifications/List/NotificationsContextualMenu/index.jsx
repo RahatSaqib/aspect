@@ -1,13 +1,13 @@
 import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import AspectVertMenu from '../../../../components/AspectVertMenu'
-import messages from './messages'
-import DeleteConfirmationModal from './DeleteConfirmationModal'
 import { NOTIFICATION_LIST } from '../../../../components/QueryFetch/Notification/index'
-import ToggleStatusConfirmationModal from './ToggleStatusConfirmationModal'
 import useI18n from '../../../../hooks/useI18n'
+import DeleteConfirmationModal from './DeleteConfirmationModal'
+import messages from './messages'
+import ToggleStatusConfirmationModal from './ToggleStatusConfirmationModal'
 
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()

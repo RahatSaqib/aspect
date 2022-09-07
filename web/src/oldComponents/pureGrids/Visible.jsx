@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types'
-
 import { makeGetClassNames, makeDelegateComponent } from './makeDelegateComponent'
 import styles from './pure-grids-responsive-min.css'
 

@@ -1,11 +1,11 @@
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { aspectFetch } from '../utils/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const PatientResults = Immutable.Record({
   items: Immutable.List(),

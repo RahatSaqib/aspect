@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
-import { SITE_KEY, SITE_KEY_BY_ID_ENDPOINT } from './siteKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { SITE_KEY, SITE_KEY_BY_ID_ENDPOINT } from './siteKeys.js'
 
 const updateSiteById = async (site, siteId) => {
   const submitSite = { ...site }
@@ -26,7 +26,11 @@ const useUpdateSite = siteId => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation(data => updateSiteById(data, siteId), {
-    onSuccess: () => queryClient.invalidateQueries([SITE_KEY, siteId]),
+    onSuccess: () => {
+      queryClient.invalidateQueries([SITE_KEY, siteId])
+      queryClient.invalidateQueries([SITE_KEY, 'list'])
+      queryClient.invalidateQueries([SITE_KEY, 'table'])
+    },
   })
 
   return mutation

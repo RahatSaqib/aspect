@@ -1,17 +1,16 @@
 import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
-import omit from 'lodash/omit'
-import flowRight from 'lodash/flowRight'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import MenuItem from '@mui/material/MenuItem'
 import Immutable from 'immutable'
-import messages from '../../../utils/messages/deviceApprovalMessages'
-
-import SelectField from '../../shared/SelectField'
+import flowRight from 'lodash/flowRight'
+import omit from 'lodash/omit'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { I18nContext } from '../../../providers/I18nProvider'
 import { fetchDeviceApprovals } from '../../../store/DeviceApprovalRedux'
 import formatI18nMessage from '../../../utils/i18n/formatterWeb'
-import { I18nContext } from '../../../providers/I18nProvider'
+import messages from '../../../utils/messages/deviceApprovalMessages'
+import SelectField from '../../shared/SelectField'
 
 export class DeviceApprovalSelectField extends PureComponent {
   static propTypes = {

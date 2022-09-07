@@ -1,5 +1,4 @@
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
-
 import getFormConfig from '../Forms/editConfig'
 import { getNotificationMeta } from '../List/config'
 import messages from './messages'

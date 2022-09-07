@@ -1,18 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Fragment, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 import { BoxLegendSvg } from '@nivo/legends'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
-import IconProvider from '../../IconProvider'
-
-import usePrevious from '../../../hooks/usePrevious'
-import { getAverageFromData } from '../Helpers/Formatters'
-import AspectLink from '../../AspectLink'
-
-import messages from '../GraphsContainer/messages'
-import styles from './GraphLegend.css'
+import PropTypes from 'prop-types'
 import useI18n from '../../../hooks/useI18n'
+import usePrevious from '../../../hooks/usePrevious'
+import AspectLink from '../../AspectLink'
+import IconProvider from '../../IconProvider'
+import messages from '../GraphsContainer/messages'
+import { getAverageFromData } from '../Helpers/Formatters'
+import styles from './GraphLegend.css'
 
 const cssClasses = classnames.bind(styles)
 

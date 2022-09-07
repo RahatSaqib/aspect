@@ -1,25 +1,20 @@
 import React, { useState } from 'react'
 import classnames from 'classnames/bind'
-
 import useI18n from '../../../hooks/useI18n'
-
-import DailyStatusFilters from './DailyStatusFilters'
+import Loading from '../../../oldComponents/Loading'
+import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
+import GRAPH_CONSTS from '../../../utils/consts/Graphs/CONSTS'
+import AspectCard from '../../AspectCard'
+import AspectDropDown from '../../AspectDropDown'
+import CardSelectors from '../CardSelectors'
+import { getPreviousPeriod, dateRangeOptions } from '../Helpers/Formatters'
+import styles from './DailyStatus.css'
 import DailyStatusClinic from './DailyStatusClinic'
 import DailyStatusDialog from './DailyStatusDialog'
+import DailyStatusFilters from './DailyStatusFilters'
 import DateRanges from './DateRanges'
-import messages from './messages'
-import GRAPH_CONSTS from '../../../globals/consts/Graphs/CONSTS'
-import DATE_CONSTS from '../../../globals/consts/DateTime/CONSTS'
-import Loading from '../../../oldComponents/Loading'
-
-import { getPreviousPeriod, dateRangeOptions } from '../Helpers/Formatters'
-import AspectDropDown from '../../AspectDropDown'
-
-import AspectCard from '../../AspectCard'
-import CardSelectors from '../CardSelectors'
 import useDailyStatus from './Helpers/useDailyStatus'
-
-import styles from './DailyStatus.css'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
 import Button from '@mui/material/Button'
-import classnames from 'classnames/bind'
 import LinearProgress from '@mui/material/LinearProgress'
-
+import classnames from 'classnames/bind'
+import useI18n from '../../../hooks/useI18n'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-
 import messages from './messages'
 import PersonAssignment from './PersonAssignmentItem'
-import useI18n from '../../../hooks/useI18n'
 import styles from './PersonDetail.css'
 
 const cssClasses = classnames.bind(styles)

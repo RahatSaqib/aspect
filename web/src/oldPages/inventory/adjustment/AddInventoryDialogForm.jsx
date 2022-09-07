@@ -1,8 +1,8 @@
 import pick from 'lodash/pick'
-import { compose, withProps, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
-
+import { compose, withProps, lifecycle, pure } from 'recompose'
 import recomposeForm from '../../../oldComponents/recomposeForm'
+import { withTodayProps, withDateFormatProps } from '../../../utils/utils/dateFormat'
 import {
   SHARED_DEFAULT_VALUES,
   sharedMessages,
@@ -10,7 +10,6 @@ import {
   connectConsumableFromInventoryItem,
   InventoryAdjustmentDialogForm,
 } from './InventoryAdjustmentDialogForm'
-import { withTodayProps, withDateFormatProps } from '../../../utils/utils/dateFormat'
 
 const messages = defineMessages({
   quantityRequired: {

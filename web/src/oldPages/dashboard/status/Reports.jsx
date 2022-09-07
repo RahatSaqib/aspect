@@ -1,22 +1,20 @@
-import classnames from 'classnames/bind'
-import isEmpty from 'lodash/isEmpty'
 import React from 'react'
-import { compose, pure, withProps } from 'recompose'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
+import classnames from 'classnames/bind'
+import endOfYear from 'date-fns/endOfYear'
+import formatDate from 'date-fns/format'
+import startOfYear from 'date-fns/startOfYear'
 import subtractDays from 'date-fns/subDays'
 import subtractYears from 'date-fns/subYears'
-import endOfYear from 'date-fns/endOfYear'
-import startOfYear from 'date-fns/startOfYear'
-import formatDate from 'date-fns/format'
+import isEmpty from 'lodash/isEmpty'
+import { compose, pure, withProps } from 'recompose'
 import config from '../../../config'
-import { getAspectAccess } from '../../../globals/sideEffects/LocalStorage'
-
-import Title from './Title'
 import Icon from '../../../oldComponents/shared/icon/Icon'
 import { requirePermissions } from '../../../oldComponents/shared/requirePermissions'
-
+import { getAspectAccess } from '../../../utils/LocalStorage'
 import styles from './Status.css'
+import Title from './Title'
 
 const cssClasses = classnames.bind(styles)
 

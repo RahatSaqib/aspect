@@ -1,9 +1,8 @@
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
-
-import { aspectFetch } from '../utils/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   REQUEST_DEVICE_TYPES_FOR_SELECT_LIST: 'REQUEST_DEVICE_TYPES_FOR_SELECT_LIST',

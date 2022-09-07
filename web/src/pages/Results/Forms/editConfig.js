@@ -1,5 +1,6 @@
-import { SITE_ALL } from '../../../components/QueryFetch/Site'
 import SAMPLE_TYPES from '../../../components/QueryFetch/SampleType'
+import { SITE_ALL } from '../../../components/QueryFetch/Site'
+import messages from '../Detail/messages'
 import {
   getBaseOptions,
   siteProps,
@@ -9,8 +10,6 @@ import {
   assayProps,
   resultCategoryControlType,
 } from './utils'
-
-import messages from '../Detail/messages'
 
 const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategory2i18nKey } = {}) => {
   return {

@@ -1,4 +1,4 @@
-@import '../../globals/variables.css';
+@import '../../theme/variables.css';
 
 .TableRow:first-child > .TableCell {
   border-top-width: 2px;

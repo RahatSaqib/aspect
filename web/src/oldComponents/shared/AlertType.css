@@ -1,4 +1,4 @@
-@import '../../globals/variables.css';
+@import '../../theme/variables.css';
 
 .FaCircle {
   color: var(--aspect-color-chill-blue-1);

@@ -1,15 +1,14 @@
-import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes } from 'recompose'
+import LinearProgress from '@mui/material/LinearProgress'
+import Paper from '@mui/material/Paper'
+import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Routes, Route } from 'react-router-dom'
-import LinearProgress from '@mui/material/LinearProgress'
-import { injectIntl } from 'react-intl'
-import Paper from '@mui/material/Paper'
-
+import { compose, setPropTypes } from 'recompose'
+import ContactDetailsFormFormik from '../../../components/Account/Details'
 import NavTitle from '../../../oldComponents/NavTitle'
-import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
 import {
   fetchAccountDetails,
   saveContactDetails,
@@ -17,13 +16,13 @@ import {
   saveUserPreferences,
 } from '../../../store/AccountRedux'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
-import styles from './AccountDetails.css'
-import accountDetailsMessages from './messages'
-import personDetailsMessages from '../../person/detail/messages'
 import { ContactDetails, LoginDetails, UserPreferences } from '../../../store/PersonRedux'
+import { setTimezoneId, setCurrentCulture } from '../../../utils/LocalStorage'
+import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
+import personDetailsMessages from '../../person/detail/messages'
+import styles from './AccountDetails.css'
 import AccountDetailsBackBar from './AccountDetailsBackBar'
-import { setTimezoneId, setCurrentCulture } from '../../../globals/sideEffects/LocalStorage'
-import ContactDetailsFormFormik from '../../../components/Account/Details'
+import accountDetailsMessages from './messages'
 
 const enhance = compose(
   injectIntl,

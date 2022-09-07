@@ -1,18 +1,22 @@
 import reduce from 'lodash/reduce'
-
-import LineGraph from '../../LineGraph'
-import BarGraph from '../../BarGraph'
-import { getTimePeriod } from '../../Helpers/Formatters'
+import times from 'lodash/times'
+import { months } from '../../../../messages'
+import { i18nWrapper } from '../../../../providers/I18nProvider'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import FilterByStateDropDown from '../../../AspectDropDown/FilterByStateDropDown'
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
-import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
+import BarGraph from '../../BarGraph'
 import AxisRightLayer from '../../BarGraph/AxisRightLayer'
+import { getTimePeriod } from '../../Helpers/Formatters'
+import LineGraph from '../../LineGraph'
+import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
+
+const { formatMessage } = i18nWrapper()
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
 } = DATE_CONSTS
 const assays = ['GxMtbRif', 'GxMtbRifUltra']
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const MONTHS = times(12, month => `${formatMessage(months[month])}`)
 const getData = data =>
   reduce(
     data,

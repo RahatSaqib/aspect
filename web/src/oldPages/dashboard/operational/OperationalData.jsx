@@ -1,18 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
-import classnames from 'classnames/bind'
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
-import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import classnames from 'classnames/bind'
 import find from 'lodash/find'
-
-import OperationalDashBoard from './OperationalDashBoard'
-import OperationalDailyStatus from './OperationalDailyStatus'
-
-import styles from './OperationalData.css'
+import { Helmet } from 'react-helmet'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import useI18n from '../../../hooks/useI18n'
 import messages from './messages'
+import OperationalDailyStatus from './OperationalDailyStatus'
+import OperationalDashBoard from './OperationalDashBoard'
+import styles from './OperationalData.css'
 
 const cssClasses = classnames.bind(styles)
 

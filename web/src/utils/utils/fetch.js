@@ -1,19 +1,18 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-loop-func */
 /* eslint-env es6 */
+import { createFetch, base, header, accept } from 'http-client'
 import get from 'lodash/get'
-import set from 'lodash/set'
-import trim from 'lodash/trim'
 import isArray from 'lodash/isArray'
 import isObject from 'lodash/isObject'
 import mapValues from 'lodash/mapValues'
-import { createFetch, base, header, accept } from 'http-client'
+import set from 'lodash/set'
+import trim from 'lodash/trim'
 import { defineMessages } from 'react-intl'
+import config from '../../config'
 import { showError } from '../../store/AppNotificationRedux'
 import { setLastServerResponseTime } from '../../store/GlobalsRedux'
-
-import config from '../../config'
-import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
+import { getAspectAccess } from '../LocalStorage'
 
 export const aspectFetchFile = createFetch(
   base(config.aspectApi),

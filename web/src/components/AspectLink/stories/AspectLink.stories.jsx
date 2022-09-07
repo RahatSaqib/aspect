@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react'
 import Immutable from 'immutable'
-import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-
+import { createStore } from 'redux'
 import { RoutesPermissionProvider } from '../../../providers/RoutePermissions'
 import AspectLink from '../index'
 import { permissions, links } from '../tests/mocks'

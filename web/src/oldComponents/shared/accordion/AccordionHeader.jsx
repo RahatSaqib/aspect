@@ -1,10 +1,9 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, setDisplayName } from 'recompose'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import IconButton from '@mui/material/IconButton'
-
+import classnames from 'classnames/bind'
+import { compose, setDisplayName } from 'recompose'
 import styles from './Accordion.css'
 
 const cssClasses = classnames.bind(styles)

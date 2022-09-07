@@ -1,17 +1,15 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
-import { compose, lifecycle, withHandlers, withProps } from 'recompose'
-import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
-
+import { connect } from 'react-redux'
+import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import useI18n from '../hooks/useI18n'
-import StyledDropdown from './shared/StyledDropdown'
 import { fetchSitesForSelectList } from '../store/SiteRedux'
+import styles from './BrowseSiteDropdown.css'
 import { mergeToFiltersParams } from './filter/utils'
 import requirePermissions from './shared/requirePermissions'
-
-import styles from './BrowseSiteDropdown.css'
+import StyledDropdown from './shared/StyledDropdown'
 
 const cssClasses = classnames.bind(styles)
 

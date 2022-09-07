@@ -1,21 +1,19 @@
-import flowRight from 'lodash/flowRight'
-import omit from 'lodash/omit'
-import get from 'lodash/get'
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
-import { injectIntl } from 'react-intl'
-import { connect } from 'react-redux'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
+import classnames from 'classnames/bind'
+import flowRight from 'lodash/flowRight'
+import get from 'lodash/get'
+import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
+import { injectIntl } from 'react-intl'
+import { connect } from 'react-redux'
+import { compose, withHandlers, lifecycle } from 'recompose'
+import { bindActionCreators } from 'redux'
 import { Unit } from '../../../oldComponents/pureGrids'
-
 import { fetchLicense, userRequestedLogout, acceptLicenseStart } from '../../../store/AuthRedux'
-
-import messages from './messages'
 import styles from './License.css'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 

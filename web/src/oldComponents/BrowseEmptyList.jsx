@@ -1,5 +1,4 @@
 import { compose, withHandlers, pure } from 'recompose'
-
 import EmptyList from './shared/EmptyList'
 
 const enhance = compose(

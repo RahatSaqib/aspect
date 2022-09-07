@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import Accordion from '@mui/material/Accordion'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionActions from '@mui/material/AccordionActions'
-import { defineMessages } from 'react-intl'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
 import classnames from 'classnames/bind'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-
+import { defineMessages } from 'react-intl'
+import { Link } from 'react-router-dom'
 import styles from './Milestones.css'
 
 const cssClasses = classnames.bind(styles)

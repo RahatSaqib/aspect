@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import { Select, MenuItem, Box, Chip } from '@mui/material'
+import PropTypes from 'prop-types'
 import useTagByType from '../../hooks/tag/useTagByType'
 
 const MAX_TAGS = 10

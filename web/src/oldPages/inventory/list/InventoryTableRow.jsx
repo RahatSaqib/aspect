@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
+import CheckIcon from '@mui/icons-material/Check'
+import ErrorIcon from '@mui/icons-material/Error'
+import TextField from '@mui/material/TextField'
 import classnames from 'classnames/bind'
-import { useDispatch } from 'react-redux'
 import isNull from 'lodash/isNull'
 import round from 'lodash/round'
-
-import TextField from '@mui/material/TextField'
-import CheckIcon from '@mui/icons-material/Check'
-
 import { useMutation } from 'react-query'
-import ErrorIcon from '@mui/icons-material/Error'
+import { useDispatch } from 'react-redux'
+import AspectVertMenu from '../../../components/AspectVertMenu'
 import useI18n from '../../../hooks/useI18n'
+import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import messages from './messages'
+import PermissionsProvider from '../../../providers/PermissionsProvider'
 import {
   showAddInventoryDialog,
   showRemoveInventoryDialog,
@@ -19,10 +19,7 @@ import {
   showReceiveInventoryDialog,
   modifyInventoryOnHand,
 } from '../../../store/InventoryRedux'
-import AspectVertMenu from '../../../components/AspectVertMenu'
-
-import styles from '../../../oldComponents/shared/DataTableRow.css'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 

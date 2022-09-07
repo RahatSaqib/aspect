@@ -1,6 +1,5 @@
 import React from 'react'
 import { LoadScript } from '@react-google-maps/api'
-
 import AspectMaps from '../index'
 
 const markers = [

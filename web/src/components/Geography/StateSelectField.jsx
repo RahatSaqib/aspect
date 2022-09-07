@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types'
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
 import LinearProgress from '@mui/material/LinearProgress'
+import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
+import PropTypes from 'prop-types'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 
 const StateSelectField = ({ allItemText, countryId, stateId, onStateIdChange, floatingLabelText }) => {

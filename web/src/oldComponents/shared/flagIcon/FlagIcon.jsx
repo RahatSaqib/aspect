@@ -1,6 +1,5 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-
+import classnames from 'classnames/bind'
 import styles from './FlagIcon.css'
 
 const cssClasses = classnames.bind(styles)

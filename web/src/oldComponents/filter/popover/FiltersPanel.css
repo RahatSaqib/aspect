@@ -1,4 +1,4 @@
-@import '../../../globals/variables.css';
+@import '../../../theme/variables.css';
 
 :root {
   @custom-media --sm-viewport (min-width: 620px and max-width: 919px);

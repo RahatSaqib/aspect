@@ -1,19 +1,18 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import classnames from 'classnames/bind'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import CircularProgress from '@mui/material/CircularProgress'
+import TextField from '@mui/material/TextField'
+import classnames from 'classnames/bind'
 import { defineMessages, injectIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
+import { RESULT_TRANSFER } from '../../../../components/QueryFetch/Result'
+import SiteAutoCompleteField from '../../../../components/SiteAutocompleteField'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import CheckboxField from '../../../../oldComponents/shared/CheckboxField'
-import { RESULT_TRANSFER } from '../../../../components/QueryFetch/Result'
-import { aspectFetch } from '../../../../utils/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../../utils/error/CommonErrorNotifications'
-import messages from '../messages'
-import SiteAutoCompleteField from '../../../../components/SiteAutocompleteField'
-
+import { aspectFetch } from '../../../../utils/utils/fetch'
 import styles from '../Detail.css'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 

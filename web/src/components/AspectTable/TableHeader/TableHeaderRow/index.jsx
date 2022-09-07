@@ -1,11 +1,10 @@
 import React from 'react'
-import { bool, func, oneOfType, array } from 'prop-types'
 import TableCell from '@mui/material/TableCell'
-
-import TableColumnHeader from '../TableColumnHeader'
-import TableColumnOrderButtons from '../TableColumnOrderButtons'
+import { bool, func, oneOfType, array } from 'prop-types'
 import TableColumnGroupBy from '../TableColumnGroupBy'
+import TableColumnHeader from '../TableColumnHeader'
 import TableColumnHideButton from '../TableColumnHideButton'
+import TableColumnOrderButtons from '../TableColumnOrderButtons'
 
 const TableHeaderRow = ({
   allowColumnReOrder,

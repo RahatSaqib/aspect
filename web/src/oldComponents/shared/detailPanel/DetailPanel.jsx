@@ -1,16 +1,15 @@
 import React from 'react'
+import Card from '@mui/material/Card'
+import classnames from 'classnames/bind'
+import Immutable from 'immutable'
 import identity from 'lodash/identity'
 import split from 'lodash/split'
-import Immutable from 'immutable'
-import classnames from 'classnames/bind'
-import { compose, mapProps } from 'recompose'
-import Card from '@mui/material/Card'
 import { MdAssignment } from 'react-icons/md'
+import { compose, mapProps } from 'recompose'
 import { formatDate, formatDateTime } from '../../../utils/utils/dateFormat'
+import { Accordion, AccordionHeader, AccordionDetail } from '../accordion'
 import CardTitle from '../CardTitle'
 import ReadOnlyFields from '../ReadOnlyFields'
-import { Accordion, AccordionHeader, AccordionDetail } from '../accordion'
-
 import styles from './DetailPanel.css'
 
 const cssClasses = classnames.bind(styles)

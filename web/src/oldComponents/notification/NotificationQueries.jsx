@@ -1,5 +1,4 @@
 import fetchWrapperForQueries from '../../components/QueryFetch'
-
 import { getFilters } from '../../filter/utils'
 
 async function getExportableFile(filtersParams, fileFormat, sortCol, sortDir, page, pageSize, reportName) {

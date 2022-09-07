@@ -2,8 +2,8 @@
   This is a generic reducer for a list of things that are
   to be loaded in a pageable, sortable grid
 */
-import flowRight from 'lodash/flowRight'
 import Immutable from 'immutable'
+import flowRight from 'lodash/flowRight'
 
 export function requestTable(table, action) {
   return table.merge(

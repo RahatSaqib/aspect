@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
-
 import { Unit } from '../../oldComponents/pureGrids'
 import Group from './Group'
 import { AspectWidget, EmptyWidget } from './Widget'

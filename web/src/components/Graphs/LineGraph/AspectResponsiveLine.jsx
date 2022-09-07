@@ -1,16 +1,14 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { ResponsiveLine } from '@nivo/line'
+import classnames from 'classnames/bind'
 import every from 'lodash/every'
 import filter from 'lodash/filter'
 import first from 'lodash/first'
 import sortBy from 'lodash/sortBy'
-import { ResponsiveLine } from '@nivo/line'
-import classnames from 'classnames/bind'
-
+import PropTypes from 'prop-types'
 import useI18n from '../../../hooks/useI18n'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
-import messages from '../intlMessages'
 import {
   formatValuesForGraphs,
   generateColorForValue,
@@ -18,7 +16,7 @@ import {
   generateToolTip,
   getMaxValueForDivergent,
 } from '../Helpers/Formatters'
-
+import messages from '../intlMessages'
 import styles from './AspectResponsiveLine.css'
 
 const cssClasses = classnames.bind(styles)
