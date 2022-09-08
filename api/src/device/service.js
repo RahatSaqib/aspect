@@ -814,12 +814,11 @@ async function getBasicsForDevicesReport(auth, query) {
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
   const queryResults = knex('Result as r')
-    .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
+    .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
       sample: 'sa',
     })
-    .whereRaw('sa.originSiteId = d.siteId')
     .whereRaw('r.deviceId = d.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
@@ -857,15 +856,36 @@ async function getDevicesForReport(auth, query) {
         .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusLogId', 'rl.id')
         .max('rl.changedOn')
         .as('lastUploadOn'),
+
+      queryResults
+        .clone()
+        .whereRaw('sa.originSiteId = d.siteId')
+        .countDistinct('r.id')
+        .as('totalResults_sameOriginSite'),
+      queryResults
+        .clone()
+        .whereRaw('sa.originSiteId = d.siteId')
+        .where('r.resultCategory1', resultCategoryIds.Error)
+        .countDistinct('r.id')
+        .as('totalErrors_sameOriginSite'),
+      queryResults
+        .clone()
+        .whereRaw('sa.originSiteId = d.siteId')
+        .where('r.resultCategory1', resultCategoryIds.Invalid)
+        .countDistinct('r.id')
+        .as('totalInvalid_sameOriginSite'),
     ])
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
+  const getPercentage = (totalResults, totalErrors) => {
+    return Math.round(100 * (totalResults ? totalErrors / totalResults : 0)) / 100
+  }
   // add more fields which depend on aggregations
   data.forEach(async it => {
-    const errorPercentage = Math.round(100 * (it.totalResults ? it.totalErrors / it.totalResults : 0))
-    it.errorRate = errorPercentage / 100
+    it.errorRate = getPercentage(it.totalResults, it.totalErrors)
+    it.errorRate_sameOriginSite = getPercentage(it.totalResults_sameOriginSite, it.totalErrors_sameOriginSite)
   })
 
   const result = { ok: true, total, length: data.length, data }
