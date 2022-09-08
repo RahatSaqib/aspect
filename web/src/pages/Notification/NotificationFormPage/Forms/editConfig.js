@@ -386,7 +386,7 @@ const deviceOfflineSection = (formatMessage, partner) => {
         items: [
           {
             id: 'daysOffline',
-            label: formatMessage(messages.maxDaysDeviceOffline),
+            label: formatMessage(messages.daysOffline),
             initialValue: [`${partner.maxDaysDeviceOffline}`],
             type: 'readOnly',
             controlType: {
@@ -409,9 +409,9 @@ const deviceOfflineSection = (formatMessage, partner) => {
 
 const deviceNoResultsSection = (formatMessage, partner) => {
   return {
-    id: 'whenDeviceHasBeenNoResultsForMoreThan',
-    label: 'whenDeviceHasBeenNoResultsForMoreThan',
-    labelI18nKey: 'whenDeviceHasBeenNoResultsForMoreThan',
+    id: 'whenDeviceDidNotSendResultsForMoreThan',
+    label: 'whenDeviceDidNotSendResultsForMoreThan',
+    labelI18nKey: 'whenDeviceDidNotSendResultsForMoreThan',
     visibleIf: values => ['DeviceNoResults'].includes(values.notificationType),
     rows: [
       {
@@ -419,7 +419,7 @@ const deviceNoResultsSection = (formatMessage, partner) => {
         items: [
           {
             id: 'daysNoResults',
-            label: formatMessage(messages.maxDaysDeviceNoResults),
+            label: formatMessage(messages.daysWithoutResults),
             initialValue: [`${partner.maxDaysDeviceNoResults}`],
             type: 'readOnly',
             controlType: {
@@ -432,7 +432,7 @@ const deviceNoResultsSection = (formatMessage, partner) => {
               controlContainer: cssClasses('full-width-100pc'),
               item: cssClasses('full-width-100pc'),
             },
-            labelI18nKey: 'daysNoResults',
+            labelI18nKey: 'daysWithoutResults',
           },
         ],
       },

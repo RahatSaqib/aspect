@@ -43,13 +43,21 @@ export default defineMessages({
     id: 'pages.NotificationDetail.whenSiteIs',
     defaultMessage: 'When site is',
   },
-  maxDaysDeviceOffline: {
-    id: 'pages.NotificationDetail.maxDaysDeviceOffline',
+  whenDeviceHasBeenOfflineForMoreThan: {
+    id: 'pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan',
     defaultMessage: 'When the device has been offline for more than ...',
   },
-  maxDaysDeviceNoResults: {
-    id: 'pages.NotificationDetail.maxDaysDeviceNoResults',
+  daysOffline: {
+    id: 'pages.NotificationDetail.daysOffline',
+    defaultMessage: 'Days Offline',
+  },
+  whenDeviceDidNotSendResultsForMoreThan: {
+    id: 'pages.NotificationDetail.whenDeviceDidNotSendResultsForMoreThan',
     defaultMessage: `When the device didn't send results for more than ...`,
+  },
+  daysWithoutResults: {
+    id: 'pages.NotificationDetail.daysWithoutResults',
+    defaultMessage: `Days without results`,
   },
   from: {
     id: 'pages.NotificationDetail.from',
