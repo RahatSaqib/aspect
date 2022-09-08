@@ -41,6 +41,8 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     resultBasedSection(formatMessage), // only for ['resultBased']
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
+    deviceOfflineSection(formatMessage, partner), // only for ['DeviceOffline']
+    deviceNoResultsSection(formatMessage, partner), // only for ['deviceNoResultsSection']
     stockExpiringSection(formatMessage, partner), // only for ['InventoryStockExpiring']
     calibrationSection(formatMessage), // only for ['calibration']
     ...sendSection(formatMessage, jobFunctions), // notification footer (sending options)
@@ -347,7 +349,7 @@ const lowInventorySection = (formatMessage, partner) => {
     visibleIf: values => ['InventoryStockout'].includes(values.notificationType),
     rows: [
       {
-        id: 81,
+        id: 85,
         items: [
           {
             id: 'daysOfInventoryLeft',
@@ -365,6 +367,72 @@ const lowInventorySection = (formatMessage, partner) => {
               item: cssClasses('full-width-100pc'),
             },
             labelI18nKey: 'daysOfInventoryLeft',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const deviceOfflineSection = (formatMessage, partner) => {
+  return {
+    id: 'whenDeviceHasBeenOfflineForMoreThan',
+    label: 'whenDeviceHasBeenOfflineForMoreThan',
+    labelI18nKey: 'whenDeviceHasBeenOfflineForMoreThan',
+    visibleIf: values => ['DeviceOffline'].includes(values.notificationType),
+    rows: [
+      {
+        id: 83,
+        items: [
+          {
+            id: 'daysOffline',
+            label: formatMessage(messages.maxDaysDeviceOffline),
+            initialValue: [`${partner.maxDaysDeviceOffline}`],
+            type: 'readOnly',
+            controlType: {
+              component: 'select',
+              hideIfNoOptions: false,
+              options: [{ value: `${partner.maxDaysDeviceOffline}`, label: `${partner.maxDaysDeviceOffline}` }],
+            },
+            classNames: {
+              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
+            },
+            labelI18nKey: 'daysOffline',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const deviceNoResultsSection = (formatMessage, partner) => {
+  return {
+    id: 'whenDeviceHasBeenNoResultsForMoreThan',
+    label: 'whenDeviceHasBeenNoResultsForMoreThan',
+    labelI18nKey: 'whenDeviceHasBeenNoResultsForMoreThan',
+    visibleIf: values => ['DeviceNoResults'].includes(values.notificationType),
+    rows: [
+      {
+        id: 85,
+        items: [
+          {
+            id: 'daysNoResults',
+            label: formatMessage(messages.maxDaysDeviceNoResults),
+            initialValue: [`${partner.maxDaysDeviceNoResults}`],
+            type: 'readOnly',
+            controlType: {
+              component: 'select',
+              hideIfNoOptions: false,
+              options: [{ value: `${partner.maxDaysDeviceNoResults}`, label: `${partner.maxDaysDeviceNoResults}` }],
+            },
+            classNames: {
+              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+              controlContainer: cssClasses('full-width-100pc'),
+              item: cssClasses('full-width-100pc'),
+            },
+            labelI18nKey: 'daysNoResults',
           },
         ],
       },
