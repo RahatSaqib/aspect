@@ -219,15 +219,15 @@ export default defineMessages({
   },
   SelectStateTitle: {
     id: 'pages.NotificationDetail.SelectStateTitle',
-    defaultMessage: 'Device State',
+    defaultMessage: 'Device from State',
   },
   SelectLgaTitle: {
     id: 'pages.NotificationDetail.SelectLgaTitle',
-    defaultMessage: 'Device LGA',
+    defaultMessage: 'Devices from LGA',
   },
   SelectLabTitle: {
     id: 'pages.NotificationDetail.SelectLabTitle',
-    defaultMessage: 'Device Lab',
+    defaultMessage: 'Devices from Lab',
   },
   SelectNationalPlaceholder: {
     id: 'pages.NotificationDetail.SelectNationalPlaceholder',
