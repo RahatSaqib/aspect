@@ -36,13 +36,9 @@ const ContactDetailsFormFormik = () => {
   const editor = useSelector(({ user }) => user.toJS())
   const [type, setType] = useState()
   const [items, setItems] = useState()
-  const [query, setQuery] = useState({
-    key: 'new',
-    endpoint: '/',
-    enabled: false,
-  })
+  const [query, setQuery] = useState({ key: 'new', endpoint: '/', enabled: false })
   const [config, setConfig] = useState(false)
-  const formItemsConfig = itemsConfig(editor)
+  const baseCfg = itemsConfig(editor)
   const [actions, setActions] = useState([])
 
   const {
@@ -53,6 +49,18 @@ const ContactDetailsFormFormik = () => {
   } = useQuery(query?.key, async () => fetchWrapperForQueries({ endpoint: query?.endpoint }), {
     enabled: query?.enabled || false,
   })
+
+  const mutation = useMutation(
+    ({ values, endpoint, method, customErrorNotifications }) => {
+      return fetchWrapperForQueries({ endpoint, method, params: { ...values }, customErrorNotifications })
+    },
+    {
+      onError: error => {
+        throw new Error(error)
+      },
+      onSuccess: ({ data: response, ok }) => mutationSuccess(queryData, response, navigate, type, ok),
+    }
+  )
 
   if (isError) {
     throw new Error(error)
@@ -84,8 +92,7 @@ const ContactDetailsFormFormik = () => {
             409: badRequestBuilder(messages),
           },
         })
-      }
-      if (type === FORM_METHOD.UPDATE) {
+      } else if (type === FORM_METHOD.UPDATE) {
         mutation.mutate({
           values: transformOutputValues(values, baseOmitFields),
           endpoint: `/person/${id}`,
@@ -94,8 +101,7 @@ const ContactDetailsFormFormik = () => {
             409: badRequestBuilder(messages),
           },
         })
-      }
-      if (type === FORM_METHOD.SELF) {
+      } else if (type === FORM_METHOD.SELF) {
         mutation.mutate({
           values: transformOutputValues(values, [...baseOmitFields, 'canLogIn']),
           endpoint: '/account-details/current-contact',
@@ -106,93 +112,53 @@ const ContactDetailsFormFormik = () => {
     }, 0)
   }
 
-  function buildItems(action) {
-    const tempItems = [
-      formItemsConfig.row1,
-      formItemsConfig.row2,
-      formItemsConfig.row3,
-      formItemsConfig.row4,
-      formItemsConfig.row5,
-      formItemsConfig.row6,
-    ]
-    if (type === FORM_METHOD.UPDATE) {
-      tempItems.unshift(formItemsConfig.row0)
-      // disabling tag input until we refactor tags
-      // (https://ops.systemone.id/browse/ASP-2591)
-      // tempItems.push(formItemsConfig.row7)
-    }
-    if (type === FORM_METHOD.SELF) {
-      // disabling tag input until we refactor tags
-      /// (https://ops.systemone.id/browse/ASP-2591)
-      // tempItems.push(formItemsConfig.row7)
-    }
-    if (personId && type !== FORM_METHOD.SELF) {
-      tempItems.push(formItemsConfig.row8)
-    }
-    return !isEqual(tempItems, items) ? action(tempItems) : items
+  const baseSubmit = {
+    id: 'submit',
+    type: 'submit',
+    color: 'primary',
+    label: formatMessage(type === FORM_METHOD.ADD ? messages.create : messages.save),
+    component: FormSubmit,
+    action: handleSubmit,
+  }
+  const disableSubmit = {
+    id: 'delete',
+    type: 'button',
+    color: 'error',
+    label: formatMessage(messages.disable),
+    component: AccountEnableDisable,
+    sx: { backgroundColor: 'red' },
+  }
+  const enableSubmit = {
+    id: 'enable',
+    type: 'button',
+    label: formatMessage(messages.enable),
+    component: AccountEnableDisable,
+    sx: { backgroundColor: 'green' },
   }
 
   useEffect(() => {
-    switch (true) {
-      case !!personId && personId !== FORM_METHOD.ADD && type !== FORM_METHOD.UPDATE && personId !== editor.userId:
-        setType(FORM_METHOD.UPDATE)
-        setQuery({
-          key: [`get-user-${personId}`, personId],
-          endpoint: `/person/${personId}`,
-          enabled: true,
-        })
-        buildItems(setItems)
-        break
-
-      case !personId || (type !== FORM_METHOD.SELF && personId === editor.userId):
-        setType(FORM_METHOD.SELF)
-        setQuery({
-          key: ['get-current-user'],
-          endpoint: '/account-details/current',
-          enabled: true,
-        })
-        buildItems(setItems)
-        break
-
-      case personId === FORM_METHOD.ADD:
-        setType(FORM_METHOD.ADD)
-        buildItems(setItems)
-        break
-
-      default:
-        setType(FORM_METHOD.UPDATE)
-        buildItems(setItems)
-        break
+    const tempItems = [baseCfg.row1, baseCfg.row2, baseCfg.row3, baseCfg.row4, baseCfg.row5, baseCfg.row6]
+    if (personId === FORM_METHOD.ADD) {
+      // adding a person
+      setType(FORM_METHOD.ADD)
+      tempItems.unshift(baseCfg.row0)
+      tempItems.push(baseCfg.row8)
+    } else if (personId !== editor.userId) {
+      // editing someone else
+      setType(FORM_METHOD.UPDATE)
+      setQuery({ key: [`get-user-${personId}`, personId], endpoint: `/person/${personId}`, enabled: true })
+      tempItems.unshift(baseCfg.row0)
+      tempItems.push(baseCfg.row8)
+    } else if (personId === editor.userId) {
+      // editing myself
+      setType(FORM_METHOD.SELF)
+      setQuery({ key: ['get-current-user'], endpoint: '/account-details/current', enabled: true })
     }
+    return !isEqual(tempItems, items) ? setItems(tempItems) : items
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    const baseSubmit = {
-      id: 'submit',
-      type: 'submit',
-      color: 'primary',
-      label: formatMessage(type === FORM_METHOD.ADD ? messages.create : messages.save),
-      component: FormSubmit,
-      action: handleSubmit,
-    }
-
-    const disableSubmit = {
-      id: 'delete',
-      type: 'button',
-      color: 'error',
-      label: formatMessage(messages.disable),
-      component: AccountEnableDisable,
-      sx: { backgroundColor: 'red' },
-    }
-    const enableSubmit = {
-      id: 'enable',
-      type: 'button',
-      label: formatMessage(messages.enable),
-      component: AccountEnableDisable,
-      sx: { backgroundColor: 'green' },
-    }
-
     switch (true) {
       case (type === FORM_METHOD.ADD || type === FORM_METHOD.SELF) && actions[0]?.label !== baseSubmit.label:
         setActions([baseSubmit])
@@ -218,18 +184,6 @@ const ContactDetailsFormFormik = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryData, actions, type])
 
-  const mutation = useMutation(
-    ({ values, endpoint, method, customErrorNotifications }) => {
-      return fetchWrapperForQueries({ endpoint, method, params: { ...values }, customErrorNotifications })
-    },
-    {
-      onError: error => {
-        throw new Error(error)
-      },
-      onSuccess: ({ data: response, ok }) => mutationSuccess(queryData, response, navigate, type, ok),
-    }
-  )
-
   function transformInputValues(values) {
     let newValues = cloneDeep(values)
     newValues = reduce(
@@ -254,7 +208,7 @@ const ContactDetailsFormFormik = () => {
     newValues.cell = replace(values.cell, / /g, '')
     /* eslint-disable lodash/collection-return */
     map(newValues, (value, key) => {
-      if (key === 'undefined' || value === '' || isNil(value) || includes(omitValues, key)) delete newValues[key]
+      if (key === 'undefined' || isNil(value) || includes(omitValues, key)) delete newValues[key]
     })
     return newValues
   }

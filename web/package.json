@@ -212,6 +212,7 @@
     "react-router-dom": "6.3.0",
     "react-select": "^5.4.0",
     "react-table": "^7.8.0",
+    "react-window": "^1.8.7",
     "recompose": "^0.30.0",
     "redux": "^4.2.0",
     "redux-form": "^8.3.8",

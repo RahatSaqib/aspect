@@ -26,7 +26,7 @@ const itemsConfig = user => {
     row0: [
       {
         id: 'canLogIn',
-        label: formatMessage(messages.userCanAlsoLogIn),
+        label: `${formatMessage(messages.userCanAlsoLogIn)} *`,
         type: 'checkbox',
         component: PaddedCheckBox,
         validation: string().required('Required'),
@@ -35,7 +35,7 @@ const itemsConfig = user => {
     row1: [
       {
         id: 'name',
-        label: `${formatMessage(messages.fullName)}`,
+        label: `${formatMessage(messages.fullName)} *`,
         type: 'text',
         component: PureTextInput,
         validation: string().required('Required'),
@@ -51,10 +51,10 @@ const itemsConfig = user => {
     row2: [
       {
         id: 'email',
-        label: `${formatMessage(messages.primaryEmail)}`,
+        label: `${formatMessage(messages.primaryEmail)} *`,
         type: 'email',
         component: PureTextInput,
-        validation: string().email('Invalid email'),
+        validation: string().email('Invalid email').required('Required'),
       },
       {
         id: 'email2',
@@ -117,7 +117,7 @@ const itemsConfig = user => {
     row5: [
       {
         id: 'lastPartnerId',
-        label: formatMessage(messages.partner),
+        label: `${formatMessage(messages.partner)} *`,
         type: 'select',
         component: PartnerSelect,
         validation: string().required('Required'),
