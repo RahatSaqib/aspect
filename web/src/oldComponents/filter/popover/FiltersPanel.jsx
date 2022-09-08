@@ -806,6 +806,11 @@ export const FiltersPanel = ({
                 minFilterName="minExpirationDate"
                 maxFilterName="maxExpirationDate"
                 dateFormat={dateFormat}
+                maxDateTo={addYears(new Date(), 3)}
+                enableDayFilter={false}
+                enableWeekFilter={false}
+                enableQuarterFilter={false}
+                enableMonthFilter={false}
                 autoOk
               />
             )}

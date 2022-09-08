@@ -36,25 +36,15 @@ async function listInventoryByLot(request, dataConstraints) {
 
 async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const { query } = request
-  const range = getDaysStockLeftRanges(query.daysStockLeft)
+  const range = daysStockLeftRanges[query.daysStockLeft] || null
   return getInventoryBySitesAndConsumable(request, dataConstraints, range)
 }
 
-function getDaysStockLeftRanges(key) {
-  switch (key) {
-    case 'outOfStock':
-      return { min: 0, max: 0 }
-    case 'upTo14':
-      return { min: 1, max: 14 }
-    case 'upTo30':
-      return { min: 15, max: 30 }
-    case 'upTo90':
-      return { min: 31, max: 90 }
-    case 'upTo180':
-      return { min: 91, max: 180 }
-    case 'moreThan180':
-      return { min: 181 }
-    default:
-      return null
-  }
+const daysStockLeftRanges = {
+  outOfStock: { min: 0, max: 0 },
+  upTo14: { min: 1, max: 14 },
+  upTo30: { min: 15, max: 30 },
+  upTo90: { min: 31, max: 90 },
+  upTo180: { min: 91, max: 180 },
+  moreThan180: { min: 181 },
 }

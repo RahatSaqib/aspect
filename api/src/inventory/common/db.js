@@ -2,7 +2,6 @@ const _ = require('lodash')
 const strategies = require('../strategies')
 const { knex, filterDateRangeParams, query, filterParams, sortPageParams } = require('../../db')
 const {
-  INVENTORY_ITEMS_TABLE_WITH_STRATEGY,
   INVENTORY_ITEM_SELECT,
   INVENTORY_ITEM_FILTER_FIELDS,
   SUM_STOCK_LEFT_FILTER_FIELDS,
@@ -141,30 +140,6 @@ function getInventorySitesQuery(constraints, request) {
     ])
 }
 
-async function findInventoryItems(
-  siteId,
-  consumableId,
-  expiresOn = null,
-  lotNumber = null,
-  inTransitFromSiteId = null,
-  select = INVENTORY_ITEMS_TABLE_WITH_STRATEGY
-) {
-  const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
-  if (lotNumber || expiresOn) {
-    const matchingStrategy = await getConsumableStrategy(consumableId)
-    if (matchingStrategy) matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
-  }
-  const matchingInventoryItems = await matchingInventoryItemsQuery
-    .clone()
-    .orderByRaw('ii.expiresOn is null')
-    .orderBy('ii.expiresOn', 'asc')
-    .orderBy('ii.createdOn', 'desc')
-    .orderBy('ii.id', 'desc')
-    .select(select)
-
-  return matchingInventoryItems
-}
-
 async function findInventoryItem(siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
   const matchingStrategy = await getConsumableStrategy(consumableId)
@@ -299,7 +274,6 @@ async function getInventoryBySitesAndConsumable(request, dataConstraints, range)
 }
 module.exports = {
   findInventoryItem,
-  findInventoryItems,
   getInventorySitesQuery,
   getInventoryLogBaseQuery,
   getInventoryLog,
