@@ -397,7 +397,9 @@ describe('Result Notifications triggers', () => {
       ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
 
       const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
-      ;[managerId] = await knex('Person').where({ email: config.manager.email }).pluck('id')
+      ;[managerId] = await knex('Person')
+        .where({ email: config.manager.email || null })
+        .pluck('id')
 
       const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
 
