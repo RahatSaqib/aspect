@@ -1,6 +1,6 @@
-import omit from 'lodash/omit'
 import flattenDeep from 'lodash/flattenDeep'
 import map from 'lodash/map'
+import omit from 'lodash/omit'
 import sortBy from 'lodash/sortBy'
 import { Items, receiveList } from './groupedItems'
 

@@ -1,6 +1,5 @@
-import map from 'lodash/map'
 import filter from 'lodash/filter'
-
+import map from 'lodash/map'
 import variables from '../../../../../cfg/variables'
 
 const buildMarkersForDailyStatus = (data, statuses) => {

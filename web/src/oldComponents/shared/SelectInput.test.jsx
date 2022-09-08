@@ -1,8 +1,8 @@
 import React from 'react'
-import { Field } from 'redux-form/immutable'
+import MenuItem from '@mui/material/MenuItem'
 import { shallow } from 'enzyme'
 import each from 'lodash/each'
-import MenuItem from '@mui/material/MenuItem'
+import { Field } from 'redux-form/immutable'
 import SelectInput from './SelectInput'
 
 describe('SelectInput', () => {

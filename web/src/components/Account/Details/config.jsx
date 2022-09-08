@@ -1,16 +1,16 @@
 import React from 'react'
-import { string } from 'yup'
 import isEmpty from 'lodash/isEmpty'
+import { string } from 'yup'
+import messages from '../../../oldPages/person/detail/messages.js'
+import { i18nWrapper } from '../../../providers/I18nProvider'
+import { getCustomMessage } from '../../../utils/utils/customMessages'
 import { PureTextInput, PureCheckboxInput, PureChip, PurePhoneNumber } from '../../Form/PureFormik/Inputs'
 import CountrySelect from './CountrySelect'
-import StateSelect from './StateSelect'
+import LanguageSelect from './LanguageSelect'
 import LGASelect from './LGASelect'
 import PartnerSelect from './PartnerSelect'
+import StateSelect from './StateSelect'
 import TimezoneSelect from './TimezoneSelect'
-import LanguageSelect from './LanguageSelect'
-import { i18nWrapper } from '../../../providers/I18nProvider'
-import messages from '../../../oldPages/person/detail/messages.js'
-import { getCustomMessage } from '../../../utils/utils/customMessages'
 
 const PaddedCheckBox = props => {
   return (

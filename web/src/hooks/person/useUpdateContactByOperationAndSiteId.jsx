@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query'
-import { PERSON_KEY, PERSON_KEY_OPERATION_SITE_ID_ENDPOINT } from './personKeys'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { PERSON_KEY, PERSON_KEY_OPERATION_SITE_ID_ENDPOINT } from './personKeys'
 
 const updateContactByOperationAndSiteId = async ({ id, operation }, siteId) =>
   fetchWrapperForQueries({

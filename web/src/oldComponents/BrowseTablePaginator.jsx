@@ -1,5 +1,4 @@
 import { compose, withHandlers, pure } from 'recompose'
-
 import TablePaginator from './shared/TablePaginator'
 
 export * from './shared/TablePaginator'

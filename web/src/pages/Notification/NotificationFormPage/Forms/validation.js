@@ -1,5 +1,5 @@
-import * as Yup from 'yup'
 import filter from 'lodash/filter'
+import * as Yup from 'yup'
 import messages from './messages'
 
 const optionsForSendXXX = requiredMessage => ({

@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
-
-import CountrySelectField from '../Geography/CountrySelectField'
-import StateSelectField from '../Geography/StateSelectField'
-import LgaSelectField from '../Geography/LgaSelectField'
+import useI18n from '../../hooks/useI18n'
 import { getCustomMessage } from '../../utils/utils/customMessages'
+import CountrySelectField from '../Geography/CountrySelectField'
+import LgaSelectField from '../Geography/LgaSelectField'
+import StateSelectField from '../Geography/StateSelectField'
 import messages from './messages'
 import styles from './styles'
-import useI18n from '../../hooks/useI18n'
 
 const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validators }) => {
   const { formatMessage } = useI18n()

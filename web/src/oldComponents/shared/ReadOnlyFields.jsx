@@ -1,7 +1,6 @@
-import PropTypes from 'prop-types'
 import React from 'react'
+import PropTypes from 'prop-types'
 import { compose, setPropTypes, pure, withProps } from 'recompose'
-
 import ReadOnlyField, { readOnlyFieldPropTypes } from './ReadOnlyField'
 
 const enhance = compose(

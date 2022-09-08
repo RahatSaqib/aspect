@@ -1,9 +1,8 @@
 import React from 'react'
-import isNil from 'lodash/isNil'
-import { array, bool, func, number, object, shape, string, oneOfType } from 'prop-types'
 import { GoogleMap } from '@react-google-maps/api'
+import isNil from 'lodash/isNil'
 import noop from 'lodash/noop'
-
+import { array, bool, func, number, object, shape, string, oneOfType } from 'prop-types'
 import GooglePin from './Markers/GooglePin'
 
 /**

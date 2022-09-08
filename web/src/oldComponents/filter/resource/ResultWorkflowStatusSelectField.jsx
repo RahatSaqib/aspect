@@ -1,17 +1,16 @@
 import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
-import omit from 'lodash/omit'
-import flowRight from 'lodash/flowRight'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import MenuItem from '@mui/material/MenuItem'
 import Immutable from 'immutable'
-
-import SelectField from '../../shared/SelectField'
-import { fetchWorkflowStatuses } from '../../../store/ResultWorkflowStatusRedux'
-import messages from './i18n/generalMessages'
-import formatI18nMessage from '../../../utils/i18n/formatterWeb'
+import flowRight from 'lodash/flowRight'
+import omit from 'lodash/omit'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { I18nContext } from '../../../providers/I18nProvider'
+import { fetchWorkflowStatuses } from '../../../store/ResultWorkflowStatusRedux'
+import formatI18nMessage from '../../../utils/i18n/formatterWeb'
+import SelectField from '../../shared/SelectField'
+import messages from './i18n/generalMessages'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {
   static propTypes = {

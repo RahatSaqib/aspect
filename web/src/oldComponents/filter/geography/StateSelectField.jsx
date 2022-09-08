@@ -1,12 +1,11 @@
-import omit from 'lodash/omit'
-import flowRight from 'lodash/flowRight'
-import Immutable from 'immutable'
-import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import MenuItem from '@mui/material/MenuItem'
-
+import Immutable from 'immutable'
+import flowRight from 'lodash/flowRight'
+import omit from 'lodash/omit'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { fetchStatesForLocationSelector } from '../../../store/GeographyRedux'
 import SelectField from '../../shared/SelectField'
 

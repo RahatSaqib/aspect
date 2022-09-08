@@ -22,9 +22,9 @@ import {
   treatmentAPISkewedDataOppositePercentageOut,
   treatmentAPISkewedActualDataOut,
 } from './barData'
-import { pieDataActualFromAPIIn, pieDataActualFromAPIOut } from './pieData'
-import { divergentDataFromAPIIn, divergentDataFromAPIOut } from './divergentData'
 import { groupByKeyGrouped, mockedDeviceStatus, mockedDeviceStatusOut } from './deviceData'
+import { divergentDataFromAPIIn, divergentDataFromAPIOut } from './divergentData'
+import { pieDataActualFromAPIIn, pieDataActualFromAPIOut } from './pieData'
 import { pieRowDataFromAPIIn, pieRowDataFromAPIOut } from './pieRowData'
 
 export {

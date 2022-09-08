@@ -1,17 +1,15 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import { injectIntl } from 'react-intl'
-
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import ColoredNumber from '../../../oldComponents/shared/ColoredNumber'
-import messages from './messages'
-import { formatRelative } from '../../../utils/utils/dateFormat'
-
-import styles from './DeviceTableRow.css'
 import stylesShared from '../../../oldComponents/shared/DataTableRow.css'
 import StatusIcon from '../../../oldComponents/shared/StatusIcon'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
+import { formatRelative } from '../../../utils/utils/dateFormat'
+import styles from './DeviceTableRow.css'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 const sharedCssClasses = classnames.bind(stylesShared)

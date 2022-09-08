@@ -1,11 +1,10 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
-import messages from './messages'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import useI18n from '../../../hooks/useI18n'
-
 import styles from '../../../oldComponents/shared/DataTableRow.css'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import messages from '../../device/list/messages'
 
 const cssClasses = classnames.bind(styles)
 

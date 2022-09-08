@@ -1,6 +1,6 @@
 import React from 'react'
-import { array, bool, func, object, oneOfType, number, string } from 'prop-types'
 import Button from '@mui/material/Button'
+import { array, bool, func, object, oneOfType, number, string } from 'prop-types'
 
 /**
  * Component to render a cell

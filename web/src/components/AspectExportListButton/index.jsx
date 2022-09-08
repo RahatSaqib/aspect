@@ -1,14 +1,12 @@
+import React, { useState } from 'react'
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 import IconButton from '@mui/material/IconButton'
+import LinearProgress from '@mui/material/LinearProgress'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import React, { useState } from 'react'
 import classnames from 'classnames/bind'
-import LinearProgress from '@mui/material/LinearProgress'
 import PropTypes from 'prop-types'
-
 import { downloadFile } from '../../utils/utils/files'
-
 import styles from './AspectExportListButton.css'
 
 const cssClasses = classnames.bind(styles)

@@ -1,6 +1,6 @@
 import filter from 'lodash/filter'
-import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 
 function handleClientSideFilterState(clientSideFilter, graphState, graphActions) {
   const {

@@ -1,9 +1,9 @@
 import React from 'react'
-import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import identity from 'lodash/identity'
 import AccountEnableDisable from '../../../components/Account/AccountEnableDisable'
+import styles from '../../../oldComponents/shared/DataTableRow.css'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 
 const cssClasses = classnames.bind(styles)
 const enhance = identity

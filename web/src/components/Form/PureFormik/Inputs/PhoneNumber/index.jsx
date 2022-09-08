@@ -1,14 +1,14 @@
 import React from 'react'
 import parsePhoneNumber, { AsYouType } from 'libphonenumber-js'
 import cloneDeep from 'lodash/cloneDeep'
-import isEmpty from 'lodash/isEmpty'
 import filter from 'lodash/filter'
+import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
-import { PureSelect, PureTextInput } from '../index'
 import useI18n from '../../../../../hooks/useI18n'
-import messages from '../../messages'
-import dialCodes from '../../../../../oldComponents/filter/hardcoded/dialCodes'
 import countries from '../../../../../oldComponents/filter/hardcoded/countries'
+import dialCodes from '../../../../../oldComponents/filter/hardcoded/dialCodes'
+import messages from '../../messages'
+import { PureSelect, PureTextInput } from '../index'
 
 const RenderPhoneNumber = ({ dialCodeProps, numberProps }) => {
   return (

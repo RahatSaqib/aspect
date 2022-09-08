@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import { Select, MenuItem, Box, Chip } from '@mui/material'
+import PropTypes from 'prop-types'
 import useAvailablePerson from '../../hooks/person/useAvailablePerson'
 import useUpdateContactByOperationAndSiteId from '../../hooks/person/useUpdateContactByOperationAndSiteId'
 

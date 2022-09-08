@@ -1,8 +1,7 @@
 import React from 'react'
-import { bool, func, string } from 'prop-types'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import classnames from 'classnames/bind'
-
+import { bool, func, string } from 'prop-types'
 import styles from '../../Table.css'
 
 const cssClasses = classnames.bind(styles)

@@ -1,18 +1,17 @@
 import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
+import MenuItem from '@mui/material/MenuItem'
+import Immutable from 'immutable'
+import flowRight from 'lodash/flowRight'
 import isArray from 'lodash/isArray'
 import omit from 'lodash/omit'
-import flowRight from 'lodash/flowRight'
-import { bindActionCreators } from 'redux'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import Immutable from 'immutable'
-import MenuItem from '@mui/material/MenuItem'
-
-import messages from './i18n/generalMessages'
-import SelectField from '../../shared/SelectField'
+import { bindActionCreators } from 'redux'
+import { I18nContext } from '../../../providers/I18nProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
 import formatI18nMessage from '../../../utils/i18n/formatterWeb'
-import { I18nContext } from '../../../providers/I18nProvider'
+import SelectField from '../../shared/SelectField'
+import messages from './i18n/generalMessages'
 
 export class ResultCategorySelectField extends PureComponent {
   static propTypes = {

@@ -1,7 +1,7 @@
-import Immutable from 'immutable'
-import noop from 'lodash/noop'
 import React from 'react'
 import { shallow } from 'enzyme'
+import Immutable from 'immutable'
+import noop from 'lodash/noop'
 import { createIntl } from 'react-intl'
 import { PersonDetail } from './PersonDetail'
 

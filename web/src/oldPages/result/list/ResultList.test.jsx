@@ -1,11 +1,10 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { createIntl } from 'react-intl'
 import Immutable from 'immutable'
-
-import { Table } from '../../../utils/metaReducers/table'
-import { Items } from '../../../utils/metaReducers/items'
+import { createIntl } from 'react-intl'
 import AspectExportListButton from '../../../components/AspectExportListButton'
+import { Items } from '../../../utils/metaReducers/items'
+import { Table } from '../../../utils/metaReducers/table'
 
 describe('Result List component', () => {
   const { ResultListWithProps } = require('./ResultList')

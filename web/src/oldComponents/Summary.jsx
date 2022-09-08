@@ -1,11 +1,10 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React, { Fragment } from 'react'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 import { Unit } from './pureGrids'
-
 import styles from './Summary.css'
 
 const cssClasses = classnames.bind(styles)

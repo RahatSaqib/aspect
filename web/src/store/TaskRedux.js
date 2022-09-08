@@ -1,14 +1,13 @@
 import { stringify } from 'querystring'
-import uniqBy from 'lodash/uniqBy'
-import map from 'lodash/map'
 import Immutable from 'immutable'
+import map from 'lodash/map'
+import uniqBy from 'lodash/uniqBy'
 import { defineMessages } from 'react-intl'
-
-import { aspectFetch } from '../utils/utils/fetch'
+import { getFilters } from '../oldComponents/filter/utils'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { receiveList, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
-import { getFilters } from '../oldComponents/filter/utils'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   REQUEST_TASKS: 'REQUEST_TASKS',

@@ -1,36 +1,34 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import Immutable from 'immutable'
-import classnames from 'classnames/bind'
-import { defineMessages } from 'react-intl'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { connect } from 'react-redux'
-import IconButton from '@mui/material/IconButton'
 import Card from '@mui/material/Card'
-import { MdFileDownload } from 'react-icons/md'
-import { Helmet } from 'react-helmet'
+import IconButton from '@mui/material/IconButton'
 import TableBody from '@mui/material/TableBody'
+import classnames from 'classnames/bind'
+import Immutable from 'immutable'
+import PropTypes from 'prop-types'
+import { Helmet } from 'react-helmet'
+import { MdFileDownload } from 'react-icons/md'
+import { defineMessages } from 'react-intl'
+import { connect } from 'react-redux'
 import { useParams } from 'react-router-dom'
-
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import useI18n from '../../../../hooks/useI18n'
+import BrowseEmptyList from '../../../../oldComponents/BrowseEmptyList'
+import BrowseTablePaginator from '../../../../oldComponents/BrowseTablePaginator'
+import DataTableProgressBar from '../../../../oldComponents/shared/DataTableProgressBar'
+import Summary from '../../../../oldComponents/Summary'
+import { fetchDeviceOperations } from '../../../../store/DeviceOperationRedux'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../../utils/selectors/searchParams'
 import { formatDate } from '../../../../utils/utils/dateFormat'
-import DataTableProgressBar from '../../../../oldComponents/shared/DataTableProgressBar'
-import BrowseTablePaginator from '../../../../oldComponents/BrowseTablePaginator'
-import BrowseEmptyList from '../../../../oldComponents/BrowseEmptyList'
-import { fetchDeviceOperations } from '../../../../store/DeviceOperationRedux'
-import Summary from '../../../../oldComponents/Summary'
+import styles from '../DeviceDetail.css'
 import {
   DeviceOperationDataTable,
   DeviceOperationDataTableHead,
   DeviceOperationDataTableRow,
 } from './DeviceOperationDataTable'
-
-import styles from '../DeviceDetail.css'
-import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

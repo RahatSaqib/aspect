@@ -1,6 +1,6 @@
-import identity from 'lodash/identity'
-import get from 'lodash/get'
 import React from 'react'
+import get from 'lodash/get'
+import identity from 'lodash/identity'
 import { injectIntl } from 'react-intl'
 import { typeToMessage } from '../loggedOutReasons'
 

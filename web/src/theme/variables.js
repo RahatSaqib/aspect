@@ -1,5 +1,5 @@
-import { createTheme } from '@mui/material/styles'
 import { cyan, lightGreen, orange } from '@mui/material/colors'
+import { createTheme } from '@mui/material/styles'
 import { customPropertiesVariables } from '../../cfg/variables'
 
 const theme = createTheme({

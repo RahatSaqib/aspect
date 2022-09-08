@@ -1,19 +1,14 @@
-// Imports from packages
+import React from 'react'
+import Button from '@mui/material/Button'
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
-import React from 'react'
-import { compose, pure, setPropTypes } from 'recompose'
 import { defineMessages, injectIntl } from 'react-intl'
-
-// Material-UI
-import Button from '@mui/material/Button'
-
-// Our own imports
-import recomposeForm from '../../../oldComponents/recomposeForm'
+import { compose, pure, setPropTypes } from 'recompose'
 import CountrySelectField from '../../../oldComponents/filter/geography/CountrySelectField'
 import PartnerSelectField from '../../../oldComponents/filter/partner/PartnerSelectField'
-import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectField'
 import DeviceSelectField from '../../../oldComponents/filter/resource/DeviceSelectField'
+import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectField'
+import recomposeForm from '../../../oldComponents/recomposeForm'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import PropTypeOf from '../../../utils/types'
 

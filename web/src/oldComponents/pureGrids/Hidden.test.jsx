@@ -1,6 +1,5 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-
 import { getClassNames, Hidden } from './Hidden'
 
 describe('Hidden module', () => {

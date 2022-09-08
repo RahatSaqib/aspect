@@ -1,7 +1,7 @@
-import noop from 'lodash/noop'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import noop from 'lodash/noop'
 import { createIntl } from 'react-intl'
+import ReactShallowRenderer from 'react-test-renderer/shallow'
 
 describe('LoginDetailsForm module', () => {
   const { validate, LoginDetailsForm } = require('./LoginDetailsForm')

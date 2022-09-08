@@ -1,22 +1,19 @@
 import React, { Fragment } from 'react'
+import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useLocation } from 'react-router-dom'
-import classnames from 'classnames/bind'
-
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
-import { reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import { useAuthState } from '../../../providers/AuthProvider'
-
-import { Shell, ShellContent } from '../../../components/Shell'
 import AspectTable from '../../../components/AspectTable'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
-import tableConfig from './NotificationListPageTableConfig'
-
-import styles from './NotificationListPage.css'
+import { Shell, ShellContent } from '../../../components/Shell'
 import useI18n from '../../../hooks/useI18n'
-import messages from './messages'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import { reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
+import { useAuthState } from '../../../providers/AuthProvider'
+import messages from './messages'
+import styles from './NotificationListPage.css'
+import tableConfig from './NotificationListPageTableConfig'
 
 const cssClasses = classnames.bind(styles)
 

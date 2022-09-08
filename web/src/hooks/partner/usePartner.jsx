@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query'
-import { PARTNER_KEY, PARTNER_KEY_ENDPOINT } from './partnerKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
+import { PARTNER_KEY, PARTNER_KEY_ENDPOINT } from './partnerKeys.js'
 
 const getPartner = async () => fetchWrapperForQueries({ endpoint: PARTNER_KEY_ENDPOINT })
 

@@ -1,5 +1,5 @@
-const transform = require('lodash/transform')
 const set = require('lodash/set')
+const transform = require('lodash/transform')
 /**
  * To see an example of usage please see
  * "web/src/dashboard/status/ColorDemo/ColorDemo.jsx"

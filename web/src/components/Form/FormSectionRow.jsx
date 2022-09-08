@@ -1,15 +1,14 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton'
+import classnames from 'classnames/bind'
 import uniqueId from 'lodash/uniqueId'
-
+import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
+import styles from './Form.css'
 import FormItem from './FormItem'
 import messagesBase from './messages'
-import styles from './Form.css'
 
 const cssClasses = classnames.bind(styles)
 

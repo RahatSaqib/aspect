@@ -1,13 +1,11 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withState, pure } from 'recompose'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-
-import StrongPasswordInput from '../../../oldComponents/shared/StrongPasswordInput'
+import classnames from 'classnames/bind'
+import { compose, withState, pure } from 'recompose'
 import recomposeForm from '../../../oldComponents/recomposeForm'
+import StrongPasswordInput from '../../../oldComponents/shared/StrongPasswordInput'
 import messages from './messages'
-
 import styles from './ResetPassword.css'
 
 const cssClasses = classnames.bind(styles)
