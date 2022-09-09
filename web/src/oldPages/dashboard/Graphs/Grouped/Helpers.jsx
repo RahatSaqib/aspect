@@ -1,11 +1,11 @@
 import reduce from 'lodash/reduce'
-import covidGraphs from '../../../components/Graphs/GraphConfigurations/Covid'
-import hivGraphs from '../../../components/Graphs/GraphConfigurations/HIV'
-import tbGraphs from '../../../components/Graphs/GraphConfigurations/TB'
-import tbTrendGraphs from '../../../components/Graphs/GraphConfigurations/Trends'
-import xdrGraphs from '../../../components/Graphs/GraphConfigurations/XDR'
-import { isGraphPermitted } from '../../../providers/PermissionsProvider'
-import { isAllowedGroupsWithoutAssays, getWhitelistedAssays } from '../../../utils/utils/graph'
+import covidGraphs from '../../../../components/Graphs/GraphConfigurations/Covid'
+import hivGraphs from '../../../../components/Graphs/GraphConfigurations/HIV'
+import tbGraphs from '../../../../components/Graphs/GraphConfigurations/TB'
+import tbTrendGraphs from '../../../../components/Graphs/GraphConfigurations/Trends'
+import xdrGraphs from '../../../../components/Graphs/GraphConfigurations/XDR'
+import { isGraphPermitted } from '../../../../providers/PermissionsProvider'
+import { isAllowedGroupsWithoutAssays, getWhitelistedAssays } from '../../../../utils/utils/graph'
 
 const { trendInYears, trendInQuarters } = tbTrendGraphs
 
