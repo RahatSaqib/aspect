@@ -223,25 +223,26 @@ export class DateRangeSelector extends PureComponent {
       intl: { formatMessage, formatDate },
       maxDateTo,
     } = this.props
-    const notShowTitles = differenceInMonths(maxDateTo, new Date()) > 0
-    const thisYearStart = startOfYear(maxDateTo)
-    const thisYearEnd = endOfYear(maxDateTo)
-    const lastYear = subtractYears(maxDateTo, 1)
+    const now = maxDateTo
+    const notShowTitles = differenceInMonths(now, new Date()) > 0
+    const thisYearStart = startOfYear(now)
+    const thisYearEnd = endOfYear(now)
+    const lastYear = subtractYears(now, 1)
     const lastYearStart = startOfYear(lastYear)
     const lastYearEnd = endOfYear(lastYear)
     const yearsBeforeLast = []
     for (let i = 2; i < 7; i++) {
-      yearsBeforeLast.push(subtractYears(maxDateTo, i))
+      yearsBeforeLast.push(subtractYears(now, i))
     }
     return [
       {
-        label: `${notShowTitles ? '' : `${formatMessage(messages.thisYear)} (`} ${formatDate(thisYearStart, {
+        label: `${notShowTitles ? '' : `${formatMessage(messages.thisYear)} (`}${formatDate(thisYearStart, {
           year: 'numeric',
         })}${notShowTitles ? '' : ')'}`,
         ...this.getDateRange(thisYearStart, thisYearEnd),
       },
       {
-        label: `${notShowTitles ? '' : `${formatMessage(messages.lastYear)} (`} ${formatDate(lastYearStart, {
+        label: `${notShowTitles ? '' : `${formatMessage(messages.lastYear)} (`}${formatDate(lastYearStart, {
           year: 'numeric',
         })}${notShowTitles ? '' : ')'}`,
         ...this.getDateRange(lastYearStart, lastYearEnd),
