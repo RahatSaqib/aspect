@@ -1102,6 +1102,10 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
     const cellPattern = patternRow.getCell(columnNumber)
     const cellStyle = patternInfo.lastCellStyle ? { ...patternInfo.lastCellStyle, numFmt: null } : null
     setCellStyle(cellPattern, cellStyle)
+    if (hasSubHeaders) {
+      const cell2 = patternRow.getCell(columnNumber + numMergeX - 1)
+      setCellStyle(cell2, cellStyle)
+    }
 
     /**
      * increase pointer to column for next loop
