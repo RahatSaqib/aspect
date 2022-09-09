@@ -1,0 +1,306 @@
+import { defineMessages } from 'react-intl'
+import { commonDefinitions } from '../../../utils/utils/customMessages'
+
+const messages = {
+  ...commonDefinitions,
+  ...defineMessages({
+    moreFilters: {
+      id: 'filter.popover.moreFilters',
+      defaultMessage: 'More filters',
+    },
+    close: {
+      id: 'filter.popover.close',
+      defaultMessage: 'Close',
+    },
+    all: {
+      id: 'filter.popover.all',
+      defaultMessage: 'All',
+    },
+    none: {
+      id: 'filter.popover.none',
+      defaultMessage: 'None',
+    },
+    contactNameEmail: {
+      id: 'filter.popover.contactNameEmail',
+      defaultMessage: 'Contact name/email',
+    },
+    setContactNameEmail: {
+      id: 'filter.popover.setContactNameEmail',
+      defaultMessage: 'Enter contact name/email...',
+    },
+    site: {
+      id: 'filter.popover.siteName',
+      defaultMessage: 'Site',
+    },
+    reportableSite: {
+      id: 'filter.popover.site',
+      defaultMessage: 'Reportable Site',
+    },
+    siteId: {
+      id: 'filter.popover.siteId',
+      defaultMessage: 'Site Id',
+    },
+    enterSiteName: {
+      id: 'filter.popover.enterSiteName',
+      defaultMessage: 'Enter site name...',
+    },
+    enterReportableSiteName: {
+      id: 'filter.popover.enterReportableSiteName',
+      defaultMessage: 'Enter reportable site name...',
+    },
+    enterReportableSiteId: {
+      id: 'filter.popover.enterReportableSiteId',
+      defaultMessage: 'Enter reportable site...',
+    },
+    enterSiteId: {
+      id: 'filter.popover.enterSiteId',
+      defaultMessage: 'Enter site ID...',
+    },
+    sampleOriginSite: {
+      id: 'filter.popover.sampleOriginSite',
+      defaultMessage: 'Sample collection site',
+    },
+    enterSampleOriginSite: {
+      id: 'filter.popover.enterSampleOriginSite',
+      defaultMessage: 'Enter sample origin site name...',
+    },
+    date: {
+      id: 'filter.popover.date',
+      defaultMessage: 'Date',
+    },
+    expirationDate: {
+      id: 'filter.popover.expirationDate',
+      defaultMessage: 'Expiration date',
+    },
+    deviceName: {
+      id: 'filter.popover.deviceName',
+      defaultMessage: 'Device',
+    },
+    enterDeviceName: {
+      id: 'filter.popover.enterDeviceName',
+      defaultMessage: 'Enter device name...',
+    },
+    consumable: {
+      id: 'filter.popover.consumable',
+      defaultMessage: 'Consumable',
+    },
+    selectConsumable: {
+      id: 'filter.popover.selectConsumable',
+      defaultMessage: 'Select consumable...',
+    },
+    partner: {
+      id: 'filter.popover.partner',
+      defaultMessage: 'Partner',
+    },
+    selectPartner: {
+      id: 'filter.popover.selectPartner',
+      defaultMessage: 'Select partner...',
+    },
+    patientOrResearchId: {
+      id: 'filter.popover.patientOrResearchId',
+      defaultMessage: 'Patient ID',
+    },
+    enterPatientOrResearchId: {
+      id: 'filter.popover.enterPatientOrResearchId',
+      defaultMessage: 'Enter patient ID...',
+    },
+    patientOrCaseId: {
+      id: 'filter.popover.patientOrCaseId',
+      defaultMessage: 'Patient/Case ID',
+    },
+    enterPatientOrCaseId: {
+      id: 'filter.popover.enterPatientOrCaseId',
+      defaultMessage: 'Enter patient/case ID...',
+    },
+    sampleId: {
+      id: 'filter.popover.sampleId',
+      defaultMessage: 'Sample ID',
+    },
+    enterSampleId: {
+      id: 'filter.popover.enterSampleId',
+      defaultMessage: 'Enter sample ID...',
+    },
+    errorCode: {
+      id: 'filter.popover.errorCode',
+      defaultMessage: 'Error Code',
+    },
+    enterErrorCode: {
+      id: 'filter.popover.enterErrorCode',
+      defaultMessage: 'Enter error code...',
+    },
+    result: {
+      id: 'filter.popover.result',
+      defaultMessage: 'Result',
+    },
+    selectResult: {
+      id: 'filter.popover.selectResult',
+      defaultMessage: 'Select result...',
+    },
+    assay: {
+      id: 'filter.popover.assay',
+      defaultMessage: 'Assay',
+    },
+    selectAssay: {
+      id: 'filter.popover.selectAssay',
+      defaultMessage: 'Select assay...',
+    },
+    disease: {
+      id: 'filter.popover.disease',
+      defaultMessage: 'Disease',
+    },
+    selectDisease: {
+      id: 'filter.popover.selectDisease',
+      defaultMessage: 'Select Disease...',
+    },
+    country: {
+      id: 'filter.popover.country',
+      defaultMessage: 'Country',
+    },
+    selectCountry: {
+      id: 'filter.popover.selectCountry',
+      defaultMessage: 'Select country...',
+    },
+    setFilters: {
+      id: 'filter.popover.setFilters',
+      defaultMessage: 'Set Filters',
+    },
+    exportExcel: {
+      id: 'pages.ListExport.exportExcel',
+      defaultMessage: 'Excel',
+    },
+    exportCsv: {
+      id: 'pages.ListExport.exportCsv',
+      defaultMessage: 'CSV',
+    },
+    workflowStatus: {
+      id: 'filter.popover.workflowStatus',
+      defaultMessage: 'Workflow Status',
+    },
+    selectWorkflowStatus: {
+      id: 'filter.popover.selectWorkflowStatus',
+      defaultMessage: 'Select status...',
+    },
+    treatmentStatus: {
+      id: 'filter.popover.treatmentStatus',
+      defaultMessage: 'Treatment Status',
+    },
+    selectTreatmentStatus: {
+      id: 'filter.popover.selectTreatmentStatus',
+      defaultMessage: 'Select status...',
+    },
+    deviceApproval: {
+      id: 'filter.popover.deviceApproval',
+      defaultMessage: 'Approval',
+    },
+    selectDeviceApproval: {
+      id: 'filter.popover.selectDeviceApproval',
+      defaultMessage: 'Select approval status...',
+    },
+    deviceType: {
+      id: 'filter.popover.deviceType',
+      defaultMessage: 'Device Type',
+    },
+    selectDeviceType: {
+      id: 'filter.popover.selectDeviceType',
+      defaultMessage: 'Select type...',
+    },
+    externalId: {
+      id: 'filter.popover.externalId',
+      defaultMessage: 'Site ID',
+    },
+    enterExternalId: {
+      id: 'filter.popover.enterExternalId',
+      defaultMessage: 'Enter site ID...',
+    },
+    notificationName: {
+      id: 'filter.popover.notificationName',
+      defaultMessage: 'Notification',
+    },
+    selectNotificationName: {
+      id: 'filter.popover.selectNotificationName',
+      defaultMessage: 'Enter notification name...',
+    },
+    revoked: {
+      id: 'filter.popover.revoked',
+      defaultMessage: 'Revoked',
+    },
+    selectRevoked: {
+      id: 'filter.popover.selectRevoked',
+      defaultMessage: 'Select revoked status...',
+    },
+    onlyReportableResults: {
+      id: 'filter.popover.onlyReportableResults',
+      defaultMessage: 'Only Reportable Results',
+    },
+    onlyTransfers: {
+      id: 'filter.popover.onlyTransfers',
+      defaultMessage: 'Only transfers',
+    },
+    onlyDownloadedByReporter: {
+      id: 'filter.popover.onlyDownloadedByReporter',
+      defaultMessage: 'Only Results Downloaded By Reporter',
+    },
+    onlyEverTransferred: {
+      id: 'filter.popover.onlyEverTransferred',
+      defaultMessage: 'Only Ever Transferred Results',
+    },
+    onlyTreatmentRequired: {
+      id: 'filter.popover.onlyTreatmentRequired',
+      defaultMessage: 'Only Results With Treatment Required',
+    },
+    deviceMaintenanceStatus: {
+      id: 'filter.popover.deviceMaintenanceStatus',
+      defaultMessage: 'Maintenance Status',
+    },
+    selectDeviceMaintenanceStatus: {
+      id: 'filter.popover.selectDeviceMaintenanceStatus',
+      defaultMessage: 'Select maintenance status...',
+    },
+    selectStockLeft: {
+      id: 'filter.popover.selectStockLeft',
+      defaultMessage: 'Select stock left...',
+    },
+    daysStockLeft: {
+      id: 'filter.popover.daysStockLeft',
+      defaultMessage: 'Days Stock Left',
+    },
+    hasStock: {
+      id: 'filter.popover.hasStock',
+      defaultMessage: 'Has Stock',
+    },
+    lotNumber: {
+      id: 'filter.popover.lotNumber',
+      defaultMessage: 'Lot Number',
+    },
+    enterLotNumber: {
+      id: 'filter.popover.enterLotNumber',
+      defaultMessage: 'Enter lot number...',
+    },
+    contactStatus: {
+      id: 'filter.popover.contactStatus',
+      defaultMessage: 'Contact Status',
+    },
+    contactStatusHint: {
+      id: 'filter.popover.contactStatusHint',
+      defaultMessage: 'Select contact status...',
+    },
+    selectConnectorStatus: {
+      id: 'filter.popover.selectConnectorStatus',
+      defaultMessage: 'Select connector status...',
+    },
+    connectorStatus: {
+      id: 'filter.popover.connectorStatus',
+      defaultMessage: 'Connector Status',
+    },
+    selectDeviceStatus: {
+      id: 'filter.popover.selectDeviceStatus',
+      defaultMessage: 'Select Device status...',
+    },
+    deviceStatus: {
+      id: 'filter.popover.deviceStatus',
+      defaultMessage: 'Device Status',
+    },
+  }),
+}
+
+export default messages
