@@ -365,7 +365,7 @@ describe('Result Notifications triggers', () => {
         .distinct('resultId', 'notificationTypeId', 'personId')
       assert.equal(notificationsBefore.length, 0)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(2000)
+      await waitForIdle(3000)
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
@@ -408,7 +408,7 @@ describe('Result Notifications triggers', () => {
       const person = _.sample(personTags)
       await knex('PersonTag').insert({ personId: person, tagId: inserted })
       messageContext.dispatch(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(3000)
       notifications = await knex('Notification as n')
         .where({
           resultId,
@@ -477,7 +477,7 @@ describe('Result Notifications triggers', () => {
         .distinct('resultId', 'notificationTypeId', 'personId')
       assert.equal(notificationsBefore.length, 0)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(2000)
+      await waitForIdle(3000)
       const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
       const smsMessages = await knex('SmsMessage').where({ smsTemplateId }).select()
       assert.equal(notifications.length, 1, 'Only one notification should exists')
@@ -498,7 +498,9 @@ describe('Result Notifications triggers', () => {
       ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
 
       const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
-      ;[managerId] = await knex('Person').where({ email: config.manager.email }).pluck('id')
+      ;[managerId] = await knex('Person')
+        .where({ email: config.manager.email || null })
+        .pluck('id')
 
       const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
 
@@ -519,7 +521,7 @@ describe('Result Notifications triggers', () => {
     it('should create a result based notification for particular person and job function', async () => {
       const resultId = insertedResultDetected
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(2000)
+      await waitForIdle(3000)
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
@@ -611,7 +613,7 @@ describe('Result Notifications triggers', () => {
         .distinct('resultId', 'notificationTypeId', 'personId', 'emailMessageId', 'smsMessageId')
       assert.equal(notificationsBefore.length, 0)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(3000)
       const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
       assert.equal(notifications.length, 1)
       const [notification] = notifications
