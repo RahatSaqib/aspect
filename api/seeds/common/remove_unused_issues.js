@@ -1,51 +1,88 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
+const addIssue = require('./add_issue')
 
-const { partnerName, adminUserName } = require('./fixtures/partnerData')
-const { issueTypeToId } = require('../../src/shared/dictionary')
-const { upsertNotificationTypes, getDefaultMessageTypes } = require('../utils')
+const { getBaseIssues } = require('../relatedObjects/issues')
 
-module.exports = require('../utils').seed(async knex => {
-  const { partnerId, adminId } = await knex('Partner as p')
-    .join('Person as per', 'per.lastPartnerId', 'p.id')
-    .join('User as u', 'u.id', 'per.userId')
-    .where({ 'p.name': partnerName, 'u.name': adminUserName })
-    .first('p.id as partnerId', 'per.userId as adminId')
+module.exports = async function cleanIssueTypes(knex, adminUserName, partnerName) {
+  const { userId, partnerId } = await knex('User as u')
+    .join('Person as p', 'p.userId', 'u.id')
+    .where({ 'u.name': adminUserName })
+    .first('p.lastPartnerId as partnerId', 'p.userId')
 
-  const issueTypeId = await issueTypeToId('HardwareTemperatureErrors')
-
-  const issuesToRemoveTrigger = await knex('IssueType')
-    .whereIn('externalId', [
-      'externalId',
-      'HardwareTemperatureDriftedFromSetPoint',
-      'HardwareHeaterTemperatureDifferentialError',
-      'HardwareThermistorTemperatureOutOfRange2014',
-      'HardwareHeaterATemperatureUnstable',
-      'HardwareHeaterBTemperatureUnstable',
-      'HardwareThermistorTemperatureOutOfRange4017',
-    ])
-    .pluck('id')
-  const jobFunctions = await knex('JobFunction')
-    .whereIn('externalId', ['admin', 'systemOne', 'deviceMaker'])
-    .pluck('id')
-  await knex('NotificationType').update({ enabled: false }).whereIn('issueTypeId', issuesToRemoveTrigger)
-  const defaultMessageTypes = await getDefaultMessageTypes(knex)
   const auditFields = {
     createdOn: new Date(),
-    createdBy: adminId,
+    createdBy: userId,
     updatedOn: new Date(),
-    updatedBy: adminId,
+    updatedBy: userId,
   }
-  await upsertNotificationTypes(
-    knex,
-    _.map(jobFunctions, jobFunctionId => ({
-      name: 'Hardware Temperature Errors',
-      partnerId,
-      issueTypeId,
-      jobFunctionId,
-      level: 1,
-      canAcknowledge: 1,
-      messageTypeId: defaultMessageTypes.HardwareTemperatureErrors.id,
-      ...auditFields,
-    }))
+
+  const issueTypes = await knex('IssueType').select()
+  const configuredIssues = Object.keys(await getBaseIssues(auditFields))
+
+  await Promise.each(issueTypes, async issueType => {
+    if (!_.includes(configuredIssues, issueType.externalId)) {
+      const issuesToDelete = await knex('Issue')
+        .where({ issueTypeId: issueType.id })
+        .select('id as issueId', 'resultId', 'deviceId')
+      const filteredResults = _.reduce(
+        issuesToDelete,
+        (issues, value, key) => {
+          if (value.resultId) issues[key] = value.resultId
+          return issues
+        },
+        []
+      )
+      const filteredDevices = _.reduce(
+        issuesToDelete,
+        (devices, value, key) => {
+          if (value.deviceId) devices[key] = value.deviceId
+          return devices
+        },
+        []
+      )
+      await knex('Notification')
+        .whereIn(
+          'issueId',
+          _.map(issuesToDelete, issue => issue.issueId)
+        )
+        .delete()
+      await knex('EmailMessage').whereIn('resultId', filteredResults).orWhereIn('deviceId', filteredDevices).delete()
+      await knex('AlertMessage').whereIn('resultId', filteredResults).orWhereIn('deviceId', filteredDevices).delete()
+      await knex('SmsMessage').whereIn('resultId', filteredResults).orWhereIn('deviceId', filteredDevices).delete()
+      await knex('PushNotificationMessage')
+        .whereIn('resultId', filteredResults)
+        .orWhereIn('deviceId', filteredDevices)
+        .delete()
+      await knex('WebhookMessage').whereIn('resultId', filteredResults).orWhereIn('deviceId', filteredDevices).delete()
+      await knex('Issue')
+        .whereIn(
+          'id',
+          _.map(issuesToDelete, issue => issue.issueId)
+        )
+        .delete()
+      await knex('IssueEventTrigger').where({ issueTypeId: issueType.id }).delete()
+      await knex('IssueResolutionTrigger').where({ issueTypeId: issueType.id }).delete()
+      await knex('NotificationType').where({ issueTypeId: issueType.id }).delete()
+      await knex('IssueEscalationTrigger').where({ issueTypeId: issueType.id }).delete()
+      await knex('IssueType').where({ id: issueType.id }).delete()
+    }
+  })
+  const { jobFunctionAdminId } =
+    (await knex('JobFunction')
+      .where({
+        externalId: 'systemOne',
+        partnerId,
+      })
+      .first('id as jobFunctionAdminId')) ||
+    (await knex('JobFunction')
+      .where({
+        externalId: 'admin',
+        partnerId,
+      })
+      .first('id as jobFunctionAdminId'))
+
+  await Promise.each(Object.values(configuredIssues), async externalId =>
+    addIssue(knex, externalId, [jobFunctionAdminId], partnerName, adminUserName)
   )
-}, __filename)
+}
