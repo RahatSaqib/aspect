@@ -74,7 +74,7 @@ const getMaxLimitPlaceHolders = () => [
     value: ({ data: { length = 0 }, total = 0 }) => {
       return total - length
     },
-    condition: ({ data: { length = 0 } = [], total = 0 }) => length === total,
+    condition: ({ data = [], total = 0 }) => data?.length === total,
     action: (cell, worksheet) => {
       if (cell) {
         cell.value = ''
