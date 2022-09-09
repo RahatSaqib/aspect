@@ -726,6 +726,7 @@ async function getDevicePerformance(request) {
 function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = false, showDecommissionedDevices = false) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
@@ -921,7 +922,6 @@ async function getDevicesForRifResistanceReport(auth, query) {
     },
     dataConstraints
   )
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     // Group for avoiding join duplications
     .groupBy(['d.id'])
