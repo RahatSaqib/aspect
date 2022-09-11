@@ -33,7 +33,7 @@ const routes = [
   {
     method: 'GET',
     path: '/notification',
-    handler: asyncHandler(listNotifications),
+    handler: listNotifications,
     config: {
       description: 'Notification List',
       notes: 'Pageable and sortable list of notifications',

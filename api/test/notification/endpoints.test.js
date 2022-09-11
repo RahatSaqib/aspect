@@ -23,13 +23,12 @@ describe('notification endpoints', () => {
         })
       })
 
-      it('Should respond with the data returned from the service', done => {
+      it('Should respond with the data returned from the service', async () => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
-          .thenCall(done)
           .execute()
       })
     })
