@@ -23,8 +23,8 @@ class TruenatLogin extends SynchronousDataProcessor {
 
   static async canProcessRequest(request) {
     const { params } = request
-    const path = _.get(params, 'params')
-    return Promise.resolve(path === 'truelab/devices/login')
+    const path = _.get(params, 'params', '').toLowerCase()
+    return Promise.resolve(path.startsWith('truelab/devices/login'))
   }
 
   async processRequest() {
