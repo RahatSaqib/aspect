@@ -24,7 +24,7 @@ const {
   baseFilterCondition,
   filterConditionWithJfForDevice,
   filterConditionWithJfForDeviceNotWayneCounty,
-} = require('./fitlerCondtions')
+} = require('./filterConditions')
 
 describe('Issue based Notifications triggers', () => {
   let insertedNotificationTypeId = null
