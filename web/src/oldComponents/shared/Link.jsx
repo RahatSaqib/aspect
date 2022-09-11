@@ -25,7 +25,7 @@ const Link = ({ label, theme, disabled, onClick, ...restProps }) => {
       className={classNames(theme.link, {
         [theme.active]: new RegExp(`^${restProps.href}`).test(location.pathname),
       })}
-      to={restProps.href}
+      to={restProps.href !== 'none' ? restProps.href : ''}
     >
       <abbr>{label}</abbr>
     </MUILink>

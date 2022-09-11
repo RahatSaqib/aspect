@@ -76,7 +76,6 @@ const mapStateToProps = state => {
     clientId: state.user.clientId,
     countryId: state.user.countryId,
     displayPreferences: state.user.displayPreferences,
-    drawerOpen: state.user.drawerOpen,
     countryAbbreviation: state.user.countryAbbreviation,
     hasToAcceptLicenseId: state.user.jwt.hasToAcceptLicenseId,
     // For render()
@@ -101,7 +100,6 @@ const App = ({
   refresh,
   clientId,
   displayPreferences,
-  drawerOpen,
   // dispatch to props
   refreshStart,
   idleStart,
@@ -131,7 +129,6 @@ const App = ({
         culture={culture}
         timezoneId={timezoneId}
         displayPreferences={displayPreferences}
-        drawerOpen={drawerOpen}
       />
       <QueryClientProvider client={new QueryClient()}>
         {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}

@@ -27,13 +27,16 @@ const ThemedLink = props => {
 }
 
 ThemedLink.defaultProps = {
+  href: 'none',
   requiredPermissions: [],
+  onClick: () => {},
 }
 
 ThemedLink.propTypes = {
-  href: PropTypes.string.isRequired,
+  href: PropTypes.string,
   label: PropTypes.string.isRequired,
   requiredPermissions: PropTypes.oneOfType([PropTypes.array]),
+  onClick: PropTypes.func,
 }
 
 export default ThemedLink
