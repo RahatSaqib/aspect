@@ -10,7 +10,7 @@ class NotificationCache {
     this.notificationCache = new NodeCache({ stdTTL: ttl })
   }
 
-  async getConditionsToEvaluate(notificationCategory = 'resultBased') {
+  async getConditionsToEvaluate(notificationCategory) {
     return this.knex('NotificationTypeCategory as ntc')
       .join('NotificationType as nt', 'nt.notificationTypeCategoryId', 'ntc.id')
       .where('ntc.externalId', notificationCategory)
@@ -59,7 +59,7 @@ class NotificationCache {
       notificationsType =
         notificationkey === notificationIssueCacheKey
           ? await this.getConditionsToEvaluate('issueBased')
-          : await this.getConditionsToEvaluate()
+          : await this.getConditionsToEvaluate('resultBased')
 
       this.setCacheValue(notificationkey, notificationsType)
     }

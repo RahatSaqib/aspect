@@ -2,7 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { createNotifications } = require('./service')
 const NotificationCache = require('./notificationCache')
-// eslint-disable-next-line no-unused-vars
+
 function issueBased() {
   return async (action, { messageContext: context }) => analyzeNotifications(context, action)
 }
@@ -48,6 +48,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
     )
   )
 }
+
 module.exports = {
   issueBased,
   resultBased,
