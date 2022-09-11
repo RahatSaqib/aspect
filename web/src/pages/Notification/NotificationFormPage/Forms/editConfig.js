@@ -770,43 +770,43 @@ const sendSection = (formatMessage, jobFunctions) => {
                   },
                 ],
               },
-              // {
-              //   id: `row-jf${jf.id}-tags`,
-              //   items: [
-              //     {
-              //       id: `jobFunctions[${index}].tags`,
-              //       initialValue: [],
-              //       controlType: {
-              //         component: 'select',
-              //         endpoint: PERSON_SELECT_LIST.ENDPOINT,
-              //         hideIfNoOptions: false,
-              //         queryKey: PERSON_SELECT_LIST.KEY,
-              //         normalizeLoadedData: response => {
-              //           const { ok, data } = response
-              //           let options = []
-              //           if (ok === true) {
-              //             let personTags = union(...data.map(({ tagDetails }) => tagDetails))
-              //             personTags = uniqWith(personTags, isEqual)
-              //             options = personTags.map(({ tagName, tagId }) => ({
-              //               label: tagName,
-              //               value: tagId,
-              //             }))
-              //           }
-              //           return options
-              //         },
-              //         isMulti: true,
-              //       },
-              //       classNames: {
-              //         itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              //         controlContainer: cssClasses('full-width-100pc'),
-              //         item: cssClasses('full-width-100pc'),
-              //       },
-              //       label: 'Tags',
-              //       labelI18nKey: 'jobFunctionTags',
-              //       visibleIf: values => values.jobFunctions[index].checked,
-              //     },
-              //   ],
-              // },
+              {
+                id: `row-jf${jf.id}-tags`,
+                items: [
+                  {
+                    id: `jobFunctions[${index}].tags`,
+                    initialValue: [],
+                    controlType: {
+                      component: 'select',
+                      endpoint: PERSON_SELECT_LIST.ENDPOINT,
+                      hideIfNoOptions: false,
+                      queryKey: PERSON_SELECT_LIST.KEY,
+                      normalizeLoadedData: response => {
+                        const { ok, data } = response
+                        let options = []
+                        if (ok === true) {
+                          let personTags = union(...data.map(({ tagDetails }) => tagDetails))
+                          personTags = uniqWith(personTags, isEqual)
+                          options = personTags.map(({ tagName, tagId }) => ({
+                            label: tagName,
+                            value: tagId,
+                          }))
+                        }
+                        return options
+                      },
+                      isMulti: true,
+                    },
+                    classNames: {
+                      itemContainer: cssClasses('max-width-100pc', 'tags-container'),
+                      controlContainer: cssClasses('full-width-100pc'),
+                      item: cssClasses('full-width-100pc'),
+                    },
+                    label: 'Tags',
+                    labelI18nKey: 'jobFunctionTags',
+                    visibleIf: values => values.jobFunctions[index].checked,
+                  },
+                ],
+              },
             ]
             return acc
           },
