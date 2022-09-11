@@ -57,7 +57,7 @@ const resultBasedNotificationPayload = Joi.object({
           .description('Selected items of ResultCategories or ResultCategoryGroups'),
       })
     )
-    .when('issueType', {
+    .when('notificationType', {
       is: 'resultBased',
       then: Joi.required(),
       otherwise: Joi.optional().allow('', null),
