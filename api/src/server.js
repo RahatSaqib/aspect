@@ -160,7 +160,15 @@ const plugins = [
 
 const start = async () => {
   await server.register(plugins)
-
+  await server.register({
+    plugin: require('hapi-api-version'),
+    options: {
+      validVersions: [1, 2],
+      defaultVersion: 1,
+      vendorName: 'systemone',
+      basePath: '/api/',
+    },
+  })
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     // ==========================================================================
     // ==========================================================================

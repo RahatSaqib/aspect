@@ -95,6 +95,7 @@
     "fs-extra": "^10.1.0",
     "google-libphonenumber": "^3.2.30",
     "handlebars": "^4.7.7",
+    "hapi-api-version": "^2.3.1",
     "hapi-auth-jwt2": "^10.2.0",
     "hapi-raven": "^7.0.1",
     "hapi-sentry": "^3.2.0",
@@ -119,7 +120,7 @@
     "timezone-support": "^2.0.2",
     "twilio": "^3.80.1",
     "vision": "^5.4.4",
-    "winston": "^3.8.1",
+    "winston": "^3.8.2",
     "winston-mail": "^2.0.0",
     "winston-sentry-log": "^1.0.26"
   },
