@@ -796,13 +796,14 @@ export const FiltersPanel = ({
                 autoOk
               />
             )}
+
             {config.expirationDate && (
               <DateRangeSelector
                 floatingLabelText={formatMessage(messages.expirationDate)}
                 onChangeDate={onExpirationDateChange}
                 controlClassName={cssClasses('Control')}
-                minDate={filters.minDate}
-                maxDate={addYears(new Date(), 10)}
+                minExpirationDate={filters.minExpirationDate}
+                maxExpirationDate={filters.maxExpirationDate}
                 minFilterName="minExpirationDate"
                 maxFilterName="maxExpirationDate"
                 dateFormat={dateFormat}
