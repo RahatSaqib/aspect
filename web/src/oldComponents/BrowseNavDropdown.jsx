@@ -1,7 +1,7 @@
-import { compose, mapProps, defaultProps } from 'recompose'
 import { defineMessages } from 'react-intl'
-import StyledDropdown from './shared/StyledDropdown'
+import { compose, mapProps, defaultProps } from 'recompose'
 import { setFiltersForLast30Days } from './filter/utils'
+import StyledDropdown from './shared/StyledDropdown'
 
 const messages = defineMessages({
   devices: {

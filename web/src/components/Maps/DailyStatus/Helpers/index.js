@@ -1,6 +1,6 @@
 import filter from 'lodash/filter'
 import map from 'lodash/map'
-import variables from '../../../../../cfg/variables'
+import variables from '../../../../theme/colors'
 
 const buildMarkersForDailyStatus = (data, statuses) => {
   const { customPropertiesVariables } = variables
