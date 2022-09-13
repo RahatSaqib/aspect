@@ -2,6 +2,7 @@ import React from 'react'
 import isEmpty from 'lodash/isEmpty'
 import { string } from 'yup'
 import { getCustomMessage } from '../../../messages/customMessages'
+import { validations } from '../../../messages'
 import messages from '../../../oldPages/person/detail/messages.js'
 import { i18nWrapper } from '../../../providers/I18nProvider'
 import { PureTextInput, PureCheckboxInput, PureChip, PurePhoneNumber } from '../../Form/PureFormik/Inputs'
@@ -29,7 +30,7 @@ const itemsConfig = user => {
         label: `${formatMessage(messages.userCanAlsoLogIn)} *`,
         type: 'checkbox',
         component: PaddedCheckBox,
-        validation: string().required('Required'),
+        validation: string().required(formatMessage(validations.required)),
       },
     ],
     row1: [
@@ -38,7 +39,7 @@ const itemsConfig = user => {
         label: `${formatMessage(messages.fullName)} *`,
         type: 'text',
         component: PureTextInput,
-        validation: string().required('Required'),
+        validation: string().required(formatMessage(validations.required)),
       },
       {
         id: 'title',
@@ -54,7 +55,9 @@ const itemsConfig = user => {
         label: `${formatMessage(messages.primaryEmail)} *`,
         type: 'email',
         component: PureTextInput,
-        validation: string().email('Invalid email').required('Required'),
+        validation: string()
+          .email(formatMessage(validations.invalidEmail))
+          .required(formatMessage(validations.required)),
       },
       {
         id: 'email2',
@@ -63,7 +66,7 @@ const itemsConfig = user => {
         component: PureTextInput,
         validation: string().when('email', {
           is: val => !isEmpty(val),
-          then: string().email('Invalid email').nullable(),
+          then: string().email(formatMessage(validations.invalidEmail)).nullable(),
           otherwise: string().nullable(),
         }),
       },
@@ -120,7 +123,7 @@ const itemsConfig = user => {
         label: `${formatMessage(messages.partner)} *`,
         type: 'select',
         component: PartnerSelect,
-        validation: string().required('Required'),
+        validation: string().required(formatMessage(validations.required)),
       },
     ],
     row6: [
