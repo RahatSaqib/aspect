@@ -31,7 +31,7 @@ async function getDeviceActivityPercentReport(auth, query) {
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
   const minDateDateValue = parseDateOrDefault(minDate)
-  console.log('🚀 ~ file: serviceReports.js ~ line 34 ~ getDeviceActivityPercentReport ~ minDate', query, minDate)
+
   const maxDateDateValue = parseDateOrDefault(maxDate)
   const activityPercentPerMonth = knex
     .from(
@@ -95,12 +95,6 @@ async function getDeviceActivityPercentReport(auth, query) {
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
   const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
   const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
-  console.log(
-    '🚀 ~ file: serviceReports.js ~ line 95 ~ getDeviceActivityPercentReport ~ maxDateFormatted',
-    maxDateFormatted,
-    minDateFormatted,
-    monthDiff
-  )
 
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
