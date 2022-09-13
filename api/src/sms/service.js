@@ -28,7 +28,7 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
     message,
     phoneNumber: phone,
     countryAbbreviation: countryCode,
-  } = await createSmsMessageFromTemplate(knex, smsMessageId)
+  } = (await createSmsMessageFromTemplate(knex, smsMessageId)) || {}
   if (!_.isEmpty(phone)) {
     const messageStatusId = await messageStatusToId('Pending')
     const phoneNumber = normalizePhoneNumber(phone, countryCode)
@@ -96,7 +96,8 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
 }
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
-  const { personId, resultId } = await knex('SmsMessage').where('id', smsMessageId).first('personId', 'resultId')
+  const { personId, resultId } =
+    (await knex('SmsMessage').where('id', smsMessageId).first('personId', 'resultId')) || {}
 
   const dataConstraints = await getConstraints({ personId })
 

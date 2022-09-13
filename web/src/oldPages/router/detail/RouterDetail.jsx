@@ -24,7 +24,6 @@ import JSONSchemaCard from '../../../oldComponents/shared/JSONSchemaCard'
 import { ReadOnlyField } from '../../../oldComponents/shared/ReadOnlyFields'
 import { fetchSingleRouter, updateSingleRouter } from '../../../store/RouterRedux'
 import isEditable from '../../../utils/selectors/isEditable'
-import DeviceDemoLink from '../../device/DeviceDemoLink'
 import messages from './messages'
 import styles from './RouterDetail.css'
 import RouterDetailModalForm from './RouterDetailModalForm'
@@ -363,14 +362,6 @@ export class RouterDetail extends PureComponent {
     )
   }
 
-  renderDemoButton() {
-    return (
-      <DeviceDemoLink to={`/demo/device/${this.props.routerId}`} className={styles.DemoLink} target="_blank">
-        Demo
-      </DeviceDemoLink>
-    )
-  }
-
   renderPaper() {
     return (
       <div>
@@ -388,7 +379,6 @@ export class RouterDetail extends PureComponent {
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
         {this.renderPaper()}
-        {this.renderDemoButton()}
       </div>
     )
   }

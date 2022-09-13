@@ -1,12 +1,14 @@
+import variables from '../../../theme/colors'
+
 const styles = theme => {
   const style = {
     row: {
       cursor: 'pointer',
       '&:nth-child(even)': {
-        backgroundColor: process.env['--aspect-color-grey-8'],
+        backgroundColor: variables.customPropertiesVariables['--aspect-color-grey-8'],
       },
       '&:hover': {
-        backgroundColor: process.env['--aspect-color-grey-6'],
+        backgroundColor: variables.customPropertiesVariables['--aspect-color-grey-6'],
       },
       '&:first-child > *': {
         borderTopWidth: 2,

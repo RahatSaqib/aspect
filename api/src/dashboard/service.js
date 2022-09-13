@@ -6,7 +6,6 @@ const {
   getConstraints,
   addConstraints,
   canViewSites,
-  canViewDevices,
   canViewResults,
   canViewInventories,
   canEditInventories,

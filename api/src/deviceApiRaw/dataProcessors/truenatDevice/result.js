@@ -30,8 +30,8 @@ class TruenatResult extends SynchronousDataProcessor {
 
   static async canProcessRequest(request) {
     const { params } = request
-    const path = _.get(params, 'params')
-    return Promise.resolve(path === 'truelab/results/upload')
+    const path = _.get(params, 'params', '').toLowerCase()
+    return Promise.resolve(path.startsWith('truelab/results/upload'))
   }
 
   async processRequest() {
