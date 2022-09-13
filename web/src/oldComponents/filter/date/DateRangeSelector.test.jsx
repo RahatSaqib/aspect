@@ -8,7 +8,7 @@ import DateTimeInput from '../../shared/DateTimeInput'
 import SelectField from '../../shared/SelectField'
 import { DateRangeSelector } from './DateRangeSelector'
 
-describe('DateRangeSelector Component', () => {
+describe.only('DateRangeSelector Component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     clearButtonTooltip: 'Clear',
@@ -585,7 +585,9 @@ describe('DateRangeSelector Component', () => {
         beforeAll(() => {
           clock = sinon.useFakeTimers(expectedDateTest.now.getTime())
         })
-
+        beforeEach(
+          () => (DateRangeSelectorWrapper = shallow(<DateRangeSelector {...props} maxDateTo={expectedDateTest.now} />))
+        )
         afterAll(() => {
           clock.restore()
         })

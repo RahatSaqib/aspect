@@ -39,6 +39,18 @@ export const InventoryContainer = ({ navigate, location }) => {
 
   const handleChange = (e, v) => {
     setActiveTab(v)
+    if (activeTab === 'supplies') {
+      const searchParams = new URLSearchParams()
+      searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
+    }
   }
   return (
     <div className={cssClasses('Container')}>

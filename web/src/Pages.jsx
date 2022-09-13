@@ -16,7 +16,6 @@ import CaseDetails from './oldPages/case/details/CaseDetails'
 import CaseList from './oldPages/case/list/CaseList'
 import OperationalData from './oldPages/dashboard/operational/OperationalData'
 import LoadableStatus from './oldPages/dashboard/status/LoadableStatus'
-import DeviceDemo from './oldPages/demo/device/DeviceDemo'
 import DeviceList from './oldPages/device/list/DeviceList'
 import DeviceApiKeyList from './oldPages/deviceApiKey/list/DeviceApiKeyList'
 import InventoryContainer from './oldPages/inventory/InventoryContainer'
@@ -162,11 +161,6 @@ const renderTaskList = props => (
 const renderOperationalData = props => (
   <LoggedInLayout>
     <OperationalData {...props} />
-  </LoggedInLayout>
-)
-const renderDeviceDemo = props => (
-  <LoggedInLayout>
-    <DeviceDemo {...props} />
   </LoggedInLayout>
 )
 const renderReports = props => (
@@ -339,8 +333,6 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
         <Route path="/operational-data/*" element={getElement(props, ['operationalData'], renderOperationalData)} />
 
         <Route path="/account-details/current/*" element={getElement(props, ['account'], renderAccountDetails)} />
-
-        <Route path="/demo/device/:deviceId" element={getElement(props, ['deviceDemo'], renderDeviceDemo)} />
 
         <Route
           path="/clinical-indicators"

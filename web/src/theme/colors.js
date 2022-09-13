@@ -1,12 +1,3 @@
-const set = require('lodash/set')
-const transform = require('lodash/transform')
-/**
- * To see an example of usage please see
- * "web/src/dashboard/status/ColorDemo/ColorDemo.jsx"
- *
- * NB: Any changes to this file needs a restart of the web
- * dev environment.
- */
 exports.customPropertiesVariables = {
   // Colors 2019
   '--alto': '#e0e0e0',
@@ -228,11 +219,3 @@ exports.customPropertiesVariables = {
 
   initialised: true, // only for test runner to work
 }
-
-exports.definePluginVariables = transform(
-  exports.customPropertiesVariables,
-  (result, value, key) =>
-    // Transform key into the form like: process.env['--aspect-color-cyan']
-    set(result, `process.env['${key}']`, JSON.stringify(value)),
-  {}
-)

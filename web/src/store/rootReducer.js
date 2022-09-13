@@ -8,7 +8,6 @@ import assayType from './AssayTypeRedux'
 import user, { types as authTypes } from './AuthRedux'
 import _case from './CaseRedux'
 import consumable from './ConsumableRedux'
-import demo from './DemoRedux'
 import deviceApiKey from './DeviceApiKeyRedux'
 import deviceApproval from './DeviceApprovalRedux'
 import deviceMaintenanceStatus from './DeviceMaintenanceStatusRedux'
@@ -41,7 +40,6 @@ const appReducer = combineReducers({
   assayType,
   case: _case,
   consumable,
-  demo,
   device,
   deviceApiKey,
   deviceApproval,
@@ -77,7 +75,6 @@ const App = Immutable.Record({
   assayType: undefined,
   case: undefined,
   consumable: undefined,
-  demo: undefined,
   device: undefined,
   deviceApiKey: undefined,
   deviceOperation: undefined,

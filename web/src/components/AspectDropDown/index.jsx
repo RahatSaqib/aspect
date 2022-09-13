@@ -19,6 +19,7 @@ import { defineMessages } from 'react-intl'
 import { useQuery } from 'react-query'
 import Select, { components as originalComponents } from 'react-select'
 import useI18n from '../../hooks/useI18n'
+import variables from '../../theme/colors'
 import UI_CONSTS from '../../utils/consts/UI'
 import IconProvider from '../IconProvider'
 import fetchWrapperForQueries from '../QueryFetch'
@@ -417,7 +418,7 @@ const {
   '--aspect-color-chill-blue-3': aspectChillBlue3,
   '--aspect-color-white': aspectWhite,
   '--white-lilac-2': lilac2,
-} = process.env
+} = variables.customPropertiesVariables
 
 function getOptionByValue(data, requestedValue, idKey) {
   // When the requested value is an object including key and value props
