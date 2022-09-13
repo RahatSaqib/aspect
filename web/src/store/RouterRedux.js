@@ -121,6 +121,7 @@ export function exportRouters(
         size: pageSize,
         format: fileFormat,
         ...filters,
+        hasResults: 0,
       })}`,
       {
         errorNotifications: {

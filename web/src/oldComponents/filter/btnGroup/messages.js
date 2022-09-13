@@ -16,6 +16,14 @@ export const messages = {
       id: 'filter.btnGroup.dateTo',
       defaultMessage: 'until {date}',
     },
+    expDateFrom: {
+      id: 'filter.btnGroup.expDateFrom',
+      defaultMessage: 'Exp. since {date}',
+    },
+    expDateTo: {
+      id: 'filter.btnGroup.expDateTo',
+      defaultMessage: 'Exp. until {date}',
+    },
     partnerId: {
       id: 'filter.btnGroup.partnerId',
       defaultMessage: 'partner "{partnerName}"',
@@ -123,6 +131,10 @@ export const messages = {
     onlyReportableResults: {
       id: 'filter.btnGroup.onlyReportableResults',
       defaultMessage: 'Show Only Reportable Results',
+    },
+    onlyTransfers: {
+      id: 'filter.btnGroup.onlyTransfers',
+      defaultMessage: 'Show Only Transfers',
     },
     onlyDownloadedByReporter: {
       id: 'filter.btnGroup.onlyDownloadedByReporter',
