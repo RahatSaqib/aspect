@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { listNotifications } = require('./service')
+const listNotifications = require('./listNotifications')
 const { exportData, getBaseReplacements } = require('../shared/excel')
 const { issueCategoryIntlToShortname } = require('../shared/dictionary')
 
