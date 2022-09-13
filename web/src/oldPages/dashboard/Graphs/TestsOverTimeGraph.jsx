@@ -8,21 +8,14 @@ import pick from 'lodash/pick'
 import AspectCard from '../../../components/AspectCard'
 import FilterByAssayDropDown from '../../../components/AspectDropDown/FilterByAssayDropDown'
 import ErrorBoundary from '../../../components/ErrorBoundary'
-import BarGraph from '../../../components/Graphs/BarGraph'
-import GraphRender from '../../../components/Graphs/GraphRender'
 import graphsContainerMessages from '../../../components/Graphs/GraphsContainer/messages'
-import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
-import PieGraph from '../../../components/Graphs/PieGraph'
 import useI18n from '../../../hooks/useI18n'
 import PermissionsProvider from '../../../providers/PermissionsProvider'
-import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import GraphContainerStyles from './GraphsContainer.css'
+import TestsOverTimeGraphMain from './TestsOverTimeGraph.Main'
+import TestsOverTimeGraphSide from './TestsOverTimeGraph.Side'
 
 const cssClasses = classnames.bind(GraphContainerStyles)
-
-const {
-  DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
-} = DATE_CONSTS
 
 const filterMonthlyByAssaysBar = (data, props) => {
   const newData = []
@@ -67,62 +60,6 @@ const selectorModifiers = [
   },
 ]
 
-const mainGraph = {
-  id: 'testPerformedMonthlyPercentage',
-  component: BarGraph,
-  type: 'bar',
-  size: 8,
-  componentClasses: ['BARCLASS'],
-  api: {
-    endpoint: '/result/clinical-indicator-aggregations',
-    params: {
-      groupBy: ['month', 'assay'],
-      [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-      [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
-    },
-  },
-  i18nKey: 'assayI18nKey',
-  indexBy: 'month',
-  keyToConsume: 'assay',
-  tickValuesYShape: 'none',
-  tickValuesXShape: 'all',
-  displayMethod: 'actual',
-  displayLegend: true,
-  formatDate: 'MMM',
-  clickThrough: {
-    allow: true,
-    baseUrl: '/browse/result?filters=',
-    keys: ['assay', 'indexBy'],
-  },
-}
-
-const sideGraph = {
-  id: 'testPerformedMonthlytotal',
-  component: PieGraph,
-  type: 'pie',
-  size: 4,
-  componentClasses: ['piegraph__container'],
-  api: {
-    endpoint: '/result/clinical-indicator-aggregations',
-    params: {
-      groupBy: ['month', 'assay'],
-      [MIN_DATE]: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-      [MAX_DATE]: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
-    },
-  },
-  i18nKey: 'assayI18nKey',
-  indexBy: 'cnt',
-  keyToConsume: 'assay',
-  displayMethod: 'percentage',
-  formatDate: 'MMM yy',
-  averages: {
-    showTotal: false,
-    totalDisplayMethod: 'actual',
-    title: 'testsOverTimeAvgTitle',
-    key: '*',
-    subTitle: null,
-  },
-}
 // variables that should be removed end
 
 const TestsOverTimeGraph = ({ assaysFromState }) => {
@@ -166,26 +103,8 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
                   name="testsOverTime"
                 >
                   <Grid container spacing={8} className={cssClasses('graph__containerGrid')}>
-                    <GraphRender
-                      assays={{ whiteListed: [], assaysFromState }}
-                      config={mainGraph}
-                      key={mainGraph.id}
-                      id={mainGraph.id}
-                      updatedParams={false}
-                      formatMessage={formatMessage}
-                      clientSideFilter={clientSideFilter}
-                      isOwnerReady
-                    />
-                    <GraphRender
-                      assays={{ whiteListed: [], assaysFromState }}
-                      config={sideGraph}
-                      key={sideGraph.id}
-                      id={sideGraph.id}
-                      updatedParams={false}
-                      formatMessage={formatMessage}
-                      clientSideFilter={clientSideFilter}
-                      isOwnerReady
-                    />
+                    <TestsOverTimeGraphMain assaysFromState={assaysFromState} clientSideFilter={clientSideFilter} />
+                    <TestsOverTimeGraphSide assaysFromState={assaysFromState} clientSideFilter={clientSideFilter} />
                   </Grid>
                 </AspectCard>
               </Grid>
