@@ -1,7 +1,6 @@
 import Immutable from 'immutable'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
-
 import { errorPleaseTryAgainInAFewMinutes, inlineWarning } from '../utils/error/CommonErrorNotifications'
 
 jest.mock('../utils/utils/browser')

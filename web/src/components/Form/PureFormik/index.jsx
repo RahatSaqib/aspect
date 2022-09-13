@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { Formik, Form, FastField } from 'formik'
-import { object } from 'yup'
 import map from 'lodash/map'
+import { object } from 'yup'
 import { getValidation } from './Helpers'
 
 /**
@@ -9,7 +9,7 @@ import { getValidation } from './Helpers'
  * extra logic, or transformers.
  */
 
-const AspectPureFormik = ({ config: { id, debug, rows, initialValues }, actions }) => (
+const AspectPureFormik = ({ config: { id, debug: cfgDebug, rows, initialValues }, actions, debug }) => (
   <Formik
     initialValues={initialValues}
     validateOnChange
@@ -36,7 +36,7 @@ const AspectPureFormik = ({ config: { id, debug, rows, initialValues }, actions 
             <Component key={id} {...rest} formik={formik} />
           ))}
         </Form>
-        {debug ? <pre>{JSON.stringify(formik, null, 2)}</pre> : null}
+        {debug || cfgDebug ? <pre>{JSON.stringify(formik, null, 2)}</pre> : null}
       </Fragment>
     )}
   </Formik>

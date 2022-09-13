@@ -1,19 +1,16 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { ResponsiveBar } from '@nivo/bar'
+import classnames from 'classnames/bind'
 import every from 'lodash/every'
 import filter from 'lodash/filter'
 import first from 'lodash/first'
-import sortBy from 'lodash/sortBy'
 import isFunction from 'lodash/isFunction'
-import { ResponsiveBar } from '@nivo/bar'
-import classnames from 'classnames/bind'
-
+import sortBy from 'lodash/sortBy'
+import PropTypes from 'prop-types'
 import useI18n from '../../../hooks/useI18n'
+import { negateTimeZoneOffset } from '../../../oldComponents/shared/DateTimeInput/utils/date'
 import { GraphLegend } from '../GraphLegend'
 import { GraphToolTip, EmptyTooltip } from '../GraphToolTip'
-import CustomBarGraphLegend from './CustomBarGraphLegend'
-import useGraphClickThrough from '../Hooks/useGraphClickThrough'
-import messages from '../intlMessages'
 import {
   formatValuesForGraphs,
   generateColorForValue,
@@ -23,11 +20,11 @@ import {
   getMaxValueForDivergent,
   getColorIdByFieldName,
 } from '../Helpers/Formatters'
-import { negateTimeZoneOffset } from '../../../oldComponents/shared/DateTimeInput/utils/date'
-
 import { calcOverallRate } from '../Helpers/Formatters/calcs'
-
+import useGraphClickThrough from '../Hooks/useGraphClickThrough'
+import messages from '../intlMessages'
 import styles from './AspectResponsiveBar.css'
+import CustomBarGraphLegend from './CustomBarGraphLegend'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,16 +1,14 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
-
+import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
-import messages from '../messages'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import { getDayTitle } from '../Helpers'
-
 import styles from '../DailyStatus.css'
+import { getDayTitle } from '../Helpers'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 

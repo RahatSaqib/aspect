@@ -1,11 +1,12 @@
 import React from 'react'
-import { oneOfType, object, string, number } from 'prop-types'
-import classnames from 'classnames/bind'
 import Card from '@mui/material/Card'
+import classnames from 'classnames/bind'
+import { oneOfType, object, string, number } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
-import PerformanceBarChart from './PerformanceBarChart'
+import variables from '../../../../theme/colors'
 import styles from '../DeviceDetail.css'
 import messages from './messages'
+import PerformanceBarChart from './PerformanceBarChart'
 
 const cssClasses = classnames.bind(styles)
 
@@ -49,12 +50,12 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
   const avgUtilizationRate = payload.utilizationRateAvg
   const avgErrorRate = payload.errorRateAvg
   const { data } = payload
-  const { '--aspect-color-white': colorWhite } = process.env
+  const { '--aspect-color-white': colorWhite } = variables.customPropertiesVariables
   const utilizationRateSeries = [
     {
       label: 'Utilization Rate',
       key: 'utilizationRate',
-      color: process.env['--aspect-color-shakespeare'],
+      color: variables.customPropertiesVariables['--aspect-color-shakespeare'],
     },
     {
       label: 'Above Target Utilization Rate',
@@ -66,7 +67,7 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
     {
       label: 'Error Rate',
       key: 'errorRate',
-      color: process.env['--aspect-color-mandy'], // green
+      color: variables.customPropertiesVariables['--aspect-color-mandy'], // green
     },
     {
       label: 'Above Average Error Rate',

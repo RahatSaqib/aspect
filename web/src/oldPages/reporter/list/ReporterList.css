@@ -9,7 +9,7 @@
 }
 
 .site__details {
-  color: var('--ming', #34717c);
+  color: var(--ming, #34717c);
   text-align: center;
   padding: 5px;
   text-decoration: underline;

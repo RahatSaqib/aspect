@@ -1,10 +1,8 @@
-import PropTypes from 'prop-types'
 import React from 'react'
-import classnames from 'classnames/bind'
 import Tooltip from '@mui/material/Tooltip'
-
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import IconProvider from '../../components/IconProvider'
-
 import styles from './AspectTooltip.css'
 
 const cssClasses = classnames.bind(styles)

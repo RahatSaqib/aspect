@@ -1,13 +1,13 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { createIntl } from 'react-intl'
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
 import Immutable from 'immutable'
-import { InventoryLogWithProps } from './InventoryLog'
+import { createIntl } from 'react-intl'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import { AuthProvider } from '../../../providers/AuthProvider'
 import { Items } from '../../../utils/metaReducers/items'
 import { Table } from '../../../utils/metaReducers/table'
-import { AuthProvider } from '../../../providers/AuthProvider'
+import { InventoryLogWithProps } from './InventoryLog'
 
 const initialState = {
   permissions: null,

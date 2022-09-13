@@ -1,3 +1,5 @@
+@import '../../theme/variables.css';
+
 .page__footerWrapper {
   font-size: 0.75rem;
   color: var(--aspect-color-grey-4);

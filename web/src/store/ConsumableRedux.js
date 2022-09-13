@@ -1,8 +1,8 @@
-import { defineMessages } from 'react-intl'
-import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
-import { aspectFetch } from '../utils/utils/fetch'
+import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   REQUEST_CONSUMABLES: 'REQUEST_CONSUMABLES',

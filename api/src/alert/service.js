@@ -58,7 +58,8 @@ async function onAlertMessageUpdateAfterIssueDataChanged({ issueId }, { messageC
 // helper functions
 // --------------------------------------
 async function createAlertMessageFromTemplate(knex, alertMessageId) {
-  const { personId, resultId } = await knex('AlertMessage').where('id', alertMessageId).first('personId', 'resultId')
+  const { personId, resultId } =
+    (await knex('AlertMessage').where('id', alertMessageId).first('personId', 'resultId')) || {}
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('AlertMessage as m')
     .innerJoin('AlertTemplate as tmpl', 'm.alertTemplateId', 'tmpl.id')

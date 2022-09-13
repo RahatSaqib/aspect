@@ -1,8 +1,8 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import { NotificationDetailBackBar } from './NotificationDetailBackBar'
-import AspectButton from '../../shared/AspectButton'
 import { DetailBackBar } from '../../DetailBackBar'
+import AspectButton from '../../shared/AspectButton'
+import { NotificationDetailBackBar } from './NotificationDetailBackBar'
 
 describe('NotificationDetailBackBar component', () => {
   const props = {

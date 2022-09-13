@@ -1,12 +1,11 @@
-import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
-
+import { defineMessages } from 'react-intl'
 import fetchWrapperForQueries from '../components/QueryFetch'
+import { getFilters } from '../oldComponents/filter/utils'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { receiveList, Items } from '../utils/metaReducers/groupedItems'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/groupedTable'
-import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { receivedExportResponse } from './GlobalsRedux'
-import { getFilters } from '../oldComponents/filter/utils'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',

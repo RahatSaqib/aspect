@@ -1,14 +1,11 @@
-import PropTypes from 'prop-types'
-// Imports from packages
 import React from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Typography from '@mui/material/Typography'
-
-// Our own imports
+import PropTypes from 'prop-types'
+import { compose, setPropTypes, pure } from 'recompose'
 import { Unit } from '../pureGrids'
 
 export const PropertiesSchemaCard = compose(

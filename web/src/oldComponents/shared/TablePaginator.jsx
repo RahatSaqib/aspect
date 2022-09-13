@@ -1,12 +1,11 @@
-import min from 'lodash/min'
-import classnames from 'classnames/bind'
 import React from 'react'
+import Button from '@mui/material/Button'
+import classnames from 'classnames/bind'
+import min from 'lodash/min'
+import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
-import Button from '@mui/material/Button'
-import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import useI18n from '../../hooks/useI18n'
-
 import styles from './TablePaginator.css'
 
 const cssClasses = classnames.bind(styles)

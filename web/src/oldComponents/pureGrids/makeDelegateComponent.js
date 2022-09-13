@@ -1,12 +1,11 @@
-// Imports from packages
+import React, { PureComponent } from 'react'
 import curry from 'lodash/curry'
-import isString from 'lodash/isString'
-import reduce from 'lodash/reduce'
 import isBoolean from 'lodash/isBoolean'
+import isString from 'lodash/isString'
 import keys from 'lodash/keys'
 import omit from 'lodash/omit'
+import reduce from 'lodash/reduce'
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 
 export const makeGetClassNames = curry((pureGridPropTypes, keyToClassNameMappings, props) => {
   const initial = isString(props.className) ? [props.className] : []

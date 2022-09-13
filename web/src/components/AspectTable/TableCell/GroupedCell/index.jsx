@@ -1,14 +1,12 @@
 import React from 'react'
-import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import IconButton from '@mui/material/IconButton'
 import classnames from 'classnames/bind'
-
-import messages from '../messages'
-import IconProvider from '../../../IconProvider'
-import Cell from '../Cell'
-
-import styles from '../../Table.css'
+import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
+import IconProvider from '../../../IconProvider'
+import styles from '../../Table.css'
+import Cell from '../Cell'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 

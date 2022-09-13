@@ -2,10 +2,9 @@ import React from 'react'
 import isDateEqual from 'date-fns/isEqual'
 import Downshift from 'downshift'
 import { act } from 'react-dom/test-utils'
-
 import { mountWithTheme, shallowWithTheme } from '../../../__setup__/common'
-import DateTimeInput from './DateTimeInput'
 import { I18nProvider } from '../../../providers/I18nProvider'
+import DateTimeInput from './DateTimeInput'
 
 const DateTimeInputI18n = props => (
   <I18nProvider>

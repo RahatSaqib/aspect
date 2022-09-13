@@ -1,20 +1,15 @@
 import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
-
 import { useQuery } from 'react-query'
-
-import SummaryStatus from '../status/SummaryStatus'
-
-import PermissionsProvider from '../../../providers/PermissionsProvider'
-import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ErrorBoundary from '../../../components/ErrorBoundary'
-import GraphsContainer from '../../../components/Graphs/GraphsContainer'
 import deviceStatusGraphs from '../../../components/Graphs/GraphConfigurations/DeviceStatus'
-import resultsTransmittedGraphs from '../../../components/Graphs/GraphConfigurations/ResultsTransmitted'
 import inventoryStatusGraphs from '../../../components/Graphs/GraphConfigurations/Inventory'
-
+import resultsTransmittedGraphs from '../../../components/Graphs/GraphConfigurations/ResultsTransmitted'
+import GraphsContainer from '../../../components/Graphs/GraphsContainer'
+import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'
-
+import PermissionsProvider from '../../../providers/PermissionsProvider'
+import SummaryStatus from '../status/SummaryStatus'
 import styles from './OperationalData.css'
 
 const cssClasses = classnames.bind(styles)

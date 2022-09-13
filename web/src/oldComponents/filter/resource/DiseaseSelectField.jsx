@@ -1,15 +1,14 @@
 import React from 'react'
+import MenuItem from '@mui/material/MenuItem'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import MenuItem from '@mui/material/MenuItem'
-
-import messages from './i18n/diseaseMessages'
-import SelectField from '../../shared/SelectField'
+import useI18n from '../../../hooks/useI18n'
 import { fetchDiseases } from '../../../store/DiseaseRedux'
 import formatI18nMessage from '../../../utils/i18n/formatterWeb'
-import useI18n from '../../../hooks/useI18n'
+import SelectField from '../../shared/SelectField'
+import messages from './i18n/diseaseMessages'
 
 const enhance = compose(
   pure,

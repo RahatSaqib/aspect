@@ -1,14 +1,15 @@
 import React from 'react'
-import { defineMessages } from 'react-intl'
-import startOfMonth from 'date-fns/startOfMonth'
-import endOfMonth from 'date-fns/endOfMonth'
-import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
-import parseISO from 'date-fns/parseISO'
 import { ResponsiveBar } from '@nivo/bar'
-import { oneOfType, object, array, string, number } from 'prop-types'
 import classnames from 'classnames/bind'
-import styles from '../DeviceDetail.css'
+import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
+import endOfMonth from 'date-fns/endOfMonth'
+import parseISO from 'date-fns/parseISO'
+import startOfMonth from 'date-fns/startOfMonth'
+import { oneOfType, object, array, string, number } from 'prop-types'
+import { defineMessages } from 'react-intl'
 import useI18n from '../../../../hooks/useI18n'
+import variables from '../../../../theme/colors'
+import styles from '../DeviceDetail.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -44,7 +45,7 @@ const PerformanceBarChart = ({ data, series, color, legend, avgValue, maxValue, 
           id: 'lines',
           type: 'patternLines',
           background: 'inherit',
-          color: process.env[color],
+          color: variables.customPropertiesVariables[color],
           rotation: 45,
           lineWidth: 7,
           spacing: 8,
@@ -77,7 +78,7 @@ const PerformanceBarChart = ({ data, series, color, legend, avgValue, maxValue, 
           axis: 'y',
           value: avgValue,
           lineStyle: {
-            stroke: process.env['--aspect-color-ship-cove'],
+            stroke: variables.customPropertiesVariables['--aspect-color-ship-cove'],
             strokeWidth: 2,
           },
           legendOrientation: 'vertical',

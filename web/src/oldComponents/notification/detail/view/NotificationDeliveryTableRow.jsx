@@ -1,14 +1,11 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import { FaCircle } from 'react-icons/fa'
 import { injectIntl } from 'react-intl'
-
-import ColoredButton from '../../../components/themedReactToolbox/ColoredButton'
-
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../components/shared/tableBody'
+import ColoredButton from '../../../components/themedReactToolbox/ColoredButton'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-
 import styles from './NotificationDeliveryTableRow.css'
 
 const cssClasses = classnames.bind(styles)

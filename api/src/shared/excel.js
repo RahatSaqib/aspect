@@ -74,7 +74,7 @@ const getMaxLimitPlaceHolders = () => [
     value: ({ data: { length = 0 }, total = 0 }) => {
       return total - length
     },
-    condition: ({ data: { length = 0 } = [], total = 0 }) => length === total,
+    condition: ({ data = [], total = 0 }) => data?.length === total,
     action: (cell, worksheet) => {
       if (cell) {
         cell.value = ''
@@ -1102,6 +1102,10 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
     const cellPattern = patternRow.getCell(columnNumber)
     const cellStyle = patternInfo.lastCellStyle ? { ...patternInfo.lastCellStyle, numFmt: null } : null
     setCellStyle(cellPattern, cellStyle)
+    if (hasSubHeaders) {
+      const cell2 = patternRow.getCell(columnNumber + numMergeX - 1)
+      setCellStyle(cell2, cellStyle)
+    }
 
     /**
      * increase pointer to column for next loop

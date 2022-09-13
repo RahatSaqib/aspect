@@ -1,10 +1,8 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
-
-import DelayShowingProgressBar from './DelayShowingProgressBar'
-
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import styles from './DataTableProgressBar.css'
+import DelayShowingProgressBar from './DelayShowingProgressBar'
 
 const cssClasses = classnames.bind(styles)
 

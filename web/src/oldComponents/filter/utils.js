@@ -1,15 +1,18 @@
-import isArray from 'lodash/isArray'
-import isNull from 'lodash/isNull'
-import isNil from 'lodash/isNil'
-import isUndefined from 'lodash/isUndefined'
-import reduce from 'lodash/reduce'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
+import subtractDays from 'date-fns/subDays'
 import filter from 'lodash/filter'
-import intersection from 'lodash/intersection'
-import flowRight from 'lodash/flowRight'
-import mapKeys from 'lodash/mapKeys'
 import find from 'lodash/find'
-import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../shared/requirePermissions'
+import flowRight from 'lodash/flowRight'
+import intersection from 'lodash/intersection'
+import isArray from 'lodash/isArray'
+import isNil from 'lodash/isNil'
+import isNull from 'lodash/isNull'
+import isUndefined from 'lodash/isUndefined'
+import mapKeys from 'lodash/mapKeys'
+import reduce from 'lodash/reduce'
 import { navigations } from '../BrowseFilters'
+import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../shared/requirePermissions'
 
 export function nonEmptyFilterValue(x) {
   return !isNull(x) && !isUndefined(x) && x !== ''
@@ -125,6 +128,18 @@ const sanitizerByConfigKey = {
   contactStatus: defaultSanitizer,
 }
 
+export const setFiltersForLast30Days = searchParams => {
+  const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+  if (!filtersParams.has('minDate') && !filtersParams.has('maxDate')) {
+    const now = new Date()
+    const last30DaysStart = subtractDays(now, 30)
+    const minDate = startOfDay(last30DaysStart)
+    const maxDate = endOfDay(now)
+    filtersParams.set('minDate', minDate.toJSON())
+    filtersParams.set('maxDate', maxDate.toJSON())
+    searchParams.set('filters', filtersParams)
+  }
+}
 /**
  * Creates a function, which receives the current filters string from URL, and the external dependencies used for enabling and disabling filters, 
  * and then returns the filter string after cleaning it all the filters that were not included in the configuration or that should be disabled based on their dependencies.
@@ -313,6 +328,7 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
             case 'onlyDisease':
               result.onlyDisease = true
               break
+
             case 'onlyReportableResults':
               result.onlyReportableResults = true
               break
@@ -355,7 +371,14 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
             case 'contactStatus':
               result.contactStatus = true
               break
+            case 'onlyTransfers':
+              result.onlyTransfers = true
+              break
+            case 'expirationDate':
+              result.expirationDate = true
+              break
             default:
+              break
           }
         })
       }

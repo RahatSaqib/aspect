@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
-import { defineMessages } from 'react-intl'
+import Tabs from '@mui/material/Tabs'
 import classnames from 'classnames/bind'
+import { defineMessages } from 'react-intl'
+import useI18n from '../../hooks/useI18n'
 import styles from './InventoryContainer.css'
 import InventoryItemsList from './list/InventoryItemsList'
 import InventoryLog from './log/InventoryLog'
-import useI18n from '../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 
@@ -39,6 +39,18 @@ export const InventoryContainer = ({ navigate, location }) => {
 
   const handleChange = (e, v) => {
     setActiveTab(v)
+    if (activeTab === 'supplies') {
+      const searchParams = new URLSearchParams()
+      searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+
+      navigate(
+        {
+          ...location,
+          search: `?${searchParams.toString()}`,
+        },
+        { replace: true }
+      )
+    }
   }
   return (
     <div className={cssClasses('Container')}>

@@ -250,8 +250,7 @@ describe('Device routes', () => {
       assert.property(res.body.data[0], 'resultCountThisMonth')
       assert.typeOf(res.body.data[0].error, 'Object')
       assert.typeOf(res.body.data[0].availability, 'Object')
-      assert.property(res.body.data[0], 'deliveredLastMonth')
-      assert.property(res.body.data[0], 'deliveredThisMonth')
+
       assert.property(res.body, 'total')
     })
 

@@ -1,10 +1,9 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { useFormikContext } from 'formik'
-import get from 'lodash/get'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
-
+import { useFormikContext } from 'formik'
+import get from 'lodash/get'
+import PropTypes from 'prop-types'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
 import { getFieldErrorProps } from '../Formik/Helpers'
 

@@ -1,18 +1,16 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-
-import { aspectFetch } from '../utils/utils/fetch'
+import { getFilters } from '../oldComponents/filter/utils'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../utils/error/CommonErrorNotifications'
-
 import { receiveList, receiveItem, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
+import { aspectFetch } from '../utils/utils/fetch'
 import { receivedExportResponse } from './GlobalsRedux'
-import { getFilters } from '../oldComponents/filter/utils'
 
 export const types = {
   REQUEST_DEVICE_API_KEYS: 'REQUEST_DEVICE_API_KEYS',

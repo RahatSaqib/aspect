@@ -1,13 +1,12 @@
 import React from 'react'
-import Immutable from 'immutable'
 import { renderHook } from '@testing-library/react-hooks'
-import { createStore } from 'redux'
+import Immutable from 'immutable'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-
+import { createStore } from 'redux'
+import { useUserIsPermitted, RoutesPermissionProvider } from '../../../providers/RoutePermissions'
 import AspectLink from '../../AspectLink'
 import { buildWidgetToLinkParams } from '../Helpers'
-import { useUserIsPermitted, RoutesPermissionProvider } from '../../../providers/RoutePermissions'
 import { links, users } from './mocks'
 
 const initialState = {

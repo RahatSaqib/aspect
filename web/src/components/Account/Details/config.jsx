@@ -1,16 +1,16 @@
 import React from 'react'
-import { string } from 'yup'
 import isEmpty from 'lodash/isEmpty'
+import { string } from 'yup'
+import messages from '../../../oldPages/person/detail/messages.js'
+import { i18nWrapper } from '../../../providers/I18nProvider'
+import { getCustomMessage } from '../../../utils/utils/customMessages'
 import { PureTextInput, PureCheckboxInput, PureChip, PurePhoneNumber } from '../../Form/PureFormik/Inputs'
 import CountrySelect from './CountrySelect'
-import StateSelect from './StateSelect'
+import LanguageSelect from './LanguageSelect'
 import LGASelect from './LGASelect'
 import PartnerSelect from './PartnerSelect'
+import StateSelect from './StateSelect'
 import TimezoneSelect from './TimezoneSelect'
-import LanguageSelect from './LanguageSelect'
-import { i18nWrapper } from '../../../providers/I18nProvider'
-import messages from '../../../oldPages/person/detail/messages.js'
-import { getCustomMessage } from '../../../utils/utils/customMessages'
 
 const PaddedCheckBox = props => {
   return (
@@ -26,7 +26,7 @@ const itemsConfig = user => {
     row0: [
       {
         id: 'canLogIn',
-        label: formatMessage(messages.userCanAlsoLogIn),
+        label: `${formatMessage(messages.userCanAlsoLogIn)} *`,
         type: 'checkbox',
         component: PaddedCheckBox,
         validation: string().required('Required'),
@@ -35,7 +35,7 @@ const itemsConfig = user => {
     row1: [
       {
         id: 'name',
-        label: `${formatMessage(messages.fullName)}`,
+        label: `${formatMessage(messages.fullName)} *`,
         type: 'text',
         component: PureTextInput,
         validation: string().required('Required'),
@@ -51,10 +51,10 @@ const itemsConfig = user => {
     row2: [
       {
         id: 'email',
-        label: `${formatMessage(messages.primaryEmail)}`,
+        label: `${formatMessage(messages.primaryEmail)} *`,
         type: 'email',
         component: PureTextInput,
-        validation: string().email('Invalid email'),
+        validation: string().email('Invalid email').required('Required'),
       },
       {
         id: 'email2',
@@ -117,7 +117,7 @@ const itemsConfig = user => {
     row5: [
       {
         id: 'lastPartnerId',
-        label: formatMessage(messages.partner),
+        label: `${formatMessage(messages.partner)} *`,
         type: 'select',
         component: PartnerSelect,
         validation: string().required('Required'),

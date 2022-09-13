@@ -1,12 +1,8 @@
-import replace from 'lodash/replace'
-import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
+import classnames from 'classnames/bind'
+import replace from 'lodash/replace'
 import { connect } from 'react-redux'
-import BrowseNavDropdown from './BrowseNavDropdown'
-import { getFilters, mergeToFiltersParams, reduceNavLinks } from './filter/utils'
-import FiltersBtnGroup from './filter/btnGroup/FiltersBtnGroup'
-import FiltersPanel from './filter/popover/FiltersPanel'
+import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import {
   exportFormatTypes,
   askExportConfirmation,
@@ -14,8 +10,11 @@ import {
   beginListExportProcessing,
 } from '../store/FilterRedux'
 import { getAspectDisplayPreferences } from '../utils/LocalStorage'
-
 import styles from './BrowseFilters.css'
+import BrowseNavDropdown from './BrowseNavDropdown'
+import FiltersBtnGroup from './filter/btnGroup/FiltersBtnGroup'
+import FiltersPanel from './filter/popover/FiltersPanel'
+import { getFilters, mergeToFiltersParams, reduceNavLinks } from './filter/utils'
 
 const cssClasses = classnames.bind(styles)
 
@@ -40,13 +39,7 @@ const enhance = compose(
         searchParams.set('filters', filtersParams)
         searchParams.delete('pageAt')
         searchParams.delete('page')
-        navigate(
-          {
-            ...location,
-            search: `?${searchParams.toString()}`,
-          },
-          { replace: true }
-        )
+        navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
       },
 
     onRemoveFilterItem:
@@ -103,13 +96,7 @@ const enhance = compose(
         searchParams.set('filters', filtersParams)
         searchParams.delete('sortCol')
 
-        navigate(
-          {
-            ...location,
-            search: `?${searchParams.toString()}`,
-          },
-          { replace: true }
-        )
+        navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
       },
   }),
   connect(

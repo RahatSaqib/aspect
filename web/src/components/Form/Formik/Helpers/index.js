@@ -1,5 +1,3 @@
-import * as Yup from 'yup'
-
 import cloneDeep from 'lodash/cloneDeep'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
@@ -11,7 +9,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import range from 'lodash/range'
 import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
-
+import * as Yup from 'yup'
 import { isUrl } from '../../../../utils/utils/validate'
 import messages from '../messages'
 

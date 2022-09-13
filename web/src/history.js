@@ -1,6 +1,5 @@
 import { createBrowserHistory } from 'history'
 import piwikReactRouter from 'piwik-react-router'
-
 import config from './config'
 
 let history = createBrowserHistory() // eslint-disable-line import/no-mutable-exports

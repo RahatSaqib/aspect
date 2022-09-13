@@ -1,12 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
-
-import { groupDateRanges } from '../Helpers'
-
-import styles from '../DailyStatus.css'
 import useI18n from '../../../../hooks/useI18n'
+import styles from '../DailyStatus.css'
+import { groupDateRanges } from '../Helpers'
 
 const cssClasses = classnames.bind(styles)
 

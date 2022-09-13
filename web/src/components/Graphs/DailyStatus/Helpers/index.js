@@ -1,29 +1,32 @@
-import map from 'lodash/map'
-import first from 'lodash/first'
-import last from 'lodash/last'
-import range from 'lodash/range'
-import findIndex from 'lodash/findIndex'
-import mapValues from 'lodash/mapValues'
-import isUndefined from 'lodash/isUndefined'
-
-import isWeekend from 'date-fns/isWeekend'
 import addDays from 'date-fns/addDays'
-import getWeek from 'date-fns/getWeek'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import getWeek from 'date-fns/getWeek'
+import isWeekend from 'date-fns/isWeekend'
+import findIndex from 'lodash/findIndex'
+import first from 'lodash/first'
+import isUndefined from 'lodash/isUndefined'
+import last from 'lodash/last'
+import map from 'lodash/map'
+import mapValues from 'lodash/mapValues'
+import range from 'lodash/range'
+import { months } from '../../../../messages'
 import { i18nWrapper } from '../../../../providers/I18nProvider'
 
-const { format } = i18nWrapper()
+const { formatMessage } = i18nWrapper()
+
+const formatDate = (month, day) => `${formatMessage(months[month])} - ${day}`
 
 function groupDateRanges(data) {
   const output = []
-  const dateFormat = 'MMM d'
-  map(data, (v, k) => {
-    const min = format(first(v), dateFormat)
-    let max = v.length > 1 ? format(last(v), dateFormat) : false
-    if (max && max.substring(0, 3) === min.substring(0, 3)) {
-      max = max.substring(4)
+  map(data, (daysOfWeek, week) => {
+    const firstDayOfPeriod = first(daysOfWeek)
+    const lastDayOfPeriod = last(daysOfWeek)
+    const min = formatDate(firstDayOfPeriod.getMonth(), firstDayOfPeriod.getDate())
+    let max = daysOfWeek.length > 1 ? formatDate(lastDayOfPeriod.getMonth(), lastDayOfPeriod.getDate()) : false
+    if (max && firstDayOfPeriod.getMonth() === lastDayOfPeriod.getMonth()) {
+      max = lastDayOfPeriod.getDate()
     }
-    return output.push({ week: k, min, max, size: v.length })
+    return output.push({ week, min, max, size: daysOfWeek.length })
   })
   return output
 }

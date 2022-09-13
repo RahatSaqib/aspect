@@ -1,5 +1,4 @@
 import configure from 'redux-idle-monitor'
-
 import config from '../config'
 import { idleLogout } from './AuthRedux'
 

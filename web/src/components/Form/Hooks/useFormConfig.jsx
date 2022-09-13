@@ -9,7 +9,6 @@ import range from 'lodash/range'
 import reduce from 'lodash/reduce'
 import set from 'lodash/set'
 import xor from 'lodash/xor'
-
 import { getInitialValuesFromFormConfig, pickItems, pickKeys } from '../Formik/Helpers'
 
 const getState = formConfig => {

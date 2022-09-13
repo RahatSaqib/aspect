@@ -2,8 +2,8 @@
   This is a generic reducer for a list of items
   where individual items can be updated with additional data
 */
-import flowRight from 'lodash/flowRight'
 import Immutable from 'immutable'
+import flowRight from 'lodash/flowRight'
 
 function receiveListHelper(items, list, method) {
   const nextById = items.byId.withMutations(mutById => {

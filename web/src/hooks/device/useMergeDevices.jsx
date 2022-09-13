@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
-import { DEVICE_KEY, DEVICE_KEY_MERGE_DEVICES_ENDPOINT } from './deviceKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
+import { DEVICE_KEY, DEVICE_KEY_MERGE_DEVICES_ENDPOINT } from './deviceKeys.js'
 
 const mergeDevices = async data => {
   return fetchWrapperForQueries({
