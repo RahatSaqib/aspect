@@ -302,7 +302,9 @@ export function exportDevices(
         page,
         size: pageSize,
         format: fileFormat,
+
         ...filters,
+        hasResults: 1,
       })}`,
       {
         errorNotifications: {

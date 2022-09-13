@@ -12,6 +12,7 @@ async function getExportableFile(filtersParams, fileFormat, sortCol, sortDir, pa
       size: pageSize,
       format: fileFormat,
       ...filters,
+      hasResults: 1,
     },
   })
 
