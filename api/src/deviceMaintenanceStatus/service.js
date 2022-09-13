@@ -138,7 +138,7 @@ async function getDeviceStatusOverTime(auth, query) {
       siteName: 's.name',
     })
     .where('dtc.hasResults', 1)
-    .where('dt.externalId', 'CepheidGeneXpert')
+    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
     .groupBy('d.id')
     .select(
       'd.id',

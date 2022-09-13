@@ -194,10 +194,6 @@ async function createReport(request, reply) {
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
 
-  if (_.isNil(query.minDate)) {
-    query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
-  }
-
   const data = await getAllSheetsData(request, sheets)
   if (Boom.isBoom(data)) {
     throw data

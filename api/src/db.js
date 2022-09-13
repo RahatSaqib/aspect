@@ -79,7 +79,7 @@ function filterDateRangeParams(queryBuilder, params, dateColumnName) {
   if (params.minDate && params.minDate.toString() !== 'Invalid Date') {
     queryBuilder.where(dateColumnName, '>=', params.minDate)
   }
-  if (params.maxDate && params.minDate.toString() !== 'Invalid Date') {
+  if (params.maxDate && params.maxDate.toString() !== 'Invalid Date') {
     queryBuilder.where(dateColumnName, '<', params.maxDate)
   }
 }

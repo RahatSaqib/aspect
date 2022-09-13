@@ -86,7 +86,6 @@ async function getDeviceActivityReport(auth, query) {
     .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
     .countDistinct('r.id as totalResults')
     .select(getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn'))
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
     .modify(addingGroupingAndSelect, query)
@@ -98,7 +97,6 @@ async function getDeviceActivityReport(auth, query) {
     .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .modify(addingGroupingAndSelect, query)
 
   // return result when both queries are finished
@@ -293,7 +291,8 @@ async function getDeviceCapacityReport(auth, query) {
 
   const devices = deviceQuery
     .clone()
-    .where({ 'dt.externalId': 'CepheidGeneXpert' })
+    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
+
     .select('d.name', 'd.id')
     .orderBy('d.name')
   // return result when both queries are finished
@@ -394,7 +393,7 @@ async function getGeneXpertOperationLogsReport(auth, query) {
 
 async function getModuleActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate } = query
+  const { minDate = subMonths(new Date(), 1) } = query
   const rows = await getModuleActivityReportData(minDate, dataConstraints, query)
 
   return {
