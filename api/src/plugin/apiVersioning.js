@@ -9,9 +9,7 @@ const internals = {
   optionsSchema: Joi.object({
     validVersions: Joi.array().items(Joi.number().integer()).min(1).required(),
     defaultVersion: Joi.any().required(),
-    vendorName: Joi.string().trim().min(1).required(),
     versionHeader: Joi.string().trim().min(1).default('api-version'),
-    passiveMode: Joi.boolean().default(false),
     basePath: Joi.string().trim().min(1).default('/'),
     invalidVersionAllow: Joi.boolean().default(true),
   }),
@@ -76,7 +74,7 @@ const _attemptPathDecoding = function (request) {
   }
 }
 
-exports.name = 'api-versioning'
+exports.name = 'apiVersioning'
 
 exports.version = '1.0'
 
