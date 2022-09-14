@@ -26,11 +26,8 @@ const Group = props => {
   )
 }
 
-const FilterByAssayDropDown = props => {
+const FilterByAssayDropDown = ({ props: { actionComponentProps: config, action } }) => {
   const { formatMessage } = useI18n()
-  const {
-    props: { actionComponentProps: config, action },
-  } = props
   const { selectorModifiers, data } = config
   const {
     identifier,
@@ -95,20 +92,8 @@ const FilterByAssayDropDown = props => {
   }, [options, data, formatMessage, initByCountryDefault])
 
   return defaultValue ? (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        marginBottom: '20px',
-      }}
-    >
-      <div
-        style={{
-          position: 'relative',
-          width: '450px',
-          zIndex: 99,
-        }}
-      >
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+      <div style={{ position: 'relative', width: '450px', zIndex: 99 }}>
         <Select
           autoBlur
           placeholder={formatMessage(messages.selectAssay)}
