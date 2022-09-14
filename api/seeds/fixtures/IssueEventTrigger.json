@@ -159,7 +159,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [5006],
+            "errorCodes": [
+              5006
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -171,7 +173,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
-            "errorCodesToSuppress": [5006],
+            "errorCodesToSuppress": [
+              5006
+            ],
             "suppressionDays": 30
           }
         }
@@ -189,7 +193,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [5006],
+            "errorCodes": [
+              5006
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -201,7 +207,9 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [5006]
+            "errorCodesToSuppress": [
+              5006
+            ]
           }
         }
       },
@@ -218,7 +226,15 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeCategories",
           "evaluationFilterParameters": {
-            "errorCodes": [5001, 5002, 5003, 5004, 5005, 5015, 5016],
+            "errorCodes": [
+              5001,
+              5002,
+              5003,
+              5004,
+              5005,
+              5015,
+              5016
+            ],
             "categoryId": "Invalid",
             "threshold": 0.04,
             "below": false,
@@ -232,7 +248,15 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [5001, 5002, 5003, 5004, 5005, 5015, 5016]
+            "errorCodesToSuppress": [
+              5001,
+              5002,
+              5003,
+              5004,
+              5005,
+              5015,
+              5016
+            ]
           }
         }
       },
@@ -249,7 +273,15 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeCategories",
           "evaluationFilterParameters": {
-            "errorCodes": [5001, 5002, 5003, 5004, 5005, 5015, 5016],
+            "errorCodes": [
+              5001,
+              5002,
+              5003,
+              5004,
+              5005,
+              5015,
+              5016
+            ],
             "categoryId": "Invalid",
             "threshold": 0.04,
             "below": false,
@@ -262,7 +294,15 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [5001, 5002, 5003, 5004, 5005, 5015, 5016]
+            "errorCodesToSuppress": [
+              5001,
+              5002,
+              5003,
+              5004,
+              5005,
+              5015,
+              5016
+            ]
           }
         }
       },
@@ -279,7 +319,10 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [5017, 5007],
+            "errorCodes": [
+              5017,
+              5007
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -292,7 +335,10 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [5017, 5007]
+            "errorCodesToSuppress": [
+              5017,
+              5007
+            ]
           }
         }
       },
@@ -309,7 +355,10 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [5017, 5007],
+            "errorCodes": [
+              5017,
+              5007
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -320,7 +369,10 @@
             "evaluationParameter": "shouldSuppressTriggering",
             "evaluationFilterParameters": {
               "suppressionDays": 30,
-              "errorCodesToSuppress": [5017, 5007]
+              "errorCodesToSuppress": [
+                5017,
+                5007
+              ]
             }
           }
         }
@@ -383,7 +435,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [5011],
+            "errorCodes": [
+              5011
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -396,7 +450,9 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [5011]
+            "errorCodesToSuppress": [
+              5011
+            ]
           }
         }
       },
@@ -413,7 +469,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [5011],
+            "errorCodes": [
+              5011
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -426,7 +484,9 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [5011]
+            "errorCodesToSuppress": [
+              5011
+            ]
           }
         }
       },
@@ -458,7 +518,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [2008],
+            "errorCodes": [
+              2008
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -469,7 +531,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
-            "errorCodesToSuppress": [2008],
+            "errorCodesToSuppress": [
+              2008
+            ],
             "suppressionDays": 30
           }
         }
@@ -487,7 +551,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [2008],
+            "errorCodes": [
+              2008
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -498,7 +564,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
-            "errorCodesToSuppress": [2008],
+            "errorCodesToSuppress": [
+              2008
+            ],
             "suppressionDays": 30
           }
         }
@@ -516,7 +584,10 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [2096, 2097],
+            "errorCodes": [
+              2096,
+              2097
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -529,7 +600,10 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [2096, 2097]
+            "errorCodesToSuppress": [
+              2096,
+              2097
+            ]
           }
         }
       },
@@ -546,7 +620,10 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeErrors",
           "evaluationFilterParameters": {
-            "errorCodes": [2096, 2097],
+            "errorCodes": [
+              2096,
+              2097
+            ],
             "threshold": 0.04,
             "below": false,
             "daysPeriod": 30,
@@ -558,7 +635,10 @@
           "evaluationParameter": "shouldSuppressTriggering",
           "evaluationFilterParameters": {
             "suppressionDays": 30,
-            "errorCodesToSuppress": [2096, 2097]
+            "errorCodesToSuppress": [
+              2096,
+              2097
+            ]
           }
         }
       },
@@ -575,7 +655,9 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCodes": [4008],
+            "errorCodes": [
+              4008
+            ],
             "daysPeriod": 60,
             "minErrors": 3
           }
@@ -585,9 +667,32 @@
           "evaluationParameter": "checkHardwareSuppression",
           "evaluationFilterParameters": {
             "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
+              2014,
+              4017,
+              1001,
+              1002,
+              4010,
+              4012,
+              4009,
+              1004,
+              2022,
+              2006,
+              1018,
+              2016,
+              4004,
+              2035,
+              2026,
+              2011,
+              2009,
+              1006,
+              4014,
+              2034,
+              4015,
+              2017,
+              4008,
+              4016,
+              4006,
+              4011
             ]
           }
         }
@@ -602,7 +707,15 @@
           "evaluationMethod": "plugin-function",
           "evaluationParameter": "analyzeDeviceHardwareError",
           "evaluationFilterParameters": {
-            "errorCodes": [4017, 1001, 1002, 4012, 2014, 1004, 4009],
+            "errorCodes": [
+              4017,
+              1001,
+              1002,
+              4012,
+              2014,
+              1004,
+              4009
+            ],
             "daysPeriod": 60,
             "minErrors": 4
           }
@@ -612,9 +725,13 @@
           "evaluationParameter": "checkHardwareSuppression",
           "evaluationFilterParameters": {
             "errorCodesToSuppress": [
-              2014, 4017, 1001, 1002, 4010, 4012, 4009, 1004, 2022, 2006, 1018,
-              2016, 4004, 2035, 2026, 2011, 2009, 1006, 4014, 2034, 4015, 2017,
-              4008, 4016, 4006, 4011
+              4017,
+              1001,
+              1002,
+              4012,
+              2014,
+              1004,
+              4009
             ]
           }
         }
