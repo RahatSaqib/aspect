@@ -8,18 +8,18 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseSiteDropdown from '../../../oldComponents/BrowseSiteDropdown'
 import PermissionsProvider from '../../../providers/PermissionsProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
-// import CovidCasesByAgeAndGender from '../Graphs/CovidCasesByAgeAndGender'
-// import CovidDailyConfirmedGraph from '../Graphs/CovidDailyConfirmedGraph'
-// import CovidMortalityAndRecoveryByGenderGraph from '../Graphs/CovidMortalityAndRecoveryByGenderGraph'
-// import CovidMortalityAndRecoveryGraph from '../Graphs/CovidMortalityAndRecoveryGraph'
-// import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
-// import GroupedByTotalResultsGraphs from '../Graphs/Grouped/GroupedByTotalResultsGraphs'
-// import GroupedByTrendsInQuartersGraphs from '../Graphs/Grouped/GroupedByTrendsInQuartersGraphs'
-// import GroupedByTrendsInYearsGraphs from '../Graphs/Grouped/GroupedByTrendsInYearsGraphs'
-// import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
+import CovidCasesByAgeAndGender from '../Graphs/CovidCasesByAgeAndGender'
+import CovidDailyConfirmedGraph from '../Graphs/CovidDailyConfirmedGraph'
+import CovidMortalityAndRecoveryByGenderGraph from '../Graphs/CovidMortalityAndRecoveryByGenderGraph'
+import CovidMortalityAndRecoveryGraph from '../Graphs/CovidMortalityAndRecoveryGraph'
+import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
+import GroupedByTotalResultsGraphs from '../Graphs/Grouped/GroupedByTotalResultsGraphs'
+import GroupedByTrendsInQuartersGraphs from '../Graphs/Grouped/GroupedByTrendsInQuartersGraphs'
+import GroupedByTrendsInYearsGraphs from '../Graphs/Grouped/GroupedByTrendsInYearsGraphs'
+import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
 import TestsOverTimeGraph from '../Graphs/TestsOverTimeGraph'
-// import TreatmentStatusGraph from '../Graphs/TreatmentStatusGraph'
-// import XDRFLQResistanceGraph from '../Graphs/XDRFLQResistanceGraph'
+import TreatmentStatusGraph from '../Graphs/TreatmentStatusGraph'
+import XDRFLQResistanceGraph from '../Graphs/XDRFLQResistanceGraph'
 import messages from './messages'
 import Reports from './Reports'
 import styles from './Status.css'
@@ -55,7 +55,7 @@ const Status = () => {
       {assays ? (
         <>
           <TestsOverTimeGraph assaysFromState={assays} />
-          {/* <GroupedByTotalResultsGraphs assays={assays} />
+          <GroupedByTotalResultsGraphs assays={assays} />
           <TreatmentStatusGraph assays={assays} />
           <DeviceStatusGraph assays={assays} />
           <CovidDailyConfirmedGraph assays={assays} />
@@ -65,7 +65,7 @@ const Status = () => {
           <InventoryStatusGraph assays={assays} />
           <GroupedByTrendsInYearsGraphs assays={assays} />
           <GroupedByTrendsInQuartersGraphs assays={assays} />
-          <XDRFLQResistanceGraph assays={assays} /> */}
+          <XDRFLQResistanceGraph assays={assays} />
         </>
       ) : null}
 

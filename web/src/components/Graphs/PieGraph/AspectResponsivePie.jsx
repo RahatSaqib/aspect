@@ -64,7 +64,7 @@ const AspectResponsivePie = ({
         margin={config(type).margin}
         innerRadius={config(type).radius}
         enableRadialLabels={false}
-        enableSlicesLabels={showLabel}
+        enableSlicesLabels={!!showLabel}
         sliceLabel={d => `${parseFloat(d.value).toFixed(2)}`}
         slicesLabelsTextColor="#FFF"
         padAngle={-1}

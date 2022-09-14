@@ -264,7 +264,7 @@ const AspectResponsiveBar = props => {
           indexBy={indexBy}
           colorBy="index"
           onClick={(value, event) => setConfig({ value, event, baseConfig })}
-          enableLabel={showLabel}
+          enableLabel={!!showLabel}
           label={d => `${parseFloat(d.value).toFixed(2)}`}
           labelTextColor="#FFF"
           enableGridY={config.enableGridY}
