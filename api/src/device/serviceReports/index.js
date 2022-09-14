@@ -95,9 +95,9 @@ async function getDeviceActivityReport(auth, query) {
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
     .countDistinct('r.id as totalResults')
-    .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
+    .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', { offsetValue: offset }))
     .modify(filterDateRangeParams, query, 'r.endedOn')
-    .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
+    .groupBy('d.id', 'monthYear')
     .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .modify(addingGroupingAndSelect, query)
 
@@ -265,8 +265,57 @@ async function getDeviceCapacityReport(auth, query) {
   minDate = minDate || addMonths(new Date(), -12).toISOString()
 
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+
+  /**
+   * 1. Read all devices with effective timezone
+   * (take first defined timezone from `device` or `site` or `country` tables)
+   */
+  const devices = deviceQuery
+    .clone()
+    .innerJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('TimeZone as tzDevice', 'd.timezone', 'tzDevice.id')
+    .leftJoin('TimeZone as tzSite', 's.timezoneid', 'tzSite.id')
+    .leftJoin('TimeZone as tzCountry', 'c.timezone', 'tzCountry.id')
+    .where({ 'dt.externalId': 'CepheidGeneXpert' })
+    .groupBy('d.id')
+    .select('d.name', 'd.id', knex.raw('COALESCE(tzDevice.name, tzSite.name, tzCountry.name) as timezone'))
+    .orderBy('d.name')
+  let deviceDetails = await devices
+  /**
+   * 2. add offset hours which need to cut from timezone
+   */
+  deviceDetails = deviceDetails.map(it => {
+    let offset = it.timezone
+    if (!offset) {
+      offset = '+00:00'
+    } else {
+      const offsetStartingLabel = '(UTC'
+      const j = it.timezone.indexOf(offsetStartingLabel)
+      if (j === -1) {
+        offset = '+00:00'
+      } else {
+        offset = _.trim(it.timezone.substring(j + offsetStartingLabel.length), ') ')
+        offset = _.replace(offset, ' ', '')
+      }
+    }
+    return {
+      ...it,
+      offset,
+    }
+  })
+  /**
+   * 3. assemble query to return list of `deviceId` and `offset` for each device
+   */
+  const subQueryForTimezoneOffset = deviceDetails
+    .map(it => `SELECT ${it.id} as deviceId, "${it.offset}" as offset`)
+    .join(' UNION ')
+  /**
+   * 4. join to the above list of deviceId/offset in order to use
+   * device's timezone offset in CONVERT_TZ
+   */
   const monthlyCapacity = deviceQuery
     .clone()
+    .innerJoin(knex.raw(`(${subQueryForTimezoneOffset}) as tz on d.id = tz.deviceId`))
     .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .leftJoin('Result as r', builder =>
       builder
@@ -275,12 +324,12 @@ async function getDeviceCapacityReport(auth, query) {
         .andOn(knex.raw('DAYOFWEEK(r.endedOn) not in (1,7)'))
     )
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
-    .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
+    .groupBy('d.id', 'monthYear')
     .select(
       'd.name',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', { offsetField: 'tz.offset' }),
       'd.id AS deviceId',
-      knex.raw('COUNT(r.id) as resultCount'),
+      knex.raw('COUNT(DISTINCT r.id) as resultCount'),
       knex.raw(
         `CASE
               WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(CONVERT_TZ(now(), "+00:00","${offset}"))
@@ -291,13 +340,9 @@ async function getDeviceCapacityReport(auth, query) {
     )
     .orderBy('d.name')
 
-  const devices = deviceQuery
-    .clone()
-    .where({ 'dt.externalId': 'CepheidGeneXpert' })
-    .select('d.name', 'd.id')
-    .orderBy('d.name')
-  // return result when both queries are finished
-  const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
+  const capacityData = await monthlyCapacity
+
+  // loop though all devices and count rate
   const data = _.map(deviceDetails, deviceRow => {
     _.each(
       _.filter(capacityData, deviceFiltered => deviceFiltered.deviceId === deviceRow.id),
