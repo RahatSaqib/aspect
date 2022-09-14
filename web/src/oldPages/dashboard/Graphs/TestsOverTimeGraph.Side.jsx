@@ -10,7 +10,7 @@ import messages from '../../../components/Graphs/intlMessages'
 import AspectResponsivePie from '../../../components/Graphs/PieGraph/AspectResponsivePie'
 import useI18n from '../../../hooks/useI18n'
 
-const TestsOverTimeGraphSide = ({ assaysFromState, clientSideFilter, data, endPointParams }) => {
+const TestsOverTimeGraphSide = ({ assaysFromState, clientSideFilter, data, endPointParams, showLabel }) => {
   const { formatMessage } = useI18n()
   const [, setFilterParams] = useState([])
   const [i18nKeys, setI18nKeys] = useState([])
@@ -76,7 +76,7 @@ const TestsOverTimeGraphSide = ({ assaysFromState, clientSideFilter, data, endPo
         <div style={{ minHeight: '350px', height: '100%' }}>
           {graphData && !isEmpty(graphData) ? (
             <AspectResponsivePie
-              config={{ id: 'testPerformedMonthlytotal' }}
+              config={{ id: 'testPerformedMonthlytotal', showLabel }}
               assaysFromState={assaysFromState}
               data={graphData}
               keys={graphKeys}

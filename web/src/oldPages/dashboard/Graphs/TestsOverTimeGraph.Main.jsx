@@ -21,7 +21,7 @@ const baseConfig = {
   formatDate: 'MMM',
 }
 
-const TestsOverTimeGraphMain = ({ assaysFromState, clientSideFilter, data, endPointParams }) => {
+const TestsOverTimeGraphMain = ({ assaysFromState, clientSideFilter, data, endPointParams, showLabel }) => {
   const { formatMessage } = useI18n()
   const [, setFilterParams] = useState([])
   const [i18nKeys, setI18nKeys] = useState([])
@@ -87,7 +87,7 @@ const TestsOverTimeGraphMain = ({ assaysFromState, clientSideFilter, data, endPo
         <div style={{ minHeight: '350px', height: '100%' }}>
           {graphData && !isEmpty(graphData) ? (
             <AspectResponsiveBar
-              config={baseConfig}
+              config={{ ...baseConfig, showLabel }}
               assaysFromState={assaysFromState}
               data={graphData}
               keys={graphKeys}

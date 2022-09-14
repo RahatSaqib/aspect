@@ -109,7 +109,7 @@ const AspectResponsiveBar = props => {
   const i18n = useI18n()
   const { format, formatMessage } = i18n
 
-  const { id: graphId, sortByKeys, groupMode, fields, layers = [] } = baseConfig
+  const { id: graphId, sortByKeys, groupMode, fields, layers = [], showLabel } = baseConfig
   const keysForBars = fields ? fields.filter(it => it.target === 'bar').map(it => it.name) : keys
   const filteredData = normalizeData(data, { sortByKeys })
   const generateConfig = (type, data) => {
@@ -264,7 +264,9 @@ const AspectResponsiveBar = props => {
           indexBy={indexBy}
           colorBy="index"
           onClick={(value, event) => setConfig({ value, event, baseConfig })}
-          enableLabel={false}
+          enableLabel={showLabel}
+          label={d => `${parseFloat(d.value).toFixed(2)}`}
+          labelTextColor="#FFF"
           enableGridY={config.enableGridY}
           enableGridX={config.enableGridX}
           gridYValues={config.gridYValues}

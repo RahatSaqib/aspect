@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { Card, CardHeader } from '@mui/material'
+import { Card, CardHeader, Checkbox, FormControlLabel } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import Grid from '@mui/material/Grid'
-import classnames from 'classnames/bind'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
@@ -15,11 +14,8 @@ import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import PermissionsProvider from '../../../providers/PermissionsProvider'
-import GraphContainerStyles from './GraphsContainer.css'
 import TestsOverTimeGraphMain from './TestsOverTimeGraph.Main'
 import TestsOverTimeGraphSide from './TestsOverTimeGraph.Side'
-
-const cssClasses = classnames.bind(GraphContainerStyles)
 
 const selectorModifiers = [
   {
@@ -59,12 +55,6 @@ const selectorModifiers = [
   },
 ]
 
-const Loading = () => (
-  <div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <CircularProgress />
-  </div>
-)
-
 const endPointParams = [
   { groupBy: 'month' },
   { groupBy: 'assay' },
@@ -75,6 +65,7 @@ const endPointParams = [
 const TestsOverTimeGraph = ({ assaysFromState }) => {
   const { formatMessage } = useI18n()
 
+  const [showLabel, setShowLabel] = useState(false)
   const [clientSideFilters, setClientSideFilters] = useState(false)
   const [clientSideFilterOptions, setClientSideFilterOptions] = useState(false)
 
@@ -100,14 +91,20 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
   ) : (
     <ErrorBoundary>
       <PermissionsProvider permissions={['dashboard']}>
-        <Grid container direction="row" spacing={8}>
-          <Grid item xs={12} lg={12}>
-            <Grid container>
-              <Grid item xs={12}>
-                <Card>
-                  <CardHeader
-                    title={formatMessage(graphsContainerMessages.testsOverTimeTitle)}
-                    action={
+        <Grid container style={{ marginTop: 6 }}>
+          <Grid item xs={12}>
+            <Card>
+              <CardHeader
+                title={formatMessage(graphsContainerMessages.testsOverTimeTitle)}
+                action={
+                  <Grid container spacing={2} style={{ alignItems: 'center' }}>
+                    <Grid item xs={3}>
+                      <FormControlLabel
+                        label={formatMessage(graphsContainerMessages.showValuesLabel)}
+                        control={<Checkbox checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
+                      />
+                    </Grid>
+                    <Grid item xs={9}>
                       <FilterByAssayDropDown
                         props={{
                           actionComponentProps: {
@@ -117,30 +114,42 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
                           action: params => updateGraphClientSide(params),
                         }}
                       />
-                    }
-                  />
-                  <Grid container spacing={8} className={cssClasses('graph__containerGrid')}>
-                    <TestsOverTimeGraphMain
-                      data={data.data}
-                      endPointParams={endPointParams}
-                      assaysFromState={assaysFromState}
-                      clientSideFilter={clientSideFilter}
-                    />
-                    <TestsOverTimeGraphSide
-                      data={data.data}
-                      endPointParams={endPointParams}
-                      assaysFromState={assaysFromState}
-                      clientSideFilter={clientSideFilter}
-                    />
+                    </Grid>
                   </Grid>
-                </Card>
+                }
+              />
+              <Grid
+                container
+                spacing={8}
+                style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', minHeight: '350px' }}
+              >
+                <TestsOverTimeGraphMain
+                  data={data.data}
+                  endPointParams={endPointParams}
+                  assaysFromState={assaysFromState}
+                  clientSideFilter={clientSideFilter}
+                  showLabel={showLabel}
+                />
+                <TestsOverTimeGraphSide
+                  data={data.data}
+                  endPointParams={endPointParams}
+                  assaysFromState={assaysFromState}
+                  clientSideFilter={clientSideFilter}
+                  showLabel={showLabel}
+                />
               </Grid>
-            </Grid>
+            </Card>
           </Grid>
         </Grid>
       </PermissionsProvider>
     </ErrorBoundary>
   )
 }
+
+const Loading = () => (
+  <div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <CircularProgress />
+  </div>
+)
 
 export default TestsOverTimeGraph
