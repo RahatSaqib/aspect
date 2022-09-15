@@ -80,7 +80,7 @@ async function getListNotifications(query, credentials) {
 
 function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
   queryBuilder.andWhere(qb => {
-    const stateConstraints = dataConstraints.$or.filter(c => c.geography?.stateId).map(c => c.geography.stateId)
+    const stateConstraints = dataConstraints.$or?.filter(c => c.geography?.stateId).map(c => c.geography.stateId) || []
     if (stateConstraints.length > 0) {
       stateConstraints.map(stateId =>
         qb.orWhere(b => {
@@ -90,7 +90,7 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
       )
     }
 
-    const lgaConstraints = dataConstraints.$or.filter(c => c.geography?.lgaId).map(c => c.geography.lgaId)
+    const lgaConstraints = dataConstraints.$or?.filter(c => c.geography?.lgaId).map(c => c.geography.lgaId) || []
     if (lgaConstraints.length > 0) {
       lgaConstraints.map(lgaId =>
         qb.orWhere(b => {
@@ -100,7 +100,7 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
       )
     }
 
-    const siteConstraints = dataConstraints.$or.filter(c => c.site).map(c => c.site.id)
+    const siteConstraints = dataConstraints.$or?.filter(c => c.site).map(c => c.site.id) || []
     if (siteConstraints.length > 0) {
       siteConstraints.map(siteId =>
         qb.orWhere(b => {

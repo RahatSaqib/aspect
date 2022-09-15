@@ -15,7 +15,7 @@ import xor from 'lodash/xor'
 import { getBaseData } from '../../../../components/Form/Formik/Helpers'
 import ASSAY_LIST from '../../../../components/QueryFetch/Assay'
 import { PERSON_SELECT_LIST } from '../../../../components/QueryFetch/Person'
-import { SITE_ALL } from '../../../../components/QueryFetch/Site'
+import { SITE_SELECT } from '../../../../components/QueryFetch/Site'
 import messages from '../messages'
 import styles from '../NotificationFormPage.css'
 
@@ -91,9 +91,9 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
   return {
     controlType: {
       component: 'select',
-      endpoint: SITE_ALL.ENDPOINT,
+      endpoint: SITE_SELECT.ENDPOINT,
       hideIfNoOptions: false,
-      queryKey: SITE_ALL.KEY,
+      queryKey: SITE_SELECT.KEY,
       normalizeLoadedData: response => {
         const { ok, data } = response
         return ok === true ? optionsBuilder(data) : []
