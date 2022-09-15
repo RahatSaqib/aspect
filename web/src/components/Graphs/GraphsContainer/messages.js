@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  showValuesLabel: {
+    id: 'pages.Status.showValuesLabel',
+    defaultMessage: 'Show Label',
+  },
   clinicalIndicatorsPieLegend: {
     id: 'pages.Status.clinicalIndicatorsPieLegend',
     defaultMessage: 'Average Monthly Suppression Rate',
