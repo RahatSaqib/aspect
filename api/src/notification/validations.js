@@ -40,7 +40,7 @@ const resultBasedNotificationPayload = Joi.object({
      * dropdown on Notifications list.
      * Notice that value 'issueBased' added here for completeness and is not used in handler.
      */
-    .valid('resultBased', 'issueBased')
+    .valid('resultBased', 'issueBased', 'reportBased')
     .description('externalId of notification type')
     .required(),
   name: Joi.string().description('Name of new notification').required(),
@@ -80,6 +80,14 @@ const resultBasedNotificationPayload = Joi.object({
       otherwise: Joi.required(),
     })
     .description('Selected items which are subset of selected deviceLevelId'),
+  cronExpression: Joi.string()
+    .when('notificationType', {
+      // check first sendSms...
+      is: 'reportBased',
+      then: Joi.required(),
+      otherwise: Joi.optional().allow('', null),
+    })
+    .description('To schedule the delivery of the email'),
   sendEmail: Joi.bool()
     .when('sendSms', {
       // check first sendSms...

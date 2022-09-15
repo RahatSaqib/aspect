@@ -1,15 +1,7 @@
 const Joi = require('@hapi/joi')
 const { getNotificationTriggerSubscriptions } = require('./subscriptions')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const {
-  listNotifications,
-  getNotifications,
-  getNotification,
-  saveNotification,
-  deleteNotification,
-  saveStatusNotification,
-  clearCache,
-} = require('./service')
+const { listNotifications, getNotifications, getNotification, deleteNotification, clearCache } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
 const {
@@ -18,6 +10,8 @@ const {
   saveNotificationResponse,
   changeNotificationStatusPayload,
 } = require('./validations')
+const saveNotification = require('./saveNotification')
+const saveStatusNotification = require('./saveStatusNotification')
 
 const routes = [
   {
@@ -179,7 +173,7 @@ const routes = [
   {
     method: 'POST',
     path: '/notification',
-    handler: asyncHandler(saveNotification),
+    handler: saveNotification,
     config: {
       description: 'Create New Notification',
       notes: 'Details of a Notification',
@@ -193,7 +187,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/notification/{id}',
-    handler: asyncHandler(saveNotification),
+    handler: saveNotification,
     config: {
       description: 'Update Notification',
       notes: 'Details of a Notification',
