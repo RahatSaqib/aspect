@@ -18,6 +18,12 @@ Quick Start for development. Everything is explained in more detail throughout t
 
 ### New Development Setup
 
+#### RabbitMQ Installation
+
+- MAC OS: Follow steps from <https://www.rabbitmq.com/install-homebrew.html>
+- Windows: Follow steps from <https://www.rabbitmq.com/install-windows-manual.html>
+- Ubuntu: Follow steps from <https://www.rabbitmq.com/install-debian.html>
+
 #### Follow this guide for setting up MySQL and all other tools:
 
 - <https://systemone.youtrack.cloud/articles/ASP-A-27164676/Developer-Setup>
