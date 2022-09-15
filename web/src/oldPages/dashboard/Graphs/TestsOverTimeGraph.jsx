@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { Card, CardHeader, Checkbox, FormControlLabel } from '@mui/material'
-import CircularProgress from '@mui/material/CircularProgress'
+import { Card, CardContent, CardHeader, Checkbox, FormControlLabel } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
@@ -11,6 +10,7 @@ import FilterByAssayDropDown from '../../../components/AspectDropDown/FilterByAs
 import ErrorBoundary from '../../../components/ErrorBoundary'
 import graphsContainerMessages from '../../../components/Graphs/GraphsContainer/messages'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
+import Loading from '../../../components/Loading'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import PermissionsProvider from '../../../providers/PermissionsProvider'
@@ -98,12 +98,6 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
                 title={formatMessage(graphsContainerMessages.testsOverTimeTitle)}
                 action={
                   <Grid container spacing={2} style={{ alignItems: 'center' }}>
-                    <Grid item xs={3}>
-                      <FormControlLabel
-                        label={formatMessage(graphsContainerMessages.showValuesLabel)}
-                        control={<Checkbox checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
-                      />
-                    </Grid>
                     <Grid item xs={9}>
                       <FilterByAssayDropDown
                         props={{
@@ -115,29 +109,37 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
                         }}
                       />
                     </Grid>
+                    <Grid item xs={3} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                      <FormControlLabel
+                        label={formatMessage(graphsContainerMessages.showValuesLabel)}
+                        control={<Checkbox checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
+                      />
+                    </Grid>
                   </Grid>
                 }
               />
-              <Grid
-                container
-                spacing={8}
-                style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', minHeight: '350px' }}
-              >
-                <TestsOverTimeGraphMain
-                  data={data.data}
-                  endPointParams={endPointParams}
-                  assaysFromState={assaysFromState}
-                  clientSideFilter={clientSideFilter}
-                  showLabel={showLabel}
-                />
-                <TestsOverTimeGraphSide
-                  data={data.data}
-                  endPointParams={endPointParams}
-                  assaysFromState={assaysFromState}
-                  clientSideFilter={clientSideFilter}
-                  showLabel={showLabel}
-                />
-              </Grid>
+              <CardContent>
+                <Grid
+                  container
+                  spacing={8}
+                  style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', minHeight: '350px' }}
+                >
+                  <TestsOverTimeGraphMain
+                    data={data.data}
+                    endPointParams={endPointParams}
+                    assaysFromState={assaysFromState}
+                    clientSideFilter={clientSideFilter}
+                    showLabel={showLabel}
+                  />
+                  <TestsOverTimeGraphSide
+                    data={data.data}
+                    endPointParams={endPointParams}
+                    assaysFromState={assaysFromState}
+                    clientSideFilter={clientSideFilter}
+                    showLabel={showLabel}
+                  />
+                </Grid>
+              </CardContent>
             </Card>
           </Grid>
         </Grid>
@@ -145,11 +147,5 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
     </ErrorBoundary>
   )
 }
-
-const Loading = () => (
-  <div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <CircularProgress />
-  </div>
-)
 
 export default TestsOverTimeGraph
