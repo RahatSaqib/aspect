@@ -72,7 +72,7 @@ const ReportIndex = () => {
     setShowProgressBar(true)
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
-      params: { ...params, timeZone },
+      params: { ...params, format: fileExtension, timeZone },
     })
       .then(async resp => {
         setShowProgressBar(false)
