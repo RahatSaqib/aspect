@@ -24,7 +24,7 @@ const getClinicianAccessToken = async () => {
 }
 
 describe('Result download routes', () => {
-  const path = '/api/v1/result/download'
+  const path = '/api/result/download'
 
   let clinicianAccessToken = ''
   let results = []
@@ -265,7 +265,7 @@ describe('Result download routes', () => {
 })
 
 describe('Result download routes', () => {
-  const path = '/api/v2/result/download'
+  const path = '/api/result/download'
 
   let clinicianAccessToken = ''
   let results = []
@@ -343,6 +343,10 @@ describe('Result download routes', () => {
       assert.property(response.body, 'total')
       assert.property(response.body, 'length')
       assert.property(response.body, 'data')
+      assert.property(response.body, 'awaitingTreatment')
+      if (!_.isNil(response.body.nextPage)) {
+        assert.property(response.body, 'nextPage')
+      }
     }
 
     function assertReporterResultDownloadResponseContainingNoResults(response) {
@@ -350,7 +354,6 @@ describe('Result download routes', () => {
       assert.isAtLeast(response.body.total, 0)
       assert.equal(response.body.length, 0)
       assert.isAtLeast(response.body.awaitingTreatment, 0)
-      assert.isAtLeast(response.body.nextPage, 0)
 
       assert.typeOf(response.body.data, 'array')
       assert.equal(response.body.data.length, 0)
@@ -361,6 +364,10 @@ describe('Result download routes', () => {
 
       assert.equal(response.body.total, numberOfResults)
       assert.equal(response.body.length, numberOfResults)
+      assert.isAtLeast(response.body.awaitingTreatment, 0)
+      if (!_.isNil(response.body.nextPage)) {
+        assert.isAtLeast(response.body.nextPage, 0)
+      }
       expect(response).to.containSubset({
         body: {
           data: [
@@ -413,6 +420,7 @@ describe('Result download routes', () => {
       const res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       // we're not awaiting the insert before returning in service.js, so need a delay here
@@ -439,6 +447,7 @@ describe('Result download routes', () => {
       let res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
         .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
       await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
@@ -447,18 +456,21 @@ describe('Result download routes', () => {
           `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra,GxMtbXdr`
         )
         .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
       await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
         .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
       await Promise.delay(500)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
       await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
@@ -472,6 +484,7 @@ describe('Result download routes', () => {
           diseaseExternalIds: 'tb,ebola,hiv',
         })
         .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
       await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
@@ -494,6 +507,7 @@ describe('Result download routes', () => {
       const res = await server
         .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
+        .set('api-version', `2`)
       await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, 2)
       // check if the download is register in the table.
