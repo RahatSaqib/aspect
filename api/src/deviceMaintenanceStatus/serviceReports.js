@@ -128,12 +128,8 @@ async function getDeviceActivityPercentReport(auth, query) {
 }
 
 async function getDeviceUtilizationPerDayReport(auth, query) {
-  if (query.maxDate)
-    if (_.isDate(query.maxDate)) {
-      query.maxDate = query.maxDate.toISOString()
-    } else {
-      query.maxDate = new Date(query.maxDate)
-    }
+  if (query.maxDate) query.maxDate = new Date(query.maxDate)
+
   const { maxDate = new Date(), minDate } = query
   if (!minDate) {
     query.minDate = subDays(maxDate, 30).toISOString()

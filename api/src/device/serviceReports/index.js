@@ -53,7 +53,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
   const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
-  for (let i = 0; i <= monthDiff + 1; i++) {
+  for (let i = 0; i <= monthDiff; i++) {
     dateFields.push({
       key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
       header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
@@ -274,7 +274,7 @@ async function getDeviceCapacityReport(auth, query) {
     )
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
     .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
-    .select(
+    .distinct(
       'd.name',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
       'd.id AS deviceId',
@@ -293,10 +293,12 @@ async function getDeviceCapacityReport(auth, query) {
     .clone()
     .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
 
-    .select('d.name', 'd.id')
+    .distinct('d.name', 'd.id')
     .orderBy('d.name')
   // return result when both queries are finished
+
   const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
+
   const data = _.map(deviceDetails, deviceRow => {
     _.each(
       _.filter(capacityData, deviceFiltered => deviceFiltered.deviceId === deviceRow.id),
