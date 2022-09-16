@@ -97,6 +97,7 @@ const config = () => {
          */
         new CssMinimizerPlugin({
           test: /\.css$/g,
+          minify: CssMinimizerPlugin.cssoMinify,
           minimizerOptions: {
             preset: [
               'default',
