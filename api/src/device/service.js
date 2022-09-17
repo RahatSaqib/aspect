@@ -7,10 +7,10 @@ const {
   subMonths,
   startOfMonth,
   endOfMonth,
-  getDaysInMonth,
   format,
   isWeekend,
   parseJSON,
+  differenceInBusinessDays,
 } = require('date-fns')
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
 
@@ -31,6 +31,8 @@ const {
   startOfTodayUtc,
   formatDateOrDefault,
   getArrayOfDaysInRange,
+  getMonthYearUserTimeZoneField,
+  getTimezoneOffsetFromNumber,
 } = require('../shared/date')
 const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
@@ -647,7 +649,7 @@ async function updateDeviceMaintenance(request) {
 }
 
 async function getDevicePerformance(request) {
-  const { auth, params } = request
+  const { auth, params, query } = request
 
   const { deviceId } = params
 
@@ -657,6 +659,8 @@ async function getDevicePerformance(request) {
 
   const startedOn = startOfMonth(subMonths(endedOn, 12)) // 12 months period
 
+  const offset = getTimezoneOffsetFromNumber(query.timezoneOffset)
+
   const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
@@ -665,10 +669,12 @@ async function getDevicePerformance(request) {
     .where('r.deviceId', deviceId)
     .where('r.endedOn', '>=', startedOn)
     .where('r.endedOn', '<=', endedOn)
+    .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
+    .whereRaw('DAYOFWEEK(r.endedOn) not in (1,7)')
     .select([
-      knex.raw('count(r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
+      knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
       knex.raw(`sum(rc1.name = 'Error') as errorCount`),
-      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`),
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthTested', offset),
     ])
     .groupBy('monthTested')
 
@@ -689,7 +695,7 @@ async function getDevicePerformance(request) {
     .where('r.endedOn', '<=', endedOn)
     .where('c.id', deviceCountry.countryId)
     .select([
-      knex.raw('count(r.id) as countryTotalResult'),
+      knex.raw('count(distinct r.id) as countryTotalResult'),
       knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`),
     ])
 
@@ -719,9 +725,9 @@ async function getDevicePerformance(request) {
     if (deviceCapacity) {
       utilizationRateAvg = 80
 
-      x.utilizationRate = Math.round(
-        (x.totalResult * 100) / (getDaysInMonth(new Date(x.monthTested)) * deviceCapacity.dailyCapacity)
-      )
+      const minDate = new Date(`${x.monthTested}-01`)
+      const workingDays = differenceInBusinessDays(endOfMonth(minDate), minDate)
+      x.utilizationRate = _.round((x.totalResult * 100) / Math.max(workingDays * deviceCapacity.dailyCapacity, 1), 2)
     } else {
       x.utilizationRate = null
     }

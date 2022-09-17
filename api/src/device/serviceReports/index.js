@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { format, parseISO, addMonths, differenceInMonths, differenceInBusinessDays, subMonths } = require('date-fns')
+const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery, listDevices } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
@@ -50,16 +50,18 @@ async function exportDevices(request, reply) {
 function getMonthsDatefields(minDate, maxDate, culture) {
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
   const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
-  const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
+
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
-  for (let i = 0; i <= monthDiff + 1; i++) {
+  let curMonth = minDateFormatted
+  while (curMonth <= maxDateFormatted) {
     dateFields.push({
-      key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
-      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
+      key: format(curMonth, 'yyyy-MM'),
+      header: `${format(curMonth, 'yyyy-LLL', {
         locale: locales[locale],
-      }),
+      })}\n (%)`,
     })
+    curMonth = addMonths(curMonth, 1)
   }
   return dateFields
 }
@@ -95,7 +97,7 @@ async function getDeviceActivityReport(auth, query) {
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
     .countDistinct('r.id as totalResults')
-    .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', { offsetValue: offset }))
+    .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .groupBy('d.id', 'monthYear')
     .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
@@ -265,57 +267,8 @@ async function getDeviceCapacityReport(auth, query) {
   minDate = minDate || addMonths(new Date(), -12).toISOString()
 
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
-
-  /**
-   * 1. Read all devices with effective timezone
-   * (take first defined timezone from `device` or `site` or `country` tables)
-   */
-  const devices = deviceQuery
-    .clone()
-    .innerJoin('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('TimeZone as tzDevice', 'd.timezone', 'tzDevice.id')
-    .leftJoin('TimeZone as tzSite', 's.timezoneid', 'tzSite.id')
-    .leftJoin('TimeZone as tzCountry', 'c.timezone', 'tzCountry.id')
-    .where({ 'dt.externalId': 'CepheidGeneXpert' })
-    .groupBy('d.id')
-    .select('d.name', 'd.id', knex.raw('COALESCE(tzDevice.name, tzSite.name, tzCountry.name) as timezone'))
-    .orderBy('d.name')
-  let deviceDetails = await devices
-  /**
-   * 2. add offset hours which need to cut from timezone
-   */
-  deviceDetails = deviceDetails.map(it => {
-    let offset = it.timezone
-    if (!offset) {
-      offset = '+00:00'
-    } else {
-      const offsetStartingLabel = '(UTC'
-      const j = it.timezone.indexOf(offsetStartingLabel)
-      if (j === -1) {
-        offset = '+00:00'
-      } else {
-        offset = _.trim(it.timezone.substring(j + offsetStartingLabel.length), ') ')
-        offset = _.replace(offset, ' ', '')
-      }
-    }
-    return {
-      ...it,
-      offset,
-    }
-  })
-  /**
-   * 3. assemble query to return list of `deviceId` and `offset` for each device
-   */
-  const subQueryForTimezoneOffset = deviceDetails
-    .map(it => `SELECT ${it.id} as deviceId, "${it.offset}" as offset`)
-    .join(' UNION ')
-  /**
-   * 4. join to the above list of deviceId/offset in order to use
-   * device's timezone offset in CONVERT_TZ
-   */
   const monthlyCapacity = deviceQuery
     .clone()
-    .innerJoin(knex.raw(`(${subQueryForTimezoneOffset}) as tz on d.id = tz.deviceId`))
     .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .leftJoin('Result as r', builder =>
       builder
@@ -327,7 +280,7 @@ async function getDeviceCapacityReport(auth, query) {
     .groupBy('d.id', 'monthYear')
     .select(
       'd.name',
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', { offsetField: 'tz.offset' }),
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
       'd.id AS deviceId',
       knex.raw('COUNT(DISTINCT r.id) as resultCount'),
       knex.raw(
@@ -340,7 +293,14 @@ async function getDeviceCapacityReport(auth, query) {
     )
     .orderBy('d.name')
 
-  const capacityData = await monthlyCapacity
+  const devices = deviceQuery
+    .clone()
+    .where({ 'dt.externalId': 'CepheidGeneXpert' })
+    .groupBy('d.id')
+    .select('d.name', 'd.id')
+    .orderBy('d.name')
+  // return result when both queries are finished
+  const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
 
   // loop though all devices and count rate
   const data = _.map(deviceDetails, deviceRow => {
@@ -355,7 +315,8 @@ async function getDeviceCapacityReport(auth, query) {
             : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
         )
         deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
-          filteredMonthlyCapacity.resultCount / Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
+          (filteredMonthlyCapacity.resultCount * 100) /
+            Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
           2
         )
       }
@@ -363,7 +324,6 @@ async function getDeviceCapacityReport(auth, query) {
 
     return deviceRow
   })
-
   const dataset = {
     ok: true,
     total: data.length,
