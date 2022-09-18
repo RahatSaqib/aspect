@@ -173,6 +173,7 @@ const deviceActivity = {
     },
   ],
 }
+
 const deviceUtilizationReport = {
   name: 'Device Average Utilization per Month',
   description:
@@ -442,6 +443,16 @@ const usageStats = {
       sortOrder: 0,
       moduleName: 'stats/serviceReports',
       functionName: 'getUsageStats',
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'stats/serviceReports',
+      functionName: 'getUserActivity',
+    },
+    {
+      sortOrder: 2,
+      moduleName: 'stats/serviceReports',
+      functionName: 'getResultsBySite',
     },
   ],
 }
