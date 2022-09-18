@@ -1,7 +1,4 @@
-import variables from '../../../../../cfg/variables.js'
-
-const envSource =
-  process.env && process.env.initialised ? process.env : Object.assign(process.env, variables.customPropertiesVariables)
+import variables from '../../../../theme/colors'
 
 const {
   '--aspect-color-mandy': colorMandy,
@@ -79,7 +76,7 @@ const {
   '--genex-blue7': genex7,
   '--genex-blue8': genex8,
   '--san-marino': geneSanMarino,
-} = envSource
+} = variables.customPropertiesVariables
 
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: colorMandy },
@@ -111,72 +108,24 @@ const graphColorMap = [
   { id: 31, externalId: 'weekendOrHoliday', color: odWeekend },
 
   // color modifications for tbResultsByCategory1Monthly && NotDetected tbResultsByCategory1Aggregate
-  {
-    id: 7,
-    externalId: 'Trace Detected_tbResultsByCategory1Monthly',
-    color: colorCrayola,
-  },
-  {
-    id: 9,
-    externalId: 'NotDetected_tbResultsByCategory1Monthly',
-    color: colorMint,
-  },
-  {
-    id: 11,
-    externalId: 'NoResult_tbResultsByCategory1Monthly',
-    color: colorSlate,
-  },
-  {
-    id: 7,
-    externalId: 'Trace Detected_tbResultsByCategory1Aggregate',
-    color: colorCrayola,
-  },
-  {
-    id: 9,
-    externalId: 'NotDetected_tbResultsByCategory1Aggregate',
-    color: colorMint,
-  },
-  {
-    id: 11,
-    externalId: 'NoResult_tbResultsByCategory1Aggregate',
-    color: colorSlate,
-  },
+  { id: 7, externalId: 'Trace Detected_tbResultsByCategory1Monthly', color: colorCrayola },
+  { id: 9, externalId: 'NotDetected_tbResultsByCategory1Monthly', color: colorMint },
+  { id: 11, externalId: 'NoResult_tbResultsByCategory1Monthly', color: colorSlate },
+  { id: 7, externalId: 'Trace Detected_tbResultsByCategory1Aggregate', color: colorCrayola },
+  { id: 9, externalId: 'NotDetected_tbResultsByCategory1Aggregate', color: colorMint },
+  { id: 11, externalId: 'NoResult_tbResultsByCategory1Aggregate', color: colorSlate },
 
   // color modifications for tbByCategory1Monthly && tbByCategory1Aggregate
-  {
-    id: 9,
-    externalId: 'NotDetected_tbByCategory1Monthly',
-    color: colorPowder,
-  },
-  {
-    id: 9,
-    externalId: 'NotDetected_tbByCategory1Aggregate',
-    color: colorPowder,
-  },
+  { id: 9, externalId: 'NotDetected_tbByCategory1Monthly', color: colorPowder },
+  { id: 9, externalId: 'NotDetected_tbByCategory1Aggregate', color: colorPowder },
 
   // color modifications for covidByCategory1Monthly && covidByCategory1Aggregate
-  {
-    id: 11,
-    externalId: 'NoResult_covidByCategory1Monthly',
-    color: colorSlate,
-  },
+  { id: 11, externalId: 'NoResult_covidByCategory1Monthly', color: colorSlate },
   { id: 16, externalId: 'Unknown_covidByCategory1Monthly', color: colorSlate },
   { id: 17, externalId: 'Negative_covidByCategory1Monthly', color: colorMint },
-  {
-    id: 11,
-    externalId: 'NoResult_covidByCategory1Aggregate',
-    color: colorSlate,
-  },
-  {
-    id: 16,
-    externalId: 'Unknown_covidByCategory1Aggregate',
-    color: colorSlate,
-  },
-  {
-    id: 17,
-    externalId: 'Negative_covidByCategory1Aggregate',
-    color: colorMint,
-  },
+  { id: 11, externalId: 'NoResult_covidByCategory1Aggregate', color: colorSlate },
+  { id: 16, externalId: 'Unknown_covidByCategory1Aggregate', color: colorSlate },
+  { id: 17, externalId: 'Negative_covidByCategory1Aggregate', color: colorMint },
 
   // for `inactive*` device statuses
   { id: 40, externalId: 'inactiveUnknown', color: odUnknown },
@@ -208,18 +157,10 @@ const graphColorMap = [
   { id: 96, externalId: 'notRecorded', color: odUnknown },
   { id: 97, externalId: 'noConsumption', color: odActive },
   { id: 100, externalId: 'abbottM2000PlasmaHivVL', color: abbott1 },
-  {
-    id: 101,
-    externalId: 'abbottM2000PlasmaHbvVL',
-    color: abbott2,
-  },
+  { id: 101, externalId: 'abbottM2000PlasmaHbvVL', color: abbott2 },
   { id: 102, externalId: 'abbottM2000DBSHivVl', color: abbott3 },
   { id: 103, externalId: 'abbottM2000HivEid', color: abbott4 },
-  {
-    id: 104,
-    externalId: 'abbottM2000DaanNCOVID19',
-    color: abbott5,
-  },
+  { id: 104, externalId: 'abbottM2000DaanNCOVID19', color: abbott5 },
 
   { id: 121, externalId: 'QHivVl', color: assayLobLolly },
   { id: 108, externalId: 'assayGenericCulture', color: assayrecentGray },
@@ -246,17 +187,9 @@ const graphColorMap = [
   { id: 124, externalId: 'assayAlereQHiv12Detect', color: alere1 },
   { id: 125, externalId: 'assayAlereQHiv12VLPlasma', color: alere2 },
 
-  {
-    id: 126,
-    externalId: 'senaiteSmearMicroscopy',
-    color: senaiteTexasRose,
-  },
+  { id: 126, externalId: 'senaiteSmearMicroscopy', color: senaiteTexasRose },
 
-  {
-    id: 127,
-    externalId: 'senaiteUnknown',
-    color: senaiteChardonnay,
-  },
+  { id: 127, externalId: 'senaiteUnknown', color: senaiteChardonnay },
   { id: 128, externalId: 'senaiteTbCulture', color: senaiteFrangipani },
 
   { id: 130, externalId: 'assayGenericDst', color: covid1 },

@@ -344,7 +344,6 @@ export class DateRangeSelector extends PureComponent {
       year: formatMessage(messages.selectYear),
       custom: '',
     }[this.state.rangeMode]
-
     const selectedValue = find(dropDownSelectItems, this.getDateRange(this.getMinDate(), this.getMaxDate()))
 
     const restProps = omit(this.props, [
