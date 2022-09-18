@@ -80,7 +80,7 @@ const HorizontalAppBar = ({ userRequestedLogout }) => {
               </PermissionsProvider>
             ) : (
               <PermissionsProvider permissions={link.permissions} key={link.label}>
-                <ThemedLink label={link.label} onClick={handleClick} />
+                <ThemedLink label={link.label} onClick={handleClick} anchorEl={anchorEl} />
                 <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                   {link.items.map(childLink => (
                     <PermissionsProvider permissions={childLink.permissions} key={childLink.href}>
