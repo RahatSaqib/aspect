@@ -1,14 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
 import Grid from '@mui/material/Grid'
+import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
+import map from 'lodash/map'
+import pick from 'lodash/pick'
 import reduce from 'lodash/reduce'
-import ErrorBoundary from '../../../components/ErrorBoundary'
-import AspectResponsiveBar from '../../../components/Graphs/BarGraph/AspectResponsiveBar'
-import handleClientSideFilterState from '../../../components/Graphs/GraphRender/ClientSideFilters'
-import { formatDataByGraphType, getGraphKeysFromResults } from '../../../components/Graphs/Helpers/Formatters'
-import messages from '../../../components/Graphs/intlMessages'
-import useI18n from '../../../hooks/useI18n'
+import ErrorBoundary from '../../../../components/ErrorBoundary'
+import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
+import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
+import messages from '../../../../components/Graphs/intlMessages'
+import useI18n from '../../../../hooks/useI18n'
+import styles from './styles.css'
+
+const cssClasses = classnames.bind(styles)
 
 const baseConfig = {
   id: 'testPerformedMonthlyPercentage',
@@ -21,9 +26,16 @@ const baseConfig = {
   formatDate: 'MMM',
 }
 
-const TestsOverTimeGraphMain = ({ assaysFromState, clientSideFilter, data, endPointParams, showLabel }) => {
+const filterFunction = (data, props) => {
+  const newData = []
+  const keys = ['month']
+  map(props, ({ externalId }) => keys.push(externalId))
+  map(data, row => newData.push(pick(row, keys)))
+  return newData
+}
+
+const TestsOverTimeGraphMain = ({ assaysFromState, data, endPointParams, showLabel, filterSelection }) => {
   const { formatMessage } = useI18n()
-  const [, setFilterParams] = useState([])
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
@@ -69,25 +81,18 @@ const TestsOverTimeGraphMain = ({ assaysFromState, clientSideFilter, data, endPo
   useEffect(() => {
     const grouped = formatRawData()
     if (grouped) {
-      setNewData(grouped)
+      const groupedFiltered = filterFunction(grouped, filterSelection)
+      setNewData(groupedFiltered)
     }
-  }, [data])
-
-  useEffect(() => {
-    return handleClientSideFilterState(
-      clientSideFilter,
-      { id: 'testPerformedMonthlyPercentage', i18nKeys, graphData, assaysFromState },
-      { formatRawData, setNewData, setFilterParams }
-    )
-  }, [clientSideFilter, graphData])
+  }, [data, filterSelection])
 
   return (
     <ErrorBoundary>
       <Grid item xs={12} md={8} lg={8}>
-        <div style={{ minHeight: '350px', height: '100%' }}>
+        <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
             <AspectResponsiveBar
-              config={{ ...baseConfig, showLabel }}
+              config={{ ...baseConfig, showLabel, showDecimals: 0 }}
               assaysFromState={assaysFromState}
               data={graphData}
               keys={graphKeys}

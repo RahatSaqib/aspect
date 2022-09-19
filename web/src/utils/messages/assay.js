@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
+  All: {
+    id: 'filter.AssaySelectField.All',
+    defaultMessage: 'All',
+  },
   AssayAbbottM2000DaanNCOVID19: {
     id: 'filter.AssaySelectField.AssayAbbottM2000DaanNCOVID19',
     defaultMessage: 'Abbott m2000 Daan N COVID-19',
