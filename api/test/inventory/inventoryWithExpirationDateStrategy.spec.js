@@ -60,7 +60,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
       before(async () => {
         shared.checkToken(server, path)
         ;[{ id: site1Id }, { id: site2Id }] = await getScopedSites()
-        const { id } = await knex('Consumable').where('name', 'GeneXpert TB Cartridge').first('id')
+        const { id } = await knex('Consumable').where('externalId', 'GxMtbRifCartridge').first('id')
         consumableId = id
         ;[inventoryItem1Id] = await knex('InventoryItem').insert({
           consumableId,
@@ -127,10 +127,11 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           updatedOn: new Date(),
         })
 
-        await knex('Consumable').update({
-          strategy: 'withExpirationDateStrategy',
-        })
-        // .where('id', consumableId)
+        await knex('Consumable')
+          .update({
+            strategy: 'withExpirationDateStrategy',
+          })
+          .where('id', consumableId)
       })
 
       after(async () => {
