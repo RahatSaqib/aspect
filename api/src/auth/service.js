@@ -105,11 +105,13 @@ async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
   if (!user) {
+    await createFailedLoginHistoryEntry(null, payload.name, 'user not exists')
     try {
       // no user with such username in Aspect yet - check it in GxAlert
       user = await gxAlertAuthenticate(payload.name, payload.password)
       if (!user) {
         // TODO: Check if what is wrong is the user or the password
+
         const err = Boom.unauthorized('Authentication failed. Wrong username or password.', null, {
           errorKeyCode: 'wrongUserOrPassword',
         })
@@ -131,6 +133,7 @@ async function authenticate(request) {
   }
 
   if (user.lockedOut === 1 || user.disabled === 1) {
+    await createFailedLoginHistoryEntry(user.id, payload.name, user.lockedOut ? 'locked out' : 'disabled')
     return Boom.forbidden('Your account is locked.')
   }
 
@@ -166,7 +169,7 @@ async function authenticate(request) {
         Attempts: ${attempts}
         `)
       }
-
+      await createFailedLoginHistoryEntry(user.id, payload.name, 'wrong password')
       return Boom.unauthorized('Authentication failed. Wrong username or password.')
     }
   }
@@ -193,12 +196,14 @@ async function authenticate(request) {
     countryAbbreviation: user.countryAbbreviation,
   })
 
-  await query('Update failed password attempts to 0').from('User').where({ id: user.id }).update({
-    failedPasswordAttempts: 0,
-    lastLogin: now,
-    lastActive: now,
-  })
-
+  await Promise.all([
+    query('Update failed password attempts to 0').from('User').where({ id: user.id }).update({
+      failedPasswordAttempts: 0,
+      lastLogin: now,
+      lastActive: now,
+    }),
+    createSuccessfulLoginHistoryEntry(user.id, payload.name),
+  ])
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
 
@@ -215,6 +220,28 @@ async function authenticate(request) {
     deviceTokenId,
     userId: user.id,
   }
+}
+
+async function createSuccessfulLoginHistoryEntry(userId, userName, success, message) {
+  await query('Create Login history entry').from('LoginHistory').insert({
+    userId,
+    userName,
+    action: 'login',
+    success: 1,
+    message,
+    createdOn: new Date(),
+  })
+}
+
+async function createFailedLoginHistoryEntry(userId, userName, message) {
+  await query('Create Login history entry').from('LoginHistory').insert({
+    userId,
+    userName,
+    action: 'login',
+    success: 0,
+    message,
+    createdOn: new Date(),
+  })
 }
 
 function setRefreshToken({
