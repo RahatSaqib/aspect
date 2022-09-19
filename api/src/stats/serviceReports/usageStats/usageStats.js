@@ -24,10 +24,12 @@ module.exports = async function getUsageStatsData(dataConstraints, query) {
 async function getActiveUsers(dataConstraints, params) {
   const { count } = await getPeopleBase()
     .join('User as u', 'u.id', 'p.userId')
-    .modify(filterDateRangeParams, params, 'u.lastLogin')
+    .join('LoginHistory as lh', 'u.id', 'lh.userId')
+    .modify(filterDateRangeParams, params, 'lh.createdOn')
     .modify(addConstraints, dataConstraints, { state: 'st', lga: 'l', site: 's', geography: 'g' })
     .modify(filterParams, params, { siteName: 's.name', stateId: 'g.stateId', lgaId: 'g.lgaId' })
-    .count('* as count')
+    .where('lh.success', 1)
+    .select(knex.raw('count(distinct(u.id)) as count'))
     .first()
 
   return count
