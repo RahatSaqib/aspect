@@ -9,15 +9,13 @@ import { defineMessages } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import ErrorBoundary from '../../../components/ErrorBoundary'
-import Shell from '../../../components/Shell'
-import ShellContent from '../../../components/Shell/Content'
-import ShellHeader from '../../../components/Shell/Header'
+import { Shell, ShellHeader, ShellContent } from '../../../components/Shell'
 import useSite from '../../../hooks/site/useSite'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import TaskList from '../../../oldPages/task/list/TaskList'
-import { default as canEdit } from '../../../utils/selectors/isEditable' // eslint-disable-line import/no-named-default
+import isEditable from '../../../utils/selectors/isEditable' // eslint-disable-line import/no-named-default
 import SiteForm from './Edit/SiteForm'
 import messages from './messages'
 import SiteDetailProfile from './Profile/SiteDetailProfile'
@@ -37,7 +35,10 @@ export const SiteDetail = ({ navigate, location }) => {
   const { siteId } = useParams()
   const { isLoading: isSiteLoading, data: site } = useSite(siteId)
   const { isLoading: isTagLoading, data: siteTags } = useTagByTypeAndId('site', siteId)
-  const { editable, user } = useSelector(state => ({ editable: canEdit(state.user, 'site'), user: state.user.toJS() }))
+  const { editable, user } = useSelector(state => ({
+    editable: isEditable(state.user, 'site'),
+    user: state.user.toJS(),
+  }))
   const [latLong, setLatLong] = useState({ lat: 0, lng: 0 })
   const isLoading = isSiteLoading || isTagLoading
 

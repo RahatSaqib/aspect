@@ -5,9 +5,7 @@ import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
-import Shell from '../../../components/Shell'
-import ShellContent from '../../../components/Shell/Content'
-import ShellHeader from '../../../components/Shell/Header'
+import { Shell, ShellHeader, ShellContent } from '../../../components/Shell'
 import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
@@ -129,18 +127,9 @@ export const DeviceDetail = props => {
     <Shell>
       <ShellHeader title={device ? device.name : 'Devices'}>
         {[
-          {
-            label: intl.formatMessage(messages.profile),
-            path: `/browse/device/${deviceId}`,
-          },
-          {
-            label: intl.formatMessage(messages.alerts),
-            path: `/browse/device/${deviceId}/alerts`,
-          },
-          {
-            label: intl.formatMessage(messages.edit),
-            path: `/browse/device/${deviceId}/edit`,
-          },
+          { label: intl.formatMessage(messages.profile), path: `/browse/device/${deviceId}` },
+          { label: intl.formatMessage(messages.alerts), path: `/browse/device/${deviceId}/alerts` },
+          { label: intl.formatMessage(messages.edit), path: `/browse/device/${deviceId}/edit` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}

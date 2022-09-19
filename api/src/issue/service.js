@@ -78,6 +78,7 @@ function onIssueEvent(actionParametersList) {
                 }) || {}
               )
             : false
+
           if (!shouldSuppressEventTriggering) {
             const shouldTriggerEvent = await actionConditionsMet(
               knex,
@@ -85,6 +86,7 @@ function onIssueEvent(actionParametersList) {
               partnerId,
               JSON.parse(triggerConditions).conditions
             )
+
             logger.debug(
               {
                 action_type: action.type,
@@ -143,7 +145,7 @@ function onIssueEvent(actionParametersList) {
                 )
                 issue = await createNewIssue(knex, issueType, action)
                 if (issue != null) {
-                  context.issueCreated(issue.id)
+                  context.issueCreated(issue.id, issue.issueTypeId)
                 }
               }
 
@@ -298,6 +300,7 @@ async function createNewIssue(knex, issueType, action) {
   // Everything is fine, create new issue
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
+  issue.issueTypeId = issueTypeId
 
   await knex('IssueStatusLog').insert({
     issueId,

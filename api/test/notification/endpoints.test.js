@@ -7,7 +7,7 @@ const { resultBasedNotificationPayload } = require('../../src/notification/valid
 describe('notification endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/notification/endpoints', {
-      './service': serviceStub,
+      './listNotifications': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }
@@ -18,19 +18,17 @@ describe('notification endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/notification', {
-          async listNotifications() {
-            return expectedResponse
-          },
+        endpoint = setupRoute('GET', '/notification', async function () {
+          return expectedResponse
         })
       })
-      it('Should respond with the data returned from the service', done => {
+
+      it('Should respond with the data returned from the service', async () => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
-          .thenCall(done)
           .execute()
       })
     })
@@ -163,6 +161,7 @@ describe('notification endpoints', () => {
         validation = schema.validate(payload)
         assert.isDefined(validation.error)
       })
+
       it('wrong result[].assayId', async () => {
         payload = {
           ...payloadGood,
