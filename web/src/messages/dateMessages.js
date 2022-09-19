@@ -13,6 +13,7 @@ const months = defineMessages({
   9: { id: 'months.october', defaultMessage: 'OCT' },
   10: { id: 'months.november', defaultMessage: 'NOV' },
   11: { id: 'months.december', defaultMessage: 'DEC' },
+  QUARTER: { id: 'quarter', defaultMessage: 'QUARTER' },
 })
 
 export { months }

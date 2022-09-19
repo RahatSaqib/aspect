@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
-import assayMessages from '../../../utils/messages/assay'
-import resultCategoryMessages from '../../../utils/messages/resultCategory'
+import { resultCategory, assay } from '../../../messages'
 
 export default defineMessages({
   titleNew: {
@@ -552,6 +551,6 @@ export default defineMessages({
     defaultMessage: 'Change',
   },
 
-  ...assayMessages,
-  ...resultCategoryMessages,
+  ...assay,
+  ...resultCategory,
 })

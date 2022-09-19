@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { i18nWrapper } from '../../providers/I18nProvider'
+import { i18nWrapper } from '../providers/I18nProvider'
 
 export const commonDefinitions = defineMessages({
   selectPlaceholder: {
