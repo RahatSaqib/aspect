@@ -86,7 +86,7 @@ const TestsOverTimeGraphSide = ({ assaysFromState, data, endPointParams, showLab
         <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
             <AspectResponsivePie
-              config={{ id: 'testPerformedMonthlytotal', showLabel }}
+              config={{ id: 'testPerformedMonthlytotal', showLabel, labelTextColor: '#FFF' }}
               assaysFromState={assaysFromState}
               data={graphData}
               keys={graphKeys}

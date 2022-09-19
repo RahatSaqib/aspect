@@ -56,7 +56,7 @@ const Status = () => {
         <>
           <TestsOverTimeGraph assaysFromState={assays} />
           <GroupedByTotalResultsGraphs assays={assays} />
-          <TreatmentStatusGraph assays={assays} />
+          <TreatmentStatusGraph assaysFromState={assays} />
           <DeviceStatusGraph assays={assays} />
           <CovidDailyConfirmedGraph assays={assays} />
           <CovidMortalityAndRecoveryGraph assays={assays} />
