@@ -6,7 +6,7 @@ const {
   messageSeverityToId,
   notificationTypeCategoryToId,
   issueTypeToId,
-} = require('../shared/dictionary')
+} = require('../../shared/dictionary')
 const { validateFilterCondition } = require('./validations')
 
 async function getListNotifications(query, credentials) {
