@@ -13,26 +13,22 @@ module.exports = async function (request) {
   const { id } = params
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
-  const { notificationType } = payload
-  if (notificationType === 'resultBased') {
-    const result = await saveNotificationType({
-      id,
-      partnerId,
-      userId,
-      payload,
-    })
 
-    if (result instanceof Boom.Boom) return result
+  const result = await saveNotificationType({
+    id,
+    partnerId,
+    userId,
+    payload,
+  })
 
-    const { ok, notificationTypeId, error } = result
-    if (!ok) {
-      return Boom.internal(`Can not save notification: ${error}`)
-    }
-    if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
-    messageContext.notificationTypeCreated(notificationTypeId)
+  if (result instanceof Boom.Boom) return result
 
-    return { ok: true, notificationTypeId }
+  const { ok, notificationTypeId, error } = result
+  if (!ok) {
+    return Boom.internal(`Can not save notification: ${error}`)
   }
+  if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
+  messageContext.notificationTypeCreated(notificationTypeId)
 
-  return { ok: false, notificationTypeId: -1 }
+  return { ok: true, notificationTypeId }
 }

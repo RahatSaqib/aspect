@@ -3,9 +3,9 @@ import { OverlayView } from '@react-google-maps/api'
 import classnames from 'classnames/bind'
 import { func, shape, string, number } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
+import { deviceStatusMessages } from '../../../../messages'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import formatI18nMessage from '../../../../utils/i18n/formatterWeb'
-import messages from '../../../../utils/messages/deviceStatusMessages'
 import IconProvider from '../../../IconProvider'
 import styles from './GooglePin.css'
 
@@ -34,7 +34,7 @@ const GooglePin = ({ position, config, id, color, info: { maintenanceStatusI18nK
         {name && maintenanceStatusI18nKey ? (
           <AspectTooltip
             title={`${name}: ${formatI18nMessage(
-              messages,
+              deviceStatusMessages,
               formatMessage,
               maintenanceStatusI18nKey,
               maintenanceStatusI18nKey

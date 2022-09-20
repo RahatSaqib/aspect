@@ -109,7 +109,7 @@ const AspectResponsiveBar = props => {
   const i18n = useI18n()
   const { format, formatMessage } = i18n
 
-  const { id: graphId, sortByKeys, groupMode, fields, layers = [], showLabel } = baseConfig
+  const { id: graphId, sortByKeys, groupMode, fields, layers = [], showLabel, showDecimals } = baseConfig
   const keysForBars = fields ? fields.filter(it => it.target === 'bar').map(it => it.name) : keys
   const filteredData = normalizeData(data, { sortByKeys })
   const generateConfig = (type, data) => {
@@ -265,7 +265,7 @@ const AspectResponsiveBar = props => {
           colorBy="index"
           onClick={(value, event) => setConfig({ value, event, baseConfig })}
           enableLabel={!!showLabel}
-          label={d => `${parseFloat(d.value).toFixed(2)}`}
+          label={d => `${parseFloat(d.value).toFixed(showDecimals)}`}
           labelTextColor="#FFF"
           enableGridY={config.enableGridY}
           enableGridX={config.enableGridX}
@@ -278,7 +278,7 @@ const AspectResponsiveBar = props => {
           axisRight={null}
           labelSkipWidth={12}
           labelSkipHeight={12}
-          animate
+          animate={false}
           motionStiffness={90}
           motionDamping={15}
           layers={config.layers}

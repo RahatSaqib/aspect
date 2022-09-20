@@ -1,0 +1,557 @@
+{
+  "countries": [
+    {
+      "abbreviation": "TZ",
+      "name": "Tanzania",
+      "a3": "TZA",
+      "culture": "en",
+      "countryCode": "255",
+      "timezone": "E. Africa Standard Time",
+      "portNumber": 3023,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeACt|ProbeBCt|ProbeCCt|ProbeDCt|ProbeECt|ProbeSpcCt|Qc1Ct|Qc2Ct",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [{
+        "name": "Arusha",
+        "lgas": [{
+          "name": "Arusha"
+        }, {
+          "name": "Arusha City"
+        }, {
+          "name": "Karatu"
+        }, {
+          "name": "Longido"
+        }, {
+          "name": "Meru"
+        }, {
+          "name": "Monduli"
+        }, {
+          "name": "Ngorongoro"
+        }]
+      },
+        {
+          "name": "Dar es Salaam",
+          "abbreviation": "Dar",
+          "lgas": []
+        },
+        {
+          "name": "Dodoma",
+          "lgas": [{
+            "name": "Bahi"
+          }, {
+            "name": "Chamwino"
+          }, {
+            "name": "Chemba"
+          }, {
+            "name": "Dodoma Municipal"
+          }, {
+            "name": "Kondoa"
+          }, {
+            "name": "Kongwa"
+          }, {
+            "name": "Mpwapwa"
+          }]
+        },
+        {
+          "name": "Geita",
+          "lgas": [{
+            "name": "Bukombe"
+          }, {
+            "name": "Chato"
+          }, {
+            "name": "Geita"
+          }, {
+            "name": "Mbogwe"
+          }, {
+            "name": "Nyang'hwale"
+          }]
+        },
+        {
+          "name": "Iringa",
+          "lgas": [{
+            "name": "Iringa (Rural)"
+          }, {
+            "name": "Iringa Municipal"
+          }, {
+            "name": "Kilolo"
+          }, {
+            "name": "Mafinga Town"
+          }, {
+            "name": "Mufindi"
+          }]
+        },
+        {
+          "name": "Kagera",
+          "lgas": [{
+            "name": "Biharamulo"
+          }, {
+            "name": "Bukoba (Rural)"
+          }, {
+            "name": "Bukoba Municipal"
+          }, {
+            "name": "Karagwe"
+          }, {
+            "name": "Kyerwa"
+          }, {
+            "name": "Missenyi"
+          }, {
+            "name": "Muleba"
+          }, {
+            "name": "Ngara"
+          }]
+        },
+        {
+          "name": "Katavi",
+          "lgas": [{
+            "name": "Mlele"
+          }, {
+            "name": "Mpanda"
+          }, {
+            "name": "Mpanda Town"
+          }]
+        },
+        {
+          "name": "Kigoma",
+          "lgas": [{
+            "name": "Buhigwe"
+          }, {
+            "name": "Kakonko"
+          }, {
+            "name": "Kasulu"
+          }, {
+            "name": "Kasulu Town"
+          }, {
+            "name": "Kibondo"
+          }, {
+            "name": "Kigoma (Rural)"
+          }, {
+            "name": "Kigoma-Ujiji Municipal"
+          }, {
+            "name": "Uvinza"
+          }]
+        },
+        {
+          "name": "Kilimanjaro",
+          "lgas": [{
+            "name": "Hai"
+          }, {
+            "name": "Moshi (Rural)"
+          }, {
+            "name": "Moshi Municipal"
+          }, {
+            "name": "Mwanga"
+          }, {
+            "name": "Rombo"
+          }, {
+            "name": "Same"
+          }, {
+            "name": "Siha"
+          }]
+        },
+        {
+          "name": "Lindi",
+          "lgas": [{
+            "name": "Kilwa"
+          }, {
+            "name": "Lindi (Rural)"
+          }, {
+            "name": "Lindi Municipal"
+          }, {
+            "name": "Liwale"
+          }, {
+            "name": "Nachingwea"
+          }, {
+            "name": "Ruangwa"
+          }]
+        },
+        {
+          "name": "Manyara",
+          "lgas": [{
+            "name": "Babati"
+          }, {
+            "name": "Babati Town"
+          }, {
+            "name": "Hanang"
+          }, {
+            "name": "Kiteto"
+          }, {
+            "name": "Mbulu"
+          }, {
+            "name": "Simanjiro"
+          }]
+        },
+        {
+          "name": "Mara",
+          "lgas": [{
+            "name": "Bunda"
+          }, {
+            "name": "Butiama"
+          }, {
+            "name": "Musoma (Rural)"
+          }, {
+            "name": "Musoma Municipal"
+          }, {
+            "name": "Rorya"
+          }, {
+            "name": "Serengeti"
+          }, {
+            "name": "Tarime"
+          }]
+        },
+        {
+          "name": "Mbeya",
+          "lgas": [{
+            "name": "Chunya"
+          }, {
+            "name": "Kyela"
+          }, {
+            "name": "Mbarali"
+          }, {
+            "name": "Mbeya (Rural)"
+          }, {
+            "name": "Mbeya City"
+          }, {
+            "name": "Rungwe"
+          }]
+        },
+        {
+          "name": "Morogoro",
+          "lgas": [{
+            "name": "Gairo"
+          }, {
+            "name": "Kilombero"
+          }, {
+            "name": "Kilosa"
+          }, {
+            "name": "Morogoro (Rural)"
+          }, {
+            "name": "Morogoro Municipal"
+          }, {
+            "name": "Mvomero"
+          }, {
+            "name": "Ulanga"
+          }]
+        },
+        {
+          "name": "Mtwara",
+          "lgas": [{
+            "name": "Masasi"
+          }, {
+            "name": "Masasi Town"
+          }, {
+            "name": "Mtwara (Rural)"
+          }, {
+            "name": "Mtwara Municipal"
+          }, {
+            "name": "Nanyumbu"
+          }, {
+            "name": "Newala"
+          }, {
+            "name": "Tandahimba"
+          }]
+        },
+        {
+          "name": "Mwanza",
+          "lgas": [{
+            "name": "Ilemela Municipal"
+          }, {
+            "name": "Kwimba"
+          }, {
+            "name": "Magu"
+          }, {
+            "name": "Misungwi"
+          }, {
+            "name": "Nyamagana Municipal"
+          }, {
+            "name": "Sengerema"
+          }, {
+            "name": "Ukerewe"
+          }]
+        },
+        {
+          "name": "Njombe",
+          "lgas": [{
+            "name": "Ludewa"
+          }, {
+            "name": "Makambako Town"
+          }, {
+            "name": "Makete"
+          }, {
+            "name": "Njombe"
+          }, {
+            "name": "Njombe Town"
+          }, {
+            "name": "Wanging'ombe"
+          }]
+        },
+        {
+          "name": "Pemba North",
+          "lgas": [{
+            "name": "Micheweni"
+          }, {
+            "name": "Wete"
+          }]
+        },
+        {
+          "name": "Pemba South",
+          "lgas": [{
+            "name": "Chake Chake"
+          }, {
+            "name": "Mkoani"
+          }]
+        },
+        {
+          "name": "Pwani",
+          "lgas": [{
+            "name": "Bagamoyo"
+          }, {
+            "name": "Kibaha"
+          }, {
+            "name": "Kibaha Town"
+          }, {
+            "name": "Kisarawe"
+          }, {
+            "name": "Mafia"
+          }, {
+            "name": "Mkuranga"
+          }, {
+            "name": "Rufiji"
+          }]
+        },
+        {
+          "name": "Rukwa",
+          "lgas": [{
+            "name": "Kalambo"
+          }, {
+            "name": "Nkasi"
+          }, {
+            "name": "Sumbawanga (Rural)"
+          }, {
+            "name": "Sumbawanga Municipal"
+          }]
+        },
+        {
+          "name": "Ruvuma",
+          "lgas": [{
+            "name": "Mbinga"
+          }, {
+            "name": "Namtumbo"
+          }, {
+            "name": "Nyasa"
+          }, {
+            "name": "Songea (Rural)"
+          }, {
+            "name": "Songea Municipal"
+          }, {
+            "name": "Tunduru"
+          }]
+        },
+        {
+          "name": "Shinyanga",
+          "lgas": [{
+            "name": "Kahama"
+          }, {
+            "name": "Kahama Town"
+          }, {
+            "name": "Kishapu"
+          }, {
+            "name": "Shinyanga (Rural)"
+          }, {
+            "name": "Shinyanga Municipal"
+          }]
+        },
+        {
+          "name": "Simiyu",
+          "lgas": [{
+            "name": "Bariadi"
+          }, {
+            "name": "Busega"
+          }, {
+            "name": "Itilima"
+          }, {
+            "name": "Maswa"
+          }, {
+            "name": "Meatu"
+          }]
+        },
+        {
+          "name": "Singida",
+          "lgas": [{
+            "name": "Ikungi"
+          }, {
+            "name": "Iramba"
+          }, {
+            "name": "Manyoni"
+          }, {
+            "name": "Mkalama"
+          }, {
+            "name": "Singida (Rural)"
+          }, {
+            "name": "Singida Municipal"
+          }]
+        },
+        {
+          "name": "Tabora",
+          "lgas": [{
+            "name": "Igunga"
+          }, {
+            "name": "Kaliua"
+          }, {
+            "name": "Nzega"
+          }, {
+            "name": "Sikonge"
+          }, {
+            "name": "Tabora Municipal"
+          }, {
+            "name": "Urambo"
+          }, {
+            "name": "Uyui"
+          }]
+        },
+        {
+          "name": "Tanga",
+          "lgas": [{
+            "name": "Handeni"
+          }, {
+            "name": "Handeni Town"
+          }, {
+            "name": "Kilindi"
+          }, {
+            "name": "Korogwe"
+          }, {
+            "name": "Korogwe Town"
+          }, {
+            "name": "Lushoto"
+          }, {
+            "name": "Mkinga"
+          }, {
+            "name": "Muheza"
+          }, {
+            "name": "Pangani"
+          }, {
+            "name": "Tanga City"
+          }]
+        },
+        {
+          "name": "Zanzibar North",
+          "lgas": [{
+            "name": "Kaskazini A [North A]"
+          }, {
+            "name": "Kaskazini B [North B]"
+          }]
+        },
+        {
+          "name": "Zanzibar South",
+          "lgas": [{
+            "name": "Kati [Central]"
+          }, {
+            "name": "Kusini [South]"
+          }]
+        },
+        {
+          "name": "Zanzibar Urban West",
+          "lgas": [{
+            "name": "Magharibi [West]"
+          }, {
+            "name": "Mjini [Town]"
+          }]
+        },
+        {
+          "name": "Temeke ",
+          "lgas": [{
+            "name": "Temeke Municipal"
+          }, {
+            "name": "Keko TB and LP District"
+          }, {
+            "name": "Kigamboni"
+          }, {
+            "name": "Mbagala"
+          }, {
+            "name": "Rangi tatu"
+          }, {
+            "name": "Tambukareli"
+          }, {
+            "name": "Wailes II"
+          }, {
+            "name": "Wailes I"
+          }, {
+            "name": "Yombo Vituka"
+          }]
+        },
+        {
+          "name": "Ilala 1",
+          "lgas": [{
+            "name": "Ilala Municipal"
+          }, {
+            "name": "Amana"
+          }, {
+            "name": "Buguruni"
+          }, {
+            "name": "Chanika"
+          }, {
+            "name": "Mnazi Mmoja"
+          }, {
+            "name": "Tabata"
+          }, {
+            "name": "Ukonga"
+          }, {
+            "name": "Vingunguti"
+          }]
+        },
+        {
+          "name": "Ilala 2",
+          "lgas": [{
+            "name": "IDC"
+          }, {
+            "name": "Mwaisela"
+          }, {
+            "name": "Private Hospitals"
+          }, {
+            "name": "TB Ward"
+          }, {
+            "name": "Muhimbili"
+          }]
+        },
+        {
+          "name": "Kinondoni",
+          "lgas": [{
+            "name": "Kinondoni Municipal"
+          }, {
+            "name": "Lugalo Hospital"
+          }, {
+            "name": "Magomeni"
+          }, {
+            "name": "Mbezi"
+          }, {
+            "name": "Mwananyamala II"
+          }, {
+            "name": "Mwananyamala I"
+          }, {
+            "name": "Sinza"
+          }, {
+            "name": "Tandale II"
+          }, {
+            "name": "Tandale I"
+          }]
+        },
+        {
+          "name": "Songwe",
+          "lgas": [{
+            "name": "Ileje"
+          }, {
+            "name": "Mbozi"
+          }, {
+            "name": "Momba"
+          }, {
+            "name": "Tunduma Town"
+          }]
+        },
+        {
+          "name": "Ubungo",
+          "abbreviation": "Ubungo",
+          "lgas": []
+        }
+      ]
+    }
+  ]
+}

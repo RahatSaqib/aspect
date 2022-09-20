@@ -2,7 +2,7 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays } = require('date-fns')
-const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
+const { knex, sortPageParams } = require('../db')
 const { getJobConstraints, addConstraints, getConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
 const { notificationTypeCreated } = require('../notificationType/actions')
@@ -19,7 +19,7 @@ async function clearCache() {
 }
 
 const evaluationMethods = {
-  issueBased: () => true, // this will be developed once we move the issue based notification to the ui
+  issueBased: issueConditionsMet,
   resultBased: resultConditionsMet,
 }
 function resultCategoryFilters(queryBuilder, filterConditions, tblResultAlias) {
@@ -108,87 +108,8 @@ function resultConditionsMet(queryBuilder, filterCondition, aliases) {
   geographyFilters(queryBuilder, filterCondition, aliases)
 }
 
-async function listNotifications(request) {
-  const { query, auth } = request
-
-  const subquery = knex('NotificationType as nti')
-    .leftOuterJoin('JobFunction AS jf', leftBuilder =>
-      leftBuilder
-        .on(
-          knex.raw(
-            `JSON_SEARCH(
-              nti.filterCondition->>'$.jobFunctions[*].jobFunctionId',
-              'one',
-              jf.id
-            ) IS NOT NULL
-          `
-          )
-        )
-        .orOn('nti.jobFunctionId', 'jf.id')
-    )
-    .leftOuterJoin('Person AS per', leftBuilder =>
-      leftBuilder.on(
-        knex.raw(
-          ` JSON_SEARCH(
-            nti.filterCondition->>'$.persons[*].personId',
-            'one',
-            per.id
-          ) IS NOT NULL`
-        )
-      )
-    )
-    .distinct('nti.id AS notificationTypeId', 'per.name AS personName', 'per.id as personId', 'jf.name AS jfName')
-
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const notificationQuery = knex('NotificationType as nt')
-    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
-    .leftOuterJoin('Notification as n', 'nt.id', 'n.notificationTypeId')
-    .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
-    .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
-    .where(builder => {
-      builder.whereNotNull('n.id').orWhere('ntc.externalId', 'resultBased')
-    })
-    .modify(filterParams, query, {
-      notificationName: 'nt.name',
-    })
-    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
-    .modify(addConstraints, dataConstraints, { partner: 'p' })
-    .max('n.createdOn as lastTriggeredOn')
-    .groupBy('nt.id')
-
-  const getItems = notificationQuery
-    .clone()
-    .leftOuterJoin(subquery.as('filters'), 'nt.id', 'filters.notificationTypeId')
-    .modify(sortPageParams, query, 'nt.name')
-    .select(
-      'nt.id as id',
-      'nt.name',
-      'nt.enabled',
-      knex.raw(`count(distinct n.id) as totalTriggers`),
-      columnCount('alert'),
-      knex.raw('COUNT(DISTINCT filters.jfName) as jobFunctionsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT filters.jfName SEPARATOR ', ') as jobFunctions`),
-      knex.raw('COUNT(DISTINCT filters.personName) as personsCount'),
-      knex.raw(`GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`),
-      columnCount('alert'),
-      knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
-      'ntc.externalId as typeCategory'
-    )
-
-  function columnCount(column) {
-    return knex.raw(
-      `SUM(CASE
-        WHEN m.${column}TemplateId IS NULL THEN 0
-        ELSE CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END END) as ${column}Count`
-    )
-  }
-
-  const getCount = knex.count('* as count').from(notificationQuery.clone().as('mainQuery')).first()
-
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  return { ok: true, total, data, length: data.length }
+function issueConditionsMet(queryBuilder, filterCondition, aliases) {
+  geographyFilters(queryBuilder, filterCondition, aliases)
 }
 
 async function createNotifications(knex, action, context) {
@@ -200,10 +121,7 @@ async function createNotifications(knex, action, context) {
     evaluationMethods[notificationTypeCategoryId],
     filterCondition
   )
-  // for each job function, find all policies with maximum constrained level,
-  // since we are ordered by, max level at first position and filter all with same
-  let jobFunctionId = null
-  let jobFunctionLevel = null
+
   const { jobFunctions = [], persons = [], sendToClinician = false, sendToPatient = false } = filterCondition || {}
 
   if (!_.isEmpty(policies)) {
@@ -241,22 +159,12 @@ async function createNotifications(knex, action, context) {
       })
     }
     await Promise.each(policies, async policy => {
-      if (_.isNil(policy.jobFunctionId) && _.isEmpty(jobFunctions) && _.isEmpty(persons)) {
+      if (_.isEmpty(jobFunctions) && _.isEmpty(persons)) {
         await createNotificationIfNotCreatedAlready(action, { policy, now }, { messageContext: context, knex })
       } else {
-        if (_.isEmpty(jobFunctions) && policy.jobFunctionId) {
-          if (policy.jobFunctionId !== jobFunctionId) {
-            ;({ jobFunctionId, level: jobFunctionLevel } = policy)
-          } else if (policy.level !== jobFunctionLevel) {
-            // This is a lower level for this particular job function
-            // continue until we get to end of list or new job function
-            /* eslint-disable no-continue */
-            return Promise.resolve()
-          }
-        }
-
         const tags = await getTagsByPolicy(knex, policy)
         const people = await getPeopleToNotify(knex, policy, tags, jobFunctions, persons)
+
         await sendNotificationsToPeople(knex, context, people, policy, action)
       }
     })
@@ -295,6 +203,15 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
     'mt.emailTemplateId',
     'mt.smsTemplateId',
     'mt.webhookTemplateId',
+    knex.raw(
+      'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
+    ),
+    knex.raw(
+      'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendSms") WHEN 1 THEN mt.smsTemplateId ELSE NULL END as smsTemplateId'
+    ),
+    knex.raw(
+      'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendWeb") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
+    ),
   ]
   let extraFields = []
   const aliases = { geography: 'g' }
@@ -308,10 +225,7 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
           .join('Issue as i', joinBuilder =>
             // If issue is escalated past configured level, send again
             // on escalation to maximum configured level
-            joinBuilder
-              .on('i.issueTypeId', 'nt.issueTypeId')
-              .andOn('i.partnerId', 'nt.partnerId')
-              .andOn('i.level', '>=', 'nt.level')
+            joinBuilder.on('i.issueTypeId', 'nt.issueTypeId').andOn('i.partnerId', 'nt.partnerId')
           )
           .leftJoin('Geography as g', 'i.geographyId', 'g.id')
           .where({ 'i.id': issueId })
@@ -325,15 +239,6 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
           knex.raw('result.patientData->>"$.email" as patientEmail'),
           knex.raw('result.patientData->>"$.clinicianPhone" as clinicianPhone'),
           knex.raw('result.patientData->>"$.clinicianEmail" as clinicianPhone'),
-          knex.raw(
-            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendEmail") WHEN 1 THEN mt.emailTemplateId ELSE NULL END as emailTemplateId'
-          ),
-          knex.raw(
-            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendSms") WHEN 1 THEN mt.smsTemplateId ELSE NULL END as smsTemplateId'
-          ),
-          knex.raw(
-            'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendWeb") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
-          ),
         ]
         queryBuilder
           .crossJoin(
@@ -389,8 +294,6 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
           if (policy.sendToContactsWithMatchingTags) {
             _qWhere.orWhereIn('pt.tagId', _.uniq(tags))
           }
-          // Or filter by job function ID (used on prev version of notifications)...
-          if (policy.jobFunctionId) _qWhere.orWhere('jf.id', policy.jobFunctionId)
 
           // Or filter by a list of job functions scoped to person tags...
           if (!_.isEmpty(jobFunctions)) {
@@ -768,7 +671,6 @@ async function deleteNotification(request) {
 }
 
 module.exports = {
-  listNotifications,
   getNotifications,
   getNotification,
   createNotifications,
