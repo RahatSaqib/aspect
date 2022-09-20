@@ -17,6 +17,7 @@ const config = require('../config')
 const { query, knex } = require('../db')
 const { gxAlertAuthenticate } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
+const { createLoginHistoryEntry } = require('./loginHistory')
 
 const clientTypes = {
   app: 'reporter_app',
@@ -105,7 +106,7 @@ async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
   if (!user) {
-    await createLoginHistoryEntry(null, payload.name, false, 'user not exists')
+    await createLoginHistoryEntry(query, null, payload.name, false, 'user not exists')
     try {
       // no user with such username in Aspect yet - check it in GxAlert
       user = await gxAlertAuthenticate(payload.name, payload.password)
@@ -133,7 +134,7 @@ async function authenticate(request) {
   }
 
   if (user.lockedOut === 1 || user.disabled === 1) {
-    await createLoginHistoryEntry(user.id, payload.name, false, user.lockedOut ? 'locked out' : 'disabled')
+    await createLoginHistoryEntry(query, user.id, payload.name, false, user.lockedOut ? 'locked out' : 'disabled')
     return Boom.forbidden('Your account is locked.')
   }
 
@@ -169,7 +170,7 @@ async function authenticate(request) {
         Attempts: ${attempts}
         `)
       }
-      await createLoginHistoryEntry(user.id, payload.name, false, 'wrong password')
+      await createLoginHistoryEntry(query, user.id, payload.name, false, 'wrong password')
       return Boom.unauthorized('Authentication failed. Wrong username or password.')
     }
   }
@@ -202,7 +203,7 @@ async function authenticate(request) {
     lastActive: now,
   })
 
-  createLoginHistoryEntry(user.id, payload.name, true)
+  createLoginHistoryEntry(query, user.id, payload.name, true)
 
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
@@ -220,17 +221,6 @@ async function authenticate(request) {
     deviceTokenId,
     userId: user.id,
   }
-}
-
-async function createLoginHistoryEntry(userId, userName, success, message) {
-  await query('Create Login history entry').from('LoginHistory').insert({
-    userId,
-    userName,
-    action: 'login',
-    success,
-    message,
-    createdOn: new Date(),
-  })
 }
 
 function setRefreshToken({
