@@ -1714,7 +1714,7 @@ async function getDeviceCalibrationsForReport(auth, query) {
       queryBuilder.on('d.id', 'dm.deviceId').andOn('dm.current', 1)
     })
     .modify(sortPageParams, query, 'name')
-    .select([
+    .distinct([
       ..._.filter(
         getSelectListFields(userTimeOffset),
         /**
