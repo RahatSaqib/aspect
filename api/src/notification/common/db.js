@@ -148,6 +148,7 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     notificationType: notificationTypeExternalId,
   } = payload
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeExternalId)
+
   const issueTypeId = await issueTypeToId(issueTypeExternalId)
 
   const now = new Date()

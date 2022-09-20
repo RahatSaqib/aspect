@@ -1,4 +1,4 @@
-const { Boom } = require('@hapi/boom')
+const { Boom, isBoom } = require('@hapi/boom')
 const { getUser } = require('../auth/service')
 const { notificationTypeCreated } = require('../notificationType/actions')
 const { saveNotificationType } = require('./common/db')
@@ -21,7 +21,7 @@ module.exports = async function (request) {
     payload,
   })
 
-  if (result instanceof Boom.Boom) return result
+  if (isBoom(result)) return result
 
   const { ok, notificationTypeId, error } = result
   if (!ok) {
