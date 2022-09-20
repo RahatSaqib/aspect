@@ -102,6 +102,7 @@ async function analyzeCategories(
   ) {
     action.options.data.errorCodes = errorCodes
     action.options.data.resultCategoryId = resultCategoryId
+
     return analyzeWithQuery(knex, action, threshold, below, daysPeriod, minResults, builder =>
       builder.first(
         knex.raw(

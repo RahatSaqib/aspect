@@ -7,6 +7,7 @@ import { Helmet } from 'react-helmet'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useI18n from '../../../hooks/useI18n'
+import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import ExportListButton from '../../../oldComponents/ExportListButton'
@@ -20,7 +21,6 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../utils/selectors/searchParams'
-import { getCustomMessage } from '../../../utils/utils/customMessages'
 import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.css'

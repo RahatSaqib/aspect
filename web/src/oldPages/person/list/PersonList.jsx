@@ -7,6 +7,7 @@ import { defineMessages } from 'react-intl'
 import { connect, useSelector } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
+import { getCustomMessage, commonDefinitions } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -24,7 +25,6 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../utils/selectors/searchParams'
-import { getCustomMessage, commonDefinitions } from '../../../utils/utils/customMessages'
 import { PersonDataTable, PersonDataTableHead, PersonDataTableRow } from './PersonDataTable'
 import styles from './PersonList.css'
 
