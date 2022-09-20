@@ -33,8 +33,10 @@ const {
   getArrayOfDaysInRange,
   getMonthYearUserTimeZoneField,
   getTimezoneOffsetFromNumber,
+  getOffsetFromIsoDateString,
+  getDateTimeProjectionInUserTimeZone,
 } = require('../shared/date')
-const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
+const { lastDayOfMonthByOffsetAndResultEndedOn, whereWorkingDaysDateRange } = require('../shared/query')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
@@ -667,14 +669,12 @@ async function getDevicePerformance(request) {
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' })
     .where('r.deviceId', deviceId)
-    .where('r.endedOn', '>=', startedOn)
-    .where('r.endedOn', '<=', endedOn)
-    .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
-    .whereRaw('DAYOFWEEK(r.endedOn) not in (1,7)')
+    .modify(whereWorkingDaysDateRange(startedOn, endedOn))
     .select([
       knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
       knex.raw(`sum(rc1.name = 'Error') as errorCount`),
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthTested', offset),
+      lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
     ])
     .groupBy('monthTested')
 
@@ -691,8 +691,7 @@ async function getDevicePerformance(request) {
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .where('r.endedOn', '>=', startedOn)
-    .where('r.endedOn', '<=', endedOn)
+    .modify(whereWorkingDaysDateRange(startedOn, endedOn))
     .where('c.id', deviceCountry.countryId)
     .select([
       knex.raw('count(distinct r.id) as countryTotalResult'),
@@ -726,7 +725,7 @@ async function getDevicePerformance(request) {
       utilizationRateAvg = 80
 
       const minDate = new Date(`${x.monthTested}-01`)
-      const workingDays = differenceInBusinessDays(endOfMonth(minDate), minDate)
+      const workingDays = differenceInBusinessDays(x.lastDayOfMonth, minDate)
       x.utilizationRate = _.round((x.totalResult * 100) / Math.max(workingDays * deviceCapacity.dailyCapacity, 1), 2)
     } else {
       x.utilizationRate = null

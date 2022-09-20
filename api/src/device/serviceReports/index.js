@@ -11,6 +11,7 @@ const {
   getOffsetFromIsoDateString,
   getDateTimeProjectionInUserTimeZone,
 } = require('../../shared/date')
+const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getUser } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
@@ -283,12 +284,7 @@ async function getDeviceCapacityReport(auth, query) {
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
       'd.id AS deviceId',
       knex.raw('COUNT(DISTINCT r.id) as resultCount'),
-      knex.raw(
-        `CASE
-              WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(CONVERT_TZ(now(), "+00:00","${offset}"))
-              ELSE DATE(LAST_DAY(r.endedOn))
-            END as lastDayOfMonth`
-      ),
+      lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
       'dcap.dailyCapacity'
     )
     .orderBy('d.name')
