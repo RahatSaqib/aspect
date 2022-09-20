@@ -11,6 +11,8 @@ import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useI18n from '../../../hooks/useI18n'
+import deviceApprovalMessages from '../../../messages/deviceApprovalMessages'
+import deviceStatusMessages from '../../../messages/deviceStatusMessages'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
@@ -21,6 +23,8 @@ import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
 
 const messages = defineMessages({
+  ...deviceApprovalMessages,
+  ...deviceStatusMessages,
   profile: {
     id: 'pages.DeviceDetail.profile',
     defaultMessage: 'Profile',

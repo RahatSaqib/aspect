@@ -1,10 +1,10 @@
-import * as assay from './assay'
+import assay from './assay'
 import { commonDefinitions, getCustomMessage } from './customMessages'
 import { months } from './dateMessages'
-import * as deviceApprovalMessages from './deviceApprovalMessages'
-import * as deviceStatusMessages from './deviceStatusMessages'
-import * as resultCategory from './resultCategory'
-import * as resultCategoryType from './resultCategoryType'
+import deviceApprovalMessages from './deviceApprovalMessages'
+import deviceStatusMessages from './deviceStatusMessages'
+import resultCategory from './resultCategory'
+import resultCategoryType from './resultCategoryType'
 
 export {
   assay,
