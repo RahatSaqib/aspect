@@ -2089,6 +2089,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       device: 'd',
       deviceType: 'dt',
       sample: 'sp',
+      site: 'si',
       geography: 'g',
       result: 'r',
       country: 'c',
