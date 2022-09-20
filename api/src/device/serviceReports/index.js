@@ -53,7 +53,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
   const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
-  for (let i = 0; i <= monthDiff + 1; i++) {
+  for (let i = 0; i <= monthDiff; i++) {
     dateFields.push({
       key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
       header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
@@ -86,7 +86,6 @@ async function getDeviceActivityReport(auth, query) {
     .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
     .countDistinct('r.id as totalResults')
     .select(getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn'))
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
     .modify(addingGroupingAndSelect, query)
@@ -98,7 +97,6 @@ async function getDeviceActivityReport(auth, query) {
     .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .modify(addingGroupingAndSelect, query)
 
   // return result when both queries are finished
@@ -276,7 +274,7 @@ async function getDeviceCapacityReport(auth, query) {
     )
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
     .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
-    .select(
+    .distinct(
       'd.name',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
       'd.id AS deviceId',
@@ -293,11 +291,14 @@ async function getDeviceCapacityReport(auth, query) {
 
   const devices = deviceQuery
     .clone()
-    .where({ 'dt.externalId': 'CepheidGeneXpert' })
-    .select('d.name', 'd.id')
+    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
+
+    .distinct('d.name', 'd.id')
     .orderBy('d.name')
   // return result when both queries are finished
+
   const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
+
   const data = _.map(deviceDetails, deviceRow => {
     _.each(
       _.filter(capacityData, deviceFiltered => deviceFiltered.deviceId === deviceRow.id),
@@ -394,7 +395,7 @@ async function getGeneXpertOperationLogsReport(auth, query) {
 
 async function getModuleActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate } = query
+  const { minDate = subMonths(new Date(), 1) } = query
   const rows = await getModuleActivityReportData(minDate, dataConstraints, query)
 
   return {

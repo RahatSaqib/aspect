@@ -2,7 +2,6 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const Stream = require('stream')
 const _ = require('lodash')
-const { subDays } = require('date-fns')
 const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
 const { knex } = require('../db')
@@ -193,10 +192,6 @@ async function createReport(request, reply) {
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
-
-  if (_.isNil(query.minDate)) {
-    query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
-  }
 
   const data = await getAllSheetsData(request, sheets)
   if (Boom.isBoom(data)) {
