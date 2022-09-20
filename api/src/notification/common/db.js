@@ -144,13 +144,16 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     webBody,
     webUrl,
     enabled,
+    cronRecurrency,
+    reportExternalId = null,
     issueType: issueTypeExternalId,
     notificationType: notificationTypeExternalId,
   } = payload
+
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeExternalId)
 
   const issueTypeId = await issueTypeToId(issueTypeExternalId)
-
+  const { id: reportId } = (await knex('Report').where({ externalId: reportExternalId }).first()) || {}
   const now = new Date()
 
   const auditFields = {
@@ -207,6 +210,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
         notificationTypeCategoryId,
         partnerId,
         issueTypeId,
+        reportId,
+        cronRecurrency,
         level: 1,
         canAcknowledge: 0,
         name,
@@ -346,6 +351,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           sendToPatient,
           sendWeb,
           enabled,
+          cronRecurrency,
+          reportId,
         }),
       })
       .where({ id: notificationTypeId })
