@@ -62,7 +62,7 @@ const Status = () => {
           <CovidMortalityAndRecoveryGraph assays={assays} />
           <CovidMortalityAndRecoveryByGenderGraph assays={assays} />
           <CovidCasesByAgeAndGender assays={assays} />
-          <InventoryStatusGraph assays={assays} />
+          <InventoryStatusGraph assaysFromState={assays} />
           <GroupedByTrendsInYearsGraphs assays={assays} />
           <GroupedByTrendsInQuartersGraphs assays={assays} />
           <XDRFLQResistanceGraph assays={assays} />
