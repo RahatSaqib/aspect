@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const {
+  addDays,
   addMinutes,
   format,
   parse,
@@ -11,7 +12,6 @@ const {
   startOfToday,
   startOfMonth,
   endOfMonth,
-  eachDayOfInterval,
   eachWeekendOfInterval,
 } = require('date-fns')
 
@@ -113,19 +113,23 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
 
   if (typeof end === 'string') end = parseISO(end)
 
-  let dates
-  const allDates = eachDayOfInterval({ start, end }).map(d => d.toISOString())
-
+  let allDates = []
+  let current = start
+  while (current <= end) {
+    allDates = [...allDates, current.toISOString()]
+    current = addDays(current, 1)
+  }
+  let dates = allDates
   if (excludeWeekends) {
     const allWeekends = eachWeekendOfInterval({ start, end }).map(d => d.toISOString())
     dates = _.difference(allDates, allWeekends)
-  } else dates = allDates
+  }
   return initialProperties
     ? dates.map(d => ({
-        date: getLocalDateInUtc(parseISO(d)),
+        date: parseISO(d),
         ...initialProperties,
       }))
-    : dates.map(d => getLocalDateInUtc(parseISO(d)))
+    : dates.map(d => parseISO(d))
 }
 
 // Returns the UTC equivalent of the passed in date/time string
