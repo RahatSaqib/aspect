@@ -65,7 +65,7 @@ const Status = () => {
           <InventoryStatusGraph assaysFromState={assays} />
           <GroupedByTrendsInYearsGraphs assays={assays} />
           <GroupedByTrendsInQuartersGraphs assays={assays} />
-          <XDRFLQResistanceGraph assays={assays} />
+          <XDRFLQResistanceGraph assaysFromState={assays} />
         </>
       ) : null}
 
