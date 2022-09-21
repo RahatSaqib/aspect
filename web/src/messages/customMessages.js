@@ -75,6 +75,14 @@ export const commonDefinitions = defineMessages({
     id: 'pages.common.lga_MW',
     defaultMessage: 'District',
   },
+  enabled: {
+    id: 'pages.common.enabled',
+    defaultMessage: 'Enabled',
+  },
+  disabled: {
+    id: 'pages.common.disabled',
+    defaultMessage: 'Disabled',
+  },
   button_Edit: {
     id: 'button_Edit',
     defaultMessage: 'Edit',

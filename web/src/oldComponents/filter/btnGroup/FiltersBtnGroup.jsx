@@ -8,6 +8,7 @@ import { MdClose } from 'react-icons/md'
 import { connect } from 'react-redux'
 import { compose, pure } from 'recompose'
 import useI18n from '../../../hooks/useI18n'
+import { commonDefinitions } from '../../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { isCountryFilterHidden } from '../utils'
 import styles from './FiltersBtnGroup.css'
@@ -28,16 +29,7 @@ const revokedOptions = [
     name: 'true',
   },
 ]
-const statusOptions = [
-  {
-    id: '0',
-    name: 'Enabled',
-  },
-  {
-    id: '1',
-    name: 'Disabled',
-  },
-]
+
 const enhance = compose(
   pure,
   connect(
@@ -406,7 +398,8 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
     contactStatus: makeButton(status =>
       formatMessage(messages.contactEnabledStatus, {
-        contactStatus: statusOptions.find(it => it.id === status, EMPTY_CONTEXT, EMPTY_MAP).name,
+        contactStatus:
+          status === '0' ? formatMessage(commonDefinitions.enabled) : formatMessage(commonDefinitions.disabled),
       })
     ),
     connectorStatus: makeButton(connectorStatus =>
