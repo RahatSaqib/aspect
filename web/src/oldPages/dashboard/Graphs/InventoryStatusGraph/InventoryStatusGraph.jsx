@@ -13,84 +13,23 @@ import {
 } from '@mui/material'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
-import ConsumableDropDown from '../../../../components/AspectDropDown/ConsumableDropDown'
 import ErrorBoundary from '../../../../components/ErrorBoundary'
-import BarGraph from '../../../../components/Graphs/BarGraph'
-import GraphsContainer from '../../../../components/Graphs/GraphsContainer'
 import graphsContainerMessages from '../../../../components/Graphs/GraphsContainer/messages'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
 import PermissionsProvider from '../../../../providers/PermissionsProvider'
+import DeviceStatusGraphMain from './InventoryStatusGraph.Main'
 import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
-
-const inventoryStatus = {
-  id: 'inventoryStatus',
-  title: 'inventoryGraphStatus',
-  assays: [],
-  selectorModifiers: [
-    {
-      component: ConsumableDropDown,
-    },
-  ],
-  componentSize: 'full',
-  group: 'assaysNotNeeded',
-  graphRenderPermissions: ['dashboard', 'operationalData'],
-  graphType: [
-    {
-      id: 'suppliesExpiryByPeriod',
-      component: BarGraph,
-      type: 'barInventory',
-      size: 12,
-      i18nKey: {
-        moreThan180: 'moreThan180',
-        noConsumption: 'noConsumption',
-        notRecorded: 'notRecorded',
-        outOfStock: 'outOfStock',
-        upTo14: 'upTo14',
-        upTo30: 'upTo30',
-        upTo90: 'upTo90',
-        upTo180: 'upTo180',
-      },
-      componentClasses: ['BARCLASS'],
-      api: {
-        endpoint: '/inventory/days-by-location',
-      },
-      sortByKeys: ['consumableName'],
-      indexBy: 'increment',
-      keyToConsume: 'count',
-      filterBy: {},
-      tickValuesYShape: 'twos',
-      tickValuesXShape: 'all',
-      displayMethod: 'actual',
-      displayLegend: false,
-      formatDate: 'MMM yy',
-      clickThrough: {
-        allow: true,
-        baseUrl: '/browse/inventory?filters=',
-        keys: [
-          'daysStockLeft',
-          'consumableId',
-          id => {
-            if (id === 'noConsumption') {
-              return {
-                hasStock: true,
-              }
-            }
-          },
-        ],
-      },
-    },
-  ],
-}
 
 const InventoryStatusGraph = ({ assaysFromState }) => {
   const { formatMessage } = useI18n()
 
   const [showLabel, setShowLabel] = useState(false)
-  const [, setFilter] = useState()
+  const [filter, setFilter] = useState()
+
   return (
     <ErrorBoundary>
       <PermissionsProvider permissions={['dashboard', 'operationalData']}>
@@ -115,12 +54,11 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
                   </Grid>
                   <Grid item xs={12} md={12} lg={9}>
                     <Grid container>
-                      <GraphsContainer assaysFromState={assaysFromState} config={inventoryStatus} />
-                      {/* <DeviceStatusGraphMain
+                      <DeviceStatusGraphMain
                         assaysFromState={assaysFromState}
                         showLabel={showLabel}
                         filterSelection={filter}
-                      /> */}
+                      />
                     </Grid>
                   </Grid>
                 </Grid>
@@ -147,7 +85,9 @@ const ConsumableSelector = ({ onChange }) => {
       )
       setOptions(opt)
       setInnerValue(opt[0].consumableExternalId)
+      onChange({ consumableExternalId: opt[0].consumableExternalId })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   return isLoading ? (
@@ -160,7 +100,10 @@ const ConsumableSelector = ({ onChange }) => {
         value={innerValue}
         onChange={e => {
           setInnerValue(e.target.value)
-          onChange(options.filter(o => o.id === e.target.value)[0].value)
+          onChange({
+            consumableExternalId: options.filter(o => o.consumableExternalId === e.target.value)[0]
+              .consumableExternalId,
+          })
         }}
       >
         {options.map(o => (
