@@ -8,7 +8,7 @@ const Sentry = require('@sentry/node')
 
 const config = require('./config')
 const { version } = require('../package.json')
-const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes } = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
@@ -165,7 +165,7 @@ const start = async () => {
     options: {
       validVersions: [1, 2],
       defaultVersion: 1,
-      basePath: '/api/',
+      basePath: '/mobile/api/',
       invalidVersionAllow: true,
     },
   })
@@ -236,6 +236,39 @@ const start = async () => {
           )
         : []
       const scope = ['clientApi'].concat(modules, decoded.permissions || [])
+      return { isValid, errorMessage, credentials: { scope, ...decoded } }
+    },
+    // TODO JWT verification algorithm verifyOptions: { algorithms: [ 'HS256' ] }
+  })
+
+  // Mobile API uses JWT
+  server.auth.strategy('mobileApi', 'jwt', {
+    key: config.secret,
+    validate: async (decoded, request) => {
+      let isValid = true
+      let errorMessage = null
+      // if user has to accept license, deny all requests except to the license api:
+      if (decoded.hasToAcceptLicenseId && request.url.pathname.indexOf('/api/auth/license') === -1) {
+        errorMessage = "The user you're trying to login didn't accept the license"
+        isValid = false
+      }
+      // can specify either module or permission, e.g. "device" or "device:view"
+      // for authorization scope on routes.
+      // multiple scopes can be specified:
+      // ["device:view"] will authorize anyone with device module and view activity
+      // ["device", "site"] will authorize anyone with device or site modules
+      // ["device", "!site"] will authorize anyone with device but not site modules
+      // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
+      //   and either "site:view" or "site:edit" permissions
+      const modules = decoded.permissions
+        ? _.uniq(
+            _.map(
+              _.filter(decoded.permissions, permission => permission.indexOf(':') > 0),
+              permission => permission.substr(0, permission.indexOf(':'))
+            )
+          )
+        : []
+      const scope = ['mobileApi'].concat(modules, decoded.permissions || [])
       return { isValid, errorMessage, credentials: { scope, ...decoded } }
     },
     // TODO JWT verification algorithm verifyOptions: { algorithms: [ 'HS256' ] }
@@ -329,6 +362,29 @@ const start = async () => {
     {
       routes: {
         prefix: '/device/raw',
+      },
+    }
+  )
+
+  // =======================
+  // Mobile API data route mounted under /mobile/api
+  // =======================
+  await server.register(
+    {
+      name: 'mobileApi',
+      version,
+      register: async server =>
+        new Promise(resolve => {
+          addMobileRoutes(server)
+          resolve()
+        }).catch(err => {
+          logger.error(err)
+          throw err
+        }),
+    },
+    {
+      routes: {
+        prefix: '/mobile/api',
       },
     }
   )

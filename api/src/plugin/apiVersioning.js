@@ -112,7 +112,14 @@ exports.register = (server, options) => {
     // If there was a version by now check if it is valid
     if (typeof requestedVersion === 'number' && !Hoek.contain(options.validVersions, requestedVersion)) {
       if (options.invalidVersionAllow) {
-        requestedVersion = options.defaultVersion
+        const largestNum = options.validVersions.reduce(function (accumulatedValue, currentValue) {
+          return Math.max(accumulatedValue, currentValue)
+        })
+        if (largestNum > requestedVersion) {
+          requestedVersion = options.defaultVersion
+        } else {
+          requestedVersion = largestNum
+        }
       } else {
         return Boom.badRequest(`Invalid api-version! Valid values: ${options.validVersions.join()}`)
       }
