@@ -64,6 +64,7 @@ const Partner = Immutable.Record({
 const JobFunction = Immutable.Record({
   id: null,
   name: null,
+  externalId: null,
 })
 const LazyLoadPartnersAndJobFunctions = Immutable.Record({
   loading: false,
@@ -103,6 +104,7 @@ function receivePartnersAndJobFunctionsForSelectList(state, partners) {
                     new JobFunction({
                       id: jobFunction.id,
                       name: jobFunction.name,
+                      externalId: jobFunction.externalId,
                     })
                 )
               ),
