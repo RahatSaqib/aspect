@@ -1,8 +1,8 @@
 import React from 'react'
 import isEmpty from 'lodash/isEmpty'
 import { string } from 'yup'
-import { getCustomMessage } from '../../../messages/customMessages'
 import { validations } from '../../../messages'
+import { getCustomMessage } from '../../../messages/customMessages'
 import messages from '../../../oldPages/person/detail/messages.js'
 import { i18nWrapper } from '../../../providers/I18nProvider'
 import { PureTextInput, PureCheckboxInput, PureChip, PurePhoneNumber } from '../../Form/PureFormik/Inputs'
@@ -57,7 +57,8 @@ const itemsConfig = user => {
         component: PureTextInput,
         validation: string()
           .email(formatMessage(validations.invalidEmail))
-          .required(formatMessage(validations.required)),
+          .required(formatMessage(validations.required))
+          .nullable(),
       },
       {
         id: 'email2',
