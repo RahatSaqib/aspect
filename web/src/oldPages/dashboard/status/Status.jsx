@@ -20,9 +20,9 @@ import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
 import TestsOverTimeGraph from '../Graphs/TestsOverTimeGraph'
 import TreatmentStatusGraph from '../Graphs/TreatmentStatusGraph'
 import XDRFLQResistanceGraph from '../Graphs/XDRFLQResistanceGraph'
+import styles from './index.css'
 import messages from './messages'
 import Reports from './Reports'
-import styles from './Status.css'
 import SummaryStatus from './SummaryStatus'
 
 const cssClasses = classnames.bind(styles)
