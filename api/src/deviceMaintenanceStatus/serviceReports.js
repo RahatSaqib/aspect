@@ -23,7 +23,7 @@ async function getDeviceActivityPercentReport(auth, query) {
   // get rows
   const getItems = deviceQuery
     .clone()
-    .join('Result as r', 'd.id', 'r.deviceId')
+    .leftJoin('Result as r', 'd.id', 'r.deviceId')
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
@@ -31,6 +31,7 @@ async function getDeviceActivityPercentReport(auth, query) {
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
   const minDateDateValue = parseDateOrDefault(minDate)
+
   const maxDateDateValue = parseDateOrDefault(maxDate)
   const activityPercentPerMonth = knex
     .from(
@@ -94,6 +95,7 @@ async function getDeviceActivityPercentReport(auth, query) {
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
   const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
   const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
+
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
   for (let i = 0; i <= monthDiff; i++) {
@@ -126,15 +128,14 @@ async function getDeviceActivityPercentReport(auth, query) {
 }
 
 async function getDeviceUtilizationPerDayReport(auth, query) {
+  if (query.maxDate) query.maxDate = new Date(query.maxDate)
+
   const { maxDate = new Date(), minDate } = query
   if (!minDate) {
     query.minDate = subDays(maxDate, 30).toISOString()
   }
   if (_.isDate(query.minDate)) {
     query.minDate = query.minDate.toISOString()
-  }
-  if (_.isDate(query.maxDate)) {
-    query.maxDate = query.maxDate.toISOString()
   }
 
   let data = await getDeviceStatusOverTime(auth, query)

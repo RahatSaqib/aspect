@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { commonDefinitions } from '../../../utils/utils/customMessages'
+import { commonDefinitions } from '../../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,

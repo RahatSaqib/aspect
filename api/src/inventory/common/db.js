@@ -1,4 +1,7 @@
+const subDays = require('date-fns/subDays')
+
 const _ = require('lodash')
+
 const strategies = require('../strategies')
 const { knex, filterDateRangeParams, query, filterParams, sortPageParams } = require('../../db')
 const {
@@ -166,6 +169,10 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
       geography: 'g',
     })
 async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
+  if (!query.minDate) {
+    query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
+  }
+
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
     .modify(filterDateRangeParams, query, 'il.createdOn')
     .modify(filterDateRangeParams, query, 'il.expiresOn', 'ExpirationDate')

@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
-import resultCategoryMessages from '../../../utils/messages/resultCategory'
-import resultCategoryTypeMessages from '../../../utils/messages/resultCategoryType'
+import { resultCategory, resultCategoryType } from '../../../messages'
 
 const messages = defineMessages({
   resultsTitle: {
@@ -318,8 +317,8 @@ const messages = defineMessages({
     id: 'pages.ResultList.assayTbLamp',
     defaultMessage: 'TB LAMP',
   },
-  ...resultCategoryMessages,
-  ...resultCategoryTypeMessages,
+  ...resultCategory,
+  ...resultCategoryType,
 })
 
 export default messages
