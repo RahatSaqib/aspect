@@ -1,9 +1,9 @@
 import React from 'react'
-import ConsumableDropDown from '../../../components/AspectDropDown/ConsumableDropDown'
-import ErrorBoundary from '../../../components/ErrorBoundary'
-import BarGraph from '../../../components/Graphs/BarGraph'
-import GraphsContainer from '../../../components/Graphs/GraphsContainer'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
+import ConsumableDropDown from '../../../../components/AspectDropDown/ConsumableDropDown'
+import ErrorBoundary from '../../../../components/ErrorBoundary'
+import BarGraph from '../../../../components/Graphs/BarGraph'
+import GraphsContainer from '../../../../components/Graphs/GraphsContainer'
+import PermissionsProvider from '../../../../providers/PermissionsProvider'
 
 const inventoryStatus = {
   id: 'inventoryStatus',
