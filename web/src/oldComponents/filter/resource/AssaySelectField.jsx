@@ -6,9 +6,9 @@ import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import messages from '../../../messages/assay'
 import { I18nContext } from '../../../providers/I18nProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
-import messages from '../../../utils/messages/assay'
 import SelectField from '../../shared/SelectField'
 
 export class AssaySelectField extends PureComponent {

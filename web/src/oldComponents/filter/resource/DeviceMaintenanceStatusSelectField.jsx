@@ -6,9 +6,9 @@ import { useDispatch } from 'react-redux'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { DEVICE_STATUS } from '../../../components/QueryFetch/Device/index'
 import useI18n from '../../../hooks/useI18n'
+import { deviceStatusMessages } from '../../../messages'
 import { types } from '../../../store/DeviceMaintenanceStatusRedux'
 import formatI18nMessage from '../../../utils/i18n/formatterWeb'
-import messages from '../../../utils/messages/deviceStatusMessages'
 import SelectField from '../../shared/SelectField'
 
 // TODO: move to HOOKS folder
@@ -55,7 +55,7 @@ const DeviceMaintenanceStatusSelectField = ({
     <SelectField {...restProps} value={value} onChange={onChange} multiple={multiple}>
       {list.map(ms => (
         <MenuItem key={ms.externalId} value={ms.externalId}>
-          {formatI18nMessage(messages, formatMessage, ms.i18nKey, ms.i18nKey)}
+          {formatI18nMessage(deviceStatusMessages, formatMessage, ms.i18nKey, ms.i18nKey)}
         </MenuItem>
       ))}
     </SelectField>

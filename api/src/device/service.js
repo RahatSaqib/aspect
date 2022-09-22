@@ -751,7 +751,7 @@ async function getDevicePerformance(request) {
 function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = false, showDecommissionedDevices = false) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
@@ -818,7 +818,7 @@ async function getBasicsForDevicesReport(auth, query) {
   const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
 
   // get total count for paging
-  const getCount = deviceQuery.clone().count('d.id as count').first()
+  const getCount = deviceQuery.clone().countDistinct('d.id').as('count').first()
   const queryResults = knex('Result as r')
     .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .modify(addConstraints, dataConstraints, {
@@ -847,9 +847,10 @@ async function getDevicesForReport(auth, query) {
   const getItems = deviceQuery
     .clone()
     .modify(sortPageParams, query, 'name')
-    .select([
+    .distinct([
       ..._.filter(getSelectListFields(userTimeOffset), elem => _.isString(elem) && elem.indexOf('dms.') < 0),
       'd.serial',
+      'd.id',
       queryResults.clone().countDistinct('r.id').as('totalResults'),
       queryResults.clone().where('r.resultCategory1', resultCategoryIds.Error).countDistinct('r.id').as('totalErrors'),
       queryResults
@@ -904,9 +905,11 @@ async function getErrorCodesByDeviceReport(auth, query) {
 
   const getItems = deviceQuery
     .clone()
+    .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
-    .select([
+    .distinct([
       'd.name',
+      'd.id',
       queryResults.clone().where('r.errorCode', '5011').countDistinct('r.id').as('error_5011'),
       queryResults.clone().where('r.errorCode', '5007').countDistinct('r.id').as('error_5007'),
       queryResults.clone().where('r.errorCode', '5006').countDistinct('r.id').as('error_5006'),
@@ -1716,7 +1719,7 @@ async function getDeviceCalibrationsForReport(auth, query) {
       queryBuilder.on('d.id', 'dm.deviceId').andOn('dm.current', 1)
     })
     .modify(sortPageParams, query, 'name')
-    .select([
+    .distinct([
       ..._.filter(
         getSelectListFields(userTimeOffset),
         /**

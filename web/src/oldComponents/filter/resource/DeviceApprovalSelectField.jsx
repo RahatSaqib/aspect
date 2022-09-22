@@ -6,10 +6,10 @@ import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { deviceApprovalMessages } from '../../../messages'
 import { I18nContext } from '../../../providers/I18nProvider'
 import { fetchDeviceApprovals } from '../../../store/DeviceApprovalRedux'
 import formatI18nMessage from '../../../utils/i18n/formatterWeb'
-import messages from '../../../utils/messages/deviceApprovalMessages'
 import SelectField from '../../shared/SelectField'
 
 export class DeviceApprovalSelectField extends PureComponent {
@@ -52,7 +52,7 @@ export class DeviceApprovalSelectField extends PureComponent {
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {deviceApprovalItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {formatI18nMessage(messages, formatMessage, a.get('i18nKey'), a.get('name'))}
+            {formatI18nMessage(deviceApprovalMessages, formatMessage, a.get('i18nKey'), a.get('name'))}
           </MenuItem>
         ))}
       </SelectField>

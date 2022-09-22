@@ -54,6 +54,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
 
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
+
   let curMonth = minDateFormatted
   while (curMonth <= maxDateFormatted) {
     dateFields.push({
@@ -89,7 +90,6 @@ async function getDeviceActivityReport(auth, query) {
     .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
     .countDistinct('r.id as totalResults')
     .select(getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn'))
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
     .modify(addingGroupingAndSelect, query)
@@ -101,7 +101,7 @@ async function getDeviceActivityReport(auth, query) {
     .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .groupBy('d.id', 'monthYear')
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    // .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .modify(addingGroupingAndSelect, query)
 
   // return result when both queries are finished
@@ -279,7 +279,7 @@ async function getDeviceCapacityReport(auth, query) {
     )
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
     .groupBy('d.id', 'monthYear')
-    .select(
+    .distinct(
       'd.name',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
       'd.id AS deviceId',
@@ -291,12 +291,14 @@ async function getDeviceCapacityReport(auth, query) {
 
   const devices = deviceQuery
     .clone()
-    .where({ 'dt.externalId': 'CepheidGeneXpert' })
+    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
     .groupBy('d.id')
     .select('d.name', 'd.id')
     .orderBy('d.name')
   // return result when both queries are finished
+
   const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
+
 
   // loop though all devices and count rate
   const data = _.map(deviceDetails, deviceRow => {
@@ -395,7 +397,7 @@ async function getGeneXpertOperationLogsReport(auth, query) {
 
 async function getModuleActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate } = query
+  const { minDate = subMonths(new Date(), 1) } = query
   const rows = await getModuleActivityReportData(minDate, dataConstraints, query)
 
   return {

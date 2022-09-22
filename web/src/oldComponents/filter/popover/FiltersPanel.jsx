@@ -11,7 +11,7 @@ import ErrorBoundary from '../../../components/ErrorBoundary'
 import ReportAutoCompleteField from '../../../components/ReportAutocompleteField'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
 import useI18n from '../../../hooks/useI18n'
-import { getCustomMessage } from '../../../utils/utils/customMessages'
+import { getCustomMessage } from '../../../messages'
 import AspectButton from '../../shared/AspectButton'
 import CheckboxField from '../../shared/CheckboxField'
 import FallbackUntilDone from '../../shared/FallbackUntilDone'
@@ -796,13 +796,14 @@ export const FiltersPanel = ({
                 autoOk
               />
             )}
+
             {config.expirationDate && (
               <DateRangeSelector
                 floatingLabelText={formatMessage(messages.expirationDate)}
                 onChangeDate={onExpirationDateChange}
                 controlClassName={cssClasses('Control')}
-                minDate={filters.minDate}
-                maxDate={addYears(new Date(), 10)}
+                minExpirationDate={filters.minExpirationDate}
+                maxExpirationDate={filters.maxExpirationDate}
                 minFilterName="minExpirationDate"
                 maxFilterName="maxExpirationDate"
                 dateFormat={dateFormat}

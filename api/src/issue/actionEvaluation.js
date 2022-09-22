@@ -28,7 +28,7 @@ async function actionConditionsMet(knex, action, partnerId, conditions) {
   const { evaluationMethod = null, evaluationParameter = null, evaluationFilterParameters = {} } = conditions
 
   if (!evaluationMethods[evaluationMethod]) {
-    throw new Error(`Unrecognised evaluation method in condition ${evaluationMethod}`)
+    throw new Error(`Unrecognized evaluation method in condition ${evaluationMethod}`)
   }
   return evaluationMethods[evaluationMethod](knex, action, partnerId, evaluationParameter, evaluationFilterParameters)
 }
