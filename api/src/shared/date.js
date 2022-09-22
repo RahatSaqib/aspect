@@ -23,13 +23,21 @@ function getDateOrDefault(object, propertyPath, defaultValue) {
   return parseDateOrDefault(date, defaultValue)
 }
 
-const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') =>
-  knex.raw(`CONCAT_WS(
+function getTimezoneOffsetFromNumber(timezoneOffset) {
+  let offset = -Math.round(timezoneOffset / 60)
+  const plusOrMinus = offset >= 0 ? '+' : '-'
+  offset = Math.abs(offset)
+  offset = `${plusOrMinus}${_.padStart(offset, 2, '0')}:00`
+  return offset
+}
+
+const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') => {
+  return knex.raw(`CONCAT_WS(
     '-',
     CAST(YEAR(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),
     LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
-
+}
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
   knex.raw(`CONCAT_WS(
     '-',
@@ -317,4 +325,5 @@ module.exports = {
   getOffsetFromIsoDateStringInMinutes,
   getTimeZoneFromUser,
   getOffsetFromUser,
+  getTimezoneOffsetFromNumber,
 }
