@@ -4,6 +4,7 @@ exports.up = async function (knex) {
     auditUserLogin.string('userName').notNullable()
     auditUserLogin.string('action', 25).notNullable()
     auditUserLogin.integer('success').notNullable()
+    auditUserLogin.string('code', 100).nullable()
     auditUserLogin.string('message', 2048).nullable()
     auditUserLogin.dateTime('createdOn').notNullable().index()
   })

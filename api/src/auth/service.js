@@ -17,7 +17,7 @@ const config = require('../config')
 const { query, knex } = require('../db')
 const { gxAlertAuthenticate } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
-const { createLoginHistoryEntry } = require('./loginHistory')
+const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 
 const clientTypes = {
   app: 'reporter_app',
@@ -102,14 +102,14 @@ function getTokenExpiry(clientType, currentTime) {
   return new Date(currentTime.getTime() + expiresTime)
 }
 
-async function authenticate(request) {
+async function authenticate(request, response) {
   const { payload } = request
   let user = await getUser(payload.name)
   if (!user) {
-    await createLoginHistoryEntry(query, null, payload.name, false, 'user not exists')
     try {
       // no user with such username in Aspect yet - check it in GxAlert
       user = await gxAlertAuthenticate(payload.name, payload.password)
+      response.user = user
       if (!user) {
         // TODO: Check if what is wrong is the user or the password
 
@@ -117,7 +117,7 @@ async function authenticate(request) {
           errorKeyCode: 'wrongUserOrPassword',
         })
         err.output.payload.data = err.data
-        return err
+        return loginHistoryCodeDecorator(err, LOGIN_HISTORY_CODES.userNotExists)
       }
     } catch (err) {
       const data = {
@@ -126,16 +126,25 @@ async function authenticate(request) {
       }
       if (err.isConnectionError !== undefined) {
         if (err.isConnectionError) return Boom.conflict("Couldn't connect to GxAlert", data)
-        return Boom.unauthorized('There was a conflict with your GxAlert credentials', data)
+        return loginHistoryCodeDecorator(
+          Boom.unauthorized('There was a conflict with your GxAlert credentials', data),
+          LOGIN_HISTORY_CODES.unexpected
+        )
       }
 
-      return Boom.internal('Authentication failed because an internal server error', data)
+      return loginHistoryCodeDecorator(
+        Boom.internal('Authentication failed because an internal server error', data),
+        LOGIN_HISTORY_CODES.unexpected
+      )
     }
   }
 
   if (user.lockedOut === 1 || user.disabled === 1) {
-    await createLoginHistoryEntry(query, user.id, payload.name, false, user.lockedOut ? 'locked out' : 'disabled')
-    return Boom.forbidden('Your account is locked.')
+    return loginHistoryCodeDecorator(
+      Boom.forbidden('Your account is locked.'),
+      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
+      user.id
+    )
   }
 
   // if password isn't a bcrypt hash, user was migrated from
@@ -144,7 +153,11 @@ async function authenticate(request) {
     // check login at GxAlert and return created/updated user from Aspect if login match in GxAlert
     user = await gxAlertAuthenticate(payload.name, payload.password)
     if (!user) {
-      return Boom.unauthorized('Authentication failed. Wrong username or password.')
+      return loginHistoryCodeDecorator(
+        Boom.unauthorized('Authentication failed. Wrong username or password.'),
+        LOGIN_HISTORY_CODES.gxAlertWrongPassword,
+        user.id
+      )
     }
   } else {
     // this is for "regular" accounts that were either created in aspect
@@ -170,8 +183,11 @@ async function authenticate(request) {
         Attempts: ${attempts}
         `)
       }
-      await createLoginHistoryEntry(query, user.id, payload.name, false, 'wrong password')
-      return Boom.unauthorized('Authentication failed. Wrong username or password.')
+      return loginHistoryCodeDecorator(
+        Boom.unauthorized('Authentication failed. Wrong username or password.'),
+        LOGIN_HISTORY_CODES.wrongPassword,
+        user.id
+      )
     }
   }
 
@@ -197,13 +213,12 @@ async function authenticate(request) {
     countryAbbreviation: user.countryAbbreviation,
   })
 
-  query('Update failed password attempts to 0').from('User').where({ id: user.id }).update({
+  response.user = user // to be consumed by loginHistoryWrapper
+  await query('Update failed password attempts to 0').from('User').where({ id: user.id }).update({
     failedPasswordAttempts: 0,
     lastLogin: now,
     lastActive: now,
   })
-
-  createLoginHistoryEntry(query, user.id, payload.name, true)
 
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
