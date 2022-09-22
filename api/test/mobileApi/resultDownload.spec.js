@@ -23,7 +23,7 @@ const getClinicianAccessToken = async () => {
   return res.body.access
 }
 
-describe('Result download routes', () => {
+describe('Mobile API Result download routes v1', () => {
   const path = '/mobile/api/result/download'
 
   let clinicianAccessToken = ''
@@ -264,7 +264,7 @@ describe('Result download routes', () => {
   })
 })
 
-describe('Result download routes', () => {
+describe('Mobile API Result download routes v2', () => {
   const path = '/mobile/api/result/download'
 
   let clinicianAccessToken = ''

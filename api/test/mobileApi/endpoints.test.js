@@ -2,7 +2,6 @@ const proxyquire = require('proxyquire')
 const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
-const { downloadResultsListV2 } = require('../../src/result/service')
 
 describe('result endpoints', () => {
   function setupRoute(method, path, serviceStub) {
