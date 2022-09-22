@@ -301,6 +301,14 @@ const routes = [
     config: {
       auth: { scope: ['device:view'] },
       description: 'Historic utilization and error rates for the device',
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+        query: {
+          timezoneOffset: Joi.number().description(`Current user's timezone offset`),
+        },
+      },
     },
   },
   {

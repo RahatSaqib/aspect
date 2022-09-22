@@ -4,7 +4,7 @@ const DEVICE_KEY_DEVICE_LIST_ENDPOINT =
   '/device/select-list?countryId=:countryId&partnerId=:partnerId&siteId=:siteId&showUnapprovedDevices=:showUnapprovedDevices&onlyResultDevices=:onlyResultDevices'
 const DEVICE_KEY_MERGE_DEVICES_ENDPOINT = '/device/mergedevices'
 
-const DEVICE_PERFORMANCE_KEY_BY_ID_ENDPOINT = '/device/performance/:deviceId'
+const DEVICE_PERFORMANCE_KEY_BY_ID_ENDPOINT = '/device/performance/:deviceId?timezoneOffset=:offset'
 
 export {
   DEVICE_KEY,
