@@ -1,26 +1,24 @@
 import React from 'react'
+import Card from '@mui/material/Card'
 import Checkbox from '@mui/material/Checkbox'
 import Grid from '@mui/material/Grid'
-import Paper from '@mui/material/Paper'
-import Card from './Card'
-import StartTime from './ChooseTime'
+import ChooseTime from './components/ChooseTime'
 
 const Weekly = ({ cronExpression, onChange }) => {
-  const onAtHourChange = e => {
-    const val = cronExpression
+  const changeHours = e => {
+    const val = [...cronExpression]
     val[0] = '0'
     val[2] = `${e.target.value}`
     onChange(val)
   }
-  const onAtMinuteChange = e => {
-    const val = cronExpression
+  const changeMinutes = e => {
+    const val = [...cronExpression]
     val[0] = '0'
     val[1] = `${e.target.value}`
     onChange(val)
   }
-
   const onCheck = e => {
-    const val = cronExpression
+    const val = [...cronExpression]
     val[0] = '0'
     if (e.target.checked) {
       val[2] = `${val[2]}`.split('/').length > 1 ? '0' : val[2].toString()
@@ -45,8 +43,8 @@ const Weekly = ({ cronExpression, onChange }) => {
   }
 
   return (
-    <div>
-      <Paper>
+    <>
+      <Card style={{ padding: 10, margin: 10 }}>
         <Grid container justifyContent="space-evenly">
           <Grid item justifyContent="flex-start">
             <Checkbox
@@ -116,17 +114,15 @@ const Weekly = ({ cronExpression, onChange }) => {
             <br />
           </Grid>
         </Grid>
-      </Paper>
-
-      <Card label="Start time">
-        <StartTime
-          hour={cronExpression[2]}
-          minute={cronExpression[1]}
-          onAtMinuteChange={onAtMinuteChange}
-          onAtHourChange={onAtHourChange}
-        />
       </Card>
-    </div>
+
+      <ChooseTime
+        hour={cronExpression[2]}
+        minute={cronExpression[1]}
+        changeMinutes={changeMinutes}
+        changeHours={changeHours}
+      />
+    </>
   )
 }
 
