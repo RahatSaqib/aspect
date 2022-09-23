@@ -45,7 +45,7 @@ const Weekly = ({ cronExpression, onChange }) => {
   return (
     <>
       <Card style={{ padding: 10, margin: 10 }}>
-        <Grid container justifyContent="space-evenly">
+        <Grid container justifyContent="space-evenly" style={{ padding: 10, margin: 10 }}>
           <Grid item justifyContent="flex-start">
             <Checkbox
               color="primary"
@@ -112,16 +112,17 @@ const Weekly = ({ cronExpression, onChange }) => {
             &nbsp;Saturday
             <br />
             <br />
+            <Grid>
+              <ChooseTime
+                hour={cronExpression[2]}
+                minute={cronExpression[1]}
+                changeMinutes={changeMinutes}
+                changeHours={changeHours}
+              />
+            </Grid>
           </Grid>
         </Grid>
       </Card>
-
-      <ChooseTime
-        hour={cronExpression[2]}
-        minute={cronExpression[1]}
-        changeMinutes={changeMinutes}
-        changeHours={changeHours}
-      />
     </>
   )
 }

@@ -6,12 +6,14 @@ import cronstrue from 'cronstrue'
 import DisplayCard from './components/DisplayCard'
 import Daily from './Daily'
 import Monthly from './Monthly'
+import Quarterly from './Quarterly'
 import Weekly from './Weekly'
 
 const options = [
   { name: 'Daily', Component: Daily, value: ['0', '0', '00', '1/1', '*', '?', '*'] },
   { name: 'Weekly', Component: Weekly, value: ['0', '0', '00', '?', '*', '*', '*'] },
   { name: 'Monthly', Component: Monthly, value: ['0', '0', '00', '1', '1/1', '?', '*'] },
+  { name: 'Quarterly', Component: Quarterly, value: ['0', '0', '00', '1', '*/3', '?', '*'] },
 ]
 
 const getHumanValue = cronExpression => {

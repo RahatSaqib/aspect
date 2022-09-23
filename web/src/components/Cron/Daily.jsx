@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
 import ChooseTime from './components/ChooseTime'
 
 const Daily = ({ cronExpression, onChange }) => {
-  const [every, setEvery] = useState(false)
+  const [every, setEvery] = useState(true)
 
   useEffect(() => setEvery(cronExpression[3] !== '?'), [cronExpression])
 
@@ -80,14 +81,16 @@ const Daily = ({ cronExpression, onChange }) => {
           }
           label="Every week day"
         />
+        <CardContent>
+          <ChooseTime
+            hour={cronExpression[2]}
+            minute={cronExpression[1]}
+            changeMinutes={changeMinutes}
+            changeHours={changeHours}
+            disabled={every}
+          />
+        </CardContent>
       </Card>
-
-      <ChooseTime
-        hour={cronExpression[2]}
-        minute={cronExpression[1]}
-        changeMinutes={changeMinutes}
-        changeHours={changeHours}
-      />
     </>
   )
 }

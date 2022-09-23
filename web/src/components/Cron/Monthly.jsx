@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { CardContent } from '@mui/material'
 import Card from '@mui/material/Card'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
@@ -6,14 +7,8 @@ import TextField from '@mui/material/TextField'
 import ChooseTime from './components/ChooseTime'
 
 const Monthly = ({ cronExpression, onChange }) => {
-  const [every, setEvery] = useState()
-
-  useEffect(() => {
-    if (cronExpression[3] === 'L') setEvery('2')
-    else if (cronExpression[3] === 'LW') setEvery('3')
-    else if (cronExpression[3].startsWith('L')) setEvery('4')
-    else setEvery('2')
-  }, [cronExpression])
+  const [every, setEvery] = useState('1')
+  const [disabled, setDisabled] = useState(true)
 
   const onDayChange = e => {
     if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
@@ -156,6 +151,7 @@ const Monthly = ({ cronExpression, onChange }) => {
         <Radio
           onChange={e => {
             setEvery(e.target.value)
+            setDisabled(!disabled)
             onChange([
               '0',
               cronExpression[1] === '*' ? '0' : cronExpression[1],
@@ -184,14 +180,16 @@ const Monthly = ({ cronExpression, onChange }) => {
           margin="normal"
           variant="outlined"
         />
+        <CardContent>
+          <ChooseTime
+            hour={cronExpression[2]}
+            minute={cronExpression[1]}
+            changeHours={onAtHourChange}
+            changeMinutes={onAtMinuteChange}
+            disabled={disabled}
+          />
+        </CardContent>
       </Card>
-
-      <ChooseTime
-        hour={cronExpression[2]}
-        minute={cronExpression[1]}
-        onAtMinuteChange={onAtMinuteChange}
-        onAtHourChange={onAtHourChange}
-      />
     </>
   )
 }
