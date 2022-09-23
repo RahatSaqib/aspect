@@ -4,10 +4,13 @@ import CardContent from '@mui/material/CardContent'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
+import useI18n from '../../hooks/useI18n'
+import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
 
 const Daily = ({ cronExpression, onChange }) => {
   const [every, setEvery] = useState(true)
+  const { formatMessage } = useI18n()
 
   useEffect(() => setEvery(cronExpression[3] !== '?'), [cronExpression])
 
@@ -54,7 +57,7 @@ const Daily = ({ cronExpression, onChange }) => {
         />
         <TextField
           id="outlined-number"
-          label="Every day(s)"
+          label={formatMessage(messages.everyDay)}
           value={cronExpression[3].split('/')[1] ? cronExpression[3].split('/')[1] : ''}
           onChange={onDayChange}
           type="number"
@@ -79,7 +82,7 @@ const Daily = ({ cronExpression, onChange }) => {
               inputProps={{ 'aria-label': 'DailyRadio' }}
             />
           }
-          label="Every week day"
+          label={formatMessage(messages.everyWeekDay)}
         />
         <CardContent>
           <ChooseTime

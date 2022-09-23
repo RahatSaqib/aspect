@@ -4,11 +4,14 @@ import Card from '@mui/material/Card'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 import TextField from '@mui/material/TextField'
+import useI18n from '../../hooks/useI18n'
+import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
 
 const Monthly = ({ cronExpression, onChange }) => {
   const [every, setEvery] = useState('1')
   const [disabled, setDisabled] = useState(true)
+  const { formatMessage } = useI18n()
 
   const onDayChange = e => {
     if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
@@ -81,7 +84,7 @@ const Monthly = ({ cronExpression, onChange }) => {
         &nbsp;&nbsp;
         <TextField
           id="outlined-number"
-          label="Day of every month(s)"
+          label={formatMessage(messages.dayOfEveryMonth)}
           value={cronExpression[3]}
           onChange={onDayChange}
           type="number"
@@ -117,7 +120,7 @@ const Monthly = ({ cronExpression, onChange }) => {
               inputProps={{ 'aria-label': 'DailyRadio' }}
             />
           }
-          label="Last day of every month"
+          label={formatMessage(messages.lastDayOfMonth)}
         />
       </Card>
 
@@ -144,7 +147,7 @@ const Monthly = ({ cronExpression, onChange }) => {
               inputProps={{ 'aria-label': 'DailyRadio' }}
             />
           }
-          label="On the last weekday of every month"
+          label={formatMessage(messages.lastWeekdayOfmonth)}
         />
       </Card>
       <Card style={{ padding: 10, margin: 10 }}>
@@ -169,7 +172,7 @@ const Monthly = ({ cronExpression, onChange }) => {
         />
         <TextField
           id="outlined-number"
-          label="Day(s) before the end of the month"
+          label={formatMessage(messages.daysBeforeEndMonth)}
           value={cronExpression[3].split('-')[1]}
           onChange={onLastDayChange}
           type="number"

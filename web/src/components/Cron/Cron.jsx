@@ -3,6 +3,8 @@ import Grid from '@mui/material/Grid'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import cronstrue from 'cronstrue'
+import useI18n from '../../hooks/useI18n'
+import { cronMessages as messages } from '../../messages'
 import DisplayCard from './components/DisplayCard'
 import Daily from './Daily'
 import Monthly from './Monthly'
@@ -10,21 +12,22 @@ import Quarterly from './Quarterly'
 import Weekly from './Weekly'
 
 const options = [
-  { name: 'Daily', Component: Daily, value: ['0', '0', '00', '1/1', '*', '?', '*'] },
-  { name: 'Weekly', Component: Weekly, value: ['0', '0', '00', '?', '*', '*', '*'] },
-  { name: 'Monthly', Component: Monthly, value: ['0', '0', '00', '1', '1/1', '?', '*'] },
-  { name: 'Quarterly', Component: Quarterly, value: ['0', '0', '00', '1', '*/3', '?', '*'] },
+  { name: 'daily', Component: Daily, value: ['0', '0', '00', '1/1', '*', '?', '*'] },
+  { name: 'weekly', Component: Weekly, value: ['0', '0', '00', '?', '*', '*', '*'] },
+  { name: 'monthly', Component: Monthly, value: ['0', '0', '00', '1', '1/1', '?', '*'] },
+  { name: 'quarterly', Component: Quarterly, value: ['0', '0', '00', '1', '*/3', '?', '*'] },
 ]
 
-const getHumanValue = cronExpression => {
-  const val = cronstrue.toString(cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ','))
-  if (val.search('undefined') === -1) {
-    return val
-  }
-  return '-'
-}
-
 const Cron = ({ showResultText, showResultCron, onChange }) => {
+  const { locale, formatMessage } = useI18n()
+  const getHumanValue = cronExpression => {
+    const val = cronstrue.toString(cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ','), { locale })
+    if (val.search('undefined') === -1) {
+      return val
+    }
+    return '-'
+  }
+
   const [cronExpression, setCronExpression] = useState(options[0].value)
   const [selectedTab, setSelectedTab] = useState(0)
 
@@ -55,7 +58,7 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
         <Grid item xs={12}>
           <Tabs value={selectedTab} aria-label="simple tabs example">
             {options.map((option, idx) => (
-              <Tab key={idx} label={option.name} onClick={() => onTabChange(idx)} />
+              <Tab key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
             ))}
           </Tabs>
         </Grid>
