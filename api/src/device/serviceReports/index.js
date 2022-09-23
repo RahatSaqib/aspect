@@ -71,7 +71,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints).whereNotIn('dt.externalId', ['Aspect', 'GxAlert'])
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
@@ -87,9 +87,15 @@ async function getDeviceActivityReport(auth, query) {
     })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
+    .distinct(
+      'd.id',
+      'd.name',
+      'd.serial',
+      'da.name as deviceApprovalStatus',
+      'dms.name as deviceMaintenanceStatus',
+      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn')
+    )
     .countDistinct('r.id as totalResults')
-    .select(getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn'))
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
     .modify(addingGroupingAndSelect, query)
@@ -98,10 +104,9 @@ async function getDeviceActivityReport(auth, query) {
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
     .countDistinct('r.id as totalResults')
-    .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
+    .distinct('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .groupBy('d.id', 'monthYear')
-    // .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .modify(addingGroupingAndSelect, query)
 
   // return result when both queries are finished

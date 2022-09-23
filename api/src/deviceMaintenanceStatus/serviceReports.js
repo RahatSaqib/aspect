@@ -26,8 +26,15 @@ async function getDeviceActivityPercentReport(auth, query) {
     .leftJoin('Result as r', 'd.id', 'r.deviceId')
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
-    .select(getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn'))
+    .distinct(
+      'd.id',
+      'd.name',
+      'd.serial',
+      'da.name as deviceApprovalStatus',
+      'dms.name as deviceMaintenanceStatus',
+      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn')
+    )
+    .whereNotIn('dt.externalId', ['Aspect', 'GxAlert'])
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
   const minDateDateValue = parseDateOrDefault(minDate)
