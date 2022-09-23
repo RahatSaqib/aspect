@@ -81,7 +81,7 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
       <Card className={cssClasses('Section')}>
         <p data-panel-title>{formatMessage(messages.performanceTitle)}</p>
         <div data-graph-container>
-          {data && data.shift() && data[0].utilizationRate !== null && (
+          {data && data.shift() && data.find(it => it.utilizationRate !== null) && (
             <div className={cssClasses('Graph_Container')} data-utilization-graph>
               {data && (
                 <div>

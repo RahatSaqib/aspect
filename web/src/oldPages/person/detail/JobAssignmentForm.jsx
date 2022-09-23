@@ -220,6 +220,7 @@ export const JobAssignmentForm = ({
               assayTypeId={values.assayTypeId}
               value={values.assayId}
               onAssayChange={onAssayIdChange}
+              multiple={false}
             />
           </section>
           <div className={cssClasses('Form__ActionRow')}>

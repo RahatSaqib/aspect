@@ -152,10 +152,9 @@ async function getDeviceUtilizationPerDayReport(auth, query) {
   let dateFields = []
   const [{ maintenanceStatusHistory = [] } = {}] = data || []
   dateFields = maintenanceStatusHistory.map(({ day }) => {
-    const date = new Date(day)
     return {
       key: day,
-      header: format(date, 'yyyy-MM-dd'),
+      header: day, // notice that `day` is in 'yyyy-MM-dd' format
       subHeaders: [
         {
           text: '#',
