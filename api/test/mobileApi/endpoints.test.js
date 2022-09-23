@@ -5,7 +5,7 @@ const endpointUtils = require('../utils/endpointUtils')
 
 describe('result endpoints', () => {
   function setupRoute(method, path, serviceStub) {
-    const endpoints = proxyquire('../../src/result/endpoints', {
+    const endpoints = proxyquire('../../src/mobileApi/result/endpoints', {
       './service': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
