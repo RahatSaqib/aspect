@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import Grid from '@mui/material/Grid'
+import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'
-import ErrorBoundary from '../../../../components/ErrorBoundary'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
 import AxisRightLayer from '../../../../components/Graphs/BarGraph/AxisRightLayer'
 import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
+import styles from './styles.css'
 import { FqrToMtbPercentageLine } from './XDRFLQResistanceGraph.Main.Layers'
+
+const cssClasses = classnames.bind(styles)
 
 const baseConfig = {
   id: 'xdrAssayGraph',
@@ -28,7 +31,7 @@ const endpointParams = [
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
 ]
 
-const XDRFLQResistanceGraph = ({ assaysFromState, showLabel, filterSelection }) => {
+const XDRFLQResistanceGraphMain = ({ assaysFromState, showLabel, filterSelection }) => {
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
@@ -53,40 +56,34 @@ const XDRFLQResistanceGraph = ({ assaysFromState, showLabel, filterSelection }) 
   return isLoading ? (
     <Loading />
   ) : (
-    <ErrorBoundary>
-      <Grid item xs={12} md={12} lg={9}>
-        <Grid container>
-          <Grid container direction="row" spacing={8}>
-            <Grid item xs={12} md={12} lg={12}>
-              {graphData && !isEmpty(graphData) ? (
-                <AspectResponsiveBar
-                  assaysFromState={assaysFromState}
-                  config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#333' }}
-                  data={graphData}
-                  keys={graphKeys}
-                  indexBy="month"
-                  formatDate={(value, i18n) =>
-                    /**
-                     * 'value' has pattern `yyyy-mm` (i.e. `2022-07`), and to correctly
-                     * format it to `Jul-22` with taking into account timezones, let's
-                     * consider mid-month date - so, convert `yyyy-mm` to `yyyy-mm-15`
-                     */
-                    i18n.format(new Date(`${value}-15`), 'MMM-yy')
-                  }
-                  tickValuesYShape="twos"
-                  tickValuesXShape="all"
-                  displayMethod="actual"
-                  displayLegend
-                  type="bar-line"
-                  i18nKeys={i18nKeys}
-                />
-              ) : null}
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </ErrorBoundary>
+    <Grid item xs={12} md={12} lg={9}>
+      <div className={cssClasses('Graph_Wrapper')}>
+        {graphData && !isEmpty(graphData) ? (
+          <AspectResponsiveBar
+            assaysFromState={assaysFromState}
+            config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#333' }}
+            data={graphData}
+            keys={graphKeys}
+            indexBy="month"
+            formatDate={(value, i18n) =>
+              /**
+               * 'value' has pattern `yyyy-mm` (i.e. `2022-07`), and to correctly
+               * format it to `Jul-22` with taking into account timezones, let's
+               * consider mid-month date - so, convert `yyyy-mm` to `yyyy-mm-15`
+               */
+              i18n.format(new Date(`${value}-15`), 'MMM-yy')
+            }
+            tickValuesYShape="twos"
+            tickValuesXShape="all"
+            displayMethod="actual"
+            displayLegend
+            type="bar-line"
+            i18nKeys={i18nKeys}
+          />
+        ) : null}
+      </div>
+    </Grid>
   )
 }
 
-export default XDRFLQResistanceGraph
+export default XDRFLQResistanceGraphMain
