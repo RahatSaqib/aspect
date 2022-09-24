@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
-import { Button, green, Snackbar } from '@mui/material'
-import { amber } from '@mui/material/colors'
+import { Button, Snackbar } from '@mui/material'
+import { amber, green } from '@mui/material/colors'
 import { withStyles } from '@mui/styles'
 import classNames from 'classnames'
 import flowRight from 'lodash/flowRight'
