@@ -1,5 +1,5 @@
 import React from 'react'
-import TableRow from '@mui/material/TableRow'
+import { TableRow } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import classNames from 'classnames'
 import styles from './DataTableRowStyle'

@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import { Person, PersonOff } from '@mui/icons-material'
-import Button from '@mui/material/Button'
-import IconButton from '@mui/material/IconButton'
+import { Button, IconButton } from '@mui/material'
 import { useMutation } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'

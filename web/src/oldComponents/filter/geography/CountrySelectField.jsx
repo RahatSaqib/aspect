@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'

@@ -1,5 +1,5 @@
 import React from 'react'
-import TableCell from '@mui/material/TableCell'
+import { TableCell } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import classNames from 'classnames'
 import styles from './DataTableRowStyle'

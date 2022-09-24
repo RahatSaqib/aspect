@@ -1,11 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
-import CardActionArea from '@mui/material/CardActionArea'
-import CardActions from '@mui/material/CardActions'
-import CardContent from '@mui/material/CardContent'
-import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
+import { Button, Card, CardActionArea, CardActions, CardContent, Grid, Typography } from '@mui/material'
 import useI18n from '../../../hooks/useI18n'
 import messages from './messages'
 

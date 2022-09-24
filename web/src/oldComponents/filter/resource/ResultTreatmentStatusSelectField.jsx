@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Paper from '@mui/material/Paper'
+import { Paper } from '@mui/material'
 import head from 'lodash/head'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { navigations } from './oldComponents/BrowseFilters'

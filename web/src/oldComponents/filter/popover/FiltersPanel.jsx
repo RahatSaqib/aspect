@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect } from 'react'
-import Card from '@mui/material/Card'
-import Modal from '@mui/material/Modal'
+import { Card, Modal } from '@mui/material'
 import classnames from 'classnames/bind'
 import addYears from 'date-fns/addYears'
 import ReactDOM from 'react-dom'

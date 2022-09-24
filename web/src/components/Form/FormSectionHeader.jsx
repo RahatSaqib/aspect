@@ -1,5 +1,5 @@
 import React from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'

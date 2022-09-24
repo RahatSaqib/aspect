@@ -1,5 +1,5 @@
 import React from 'react'
-import Card from '@mui/material/Card'
+import { Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import { oneOfType, object, string, number } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'

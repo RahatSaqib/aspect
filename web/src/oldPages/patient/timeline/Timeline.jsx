@@ -1,5 +1,5 @@
 import React from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'

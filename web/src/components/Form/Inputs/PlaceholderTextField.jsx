@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import FormControl from '@mui/material/FormControl'
+import { FormControl } from '@mui/material'
 import classnames from 'classnames/bind'
 import { useFormikContext } from 'formik'
 import PropTypes from 'prop-types'

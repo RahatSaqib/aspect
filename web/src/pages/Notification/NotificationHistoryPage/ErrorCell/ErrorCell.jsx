@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import { array, arrayOf, number, oneOfType, string } from 'prop-types'
 import IconProvider from '../../../../components/IconProvider/index'

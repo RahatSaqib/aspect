@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
+import { Button, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import { defineMessages } from 'react-intl'

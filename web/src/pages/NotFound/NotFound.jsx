@@ -1,7 +1,7 @@
 import React from 'react'
 import ActionHome from '@mui/icons-material/Home'
 import ActionBack from '@mui/icons-material/KeyboardArrowLeft'
-import IconButton from '@mui/material/IconButton'
+import { IconButton } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { Link, useNavigate } from 'react-router-dom'

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
+import { LinearProgress } from '@mui/material'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'

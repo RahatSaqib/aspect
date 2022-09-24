@@ -1,9 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import React from 'react'
-import Autocomplete from '@mui/material/Autocomplete'
-import { useTheme } from '@mui/material/styles'
-import TextField from '@mui/material/TextField'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import { Autocomplete, useTheme, TextField, useMediaQuery } from '@mui/material'
 import filter from 'lodash/filter'
 import startCase from 'lodash/startCase'
 import { VariableSizeList } from 'react-window'

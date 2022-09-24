@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import { shallow } from 'enzyme'
 import includes from 'lodash/includes'
 import { createIntl } from 'react-intl'
