@@ -173,6 +173,7 @@ const deviceActivity = {
     },
   ],
 }
+
 const deviceUtilizationReport = {
   name: 'Device Average Utilization per Month',
   description:
@@ -427,6 +428,35 @@ const tbWorkloadSummary = {
   ],
 }
 
+const usageStats = {
+  name: 'Usage Statistics Report',
+  description: 'Shows stats about the use of the system.',
+  i18nKey: 'usageStatistics',
+  i18nKeyDescription: 'usageStatistics_Description',
+  externalId: 'usage_statistics_report',
+  fileName: 'UsageStatistics',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 140,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'stats/serviceReports',
+      functionName: 'getUsageStats',
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'stats/serviceReports',
+      functionName: 'getUserActivity',
+    },
+    {
+      sortOrder: 2,
+      moduleName: 'stats/serviceReports',
+      functionName: 'getResultsBySite',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -446,4 +476,5 @@ module.exports = {
   moduleStatusReport,
   tbWorkloadSummary,
   xdrDevicesSummary,
+  usageStats,
 }
