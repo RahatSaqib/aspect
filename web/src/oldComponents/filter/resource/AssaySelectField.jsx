@@ -6,9 +6,9 @@ import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import messages from '../../../messages/assay'
 import { I18nContext } from '../../../providers/I18nProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
-import messages from '../../../utils/messages/assay'
 import SelectField from '../../shared/SelectField'
 
 export class AssaySelectField extends PureComponent {
@@ -22,6 +22,7 @@ export class AssaySelectField extends PureComponent {
     assayTypeId: PropTypes.string,
     deviceTypeId: PropTypes.string,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+    multiple: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -31,6 +32,7 @@ export class AssaySelectField extends PureComponent {
     assayTypeId: '',
     deviceTypeId: '',
     value: '',
+    multiple: true,
   }
 
   static contextType = I18nContext
@@ -90,7 +92,7 @@ export class AssaySelectField extends PureComponent {
         value={value}
         onChange={this.handleChange}
         disabled={isSingleAssay || validFilteredAssays(validAssays).size <= 1}
-        multiple
+        multiple={rest.multiple}
       >
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {validFilteredAssays(validAssays).map(a => (

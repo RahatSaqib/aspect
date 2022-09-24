@@ -1,0 +1,3920 @@
+[{
+  "externalId": "Sinza Health Centre",
+  "latitude": 39.133999,
+  "longitude": -6.712000,
+  "stateName": "Ubungo",
+  "name": "Sinza Health Centre",
+  "shortName": "Sinza HC",
+  "timeZoneId": "E. Africa Standard Time",
+  "devices": [{
+    "name": "Sinza Health Centre",
+    "shortName": "Sinza HC",
+    "macAddress": "MAC6805CA237593",
+    "hostId": "Sinza Hospital",
+    "serial": "Cepheid-4071D8G",
+    "gxAlertDeviceId": 446
+  }]
+},
+  {
+    "externalId": "Ukonga Prison",
+    "latitude": 34.854000,
+    "longitude": -6.307000,
+    "stateName": "Ilala 1",
+    "lgaName": "Ilala Municipal",
+    "name": "Ukonga Prison",
+    "shortName": "Ukonga Prison",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ukonga Prison",
+      "shortName": "Ukonga Prison",
+      "macAddress": "MACD89D6798F05E",
+      "hostId": "UKONGA PRISON DISPEN",
+      "serial": "Cepheid-30797PK",
+      "gxAlertDeviceId": 448
+    }]
+  },
+  {
+    "externalId": "Iringa Regional Hospital",
+    "latitude": 35.687000,
+    "longitude": -7.763000,
+    "stateName": "Iringa",
+    "lgaName": "Iringa Municipal",
+    "name": "Iringa Hospital",
+    "shortName": "Iringa RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Iringa Hospital",
+      "shortName": "Iringa RRH",
+      "macAddress": "MAC60D81936CD4D",
+      "hostId": "IRINGA REGIONAL REFE",
+      "serial": "CEPHEIDB4QQ5R1",
+      "gxAlertDeviceId": 451
+    }]
+  },
+  {
+    "externalId": "Pasada Laboratory",
+    "latitude": 39.334000,
+    "longitude": -6.860000,
+    "stateName": "Temeke ",
+    "lgaName": "Temeke Municipal",
+    "name": "Pasada Laboratory",
+    "shortName": "Pasada",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Pasada Laboratory",
+      "shortName": "Pasada",
+      "macAddress": "MAC18D6C7194E15",
+      "hostId": "Pasada",
+      "serial": "Cepheid-410C1D4",
+      "gxAlertDeviceId": 453
+    }]
+  },
+  {
+    "externalId": "Mbeya Military hospital",
+    "latitude": 33.377998,
+    "longitude": -8.212000,
+    "stateName": "Mbeya",
+    "lgaName": "Mbeya City",
+    "name": "Mbalizi Military Hospital",
+    "shortName": "Mbalizi MH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbalizi Military Hospital",
+      "shortName": "Mbalizi MH",
+      "macAddress": "MACD89D6798706A",
+      "hostId": "MH  MBEYA",
+      "serial": "Cepheid-30797RM",
+      "gxAlertDeviceId": 459
+    }]
+  },
+  {
+    "externalId": "Mererani Health Centre",
+    "latitude": 36.587002,
+    "longitude": -4.574000,
+    "stateName": "Manyara",
+    "lgaName": "Simanjiro",
+    "name": "Mirerani Health Centre",
+    "shortName": "Mirerani HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mirerani Health Centre",
+      "shortName": "Mirerani HC",
+      "macAddress": "MAC8851FB5E8C36",
+      "hostId": "Mererani Health Cent",
+      "serial": "Cepheid-admn-PC",
+      "gxAlertDeviceId": 460
+    }]
+  },
+  {
+    "externalId": "Bukoba Regional Hospital",
+    "latitude": 31.465000,
+    "longitude": -2.022000,
+    "stateName": "Kagera",
+    "lgaName": "Bukoba Municipal",
+    "name": "Bukoba Regional Referral Hospital",
+    "shortName": "Bukoba RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Bukoba Regional Referral Hospital",
+      "shortName": "Bukoba RRH",
+      "macAddress": "MAC6805CA20C4AB",
+      "hostId": "Bukoba Regional Hosp",
+      "serial": "Cepheid-3520VYK",
+      "gxAlertDeviceId": 464
+    }]
+  },
+  {
+    "externalId": "Butimba Prison",
+    "latitude": 32.810001,
+    "longitude": -2.434000,
+    "stateName": "Mwanza",
+    "lgaName": "Nyamagana Municipal",
+    "name": "Butimba Prison",
+    "shortName": "Butimba Prison",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Butimba Prison",
+      "shortName": "Butimba Prison",
+      "macAddress": "MACD89D6798A027",
+      "hostId": "BUTIMBA PRISON",
+      "serial": "Cepheid-30797NK",
+      "gxAlertDeviceId": 470
+    }]
+  },
+  {
+    "externalId": "Bugando Medical Centre",
+    "latitude": 32.810001,
+    "longitude": -2.434000,
+    "stateName": "Mwanza",
+    "lgaName": "Nyamagana Municipal",
+    "name": "Bugando Medical Centre",
+    "shortName": "Bugando MC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Bugando Medical Centre",
+      "shortName": "Bugando MC",
+      "macAddress": "MAC6805CA16A736",
+      "hostId": "BUGANDO MEDICAL CENT",
+      "serial": "Cepheid-32406WC",
+      "gxAlertDeviceId": 495
+    }]
+  },
+  {
+    "externalId": "Makambako Town Council Hospital",
+    "latitude": 34.900002,
+    "longitude": -9.368000,
+    "stateName": "Njombe",
+    "lgaName": "Njombe",
+    "name": "Makambako Hospital",
+    "shortName": "Makambako TCH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Makambako Hospital",
+      "shortName": "Makambako TCH",
+      "macAddress": "MACF0921CE4C12A",
+      "hostId": "Makambako Town counc",
+      "serial": "Cepheid-4071DBJ",
+      "gxAlertDeviceId": 972
+    }]
+  },
+  {
+    "externalId": "Meatu District Hospital",
+    "latitude": 34.200001,
+    "longitude": -2.950000,
+    "stateName": "Simiyu",
+    "lgaName": "Meatu",
+    "name": "Meatu District Hospital",
+    "shortName": "Meatu DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Meatu District Hospital",
+      "shortName": "Meatu DH",
+      "macAddress": "MACA0369F478F1A",
+      "hostId": "MEATU DISTRICT HOSPI",
+      "serial": "Cepheid-4421K5Y",
+      "gxAlertDeviceId": 1075
+    }]
+  },
+  {
+    "externalId": "Ruhuwiko Military Hospital",
+    "latitude": 36.139999,
+    "longitude": -10.792000,
+    "stateName": "Ruvuma",
+    "lgaName": "Songea Municipal",
+    "name": "Ruhuwiko Military Hospital",
+    "shortName": "Ruhuwiko MH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ruhuwiko Military Hospital",
+      "shortName": "Ruhuwiko MH",
+      "macAddress": "MACD89D6798F056",
+      "hostId": "RUHUWIKO MILITARY HO",
+      "serial": "Cepheid-30797PT",
+      "gxAlertDeviceId": 1212
+    }]
+  },
+  {
+    "externalId": "Karatu District Hospital",
+    "latitude": 35.917000,
+    "longitude": -2.967000,
+    "stateName": "Arusha",
+    "lgaName": "Karatu",
+    "name": "Karatu District Hospital",
+    "shortName": "Karatu DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Karatu District Hospital",
+      "shortName": "Karatu DH",
+      "macAddress": "MAC5065F3466E53",
+      "hostId": "Karatu District Hospital",
+      "serial": "Cepheid-5501RYX",
+      "gxAlertDeviceId": 1276
+    }]
+  },
+  {
+    "externalId": "Pasada HIV",
+    "latitude": 39.397999,
+    "longitude": -6.985000,
+    "stateName": "Temeke ",
+    "lgaName": "Temeke Municipal",
+    "name": "Pasada HIV",
+    "shortName": "Pasada HIV",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Pasada HIV",
+      "shortName": "Pasada HIV",
+      "macAddress": "MACA01D48B7B55F",
+      "hostId": "PASADA LABORATORY",
+      "serial": "Cepheid-5040HHC",
+      "gxAlertDeviceId": 1280
+    }]
+  },
+  {
+    "externalId": "Mbeya Regional Hospital",
+    "latitude": 33.377998,
+    "longitude": -8.212000,
+    "stateName": "Mbeya",
+    "lgaName": "Mbeya City",
+    "name": "Mbeya Regional Hospital",
+    "shortName": "Mbeya RH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbeya Regional Hospital",
+      "shortName": "Mbeya RH",
+      "macAddress": "MACF07BCB13732C",
+      "hostId": "MBEYA REGIONAL HOSPI",
+      "serial": "CEPHEIDJPXS1M1",
+      "gxAlertDeviceId": 1525
+    }]
+  },
+  {
+    "externalId": "Kisarawe District Hospital",
+    "latitude": 38.647999,
+    "longitude": -7.227000,
+    "stateName": "Pwani",
+    "lgaName": "Kisarawe",
+    "name": "Kisarawe District Hospital",
+    "shortName": "Kisarawe DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kisarawe District Hospital",
+      "shortName": "Kisarawe DH",
+      "macAddress": "MAC98E7F468D436",
+      "hostId": "Kisarawe District Ho",
+      "serial": "Cepheid-642618F",
+      "gxAlertDeviceId": 1781
+    }]
+  },
+  {
+    "externalId": "Rangitatu",
+    "latitude": 39.397999,
+    "longitude": -6.985000,
+    "stateName": "Temeke ",
+    "lgaName": "Rangi tatu",
+    "name": "Rangitatu",
+    "shortName": "Rangitatu HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Rangitatu",
+      "shortName": "Rangitatu HC",
+      "macAddress": "MACA0369F5A3013",
+      "hostId": "MBAGALA RANGI TATU H",
+      "serial": "Cepheid-528265K",
+      "gxAlertDeviceId": 1821
+    }]
+  },
+  {
+    "externalId": "Muhimbili National Hospital",
+    "latitude": 39.264999,
+    "longitude": -6.893000,
+    "stateName": "Ilala 2",
+    "lgaName": "Mwaisela",
+    "name": "Muhimbili Hospital",
+    "shortName": "MNH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Muhimbili Hospital",
+      "shortName": "MNH",
+      "macAddress": "MAC6805CA4F0E90",
+      "hostId": "MUHIMBILI NATIONAL H",
+      "serial": "Cepheid-7122CCR",
+      "gxAlertDeviceId": 1833
+    }]
+  },
+  {
+    "externalId": "Mbinga District Hospital",
+    "latitude": 36.251999,
+    "longitude": -10.726000,
+    "stateName": "Ruvuma",
+    "lgaName": "Mbinga",
+    "name": "Mbinga District Hospital",
+    "shortName": "Mbinga DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbinga District Hospital",
+      "shortName": "Mbinga DH",
+      "macAddress": "MAC8CDCD4509F22",
+      "hostId": "MBINGA DISTRICT HOSP",
+      "serial": "Cepheid-5212D6V",
+      "gxAlertDeviceId": 1919
+    }]
+  },
+  {
+    "externalId": "Kasulu District Hospital",
+    "latitude": 30.410999,
+    "longitude": -4.776000,
+    "stateName": "Kigoma",
+    "lgaName": "Kasulu",
+    "name": "Kasulu District Hospital",
+    "shortName": "Kasulu DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kasulu District Hospital",
+      "shortName": "Kasulu DH",
+      "macAddress": "MACF0D5BF0E24A5",
+      "hostId": "KASULU DISTRICT HOSP",
+      "serial": "Cepheid-6426194",
+      "gxAlertDeviceId": 2060
+    }]
+  },
+  {
+    "externalId": "Namanyere District Hospital",
+    "latitude": 31.468000,
+    "longitude": -7.964000,
+    "stateName": "Rukwa",
+    "lgaName": "Nkasi",
+    "name": "Namanyere District Hospital",
+    "shortName": "Namanyere DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Namanyere District Hospital",
+      "shortName": "Namanyere DH",
+      "macAddress": "MAC2C44FD3291E1",
+      "hostId": "NAMANYERE DDH",
+      "serial": "cepheid-HP",
+      "gxAlertDeviceId": 2152
+    }]
+  },
+  {
+    "externalId": "Dr. Attman Hospital",
+    "latitude": 31.448000,
+    "longitude": -7.958000,
+    "stateName": "Rukwa",
+    "lgaName": "Sumbawanga Municipal",
+    "name": "Dr. Attman Hospital",
+    "shortName": "Dr. Attman",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Dr. Attman Hospital",
+      "shortName": "Dr. Attman",
+      "macAddress": "MAC6805CA21E005",
+      "hostId": "Dr atiman Memorial H",
+      "serial": "Cepheid-40611WG",
+      "gxAlertDeviceId": 2154
+    }]
+  },
+  {
+    "externalId": "Consolata Hospital Ikonda",
+    "latitude": -9.411732,
+    "longitude": 34.603359,
+    "stateName": "Njombe",
+    "lgaName": "Makete",
+    "name": "Ikonda Hospital",
+    "shortName": "Consolata Ikonda",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ikonda Hospital",
+      "shortName": "Consolata Ikonda",
+      "macAddress": "MAC5065F33339D8",
+      "hostId": "Consolata Hospital I",
+      "serial": "Cepheid-5471C5J",
+      "gxAlertDeviceId": 2219
+    }]
+  },
+  {
+    "externalId": "Ndanda Hospital",
+    "latitude": 39.123001,
+    "longitude": -10.775000,
+    "stateName": "Mtwara",
+    "lgaName": "Masasi Town",
+    "name": "Ndanda Hospital",
+    "shortName": "Ndanda Hospital",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ndanda Hospital",
+      "shortName": "Ndanda Hospital",
+      "macAddress": "MAC6805CA129BB0",
+      "hostId": "ST BENEDICT NDANDA L",
+      "serial": "Cepheid-3031JF1",
+      "gxAlertDeviceId": 2310
+    }]
+  },
+  {
+    "externalId": "Mkuranga District Hospital",
+    "latitude": 38.641998,
+    "longitude": -7.263000,
+    "stateName": "Pwani",
+    "lgaName": "Mkuranga",
+    "name": "Mkuranga District Hospital",
+    "shortName": "Mkuranga DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mkuranga District Hospital",
+      "shortName": "Mkuranga DH",
+      "macAddress": "MACA0369F861704",
+      "hostId": "mkuranga hospital",
+      "serial": "Cepheid-5501G2M",
+      "gxAlertDeviceId": 2358
+    }]
+  },
+  {
+    "externalId": "KCMC Clinical Laboratory",
+    "latitude": 37.639000,
+    "longitude": -3.760000,
+    "stateName": "Kilimanjaro",
+    "lgaName": "Moshi Municipal",
+    "name": "KCMC Hospital",
+    "shortName": "KCMC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "KCMC Hospital",
+      "shortName": "KCMC",
+      "macAddress": "MAC6805CA64BCEA",
+      "hostId": "KCMC Clinical Labora",
+      "serial": "Cepheid-7382NDH",
+      "gxAlertDeviceId": 2361
+    }]
+  },
+  {
+    "externalId": "Tandahimba District Hospital",
+    "latitude": 39.123001,
+    "longitude": -10.775000,
+    "stateName": "Mtwara",
+    "lgaName": "Tandahimba",
+    "name": "Tandahimba District Hospital",
+    "shortName": "Tandahimba DH ",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tandahimba District Hospital",
+      "shortName": "Tandahimba DH ",
+      "macAddress": "MAC6805CA4F1ACE",
+      "hostId": "TANDAHIMBA DISTRICT",
+      "serial": "Cepheid-7122CD5",
+      "gxAlertDeviceId": 2363
+    }]
+  },
+  {
+    "externalId": "Huruma District Council Hospital",
+    "latitude": 37.639000,
+    "longitude": -3.760000,
+    "stateName": "Kilimanjaro",
+    "lgaName": "Rombo",
+    "name": "Huruma Hospital",
+    "shortName": "Huruma CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Huruma Hospital",
+      "shortName": "Huruma CDH",
+      "macAddress": "MACA0369FD4ED9F",
+      "hostId": "Huruma Coucil Distri",
+      "serial": "Cepheid-70310ZQ",
+      "gxAlertDeviceId": 2364
+    }]
+  },
+  {
+    "externalId": "Mangaka District Hospital",
+    "latitude": 39.123001,
+    "longitude": -10.775000,
+    "stateName": "Mtwara",
+    "lgaName": "Nanyumbu",
+    "name": "Mangaka District Hospital",
+    "shortName": "Mangaka DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mangaka District Hospital",
+      "shortName": "Mangaka DH",
+      "macAddress": "MAC6805CA64B7B9",
+      "hostId": "MANGAKA DISTRICT HOS",
+      "serial": "Cepheid-7382N1J",
+      "gxAlertDeviceId": 2367
+    }]
+  },
+  {
+    "externalId": "St. Francis Hospital",
+    "latitude": 36.988998,
+    "longitude": -7.921000,
+    "stateName": "Morogoro",
+    "lgaName": "Kilombero",
+    "name": "St. Francis Hospital",
+    "shortName": "St. Francis",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "St. Francis Hospital",
+      "shortName": "St. Francis",
+      "macAddress": "MAC1803733380B3",
+      "hostId": "St. Fransis Refferal",
+      "serial": "CepheidB8428V1",
+      "gxAlertDeviceId": 2368
+    }]
+  },
+  {
+    "externalId": "Shinyanga Regional Referral Hospital",
+    "latitude": 32.936001,
+    "longitude": -3.752000,
+    "stateName": "Shinyanga",
+    "lgaName": "Shinyanga Municipal",
+    "name": "Shinyanga Hospital",
+    "shortName": "Shinyanga RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Shinyanga Hospital",
+      "shortName": "Shinyanga RRH",
+      "macAddress": "MACD89D6798706E",
+      "hostId": "SHINYANGA REGIONAL H",
+      "serial": "Cepheid-30797RQ",
+      "gxAlertDeviceId": 2390
+    }]
+  },
+  {
+    "externalId": "Mwananyamala Hospital",
+    "latitude": 39.141998,
+    "longitude": -6.728000,
+    "stateName": "Kinondoni",
+    "lgaName": "Kinondoni Municipal",
+    "name": "Mwananyamala Hospital",
+    "shortName": "Mwananyamala RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mwananyamala Hospital",
+      "shortName": "Mwananyamala RRH",
+      "macAddress": "MAC8CDCD44E5B3F",
+      "hostId": "MWANANYAMALA",
+      "serial": "Cepheid-5212D8Z",
+      "gxAlertDeviceId": 2418
+    }]
+  },
+  {
+    "externalId": "KCRI Biotechnology",
+    "stateName": "Kilimanjaro",
+    "lgaName": "Moshi Municipal",
+    "name": "KCRI Biotechnology",
+    "shortName": "KCRI ",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "KCRI Biotechnology",
+      "shortName": "KCRI ",
+      "macAddress": "MAC8851FB5E8B18",
+      "hostId": "KCRI Biotechnology",
+      "serial": "Cepheid-32406WY",
+      "gxAlertDeviceId": 2475
+    }]
+  },
+  {
+    "externalId": "Mwambani District Hospital",
+    "stateName": "Songwe",
+    "lgaName": "Momba",
+    "name": "Mwambani District Hospital",
+    "shortName": "Mwambani DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mwambani District Hospital",
+      "shortName": "Mwambani DH",
+      "macAddress": "MAC6805CA21DE4C",
+      "hostId": "Mwanbani District Ho",
+      "serial": "Cepheid-40611W2",
+      "gxAlertDeviceId": 2488
+    }]
+  },
+  {
+    "externalId": "Turiani Designated District Hospital",
+    "latitude": 36.988998,
+    "longitude": -7.921000,
+    "stateName": "Morogoro",
+    "lgaName": "Mvomero",
+    "name": "Turiani Hospital",
+    "shortName": "Turiani DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Turiani Hospital",
+      "shortName": "Turiani DH",
+      "macAddress": "MAC6805CA4F0ED5",
+      "hostId": "TURIANI HOSPITAL",
+      "serial": "Cepheid-7122C86",
+      "gxAlertDeviceId": 2495
+    }]
+  },
+  {
+    "externalId": "Kyela District Hospital",
+    "latitude": 33.377998,
+    "longitude": -8.212000,
+    "stateName": "Mbeya",
+    "lgaName": "Kyela",
+    "name": "Kyela District Hospital",
+    "shortName": "Kyela DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kyela District Hospital",
+      "shortName": "Kyela DH",
+      "macAddress": "MACD0BF9CE0DEE5",
+      "hostId": "Kyela District Hospi",
+      "serial": "Cepheid-5040HDC",
+      "gxAlertDeviceId": 2496
+    }]
+  },
+  {
+    "externalId": "Kibena Regional Referral Hospital",
+    "latitude": -9.335740,
+    "longitude": 34.768688,
+    "stateName": "Njombe",
+    "lgaName": "Njombe Town",
+    "name": "Kibena Hospital",
+    "shortName": "Kibena H",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kibena Hospital",
+      "shortName": "Kibena H",
+      "macAddress": "MAC6805CA647253",
+      "hostId": "Njombe",
+      "serial": "Cepheid-7382NHT",
+      "gxAlertDeviceId": 2503
+    }]
+  },
+  {
+    "externalId": "Ligula Regional Hospital",
+    "latitude": -10.292220,
+    "longitude": 40.177410,
+    "stateName": "Mtwara",
+    "lgaName": "Mtwara Municipal",
+    "name": "Ligula Hospital",
+    "shortName": "Ligula RH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ligula Hospital",
+      "shortName": "Ligula RH",
+      "macAddress": "MACD4C9EFE59FD4",
+      "hostId": "LIGULA RRHL",
+      "serial": "Cepheid-321BXRS",
+      "gxAlertDeviceId": 2530
+    }]
+  },
+  {
+    "externalId": "Keko Dispensary",
+    "latitude": -6.984657,
+    "longitude": 39.398430,
+    "stateName": "Temeke ",
+    "lgaName": "Keko TB and LP District",
+    "name": "Keko Prison Dispensary",
+    "shortName": "Keko Prison",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Keko Prison Dispensary",
+      "shortName": "Keko Prison",
+      "macAddress": "MACD89D6798900E",
+      "hostId": "KEKO PRISON DISPENSA",
+      "serial": "Cepheid-30797Q8",
+      "gxAlertDeviceId": 2531
+    }]
+  },
+  {
+    "externalId": "Tunduru District Hospital",
+    "latitude": 36.139999,
+    "longitude": -10.792000,
+    "stateName": "Ruvuma",
+    "lgaName": "Tunduru",
+    "name": "Tunduru District Hospital",
+    "shortName": "Tunduru DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tunduru District Hospital",
+      "shortName": "Tunduru DH",
+      "macAddress": "MAC180373336754",
+      "hostId": "TUNDURU DISTRICT HOS",
+      "serial": "Cepheid-PC",
+      "gxAlertDeviceId": 2667
+    }]
+  },
+  {
+    "externalId": "Maweni Prison",
+    "latitude": -5.114760,
+    "longitude": 39.018219,
+    "stateName": "Tanga",
+    "lgaName": "Tanga City",
+    "name": "Maweni Prison",
+    "shortName": "Maweni Prison",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Maweni Prison",
+      "shortName": "Maweni Prison",
+      "macAddress": "MAC6805CA646978",
+      "hostId": "Maweni Prison",
+      "serial": "Cepheid-7382ND2",
+      "gxAlertDeviceId": 3250
+    }]
+  },
+  {
+    "externalId": "Muheza District Hospital",
+    "latitude": -5.216447,
+    "longitude": 38.279461,
+    "stateName": "Tanga",
+    "lgaName": "Muheza",
+    "name": "Muheza District Hospital",
+    "shortName": "Muheza DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Muheza District Hospital",
+      "shortName": "Muheza DH",
+      "macAddress": "MAC6805CA4E2D48",
+      "hostId": "Muheza designated Di",
+      "serial": "Cepheid-71020GM",
+      "gxAlertDeviceId": 3251
+    }]
+  },
+  {
+    "externalId": "Handeni District Hospital",
+    "latitude": -5.216447,
+    "longitude": 38.279461,
+    "stateName": "Tanga",
+    "lgaName": "Handeni Town",
+    "name": "Handeni District Hospital",
+    "shortName": "Handeni DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Handeni District Hospital",
+      "shortName": "Handeni DH",
+      "macAddress": "MACA0369FD4E9C9",
+      "hostId": "Handeni District Hos",
+      "serial": "Cepheid-70310ZH",
+      "gxAlertDeviceId": 3253
+    }]
+  },
+  {
+    "externalId": "Lushoto District Hospital",
+    "latitude": -5.216447,
+    "longitude": 38.279457,
+    "stateName": "Tanga",
+    "lgaName": "Lushoto",
+    "name": "Lushoto District Hospital",
+    "shortName": "Lushoto DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Lushoto District Hospital",
+      "shortName": "Lushoto DH",
+      "macAddress": "MAC309C23FAEB78",
+      "hostId": "Lushoto District Hos",
+      "serial": "CPHD-J07QJ59",
+      "gxAlertDeviceId": 3258
+    }]
+  },
+  {
+    "externalId": "Shirati KMT Hospital",
+    "latitude": -1.853199,
+    "longitude": 34.399590,
+    "stateName": "Mara",
+    "lgaName": "Rorya",
+    "name": "Shirati KMT Hospital",
+    "shortName": "Shirati KMT",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Shirati KMT Hospital",
+      "shortName": "Shirati KMT",
+      "macAddress": "MACA0369FD4EBD5",
+      "hostId": "SHIRATI KMT HOSPITAL",
+      "serial": "Cepheid-70310W2",
+      "gxAlertDeviceId": 3375
+    }]
+  },
+  {
+    "externalId": "Kigamboni Health Centre",
+    "latitude": -6.984657,
+    "longitude": 39.398430,
+    "stateName": "Temeke ",
+    "lgaName": "Kigamboni",
+    "name": "Kigamboni Health Centre",
+    "shortName": "Kigamboni HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kigamboni Health Centre",
+      "shortName": "Kigamboni HC",
+      "macAddress": "MAC6805CA4F089A",
+      "hostId": "816236 KIGAMBONI HEA",
+      "serial": "Cepheid-7122CCJ",
+      "gxAlertDeviceId": 3381
+    }]
+  },
+  {
+    "externalId": "Hindu Mandal Hospital",
+    "stateName": "Ilala 2",
+    "lgaName": "Private Hospitals",
+    "name": "Hindu Mandal Hospital",
+    "shortName": "Hindu Mandal",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Hindu Mandal Hospital",
+      "shortName": "Hindu Mandal",
+      "macAddress": "MAC6805CA4F0B78",
+      "hostId": "hindu Mandal Hospita",
+      "serial": "Cepheid-7122CBJ",
+      "gxAlertDeviceId": 3386
+    }]
+  },
+  {
+    "externalId": "Chato District Hospital",
+    "latitude": -3.277630,
+    "longitude": 31.899340,
+    "stateName": "Geita",
+    "lgaName": "Chato",
+    "name": "Chato District Hospital",
+    "shortName": "Chato DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Chato District Hospital",
+      "shortName": "Chato DH",
+      "macAddress": "MACB00CD1C4CA90",
+      "hostId": "CHATO DISTRICT HOSPI",
+      "serial": "Cepheid-9F04683",
+      "gxAlertDeviceId": 3391
+    }]
+  },
+  {
+    "externalId": "Makiungu Hospital",
+    "latitude": -5.745349,
+    "longitude": 34.497463,
+    "stateName": "Singida",
+    "lgaName": "Ikungi",
+    "name": "Makiungu Hospital",
+    "shortName": "Makiungu CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Makiungu Hospital",
+      "shortName": "Makiungu CDH",
+      "macAddress": "MAC6805CA4F19C0",
+      "hostId": "MAKIUNGU CDH",
+      "serial": "Cepheid-7122CF0",
+      "gxAlertDeviceId": 3394
+    }]
+  },
+  {
+    "externalId": "Namtumbo District Hospital",
+    "latitude": 36.139999,
+    "longitude": -10.792000,
+    "stateName": "Ruvuma",
+    "lgaName": "Namtumbo",
+    "name": "Namtumbo District Hospital",
+    "shortName": "Namtumbo DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Namtumbo District Hospital",
+      "shortName": "Namtumbo DH",
+      "macAddress": "MAC2C44FD2DD54A",
+      "hostId": "Namtumbo District Ho",
+      "serial": "Cepheid-40611W5",
+      "gxAlertDeviceId": 3395
+    }]
+  },
+  {
+    "externalId": "Songea District Hospital",
+    "latitude": 36.139999,
+    "longitude": -10.792000,
+    "stateName": "Ruvuma",
+    "lgaName": "Songea Municipal",
+    "name": "Ruvuma Regional Referral Hospital",
+    "shortName": "Ruvuma RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ruvuma Regional Referral Hospital",
+      "shortName": "Ruvuma RRH",
+      "macAddress": "MAC6805CA2375AB",
+      "hostId": "Songea Regional Reff",
+      "serial": "Cepheid-4071D9R",
+      "gxAlertDeviceId": 3396
+    }]
+  },
+  {
+    "externalId": "Longido Health Centre",
+    "latitude": -2.967245,
+    "longitude": 35.916821,
+    "stateName": "Arusha",
+    "lgaName": "Longido",
+    "name": "Longido Health Centre",
+    "shortName": "Longido HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Longido Health Centre",
+      "shortName": "Longido HC",
+      "macAddress": "MAC6805CA4ABF57",
+      "hostId": "Longido Health Cente",
+      "serial": "Cepheid-7122C6P",
+      "gxAlertDeviceId": 3397
+    }]
+  },
+  {
+    "externalId": "Bukombe District Hospital",
+    "latitude": -3.311645,
+    "longitude": 31.899441,
+    "stateName": "Geita",
+    "lgaName": "Bukombe",
+    "name": "Bukombe District Hospital",
+    "shortName": "Bukombe DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Bukombe District Hospital",
+      "shortName": "Bukombe DH",
+      "macAddress": "MACA0369F8884F6",
+      "hostId": "Bukombe District Hos",
+      "serial": "Cepheid-PC",
+      "gxAlertDeviceId": 3398
+    }]
+  },
+  {
+    "externalId": "Tunduma Health Centre",
+    "stateName": "Songwe",
+    "lgaName": "Tunduma Town",
+    "name": "Tunduma Health Centre",
+    "shortName": "Tunduma HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tunduma Health Centre",
+      "shortName": "Tunduma HC",
+      "macAddress": "MAC6805CA8E9B44",
+      "hostId": "TUNDUMA HEALTH CENTR",
+      "serial": "Cepheid-8471VTV",
+      "gxAlertDeviceId": 3400
+    }]
+  },
+  {
+    "externalId": "Mvumi Mission",
+    "stateName": "Dodoma",
+    "lgaName": "Chamwino",
+    "name": "Mvumi Mission",
+    "shortName": "Mvumi Mission",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mvumi Mission",
+      "shortName": "Mvumi Mission",
+      "macAddress": "MAC6805CA4F0EC5",
+      "hostId": "DCT MVUMI DDH LAB",
+      "serial": "DESKTOP-R38O6NI",
+      "gxAlertDeviceId": 3404
+    }]
+  },
+  {
+    "externalId": "Mbarali District Hospital",
+    "latitude": -8.259375,
+    "longitude": 33.318008,
+    "stateName": "Mbeya",
+    "lgaName": "Mbarali",
+    "name": "Mbarali District Hospital",
+    "shortName": "Mbarali DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbarali District Hospital",
+      "shortName": "Mbarali DH",
+      "macAddress": "MAC6805CA5FB963",
+      "hostId": "MBARALI DISTRICT HOS",
+      "serial": "Cepheid-7331QTM",
+      "gxAlertDeviceId": 3409
+    }]
+  },
+  {
+    "externalId": "Sokoine Hospital",
+    "latitude": 38.409000,
+    "longitude": -9.479000,
+    "stateName": "Lindi",
+    "lgaName": "Lindi Municipal",
+    "name": "Sokoine Hospital",
+    "shortName": "Sokoine RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Sokoine Hospital",
+      "shortName": "Sokoine RRH",
+      "macAddress": "MACD4C9EFE5DF45",
+      "hostId": "SOKOINE REGIONAL REF",
+      "serial": "Cepheid-321BXVG",
+      "gxAlertDeviceId": 3412
+    }]
+  },
+  {
+    "externalId": "Oltrument District Hospital",
+    "latitude": -2.959364,
+    "longitude": 35.905231,
+    "stateName": "Arusha",
+    "lgaName": "Arusha",
+    "name": "Oltrument District Hospital",
+    "shortName": "Oltrument DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Oltrument District Hospital",
+      "shortName": "Oltrument DH",
+      "macAddress": "MAC6805CA64BCDD",
+      "hostId": "OLTRUMET HOSPITAL",
+      "serial": "Cepheid-7382NDV",
+      "gxAlertDeviceId": 3413
+    }]
+  },
+  {
+    "externalId": "St. Carolus Hospital",
+    "latitude": -5.745349,
+    "longitude": 34.497463,
+    "stateName": "Singida",
+    "lgaName": "Singida (Rural)",
+    "name": "St. Carolus Hospital",
+    "shortName": "St. Carolus ",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "St. Carolus Hospital",
+      "shortName": "St. Carolus ",
+      "macAddress": "MAC6805CA4F0861",
+      "hostId": "St Carolus Hospital",
+      "serial": "Cepheid-7122CF1",
+      "gxAlertDeviceId": 3414
+    }]
+  },
+  {
+    "externalId": "Manyara Hospital",
+    "latitude": -4.211562,
+    "longitude": 35.748932,
+    "stateName": "Manyara",
+    "lgaName": "Babati",
+    "name": "Manyara Hospital",
+    "shortName": "Manyara RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Manyara Hospital",
+      "shortName": "Manyara RRH",
+      "macAddress": "MACA0369FD4B383",
+      "hostId": "MANYARA RRH",
+      "serial": "Cepheid-7051895",
+      "gxAlertDeviceId": 3417
+    }]
+  },
+  {
+    "externalId": "Tumaini District Hospital",
+    "latitude": -4.532309,
+    "longitude": 36.551308,
+    "stateName": "Manyara",
+    "lgaName": "Hanang",
+    "name": "Tumaini District Hospital",
+    "shortName": "Tumaini",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tumaini District Hospital",
+      "shortName": "Tumaini",
+      "macAddress": "MACA0369FD4EBC1",
+      "hostId": "TUMAINI HOSPITAL",
+      "serial": "Cepheid-70310XJ",
+      "gxAlertDeviceId": 3418
+    }]
+  },
+  {
+    "externalId": "Urambo District Hospital",
+    "latitude": -5.297173,
+    "longitude": 32.823025,
+    "stateName": "Tabora",
+    "lgaName": "Urambo",
+    "name": "Urambo District Hospital",
+    "shortName": "Urambo DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Urambo District Hospital",
+      "shortName": "Urambo DH",
+      "macAddress": "MACA0369FD4F7DE",
+      "hostId": "URAMBO DISTRICT HOSP",
+      "serial": "Cepheid-70518B2",
+      "gxAlertDeviceId": 3419
+    }]
+  },
+  {
+    "externalId": "Sikonge Hospital",
+    "latitude": -5.297173,
+    "longitude": 32.823021,
+    "stateName": "Tabora",
+    "lgaName": "Sikonge",
+    "name": "Sikonge Hospital",
+    "shortName": "Sikonge DDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Sikonge Hospital",
+      "shortName": "Sikonge DDH",
+      "macAddress": "MAC6805CA63C1A7",
+      "hostId": "SIKONGE CDH",
+      "serial": "Cepheid-7382NCH",
+      "gxAlertDeviceId": 3420
+    }]
+  },
+  {
+    "externalId": "Dareda Hospital",
+    "latitude": -4.532309,
+    "longitude": 36.551308,
+    "stateName": "Manyara",
+    "lgaName": "Babati",
+    "name": "Dareda Hospital",
+    "shortName": "Dareda CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Dareda Hospital",
+      "shortName": "Dareda CDH",
+      "macAddress": "MAC00D861624E9E",
+      "hostId": "DAREDA DESGNATED HOS",
+      "serial": "CPHD-J09327V",
+      "gxAlertDeviceId": 3421
+    }]
+  },
+  {
+    "externalId": "Igunga District Hospital",
+    "latitude": -5.297173,
+    "longitude": 32.823025,
+    "stateName": "Tabora",
+    "lgaName": "Igunga",
+    "name": "Igunga District Hospital",
+    "shortName": "Igunga DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Igunga District Hospital",
+      "shortName": "Igunga DH",
+      "macAddress": "MAC6805CA4ABAA9",
+      "hostId": "IGUNGA DISTRICT HOSP",
+      "serial": "Cepheid-7091D2N",
+      "gxAlertDeviceId": 3426
+    }]
+  },
+  {
+    "externalId": "MAMC Mloganzila",
+    "latitude": 38.248051,
+    "longitude": -82.188637,
+    "stateName": "Ubungo",
+    "name": "MAMC Mloganzila",
+    "shortName": "MAMC Mloganzila",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "MAMC Mloganzila",
+      "shortName": "MAMC Mloganzila",
+      "macAddress": "MAC6805CA64BF1E",
+      "hostId": "Mloganzila Hospital",
+      "serial": "Cepheid-7382ND9",
+      "gxAlertDeviceId": 3428
+    }]
+  },
+  {
+    "externalId": "Singida Hospital",
+    "latitude": -4.812430,
+    "longitude": 34.743141,
+    "stateName": "Singida",
+    "lgaName": "Singida Municipal",
+    "name": "Singida Hospital",
+    "shortName": "Singida RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Singida Hospital",
+      "shortName": "Singida RRH",
+      "macAddress": "MACA0369F4A4733",
+      "hostId": "SINGIDA RRH",
+      "serial": "Cepheid-4421K6R",
+      "gxAlertDeviceId": 3430
+    }]
+  },
+  {
+    "externalId": "Kiomboi District Hospital",
+    "latitude": -5.745349,
+    "longitude": 34.497463,
+    "stateName": "Singida",
+    "lgaName": "Iramba",
+    "name": "Kiomboi District Hospital",
+    "shortName": "Kiomboi DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kiomboi District Hospital",
+      "shortName": "Kiomboi DH",
+      "macAddress": "MAC6805CA4F1952",
+      "hostId": "KIOMBOI DISTRICT HOS",
+      "serial": "Cepheid-7122CC0",
+      "gxAlertDeviceId": 3433
+    }]
+  },
+  {
+    "externalId": "Same District Hospital",
+    "latitude": -3.755265,
+    "longitude": 37.635368,
+    "stateName": "Kilimanjaro",
+    "lgaName": "Same",
+    "name": "Same District Hospital",
+    "shortName": "Same DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Same District Hospital",
+      "shortName": "Same DH",
+      "macAddress": "MAC6805CA4F0DB1",
+      "hostId": "SAME DISTRICT HOSPIT",
+      "serial": "Cepheid-7122C6F",
+      "gxAlertDeviceId": 3435
+    }]
+  },
+  {
+    "externalId": "Levolosi Health Centre",
+    "latitude": 35.917000,
+    "longitude": -2.967000,
+    "stateName": "Arusha",
+    "lgaName": "Arusha City",
+    "name": "Levolosi Health Centre",
+    "shortName": "Levolosi HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Levolosi Health Centre",
+      "shortName": "Levolosi HC",
+      "macAddress": "MAC2C44FD32BA77",
+      "hostId": "levolosi hc",
+      "serial": "CEPHEID-PC",
+      "gxAlertDeviceId": 3450
+    }]
+  },
+  {
+    "externalId": "Mkomaindo District Hospital",
+    "latitude": -10.778614,
+    "longitude": 39.148121,
+    "stateName": "Mtwara",
+    "lgaName": "Masasi",
+    "name": "Mkomaindo District Hospital",
+    "shortName": "Mkomaindo DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mkomaindo District Hospital",
+      "shortName": "Mkomaindo DH",
+      "macAddress": "MAC6805CA63C591",
+      "hostId": "MKOMAINDO TC HOSPITA",
+      "serial": "Cepheid-7382NLT",
+      "gxAlertDeviceId": 3458
+    }]
+  },
+  {
+    "externalId": "Chunya District Hospital",
+    "latitude": 33.381001,
+    "longitude": -8.229000,
+    "stateName": "Mbeya",
+    "lgaName": "Chunya",
+    "name": "Chunya District Hospital",
+    "shortName": "Chunya DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Chunya District Hospital",
+      "shortName": "Chunya DH",
+      "macAddress": "MAC6805CA21DEFB",
+      "hostId": "CHUNYA DISTRICT HOSP",
+      "serial": "CHUNYADH-PC",
+      "gxAlertDeviceId": 3471
+    }]
+  },
+  {
+    "externalId": "Mnazi Mmoja Health Centre",
+    "latitude": 39.141998,
+    "longitude": -6.917000,
+    "stateName": "Ilala 1",
+    "lgaName": "Mnazi Mmoja",
+    "name": "Mnazi Mmoja Health Centre",
+    "shortName": "Mnazi Mmmoja HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mnazi Mmoja Health Centre",
+      "shortName": "Mnazi Mmmoja HC",
+      "macAddress": "MAC6805CA2370F8",
+      "hostId": "Mnazi Mmmoja Hospita",
+      "serial": "Cepheid-4071D9J",
+      "gxAlertDeviceId": 3490
+    }]
+  },
+  {
+    "externalId": "Mpwapwa District Hospital",
+    "latitude": -5.911935,
+    "longitude": 35.934757,
+    "stateName": "Dodoma",
+    "lgaName": "Mpwapwa",
+    "name": "Mpwapwa District Hospital",
+    "shortName": "Mpwapwa DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mpwapwa District Hospital",
+      "shortName": "Mpwapwa DH",
+      "macAddress": "MACA08CFDD645CC",
+      "hostId": "MPWAPWA DISTRICT HOS",
+      "serial": "Cepheid-7122CBL",
+      "gxAlertDeviceId": 3499
+    }]
+  },
+  {
+    "externalId": "Kowaki Hospital",
+    "latitude": -1.853199,
+    "longitude": 34.399590,
+    "stateName": "Mara",
+    "lgaName": "Rorya",
+    "name": "Kowaki Hospital",
+    "shortName": "Kowaki Hosp Labo",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kowaki Hospital",
+      "shortName": "Kowaki Hosp Labo",
+      "macAddress": "MAC6805CA669C2A",
+      "hostId": "Kowaki Hospital Labo",
+      "serial": "Cepheid-7452Q14",
+      "gxAlertDeviceId": 3500
+    }]
+  },
+  {
+    "externalId": "Babati Town Council Hospital",
+    "latitude": -4.211562,
+    "longitude": 35.748932,
+    "stateName": "Manyara",
+    "lgaName": "Babati Town",
+    "name": "Babati Town Council Hospital",
+    "shortName": "Babati TCH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Babati Town Council Hospital",
+      "shortName": "Babati TCH",
+      "macAddress": "MAC2C44FD329061",
+      "hostId": "BABATI TC HOSPITAL",
+      "serial": "MRARAHOSPITAL",
+      "gxAlertDeviceId": 3502
+    }]
+  },
+  {
+    "externalId": "Mkoani Health Centre",
+    "latitude": -7.250099,
+    "longitude": 38.649921,
+    "stateName": "Pwani",
+    "lgaName": "Kibaha Town",
+    "name": "Mkoani Health Centre",
+    "shortName": "Mkoani HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mkoani Health Centre",
+      "shortName": "Mkoani HC",
+      "macAddress": "MAC6805CA8FFD21",
+      "hostId": "Mkoani Health Center",
+      "serial": "Cepheid-8471VRX",
+      "gxAlertDeviceId": 3529
+    }]
+  },
+  {
+    "externalId": "Maweni Hospital",
+    "latitude": -4.801695,
+    "longitude": 30.410919,
+    "stateName": "Kigoma",
+    "lgaName": "Kigoma-Ujiji Municipal",
+    "name": "Maweni Hospital",
+    "shortName": "Maweni RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Maweni Hospital",
+      "shortName": "Maweni RRH",
+      "macAddress": "MAC00D8615E7186",
+      "hostId": "Maweni Regional Hosp",
+      "serial": "MRRHL-PC",
+      "gxAlertDeviceId": 3548
+    }]
+  },
+  {
+    "externalId": "Kibaya District Hospital",
+    "latitude": -4.532309,
+    "longitude": 36.551308,
+    "stateName": "Manyara",
+    "lgaName": "Kiteto",
+    "name": "Kibaya District Hospital",
+    "shortName": "Kibaya DC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kibaya District Hospital",
+      "shortName": "Kibaya DC",
+      "macAddress": "MAC6805CA4F09B9",
+      "hostId": "KIBAYA DISTRICT HOSP",
+      "serial": "Cepheid-7122CD1",
+      "gxAlertDeviceId": 3556
+    }]
+  },
+  {
+    "externalId": "St. Gasper Hospital",
+    "latitude": -5.745349,
+    "longitude": 34.497459,
+    "stateName": "Singida",
+    "lgaName": "Manyoni",
+    "name": "St. Gasper Hospital",
+    "shortName": "St. Gasper RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "St. Gasper Hospital",
+      "shortName": "St. Gasper RRH",
+      "macAddress": "MAC",
+      "hostId": "ST GASPAR REFERRAL A",
+      "serial": "DESKTOP-3INFRIM",
+      "gxAlertDeviceId": 3579
+    }]
+  },
+  {
+    "externalId": "MBEYA ZONAL REFERRAL",
+    "latitude": 33.381001,
+    "longitude": -8.229000,
+    "stateName": "Mbeya",
+    "lgaName": "Mbeya City",
+    "name": "Mbeya Referral Hospital",
+    "shortName": "Mbeya Referral",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbeya Referral Hospital",
+      "shortName": "Mbeya Referral",
+      "macAddress": "MACDC4A3E3A56DC",
+      "hostId": "MBEYA ZONAL REFERRAL",
+      "serial": "User-PC",
+      "gxAlertDeviceId": 3594
+    }]
+  },
+  {
+    "externalId": "Monduli District Hoshpital",
+    "latitude": 35.917000,
+    "longitude": -2.967000,
+    "stateName": "Arusha",
+    "lgaName": "Monduli",
+    "name": "Monduli District Hohpital",
+    "shortName": "Monduli DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Monduli District Hohpital",
+      "shortName": "Monduli DH",
+      "macAddress": "MAC70B5E85C0348",
+      "hostId": "Monduli District Hos",
+      "serial": "DESKTOP-G1E8DUR",
+      "gxAlertDeviceId": 3606
+    }]
+  },
+  {
+    "externalId": "Bagamoyo District Hospital",
+    "latitude": -6.442756,
+    "longitude": 38.903690,
+    "stateName": "Pwani",
+    "lgaName": "Bagamoyo",
+    "name": "Bagamoyo District Hospital",
+    "shortName": "Bagamoyo DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Bagamoyo District Hospital",
+      "shortName": "Bagamoyo DH",
+      "macAddress": "MACA0369FD4B223",
+      "hostId": "BAGAMOYO DC",
+      "serial": "Cepheid-7021MSN",
+      "gxAlertDeviceId": 3622
+    }]
+  },
+  {
+    "externalId": "St. Kizito Hospital",
+    "latitude": -7.902053,
+    "longitude": 37.004105,
+    "stateName": "Morogoro",
+    "lgaName": "Kilosa",
+    "name": "St. Kizito Hospital",
+    "shortName": "St. Kizito",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "St. Kizito Hospital",
+      "shortName": "St. Kizito",
+      "macAddress": "MAC6805CA647094",
+      "hostId": "ST KIZITO HOSP",
+      "serial": "Cepheid-7382N3B",
+      "gxAlertDeviceId": 3623
+    }]
+  },
+  {
+    "externalId": "Tarime District Hospital",
+    "latitude": -1.745804,
+    "longitude": 33.943584,
+    "stateName": "Mara",
+    "lgaName": "Tarime",
+    "name": "Tarime District Hospital",
+    "shortName": "Tarime DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tarime District Hospital",
+      "shortName": "Tarime DH",
+      "macAddress": "MACA0369FD4EA28",
+      "hostId": "TARIME DISTRICT HOSP",
+      "serial": "Cepheid-70310Z5",
+      "gxAlertDeviceId": 3638
+    }]
+  },
+  {
+    "externalId": "Masumbwe Health Centre",
+    "latitude": -3.277630,
+    "longitude": 31.899338,
+    "stateName": "Geita",
+    "lgaName": "Mbogwe",
+    "name": "Masumbwe Health Centre",
+    "shortName": "Masumbwe HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Masumbwe Health Centre",
+      "shortName": "Masumbwe HC",
+      "macAddress": "MAC6805CA63C7E2",
+      "hostId": "MASUMBWE HEALTH CENT",
+      "serial": "Cepheid-7382N5C",
+      "gxAlertDeviceId": 3642
+    }]
+  },
+  {
+    "externalId": "Kaliua Health Centre",
+    "latitude": -5.297173,
+    "longitude": 32.823025,
+    "stateName": "Tabora",
+    "lgaName": "Kaliua",
+    "name": "Kaliua Health Centre",
+    "shortName": "Kaliua HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kaliua Health Centre",
+      "shortName": "Kaliua HC",
+      "macAddress": "MACA0369FD4EA68",
+      "hostId": "KALIUA HEALTH CENTRE",
+      "serial": "Cepheid-70310VS",
+      "gxAlertDeviceId": 3646
+    }]
+  },
+  {
+    "externalId": "Ndala Hospital",
+    "latitude": -5.297173,
+    "longitude": 32.823025,
+    "stateName": "Tabora",
+    "lgaName": "Nzega",
+    "name": "Ndala Hospital",
+    "shortName": "Ndala DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ndala Hospital",
+      "shortName": "Ndala DH",
+      "macAddress": "MAC6805CA6CA11F",
+      "hostId": "NDALA MISSION HOSPIT",
+      "serial": "Cepheid-7481KMX",
+      "gxAlertDeviceId": 3649
+    }]
+  },
+  {
+    "externalId": "Ushetu Health Center",
+    "stateName": "Shinyanga",
+    "lgaName": "Kahama",
+    "name": "Ushetu Health Centre",
+    "shortName": "Ushetu HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ushetu Health Centre",
+      "shortName": "Ushetu HC",
+      "macAddress": "MAC6805CA4F0DFD",
+      "hostId": "USHETU H/C",
+      "serial": "Cepheid-7122C84",
+      "gxAlertDeviceId": 3668
+    }]
+  },
+  {
+    "externalId": "Misungwi District Hospital",
+    "latitude": -2.604912,
+    "longitude": 32.742222,
+    "stateName": "Mwanza",
+    "lgaName": "Misungwi",
+    "name": "Misungwi District Hospital",
+    "shortName": "Misungwi DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Misungwi District Hospital",
+      "shortName": "Misungwi DH",
+      "macAddress": "MAC6805CA4F0ECA",
+      "hostId": "MISUNGWI DISTRICT HO",
+      "serial": "HP-PC",
+      "gxAlertDeviceId": 3684
+    }]
+  },
+  {
+    "externalId": "Buzuruga Health Centre",
+    "latitude": -2.517884,
+    "longitude": 32.899101,
+    "stateName": "Mwanza",
+    "lgaName": "Ilemela Municipal",
+    "name": "Buzuruga Health Centre",
+    "shortName": "Buzuruga HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Buzuruga Health Centre",
+      "shortName": "Buzuruga HC",
+      "macAddress": "MAC6805CA4F0FA3",
+      "hostId": "BUZURUGA HEALTH CENT",
+      "serial": "Cepheid-7122C6M",
+      "gxAlertDeviceId": 3685
+    }]
+  },
+  {
+    "externalId": "Magu District Hospital",
+    "latitude": -2.517884,
+    "longitude": 32.899097,
+    "stateName": "Mwanza",
+    "lgaName": "Magu",
+    "name": "Magu District Hospital",
+    "shortName": "Magu DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Magu District Hospital",
+      "shortName": "Magu DH",
+      "macAddress": "MAC6805CA4F09EC",
+      "hostId": "MAGU DISTRICT HOSPIT",
+      "serial": "Cepheid-7122CHG",
+      "gxAlertDeviceId": 3687
+    }]
+  },
+  {
+    "externalId": "Mtowisa Health Centre",
+    "latitude": -8.080380,
+    "longitude": 31.275631,
+    "stateName": "Rukwa",
+    "lgaName": "Sumbawanga (Rural)",
+    "name": "Mtowisa Health Centre",
+    "shortName": "Mtowisa HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mtowisa Health Centre",
+      "shortName": "Mtowisa HC",
+      "macAddress": "MAC6805CA4F0DFC",
+      "hostId": "MTOWISA HEALTH CENTE",
+      "serial": "Cepheid-7122C62",
+      "gxAlertDeviceId": 3703
+    }]
+  },
+  {
+    "externalId": "St. Joseph Hospital",
+    "latitude": -10.733060,
+    "longitude": 36.245220,
+    "stateName": "Ruvuma",
+    "lgaName": "Songea (Rural)",
+    "name": "St. Joseph Peramiho Referral Hospital",
+    "shortName": "Peramiho Hospita",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "St. Joseph Peramiho Referral Hospital",
+      "shortName": "Peramiho Hospita",
+      "macAddress": "MAC6805CA64BD32",
+      "hostId": "St Joseph Mission Ho",
+      "serial": "Cepheid-7382NDT",
+      "gxAlertDeviceId": 3704
+    }]
+  },
+  {
+    "externalId": "Queen of Universal Hospital",
+    "latitude": -5.745349,
+    "longitude": 34.497463,
+    "stateName": "Singida",
+    "lgaName": "Ikungi",
+    "name": "Queen of Universal Hospital",
+    "shortName": "Queen of UH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Queen of Universal Hospital",
+      "shortName": "Queen of UH",
+      "macAddress": "MAC00D861617E54",
+      "hostId": "QUEEN OF UNIVERSE HO",
+      "serial": "CPHD-J08XJW1",
+      "gxAlertDeviceId": 3708
+    }]
+  },
+  {
+    "externalId": "BUGISI HEALTH CENTRE",
+    "latitude": 32.936001,
+    "longitude": -3.752000,
+    "stateName": "Shinyanga",
+    "lgaName": "Shinyanga (Rural)",
+    "name": "Bugisi Health Centre",
+    "shortName": "Bugisi HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Bugisi Health Centre",
+      "shortName": "Bugisi HC",
+      "macAddress": "MAC8CDCD450B642",
+      "hostId": "BUGISI HEALTH CENTRE",
+      "serial": "cepheid-PC",
+      "gxAlertDeviceId": 3709
+    }]
+  },
+  {
+    "externalId": "Litembo Hospital",
+    "latitude": -10.733057,
+    "longitude": 36.245220,
+    "stateName": "Ruvuma",
+    "lgaName": "Mbinga",
+    "name": "Litembo Hospital",
+    "shortName": "Litembo  DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Litembo Hospital",
+      "shortName": "Litembo  DH",
+      "macAddress": "MAC6805CA647318",
+      "hostId": "Litembo  Diocesan Ho",
+      "serial": "Cepheid-7382NKD",
+      "gxAlertDeviceId": 3710
+    }]
+  },
+  {
+    "externalId": "Nindo Health Centre",
+    "latitude": -3.449449,
+    "longitude": 33.270939,
+    "stateName": "Shinyanga",
+    "lgaName": "Shinyanga (Rural)",
+    "name": "Nindo Health Centre",
+    "shortName": "Nindo HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nindo Health Centre",
+      "shortName": "Nindo HC",
+      "macAddress": "MAC6805CA4F0970",
+      "hostId": "NINDO HEALTH CENTRE",
+      "serial": "Cepheid-7122CH1",
+      "gxAlertDeviceId": 3711
+    }]
+  },
+  {
+    "externalId": "Itumba District Hospital",
+    "latitude": -8.033847,
+    "longitude": 32.753910,
+    "stateName": "Songwe",
+    "lgaName": "Ileje",
+    "name": "Itumba District Hospital",
+    "shortName": "Itumba DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Itumba District Hospital",
+      "shortName": "Itumba DH",
+      "macAddress": "MAC6805CA6234CE",
+      "hostId": "Itumba District Hosp",
+      "serial": "Cepheid-7361P9F",
+      "gxAlertDeviceId": 3712
+    }]
+  },
+  {
+    "externalId": "Chalinze Health Centre",
+    "latitude": -7.250099,
+    "longitude": 38.649921,
+    "stateName": "Pwani",
+    "lgaName": "Bagamoyo",
+    "name": "Chalinze Health Centre",
+    "shortName": "Chalinze HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Chalinze Health Centre",
+      "shortName": "Chalinze HC",
+      "macAddress": "MAC10E7C64100AA",
+      "hostId": "CHALINZE HEALTH CENT",
+      "serial": "Cepheid-8471VTN",
+      "gxAlertDeviceId": 3713
+    }]
+  },
+  {
+    "externalId": "Msoga District Hospital",
+    "latitude": -5.043782,
+    "longitude": 39.771870,
+    "stateName": "Pwani",
+    "lgaName": "Bagamoyo",
+    "name": "Msoga District Hospital",
+    "shortName": "Msoga DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Msoga District Hospital",
+      "shortName": "Msoga DH",
+      "macAddress": "MAC6805CA4F08E1",
+      "hostId": "MSOGA DISTRICT HOSPI",
+      "serial": "Cepheid-7122CB6",
+      "gxAlertDeviceId": 3715
+    }]
+  },
+  {
+    "externalId": "Nkwenda Health Centre",
+    "latitude": -1.942651,
+    "longitude": 31.475554,
+    "stateName": "Kagera",
+    "lgaName": "Kyerwa",
+    "name": "Nkwenda Health Centre",
+    "shortName": "Nkwenda HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nkwenda Health Centre",
+      "shortName": "Nkwenda HC",
+      "macAddress": "MAC6805CA4F09CD",
+      "hostId": "NKWENDA HEALTH CENTE",
+      "serial": "Cepheid-7122C7M",
+      "gxAlertDeviceId": 3716
+    }]
+  },
+  {
+    "externalId": "Usevya Health Centre",
+    "latitude": -6.000000,
+    "longitude": 31.000000,
+    "stateName": "Katavi",
+    "lgaName": "Mlele",
+    "name": "Usevya Health Centre",
+    "shortName": "Usevya HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Usevya Health Centre",
+      "shortName": "Usevya HC",
+      "macAddress": "MAC6805CA64B17B",
+      "hostId": "USEVYA HEALTH CENTER",
+      "serial": "Cepheid-7382NFW",
+      "gxAlertDeviceId": 3717
+    }]
+  },
+  {
+    "externalId": "Nyerere Hospital",
+    "latitude": -1.745804,
+    "longitude": 33.943584,
+    "stateName": "Mara",
+    "lgaName": "Serengeti",
+    "name": "Nyerere Hospital",
+    "shortName": "Mugumu DDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nyerere Hospital",
+      "shortName": "Mugumu DDH",
+      "macAddress": "MAC6805CA4F0FEA",
+      "hostId": "NYERERE DDH",
+      "serial": "Cepheid-7122CHL",
+      "gxAlertDeviceId": 3718
+    }]
+  },
+  {
+    "externalId": "Nyakahanga Hospital",
+    "latitude": -1.942651,
+    "longitude": 31.475550,
+    "stateName": "Kagera",
+    "lgaName": "Karagwe",
+    "name": "Nyakahanga Hospital",
+    "shortName": "Nyakahanga CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nyakahanga Hospital",
+      "shortName": "Nyakahanga CDH",
+      "macAddress": "MACA0369FD4F66A",
+      "hostId": "Nyakahanga CDH",
+      "serial": "Cepheid-7050W00",
+      "gxAlertDeviceId": 3719
+    }]
+  },
+  {
+    "externalId": "Mbambabay Health Centre",
+    "latitude": -10.733060,
+    "longitude": 36.245220,
+    "stateName": "Ruvuma",
+    "lgaName": "Nyasa",
+    "name": "Mbambabay Health Centre",
+    "shortName": "Mbambabay HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbambabay Health Centre",
+      "shortName": "Mbambabay HC",
+      "macAddress": "MAC6805CA4F0DC8",
+      "hostId": "Mbambabay Healthy Ce",
+      "serial": "Cepheid-7122CHD",
+      "gxAlertDeviceId": 3724
+    }]
+  },
+  {
+    "externalId": "Inyonga B Health Centre",
+    "latitude": -6.000000,
+    "longitude": 31.000000,
+    "stateName": "Katavi",
+    "lgaName": "Mlele",
+    "name": "Inyonga B Health Centre",
+    "shortName": "Inyonga B HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Inyonga B Health Centre",
+      "shortName": "Inyonga B HC",
+      "macAddress": "MAC6805CA4F0977",
+      "hostId": "INYONGA B HEALTH CEN",
+      "serial": "Cepheid-7122C7R",
+      "gxAlertDeviceId": 3732
+    }]
+  },
+  {
+    "externalId": "Biharamulo Hospital",
+    "stateName": "Kagera",
+    "lgaName": "Biharamulo",
+    "name": "Biharamulo Hospital",
+    "shortName": "Biharamulo CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Biharamulo Hospital",
+      "shortName": "Biharamulo CDH",
+      "macAddress": "MACA0369FD4EB93",
+      "hostId": "BIHARAMULO CDH",
+      "serial": "Cepheid-70310XR",
+      "gxAlertDeviceId": 3733
+    }]
+  },
+  {
+    "externalId": "Mlandizi Health Centre",
+    "latitude": -7.250099,
+    "longitude": 38.649921,
+    "stateName": "Pwani",
+    "lgaName": "Kibaha",
+    "name": "Mlandizi Health Centre",
+    "shortName": "Mlandizi HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mlandizi Health Centre",
+      "shortName": "Mlandizi HC",
+      "macAddress": "MAC6805CA4F08DD",
+      "hostId": "MLANDIZI HEALTH CENT",
+      "serial": "Cepheid-7122C9Z",
+      "gxAlertDeviceId": 3734
+    }]
+  },
+  {
+    "externalId": "Ngokolo Health Centre",
+    "latitude": -3.449449,
+    "longitude": 33.270939,
+    "stateName": "Shinyanga",
+    "lgaName": "Kahama Town",
+    "name": "Ngokolo Health Centre",
+    "shortName": "Ngokolo HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ngokolo Health Centre",
+      "shortName": "Ngokolo HC",
+      "macAddress": "MAC6805CA66A672",
+      "hostId": "NGOKOLO HEALTH CENTR",
+      "serial": "Cepheid-7452Q69",
+      "gxAlertDeviceId": 3744
+    }]
+  },
+  {
+    "externalId": "Mwamapalala Health Centre",
+    "latitude": -3.156971,
+    "longitude": 34.255371,
+    "stateName": "Simiyu",
+    "lgaName": "Itilima",
+    "name": "Mwamapalala Health Centre",
+    "shortName": "Mwamapalala HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mwamapalala Health Centre",
+      "shortName": "Mwamapalala HC",
+      "macAddress": "MAC6805CA669C4F",
+      "hostId": "MWAMAPALA",
+      "serial": "Cepheid-7452Q6T",
+      "gxAlertDeviceId": 3747
+    }]
+  },
+  {
+    "externalId": "Dr. Jakaya Kikwete District Hospital",
+    "stateName": "Shinyanga",
+    "lgaName": "Kishapu",
+    "name": "Dr. Jakaya Kikwete District Hospital",
+    "shortName": "Jakaya MKDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Dr. Jakaya Kikwete District Hospital",
+      "shortName": "Jakaya MKDH",
+      "macAddress": "MAC6805CA4F09F3",
+      "hostId": "JAKAYA MRISHO KIKWET",
+      "serial": "Cepheid-7122C6Y",
+      "gxAlertDeviceId": 3748
+    }]
+  },
+  {
+    "externalId": "Izimbya Hospital",
+    "latitude": -1.942651,
+    "longitude": 31.475550,
+    "stateName": "Kagera",
+    "lgaName": "Bukoba (Rural)",
+    "name": "Izimbya Hospital",
+    "shortName": "Izimbya CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Izimbya Hospital",
+      "shortName": "Izimbya CDH",
+      "macAddress": "MAC6805CA4F1AA1",
+      "hostId": "IZIMBYA CD HOSPITAL",
+      "serial": "Cepheid-7122C6H",
+      "gxAlertDeviceId": 3754
+    }]
+  },
+  {
+    "externalId": "Nassa Health Centre",
+    "latitude": -3.156971,
+    "longitude": 34.255371,
+    "stateName": "Simiyu",
+    "lgaName": "Busega",
+    "name": "Nassa Health Centre",
+    "shortName": "Nassa HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nassa Health Centre",
+      "shortName": "Nassa HC",
+      "macAddress": "MACA0369FD4EBAE",
+      "hostId": "NASSA HEALTH CENTRE",
+      "serial": "Cepheid-70310VX",
+      "gxAlertDeviceId": 3776
+    }]
+  },
+  {
+    "externalId": "Chimala Mission Hospital",
+    "latitude": -8.259375,
+    "longitude": 33.318008,
+    "stateName": "Mbeya",
+    "lgaName": "Mbarali",
+    "name": "Chimala Mission Hospital",
+    "shortName": "Chimala MH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Chimala Mission Hospital",
+      "shortName": "Chimala MH",
+      "macAddress": "MAC6805CA8E9A65",
+      "hostId": "Chimala Mission Hosp",
+      "serial": "Cepheid-8471W51",
+      "gxAlertDeviceId": 3789
+    }]
+  },
+  {
+    "externalId": "Isanga Prison Dispensary",
+    "latitude": 38.247532,
+    "longitude": -82.187393,
+    "stateName": "Dodoma",
+    "lgaName": "Dodoma Municipal",
+    "name": "Isanga Prison Dispensary",
+    "shortName": "Isanga Prison",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Isanga Prison Dispensary",
+      "shortName": "Isanga Prison",
+      "macAddress": "MAC6805CA64BD2E",
+      "hostId": "ISANGA HEALTH CENTRE",
+      "serial": "ISANGAPRISONDISPENSARY",
+      "gxAlertDeviceId": 3807
+    }]
+  },
+  {
+    "externalId": "Mnazi Mmoja Hospital",
+    "latitude": 39.192001,
+    "longitude": -6.164000,
+    "stateName": "Zanzibar Urban West",
+    "lgaName": "Mjini [Town]",
+    "name": "Mnazi Mmoja Hospital",
+    "shortName": "MMHZ",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mnazi Mmoja Hospital",
+      "shortName": "MMHZ",
+      "macAddress": "MAC6C3BE535BC2E",
+      "hostId": "MNAZI MMOJA ZNZ",
+      "serial": "Cepheid-31916TG",
+      "gxAlertDeviceId": 3821
+    }]
+  },
+  {
+    "externalId": "KAREMA HEALTH CENTRE",
+    "latitude": -8.080380,
+    "longitude": 31.275631,
+    "stateName": "Rukwa",
+    "lgaName": "Sumbawanga (Rural)",
+    "name": "Karema Health Centre",
+    "shortName": "Karema HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Karema Health Centre",
+      "shortName": "Karema HC",
+      "macAddress": "MAC6805CA4F0DD6",
+      "hostId": "KAREMA HEALTH CENTRE",
+      "serial": "Cepheid-7122CFP",
+      "gxAlertDeviceId": 3829
+    }]
+  },
+  {
+    "externalId": "Kivunge District Hospital",
+    "stateName": "Zanzibar Urban West",
+    "lgaName": "Magharibi [West]",
+    "name": "Kivunge District Hospital",
+    "shortName": "Kivunge DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kivunge District Hospital",
+      "shortName": "Kivunge DH",
+      "macAddress": "MAC00D86167C1B9",
+      "hostId": "KIVUNGE DISTRICT HOS",
+      "serial": "CPHD-9F02329",
+      "gxAlertDeviceId": 3848
+    }]
+  },
+  {
+    "externalId": "Bemjamin Mkapa Hospital",
+    "latitude": -6.181244,
+    "longitude": 35.748161,
+    "stateName": "Dodoma",
+    "lgaName": "Dodoma Municipal",
+    "name": "Benjamin Mkapa Hospital",
+    "shortName": "BMH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Benjamin Mkapa Hospital",
+      "shortName": "BMH",
+      "macAddress": "MAC6805CA6476C5",
+      "hostId": "BENJAMIN MKAPA HOSPI",
+      "serial": "Cepheid-7382NGN",
+      "gxAlertDeviceId": 3863
+    }]
+  },
+  {
+    "externalId": "Morogoro Hospital",
+    "latitude": 37.665001,
+    "longitude": -6.786000,
+    "stateName": "Morogoro",
+    "lgaName": "Morogoro Municipal",
+    "name": "Morogoro Hospital",
+    "shortName": "Morogoro RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Morogoro Hospital",
+      "shortName": "Morogoro RRH",
+      "macAddress": "MACC4E98414213D",
+      "hostId": "Morogoro Regional Referral Hospital",
+      "serial": "DESKTOP-TJJL3OM",
+      "gxAlertDeviceId": 3882
+    }]
+  },
+  {
+    "externalId": "Geita Hospital",
+    "latitude": 32.215000,
+    "longitude": -2.883000,
+    "stateName": "Geita",
+    "lgaName": "Geita",
+    "name": "Geita Hospital",
+    "shortName": "Geita RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Geita Hospital",
+      "shortName": "Geita RRH",
+      "macAddress": "MAC00D8615E736D",
+      "hostId": "GEITA REGIONAL REFER",
+      "serial": "CPHD-J08QR5D",
+      "gxAlertDeviceId": 3918
+    }]
+  },
+  {
+    "externalId": "Kairuki Hospital",
+    "latitude": -6.824000,
+    "longitude": 39.249001,
+    "stateName": "Ilala 2",
+    "lgaName": "Private Hospitals",
+    "name": "Kairuki Hospital",
+    "shortName": "Kairuki Hospital",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kairuki Hospital",
+      "shortName": "Kairuki Hospital",
+      "macAddress": "MAC6805CA4F0E52",
+      "hostId": "KAIRUKI HOSPITAL",
+      "serial": "Cepheid-7122CF5",
+      "gxAlertDeviceId": 3941
+    }]
+  },
+  {
+    "externalId": "Vijibweni Health Centre",
+    "latitude": -6.869000,
+    "longitude": 39.261002,
+    "stateName": "Temeke ",
+    "lgaName": "Kigamboni",
+    "name": "Vijibweni Health Centre",
+    "shortName": "Vijibweni HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Vijibweni Health Centre",
+      "shortName": "Vijibweni HC",
+      "macAddress": "MACA0369FD4EE4F",
+      "hostId": "VIJITBWENI HOSPITAL",
+      "serial": "DESKTOP-531OTE5",
+      "gxAlertDeviceId": 3943
+    }]
+  },
+  {
+    "externalId": "TMJ Hospital",
+    "latitude": -6.824000,
+    "longitude": 39.249001,
+    "stateName": "Ilala 2",
+    "lgaName": "Private Hospitals",
+    "name": "TMJ Hospital",
+    "shortName": "TMJ ",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "TMJ Hospital",
+      "shortName": "TMJ ",
+      "macAddress": "MACA08CFDD645EC",
+      "hostId": "TMJ DIAGONISTIC CENT",
+      "serial": "Cepheid-7122CCY",
+      "gxAlertDeviceId": 3944
+    }]
+  },
+  {
+    "externalId": "Manyoni District Hospital",
+    "latitude": -5.745349,
+    "longitude": 34.497459,
+    "stateName": "Singida",
+    "lgaName": "Manyoni",
+    "name": "Manyoni District Hospital",
+    "shortName": "Manyoni DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Manyoni District Hospital",
+      "shortName": "Manyoni DH",
+      "macAddress": "MAC8CEC4B5116D8",
+      "hostId": "MANYONI DH LABORATOR",
+      "serial": "DESKTOP-BB9IP17",
+      "gxAlertDeviceId": 3946
+    }]
+  },
+  {
+    "externalId": "Lupembe Health Centre",
+    "stateName": "Njombe",
+    "lgaName": "Njombe",
+    "name": "Lupembe Health Centre",
+    "shortName": "Lupembe HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Lupembe Health Centre",
+      "shortName": "Lupembe HC",
+      "macAddress": "MAC6805CA4F0AA3",
+      "hostId": "LUPEMBE HEALTH CENTE",
+      "serial": "Cepheid-7122C8J",
+      "gxAlertDeviceId": 3949
+    }]
+  },
+  {
+    "externalId": "Aga Khan Hospital",
+    "latitude": -6.824000,
+    "longitude": 39.249001,
+    "stateName": "Ilala 2",
+    "lgaName": "Private Hospitals",
+    "name": "Aga Khan Hospital",
+    "shortName": "Aga Khan Hospita",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Aga Khan Hospital",
+      "shortName": "Aga Khan Hospita",
+      "macAddress": "MACA0369F90797F",
+      "hostId": "AGAKHAN HOSPITAL",
+      "serial": "GeneXpertSystem",
+      "gxAlertDeviceId": 3955
+    }]
+  },
+  {
+    "externalId": "Nyangao Hospital",
+    "latitude": -9.477178,
+    "longitude": 38.382481,
+    "stateName": "Lindi",
+    "lgaName": "Lindi (Rural)",
+    "name": "Nyangao Hospital",
+    "shortName": "St.Walburg's DDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nyangao Hospital",
+      "shortName": "St.Walburg's DDH",
+      "macAddress": "MAC6805CA4F09C8",
+      "hostId": "ST. WALBURG'S NYANGAO REFERRAL HOSPITAL",
+      "serial": "Cepheid-7122CD8",
+      "gxAlertDeviceId": 3958
+    }]
+  },
+  {
+    "externalId": "Brigita Dispensary",
+    "latitude": 38.247532,
+    "longitude": -82.187393,
+    "stateName": "Lindi",
+    "lgaName": "Lindi Municipal",
+    "name": "Brigita Dispensary",
+    "shortName": "Brigita Dispensa",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Brigita Dispensary",
+      "shortName": "Brigita Dispensa",
+      "macAddress": "MAC6805CA64BFA1",
+      "hostId": "BRIGITA DISPENSARY L",
+      "serial": "Cepheid-7382N2Q",
+      "gxAlertDeviceId": 3961
+    }]
+  },
+  {
+    "externalId": "Nzega District Hospital",
+    "latitude": -5.297173,
+    "longitude": 32.823021,
+    "stateName": "Tabora",
+    "lgaName": "Nzega",
+    "name": "Nzega District Hospital",
+    "shortName": "Nzega DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nzega District Hospital",
+      "shortName": "Nzega DH",
+      "macAddress": "MAC6805CA4F0DA0",
+      "hostId": "NZEGA DISTRICT  HOSPITAL",
+      "serial": "Cepheid-7122C68",
+      "gxAlertDeviceId": 3962
+    }]
+  },
+  {
+    "externalId": "Ruangwa District Hospital",
+    "latitude": -9.477178,
+    "longitude": 38.382484,
+    "stateName": "Lindi",
+    "lgaName": "Ruangwa",
+    "name": "Ruangwa District Hospital",
+    "shortName": "Ruangwa DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ruangwa District Hospital",
+      "shortName": "Ruangwa DH",
+      "macAddress": "MAC6805CA4F0ED9",
+      "hostId": "Ruangwa District Hos",
+      "serial": "Cepheid-7122CBR",
+      "gxAlertDeviceId": 3964
+    }]
+  },
+  {
+    "externalId": "Nachingwea District Hospital",
+    "latitude": 38.247532,
+    "longitude": -82.187393,
+    "stateName": "Lindi",
+    "lgaName": "Nachingwea",
+    "name": "Nachingwea District Hospital",
+    "shortName": "Nachingwea DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nachingwea District Hospital",
+      "shortName": "Nachingwea DH",
+      "macAddress": "MAC6805CA4F1BBD",
+      "hostId": "Nachingwea District",
+      "serial": "Cepheid-7122C85",
+      "gxAlertDeviceId": 3965
+    }]
+  },
+  {
+    "externalId": "Ludewa District Hospital",
+    "latitude": -9.411732,
+    "longitude": 34.603359,
+    "stateName": "Njombe",
+    "lgaName": "Ludewa",
+    "name": "Ludewa District Hospital",
+    "shortName": "Ludewa DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ludewa District Hospital",
+      "shortName": "Ludewa DH",
+      "macAddress": "MAC6805CA4F1954",
+      "hostId": "LUDEWA DISTRICT HOSP",
+      "serial": "Cepheid-7122C7N",
+      "gxAlertDeviceId": 3966
+    }]
+  },
+  {
+    "externalId": "Kasanga Health Centre",
+    "latitude": -8.388431,
+    "longitude": 35.161388,
+    "stateName": "Iringa",
+    "lgaName": "Mufindi",
+    "name": "Kasanga Health Centre",
+    "shortName": "Kasanga HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kasanga Health Centre",
+      "shortName": "Kasanga HC",
+      "macAddress": "MAC6805CA4F09E2",
+      "hostId": "KASANGA HEALTH CENTR",
+      "serial": "Cepheid-7122CHJ",
+      "gxAlertDeviceId": 3971
+    }]
+  },
+  {
+    "externalId": "Tumbi Hospital",
+    "latitude": 39.324001,
+    "longitude": -2.480000,
+    "stateName": "Pwani",
+    "lgaName": "Kibaha",
+    "name": "Tumbi Hospital",
+    "shortName": "Tumbi Hospital",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tumbi Hospital",
+      "shortName": "Tumbi Hospital",
+      "macAddress": "MAC6805CA2376CE",
+      "hostId": "TUMBI REGION REFFERA",
+      "serial": "Cepheid-4071D8W",
+      "gxAlertDeviceId": 3973
+    }]
+  },
+  {
+    "externalId": "Liwale District Hospital",
+    "latitude": -9.477178,
+    "longitude": 38.382484,
+    "stateName": "Lindi",
+    "lgaName": "Liwale",
+    "name": "Liwale District Hospital",
+    "shortName": "Liwale DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Liwale District Hospital",
+      "shortName": "Liwale DH",
+      "macAddress": "MAC6805CA64B93D",
+      "hostId": "Liwale District Hosp",
+      "serial": "Cepheid-7382N6L",
+      "gxAlertDeviceId": 3974
+    }]
+  },
+  {
+    "externalId": "Usokami Health Centre",
+    "latitude": -8.388431,
+    "longitude": 35.161388,
+    "stateName": "Iringa",
+    "lgaName": "Mufindi",
+    "name": "Usokami Health Centre",
+    "shortName": "Usokami HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Usokami Health Centre",
+      "shortName": "Usokami HC",
+      "macAddress": "MAC6805CA64BF90",
+      "hostId": "USOKAMI HEALTH CENTR",
+      "serial": "Cepheid-7382NFV",
+      "gxAlertDeviceId": 3976
+    }]
+  },
+  {
+    "externalId": "Makete District Hospital",
+    "latitude": -9.411732,
+    "longitude": 34.603359,
+    "stateName": "Njombe",
+    "lgaName": "Makete",
+    "name": "Makete District Hospital",
+    "shortName": "Makete DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Makete District Hospital",
+      "shortName": "Makete DH",
+      "macAddress": "MAC6805CA61FC02",
+      "hostId": "MAKETE DISRICT HOSPI",
+      "serial": "Cepheid-7361P8X",
+      "gxAlertDeviceId": 3978
+    }]
+  },
+  {
+    "externalId": "Kinyonga District Hospital",
+    "latitude": -9.477178,
+    "longitude": 38.382484,
+    "stateName": "Lindi",
+    "lgaName": "Kilwa",
+    "name": "Kinyonga District Hospital",
+    "shortName": "Kinyonga DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kinyonga District Hospital",
+      "shortName": "Kinyonga DH",
+      "macAddress": "MAC6805CA4E35D3",
+      "hostId": "Kinyonga District Hospital Kilwa",
+      "serial": "Cepheid-71020F6",
+      "gxAlertDeviceId": 3980
+    }]
+  },
+  {
+    "externalId": "Ilembula Hospital",
+    "latitude": -9.411732,
+    "longitude": 34.603359,
+    "stateName": "Njombe",
+    "lgaName": "Wanging'ombe",
+    "name": "Ilembula Hospital",
+    "shortName": "Ilembula CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ilembula Hospital",
+      "shortName": "Ilembula CDH",
+      "macAddress": "MAC6805CA4F1AED",
+      "hostId": "ILEMBULA LUTHERAN HO",
+      "serial": "Cepheid-7122C6B",
+      "gxAlertDeviceId": 3982
+    }]
+  },
+  {
+    "externalId": "Ngerengere Health Centre",
+    "latitude": -7.902053,
+    "longitude": 37.004105,
+    "stateName": "Morogoro",
+    "lgaName": "Morogoro (Rural)",
+    "name": "Ngerengere Health Centre",
+    "shortName": "Ngerengere HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ngerengere Health Centre",
+      "shortName": "Ngerengere HC",
+      "macAddress": "MAC40B0341D596C",
+      "hostId": "NGERENGERE HEALTH CE",
+      "serial": "Cepheid-7382N43",
+      "gxAlertDeviceId": 3986
+    }]
+  },
+  {
+    "externalId": "Mafinga District Hospital",
+    "stateName": "Iringa",
+    "lgaName": "Mafinga Town",
+    "name": "Mafinga District Hospital",
+    "shortName": "Mafinga DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mafinga District Hospital",
+      "shortName": "Mafinga DH",
+      "macAddress": "MAC6805CA63BABA",
+      "hostId": "MAFINGA DISTRICT HOS",
+      "serial": "Cepheid-7382N1M",
+      "gxAlertDeviceId": 3987
+    }]
+  },
+  {
+    "externalId": "Kibaoni Health Centre",
+    "stateName": "Morogoro",
+    "lgaName": "Kilombero",
+    "name": "Kibaoni Health Centre",
+    "shortName": "Kibaoni HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kibaoni Health Centre",
+      "shortName": "Kibaoni HC",
+      "macAddress": "MAC40B0343D2A32",
+      "hostId": "KIBAONI HEALTH CENTR",
+      "serial": "Cepheid-7382NC8",
+      "gxAlertDeviceId": 3989
+    }]
+  },
+  {
+    "externalId": "Mahenge District Hospital",
+    "latitude": -7.902053,
+    "longitude": 37.004101,
+    "stateName": "Morogoro",
+    "lgaName": "Ulanga",
+    "name": "Mahenge District Hospital",
+    "shortName": "Mahenge DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mahenge District Hospital",
+      "shortName": "Mahenge DH",
+      "macAddress": "MAC6805CA4F19A0",
+      "hostId": "MAHENGE DISTRICT HOS",
+      "serial": "Cepheid-7122CB0",
+      "gxAlertDeviceId": 3992
+    }]
+  },
+  {
+    "externalId": "Mbulu District Hospital",
+    "latitude": -4.532309,
+    "longitude": 36.551311,
+    "stateName": "Manyara",
+    "lgaName": "Mbulu",
+    "name": "Mbulu District Hospital",
+    "shortName": "Mbulu TCH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbulu District Hospital",
+      "shortName": "Mbulu TCH",
+      "macAddress": "MACA0369FD4EBC7",
+      "hostId": "MBULU TOWN COUNCIL H",
+      "serial": "Cepheid-70310W0",
+      "gxAlertDeviceId": 3994
+    }]
+  },
+  {
+    "externalId": "Tosamaganga Hospital",
+    "latitude": -8.388431,
+    "longitude": 35.161388,
+    "stateName": "Iringa",
+    "lgaName": "Iringa (Rural)",
+    "name": "Tosamaganga Hospital",
+    "shortName": "Tosamaganga CDH ",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tosamaganga Hospital",
+      "shortName": "Tosamaganga CDH ",
+      "macAddress": "MAC6805CA6469BC",
+      "hostId": "TOSAMAGANGA CDH  LAB",
+      "serial": "Cepheid-7382N3X",
+      "gxAlertDeviceId": 3995
+    }]
+  },
+  {
+    "externalId": "Lugala Hospital",
+    "latitude": -7.902053,
+    "longitude": 37.004101,
+    "stateName": "Morogoro",
+    "lgaName": "Ulanga",
+    "name": "Lugala Hospital",
+    "shortName": "Lugala DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Lugala Hospital",
+      "shortName": "Lugala DH",
+      "macAddress": "MAC6C4B90EAEDD0",
+      "hostId": "LUGALA LUTHERAN HOSP",
+      "serial": "DESKTOP-Q6AKKMT",
+      "gxAlertDeviceId": 3997
+    }]
+  },
+  {
+    "externalId": "Ilula Hospital",
+    "stateName": "Iringa",
+    "lgaName": "Kilolo",
+    "name": "Ilula Hospital",
+    "shortName": "Ilula CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ilula Hospital",
+      "shortName": "Ilula CDH",
+      "macAddress": "MACA0369FD4B0DC",
+      "hostId": "ILULA LUTHERAN HOSPI",
+      "serial": "Cepheid-70310TT",
+      "gxAlertDeviceId": 3999
+    }]
+  },
+  {
+    "externalId": "Lilungu Prison Dispensary",
+    "stateName": "Mtwara",
+    "lgaName": "Mtwara Municipal",
+    "name": "Lilungu Prison Dispensary",
+    "shortName": "Magereza Lilungu",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Lilungu Prison Dispensary",
+      "shortName": "Magereza Lilungu",
+      "macAddress": "MAC6805CA647516",
+      "hostId": "MAGEREZA LILUNGU ZAH",
+      "serial": "Cepheid-7382NKB",
+      "gxAlertDeviceId": 4003
+    }]
+  },
+  {
+    "externalId": "Kharumwa Health Centre",
+    "stateName": "Geita",
+    "lgaName": "Nyang'hwale",
+    "name": "Kharumwa Health Centre",
+    "shortName": "Kharumwa HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kharumwa Health Centre",
+      "shortName": "Kharumwa HC",
+      "macAddress": "MAC6805CA4F194F",
+      "hostId": "KHARUMWA HEALTH CENT",
+      "serial": "Cepheid-7122C64",
+      "gxAlertDeviceId": 4004
+    }]
+  },
+  {
+    "externalId": "Nanguruwe Health Centre",
+    "stateName": "Mtwara",
+    "lgaName": "Mtwara (Rural)",
+    "name": "Nanguruwe Health Centre",
+    "shortName": "Nanguruwe RHC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nanguruwe Health Centre",
+      "shortName": "Nanguruwe RHC",
+      "macAddress": "MAC6805CA4F0ED3",
+      "hostId": "NANGURUWE DC HOSPITA",
+      "serial": "Cepheid-7122CD0",
+      "gxAlertDeviceId": 4006
+    }]
+  },
+  {
+    "externalId": "Mkalama District Hospital",
+    "latitude": -5.745349,
+    "longitude": 34.497459,
+    "stateName": "Singida",
+    "lgaName": "Mkalama",
+    "name": "Mkalama District Hospital",
+    "shortName": "Mkalama DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mkalama District Hospital",
+      "shortName": "Mkalama DH",
+      "macAddress": "MAC84E714007E1C",
+      "hostId": "MKALAMA DISTRIVT HOS",
+      "serial": "CPHD-J09326C",
+      "gxAlertDeviceId": 4016
+    }]
+  },
+  {
+    "externalId": "Pathology Laboratory MMH Zanzibar",
+    "latitude": 39.199001,
+    "longitude": -6.165000,
+    "stateName": "Zanzibar Urban West",
+    "lgaName": "Mjini [Town]",
+    "name": "Pathology Laboratory MMH Zanzibar",
+    "shortName": "PL MMH ZNZ",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Pathology Laboratory MMH Zanzibar",
+      "shortName": "PL MMH ZNZ",
+      "macAddress": "MAC98E7F468D706",
+      "hostId": "PATHOLOGY LABORATORY",
+      "serial": "Cepheid-642626F",
+      "gxAlertDeviceId": 4017
+    }]
+  },
+  {
+    "externalId": "St. Gemma Hospital",
+    "latitude": -6.181244,
+    "longitude": 35.748161,
+    "stateName": "Dodoma",
+    "lgaName": "Dodoma Municipal",
+    "name": "St. Gemma Hospital",
+    "shortName": "St. Gemma CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "St. Gemma Hospital",
+      "shortName": "St. Gemma CDH",
+      "macAddress": "MAC6805CA69A1A2",
+      "hostId": "ST.GEMMA HOSPITAL",
+      "serial": "Cepheid-7481KMH",
+      "gxAlertDeviceId": 4019
+    }]
+  },
+  {
+    "externalId": "Benjamin Mkapa Hospital",
+    "latitude": -6.179118,
+    "longitude": 35.746819,
+    "stateName": "Dodoma",
+    "lgaName": "Dodoma Municipal",
+    "name": "Benjamin Mkapa Hospital",
+    "shortName": "BMH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Benjamin Mkapa Hospital",
+      "shortName": "BMH",
+      "macAddress": "MAC6805CA6476C5",
+      "hostId": "BENJAMINI MKAPA HOSP",
+      "serial": "DESKTOP-179PJUL",
+      "gxAlertDeviceId": 4055
+    }]
+  },
+  {
+    "externalId": "Dr. Attman Hospital",
+    "stateName": "Rukwa",
+    "lgaName": "Sumbawanga Municipal",
+    "name": "Dr. Attman Hospital",
+    "shortName": "Dr. Attman",
+    "timeZoneId": "E. Africa Standard Time"
+  },
+  {
+    "externalId": "Sumbawanga Regional Referral Hospital",
+    "latitude": 31.348000,
+    "longitude": -7.033000,
+    "stateName": "Rukwa",
+    "lgaName": "Sumbawanga Municipal",
+    "name": "Sumbawanga Regional Referral Hospital",
+    "shortName": "Sumbawanga  RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Sumbawanga Regional Referral Hospital",
+      "shortName": "Sumbawanga  RRH",
+      "macAddress": "MAC6805CA12A0E1",
+      "hostId": "SUMBAWANGA RRH",
+      "serial": "DESKTOP-5TNJA7M",
+      "gxAlertDeviceId": 4103
+    }]
+  },
+  {
+    "externalId": "ICAP Geita Mobile Clinic",
+    "latitude": -3.277630,
+    "longitude": 31.899338,
+    "stateName": "Geita",
+    "lgaName": "Geita",
+    "name": "ICAP Geita Mobile Clinic",
+    "shortName": "ICAP Geita",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "ICAP Geita Mobile Clinic",
+      "shortName": "ICAP Geita",
+      "macAddress": "MAC",
+      "hostId": "ICAP GEITA REGION MO",
+      "serial": "Cepheid-64262CR",
+      "gxAlertDeviceId": 4133
+    }]
+  },
+  {
+    "externalId": "Nzera District Hospital",
+    "stateName": "Geita",
+    "lgaName": "Geita",
+    "name": "Nzera District Hospital",
+    "shortName": "Nzera DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nzera District Hospital",
+      "shortName": "Nzera DH",
+      "macAddress": "MAC6805CA16A79A",
+      "hostId": "NZERA DISTRICT HOSPI",
+      "serial": "Cepheid-Cepheid",
+      "gxAlertDeviceId": 4135
+    }]
+  },
+  {
+    "externalId": "Mbalizi DD Hospital",
+    "latitude": -8.259375,
+    "longitude": 33.318008,
+    "stateName": "Mbeya",
+    "lgaName": "Mbeya City",
+    "name": "Mbalizi DD Hospital",
+    "shortName": "Mbalizi DDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbalizi DD Hospital",
+      "shortName": "Mbalizi DDH",
+      "macAddress": "MAC6805CA8EA5CF",
+      "hostId": "MBALIZI DDH",
+      "serial": "DESKTOP-RQKCQ3F",
+      "gxAlertDeviceId": 4139
+    }]
+  },
+  {
+    "externalId": "Nkoma Health Centre",
+    "latitude": -3.156971,
+    "longitude": 34.255371,
+    "stateName": "Simiyu",
+    "lgaName": "Itilima",
+    "name": "Nkoma Health Centre",
+    "shortName": "Nkoma HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nkoma Health Centre",
+      "shortName": "Nkoma HC",
+      "macAddress": "MACF48E3889A4E5",
+      "hostId": "NKOMA HEALTH CENTER",
+      "serial": "Cepheid-Itilima",
+      "gxAlertDeviceId": 4148
+    }]
+  },
+  {
+    "externalId": "Dodoma Regional Referral Hospital",
+    "latitude": -6.173490,
+    "longitude": 35.746521,
+    "stateName": "Dodoma",
+    "lgaName": "Dodoma Municipal",
+    "name": "Dodoma Regional Referral Hospital",
+    "shortName": "Dodoma RRRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Dodoma Regional Referral Hospital",
+      "shortName": "Dodoma RRRH",
+      "macAddress": "MAC3CD92B4C60B9",
+      "hostId": "Dodoma Regional Refe",
+      "serial": "Cepheid-804134",
+      "gxAlertDeviceId": 4167
+    }]
+  },
+  {
+    "externalId": "Village of Hope Health Centre",
+    "latitude": -5.911935,
+    "longitude": 35.934761,
+    "stateName": "Dodoma",
+    "lgaName": "Dodoma Municipal",
+    "name": "Village of Hope Health Centre",
+    "shortName": "Village of Hope",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Village of Hope Health Centre",
+      "shortName": "Village of Hope",
+      "macAddress": "MACA0369F906EB4",
+      "hostId": "VILLAGE OF HOPE HC",
+      "serial": "Cepheid-60912VD",
+      "gxAlertDeviceId": 4168
+    }]
+  },
+  {
+    "externalId": "Musoma Hospital",
+    "latitude": -1.745804,
+    "longitude": 33.943581,
+    "stateName": "Mara",
+    "lgaName": "Musoma Municipal",
+    "name": "Musoma Hospital",
+    "shortName": "Musoma RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Musoma Hospital",
+      "shortName": "Musoma RRH",
+      "macAddress": "MAC10604B6DE9AD",
+      "hostId": "MUSOMA RRH",
+      "serial": "DESKTOP-C20BTER",
+      "gxAlertDeviceId": 4171
+    }]
+  },
+  {
+    "externalId": "Katoro Health Center",
+    "latitude": -3.277630,
+    "longitude": 31.899338,
+    "stateName": "Geita",
+    "lgaName": "Geita",
+    "name": "Katoro Health Center",
+    "shortName": "Katoro HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Katoro Health Center",
+      "shortName": "Katoro HC",
+      "macAddress": "MAC6805CA5A4E87",
+      "hostId": "katoro hc",
+      "serial": "Cepheid-7282LKD",
+      "gxAlertDeviceId": 4172
+    }]
+  },
+  {
+    "externalId": "Mtimbira Health Centre",
+    "latitude": -7.902053,
+    "longitude": 37.004101,
+    "stateName": "Morogoro",
+    "lgaName": "Ulanga",
+    "name": "Mtimbira Health Centre",
+    "shortName": "Mtimbira HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mtimbira Health Centre",
+      "shortName": "Mtimbira HC",
+      "macAddress": "MACA08CFDD3D101",
+      "hostId": "MTIMBIRA HEALTH CENT",
+      "serial": "DESKTOP-Q6AKKMT",
+      "gxAlertDeviceId": 4175
+    }]
+  },
+  {
+    "externalId": "Mawenzi Hospital",
+    "latitude": -3.344810,
+    "longitude": 37.340031,
+    "stateName": "Kilimanjaro",
+    "lgaName": "Moshi Municipal",
+    "name": "Mawenzi Hospital",
+    "shortName": "Mawenzi RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mawenzi Hospital",
+      "shortName": "Mawenzi RRH",
+      "macAddress": "MAC6805CA237C21",
+      "hostId": "Mawenzi Reginal Refe",
+      "serial": "MAWENZILAB-PC",
+      "gxAlertDeviceId": 4181
+    }]
+  },
+  {
+    "externalId": "Ipogolo Health Centre",
+    "latitude": -8.388431,
+    "longitude": 35.161392,
+    "stateName": "Iringa",
+    "lgaName": "Iringa Municipal",
+    "name": "Ipogolo Health Centre",
+    "shortName": "Ipogolo HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ipogolo Health Centre",
+      "shortName": "Ipogolo HC",
+      "macAddress": "MAC10E7C640FC55",
+      "hostId": "IPONGOLO HEALTH CENT",
+      "serial": "Cepheid",
+      "gxAlertDeviceId": 4200
+    }]
+  },
+  {
+    "externalId": "Chake Chake Hospital",
+    "latitude": -5.313136,
+    "longitude": 39.741348,
+    "stateName": "Pemba South",
+    "lgaName": "Chake Chake",
+    "name": "Chake Chake Hospital",
+    "shortName": "ChakeChake Pemba",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Chake Chake Hospital",
+      "shortName": "ChakeChake Pemba",
+      "macAddress": "MACA0369FD4B7AB",
+      "hostId": "CHAKE CHAKE HOSPITAL",
+      "serial": "Cepheid-7032988",
+      "gxAlertDeviceId": 4201
+    }]
+  },
+  {
+    "externalId": "Nyasho Health Centre",
+    "stateName": "Mara",
+    "lgaName": "Musoma Municipal",
+    "name": "Nyasho Health Centre",
+    "shortName": "Nyasho HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nyasho Health Centre",
+      "shortName": "Nyasho HC",
+      "macAddress": "MACA0369FD4BDC5",
+      "hostId": "NYASHO H/C",
+      "serial": "Cepheid-70310V8",
+      "gxAlertDeviceId": 4220
+    }]
+  },
+  {
+    "externalId": "Katavi Regional Referral Hospital",
+    "latitude": 31.333000,
+    "longitude": -6.400000,
+    "stateName": "Katavi",
+    "lgaName": "Mpanda Town",
+    "name": "Katavi Regional Referral Hospital",
+    "shortName": "Katavi RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Katavi Regional Referral Hospital",
+      "shortName": "Katavi RRH",
+      "macAddress": "MAC3417EBA6FCB0",
+      "hostId": "KATAVI RRH (MPANDA H",
+      "serial": "DESKTOP-DCU6EP1",
+      "gxAlertDeviceId": 4221
+    }]
+  },
+  {
+    "externalId": "Igunga District Hospital",
+    "latitude": -5.297173,
+    "longitude": 32.823021,
+    "stateName": "Tabora",
+    "lgaName": "Igunga",
+    "name": "Igunga District Hospital",
+    "shortName": "Igunga DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Igunga District Hospital",
+      "shortName": "Igunga DH",
+      "macAddress": "MAC6805CA4ABAA9",
+      "hostId": "IGUNGA DH",
+      "serial": "Cepheid-7091D2N",
+      "gxAlertDeviceId": 4224
+    }]
+  },
+  {
+    "externalId": "Rubya Hospital",
+    "latitude": -1.942651,
+    "longitude": 31.475554,
+    "stateName": "Kagera",
+    "lgaName": "Muleba",
+    "name": "Rubya Hospital",
+    "shortName": "Rubya CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Rubya Hospital",
+      "shortName": "Rubya CDH",
+      "macAddress": "MACA0369FD4E9FE",
+      "hostId": "RUBYA DDH",
+      "serial": "Cepheid-70310XP",
+      "gxAlertDeviceId": 4225
+    }]
+  },
+  {
+    "externalId": "Nkinga Hospital",
+    "latitude": -5.297173,
+    "longitude": 32.823021,
+    "stateName": "Tabora",
+    "lgaName": "Igunga",
+    "name": "Nkinga Hospital",
+    "shortName": "Nkinga Hospital",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nkinga Hospital",
+      "shortName": "Nkinga Hospital",
+      "macAddress": "MAC6805CA66A3BB",
+      "hostId": "NKINGA HOSPITAL",
+      "serial": "Cepheid-7452PZ1",
+      "gxAlertDeviceId": 4231
+    }]
+  },
+  {
+    "externalId": "Maswa District Hospital",
+    "latitude": -3.156971,
+    "longitude": 34.255371,
+    "stateName": "Simiyu",
+    "lgaName": "Maswa",
+    "name": "Maswa District Hospital",
+    "shortName": "Maswa DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Maswa District Hospital",
+      "shortName": "Maswa DH",
+      "macAddress": "MACB083FEA62642",
+      "hostId": "MASWA DISTRICT HOSP",
+      "serial": "MDC",
+      "gxAlertDeviceId": 4234
+    }]
+  },
+  {
+    "externalId": "ICAP Mwanza Mobile Clinic",
+    "latitude": -2.604912,
+    "longitude": 32.742222,
+    "stateName": "Mwanza",
+    "lgaName": "Nyamagana Municipal",
+    "name": "ICAP Mwanza Mobile Clinic",
+    "shortName": "ICAP MOBILE",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "ICAP Mwanza Mobile Clinic",
+      "shortName": "ICAP MOBILE",
+      "macAddress": "MAC98E7F468D475",
+      "hostId": "ICAP MOBILE CLINIC M",
+      "serial": "Cepheid-64262D7",
+      "gxAlertDeviceId": 4248
+    }]
+  },
+  {
+    "externalId": "Tukuyu District Hospital",
+    "latitude": -8.259375,
+    "longitude": 33.318008,
+    "stateName": "Mbeya",
+    "lgaName": "Rungwe",
+    "name": "Tukuyu District Hospital",
+    "shortName": "Tukuyu DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tukuyu District Hospital",
+      "shortName": "Tukuyu DH",
+      "macAddress": "MAC6805CA21DF05",
+      "hostId": "TUKUYU DISTRICT HOSP",
+      "serial": "DESKTOP-RG301GI",
+      "gxAlertDeviceId": 4250
+    }]
+  },
+  {
+    "externalId": "Tandale Health Centre",
+    "stateName": "Kinondoni",
+    "lgaName": "Tandale I",
+    "name": "Tandale Health Centre",
+    "shortName": "Tandale HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tandale Health Centre",
+      "shortName": "Tandale HC",
+      "macAddress": "MACF875A4CCF508",
+      "hostId": "TANDALE HEALTH CENTE",
+      "serial": "Cepheid-0F07108",
+      "gxAlertDeviceId": 4268
+    }]
+  },
+  {
+    "externalId": "Mbezi Health Centre",
+    "stateName": "Ubungo",
+    "name": "Mbezi Health Centre",
+    "shortName": "Mbezi HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mbezi Health Centre",
+      "shortName": "Mbezi HC",
+      "macAddress": "MACF875A4B5614A",
+      "hostId": "MBEZI HEALTH CENTER",
+      "serial": "Cepheid-0F06929",
+      "gxAlertDeviceId": 4269
+    }]
+  },
+  {
+    "externalId": "Bunju Health Centre",
+    "latitude": -6.795000,
+    "longitude": 39.265999,
+    "stateName": "Kinondoni",
+    "lgaName": "Kinondoni Municipal",
+    "name": "Bunju Health Centre",
+    "shortName": "Bunju HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Bunju Health Centre",
+      "shortName": "Bunju HC",
+      "macAddress": "MACF875A4B57728",
+      "hostId": "BUNJU HEALTH CENTER",
+      "serial": "Cepheid-0F06919",
+      "gxAlertDeviceId": 4303
+    }]
+  },
+  {
+    "externalId": "Nyamiaga Hospital",
+    "latitude": -1.942651,
+    "longitude": 31.475550,
+    "stateName": "Kagera",
+    "lgaName": "Ngara",
+    "name": "Nyamiaga Hospital",
+    "shortName": "Nyamiaga",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Nyamiaga Hospital",
+      "shortName": "Nyamiaga",
+      "macAddress": "MAC6805CA4F0C3A",
+      "hostId": "NYAMIAGA DH",
+      "serial": "Cepheid-7122CF3",
+      "gxAlertDeviceId": 4318
+    }]
+  },
+  {
+    "externalId": "Tanga Regional Referral Hospital",
+    "latitude": 38.247894,
+    "longitude": -82.188126,
+    "stateName": "Tanga",
+    "lgaName": "Tanga City",
+    "name": "Tanga Regional Referral Hospital",
+    "shortName": "Tanga RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Tanga Regional Referral Hospital",
+      "shortName": "Tanga RRH",
+      "macAddress": "MAC6805CA16A799",
+      "hostId": "Tanga Regional Refer",
+      "serial": "DESKTOP-FJN6OER",
+      "gxAlertDeviceId": 4319
+    }]
+  },
+  {
+    "externalId": "Sengerema Desinated District Hospital",
+    "latitude": -2.604912,
+    "longitude": 32.742222,
+    "stateName": "Mwanza",
+    "lgaName": "Sengerema",
+    "name": "Sengerema Desinated District Hospital",
+    "shortName": "Sengerema DDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Sengerema Desinated District Hospital",
+      "shortName": "Sengerema DDH",
+      "macAddress": "MACF875A4F8D4A3",
+      "hostId": "SENGEREMA DDH",
+      "serial": "Cepheid-0F08105",
+      "gxAlertDeviceId": 4355
+    }]
+  },
+  {
+    "externalId": "St. Gemma Hospital",
+    "latitude": -5.911935,
+    "longitude": 35.934761,
+    "stateName": "Dodoma",
+    "lgaName": "Dodoma Municipal",
+    "name": "St. Gemma Hospital",
+    "shortName": "St. Gemma CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "St. Gemma Hospital",
+      "shortName": "St. Gemma CDH",
+      "macAddress": "MAC6805CA69A1A2",
+      "hostId": "ST.GEMMA HOSPITAL CD",
+      "serial": "Cepheid-7481KMH",
+      "gxAlertDeviceId": 4357
+    }]
+  },
+  {
+    "externalId": "Kibiti District Hospital",
+    "latitude": -7.250099,
+    "longitude": 38.649921,
+    "stateName": "Pwani",
+    "lgaName": "Rufiji",
+    "name": "Kibiti District Hospital",
+    "shortName": "Kibiti DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kibiti District Hospital",
+      "shortName": "Kibiti DH",
+      "macAddress": "MACF875A4B56D9C",
+      "hostId": "kibiti",
+      "serial": "Cepheid-0F06921",
+      "gxAlertDeviceId": 4372
+    }]
+  },
+  {
+    "externalId": "Kibong'oto Infectious Disease Hospital",
+    "latitude": -3.755265,
+    "longitude": 37.635368,
+    "stateName": "Kilimanjaro",
+    "lgaName": "Siha",
+    "name": "Kibong'oto Infectious Disease Hospital",
+    "shortName": "KIDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kibong'oto Infectious Disease Hospital",
+      "shortName": "KIDH",
+      "macAddress": "MAC6805CA61FAB8",
+      "hostId": "Kibong'oto IDHL",
+      "serial": "Cepheid-7361P0Q",
+      "gxAlertDeviceId": 4375
+    }]
+  },
+  {
+    "externalId": "Amana Regional Hospital",
+    "latitude": -6.824000,
+    "longitude": 39.249001,
+    "stateName": "Ilala 1",
+    "lgaName": "Ilala Municipal",
+    "name": "Amana Regional Hospital",
+    "shortName": "AMANA RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Amana Regional Hospital",
+      "shortName": "AMANA RRH",
+      "macAddress": "MAC2CF05DC7782D",
+      "hostId": "AMANA RRH",
+      "serial": "DESKTOP-MVCSITF",
+      "gxAlertDeviceId": 4384
+    }]
+  },
+  {
+    "externalId": "Songambele Health Center",
+    "latitude": -3.156971,
+    "longitude": 34.255371,
+    "stateName": "Simiyu",
+    "lgaName": "Bariadi",
+    "name": "Songambele Health Center",
+    "shortName": "Songambele HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Songambele Health Center",
+      "shortName": "Songambele HC",
+      "macAddress": "MAC6805CA69761F",
+      "hostId": "Songambele Health Ce",
+      "serial": "Cepheid-7452Q3Y",
+      "gxAlertDeviceId": 4386
+    }]
+  },
+  {
+    "externalId": "Simiyu Regional Referral Hospital",
+    "latitude": -3.156971,
+    "longitude": 34.255371,
+    "stateName": "Simiyu",
+    "lgaName": "Bariadi",
+    "name": "Simiyu Regional Referral Hospital",
+    "shortName": "Simiyu RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Simiyu Regional Referral Hospital",
+      "shortName": "Simiyu RRH",
+      "macAddress": "MACF875A4B561E4",
+      "hostId": "SIMIYU RRH",
+      "serial": "Cepheid-0F07102",
+      "gxAlertDeviceId": 4388
+    }]
+  },
+  {
+    "externalId": "Ngudu District Hospital",
+    "latitude": -2.604912,
+    "longitude": 32.742222,
+    "stateName": "Mwanza",
+    "lgaName": "Kwimba",
+    "name": "Ngudu District Hospital",
+    "shortName": "Ngudu DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ngudu District Hospital",
+      "shortName": "Ngudu DH",
+      "macAddress": "MAC",
+      "hostId": "NGUDU DH",
+      "serial": "DESKTOP-CF1SOE9",
+      "gxAlertDeviceId": 4392
+    }]
+  },
+  {
+    "externalId": "Regency Medical Centre",
+    "latitude": 38.248051,
+    "longitude": -82.188637,
+    "stateName": "Ilala 2",
+    "lgaName": "Private Hospitals",
+    "name": "Regency Medical Centre",
+    "shortName": "Regency MC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Regency Medical Centre",
+      "shortName": "Regency MC",
+      "macAddress": "MAC6805CA4F08EA",
+      "hostId": "REGENCY HOSPITAL",
+      "serial": "Cepheid-7122CF4",
+      "gxAlertDeviceId": 4394
+    }]
+  },
+  {
+    "externalId": "Dinyecha Health Centre",
+    "latitude": -10.778610,
+    "longitude": 39.148121,
+    "stateName": "Mtwara",
+    "lgaName": "Mtwara (Rural)",
+    "name": "Dinyecha Health Centre",
+    "shortName": "Dinyecha HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Dinyecha Health Centre",
+      "shortName": "Dinyecha HC",
+      "macAddress": "MAC6805CA64B854",
+      "hostId": "DINYECHA HEALTH CENT",
+      "serial": "Cepheid-7382N3S",
+      "gxAlertDeviceId": 4397
+    }]
+  },
+  {
+    "externalId": "Kondoa District Hospital",
+    "latitude": -5.911935,
+    "longitude": 35.934761,
+    "stateName": "Dodoma",
+    "lgaName": "Kondoa",
+    "name": "Kondoa District Hospital",
+    "shortName": "Kondoa DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kondoa District Hospital",
+      "shortName": "Kondoa DH",
+      "macAddress": "MAC40B0341D7571",
+      "hostId": "KONDOA DISTRICT HOSP",
+      "serial": "Cepheid-7382NFK",
+      "gxAlertDeviceId": 4398
+    }]
+  },
+  {
+    "externalId": "Korogwe District Hospital",
+    "latitude": -5.216280,
+    "longitude": 38.289299,
+    "stateName": "Tanga",
+    "lgaName": "Korogwe Town",
+    "name": "Korogwe District Hospital",
+    "shortName": "Korogwe DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Korogwe District Hospital",
+      "shortName": "Korogwe DH",
+      "macAddress": "DESKTOP-IPA2K8F",
+      "hostId": "KOROGWE TOWN HOSPITAL",
+      "serial": "DESKTOP-IPA2K8F",
+      "gxAlertDeviceId": 4399
+    }]
+  },
+  {
+    "externalId": "Namtumbo Health Centre",
+    "latitude": -10.733060,
+    "longitude": 36.245220,
+    "stateName": "Ruvuma",
+    "lgaName": "Namtumbo",
+    "name": "Namtumbo Health Centre",
+    "shortName": "Namtumbo HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Namtumbo Health Centre",
+      "shortName": "Namtumbo HC",
+      "macAddress": "MAC2C44FD2DD54A",
+      "hostId": "NAMTUMBO HEALTH CENT",
+      "serial": "Cepheid-40611W5",
+      "gxAlertDeviceId": 4404
+    }]
+  },
+  {
+    "externalId": "Mt. Meru Hospital",
+    "latitude": -2.959335,
+    "longitude": 35.905231,
+    "stateName": "Arusha",
+    "lgaName": "Arusha City",
+    "name": "Mt. Meru Hospital",
+    "shortName": "Mt. Meru RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mt. Meru Hospital",
+      "shortName": "Mt. Meru RRH",
+      "macAddress": "MAC6805CA237B1F",
+      "hostId": "mt meru hospital",
+      "serial": "DESKTOP-1KLLT4L",
+      "gxAlertDeviceId": 4406
+    }]
+  },
+  {
+    "externalId": "Kibondo District Hospital",
+    "latitude": 30.410999,
+    "longitude": -4.776000,
+    "stateName": "Kigoma",
+    "lgaName": "Kibondo",
+    "name": "Kibondo District Hospital",
+    "shortName": "Kibondo DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kibondo District Hospital",
+      "shortName": "Kibondo DH",
+      "macAddress": "MAC902E1682F72E",
+      "hostId": "KIBONDO DISRICT HOSPITAL",
+      "serial": "Cepheid-1F23853",
+      "gxAlertDeviceId": 4409
+    }]
+  },
+  {
+    "externalId": "Kongwa District Hospital",
+    "latitude": -5.911935,
+    "longitude": 35.934761,
+    "stateName": "Dodoma",
+    "lgaName": "Kongwa",
+    "name": "Kongwa District Hospital",
+    "shortName": "Kongwa DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kongwa District Hospital",
+      "shortName": "Kongwa DH",
+      "macAddress": "MACD037453F767E",
+      "hostId": "KONGWA DISTRICT HOSP",
+      "serial": "CPHD-J08XJX7",
+      "gxAlertDeviceId": 4412
+    }]
+  },
+  {
+    "externalId": "Mafia District Hospital",
+    "latitude": -7.250099,
+    "longitude": 38.649921,
+    "stateName": "Pwani",
+    "lgaName": "Mafia",
+    "name": "Mafia District Hospital",
+    "shortName": "Mafia DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mafia District Hospital",
+      "shortName": "Mafia DH",
+      "macAddress": "MAC6805CA647298",
+      "hostId": "MAFIA DISTRICT HOSPI",
+      "serial": "Cepheid-7382N64",
+      "gxAlertDeviceId": 4413
+    }]
+  },
+  {
+    "externalId": "Ruanda Prison Dispensary",
+    "latitude": -8.259375,
+    "longitude": 33.318008,
+    "stateName": "Mbeya",
+    "lgaName": "Mbeya City",
+    "name": "Ruanda Prison Dispensary",
+    "shortName": "Ruanda PD ",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Ruanda Prison Dispensary",
+      "shortName": "Ruanda PD ",
+      "macAddress": "MAC902E1682F6C0",
+      "hostId": "RUANDA PRISON DISPENSARY",
+      "serial": "Cepheid-1F23593",
+      "gxAlertDeviceId": 4415
+    }]
+  },
+  {
+    "externalId": "Kilosa District Hospital",
+    "latitude": -7.902053,
+    "longitude": 37.004105,
+    "stateName": "Morogoro",
+    "lgaName": "Kilosa",
+    "name": "Kilosa District Hospital",
+    "shortName": "Kilosa DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kilosa District Hospital",
+      "shortName": "Kilosa DH",
+      "macAddress": "MAC8CDCD4506107",
+      "hostId": "KILOSA DH",
+      "serial": "DESKTOP-4FMOARP",
+      "gxAlertDeviceId": 4416
+    }]
+  },
+  {
+    "externalId": "Segerea Prison Dispensary",
+    "latitude": -6.824000,
+    "longitude": 39.249001,
+    "stateName": "Ilala 1",
+    "lgaName": "Ilala Municipal",
+    "name": "Segerea Prison Dispensary",
+    "shortName": "Segerea  Prison",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Segerea Prison Dispensary",
+      "shortName": "Segerea  Prison",
+      "macAddress": "MACC4E984142138",
+      "hostId": "SEGEREA PRISON HEALT",
+      "serial": "Cepheid-1F23945",
+      "gxAlertDeviceId": 4418
+    }]
+  },
+  {
+    "externalId": "Lunguya Health Centre",
+    "latitude": -3.449449,
+    "longitude": 33.270939,
+    "stateName": "Shinyanga",
+    "lgaName": "Kahama",
+    "name": "Lunguya Health Centre",
+    "shortName": "Lunguya HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Lunguya Health Centre",
+      "shortName": "Lunguya HC",
+      "macAddress": "MAC",
+      "hostId": "LUNGUYA HC",
+      "serial": "Cepheid-528265D",
+      "gxAlertDeviceId": 4426
+    }]
+  },
+  {
+    "externalId": "Kibongo'oto Infectious Disease Hospital",
+    "stateName": "Kilimanjaro",
+    "lgaName": "Siha",
+    "name": "Kibongo'oto Infectious Disease Hospital",
+    "shortName": "K",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kibongo'oto Infectious Disease Hospital",
+      "shortName": "K",
+      "macAddress": "MAC6805CA4AB7EC",
+      "hostId": "Kibongo'oto Infectio",
+      "serial": "Cepheid-L8T14AV",
+      "gxAlertDeviceId": 4427
+    }]
+  },
+  {
+    "externalId": "Temeke Hospital",
+    "latitude": 39.497002,
+    "longitude": -7.012000,
+    "stateName": "Temeke ",
+    "lgaName": "Temeke Municipal",
+    "name": "Temeke Hospital",
+    "shortName": "Temeke RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Temeke Hospital",
+      "shortName": "Temeke RRH",
+      "macAddress": "MAC0023242D9556",
+      "hostId": "TEMEKE  REGIONAL REF",
+      "serial": "DESKTOP-DAP6C6J",
+      "gxAlertDeviceId": 4452
+    }]
+  },
+  {
+    "externalId": "Kahama District Hospital1",
+    "latitude": -3.656205,
+    "longitude": 33.427120,
+    "stateName": "Shinyanga",
+    "lgaName": "Kahama Town",
+    "name": "Kahama District Hospital1",
+    "shortName": "Kahama DH1",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kahama District Hospital1",
+      "shortName": "Kahama DH1",
+      "macAddress": "MACF0921CE4C138",
+      "hostId": "KAHAMA HOSPITAL",
+      "serial": "Cepheid-4071D96",
+      "gxAlertDeviceId": 4475
+    }]
+  },
+  {
+    "externalId": "Uvinza Health Centre",
+    "latitude": -4.589975,
+    "longitude": 30.561010,
+    "stateName": "Kigoma",
+    "lgaName": "Uvinza",
+    "name": "Uvinza Health Centre",
+    "shortName": "Uvinza HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Uvinza Health Centre",
+      "shortName": "Uvinza HC",
+      "macAddress": "MAC902E1682F4EC",
+      "hostId": "UVINZA HC",
+      "serial": "Cepheid-1F23598",
+      "gxAlertDeviceId": 4494
+    }]
+  },
+  {
+    "externalId": "Kaigara Health Centre",
+    "stateName": "Kagera",
+    "lgaName": "Muleba",
+    "name": "Kaigara Health Centre",
+    "shortName": "Kaigara HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kaigara Health Centre",
+      "shortName": "Kaigara HC",
+      "macAddress": "MACF875A4B5804E",
+      "hostId": "KAIGARA H/C",
+      "serial": "Cepheid-0F07109",
+      "gxAlertDeviceId": 4516
+    }]
+  },
+  {
+    "externalId": "Mugana Hospital",
+    "latitude": -1.331151,
+    "longitude": 31.812561,
+    "stateName": "Kagera",
+    "lgaName": "Ngara",
+    "name": "Mugana Hospital",
+    "shortName": "Mugana CDH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mugana Hospital",
+      "shortName": "Mugana CDH",
+      "macAddress": "MAC6805CA4F0E4A",
+      "hostId": "MUGANA CDH",
+      "serial": "Cepheid-7122CD4",
+      "gxAlertDeviceId": 4518
+    }]
+  },
+  {
+    "externalId": "Kakonko Health Centre",
+    "latitude": -4.589975,
+    "longitude": 30.561007,
+    "stateName": "Kigoma",
+    "lgaName": "Kakonko",
+    "name": "Kakonko Health Centre",
+    "shortName": "Kakonko HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kakonko Health Centre",
+      "shortName": "Kakonko HC",
+      "macAddress": "MACF875A4F8E4EF",
+      "hostId": "Kakonko Health Centr",
+      "serial": "Cepheid-0F07975",
+      "gxAlertDeviceId": 4519
+    }]
+  },
+  {
+    "externalId": "Newala District Hospital",
+    "latitude": -10.281120,
+    "longitude": 40.181339,
+    "stateName": "Mtwara",
+    "lgaName": "Newala",
+    "name": "Newala District Hospital",
+    "shortName": "Newala DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Newala District Hospital",
+      "shortName": "Newala DH",
+      "macAddress": "MACA0369FD4EB6A",
+      "hostId": "NEWALA DH",
+      "serial": "Cepheid-70310XW",
+      "gxAlertDeviceId": 4526
+    }]
+  },
+  {
+    "externalId": "St. Benedict Hospital",
+    "latitude": 53.388252,
+    "longitude": 6.682511,
+    "stateName": "Mtwara",
+    "lgaName": "Masasi",
+    "name": "St. Benedict Hospital",
+    "shortName": "St. Benedict RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "St. Benedict Hospital",
+      "shortName": "St. Benedict RRH",
+      "macAddress": "BFEBFBFF000306A9-46999945",
+      "hostId": "St Benedict Ndanda RRH",
+      "serial": "Cepheid-3031JF1",
+      "gxAlertDeviceId": 4534
+    }]
+  },
+  {
+    "externalId": "Bariadi Town Council Hospital",
+    "latitude": -2.803549,
+    "longitude": 33.986992,
+    "stateName": "Simiyu",
+    "lgaName": "Bariadi",
+    "name": "Bariadi Town Council Hospital",
+    "shortName": "Bariadi TCH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Bariadi Town Council Hospital",
+      "shortName": "Bariadi TCH",
+      "macAddress": "MAC8CDCD449D857",
+      "hostId": "BARIADI TOWN COUNCIL",
+      "serial": "DESKTOP-JE0VETP",
+      "gxAlertDeviceId": 4541
+    }]
+  },
+  {
+    "externalId": "Sekou-toure Regional Referral Hospital",
+    "latitude": -2.519691,
+    "longitude": 32.901440,
+    "stateName": "Mwanza",
+    "lgaName": "Nyamagana Municipal",
+    "name": "Sekou-toure Regional Referral Hospital",
+    "shortName": "Sekou-toure RRH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Sekou-toure Regional Referral Hospital",
+      "shortName": "Sekou-toure RRH",
+      "macAddress": "MAC180373D24990",
+      "hostId": "SEKOU TOURE RRH",
+      "serial": "Cepheid-PC",
+      "gxAlertDeviceId": 4543
+    }]
+  },
+  {
+    "externalId": "Himo Health Centre",
+    "latitude": -3.348646,
+    "longitude": 37.343525,
+    "stateName": "Kilimanjaro",
+    "lgaName": "Moshi (Rural)",
+    "name": "Himo Health Centre",
+    "shortName": "Himo HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Himo Health Centre",
+      "shortName": "Himo HC",
+      "macAddress": "MACA0369FD4EA73",
+      "hostId": "HIMO HEALTH CENTRE",
+      "serial": "DESKTOP-68U9O27",
+      "gxAlertDeviceId": 4549
+    }]
+  },
+  {
+    "externalId": "Makole Health Centre",
+    "latitude": -6.181244,
+    "longitude": 35.748158,
+    "stateName": "Dodoma",
+    "lgaName": "Dodoma Municipal",
+    "name": "Makole Health Centre",
+    "shortName": "Makole HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Makole Health Centre",
+      "shortName": "Makole HC",
+      "macAddress": "MAC00D861624E77",
+      "hostId": "MAKOLE HEALTH CENTRE",
+      "serial": "CPHD-J09326J",
+      "gxAlertDeviceId": 4559
+    }]
+  },
+  {
+    "externalId": "Mlowo Dispensary",
+    "latitude": -8.531138,
+    "longitude": 32.429771,
+    "stateName": "Songwe",
+    "lgaName": "Mbozi",
+    "name": "Mlowo Dispensary",
+    "shortName": "Mlowo Dispensary",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Mlowo Dispensary",
+      "shortName": "Mlowo Dispensary",
+      "macAddress": "MAC84E71400901C",
+      "hostId": "MLOWO DISPENSARY",
+      "serial": "CPHD-0F08139",
+      "gxAlertDeviceId": 4574
+    }]
+  },
+  {
+    "externalId": "Kirando Health Centre",
+    "stateName": "Rukwa",
+    "lgaName": "Nkasi",
+    "name": "Kirando Health Centre",
+    "shortName": "Kirando HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kirando Health Centre",
+      "shortName": "Kirando HC",
+      "macAddress": "MAC00D861F75B0B",
+      "hostId": "KIRANDO HEALTH CENTER",
+      "serial": "CPHD-0F08130",
+      "gxAlertDeviceId": 4575
+    }]
+  },
+  {
+    "externalId": "Kalambo District Hospital",
+    "latitude": -7.952386,
+    "longitude": 31.623190,
+    "stateName": "Rukwa",
+    "lgaName": "Kalambo",
+    "name": "Kalambo District Hospital",
+    "shortName": "Kalambo DH",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kalambo District Hospital",
+      "shortName": "Kalambo DH",
+      "macAddress": "MAC00D861F75AEA",
+      "hostId": "KALAMBO DISTRICT HOS",
+      "serial": "CPHD-0F08153",
+      "gxAlertDeviceId": 4577
+    }]
+  },
+  {
+    "externalId": "Kamsamba Health Centre",
+    "latitude": -8.531138,
+    "longitude": 32.429771,
+    "stateName": "Songwe",
+    "lgaName": "Mbozi",
+    "name": "Kamsamba Health Centre",
+    "shortName": "Kamsamba HC",
+    "timeZoneId": "E. Africa Standard Time",
+    "devices": [{
+      "name": "Kamsamba Health Centre",
+      "shortName": "Kamsamba HC",
+      "macAddress": "MAC00D861F7545A",
+      "hostId": "KAMSAMBA HEALTH CENT",
+      "serial": "CPHD-0F08043",
+      "gxAlertDeviceId": 4580
+    }]
+  }
+]

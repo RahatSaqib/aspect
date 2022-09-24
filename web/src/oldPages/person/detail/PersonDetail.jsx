@@ -154,7 +154,11 @@ export class PersonDetail extends PureComponent {
         'assayId',
       ]),
     }
-    return addPersonAssignment(data)
+    const finalData = {
+      ...data,
+      assayId: +data.assayId,
+    }
+    return addPersonAssignment(finalData)
   }
 
   deleteAssignment = jobContextId => {

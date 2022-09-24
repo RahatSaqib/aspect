@@ -7,10 +7,10 @@ const {
   subMonths,
   startOfMonth,
   endOfMonth,
-  getDaysInMonth,
   format,
   isWeekend,
   parseJSON,
+  differenceInBusinessDays,
 } = require('date-fns')
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
 
@@ -31,8 +31,12 @@ const {
   startOfTodayUtc,
   formatDateOrDefault,
   getArrayOfDaysInRange,
+  getMonthYearUserTimeZoneField,
+  getTimezoneOffsetFromNumber,
+  getOffsetFromIsoDateString,
+  getDateTimeProjectionInUserTimeZone,
 } = require('../shared/date')
-const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
+const { lastDayOfMonthByOffsetAndResultEndedOn, whereWorkingDaysDateRange } = require('../shared/query')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
@@ -647,7 +651,7 @@ async function updateDeviceMaintenance(request) {
 }
 
 async function getDevicePerformance(request) {
-  const { auth, params } = request
+  const { auth, params, query } = request
 
   const { deviceId } = params
 
@@ -657,18 +661,20 @@ async function getDevicePerformance(request) {
 
   const startedOn = startOfMonth(subMonths(endedOn, 12)) // 12 months period
 
+  const offset = getTimezoneOffsetFromNumber(query.timezoneOffset)
+
   const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' })
     .where('r.deviceId', deviceId)
-    .where('r.endedOn', '>=', startedOn)
-    .where('r.endedOn', '<=', endedOn)
+    .modify(whereWorkingDaysDateRange(startedOn, endedOn))
     .select([
-      knex.raw('count(r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
+      knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
       knex.raw(`sum(rc1.name = 'Error') as errorCount`),
-      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`),
+      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthTested', offset),
+      lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
     ])
     .groupBy('monthTested')
 
@@ -685,11 +691,10 @@ async function getDevicePerformance(request) {
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .where('r.endedOn', '>=', startedOn)
-    .where('r.endedOn', '<=', endedOn)
+    .modify(whereWorkingDaysDateRange(startedOn, endedOn))
     .where('c.id', deviceCountry.countryId)
     .select([
-      knex.raw('count(r.id) as countryTotalResult'),
+      knex.raw('count(distinct r.id) as countryTotalResult'),
       knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`),
     ])
 
@@ -719,9 +724,9 @@ async function getDevicePerformance(request) {
     if (deviceCapacity) {
       utilizationRateAvg = 80
 
-      x.utilizationRate = Math.round(
-        (x.totalResult * 100) / (getDaysInMonth(new Date(x.monthTested)) * deviceCapacity.dailyCapacity)
-      )
+      const minDate = new Date(`${x.monthTested}-01`)
+      const workingDays = differenceInBusinessDays(x.lastDayOfMonth, minDate)
+      x.utilizationRate = _.round((x.totalResult * 100) / Math.max(workingDays * deviceCapacity.dailyCapacity, 1), 2)
     } else {
       x.utilizationRate = null
     }
@@ -746,7 +751,7 @@ async function getDevicePerformance(request) {
 function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = false, showDecommissionedDevices = false) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
@@ -842,10 +847,10 @@ async function getDevicesForReport(auth, query) {
   const getItems = deviceQuery
     .clone()
     .modify(sortPageParams, query, 'name')
-    .groupBy('d.id')
-    .select([
+    .distinct([
       ..._.filter(getSelectListFields(userTimeOffset), elem => _.isString(elem) && elem.indexOf('dms.') < 0),
       'd.serial',
+      'd.id',
       queryResults.clone().countDistinct('r.id').as('totalResults'),
       queryResults.clone().where('r.resultCategory1', resultCategoryIds.Error).countDistinct('r.id').as('totalErrors'),
       queryResults
@@ -902,8 +907,9 @@ async function getErrorCodesByDeviceReport(auth, query) {
     .clone()
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
-    .select([
+    .distinct([
       'd.name',
+      'd.id',
       queryResults.clone().where('r.errorCode', '5011').countDistinct('r.id').as('error_5011'),
       queryResults.clone().where('r.errorCode', '5007').countDistinct('r.id').as('error_5007'),
       queryResults.clone().where('r.errorCode', '5006').countDistinct('r.id').as('error_5006'),
@@ -1713,7 +1719,7 @@ async function getDeviceCalibrationsForReport(auth, query) {
       queryBuilder.on('d.id', 'dm.deviceId').andOn('dm.current', 1)
     })
     .modify(sortPageParams, query, 'name')
-    .select([
+    .distinct([
       ..._.filter(
         getSelectListFields(userTimeOffset),
         /**

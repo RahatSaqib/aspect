@@ -163,7 +163,7 @@ const routes = [
   {
     method: 'GET',
     path: '/site/select-list/{mode?}',
-    handler: asyncHandler(listSitesForSelectList),
+    handler: listSitesForSelectList,
     config: {
       description: 'Sites for Select List',
       notes: "List of site ID's and names",

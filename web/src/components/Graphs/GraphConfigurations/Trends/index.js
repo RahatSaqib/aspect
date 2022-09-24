@@ -162,11 +162,7 @@ const trendInQuartersMtbDetected = getGraphEntry({
     fields: [
       { name: 'Total', colorId: 'caseTotal', target: 'bar' },
       { name: 'MtbDetected', colorId: 'caseDetected', target: 'bar' },
-      {
-        name: 'MtbToTotalPercentage',
-        colorId: 'casePercentDetectedOfTotal',
-        target: 'line',
-      },
+      { name: 'MtbToTotalPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
     ],
     keyToConsume: '',
     filterBy: {},
@@ -174,7 +170,7 @@ const trendInQuartersMtbDetected = getGraphEntry({
     tickValuesYShape: 'twos',
     formatDate: value => {
       const [yyyy, qq] = `${value}`.split('-')
-      return `Q${qq}-${yyyy.substring(2)}`
+      return `${formatMessage(months.QUARTER)}${qq}-${yyyy.substring(2)}`
     },
     layers: [MtbToTotalPercentage, AxisRightLayer],
     axisRightProps: {
@@ -202,11 +198,7 @@ const trendInQuartersRifDetected = getGraphEntry({
     fields: [
       { name: 'MtbDetected', colorId: 'caseTotal', target: 'bar' },
       { name: 'RrdDetected', colorId: 'caseDetected', target: 'bar' },
-      {
-        name: 'RrdToMtbPercentage',
-        colorId: 'casePercentDetectedOfTotal',
-        target: 'line',
-      },
+      { name: 'RrdToMtbPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
     ],
     keyToConsume: '',
     filterBy: {},
@@ -214,7 +206,7 @@ const trendInQuartersRifDetected = getGraphEntry({
     tickValuesYShape: 'twos',
     formatDate: value => {
       const [yyyy, qq] = `${value}`.split('-')
-      return `Q${qq}-${yyyy.substring(2)}`
+      return `${formatMessage(months.QUARTER)}${qq}-${yyyy.substring(2)}`
     },
     layers: [RrdToMtbPercentage, AxisRightLayer],
     axisRightProps: {

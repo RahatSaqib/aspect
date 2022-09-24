@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi')
-
 const { asyncHandler } = require('../routes')
+const { loginHistoryWrapper } = require('./loginHistory')
 
 const {
   authenticate,
@@ -20,7 +20,7 @@ const routes = [
   {
     method: 'POST',
     path: '/auth',
-    handler: asyncHandler(authenticate),
+    handler: loginHistoryWrapper(authenticate),
     config: {
       auth: false,
       description: 'Authenticate user',

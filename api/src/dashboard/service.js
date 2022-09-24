@@ -6,7 +6,6 @@ const {
   getConstraints,
   addConstraints,
   canViewSites,
-  canViewDevices,
   canViewResults,
   canViewInventories,
   canEditInventories,
@@ -368,10 +367,6 @@ async function getSiteList(auth, dataConstraints) {
 }
 
 async function getDeviceList(auth, dataConstraints) {
-  if (!canViewDevices(auth)) {
-    return []
-  }
-
   const deviceList = await knex('Device as d')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')

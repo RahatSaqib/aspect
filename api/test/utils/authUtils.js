@@ -226,6 +226,7 @@ async function removeUser(userId) {
   const siteIds = await knex('Site').where('createdBy', userId).pluck('id')
   await knex('Sample').whereIn('originSiteId', siteIds).del()
   await knex('Site').where({ createdBy: userId }).del()
+  await knex('LoginHistory').where('userId', '>', 0).del()
   await knex('User').where({ id: userId }).del()
 }
 

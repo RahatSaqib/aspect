@@ -32,17 +32,14 @@ const optionsForSendXXX = {
 
 const resultBasedNotificationPayload = Joi.object({
   notificationType: Joi.string()
-    /**
-     * see all values in getOptions() in `MigratedComponents/Notifications/List/config.jsx`
-     * which are basically externalId from table NotificationTypeCategory
-     *
-     * Add more valid values upon enabling other notification types in Create
-     * dropdown on Notifications list.
-     * Notice that value 'issueBased' added here for completeness and is not used in handler.
-     */
     .valid('resultBased', 'issueBased')
     .description('externalId of notification type')
     .required(),
+  issueType: Joi.string().when('notificationType', {
+    is: 'resultBased',
+    then: Joi.optional().allow('', null),
+    otherwise: Joi.required(),
+  }),
   name: Joi.string().description('Name of new notification').required(),
   result: Joi.array()
     .items(
@@ -60,7 +57,11 @@ const resultBasedNotificationPayload = Joi.object({
           .description('Selected items of ResultCategories or ResultCategoryGroups'),
       })
     )
-    .required()
+    .when('notificationType', {
+      is: 'resultBased',
+      then: Joi.required(),
+      otherwise: Joi.optional().allow('', null),
+    })
     .description('Selected items of Assay and corresponding ResultCategories or ResultCategoryGroups'),
   deviceLevelId: Joi.string()
     // see options for id:'deviceLevelId' in `web/src/MigratedComponents/Notifications/Forms/editConfig.js`
