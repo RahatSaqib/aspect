@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import cronstrue from 'cronstrue'
+import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages'
 import DisplayCard from './components/DisplayCard'
@@ -64,7 +65,7 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
         </Grid>
 
         <Grid item xs={12}>
-          <Selector cronExpression={cronExpression} onChange={onValueChange} />
+          <Selector key={options[selectedTab].name} cronExpression={cronExpression} onChange={onValueChange} />
         </Grid>
 
         <Grid item xs={12}>
@@ -78,4 +79,14 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
   )
 }
 
+Cron.propTypes = {
+  showResultText: PropTypes.bool,
+  showResultCron: PropTypes.bool,
+  onChange: PropTypes.func.isRequired,
+}
+
+Cron.defaultProps = {
+  showResultText: true,
+  showResultCron: true,
+}
 export default Cron
