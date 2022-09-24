@@ -5,6 +5,17 @@ import { mountWithI18n } from '../../__setup__/common'
 import Cron from './Cron'
 
 describe.only('Cron Selector Component', () => {
+  describe('snapshot test', () => {
+    it('should shallow render export list correctly', () => {
+      const props = {
+        showResultText: false,
+        showResultCron: true,
+        onChange: () => true,
+      }
+      const element = mountWithI18n(<Cron {...props} />)
+      expect(element).toMatchSnapshot()
+    })
+  })
   describe('Weekly', () => {
     beforeAll(() => {
       const mockedFormatMessage = jest.fn()
