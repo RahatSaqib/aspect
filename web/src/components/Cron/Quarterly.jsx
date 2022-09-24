@@ -88,6 +88,7 @@ const Quarterly = ({ cronExpression, onChange }) => {
           value={cronExpression[3]}
           onChange={onDayChange}
           type="number"
+          disabled={every !== '1'}
           InputLabelProps={{
             readOnly: every !== '1',
             shrink: true,
@@ -154,6 +155,7 @@ const Quarterly = ({ cronExpression, onChange }) => {
             readOnly: every !== '4',
             shrink: true,
           }}
+          disabled={every !== '4'}
           margin="normal"
           variant="outlined"
         />
@@ -163,7 +165,7 @@ const Quarterly = ({ cronExpression, onChange }) => {
             minute={cronExpression[1]}
             changeHours={onAtHourChange}
             changeMinutes={onAtMinuteChange}
-            disabled={disabled}
+            disabled={every !== '4'}
           />
         </CardContent>
       </Card>

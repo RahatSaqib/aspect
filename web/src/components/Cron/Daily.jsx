@@ -64,6 +64,7 @@ const Daily = ({ cronExpression, onChange }) => {
           InputLabelProps={{ disabled: !every, shrink: true }}
           margin="normal"
           variant="outlined"
+          disabled={!every}
         />
       </Card>
 

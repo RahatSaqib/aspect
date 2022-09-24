@@ -35,7 +35,10 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
   const onTabChange = idx => {
     setSelectedTab(idx)
     setCronExpression(options[idx].value)
-    onChange(options[idx].value)
+    let newVal = ''
+    newVal = options[idx].value.toString().replace(/,/g, ' ')
+    newVal = newVal.replace(/!/g, ',')
+    onChange(newVal, getHumanValue(newVal))
   }
 
   const onValueChange = val => {
@@ -57,7 +60,7 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
     <>
       <Grid container>
         <Grid item xs={12}>
-          <Tabs value={selectedTab} aria-label="simple tabs example">
+          <Tabs value={selectedTab}>
             {options.map((option, idx) => (
               <Tab key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
             ))}

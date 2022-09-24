@@ -51,8 +51,8 @@ export default defineMessages({
     defaultMessage: 'Thursday',
   },
   friday: {
-    id: 'components.shared.thursday',
-    defaultMessage: 'Thursday',
+    id: 'components.shared.friday',
+    defaultMessage: 'Friday',
   },
   saturday: {
     id: 'components.shared.saturday',

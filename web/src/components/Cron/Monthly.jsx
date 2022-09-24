@@ -94,6 +94,7 @@ const Monthly = ({ cronExpression, onChange }) => {
           }}
           margin="normal"
           variant="outlined"
+          disabled={every !== '1'}
         />
       </Card>
 
@@ -182,6 +183,7 @@ const Monthly = ({ cronExpression, onChange }) => {
           }}
           margin="normal"
           variant="outlined"
+          disabled={every !== '4'}
         />
         <CardContent>
           <ChooseTime
