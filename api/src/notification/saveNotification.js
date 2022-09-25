@@ -20,7 +20,6 @@ module.exports = async function (request) {
     userId,
     payload,
   })
-
   if (isBoom(result)) return result
 
   const { ok, notificationTypeId, error } = result
