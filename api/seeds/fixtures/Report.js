@@ -64,6 +64,7 @@ const allResults = {
         sortDir: 'desc',
         templateFolderPath: 'export/results',
         maxNumberOfRecords: 50000,
+        streamCSV: true,
       },
     },
   ],

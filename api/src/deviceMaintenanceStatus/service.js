@@ -78,7 +78,7 @@ async function deviceStatusOverTime(request) {
 
 async function getDeviceStatusOverTime(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate, maxDate } = query
+  const { minDate, maxDate = new Date().toISOString() } = query
   const offset = getOffsetFromIsoDateString(minDate)
 
   // Filters for results: results should be filtered normally, just converting the received date to UTC
@@ -87,8 +87,8 @@ async function getDeviceStatusOverTime(auth, query) {
 
   // Filters for statuses: statuses should be filtered differently, as they are saved as only date.
   // If a date time like '2020-01-01T00:00:00.000-03:00' is received, then we should convert it to '2020-01-01T00:00:00.000Z' (same date, same day, but in Z timezone)
-  const minDatePart = minDate.substring(0, 10)
-  const maxDatePart = maxDate.substring(0, 10)
+  const minDatePart = minDateResults.substring(0, 10)
+  const maxDatePart = maxDateResults.substring(0, 10)
   const minDateStatus = `${minDatePart}T00:00:00.000Z`
   const maxDateStatus = `${maxDatePart}T00:00:00.000Z`
 
