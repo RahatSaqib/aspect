@@ -11,7 +11,6 @@ const internals = {
     defaultVersion: Joi.any().required(),
     versionHeader: Joi.string().trim().min(1).default('api-version'),
     basePath: Joi.string().trim().min(1).default('/'),
-    invalidVersionAllow: Joi.boolean().default(true),
   }),
 }
 
@@ -111,17 +110,13 @@ exports.register = (server, options) => {
 
     // If there was a version by now check if it is valid
     if (typeof requestedVersion === 'number' && !Hoek.contain(options.validVersions, requestedVersion)) {
-      if (options.invalidVersionAllow) {
-        const largestNum = options.validVersions.reduce(function (accumulatedValue, currentValue) {
-          return Math.max(accumulatedValue, currentValue)
-        })
-        if (largestNum > requestedVersion) {
-          requestedVersion = options.defaultVersion
-        } else {
-          requestedVersion = largestNum
-        }
+      const largestNum = options.validVersions.reduce(function (accumulatedValue, currentValue) {
+        return Math.max(accumulatedValue, currentValue)
+      })
+      if (largestNum > requestedVersion) {
+        requestedVersion = options.defaultVersion
       } else {
-        return Boom.badRequest(`Invalid api-version! Valid values: ${options.validVersions.join()}`)
+        requestedVersion = largestNum
       }
     }
 

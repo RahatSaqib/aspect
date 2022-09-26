@@ -3,14 +3,14 @@ const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
 
-describe('result endpoints', () => {
+describe('mobile API: result endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/mobileApi/result/endpoints', {
       './service': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }
-  describe('/v1/result/download', () => {
+  describe('/mobile/api/v1/result/download', () => {
     let endpoint
     const expectedResponse = { value: 'Expected result' }
 
@@ -32,7 +32,7 @@ describe('result endpoints', () => {
     })
   })
 
-  describe('/v2/result/download', () => {
+  describe('/mobile/api/v2/result/download', () => {
     let endpoint
     const expectedResponse = { value: 'Expected result' }
 

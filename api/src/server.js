@@ -166,7 +166,6 @@ const start = async () => {
       validVersions: [1, 2],
       defaultVersion: 1,
       basePath: '/mobile/api/',
-      invalidVersionAllow: true,
     },
   })
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
