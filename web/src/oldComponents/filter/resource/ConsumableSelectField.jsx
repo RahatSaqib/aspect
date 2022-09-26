@@ -18,7 +18,7 @@ export class ConsumableSelectField extends PureComponent {
   }
 
   static defaultProps = {
-    allItemText: 'All',
+    allItemText: '',
     consumableItems: null,
     value: '',
   }
@@ -44,7 +44,7 @@ export class ConsumableSelectField extends PureComponent {
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
-        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+        {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
         {consumableItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
             {a.get('name')}
