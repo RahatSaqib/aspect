@@ -83,6 +83,10 @@ export const commonDefinitions = defineMessages({
     id: 'pages.common.disabled',
     defaultMessage: 'Disabled',
   },
+  notAvailable: {
+    id: 'pages.common.notAvailable',
+    defaultMessage: 'N/A',
+  },
   button_Edit: {
     id: 'button_Edit',
     defaultMessage: 'Edit',

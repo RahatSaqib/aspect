@@ -151,7 +151,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
         {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
           <span className={cssClasses('alert')}>
             &nbsp; ({parseFloat(inventoryItem.get('quantityOnHand')) <= 0 ? '' : '-'}
-            {inventoryItem.get('qtyExpired')} Expired)
+            {inventoryItem.get('qtyExpired')} {formatMessage(messages.expired)})
           </span>
         ) : null}
       </TableCell>
@@ -162,7 +162,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       ) : null}
       {inventoryItem.get('lotNumber') !== undefined ? (
         <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('lotNumber')}>
-          {inventoryItem.get('lotNumber') ? inventoryItem.get('lotNumber') : 'N/A'}
+          {inventoryItem.get('lotNumber') ? inventoryItem.get('lotNumber') : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
       {inventoryItem.get('expiresOn') !== undefined ? (
@@ -174,7 +174,9 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
                 : null
             }
           >
-            {inventoryItem.get('expiresOn') ? inventoryItem.get('expiresOn').split('T')[0] : 'N/A'}
+            {inventoryItem.get('expiresOn')
+              ? inventoryItem.get('expiresOn').split('T')[0]
+              : formatMessage(messages.notAvailable)}
           </span>
         </TableCell>
       ) : null}
@@ -218,12 +220,16 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       ) : null}
       {inventoryItem.get('daysStockLeft') !== undefined ? (
         <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('daysStockLeft')}>
-          {inventoryItem.get('daysStockLeft') !== null ? round(inventoryItem.get('daysStockLeft'), 2) : 'N/A'}
+          {inventoryItem.get('daysStockLeft') !== null
+            ? round(inventoryItem.get('daysStockLeft'), 2)
+            : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
       {inventoryItem.get('projectedWaste') !== undefined ? (
         <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('projectedWaste')}>
-          {inventoryItem.get('projectedWaste') !== null ? round(inventoryItem.get('projectedWaste'), 2) : 'N/A'}
+          {inventoryItem.get('projectedWaste') !== null
+            ? round(inventoryItem.get('projectedWaste'), 2)
+            : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
       {!inventoryOnHand ? (
