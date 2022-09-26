@@ -11,6 +11,7 @@ import {
 } from '../store/FilterRedux'
 import { getAspectDisplayPreferences } from '../utils/LocalStorage'
 import styles from './BrowseFilters.css'
+import BrowseNavDropdown from './BrowseNavDropdown'
 import FiltersBtnGroup from './filter/btnGroup/FiltersBtnGroup'
 import FiltersPanel from './filter/popover/FiltersPanel'
 import { getFilters, mergeToFiltersParams, reduceNavLinks } from './filter/utils'
@@ -127,6 +128,7 @@ export const BrowseFilters = ({
   onRemoveFilterItem,
   reducedSource,
   dateFormat,
+  showBrowseDropdown = true,
   ...restProps
 }) => (
   <div className={cssClasses('Container')}>
@@ -134,7 +136,9 @@ export const BrowseFilters = ({
       filters={restProps.filters}
       onRemoveFilterItem={onRemoveFilterItem}
       className={cssClasses('FiltersBtnGroup')}
-    />
+    >
+      {showBrowseDropdown && <BrowseNavDropdown navigate={navigate} location={location} source={reducedSource} />}
+    </FiltersBtnGroup>
     {children}
 
     <FiltersPanel className={cssClasses('FiltersPanel')} dateFormat={dateFormat} {...restProps} />

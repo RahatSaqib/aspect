@@ -27,6 +27,9 @@ export const types = {
 
   LOGOUT: 'LOGOUT',
 
+  TOGGLE_DRAWER: 'TOGGLE_DRAWER',
+  CLOSE_DRAWER: 'CLOSE_DRAWER',
+
   RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
 
   REQUEST_LICENSE: 'REQUEST_LICENSE',
@@ -44,6 +47,18 @@ export function hydrateFromLocalStorage(data) {
   return {
     type: types.HYDRATE_FROM_LOCAL_STORAGE,
     data,
+  }
+}
+
+export function toggleDrawer() {
+  return {
+    type: types.TOGGLE_DRAWER,
+  }
+}
+
+export function closeDrawer() {
+  return {
+    type: types.CLOSE_DRAWER,
   }
 }
 
@@ -466,6 +481,7 @@ const User = Immutable.Record({
   timezoneId: 'Eastern Standard Time',
   displayPreferences: Immutable.Map(),
   countryAbbreviation: null,
+  drawerOpen: false,
   loggedOutReason: '',
   licenseContent: undefined,
   countryId: undefined,
@@ -511,6 +527,11 @@ export default function authReducer(state = initialState, action) {
     case types.REFRESH_FAILURE:
     case types.LOGOUT:
       return state.clear().set('loggedOutReason', action.data.reason)
+
+    case types.TOGGLE_DRAWER:
+      return state.set('drawerOpen', !state.drawerOpen)
+    case types.CLOSE_DRAWER:
+      return state.set('drawerOpen', false)
 
     case accountTypes.RECEIVE_UPDATED_USER_PREFERENCES:
       return state.merge({
