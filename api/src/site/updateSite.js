@@ -12,7 +12,7 @@ module.exports = async function (request) {
   try {
     await validate(params.siteId, auth.credentials, siteParams)
   } catch (error) {
-    if (error instanceof Boom.Boom) {
+    if (Boom.isBoom(error)) {
       return error
     }
     throw error
