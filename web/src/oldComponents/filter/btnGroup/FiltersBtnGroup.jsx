@@ -124,7 +124,7 @@ const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
     .find(it => assayIds.includes(it.get('id')), EMPTY_CONTEXT, EMPTY_MAP)
     .get('resultCategories', EMPTY_MAP)
     .find(it => it.get('id') === resultCategoryId, EMPTY_CONTEXT, EMPTY_MAP)
-    .get('name', '')
+    .get('i18nKey', '')
 }
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
@@ -227,13 +227,17 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
               resultCategoryName: `"${startCase(filters.assayOverride)}"`,
             }
           : {
-              resultCategoryName: getResultCategoryName(assayItems, filters.assayId, resultCategoryId),
+              resultCategoryName: formatMessage(
+                messages[getResultCategoryName(assayItems, filters.assayId, resultCategoryId)]
+              ),
             }
       )
     ),
     resultCategory2Id: makeButton((resultCategory2Id, { filters, assayItems }) =>
       formatMessage(messages.withResultCategory, {
-        resultCategoryName: getResultCategoryName(assayItems, filters.assayId, resultCategory2Id),
+        resultCategoryName: formatMessage(
+          messages[getResultCategoryName(assayItems, filters.assayId, resultCategory2Id)]
+        ),
       })
     ),
     resultCategoryGroupId: makeButton((resultCategoryGroupId, { filters, resultCategoryGroupItems }) => {
@@ -244,9 +248,13 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
               resultCategoryGroupName: `"${startCase(filters.assayOverride)}"`,
             }
           : {
-              resultCategoryGroupName: resultCategoryGroupItems
-                .find(it => it.get('externalId') === resultCategoryGroupId, EMPTY_CONTEXT, EMPTY_MAP)
-                .get('name'),
+              resultCategoryGroupName: formatMessage(
+                messages[
+                  resultCategoryGroupItems
+                    .find(it => it.get('externalId') === resultCategoryGroupId, EMPTY_CONTEXT, EMPTY_MAP)
+                    .get('i18nKey')
+                ]
+              ),
             }
       )
     }),
@@ -296,16 +304,22 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
     workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
       formatMessage(messages.withWorkflowStatus, {
-        workflowStatusName: workflowStatusItems
-          .find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        workflowStatusName: formatMessage(
+          messages[
+            workflowStatusItems.find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')
+          ]
+        ),
       })
     ),
     treatmentStatus: makeButton((treatmentStatus, { treatmentStatusItems }) =>
       formatMessage(messages.withTreatmentStatus, {
-        treatmentStatusName: treatmentStatusItems
-          .find(it => it.get('externalId') === treatmentStatus, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        treatmentStatusName: formatMessage(
+          messages[
+            treatmentStatusItems
+              .find(it => it.get('externalId') === treatmentStatus, EMPTY_CONTEXT, EMPTY_MAP)
+              .get('i18nKey')
+          ]
+        ),
       })
     ),
     deviceApprovalId: makeButton((deviceApprovalId, { deviceApprovalItems }) =>
