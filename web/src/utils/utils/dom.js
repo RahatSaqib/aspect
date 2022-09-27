@@ -1,5 +1,5 @@
-import isObject from 'lodash/isObject'
 import has from 'lodash/has'
+import isObject from 'lodash/isObject'
 
 const findKeyInTree = (target, key) => {
   while (isObject(target)) {

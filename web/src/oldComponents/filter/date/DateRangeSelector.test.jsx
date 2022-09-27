@@ -1,14 +1,14 @@
 import React from 'react'
-import includes from 'lodash/includes'
-import { shallow } from 'enzyme'
-import sinon from 'sinon'
 import MenuItem from '@mui/material/MenuItem'
+import { shallow } from 'enzyme'
+import includes from 'lodash/includes'
 import { createIntl } from 'react-intl'
-import { DateRangeSelector } from './DateRangeSelector'
-import SelectField from '../../shared/SelectField'
+import sinon from 'sinon'
 import DateTimeInput from '../../shared/DateTimeInput'
+import SelectField from '../../shared/SelectField'
+import { DateRangeSelector } from './DateRangeSelector'
 
-describe('DateRangeSelector Component', () => {
+describe.only('DateRangeSelector Component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     clearButtonTooltip: 'Clear',
@@ -585,7 +585,9 @@ describe('DateRangeSelector Component', () => {
         beforeAll(() => {
           clock = sinon.useFakeTimers(expectedDateTest.now.getTime())
         })
-
+        beforeEach(
+          () => (DateRangeSelectorWrapper = shallow(<DateRangeSelector {...props} maxDateTo={expectedDateTest.now} />))
+        )
         afterAll(() => {
           clock.restore()
         })

@@ -15,6 +15,14 @@
         "action": "RESULT_LOGGED",
         "method": "resultBased"
       }
+    },
+    {
+      "name": "Report-Based",
+      "externalId": "reportBased",
+      "triggerCondition": {
+        "action": "REPORT_READY_TO_DELIVER",
+        "method": "reportBased"
+      }
     }
   ]
 }

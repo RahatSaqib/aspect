@@ -1,5 +1,4 @@
 import Table from '@mui/material/Table'
-
 import DataTableHead from '../../../../components/shared/tableHead'
 import ResultTableRow from './ResultTableRow'
 

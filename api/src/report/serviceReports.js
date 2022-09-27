@@ -2,7 +2,6 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const Stream = require('stream')
 const _ = require('lodash')
-const { subDays } = require('date-fns')
 const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
 const { knex } = require('../db')
@@ -16,6 +15,7 @@ const {
   respondFile,
   respondStream,
   RELABEL_EXCEL,
+  renderExcelTemplateToCsv,
 } = require('../shared/excel')
 const logger = require('../shared/logger')
 
@@ -194,10 +194,6 @@ async function createReport(request, reply) {
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
 
-  if (_.isNil(query.minDate)) {
-    query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
-  }
-
   const data = await getAllSheetsData(request, sheets)
   if (Boom.isBoom(data)) {
     throw data
@@ -241,7 +237,25 @@ async function createReport(request, reply) {
   ]
 
   if (extension === 'csv') {
-    return streamToCsv(data, reply, fileName)
+    const [sheet] = sheets
+    const { streamCSV } = sheet.query || {}
+    if (streamCSV) {
+      return streamToCsv(data, reply, fileName)
+    }
+    const dataBuffer = await renderExcelTemplateToCsv({
+      countryAbbreviation,
+      culture,
+      templateFolderPath: templateFolderPath || externalId,
+      data,
+      replacements,
+    })
+
+    return respondFile({
+      dataBuffer,
+      extension,
+      fileNamePrefix: fileName,
+      reply,
+    })
   }
   const renderParams = {
     countryAbbreviation,

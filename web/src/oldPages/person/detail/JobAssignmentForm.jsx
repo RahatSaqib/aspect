@@ -1,29 +1,25 @@
-import { connect } from 'react-redux'
-import identity from 'lodash/identity'
 import React from 'react'
-import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import classnames from 'classnames/bind'
-import recomposeForm from '../../../oldComponents/recomposeForm'
-
-import { Unit } from '../../../oldComponents/pureGrids'
-
-import messages from './messages'
-import { getCustomMessage } from '../../../utils/utils/customMessages'
-import CountrySelectField from '../../../oldComponents/filter/geography/CountrySelectField'
-import StateSelectField from '../../../oldComponents/filter/geography/StateSelectField'
-import LgaSelectField from '../../../oldComponents/filter/geography/LgaSelectField'
-import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectField'
-import SelectField from '../../../oldComponents/shared/SelectField'
-import DiseaseSelectField from '../../../oldComponents/filter/resource/DiseaseSelectField'
-import DeviceTypeSelectField from '../../../oldComponents/filter/resource/DeviceTypeSelectField'
-import AssayTypeSelectField from '../../../oldComponents/filter/resource/AssayTypeSelectField'
-import AssaySelectField from '../../../oldComponents/filter/resource/AssaySelectField'
-
-import PersonAssignments from './PersonAssignments'
+import identity from 'lodash/identity'
+import { connect } from 'react-redux'
+import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import useI18n from '../../../hooks/useI18n'
-
+import { getCustomMessage } from '../../../messages/customMessages'
+import CountrySelectField from '../../../oldComponents/filter/geography/CountrySelectField'
+import LgaSelectField from '../../../oldComponents/filter/geography/LgaSelectField'
+import StateSelectField from '../../../oldComponents/filter/geography/StateSelectField'
+import AssaySelectField from '../../../oldComponents/filter/resource/AssaySelectField'
+import AssayTypeSelectField from '../../../oldComponents/filter/resource/AssayTypeSelectField'
+import DeviceTypeSelectField from '../../../oldComponents/filter/resource/DeviceTypeSelectField'
+import DiseaseSelectField from '../../../oldComponents/filter/resource/DiseaseSelectField'
+import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectField'
+import { Unit } from '../../../oldComponents/pureGrids'
+import recomposeForm from '../../../oldComponents/recomposeForm'
+import SelectField from '../../../oldComponents/shared/SelectField'
+import messages from './messages'
+import PersonAssignments from './PersonAssignments'
 import styles from './PersonDetail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -224,6 +220,7 @@ export const JobAssignmentForm = ({
               assayTypeId={values.assayTypeId}
               value={values.assayId}
               onAssayChange={onAssayIdChange}
+              multiple={false}
             />
           </section>
           <div className={cssClasses('Form__ActionRow')}>

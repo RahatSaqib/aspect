@@ -1,24 +1,30 @@
-import classnames from 'classnames/bind'
-import React, { useEffect } from 'react'
-import { useQuery } from 'react-query'
-import { Helmet } from 'react-helmet'
+import React, { useEffect, useState } from 'react'
 import TableBody from '@mui/material/TableBody'
+import classnames from 'classnames/bind'
+import isEmpty from 'lodash/isEmpty'
 import PropTypes from 'prop-types'
-import useI18n from '../../../hooks/useI18n'
-import { useAuthState } from '../../../providers/AuthProvider'
+import { Helmet } from 'react-helmet'
+import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
+import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import {
+  getFilters,
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+  setFiltersForLast30Days,
+} from '../../../oldComponents/filter/utils'
+import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
-import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
-import messages from './messages'
+import { useAuthState } from '../../../providers/AuthProvider'
+import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
 import styles from './InventoryLog.css'
+import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
@@ -33,6 +39,18 @@ const FILTERS_CONFIG = [
   },
   {
     date: true,
+    requiredPermissions: [],
+  },
+  {
+    onlyTransfers: true,
+    requiredPermissions: [],
+  },
+  {
+    lotNumber: true,
+    requiredPermissions: [],
+  },
+  {
+    expirationDate: true,
     requiredPermissions: [],
   },
 ]
@@ -148,6 +166,7 @@ export const InventoryLogWithProps = ({
             navigate={navigate}
             location={location}
             intl={intl}
+            pageSizeButtonKeys={[10, 25, 50, 100]}
             paginatorStatus={messages.paginatorStatus}
             total={total}
             pageAt={pageAt}
@@ -165,49 +184,43 @@ const InventoryLog = ({ navigate, location }) => {
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
-
-  // >>>>>> Structuring data <<<<<<
-  const sortPage = makeSortPageSelector({
-    sortCol: 'createdOn',
-    sortDir: 'desc',
-  })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
-    location,
-    availableSortCol,
-    dependencies: {},
-  })
-  const { value: searchParams } = searchSanitizer(location, {})
-  const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
-  const filters = getFilters(filtersParams)
-
-  // >>>>>> Defining queries <<<<<<
-  const params = {
-    sortCol,
-    sortDir,
-    page: pageAt,
-    size: pageSize,
-    ...filters,
-  }
+  const [firstLoad, setFirstLoad] = useState(true)
+  const [requestParams, setRequestParams] = useState({})
+  // >>>>>> Structuring data <<<<<<
 
   const {
     isError,
     isLoading,
     data = false,
     error,
-  } = useQuery([INVENTORY_LOG.KEY, params, filters], async () =>
-    fetchWrapperForQueries({ endpoint: INVENTORY_LOG.ENDPOINT, params })
+  } = useQuery(
+    [INVENTORY_LOG.KEY, requestParams],
+    async () => fetchWrapperForQueries({ endpoint: INVENTORY_LOG.ENDPOINT, params: requestParams }),
+    {
+      enable: !isEmpty(requestParams),
+    }
   )
+  const sortPage = makeSortPageSelector({
+    sortCol: 'createdOn',
+    sortDir: 'desc',
+    pageSize: 50,
+  })
+
+  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
+    location,
+    availableSortCol,
+    dependencies: {},
+  })
 
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location, {})
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
-      searchParams.get('filters') || '',
-      {}
-    )
-    if (sanitized || filtersSanitized) {
-      searchParams.set('filters', filtersParams)
-
+    // >>>>>> Defining queries <<<<<<
+    const { value: searchParams } = searchSanitizer(location, {})
+    const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
+    searchParams.set('filters', filtersParams)
+    if (firstLoad) {
+      setFiltersForLast30Days(searchParams)
+      setFirstLoad(false)
       navigate(
         {
           ...location,
@@ -216,7 +229,16 @@ const InventoryLog = ({ navigate, location }) => {
         { replace: true }
       )
     }
-  }, [location, navigate])
+
+    const filters = getFilters(filtersParams)
+    setRequestParams({
+      sortCol,
+      sortDir,
+      page: pageAt,
+      size: pageSize,
+      ...filters,
+    })
+  }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize])
 
   if (isError) throw new Error(error)
 
@@ -227,12 +249,8 @@ const InventoryLog = ({ navigate, location }) => {
     reducedFilters,
     isLoading,
     data,
-    sortCol,
-    sortDir,
-    pageAt,
-    pageSize,
+    ...{ sortCol, sortDir, pageAt, pageSize, ...requestParams },
   }
-
   return <InventoryLogWithProps {...props} />
 }
 

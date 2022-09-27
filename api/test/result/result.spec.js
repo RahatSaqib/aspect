@@ -50,8 +50,13 @@ describe('Result routes', () => {
     const {
       body: { data: clinicianAccessibleResults },
     } = await server.get(path).set('Authorization', `Bearer ${clinicianAccessToken}`)
-    clinicianAssayId = clinicianAccessibleResults[0].assayId
-    clinicianResultId = clinicianAccessibleResults[0].id
+
+    try {
+      clinicianAssayId = clinicianAccessibleResults[0].assayId
+      clinicianResultId = clinicianAccessibleResults[0].id
+    } catch (e) {
+      //
+    }
   })
 
   describe('GET', () => {

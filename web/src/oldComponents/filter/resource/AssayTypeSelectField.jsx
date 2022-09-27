@@ -1,15 +1,13 @@
+import React from 'react'
+import MenuItem from '@mui/material/MenuItem'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
-import React from 'react'
+import { connect } from 'react-redux'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-
-import MenuItem from '@mui/material/MenuItem'
-
-import SelectField from '../../shared/SelectField'
-import { fetchAssayTypes } from '../../../store/AssayTypeRedux'
 import useI18n from '../../../hooks/useI18n'
+import { fetchAssayTypes } from '../../../store/AssayTypeRedux'
+import SelectField from '../../shared/SelectField'
 
 const messages = defineMessages({
   assayTypeCD4: {

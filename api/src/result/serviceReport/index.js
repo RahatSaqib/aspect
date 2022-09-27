@@ -439,7 +439,6 @@ async function getReportWorkloadSummary(auth, query) {
   const resultQuery = getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupBy, query)
 
   let data = await processGroupedQuery(resultQuery, groupBy)
-  data = _.filter(data, it => !!it.state && it.state !== 'null')
   data = _.sortBy(data, ['state', 'month'])
 
   /**
@@ -460,7 +459,8 @@ async function getReportWorkloadSummary(auth, query) {
   const obj = _.reduce(
     data,
     (acc, item) => {
-      const { state, month, cnt, resultCategory1, resultCategory2 } = item
+      const { state: _state, month, cnt, resultCategory1, resultCategory2 } = item
+      const state = _state || 'No province assigned'
       acc[state] = acc[state] || {}
       acc[state][month] = acc[state][month] || { ...emptyCounts }
       // count 'all'

@@ -1,12 +1,10 @@
-// Imports from packages
-import omit from 'lodash/omit'
-import PropTypes from 'prop-types'
 import React from 'react'
 import MenuItem from '@mui/material/MenuItem'
+import omit from 'lodash/omit'
+import PropTypes from 'prop-types'
 import { injectIntl, defineMessages } from 'react-intl'
-
-import SelectField from '../../shared/SelectField'
 import PropTypeOf from '../../../utils/types'
+import SelectField from '../../shared/SelectField'
 
 const messages = defineMessages({
   optionUp: {

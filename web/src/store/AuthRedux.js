@@ -1,20 +1,19 @@
+import Immutable from 'immutable'
+import jwtDecode from 'jwt-decode'
 import forEach from 'lodash/forEach'
 import isNil from 'lodash/isNil'
 import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
-import Immutable from 'immutable'
-import jwtDecode from 'jwt-decode'
 import { SubmissionError } from 'redux-form/immutable'
-
 import config from '../config'
-import { getClientId, getClientName, getClientType as clientType } from '../utils/utils/browser'
-import { aspectFetch } from '../utils/utils/fetch'
+import { reasonTypes } from '../oldPages/auth/loggedOutReasons'
 import {
   errorPleaseTryAgainInAFewMinutes,
   inlineErrorPleaseTryAgainInAFewMinutes,
 } from '../utils/error/CommonErrorNotifications'
+import { getClientId, getClientName, getClientType as clientType } from '../utils/utils/browser'
+import { aspectFetch } from '../utils/utils/fetch'
 import { types as accountTypes } from './AccountRedux'
-import { reasonTypes } from '../oldPages/auth/loggedOutReasons'
 
 export const types = {
   HYDRATE_FROM_LOCAL_STORAGE: 'HYDRATE_FROM_LOCAL_STORAGE',

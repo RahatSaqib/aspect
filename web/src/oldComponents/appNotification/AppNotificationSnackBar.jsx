@@ -1,17 +1,14 @@
-import PropTypes from 'prop-types'
-// Imports from packages
 import React, { PureComponent } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import flowRight from 'lodash/flowRight'
-import classNames from 'classnames'
-import { defineMessages, injectIntl } from 'react-intl'
 import Button from '@mui/material/Button'
-import Snackbar from '@mui/material/Snackbar'
 import { green, amber } from '@mui/material/colors'
+import Snackbar from '@mui/material/Snackbar'
 import { withStyles } from '@mui/styles'
-
-// Our own imports
+import classNames from 'classnames'
+import flowRight from 'lodash/flowRight'
+import PropTypes from 'prop-types'
+import { defineMessages, injectIntl } from 'react-intl'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { showMoreDetails, hideAppNotification, Error } from '../../store/AppNotificationRedux'
 import PropTypeOf from '../../utils/types'
 

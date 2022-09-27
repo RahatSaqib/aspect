@@ -1,10 +1,8 @@
 import React from 'react'
-import classnames from 'classnames/bind'
-
 import MenuItem from '@mui/material/MenuItem'
-
-import groupedOptions from './config'
+import classnames from 'classnames/bind'
 import IconProvider from '../IconProvider'
+import groupedOptions from './config'
 import messages from './messages'
 import styles from './Placeholders.css'
 

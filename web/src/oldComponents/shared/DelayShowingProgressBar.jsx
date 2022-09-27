@@ -1,7 +1,7 @@
-import isEqual from 'lodash/isEqual'
-import { compose, lifecycle } from 'recompose'
 import CircularProgress from '@mui/material/CircularProgress'
 import LinearProgress from '@mui/material/LinearProgress'
+import isEqual from 'lodash/isEqual'
+import { compose, lifecycle } from 'recompose'
 
 const DELAY = 500
 

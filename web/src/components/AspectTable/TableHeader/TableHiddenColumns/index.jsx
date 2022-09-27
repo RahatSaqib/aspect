@@ -1,12 +1,10 @@
 import React from 'react'
-import { array, func, oneOfType } from 'prop-types'
 import Chip from '@mui/material/Chip'
 import classnames from 'classnames/bind'
-
-import messages from '../messages'
-
-import styles from '../../Table.css'
+import { array, func, oneOfType } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
+import styles from '../../Table.css'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 

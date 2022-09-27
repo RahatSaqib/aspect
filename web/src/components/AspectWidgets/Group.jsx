@@ -1,15 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import Card from '@mui/material/Card'
+import classnames from 'classnames/bind'
 import orderBy from 'lodash/orderBy'
-
-import { Unit } from '../../oldComponents/pureGrids'
-import { AspectWidget } from './Widget'
-import messages from './messages'
-
-import styles from './Widgets.css'
+import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
+import { Unit } from '../../oldComponents/pureGrids'
+import messages from './messages'
+import { AspectWidget } from './Widget'
+import styles from './Widgets.css'
 
 const cssClasses = classnames.bind(styles)
 

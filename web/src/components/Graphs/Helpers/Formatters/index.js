@@ -20,7 +20,6 @@ import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
 import values from 'lodash/values'
 import valuesIn from 'lodash/valuesIn'
-
 import {
   dateRangeOptions,
   getAllDaysInCurrentMonth,
@@ -30,7 +29,7 @@ import {
   getPreviousPeriod,
   negateTimeZoneOffset,
 } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
-
+import graphColorMap from '../Variables'
 import {
   calcPercentageSplitBar,
   calcPercentageForGraphs,
@@ -39,7 +38,6 @@ import {
   roundIfNumber,
   percentageOrActualForPie,
 } from './calcs'
-
 import {
   groupByKey,
   groupForPie,
@@ -50,9 +48,7 @@ import {
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,
 } from './grouping'
-
 import validateGraphConfig from './validate'
-import graphColorMap from '../Variables'
 
 const makeProperCase = string => startCase(string)
 

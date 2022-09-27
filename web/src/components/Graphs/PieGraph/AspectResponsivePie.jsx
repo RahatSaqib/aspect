@@ -1,15 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import { ResponsivePie } from '@nivo/pie'
-import { PieInnerLegend, PieInnerLegendSolid, PieInnerLegendDoughNut } from '../GraphLegend'
-import messages from '../intlMessages'
-import { generateColorForValue, generateToolTip, percentageOrActualForPie } from '../Helpers/Formatters'
-
-import { GraphToolTip } from '../GraphToolTip'
-
-import styles from './PieGraph.css'
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import useI18n from '../../../hooks/useI18n'
+import { PieInnerLegend, PieInnerLegendSolid, PieInnerLegendDoughNut } from '../GraphLegend'
+import { GraphToolTip } from '../GraphToolTip'
+import { generateColorForValue, generateToolTip, percentageOrActualForPie } from '../Helpers/Formatters'
+import messages from '../intlMessages'
+import styles from './PieGraph.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -25,7 +23,7 @@ const AspectResponsivePie = ({
   i18nKeys,
   config: baseConfig,
 }) => {
-  const { id: graphId } = baseConfig
+  const { id: graphId, showLabel } = baseConfig
   const { formatNumber: intlFormatNumber, formatMessage } = useI18n()
   const config = (type, data, displayMethod) => {
     switch (true) {
@@ -66,7 +64,9 @@ const AspectResponsivePie = ({
         margin={config(type).margin}
         innerRadius={config(type).radius}
         enableRadialLabels={false}
-        enableSlicesLabels={false}
+        enableSlicesLabels={!!showLabel}
+        sliceLabel={d => `${parseFloat(d.value).toFixed(2)}%`}
+        slicesLabelsTextColor="#FFF"
         padAngle={-1}
         startAngle={0}
         endAngle={config(type).endAngle}
@@ -83,7 +83,6 @@ const AspectResponsivePie = ({
         radialLabelsLinkStrokeWidth={1}
         radialLabelsLinkColor={{ from: 'color' }}
         slicesLabelsSkipAngle={10}
-        slicesLabelsTextColor="#333333"
         animate
         motionStiffness={90}
         motionDamping={15}

@@ -19,6 +19,7 @@ const {
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
 } = require('./service')
+const mergeDevices = require('./mergeDevices')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { taskTracker } = require('../scheduler/taskTracker')
@@ -300,6 +301,14 @@ const routes = [
     config: {
       auth: { scope: ['device:view'] },
       description: 'Historic utilization and error rates for the device',
+      validate: {
+        params: {
+          deviceId: Joi.string().description('Device id').required(),
+        },
+        query: {
+          timezoneOffset: Joi.number().description(`Current user's timezone offset`),
+        },
+      },
     },
   },
   {
@@ -409,6 +418,7 @@ const routes = [
     path: '/device/select-list',
     handler: asyncHandler(listDevicesForSelectList),
     config: {
+      auth: { scope: ['device:view'] },
       description: 'Device for Select List',
       notes: "List of device ID's and names",
       validate: {
@@ -416,6 +426,8 @@ const routes = [
           countryId: Joi.number().allow('').description('Country ID'),
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
+          showUnapprovedDevices: Joi.bool().optional().default(false).description('Show unapproved devices'),
+          onlyResultDevices: Joi.bool().optional().default(false).description('Show only devices that process results'),
         },
       },
     },
@@ -706,6 +718,22 @@ const routes = [
               })
             ),
         }),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/mergedevices',
+    handler: mergeDevices,
+    config: {
+      auth: { scope: ['device:admin'] },
+      description: 'Merges two devices',
+      notes: 'Move all relevant data to target device. Deletes source devices.',
+      validate: {
+        payload: {
+          sourceDevicesIds: Joi.array().items(Joi.number()).description('Source devices Ids').required(),
+          targetDeviceId: Joi.number().description('Target device Id').required(),
+        },
       },
     },
   },

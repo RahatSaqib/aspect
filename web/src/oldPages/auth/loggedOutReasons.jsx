@@ -1,6 +1,6 @@
+import has from 'lodash/has'
 import reduce from 'lodash/reduce'
 import set from 'lodash/set'
-import has from 'lodash/has'
 import { defineMessages } from 'react-intl'
 
 const reasonTypeList = [

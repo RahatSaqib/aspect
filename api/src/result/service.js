@@ -1982,6 +1982,8 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
             })
         })
       }
+      if (query.consumableId)
+        queryBuilder.join('InventoryLog as il', 'il.resultId', 'r.id').where('il.consumableId', query.consumableId)
       if (!_.isEmpty(assayId)) queryBuilder.whereIn('r.assayId', assayId)
       if (query.reportableSiteId || query.reportableSiteName) {
         /**
@@ -2087,6 +2089,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       device: 'd',
       deviceType: 'dt',
       sample: 'sp',
+      site: 'si',
       geography: 'g',
       result: 'r',
       country: 'c',

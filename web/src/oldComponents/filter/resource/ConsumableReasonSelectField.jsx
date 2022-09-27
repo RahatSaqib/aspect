@@ -1,13 +1,11 @@
+import React from 'react'
+import MenuItem from '@mui/material/MenuItem'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
-import React from 'react'
-import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { connect } from 'react-redux'
-
-import MenuItem from '@mui/material/MenuItem'
-
-import SelectField from '../../shared/SelectField'
+import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { fetchConsumableReasons } from '../../../store/ConsumableRedux'
+import SelectField from '../../shared/SelectField'
 
 export const testConductedReasonI18nKey = 'ConsumableReason_TestConducted'
 

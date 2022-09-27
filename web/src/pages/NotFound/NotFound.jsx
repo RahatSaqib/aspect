@@ -1,16 +1,13 @@
-import classnames from 'classnames/bind'
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
-
-// Material-UI
-import IconButton from '@mui/material/IconButton'
 import ActionHome from '@mui/icons-material/Home'
 import ActionBack from '@mui/icons-material/KeyboardArrowLeft'
-
+import IconButton from '@mui/material/IconButton'
+import classnames from 'classnames/bind'
+import { Helmet } from 'react-helmet'
+import { Link, useNavigate } from 'react-router-dom'
+import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 import styles from './NotFound.css'
-import useI18n from '../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

@@ -5,11 +5,12 @@ const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
 
 const { knex } = require('../db')
-const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
+const { parseDateOrDefault, formatDateOrDefault, getFormattedDateTimeWithTimezone } = require('../shared/date')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
+handlebars.registerHelper('localizedDate', localizedDate)
 handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
 handlebars.registerHelper('formatDate', formatDate)
 handlebars.registerHelper('formatPhone', formatPhone)
@@ -79,6 +80,9 @@ function addDataSourceToQuery(queryBuilder, aliases, resultId) {
       .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .leftJoin('Partner as pr', 'pr.id', 'r.partnerId')
+      .leftJoin('TimeZone as devicetz', 'd.timezone', 'devicetz.id')
+      .leftJoin('TimeZone as sitetz', 's.timezoneId', 'sitetz.id')
+      .leftJoin('TimeZone as countrytz', 'rc.timezone', 'countrytz.id')
       .select(
         's.id as siteId',
         's.externalId as siteExternalId',
@@ -123,9 +127,11 @@ function addDataSourceToQuery(queryBuilder, aliases, resultId) {
         'a.externalId as assayExternalId',
         'a.name as assayName',
         'sample.externalId as sampleExternalId',
+        'sample.collectedOn as sampleCollectedOn',
         'rc1.externalId as resultCategory1ExternalId',
         'rc2.externalId as resultCategory2ExternalId',
-        'rs.name as reportableSiteName'
+        'rs.name as reportableSiteName',
+        knex.raw('COALESCE(devicetz.timezone, sitetz.timezone, countrytz.timezone) as timezone')
       )
   }
 
@@ -200,23 +206,16 @@ function addDataSourceToQuery(queryBuilder, aliases, resultId) {
  *   The object must also contain the template strings that will be processed:
  * @param  {Array} templateFields: the keys in the data object that contain the string templates to be processed
  *   EG: [ 'emailSubjectTemplate', 'emailBodyTemplate' ]
- * @param  {object} options: how the template will be processed
- *  {
- *    dynamic: true/false (required ti be tru when using numberOfDays handleBars helper or processing a JSON string template)
- *  }
  * @return an object containing the processed string templates as specified in templateFields
  *   EG: { emailSubject: 'The processed subject string', emailBody: 'The processed body string' }
  */
-async function processUsingDataSourceQuery(data, templateFields, options = {}) {
+async function processUsingDataSourceQuery(data, templateFields) {
   const ds = await getBaseDataSource(data)
+
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
-    if (options.dynamic) {
-      memo[fieldName] = processUsingDynamicHelpers(template, ds)
-    } else {
-      memo[fieldName] = processUsingHandlebarsSyntax(template, ds)
-    }
+    memo[fieldName] = processUsingDynamicHelpers(template, ds)
     return memo
   }, {})
 }
@@ -442,6 +441,7 @@ async function getBaseDataSource(data) {
       type: d.notificationTypeName,
     },
     displayPreferences,
+    timezone: d.timezone,
   }
 }
 
@@ -463,12 +463,26 @@ function processUsingDynamicHelpers(template, ds) {
    * - process template - this replaces {{isoDate ...}} and all other placeholders with actual values
    * - then replace tokens '${openMustaches}' and '${closeMustaches}' with corresponding mustaches
    * - process template - this replaces {{numberOfDays ...}} with actual value
+   * if template contains one of the following mustached string
+   * - device.lastSeenOn
+   * - device.lastPingOn
+   * - result.startedOn
+   * - result.endedOn
+   * - result.createdOn
+   * - result.sample.collectedOn
+   * then process it changing the format to localizedDate (Wed Aug 24 2022 02:25:32 GMT-4)
    * otherwise - process template in one step
    */
-  const dynamicTemplate = template.replace(
-    /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
-    (str, match) => `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
-  )
+  const dynamicTemplate = template
+    .replace(
+      /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
+      (str, match) => `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
+    )
+    .replace(
+      /{{\s*(device.lastSeenOn|device.lastPingOn|result.startedOn|result.endedOn|result.createdOn|result.sample.collectedOn)\s*}}/g,
+      (str, match) => `\${openMustaches}localizedDate ${match} timezone\${closeMustaches}`
+    )
+
   let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
 
   if (dynamicTemplate !== template) {
@@ -500,6 +514,10 @@ function numberOfDays(date) {
 function isoDate(date) {
   const parsed = parseDateOrDefault(date)
   return parsed == null ? null : parsed.toISOString()
+}
+
+function localizedDate(date, timezone) {
+  return date && getFormattedDateTimeWithTimezone(date, timezone)
 }
 
 function getArgumentFromOptions(options, keyInOptionsHash) {

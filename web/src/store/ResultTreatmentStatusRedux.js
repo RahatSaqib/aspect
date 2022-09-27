@@ -1,10 +1,10 @@
-import { defineMessages } from 'react-intl'
-import Immutable from 'immutable'
-import sortBy from 'lodash/sortBy'
-import reduce from 'lodash/reduce'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
-import { aspectFetch } from '../utils/utils/fetch'
+import Immutable from 'immutable'
+import reduce from 'lodash/reduce'
+import sortBy from 'lodash/sortBy'
+import { defineMessages } from 'react-intl'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   REQUEST_TREATMENT_STATUSES: 'REQUEST_TREATMENT_STATUSES',

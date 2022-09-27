@@ -1,22 +1,17 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
-import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
-import { Link } from 'react-router-dom'
-
-// Material-UI
-import Button from '@mui/material/Button'
 import ExitToApp from '@mui/icons-material/ExitToApp'
+import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-
-// Our own imports
-import recomposeForm, { errorProps } from '../../../oldComponents/recomposeForm'
-import JSONSchemaCard from '../../../oldComponents/shared/JSONSchemaCard'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
+import { compose, setPropTypes, pure } from 'recompose'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
-import { tokens } from '../../../store/DeviceApprovalRedux'
+import recomposeForm, { errorProps } from '../../../oldComponents/recomposeForm'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-
+import JSONSchemaCard from '../../../oldComponents/shared/JSONSchemaCard'
+import { tokens } from '../../../store/DeviceApprovalRedux'
 import styles from './RouterDetailModalForm.css'
 
 const cssClasses = classnames.bind(styles)

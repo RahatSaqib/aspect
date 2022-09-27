@@ -1,9 +1,8 @@
-import thunk from 'redux-thunk'
 import { createStore, compose, applyMiddleware } from 'redux'
 import { createLogger } from 'redux-logger'
-
-import rootReducer from './rootReducer'
+import thunk from 'redux-thunk'
 import { middleware as idleMiddleware } from './IdleRedux'
+import rootReducer from './rootReducer'
 
 const showLogger = false
 const middleware = [thunk, idleMiddleware]

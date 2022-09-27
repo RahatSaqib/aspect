@@ -1,13 +1,10 @@
 import { defineMessages } from 'react-intl'
-
-import deviceApprovalMessages from '../../../utils/messages/deviceApprovalMessages'
-import deviceStatusMessages from '../../../utils/messages/deviceStatusMessages'
-import assayTranslations from '../../../utils/messages/assay'
+import { assay, deviceApprovalMessages, deviceStatusMessages } from '../../../messages'
 
 export const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
-  ...assayTranslations,
+  ...assay,
   ...defineMessages({
     dateFrom: {
       id: 'filter.btnGroup.dateFrom',
@@ -16,6 +13,14 @@ export const messages = {
     dateTo: {
       id: 'filter.btnGroup.dateTo',
       defaultMessage: 'until {date}',
+    },
+    expDateFrom: {
+      id: 'filter.btnGroup.expDateFrom',
+      defaultMessage: 'Exp. since {date}',
+    },
+    expDateTo: {
+      id: 'filter.btnGroup.expDateTo',
+      defaultMessage: 'Exp. until {date}',
     },
     partnerId: {
       id: 'filter.btnGroup.partnerId',
@@ -124,6 +129,10 @@ export const messages = {
     onlyReportableResults: {
       id: 'filter.btnGroup.onlyReportableResults',
       defaultMessage: 'Show Only Reportable Results',
+    },
+    onlyTransfers: {
+      id: 'filter.btnGroup.onlyTransfers',
+      defaultMessage: 'Show Only Transfers',
     },
     onlyDownloadedByReporter: {
       id: 'filter.btnGroup.onlyDownloadedByReporter',

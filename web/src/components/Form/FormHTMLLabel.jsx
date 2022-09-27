@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-
 import LabelLinkComponent from './LabelLinkComponent'
 
 const FormHTMLLabel = ({ label, link }) => (

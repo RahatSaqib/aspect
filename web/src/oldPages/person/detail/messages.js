@@ -1,6 +1,5 @@
-// Imports from packages
 import { defineMessages } from 'react-intl'
-import { commonDefinitions } from '../../../utils/utils/customMessages'
+import { commonDefinitions } from '../../../messages/customMessages'
 
 // Define all messages for /site/detail page
 export default {

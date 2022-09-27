@@ -1,22 +1,16 @@
-// Imports from packages
-import _fp from 'lodash/fp'
-import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, pure, setPropTypes, lifecycle } from 'recompose'
-import { connect } from 'react-redux'
-import { defineMessages, injectIntl } from 'react-intl'
-
-// Material-UI
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-
-// Our own imports
-import recomposeForm, { errorProps } from '../../../oldComponents/recomposeForm'
+import _fp from 'lodash/fp'
+import PropTypes from 'prop-types'
+import { defineMessages, injectIntl } from 'react-intl'
+import { connect } from 'react-redux'
+import { compose, pure, setPropTypes, lifecycle } from 'recompose'
 import CountrySelectField from '../../../oldComponents/filter/geography/CountrySelectField'
 import PartnerSelectField from '../../../oldComponents/filter/partner/PartnerSelectField'
 import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectField'
+import recomposeForm, { errorProps } from '../../../oldComponents/recomposeForm'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-
 import { fetchCountriesForLocationSelector, LazyLoadItems } from '../../../store/GeographyRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../../store/JobRedux'
 import PropTypeOf from '../../../utils/types'

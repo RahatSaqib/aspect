@@ -1,17 +1,16 @@
-import Immutable from 'immutable'
-import classnames from 'classnames/bind'
 import React, { Children } from 'react'
-import { compose, pure } from 'recompose'
-import { connect } from 'react-redux'
 import Button from '@mui/material/Button'
-import { MdClose } from 'react-icons/md'
-import startCase from 'lodash/startCase'
+import classnames from 'classnames/bind'
+import Immutable from 'immutable'
 import isArray from 'lodash/isArray'
-
-import { isCountryFilterHidden } from '../utils'
+import startCase from 'lodash/startCase'
+import { MdClose } from 'react-icons/md'
+import { connect } from 'react-redux'
+import { compose, pure } from 'recompose'
 import useI18n from '../../../hooks/useI18n'
+import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
+import { isCountryFilterHidden } from '../utils'
 import styles from './FiltersBtnGroup.css'
-import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
@@ -70,6 +69,8 @@ const filtersOrdering = {
   lgaId: 3,
   minDate: 18,
   maxDate: 19,
+  minExpirationDate: 40,
+  maxExpirationDate: 41,
   partnerId: 8,
   patientOrResearchId: 10,
   sampleId: 9,
@@ -97,6 +98,7 @@ const filtersOrdering = {
   onlyReportableResults: 23,
   onlyTreatmentRequired: 33,
   onlyDownloadedByReporter: 35,
+  onlyTransfers: 36,
   onlyEverTransferred: 34,
   issueTypeId: 24,
   daysStockLeft: 31,
@@ -192,6 +194,16 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
     maxDate: makeButton(date =>
       formatMessage(messages.dateTo, {
+        date: format(new Date(date), dateFormat),
+      })
+    ),
+    minExpirationDate: makeButton(date =>
+      formatMessage(messages.expDateFrom, {
+        date: format(new Date(date), dateFormat),
+      })
+    ),
+    maxExpirationDate: makeButton(date =>
+      formatMessage(messages.expDateTo, {
         date: format(new Date(date), dateFormat),
       })
     ),
@@ -373,6 +385,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     onlyDownloadedByReporter: makeButton(() => formatMessage(messages.onlyDownloadedByReporter)),
     onlyEverTransferred: makeButton(() => formatMessage(messages.onlyEverTransferred)),
     onlyTreatmentRequired: makeButton(() => formatMessage(messages.onlyTreatmentRequired)),
+    onlyTransfers: makeButton(() => formatMessage(messages.onlyTransfers)),
     issueTypeId: makeButton(issueTypeId =>
       formatMessage(messages.deviceIssueType, {
         issueTypeId: startCase(issueTypeId),

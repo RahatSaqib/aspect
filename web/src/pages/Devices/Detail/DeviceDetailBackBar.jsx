@@ -1,7 +1,7 @@
-import { defineMessages, injectIntl } from 'react-intl'
 import React from 'react'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
+import { defineMessages, injectIntl } from 'react-intl'
 import DetailBackBar from '../../../oldComponents/DetailBackBar'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 
 const messages = defineMessages({
   profile: {

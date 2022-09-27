@@ -1,9 +1,8 @@
 import constant from 'lodash/constant'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { compose, setPropTypes, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-
 import { setNavTitle } from '../store/GlobalsRedux'
 
 const enhance = compose(

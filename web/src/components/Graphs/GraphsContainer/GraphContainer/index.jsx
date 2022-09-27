@@ -1,18 +1,16 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
-import classnames from 'classnames/bind'
 import Grid from '@mui/material/Grid'
-
-import AspectCard from '../../../AspectCard'
-import GraphRender from '../../GraphRender'
-import CardSelectors from '../../CardSelectors'
-import PermissionsProvider from '../../../../providers/PermissionsProvider'
-
-import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
-import { extractOptionValue } from '../../Helpers/Formatters'
-import messages from '../messages'
-import styles from '../GraphsContainer.css'
+import classnames from 'classnames/bind'
+import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
+import PermissionsProvider from '../../../../providers/PermissionsProvider'
+import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
+import AspectCard from '../../../AspectCard'
+import CardSelectors from '../../CardSelectors'
+import GraphRender from '../../GraphRender'
+import { extractOptionValue } from '../../Helpers/Formatters'
+import styles from '../GraphsContainer.css'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 

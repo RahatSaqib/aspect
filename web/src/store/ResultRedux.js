@@ -1,8 +1,8 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-
-import { aspectFetch } from '../utils/utils/fetch'
+import { getFilters } from '../oldComponents/filter/utils'
+import screenSchema from '../oldPages/result/ResultScreenSchema.json'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
@@ -10,9 +10,8 @@ import {
 } from '../utils/error/CommonErrorNotifications'
 import { receiveList, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
+import { aspectFetch } from '../utils/utils/fetch'
 import { receivedExportResponse } from './GlobalsRedux'
-import screenSchema from '../oldPages/result/ResultScreenSchema.json'
-import { getFilters } from '../oldComponents/filter/utils'
 
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',

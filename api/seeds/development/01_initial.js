@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays } = require('date-fns')
+const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears } = require('date-fns')
 
 const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
@@ -3566,6 +3566,8 @@ async function seed(knex) {
         new Date(now.getTime() + _.random(-millisInNormalYear / 2, millisInNormalYear * 2)).setHours(0, 0, 0, 0)
       )
       let quantityOnHand = _.random(0, 1000)
+      const consumableReasons = await knex('ConsumableReason').where('reset', 0).select()
+
       let lotNumber = null
       // TB Cartridges
       let [inventoryItemId] = await knex('InventoryItem').insert({
@@ -3583,7 +3585,9 @@ async function seed(knex) {
         lotNumber,
         quantity: quantityOnHand,
         inventoryItemId,
-        ..._.omit(auditFields, ['updatedOn', 'updatedBy']),
+        ..._.omit(auditFields, ['updatedOn', 'updatedBy', 'createdOn']),
+        createdOn: subYears(now, _.random(0, 4)),
+        consumableReasonId: _.sample(consumableReasons).id,
       })
 
       if (i % 5 === 0) {
@@ -3608,6 +3612,8 @@ async function seed(knex) {
           quantity: quantityOnHand,
           inventoryItemId,
           ..._.omit(auditFields, ['updatedOn', 'updatedBy']),
+          createdOn: subYears(now, _.random(0, 4)),
+          consumableReasonId: _.sample(consumableReasons).id,
         })
       }
       if (i % 7 === 0) {
@@ -3632,6 +3638,8 @@ async function seed(knex) {
           quantity: quantityOnHand,
           inventoryItemId,
           ..._.omit(auditFields, ['updatedOn', 'updatedBy']),
+          consumableReasonId: _.sample(consumableReasons).id,
+          createdOn: subYears(now, _.random(0, 4)),
         })
       }
     })

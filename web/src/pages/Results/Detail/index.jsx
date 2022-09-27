@@ -1,16 +1,15 @@
 import React, { Fragment } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import isNaN from 'lodash/isNaN'
 import { useMutation } from 'react-query'
-
-import useI18n from '../../../hooks/useI18n'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { getReturnUrl, useUrlQuery } from '../../../components/AspectTable/Helpers'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
+import fetchWrapperForQueries from '../../../components/QueryFetch/index'
+import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
+import useI18n from '../../../hooks/useI18n'
+import getFormConfig from '../Forms/editConfig'
 import Create from './Create'
 import Update from './Update'
-import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
-import fetchWrapperForQueries from '../../../components/QueryFetch/index'
-import { getReturnUrl, useUrlQuery } from '../../../components/AspectTable/Helpers'
-import getFormConfig from '../Forms/editConfig'
 
 const AspectResultDetail = () => {
   const intl = useI18n()

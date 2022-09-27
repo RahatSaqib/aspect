@@ -1,6 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listPartners, showPartner } = require('./service')
+const getCurrentPartner = require('./getCurrentPartner')
 
 const routes = [
   {
@@ -32,6 +33,16 @@ const routes = [
           partnerId: Joi.string().description('Partner ID').required(),
         },
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/partner/current-partner',
+    handler: getCurrentPartner,
+    config: {
+      auth: { scope: ['browse'] },
+      description: 'Current Partner',
+      notes: 'Get current partner with configuration data',
     },
   },
 ]

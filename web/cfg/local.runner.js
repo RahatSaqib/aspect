@@ -2,8 +2,8 @@
  * Source: https://www.browserstack.com/automate/nightwatch
  */
 require('dotenv-safe').config()
-const Nightwatch = require('nightwatch')
 const browserstack = require('browserstack-local')
+const Nightwatch = require('nightwatch')
 
 try {
   process.mainModule.filename = './node_modules/.bin/nightwatch'

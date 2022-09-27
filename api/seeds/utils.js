@@ -54,7 +54,7 @@ const tables = [
 ]
 
 const uniqueKeys = {
-  NotificationType: ['partnerId', 'name', 'issueTypeId', 'jobFunctionId', 'level', 'messageTypeId'],
+  NotificationType: ['partnerId', 'name', 'issueTypeId', 'jobFunctionId', 'messageTypeId'],
   IssueEventTrigger: ['issueTypeId', 'partnerId', 'issueEventStatusId'],
   IssueResolutionTrigger: ['issueTypeId', 'partnerId'],
   IssueEscalationTrigger: ['issueTypeId', 'partnerId', 'escalateToLevel'],
@@ -2810,11 +2810,11 @@ async function updatePermissions(knex, permissions) {
 
 /**
  * Removes a permission activity and replaces it for another one
- * @param  {[object]} knex The knex instance
- * @param  {[string]} ativityToRemove The activity that want to remove. Ex.: 'admin'
- * @param  {[string]} activityToReplaceFor The activity that want to replace the one that'll be removed. Ex.: 'edit'
+ * @param {[object]} knex The knex instance
+ * @param {[string]} ativityToRemove The activity that want to remove. Ex.: 'admin'
+ * @param {[string]} activityToReplaceFor The activity that want to replace the one that'll be removed. Ex.: 'edit'
  * @deprecated this method breaks seeding if you later re-add the removed permissions.
- * Instead use @example await upsertPermissions(knex, permissions)
+ * Instead @see updatePermissions
  */
 async function removeAndReplaceActivity(knex, activityToRemove, activityToReplaceFor) {
   const modules = await getPermissionModules(knex)

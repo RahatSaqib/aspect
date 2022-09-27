@@ -1,24 +1,18 @@
+import React, { PureComponent } from 'react'
+import LinearProgress from '@mui/material/LinearProgress'
+import Paper from '@mui/material/Paper'
 import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
-import { Routes, Route, Navigate, useParams } from 'react-router-dom'
-import { compose, setPropTypes } from 'recompose'
+import { Helmet } from 'react-helmet'
 import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
-import { Helmet } from 'react-helmet'
-
-// Material-UI
-import Paper from '@mui/material/Paper'
-import LinearProgress from '@mui/material/LinearProgress'
-
+import { Routes, Route, Navigate, useParams } from 'react-router-dom'
+import { compose, setPropTypes } from 'recompose'
 import ContactDetailsFormFormik from '../../../components/Account/Details'
-
-import LoginDetailsForm from './LoginDetailsForm'
-import JobAssignmentForm from './JobAssignmentForm'
-import PersonDetailBackBar from './PersonDetailsBackBar'
-
 import NavTitle from '../../../oldComponents/NavTitle'
-import isEditable from '../../../utils/selectors/isEditable'
+import PermissionsProvider from '../../../providers/PermissionsProvider'
+import { showAcknowledgement } from '../../../store/AppNotificationRedux'
+import { fetchPartnersAndJobFunctionsForSelectList } from '../../../store/JobRedux'
 import {
   fetchSinglePerson,
   createPerson,
@@ -33,13 +27,13 @@ import {
   fetchPersonAssignments,
   deletePersonAssignment,
 } from '../../../store/PersonRedux'
-import { fetchPartnersAndJobFunctionsForSelectList } from '../../../store/JobRedux'
-import { showAcknowledgement } from '../../../store/AppNotificationRedux'
+import isEditable from '../../../utils/selectors/isEditable'
 import PropTypeOf from '../../../utils/types'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
-
+import JobAssignmentForm from './JobAssignmentForm'
+import LoginDetailsForm from './LoginDetailsForm'
 import messages from './messages'
 import styles from './PersonDetail.css'
+import PersonDetailBackBar from './PersonDetailsBackBar'
 
 const enhance = compose(
   injectIntl,
@@ -160,7 +154,11 @@ export class PersonDetail extends PureComponent {
         'assayId',
       ]),
     }
-    return addPersonAssignment(data)
+    const finalData = {
+      ...data,
+      assayId: +data.assayId,
+    }
+    return addPersonAssignment(finalData)
   }
 
   deleteAssignment = jobContextId => {

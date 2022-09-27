@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
-
 import styles from './colordemo.css'
 
 const cssClasses = classnames.bind(styles)

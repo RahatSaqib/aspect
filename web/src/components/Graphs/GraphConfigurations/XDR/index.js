@@ -1,13 +1,11 @@
-import BarGraph from '../../BarGraph'
-import PieGraph from '../../PieGraph'
-import { getTimePeriod } from '../../Helpers/Formatters'
-
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
-import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
-
-import { FqrToMtbPercentageLine } from './Layers'
-import AxisRightLayer from '../../BarGraph/AxisRightLayer'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
+import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
 import FilterByStateDropDown from '../../../AspectDropDown/FilterByStateDropDown'
+import BarGraph from '../../BarGraph'
+import AxisRightLayer from '../../BarGraph/AxisRightLayer'
+import { getTimePeriod } from '../../Helpers/Formatters'
+import PieGraph from '../../PieGraph'
+import { FqrToMtbPercentageLine } from './Layers'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },

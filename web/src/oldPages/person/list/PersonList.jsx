@@ -1,35 +1,31 @@
 import React from 'react'
-import flowRight from 'lodash/flowRight'
-import classnames from 'classnames/bind'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
-import { bindActionCreators } from 'redux'
-import { connect, useSelector } from 'react-redux'
-import { Helmet } from 'react-helmet'
 import TableBody from '@mui/material/TableBody'
-
-import { getCustomMessage, commonDefinitions } from '../../../utils/utils/customMessages'
+import classnames from 'classnames/bind'
+import flowRight from 'lodash/flowRight'
+import { Helmet } from 'react-helmet'
+import { defineMessages } from 'react-intl'
+import { connect, useSelector } from 'react-redux'
+import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { bindActionCreators } from 'redux'
+import { getCustomMessage, commonDefinitions } from '../../../messages/customMessages'
+import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import ExportListButton from '../../../oldComponents/ExportListButton'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import NavTitle from '../../../oldComponents/NavTitle'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
+import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import requirePermissions, { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
+import { i18nWrapper } from '../../../providers/I18nProvider/index'
+import { fetchPersons, exportContacts } from '../../../store/PersonRedux'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../utils/selectors/searchParams'
-import requirePermissions, { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
-
-import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
-import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { fetchPersons, exportContacts } from '../../../store/PersonRedux'
 import { PersonDataTable, PersonDataTableHead, PersonDataTableRow } from './PersonDataTable'
-import { i18nWrapper } from '../../../providers/I18nProvider/index'
-
-import ExportListButton from '../../../oldComponents/ExportListButton'
-
 import styles from './PersonList.css'
 
 const cssClasses = classnames.bind(styles)

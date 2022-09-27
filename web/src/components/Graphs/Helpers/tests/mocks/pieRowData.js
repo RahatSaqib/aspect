@@ -1,5 +1,5 @@
-import format from 'date-fns/format'
 import endOfMonth from 'date-fns/endOfMonth'
+import format from 'date-fns/format'
 
 const now = new Date()
 const lastDayOfMonth = format(endOfMonth(new Date()), 'dd')

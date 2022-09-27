@@ -1,11 +1,10 @@
 import React from 'react'
-import { number, string } from 'prop-types'
 import classnames from 'classnames/bind'
-import messages from '../messages'
-import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
-
-import styles from '../../Table.css'
+import { number, string } from 'prop-types'
 import { i18nWrapper } from '../../../../providers/I18nProvider/index'
+import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
+import styles from '../../Table.css'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 

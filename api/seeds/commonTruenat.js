@@ -11,6 +11,7 @@ const { seedPartnerAssay, seedPartnerDisease } = require('./utils')
 const { deviceApprovalToId } = require('../src/shared/dictionary')
 const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
+const upsertConsumables = require('./common/upsert_consumables')
 
 const bcryptHash = promisify(bcrypt.hash)
 
@@ -63,6 +64,7 @@ async function upsertTruenatDeviceTypeAndAssays(
         resultSourceId,
       })
       assayIds[truenatAssay.externalId] = createdAssayId
+      await upsertConsumables(knex, true, [truenatAssay.externalId])
     } else {
       assayIds[truenatAssay.externalId] = existingAssayId
     }
