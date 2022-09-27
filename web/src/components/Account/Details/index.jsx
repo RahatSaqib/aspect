@@ -137,7 +137,7 @@ const ContactDetailsFormFormik = () => {
   }
 
   useEffect(() => {
-    const tempItems = [baseCfg.row1, baseCfg.row2, baseCfg.row3, baseCfg.row4, baseCfg.row5, baseCfg.row6]
+    const tempItems = [baseCfg.row1, baseCfg.row2, baseCfg.row3, baseCfg.row4, baseCfg.row5, baseCfg.row6, baseCfg.row7]
     if (personId === FORM_METHOD.ADD) {
       // adding a person
       setType(FORM_METHOD.ADD)
@@ -240,14 +240,7 @@ const ContactDetailsFormFormik = () => {
       <AspectPureFormik config={config} actions={actions} />
     </div>
   ) : (
-    <div
-      style={{
-        height: 'calc(100vh - 120px)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <div style={{ height: 'calc(100vh - 120px)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Loading />
     </div>
   )
