@@ -169,7 +169,10 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
       geography: 'g',
     })
 async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
-  if (!query.minDate) {
+  if (_.isNil(query.maxDate)) {
+    query.maxDate = new Date()
+  }
+  if (_.isNil(query.minDate)) {
     query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
   }
 
