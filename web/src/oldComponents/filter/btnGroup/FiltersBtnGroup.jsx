@@ -300,7 +300,9 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       })
     ),
     consumableId: makeButton((consumableId, { consumableItems }) =>
-      consumableItems.find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP).get('name')
+      formatMessage(
+        messages[consumableItems.find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')]
+      )
     ),
     workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
       formatMessage(messages.withWorkflowStatus, {

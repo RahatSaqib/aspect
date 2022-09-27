@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AspectDropDown from '.'
-import messages from '../../utils/consumable/messages'
+import { consumableMessages } from '../../messages'
 
 const config = {
   endpoint: '/dashboard/inventory-item',
@@ -15,7 +15,7 @@ const config = {
   },
   isClearable: false,
   defaultSelectedOption: true,
-  messages,
+  messages: consumableMessages,
 }
 
 const ConsumableDropdown = ({ action }) => <AspectDropDown props={config} action={action} />

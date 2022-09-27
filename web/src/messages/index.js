@@ -1,5 +1,6 @@
 import assay from './assay'
 import cronMessages from './cronMessages'
+import consumableMessages from './consumableMessages'
 import { commonDefinitions, getCustomMessage } from './customMessages'
 import { months } from './dateMessages'
 import deviceApprovalMessages from './deviceApprovalMessages'
@@ -12,6 +13,7 @@ import { validations } from './validations'
 
 export {
   assay,
+  consumableMessages,
   commonDefinitions,
   getCustomMessage,
   deviceApprovalMessages,
