@@ -121,9 +121,10 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('siteName')}>
         {inventoryItem.get('siteName')}
       </TableCell>
-
-      <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('consumableName')}>
-        {inventoryItem.get('consumableName')}
+      <TableCell className={cssClasses('TableCell')}>
+        {messages[inventoryItem.get('consumableNameI18nKey')]
+          ? formatMessage(messages[inventoryItem.get('consumableNameI18nKey')])
+          : inventoryItem.get('consumableName')}
       </TableCell>
       <TableCell className={cssClasses('TableCell')}>
         {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}

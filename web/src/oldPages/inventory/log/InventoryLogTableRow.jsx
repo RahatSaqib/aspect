@@ -16,7 +16,11 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
         {inventoryLogItem.createdOn ? formatDateTime(inventoryLogItem.createdOn) : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.siteName}</TableCell>
-      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.consumableName}</TableCell>
+      <TableCell className={cssClasses('TableCell')}>
+        {messages[inventoryLogItem.consumableNameI18nKey]
+          ? formatMessage(messages[inventoryLogItem.consumableNameI18nKey])
+          : inventoryLogItem.consumableName}
+      </TableCell>
 
       {inventoryLogItem.lotNumber !== undefined ? (
         <TableCell className={cssClasses('TableCell')}>

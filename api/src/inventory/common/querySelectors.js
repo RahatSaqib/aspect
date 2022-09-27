@@ -61,6 +61,7 @@ const INVENTORY_ITEM_SELECT = [
 const INVENTORY_LOG_LIST = {
   createdOn: 'il.createdOn',
   consumableName: 'c.name',
+  consumableNameI18nKey: 'c.i18nKey',
   lotNumber: 'il.lotNumber',
   expirationDate: 'il.expiresOn',
   siteName: 's.name',

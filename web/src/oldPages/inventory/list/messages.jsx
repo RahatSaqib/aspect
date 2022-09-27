@@ -1,8 +1,10 @@
 import { defineMessages } from 'react-intl'
+import { consumableMessages } from '../../../messages'
 import { commonDefinitions } from '../../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,
+  ...consumableMessages,
   ...defineMessages({
     projectedWasteDescription: {
       id: 'pages.InventoryItemsList.projectedWasteDescription',
