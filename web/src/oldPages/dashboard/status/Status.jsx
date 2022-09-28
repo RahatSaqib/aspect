@@ -3,7 +3,6 @@ import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useSelector, useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
-import Cron from '../../../components/Cron'
 import ErrorBoundary from '../../../components/ErrorBoundary'
 import useI18n from '../../../hooks/useI18n'
 import BrowseSiteDropdown from '../../../oldComponents/BrowseSiteDropdown'
@@ -52,12 +51,6 @@ const Status = () => {
           <SummaryStatus className={cssClasses('Section--summary')} dashboard="home" />
         </PermissionsProvider>
       </ErrorBoundary>
-
-      <Cron
-        showResultText
-        showResultCron
-        onChange={(cronExpression, cronText) => console.warn('cronExpression, cronText', cronExpression, cronText)}
-      />
 
       {assays ? (
         <>
