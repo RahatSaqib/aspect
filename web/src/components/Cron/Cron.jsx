@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Card, CardContent } from '@mui/material'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
+import classNames from 'classnames/bind'
 import cronstrue from 'cronstrue'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
@@ -10,7 +11,10 @@ import DisplayCard from './components/DisplayCard'
 import Daily from './Daily'
 import Monthly from './Monthly'
 import Quarterly from './Quarterly'
+import styles from './styles.css'
 import Weekly from './Weekly'
+
+const classes = classNames.bind(styles)
 
 const options = [
   { name: 'daily', Component: Daily, value: ['0', '0', '00', '1/1', '*', '?', '*'] },
@@ -60,7 +64,7 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
   return (
     <Card>
       <CardContent>
-        <Tabs value={selectedTab} style={{ marginBottom: 10 }}>
+        <Tabs value={selectedTab} className={classes('Tab_Margin')}>
           {options.map((option, idx) => (
             <Tab key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
           ))}

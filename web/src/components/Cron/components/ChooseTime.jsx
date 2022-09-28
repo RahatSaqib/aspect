@@ -1,22 +1,26 @@
 import React from 'react'
 import { MenuItem, TextField } from '@mui/material'
 import Stack from '@mui/material/Stack'
+import classNames from 'classnames/bind'
 import { range } from 'ramda'
 import useI18n from '../../../hooks/useI18n'
 import { cronMessages as messages } from '../../../messages/index'
+import styles from '../styles.css'
+
+const classes = classNames.bind(styles)
 
 const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
   const { formatMessage } = useI18n()
 
   return (
-    <Stack direction="row" spacing={1} alignItems="flex-start" style={{ marginBottom: 8 }}>
+    <Stack direction="row" spacing={1} alignItems="flex-start" className={classes('Input_Wrapper')}>
       <TextField
         select
         value={parseInt(hour || 0, 10)}
         onChange={changeHours}
         disabled={disabled}
         variant="standard"
-        style={{ minWidth: 150 }}
+        className={classes('Input_Width')}
         label={formatMessage(messages.hours)}
       >
         {range(0, 24).map(m => (
@@ -31,7 +35,7 @@ const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
         onChange={changeMinutes}
         disabled={disabled}
         variant="standard"
-        style={{ minWidth: 150 }}
+        className={classes('Input_Width')}
         label={formatMessage(messages.minutes)}
       >
         {range(0, 60).map(m => (

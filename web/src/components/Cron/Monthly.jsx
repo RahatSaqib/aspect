@@ -4,9 +4,13 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
+import classNames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
+import styles from './styles.css'
+
+const classes = classNames.bind(styles)
 
 const Monthly = ({ cronExpression, onChange }) => {
   const [every, setEvery] = useState('1')
@@ -61,7 +65,7 @@ const Monthly = ({ cronExpression, onChange }) => {
   return (
     <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
       <Stack direction="row" spacing={1} alignItems="center">
-        <div style={{ marginLeft: 12 }}>
+        <div className={classes('Content')}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
               <FormGroup>
@@ -191,7 +195,7 @@ const Monthly = ({ cronExpression, onChange }) => {
               value={cronExpression[3].split('-')[1]}
               onChange={onLastDayChange}
               type="number"
-              style={{ width: 200 }}
+              className={classes('Input_Width')}
               InputLabelProps={{ readOnly: every !== '4', shrink: true }}
               margin="normal"
               disabled={every !== '4'}

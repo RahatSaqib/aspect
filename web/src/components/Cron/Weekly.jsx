@@ -3,10 +3,13 @@ import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
 import Stack from '@mui/material/Stack'
+import classNames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
+import styles from './styles.css'
 
+const classes = classNames.bind(styles)
 const Weekly = ({ cronExpression, onChange }) => {
   const { formatMessage } = useI18n()
 
@@ -50,7 +53,7 @@ const Weekly = ({ cronExpression, onChange }) => {
   return (
     <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
       <Stack direction="row" spacing={1} alignItems="center">
-        <div style={{ margin: '0 12px' }}>
+        <div className={classes('Content')}>
           <FormGroup row>
             <FormControlLabel
               control={
