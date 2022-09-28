@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Grid from '@mui/material/Grid'
+import { Card, CardContent } from '@mui/material'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import cronstrue from 'cronstrue'
@@ -19,15 +19,16 @@ const options = [
   { name: 'quarterly', Component: Quarterly, value: ['0', '0', '00', '1', '*/3', '?', '*'] },
 ]
 
+const getHumanValue = (cronExpression, locale) => {
+  const val = cronstrue.toString(cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ','), { locale })
+  if (val.search('undefined') === -1) {
+    return val
+  }
+  return '-'
+}
+
 const Cron = ({ showResultText, showResultCron, onChange }) => {
   const { locale, formatMessage } = useI18n()
-  const getHumanValue = cronExpression => {
-    const val = cronstrue.toString(cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ','), { locale })
-    if (val.search('undefined') === -1) {
-      return val
-    }
-    return '-'
-  }
 
   const [cronExpression, setCronExpression] = useState(options[0].value)
   const [selectedTab, setSelectedTab] = useState(0)
@@ -38,7 +39,7 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
     let newVal = ''
     newVal = options[idx].value.toString().replace(/,/g, ' ')
     newVal = newVal.replace(/!/g, ',')
-    onChange(newVal, getHumanValue(newVal))
+    onChange(newVal, getHumanValue(newVal, locale))
   }
 
   const onValueChange = val => {
@@ -52,33 +53,25 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
     let newVal = ''
     newVal = val.toString().replace(/,/g, ' ')
     newVal = newVal.replace(/!/g, ',')
-    onChange(newVal, getHumanValue(newVal))
+    onChange(newVal, getHumanValue(newVal, locale))
   }
   const Selector = options[selectedTab].Component
 
   return (
-    <>
-      <Grid container>
-        <Grid item xs={12}>
-          <Tabs value={selectedTab}>
-            {options.map((option, idx) => (
-              <Tab key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
-            ))}
-          </Tabs>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Selector key={options[selectedTab].name} cronExpression={cronExpression} onChange={onValueChange} />
-        </Grid>
-
-        <Grid item xs={12}>
-          <DisplayCard
-            textResult={showResultText && getHumanValue(cronExpression)}
-            cronResult={showResultCron && cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ',')}
-          />
-        </Grid>
-      </Grid>
-    </>
+    <Card style={{ padding: '10px 0', margin: '10px 0' }}>
+      <CardContent>
+        <Tabs value={selectedTab}>
+          {options.map((option, idx) => (
+            <Tab key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
+          ))}
+        </Tabs>
+        <Selector key={options[selectedTab].name} cronExpression={cronExpression} onChange={onValueChange} />
+        <DisplayCard
+          textResult={showResultText && getHumanValue(cronExpression, locale)}
+          cronResult={showResultCron && cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ',')}
+        />
+      </CardContent>
+    </Card>
   )
 }
 
