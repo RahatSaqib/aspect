@@ -7,7 +7,7 @@ const {
   resultCategoryToId,
 } = require('../../src/shared/dictionary')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
-const { upsertMGITDeviceTypeAndAssays, upsertCultureAssays } = require('../commonTB')
+const { upsertCultureAssays } = require('../commonTB')
 
 async function seed(knex) {
   const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId('Information System')
