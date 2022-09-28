@@ -16,7 +16,9 @@ const getSites = async ({ sortCol, sortDir, pageAt, pageSize, filters }) =>
     return { siteList: response.data, total: response.total }
   })
 
-const useSites = ({ sortCol, sortDir, pageAt, pageSize, filters }, options) =>
-  useQuery([SITE_KEY, 'table'], () => getSites({ sortCol, sortDir, pageAt, pageSize, filters }), options)
+const useSites = ({ sortCol, sortDir, pageAt, pageSize, filters }, options) => {
+  const params = { sortCol, sortDir, pageAt, pageSize, filters }
+  return useQuery([SITE_KEY, params], () => getSites(params), options)
+}
 
 export default useSites
