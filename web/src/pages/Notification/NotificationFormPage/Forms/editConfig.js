@@ -181,41 +181,41 @@ const notificationTypeSection = formatMessage => {
                   {
                     label: formatMessage(messages.notificationCreateGroupForDevices),
                     options: [
-                      // {
-                      //   value: 'DeviceNoResults',
-                      //   label: formatMessage(messages.notificationTypeNoResult),
-                      //   icon: 'AiOutlineFileExclamation',
-                      // },
-                      // {
-                      //   value: 'DeviceOffline',
-                      //   label: formatMessage(messages.notificationTypeOffline),
-                      //   icon: 'AiOutlineApi',
-                      // },
+                      {
+                        value: 'DeviceNoResults',
+                        label: formatMessage(messages.notificationTypeNoResult),
+                        icon: 'AiOutlineFileExclamation',
+                      },
+                      {
+                        value: 'DeviceOffline',
+                        label: formatMessage(messages.notificationTypeOffline),
+                        icon: 'AiOutlineApi',
+                      },
                       // { TODO:  Uncomment when the issue is ready.
                       //   value: 'calibration',
                       //   label: formatMessage(messages.notificationTypeCalibration),
                       //   icon: 'AiOutlineTool',
                       // },
-                      // {
-                      //   value: 'ModuleReplaced',
-                      //   label: formatMessage(messages.notificationTypeModuleReplaced),
-                      //   icon: 'AiOutlineSwap',
-                      // },
-                      // {
-                      //   value: 'ModuleDisabled',
-                      //   label: formatMessage(messages.notificationTypeModuleDisabled),
-                      //   icon: 'AiOutlineBlock',
-                      // },
-                      // {
-                      //   value: 'UnusedModules',
-                      //   label: formatMessage(messages.notificationTypeModuleUnused),
-                      //   icon: 'AiOutlineExclamation',
-                      // },
-                      // {
-                      //   value: 'InstrumentReplaced',
-                      //   label: formatMessage(messages.notificationTypeInstrumentReplaced),
-                      //   icon: 'AiOutlineTool',
-                      // },
+                      {
+                        value: 'ModuleReplaced',
+                        label: formatMessage(messages.notificationTypeModuleReplaced),
+                        icon: 'AiOutlineSwap',
+                      },
+                      {
+                        value: 'ModuleDisabled',
+                        label: formatMessage(messages.notificationTypeModuleDisabled),
+                        icon: 'AiOutlineBlock',
+                      },
+                      {
+                        value: 'UnusedModules',
+                        label: formatMessage(messages.notificationTypeModuleUnused),
+                        icon: 'AiOutlineExclamation',
+                      },
+                      {
+                        value: 'InstrumentReplaced',
+                        label: formatMessage(messages.notificationTypeInstrumentReplaced),
+                        icon: 'AiOutlineTool',
+                      },
                     ],
                   },
                 ],
