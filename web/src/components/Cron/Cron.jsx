@@ -58,9 +58,9 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
   const Selector = options[selectedTab].Component
 
   return (
-    <Card style={{ padding: '10px 0', margin: '10px 0' }}>
+    <Card>
       <CardContent>
-        <Tabs value={selectedTab}>
+        <Tabs value={selectedTab} style={{ marginBottom: 10 }}>
           {options.map((option, idx) => (
             <Tab key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
           ))}

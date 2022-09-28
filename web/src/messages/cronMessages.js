@@ -25,9 +25,13 @@ export default defineMessages({
     id: 'components.shared.everyDay',
     defaultMessage: 'Every Day(s)',
   },
-  startTime: {
-    id: 'components.shared.startTime',
-    defaultMessage: 'Start Time',
+  hours: {
+    id: 'components.shared.hours',
+    defaultMessage: 'Hour',
+  },
+  minutes: {
+    id: 'components.shared.minutes',
+    defaultMessage: 'Minutes',
   },
   dayOfEveryMonth: {
     id: 'components.shared.dayOfEveryMonth',

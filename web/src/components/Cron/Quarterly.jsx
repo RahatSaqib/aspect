@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { CardContent } from '@mui/material'
-import Card from '@mui/material/Card'
+import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Radio from '@mui/material/Radio'
+import FormGroup from '@mui/material/FormGroup'
+import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages/index'
@@ -10,7 +10,6 @@ import ChooseTime from './components/ChooseTime'
 
 const Quarterly = ({ cronExpression, onChange }) => {
   const [every, setEvery] = useState('1')
-  const [disabled, setDisabled] = useState(true)
   const { formatMessage } = useI18n()
 
   const onDayChange = e => {
@@ -59,117 +58,125 @@ const Quarterly = ({ cronExpression, onChange }) => {
     onChange(val)
   }
 
-  const onMonthlyChange = e => {
-    setEvery(e.target.value)
-    onChange([
-      '0',
-      cronExpression[1] === '*' ? '0' : cronExpression[1],
-      cronExpression[2] === '*' ? '0' : cronExpression[2],
-      '1',
-      '*/3',
-      '?',
-      '*',
-    ])
-  }
   return (
-    <>
-      <Card style={{ padding: 10, margin: 10 }}>
-        <Radio
-          onChange={onMonthlyChange}
-          value="1"
-          name="MonthlyRadio"
-          checked={every === '1'}
-          inputProps={{ 'aria-label': 'DailyRadio' }}
-        />
-        &nbsp;&nbsp;
-        <TextField
-          id="outlined-number"
-          label={formatMessage(messages.dayOfEveryQuarter)}
-          value={cronExpression[3]}
-          onChange={onDayChange}
-          type="number"
-          disabled={every !== '1'}
-          InputLabelProps={{
-            readOnly: every !== '1',
-            shrink: true,
-          }}
-          margin="normal"
-          variant="outlined"
-        />
-      </Card>
-
-      <Card style={{ padding: 10, margin: 10 }}>
-        <FormControlLabel
-          value="top"
-          control={
-            <Radio
-              onChange={e => {
-                setEvery(e.target.value)
-                onChange([
-                  '0',
-                  cronExpression[1] === '*' ? '0' : cronExpression[1],
-                  cronExpression[2] === '*' ? '0' : cronExpression[2],
-                  'L',
-                  '*/3',
-                  '?',
-                  '*',
-                ])
-              }}
-              value="2"
-              name="DailyRadio"
-              checked={every === '2'}
-              inputProps={{ 'aria-label': 'DailyRadio' }}
-            />
-          }
-          label={formatMessage(messages.lastDayofQuarter)}
-        />
-      </Card>
-
-      <Card style={{ padding: 10, margin: 10 }}>
-        <Radio
-          onChange={e => {
-            setEvery(e.target.value)
-            setDisabled(!disabled)
-            onChange([
-              '0',
-              cronExpression[1] === '*' ? '0' : cronExpression[1],
-              cronExpression[2] === '*' ? '0' : cronExpression[2],
-              `L-${1}`,
-              '*/3',
-              '?',
-              '*',
-            ])
-          }}
-          value="4"
-          name="MonthlyRadio"
-          checked={every === '4'}
-          inputProps={{ 'aria-label': 'MonthlyRadio' }}
-        />
-        <TextField
-          id="outlined-number"
-          label={formatMessage(messages.daysBeforeEndQuarter)}
-          value={cronExpression[3].split('-')[1]}
-          onChange={onLastDayChange}
-          type="number"
-          InputLabelProps={{
-            readOnly: every !== '4',
-            shrink: true,
-          }}
-          disabled={every !== '4'}
-          margin="normal"
-          variant="outlined"
-        />
-        <CardContent>
-          <ChooseTime
-            hour={cronExpression[2]}
-            minute={cronExpression[1]}
-            changeHours={onAtHourChange}
-            changeMinutes={onAtMinuteChange}
-            disabled={every !== '4'}
+    <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
+      <Stack direction="row" spacing={1} alignItems="center">
+        <div style={{ marginLeft: 12 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color="primary"
+                    type="checkbox"
+                    value="1"
+                    onChange={() => {
+                      setEvery('1')
+                      onChange([
+                        '0',
+                        cronExpression[1] === '*' ? '0' : cronExpression[1],
+                        cronExpression[2] === '*' ? '0' : cronExpression[2],
+                        '1',
+                        '*/3',
+                        '?',
+                        '*',
+                      ])
+                    }}
+                    checked={every === '1'}
+                  />
+                }
+                label={formatMessage(messages.dayOfEveryQuarter)}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color="primary"
+                    type="checkbox"
+                    value="2"
+                    onChange={() => {
+                      setEvery('2')
+                      onChange([
+                        '0',
+                        cronExpression[1] === '*' ? '0' : cronExpression[1],
+                        cronExpression[2] === '*' ? '0' : cronExpression[2],
+                        'L',
+                        '*/3',
+                        '?',
+                        '*',
+                      ])
+                    }}
+                    checked={every === '2'}
+                  />
+                }
+                label={formatMessage(messages.lastDayofQuarter)}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color="primary"
+                    type="checkbox"
+                    value="4"
+                    onChange={() => {
+                      setEvery('4')
+                      onChange([
+                        '0',
+                        cronExpression[1] === '*' ? '0' : cronExpression[1],
+                        cronExpression[2] === '*' ? '0' : cronExpression[2],
+                        `L-${1}`,
+                        '*/3',
+                        '?',
+                        '*',
+                      ])
+                    }}
+                    checked={every === '4'}
+                  />
+                }
+                label={formatMessage(messages.daysBeforeEndQuarter)}
+              />
+            </FormGroup>
+          </Stack>
+        </div>
+      </Stack>
+      <Stack direction="row" spacing={1} alignItems="center">
+        {every === '1' ? (
+          <TextField
+            id="outlined-number"
+            label={formatMessage(messages.dayOfEveryQuarter)}
+            value={cronExpression[3]}
+            onChange={onDayChange}
+            type="number"
+            InputLabelProps={{
+              readOnly: every !== '1',
+              shrink: true,
+            }}
+            margin="normal"
+            disabled={every !== '1'}
           />
-        </CardContent>
-      </Card>
-    </>
+        ) : null}
+
+        {every === '4' ? (
+          <Stack direction="row" spacing={1} alignItems="flex-start">
+            <TextField
+              id="outlined-number"
+              label={formatMessage(messages.daysBeforeEndQuarter)}
+              value={cronExpression[3].split('-')[1]}
+              onChange={onLastDayChange}
+              type="number"
+              style={{ width: 200 }}
+              InputLabelProps={{ readOnly: every !== '4', shrink: true }}
+              margin="normal"
+              disabled={every !== '4'}
+            />
+            <ChooseTime
+              hour={cronExpression[2]}
+              minute={cronExpression[1]}
+              changeHours={onAtHourChange}
+              changeMinutes={onAtMinuteChange}
+            />
+          </Stack>
+        ) : null}
+      </Stack>
+    </Stack>
   )
 }
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Radio from '@mui/material/Radio'
+import Stack from '@mui/material/Stack'
+import { styled } from '@mui/material/styles'
+import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
@@ -46,46 +46,38 @@ const Daily = ({ cronExpression, onChange }) => {
   }
 
   return (
-    <>
-      <Card style={{ padding: 10, margin: 10 }}>
-        <Radio
+    <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
+      <Stack direction="row" spacing={1} alignItems="center">
+        <Typography variant="subtitle2">{formatMessage(messages.everyWeekDay)}</Typography>
+        <AntSwitch
           checked={!!every}
-          onClick={() => setEvery(true)}
-          value="1"
-          name="DailyRadio"
-          inputProps={{ 'aria-label': 'DailyRadio' }}
+          inputProps={{ 'aria-label': 'ant design' }}
+          onChange={() => {
+            if (every) {
+              // weekly
+              setEvery(false)
+              onChange(['0', cronExpression[1], cronExpression[2], '?', '*', 'MON-FRI', '*'])
+            } else {
+              // daily
+              setEvery(!every)
+            }
+          }}
         />
-        <TextField
-          id="outlined-number"
-          label={formatMessage(messages.everyDay)}
-          value={cronExpression[3].split('/')[1] ? cronExpression[3].split('/')[1] : ''}
-          onChange={onDayChange}
-          type="number"
-          InputLabelProps={{ disabled: !every, shrink: true }}
-          margin="normal"
-          variant="outlined"
-          disabled={!every}
-        />
-      </Card>
-
-      <Card style={{ padding: 10, margin: 10 }}>
-        <FormControlLabel
-          value="top"
-          control={
-            <Radio
-              onClick={() => {
-                setEvery(false)
-                onChange(['0', cronExpression[1], cronExpression[2], '?', '*', 'MON-FRI', '*'])
-              }}
-              value="2"
-              name="DailyRadio"
-              checked={!every}
-              inputProps={{ 'aria-label': 'DailyRadio' }}
-            />
-          }
-          label={formatMessage(messages.everyWeekDay)}
-        />
-        <CardContent>
+        <Typography variant="subtitle2">{formatMessage(messages.everyDay)}</Typography>
+      </Stack>
+      <Stack direction="row" spacing={1} alignItems="center">
+        {every ? (
+          <TextField
+            id="outlined-number"
+            label={formatMessage(messages.everyDay)}
+            value={cronExpression[3].split('/')[1] ? cronExpression[3].split('/')[1] : ''}
+            onChange={onDayChange}
+            type="number"
+            InputLabelProps={{ disabled: !every, shrink: true }}
+            margin="normal"
+            disabled={!every}
+          />
+        ) : (
           <ChooseTime
             hour={cronExpression[2]}
             minute={cronExpression[1]}
@@ -93,10 +85,51 @@ const Daily = ({ cronExpression, onChange }) => {
             changeHours={changeHours}
             disabled={every}
           />
-        </CardContent>
-      </Card>
-    </>
+        )}
+      </Stack>
+    </Stack>
   )
 }
+
+const AntSwitch = styled(Switch)(({ theme }) => ({
+  width: 28,
+  height: 16,
+  padding: 0,
+  display: 'flex',
+  '&:active': {
+    '& .MuiSwitch-thumb': {
+      width: 15,
+    },
+    '& .MuiSwitch-switchBase.Mui-checked': {
+      transform: 'translateX(9px)',
+    },
+  },
+  '& .MuiSwitch-switchBase': {
+    padding: 2,
+    '&.Mui-checked': {
+      transform: 'translateX(12px)',
+      color: '#fff',
+      '& + .MuiSwitch-track': {
+        opacity: 1,
+        backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
+      },
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    transition: theme.transitions.create(['width'], {
+      duration: 200,
+    }),
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 16 / 2,
+    opacity: 1,
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
+    boxSizing: 'border-box',
+  },
+}))
 
 export default Daily
