@@ -5,7 +5,7 @@ import classnames from 'classnames/bind'
 import useI18n from '../../../hooks/useI18n'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
-import PersonAssignment from './PersonAssignmentItem'
+import PersonAssignmentItem from './PersonAssignmentItem'
 import styles from './PersonDetail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -27,9 +27,9 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
       <h1>{formatMessage(messages.assignments)}</h1>
       {!loadedAssignments && <LinearProgress />}
       {assignments.length === 0 && <h4>Not specified</h4>}
-      {assignments.map(assignment => (
-        <PersonAssignment
-          key={`${assignment.jobFunctionId}-${assignment.jobId}`}
+      {assignments.map((assignment, idx) => (
+        <PersonAssignmentItem
+          key={`${assignment.jobFunctionId}-${assignment.jobId}-${idx}`}
           assignment={assignment}
           showLinks
           onAskConfirmation={askConfirmation}
@@ -50,7 +50,7 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
         onClose={onCancelConfirmation}
       >
         <h3>Do you want to remove below assignment?</h3>
-        <PersonAssignment assignment={confirmation.assignment} />
+        <PersonAssignmentItem assignment={confirmation.assignment} />
       </AspectDialog>
     </section>
   )

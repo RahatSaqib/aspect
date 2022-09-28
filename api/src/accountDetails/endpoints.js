@@ -33,6 +33,7 @@ const routes = [
             zip: Joi.string().max(45).allow('', null),
             timezone: Joi.string().max(255).allow('', null),
             culture: Joi.string().max(255).allow('', null),
+            tags: Joi.string().allow('', null),
           },
         },
       },
