@@ -137,22 +137,23 @@ const ContactDetailsFormFormik = () => {
   }
 
   useEffect(() => {
+    //
     const tempItems = [baseCfg.row1, baseCfg.row2, baseCfg.row3, baseCfg.row4, baseCfg.row5, baseCfg.row6, baseCfg.row7]
     if (personId === FORM_METHOD.ADD) {
       // adding a person
       setType(FORM_METHOD.ADD)
       tempItems.unshift(baseCfg.row0)
       tempItems.push(baseCfg.row8)
+    } else if (!personId || personId === editor.userId) {
+      // editing myself
+      setType(FORM_METHOD.SELF)
+      setQuery({ key: ['get-current-user'], endpoint: '/account-details/current', enabled: true })
     } else if (personId !== editor.userId) {
       // editing someone else
       setType(FORM_METHOD.UPDATE)
       setQuery({ key: [`get-user-${personId}`, personId], endpoint: `/person/${personId}`, enabled: true })
       tempItems.unshift(baseCfg.row0)
       tempItems.push(baseCfg.row8)
-    } else if (personId === editor.userId) {
-      // editing myself
-      setType(FORM_METHOD.SELF)
-      setQuery({ key: ['get-current-user'], endpoint: '/account-details/current', enabled: true })
     }
     return !isEqual(tempItems, items) ? setItems(tempItems) : items
     // eslint-disable-next-line react-hooks/exhaustive-deps
