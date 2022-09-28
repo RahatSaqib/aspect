@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import cloneDeep from 'lodash/cloneDeep'
 import includes from 'lodash/includes'
 import isEmpty from 'lodash/isEmpty'
-import isString from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import isNil from 'lodash/isNil'
+import isString from 'lodash/isString'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
@@ -209,7 +209,7 @@ const ContactDetailsFormFormik = () => {
     newValues.phone = replace(values.phone, / /g, '')
     newValues.cell = replace(values.cell, / /g, '')
 
-    newValues.tags = typeof values.tags === 'string' ? values.tags : values.tags.join(',')
+    newValues.tags = isString(values.tags) ? values.tags : values.tags.join(',')
     /* eslint-disable lodash/collection-return */
     map(newValues, (value, key) => {
       if (key === 'undefined' || isNil(value) || includes(omitValues, key)) delete newValues[key]
