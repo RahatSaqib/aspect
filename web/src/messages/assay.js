@@ -193,4 +193,13 @@ export default defineMessages({
     id: 'filter.AssaySelectField.assayGenericDst',
     defaultMessage: 'TB DST',
   },
+  assayLPA: {
+    id: 'filter.AssaySelectField.assayLPA',
+    defaultMessage: 'LPA',
+  },
+  assaySmear: {
+    id: 'filter.AssaySelectField.assaySmear',
+    defaultMessage: 'Smear',
+  },
+  assayTbLamp: { id: 'filter.AssaySelectField.assayTbLamp', defaultMessage: 'TB lamp' },
 })
