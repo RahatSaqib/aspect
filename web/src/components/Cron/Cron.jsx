@@ -86,7 +86,7 @@ Cron.propTypes = {
 }
 
 Cron.defaultProps = {
-  showResultText: true,
+  showResultText: false,
   showResultCron: true,
 }
 export default Cron
