@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
+import Radio from '@mui/material/Radio'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import classNames from 'classnames/bind'
@@ -69,9 +69,8 @@ const Quarterly = ({ cronExpression, onChange }) => {
             <FormGroup row>
               <FormControlLabel
                 control={
-                  <Checkbox
+                  <Radio
                     color="primary"
-                    type="checkbox"
                     value="1"
                     onChange={() => {
                       setEvery('1')
@@ -92,9 +91,8 @@ const Quarterly = ({ cronExpression, onChange }) => {
               />
               <FormControlLabel
                 control={
-                  <Checkbox
+                  <Radio
                     color="primary"
-                    type="checkbox"
                     value="2"
                     onChange={() => {
                       setEvery('2')
@@ -115,9 +113,8 @@ const Quarterly = ({ cronExpression, onChange }) => {
               />
               <FormControlLabel
                 control={
-                  <Checkbox
+                  <Radio
                     color="primary"
-                    type="checkbox"
                     value="4"
                     onChange={() => {
                       setEvery('4')

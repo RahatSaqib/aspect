@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
+import Radio from '@mui/material/Radio'
 import Stack from '@mui/material/Stack'
-import { styled } from '@mui/material/styles'
-import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
+import classNames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
+import styles from './styles.css'
+
+const classes = classNames.bind(styles)
 
 const Daily = ({ cronExpression, onChange }) => {
   const [every, setEvery] = useState(true)
@@ -47,24 +51,37 @@ const Daily = ({ cronExpression, onChange }) => {
 
   return (
     <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
-      <Stack direction="row" spacing={1} alignItems="center">
-        <Typography variant="subtitle2">{formatMessage(messages.everyWeekDay)}</Typography>
-        <AntSwitch
-          checked={!!every}
-          inputProps={{ 'aria-label': 'ant design' }}
-          onChange={() => {
-            if (every) {
-              // weekly
-              setEvery(false)
-              onChange(['0', cronExpression[1], cronExpression[2], '?', '*', 'MON-FRI', '*'])
-            } else {
-              // daily
-              setEvery(!every)
+      <div className={classes('Content')}>
+        <FormGroup row>
+          <FormControlLabel
+            control={
+              <Radio
+                color="primary"
+                value="1"
+                onChange={() => {
+                  setEvery(true)
+                }}
+                checked={every}
+              />
             }
-          }}
-        />
-        <Typography variant="subtitle2">{formatMessage(messages.everyDay)}</Typography>
-      </Stack>
+            label={formatMessage(messages.everyDay)}
+          />
+          <FormControlLabel
+            control={
+              <Radio
+                color="primary"
+                value="4"
+                onChange={() => {
+                  setEvery(false)
+                  onChange(['0', cronExpression[1], cronExpression[2], '?', '*', 'MON-FRI', '*'])
+                }}
+                checked={!every}
+              />
+            }
+            label={formatMessage(messages.everyWeekDay)}
+          />
+        </FormGroup>
+      </div>
       <Stack direction="row" spacing={1} alignItems="center">
         {every ? (
           <TextField
@@ -90,46 +107,5 @@ const Daily = ({ cronExpression, onChange }) => {
     </Stack>
   )
 }
-
-const AntSwitch = styled(Switch)(({ theme }) => ({
-  width: 28,
-  height: 16,
-  padding: 0,
-  display: 'flex',
-  '&:active': {
-    '& .MuiSwitch-thumb': {
-      width: 15,
-    },
-    '& .MuiSwitch-switchBase.Mui-checked': {
-      transform: 'translateX(9px)',
-    },
-  },
-  '& .MuiSwitch-switchBase': {
-    padding: 2,
-    '&.Mui-checked': {
-      transform: 'translateX(12px)',
-      color: '#fff',
-      '& + .MuiSwitch-track': {
-        opacity: 1,
-        backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
-      },
-    },
-  },
-  '& .MuiSwitch-thumb': {
-    boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    transition: theme.transitions.create(['width'], {
-      duration: 200,
-    }),
-  },
-  '& .MuiSwitch-track': {
-    borderRadius: 16 / 2,
-    opacity: 1,
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
-    boxSizing: 'border-box',
-  },
-}))
 
 export default Daily
