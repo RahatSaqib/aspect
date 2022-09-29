@@ -1,7 +1,4 @@
 module.exports = require('../utils').seed(seed, __filename)
-const { generateResults } = require('../commonGenerateResults')
-const patients = require('./fixtures/patients.json')
-const { errorCodes } = require('./fixtures/errorCodes.js')
 
 const {
   deviceTypeCategoryToId,
@@ -16,12 +13,12 @@ async function seed(knex) {
   const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId('Information System')
 
   let { id: deviceTypeNTRLDatabaseId } =
-    (await knex('DeviceType').where('externalId', 'NTRLDatabase').first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'CustomDevice').first('id')) || {}
 
   if (deviceTypeNTRLDatabaseId) return
   ;[deviceTypeNTRLDatabaseId] = await knex('DeviceType').insert({
-    externalId: 'PhilippinesNtrl',
-    name: 'Philippines NTRL Database',
+    externalId: 'CustomDevice',
+    name: 'CustomDevice Database',
     manufacturer: 'NTRL',
     deviceTypeCategoryId: informationSystemDeviceTypeCategoryId,
   })
@@ -252,10 +249,4 @@ async function seed(knex) {
   })
 
   await updateAssayResultCategoryTreatmentEmphasize(knex)
-  const { partnerId, userId } = await knex('Person as p')
-    .innerJoin('User as u')
-    .where('u.name', 'reporter_admin')
-    .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
-
-  await generateResults(knex, userId, partnerId, patients, errorCodes)
 }
