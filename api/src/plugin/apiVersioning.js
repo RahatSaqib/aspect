@@ -44,7 +44,7 @@ const _extractVersionFromAcceptHeader = function (request, options) {
   return null
 }
 
-const _extractVersionFromPath = function (request, options) {
+const _extractVersionFromPath = function (request) {
   const versionedPathMatch = request.path.match(/^\/v(\d+)/)
   if (versionedPathMatch) {
     return parseInt(versionedPathMatch[1])
