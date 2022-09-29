@@ -2,7 +2,6 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { getConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
-const { returnIso8601StringWithoutTimeZoneOffset } = require('../../shared/date')
 const logger = require('../../shared/logger')
 const { getPageParams } = require('../../routes')
 const {
