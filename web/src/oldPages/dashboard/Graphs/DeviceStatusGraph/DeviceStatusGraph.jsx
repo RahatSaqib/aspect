@@ -8,7 +8,6 @@ import ErrorBoundary from '../../../../components/ErrorBoundary'
 import graphsContainerMessages from '../../../../components/Graphs/GraphsContainer/messages'
 import { dateRangeOptions } from '../../../../components/Graphs/Helpers/Formatters'
 import useI18n from '../../../../hooks/useI18n'
-import PermissionsProvider from '../../../../providers/PermissionsProvider'
 import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import DeviceStatusGraphMain from './DeviceStatusGraph.Main'
 import styles from './styles.css'
@@ -24,41 +23,39 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
   const [filter, setFilter] = useState()
   return (
     <ErrorBoundary>
-      <PermissionsProvider permissions={['dashboard', 'operationalData']}>
-        <Grid container className={cssClasses('Graph_Container')}>
-          <Grid item xs={12}>
-            <Card>
-              <CardHeader title={formatMessage(graphsContainerMessages.deviceStatusTitle)} />
-              <CardContent>
-                <Grid container spacing={8} className={cssClasses('Graph_Content')}>
-                  <Grid item xs={12} md={12} lg={3}>
-                    <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                      <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
-                        <FormControlLabel
-                          label={formatMessage(graphsContainerMessages.showValuesLabel)}
-                          control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
-                        />
-                      </Grid>
-                      <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
-                        <PeriodSelector onChange={setFilter} />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item xs={12} md={12} lg={9}>
-                    <Grid container>
-                      <DeviceStatusGraphMain
-                        assaysFromState={assaysFromState}
-                        showLabel={showLabel}
-                        filterSelection={filter}
+      <Grid container className={cssClasses('Graph_Container')}>
+        <Grid item xs={12}>
+          <Card>
+            <CardHeader title={formatMessage(graphsContainerMessages.deviceStatusTitle)} />
+            <CardContent>
+              <Grid container spacing={8} className={cssClasses('Graph_Content')}>
+                <Grid item xs={12} md={12} lg={3}>
+                  <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
+                    <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                      <FormControlLabel
+                        label={formatMessage(graphsContainerMessages.showValuesLabel)}
+                        control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
                       />
+                    </Grid>
+                    <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
+                      <PeriodSelector onChange={setFilter} />
                     </Grid>
                   </Grid>
                 </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+                <Grid item xs={12} md={12} lg={9}>
+                  <Grid container>
+                    <DeviceStatusGraphMain
+                      assaysFromState={assaysFromState}
+                      showLabel={showLabel}
+                      filterSelection={filter}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
         </Grid>
-      </PermissionsProvider>
+      </Grid>
     </ErrorBoundary>
   )
 }

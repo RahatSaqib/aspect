@@ -3,7 +3,6 @@ import ErrorBoundary from '../../../components/ErrorBoundary'
 import GraphsContainer from '../../../components/Graphs/GraphsContainer'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
 import PieGraph from '../../../components/Graphs/PieGraph'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 
 const {
@@ -82,9 +81,7 @@ const covidMortalityAndRecoveryByGender = {
 const CovidMortalityAndRecoveryByGenderGraph = ({ assays }) => {
   return (
     <ErrorBoundary key={covidMortalityAndRecoveryByGender.id}>
-      <PermissionsProvider permissions={covidMortalityAndRecoveryByGender.graphRenderPermissions}>
-        <GraphsContainer assaysFromState={assays} config={covidMortalityAndRecoveryByGender} />
-      </PermissionsProvider>
+      <GraphsContainer assaysFromState={assays} config={covidMortalityAndRecoveryByGender} />
     </ErrorBoundary>
   )
 }

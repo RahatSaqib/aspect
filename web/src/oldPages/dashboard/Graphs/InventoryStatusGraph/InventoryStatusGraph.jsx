@@ -18,7 +18,6 @@ import graphsContainerMessages from '../../../../components/Graphs/GraphsContain
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
-import PermissionsProvider from '../../../../providers/PermissionsProvider'
 import DeviceStatusGraphMain from './InventoryStatusGraph.Main'
 import styles from './styles.css'
 
@@ -32,41 +31,39 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
 
   return (
     <ErrorBoundary>
-      <PermissionsProvider permissions={['dashboard', 'operationalData']}>
-        <Grid container className={cssClasses('Graph_Container')}>
-          <Grid item xs={12}>
-            <Card>
-              <CardHeader title={formatMessage(graphsContainerMessages.inventoryGraphStatus)} />
-              <CardContent>
-                <Grid container spacing={8} className={cssClasses('Graph_Content')}>
-                  <Grid item xs={12} md={12} lg={3}>
-                    <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                      <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
-                        <FormControlLabel
-                          label={formatMessage(graphsContainerMessages.showValuesLabel)}
-                          control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
-                        />
-                      </Grid>
-                      <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
-                        <ConsumableSelector onChange={setFilter} />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item xs={12} md={12} lg={9}>
-                    <Grid container>
-                      <DeviceStatusGraphMain
-                        assaysFromState={assaysFromState}
-                        showLabel={showLabel}
-                        filterSelection={filter}
+      <Grid container className={cssClasses('Graph_Container')}>
+        <Grid item xs={12}>
+          <Card>
+            <CardHeader title={formatMessage(graphsContainerMessages.inventoryGraphStatus)} />
+            <CardContent>
+              <Grid container spacing={8} className={cssClasses('Graph_Content')}>
+                <Grid item xs={12} md={12} lg={3}>
+                  <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
+                    <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                      <FormControlLabel
+                        label={formatMessage(graphsContainerMessages.showValuesLabel)}
+                        control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
                       />
+                    </Grid>
+                    <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
+                      <ConsumableSelector onChange={setFilter} />
                     </Grid>
                   </Grid>
                 </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+                <Grid item xs={12} md={12} lg={9}>
+                  <Grid container>
+                    <DeviceStatusGraphMain
+                      assaysFromState={assaysFromState}
+                      showLabel={showLabel}
+                      filterSelection={filter}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
         </Grid>
-      </PermissionsProvider>
+      </Grid>
     </ErrorBoundary>
   )
 }
