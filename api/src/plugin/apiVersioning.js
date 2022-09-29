@@ -1,13 +1,11 @@
 /* eslint-disable radix */
 /* eslint-disable no-underscore-dangle */
 const Boom = require('@hapi/boom')
-const Hoek = require('@hapi/hoek')
 const Joi = require('@hapi/joi')
 const MediaType = require('media-type')
 
 const internals = {
   optionsSchema: Joi.object({
-    validVersions: Joi.array().items(Joi.number().integer()).min(1).required(),
     defaultVersion: Joi.any().required(),
     versionHeader: Joi.string().trim().min(1).default('api-version'),
     basePath: Joi.string().trim().min(1).default('/'),
@@ -109,10 +107,23 @@ exports.register = (server, options) => {
     }
 
     // If there was a version by now check if it is valid
-    if (typeof requestedVersion === 'number' && !Hoek.contain(options.validVersions, requestedVersion)) {
-      const largestNum = options.validVersions.reduce(function (accumulatedValue, currentValue) {
-        return Math.max(accumulatedValue, currentValue)
+    if (typeof requestedVersion === 'number') {
+      // reading all registered routes
+      const table = server.table()
+      const matchingRoutesList = []
+
+      // preparing list of routes matching to versioned routes
+      table.map(url => {
+        if (url.path.replace(/v[0-9][/]/gi, '').trim() === request.path) {
+          matchingRoutesList.push(url.path)
+        }
+        return url
       })
+
+      // finding available versions from matching versioned routes for basePath(/mobile/api/)
+      const regex = new RegExp(`${options.basePath}v`, '')
+      const availableVersion = matchingRoutesList.map(list => parseInt(list.replace(regex, '').trim().split('/')[0]))
+      const largestNum = availableVersion ? Math.max(...availableVersion) : options.defaultVersion
       if (largestNum > requestedVersion) {
         requestedVersion = options.defaultVersion
       } else {

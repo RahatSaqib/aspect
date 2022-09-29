@@ -6,7 +6,7 @@ const endpointUtils = require('../utils/endpointUtils')
 describe('mobile API: result endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/mobileApi/result/endpoints', {
-      './service': serviceStub,
+      './downloadV2': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }

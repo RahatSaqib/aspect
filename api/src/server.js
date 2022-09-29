@@ -163,7 +163,6 @@ const start = async () => {
   await server.register({
     plugin: require('./plugin/apiVersioning'),
     options: {
-      validVersions: [1, 2],
       defaultVersion: 1,
       basePath: '/mobile/api/',
     },
