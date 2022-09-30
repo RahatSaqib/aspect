@@ -24,6 +24,9 @@ const baseConfig = {
   ],
   layers: [FqrToMtbPercentageLine, AxisRightLayer],
   clickThrough: false,
+  axisRightProps: {
+    fieldName: 'FqrToMtbPercentage',
+  },
 }
 
 const endpointParams = [
