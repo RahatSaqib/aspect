@@ -128,10 +128,14 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     return Boom.badRequest()
   }
 
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
+  const dictionary = {
+    assayIds: await allAssayToId(),
+  }
 
-  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials, { excludeEqaResults: true })
+
+  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints, dictionary)
   // get total count for paging
   const getCount = resultQuery.clone().countDistinct('r.id as count').first()
 
@@ -246,10 +250,14 @@ async function getResultsForExport(auth, query) {
     return Boom.badRequest()
   }
 
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
+  const dictionary = {
+    assayIds: await allAssayToId(),
+  }
 
-  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials, { excludeEqaResults: true })
+
+  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints, dictionary)
   const getCount = resultQuery.clone().count('r.id as total').first()
 
   const getData = resultQuery.clone().groupBy('r.id').modify(sortPageParams, query, 'endedOn').select(selectFields)
@@ -1955,7 +1963,7 @@ function getBaseQueryForResults() {
   return resultQuery
 }
 
-function getQueryForResultsListAndExport(query, dataConstraints) {
+function getQueryForResultsListAndExport(query, dataConstraints, dictionary) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
 
   const resultQuery = getBaseQueryForResults()
@@ -2095,6 +2103,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       country: 'c',
       disease: 'dis',
       showUnapprovedDevices,
+      dictionary,
     })
 
   return resultQuery
