@@ -11,14 +11,7 @@ module.exports = async function (request) {
 
   const siteParams = await normalizeParameters(payload, user.countryId)
 
-  try {
-    await validate(params.siteId, auth.credentials, siteParams)
-  } catch (error) {
-    if (Boom.isBoom(error)) {
-      return error
-    }
-    throw error
-  }
+  await validate(params.siteId, auth.credentials, siteParams)
 
   await updateSite(params.siteId, siteParams)
 

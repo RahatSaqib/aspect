@@ -8,14 +8,7 @@ const { getExistingSite } = require('./common/db')
 module.exports = async function (request) {
   const { payload, auth } = request
 
-  try {
-    await validate(payload)
-  } catch (error) {
-    if (Boom.isBoom(error)) {
-      return error
-    }
-    throw error
-  }
+  await validate(payload)
 
   const user = await getUserFromCredentials(auth.credentials)
 
