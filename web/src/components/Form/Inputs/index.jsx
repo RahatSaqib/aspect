@@ -1,4 +1,5 @@
 import React from 'react'
+import Cron from '../../Cron/index'
 import Checkbox from './Checkbox'
 import { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone } from './DatePicker'
 import PlaceholderTextArea from './PlaceholderTextArea'
@@ -17,6 +18,7 @@ const Inputs = {
   datePickerNoTimezone: AspectDatePickerNoTimezone,
   select: AspectSelect,
   checkbox: Checkbox,
+  cron: Cron,
 }
 
 const AspectInput = props => {
