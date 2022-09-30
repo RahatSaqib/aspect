@@ -39,6 +39,7 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
   sections: [
     ...notificationTypeSection(formatMessage), // notification header (enabled/type)
     resultBasedSection(formatMessage), // only for ['resultBased']
+    issueBasedSection(formatMessage),
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
     deviceOfflineSection(formatMessage, partner), // only for ['DeviceOffline']
@@ -148,75 +149,31 @@ const notificationTypeSection = formatMessage => {
           id: 0,
           items: [
             {
+              id: 'name',
+              controlType: { component: 'textField' },
+              fullWidth: true,
+              labelI18nKey: 'notificationTitle',
+            },
+            {
               id: 'notificationType',
               controlType: {
                 component: 'select',
                 hideIfNoOptions: false,
                 options: [
                   {
-                    label: formatMessage(messages.notificationCreateGroupForResults),
-                    options: [
-                      {
-                        value: 'resultBased',
-                        label: formatMessage(messages.notificationTypeResultBased),
-                        icon: 'AiOutlineSolution',
-                      },
-                    ],
+                    value: 'resultBased',
+                    label: formatMessage(messages.notificationTypeResultBased),
+                    icon: 'GrTest',
                   },
                   {
-                    label: formatMessage(messages.notificationCreateGroupForSite),
-                    options: [
-                      // {
-                      //   value: 'InventoryStockout',
-                      //   label: formatMessage(messages.notificationTypeLowInventory),
-                      //   icon: 'AiOutlineDashboard',
-                      // },
-                      // {
-                      //   value: 'InventoryStockExpiring',
-                      //   label: formatMessage(messages.notificationTypeExpiring),
-                      //   icon: 'AiOutlineDashboard',
-                      // },
-                    ],
+                    value: 'issueBased',
+                    label: 'Issue based',
+                    icon: 'AiOutlineIssuesClose',
                   },
                   {
-                    label: formatMessage(messages.notificationCreateGroupForDevices),
-                    options: [
-                      {
-                        value: 'DeviceNoResults',
-                        label: formatMessage(messages.notificationTypeNoResult),
-                        icon: 'AiOutlineFileExclamation',
-                      },
-                      {
-                        value: 'DeviceOffline',
-                        label: formatMessage(messages.notificationTypeOffline),
-                        icon: 'AiOutlineApi',
-                      },
-                      // { TODO:  Uncomment when the issue is ready.
-                      //   value: 'calibration',
-                      //   label: formatMessage(messages.notificationTypeCalibration),
-                      //   icon: 'AiOutlineTool',
-                      // },
-                      {
-                        value: 'ModuleReplaced',
-                        label: formatMessage(messages.notificationTypeModuleReplaced),
-                        icon: 'AiOutlineSwap',
-                      },
-                      {
-                        value: 'ModuleDisabled',
-                        label: formatMessage(messages.notificationTypeModuleDisabled),
-                        icon: 'AiOutlineBlock',
-                      },
-                      {
-                        value: 'UnusedModules',
-                        label: formatMessage(messages.notificationTypeModuleUnused),
-                        icon: 'AiOutlineExclamation',
-                      },
-                      {
-                        value: 'InstrumentReplaced',
-                        label: formatMessage(messages.notificationTypeInstrumentReplaced),
-                        icon: 'AiOutlineTool',
-                      },
-                    ],
+                    value: 'reportBased',
+                    label: 'Report Base',
+                    icon: 'AiOutlineSolution',
                   },
                 ],
                 placeholder: formatMessage(messages.notificationType),
@@ -227,12 +184,6 @@ const notificationTypeSection = formatMessage => {
                 item: cssClasses('full-width-100pc'),
               },
               labelI18nKey: 'notificationType',
-            },
-            {
-              id: 'name',
-              controlType: { component: 'textField' },
-              fullWidth: true,
-              labelI18nKey: 'notificationTitle',
             },
           ],
         },
@@ -817,4 +768,142 @@ const sendSection = (formatMessage, jobFunctions) => {
   ]
 }
 
+const issueBasedSection = formatMessage => {
+  return {
+    id: 'section_issueType',
+    label: 'Issue Type',
+    labelI18nKey: 'issueType',
+    visibleIf: values => {
+      return ['issueBased'].includes(values.notificationType)
+    },
+    rows: [
+      {
+        id: 0,
+        items: [
+          {
+            id: 'issueTypeId',
+            label: 'issues',
+            labelI18nKey: 'issues',
+            controlType: {
+              component: 'select',
+              hideIfNoOptions: false,
+              options: [
+                {
+                  label: formatMessage(messages.notificationCreateGroupForSite),
+                  options: [
+                    // {
+                    //   value: 'InventoryStockout',
+                    //   label: formatMessage(messages.notificationTypeLowInventory),
+                    //   icon: 'AiOutlineDashboard',
+                    // },
+                    // {
+                    //   value: 'InventoryStockExpiring',
+                    //   label: formatMessage(messages.notificationTypeExpiring),
+                    //   icon: 'AiOutlineDashboard',
+                    // },
+                  ],
+                },
+                {
+                  label: formatMessage(messages.notificationCreateGroupForDevices),
+                  options: [
+                    {
+                      value: 'DeviceNoResults',
+                      label: formatMessage(messages.notificationTypeNoResult),
+                      icon: 'AiOutlineFileExclamation',
+                    },
+                    {
+                      value: 'DeviceOffline',
+                      label: formatMessage(messages.notificationTypeOffline),
+                      icon: 'AiOutlineApi',
+                    },
+                    // { TODO:  Uncomment when the issue is ready.
+                    //   value: 'calibration',
+                    //   label: formatMessage(messages.notificationTypeCalibration),
+                    //   icon: 'AiOutlineTool',
+                    // },
+                    {
+                      value: 'ModuleReplaced',
+                      label: formatMessage(messages.notificationTypeModuleReplaced),
+                      icon: 'AiOutlineSwap',
+                    },
+                    {
+                      value: 'ModuleDisabled',
+                      label: formatMessage(messages.notificationTypeModuleDisabled),
+                      icon: 'AiOutlineBlock',
+                    },
+                    {
+                      value: 'UnusedModules',
+                      label: formatMessage(messages.notificationTypeModuleUnused),
+                      icon: 'AiOutlineExclamation',
+                    },
+                    {
+                      value: 'InstrumentReplaced',
+                      label: formatMessage(messages.notificationTypeInstrumentReplaced),
+                      icon: 'AiOutlineTool',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  }
+  // {
+  //   label: formatMessage(messages.notificationCreateGroupForSite),
+  //   options: [
+  //     {
+  //       value: 'InventoryStockout',
+  //       label: formatMessage(messages.notificationTypeLowInventory),
+  //       icon: 'AiOutlineDashboard',
+  //     },
+  //     {
+  //       value: 'InventoryStockExpiring',
+  //       label: formatMessage(messages.notificationTypeExpiring),
+  //       icon: 'AiOutlineDashboard',
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: formatMessage(messages.notificationCreateGroupForDevices),
+  //   options: [
+  //     {
+  //       value: 'DeviceNoResults',
+  //       label: formatMessage(messages.notificationTypeNoResult),
+  //       icon: 'AiOutlineFileExclamation',
+  //     },
+  //     {
+  //       value: 'DeviceOffline',
+  //       label: formatMessage(messages.notificationTypeOffline),
+  //       icon: 'AiOutlineApi',
+  //     },
+  //     // { TODO:  Uncomment when the issue is ready.
+  //     //   value: 'calibration',
+  //     //   label: formatMessage(messages.notificationTypeCalibration),
+  //     //   icon: 'AiOutlineTool',
+  //     // },
+  //     {
+  //       value: 'ModuleReplaced',
+  //       label: formatMessage(messages.notificationTypeModuleReplaced),
+  //       icon: 'AiOutlineSwap',
+  //     },
+  //     {
+  //       value: 'ModuleDisabled',
+  //       label: formatMessage(messages.notificationTypeModuleDisabled),
+  //       icon: 'AiOutlineBlock',
+  //     },
+  //     {
+  //       value: 'UnusedModules',
+  //       label: formatMessage(messages.notificationTypeModuleUnused),
+  //       icon: 'AiOutlineExclamation',
+  //     },
+  //     {
+  //       value: 'InstrumentReplaced',
+  //       label: formatMessage(messages.notificationTypeInstrumentReplaced),
+  //       icon: 'AiOutlineTool',
+  //     },
+  //   ],
+  // },
+}
 export default getFormConfig

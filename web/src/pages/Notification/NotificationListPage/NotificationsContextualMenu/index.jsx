@@ -16,7 +16,7 @@ const initialDeleteStatus = { showDialog: false, notificationId: 0 }
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useI18n()
-  const { id, typeCategory, name, enabled, totalTriggers } = item
+  const { id, name, enabled, totalTriggers } = item
   const queryClient = useQueryClient()
   const refreshList = () => {
     queryClient.invalidateQueries(NOTIFICATION_LIST.KEY)
@@ -31,7 +31,6 @@ const NotificationsContextualMenu = ({ item }) => {
       icon: 'FaEdit',
       text: formatMessage(messages.editTitle),
       action: () => navigate(`/browse/notification/${id}`),
-      disabled: typeCategory !== 'resultBased',
     },
     {
       icon: 'FaCopy',

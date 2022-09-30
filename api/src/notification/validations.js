@@ -23,6 +23,24 @@ function listNotificationsBaseConfig() {
     },
   }
 }
+const NotificationSchema = Joi.object().keys({
+  ok: Joi.bool().required().description('False on any non-fatal error'),
+  data: Joi.object()
+    .allow(null)
+    .keys({
+      notificationTypeName: Joi.string().required().description('Notification Type Category name'),
+      notificationType: Joi.string().required().description('Notification Type external Id'),
+      name: Joi.string().required().description('Name of the notification'),
+      filterCondition: Joi.string().allow(null).description('The condition Filters'),
+      issueTypeId: Joi.string().allow('', null).description('The external Id of the issueType'),
+      emailSubject: Joi.string().allow(null).description('email subject'),
+      emailBody: Joi.string().allow(null).description('email body'),
+      smsBody: Joi.string().allow(null).description('sms body'),
+      webUrl: Joi.string().allow(null).description('Web url'),
+      webBody: Joi.string().allow(null).description('Web body'),
+      enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
+    }),
+})
 
 const optionsForSendXXX = {
   is: true,
@@ -188,4 +206,5 @@ module.exports = {
   resultBasedNotificationPayload,
   changeNotificationStatusPayload,
   saveNotificationResponse,
+  NotificationSchema,
 }
