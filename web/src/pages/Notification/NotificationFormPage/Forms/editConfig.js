@@ -23,6 +23,7 @@ import {
   lowInventorySection,
   stockExpiringSection,
 } from './issueBasedConfig'
+import { reportBasedSection } from './reportBasedConfig'
 import { resultBasedSection } from './resultBasedConfig'
 
 const cssClasses = classnames.bind(styles)
@@ -46,6 +47,7 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     ...notificationTypeSection(formatMessage), // notification header (enabled/type)
     resultBasedSection(formatMessage), // only for ['resultBased']
     issueBasedSection(formatMessage), // only for ['issueBased]
+    reportBasedSection(formatMessage),
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
     deviceOfflineSection(formatMessage, partner), // only for ['DeviceOffline']

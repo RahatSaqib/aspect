@@ -181,9 +181,7 @@ const issueBasedSection = formatMessage => {
     id: 'section_issueType',
     label: 'Issue Type',
     labelI18nKey: 'issueType',
-    visibleIf: values => {
-      return ['issueBased'].includes(values.notificationType)
-    },
+    visibleIf: values => ['issueBased'].includes(values.notificationType),
     rows: [
       {
         id: 0,
