@@ -1,5 +1,5 @@
 const Boom = require('@hapi/boom')
-const { getConstraints } = require('../auth/constraints')
+const { getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
 const { getExistingSiteExcludingCurrent, updateSite, checkSiteAccess } = require('./common/db')
@@ -7,7 +7,9 @@ const { getExistingSiteExcludingCurrent, updateSite, checkSiteAccess } = require
 module.exports = async function (request) {
   const { auth, params, payload } = request
 
-  const siteParams = await normalizeParameters(payload)
+  const user = await getUserFromCredentials(auth.credentials)
+
+  const siteParams = await normalizeParameters(payload, user.countryId)
 
   try {
     await validate(params.siteId, auth.credentials, siteParams)
@@ -23,8 +25,8 @@ module.exports = async function (request) {
   return params.siteId
 }
 
-async function normalizeParameters(payload) {
-  const payloadWithGeographyId = await transformGeographyFromUpdates(payload)
+async function normalizeParameters(payload, countryId) {
+  const payloadWithGeographyId = await transformGeographyFromUpdates(payload, countryId)
   return normalizeSiteParameters(payloadWithGeographyId)
 }
 
