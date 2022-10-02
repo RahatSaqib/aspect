@@ -1,5 +1,5 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable radix */
-/* eslint-disable no-underscore-dangle */
 const Boom = require('@hapi/boom')
 const Joi = require('@hapi/joi')
 const MediaType = require('media-type')
@@ -8,21 +8,21 @@ const internals = {
   optionsSchema: Joi.object({
     defaultVersion: Joi.any().required(),
     versionHeader: Joi.string().trim().min(1).default('api-version'),
-    basePath: Joi.string().trim().min(1).default('/'),
+    mobileApiPath: Joi.string().trim().min(1).default('/'),
   }),
 }
 
-const _extractVersionFromCustomHeader = function (request, options) {
+const extractVersionFromCustomHeader = function (request, options) {
   const apiVersionHeader = request.headers[options.versionHeader]
 
-  if (/^[0-9]+$/.test(apiVersionHeader)) {
+  if (!isNaN(apiVersionHeader)) {
     return parseInt(apiVersionHeader)
   }
 
   return null
 }
 
-const _extractVersionFromAcceptHeader = function (request, options) {
+const extractVersionFromAcceptHeader = function (request, options) {
   const acceptHeader = request.headers.accept
   const media = MediaType.fromString(acceptHeader)
 
@@ -42,8 +42,8 @@ const _extractVersionFromAcceptHeader = function (request, options) {
   return null
 }
 
-const _extractVersionFromPath = function (request) {
-  const versionedPathMatch = request.path.match(/^\/v(\d+)/)
+const extractVersionFromPath = function (request) {
+  const versionedPathMatch = request.path.match(/{options.mobileApiPath}\/v(\d+)/)
   if (versionedPathMatch) {
     return parseInt(versionedPathMatch[1])
   }
@@ -52,7 +52,7 @@ const _extractVersionFromPath = function (request) {
 }
 
 // Set a response header containing the version number
-const _addVersionToResponseHeader = function (request, requestedVersion, options) {
+const addVersionToResponseHeader = function (request, requestedVersion, options) {
   const headerName = options.versionHeader
   const { response } = request
 
@@ -63,7 +63,7 @@ const _addVersionToResponseHeader = function (request, requestedVersion, options
   }
 }
 
-const _attemptPathDecoding = function (request) {
+const attemptPathDecoding = function (request) {
   try {
     decodeURI(request.path)
   } catch (err) {
@@ -86,19 +86,19 @@ exports.register = (server, options) => {
 
   server.ext('onRequest', (request, h) => {
     // Surface any URI decoding errors before calling server.match
-    _attemptPathDecoding(request)
+    attemptPathDecoding(request)
 
     // First check for custom header
-    let requestedVersion = _extractVersionFromCustomHeader(request, options)
+    let requestedVersion = extractVersionFromCustomHeader(request, options)
 
     // If no version check accept header
     if (typeof requestedVersion !== 'number') {
-      requestedVersion = _extractVersionFromAcceptHeader(request, options)
+      requestedVersion = extractVersionFromAcceptHeader(request, options)
     }
 
     // If no version check route path
     if (typeof requestedVersion !== 'number') {
-      requestedVersion = _extractVersionFromPath(request, options)
+      requestedVersion = extractVersionFromPath(request, options)
     }
 
     // If passive mode skips the rest for non versioned routes
@@ -114,28 +114,26 @@ exports.register = (server, options) => {
 
       // preparing list of routes matching to versioned routes
       table.map(url => {
-        if (url.path.replace(/v[0-9][/]/gi, '').trim() === request.path) {
+        if (url.path.replace(/v\d+[\/]/gi, '').trim() === request.path) {
           matchingRoutesList.push(url.path)
         }
         return url
       })
 
-      // finding available versions from matching versioned routes for basePath(/mobile/api/)
+      // finding available versions from matching versioned routes for mobileApiPath(/mobile/api/)
       const availableVersion = matchingRoutesList.map(list => parseInt(list.match(/\d+/)[0]))
       const largestNum = availableVersion ? Math.max(...availableVersion) : options.defaultVersion
-      if (largestNum > requestedVersion) {
-        requestedVersion = options.defaultVersion
-      } else {
-        requestedVersion = largestNum
-      }
+      requestedVersion = largestNum > requestedVersion ? options.defaultVersion : largestNum
     }
 
     // If there was no version by now use the default version
-    if (typeof requestedVersion !== 'number') {
+    else {
       requestedVersion = options.defaultVersion
     }
 
-    const versionedPath = `${options.basePath}v${requestedVersion}${request.path.slice(options.basePath.length - 1)}`
+    const versionedPath = `${options.mobileApiPath}v${requestedVersion}${request.path.slice(
+      options.mobileApiPath.length - 1
+    )}`
 
     let { method } = request
     if (request.method === 'options') {
@@ -147,9 +145,9 @@ exports.register = (server, options) => {
 
     const route = server.match(method, versionedPath)
 
-    if (route && route.path.indexOf(`${options.basePath}v${requestedVersion}/`) === 0) {
+    if (route && route.path.indexOf(`${options.mobileApiPath}v${requestedVersion}/`) === 0) {
       request.setUrl(
-        `${options.basePath}v${requestedVersion}${request.path.slice(options.basePath.length - 1)}${
+        `${options.mobileApiPath}v${requestedVersion}${request.path.slice(options.mobileApiPath.length - 1)}${
           request.url.search || ''
         }`
       ) // required to preserve query parameters
@@ -162,7 +160,7 @@ exports.register = (server, options) => {
   })
 
   server.ext('onPreResponse', (request, h) => {
-    _addVersionToResponseHeader(request, request.pre.apiVersion, options)
+    addVersionToResponseHeader(request, request.pre.apiVersion, options)
     return h.continue
   })
 }

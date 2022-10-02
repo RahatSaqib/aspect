@@ -389,7 +389,7 @@ API versioning plugin is stored in /src/plugin/apiVersioning.js
 API versioning have three options
 - defaultVersion (required) : If any versioned endpoint is requested without api-version custom header, then it will take defaultVersion.
 - versionHeader (optional) : Configure this param if want to access different custom header instead of api-version
-- basePath (optional) : In case we have a base path different from / (example: /api/). Per default this is /.
+- mobileApiPath (optional) : In case we have a base path different from / (example: /api/). Per default this is /.
 
 
 Following are the use-cases for the api versioning

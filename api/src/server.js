@@ -164,7 +164,7 @@ const start = async () => {
     plugin: require('./plugin/apiVersioning'),
     options: {
       defaultVersion: 1,
-      basePath: '/mobile/api/',
+      mobileApiPath: '/mobile/api/',
     },
   })
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
