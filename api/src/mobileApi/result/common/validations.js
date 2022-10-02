@@ -2,7 +2,7 @@ const Joi = require('@hapi/joi')
 const { validateSortPageParams } = require('../../../routes')
 
 const downloadResultValidation = () => {
-  return Joi.object().keys({
+  return {
     minUpdatedOn: Joi.date().iso().allow(null).description('Updated From Date'),
     diseaseExternalIds: Joi.string().allow(null).optional().description('A csv of the diseases external ID'),
     maxUpdatedOn: Joi.date().iso().allow(null).description('Updated To Date'),
@@ -18,7 +18,7 @@ const downloadResultValidation = () => {
     deviceType: Joi.string().optional().description('External Id Device type, the default value is CepheidGeneXpert'),
     isTransferred: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
     ...validateSortPageParams('updatedOn'),
-  })
+  }
 }
 
 const downloadResultResponseValidation = () => {
@@ -140,7 +140,7 @@ const downloadResultResponseValidation = () => {
 }
 
 const downloadResultValidationV2 = () => {
-  return Joi.object().keys({
+  return {
     minUpdatedOn: Joi.date().iso().allow(null).description('Updated From Date'),
     diseaseExternalIds: Joi.string().allow(null).optional().description('A csv of the diseases external ID'),
     maxUpdatedOn: Joi.date().iso().allow(null).description('Updated To Date'),
@@ -156,7 +156,7 @@ const downloadResultValidationV2 = () => {
     deviceType: Joi.string().optional().description('External Id Device type, the default value is CepheidGeneXpert'),
     isTransferred: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
     ...validateSortPageParams('updatedOn'),
-  })
+  }
 }
 
 const downloadResultResponseValidationV2 = () => {

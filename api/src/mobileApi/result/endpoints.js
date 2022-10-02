@@ -22,7 +22,7 @@ const routes = [
         'Pageable and sortable list of complete results (including all result details). Used for syncing the reporter app',
       auth: { scope: ['result:view'] },
       validate: {
-        query: downloadResultValidation,
+        query: downloadResultValidation(),
       },
       response: {
         options: {
@@ -42,7 +42,7 @@ const routes = [
         'Pageable and sortable list of complete results (including all result details). Used for syncing the reporter app',
       auth: { scope: ['result:view'] },
       validate: {
-        query: downloadResultValidationV2,
+        query: downloadResultValidationV2(),
       },
       response: {
         options: {

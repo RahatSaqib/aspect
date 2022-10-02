@@ -121,8 +121,7 @@ exports.register = (server, options) => {
       })
 
       // finding available versions from matching versioned routes for basePath(/mobile/api/)
-      const regex = new RegExp(`${options.basePath}v`, '')
-      const availableVersion = matchingRoutesList.map(list => parseInt(list.replace(regex, '').trim().split('/')[0]))
+      const availableVersion = matchingRoutesList.map(list => parseInt(list.match(/\d+/)[0]))
       const largestNum = availableVersion ? Math.max(...availableVersion) : options.defaultVersion
       if (largestNum > requestedVersion) {
         requestedVersion = options.defaultVersion

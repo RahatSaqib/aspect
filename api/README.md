@@ -375,3 +375,26 @@ err.output.statusCode = 444
 err.reformat()
 return err
 ```
+
+## API Versioning
+
+API versioning supports multiple versions of api end points. This mechanism enables api versioning based on custom header api-version. We can support/target individual endpoint by implementing this mechanism. 
+
+API versioning plugin is stored in /src/plugin/apiVersioning.js
+
+- Check if an accept header OR a custom header (default api-version) is present and extract the version
+- If no version was extracted (e.g. no headers sent) use the default version
+- Check if a versioned route (like /v2/users) exists -> if so rewrite the url from /users to /v2/users, otherwise do nothing
+
+API versioning have three options
+- defaultVersion (required) : If any versioned endpoint is requested without api-version custom header, then it will take defaultVersion.
+- versionHeader (optional) : Configure this param if want to access different custom header instead of api-version
+- basePath (optional) : In case we have a base path different from / (example: /api/). Per default this is /.
+
+
+Following are the use-cases for the api versioning
+
+- If there is an endpoint with a matching version to the request, use that endpoint
+- If there are any versioned endpoints with a version, lower than the version specified in the request, use the highest version that is below the version specified in the request
+- If there are any un-versioned endpoints use this un-versioned endpoint
+
