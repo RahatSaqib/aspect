@@ -106,20 +106,8 @@ describe('/account-details', () => {
           newTimezone,
           `The timezone set for this person is already set to 'South Africa Standard Time'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the timezone for this person (id=${accountDetails.id}) to something other than '${newTimezone}'`
         )
-        let userPreferences = _.omit(accountDetails, [
-          'userId',
-          'username',
-          'name',
-          'title',
-          'email',
-          'email2',
-          'phone',
-          'cell',
-          'countryId',
-          'stateId',
-          'lgaId',
-          'zip',
-        ])
+        const { id: accountDetailId, culture: cultureId } = accountDetails
+        let userPreferences = { id: accountDetailId, culture: cultureId }
         let res = await server
           .put(path)
           .send({ ...userPreferences, timezone: newTimezone })
@@ -144,6 +132,7 @@ describe('/account-details', () => {
           'lgaId',
           'timezone',
           'culture',
+          'tags',
         ]
         _.each(accountDetailsFieldNames, fieldName => {
           assert.property(res.body.data, fieldName)
@@ -156,20 +145,8 @@ describe('/account-details', () => {
         assert.equal(res.body.data.timezone, newTimezone)
 
         // Clean Up: Update the user with their old title again
-        userPreferences = _.omit(accountDetails, [
-          'userId',
-          'username',
-          'name',
-          'title',
-          'email',
-          'email2',
-          'phone',
-          'cell',
-          'countryId',
-          'stateId',
-          'lgaId',
-          'zip',
-        ])
+        const { id, culture } = accountDetails
+        userPreferences = { id, culture }
 
         res = await server
           .put(path)

@@ -49,8 +49,12 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
   )
 }
 
+async function reportBased() {
+  return () => true
+}
 module.exports = {
   issueBased,
   resultBased,
+  reportBased,
   onIssueEscalated,
 }

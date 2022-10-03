@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-09T22:20:34.545Z\n"
+"POT-Creation-Date: 2022-09-30T17:11:05.070Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -337,13 +337,10 @@ msgstr ""
 msgid "Account Details"
 msgstr "Тафсилоти ҳисоб"
 
-#. [pages.ResultList.ResultWorkflowStatusAcknowledged]
+#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
 #. [pages.TaskList.issueStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
-#. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
 #: extracted_strings.json
@@ -472,6 +469,13 @@ msgstr "Адрес 2"
 msgid "Adjust"
 msgstr "Танзим кардан"
 
+#. [jobFunction.admin]
+#. defaultMessage is:
+#. Admin
+#: extracted_strings.json
+msgid "Admin"
+msgstr "Админ"
+
 #. [pages.transferResult.successMessageButton]
 #. defaultMessage is:
 #. After clicking the OK button below, you will be redirected to the list of results.
@@ -533,6 +537,9 @@ msgstr "Alere Q HIV-1/2 VL плазма"
 msgid "Alerts"
 msgstr "Огоҳӣ"
 
+#. [filter.AssaySelectField.All]
+#. defaultMessage is:
+#. All
 #. [filter.clientSideFilterSelect.selectAll]
 #. defaultMessage is:
 #. All
@@ -859,11 +866,18 @@ msgstr "Навъи таҳлил:"
 msgid "Assay is required"
 msgstr "Таҳлил талаб карда мешавад"
 
+#. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
+#. defaultMessage is:
+#. Asserted inventory on hand decrease
+#: extracted_strings.json
+msgid "Asserted inventory on hand decrease"
+msgstr "Инвентаризатсияи тасдиқшуда дар коҳиши дастӣ"
+
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandRemove]
 #. defaultMessage is:
-#. Asserted inventory on hand
+#. Asserted inventory on hand increase
 #: extracted_strings.json
-msgid "Asserted inventory on hand"
+msgid "Asserted inventory on hand increase"
 msgstr "Инвентаризатсияи тасдиқшуда дар даст"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
@@ -1056,9 +1070,6 @@ msgstr "Шумораи миёнаи санҷишҳо дар як рӯзи кор
 msgid "Average time to replace disabled module"
 msgstr "Вақти миёна барои иваз кардани модули ғайрифаъол"
 
-#. [pages.ResultList.ResultTreatmentStatusAwaitingTreatment]
-#. defaultMessage is:
-#. Awaiting Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
 #. Awaiting Treatment
@@ -1501,6 +1512,13 @@ msgstr "Таърихи клиникӣ"
 #: extracted_strings.json
 msgid "Clinical Indicators"
 msgstr "Нишондиҳандаҳои клиникӣ"
+
+#. [jobFunction.clinician]
+#. defaultMessage is:
+#. Clinician
+#: extracted_strings.json
+msgid "Clinician"
+msgstr "Клиникист"
 
 #. [errorResponseMessages.generic.closeText]
 #. defaultMessage is:
@@ -2012,6 +2030,13 @@ msgstr "Ковид - 19"
 msgid "Create"
 msgstr "Эҷод кунед"
 
+#. [pages.NotificationList.createNotification]
+#. defaultMessage is:
+#. Create Notification
+#: extracted_strings.json
+msgid "Create Notification"
+msgstr "Эҷод кунед"
+
 #. [pages.SiteList.createSite]
 #. defaultMessage is:
 #. Create Site
@@ -2133,6 +2158,13 @@ msgstr "Нобуд кунед"
 msgid "DST"
 msgstr "DST"
 
+#. [components.shared.daily]
+#. defaultMessage is:
+#. Daily
+#: extracted_strings.json
+msgid "Daily"
+msgstr "Ҳар рӯз"
+
 #. [pages.Status.clinicalIndicatorsCovidName]
 #. defaultMessage is:
 #. Daily Confirmed Cases
@@ -2240,10 +2272,10 @@ msgstr "Тандурустии маълумот"
 #. [pages.Milestones.date]
 #. defaultMessage is:
 #. Date
-#. [pages.DeviceDetailOperation.startedOn]
+#. [pages.Notifications.table.dateHeader]
 #. defaultMessage is:
 #. Date
-#. [pages.Notifications.table.dateHeader]
+#. [pages.DeviceDetailOperation.startedOn]
 #. defaultMessage is:
 #. Date
 #: extracted_strings.json
@@ -2295,6 +2327,34 @@ msgstr "Санаи интиқол"
 msgid "Day"
 msgstr "Рӯз"
 
+#. [components.shared.dayOfEveryMonth]
+#. defaultMessage is:
+#. Day of Every Months(s)
+#: extracted_strings.json
+msgid "Day of Every Months(s)"
+msgstr "Рӯзи ҳар моҳ(ҳо)"
+
+#. [components.shared.dayOfEveryQuarter]
+#. defaultMessage is:
+#. Day of Every Quarter
+#: extracted_strings.json
+msgid "Day of Every Quarter"
+msgstr "Рӯзи ҳар семоҳа"
+
+#. [components.shared.daysBeforeEndMonth]
+#. defaultMessage is:
+#. Day(s) before the end of the Quarter
+#: extracted_strings.json
+msgid "Day(s) before the end of the Quarter"
+msgstr "Рӯз(ҳо) пеш аз анҷоми семоҳа"
+
+#. [pages.NotificationDetail.daysOffline]
+#. defaultMessage is:
+#. Days Offline
+#: extracted_strings.json
+msgid "Days Offline"
+msgstr "Рӯзҳои офлайнӣ"
+
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
 #. Days Stock Left
@@ -2322,6 +2382,20 @@ msgstr "Рӯзҳо бо қатъи хидмат"
 msgid "Days active"
 msgstr "Рӯзҳои фаъол"
 
+#. [pages.NotificationDetail.daysOfInventoryLeft]
+#. defaultMessage is:
+#. Days of inventory left
+#: extracted_strings.json
+msgid "Days of inventory left"
+msgstr "Рӯзҳои захира боқӣ мондааст"
+
+#. [pages.NotificationDetail.daysWithoutResults]
+#. defaultMessage is:
+#. Days without results
+#: extracted_strings.json
+msgid "Days without results"
+msgstr "Рӯзҳо бе натиҷа"
+
 #. [component.Widget.dashboardWidgetTitleTotalDeaths]
 #. defaultMessage is:
 #. Deaths
@@ -2346,22 +2420,12 @@ msgstr "Ба кор андохта шуд"
 msgid "Delete (Only 0 triggers)"
 msgstr "Нест кардан (танҳо 0 триггер)"
 
-#. [pages.ResultList.ResultWorkflowStatusDelivered]
-#. defaultMessage is:
-#. Delivered
 #. [pages.deviceDetail.ResultWorkflowStatusDelivered]
 #. defaultMessage is:
 #. Delivered
 #: extracted_strings.json
 msgid "Delivered"
 msgstr "Супурд"
-
-#. [pages.DeviceDemo.title]
-#. defaultMessage is:
-#. Demo Device
-#: extracted_strings.json
-msgid "Demo Device"
-msgstr "Дастгоҳи намоишӣ"
 
 #. [filter.AssayTypeSelectField.assayTypeDengue]
 #. defaultMessage is:
@@ -2534,26 +2598,19 @@ msgstr "Саломатии дастгоҳ"
 msgid "Device Issue: {issueTypeId}"
 msgstr "Масъалаи дастгоҳ: {issueTypeId}"
 
-#. [pages.NotificationDetail.SelectLgaTitle]
-#. defaultMessage is:
-#. Device LGA
-#: extracted_strings.json
-msgid "Device LGA"
-msgstr "Дастгоҳи LGA"
-
-#. [pages.NotificationDetail.SelectLabTitle]
-#. defaultMessage is:
-#. Device Lab
-#: extracted_strings.json
-msgid "Device Lab"
-msgstr "Лабораторияи дастгоҳ"
-
 #. [pages.MaintenanceStatusDialog.dialogTitle]
 #. defaultMessage is:
 #. Device Maintenance
 #: extracted_strings.json
 msgid "Device Maintenance"
 msgstr "Нигоҳдории дастгоҳ"
+
+#. [jobFunction.deviceMaker]
+#. defaultMessage is:
+#. Device Maker
+#: extracted_strings.json
+msgid "Device Maker"
+msgstr "Созандаи дастгоҳ"
 
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
@@ -2568,13 +2625,6 @@ msgstr "Номи дастгоҳ"
 #: extracted_strings.json
 msgid "Device Serial"
 msgstr "Силсилаи дастгоҳ"
-
-#. [pages.NotificationDetail.SelectStateTitle]
-#. defaultMessage is:
-#. Device State
-#: extracted_strings.json
-msgid "Device State"
-msgstr "Ҳолати дастгоҳ"
 
 #. [filter.popover.deviceStatus]
 #. defaultMessage is:
@@ -2605,6 +2655,13 @@ msgstr "Навъи дастгоҳ"
 #: extracted_strings.json
 msgid "Device Warranty"
 msgstr "Кафолати дастгоҳ"
+
+#. [pages.NotificationDetail.SelectStateTitle]
+#. defaultMessage is:
+#. Device from State
+#: extracted_strings.json
+msgid "Device from State"
+msgstr "Дастгоҳ аз давлат"
 
 #. [pages.Result.deviceRequired]
 #. defaultMessage is:
@@ -2666,6 +2723,20 @@ msgstr "Дастгоҳҳо фаъол"
 msgid "Devices With Service Interruption"
 msgstr "Таҷҳизот бо қатъи хидмат"
 
+#. [pages.NotificationDetail.SelectLgaTitle]
+#. defaultMessage is:
+#. Devices from LGA
+#: extracted_strings.json
+msgid "Devices from LGA"
+msgstr "Дастгоҳҳо аз LGA"
+
+#. [pages.NotificationDetail.SelectLabTitle]
+#. defaultMessage is:
+#. Devices from Lab
+#: extracted_strings.json
+msgid "Devices from Lab"
+msgstr "Дастгоҳҳо аз лаборатория"
+
 #. [component.Widget.unusedModulesTitle]
 #. defaultMessage is:
 #. Devices with Unused Modules
@@ -2690,6 +2761,9 @@ msgstr "Рақами рақам"
 msgid "Disable"
 msgstr "Хомӯш кардан"
 
+#. [pages.common.disabled]
+#. defaultMessage is:
+#. Disabled
 #. [filter.btnGroup.contactStatus.contactDisabled]
 #. defaultMessage is:
 #. Disabled
@@ -2772,6 +2846,13 @@ msgstr "Оё шумо мехоҳед, ки хомӯш кунед"
 #: extracted_strings.json
 msgid "Do you want to enable"
 msgstr "Мехоҳед фаъол созед"
+
+#. [jobFunction.donor]
+#. defaultMessage is:
+#. Donor
+#: extracted_strings.json
+msgid "Donor"
+msgstr "Донор"
 
 #. [pages.DeviceStatusSelectField.down]
 #. defaultMessage is:
@@ -2984,6 +3065,9 @@ msgstr "Ин огоҳиномаро фаъол созед"
 msgid "Enable/Disable User"
 msgstr "Истифодабарандаро фаъол/хомӯш кардан"
 
+#. [pages.common.enabled]
+#. defaultMessage is:
+#. Enabled
 #. [filter.btnGroup.contactStatus.contactEnabled]
 #. defaultMessage is:
 #. Enabled
@@ -3154,16 +3238,13 @@ msgstr "Номи сайтро ворид кунед..."
 #. [resultCategoryGroup.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
-#. [pages.ResultList.ResultWorkflowStatusError]
+#. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
 #. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
 #. [pages.deviceDetail.resultCategoryError]
-#. defaultMessage is:
-#. Error
-#. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
 #: extracted_strings.json
@@ -3332,12 +3413,33 @@ msgstr "Хатогӣ дар интиқоли натиҷа"
 msgid "Error creating person"
 msgstr "Хатогии эҷоди шахс"
 
+#. [components.shared.everyDay]
+#. defaultMessage is:
+#. Every Day(s)
+#: extracted_strings.json
+msgid "Every Day(s)"
+msgstr "Ҳар рӯз(ҳо)"
+
+#. [components.shared.everyWeekDay]
+#. defaultMessage is:
+#. Every week day
+#: extracted_strings.json
+msgid "Every week day"
+msgstr "Ҳар рӯзи ҳафта"
+
 #. [pages.ListExport.exportExcel]
 #. defaultMessage is:
 #. Excel
 #: extracted_strings.json
 msgid "Excel"
 msgstr "Excel"
+
+#. [components.shared.execute]
+#. defaultMessage is:
+#. Execute
+#: extracted_strings.json
+msgid "Execute"
+msgstr "Иҷро кунед"
 
 #. [filter.btnGroup.expDateFrom]
 #. defaultMessage is:
@@ -3377,6 +3479,9 @@ msgstr "Муҳлати тамомшави"
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Expired]
 #. defaultMessage is:
 #. Expired
+#. [pages.InventoryItemsList.expired]
+#. defaultMessage is:
+#. Expired
 #. [pages.InventoryLog.ConsumableReason_Expired]
 #. defaultMessage is:
 #. Expired
@@ -3410,6 +3515,13 @@ msgstr "Ба охир мерасад"
 #: extracted_strings.json
 msgid "Expires {date}"
 msgstr "Мӯҳлати анҷоми {date}"
+
+#. [pages.NotificationDetail.stockExpiringDays]
+#. defaultMessage is:
+#. Expiring in days
+#: extracted_strings.json
+msgid "Expiring in days"
+msgstr "Дар рӯзҳо ба охир мерасад"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -3637,9 +3749,6 @@ msgstr "Бори аввал тасдиқ карда шуд"
 msgid "First approved"
 msgstr "Аввал тасдик"
 
-#. [pages.ResultList.ResultWorkflowStatusFlagged]
-#. defaultMessage is:
-#. Flagged
 #. [pages.deviceDetail.ResultWorkflowStatusFlagged]
 #. defaultMessage is:
 #. Flagged
@@ -3661,6 +3770,13 @@ msgstr "Барои {period}"
 msgid "Forgot Password?"
 msgstr "Калидвожа фаромӯш шуд?"
 
+#. [components.shared.friday]
+#. defaultMessage is:
+#. Friday
+#: extracted_strings.json
+msgid "Friday"
+msgstr "Ҷумъа"
+
 #. [pages.DailyStatusDialog.siteWorkingHoursFrom]
 #. defaultMessage is:
 #. From
@@ -3675,14 +3791,10 @@ msgstr "Аз"
 msgid "From Site"
 msgstr "Аз сайт"
 
-#. [pages.NotificationDetail.fromThisDevice]
-#. defaultMessage is:
-#. From this device
-#: extracted_strings.json
-msgid "From this device"
-msgstr "Аз ин дастгох"
-
 #. [pages.dateRangeSelector.fromDate]
+#. defaultMessage is:
+#. From...
+#. [pages.NotificationDetail.from]
 #. defaultMessage is:
 #. From...
 #: extracted_strings.json
@@ -4208,6 +4320,13 @@ msgstr "ID-и мизбон"
 msgid "Host Id"
 msgstr "Хост ID"
 
+#. [components.shared.hours]
+#. defaultMessage is:
+#. Hour
+#: extracted_strings.json
+msgid "Hour"
+msgstr "Соат"
+
 #. [component.DateTimeInput.hours.placeholder]
 #. defaultMessage is:
 #. Hours
@@ -4304,9 +4423,6 @@ msgstr ""
 msgid "Imported"
 msgstr "Ворид карда шудааст"
 
-#. [pages.ResultList.ResultWorkflowStatusInProgress]
-#. defaultMessage is:
-#. In Progress
 #. [pages.deviceDetail.ResultWorkflowStatusInProgress]
 #. defaultMessage is:
 #. In Progress
@@ -4409,6 +4525,13 @@ msgstr "Ҷойгиркунандаи Барои"
 msgid "Insert placeholder"
 msgstr "Ҷойгиркуниро ворид кунед"
 
+#. [pages.Notification.type.InstrumentReplaced]
+#. defaultMessage is:
+#. Instrument Replaced
+#: extracted_strings.json
+msgid "Instrument Replaced"
+msgstr "Асбоб иваз карда шуд"
+
 #. [forms.formItem.instrumentSerial]
 #. defaultMessage is:
 #. Instrument Serial
@@ -4500,6 +4623,13 @@ msgstr ""
 "Маълумоти нодуруст. Лутфан, аз назар гузаронед, дубора кӯшиш кунед ё барои "
 "кӯмак бо администратори худ тамос гиред."
 
+#. [validations.invalidEmail]
+#. defaultMessage is:
+#. Invalid email
+#: extracted_strings.json
+msgid "Invalid email"
+msgstr "Почтаи электронӣ нодуруст"
+
 #. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message]
 #. defaultMessage is:
 #. Invalid username or password
@@ -4520,6 +4650,13 @@ msgstr "URL-и вебхук нодуруст"
 #: extracted_strings.json
 msgid "Inventory"
 msgstr "Инвентаризатсия"
+
+#. [pages.Notification.type.InventoryExpiring]
+#. defaultMessage is:
+#. Inventory Expiring
+#: extracted_strings.json
+msgid "Inventory Expiring"
+msgstr "Мӯҳлати инвентаризатсия"
 
 #. [pages.NewInventoryDialogForm.defaultConsumableName]
 #. defaultMessage is:
@@ -4674,6 +4811,9 @@ msgstr "LGA"
 msgid "LGA Contacts"
 msgstr "Тамосҳои LGA"
 
+#. [filter.AssaySelectField.assayLPA]
+#. defaultMessage is:
+#. LPA
 #. [legends.Unknown.assayLPA]
 #. defaultMessage is:
 #. LPA
@@ -4683,6 +4823,27 @@ msgstr "Тамосҳои LGA"
 #: extracted_strings.json
 msgid "LPA"
 msgstr "LPA"
+
+#. [jobFunction.labAdmin]
+#. defaultMessage is:
+#. Lab Admin
+#: extracted_strings.json
+msgid "Lab Admin"
+msgstr "Администратори лаборатория"
+
+#. [jobFunction.labManager]
+#. defaultMessage is:
+#. Lab Manager
+#: extracted_strings.json
+msgid "Lab Manager"
+msgstr "Лаборатория:"
+
+#. [jobFunction.labUser]
+#. defaultMessage is:
+#. Lab User
+#: extracted_strings.json
+msgid "Lab User"
+msgstr "Корбари лаборатория"
 
 #. [pages.Milestones.resultSiteName]
 #. defaultMessage is:
@@ -4810,6 +4971,20 @@ msgstr "Соли гузашта"
 #: extracted_strings.json
 msgid "Last calibrated {date}"
 msgstr "Калибровкаи охирин {date}"
+
+#. [components.shared.lastDayofQuarter]
+#. defaultMessage is:
+#. Last day of every Quarter
+#: extracted_strings.json
+msgid "Last day of every Quarter"
+msgstr "Рӯзи охирини ҳар семоҳа"
+
+#. [components.shared.lastDayOfMonth]
+#. defaultMessage is:
+#. Last day of every month
+#: extracted_strings.json
+msgid "Last day of every month"
+msgstr "Рӯзи охирини ҳар моҳ"
 
 #. [pages.DeviceDetailProfile.lastSeenOn]
 #. defaultMessage is:
@@ -5535,6 +5710,13 @@ msgstr "Мард"
 msgid "Manage"
 msgstr "Идора кардан"
 
+#. [jobFunction.manager]
+#. defaultMessage is:
+#. Manager
+#: extracted_strings.json
+msgid "Manager"
+msgstr "Менеҷер"
+
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipLastUpdatedBy]
 #. defaultMessage is:
 #. Manually set by {username} ({updatedDate})
@@ -5555,6 +5737,23 @@ msgstr "Якҷоя кардан"
 #: extracted_strings.json
 msgid "Merge Devices"
 msgstr "Якҷоя кардани дастгоҳҳо"
+
+#. [filter.AssaySelectField.microscopy]
+#. defaultMessage is:
+#. Microscopy
+#: extracted_strings.json
+msgid "Microscopy"
+msgstr "Микроскопия"
+
+#. [components.shared.minutes]
+#. defaultMessage is:
+#. Minutes
+#: extracted_strings.json
+msgid "Minutes"
+msgstr ""
+"Аз сабаби хатогии \"{errorMessage}\" {fileType} гузориши \"{reportName}\" "
+"тавлид нашуд. Лутфан, пас аз чанд дақиқа бори дигар кӯшиш кунед. Агар хатогӣ "
+"идома ёбад, барои дастгирӣ бо маъмури худ тамос гиред."
 
 #. [legends.Unknown.resultCategoryMissing]
 #. defaultMessage is:
@@ -5580,6 +5779,15 @@ msgstr "Мобилӣ"
 msgid "Module"
 msgstr "Модул"
 
+#. [pages.Notification.type.ModuleDisabled]
+#. defaultMessage is:
+#. Module Disabled
+#: extracted_strings.json
+msgid "Module Disabled"
+msgstr ""
+"Вақти миёна (дар рӯз) байни вақте ки модул хомӯш карда шуд ва силсилаи "
+"модули дигар дар ҳамон як слот ошкор карда мешавад."
+
 #. [forms.formItem.moduleName]
 #. defaultMessage is:
 #. Module Name
@@ -5589,6 +5797,13 @@ msgstr "Модул"
 #: extracted_strings.json
 msgid "Module Name"
 msgstr "Номи модул"
+
+#. [pages.Notification.type.ModuleReplaced]
+#. defaultMessage is:
+#. Module Replaced
+#: extracted_strings.json
+msgid "Module Replaced"
+msgstr "Модул иваз карда шуд"
 
 #. [forms.formItem.moduleSerial]
 #. defaultMessage is:
@@ -5609,6 +5824,20 @@ msgstr "Силсилаи модул"
 #: extracted_strings.json
 msgid "Module Swaps"
 msgstr "Иваз кардани модул"
+
+#. [pages.Notification.type.ModuleUnused]
+#. defaultMessage is:
+#. Module Unused
+#: extracted_strings.json
+msgid "Module Unused"
+msgstr "Модули истифоданашуда"
+
+#. [components.shared.monday]
+#. defaultMessage is:
+#. Monday
+#: extracted_strings.json
+msgid "Monday"
+msgstr "Душанбе"
 
 #. [pages.dateRangeSelector.month]
 #. defaultMessage is:
@@ -5669,6 +5898,9 @@ msgstr "Сутунро ба чап ҳаракат кунед"
 msgid "Move Column Right"
 msgstr "Сутунро ба рост ҳаракат кунед"
 
+#. [pages.common.notAvailable]
+#. defaultMessage is:
+#. N/A
 #. [pages.DeviceList.notAvailable]
 #. defaultMessage is:
 #. N/A
@@ -5706,6 +5938,13 @@ msgstr "НП"
 #: extracted_strings.json
 msgid "NP Detected"
 msgstr "NP муайян карда шуд"
+
+#. [jobFunction.ntp]
+#. defaultMessage is:
+#. NTP
+#: extracted_strings.json
+msgid "NTP"
+msgstr "NTP"
 
 #. [placeholder.name]
 #. defaultMessage is:
@@ -5888,6 +6127,9 @@ msgstr "Маълумот дастрас нест"
 msgid "No Power"
 msgstr "Не қудрат"
 
+#. [pages.NotificationDetail.type.NoResult]
+#. defaultMessage is:
+#. No Result
 #. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
 #. No Result
@@ -5962,6 +6204,9 @@ msgid "No matching results found"
 msgstr "Ягон натиҷаи мувофиқе ёфт нашуд"
 
 #. [base.noOptionsMessage]
+#. defaultMessage is:
+#. No options
+#. [form.noOptions]
 #. defaultMessage is:
 #. No options
 #: extracted_strings.json
@@ -6045,13 +6290,10 @@ msgstr "Муайян карда нашудааст"
 msgid "Not Found"
 msgstr "Дарёфт нашуд"
 
-#. [reporters.notPossible]
-#. defaultMessage is:
-#. Not Possible
-#. [pages.ResultList.ResultTreatmentStatusNotPossible]
-#. defaultMessage is:
-#. Not Possible
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
+#. defaultMessage is:
+#. Not Possible
+#. [reporters.notPossible]
 #. defaultMessage is:
 #. Not Possible
 #: extracted_strings.json
@@ -6080,6 +6322,15 @@ msgstr "Сабт карда нашудааст"
 #: extracted_strings.json
 msgid "Not possible"
 msgstr "Мумкин нест"
+
+#. [page.contacts.person.notSpecified]
+#. defaultMessage is:
+#. Not specified
+#: extracted_strings.json
+msgid "Not specified"
+msgstr ""
+"Сервер арзишҳои дар ин майдонҳои филтр муқарраршударо рад кард. Гурӯҳи "
+"техникии мо огоҳ карда шудааст ва ҳарчи зудтар ба мушкилот машғул хоҳад шуд."
 
 #. [pages.resultTreatmentPanel.notYetConfirmedOnTreatment]
 #. defaultMessage is:
@@ -6147,6 +6398,9 @@ msgstr "Сарлавҳаи огоҳинома"
 msgid "Notification Type"
 msgstr "Навъи огоҳинома"
 
+#. [pages.Notifications.group.forDevices]
+#. defaultMessage is:
+#. Notification for Devices
 #. [pages.Notifications.table.createButton.group.forDevices]
 #. defaultMessage is:
 #. Notification for Devices
@@ -6154,12 +6408,22 @@ msgstr "Навъи огоҳинома"
 msgid "Notification for Devices"
 msgstr "Огоҳинома барои дастгоҳҳо"
 
+#. [pages.Notifications.group.forResults]
+#. defaultMessage is:
+#. Notification for Results
 #. [pages.Notifications.table.createButton.group.forResults]
 #. defaultMessage is:
 #. Notification for Results
 #: extracted_strings.json
 msgid "Notification for Results"
 msgstr "Огоҳӣ оид ба натиҷаҳо"
+
+#. [pages.Notifications.group.forSite]
+#. defaultMessage is:
+#. Notification for Site
+#: extracted_strings.json
+msgid "Notification for Site"
+msgstr "Огоҳинома барои сайт"
 
 #. [browsePage.browseDropdown.notifications]
 #. defaultMessage is:
@@ -6241,13 +6505,16 @@ msgstr ""
 msgid "OCT"
 msgstr "октябр"
 
+#. [pages.deviceDetail.ResultWorkflowStatusOK]
+#. defaultMessage is:
+#. OK
+#. [pages.ResultList.ResultWorkflowStatusValidated]
+#. defaultMessage is:
+#. OK
 #. [pages.TaskList.issueStatusOK]
 #. defaultMessage is:
 #. OK
 #. [pages.transferResult.successOk]
-#. defaultMessage is:
-#. OK
-#. [pages.deviceDetail.ResultWorkflowStatusOK]
 #. defaultMessage is:
 #. OK
 #: extracted_strings.json
@@ -6270,13 +6537,6 @@ msgstr "Хуб"
 msgid "Offline"
 msgstr "Офлайн"
 
-#. [pages.ResultList.ResultWorkflowStatusOK]
-#. defaultMessage is:
-#. Ok
-#: extracted_strings.json
-msgid "Ok"
-msgstr "Хуб"
-
 #. [pages.StrongPasswordInput.passwordStrengthMeterOkay]
 #. defaultMessage is:
 #. Okay
@@ -6294,15 +6554,19 @@ msgstr "Хуб"
 msgid "Older"
 msgstr "Калонсолтар"
 
-#. [pages.ResultList.ResultTreatmentStatusOnTreatment]
-#. defaultMessage is:
-#. On Treatment
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusOnTreatment]
 #. defaultMessage is:
 #. On Treatment
 #: extracted_strings.json
 msgid "On Treatment"
 msgstr "Дар бораи табобат"
+
+#. [components.shared.lastWeekdayOfmonth]
+#. defaultMessage is:
+#. On the last weekday of every month
+#: extracted_strings.json
+msgid "On the last weekday of every month"
+msgstr "Дар рӯзи охирини ҳафтаи ҳар моҳ"
 
 #. [filter.btnGroup.online]
 #. defaultMessage is:
@@ -6390,9 +6654,6 @@ msgstr "Маълумоти амалиётӣ"
 msgid "Operator"
 msgstr "Оператор"
 
-#. [pages.ResultList.ResultWorkflowStatusOrdered]
-#. defaultMessage is:
-#. Ordered
 #. [pages.deviceDetail.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
@@ -6539,10 +6800,10 @@ msgstr "Маълумоти беморон"
 #. [pages.ResultList.patientId]
 #. defaultMessage is:
 #. Patient ID
-#. [pages.DeviceDetailProfile.patientId]
+#. [pages.Notifications.table.patientId]
 #. defaultMessage is:
 #. Patient ID
-#. [pages.Notifications.table.patientId]
+#. [pages.DeviceDetailProfile.patientId]
 #. defaultMessage is:
 #. Patient ID
 #: extracted_strings.json
@@ -6836,9 +7097,6 @@ msgstr "Лутфан миқдори интиқолро муайян кунед"
 #. [errorResponseMessages.saveLoginDetails.PUT.409.resolution]
 #. defaultMessage is:
 #. Please try another username
-#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution]
-#. defaultMessage is:
-#. Please try another username
 #: extracted_strings.json
 msgid "Please try another username"
 msgstr "Лутфан номи корбарии дигарро санҷед"
@@ -7061,9 +7319,6 @@ msgstr "Гузашта"
 msgid "Proceed"
 msgstr "Давом диҳед"
 
-#. [pages.ResultList.ResultWorkflowStatusProcessed]
-#. defaultMessage is:
-#. Processed
 #. [pages.deviceDetail.ResultWorkflowStatusProcessed]
 #. defaultMessage is:
 #. Processed
@@ -7122,9 +7377,6 @@ msgstr "Вилоят/минтақа"
 msgid "Provisioned"
 msgstr "Таъмин карда шудааст"
 
-#. [pages.ResultList.ResultWorkflowStatusPurged]
-#. defaultMessage is:
-#. Purged
 #. [pages.deviceDetail.ResultWorkflowStatusPurged]
 #. defaultMessage is:
 #. Purged
@@ -7221,6 +7473,13 @@ msgstr "Миқдори интиқол"
 msgid "Quarter"
 msgstr "Квартал"
 
+#. [components.shared.monthly]
+#. defaultMessage is:
+#. Quarterly
+#: extracted_strings.json
+msgid "Quarterly"
+msgstr "Ҳар семоҳа"
+
 #. [results.categoryTypeRIFResistanceI18nKey]
 #. defaultMessage is:
 #. RIF Resistance
@@ -7263,9 +7522,6 @@ msgstr "RRD#"
 msgid "RRD%"
 msgstr "RRD%"
 
-#. [pages.ResultList.ResultWorkflowStatusDeliverable]
-#. defaultMessage is:
-#. Ready for delivery
 #. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
@@ -7374,6 +7630,13 @@ msgstr "Минтақаи н"
 #: extracted_strings.json
 msgid "Region: {region}"
 msgstr "Минтақа: {region}"
+
+#. [jobFunction.regionalOfficer]
+#. defaultMessage is:
+#. Regional Officer
+#: extracted_strings.json
+msgid "Regional Officer"
+msgstr "Корманди минтақавӣ"
 
 #. [legends.Unknown.resultCategoryRejected]
 #. defaultMessage is:
@@ -7537,6 +7800,9 @@ msgstr "Аз Aspect пароли навро дархост кунед"
 msgid "Require printer"
 msgstr "Принтер талаб мекунад"
 
+#. [validations.required]
+#. defaultMessage is:
+#. Required
 #. [forms.required]
 #. defaultMessage is:
 #. Required
@@ -7628,7 +7894,7 @@ msgstr "Натиҷаи 1"
 msgid "Result 2"
 msgstr "Натиҷаи 2"
 
-#. [pages.Notification.type.ResultBased]
+#. [pages.NotificationDetail.type.ResultBased]
 #. defaultMessage is:
 #. Result Based
 #. [pages.TableCell.resultBasedNotification]
@@ -7668,6 +7934,20 @@ msgstr "Матни натиҷа"
 #: extracted_strings.json
 msgid "Result Transfer Completed"
 msgstr "Интиқоли натиҷа анҷом ёфт"
+
+#. [jobFunction.resultViewerNo]
+#. defaultMessage is:
+#. Result Viewer - No
+#: extracted_strings.json
+msgid "Result Viewer - No"
+msgstr "Намоишгари натиҷа - Не"
+
+#. [jobFunction.resultViewerYes]
+#. defaultMessage is:
+#. Result Viewer - Yes
+#: extracted_strings.json
+msgid "Result Viewer - Yes"
+msgstr "Намоишгари натиҷа - Ҳа"
 
 #. [pages.DeviceDetailProfile.resultWorkflowStatus]
 #. defaultMessage is:
@@ -7872,10 +8152,10 @@ msgstr "Сайти ҷамъоварии намуна:"
 #. [pages.ResultList.sampleId]
 #. defaultMessage is:
 #. Sample ID
-#. [pages.DeviceDetailProfile.sampleId]
+#. [pages.Notifications.table.sampleId]
 #. defaultMessage is:
 #. Sample ID
-#. [pages.Notifications.table.sampleId]
+#. [pages.DeviceDetailProfile.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #: extracted_strings.json
@@ -7916,6 +8196,13 @@ msgstr "Навъи намуна:"
 #: extracted_strings.json
 msgid "Sample collection site"
 msgstr "Сайти ҷамъоварии намуна"
+
+#. [components.shared.saturday]
+#. defaultMessage is:
+#. Saturday
+#: extracted_strings.json
+msgid "Saturday"
+msgstr "шанбе"
 
 #. [pages.Contacts.save]
 #. defaultMessage is:
@@ -8208,6 +8495,13 @@ msgstr "Сабабро интихоб кунед"
 #: extracted_strings.json
 msgid "Select Result Category ..."
 msgstr "Категорияи натиҷаро интихоб кунед ..."
+
+#. [pages.NotificationDetail.sitePlaceholder]
+#. defaultMessage is:
+#. Select Site...
+#: extracted_strings.json
+msgid "Select Site..."
+msgstr "Сайтро интихоб кунед..."
 
 #. [filter.clientSideFilterSelect.selectState]
 #. defaultMessage is:
@@ -8557,6 +8851,13 @@ msgstr ""
 "Барои ин огоҳинома бояд ақаллан як вазифаи корӣ ё шахси алоҳидаро интихоб "
 "кунад"
 
+#. [pages.Status.showValuesLabel]
+#. defaultMessage is:
+#. Show Label
+#: extracted_strings.json
+msgid "Show Label"
+msgstr "Нишон додани Нишон"
+
 #. [filter.btnGroup.onlyReportableResults]
 #. defaultMessage is:
 #. Show Only Reportable Results
@@ -8777,6 +9078,9 @@ msgstr "Баромадан"
 #. [pages.TaskList.site]
 #. defaultMessage is:
 #. Site
+#. [pages.NotificationDetail.siteTitle]
+#. defaultMessage is:
+#. Site
 #. [pages.resultEdit.site]
 #. defaultMessage is:
 #. Site
@@ -8894,6 +9198,9 @@ msgstr "Сайт талаб карда мешавад"
 msgid "Sites"
 msgstr "Сайтҳо"
 
+#. [filter.AssaySelectField.assaySmear]
+#. defaultMessage is:
+#. Smear
 #. [legends.Unknown.assaySmear]
 #. defaultMessage is:
 #. Smear
@@ -9085,6 +9392,13 @@ msgstr "Муваффакият"
 msgid "Successfully"
 msgstr "Бомуваффакият"
 
+#. [components.shared.sunday]
+#. defaultMessage is:
+#. Sunday
+#: extracted_strings.json
+msgid "Sunday"
+msgstr "Якшанбе"
+
 #. [browsePage.browseDropdown.supplies]
 #. defaultMessage is:
 #. Supplies
@@ -9177,6 +9491,13 @@ msgstr "Муқовимат ба бемории сил"
 msgid "TB XDR Drug Resistances"
 msgstr "Муқовимат ба маводи мухаддир TB XDR"
 
+#. [filter.AssaySelectField.assayTbLamp]
+#. defaultMessage is:
+#. TB lamp
+#: extracted_strings.json
+msgid "TB lamp"
+msgstr "ЛАМПАИ сил"
+
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
 #. Tags
@@ -9251,6 +9572,13 @@ msgstr "Тафсилоти техникӣ"
 msgid "Technical information"
 msgstr "Маълумоти техникӣ"
 
+#. [jobFunction.technician]
+#. defaultMessage is:
+#. Technician
+#: extracted_strings.json
+msgid "Technician"
+msgstr "техник"
+
 #. [pages.ContactDetails.phone]
 #. defaultMessage is:
 #. Telephone
@@ -9295,13 +9623,6 @@ msgstr "Санҷиш ба охир расид"
 #: extracted_strings.json
 msgid "Test Started On"
 msgstr "Санҷиш оғоз шуд"
-
-#. [pages.Notification.type.TestUpdated]
-#. defaultMessage is:
-#. Test Updated
-#: extracted_strings.json
-msgid "Test Updated"
-msgstr "Санҷиши навсозӣ"
 
 #. [pages.InventoryLog.ConsumableReason_TestConducted]
 #. defaultMessage is:
@@ -9841,9 +10162,6 @@ msgstr "Миқдори умумии паёмҳои матнии дар моҳ ф
 #. [errorResponseMessages.saveLoginDetails.PUT.409.message]
 #. defaultMessage is:
 #. The username that you have entered is already in use by another user on the system
-#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message]
-#. defaultMessage is:
-#. The username that you have entered is already in use by another user on the system
 #: extracted_strings.json
 msgid ""
 "The username that you have entered is already in use by another user on the "
@@ -9948,9 +10266,6 @@ msgid "This Quarter"
 msgstr "Ин квартал"
 
 #. [errorResponseMessages.saveLoginDetails.PUT.409.title]
-#. defaultMessage is:
-#. This Username is Unavailable
-#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title]
 #. defaultMessage is:
 #. This Username is Unavailable
 #: extracted_strings.json
@@ -10128,6 +10443,13 @@ msgid ""
 msgstr ""
 "Ин корбарро дубора фаъол мекунад ва онҳо метавонанд дубора ворид шаванд. Оё "
 "мехоҳед идома диҳед?"
+
+#. [components.shared.thursday]
+#. defaultMessage is:
+#. Thursday
+#: extracted_strings.json
+msgid "Thursday"
+msgstr "Панҷшанбе"
 
 #. [pages.TaskList.time]
 #. defaultMessage is:
@@ -10439,6 +10761,27 @@ msgstr "Усули табобат:"
 msgid "True"
 msgstr "Дуруст"
 
+#. [consumable.truenatMTBPlusTestKit]
+#. defaultMessage is:
+#. Truenat MTB Plus Test Kit
+#: extracted_strings.json
+msgid "Truenat MTB Plus Test Kit"
+msgstr "Маҷмӯаи санҷиши Truenat MTB Plus"
+
+#. [consumable.truenatMTBRifTestKit]
+#. defaultMessage is:
+#. Truenat MTB Test Kit
+#: extracted_strings.json
+msgid "Truenat MTB Test Kit"
+msgstr "Маҷмӯаи санҷиши Truenat MTB"
+
+#. [consumable.truenatUnknownTestKit]
+#. defaultMessage is:
+#. Truenat Unknown Test Kit
+#: extracted_strings.json
+msgid "Truenat Unknown Test Kit"
+msgstr "Truenat Маҷмӯаи санҷиши номаълум"
+
 #. [filter.AssaySelectField.assayTruenatMtb]
 #. defaultMessage is:
 #. Truenat® MTB
@@ -10500,6 +10843,13 @@ msgstr "Truenat® Unknown Test Type"
 #: extracted_strings.json
 msgid "Tuberculosis"
 msgstr "Бемории сил"
+
+#. [components.shared.tuesday]
+#. defaultMessage is:
+#. Tuesday
+#: extracted_strings.json
+msgid "Tuesday"
+msgstr "сешанбе"
 
 #. [pages.NotificationDetail.buttonUpdate]
 #. defaultMessage is:
@@ -10600,6 +10950,13 @@ msgstr "Афзалиятҳои корбар бомуваффақият тағи�
 msgid "Username"
 msgstr "Номи корбар"
 
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.usernameAlreadyInUse]
+#. defaultMessage is:
+#. Username already in use
+#: extracted_strings.json
+msgid "Username already in use"
+msgstr "Номи корбар аллакай истифода мешавад"
+
 #. [component.Widget.utilizationRateTitle]
 #. defaultMessage is:
 #. Utilization Rate
@@ -10638,9 +10995,6 @@ msgstr "Натиҷаҳои эътибор"
 msgid "Valid Tests"
 msgstr "Санҷишҳои эътибор"
 
-#. [pages.ResultList.ResultWorkflowStatusValidated]
-#. defaultMessage is:
-#. Validated
 #. [pages.deviceDetail.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. Validated
@@ -10812,6 +11166,13 @@ msgstr "URL-и веб лозим аст"
 msgid "Webhook Sent"
 msgstr "Вебхук фиристода шуд"
 
+#. [components.shared.wednesday]
+#. defaultMessage is:
+#. Wednesday
+#: extracted_strings.json
+msgid "Wednesday"
+msgstr "Чоршанбе"
+
 #. [pages.dateRangeSelector.week]
 #. defaultMessage is:
 #. Week
@@ -10826,12 +11187,54 @@ msgstr "Ҳафта"
 msgid "Week or holiday"
 msgstr "Ҳафта ё истироҳат"
 
+#. [components.shared.weekly]
+#. defaultMessage is:
+#. Weekly
+#: extracted_strings.json
+msgid "Weekly"
+msgstr "Ҳар ҳафта"
+
 #. [pages.welcomePage.welcome]
 #. defaultMessage is:
 #. Welcome to Aspect
 #: extracted_strings.json
 msgid "Welcome to Aspect"
 msgstr "Хуш омадед ба Aspect"
+
+#. [pages.NotificationDetail.whenDeviceHasLessThan]
+#. defaultMessage is:
+#. When device has less than...
+#: extracted_strings.json
+msgid "When device has less than..."
+msgstr "Вақте ки дастгоҳ камтар аз..."
+
+#. [pages.NotificationDetail.whenSiteIs]
+#. defaultMessage is:
+#. When site is
+#: extracted_strings.json
+msgid "When site is"
+msgstr "Вақте ки сайт"
+
+#. [pages.NotificationDetail.stockExpiring]
+#. defaultMessage is:
+#. When stock is...
+#: extracted_strings.json
+msgid "When stock is..."
+msgstr "Вақте ки саҳмияҳо ..."
+
+#. [pages.NotificationDetail.whenDeviceDidNotSendResultsForMoreThan]
+#. defaultMessage is:
+#. When the device didn't send results for more than ...
+#: extracted_strings.json
+msgid "When the device didn't send results for more than ..."
+msgstr "Вақте ки дастгоҳ зиёда аз ... натиҷа нафиристод"
+
+#. [pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan]
+#. defaultMessage is:
+#. When the device has been offline for more than ...
+#: extracted_strings.json
+msgid "When the device has been offline for more than ..."
+msgstr "Вақте ки дастгоҳ зиёда аз он офлайн буд ..."
 
 #. [pages.NotificationDetail.whenResultIs]
 #. defaultMessage is:
@@ -11757,6 +12160,18 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, ҷамъ, як {# натиҷа} дигар {# натиҷа} })"
+
+#~ msgid "Demo Device"
+#~ msgstr "Дастгоҳи намоишӣ"
+
+#~ msgid "From this device"
+#~ msgstr "Аз ин дастгох"
+
+#~ msgid "Ok"
+#~ msgstr "Хуб"
+
+#~ msgid "Test Updated"
+#~ msgstr "Санҷиши навсозӣ"
 
 #~ msgid "Hello Storybook!"
 #~ msgstr "Салом китоби ҳикоя!"

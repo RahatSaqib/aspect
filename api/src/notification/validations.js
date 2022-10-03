@@ -32,7 +32,15 @@ const optionsForSendXXX = {
 
 const resultBasedNotificationPayload = Joi.object({
   notificationType: Joi.string()
-    .valid('resultBased', 'issueBased')
+    /**
+     * see all values in getOptions() in `MigratedComponents/Notifications/List/config.jsx`
+     * which are basically externalId from table NotificationTypeCategory
+     *
+     * Add more valid values upon enabling other notification types in Create
+     * dropdown on Notifications list.
+     * Notice that value 'issueBased' added here for completeness and is not used in handler.
+     */
+    .valid('resultBased', 'issueBased', 'reportBased')
     .description('externalId of notification type')
     .required(),
   issueType: Joi.string().when('notificationType', {
@@ -81,6 +89,22 @@ const resultBasedNotificationPayload = Joi.object({
       otherwise: Joi.required(),
     })
     .description('Selected items which are subset of selected deviceLevelId'),
+  cronRecurrency: Joi.string()
+    .when('notificationType', {
+      // check first sendSms...
+      is: 'reportBased',
+      then: Joi.required(),
+      otherwise: Joi.optional().allow('', null),
+    })
+    .description('To schedule the delivery of the email'),
+  reportExternalId: Joi.string()
+    .when('notificationType', {
+      // check first sendSms...
+      is: 'reportBased',
+      then: Joi.required(),
+      otherwise: Joi.forbidden(),
+    })
+    .description('Report ExternalId'),
   sendEmail: Joi.bool()
     .when('sendSms', {
       // check first sendSms...

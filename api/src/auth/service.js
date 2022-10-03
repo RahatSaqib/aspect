@@ -103,7 +103,7 @@ function getTokenExpiry(clientType, currentTime) {
 }
 
 async function authenticate(request, response) {
-    const { payload } = request
+  const { payload } = request
   let user = await getUser(payload.name)
   if (!user) {
     try {
@@ -450,7 +450,9 @@ async function isUsernameAlreadyInUseBySomebodyElse(userId, username) {
     const existingUserIdWithNewUsername = await getUserId(username)
     if (existingUserIdWithNewUsername) {
       if (existingUserIdWithNewUsername.id !== userId) {
-        return Boom.conflict('Username already in use')
+        return Boom.conflict('Username already in use', {
+          errorKeyCode: 'usernameAlreadyInUse',
+        })
       }
     }
   }
