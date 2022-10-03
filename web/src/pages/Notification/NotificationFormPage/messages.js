@@ -2,6 +2,26 @@ import { defineMessages } from 'react-intl'
 import { resultCategory, assay, report } from '../../../messages'
 
 export default defineMessages({
+  reportBaseType: {
+    id: 'pages.NotificationDetail.New.reportBaseType',
+    defaultMessage: 'Reports',
+  },
+  hasRecurrency: {
+    id: 'pages.NotificationDetail.New.hasRecurrency',
+    defaultMessage: 'Has Recurrency',
+  },
+  ReportsAvailable: {
+    id: 'pages.NotificationDetail.New.ReportsAvailable',
+    defaultMessage: 'Reports Available',
+  },
+  issueType: {
+    id: 'pages.NotificationDetail.New.issueType',
+    defaultMessage: 'Issues types',
+  },
+  issues: {
+    id: 'pages.NotificationDetail.New.issues',
+    defaultMessage: 'Issues available',
+  },
   titleNew: {
     id: 'pages.NotificationDetail.New.title',
     defaultMessage: 'New Notification',

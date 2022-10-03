@@ -6,7 +6,7 @@ import messages from '../../NotificationListPage/messages'
 const reportBasedSection = formatMessage => {
   return {
     id: 'section_reportBased',
-    label: 'Issue Type',
+    label: 'Reports',
     labelI18nKey: 'reportBaseType',
     visibleIf: values => ['reportBased'].includes(values.notificationType),
     rows: [
@@ -25,7 +25,7 @@ const reportBasedSection = formatMessage => {
               normalizeLoadedData: response =>
                 response.data.map(i => ({
                   label: formatMessage(messages[i.i18nKey]) || i.i18nKey,
-                  value: i.i18nKey,
+                  value: i.externalId,
                 })),
               isClearable: true,
             },
@@ -56,6 +56,9 @@ const reportBasedSection = formatMessage => {
             labelI18nKey: 'recurrency',
             controlType: {
               component: 'cron',
+              onChange: value => {
+                return value
+              },
             },
 
             visibleIf: values => values.hasRecurrency === true && !isNil(values.reportId) && !isEmpty(values.reportId),

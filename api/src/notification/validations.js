@@ -33,6 +33,8 @@ const NotificationSchema = Joi.object().keys({
       name: Joi.string().required().description('Name of the notification'),
       filterCondition: Joi.string().allow(null).description('The condition Filters'),
       issueTypeId: Joi.string().allow('', null).description('The external Id of the issueType'),
+      reportId: Joi.string().allow('', null).description('The external Id of the report'),
+      cronRecurrency: Joi.string().optional().allow('', null),
       emailSubject: Joi.string().allow(null).description('email subject'),
       emailBody: Joi.string().allow(null).description('email body'),
       smsBody: Joi.string().allow(null).description('sms body'),
@@ -61,12 +63,34 @@ const resultBasedNotificationPayload = Joi.object({
     .valid('resultBased', 'issueBased', 'reportBased')
     .description('externalId of notification type')
     .required(),
-  issueType: Joi.string().when('notificationType', {
-    is: 'resultBased',
-    then: Joi.optional().allow('', null),
-    otherwise: Joi.required(),
+  issueTypeId: Joi.string().when('notificationType', {
+    is: 'issueBased',
+    otherwise: Joi.optional().allow('', null),
+    then: Joi.required(),
   }),
+  reportId: Joi.string()
+    .when('notificationType', {
+      is: 'reportBased',
+      then: Joi.required(),
+      otherwise: Joi.forbidden(),
+    })
+    .description('Report ExternalId'),
   name: Joi.string().description('Name of new notification').required(),
+  hasRecurrency: Joi.when('notificationType', {
+    // check first sendSms...
+    is: 'reportBased',
+    then: Joi.boolean().optional().allow('', null),
+    otherwise: Joi.forbidden(),
+  }),
+  cronRecurrency: Joi.string()
+    .when('hasRecurrency', {
+      // check first sendSms...
+      is: true,
+      otherwise: Joi.forbidden(),
+      then: Joi.required(),
+    })
+    .description('To schedule the delivery of the email'),
+
   result: Joi.array()
     .items(
       Joi.object().keys({
@@ -107,22 +131,7 @@ const resultBasedNotificationPayload = Joi.object({
       otherwise: Joi.required(),
     })
     .description('Selected items which are subset of selected deviceLevelId'),
-  cronRecurrency: Joi.string()
-    .when('notificationType', {
-      // check first sendSms...
-      is: 'reportBased',
-      then: Joi.required(),
-      otherwise: Joi.optional().allow('', null),
-    })
-    .description('To schedule the delivery of the email'),
-  reportExternalId: Joi.string()
-    .when('notificationType', {
-      // check first sendSms...
-      is: 'reportBased',
-      then: Joi.required(),
-      otherwise: Joi.forbidden(),
-    })
-    .description('Report ExternalId'),
+
   sendEmail: Joi.bool()
     .when('sendSms', {
       // check first sendSms...
@@ -139,6 +148,7 @@ const resultBasedNotificationPayload = Joi.object({
   enabled: Joi.bool().optional().default(true).description('Disable for sending notifications'),
   sendSms: Joi.bool().description('To send over sms'),
   sendWeb: Joi.bool().description('To send over webhook'),
+
   emailSubject: Joi.string()
     .when('sendEmail', optionsForSendXXX)
     .description('Email subject (if sendEmail is checked)'),

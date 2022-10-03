@@ -40,6 +40,11 @@ const validationSchema = formatMessage =>
           ])
           .required(),
       }),
+      reportId: Yup.string().when('notificationType', {
+        is: 'reportBased',
+        then: Yup.string().required(),
+        otherwise: Yup.string().notRequired(),
+      }),
       name: Yup.string().required(formatMessage(messages.notificationNameRequired)),
       result: Yup.array().when('notificationType', {
         is: 'resultBased',

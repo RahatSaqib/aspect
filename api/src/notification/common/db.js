@@ -15,6 +15,7 @@ async function getNotification(id) {
       'ntc.name as notificationTypeName',
       'ntc.externalId as notificationType',
       'it.externalId as issueTypeId',
+      'r.externalId as reportId',
       'nt.name as name',
       'nt.filterCondition as filterCondition',
       'et.subject as emailSubject',
@@ -22,12 +23,14 @@ async function getNotification(id) {
       'st.message as smsBody',
       'wt.url as webUrl',
       'wt.payload as webBody',
-      'nt.enabled'
+      'nt.enabled',
+      'nt.cronRecurrency'
     )
     .from('NotificationType as nt')
     .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
     .leftJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
     .leftJoin('IssueType as it', 'it.id', 'nt.issueTypeId')
+    .leftJoin('Report as r', 'r.id', 'nt.reportId')
     .leftJoin('EmailTemplate as et', 'et.id', 'mt.emailTemplateId')
     .leftJoin('SmsTemplate as st', 'st.id', 'mt.smsTemplateId')
     .leftJoin('WebhookTemplate as wt', 'wt.id', 'mt.webhookTemplateId')
@@ -173,15 +176,15 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     webUrl,
     enabled,
     cronRecurrency,
-    reportExternalId = null,
-    issueType: issueTypeExternalId,
+    issueTypeId: issueTypeExternalId,
+    reportId: reportExternalId,
     notificationType: notificationTypeExternalId,
   } = payload
 
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeExternalId)
 
   const issueTypeId = await issueTypeToId(issueTypeExternalId)
-  const { id: reportId } = (await knex('Report').where({ externalId: reportExternalId }).first()) || {}
+  const { id: reportId } = reportExternalId ? await knex('Report').where({ externalId: reportExternalId }).first() : {}
   const now = new Date()
 
   const auditFields = {
@@ -278,6 +281,10 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           updatedOn: now,
           updatedBy: userId,
           enabled,
+          reportId,
+          issueTypeId,
+          notificationTypeCategoryId,
+          cronRecurrency,
         })
         .where({ id: notificationTypeId })
       ;({ messageTypeId } = await knex
@@ -365,14 +372,19 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     /**
      * update remaining fields in NotificationType
      */
+
     await knex('NotificationType')
       .update({
         messageTypeId,
+        issueTypeId,
+        cronRecurrency,
+        reportId,
         filterCondition: JSON.stringify({
           areaItems,
           deviceLevelId,
           jobFunctions,
           persons,
+          issueTypeId,
           result,
           sendEmail,
           sendSms,
