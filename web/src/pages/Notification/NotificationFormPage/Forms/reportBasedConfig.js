@@ -1,3 +1,6 @@
+import isEmpty from 'lodash/isEmpty'
+import isNil from 'lodash/isNil'
+import { REPORT_LIST } from '../../../../components/QueryFetch/Report'
 import messages from '../../NotificationListPage/messages'
 
 const reportBasedSection = formatMessage => {
@@ -5,9 +8,7 @@ const reportBasedSection = formatMessage => {
     id: 'section_reportBased',
     label: 'Issue Type',
     labelI18nKey: 'reportBaseType',
-    visibleIf: values => {
-      return ['reportBased'].includes(values.notificationType)
-    },
+    visibleIf: values => ['reportBased'].includes(values.notificationType),
     rows: [
       {
         id: 0,
@@ -15,67 +16,18 @@ const reportBasedSection = formatMessage => {
           {
             id: 'reportId',
             label: 'Reports',
-            labelI18nKey: 'issues',
+            labelI18nKey: 'ReportsAvailable',
             controlType: {
               component: 'select',
+              endpoint: `${REPORT_LIST.ENDPOINT}?availableForNotification=1`,
               hideIfNoOptions: false,
-              options: [
-                {
-                  label: formatMessage(messages.notificationCreateGroupForSite),
-                  options: [
-                    {
-                      value: 'InventoryStockout',
-                      label: formatMessage(messages.notificationTypeLowInventory),
-                      icon: 'AiOutlineDashboard',
-                    },
-                    {
-                      value: 'InventoryStockExpiring',
-                      label: formatMessage(messages.notificationTypeExpiring),
-                      icon: 'AiOutlineDashboard',
-                    },
-                  ],
-                },
-                {
-                  label: formatMessage(messages.notificationCreateGroupForDevices),
-                  options: [
-                    {
-                      value: 'DeviceNoResults',
-                      label: formatMessage(messages.notificationTypeNoResult),
-                      icon: 'AiOutlineFileExclamation',
-                    },
-                    {
-                      value: 'DeviceOffline',
-                      label: formatMessage(messages.notificationTypeOffline),
-                      icon: 'AiOutlineApi',
-                    },
-                    // { TODO:  Uncomment when the issue is ready.
-                    //   value: 'calibration',
-                    //   label: formatMessage(messages.notificationTypeCalibration),
-                    //   icon: 'AiOutlineTool',
-                    // },
-                    {
-                      value: 'ModuleReplaced',
-                      label: formatMessage(messages.notificationTypeModuleReplaced),
-                      icon: 'AiOutlineSwap',
-                    },
-                    {
-                      value: 'ModuleDisabled',
-                      label: formatMessage(messages.notificationTypeModuleDisabled),
-                      icon: 'AiOutlineBlock',
-                    },
-                    {
-                      value: 'UnusedModules',
-                      label: formatMessage(messages.notificationTypeModuleUnused),
-                      icon: 'AiOutlineExclamation',
-                    },
-                    {
-                      value: 'InstrumentReplaced',
-                      label: formatMessage(messages.notificationTypeInstrumentReplaced),
-                      icon: 'AiOutlineTool',
-                    },
-                  ],
-                },
-              ],
+              queryKey: REPORT_LIST.KEY,
+              normalizeLoadedData: response =>
+                response.data.map(i => ({
+                  label: formatMessage(messages[i.i18nKey]) || i.i18nKey,
+                  value: i.i18nKey,
+                })),
+              isClearable: true,
             },
           },
         ],
@@ -90,16 +42,23 @@ const reportBasedSection = formatMessage => {
             controlType: {
               component: 'checkbox',
             },
+            visibleIf: values => !isNil(values.reportId) && !isEmpty(values.reportId),
           },
+        ],
+      },
+      {
+        id: 3,
+        items: [
           {
             id: 'recurrency',
+            fullWidth: true,
             label: 'Recurrency',
             labelI18nKey: 'recurrency',
             controlType: {
               component: 'cron',
             },
 
-            visibleIf: values => values.hasRecurrency === true,
+            visibleIf: values => values.hasRecurrency === true && !isNil(values.reportId) && !isEmpty(values.reportId),
           },
         ],
       },

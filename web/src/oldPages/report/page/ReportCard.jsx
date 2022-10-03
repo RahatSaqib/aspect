@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import useI18n from '../../../hooks/useI18n'
-import messages from './messages'
+import messages from '../../../messages/report'
 
 const styles = {
   formatCard: {

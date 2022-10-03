@@ -62,11 +62,11 @@ const Cron = ({ showResultText, showResultCron, onChange }) => {
   const Selector = options[selectedTab].Component
 
   return (
-    <Card>
+    <Card style={{ maxWidht: '100%' }}>
       <CardContent>
-        <Tabs value={selectedTab} className={classes('Tab_Margin')}>
+        <Tabs value={selectedTab} className={classes('Tab_Margin')} fullWidth>
           {options.map((option, idx) => (
-            <Tab key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
+            <Tab fullWidth key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
           ))}
         </Tabs>
         <Selector key={options[selectedTab].name} cronExpression={cronExpression} onChange={onValueChange} />
@@ -86,7 +86,7 @@ Cron.propTypes = {
 }
 
 Cron.defaultProps = {
-  showResultText: false,
-  showResultCron: true,
+  showResultText: true,
+  showResultCron: false,
 }
 export default Cron

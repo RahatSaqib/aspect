@@ -217,6 +217,7 @@ const geographySection = formatMessage => {
               endpoint: '/geography/level-by-user-select-list',
               hideIfNoOptions: false,
               queryKey: 'GEOGRAPHY_LEVEL',
+
               normalizeLoadedData: response =>
                 response.map(i => ({ label: formatMessage(messages[`Area${i.name}`]), value: i.id })),
               placeholder: formatMessage(messages.SelectAreaPlaceholder),
