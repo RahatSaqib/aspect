@@ -1,13 +1,16 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { query } = require('../db')
+const { knex, query } = require('../db')
 const { transformGeographyFromUpdates } = require('../geography/service')
+const { updateTagsById, tagsAreEqual } = require('../tag/service')
 
 function getAccountDetailsForUsername(username) {
   return query('Get account details for currently logged in user')
     .from('User as u')
     .leftJoin('Person as p', 'u.id', 'p.userId')
-    .leftOuterJoin('Geography as g', 'g.id', 'p.geographyId')
+    .leftJoin('Geography as g', 'g.id', 'p.geographyId')
+    .leftJoin('PersonTag as pt', 'pt.personId', 'p.id')
+    .leftJoin('Tag as t', 'pt.tagId', 't.id')
     .where({ 'u.name': username })
     .first(
       'p.id',
@@ -24,7 +27,8 @@ function getAccountDetailsForUsername(username) {
       'g.lgaId',
       'p.zip',
       'p.timezone',
-      'p.culture'
+      'p.culture',
+      knex.raw(`GROUP_CONCAT(t.title) as tags`)
     )
 }
 
@@ -34,9 +38,9 @@ async function getAccountDetailsForLoggedInUser(request) {
 }
 
 async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
-  const username = request.auth.credentials.name
+  const { payload: newAccountDetails, auth } = request
+  const username = auth.credentials.name
   let accountDetails = await getAccountDetailsForUsername(username)
-  const newAccountDetails = request.payload
 
   _.mapKeys(newAccountDetails, (value, key) => {
     if (value === '') {
@@ -52,7 +56,14 @@ async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
   const changedFields = _.reduce(
     newAccountDetails,
     (result, value, key) => {
-      if (_.includes(updatablePersonFields, key) && key in accountDetails && accountDetails[key] !== value) {
+      if (
+        _.includes(
+          updatablePersonFields.filter(f => f !== 'tags'),
+          key
+        ) &&
+        key in accountDetails &&
+        accountDetails[key] !== value
+      ) {
         result[key] = value
       }
       return result
@@ -62,6 +73,12 @@ async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
 
   // Update record if any values have changed
   const changedPersonFields = await transformGeographyFromUpdates(changedFields)
+
+  const changedTags = !tagsAreEqual(newAccountDetails.tags, accountDetails.tags)
+  if (changedTags) {
+    await updateTagsById(accountDetails.id, 'person', newAccountDetails.tags, auth)
+    changedPersonFields.updatedOn = new Date()
+  }
 
   if (!_.isEmpty(changedPersonFields)) {
     changedPersonFields.updatedOn = new Date()

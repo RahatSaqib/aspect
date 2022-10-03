@@ -103,7 +103,7 @@ function getTokenExpiry(clientType, currentTime) {
 }
 
 async function authenticate(request, response) {
-    const { payload } = request
+  const { payload } = request
   let user = await getUser(payload.name)
   if (!user) {
     try {

@@ -143,9 +143,7 @@ const itemsConfig = user => {
       {
         id: 'tags',
         label: formatMessage(messages.chooseTags),
-        type: 'hidden',
         component: PureChip,
-        validation: string().nullable(),
       },
     ],
     row8: [

@@ -54,7 +54,7 @@ const tables = [
 ]
 
 const uniqueKeys = {
-  NotificationType: ['partnerId', 'name', 'issueTypeId', 'jobFunctionId', 'level', 'messageTypeId'],
+  NotificationType: ['partnerId', 'name', 'issueTypeId', 'jobFunctionId', 'messageTypeId'],
   IssueEventTrigger: ['issueTypeId', 'partnerId', 'issueEventStatusId'],
   IssueResolutionTrigger: ['issueTypeId', 'partnerId'],
   IssueEscalationTrigger: ['issueTypeId', 'partnerId', 'escalateToLevel'],

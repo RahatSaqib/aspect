@@ -63,12 +63,16 @@ const routes = [
                   Joi.object().keys({
                     personId: Joi.number().required().description('Person Id'),
                     name: Joi.string().required().description('Person name'),
-                    email: Joi.string().allow(null).description('Person email'),
-                    phone: Joi.array().items(Joi.string()),
-                    disabled: Joi.bool().allow(null).description('Flag if Person is disabled'),
-                    disabledOn: Joi.date().allow(null).description('The date when Person was disabled, if any'),
+                    email: Joi.string().optional().allow(null).description('Person email'),
+                    phone: Joi.array().optional().items(Joi.string()),
+                    disabled: Joi.bool().optional().allow(null).description('Flag if Person is disabled'),
+                    disabledOn: Joi.date()
+                      .optional()
+                      .allow(null)
+                      .description('The date when Person was disabled, if any'),
                   })
                 )
+                .optional()
                 .description(`Device's Site contacts`),
             })
           ),

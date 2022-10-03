@@ -304,7 +304,6 @@ async function getDeviceCapacityReport(auth, query) {
 
   const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
 
-
   // loop though all devices and count rate
   const data = _.map(deviceDetails, deviceRow => {
     _.each(

@@ -260,36 +260,12 @@ export const PersonList = ({
               sortColumnKey={sortCol}
               sortColumnDir={sortDir}
               columns={[
-                {
-                  key: 'name',
-                  label: formatMessage(messages.personName),
-                  sortable: true,
-                },
-                {
-                  key: 'level',
-                  label: formatMessage(messages.level),
-                  sortable: true,
-                },
-                {
-                  key: 'state',
-                  label: getCustomMessage(messages, 'state', user),
-                  sortable: true,
-                },
-                {
-                  key: 'lga',
-                  label: getCustomMessage(messages, 'lga', user),
-                  sortable: true,
-                },
-                {
-                  key: 'tags',
-                  label: formatMessage(messages.tags),
-                  sortable: true,
-                },
-                isEditAllow && {
-                  key: 'actions',
-                  label: formatMessage(messages.enableDisable),
-                  sortable: false,
-                },
+                { key: 'name', label: formatMessage(messages.personName), sortable: true },
+                { key: 'level', label: formatMessage(messages.level), sortable: true },
+                { key: 'state', label: getCustomMessage(messages, 'state', user), sortable: true },
+                { key: 'lga', label: getCustomMessage(messages, 'lga', user), sortable: true },
+                { key: 'tags', label: formatMessage(messages.tags), sortable: true },
+                isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
               ]}
             />
             <TableBody>
