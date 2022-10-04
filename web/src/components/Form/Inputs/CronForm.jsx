@@ -10,6 +10,7 @@ import useI18n from '../../../hooks/useI18n'
 import Cron from '../../Cron/index'
 import { getCronHumanValue } from '../../Cron/utils'
 import { getFieldErrorProps } from '../Formik/Helpers'
+import messages from '../messages'
 
 const CronForm = props => {
   const { className, classNames, formik, id } = props
@@ -22,7 +23,7 @@ const CronForm = props => {
     updateField(id, value, { formik, toggleEdit })
   }
 
-  const { locale } = useI18n()
+  const { locale, formatMessage } = useI18n()
   return (
     <FormControl component="fieldset" fullWidth>
       {initialRecurrency ? (
@@ -44,13 +45,13 @@ const CronForm = props => {
             />
             <FormControlLabel
               control={<Radio color="primary" value="2" onChange={() => setShowCron(true)} checked={showCron} />}
-              label="new recurrency"
+              label={formatMessage(messages.newRecurrency)}
             />
             {showCron ? <Cron onChange={handleOnChange} className={className} classNames={classNames} /> : true}
           </FormGroup>
         </>
       ) : (
-        <Cron onChange={handleOnChange} className={className} classNames={classNames} cancelable={initialRecurrency} />
+        <Cron onChange={handleOnChange} className={className} classNames={classNames} />
       )}
       {error && helperText ? <FormHelperText error>{helperText}</FormHelperText> : null}
     </FormControl>
