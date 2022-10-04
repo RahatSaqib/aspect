@@ -577,5 +577,9 @@ export default {
       id: 'page.contacts.person.userCanAlsoLogIn',
       defaultMessage: 'This contact can log in as a user',
     },
+    notSpecified: {
+      id: 'page.contacts.person.notSpecified',
+      defaultMessage: 'Not specified',
+    },
   }),
 }

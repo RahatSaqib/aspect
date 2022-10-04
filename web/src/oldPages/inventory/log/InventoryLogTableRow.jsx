@@ -13,14 +13,18 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
   return (
     <TableRow className={cssClasses('TableRow')}>
       <TableCell className={cssClasses('TableCell')}>
-        {inventoryLogItem.createdOn ? formatDateTime(inventoryLogItem.createdOn) : 'N/A'}
+        {inventoryLogItem.createdOn ? formatDateTime(inventoryLogItem.createdOn) : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.siteName}</TableCell>
-      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.consumableName}</TableCell>
+      <TableCell className={cssClasses('TableCell')}>
+        {messages[inventoryLogItem.consumableNameI18nKey]
+          ? formatMessage(messages[inventoryLogItem.consumableNameI18nKey])
+          : inventoryLogItem.consumableName}
+      </TableCell>
 
       {inventoryLogItem.lotNumber !== undefined ? (
         <TableCell className={cssClasses('TableCell')}>
-          {inventoryLogItem.lotNumber ? inventoryLogItem.lotNumber : 'N/A'}
+          {inventoryLogItem.lotNumber ? inventoryLogItem.lotNumber : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
 
@@ -32,7 +36,9 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
               : null
           }
         >
-          {inventoryLogItem.expirationDate ? inventoryLogItem.expirationDate.split('T')[0] : 'N/A'}
+          {inventoryLogItem.expirationDate
+            ? inventoryLogItem.expirationDate.split('T')[0]
+            : formatMessage(messages.notAvailable)}
         </span>
       </TableCell>
 

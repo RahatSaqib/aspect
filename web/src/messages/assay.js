@@ -202,4 +202,8 @@ export default defineMessages({
     defaultMessage: 'Smear',
   },
   assayTbLamp: { id: 'filter.AssaySelectField.assayTbLamp', defaultMessage: 'TB lamp' },
+  microscopy: {
+    id: 'filter.AssaySelectField.microscopy',
+    defaultMessage: 'Microscopy',
+  },
 })
