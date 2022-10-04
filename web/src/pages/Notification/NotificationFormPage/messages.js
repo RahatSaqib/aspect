@@ -115,6 +115,14 @@ export default defineMessages({
     id: 'pages.NotificationDetail.type.ResultBased',
     defaultMessage: 'Result Based',
   },
+  notificationTypeReportBased: {
+    id: 'pages.NotificationDetail.type.notificationTypeReportBased',
+    defaultMessage: 'Report Based',
+  },
+  notificationTypeIssueBased: {
+    id: 'pages.NotificationDetail.type.notificationTypeIssueBased',
+    defaultMessage: 'Issue Based',
+  },
   // Notification for Site
   notificationCreateGroupForSite: {
     id: 'pages.Notifications.group.forSite',
