@@ -90,16 +90,11 @@ const NotificationFormPage = () => {
       values.areaItems = values.areaItemsLab
       delete values.areaItemsLab
     }
-    console.log(
-    '🚀 ~ file: NotificationFormPage.Create.jsx ~ line 95 ~ onSubmit ~ values',
-    values,
-    !values?.hasRecurrency,
-    values?.hasRecurrency
-    )
-    if (values?.hasRecurrency) {
-    unset(values, 'cronRecurrency')
-  }
-  
+
+    if (!values?.hasRecurrency) {
+      unset(values, 'cronRecurrency')
+    }
+
     submitNotification(
       { values, id: undefined },
       {

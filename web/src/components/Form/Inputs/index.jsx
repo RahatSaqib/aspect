@@ -1,5 +1,4 @@
 import React from 'react'
-import omit from 'lodash/omit'
 import Checkbox from './Checkbox'
 import CronForm from './CronForm'
 import { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone } from './DatePicker'
