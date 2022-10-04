@@ -50,17 +50,13 @@ const reportBasedSection = formatMessage => {
         id: 3,
         items: [
           {
-            id: 'recurrency',
+            id: 'cronRecurrency',
             fullWidth: true,
             label: 'Recurrency',
             labelI18nKey: 'recurrency',
             controlType: {
               component: 'cron',
-              onChange: value => {
-                return value
-              },
             },
-
             visibleIf: values => values.hasRecurrency === true && !isNil(values.reportId) && !isEmpty(values.reportId),
           },
         ],

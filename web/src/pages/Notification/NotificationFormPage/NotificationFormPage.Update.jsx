@@ -71,6 +71,7 @@ const NotificationFormPage = ({ id }) => {
         result: filter.result,
         issueTypeId,
         reportId,
+        hasRecurrency: !!cronRecurrency,
         cronRecurrency,
         /**
          * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
@@ -138,6 +139,16 @@ const NotificationFormPage = ({ id }) => {
     if (!values?.persons?.length) {
       unset(values, 'persons')
     }
+
+    if (values?.hasRecurrency) {
+      delete values.cronRecurrency
+    }
+    console.log(
+      '🚀 ~ file: NotificationFormPage.Create.jsx ~ line 95 ~ onSubmit ~ values',
+      values,
+      !values?.hasRecurrency,
+      values?.hasRecurrency
+    )
     /**
      * fun little excercise to sanitise three different
      * areaItem fields (state|lga|lab) into a single DB field :)

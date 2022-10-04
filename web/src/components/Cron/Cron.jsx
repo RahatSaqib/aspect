@@ -4,6 +4,7 @@ import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import classNames from 'classnames/bind'
 import cronstrue from 'cronstrue'
+import isEmpty from 'lodash/isEmpty'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages'
@@ -15,26 +16,32 @@ import styles from './styles.css'
 import Weekly from './Weekly'
 
 const classes = classNames.bind(styles)
-
+const DEFAULT_VALUE = ['0', '0', '00', '1/1', '*', '?', '*']
 const options = [
-  { name: 'daily', Component: Daily, value: ['0', '0', '00', '1/1', '*', '?', '*'] },
+  { name: 'daily', Component: Daily, value: DEFAULT_VALUE },
   { name: 'weekly', Component: Weekly, value: ['0', '0', '00', '?', '*', '*', '*'] },
   { name: 'monthly', Component: Monthly, value: ['0', '0', '00', '1', '1/1', '?', '*'] },
   { name: 'quarterly', Component: Quarterly, value: ['0', '0', '00', '1', '*/3', '?', '*'] },
 ]
 
 const getHumanValue = (cronExpression, locale) => {
-  const val = cronstrue.toString(cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ','), { locale })
-  if (val.search('undefined') === -1) {
-    return val
+  try {
+    if (!isEmpty(cronExpression)) {
+      const val = cronstrue.toString(cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ','), { locale })
+      if (val.search('undefined') === -1) {
+        return val
+      }
+    }
+
+    return '-'
+  } catch (ex) {
+    return '-'
   }
-  return '-'
 }
 
 const Cron = ({ showResultText, showResultCron, onChange }) => {
   const { locale, formatMessage } = useI18n()
-
-  const [cronExpression, setCronExpression] = useState(options[0].value)
+  const [cronExpression, setCronExpression] = useState(DEFAULT_VALUE)
   const [selectedTab, setSelectedTab] = useState(0)
 
   const onTabChange = idx => {
@@ -83,10 +90,12 @@ Cron.propTypes = {
   showResultText: PropTypes.bool,
   showResultCron: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
+  value: PropTypes.arrayOf(PropTypes.string),
 }
 
 Cron.defaultProps = {
   showResultText: true,
   showResultCron: false,
+  value: DEFAULT_VALUE,
 }
 export default Cron

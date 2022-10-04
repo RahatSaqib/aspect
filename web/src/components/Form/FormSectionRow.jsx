@@ -39,6 +39,7 @@ const FormSectionRow = ({
       >
         {items?.map((item, itemIndex) => {
           const { id, ...restItemProps } = item
+
           return (
             <FormItem
               key={`${parentKey}-${itemIndex.toString()}`}
