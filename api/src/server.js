@@ -206,10 +206,9 @@ const start = async () => {
   })
   server.auth.strategy('deviceApiRawUnauthenticated', 'deviceApiRawUnauthenticated')
 
-  // Client API uses JWT
-  server.auth.strategy('clientApi', 'jwt', {
-    key: config.secret,
-    validate: async (decoded, request) => {
+  // Common function to validate scope based on the request
+  const validateApi = scopeApi => {
+    const validateFnc = async function (decoded, request) {
       let isValid = true
       let errorMessage = null
       // if user has to accept license, deny all requests except to the license api:
@@ -233,42 +232,23 @@ const start = async () => {
             )
           )
         : []
-      const scope = ['clientApi'].concat(modules, decoded.permissions || [])
+      const scope = [scopeApi].concat(modules, decoded.permissions || [])
       return { isValid, errorMessage, credentials: { scope, ...decoded } }
-    },
+    }
+    return validateFnc
+  }
+
+  // Client API uses JWT
+  server.auth.strategy('clientApi', 'jwt', {
+    key: config.secret,
+    validate: validateApi('clientApi'),
     // TODO JWT verification algorithm verifyOptions: { algorithms: [ 'HS256' ] }
   })
 
   // Mobile API uses JWT
   server.auth.strategy('mobileApi', 'jwt', {
     key: config.secret,
-    validate: async (decoded, request) => {
-      let isValid = true
-      let errorMessage = null
-      // if user has to accept license, deny all requests except to the license api:
-      if (decoded.hasToAcceptLicenseId && request.url.pathname.indexOf('/api/auth/license') === -1) {
-        errorMessage = "The user you're trying to login didn't accept the license"
-        isValid = false
-      }
-      // can specify either module or permission, e.g. "device" or "device:view"
-      // for authorization scope on routes.
-      // multiple scopes can be specified:
-      // ["device:view"] will authorize anyone with device module and view activity
-      // ["device", "site"] will authorize anyone with device or site modules
-      // ["device", "!site"] will authorize anyone with device but not site modules
-      // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
-      //   and either "site:view" or "site:edit" permissions
-      const modules = decoded.permissions
-        ? _.uniq(
-            _.map(
-              _.filter(decoded.permissions, permission => permission.indexOf(':') > 0),
-              permission => permission.substr(0, permission.indexOf(':'))
-            )
-          )
-        : []
-      const scope = ['mobileApi'].concat(modules, decoded.permissions || [])
-      return { isValid, errorMessage, credentials: { scope, ...decoded } }
-    },
+    validate: validateApi('mobileApi'),
     // TODO JWT verification algorithm verifyOptions: { algorithms: [ 'HS256' ] }
   })
 
