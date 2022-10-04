@@ -232,6 +232,10 @@ const manager = {
       module: 'router',
       activity: 'view',
     },
+    {
+      module: 'result',
+      activity: 'edit',
+    },
   ],
 }
 
@@ -599,6 +603,10 @@ const ntp = {
     },
     {
       module: 'report',
+      activity: 'view',
+    },
+    {
+      module: 'result',
       activity: 'view',
     },
   ],
