@@ -3,7 +3,6 @@ import ErrorBoundary from '../../../components/ErrorBoundary'
 import BarGraph from '../../../components/Graphs/BarGraph'
 import GraphsContainer from '../../../components/Graphs/GraphsContainer'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 
 const {
@@ -72,9 +71,7 @@ const covidMortalityAndRecoveryConfig = {
 const CovidMortalityAndRecoveryGraph = ({ assays }) => {
   return (
     <ErrorBoundary key={covidMortalityAndRecoveryConfig.id}>
-      <PermissionsProvider permissions={covidMortalityAndRecoveryConfig.graphRenderPermissions}>
-        <GraphsContainer assaysFromState={assays} config={covidMortalityAndRecoveryConfig} />
-      </PermissionsProvider>
+      <GraphsContainer assaysFromState={assays} config={covidMortalityAndRecoveryConfig} />
     </ErrorBoundary>
   )
 }
