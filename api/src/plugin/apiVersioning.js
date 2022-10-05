@@ -3,6 +3,7 @@
 const Boom = require('@hapi/boom')
 const Joi = require('@hapi/joi')
 const MediaType = require('media-type')
+const RouteCache = require('./routeCache')
 
 const internals = {
   optionsSchema: Joi.object({
@@ -84,7 +85,7 @@ exports.register = (server, options) => {
   // Use the validated and maybe converted values from Joi
   options = validateOptions.value
 
-  server.ext('onRequest', (request, h) => {
+  server.ext('onRequest', async (request, h) => {
     // Surface any URI decoding errors before calling server.match
     attemptPathDecoding(request)
 
@@ -110,12 +111,14 @@ exports.register = (server, options) => {
     if (typeof requestedVersion === 'number') {
       // reading all registered routes
       const table = server.table()
+      const routesCache = RouteCache.getInstance(table)
+      const routesList = await routesCache.getCacheValueRoute()
       const matchingRoutesList = []
 
       // preparing list of routes matching to versioned routes
-      table.map(url => {
-        if (url.path.replace(/v\d+[\/]/gi, '').trim() === request.path) {
-          matchingRoutesList.push(url.path)
+      routesList.map(url => {
+        if (url.replace(/v\d+[\/]/gi, '').trim() === request.path) {
+          matchingRoutesList.push(url)
         }
         return url
       })
