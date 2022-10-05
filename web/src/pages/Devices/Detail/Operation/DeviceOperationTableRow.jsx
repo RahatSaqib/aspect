@@ -1,12 +1,10 @@
+import React from 'react'
+import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import partial from 'lodash/partial'
-import classnames from 'classnames/bind'
-import React from 'react'
-import { formatDate } from '../../../../utils/utils/dateFormat'
-
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../../oldComponents/shared/tableBody'
-
 import styles from '../../../../oldComponents/shared/DataTableRow.css'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../../oldComponents/shared/tableBody'
+import { formatDate } from '../../../../utils/utils/dateFormat'
 
 const cssClasses = classnames.bind(styles)
 

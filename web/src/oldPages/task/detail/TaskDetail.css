@@ -1,4 +1,4 @@
-@import '../../../globals/variables.css';
+@import '../../../theme/variables.css';
 
 .Section {
   padding: 20px var(--aspect-detail-horizontal-padding);

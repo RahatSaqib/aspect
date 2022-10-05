@@ -17,12 +17,15 @@ const withNewReports = jobFunction => ({
     'module_status_report',
   ]), // add externalId of report
 })
-
+const withNoReporterPermissions = jf => ({
+  ...jf,
+  permissions: _.filter(jf.permissions, permission => permission.module !== 'reporter'),
+})
 module.exports = [
-  withNewReports(admin),
-  withNewReports(regionalOfficer),
-  labUser,
-  clinician,
-  remoteHealthWorker,
-  technician,
+  withNoReporterPermissions(withNewReports(admin)),
+  withNoReporterPermissions(withNewReports(regionalOfficer)),
+  withNoReporterPermissions(labUser),
+  withNoReporterPermissions(clinician),
+  withNoReporterPermissions(remoteHealthWorker),
+  withNoReporterPermissions(technician),
 ]

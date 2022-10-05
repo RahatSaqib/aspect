@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import deviceStatusMessages from '../../../utils/messages/deviceStatusMessages'
+import { deviceStatusMessages } from '../../../messages'
 
 const messages = {
   ...deviceStatusMessages,

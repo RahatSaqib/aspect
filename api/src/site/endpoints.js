@@ -152,7 +152,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/site/{siteId}',
-    handler: asyncHandler(updateSite),
+    handler: updateSite,
     config: {
       description: 'Update Site Detail',
       notes: 'Detail of a site',
@@ -163,7 +163,7 @@ const routes = [
   {
     method: 'GET',
     path: '/site/select-list/{mode?}',
-    handler: asyncHandler(listSitesForSelectList),
+    handler: listSitesForSelectList,
     config: {
       description: 'Sites for Select List',
       notes: "List of site ID's and names",

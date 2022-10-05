@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 import Grid from '@mui/material/Grid'
-import GraphContainer from './GraphContainer'
-import { validateGraphConfig } from '../Helpers/Formatters'
+import PropTypes from 'prop-types'
 import { isAllowedGroupsWithoutAssays, getWhitelistedAssays } from '../../../utils/utils/graph'
+import { validateGraphConfig } from '../Helpers/Formatters'
+import GraphContainer from './GraphContainer'
 
 const spacing = {
   half: { innerSize: 12, outerSize: 6 },

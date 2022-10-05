@@ -1,24 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
+import CircularProgress from '@mui/material/CircularProgress'
+import findIndex from 'lodash/findIndex'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
-import CircularProgress from '@mui/material/CircularProgress'
 import { useQuery } from 'react-query'
-import findIndex from 'lodash/findIndex'
-
-import useI18n from '../../../../hooks/useI18n'
-import { FormikProvider } from '../../../../components/Form/Formik/Context'
 import AspectForm from '../../../../components/Form'
 import FormActions from '../../../../components/Form/formActions'
-import Shell from '../../../../components/Shell'
-import ShellHeader from '../../../../components/Shell/Header'
-import ShellContent from '../../../../components/Shell/Content'
-import ShellFooter from '../../../../components/Shell/Footer'
-import { RESULT_DETAIL } from '../../../../components/QueryFetch/Result'
+import { FormikProvider } from '../../../../components/Form/Formik/Context'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
+import { RESULT_DETAIL } from '../../../../components/QueryFetch/Result'
+import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../../components/Shell'
+import useI18n from '../../../../hooks/useI18n'
+import { getFormConfigWithData } from '../utils'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
-import { getFormConfigWithData } from '../utils'
 
 const AspectResultDetail = ({ resultId, onSubmit }) => {
   const intl = useI18n()

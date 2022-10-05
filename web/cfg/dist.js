@@ -1,11 +1,11 @@
-const webpack = require('webpack')
-const { merge } = require('webpack-merge')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const { merge } = require('webpack-merge')
 const base = require('./base')
 
 /**
@@ -97,6 +97,7 @@ const config = () => {
          */
         new CssMinimizerPlugin({
           test: /\.css$/g,
+          minify: CssMinimizerPlugin.cssoMinify,
           minimizerOptions: {
             preset: [
               'default',

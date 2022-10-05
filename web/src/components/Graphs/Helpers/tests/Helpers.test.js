@@ -12,7 +12,6 @@ import {
   generateTickValues,
   normaliseKeys,
 } from '../Formatters'
-
 import {
   barDataActualFromAPIIn,
   barDataActualFromAPIOut,
@@ -46,7 +45,6 @@ import {
   treatmentAPISkewedDataOppositePercentageOut,
   treatmentAPISkewedActualDataOut,
 } from './mocks/data.js'
-
 import { itemMocked, assaysMocked } from './mocks/tooltips'
 
 describe('Graph Helpers', () => {

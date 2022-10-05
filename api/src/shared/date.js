@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const {
+  addDays,
   addMinutes,
   format,
   parse,
@@ -11,24 +12,32 @@ const {
   startOfToday,
   startOfMonth,
   endOfMonth,
-  eachDayOfInterval,
   eachWeekendOfInterval,
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
+const { formatInTimeZone } = require('date-fns-tz')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
   return parseDateOrDefault(date, defaultValue)
 }
 
-const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') =>
-  knex.raw(`CONCAT_WS(
+function getTimezoneOffsetFromNumber(timezoneOffset) {
+  let offset = -Math.round(timezoneOffset / 60)
+  const plusOrMinus = offset >= 0 ? '+' : '-'
+  offset = Math.abs(offset)
+  offset = `${plusOrMinus}${_.padStart(offset, 2, '0')}:00`
+  return offset
+}
+
+const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') => {
+  return knex.raw(`CONCAT_WS(
     '-',
     CAST(YEAR(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),
     LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
-
+}
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
   knex.raw(`CONCAT_WS(
     '-',
@@ -112,19 +121,23 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
 
   if (typeof end === 'string') end = parseISO(end)
 
-  let dates
-  const allDates = eachDayOfInterval({ start, end }).map(d => d.toISOString())
-
+  let allDates = []
+  let current = start
+  while (current <= end) {
+    allDates = [...allDates, current.toISOString()]
+    current = addDays(current, 1)
+  }
+  let dates = allDates
   if (excludeWeekends) {
     const allWeekends = eachWeekendOfInterval({ start, end }).map(d => d.toISOString())
     dates = _.difference(allDates, allWeekends)
-  } else dates = allDates
+  }
   return initialProperties
     ? dates.map(d => ({
-        date: getLocalDateInUtc(parseISO(d)),
+        date: parseISO(d),
         ...initialProperties,
       }))
-    : dates.map(d => getLocalDateInUtc(parseISO(d)))
+    : dates.map(d => parseISO(d))
 }
 
 // Returns the UTC equivalent of the passed in date/time string
@@ -204,6 +217,12 @@ function dayOfYear(date) {
 
 function getWellFormattedDateStringWithTimezone(dateTime) {
   return format(dateTime, 'yyyy-MM-dd HH:mm:ss.SSSxxx').replace(' ', 'T')
+}
+
+// Return Wed Aug 24 2022 02:25:32 GMT-4
+function getFormattedDateTimeWithTimezone(dateTime, timezone) {
+  timezone = timezone || 'Etc/UTC'
+  return formatInTimeZone(dateTime, timezone, 'E MMM dd yyyy HH:mm:ss O')
 }
 
 /**
@@ -299,10 +318,12 @@ module.exports = {
   getDateTimeProjectionInUserTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
+  getFormattedDateTimeWithTimezone,
   getDatesFromQuery,
   getOffsetFromTimeZone,
   getOffsetFromIsoDateString,
   getOffsetFromIsoDateStringInMinutes,
   getTimeZoneFromUser,
   getOffsetFromUser,
+  getTimezoneOffsetFromNumber,
 }

@@ -1,8 +1,7 @@
-import identity from 'lodash/identity'
-import classnames from 'classnames/bind'
 import React from 'react'
+import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import AspectButton from '../shared/AspectButton'
-
 import styles from './ColoredButton.css'
 
 const cssClasses = classnames.bind(styles)

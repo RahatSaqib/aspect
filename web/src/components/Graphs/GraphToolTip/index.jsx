@@ -1,11 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { defineMessages } from 'react-intl'
 import classnames from 'classnames/bind'
 import startCase from 'lodash/startCase'
-
-import styles from './GraphTooltip.css'
+import PropTypes from 'prop-types'
+import { defineMessages } from 'react-intl'
 import useI18n from '../../../hooks/useI18n'
+import styles from './GraphTooltip.css'
 
 const cssClasses = classnames.bind(styles)
 

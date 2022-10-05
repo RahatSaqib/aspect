@@ -1,18 +1,22 @@
 import reduce from 'lodash/reduce'
-
-import LineGraph from '../../LineGraph'
-import BarGraph from '../../BarGraph'
-import { getTimePeriod } from '../../Helpers/Formatters'
+import times from 'lodash/times'
+import { months } from '../../../../messages'
+import { i18nWrapper } from '../../../../providers/I18nProvider'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import FilterByStateDropDown from '../../../AspectDropDown/FilterByStateDropDown'
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
-import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
+import BarGraph from '../../BarGraph'
 import AxisRightLayer from '../../BarGraph/AxisRightLayer'
+import { getTimePeriod } from '../../Helpers/Formatters'
+import LineGraph from '../../LineGraph'
+import { MtbToTotalPercentage, RrdToMtbPercentage } from './Layers'
+
+const { formatMessage } = i18nWrapper()
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
 } = DATE_CONSTS
 const assays = ['GxMtbRif', 'GxMtbRifUltra']
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const MONTHS = times(12, month => `${formatMessage(months[month])}`)
 const getData = data =>
   reduce(
     data,
@@ -158,11 +162,7 @@ const trendInQuartersMtbDetected = getGraphEntry({
     fields: [
       { name: 'Total', colorId: 'caseTotal', target: 'bar' },
       { name: 'MtbDetected', colorId: 'caseDetected', target: 'bar' },
-      {
-        name: 'MtbToTotalPercentage',
-        colorId: 'casePercentDetectedOfTotal',
-        target: 'line',
-      },
+      { name: 'MtbToTotalPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
     ],
     keyToConsume: '',
     filterBy: {},
@@ -170,7 +170,7 @@ const trendInQuartersMtbDetected = getGraphEntry({
     tickValuesYShape: 'twos',
     formatDate: value => {
       const [yyyy, qq] = `${value}`.split('-')
-      return `Q${qq}-${yyyy.substring(2)}`
+      return `${formatMessage(months.QUARTER)}${qq}-${yyyy.substring(2)}`
     },
     layers: [MtbToTotalPercentage, AxisRightLayer],
     axisRightProps: {
@@ -198,11 +198,7 @@ const trendInQuartersRifDetected = getGraphEntry({
     fields: [
       { name: 'MtbDetected', colorId: 'caseTotal', target: 'bar' },
       { name: 'RrdDetected', colorId: 'caseDetected', target: 'bar' },
-      {
-        name: 'RrdToMtbPercentage',
-        colorId: 'casePercentDetectedOfTotal',
-        target: 'line',
-      },
+      { name: 'RrdToMtbPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
     ],
     keyToConsume: '',
     filterBy: {},
@@ -210,7 +206,7 @@ const trendInQuartersRifDetected = getGraphEntry({
     tickValuesYShape: 'twos',
     formatDate: value => {
       const [yyyy, qq] = `${value}`.split('-')
-      return `Q${qq}-${yyyy.substring(2)}`
+      return `${formatMessage(months.QUARTER)}${qq}-${yyyy.substring(2)}`
     },
     layers: [RrdToMtbPercentage, AxisRightLayer],
     axisRightProps: {

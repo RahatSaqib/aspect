@@ -1,8 +1,8 @@
-import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
+import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { aspectFetch } from '../utils/utils/fetch'
 import { errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   REQUEST_TAGS: 'REQUEST_TAGS',

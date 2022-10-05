@@ -43,6 +43,7 @@ async function listDeviceApiKeys(request) {
       partnerId: 'dak.partnerId',
       siteName: 's.name',
       deviceName: 'd.name',
+      revoked: 'dak.revoked',
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',

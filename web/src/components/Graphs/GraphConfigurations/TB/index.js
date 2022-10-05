@@ -1,9 +1,8 @@
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
+import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
 import BarGraph from '../../BarGraph'
-import PieGraph from '../../PieGraph'
 import { getTimePeriod } from '../../Helpers/Formatters'
-
-import DATE_CONSTS from '../../../../globals/consts/DateTime/CONSTS'
-import GRAPH_CONSTS from '../../../../globals/consts/Graphs/CONSTS'
+import PieGraph from '../../PieGraph'
 
 const {
   DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },

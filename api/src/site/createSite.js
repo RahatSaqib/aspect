@@ -11,7 +11,7 @@ module.exports = async function (request) {
   try {
     await validate(payload)
   } catch (error) {
-    if (error instanceof Boom.Boom) {
+    if (Boom.isBoom(error)) {
       return error
     }
     throw error
@@ -35,9 +35,9 @@ module.exports = async function (request) {
     updatedBy: user.id,
   }
 
-  const [insertedId] = await knex('Site').insert(values)
+  const [newId] = await knex('Site').insert(values)
 
-  return { ok: true, data: { id: insertedId } }
+  return newId
 }
 
 async function normalizeParameters(payload) {

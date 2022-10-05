@@ -1,218 +1,24 @@
-import Immutable from 'immutable'
-import classnames from 'classnames/bind'
 import React, { Children } from 'react'
-import { compose, pure } from 'recompose'
-import { defineMessages } from 'react-intl'
-import { connect } from 'react-redux'
 import Button from '@mui/material/Button'
-import { MdClose } from 'react-icons/md'
-import startCase from 'lodash/startCase'
+import classnames from 'classnames/bind'
+import Immutable from 'immutable'
 import isArray from 'lodash/isArray'
-
-import { isCountryFilterHidden } from '../utils'
+import startCase from 'lodash/startCase'
+import { MdClose } from 'react-icons/md'
+import { connect } from 'react-redux'
+import { compose, pure } from 'recompose'
 import useI18n from '../../../hooks/useI18n'
+import { commonDefinitions } from '../../../messages/customMessages'
+import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
+import { isCountryFilterHidden } from '../utils'
 import styles from './FiltersBtnGroup.css'
-import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
-import deviceApprovalMessages from '../../../utils/messages/deviceApprovalMessages'
-import deviceStatusMessages from '../../../utils/messages/deviceStatusMessages'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
 const EMPTY_CONTEXT = null
 const EMPTY_MAP = Immutable.Map()
 
-const messages = defineMessages({
-  ...deviceStatusMessages,
-  ...deviceApprovalMessages,
-  dateFrom: {
-    id: 'filter.btnGroup.dateFrom',
-    defaultMessage: 'since {date}',
-  },
-  dateTo: {
-    id: 'filter.btnGroup.dateTo',
-    defaultMessage: 'until {date}',
-  },
-  partnerId: {
-    id: 'filter.btnGroup.partnerId',
-    defaultMessage: 'partner "{partnerName}"',
-  },
-  patientOrResearchId: {
-    id: 'filter.btnGroup.patientOrResearchId',
-    defaultMessage: 'patient ID includes {patientOrResearchId}',
-  },
-  patientOrCaseId: {
-    id: 'filter.btnGroup.patientOrCaseId',
-    defaultMessage: 'patient/case ID includes {patientOrCaseId}',
-  },
-  sampleId: {
-    id: 'filter.btnGroup.sampleId',
-    defaultMessage: 'sample includes "{sampleId}"',
-  },
-  errorCode: {
-    id: 'filter.btnGroup.errorCode',
-    defaultMessage: 'error code includes "{errorCode}"',
-  },
-  whereDeviceNameIncludes: {
-    id: 'filter.btnGroup.whereDeviceNameIncludes',
-    defaultMessage: 'device name includes "{deviceName}"',
-  },
-  withResultCategory: {
-    id: 'filter.btnGroup.withResultCategory',
-    defaultMessage: 'with result {resultCategoryName}',
-  },
-  withResultCategoryGroup: {
-    id: 'filter.btnGroup.withResultCategoryGroup',
-    defaultMessage: 'with result {resultCategoryGroupName}',
-  },
-  whereSiteNameIncludes: {
-    id: 'filter.btnGroup.whereSiteNameIncludes',
-    defaultMessage: 'site name includes "{siteName}"',
-  },
-  whereSiteIdIncludes: {
-    id: 'filter.btnGroup.whereSiteIdIncludes',
-    defaultMessage: 'site ID includes "{siteId}"',
-  },
-  whereReportableSiteNameIncludes: {
-    id: 'filter.btnGroup.whereReportableSiteNameIncludes',
-    defaultMessage: 'reportable site name includes "{reportableSiteName}"',
-  },
-  whereReportableSiteName: {
-    id: 'filter.btnGroup.whereReportableSiteIs',
-    defaultMessage: 'reportable site "{reportableSiteName}"',
-  },
-  whereReportableSiteIdIncludes: {
-    id: 'filter.btnGroup.whereSiteIdIncludes',
-    defaultMessage: 'reportable site ID includes "{reportableSiteId}"',
-  },
-  sampleOriginSite: {
-    id: 'filter.btnGroup.sampleOriginSite',
-    defaultMessage: 'sample collection site is {sampleOriginSiteName}',
-  },
-  whoseNameOrEmailIncludes: {
-    id: 'filter.btnGroup.whoseNameOrEmailIncludes',
-    defaultMessage: 'name/email includes "{contactNameOrEmail}"',
-  },
-  withWorkflowStatus: {
-    id: 'filter.btnGroup.withWorkflowStatus',
-    defaultMessage: 'workflow status is {workflowStatusName}',
-  },
-  withTreatmentStatus: {
-    id: 'filter.btnGroup.withTreatmentStatus',
-    defaultMessage: 'treatment status is {treatmentStatusName}',
-  },
-  withDeviceApproval: {
-    id: 'filter.btnGroup.withDeviceApproval',
-    defaultMessage: 'approval status is {deviceApprovalName}',
-  },
-  withDeviceMaintenanceStatus: {
-    id: 'filter.btnGroup.withDeviceMaintenanceStatus',
-    defaultMessage: 'maintenance status is {deviceMaintenanceStatusName}',
-  },
-  withDeviceType: {
-    id: 'filter.btnGroup.withDeviceType',
-    defaultMessage: 'type is {deviceTypeName}',
-  },
-  withConnectorStatus: {
-    id: 'filter.btnGroup.withConnectorStatus',
-    defaultMessage: 'Connector Status is {connectorStatus}',
-  },
-  whereExternalIdIncludes: {
-    id: 'filter.btnGroup.whereExternalIdIncludes',
-    defaultMessage: 'ID includes "{externalId}"',
-  },
-  whereDeviceIdIsIn: {
-    id: 'filter.btnGroup.whereDeviceIdIsIn',
-    defaultMessage: 'deviceId is in ({joinedIds})',
-  },
-  whereSiteIdIsIn: {
-    id: 'filter.btnGroup.whereSiteIdIsIn',
-    defaultMessage: 'site ID is in ({joinedIds})',
-  },
-  whereNotificationNameIncludes: {
-    id: 'filter.btnGroup.whereNotificationNameIncludes',
-    defaultMessage: 'notification name includes "{notificationName}"',
-  },
-  withRevoked: {
-    id: 'filter.btnGroup.withRevoked',
-    defaultMessage: 'revoked is "{revokedStatus}"',
-  },
-  onlyReportableResults: {
-    id: 'filter.btnGroup.onlyReportableResults',
-    defaultMessage: 'Show Only Reportable Results',
-  },
-  onlyDownloadedByReporter: {
-    id: 'filter.btnGroup.onlyDownloadedByReporter',
-    defaultMessage: 'Show Only Results Downloaded By Reporter',
-  },
-  onlyEverTransferred: {
-    id: 'filter.btnGroup.onlyEverTransferred',
-    defaultMessage: 'Show Only Results Ever Transferred',
-  },
-  onlyTreatmentRequired: {
-    id: 'filter.btnGroup.onlyTreatmentRequired',
-    defaultMessage: 'Show Only Results With Treatment Required',
-  },
-  deviceIssueType: {
-    id: 'filter.btnGroup.deviceIssueType',
-    defaultMessage: 'Device Issue: {issueTypeId}',
-  },
-  hasStock: {
-    id: 'filter.btnGroup.hasStock',
-    defaultMessage: 'Only lots with stock',
-  },
-  outOfStock: {
-    id: 'filter.btnGroup.daysStockLeft.outOfStock',
-    defaultMessage: 'Out of Stock',
-  },
-  upTo14: {
-    id: 'filter.btnGroup.daysStockLeft.upTo14',
-    defaultMessage: '1-14 Days',
-  },
-  upTo30: {
-    id: 'filter.btnGroup.daysStockLeft.upTo30',
-    defaultMessage: '15-30 Days',
-  },
-  upTo90: {
-    id: 'filter.btnGroup.daysStockLeft.upTo90',
-    defaultMessage: '1-3 Months',
-  },
-  upTo180: {
-    id: 'filter.btnGroup.daysStockLeft.upTo180',
-    defaultMessage: '4-6 Months',
-  },
-  moreThan180: {
-    id: 'filter.btnGroup.daysStockLeft.moreThan180',
-    defaultMessage: '>6 Months',
-  },
-  notRecorded: {
-    id: 'filter.btnGroup.daysStockLeft.notRecorded',
-    defaultMessage: 'Not Recorded',
-  },
-  noConsumption: {
-    id: 'filter.btnGroup.daysStockLeft.noConsumption',
-    defaultMessage: 'No Consumption',
-  },
-  whereReportNameIncludes: {
-    id: 'filter.btnGroup.whereReportNameIncludes',
-    defaultMessage: 'report name includes "{reportName}"',
-  },
-  whereLotNumberIncludes: {
-    id: 'filter.btnGroup.whereLotNumberIncludes',
-    defaultMessage: 'lot number includes "{lotNumber}"',
-  },
-  contactEnabledStatus: {
-    id: 'filter.btnGroup.contactEnabledStatus',
-    defaultMessage: 'Contact Status: {contactStatus}',
-  },
-  online: {
-    id: 'filter.btnGroup.online',
-    defaultMessage: 'Online',
-  },
-  offline: {
-    id: 'filter.btnGroup.offline',
-    defaultMessage: 'Offline',
-  },
-})
 const revokedOptions = [
   {
     id: '0',
@@ -223,16 +29,7 @@ const revokedOptions = [
     name: 'true',
   },
 ]
-const statusOptions = [
-  {
-    id: '0',
-    name: 'Enabled',
-  },
-  {
-    id: '1',
-    name: 'Disabled',
-  },
-]
+
 const enhance = compose(
   pure,
   connect(
@@ -264,6 +61,8 @@ const filtersOrdering = {
   lgaId: 3,
   minDate: 18,
   maxDate: 19,
+  minExpirationDate: 40,
+  maxExpirationDate: 41,
   partnerId: 8,
   patientOrResearchId: 10,
   sampleId: 9,
@@ -291,6 +90,7 @@ const filtersOrdering = {
   onlyReportableResults: 23,
   onlyTreatmentRequired: 33,
   onlyDownloadedByReporter: 35,
+  onlyTransfers: 36,
   onlyEverTransferred: 34,
   issueTypeId: 24,
   daysStockLeft: 31,
@@ -324,7 +124,7 @@ const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
     .find(it => assayIds.includes(it.get('id')), EMPTY_CONTEXT, EMPTY_MAP)
     .get('resultCategories', EMPTY_MAP)
     .find(it => it.get('id') === resultCategoryId, EMPTY_CONTEXT, EMPTY_MAP)
-    .get('name', '')
+    .get('i18nKey', '')
 }
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
@@ -339,11 +139,11 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       } = props
       const assayIds = isArray(assayId) ? assayId : [assayId]
       return assayIds.map((__, index) =>
-        makeButton(value => assayItems.find(it => it.get('id') === value, EMPTY_CONTEXT, EMPTY_MAP).get('name'))(
-          filterKey,
-          props,
-          index
-        )
+        makeButton(value =>
+          formatMessage(
+            messages[assayItems.find(it => it.get('id') === value, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')]
+          )
+        )(filterKey, props, index)
       )
     },
     diseaseId: makeButton((diseaseId, { diseaseItems }) =>
@@ -389,6 +189,16 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         date: format(new Date(date), dateFormat),
       })
     ),
+    minExpirationDate: makeButton(date =>
+      formatMessage(messages.expDateFrom, {
+        date: format(new Date(date), dateFormat),
+      })
+    ),
+    maxExpirationDate: makeButton(date =>
+      formatMessage(messages.expDateTo, {
+        date: format(new Date(date), dateFormat),
+      })
+    ),
     partnerId: makeButton((partnerId, { partnerItems }) =>
       formatMessage(messages.partnerId, {
         partnerName: partnerItems.find(it => it.get('id') === partnerId, EMPTY_CONTEXT, EMPTY_MAP).get('name'),
@@ -417,13 +227,17 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
               resultCategoryName: `"${startCase(filters.assayOverride)}"`,
             }
           : {
-              resultCategoryName: getResultCategoryName(assayItems, filters.assayId, resultCategoryId),
+              resultCategoryName: formatMessage(
+                messages[getResultCategoryName(assayItems, filters.assayId, resultCategoryId)]
+              ),
             }
       )
     ),
     resultCategory2Id: makeButton((resultCategory2Id, { filters, assayItems }) =>
       formatMessage(messages.withResultCategory, {
-        resultCategoryName: getResultCategoryName(assayItems, filters.assayId, resultCategory2Id),
+        resultCategoryName: formatMessage(
+          messages[getResultCategoryName(assayItems, filters.assayId, resultCategory2Id)]
+        ),
       })
     ),
     resultCategoryGroupId: makeButton((resultCategoryGroupId, { filters, resultCategoryGroupItems }) => {
@@ -434,9 +248,13 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
               resultCategoryGroupName: `"${startCase(filters.assayOverride)}"`,
             }
           : {
-              resultCategoryGroupName: resultCategoryGroupItems
-                .find(it => it.get('externalId') === resultCategoryGroupId, EMPTY_CONTEXT, EMPTY_MAP)
-                .get('name'),
+              resultCategoryGroupName: formatMessage(
+                messages[
+                  resultCategoryGroupItems
+                    .find(it => it.get('externalId') === resultCategoryGroupId, EMPTY_CONTEXT, EMPTY_MAP)
+                    .get('i18nKey')
+                ]
+              ),
             }
       )
     }),
@@ -482,20 +300,28 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       })
     ),
     consumableId: makeButton((consumableId, { consumableItems }) =>
-      consumableItems.find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP).get('name')
+      formatMessage(
+        messages[consumableItems.find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')]
+      )
     ),
     workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
       formatMessage(messages.withWorkflowStatus, {
-        workflowStatusName: workflowStatusItems
-          .find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        workflowStatusName: formatMessage(
+          messages[
+            workflowStatusItems.find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')
+          ]
+        ),
       })
     ),
     treatmentStatus: makeButton((treatmentStatus, { treatmentStatusItems }) =>
       formatMessage(messages.withTreatmentStatus, {
-        treatmentStatusName: treatmentStatusItems
-          .find(it => it.get('externalId') === treatmentStatus, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        treatmentStatusName: formatMessage(
+          messages[
+            treatmentStatusItems
+              .find(it => it.get('externalId') === treatmentStatus, EMPTY_CONTEXT, EMPTY_MAP)
+              .get('i18nKey')
+          ]
+        ),
       })
     ),
     deviceApprovalId: makeButton((deviceApprovalId, { deviceApprovalItems }) =>
@@ -567,6 +393,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     onlyDownloadedByReporter: makeButton(() => formatMessage(messages.onlyDownloadedByReporter)),
     onlyEverTransferred: makeButton(() => formatMessage(messages.onlyEverTransferred)),
     onlyTreatmentRequired: makeButton(() => formatMessage(messages.onlyTreatmentRequired)),
+    onlyTransfers: makeButton(() => formatMessage(messages.onlyTransfers)),
     issueTypeId: makeButton(issueTypeId =>
       formatMessage(messages.deviceIssueType, {
         issueTypeId: startCase(issueTypeId),
@@ -587,7 +414,8 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
     contactStatus: makeButton(status =>
       formatMessage(messages.contactEnabledStatus, {
-        contactStatus: statusOptions.find(it => it.id === status, EMPTY_CONTEXT, EMPTY_MAP).name,
+        contactStatus:
+          status === '0' ? formatMessage(commonDefinitions.enabled) : formatMessage(commonDefinitions.disabled),
       })
     ),
     connectorStatus: makeButton(connectorStatus =>

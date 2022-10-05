@@ -1,13 +1,11 @@
 import React from 'react'
-import { bool, func, number, string } from 'prop-types'
 import classnames from 'classnames/bind'
-
+import { bool, func, number, string } from 'prop-types'
+import useI18n from '../../../../hooks/useI18n'
+import styles from '../../Table.css'
 import messages from '../messages'
 import IndexButton from './IndexButton'
 import NowShowing from './NowShowing'
-
-import styles from '../../Table.css'
-import useI18n from '../../../../hooks/useI18n'
 
 const cssClasses = classnames.bind(styles)
 

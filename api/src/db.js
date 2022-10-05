@@ -73,17 +73,22 @@ function filterParams(queryBuilder, params, filters) {
   })
 }
 
-// extracts the parameters related to filtering from the candidate
-// params and modifies the query builder with the filter modifications
-function filterDateRangeParams(queryBuilder, params, dateColumnName) {
-  if (params.minDate && params.minDate.toString() !== 'Invalid Date') {
-    queryBuilder.where(dateColumnName, '>=', params.minDate)
+/**
+ * Apply a date filter to a knex query, given a date range.
+ * @param {*} queryBuilder
+ * @param {*} params This are the URL params received for applying in the query
+ * @param {*} dateColumnName Because we can have other fields for date like for example expirationdate or endedon
+ * @param {*} dateParamName This is how the date max and min are named in the url
+ */
+function filterDateRangeParams(queryBuilder, params, dateColumnName, dateParamName = 'Date') {
+  if (params[`min${dateParamName}`] && params[`min${dateParamName}`].toString() !== 'Invalid Date') {
+    queryBuilder.where(dateColumnName, '>=', params[`min${dateParamName}`])
   }
-  if (params.maxDate && params.minDate.toString() !== 'Invalid Date') {
-    queryBuilder.where(dateColumnName, '<', params.maxDate)
+
+  if (params[`max${dateParamName}`] && params[`max${dateParamName}`].toString() !== 'Invalid Date') {
+    queryBuilder.where(dateColumnName, '<', params[`max${dateParamName}`])
   }
 }
-
 // helper function for run, transact and migration
 const makeBlockRunner = block => blockArg =>
   block(blockArg).catch(err => {

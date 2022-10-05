@@ -18,56 +18,154 @@ const {
 
 const { assert } = chai
 
-const { filterConditionWithAssay, filterConditionWithJf, baseFilterCondition } = require('./fitlerCondtions')
+const {
+  filterConditionWithAssay,
+  filterConditionWithJf,
+  baseFilterCondition,
+  filterConditionWithJfForDevice,
+  filterConditionWithJfForDeviceNotWayneCounty,
+} = require('./filterConditions')
 
 describe('Issue based Notifications triggers', () => {
+  let insertedNotificationTypeId = null
+  let messageContext = null
   let insertedIssueId = null
-  before(async () => {
-    const resultSample = await knex('Result').first()
-    const messageTypes = await knex('MessageType').whereNotNull('smsTemplateId').select()
+  let issueTypeId = null
+  const createTestContext = async filterCondition => {
+    const messageTypes = await knex('MessageType')
+      .whereNotNull('smsTemplateId')
+      .whereNotNull('emailTemplateId')
+      .select()
 
     const notificationTypeCategoryId = await notificationTypeCategoryToId('issueBased')
-    const issueTypes = await knex('IssueType')
-      .where({ externalId: 'HardwareCartridgeIntegrityTestFailure' })
-      .pluck('id')
+
     const createdOn = new Date()
     const updatedOn = new Date()
-    const issueTypeId = _.sample(issueTypes)
-    await knex('NotificationType').insert({
-      partnerId: resultSample.partnerId,
-      name: 'Random issue based notification',
-      createdOn,
-      updatedOn,
-      notificationTypeCategoryId,
-      issueTypeId,
-      messageTypeId: _.sample(messageTypes).id,
-    })
-
     const issueStatusId = await issueStatusToId('Active')
 
+    ;({ issueTypeId } = await knex('IssueType').where('externalId', '=', 'DeviceOffline').first('id as issueTypeId'))
+    ;[insertedNotificationTypeId] = await knex('NotificationType').insert({
+      partnerId: 1,
+      name: 'some random issue notification',
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      notificationTypeCategoryId,
+      filterCondition: filterCondition ? JSON.stringify(filterCondition) : null,
+      messageTypeId: _.sample(messageTypes).id,
+      issueTypeId,
+    })
+
+    messageContext = await createMessageContext()
+    // the cache should be reseted just for the test and because we are manually inserting data directly into the db.
+    await server.post('/api/notification/clearcache').set('Authorization', `Bearer${shared.token}`)
+    const device = await knex('Device').where('name', 'Daktari Wayne, OH').first()
     ;[insertedIssueId] = await knex('Issue').insert({
-      partnerId: resultSample.partnerId,
-      deviceId: resultSample.deviceId,
-      siteId: resultSample.siteId,
-      geographyId: resultSample.geographyId,
+      partnerId: device.partnerId,
+      deviceId: device.id,
+      siteId: device.siteId,
+      geographyId: device.geographyId,
       issueStatusId,
       issueTypeId,
       createdOn,
       updatedOn,
     })
-  })
-  after(async () => {
-    await knex('Notification').where('issueId', insertedIssueId).delete()
+  }
+  const removeTestContext = async () => {
+    await Promise.each(['EmailMessage', 'SmsMessage', 'AlertMessage'], table =>
+      knex(table)
+        .whereIn(
+          'id',
+          knex.raw(
+            '(?)',
+            knex('Notification').where({ notificationTypeId: insertedNotificationTypeId }).pluck(`${table}Id`)
+          )
+        )
+        .delete()
+    )
+    await knex('Notification')
+      .whereIn('issueId', [insertedIssueId])
+      .orWhere({ notificationTypeId: insertedNotificationTypeId })
+      .delete()
     await knex('Issue').where({ id: insertedIssueId }).delete()
-    await knex('NotificationType').where({ name: 'Random issue based notification' }).delete()
+    await knex('NotificationType').where({ id: insertedNotificationTypeId }).delete()
+    // await server.post('/api/notification/clearcache').set('Authorization', `Bearer${shared.token}`)
+  }
+  describe('Empty Filter conditions', async () => {
+    before(async () => createTestContext({}))
+    after(async () => removeTestContext())
+
+    it("should NOT create a issue based notification without special filter conditions, because there isn't anyone to be notified", async () => {
+      let notifications = await knex('Notification').where({ issueId: insertedIssueId }).select()
+      assert.equal(notifications.length, 0)
+      const { id: issueTypeId } = await knex('IssueType').where('externalId', '=', 'DeviceOffline').first()
+      await messageContext.dispatch(issueCreated(insertedIssueId, issueTypeId))
+      await waitForIdle(1000)
+      notifications = await knex('Notification').where({ issueId: insertedIssueId }).select()
+
+      assert.equal(notifications.length, 0)
+    })
   })
-  it('should create a issue based notification without special filter conditions', async () => {
-    let notifications = await knex('Notification').where({ issueId: insertedIssueId }).select()
-    assert.equal(notifications.length, 0)
-    await dispatchAndWaitForAction(issueCreated(insertedIssueId))
-    await waitForIdle(1000)
-    notifications = await knex('Notification').where({ issueId: insertedIssueId }).select()
-    assert.equal(notifications.length, 1)
+  describe('Filter with JF for Wayne County', () => {
+    before(async () => createTestContext(filterConditionWithJfForDevice))
+    after(removeTestContext)
+
+    it('should create a notification for particular lga, wayne oh', async () => {
+      messageContext.dispatch(issueCreated(insertedIssueId, issueTypeId))
+      await waitForIdle(2000)
+      const notifications = await knex('Notification').whereIn('issueId', [insertedIssueId]).distinct()
+      assert.isAtLeast(notifications.length, 1)
+    })
+  })
+
+  describe('Filter with JF for not Wayne County', () => {
+    before(async () => createTestContext(filterConditionWithJfForDeviceNotWayneCounty))
+    after(removeTestContext)
+
+    it('should NOT create a notification for particular lga, wayne oh', async () => {
+      messageContext.dispatch(issueCreated(insertedIssueId, issueTypeId))
+      await waitForIdle(2000)
+      const notifications = await knex('Notification').whereIn('issueId', [insertedIssueId]).distinct()
+      assert.isAtLeast(notifications.length, 0)
+    })
+  })
+  describe('Filter by Person', () => {
+    let adminId
+    let managerId
+
+    beforeEach(async () => {
+      ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
+
+      const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
+      ;[managerId] = await knex('Person').where({ email: config.manager.email }).pluck('id')
+
+      const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
+
+      // Notify to the person called "Admin" - Send notification
+      // Notify to a person assigned to the job function "Manager" - Send notification
+      // Notify to a person assigned to the job function "Admin" - DO NOT send notification (the admin user was included as person)
+      // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
+      const filterConditions = {
+        ..._.omit(filterConditionWithJfForDevice, 'jobFunctions'),
+        persons: [{ personId: `${adminId}` }],
+        jobFunctions: [{ jobFunctionId: `${managerJobFunctionId}` }, { jobFunctionId: `${adminJobFunctionId}` }],
+      }
+      await createTestContext(filterConditions)
+    })
+
+    afterEach(removeTestContext)
+
+    it('should create a notification for particular person and job function', async () => {
+      await dispatchAndWaitForAction(issueCreated(insertedIssueId, issueTypeId))
+      await waitForIdle(1000)
+      const notifications = await knex('Notification')
+        .where({ issueId: insertedIssueId, notificationTypeId: insertedNotificationTypeId })
+        .distinct('issueId', 'notificationTypeId', 'personId')
+      const notificationToPerson = notifications.filter(n => n.personId === adminId)
+      const notificationToJobFunction = notifications.filter(n => n.personId === managerId)
+      assert.isNotEmpty(notificationToPerson)
+      assert.isNotEmpty(notificationToJobFunction)
+      assert.equal(notifications.length, 2)
+    })
   })
 })
 
@@ -130,8 +228,10 @@ describe('Result Notifications triggers', () => {
     resultCategory1 = await resultCategoryToId('Detected')
     results = await knex('Result as r')
       .join('Geography as g', 'r.geographyId', 'g.id')
+      .join('Device as d', 'd.id', 'r.deviceId')
+      .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
       .join('Lga as l', 'g.lgaId', 'l.id')
-      .where({ partnerId: 1 })
+      .where({ 'r.partnerId': 1, 'dt.externalId': 'DaktariVirology' })
       .whereNotExists(knex('Notification as n').whereRaw('n.resultId = r.id').select())
       .distinct('r.*', 'l.name as lgaName')
     assert.isAtLeast(results.length, 1)
@@ -259,12 +359,13 @@ describe('Result Notifications triggers', () => {
     it('should create a result based notification for particular jobFunctions', async () => {
       const resultId = insertedResultDetected
       assert.isNotNull(resultId)
+
       const notificationsBefore = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
       assert.equal(notificationsBefore.length, 0)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(2000)
+      await waitForIdle(3000)
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
@@ -307,7 +408,7 @@ describe('Result Notifications triggers', () => {
       const person = _.sample(personTags)
       await knex('PersonTag').insert({ personId: person, tagId: inserted })
       messageContext.dispatch(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(3000)
       notifications = await knex('Notification as n')
         .where({
           resultId,
@@ -315,6 +416,77 @@ describe('Result Notifications triggers', () => {
         })
         .distinct('resultId', 'notificationTypeId', 'personId')
       assert.equal(notifications.length, 1)
+    })
+  })
+
+  describe('SMS notification timezone test', () => {
+    const inserted = null
+    let smsTemplateId = null
+    let messageTypeId = null
+    let backupResult = null
+    let backupSample = null
+    before(async () => {
+      await createTestContext({
+        ...filterConditionWithJf,
+        sendSms: true,
+      })
+      ;[smsTemplateId] = await knex('SmsTemplate').insert({
+        message:
+          'A new Rif case detected on {{site.name}} GeneXpert site started on {{result.startedOn}} and tested on {{result.endedOn}}. Sample collected on {{result.sample.collectedOn}}.',
+        createdBy: 1,
+        updatedBy: 1,
+        phoneNumber: '{{ person.cell }}',
+      })
+      ;[messageTypeId] = await knex('MessageType').insert({
+        messageSeverityId: 2,
+        alertTemplateId: null,
+        smsTemplateId,
+        webhookTemplateId: null,
+        pushNotificationTemplateId: null,
+      })
+      backupResult = await knex('Result').where('id', insertedResultDetected).first()
+      backupSample = await knex('Sample').where('id', backupResult.sampleId).first()
+      await knex('Result').where('id', insertedResultDetected).update({
+        startedOn: '2021-09-10 12:21:25.000',
+        endedOn: '2099-09-14 20:58:17.000',
+      })
+      await knex('Sample').where('id', backupResult.sampleId).update({
+        collectedOn: '2021-08-25 14:24:01.000',
+      })
+      await knex('NotificationType').where('id', ntId).update({ messageTypeId })
+    })
+    after(async () => {
+      await removeTestContext()
+      await knex('PersonTag').where('TagId', '>=', inserted).delete()
+      await knex('Tag').whereIn('title', ['oneTag', 'secondTag', 'thirdTag']).delete()
+      await knex('MessageType').where('id', messageTypeId).delete()
+      await knex('SmsMessage').where('smsTemplateId', smsTemplateId).delete()
+      await knex('SmsTemplate').where('id', smsTemplateId).delete()
+      await knex('Result').where('id', insertedResultDetected).update(backupResult)
+      await knex('Sample').where('id', backupResult.sampleId).update(backupSample)
+    })
+
+    afterEach(async () =>
+      knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
+    )
+    it('should create a result based notification for particular jobFunctions', async () => {
+      const resultId = insertedResultDetected
+      assert.isNotNull(resultId)
+      const notificationsBefore = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntId })
+        .distinct('resultId', 'notificationTypeId', 'personId')
+      assert.equal(notificationsBefore.length, 0)
+      await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
+      await waitForIdle(3000)
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
+      const smsMessages = await knex('SmsMessage').where({ smsTemplateId }).select()
+      assert.equal(notifications.length, 1, 'Only one notification should exists')
+      assert.equal(smsMessages.length, 1, 'Only one sms message should exists')
+      assert.equal(
+        smsMessages[0].message,
+        'A new Rif case detected on Wayne County Ohio GeneXpert site started on Fri Sep 10 2021 08:21:25 GMT-4 and tested on Mon Sep 14 2099 16:58:17 GMT-4. Sample collected on Wed Aug 25 2021 10:24:01 GMT-4.',
+        'All the dates should be localized GMT-4 (New York)'
+      )
     })
   })
 
@@ -326,7 +498,9 @@ describe('Result Notifications triggers', () => {
       ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
 
       const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
-      ;[managerId] = await knex('Person').where({ email: config.manager.email }).pluck('id')
+      ;[managerId] = await knex('Person')
+        .where({ email: config.manager.email || null })
+        .pluck('id')
 
       const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
 
@@ -347,7 +521,7 @@ describe('Result Notifications triggers', () => {
     it('should create a result based notification for particular person and job function', async () => {
       const resultId = insertedResultDetected
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(3000)
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
@@ -380,7 +554,7 @@ describe('Result Notifications triggers', () => {
       const resultId = insertedResultDetected
       assert.isNotNull(resultId)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(2000)
       const notifications = await knex('Notification')
         .where({ resultId, notificationTypeId: ntId })
         .distinct('resultId', 'notificationTypeId', 'personId')
@@ -439,7 +613,7 @@ describe('Result Notifications triggers', () => {
         .distinct('resultId', 'notificationTypeId', 'personId', 'emailMessageId', 'smsMessageId')
       assert.equal(notificationsBefore.length, 0)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(1000)
+      await waitForIdle(3000)
       const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
       assert.equal(notifications.length, 1)
       const [notification] = notifications
@@ -469,6 +643,13 @@ describe('Notification routes', () => {
       notificationTypeCategoryId: await notificationTypeCategoryToId('resultBased'),
       filterCondition: JSON.stringify({
         persons: [{ personId: `${personId}`, checked: true }],
+        jobFunctions: [
+          {
+            jobFunctionId: '1',
+            checked: true,
+            tags: [],
+          },
+        ],
       }),
       messageTypeId: messageType.id,
     })
@@ -528,8 +709,6 @@ describe('Notification routes', () => {
   })
 
   it('GET - With jobFunctionId', async () => {
-    await knex('NotificationType').where({ id: ntId }).update({ filterCondition: null, jobFunctionId: 1 })
-
     const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
     assert.equal(res.status, 200)
@@ -537,6 +716,7 @@ describe('Notification routes', () => {
     assert.property(res.body, 'data')
     assert.typeOf(res.body.data, 'array')
     assert.isAtLeast(res.body.data.length, 1)
+
     const [{ jobFunctions, jobFunctionsCount }] = res.body.data.filter(n => n.id === ntId)
     assert.equal(jobFunctions, 'Admin')
     assert.equal(jobFunctionsCount, 1)

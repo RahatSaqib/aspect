@@ -1,39 +1,35 @@
+import React, { useState, useEffect } from 'react'
+import TableBody from '@mui/material/TableBody'
+import classnames from 'classnames/bind'
+import Immutable from 'immutable'
 import flowRight from 'lodash/flowRight'
 import isEmpty from 'lodash/isEmpty'
-import classnames from 'classnames/bind'
-import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
-import TableBody from '@mui/material/TableBody'
-
-import Immutable from 'immutable'
-import { useNavigate, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { useNavigate, useLocation } from 'react-router-dom'
+import AspectExportListButton from '../../../components/AspectExportListButton'
+import fetchWrapperForQueries from '../../../components/QueryFetch'
+import useI18n from '../../../hooks/useI18n'
+import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import NavTitle from '../../../oldComponents/NavTitle'
+import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import { useAuthState } from '../../../providers/AuthProvider'
+import { i18nWrapper } from '../../../providers/I18nProvider'
+import { receiveList, Items } from '../../../utils/metaReducers/items'
+import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../utils/selectors/searchParams'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import { useAuthState } from '../../../providers/AuthProvider'
-import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
-import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { getExportableFile, REPORTERS_LIST, REPORTERS_LIST_REVOKE_ONE } from '../ReporterQueries'
-import { ReporterDataTable, ReporterDataTableHead, ReporterDataTableRow } from './ReporterDataTable'
-
-import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
-import { receiveList, Items } from '../../../utils/metaReducers/items'
-
-import AspectExportListButton from '../../../components/AspectExportListButton'
-import fetchWrapperForQueries from '../../../components/QueryFetch'
 import messages from './messages'
-import useI18n from '../../../hooks/useI18n'
-import { i18nWrapper } from '../../../providers/I18nProvider'
-
+import { ReporterDataTable, ReporterDataTableHead, ReporterDataTableRow } from './ReporterDataTable'
 import styles from './ReporterList.css'
 
 const cssClasses = classnames.bind(styles)
@@ -88,7 +84,6 @@ const FILTERS_CONFIG = [
   { lga: true, requiredPermissions: [] },
   { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
-  { revoked: true, requiredPermissions: [] },
   { assayId: true, requiredPermissions: ['assay:view'] },
 ]
 

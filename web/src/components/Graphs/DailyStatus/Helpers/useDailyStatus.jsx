@@ -1,18 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useQueryClient, useMutation, useQuery } from 'react-query'
 import cloneDeep from 'lodash/cloneDeep'
 import findIndex from 'lodash/findIndex'
 import findLastIndex from 'lodash/findLastIndex'
-
-import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
-import messages from '../messages'
-
-import { extractOptionValue } from '../../Helpers/Formatters'
-import { replaceRouteParams } from '../../../QueryFetch/Helpers'
-
+import { useQueryClient, useMutation, useQuery } from 'react-query'
+import useI18n from '../../../../hooks/useI18n'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../../../QueryFetch/Device'
-import useI18n from '../../../../hooks/useI18n'
+import { replaceRouteParams } from '../../../QueryFetch/Helpers'
+import { extractOptionValue } from '../../Helpers/Formatters'
+import messages from '../messages'
+import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
 
 const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extraParams = {}) => {
   const queryClient = useQueryClient()
@@ -141,7 +138,9 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
    * Notice that date range is _continuous dates with SAME status
    */
   const getDeviceDayDetails = ({ day, deviceId }) => {
-    const { maintenanceStatusHistory, shortName } = devicesDaily.find(({ id }) => +id === +deviceId)
+    const { maintenanceStatusHistory, shortName, siteContacts, hoursStart, hoursEnd } = devicesDaily.find(
+      ({ id }) => +id === +deviceId
+    )
     const { maintenanceStatusExternalId, maintenanceStatusNotes: note } = maintenanceStatusHistory.find(
       it => it.day === day
     )
@@ -159,6 +158,11 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
     return {
       deviceId,
       deviceName: shortName,
+      siteProps: {
+        siteContacts,
+        hoursStart,
+        hoursEnd,
+      },
       day, // day clicked (formatted as "YYYY-MM-DD")
       periodWithSameStatus: {
         startedOn,

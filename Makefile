@@ -14,14 +14,4 @@ web.start: web.server.PID
 web.stop: web.server.PID
 	cd ./web/dist && kill `cat $<` && rm $<
 
-e2e.local.impl:
-	-cd ./e2e && yarn nightwatch:local
-
-e2e.browserstack.impl:
-	-cd ./e2e && yarn nightwatch:browserstack
-
-e2e.local: api.start web.start e2e.local.impl web.stop api.stop
-
-e2e.browserstack: api.start web.start e2e.browserstack.impl web.stop api.stop
-
-.PHONY: api.start api.stop web.start web.stop e2e.local.impl e2e.browserstack.impl
+.PHONY: api.start api.stop web.start web.stop 

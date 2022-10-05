@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
-import { COUNTRY_KEY, STATE_KEY_BY_COUNTRY_ID_ENDPOINT } from './geographyKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { COUNTRY_KEY, STATE_KEY_BY_COUNTRY_ID_ENDPOINT } from './geographyKeys.js'
 
 const getStatesByCountryId = async countryId =>
   fetchWrapperForQueries({

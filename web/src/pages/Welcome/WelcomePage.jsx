@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 

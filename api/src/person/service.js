@@ -6,6 +6,7 @@ const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { clientTypes, revokeUsersToken, lockedOutUser } = require('../auth/service')
 const { getPeopleBase } = require('../shared/utilsPerson')
+const { updateTagsById, tagsAreEqual } = require('../tag/service')
 
 async function listPeople(request) {
   const { auth, query } = request
@@ -63,6 +64,7 @@ async function listPeople(request) {
     .where('j.personId', '=', knex.raw('p.id'))
     .select(knex.raw('group_concat(jf.name separator "; ")'))
     .as('level')
+
   const getTags = knex('Tag as t')
     .innerJoin('PersonTag as pt', 't.id', 'pt.tagId')
     .innerJoin('Partner as prt', 't.partnerId', 'prt.id')
@@ -207,7 +209,7 @@ async function validateContact(request) {
 
   const site = await getSite(siteId, dataConstraints)
 
-  const personDetails = await getPersonDetails(id).modify(addConstraints, dataConstraints, { geography: 'g' })
+  const personDetails = await getPersonDetails(id, dataConstraints)
 
   return {
     siteId,
@@ -216,8 +218,8 @@ async function validateContact(request) {
   }
 }
 
-function getPersonDetails(personId) {
-  return query('Get person details')
+async function getPersonDetails(personId, dataConstraints) {
+  const personDetails = await query('Get person details')
     .from('Person as p')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .leftJoin('User as u', 'p.userId', 'u.id')
@@ -225,6 +227,7 @@ function getPersonDetails(personId) {
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftOuterJoin('Job as j', 'p.id', 'j.personId')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where({ 'p.id': personId })
     .first(
       'p.id',
@@ -257,12 +260,23 @@ function getPersonDetails(personId) {
       'p.disabledOn',
       'j.id as jobId'
     )
+  if (personDetails) {
+    const tags = await query('Get person tags')
+      .from('Person as p')
+      .join('PersonTag as pt', 'pt.personId', 'p.id')
+      .join('Tag as t', 'pt.tagId', 't.id')
+      .where({ 'p.id': personId })
+      .select('t.title')
+
+    personDetails.tags = tags.map(t => t.title)
+  }
+  return personDetails
 }
 
 async function showPerson(request) {
-  const { params } = request
-
-  const personDetails = await getPersonDetails(params.personId)
+  const { params, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const personDetails = await getPersonDetails(params.personId, dataConstraints)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
@@ -286,7 +300,7 @@ async function showPerson(request) {
 }
 
 async function savePerson(request, updatablePersonFields) {
-  const { params, payload } = request
+  const { params, payload, auth } = request
 
   _.mapKeys(payload, (value, key) => {
     if (value === '') {
@@ -296,8 +310,8 @@ async function savePerson(request, updatablePersonFields) {
 
   // TODO: check access level permissions
   const currentlyLoggedInUser = await userService.getUser(request.auth.credentials.name)
-
-  const personDetails = await getPersonDetails(params.personId)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const personDetails = await getPersonDetails(params.personId, dataConstraints)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
@@ -305,15 +319,28 @@ async function savePerson(request, updatablePersonFields) {
   const changedFields = _.reduce(
     payload,
     (result, value, key) => {
-      if (_.includes(updatablePersonFields, key) && key in personDetails && personDetails[key] !== value) {
+      if (
+        _.includes(
+          updatablePersonFields.filter(f => f !== 'tags'),
+          key
+        ) &&
+        key in personDetails &&
+        personDetails[key] !== value
+      ) {
         result[key] = value
       }
       return result
     },
     {}
   )
-
   const changedPersonFields = await transformGeographyFromUpdates(changedFields)
+  const changedTags = !tagsAreEqual(payload.tags, personDetails.tags.map(t => t.title).join(','))
+
+  if (changedTags) {
+    await updateTagsById(params.personId, 'person', payload.tags, auth)
+    changedPersonFields.updatedOn = new Date()
+  }
+
   if (!_.isEmpty(changedPersonFields)) {
     if (changedFields.countryId && personDetails.lastCountryId !== changedFields.countryId) {
       changedPersonFields.lastCountryId = changedFields.countryId
@@ -337,7 +364,7 @@ async function savePerson(request, updatablePersonFields) {
 }
 
 async function createPerson(request) {
-  const { payload } = request
+  const { payload, auth } = request
 
   _.mapKeys(payload, (value, key) => {
     if (value === '') {
@@ -363,8 +390,15 @@ async function createPerson(request) {
     changedPersonFields.lastCountryId = changedFields.countryId
   }
 
-  const [personId] = await knex('Person').insert(changedPersonFields)
-  const personDetails = await getPersonDetails(personId)
+  const changedPersonFieldsWithoutTags = _.omit(changedPersonFields, 'tags')
+
+  const [personId] = await knex('Person').insert(changedPersonFieldsWithoutTags)
+  if (changedPersonFields?.tags) {
+    await updateTagsById(personId, 'person', changedPersonFields.tags, auth)
+    changedPersonFieldsWithoutTags.updatedOn = new Date()
+  }
+  const dataConstraints = await getConstraints(auth.credentials)
+  const personDetails = await getPersonDetails(personId, dataConstraints)
   personDetails.jobFunctions = []
 
   return { ok: true, data: personDetails }

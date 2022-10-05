@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
+import CheckIcon from '@mui/icons-material/Check'
+import ErrorIcon from '@mui/icons-material/Error'
+import TextField from '@mui/material/TextField'
 import classnames from 'classnames/bind'
-import { useDispatch } from 'react-redux'
 import isNull from 'lodash/isNull'
 import round from 'lodash/round'
-
-import TextField from '@mui/material/TextField'
-import CheckIcon from '@mui/icons-material/Check'
-
 import { useMutation } from 'react-query'
-import ErrorIcon from '@mui/icons-material/Error'
+import { useDispatch } from 'react-redux'
+import AspectVertMenu from '../../../components/AspectVertMenu'
 import useI18n from '../../../hooks/useI18n'
+import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import messages from './messages'
+import PermissionsProvider from '../../../providers/PermissionsProvider'
 import {
   showAddInventoryDialog,
   showRemoveInventoryDialog,
@@ -19,10 +19,7 @@ import {
   showReceiveInventoryDialog,
   modifyInventoryOnHand,
 } from '../../../store/InventoryRedux'
-import AspectVertMenu from '../../../components/AspectVertMenu'
-
-import styles from '../../../oldComponents/shared/DataTableRow.css'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
@@ -124,9 +121,10 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('siteName')}>
         {inventoryItem.get('siteName')}
       </TableCell>
-
-      <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('consumableName')}>
-        {inventoryItem.get('consumableName')}
+      <TableCell className={cssClasses('TableCell')}>
+        {messages[inventoryItem.get('consumableNameI18nKey')]
+          ? formatMessage(messages[inventoryItem.get('consumableNameI18nKey')])
+          : inventoryItem.get('consumableName')}
       </TableCell>
       <TableCell className={cssClasses('TableCell')}>
         {hasQtyOnHand(inventoryItem.get('quantityOnHand'))}
@@ -154,7 +152,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
         {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
           <span className={cssClasses('alert')}>
             &nbsp; ({parseFloat(inventoryItem.get('quantityOnHand')) <= 0 ? '' : '-'}
-            {inventoryItem.get('qtyExpired')} Expired)
+            {inventoryItem.get('qtyExpired')} {formatMessage(messages.expired)})
           </span>
         ) : null}
       </TableCell>
@@ -165,7 +163,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       ) : null}
       {inventoryItem.get('lotNumber') !== undefined ? (
         <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('lotNumber')}>
-          {inventoryItem.get('lotNumber') ? inventoryItem.get('lotNumber') : 'N/A'}
+          {inventoryItem.get('lotNumber') ? inventoryItem.get('lotNumber') : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
       {inventoryItem.get('expiresOn') !== undefined ? (
@@ -177,7 +175,9 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
                 : null
             }
           >
-            {inventoryItem.get('expiresOn') ? inventoryItem.get('expiresOn').split('T')[0] : 'N/A'}
+            {inventoryItem.get('expiresOn')
+              ? inventoryItem.get('expiresOn').split('T')[0]
+              : formatMessage(messages.notAvailable)}
           </span>
         </TableCell>
       ) : null}
@@ -221,12 +221,16 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       ) : null}
       {inventoryItem.get('daysStockLeft') !== undefined ? (
         <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('daysStockLeft')}>
-          {inventoryItem.get('daysStockLeft') !== null ? round(inventoryItem.get('daysStockLeft'), 2) : 'N/A'}
+          {inventoryItem.get('daysStockLeft') !== null
+            ? round(inventoryItem.get('daysStockLeft'), 2)
+            : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
       {inventoryItem.get('projectedWaste') !== undefined ? (
         <TableCell className={cssClasses('TableCell')} rowSpan={rowSpan('projectedWaste')}>
-          {inventoryItem.get('projectedWaste') !== null ? round(inventoryItem.get('projectedWaste'), 2) : 'N/A'}
+          {inventoryItem.get('projectedWaste') !== null
+            ? round(inventoryItem.get('projectedWaste'), 2)
+            : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
       {!inventoryOnHand ? (

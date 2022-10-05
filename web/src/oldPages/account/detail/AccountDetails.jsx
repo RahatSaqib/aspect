@@ -1,15 +1,14 @@
-import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { compose, setPropTypes } from 'recompose'
+import LinearProgress from '@mui/material/LinearProgress'
+import Paper from '@mui/material/Paper'
+import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Routes, Route } from 'react-router-dom'
-import LinearProgress from '@mui/material/LinearProgress'
-import { injectIntl } from 'react-intl'
-import Paper from '@mui/material/Paper'
-
+import { compose, setPropTypes } from 'recompose'
+import ContactDetailsFormFormik from '../../../components/Account/Details'
 import NavTitle from '../../../oldComponents/NavTitle'
-import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
 import {
   fetchAccountDetails,
   saveContactDetails,
@@ -17,13 +16,13 @@ import {
   saveUserPreferences,
 } from '../../../store/AccountRedux'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
-import styles from './AccountDetails.css'
-import accountDetailsMessages from './messages'
-import personDetailsMessages from '../../person/detail/messages'
 import { ContactDetails, LoginDetails, UserPreferences } from '../../../store/PersonRedux'
+import { setTimezoneId, setCurrentCulture } from '../../../utils/LocalStorage'
+import LoginDetailsForm from '../../person/detail/LoginDetailsForm'
+import personDetailsMessages from '../../person/detail/messages'
+import styles from './AccountDetails.css'
 import AccountDetailsBackBar from './AccountDetailsBackBar'
-import { setTimezoneId, setCurrentCulture } from '../../../globals/sideEffects/LocalStorage'
-import ContactDetailsFormFormik from '../../../components/Account/Details'
+import accountDetailsMessages from './messages'
 
 const enhance = compose(
   injectIntl,
@@ -149,41 +148,47 @@ export class AccountDetails extends PureComponent {
         <NavTitle title={formatMessage(accountDetailsMessages.title)} />
 
         <Routes>
-          <Route path="">
-            <div>
-              {(loading || saving) && <LinearProgress />}
-              <AccountDetailsBackBar
-                formatMessage={formatMessage}
-                title={accountDetails && accountDetails.get('contactDetails').get('name')}
-                {...this.props}
-              />
-              <Paper className={styles.AddMargin}>
-                <ContactDetailsFormFormik />
-              </Paper>
-            </div>
-          </Route>
-          <Route path="system-access-control">
-            <div>
-              {(loading || saving) && <LinearProgress />}
-              <AccountDetailsBackBar
-                formatMessage={formatMessage}
-                title={accountDetails && accountDetails.get('contactDetails').get('name')}
-                {...this.props}
-              />
-              <Paper className={styles.AddMargin}>
-                <LoginDetailsForm
-                  intl={intl}
-                  loading={loading || saving}
-                  canModify={false}
-                  loginDetails={accountDetails.get('loginDetails')}
-                  currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
-                  openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
-                  closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
-                  onSubmit={this.handleSaveLoginDetails}
+          <Route
+            path=""
+            element={
+              <div>
+                {(loading || saving) && <LinearProgress />}
+                <AccountDetailsBackBar
+                  formatMessage={formatMessage}
+                  title={accountDetails && accountDetails.get('contactDetails').get('name')}
+                  {...this.props}
                 />
-              </Paper>
-            </div>
-          </Route>
+                <Paper className={styles.AddMargin}>
+                  <ContactDetailsFormFormik />
+                </Paper>
+              </div>
+            }
+          />
+          <Route
+            path="system-access-control"
+            element={
+              <div>
+                {(loading || saving) && <LinearProgress />}
+                <AccountDetailsBackBar
+                  formatMessage={formatMessage}
+                  title={accountDetails && accountDetails.get('contactDetails').get('name')}
+                  {...this.props}
+                />
+                <Paper className={styles.AddMargin}>
+                  <LoginDetailsForm
+                    intl={intl}
+                    loading={loading || saving}
+                    canModify={false}
+                    loginDetails={accountDetails.get('loginDetails')}
+                    currentPasswordInputDialogOpen={this.state.currentPasswordInputDialogOpen}
+                    openCurrentPasswordInputDialog={this.openCurrentPasswordInputDialog}
+                    closeCurrentPasswordInputDialog={this.closeCurrentPasswordInputDialog}
+                    onSubmit={this.handleSaveLoginDetails}
+                  />
+                </Paper>
+              </div>
+            }
+          />
         </Routes>
       </div>
     )

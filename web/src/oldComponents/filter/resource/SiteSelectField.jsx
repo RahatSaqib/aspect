@@ -1,16 +1,12 @@
-// Imports from packages
+import React from 'react'
+import MenuItem from '@mui/material/MenuItem'
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
-import React from 'react'
+import { connect } from 'react-redux'
 import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-
-// Material-UI
-import MenuItem from '@mui/material/MenuItem'
-
-import SelectField from '../../shared/SelectField'
 import { fetchSitesForSelectList } from '../../../store/SiteRedux'
+import SelectField from '../../shared/SelectField'
 
 const enhance = compose(
   pure,

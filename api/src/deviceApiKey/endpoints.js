@@ -18,6 +18,7 @@ function listDeviceApiKeysBaseConfig() {
         partnerId: Joi.number().allow('').description('Filter for partner ID'),
         siteName: Joi.string().allow('').description('Filter for site name'),
         deviceName: Joi.string().allow('').description('Filter for device name'),
+        revoked: Joi.number().integer().optional().description('Filter by revoked'),
         // query param 'format' is applicable only for handler 'exportDeviceApiKeys'
         format: Joi.string().allow('').description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
@@ -31,7 +32,7 @@ const routes = [
   {
     method: 'GET',
     path: '/deviceApiKey',
-    handler: asyncHandler(listDeviceApiKeys),
+    handler: listDeviceApiKeys,
     config: {
       description: 'DeviceApiKey List',
       notes: 'Pageable and sortable list of deviceApiKeys',

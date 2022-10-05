@@ -1,6 +1,6 @@
-import get from 'lodash/get'
-import camelCase from 'lodash/camelCase'
 import enUs from 'date-fns/locale/en-US/'
+import camelCase from 'lodash/camelCase'
+import get from 'lodash/get'
 
 // FIXME: date-fns-alpha.8 has not supported yet
 // import fr from 'date-fns/locale/fr/'

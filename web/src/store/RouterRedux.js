@@ -1,8 +1,6 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-
-import { aspectFetch } from '../utils/utils/fetch'
 import { getFilters, mergeToFiltersParams } from '../oldComponents/filter/utils'
 import {
   filterFieldsRejectedError,
@@ -10,9 +8,9 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../utils/error/CommonErrorNotifications'
-
 import { receiveList, receiveItem, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
+import { aspectFetch } from '../utils/utils/fetch'
 import { receivedExportResponse } from './GlobalsRedux'
 
 export const types = {
@@ -123,6 +121,7 @@ export function exportRouters(
         size: pageSize,
         format: fileFormat,
         ...filters,
+        hasResults: 0,
       })}`,
       {
         errorNotifications: {

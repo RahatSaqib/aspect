@@ -2,35 +2,45 @@ import React, { Fragment, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import TextField from '@mui/material/TextField'
-import map from 'lodash/map'
-import pullAt from 'lodash/pullAt'
-import isEqual from 'lodash/isEqual'
 import cloneDeep from 'lodash/cloneDeep'
+import isArray from 'lodash/isArray'
+import isString from 'lodash/isString'
+import pullAt from 'lodash/pullAt'
 import startCase from 'lodash/startCase'
 import useI18n from '../../../../../hooks/useI18n'
 import messages from '../../messages'
 
-const PureChip = props => {
+const PureChip = ({ inputProps, form }) => {
   const { formatMessage } = useI18n()
-  const { inputProps, form } = props
+  const [tags, setValue] = useState([]) // set string
+  const [helperText, setHelperText] = useState(false)
   const { id, label } = inputProps
   const { setFieldValue, values } = form
-  const [helperText, setHelperText] = useState(false)
-  const [tags, setValue] = useState(values[id] || [])
+
+  useEffect(() => {
+    const myValue = isArray(values[id]) ? values[id].map(e => (isString(e) ? e : e.title)) : values[id]?.split(',')
+    setValue(myValue)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form])
 
   const onDelete = (_title, index) => () => {
     const newValue = cloneDeep(tags)
     pullAt(newValue, [index])
     setValue(newValue)
+    setFieldValue(id, newValue.join(',')) // str
   }
 
-  const handleEnter = event => {
+  const onKeyPress = event => {
     const { key, target } = event
-    const tagValue = target.value.trim()
     if (key === 'Enter') {
+      const tagValue = target.value.trim()
       event.preventDefault()
+
       if (tagValue.length) {
-        setValue(current => [...current, tagValue])
+        const newVal = tags ? [...tags, tagValue] : [tagValue]
+
+        setValue(newVal)
+        setFieldValue(id, newVal.join(',')) // str
       }
       target.value = ''
     }
@@ -44,36 +54,26 @@ const PureChip = props => {
     }
   }
 
-  useEffect(() => {
-    if (!isEqual(tags, form.values[id])) {
-      setFieldValue(id, tags.join(', '))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tags])
-
   return (
     <Fragment>
       {tags?.length ? (
         <Box mb={3}>
-          {map(tags, (tag, index) => (
-            <Chip
-              key={tag}
-              label={tag}
-              onDelete={onDelete(tag, index)}
-              style={{
-                backgroundColor: '#34717c',
-                borderRadius: '5px',
-                color: 'white',
-                marginRight: '5px',
-              }}
-            />
-          ))}
+          {tags.map((tag, index) =>
+            tag !== '' ? (
+              <Chip
+                key={tag}
+                label={tag}
+                onDelete={onDelete(tag, index)}
+                style={{ backgroundColor: '#34717c', borderRadius: '5px', color: 'white', marginRight: '5px' }}
+              />
+            ) : null
+          )}
         </Box>
       ) : null}
       <TextField
         fullWidth
         label={label || startCase(id)}
-        onKeyPress={handleEnter}
+        onKeyPress={onKeyPress}
         onFocus={handleFocus}
         onBlur={handleFocus}
         helperText={helperText}

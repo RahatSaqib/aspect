@@ -1,12 +1,11 @@
+import React, { PureComponent } from 'react'
+import MenuItem from '@mui/material/MenuItem'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import MenuItem from '@mui/material/MenuItem'
-
-import SelectField from '../../shared/SelectField'
+import { bindActionCreators } from 'redux'
 import { fetchCountriesForLocationSelector, LazyLoadItems } from '../../../store/GeographyRedux'
+import SelectField from '../../shared/SelectField'
 
 /**
  * @deprecated

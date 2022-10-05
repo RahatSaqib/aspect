@@ -3,7 +3,7 @@ function mutationSuccess(queryData, response, navigate, type, outcome) {
   const updatedLogin = response.canLogIn && queryData?.data?.canLogIn !== response.canLogIn
   switch (true) {
     case type === 'add' && ok:
-      navigate(`/browse/person/${response?.id}`)
+      navigate('/browse/person?filters=contactStatus%3D0')
       break
 
     case type === 'update' && updatedLogin && ok:

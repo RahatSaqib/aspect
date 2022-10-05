@@ -1,6 +1,5 @@
-// Imports from packages
 import { defineMessages } from 'react-intl'
-import { commonDefinitions } from '../../../utils/utils/customMessages'
+import { commonDefinitions } from '../../../messages/customMessages'
 
 // Define all messages for /site/detail page
 export default {
@@ -577,6 +576,10 @@ export default {
     userCanAlsoLogIn: {
       id: 'page.contacts.person.userCanAlsoLogIn',
       defaultMessage: 'This contact can log in as a user',
+    },
+    notSpecified: {
+      id: 'page.contacts.person.notSpecified',
+      defaultMessage: 'Not specified',
     },
   }),
 }

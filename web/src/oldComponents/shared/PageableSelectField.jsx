@@ -1,10 +1,7 @@
-import PropTypes from 'prop-types'
-// Imports from packages
 import React, { PureComponent } from 'react'
-
-// Material-UI
-import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import PropTypes from 'prop-types'
 
 const VALUE_LOAD_MORE = 'VALUE_LOAD_MORE'
 const VALUE_LOADING_MORE = 'VALUE_LOADING_MORE'

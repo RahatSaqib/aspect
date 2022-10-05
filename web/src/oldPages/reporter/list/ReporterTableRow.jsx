@@ -3,12 +3,9 @@ import classnames from 'classnames/bind'
 import { useLocation } from 'react-router-dom'
 import AspectLink from '../../../components/AspectLink'
 import { buildURL, getFiltersObjectFromLocation } from '../../../components/AspectLink/helpers'
-
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-
-import ReporterLinkCell from './ReporterLinkCell'
-
 import styles from '../../../oldComponents/shared/DataTableRow.css'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import ReporterLinkCell from './ReporterLinkCell'
 
 const cssClasses = classnames.bind(styles)
 

@@ -1,12 +1,11 @@
-import PropTypes from 'prop-types'
 import React, { useEffect, useState } from 'react'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import { withStyles } from '@mui/styles'
 import classNames from 'classnames'
 import isArray from 'lodash/isArray'
-
-import { withStyles } from '@mui/styles'
-import TextField from '@mui/material/TextField'
-import MenuItem from '@mui/material/MenuItem'
 import isEmpty from 'lodash/isEmpty'
+import PropTypes from 'prop-types'
 
 const styles = theme => ({
   label: {

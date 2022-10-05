@@ -21,6 +21,7 @@ const admin = {
     'inventory_log',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'usage_statistics_report',
   ],
   permissions: [
     {
@@ -30,6 +31,10 @@ const admin = {
     {
       module: 'device',
       activity: 'edit',
+    },
+    {
+      module: 'device',
+      activity: 'admin',
     },
     {
       module: 'case',
@@ -156,6 +161,7 @@ const manager = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'usage_statistics_report',
   ],
   permissions: [
     {
@@ -226,6 +232,10 @@ const manager = {
       module: 'router',
       activity: 'view',
     },
+    {
+      module: 'result',
+      activity: 'edit',
+    },
   ],
 }
 
@@ -247,6 +257,7 @@ const regionalOfficer = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'usage_statistics_report',
   ],
   permissions: [
     {
@@ -594,6 +605,10 @@ const ntp = {
       module: 'report',
       activity: 'view',
     },
+    {
+      module: 'result',
+      activity: 'view',
+    },
   ],
 }
 
@@ -889,6 +904,7 @@ const labManager = {
     'module_activity_report',
     'report_custom_fields_completion',
     'tb_workload_summary',
+    'usage_statistics_report',
   ],
   permissions: [
     {
@@ -968,6 +984,7 @@ const labSupervisor = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'usage_statistics_report',
   ],
   permissions: [
     {
@@ -1203,6 +1220,7 @@ const labAdmin = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'usage_statistics_report',
   ],
   permissions: [
     {

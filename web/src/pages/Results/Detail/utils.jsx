@@ -1,5 +1,5 @@
+import uniqBy from 'lodash/uniqBy'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
-
 import getFormConfig from '../Forms/editConfig'
 import getValidationSchema from '../Forms/validation'
 import messages from './messages'
@@ -45,7 +45,8 @@ function getRowsForCustomFields(values) {
   // show 3 cells per row
   const cellsPerRow = 3
   let row = {}
-  values.customFieldsValues.forEach((customField, index) => {
+
+  uniqBy(values.customFieldsValues, elem => elem.externalId).forEach((customField, index) => {
     // start new row
     if (index % cellsPerRow === 0) {
       if (index > 0) {

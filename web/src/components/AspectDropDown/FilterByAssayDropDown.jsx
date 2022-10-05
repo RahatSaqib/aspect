@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { oneOfType, object } from 'prop-types'
+import findIndex from 'lodash/findIndex'
+import groupBy from 'lodash/groupBy'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import map from 'lodash/map'
-import groupBy from 'lodash/groupBy'
 import orderBy from 'lodash/orderBy'
-import findIndex from 'lodash/findIndex'
+import { oneOfType, object } from 'prop-types'
 import Select, { components } from 'react-select'
 import useI18n from '../../hooks/useI18n'
-import { getAspectTheme } from './index.jsx'
-import assayTranslations from '../../utils/messages/assay.js'
-import messages from './messages'
+import assayTranslations from '../../messages/assay.js'
 import ClearIndicator from './ClearIndicator'
+import { getAspectTheme } from './index.jsx'
+import messages from './messages'
 
 const Group = props => {
   const { selectProps, options, headingProps } = props
@@ -26,11 +26,8 @@ const Group = props => {
   )
 }
 
-const FilterByAssayDropDown = props => {
+const FilterByAssayDropDown = ({ props: { actionComponentProps: config, action } }) => {
   const { formatMessage } = useI18n()
-  const {
-    props: { actionComponentProps: config, action },
-  } = props
   const { selectorModifiers, data } = config
   const {
     identifier,
@@ -95,20 +92,8 @@ const FilterByAssayDropDown = props => {
   }, [options, data, formatMessage, initByCountryDefault])
 
   return defaultValue ? (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        marginBottom: '20px',
-      }}
-    >
-      <div
-        style={{
-          position: 'relative',
-          width: '450px',
-          zIndex: 99,
-        }}
-      >
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
+      <div style={{ position: 'relative', width: '450px', zIndex: 99 }}>
         <Select
           autoBlur
           placeholder={formatMessage(messages.selectAssay)}

@@ -1,11 +1,11 @@
 /* eslint-disable react/no-find-dom-node */
+import React, { PureComponent } from 'react'
+import classnames from 'classnames'
 import elementResizeDetectorMaker from 'element-resize-detector'
-import throttle from 'lodash/throttle'
 import noop from 'lodash/noop'
 import omit from 'lodash/omit'
-import classnames from 'classnames'
+import throttle from 'lodash/throttle'
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
 import ReactDOM from 'react-dom'
 
 class FallbackUntilDone extends PureComponent {

@@ -1,10 +1,8 @@
 import React from 'react'
-import { bool, func, oneOf, string } from 'prop-types'
 import Button from '@mui/material/Button'
 import classnames from 'classnames/bind'
-
+import { bool, func, oneOf, string } from 'prop-types'
 import IconProvider from '../../../IconProvider'
-
 import styles from '../../Table.css'
 
 const cssClasses = classnames.bind(styles)

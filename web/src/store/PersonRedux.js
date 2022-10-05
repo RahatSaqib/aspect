@@ -1,9 +1,8 @@
 import { stringify } from 'querystring'
-import pick from 'lodash/pick'
 import Immutable from 'immutable'
+import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
-
-import { aspectFetch } from '../utils/utils/fetch'
+import { getFilters } from '../oldComponents/filter/utils'
 import {
   filterFieldsRejectedError,
   inlineWarning,
@@ -11,10 +10,10 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../utils/error/CommonErrorNotifications'
-import { receivedExportResponse } from './GlobalsRedux'
 import { receiveList, receiveItem, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
-import { getFilters } from '../oldComponents/filter/utils'
+import { aspectFetch } from '../utils/utils/fetch'
+import { receivedExportResponse } from './GlobalsRedux'
 
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
@@ -436,17 +435,9 @@ export function updateSinglePersonLoginDetails(personId, data) {
       errorNotifications: {
         409: inlineWarning(
           defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
-              defaultMessage: 'This Username is Unavailable',
-            },
-            message: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
-              defaultMessage: 'The username that you have entered is already in use by another user on the system',
-            },
-            resolution: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
-              defaultMessage: 'Please try another username',
+            usernameAlreadyInUse: {
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.usernameAlreadyInUse',
+              defaultMessage: 'Username already in use',
             },
           })
         ),

@@ -19,7 +19,7 @@ async function getModuleActivityReportData(minDate, dataConstraints, query) {
 
   const moduleDisabledIssues = knex('Issue as i2')
     .join('IssueType as it', 'i2.issueTypeId', 'it.id')
-    .where('it.name', 'ModuleDisabled')
+    .where('it.externalId', 'ModuleDisabled')
     .whereIn('i2.id', function () {
       this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleName"')
     })

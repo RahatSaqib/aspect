@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
-import pick from 'lodash/pick'
 import flowRight from 'lodash/flowRight'
+import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
-
-import recomposeForm from '../../../oldComponents/recomposeForm'
-import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
-import { withDateFormatProps } from '../../../utils/utils/dateFormat'
 import useI18n from '../../../hooks/useI18n'
+import recomposeForm from '../../../oldComponents/recomposeForm'
+import { withDateFormatProps } from '../../../utils/utils/dateFormat'
+import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
 
 const messages = defineMessages({
   dialogTitle: {

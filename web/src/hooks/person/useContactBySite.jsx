@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
-import { PERSON_KEY, PERSON_KEY_BY_SITE_ID_ENDPOINT } from './personKeys.js'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { PERSON_KEY, PERSON_KEY_BY_SITE_ID_ENDPOINT } from './personKeys.js'
 
 const getContactsBySiteId = async siteId =>
   fetchWrapperForQueries({

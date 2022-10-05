@@ -1,30 +1,26 @@
+import React from 'react'
+import TableBody from '@mui/material/TableBody'
+import classnames from 'classnames/bind'
+import Immutable from 'immutable'
 import flowRight from 'lodash/flowRight'
 import intersectionWith from 'lodash/intersectionWith'
-import isEqual from 'lodash/isEqual'
 import isEmpty from 'lodash/isEmpty'
-import Immutable from 'immutable'
-import classnames from 'classnames/bind'
-import React from 'react'
-import { compose, withProps, withState, withHandlers, lifecycle } from 'recompose'
-import { defineMessages, injectIntl } from 'react-intl'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import isEqual from 'lodash/isEqual'
 import { Helmet } from 'react-helmet'
-import TableBody from '@mui/material/TableBody'
-
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../../utils/selectors/searchParams'
+import { defineMessages, injectIntl } from 'react-intl'
+import { connect } from 'react-redux'
+import { compose, withProps, withState, withHandlers, lifecycle } from 'recompose'
+import { bindActionCreators } from 'redux'
+import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
+import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import NavTitle from '../../../oldComponents/NavTitle'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
-import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
+import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
@@ -32,12 +28,14 @@ import {
   updateSingleDeviceApiKey,
   fetchDeviceApiKeys,
 } from '../../../store/DeviceApiKeyRedux'
-import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../../utils/selectors/searchParams'
 import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
 import { DeviceApiKeyDataTable, DeviceApiKeyDataTableHead, DeviceApiKeyDataTableRow } from './DeviceApiKeyDataTable'
-import ExportListButton from '../../../oldComponents/ExportListButton'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
-
+import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
 import styles from './DeviceApiKeyList.css'
 
 const cssClasses = classnames.bind(styles)
@@ -102,6 +100,10 @@ const FILTERS_CONFIG = [
   {
     siteName: true,
     requiredPermissions: ['site:view'],
+  },
+  {
+    revoked: true,
+    requiredPermissions: [],
   },
 ]
 const DEFAULT_GENERATOR_VALUES = { count: 1 }

@@ -1,29 +1,23 @@
-import classnames from 'classnames/bind'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Button from '@mui/material/Button'
-
-import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
-import formConfig from './formConfig'
-import { FormikProvider } from '../../../Form/Formik/Context'
-import AspectForm from '../../../Form'
-import ButtonSave from './ButtonSave'
-import messages from './messages'
-import { MODE, getFormConfig } from './utils'
-import styles from './DailyStatusDialog.css'
-import { getISOFromString } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
+import classnames from 'classnames/bind'
 import useI18n from '../../../../hooks/useI18n'
+import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import { getISOFromString } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
+import AspectForm from '../../../Form'
+import { FormikProvider } from '../../../Form/Formik/Context'
+import ButtonSave from './ButtonSave'
+import styles from './DailyStatusDialog.css'
+import formConfig from './formConfig'
+import messages from './messages'
+import SiteInfo from './SiteInfo'
+import { MODE, getFormConfig } from './utils'
 
 const cssClasses = classnames.bind(styles)
 
-export const DailyStatusDialog = ({ data = {}, isOpen, onCancel, onSubmit, statuses, title, deviceName }) => {
+export const DailyStatusDialog = ({ data = {}, onCancel, onSubmit, statuses, title, deviceName, siteProps }) => {
   const [mode, setMode] = useState(MODE.EDITING)
   const { formatMessage } = useI18n()
-
-  useEffect(() => {
-    if (isOpen) {
-      setMode(MODE.EDITING)
-    }
-  }, [isOpen])
 
   const onSaveChanges = (deviceId, values) => {
     setMode(MODE.SAVING)
@@ -56,7 +50,7 @@ export const DailyStatusDialog = ({ data = {}, isOpen, onCancel, onSubmit, statu
           root: cssClasses('reset-overflow'),
         }}
         maxWidth="xs"
-        open={isOpen}
+        open
         onClose={onCancel}
         title={title || formatMessage(messages.title)}
       >
@@ -67,6 +61,8 @@ export const DailyStatusDialog = ({ data = {}, isOpen, onCancel, onSubmit, statu
           <div className={cssClasses('Form__controls')}>
             <AspectForm config={config} />
           </div>
+
+          <SiteInfo {...siteProps} />
         </div>
       </AspectDialog>
     </FormikProvider>

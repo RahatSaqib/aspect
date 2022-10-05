@@ -1,16 +1,15 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { createIntl } from 'react-intl'
-import { Helmet } from 'react-helmet'
-import omit from 'lodash/omit'
 import Immutable from 'immutable'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { ReporterListWithProps } from './ReporterList'
+import omit from 'lodash/omit'
+import { Helmet } from 'react-helmet'
+import { createIntl } from 'react-intl'
+import AspectExportListButton from '../../../components/AspectExportListButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-
+import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { Items, makeItems } from '../../../utils/metaReducers/items'
 import { Table, makeTable } from '../../../utils/metaReducers/table'
-import AspectExportListButton from '../../../components/AspectExportListButton'
+import { ReporterListWithProps } from './ReporterList'
 
 describe('ReporterList', () => {
   let props = {}

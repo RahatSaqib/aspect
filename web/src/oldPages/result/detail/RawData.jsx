@@ -1,10 +1,10 @@
-import identity from 'lodash/identity'
 import React from 'react'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Typography from '@mui/material/Typography'
+import identity from 'lodash/identity'
 import { ReadOnlyField } from '../../../oldComponents/shared/ReadOnlyFields'
 
 const enhance = identity

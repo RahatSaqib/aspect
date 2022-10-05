@@ -1,19 +1,18 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-loop-func */
 /* eslint-env es6 */
+import { createFetch, base, header, accept } from 'http-client'
 import get from 'lodash/get'
-import set from 'lodash/set'
-import trim from 'lodash/trim'
 import isArray from 'lodash/isArray'
 import isObject from 'lodash/isObject'
 import mapValues from 'lodash/mapValues'
-import { createFetch, base, header, accept } from 'http-client'
+import set from 'lodash/set'
+import trim from 'lodash/trim'
 import { defineMessages } from 'react-intl'
+import config from '../../config'
 import { showError } from '../../store/AppNotificationRedux'
 import { setLastServerResponseTime } from '../../store/GlobalsRedux'
-
-import config from '../../config'
-import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
+import { getAspectAccess } from '../LocalStorage'
 
 export const aspectFetchFile = createFetch(
   base(config.aspectApi),
@@ -118,7 +117,9 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         get(options, 'errorNotifications.default')
       )
       if (errorNotification) {
-        if (err.statusCode === 409 || err.statusCode === 422) {
+        if (err.data?.errorKeyCode && errorNotification[err.data.errorKeyCode]) {
+          errorNotification = { message: errorNotification[err.data.errorKeyCode] }
+        } else if (err.statusCode === 409 || err.statusCode === 422) {
           errorNotification = {
             ...defineMessages({
               message: {

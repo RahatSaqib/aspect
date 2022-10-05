@@ -1,10 +1,10 @@
 import React from 'react'
-import { compose, withHandlers, lifecycle } from 'recompose'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Routes, Route } from 'react-router-dom'
-import NotificationDetailView from './view/NotificationDetailView'
+import { compose, withHandlers, lifecycle } from 'recompose'
+import { bindActionCreators } from 'redux'
 import NotificationDetailHistory from './history/NotificationDetailHistory'
+import NotificationDetailView from './view/NotificationDetailView'
 
 const enhance = compose(
   connect(
@@ -33,12 +33,8 @@ const enhance = compose(
 export const NotificationDetail = props => (
   <div>
     <Routes>
-      <Route path="">
-        <NotificationDetailView {...props} />
-      </Route>
-      <Route path="history">
-        <NotificationDetailHistory {...props} />
-      </Route>
+      <Route path="" element={<NotificationDetailView {...props} />} />
+      <Route path="history" element={<NotificationDetailHistory {...props} />} />
     </Routes>
   </div>
 )

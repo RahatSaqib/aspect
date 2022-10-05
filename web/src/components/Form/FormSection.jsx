@@ -1,8 +1,7 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import Grid from '@mui/material/Grid'
 import { FieldArray, useFormikContext } from 'formik'
-
+import PropTypes from 'prop-types'
 import { getVisibleRows } from './Formik/Helpers/index'
 import FormSectionRow from './FormSectionRow'
 import messagesBase from './messages'
@@ -19,8 +18,8 @@ const FormSection = ({ classNames, fullWidth, messages, rows = [], visibleIf, pa
     <Grid item xs={fullWidth ? 12 : 10}>
       {rows &&
         rows.map((row, rowIndex) => {
-          const key = `${parentKey}-${row.id}`
           if (visibleRows[rowIndex] === true) {
+            const key = `${parentKey}-${row.id}`
             const { items, isMulti } = row
             const commonProps = { rowIndex, items, classNames, messages }
             if (isMulti) {

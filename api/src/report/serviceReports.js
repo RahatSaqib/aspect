@@ -2,23 +2,20 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const Stream = require('stream')
 const _ = require('lodash')
-const { subDays } = require('date-fns')
 const { formatInTimeZone } = require('date-fns-tz')
-
+const csv = require('fast-csv')
 const { knex } = require('../db')
 const { getUser } = require('../auth/service')
-const { getReportDetails, listReports } = require('./service')
+const { getReportDetails } = require('./service')
 const {
-  exportData,
-  getBaseReplacements,
   getMaxLimitPlaceHolders,
   getAdministrativeDivisionLabelPlaceHolders,
-  renderExcelTemplateToCsv,
   renderExcelTemplate,
   streamExcelTemplate,
   respondFile,
   respondStream,
   RELABEL_EXCEL,
+  renderExcelTemplateToCsv,
 } = require('../shared/excel')
 const logger = require('../shared/logger')
 
@@ -67,7 +64,16 @@ async function getSheetData(request, sheet, sharedResults) {
   logger.debug(`Report moduleName='${moduleName}', functionName='${functionName}'`, RELABEL_EXCEL)
 
   const result = await dataFunc(auth, query, { sharedResults, useNamedData })
-  const { ok, data, total, errorMessage, dynamicColumns = [], dataSelector = null, sections = [] } = result
+  const {
+    ok,
+    data,
+    total,
+    errorMessage,
+    dynamicColumns = [],
+    fixedColumns = [],
+    dataSelector = null,
+    sections = [],
+  } = result
 
   if (nameOfSharedData) {
     sharedResults[nameOfSharedData] = result
@@ -77,7 +83,7 @@ async function getSheetData(request, sheet, sharedResults) {
   logger.debug(`Worksheet data - total=${total}, list size=${listSize}'`, RELABEL_EXCEL)
 
   if (ok) {
-    return { data, total, dynamicColumns, dataSelector, sections }
+    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections }
   }
 
   return Boom.preconditionFailed(`Error in function ${functionName} of module ${moduleName} - ${errorMessage}`)
@@ -147,6 +153,7 @@ async function getAllSheetsData(request, sheets) {
     const {
       data,
       dynamicColumns,
+      fixedColumns,
       total = null,
       dataSelector = null,
       sections,
@@ -159,6 +166,7 @@ async function getAllSheetsData(request, sheets) {
     dataSet[sheetIndex] = {
       data,
       dynamicColumns,
+      fixedColumns,
       sections,
       dataSelector,
       total,
@@ -185,10 +193,6 @@ async function createReport(request, reply) {
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
-
-  if (_.isNil(query.minDate)) {
-    query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
-  }
 
   const data = await getAllSheetsData(request, sheets)
   if (Boom.isBoom(data)) {
@@ -233,6 +237,11 @@ async function createReport(request, reply) {
   ]
 
   if (extension === 'csv') {
+    const [sheet] = sheets
+    const { streamCSV } = sheet.query || {}
+    if (streamCSV) {
+      return streamToCsv(data, reply, fileName)
+    }
     const dataBuffer = await renderExcelTemplateToCsv({
       countryAbbreviation,
       culture,
@@ -248,7 +257,6 @@ async function createReport(request, reply) {
       reply,
     })
   }
-
   const renderParams = {
     countryAbbreviation,
     culture,
@@ -296,6 +304,42 @@ async function renderExcelFile(params) {
     fileNamePrefix: fileName,
     reply,
   })
+}
+
+async function streamToCsv(dataset, reply, fileName) {
+  const worksheetData = dataset[0]
+
+  const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
+  /**
+   * replace base placeholders, i.e. <Dates>, <States>, etc in the header
+   */
+  const csvStream = csv.format({
+    headers: data.length > 0,
+    writeBOM: true,
+  })
+
+  if (data.length > 0) {
+    _.forEach(data, row => {
+      const rowNormalized = transformRow(row, [...fixedColumns, ...dynamicColumns], dataSelector)
+      csvStream.write(rowNormalized)
+    })
+  } else {
+    csvStream.write({ data: defaultNoDataMessage })
+  }
+  csvStream.end()
+  return reply
+    .response(csvStream)
+    .encoding('binary')
+    .type('stream/octet-stream')
+    .header('content-disposition', `attachment; filename=${fileName}-${new Date().toISOString()}.csv;`)
+}
+
+function transformRow(row, columns, dataSelector) {
+  const rowNormalized = {}
+  const value = dataSelector ? dataSelector(row) : row
+  columns.forEach(({ key, header }) => (rowNormalized[header] = value[key]))
+
+  return rowNormalized
 }
 
 function renderExcelStream(params) {
@@ -362,19 +406,6 @@ function renderExcelStream(params) {
   })
 }
 
-// ----------------------------------------------------------------------------------------------
-async function exportReports(request, reply) {
-  const { data } = await listReports(request)
-  const sheetData = {
-    data,
-    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
-    defaultNoDataMessage: 'No data',
-  }
-  return exportData(request, reply, sheetData, 'reports', {
-    replacements: [...getBaseReplacements(), ...getMaxLimitPlaceHolders()],
-  })
-}
 module.exports = {
   createReport,
-  exportReports,
 }

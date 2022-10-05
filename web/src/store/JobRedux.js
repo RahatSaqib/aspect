@@ -1,9 +1,9 @@
-import { defineMessages } from 'react-intl'
-import map from 'lodash/map'
-import Immutable from 'immutable'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
-import { aspectFetch } from '../utils/utils/fetch'
+import Immutable from 'immutable'
+import map from 'lodash/map'
+import { defineMessages } from 'react-intl'
 import { errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
+import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
   REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
@@ -64,6 +64,7 @@ const Partner = Immutable.Record({
 const JobFunction = Immutable.Record({
   id: null,
   name: null,
+  externalId: null,
 })
 const LazyLoadPartnersAndJobFunctions = Immutable.Record({
   loading: false,
@@ -103,6 +104,7 @@ function receivePartnersAndJobFunctionsForSelectList(state, partners) {
                     new JobFunction({
                       id: jobFunction.id,
                       name: jobFunction.name,
+                      externalId: jobFunction.externalId,
                     })
                 )
               ),

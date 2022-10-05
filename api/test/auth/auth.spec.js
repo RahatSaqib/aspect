@@ -60,7 +60,9 @@ describe('Authentication routes', () => {
   })
   afterEach(() =>
     runTestWithKnex(async knex => {
+      await knex('LoginHistory').where('userId', '>', 0).del()
       await knex('RefreshToken').whereIn('clientName', [webClientName, appClientName]).delete()
+      await knex('LoginHistory').where('userId', '>', 0).del()
     })
   )
 
@@ -112,12 +114,16 @@ describe('Authentication routes', () => {
       runTestWithKnex(async knex => {
         await knex('RefreshToken').whereIn('clientId', ['123123123-123123123', '9999-9999']).delete()
         await knex('Person').where('name', unlicensedUser).delete()
+        await knex('LoginHistory').where('userId', '>', 0).del()
         await knex('User').where('name', unlicensedUser).delete()
       })
     )
 
     describe('POST', () => {
       it('should return a JSON message that contains a valid jwt, access token, and client ID if username/password are correct', async () => {
+        runTestWithKnex(async knex => {
+          await knex('LoginHistory').where('userId', '>', 0).del()
+        })
         await server
           .post(authPath)
           .send({
@@ -139,6 +145,12 @@ describe('Authentication routes', () => {
               assert.property(decoded, 'iss')
             })
           })
+
+        runTestWithKnex(async knex => {
+          const lh = await knex('LoginHistory').where('username', adminUsername)
+          assert.lengthOf(lh, 1)
+          assert.equal(lh[0].success, 1)
+        })
       })
       it('should only generate random clientId  if none is sent with the request', async () => {
         await server
@@ -271,6 +283,9 @@ describe('Authentication routes', () => {
       })
 
       it('should return 401 and error message if incorrect password', async () => {
+        runTestWithKnex(async knex => {
+          await knex('LoginHistory').where('userId', '>', 0).del()
+        })
         await server
           .post(authPath)
           .send({
@@ -282,6 +297,12 @@ describe('Authentication routes', () => {
             assert.equal(res.status, 401)
             assert.equal(res.body.message, 'Authentication failed. Wrong username or password.')
           })
+        runTestWithKnex(async knex => {
+          const lh = await knex('LoginHistory').where('username', adminUsername)
+          assert.lengthOf(lh, 1)
+          assert.equal(lh[0].success, 0)
+          assert.equal(lh[0].code, 'wrong.password')
+        })
       })
     })
 

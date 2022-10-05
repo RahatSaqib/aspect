@@ -1,6 +1,6 @@
 import React from 'react'
-import SelectInput from './SelectInput'
 import { timezones } from '../filter/hardcoded'
+import SelectInput from './SelectInput'
 
 /**
  * @deprecated Use TimeZoneSelect from MigratedComponents

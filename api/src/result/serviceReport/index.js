@@ -85,6 +85,7 @@ async function getAllResultsForExport(auth, query) {
     ...columnsFromAssaySchema,
     ...columnsFromResultForms,
   ]
+
   if (extraColumns.length === 0) columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
 
   const dataset = {
@@ -93,6 +94,18 @@ async function getAllResultsForExport(auth, query) {
     length: _.get(data, 'length', 0),
     data,
     dynamicColumns: columns,
+    fixedColumns: [
+      { key: 'endedOn', header: 'Test Date' },
+      { key: 'stateName', header: 'Sample State' },
+      { key: 'siteName', header: 'Sample Site' },
+      { key: 'sampleId', header: 'Sample ID' },
+      { key: 'deviceName', header: 'Device' },
+      { key: 'assayName', header: 'Assay' },
+      { key: 'errorCode', header: 'Error Code' },
+      { key: 'resultWorkflowStatus', header: 'Workflow Status' },
+      { key: 'resultTreatmentStatus', header: 'Treatment Status' },
+      { key: 'patientId', header: 'Patient Id' },
+    ],
     dataSelector: (
       dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
     ) =>
@@ -111,10 +124,11 @@ async function getAllResultsForExport(auth, query) {
 // ----------------------------------------------------------------------------------------------
 async function exportResults(request, reply) {
   const { query, auth } = request
-  const { data, dynamicColumns, dataSelector, total } = await getAllResultsForExport(auth, query)
+  const { data, dynamicColumns, dataSelector, fixedColumns = [], total } = await getAllResultsForExport(auth, query)
   const sheetData = {
     data,
     dynamicColumns,
+    fixedColumns,
     total,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
@@ -425,7 +439,6 @@ async function getReportWorkloadSummary(auth, query) {
   const resultQuery = getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupBy, query)
 
   let data = await processGroupedQuery(resultQuery, groupBy)
-  data = _.filter(data, it => !!it.state && it.state !== 'null')
   data = _.sortBy(data, ['state', 'month'])
 
   /**
@@ -446,7 +459,8 @@ async function getReportWorkloadSummary(auth, query) {
   const obj = _.reduce(
     data,
     (acc, item) => {
-      const { state, month, cnt, resultCategory1, resultCategory2 } = item
+      const { state: _state, month, cnt, resultCategory1, resultCategory2 } = item
+      const state = _state || 'No province assigned'
       acc[state] = acc[state] || {}
       acc[state][month] = acc[state][month] || { ...emptyCounts }
       // count 'all'

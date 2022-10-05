@@ -1,7 +1,6 @@
 import classnames from 'classnames/bind'
-
-import styles from './DailyStatusDialog.css'
 import { setClassNames, setInitialValue } from '../Helpers'
+import styles from './DailyStatusDialog.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -19,13 +18,10 @@ export const getFormConfig = (formConfig, statuses, data) => {
       setInitialValue(items, 'endedOn', data.endedOn, cssClasses)
       setInitialValue(items, 'reason', data.maintenanceStatusExternalId, cssClasses, item => {
         // init dropdown options
-        item.controlType.options = statuses
-          // show only statuses with manuallySet flag
-          .filter(({ manuallySet }) => manuallySet === 1)
-          .map(({ externalId, name }) => ({
-            label: name,
-            value: externalId,
-          }))
+        item.controlType.options = statuses.map(({ externalId, name }) => ({
+          label: name,
+          value: externalId,
+        }))
       })
       setInitialValue(items, 'note', data.note, cssClasses)
     })

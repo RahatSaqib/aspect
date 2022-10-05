@@ -1,14 +1,12 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import identity from 'lodash/identity'
 import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
+import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
-
-import TaskList from '../../../../oldPages/task/list/TaskList'
-
-import styles from '../DeviceDetail.css'
 import useI18n from '../../../../hooks/useI18n'
+import TaskList from '../../../../oldPages/task/list/TaskList'
+import styles from '../DeviceDetail.css'
 
 const cssClasses = classnames.bind(styles)
 

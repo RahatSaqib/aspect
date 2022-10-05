@@ -1,9 +1,8 @@
 import React from 'react'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import Grid from '@mui/material/Grid'
 import classnames from 'classnames/bind'
-
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import styles from './Timeline.css'
 
 const cssClasses = classnames.bind(styles)

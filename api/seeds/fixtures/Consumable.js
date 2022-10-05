@@ -216,6 +216,62 @@ const getConsumables = async () => {
         },
       ],
     },
+    {
+      name: 'Truenat MTB Test Kit',
+      externalId: 'truenatMTBTestKit',
+      i18nKey: 'truenatMTBTestKit',
+      unit: piece,
+      canExpire: 1,
+      manufacturer: 'Molbio Diagnostics',
+      assays: [
+        {
+          externalId: 'assayTruenatMtb',
+          quantity: 1,
+        },
+      ],
+    },
+    {
+      name: 'Truenat MTB Plus Test Kit',
+      externalId: 'truenatMTBPlusTestKit',
+      i18nKey: 'truenatMTBPlusTestKit',
+      unit: piece,
+      canExpire: 1,
+      manufacturer: 'Molbio Diagnostics',
+      assays: [
+        {
+          externalId: 'assayTruenatMtbPlus',
+          quantity: 1,
+        },
+      ],
+    },
+    {
+      name: 'Truenat MTB Rif Test Kit',
+      externalId: 'truenatMTBRifTestKit',
+      i18nKey: 'truenatMTBRifTestKit',
+      unit: piece,
+      canExpire: 1,
+      manufacturer: 'Molbio Diagnostics',
+      assays: [
+        {
+          externalId: 'assayTruenatRif',
+          quantity: 1,
+        },
+      ],
+    },
+    {
+      name: 'Truenat Unknown Test Kit',
+      externalId: 'truenatUnknownTestKit',
+      i18nKey: 'truenatUnknownTestKit',
+      unit: piece,
+      canExpire: 1,
+      manufacturer: 'Molbio Diagnostics',
+      assays: [
+        {
+          externalId: 'assayTruenatUnknown',
+          quantity: 1,
+        },
+      ],
+    },
   ]
   return consumables
 }

@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
-import deviceStatusMessages from '../../../../utils/messages/deviceStatusMessages'
-import deviceApprovalMessages from '../../../../utils/messages/deviceApprovalMessages'
+import { deviceApprovalMessages, deviceStatusMessages } from '../../../../messages'
 
 const messages = {
   ...deviceStatusMessages,

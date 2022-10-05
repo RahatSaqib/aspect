@@ -1,0 +1,72 @@
+[
+  {
+    "title": "Age",
+    "type": "int",
+    "order": 10,
+    "dbColumn": "PatientAge",
+    "testType": null
+  },
+  {
+    "title": "Gender",
+    "type": "int",
+    "order": 20,
+    "dbColumn": "PatientGender",
+    "testType": null
+  },
+  {
+    "title": "HIV Status",
+    "type": "int",
+    "order": 30,
+    "dbColumn": "HivStatus",
+    "testType": null
+  },
+  {
+    "title": "Requesting facility",
+    "type": "string",
+    "order": 40,
+    "dbColumn": "HealthFacility",
+    "testType": null
+  },
+  {
+    "title": "TB Specimen Type",
+    "type": "string",
+    "order": 50,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Previous treatment history",
+    "type": "string",
+    "order": 60,
+    "dbColumn": "TestReason",
+    "testType": null
+  },
+  {
+    "title": "Repeat test",
+    "type": "int",
+    "order": 70,
+    "dbColumn": "RepeatTest",
+    "testType": null
+  },
+  {
+    "title": "Ward Leader's Name",
+    "type": "string",
+    "order": 80,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "Ward Leader's Phone Number",
+    "type": "string",
+    "order": 90,
+    "dbColumn": null,
+    "testType": null
+  },
+  {
+    "title": "HIV Specimen Type",
+    "type": "int",
+    "order": 100,
+    "dbColumn": null,
+    "testType": null
+  }
+]

@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { commonDefinitions } from '../../utils/utils/customMessages'
+import { commonDefinitions } from '../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,
@@ -11,14 +11,6 @@ const messages = {
     countryRequired: {
       id: 'pages.LocationSelector.countryRequired',
       defaultMessage: 'Country is required',
-    },
-    state: {
-      id: 'pages.LocationSelector.state',
-      defaultMessage: 'State',
-    },
-    lga: {
-      id: 'pages.LocationSelector.lga',
-      defaultMessage: 'Area',
     },
   }),
 }
