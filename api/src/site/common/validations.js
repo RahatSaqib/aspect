@@ -49,13 +49,13 @@ const postSchema = {
 function throwExistingSiteError(name, shortName, externalId, existingSite) {
   const problems = new Problem()
   if (name === existingSite.name) {
-    problems.addProblem('siteNameRepeated', 'The site name already exists', 'name', name)
+    problems.addProblem('siteNameRepeated')
   }
   if (shortName === existingSite.shortName) {
-    problems.addProblem('siteShortNameRepeated', 'The site short name already exists', 'shortName', shortName)
+    problems.addProblem('siteShortNameRepeated')
   }
   if (externalId === existingSite.externalId) {
-    problems.addProblem('siteIdRepeated', 'The Site Id already exists', 'externalId', externalId)
+    problems.addProblem('siteIdRepeated')
   }
 
   throw Boom.conflict('', problems)
