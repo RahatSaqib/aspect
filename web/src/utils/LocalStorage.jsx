@@ -97,13 +97,6 @@ const enhance = compose(
     },
 
     componentDidMount() {
-      // TODO: Remove me, for legacy system
-      localStorage.removeItem('jwt')
-      localStorage.removeItem('jwt_expires')
-      localStorage.removeItem('refresh')
-      localStorage.removeItem('culture')
-      localStorage.removeItem('timezone')
-      // End-TODO
       this.handleStorage(this.props)
     },
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-06T14:48:19.259Z\n"
+"POT-Creation-Date: 2022-10-06T18:45:28.779Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -963,7 +963,7 @@ msgstr "Середня підтверджена відповідь"
 #. Average Days for Instrument Replacement.
 #: extracted_strings.json
 msgid "Average Days for Instrument Replacement."
-msgstr "Середні дні для заміни інструменту"
+msgstr "Середні дні для заміни інструменту."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -1629,7 +1629,7 @@ msgstr "Підтвердити новий пароль"
 #. Confirm to proceed.
 #: extracted_strings.json
 msgid "Confirm to proceed."
-msgstr "Підтвердити"
+msgstr "Підтвердити."
 
 #. [legends.Unknown.Confirmed]
 #. defaultMessage is:
@@ -2735,7 +2735,7 @@ msgstr "Пристрої в корпусі LGA"
 #. Devices from Lab
 #: extracted_strings.json
 msgid "Devices from Lab"
-msgstr "Лабораторія:"
+msgstr "Пристрої від Lab"
 
 #. [component.Widget.unusedModulesTitle]
 #. defaultMessage is:
@@ -11933,6 +11933,9 @@ msgid "type is {deviceTypeName}"
 msgstr "тип - {deviceTypeName}"
 
 #. [server.userFriendly.message]
+#. defaultMessage is:
+#. undefined
+#. [page.contacts.person.removeAssignment]
 #. defaultMessage is:
 #. undefined
 #: extracted_strings.json

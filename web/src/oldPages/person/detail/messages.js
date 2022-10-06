@@ -585,8 +585,7 @@ export default {
     },
     removeAssignment: {
       id: 'page.contacts.person.removeAssignment',
-
-      default: 'Do you want to remove below assignment?',
+      defaultMessage: 'Do you want to remove below assignment?',
     },
   }),
 }

@@ -1,15 +1,14 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useAuthState } from '../../../../providers/AuthProvider'
 import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
 import styles from '../../Table.css'
 
 const cssClasses = classnames.bind(styles)
 
 const DateTimeCellBase = ({ value, flagged, since }) => {
-  const { culture } = useI18n()
-  console.log('🚀 ~ file: index.jsx ~ line 12 ~ DateTimeCellBase ~ culture', culture)
+  const { culture } = useAuthState()
   if (!value) return null
   const { isPast, timeSince } = timeSinceFromUTC(value, culture)
   const dateFormatted = timeAndDate(value, 'yyyy-MM-dd hh:mm:ss')

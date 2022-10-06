@@ -120,14 +120,14 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         if (err.data?.errorKeyCode && errorNotification[err.data.errorKeyCode]) {
           errorNotification = { message: errorNotification[err.data.errorKeyCode] }
         } else if (err.statusCode === 409 || err.statusCode === 422) {
-          errorNotification = {
-            ...defineMessages({
-              message: {
-                id: 'server.userFriendly.message',
-                defaultMessage: err.message,
-              },
-            }),
-          }
+          // errorNotification = {
+          //   ...defineMessages({
+          //     // message: {
+          //     //   id: 'server.userFriendly.message',
+          //     //   defaultMessage: err.message,
+          //     // },
+          //   }),
+          // }
         } else if (errorNotification[err.message]) {
           errorNotification = errorNotification[err.message]
         } else if (errorNotification.default) {

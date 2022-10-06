@@ -54,11 +54,6 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
   const localStorageCulture = getCurrentCulture()
 
   const userLocale = passedCulture || localStorageCulture || 'en'
-  console.log(
-    "🚀 ~ file: index.jsx ~ line 57 ~ i18nWrapper ~ passedCulture || localStorageCulture || 'en'",
-    passedCulture,
-    localStorageCulture
-  )
 
   const intl = createIntl({
     locale: userLocale === 'tg-TJ' ? 'uz-Cyrl' : userLocale,
@@ -69,7 +64,6 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
   const timezone = passedTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone
 
   const { formatDate, formats, formatMessage, locale, ...rest } = intl
-  console.log('🚀 ~ file: index.jsx ~ line 72 ~ i18nWrapper ~ locale', locale, userLocale)
   const dateFNSLocale = dateFNSLocales[userLocale]
   const validTimeZone = timeZoneFallBack(timezone)
   return {
