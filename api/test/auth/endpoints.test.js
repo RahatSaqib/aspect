@@ -23,12 +23,13 @@ describe('auth endpoints', () => {
           },
         })
       })
-      it('Should respond with the data returned from the service', async () => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
+          .thenCall(done)
           .execute()
       })
     })
@@ -46,12 +47,13 @@ describe('auth endpoints', () => {
           },
         })
       })
-      it('Should respond with the data returned from the service', async () => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
+          .thenCall(done)
           .execute()
       })
     })
@@ -67,12 +69,13 @@ describe('auth endpoints', () => {
           },
         })
       })
-      it('Should respond with the data returned from the service', async () => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
+          .thenCall(done)
           .execute()
       })
     })
@@ -88,12 +91,13 @@ describe('auth endpoints', () => {
           },
         })
       })
-      it('Should respond with the data returned from the service', async () => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
+          .thenCall(done)
           .execute()
       })
     })
@@ -111,12 +115,13 @@ describe('auth endpoints', () => {
           },
         })
       })
-      it('Should respond with the data returned from the service', async () => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
+          .thenCall(done)
           .execute()
       })
     })
@@ -132,12 +137,13 @@ describe('auth endpoints', () => {
           },
         })
       })
-      it('Should respond with the data returned from the service', async () => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
+          .thenCall(done)
           .execute()
       })
     })
@@ -153,12 +159,13 @@ describe('auth endpoints', () => {
           },
         })
       })
-      it('Should respond with the data returned from the service', async () => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
             assert.deepEqual(response, expectedResponse)
           })
+          .thenCall(done)
           .execute()
       })
     })

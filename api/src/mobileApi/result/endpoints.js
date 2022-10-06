@@ -15,7 +15,7 @@ const routes = [
   {
     method: 'GET',
     path: '/v1/result/download',
-    handler: asyncHandler(downloadResultsList),
+    handler: downloadResultsList,
     config: {
       description: 'Result Sync',
       notes:
@@ -35,7 +35,7 @@ const routes = [
   {
     method: 'GET',
     path: '/v2/result/download',
-    handler: asyncHandler(downloadResultsListV2),
+    handler: downloadResultsListV2,
     config: {
       description: 'Result Sync',
       notes:
