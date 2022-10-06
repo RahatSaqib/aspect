@@ -1,4 +1,6 @@
 const Joi = require('@hapi/joi')
+const Boom = require('@hapi/boom')
+const Problem = require('../../shared/problem')
 
 const entitySchema = {
   name: Joi.string().required(),
@@ -36,4 +38,27 @@ const postSchema = {
   },
 }
 
-module.exports = { postSchema, updateSchema }
+/**
+ * Throws a Boom error with the result of build a @see Problem object detailing the repeated values
+ * between a request params and a existing site.
+ * @param {string} name - Name of the site
+ * @param {string} shortName - Short Name of the site
+ * @param {string} externalId - external Id (Site Id in UI) of the site
+ * @param {Object} existingSite - Site object retrieved from DB
+ */
+function throwExistingSiteError(name, shortName, externalId, existingSite) {
+  const problems = new Problem()
+  if (name === existingSite.name) {
+    problems.addProblem('siteNameRepeated', 'The site name already exists', 'name', name)
+  }
+  if (shortName === existingSite.shortName) {
+    problems.addProblem('siteShortNameRepeated', 'The site short name already exists', 'shortName', shortName)
+  }
+  if (externalId === existingSite.externalId) {
+    problems.addProblem('siteIdRepeated', 'The Site Id already exists', 'externalId', externalId)
+  }
+
+  throw Boom.conflict('', problems)
+}
+
+module.exports = { postSchema, updateSchema, throwExistingSiteError }
