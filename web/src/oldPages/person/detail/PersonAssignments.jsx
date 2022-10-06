@@ -35,7 +35,6 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
           onAskConfirmation={askConfirmation}
         />
       ))}
-
       <AspectDialog
         actions={[
           <Button color="primary" onClick={onCancelConfirmation}>
@@ -49,7 +48,7 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
         open={confirmation.isActive}
         onClose={onCancelConfirmation}
       >
-        <h3>Do you want to remove below assignment?</h3>
+        <h3>{formatMessage(messages.removeAssignment)}</h3>
         <PersonAssignmentItem assignment={confirmation.assignment} />
       </AspectDialog>
     </section>

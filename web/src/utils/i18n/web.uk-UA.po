@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-30T17:11:05.070Z\n"
+"POT-Creation-Date: 2022-10-06T14:48:19.259Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -8853,7 +8853,7 @@ msgstr "Показати лише звітні результати"
 #. Show Only Results Downloaded By Reporter
 #: extracted_strings.json
 msgid "Show Only Results Downloaded By Reporter"
-msgstr "Показати лише результати, завантажені Reporter"
+msgstr "Показати тільки результати, завантажені репортером"
 
 #. [filter.btnGroup.onlyEverTransferred]
 #. defaultMessage is:
@@ -8874,7 +8874,7 @@ msgstr "Показати лише результати з необхідним �
 #. Show Only Transfers
 #: extracted_strings.json
 msgid "Show Only Transfers"
-msgstr "Показати лише результати, завантажені Reporter"
+msgstr "Показати тільки перекази"
 
 #. [pages.CaseList.paginatorStatus]
 #. defaultMessage is:

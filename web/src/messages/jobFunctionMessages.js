@@ -13,6 +13,10 @@ export default defineMessages({
     id: 'jobFunction.deviceMaker',
     defaultMessage: 'Device Maker',
   },
+  'Device Maker': {
+    id: 'jobFunction.deviceMaker',
+    defaultMessage: 'Device Maker',
+  },
   donor: {
     id: 'jobFunction.donor',
     defaultMessage: 'Donor',

@@ -1,6 +1,7 @@
 import React from 'react'
 import CloseIcon from '@mui/icons-material/RemoveCircle'
 import classnames from 'classnames/bind'
+import camelCase from 'lodash/camelCase'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import useI18n from '../../../hooks/useI18n'
@@ -32,7 +33,8 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
   return (
     <div className={cssClasses('Assignment__Section')}>
       <div className={cssClasses('Assignment__Title')}>
-        {assignment.jobFunctionName}
+        {formatMessage(messages[camelCase(assignment.jobFunctionName)])}
+        {console.log('🚀 ~ file: PersonAssignmentItem.jsx ~ line 36 ~ assignment', assignment)}
         {onAskConfirmation && (
           <Link to="#" onClick={() => onAskConfirmation(assignment)} className={cssClasses('Assignment__Link')}>
             <CloseIcon style={{ fill: '--aspect-color-chill-blue-1' }} />
