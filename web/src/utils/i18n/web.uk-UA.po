@@ -7269,7 +7269,7 @@ msgstr "Позитиви"
 #. Press enter to add tag
 #: extracted_strings.json
 msgid "Press enter to add tag"
-msgstr "Натисніть Enter, щоб додати тег"
+msgstr "Натисніть введіть ключ, щоб додати тег"
 
 #. [legends.Unknown.resultCategoryPresumptivePositive]
 #. defaultMessage is:

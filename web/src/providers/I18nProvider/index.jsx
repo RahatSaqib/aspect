@@ -53,7 +53,7 @@ function timeZoneFallBack(timezone) {
 function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
   const localStorageCulture = getCurrentCulture()
 
-  const userLocale = localStorageCulture || 'en'
+  const userLocale = passedCulture || localStorageCulture || 'en'
   console.log(
     "🚀 ~ file: index.jsx ~ line 57 ~ i18nWrapper ~ passedCulture || localStorageCulture || 'en'",
     passedCulture,

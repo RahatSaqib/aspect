@@ -9,6 +9,7 @@ const cssClasses = classnames.bind(styles)
 
 const DateTimeCellBase = ({ value, flagged, since }) => {
   const { culture } = useI18n()
+  console.log('🚀 ~ file: index.jsx ~ line 12 ~ DateTimeCellBase ~ culture', culture)
   if (!value) return null
   const { isPast, timeSince } = timeSinceFromUTC(value, culture)
   const dateFormatted = timeAndDate(value, 'yyyy-MM-dd hh:mm:ss')

@@ -7,6 +7,7 @@ import { defineMessages } from 'react-intl'
 import { connect, useSelector } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
+import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage, commonDefinitions } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
@@ -18,7 +19,6 @@ import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import requirePermissions, { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
-import { i18nWrapper } from '../../../providers/I18nProvider/index'
 import { fetchPersons, exportContacts } from '../../../store/PersonRedux'
 import {
   makeSortPageSelector,
@@ -224,7 +224,7 @@ export const PersonList = ({
   const AddNewButton = requirePermissions({
     permissions: ['person:edit'],
   })(AspectButton)
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
 
   const { permissions: userPermissions } = useSelector(({ user }) => user.toJS().jwt)
 

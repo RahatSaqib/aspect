@@ -26,7 +26,6 @@ import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import requirePermissions from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
-import { i18nWrapper } from '../../../providers/I18nProvider'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import {
@@ -41,7 +40,79 @@ import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './Resu
 import styles from './ResultList.css'
 
 const cssClasses = classnames.bind(styles)
-
+const getBaseColumns = (extraColumns = [], formatMessage) => {
+  return Immutable.List(
+    filter(
+      [
+        {
+          key: 'endedOn',
+          label: formatMessage(messages.endedOn),
+          sortable: true,
+        },
+        {
+          key: 'deviceName',
+          label: formatMessage(messages.deviceName),
+          sortable: true,
+          hiddenOn: 'xs',
+        },
+        {
+          key: 'sampleOriginSiteName',
+          label: formatMessage(messages.sampleOriginSiteName),
+          sortable: true,
+          hiddenOn: 'sm',
+        },
+        {
+          key: 'sampleId',
+          label: formatMessage(messages.sampleId),
+          sortable: true,
+        },
+        {
+          key: 'assayName',
+          label: formatMessage(messages.assayName),
+          sortable: true,
+        },
+        {
+          key: 'resultText',
+          label: formatMessage(messages.resultText),
+          sortable: true,
+        },
+        ...map(extraColumns, column => ({
+          key: column?.fieldName,
+          label: messageByI18nKey(column?.i18nKey)(column?.title, formatMessage),
+          sortable: true,
+          hiddenOn: 'md',
+        })),
+        {
+          key: 'errorCode',
+          label: formatMessage(messages.errorCode),
+          sortable: true,
+          hiddenOn: 'lg',
+        },
+        {
+          key: 'resultWorkflowStatus',
+          label: formatMessage(messages.resultWorkflowStatus),
+          sortable: true,
+          hiddenOn: 'md',
+          auth: ['+reporter'],
+        },
+        {
+          key: 'treatmentStatusInfo',
+          label: formatMessage(messages.resultTreatmentStatus),
+          sortable: true,
+          hiddenOn: 'md',
+          auth: ['+reporter'],
+        },
+        {
+          key: 'patientId',
+          label: formatMessage(messages.patientId),
+          sortable: true,
+          hiddenOn: 'xs',
+        },
+      ],
+      elem => (extraColumns.length > 0 && elem.key !== 'resultText') || extraColumns.length === 0
+    )
+  )
+}
 const FILTERS_CONFIG = [
   {
     assayAndResultCategory: true,
@@ -149,80 +220,6 @@ const messageByI18nKey = partial(
   }
 )
 
-const getBaseColumns = (extraColumns = []) => {
-  const { formatMessage } = i18nWrapper()
-  return Immutable.List(
-    filter(
-      [
-        {
-          key: 'endedOn',
-          label: formatMessage(messages.endedOn),
-          sortable: true,
-        },
-        {
-          key: 'deviceName',
-          label: formatMessage(messages.deviceName),
-          sortable: true,
-          hiddenOn: 'xs',
-        },
-        {
-          key: 'sampleOriginSiteName',
-          label: formatMessage(messages.sampleOriginSiteName),
-          sortable: true,
-          hiddenOn: 'sm',
-        },
-        {
-          key: 'sampleId',
-          label: formatMessage(messages.sampleId),
-          sortable: true,
-        },
-        {
-          key: 'assayName',
-          label: formatMessage(messages.assayName),
-          sortable: true,
-        },
-        {
-          key: 'resultText',
-          label: formatMessage(messages.resultText),
-          sortable: true,
-        },
-        ...map(extraColumns, column => ({
-          key: column?.fieldName,
-          label: messageByI18nKey(column?.i18nKey)(column?.title, formatMessage),
-          sortable: true,
-          hiddenOn: 'md',
-        })),
-        {
-          key: 'errorCode',
-          label: formatMessage(messages.errorCode),
-          sortable: true,
-          hiddenOn: 'lg',
-        },
-        {
-          key: 'resultWorkflowStatus',
-          label: formatMessage(messages.resultWorkflowStatus),
-          sortable: true,
-          hiddenOn: 'md',
-          auth: ['+reporter'],
-        },
-        {
-          key: 'treatmentStatusInfo',
-          label: formatMessage(messages.resultTreatmentStatus),
-          sortable: true,
-          hiddenOn: 'md',
-          auth: ['+reporter'],
-        },
-        {
-          key: 'patientId',
-          label: formatMessage(messages.patientId),
-          sortable: true,
-          hiddenOn: 'xs',
-        },
-      ],
-      elem => (extraColumns.length > 0 && elem.key !== 'resultText') || extraColumns.length === 0
-    )
-  )
-}
 export const ResultListWithProps = ({
   intl,
   // history,
@@ -392,7 +389,7 @@ const ResultList = () => {
       const newTable = receiveTableItems(table, totalItems, extraColumns)
       setTable(newTable)
 
-      setColumns(getBaseColumns(extraColumns))
+      setColumns(getBaseColumns(extraColumns, intl.formatMessage))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])

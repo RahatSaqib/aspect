@@ -8,13 +8,13 @@ import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle, setPropTypes, defaultProps } from 'recompose'
+import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import StyledDropdown from '../../../oldComponents/shared/StyledDropdown'
-import { i18nWrapper } from '../../../providers/I18nProvider/index'
 import { fetchTasks } from '../../../store/TaskRedux'
 import {
   makeSortPageSelector,
@@ -190,7 +190,7 @@ export const TaskList = ({
   pageSize,
   onRowClick,
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.tasksTitle)} />

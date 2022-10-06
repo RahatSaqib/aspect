@@ -34,7 +34,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
     <div className={cssClasses('Assignment__Section')}>
       <div className={cssClasses('Assignment__Title')}>
         {formatMessage(messages[camelCase(assignment.jobFunctionName)])}
-        {console.log('🚀 ~ file: PersonAssignmentItem.jsx ~ line 36 ~ assignment', assignment)}
+
         {onAskConfirmation && (
           <Link to="#" onClick={() => onAskConfirmation(assignment)} className={cssClasses('Assignment__Link')}>
             <CloseIcon style={{ fill: '--aspect-color-chill-blue-1' }} />

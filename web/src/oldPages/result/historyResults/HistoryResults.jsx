@@ -9,13 +9,13 @@ import classnames from 'classnames/bind'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import { MdFileDownload } from 'react-icons/md'
+import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import { i18nWrapper } from '../../../providers/I18nProvider/index'
 import messages from '../list/messages'
 import cssStyles from './HistoryResults.css'
 
@@ -36,7 +36,7 @@ export const Results = ({
   onExportClick,
   onRowClick,
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
 
   return (
     <section className={cssClasses('Section')}>
