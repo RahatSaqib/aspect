@@ -166,16 +166,16 @@ const notificationTypeSection = formatMessage => {
                   {
                     label: formatMessage(messages.notificationCreateGroupForSite),
                     options: [
-                      {
-                        value: 'InventoryStockout',
-                        label: formatMessage(messages.notificationTypeLowInventory),
-                        icon: 'AiOutlineDashboard',
-                      },
-                      {
-                        value: 'InventoryStockExpiring',
-                        label: formatMessage(messages.notificationTypeExpiring),
-                        icon: 'AiOutlineDashboard',
-                      },
+                      // {
+                      //   value: 'InventoryStockout',
+                      //   label: formatMessage(messages.notificationTypeLowInventory),
+                      //   icon: 'AiOutlineDashboard',
+                      // },
+                      // {
+                      //   value: 'InventoryStockExpiring',
+                      //   label: formatMessage(messages.notificationTypeExpiring),
+                      //   icon: 'AiOutlineDashboard',
+                      // },
                     ],
                   },
                   {

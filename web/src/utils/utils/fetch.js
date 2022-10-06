@@ -117,7 +117,9 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         get(options, 'errorNotifications.default')
       )
       if (errorNotification) {
-        if (err.statusCode === 409 || err.statusCode === 422) {
+        if (err.data?.errorKeyCode && errorNotification[err.data.errorKeyCode]) {
+          errorNotification = { message: errorNotification[err.data.errorKeyCode] }
+        } else if (err.statusCode === 409 || err.statusCode === 422) {
           errorNotification = {
             ...defineMessages({
               message: {

@@ -23,7 +23,7 @@ const AspectResponsivePie = ({
   i18nKeys,
   config: baseConfig,
 }) => {
-  const { id: graphId, showLabel } = baseConfig
+  const { id: graphId, showLabel, labelTextColor } = baseConfig
   const { formatNumber: intlFormatNumber, formatMessage } = useI18n()
   const config = (type, data, displayMethod) => {
     switch (true) {
@@ -66,7 +66,7 @@ const AspectResponsivePie = ({
         enableRadialLabels={false}
         enableSlicesLabels={!!showLabel}
         sliceLabel={d => `${parseFloat(d.value).toFixed(2)}%`}
-        slicesLabelsTextColor="#FFF"
+        slicesLabelsTextColor={labelTextColor}
         padAngle={-1}
         startAngle={0}
         endAngle={config(type).endAngle}

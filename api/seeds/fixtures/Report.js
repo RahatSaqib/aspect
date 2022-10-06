@@ -4,6 +4,7 @@ const xdrDevicesSummary = {
   i18nKey: 'xdrDevicesSummary',
   externalId: 'xdr_devices_summary', // folder name in /templates
   i18nKeyDescription: 'xdrDevicesSummaryDescription',
+  availableForNotification: 1,
   fileName: 'XdrDevicesSummary',
   exportCsv: false,
   sortOrder: 101,
@@ -27,6 +28,7 @@ const mtbDetectedRRDetected = {
   externalId: 'mtb_detected_rr_detected',
   fileName: 'MTB_Detected_RR_Detected',
   sortOrder: 0,
+  availableForNotification: 1,
   sheets: [
     {
       sortOrder: 0,
@@ -49,6 +51,7 @@ const allResults = {
   externalId: 'all_results',
   fileName: 'All_results',
   sortOrder: 0,
+  availableForNotification: 1,
   exportCsv: true,
   exportExcel: false,
   sheets: [
@@ -61,6 +64,7 @@ const allResults = {
         sortDir: 'desc',
         templateFolderPath: 'export/results',
         maxNumberOfRecords: 50000,
+        streamCSV: true,
       },
     },
   ],
@@ -72,6 +76,7 @@ const criticalErrorsByDevice = {
   i18nKeyDescription: 'Critical_Errors_By_Device_description',
   externalId: 'critical_errors_by_device',
   fileName: 'DevicesWithErrors',
+  availableForNotification: 1,
   sortOrder: 2,
   sheets: [
     {
@@ -107,6 +112,7 @@ const rifResistanceRate = {
   i18nKeyDescription: 'RIF_Resistance_Rate_description',
   fileName: 'RifResistanceRate',
   sortOrder: 3,
+  availableForNotification: 1,
   sheets: [
     {
       sortOrder: 0,
@@ -123,6 +129,7 @@ const resultsHivNotSuppressed = {
   externalId: 'results_hiv_not_suppressed',
   i18nKeyDescription: 'results_hiv_not_suppressed_description',
   fileName: 'HIVNotSuppressed',
+  availableForNotification: 1,
   sortOrder: 4,
   sheets: [
     {
@@ -147,6 +154,7 @@ const deviceActivity = {
   externalId: 'device_activity',
   i18nKeyDescription: 'device_activity_description',
   fileName: 'deviceActivity',
+  availableForNotification: 1,
   sortOrder: 5,
   sheets: [
     {
@@ -173,6 +181,7 @@ const deviceActivity = {
     },
   ],
 }
+
 const deviceUtilizationReport = {
   name: 'Device Average Utilization per Month',
   description:
@@ -181,6 +190,7 @@ const deviceUtilizationReport = {
   externalId: 'device_utilization',
   i18nKeyDescription: 'device_utilization_description',
   fileName: 'deviceUtilization',
+  availableForNotification: 1,
   sortOrder: 7,
   sheets: [
     {
@@ -205,6 +215,7 @@ const deviceActivityPercent = {
   i18nKeyDescription: 'device_activity_percent_description',
   fileName: 'deviceActivityPercent',
   sortOrder: 6,
+  availableForNotification: 1,
   sheets: [
     {
       sortOrder: 0,
@@ -226,6 +237,7 @@ const moduleSwaps = {
   externalId: 'module_swaps',
   fileName: 'moduleSwaps',
   i18nKeyDescription: 'moduleSwapsReport_description',
+  availableForNotification: 1,
   sortOrder: 7,
   sheets: [
     {
@@ -248,6 +260,7 @@ const deviceCalibrationReport = {
   i18nKeyDescription: 'Device_Calibration_Report_description',
   externalId: 'device_calibration_report',
   fileName: 'DeviceCalibrationReport',
+  availableForNotification: 1,
   sortOrder: 8,
   sheets: [
     {
@@ -268,6 +281,7 @@ const geneXpertIssues = {
   name: 'GeneXpert Issues',
   description: 'This report shows all issues that apply to GeneXpert devices',
   i18nKey: 'geneXpertIssues',
+  availableForNotification: 1,
   i18nKeyDescription: 'geneXpertIssues_description',
   externalId: 'genexpert_issues',
   fileName: 'geneXpertIssues',
@@ -294,6 +308,7 @@ const utilizationPerInstrumentDayReport = {
   externalId: 'device_utilization_per_day',
   i18nKeyDescription: 'deviceUtilizationPerDayDescription',
   fileName: 'deviceUtilizationPerDay',
+  availableForNotification: 1,
   sortOrder: 11,
   sheets: [
     {
@@ -311,6 +326,7 @@ const moduleActivityReport = {
   i18nKeyDescription: 'moduleActivityReport_Description',
   externalId: 'module_activity_report',
   fileName: 'ModuleActivityReport',
+  availableForNotification: 1,
   exportCsv: true,
   sortOrder: 120,
   sheets: [
@@ -330,6 +346,7 @@ const moduleStatusReport = {
   i18nKeyDescription: 'moduleStatusReport_Description',
   externalId: 'module_status_report',
   fileName: 'ModuleStatusReport',
+  availableForNotification: 1,
   exportCsv: true,
   exportExcel: true,
   sortOrder: 130,
@@ -349,6 +366,7 @@ const reportCustomFieldsCompletion = {
   externalId: 'report_custom_fields_completion', // folder name in /templates
   i18nKeyDescription: 'reportCustomFieldsCompletionDescription',
   fileName: 'ReportCustomFieldsCompletion',
+  availableForNotification: 1,
   exportCsv: false,
   sortOrder: 13,
   sheets: [
@@ -368,6 +386,7 @@ const inventoryLog = {
   description: 'Lists all the inventory transactions in the filters scope',
   i18nKey: 'inventoryLog',
   externalId: 'inventory_log',
+  availableForNotification: 1,
   i18nKeyDescription: 'inventoryLogDescription',
   fileName: 'InventoryLog',
   exportCsv: false,
@@ -390,6 +409,7 @@ const tbWorkloadSummary = {
   i18nKey: 'reportTBWorkloadSummary',
   externalId: 'tb_workload_summary', // folder name in /templates
   i18nKeyDescription: 'reportTBWorkloadSummaryDescription',
+  availableForNotification: 1,
   fileName: 'ReportTBWorkloadSummary',
   exportCsv: false,
   sortOrder: 15,
@@ -427,6 +447,35 @@ const tbWorkloadSummary = {
   ],
 }
 
+const usageStats = {
+  name: 'Usage Statistics Report',
+  description: 'Shows stats about the use of the system.',
+  i18nKey: 'usageStatistics',
+  i18nKeyDescription: 'usageStatistics_Description',
+  externalId: 'usage_statistics_report',
+  fileName: 'UsageStatistics',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 140,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'stats/serviceReports',
+      functionName: 'getUsageStats',
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'stats/serviceReports',
+      functionName: 'getUserActivity',
+    },
+    {
+      sortOrder: 2,
+      moduleName: 'stats/serviceReports',
+      functionName: 'getResultsBySite',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -446,4 +495,5 @@ module.exports = {
   moduleStatusReport,
   tbWorkloadSummary,
   xdrDevicesSummary,
+  usageStats,
 }

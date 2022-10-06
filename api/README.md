@@ -60,6 +60,13 @@ twilioMessagingServiceSid = "MG3ce426d5d330c9720bff0237690cba14"
 webhook.redcap.url= 'asdf'
 webhook.redcap.authToken= 'jkasd'
 
+# Alter user for native password in MySQL. Login as root user to perform it.
+ALTER USER 'username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+flush privileges;
+
+# MySQL set_mode, open my.cnf and add this sql-mode.
+sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+
 # Run migrations
 yarn run knex migrate:latest
 
@@ -397,4 +404,12 @@ Following are the use-cases for the api versioning
 - If there is an endpoint with a matching version to the request, use that endpoint
 - If there are any versioned endpoints with a version, lower than the version specified in the request, use the highest version that is below the version specified in the request
 - If there are any un-versioned endpoints use this un-versioned endpoint
+
+### Testing with Postman
+
+To test API, go to Aspect API postman collection. 
+Select Environment - Aspect Local Development
+Go to Auth folder under Aspect API collection
+Select auth api and hit send button
+It will return success response with the Token
 

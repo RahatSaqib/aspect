@@ -333,7 +333,7 @@ describe('Device routes', () => {
       assert.property(res.body, 'utilizationRateAvg')
       assert.property(res.body, 'errorRateAvg')
       assert.property(res.body, 'data')
-      assert.equal(res.body.data.length, 13)
+      assert.equal(res.body.data.length, 14)
       assert.typeOf(res.body.data, 'array')
       assert.property(res.body.data[0], 'totalResult')
       assert.property(res.body.data[0], 'errorCount')

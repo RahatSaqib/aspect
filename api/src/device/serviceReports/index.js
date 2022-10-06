@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { format, parseISO, addMonths, differenceInMonths, differenceInBusinessDays, subMonths } = require('date-fns')
+const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = require('date-fns')
 const locales = require('date-fns/locale')
 const { getDeviceBaseQuery, listDevices } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
@@ -11,6 +11,7 @@ const {
   getOffsetFromIsoDateString,
   getDateTimeProjectionInUserTimeZone,
 } = require('../../shared/date')
+const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getUser } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
@@ -50,16 +51,19 @@ async function exportDevices(request, reply) {
 function getMonthsDatefields(minDate, maxDate, culture) {
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
   const minDateFormatted = _.isDate(minDate) ? minDate : parseISO(minDate)
-  const monthDiff = differenceInMonths(maxDateFormatted, minDateFormatted)
+
   const dateFields = []
   const locale = culture.split('-')[0].toLowerCase()
-  for (let i = 0; i <= monthDiff; i++) {
+
+  let curMonth = minDateFormatted
+  while (curMonth <= maxDateFormatted) {
     dateFields.push({
-      key: format(addMonths(minDateFormatted, i), 'yyyy-MM'),
-      header: format(addMonths(minDateFormatted, i), 'yyyy-LLL', {
+      key: format(curMonth, 'yyyy-MM'),
+      header: `${format(curMonth, 'yyyy-LLL', {
         locale: locales[locale],
-      }),
+      })}\n (%)`,
     })
+    curMonth = addMonths(curMonth, 1)
   }
   return dateFields
 }
@@ -67,7 +71,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseQuery(query, dataConstraints).whereNotIn('dt.externalId', ['Aspect', 'GxAlert'])
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
@@ -83,9 +87,15 @@ async function getDeviceActivityReport(auth, query) {
     })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .select('d.id', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus')
+    .distinct(
+      'd.id',
+      'd.name',
+      'd.serial',
+      'da.name as deviceApprovalStatus',
+      'dms.name as deviceMaintenanceStatus',
+      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn')
+    )
     .countDistinct('r.id as totalResults')
-    .select(getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn'))
     .groupBy('d.id', 'd.name', 'd.serial')
     .modify(sortPageParams, query, 'name')
     .modify(addingGroupingAndSelect, query)
@@ -94,9 +104,9 @@ async function getDeviceActivityReport(auth, query) {
     .clone()
     .join('Result as r', 'd.id', 'r.deviceId')
     .countDistinct('r.id as totalResults')
-    .select('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
+    .distinct('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
     .modify(filterDateRangeParams, query, 'r.endedOn')
-    .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
+    .groupBy('d.id', 'monthYear')
     .modify(addingGroupingAndSelect, query)
 
   // return result when both queries are finished
@@ -273,18 +283,13 @@ async function getDeviceCapacityReport(auth, query) {
         .andOn(knex.raw('DAYOFWEEK(r.endedOn) not in (1,7)'))
     )
     .where({ 'dt.externalId': 'CepheidGeneXpert' })
-    .groupBy('d.id', getMonthYearUserTimeZoneField(knex, 'r.endedOn', null, offset))
+    .groupBy('d.id', 'monthYear')
     .distinct(
       'd.name',
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset),
       'd.id AS deviceId',
-      knex.raw('COUNT(r.id) as resultCount'),
-      knex.raw(
-        `CASE
-              WHEN DATE(NOW()) < date(LAST_DAY(r.endedOn)) THEN date(CONVERT_TZ(now(), "+00:00","${offset}"))
-              ELSE DATE(LAST_DAY(r.endedOn))
-            END as lastDayOfMonth`
-      ),
+      knex.raw('COUNT(DISTINCT r.id) as resultCount'),
+      lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
       'dcap.dailyCapacity'
     )
     .orderBy('d.name')
@@ -292,13 +297,14 @@ async function getDeviceCapacityReport(auth, query) {
   const devices = deviceQuery
     .clone()
     .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
-
-    .distinct('d.name', 'd.id')
+    .groupBy('d.id')
+    .select('d.name', 'd.id')
     .orderBy('d.name')
   // return result when both queries are finished
 
   const [capacityData, deviceDetails] = await Promise.all([monthlyCapacity, devices])
 
+  // loop though all devices and count rate
   const data = _.map(deviceDetails, deviceRow => {
     _.each(
       _.filter(capacityData, deviceFiltered => deviceFiltered.deviceId === deviceRow.id),
@@ -311,7 +317,8 @@ async function getDeviceCapacityReport(auth, query) {
             : new Date(`${filteredMonthlyCapacity.monthYear}-01`)
         )
         deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
-          filteredMonthlyCapacity.resultCount / Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
+          (filteredMonthlyCapacity.resultCount * 100) /
+            Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
           2
         )
       }
@@ -319,7 +326,6 @@ async function getDeviceCapacityReport(auth, query) {
 
     return deviceRow
   })
-
   const dataset = {
     ok: true,
     total: data.length,
