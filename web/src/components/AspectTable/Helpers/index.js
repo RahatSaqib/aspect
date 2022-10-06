@@ -149,17 +149,7 @@ function totalItemCount(vals) {
 function timeSinceFromUTC(val, locale) {
   const date = parseISO(val)
   const dateFNSLocale = dateFNSLocales[locale]
-  console.log({
-    locale,
-    dateFNSLocale,
-    isPast: isPast(date),
-    timeSince: formatDistance(date, new Date(), {
-      addSuffix: true,
-      locale: dateFNSLocale,
-    }),
-  })
   return {
-    dateFNSLocale,
     isPast: isPast(date),
     timeSince: formatDistance(date, new Date(), {
       addSuffix: true,
