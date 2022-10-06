@@ -2044,7 +2044,7 @@ msgstr "Crear"
 #. Create Notification
 #: extracted_strings.json
 msgid "Create Notification"
-msgstr "Crear sitio"
+msgstr "Crear notificación"
 
 #. [pages.SiteList.createSite]
 #. defaultMessage is:
@@ -5916,7 +5916,7 @@ msgstr "Mover la columna a la derecha"
 #. N/A
 #: extracted_strings.json
 msgid "N/A"
-msgstr "N/A"
+msgstr "No applica"
 
 #. [pages.resultTreatmentPanel.note]
 #. defaultMessage is:
@@ -11741,7 +11741,7 @@ msgstr "min."
 #. n/a
 #: extracted_strings.json
 msgid "n/a"
-msgstr "n/a"
+msgstr "no aplica"
 
 #. [filter.btnGroup.whoseNameOrEmailIncludes]
 #. defaultMessage is:

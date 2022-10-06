@@ -676,6 +676,7 @@ const sendSection = (formatMessage, jobFunctions) => {
                 isMulti: true,
                 isClearable: true,
                 queryKey: PERSON_SELECT_LIST.KEY,
+                placeholder: formatMessage(messages.selectPersonOption),
                 normalizeLoadedData: (response, formik) => {
                   const { values, setFieldValue } = formik
                   function makeLabel(name, state) {
