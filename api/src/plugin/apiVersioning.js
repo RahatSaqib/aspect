@@ -117,7 +117,7 @@ exports.register = (server, options) => {
 
       // preparing list of routes matching to versioned routes
       routesList.map(url => {
-        if (url.replace(/v\d+[\/]/gi, '').trim() === request.path) {
+        if (url.replace(/v\d+[\\/]/gi, '').trim() === request.path) {
           matchingRoutesList.push(url)
         }
         return url
