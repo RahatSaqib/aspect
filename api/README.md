@@ -54,6 +54,13 @@ twilioMessagingServiceSid = "MG3ce426d5d330c9720bff0237690cba14"
 webhook.redcap.url= 'asdf'
 webhook.redcap.authToken= 'jkasd'
 
+# Alter user for native password in MySQL. Login as root user to perform it.
+ALTER USER 'username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+flush privileges;
+
+# MySQL set_mode, open my.cnf and add this sql-mode.
+sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+
 # Run migrations
 yarn run knex migrate:latest
 
@@ -369,3 +376,10 @@ err.output.statusCode = 444
 err.reformat()
 return err
 ```
+### Testing with Postman
+
+To test API, go to Aspect API postman collection. 
+Select Environment - Aspect Local Development
+Go to Auth folder under Aspect API collection
+Select auth api and hit send button
+It will return success response with the Token
