@@ -8,7 +8,7 @@ import DateTimeInput from '../../shared/DateTimeInput'
 import SelectField from '../../shared/SelectField'
 import { DateRangeSelector } from './DateRangeSelector'
 
-describe.only('DateRangeSelector Component', () => {
+describe('DateRangeSelector Component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     clearButtonTooltip: 'Clear',

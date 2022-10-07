@@ -1,7 +1,19 @@
 import { defineMessages } from 'react-intl'
-import { assay, deviceApprovalMessages, deviceStatusMessages } from '../../../messages'
+import {
+  assay,
+  consumableMessages,
+  deviceApprovalMessages,
+  deviceStatusMessages,
+  resultCategory,
+  resultTreatmentStatusMessages,
+  resultWorkflowStatusMessages,
+} from '../../../messages'
 
 export const messages = {
+  ...consumableMessages,
+  ...resultCategory,
+  ...resultWorkflowStatusMessages,
+  ...resultTreatmentStatusMessages,
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...assay,

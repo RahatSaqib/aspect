@@ -57,4 +57,20 @@ export default defineMessages({
     id: 'consumable.assayGXCovid19Cartridge',
     defaultMessage: 'GeneXpert COVID-19 Cartridge',
   },
+  truenatMTBPlusTestKit: {
+    id: 'consumable.truenatMTBPlusTestKit',
+    defaultMessage: 'Truenat MTB Plus Test Kit',
+  },
+  truenatMTBRifTestKit: {
+    id: 'consumable.truenatMTBRifTestKit',
+    defaultMessage: 'Truenat MTB Rif Test Kit',
+  },
+  truenatMTBTestKit: {
+    id: 'consumable.truenatMTBRifTestKit',
+    defaultMessage: 'Truenat MTB Test Kit',
+  },
+  truenatUnknownTestKit: {
+    id: 'consumable.truenatUnknownTestKit',
+    defaultMessage: 'Truenat Unknown Test Kit',
+  },
 })

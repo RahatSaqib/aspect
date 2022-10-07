@@ -22,26 +22,28 @@ import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
 
-const messages = defineMessages({
+const messages = {
   ...deviceApprovalMessages,
   ...deviceStatusMessages,
-  profile: {
-    id: 'pages.DeviceDetail.profile',
-    defaultMessage: 'Profile',
-  },
-  operation: {
-    id: 'pages.DeviceDetail.operation',
-    defaultMessage: 'Operation',
-  },
-  alerts: {
-    id: 'pages.DeviceDetail.alerts',
-    defaultMessage: 'Alerts',
-  },
-  edit: {
-    id: 'pages.DeviceDetail.edit',
-    defaultMessage: 'Edit',
-  },
-})
+  ...defineMessages({
+    profile: {
+      id: 'pages.DeviceDetail.profile',
+      defaultMessage: 'Profile',
+    },
+    operation: {
+      id: 'pages.DeviceDetail.operation',
+      defaultMessage: 'Operation',
+    },
+    alerts: {
+      id: 'pages.DeviceDetail.alerts',
+      defaultMessage: 'Alerts',
+    },
+    edit: {
+      id: 'pages.DeviceDetail.edit',
+      defaultMessage: 'Edit',
+    },
+  }),
+}
 
 export const DeviceDetail = props => {
   const dispatch = useDispatch()

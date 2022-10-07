@@ -1,5 +1,5 @@
 import React from 'react'
-import Line from '../../../components/Graphs/BarGraph/LineLayer'
+import Line from '../../../../components/Graphs/BarGraph/LineLayer'
 
 const layerProps = {
   pointProps: {

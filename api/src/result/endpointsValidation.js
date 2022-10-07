@@ -127,9 +127,9 @@ const baseResultResponse = {
   errorCode: Joi.string().allow(null, '').description('If an error occurred, contains the error code from the device'),
   resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
   caseExternalId: Joi.string().optional().allow(null, '').description('The id of the case'),
-  diseaseId: Joi.number().positive().required().description('the Id of the disease'),
-  diseaseName: Joi.string().required().description('the name of the disease'),
-  diseaseExternalId: Joi.string().required().description('the external id of the disease'),
+  diseaseId: Joi.number().positive().allow(null).required().description('the Id of the disease'),
+  diseaseName: Joi.string().required().allow(null).description('the name of the disease'),
+  diseaseExternalId: Joi.string().required().allow(null).description('the external id of the disease'),
 
   detectedResistance: Joi.alternatives()
     .try(Joi.string(), Joi.array())
