@@ -377,6 +377,10 @@ function listResultsBaseConfig() {
         showUnapprovedDevices: Joi.boolean()
           .default(false)
           .description('If true, will include all the results of unapproved devices'),
+        displayResult: Joi.string()
+          .allow(null, '')
+          .optional()
+          .description('To display either "all", "actual" or "excluded" results'),
       },
     },
   }

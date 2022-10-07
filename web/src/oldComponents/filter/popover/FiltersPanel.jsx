@@ -31,6 +31,7 @@ import DeviceMaintenanceStatusSelectField from '../resource/DeviceMaintenanceSta
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
 import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import DiseaseSelectField from '../resource/DiseaseSelectField'
+import DisplayResultSelectField from '../resource/DisplayResultSelectField'
 import ResultCategoryGroupSelectField from '../resource/ResultCategoryGroupSelectField'
 import ResultCategorySelectField from '../resource/ResultCategorySelectField'
 import ResultTreatmentStatusSelectField from '../resource/ResultTreatmentStatusSelectField'
@@ -180,6 +181,10 @@ const enhance = compose(
       ({ onChangeFilters }) =>
       deviceMaintenanceStatusId =>
         onChangeFilters({ deviceMaintenanceStatusId }),
+    onDisplayResultChange:
+      ({ onChangeFilters }) =>
+      displayResult =>
+        onChangeFilters({ displayResult }),
     onRevokedChange:
       ({ onChangeFilters }) =>
       revoked =>
@@ -311,6 +316,7 @@ export const FiltersPanel = ({
   onHasStockChange,
   onReportNameChange,
   onToggleEnabledDisabled,
+  onDisplayResultChange,
   user,
   assays,
   countries,
@@ -880,6 +886,20 @@ export const FiltersPanel = ({
                   floatingLabelFixed
                   hintText={formatMessage(messages.selectTreatmentStatus)}
                   floatingLabelText={formatMessage(messages.treatmentStatus)}
+                  style={{ verticalAlign: 'bottom' }}
+                  autoWidth
+                />
+              </div>
+            )}
+            {config.displayResult && (
+              <div className={cssClasses('Control')}>
+                <DisplayResultSelectField
+                  allItemText={formatMessage(messages.all)}
+                  value={filters.displayResult}
+                  onDisplayResultChange={onDisplayResultChange}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectDisplayResult)}
+                  floatingLabelText={formatMessage(messages.displayResult)}
                   style={{ verticalAlign: 'bottom' }}
                   autoWidth
                 />

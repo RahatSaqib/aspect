@@ -16,6 +16,7 @@ const { addLoggers } = require('./logger/service')
 const logger = require('./shared/logger')
 const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
+const { getDictionary, getDictionarySync } = require('./shared/dictionary')
 
 const { port } = config
 const server = new Hapi.server({
@@ -185,6 +186,27 @@ const start = async () => {
       return h.continue
     })
   }
+
+  /**
+   * Make sure to read and cache some dictionaries
+   * to be able to get them in sync mode by `getDictionarySync`.
+   * As an example - this is needed to use some dictionaries in plugins
+   * which are called from plain function within `addConstraints()`.
+   * For more details see calling of plugin `modifyQueryToExcludeResult`
+   * in `api/src/auth/constraints.js`
+   */
+  server.ext('onRequest', async function (request, h) {
+    const dictionaryTables = [{ table: 'Assay', column: 'id' }]
+    await Promise.all(
+      dictionaryTables.map(async ({ table, column }) => {
+        if (!getDictionarySync(table, column)) {
+          // calling of async func `getDictionary` reads and caches specified table/column
+          return getDictionary(table, column)
+        }
+      })
+    )
+    return h.continue
+  })
 
   // ==========================================================================
   // ==========================================================================

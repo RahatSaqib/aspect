@@ -78,6 +78,10 @@ const FILTERS_CONFIG = [
   { workflowStatus: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },
   {
+    displayResult: true,
+    requiredPermissions: [],
+  },
+  {
     onlyReportableResults: true,
     requiredPermissions: ['assay:view'],
   },

@@ -43,7 +43,7 @@ async function getConstraintsByDeviceAPIKey(apiKey) {
   return Promise.resolve()
 }
 
-async function getConstraints(credentials, { excludeEqaResults = false } = {}) {
+async function getConstraints(credentials, { displayResult = 'actual' } = {}) {
   const user = await getUserFromCredentials(credentials)
   if (!user) {
     return Promise.resolve()
@@ -63,7 +63,7 @@ async function getConstraints(credentials, { excludeEqaResults = false } = {}) {
     },
   }
 
-  if (excludeEqaResults) {
+  if (displayResult === 'actual' || displayResult === 'excluded') {
     const { partnerId } = user
     const { getPartnerPluginName } = require('../plugin/utils')
     const partnerPluginName = await getPartnerPluginName({ partnerId })

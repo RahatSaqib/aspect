@@ -377,6 +377,9 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
             case 'expirationDate':
               result.expirationDate = true
               break
+            case 'displayResult':
+              result.displayResult = true
+              break
             default:
               break
           }
