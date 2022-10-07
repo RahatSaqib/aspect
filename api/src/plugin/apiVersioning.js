@@ -102,11 +102,6 @@ exports.register = (server, options) => {
       requestedVersion = extractVersionFromPath(request, options)
     }
 
-    // If passive mode skips the rest for non versioned routes
-    if (options.passiveMode === true && typeof requestedVersion !== 'number') {
-      return h.continue
-    }
-
     // If there was a version by now check if it is valid
     if (typeof requestedVersion === 'number') {
       // reading all registered routes
