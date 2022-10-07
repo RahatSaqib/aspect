@@ -1,4 +1,3 @@
-const { asyncHandler } = require('../../routes')
 const { downloadResultsList } = require('./download')
 const { downloadResultsListV2 } = require('./downloadV2')
 const {
