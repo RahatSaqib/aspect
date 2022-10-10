@@ -17,7 +17,7 @@ module.exports = async function (request) {
     return Boom.badRequest('Cannot retrieve user from create site request')
   }
 
-  const siteParams = await normalizeParameters(payload)
+  const siteParams = await normalizeParameters(payload, user.countryId)
 
   const values = {
     ...siteParams,
@@ -34,8 +34,8 @@ module.exports = async function (request) {
   return newId
 }
 
-async function normalizeParameters(payload) {
-  const payloadWithGeographyId = await transformGeographyFromUpdates(payload)
+async function normalizeParameters(payload, countryId) {
+  const payloadWithGeographyId = await transformGeographyFromUpdates(payload, countryId)
   return normalizeSiteParameters(payloadWithGeographyId)
 }
 
