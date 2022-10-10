@@ -41,11 +41,12 @@ const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
 function getSelectListFields(userTimeOffset, { lastSeenField } = {}) {
-  const fields = SELECT_LIST_FIELDS
-  fields.push(getDateTimeProjectionInUserTimeZone(knex, 'd.createdOn', userTimeOffset, 'createdOn'))
-  fields.push(getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', userTimeOffset, 'lastPingOn'))
-  fields.push(getDateTimeProjectionInUserTimeZone(knex, lastSeenField ?? 'd.lastSeenOn', userTimeOffset, 'lastSeen'))
-  return fields
+  return [
+    ...SELECT_LIST_FIELDS,
+    getDateTimeProjectionInUserTimeZone(knex, 'd.createdOn', userTimeOffset, 'createdOn'),
+    getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', userTimeOffset, 'lastPingOn'),
+    getDateTimeProjectionInUserTimeZone(knex, lastSeenField ?? 'd.lastSeenOn', userTimeOffset, 'lastSeen'),
+  ]
 }
 
 const SELECT_LIST_FIELDS = [
