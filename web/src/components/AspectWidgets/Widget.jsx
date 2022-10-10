@@ -1,6 +1,5 @@
 import React from 'react'
-import Card from '@mui/material/Card'
-import CircularProgress from '@mui/material/CircularProgress'
+import { Card, CircularProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import { bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import useI18n from '../../hooks/useI18n'

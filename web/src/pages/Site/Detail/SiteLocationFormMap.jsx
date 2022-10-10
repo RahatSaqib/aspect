@@ -1,5 +1,5 @@
 import React from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
+import { CircularProgress } from '@mui/material'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../../hooks/useI18n'

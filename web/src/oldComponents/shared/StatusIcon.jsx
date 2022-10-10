@@ -1,6 +1,6 @@
 import React from 'react'
 import CircleIcon from '@mui/icons-material/Circle'
-import { Tooltip } from '@mui/material/index'
+import { Tooltip } from '@mui/material'
 import identity from 'lodash/identity'
 import PropTypes from 'prop-types'
 

@@ -1,4 +1,4 @@
-import Table from '@mui/material/Table'
+import { Table } from '@mui/material'
 import { DataTableHead } from '../../components/shared/tableHead'
 import WorkflowLogTableRow from './WorkflowLogTableRow'
 

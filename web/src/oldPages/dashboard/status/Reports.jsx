@@ -1,6 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
+import { Button, Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import endOfYear from 'date-fns/endOfYear'
 import formatDate from 'date-fns/format'

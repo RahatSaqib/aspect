@@ -1,5 +1,5 @@
 import React from 'react'
-import MUILink from '@mui/material/Link'
+import { Link as MUILink } from '@mui/material'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'

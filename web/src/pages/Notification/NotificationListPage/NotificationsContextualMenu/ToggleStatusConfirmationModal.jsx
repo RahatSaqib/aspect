@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useMutation } from 'react-query'
 import fetchWrapperForQueries from '../../../../components/QueryFetch/index'

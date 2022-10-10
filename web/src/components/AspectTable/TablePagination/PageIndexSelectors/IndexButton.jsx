@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import { bool, func, oneOf, string } from 'prop-types'
 import IconProvider from '../../../IconProvider'

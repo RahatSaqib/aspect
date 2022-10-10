@@ -1,5 +1,5 @@
-import { cyan, lightGreen, orange, grey } from '@mui/material/colors'
-import { createTheme, alpha, lighten } from '@mui/material/styles'
+import { createTheme, lighten, alpha } from '@mui/material'
+import { cyan, grey, lightGreen, orange } from '@mui/material/colors'
 import { customPropertiesVariables } from './colors'
 
 const themedColors = {

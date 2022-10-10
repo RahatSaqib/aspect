@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import fromPairs from 'lodash/fromPairs'

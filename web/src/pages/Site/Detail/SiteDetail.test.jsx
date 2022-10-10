@@ -1,5 +1,5 @@
 import React from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
+import { LinearProgress } from '@mui/material'
 import { mount } from 'enzyme'
 import Immutable from 'immutable'
 import noop from 'lodash/noop'

@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'

@@ -1,6 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import MenuItem from '@mui/material/MenuItem'
+import { Button, MenuItem } from '@mui/material'
 import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import { connect } from 'react-redux'

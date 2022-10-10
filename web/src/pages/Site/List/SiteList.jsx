@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
-import TableBody from '@mui/material/TableBody'
+import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import { Helmet } from 'react-helmet'

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'

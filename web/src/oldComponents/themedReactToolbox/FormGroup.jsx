@@ -1,6 +1,5 @@
 import React from 'react'
-import FormControl from '@mui/material/FormControl'
-import FormLabel from '@mui/material/FormLabel'
+import { FormControl, FormLabel } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import classnames from 'classnames'
 
