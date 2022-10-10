@@ -263,7 +263,7 @@ const DeviceDetailProfile = ({
     },
     {
       key: 'resultWorkflowStatusI18nkey',
-      formatter: value => formatMessage(resultMessages[value]),
+      formatter: value => (value ? formatMessage(resultMessages[value]) : ''),
       label: formatMessage(messages.resultWorkflowStatus),
       sortable: true,
     },

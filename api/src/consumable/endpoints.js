@@ -33,6 +33,7 @@ const routes = [
             Joi.object().keys({
               id: Joi.number().integer().required(),
               name: Joi.string().max(255).allow('', null),
+              i18nKey: Joi.string().max(255).allow('', null),
               unit: Joi.string().max(50).allow('', null),
               unitShortName: Joi.string().max(50).allow('', null),
               canExpire: Joi.number().integer(),

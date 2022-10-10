@@ -92,7 +92,7 @@ const TestsOverTimeGraphMain = ({ assaysFromState, data, endPointParams, showLab
         <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
             <AspectResponsiveBar
-              config={{ ...baseConfig, showLabel, showDecimals: 0 }}
+              config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#FFF' }}
               assaysFromState={assaysFromState}
               data={graphData}
               keys={graphKeys}

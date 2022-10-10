@@ -435,17 +435,9 @@ export function updateSinglePersonLoginDetails(personId, data) {
       errorNotifications: {
         409: inlineWarning(
           defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title',
-              defaultMessage: 'This Username is Unavailable',
-            },
-            message: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message',
-              defaultMessage: 'The username that you have entered is already in use by another user on the system',
-            },
-            resolution: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution',
-              defaultMessage: 'Please try another username',
+            usernameAlreadyInUse: {
+              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.usernameAlreadyInUse',
+              defaultMessage: 'Username already in use',
             },
           })
         ),

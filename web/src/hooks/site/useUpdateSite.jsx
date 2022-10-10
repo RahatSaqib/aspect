@@ -1,6 +1,8 @@
+import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { inlineWarning, errorPleaseTryAgainInAFewMinutes } from '../../utils/error/CommonErrorNotifications'
 import { SITE_KEY, SITE_KEY_BY_ID_ENDPOINT } from './siteKeys.js'
 
 const updateSiteById = async (site, siteId) => {
@@ -19,6 +21,32 @@ const updateSiteById = async (site, siteId) => {
     endpoint: replaceRouteParams(SITE_KEY_BY_ID_ENDPOINT, { siteId }),
     method: 'PUT',
     params: { ...submitSite },
+    customErrorNotifications: {
+      409: inlineWarning(
+        defineMessages({
+          siteNameRepeated: {
+            id: 'errorResponseMessages.updateSite.PUT.409.siteNameRepeated',
+            defaultMessage: 'Site name is already in use',
+          },
+          siteShortNameRepeated: {
+            id: 'errorResponseMessages.updateSite.PUT.409.siteShortNameRepeated',
+            defaultMessage: 'Short name is already in use',
+          },
+          siteIdRepeated: {
+            id: 'errorResponseMessages.updateSite.PUT.409.siteIdRepeated',
+            defaultMessage: 'Site Id is already in use',
+          },
+        })
+      ),
+      default: errorPleaseTryAgainInAFewMinutes(
+        defineMessages({
+          title: {
+            id: 'errorResponseMessages.updateSite.PUT.default.title',
+            defaultMessage: 'Saving Site Failed',
+          },
+        })
+      ),
+    },
   })
 }
 

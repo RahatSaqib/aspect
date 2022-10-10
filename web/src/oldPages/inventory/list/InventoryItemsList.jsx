@@ -267,7 +267,7 @@ export const InventoryItemsListWithProps = ({
                   </PermissionsProvider>
                 </ErrorBoundary>
               }
-              label="Inventory on hand"
+              label={intl.formatMessage(messages.inventoryOnHand)}
             />
           ) : null}
         </FormGroup>

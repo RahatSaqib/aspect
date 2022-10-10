@@ -15,7 +15,13 @@ async function getJobFunctionsForSelectList(request) {
     .innerJoin('Partner as p', 'jf.partnerId', 'p.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .orderBy(['p.name', 'jf.name'], 'asc')
-    .select('p.id as partnerId', 'p.name as partnerName', 'jf.id as jobFunctionId', 'jf.name as jobFunctionName')
+    .select(
+      'p.id as partnerId',
+      'p.name as partnerName',
+      'jf.id as jobFunctionId',
+      'jf.name as jobFunctionName',
+      'jf.externalId as jobFunctionExternalId'
+    )
 
   const partners = _.map(_.uniqBy(partnersAndJobFunctions, 'partnerId'), partnerRecord => ({
     id: partnerRecord.partnerId,
@@ -28,6 +34,7 @@ async function getJobFunctionsForSelectList(request) {
         jobFunctionRecord => ({
           id: jobFunctionRecord.jobFunctionId,
           name: jobFunctionRecord.jobFunctionName,
+          externalId: jobFunctionRecord.jobFunctionExternalId,
         })
       ),
       'name'
