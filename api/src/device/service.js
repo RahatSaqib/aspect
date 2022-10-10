@@ -127,6 +127,7 @@ async function getListDevices(query, auth) {
   const { assayId } = query
   const assayFilter = assayId ? (_.isArray(assayId) ? assayId.join(',') : assayId) : null
   const deviceQuery = knex('Device as d')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
@@ -223,6 +224,7 @@ async function getListDevices(query, auth) {
       assayId: 'a.id',
     })
     .modify(addConstraints, dataConstraints, {
+      partner: 'p',
       assay: 'a',
       device: 'd',
       deviceType: 'dt',
@@ -751,6 +753,7 @@ async function getDevicePerformance(request) {
 
 function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = false, showDecommissionedDevices = false) {
   const deviceQuery = knex('Device as d')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -799,6 +802,7 @@ function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = fals
       siteName: 's.name',
     })
     .modify(addConstraints, dataConstraints, {
+      partner: 'p',
       assay: 'a',
       device: 'd',
       deviceType: 'dt',
