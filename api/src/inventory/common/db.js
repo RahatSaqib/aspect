@@ -104,6 +104,7 @@ function getInventorySitesQuery(constraints, request) {
       knex.raw("CONCAT(c.id, '-', s.id) as id"),
       'c.id as consumableId',
       'c.name as consumableName',
+      'c.i18nKey as consumableNameI18nKey',
       'c.manufacturer',
       'c.canExpire',
       'u.shortName as unitShortName',
@@ -169,7 +170,10 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
       geography: 'g',
     })
 async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
-  if (!query.minDate) {
+  if (_.isNil(query.maxDate)) {
+    query.maxDate = new Date()
+  }
+  if (_.isNil(query.minDate)) {
     query.minDate = subDays(new Date(query.maxDate), 30).toISOString()
   }
 

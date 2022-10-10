@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
+  ResultTreatmentStatusNotAvailable: {
+    id: 'pages.ResultList.ResultTreatmentStatusNotAvailable',
+    defaultMessage: 'Not Available',
+  },
   ResultTreatmentStatusAwaitingTreatment: {
     id: 'pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment',
     defaultMessage: 'Awaiting Treatment',

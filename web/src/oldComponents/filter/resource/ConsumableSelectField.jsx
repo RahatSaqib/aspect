@@ -3,9 +3,12 @@ import { MenuItem } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
+import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { consumableMessages } from '../../../messages'
 import { fetchConsumables, ConsumableItems } from '../../../store/ConsumableRedux'
+import PropTypeOf from '../../../utils/types'
 import SelectField from '../../shared/SelectField'
 
 export class ConsumableSelectField extends PureComponent {
@@ -15,10 +18,11 @@ export class ConsumableSelectField extends PureComponent {
     consumableItems: PropTypes.objectOf(ConsumableItems),
     onConsumableChange: PropTypes.func.isRequired,
     value: PropTypes.string,
+    intl: PropTypeOf.intl.isRequired,
   }
 
   static defaultProps = {
-    allItemText: 'All',
+    allItemText: '',
     consumableItems: null,
     value: '',
   }
@@ -40,14 +44,15 @@ export class ConsumableSelectField extends PureComponent {
       'consumableItems',
       'onConsumableChange',
       'value',
+      'intl',
     ])
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
-        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+        {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
         {consumableItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {a.get('name')}
+            {this.props.intl.formatMessage(consumableMessages[a.get('i18nKey')])}
           </MenuItem>
         ))}
       </SelectField>
@@ -70,4 +75,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(ConsumableSelectField)
+export default flowRight(injectIntl, connect(mapStateToProps, mapDispatchToProps))(ConsumableSelectField)

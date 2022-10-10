@@ -7,6 +7,7 @@ import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage } from '../../../messages/customMessages'
+import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import ExportListButton from '../../../oldComponents/ExportListButton'
@@ -125,36 +126,40 @@ export const SiteList = ({ navigate, location }) => {
         </AspectButton>
       </BrowseFilters>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <ExportListButton onExcelClick={onExcelClick} onCsvClick={onExcelClick} reportName="Sites" visible />
-        <SiteDataTable className={cssClasses('SiteDataTable')}>
-          <SiteDataTableHead
-            navigate={navigate}
-            location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={tableColumns}
-          />
-          <TableBody>
-            {data.siteList.map(site => (
-              <SiteDataTableRow
-                key={site.id}
-                site={site}
-                onClick={onRowClick}
-                onAlertClick={onAlertClick}
-                data-site-id={site.id}
+        {data.siteList.length === 0 ? (
+          <BrowseEmptyList navigate={navigate} location={location} />
+        ) : (
+          <>
+            <ExportListButton onExcelClick={onExcelClick} onCsvClick={onExcelClick} reportName="Sites" visible />
+            <SiteDataTable className={cssClasses('SiteDataTable')}>
+              <SiteDataTableHead
+                navigate={navigate}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={tableColumns}
               />
-            ))}
-          </TableBody>
-        </SiteDataTable>
-        {data.siteList.length < data.total && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            paginatorStatus={messages.paginatorStatus}
-            total={data.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
+              <TableBody>
+                {data.siteList.map(site => (
+                  <SiteDataTableRow
+                    key={site.id}
+                    site={site}
+                    onClick={onRowClick}
+                    onAlertClick={onAlertClick}
+                    data-site-id={site.id}
+                  />
+                ))}
+              </TableBody>
+            </SiteDataTable>
+            <BrowseTablePaginator
+              navigate={navigate}
+              location={location}
+              paginatorStatus={messages.paginatorStatus}
+              total={data.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
+            />
+          </>
         )}
       </DataTableCard>
     </div>

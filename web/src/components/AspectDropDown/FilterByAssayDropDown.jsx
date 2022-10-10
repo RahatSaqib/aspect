@@ -92,7 +92,7 @@ const FilterByAssayDropDown = ({ props: { actionComponentProps: config, action }
   }, [options, data, formatMessage, initByCountryDefault])
 
   return defaultValue ? (
-    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
       <div style={{ position: 'relative', width: '450px', zIndex: 99 }}>
         <Select
           autoBlur

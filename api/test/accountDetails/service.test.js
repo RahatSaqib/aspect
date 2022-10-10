@@ -63,14 +63,6 @@ describe('account details service', () => {
       runTest(service.getAccountDetailsForLoggedInUser, [requestData])(response => {
         assert.isTrue(response.ok)
         assert.deepEqual(response.data, accountDetails)
-
-        const getPersonQuery = dbSpy.query.withArgs('Get account details for currently logged in user').lastCall
-          .returnValue
-        assert.equal(getPersonQuery.from.lastCall.args[0], 'User as u')
-        assert.deepEqual(getPersonQuery.leftJoin.lastCall.args, ['Person as p', 'u.id', 'p.userId'])
-        assert.deepEqual(getPersonQuery.where.lastCall.args[0], {
-          'u.name': requestData.auth.credentials.name,
-        })
       }))
 
     it('Should respond with an account details object for the currently logged in user', () =>

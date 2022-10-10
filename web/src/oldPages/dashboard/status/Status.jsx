@@ -20,9 +20,9 @@ import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
 import TestsOverTimeGraph from '../Graphs/TestsOverTimeGraph'
 import TreatmentStatusGraph from '../Graphs/TreatmentStatusGraph'
 import XDRFLQResistanceGraph from '../Graphs/XDRFLQResistanceGraph'
+import styles from './index.css'
 import messages from './messages'
 import Reports from './Reports'
-import styles from './Status.css'
 import SummaryStatus from './SummaryStatus'
 
 const cssClasses = classnames.bind(styles)
@@ -54,18 +54,42 @@ const Status = () => {
 
       {assays ? (
         <>
-          <TestsOverTimeGraph assaysFromState={assays} />
-          <GroupedByTotalResultsGraphs assays={assays} />
-          <TreatmentStatusGraph assays={assays} />
-          <DeviceStatusGraph assays={assays} />
-          <CovidDailyConfirmedGraph assays={assays} />
-          <CovidMortalityAndRecoveryGraph assays={assays} />
-          <CovidMortalityAndRecoveryByGenderGraph assays={assays} />
-          <CovidCasesByAgeAndGender assays={assays} />
-          <InventoryStatusGraph assays={assays} />
-          <GroupedByTrendsInYearsGraphs assays={assays} />
-          <GroupedByTrendsInQuartersGraphs assays={assays} />
-          <XDRFLQResistanceGraph assays={assays} />
+          <PermissionsProvider permissions={['dashboard', '+result']}>
+            <TestsOverTimeGraph assaysFromState={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['dashboard', '+result']}>
+            <GroupedByTotalResultsGraphs assays={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['dashboard', '+reporter', '+treatmentStatus:view', '+result:view']}>
+            <TreatmentStatusGraph assaysFromState={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['dashboard', 'operationalData']}>
+            <DeviceStatusGraph assaysFromState={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['covid']}>
+            <CovidDailyConfirmedGraph assays={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['covid']}>
+            <CovidMortalityAndRecoveryGraph assays={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['covid']}>
+            <CovidMortalityAndRecoveryByGenderGraph assays={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['covid']}>
+            <CovidCasesByAgeAndGender assays={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['dashboard', 'operationalData']}>
+            <InventoryStatusGraph assaysFromState={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['dashboard', '+result']}>
+            <GroupedByTrendsInYearsGraphs assays={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['dashboard', '+result']}>
+            <GroupedByTrendsInQuartersGraphs assays={assays} />
+          </PermissionsProvider>
+          <PermissionsProvider permissions={['dashboard']}>
+            <XDRFLQResistanceGraph assaysFromState={assays} />
+          </PermissionsProvider>
         </>
       ) : null}
 

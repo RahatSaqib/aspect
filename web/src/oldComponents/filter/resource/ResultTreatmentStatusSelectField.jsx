@@ -4,10 +4,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { compose, pure, setPropTypes, mapProps, lifecycle, withHandlers } from 'recompose'
 import useI18n from '../../../hooks/useI18n'
+import { resultTreatmentStatusMessages } from '../../../messages'
 import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
 import formatI18nMessage from '../../../utils/i18n/formatterWeb'
 import SelectField from '../../shared/SelectField'
-import messages from './i18n/resultTreatmentStatusMessages'
 
 const enhance = compose(
   pure,
@@ -64,7 +64,7 @@ export function TreatmentSelectField({
       {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
       {treatmentSelectList.map(s => (
         <MenuItem key={s.value} value={s.value}>
-          {formatI18nMessage(messages, formatMessage, s.i18nKey, s.name)}
+          {formatI18nMessage(resultTreatmentStatusMessages, formatMessage, s.i18nKey, s.name)}
         </MenuItem>
       ))}
     </SelectField>

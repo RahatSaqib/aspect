@@ -104,10 +104,8 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
     .catch(err => {
       const store = require('../../store/store').default
       const customErrorNotifications = get(options, `errorNotifications.customErrorNotifications.${err.statusCode}`)
-
       if (customErrorNotifications && typeof customErrorNotifications === 'function') {
         const customErrorMessage = customErrorNotifications(err.data.extraData)
-
         store.dispatch(showError(customErrorMessage, err))
         return Promise.reject(err)
       }
@@ -117,15 +115,11 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         get(options, 'errorNotifications.default')
       )
       if (errorNotification) {
-        if (err.statusCode === 409 || err.statusCode === 422) {
-          errorNotification = {
-            ...defineMessages({
-              message: {
-                id: 'server.userFriendly.message',
-                defaultMessage: err.message,
-              },
-            }),
-          }
+        if (err.data?.errorKeyCode && errorNotification[err.data.errorKeyCode]) {
+          errorNotification = { message: errorNotification[err.data.errorKeyCode] }
+        } else if (err.data?.problems) {
+          const message = Object.keys(err.data.problems).map(errorKeyCode => errorNotification[errorKeyCode])[0] // TODO Remove when there is support for multiple messages.
+          errorNotification = { message }
         } else if (errorNotification[err.message]) {
           errorNotification = errorNotification[err.message]
         } else if (errorNotification.default) {

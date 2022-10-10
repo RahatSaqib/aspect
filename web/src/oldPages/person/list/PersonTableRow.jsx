@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
+import isString from 'lodash/isString'
 import AccountEnableDisable from '../../../components/Account/AccountEnableDisable'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
@@ -10,7 +11,7 @@ const enhance = identity
 
 const formatTags = tagsStr => {
   if (!tagsStr) return ''
-  let tags = tagsStr.split(';')
+  let tags = isString(tagsStr) ? tagsStr.split(';') : tagsStr.toJS().map(e => (isString(e) ? e : e.title))
   if (tags.length > 2) {
     const tagsToShow = tags.slice(0, 2)
     const tagsToHide = tags.slice(2)

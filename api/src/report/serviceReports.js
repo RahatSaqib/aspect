@@ -15,6 +15,7 @@ const {
   respondFile,
   respondStream,
   RELABEL_EXCEL,
+  renderExcelTemplateToCsv,
 } = require('../shared/excel')
 const logger = require('../shared/logger')
 
@@ -236,7 +237,25 @@ async function createReport(request, reply) {
   ]
 
   if (extension === 'csv') {
-    return streamToCsv(data, reply, fileName)
+    const [sheet] = sheets
+    const { streamCSV } = sheet.query || {}
+    if (streamCSV) {
+      return streamToCsv(data, reply, fileName)
+    }
+    const dataBuffer = await renderExcelTemplateToCsv({
+      countryAbbreviation,
+      culture,
+      templateFolderPath: templateFolderPath || externalId,
+      data,
+      replacements,
+    })
+
+    return respondFile({
+      dataBuffer,
+      extension,
+      fileNamePrefix: fileName,
+      reply,
+    })
   }
   const renderParams = {
     countryAbbreviation,

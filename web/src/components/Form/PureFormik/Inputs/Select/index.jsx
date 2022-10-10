@@ -3,7 +3,16 @@ import React from 'react'
 import { Autocomplete, useTheme, TextField, useMediaQuery } from '@mui/material'
 import filter from 'lodash/filter'
 import startCase from 'lodash/startCase'
+import { defineMessages } from 'react-intl'
 import { VariableSizeList } from 'react-window'
+import { i18nWrapper } from '../../../../../providers/I18nProvider'
+
+const messages = defineMessages({
+  noOptions: {
+    id: 'form.noOptions',
+    defaultMessage: 'No options',
+  },
+})
 
 /**
  * this component should not contain **ANY**
@@ -11,10 +20,12 @@ import { VariableSizeList } from 'react-window'
  */
 
 const PureSelect = props => {
+  const { formatMessage } = i18nWrapper()
+
   const { inputProps, form } = props
   const { id, disabled, label, type, variant, options, initialValue, renderOption: RenderComponent } = inputProps
   const { errors, touched, handleBlur, values, setFieldValue } = form
-  const value = filter(options, { value: values[id] })[0] || {}
+  const value = filter(options, { value: values[id] })[0] || null
 
   return (
     <Autocomplete
@@ -23,6 +34,7 @@ const PureSelect = props => {
       autoSelect
       options={options || []}
       getOptionLabel={option => option?.label || ''}
+      noOptionsText={formatMessage(messages.noOptions)}
       defaultValue={initialValue}
       value={value}
       onChange={(_e, selected) => setFieldValue(id, selected?.value || '')}
