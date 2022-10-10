@@ -1,6 +1,5 @@
 import React from 'react'
-import { createTheme } from '@mui/material'
-import { ThemeProvider } from '@mui/material/styles'
+import { createTheme, ThemeProvider } from '@mui/material'
 import { mount, shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import { QueryClient, QueryClientProvider } from 'react-query'
