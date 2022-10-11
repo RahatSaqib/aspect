@@ -108,19 +108,12 @@ exports.register = (server, options) => {
       const table = server.table()
       const routesCache = RouteCache.getInstance(table)
       const routesList = await routesCache.getCacheValueRoute()
-      const matchingRoutesList = []
 
-      // preparing list of routes matching to versioned routes
-      routesList.map(url => {
-        if (url.replace(/v\d+[\\/]/gi, '').trim() === request.path) {
-          matchingRoutesList.push(url)
-        }
-        return url
-      })
-
-      // finding available versions from matching versioned routes for mobileApiPath(/mobile/api/)
-      const availableVersion = matchingRoutesList.map(list => parseInt(list.match(/\d+/)[0]))
-      const largestNum = availableVersion ? Math.max(...availableVersion) : options.defaultVersion
+      // getting matching routes from cache
+      const availableVersion = await routesCache.getCachedAvailableRoutes(routesList, request)
+      const largestNum = availableVersion[request.path]
+        ? Math.max(...availableVersion[request.path])
+        : options.defaultVersion
       requestedVersion = largestNum > requestedVersion ? options.defaultVersion : largestNum
     }
 
