@@ -202,6 +202,8 @@ async function seed(knex) {
     deviceTypeId: deviceTypeHainGenoScanId,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
+    resultCategory1Titlei18nKey: 'resultCategoryResult',
+
     resultDataSchema: JSON.stringify({
       no: {
         list: false,
@@ -674,6 +676,8 @@ async function seed(knex) {
     deviceTypeId: deviceTypeHainGenoScanId,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
+    resultCategory1Titlei18nKey: 'resultCategoryResult',
+
     resultDataSchema: JSON.stringify({
       no: {
         list: false,
@@ -1543,6 +1547,8 @@ async function seed(knex) {
     deviceTypeId: deviceTypeHainGenoScanId,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
+    resultCategory1Titlei18nKey: 'resultCategoryResult',
+
     resultDataSchema: JSON.stringify({
       no: {
         list: false,
@@ -2293,6 +2299,8 @@ async function seed(knex) {
     deviceTypeId: deviceTypeHainGenoScanId,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
+    resultCategory1Titlei18nKey: 'resultCategoryResult',
+
     resultDataSchema: JSON.stringify({
       no: {
         list: false,

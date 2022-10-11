@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-06T18:45:28.779Z\n"
+"POT-Creation-Date: 2022-10-11T19:12:20.750Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1153,6 +1153,13 @@ msgstr ""
 "На основі останніх 30 днів відображає відсоток результатів із помилками "
 "порівняно із загальною кількістю виконаних результатів"
 
+#. [filter.sampleType.sampleTypeBlood]
+#. defaultMessage is:
+#. Blood
+#: extracted_strings.json
+msgid "Blood"
+msgstr "Кров"
+
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
@@ -1235,6 +1242,13 @@ msgstr "Тест на COVID-19"
 #: extracted_strings.json
 msgid "CREATE"
 msgstr "Створити"
+
+#. [filter.sampleType.sampleTypeCSF]
+#. defaultMessage is:
+#. CSF
+#: extracted_strings.json
+msgid "CSF"
+msgstr "CSF"
 
 #. [pages.ListExport.exportCsv]
 #. defaultMessage is:
@@ -2137,6 +2151,13 @@ msgstr "Користувацькі поля"
 msgid "Custom Fields Average Completion"
 msgstr "Середнє заповнення спеціальних полів"
 
+#. [filter.sampleType.sampleTypeDBS]
+#. defaultMessage is:
+#. DBS
+#: extracted_strings.json
+msgid "DBS"
+msgstr "DBS"
+
 #. [months.december]
 #. defaultMessage is:
 #. DEC
@@ -2847,6 +2868,13 @@ msgstr "Ви хочете вимкнути"
 msgid "Do you want to enable"
 msgstr "Ви хочете ввімкнути"
 
+#. [page.contacts.person.removeAssignment]
+#. defaultMessage is:
+#. Do you want to remove below assignment?
+#: extracted_strings.json
+msgid "Do you want to remove below assignment?"
+msgstr "Ви хочете видалити нижчезазначене призначення?"
+
 #. [jobFunction.donor]
 #. defaultMessage is:
 #. Donor
@@ -2965,6 +2993,13 @@ msgstr "Змінити"
 msgid "Edit Notification"
 msgstr "Редагувати сповіщення"
 
+#. [filter.sampleType.sampleTypeEffusion]
+#. defaultMessage is:
+#. Effusion
+#: extracted_strings.json
+msgid "Effusion"
+msgstr "Випіт"
+
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
 #. Either your computer has been disconnected from the internet or our server has failed to respond.
@@ -2993,14 +3028,14 @@ msgstr "Адреса ел. пошти"
 #. Email Address
 #: extracted_strings.json
 msgid "Email Address"
-msgstr "Email адреса"
+msgstr "Адреса електронної пошти"
 
 #. [pages.NotificationDetail.emailBody]
 #. defaultMessage is:
 #. Email Body
 #: extracted_strings.json
 msgid "Email Body"
-msgstr "Зміст Email"
+msgstr "контент електронної пошти"
 
 #. [pages.Notifications.table.emailSentHeader]
 #. defaultMessage is:
@@ -3014,7 +3049,7 @@ msgstr "Листа відправлено"
 #. Email Subject
 #: extracted_strings.json
 msgid "Email Subject"
-msgstr "Email Тема"
+msgstr "Тема листа"
 
 #. [pages.Notifications.emailBodyRequired]
 #. defaultMessage is:
@@ -3884,6 +3919,13 @@ msgstr "GP не виявлено - NP виявлено"
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP не виявлено - NP не виявлено"
 
+#. [filter.sampleType.sampleTypeGastricLavage]
+#. defaultMessage is:
+#. Gastric Lavage
+#: extracted_strings.json
+msgid "Gastric Lavage"
+msgstr "Промивання шлунка"
+
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
 #. GeneXpert COVID-19
@@ -4699,6 +4741,13 @@ msgstr "Інвентар на руках"
 #: extracted_strings.json
 msgid "Is at least {minLength} characters long"
 msgstr "Принаймні {minLength} символів"
+
+#. [filter.sampleType.sampleTypeIsolate]
+#. defaultMessage is:
+#. Isolate
+#: extracted_strings.json
+msgid "Isolate"
+msgstr "Ізолювати"
 
 #. [pages.TableCell.issueBasedNotification]
 #. defaultMessage is:
@@ -5964,6 +6013,13 @@ msgstr "NTP"
 msgid "Name"
 msgstr "Ім'я"
 
+#. [filter.sampleType.sampleTypeNasalSwab]
+#. defaultMessage is:
+#. Nasal Swab
+#: extracted_strings.json
+msgid "Nasal Swab"
+msgstr "Мазок з носа"
+
 #. [pages.NotificationDetail.Area.National]
 #. defaultMessage is:
 #. National
@@ -6509,7 +6565,7 @@ msgstr "жовтень"
 #. OK
 #: extracted_strings.json
 msgid "OK"
-msgstr "ОК"
+msgstr "Добре"
 
 #. [filter.btnGroup.offline]
 #. defaultMessage is:
@@ -6652,6 +6708,9 @@ msgid "Ordered"
 msgstr "Впорядковано"
 
 #. [pages.shared.deviceStatus.inactiveOther]
+#. defaultMessage is:
+#. Other
+#. [filter.sampleType.sampleTypeOther]
 #. defaultMessage is:
 #. Other
 #: extracted_strings.json
@@ -6888,6 +6947,13 @@ msgstr "Деталь людини"
 #: extracted_strings.json
 msgid "Phone"
 msgstr "Телефон"
+
+#. [filter.sampleType.sampleTypePlasma]
+#. defaultMessage is:
+#. Plasma
+#: extracted_strings.json
+msgid "Plasma"
+msgstr "Плазма"
 
 #. [errorResponseMessages.common.notFound.resolution]
 #. defaultMessage is:
@@ -7369,6 +7435,13 @@ msgstr "Надано"
 #: extracted_strings.json
 msgid "Purged"
 msgstr "Очищений"
+
+#. [filter.sampleType.sampleTypePus]
+#. defaultMessage is:
+#. Pus
+#: extracted_strings.json
+msgid "Pus"
+msgstr "Гній"
 
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
@@ -7854,6 +7927,9 @@ msgstr "Вирішено"
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
+#. [pages.ResultList.resultCategoryResult]
+#. defaultMessage is:
+#. Result
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
@@ -8087,6 +8163,13 @@ msgstr "SMS надіслано MTD"
 #: extracted_strings.json
 msgid "SMS was sent to:"
 msgstr "SMS надіслано на адресу:"
+
+#. [filter.sampleType.sampleTypeSaliva]
+#. defaultMessage is:
+#. Saliva
+#: extracted_strings.json
+msgid "Saliva"
+msgstr "Слина"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -8443,7 +8526,7 @@ msgstr "Виберіть хворобу ..."
 #. Select Job
 #: extracted_strings.json
 msgid "Select Job"
-msgstr "Виберіть Job"
+msgstr "Виберіть завдання"
 
 #. [pages.NotificationDetail.SelectLevel]
 #. defaultMessage is:
@@ -9220,6 +9303,13 @@ msgstr "Довжина SMS-повідомлення не повинна пере
 msgid "Source devices"
 msgstr "Пристрої-джерела"
 
+#. [filter.sampleType.sampleTypeSputum]
+#. defaultMessage is:
+#. Sputum
+#: extracted_strings.json
+msgid "Sputum"
+msgstr "Мокротиння"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -9281,6 +9371,9 @@ msgstr "Штат / регіон"
 #. defaultMessage is:
 #. Status
 #. [pages.ResultWorkflowStatusLog.logStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.ResultList.resultCategoryStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
@@ -11932,16 +12025,6 @@ msgstr "статус лікування - {treatmentStatusName}"
 msgid "type is {deviceTypeName}"
 msgstr "тип - {deviceTypeName}"
 
-#. [server.userFriendly.message]
-#. defaultMessage is:
-#. undefined
-#. [page.contacts.person.removeAssignment]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "невизначений"
-
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
@@ -12132,6 +12215,12 @@ msgstr "{unit} загальна калібрування"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {total, plural, one {# результат} other {# результати}})"
+
+#~ msgid "lalalala"
+#~ msgstr "лалалала"
+
+#~ msgid "undefined"
+#~ msgstr "невизначений"
 
 #~ msgid "Demo Device"
 #~ msgstr "Загальний показник активності"

@@ -1,6 +1,6 @@
 import assay from './assay'
-import cronMessages from './cronMessages'
 import consumableMessages from './consumableMessages'
+import cronMessages from './cronMessages'
 import { commonDefinitions, getCustomMessage } from './customMessages'
 import { months } from './dateMessages'
 import deviceApprovalMessages from './deviceApprovalMessages'
@@ -9,6 +9,7 @@ import resultCategory from './resultCategory'
 import resultCategoryType from './resultCategoryType'
 import resultTreatmentStatusMessages from './resultTreatmentStatusMessages'
 import resultWorkflowStatusMessages from './resultWorkflowStatusMessages'
+import sampleType from './sampleType'
 import { validations } from './validations'
 
 export {
@@ -25,4 +26,5 @@ export {
   resultWorkflowStatusMessages,
   resultTreatmentStatusMessages,
   validations,
+  sampleType,
 }
