@@ -17,6 +17,7 @@ module.exports = async function getResultsBySiteData(dataConstraints, params) {
       'baseSite.id'
     )
     .modify(filterParams, params, { siteName: 'baseSite.name', stateId: 'geo.stateId', lgaId: 'geo.lgaId' })
+    .modify(filterDateRangeParams, params, 'results.createdOn')
     .groupBy('results.siteId', 'baseSite.name')
     .select('baseSite.name as site')
     .count(`results.createdOn as testsReported`)
