@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react'
 import { Paper } from '@mui/material'
-import head from 'lodash/head'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { navigations } from './oldComponents/BrowseFilters'
 import DetailLayout from './oldComponents/DetailLayout'
-import { reduceNavLinks } from './oldComponents/filter/utils'
 import LoggedInLayout from './oldComponents/LoggedInLayout'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import SignedOutLayout from './oldComponents/SignedOutLayout'
@@ -16,7 +13,7 @@ import CaseDetails from './oldPages/case/details/CaseDetails'
 import CaseList from './oldPages/case/list/CaseList'
 import OperationalData from './oldPages/dashboard/operational/OperationalData'
 import LoadableStatus from './oldPages/dashboard/status/LoadableStatus'
-import DeviceList from './oldPages/device/list/DeviceList'
+import DeviceContainer from './oldPages/device/DeviceContainer'
 import DeviceApiKeyList from './oldPages/deviceApiKey/list/DeviceApiKeyList'
 import InventoryContainer from './oldPages/inventory/InventoryContainer'
 import ClinicalHistory from './oldPages/patient/ClinicalHistory'
@@ -40,19 +37,6 @@ import SiteDetail, { EditSite } from './pages/Site/Detail'
 import SiteList from './pages/Site/List'
 import Welcome from './pages/Welcome'
 import { RoutesPermissionProvider } from './providers/RoutePermissions'
-
-function useHashAndScroll() {
-  const location = useLocation()
-  useEffect(() => {
-    const { hash = '' } = location
-    setTimeout(() => {
-      const nodeList = document.querySelectorAll(`[name="${hash.replace('#', '')}"]`)
-      if (nodeList && nodeList.length) {
-        nodeList[0].scrollIntoView({ behavior: 'smooth' })
-      }
-    }, 0)
-  }, [location])
-}
 
 const getElement = (props, permissions, render) => {
   return <RenderTo render={render} props={props} permissions={permissions} />
@@ -80,11 +64,6 @@ const renderRedirectToDashboard = ({ location, permissions }) => {
     pathname = '/welcome'
   }
   return <Navigate replace to={pathname} state={{ referrer: location }} />
-}
-
-const renderRedirectToBrowse = ({ permissions }) => {
-  const reducedNav = reduceNavLinks(navigations, permissions)
-  return <Navigate to={head(reducedNav).value || '/browse/device'} />
 }
 
 const renderClinicalIndicators = () => (
@@ -148,11 +127,7 @@ const renderLicense = props => (
     <License {...props} />
   </SignedOutLayout>
 )
-const renderLoadableStatus = () => (
-  <LoggedInLayout>
-    <LoadableStatus />
-  </LoggedInLayout>
-)
+
 const renderTaskList = props => (
   <LoggedInLayout>
     <TaskList {...props} />
@@ -168,11 +143,7 @@ const renderReports = props => (
     <ReportIndex {...props} />
   </LoggedInLayout>
 )
-const renderDeviceList = props => (
-  <LoggedInLayout>
-    <DeviceList {...props} />
-  </LoggedInLayout>
-)
+
 const renderDeviceDetail = props => (
   <LoggedInLayout>
     <DeviceDetail {...props} />
@@ -233,11 +204,7 @@ const renderPersonList = props => (
     <PersonList {...props} />
   </LoggedInLayout>
 )
-const renderInventoryContainer = props => (
-  <LoggedInLayout>
-    <InventoryContainer {...props} />
-  </LoggedInLayout>
-)
+
 const renderNotificationList = props => (
   <LoggedInLayout>
     <NotificationList {...props} />
@@ -309,7 +276,6 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
     navigate,
   }
 
-  useHashAndScroll()
   return (
     <RoutesPermissionProvider>
       <Routes>
@@ -326,7 +292,17 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
 
         <Route
           path="/dashboard"
-          element={<RenderTo render={renderLoadableStatus} props={props} permissions={['dashboard:summary']} />}
+          element={
+            <RenderTo
+              render={() => (
+                <LoggedInLayout>
+                  <LoadableStatus />
+                </LoggedInLayout>
+              )}
+              props={props}
+              permissions={['dashboard:summary']}
+            />
+          }
         />
 
         <Route path="/task-list" element={getElement(props, ['task'], renderTaskList)} />
@@ -346,9 +322,23 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
 
         <Route path="/manage" element={getElement(props, ['manage'], renderManage)} />
 
-        <Route path="/browse" element={getElement(props, ['browse'], renderRedirectToBrowse)} />
+        <Route path="/browse" element={<Navigate to="/browse/device" />} />
 
-        <Route path="/browse/device" element={getElement(props, ['browse', 'device'], renderDeviceList)} />
+        <Route
+          path="/browse/device"
+          element={
+            <RenderTo
+              render={() => (
+                <LoggedInLayout>
+                  <DeviceContainer />
+                </LoggedInLayout>
+              )}
+              props={props}
+              permissions={['browse', 'device']}
+            />
+          }
+        />
+
         <Route
           path="/browse/device/:deviceId/*"
           element={getElement(props, ['browse', 'device'], renderDeviceDetail)}
@@ -390,7 +380,17 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
 
         <Route
           path="/browse/inventory/*"
-          element={getElement(props, ['browse', 'inventory'], renderInventoryContainer)}
+          element={
+            <RenderTo
+              render={() => (
+                <LoggedInLayout>
+                  <InventoryContainer />
+                </LoggedInLayout>
+              )}
+              props={props}
+              permissions={['browse', 'inventory']}
+            />
+          }
         />
 
         <Route

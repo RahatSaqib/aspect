@@ -446,7 +446,6 @@ export const DeviceListWithProps = ({
 )
 
 export const DeviceList = () => {
-  // >>>>>> hooks/ <<<<<<
   const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
   const intl = useI18n()
@@ -456,15 +455,7 @@ export const DeviceList = () => {
     displayPreferences,
   } = useAuthState()
   const location = useLocation()
-  const clearMergeDialog = () => {
-    setSourceDevicesIds([])
-    setTargetDeviceId(null)
-    setSiteToMergeDevices(null)
-    setDeviceTypeToMerge(null)
-    setConfirmationVisible(false)
-  }
 
-  // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(new Table())
   const [total, setTotal] = useState()
@@ -555,6 +546,14 @@ export const DeviceList = () => {
     if (!sanitized) {
       return getExportableFile(filtersParams, formatType, sortCol, sortDir, 0, total, 'devices')
     }
+  }
+
+  const clearMergeDialog = () => {
+    setSourceDevicesIds([])
+    setTargetDeviceId(null)
+    setSiteToMergeDevices(null)
+    setDeviceTypeToMerge(null)
+    setConfirmationVisible(false)
   }
 
   if (isError) {
