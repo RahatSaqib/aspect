@@ -1,7 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import InputLabel from '@mui/material/InputLabel'
-import TextField from '@mui/material/TextField'
+import { Button, InputLabel, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import has from 'lodash/has'
 import identity from 'lodash/identity'

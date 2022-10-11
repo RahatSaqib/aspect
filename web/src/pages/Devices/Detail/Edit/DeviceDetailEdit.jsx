@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
+import { Button, Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
 import PropTypes from 'prop-types'

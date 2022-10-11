@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Paper from '@mui/material/Paper'
+import { Paper } from '@mui/material'
 import head from 'lodash/head'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { navigations } from './oldComponents/BrowseFilters'
@@ -148,9 +148,9 @@ const renderLicense = props => (
     <License {...props} />
   </SignedOutLayout>
 )
-const renderLoadableStatus = props => (
+const renderLoadableStatus = () => (
   <LoggedInLayout>
-    <LoadableStatus {...props} />
+    <LoadableStatus />
   </LoggedInLayout>
 )
 const renderTaskList = props => (
@@ -324,7 +324,10 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
 
         <Route path="/license" element={renderRedirectToLoginOr(props) || renderLicense(props)} />
 
-        <Route path="/dashboard" element={getElement(props, ['dashboard:summary'], renderLoadableStatus)} />
+        <Route
+          path="/dashboard"
+          element={<RenderTo render={renderLoadableStatus} props={props} permissions={['dashboard:summary']} />}
+        />
 
         <Route path="/task-list" element={getElement(props, ['task'], renderTaskList)} />
         <Route path="/task-list/aggre-list" element={getElement(props, ['task'], renderTaskAggre)} />

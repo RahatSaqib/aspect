@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import Immutable from 'immutable'
 import flowRight from 'lodash/flowRight'
 import omit from 'lodash/omit'

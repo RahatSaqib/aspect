@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
+import { CircularProgress } from '@mui/material'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'
 import AspectForm from '../../../../components/Form'

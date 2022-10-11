@@ -1,6 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
+import { Button, Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import endOfYear from 'date-fns/endOfYear'
 import formatDate from 'date-fns/format'
@@ -13,7 +12,7 @@ import config from '../../../config'
 import Icon from '../../../oldComponents/shared/icon/Icon'
 import { requirePermissions } from '../../../oldComponents/shared/requirePermissions'
 import { getAspectAccess } from '../../../utils/LocalStorage'
-import styles from './Status.css'
+import styles from './index.css'
 import Title from './Title'
 
 const cssClasses = classnames.bind(styles)

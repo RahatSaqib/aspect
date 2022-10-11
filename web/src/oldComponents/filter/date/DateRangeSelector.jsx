@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
-import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
+import { Divider, MenuItem } from '@mui/material'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'

@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import { useFormikContext } from 'formik'
 import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'

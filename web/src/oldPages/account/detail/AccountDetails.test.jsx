@@ -1,5 +1,5 @@
 import React from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
+import { LinearProgress } from '@mui/material'
 import { shallow } from 'enzyme'
 import noop from 'lodash/noop'
 import { Route } from 'react-router-dom'

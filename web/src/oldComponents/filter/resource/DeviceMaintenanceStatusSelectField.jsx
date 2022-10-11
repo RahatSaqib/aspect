@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'

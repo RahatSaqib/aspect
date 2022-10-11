@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
-import Paper from '@mui/material/Paper'
+import { LinearProgress, Paper } from '@mui/material'
 import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'

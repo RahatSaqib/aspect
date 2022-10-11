@@ -39,6 +39,9 @@ describe('account details service', () => {
           return updates
         },
       },
+      '../auth/constraints': {
+        getUserFromCredentials: async () => ({ countryId: 1 }),
+      },
     })
   })
 

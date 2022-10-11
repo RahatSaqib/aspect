@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
@@ -86,7 +86,7 @@ const TestsOverTimeGraphSide = ({ assaysFromState, data, endPointParams, showLab
         <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
             <AspectResponsivePie
-              config={{ id: 'testPerformedMonthlytotal', showLabel }}
+              config={{ id: 'testPerformedMonthlytotal', showLabel, labelTextColor: '#FFF' }}
               assaysFromState={assaysFromState}
               data={graphData}
               keys={graphKeys}

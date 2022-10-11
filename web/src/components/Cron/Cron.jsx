@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, CardContent } from '@mui/material'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
+import { Card, CardContent, Tab, Tabs } from '@mui/material'
 import classNames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'

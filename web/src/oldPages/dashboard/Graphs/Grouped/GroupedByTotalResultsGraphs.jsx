@@ -5,7 +5,6 @@ import hivGraphs from '../../../../components/Graphs/GraphConfigurations/HIV'
 import tbGraphs from '../../../../components/Graphs/GraphConfigurations/TB'
 import xdrGraphs from '../../../../components/Graphs/GraphConfigurations/XDR'
 import GraphsContainer from '../../../../components/Graphs/GraphsContainer'
-import PermissionsProvider from '../../../../providers/PermissionsProvider'
 
 const { hivResults } = hivGraphs
 const { tbDetected, tbResults } = tbGraphs
@@ -23,25 +22,23 @@ const GroupedByTotalResultsGraphs = ({ assays }) => {
 
   return graphs.map(({ graph, name }, index) => (
     <ErrorBoundary key={graph.id}>
-      <PermissionsProvider permissions={graph.graphRenderPermissions}>
-        <GraphsContainer
-          assaysFromState={assays}
-          config={{
-            ...graph,
-            onSettled: data => {
-              if (graphs[index].totalResults < 0) {
-                setGraphs(old => {
-                  const newElem = { totalResults: data.totalResults, name, graph }
-                  const allButCurrent = old.filter(e => e.name !== name)
-                  allButCurrent.push(newElem)
-                  allButCurrent.sort((a, b) => b.totalResults - a.totalResults)
-                  return allButCurrent
-                })
-              }
-            },
-          }}
-        />
-      </PermissionsProvider>
+      <GraphsContainer
+        assaysFromState={assays}
+        config={{
+          ...graph,
+          onSettled: data => {
+            if (graphs[index].totalResults < 0) {
+              setGraphs(old => {
+                const newElem = { totalResults: data.totalResults, name, graph }
+                const allButCurrent = old.filter(e => e.name !== name)
+                allButCurrent.push(newElem)
+                allButCurrent.sort((a, b) => b.totalResults - a.totalResults)
+                return allButCurrent
+              })
+            }
+          },
+        }}
+      />
     </ErrorBoundary>
   ))
 }

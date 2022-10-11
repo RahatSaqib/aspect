@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
+import { LinearProgress } from '@mui/material'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
@@ -22,26 +22,28 @@ import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
 
-const messages = defineMessages({
+const messages = {
   ...deviceApprovalMessages,
   ...deviceStatusMessages,
-  profile: {
-    id: 'pages.DeviceDetail.profile',
-    defaultMessage: 'Profile',
-  },
-  operation: {
-    id: 'pages.DeviceDetail.operation',
-    defaultMessage: 'Operation',
-  },
-  alerts: {
-    id: 'pages.DeviceDetail.alerts',
-    defaultMessage: 'Alerts',
-  },
-  edit: {
-    id: 'pages.DeviceDetail.edit',
-    defaultMessage: 'Edit',
-  },
-})
+  ...defineMessages({
+    profile: {
+      id: 'pages.DeviceDetail.profile',
+      defaultMessage: 'Profile',
+    },
+    operation: {
+      id: 'pages.DeviceDetail.operation',
+      defaultMessage: 'Operation',
+    },
+    alerts: {
+      id: 'pages.DeviceDetail.alerts',
+      defaultMessage: 'Alerts',
+    },
+    edit: {
+      id: 'pages.DeviceDetail.edit',
+      defaultMessage: 'Edit',
+    },
+  }),
+}
 
 export const DeviceDetail = props => {
   const dispatch = useDispatch()

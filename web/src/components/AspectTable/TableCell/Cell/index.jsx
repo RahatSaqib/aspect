@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import { array, bool, func, object, oneOfType, number, string } from 'prop-types'
 
 /**

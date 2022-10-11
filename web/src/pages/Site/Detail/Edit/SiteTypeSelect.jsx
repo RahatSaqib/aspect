@@ -1,7 +1,5 @@
 import React from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
-import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
+import { LinearProgress, MenuItem, TextField } from '@mui/material'
 import useSiteType from '../../../../hooks/site/useSiteType'
 
 const SiteTypeSelect = ({ name, label, value, onChange, width, disabled }) => {

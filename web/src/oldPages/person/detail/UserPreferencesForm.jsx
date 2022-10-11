@@ -1,7 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
+import { Button, MenuItem, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import { compose, lifecycle, pure } from 'recompose'
 import { timezones, languages } from '../../../oldComponents/filter/hardcoded'

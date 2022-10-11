@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import { mount } from 'enzyme'
 import Contacts from './Contacts'
 

@@ -1,7 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import CircularProgress from '@mui/material/CircularProgress'
-import Tooltip from '@mui/material/Tooltip'
+import { Button, CircularProgress, Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import { bool, func } from 'prop-types'
 import { defineMessages } from 'react-intl'

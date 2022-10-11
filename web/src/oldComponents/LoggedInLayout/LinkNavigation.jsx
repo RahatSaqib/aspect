@@ -16,11 +16,11 @@ export const LinkNavigation = ({ type, onClick, children }) => {
       label: formatMessage(messages.homeTitle),
       requiredPermissions: ['dashboard:summary'],
     },
-    {
-      href: '/task-list',
-      label: formatMessage(messages.taskListTitle),
-      requiredPermissions: ['taskMenu'],
-    },
+    // {
+    //   href: '/task-list',
+    //   label: formatMessage(messages.taskListTitle),
+    //   requiredPermissions: ['taskMenu'],
+    // },
     {
       href: '/operational-data',
       label: formatMessage(messages.operationDataTitle),
