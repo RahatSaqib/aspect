@@ -377,7 +377,7 @@ async function seedSenaiteLimsAssays(knex, assayExternalIds) {
     assayTypeId: await assayTypeToId('TB G&D'),
     deviceTypeId,
     resultCategory1Label: 'Result',
-    resultCategory1Titlei18nKey: 'resultCategoryResult',
+    resultCategory1i18nKey: 'resultCategoryResult',
 
     resultSourceId: await resultSourceToId('LIMS'),
     patientDataSchema: JSON.stringify(senaiteLimsPatientDataSchema),
