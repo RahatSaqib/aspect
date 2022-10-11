@@ -693,8 +693,6 @@ async function seed(knex) {
     deviceTypeId: deviceTypeCommCare,
     resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'Result',
-    resultCategory1Titlei18nKey: 'resultCategoryResult',
-
     resultCategory1i18nKey: 'resultCategoryEid',
     resultDataSchema: commCareResultDataSchemaHiv,
     patientDataSchema: commCarePatientDataSchema,

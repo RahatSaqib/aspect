@@ -55,7 +55,7 @@ async function upsertMGITDeviceTypeAndAssays(
     deviceTypeId: deviceTypeBDMGITId,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
-    resultCategory1Titlei18nKey: 'resultCategoryResult',
+    resultCategory1i18nKey: 'resultCategoryResult',
     resultDataSchema: JSON.stringify(assayBdMgitAstResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }

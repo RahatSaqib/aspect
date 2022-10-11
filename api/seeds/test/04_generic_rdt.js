@@ -29,7 +29,7 @@ async function seed(knex) {
     deviceTypeId,
     resultSourceId,
     resultCategory1Label: 'Status',
-    resultCategory1Titlei18nKey: 'resultCategoryStatus',
+    resultCategory1i18nKey: 'resultCategoryStatus',
     resultDataSchema: JSON.stringify({
       resultText: { list: true, type: 'string', title: 'Result' },
     }),
