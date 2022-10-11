@@ -1,6 +1,5 @@
 import React from 'react'
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
+import { Card, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import AspectTitle from '../AspectTitle'

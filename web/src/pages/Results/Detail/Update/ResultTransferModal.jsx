@@ -1,7 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import Button from '@mui/material/Button'
-import CircularProgress from '@mui/material/CircularProgress'
-import TextField from '@mui/material/TextField'
+import { Button, CircularProgress, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import { defineMessages, injectIntl } from 'react-intl'
 import { useNavigate } from 'react-router'

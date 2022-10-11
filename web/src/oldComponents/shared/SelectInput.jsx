@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import classNames from 'classnames'
 import map from 'lodash/map'
 import { Field } from 'redux-form/immutable'

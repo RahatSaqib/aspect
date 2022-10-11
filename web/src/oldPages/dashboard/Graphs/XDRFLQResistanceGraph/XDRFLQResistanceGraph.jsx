@@ -1,8 +1,16 @@
 import React, { useState } from 'react'
-import { Card, CardContent, CardHeader, Switch, FormControlLabel, FormControl, InputLabel } from '@mui/material'
-import Grid from '@mui/material/Grid'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Switch,
+  FormControlLabel,
+  FormControl,
+  InputLabel,
+  Grid,
+  MenuItem,
+  Select,
+} from '@mui/material'
 import classnames from 'classnames/bind'
 import ErrorBoundary from '../../../../components/ErrorBoundary'
 import graphsContainerMessages from '../../../../components/Graphs/GraphsContainer/messages'

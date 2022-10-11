@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
-import Paper from '@mui/material/Paper'
+import { LinearProgress, Paper } from '@mui/material'
 import classnames from 'classnames/bind'
 import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'

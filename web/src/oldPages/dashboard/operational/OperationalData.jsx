@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
+import { Tab, Tabs } from '@mui/material'
 import classnames from 'classnames/bind'
 import find from 'lodash/find'
 import { Helmet } from 'react-helmet'

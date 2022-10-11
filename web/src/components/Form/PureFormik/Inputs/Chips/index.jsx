@@ -1,7 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
-import TextField from '@mui/material/TextField'
+import { Box, Chip, TextField } from '@mui/material'
 import cloneDeep from 'lodash/cloneDeep'
 import isArray from 'lodash/isArray'
 import isString from 'lodash/isString'

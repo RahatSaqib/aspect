@@ -3,6 +3,7 @@ const Boom = require('@hapi/boom')
 const { knex, query } = require('../db')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { updateTagsById, tagsAreEqual } = require('../tag/service')
+const { getUserFromCredentials } = require('../auth/constraints')
 
 function getAccountDetailsForUsername(username) {
   return query('Get account details for currently logged in user')
@@ -41,6 +42,7 @@ async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
   const { payload: newAccountDetails, auth } = request
   const username = auth.credentials.name
   let accountDetails = await getAccountDetailsForUsername(username)
+  const user = await getUserFromCredentials(auth.credentials)
 
   _.mapKeys(newAccountDetails, (value, key) => {
     if (value === '') {
@@ -72,7 +74,7 @@ async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
   )
 
   // Update record if any values have changed
-  const changedPersonFields = await transformGeographyFromUpdates(changedFields)
+  const changedPersonFields = await transformGeographyFromUpdates(changedFields, user.countryId)
 
   const changedTags = !tagsAreEqual(newAccountDetails.tags, accountDetails.tags)
   if (changedTags) {

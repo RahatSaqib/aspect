@@ -1,6 +1,5 @@
 import React, { cloneElement, createElement, Children, Component, isValidElement } from 'react'
-import AppBar from '@mui/material/AppBar'
-import Tabs from '@mui/material/Tabs'
+import { AppBar, Tabs } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'

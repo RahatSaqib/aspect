@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import Button from '@mui/material/Button'
-import LinearProgress from '@mui/material/LinearProgress'
+import { Button, LinearProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import useI18n from '../../../hooks/useI18n'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'

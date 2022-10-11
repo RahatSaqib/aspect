@@ -46,7 +46,9 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
       <TableCell className={cssClasses('TableCell')}>
         {messages[inventoryLogItem.consumableReasonI18nKey]
           ? formatMessage(messages[inventoryLogItem.consumableReasonI18nKey], {
-              refSiteName: inventoryLogItem.refSiteName,
+              refSiteName: inventoryLogItem.refSiteName
+                ? inventoryLogItem.refSiteName
+                : formatMessage(messages.notAvailable),
             })
           : ''}
       </TableCell>

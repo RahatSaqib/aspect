@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import { useFormikContext } from 'formik'
 import isFunction from 'lodash/isFunction'

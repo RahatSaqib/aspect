@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import classnames from 'classnames/bind'
 import IconProvider from '../IconProvider'
 import groupedOptions from './config'

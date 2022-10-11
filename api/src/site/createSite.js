@@ -4,18 +4,12 @@ const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
 const { getUserFromCredentials } = require('../auth/constraints')
 const { getExistingSite } = require('./common/db')
+const { throwExistingSiteError } = require('./common/validations')
 
 module.exports = async function (request) {
   const { payload, auth } = request
 
-  try {
-    await validate(payload)
-  } catch (error) {
-    if (Boom.isBoom(error)) {
-      return error
-    }
-    throw error
-  }
+  await validate(payload)
 
   const user = await getUserFromCredentials(auth.credentials)
 
@@ -23,7 +17,7 @@ module.exports = async function (request) {
     return Boom.badRequest('Cannot retrieve user from create site request')
   }
 
-  const siteParams = await normalizeParameters(payload)
+  const siteParams = await normalizeParameters(payload, user.countryId)
 
   const values = {
     ...siteParams,
@@ -40,8 +34,8 @@ module.exports = async function (request) {
   return newId
 }
 
-async function normalizeParameters(payload) {
-  const payloadWithGeographyId = await transformGeographyFromUpdates(payload)
+async function normalizeParameters(payload, countryId) {
+  const payloadWithGeographyId = await transformGeographyFromUpdates(payload, countryId)
   return normalizeSiteParameters(payloadWithGeographyId)
 }
 
@@ -53,10 +47,6 @@ async function validateSiteNotExists({ name, shortName, externalId }) {
   const existingSite = await getExistingSite(name, shortName, externalId)
 
   if (existingSite) {
-    let message = name === existingSite.name ? `A site with the name (${name}) already exists.\n` : ''
-    message += shortName === existingSite.shortName ? `A site with the shortName (${shortName}) already exists.\n` : ''
-    message += externalId === existingSite.externalId ? `A site with site Id (${externalId}) already exists.\n` : ''
-
-    throw Boom.conflict(message)
+    throwExistingSiteError(name, shortName, externalId, existingSite)
   }
 }
