@@ -20,6 +20,7 @@ const {
   onDeviceMaintenanceStatusLogScheduled,
 } = require('./service')
 const mergeDevices = require('./mergeDevices')
+const listWorkload = require('./listWorkload')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { taskTracker } = require('../scheduler/taskTracker')
@@ -292,6 +293,74 @@ const routes = [
       description: 'Device List',
       notes: 'Pageable and sortable list of devices',
       ...listDevicesBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/workload',
+    handler: asyncHandler(listWorkload),
+    config: {
+      description: 'Device List',
+      notes: 'Pageable and sortable list of devices',
+      auth: { scope: ['device:view'] },
+      validate: {
+        query: {
+          hasResults: Joi.number()
+            .allow('')
+            .min(0)
+            .max(1)
+            .description('Filter for getting devices that can have results'),
+          hasConnectivity: Joi.number()
+            .allow('')
+            .min(0)
+            .max(1)
+            .description('Filter for getting devices that can have connectivity'),
+          assayId: Joi.number().description('Filter for assay ID'),
+          deviceName: Joi.string().allow('').description('Filter for device name'),
+          deviceMaintenanceStatusId: Joi.array()
+            .items(Joi.string())
+            .single()
+            .allow(null)
+            .description('Filter for device maintenance status external id'),
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(true),
+          ...validateSortPageParams(
+            // TODO: Add 'availabilityRate' Sort Page Param
+            'name',
+            'deviceStatus',
+            'lastPingOn',
+            'firstResultConductedOn',
+            'lastResultConductedOn',
+            'totalTests'
+          ),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of devices that match the given filters'),
+          length: Joi.number().required().description('The number of devices included in this response'),
+          data: Joi.array().required().description('The devices'),
+          // .items(
+          //   Joi.object().keys({
+          //     name: Joi.string().required().description('The name of the device'),
+          //     deviceStatus: Joi.string().allow('', null).description('The connector status'),
+          //     lastPingOn: Joi.date().allow(null).description('When the device last pinged'),
+          //     firstResultConductedOn: Joi.date().allow(null).description('When the device generate first result'),
+          //     lastResultConductedOn: Joi.date().allow(null).description('When the device generate last result'),
+          //     totalTests: Joi.number().description('The number of total tests in the period'),
+          //   })
+          // ),
+          extraColumns: Joi.array()
+            .allow(null)
+            .optional()
+            .description('Extra columns arrays')
+            .items(Joi.object().optional()),
+        }),
+      },
     },
   },
   {
