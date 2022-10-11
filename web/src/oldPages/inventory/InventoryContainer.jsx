@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Tab, Tabs } from '@mui/material'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
+import { useLocation, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
 import styles from './InventoryContainer.css'
 import InventoryItemsList from './list/InventoryItemsList'
@@ -22,7 +23,9 @@ const messages = defineMessages({
 const currentTabStyle = (currentTab, activeTab) =>
   currentTab === activeTab ? 'tabs__tab--active' : 'tabs__tab--inactive'
 
-export const InventoryContainer = ({ navigate, location }) => {
+export const InventoryContainer = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('supplies')
   const { formatMessage } = useI18n()
   const tabsConfig = {
