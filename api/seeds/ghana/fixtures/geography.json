@@ -1,0 +1,723 @@
+{
+    "countries": [
+        {
+            "abbreviation": "GH",
+            "name": "Ghana",
+            "a3": "GHA",
+            "culture": "en",
+            "countryCode": "233",
+            "timezone": "UTC",
+            "portNumber": 3045,
+            "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
+            "inventoryDaysThreshold": 21,
+            "monthStartsOnDay": 1,
+            "states": [
+                {
+                    "name": "Ashanti Region",
+                    "abbreviation": "AR",
+                    "lgas": [
+                        {
+                            "name": "Adansi North District"
+                        },
+                        {
+                            "name": "Adansi South District"
+                        },
+                        {
+                            "name": "Afigya Kwabre District"
+                        },
+                        {
+                            "name": "Ahafo Ano North Municipal"
+                        },
+                        {
+                            "name": "Ahafo Ano South District"
+                        },
+                        {
+                            "name": "Amansie Central Region District"
+                        },
+                        {
+                            "name": "Amansie West District"
+                        },
+                        {
+                            "name": "Asante Akim Central Region Municipal"
+                        },
+                        {
+                            "name": "Asante akim North District"
+                        },
+                        {
+                            "name": "Asante Akim South District"
+                        },
+                        {
+                            "name": "Asokore Mampong Municipal"
+                        },
+                        {
+                            "name": "Atwima Kwanwoma District"
+                        },
+                        {
+                            "name": "Atwima Mponua District"
+                        },
+                        {
+                            "name": "Atwima Nwabiagya District"
+                        },
+                        {
+                            "name": "Bekwai Municipal"
+                        },
+                        {
+                            "name": "Bosome Freho District"
+                        },
+                        {
+                            "name": "Bosomtwe District"
+                        },
+                        {
+                            "name": "Ejisu Juaben Municipal"
+                        },
+                        {
+                            "name": "Ejura Sekyedumasi Municipal"
+                        },
+                        {
+                            "name": "Kumasi Metropolitan"
+                        },
+                        {
+                            "name": "Kwabre East District"
+                        },
+                        {
+                            "name": "Mampong Municipal "
+                        },
+                        {
+                            "name": "Obuasi Municipal"
+                        },
+                        {
+                            "name": "Offinso Municipal"
+                        },
+                        {
+                            "name": "Offinso North District"
+                        },
+                        {
+                            "name": "Sekyere Afram Plains District"
+                        },
+                        {
+                            "name": "Sekyere Central Region District"
+                        },
+                        {
+                            "name": "Sekyere East District"
+                        },
+                        {
+                            "name": "Sekyere Kumawu District"
+                        }
+                    ]
+                },
+                {
+                    "name": "Brong-Ahafo Region.",
+                    "abbreviation": "BA",
+                    "lgas": [
+                        {
+                            "name": "Asunafo North Municipal"
+                        },
+                        {
+                            "name": "Asunafo South District"
+                        },
+                        {
+                            "name": "Asutifi North District"
+                        },
+                        {
+                            "name": "Asutifi South District"
+                        },
+                        {
+                            "name": "Atebubu Amantin District"
+                        },
+                        {
+                            "name": "Banda District"
+                        },
+                        {
+                            "name": "Berekum Municipal"
+                        },
+                        {
+                            "name": "Dormaa Central/Municipal"
+                        },
+                        {
+                            "name": "Dormaa East District"
+                        },
+                        {
+                            "name": "Dormaa west District"
+                        },
+                        {
+                            "name": "Jaman North District"
+                        },
+                        {
+                            "name": "Jaman South District"
+                        },
+                        {
+                            "name": "Kintampo North Municipal"
+                        },
+                        {
+                            "name": "Kintampo South District"
+                        },
+                        {
+                            "name": "Nkoranza South Municipal "
+                        },
+                        {
+                            "name": "Nkoranza  North District"
+                        },
+                        {
+                            "name": "Pru District"
+                        },
+                        {
+                            "name": "Sene East District"
+                        },
+                        {
+                            "name": "Sene West District"
+                        },
+                        {
+                            "name": "Sunyani Municipal"
+                        },
+                        {
+                            "name": "Sunyani West District"
+                        },
+                        {
+                            "name": "Tain District"
+                        },
+                        {
+                            "name": "Tano North District"
+                        },
+                        {
+                            "name": "Tano South District"
+                        },
+                        {
+                            "name": "Techiman Municipal"
+                        },
+                        {
+                            "name": "Techiman North District"
+                        },
+                        {
+                            "name": "Wenchi Municipal"
+                        }
+                    ]
+                },
+                {
+                    "name": "Central Region",
+                    "abbreviation": "CR",
+                    "lgas": [
+                        {
+                            "name": "Abura Asebu Kwamankese District"
+                        },
+                        {
+                            "name": "Agona East District"
+                        },
+                        {
+                            "name": "Agona West Municipal"
+                        },
+                        {
+                            "name": "Ajumko Enyan Essiam District"
+                        },
+                        {
+                            "name": "Asikuma Odoben Brankwa District"
+                        },
+                        {
+                            "name": "Assin North Municipal"
+                        },
+                        {
+                            "name": "Awutu Senya East Municipal"
+                        },
+                        {
+                            "name": "Awutu Senya East Municipal"
+                        },
+                        {
+                            "name": "Awutu Senya West District"
+                        },
+                        {
+                            "name": "Cape Coast Metropolitan"
+                        },
+                        {
+                            "name": "Effutu Municipal"
+                        },
+                        {
+                            "name": "Ekumfi District"
+                        },
+                        {
+                            "name": "Gomoa East District"
+                        },
+                        {
+                            "name": "Gomoa West District"
+                        },
+                        {
+                            "name": "Komenda-Edina-Eguafo- Abirem District"
+                        },
+                        {
+                            "name": "Mfantseman Municipal"
+                        },
+                        {
+                            "name": "Twifo Atti Morkwa District"
+                        },
+                        {
+                            "name": "Twifo Heman Lower Denkyira District"
+                        },
+                        {
+                            "name": "Upper Denkyira East Municipal"
+                        },
+                        {
+                            "name": "Upper Denkyira West District"
+                        }
+                    ]
+                },
+                {
+                    "name": "Eastern Region",
+                    "abbreviation": "ER",
+                    "lgas": [
+                        {
+                            "name": "Akuapem North Municipal"
+                        },
+                        {
+                            "name": "Akuapim South District"
+                        },
+                        {
+                            "name": "Akyemansa District"
+                        },
+                        {
+                            "name": "Asuogyaman District"
+                        },
+                        {
+                            "name": "Atiwa District"
+                        },
+                        {
+                            "name": "Ayensuano District"
+                        },
+                        {
+                            "name": "Birim Central Region Municipal"
+                        },
+                        {
+                            "name": "Birim North District"
+                        },
+                        {
+                            "name": "Birim South District"
+                        },
+                        {
+                            "name": "Denkyembour District"
+                        },
+                        {
+                            "name": "East Akim Municipal"
+                        },
+                        {
+                            "name": "Fanteakwa District"
+                        },
+                        {
+                            "name": "Kwaebibirem District"
+                        },
+                        {
+                            "name": "Kwahu Afram Plains North District"
+                        },
+                        {
+                            "name": "Kwahu Afram Plains South District"
+                        },
+                        {
+                            "name": "Kwahu East District"
+                        },
+                        {
+                            "name": "Kwahu South District"
+                        },
+                        {
+                            "name": "Kwahu West Municipal"
+                        },
+                        {
+                            "name": "Lower Manya Krobo "
+                        },
+                        {
+                            "name": "New Juaben Municipal"
+                        },
+                        {
+                            "name": "Nsawam Adoagyire Municipal"
+                        },
+                        {
+                            "name": "Suhum Municipal"
+                        },
+                        {
+                            "name": "Upper Manya Krobo District"
+                        },
+                        {
+                            "name": "Upper West Region Akim District"
+                        },
+                        {
+                            "name": "West Akim Municipal"
+                        },
+                        {
+                            "name": "Yillo Krobo Municipal"
+                        }
+                    ]
+                },
+                {
+                    "name": "Greater Accra Region",
+                    "abbreviation": "GA",
+                    "lgas": [
+                        {
+                            "name": "Accra Metropolitan"
+                        },
+                        {
+                            "name": "Ada West District"
+                        },
+                        {
+                            "name": "Ada East District"
+                        },
+                        {
+                            "name": "Adentan Municipal"
+                        },
+                        {
+                            "name": "Ashaiman Municipal"
+                        },
+                        {
+                            "name": "Ga Central Region Municipal"
+                        },
+                        {
+                            "name": "Ga South Municipal"
+                        },
+                        {
+                            "name": "Ga East Municipal"
+                        },
+                        {
+                            "name": "Ga West Municipal"
+                        },
+                        {
+                            "name": "La Dade-Kotopong Municipal"
+                        },
+                        {
+                            "name": "Ledzekuku-Krowor Municipal"
+                        },
+                        {
+                            "name": "La-Nkwantanang-Madina Municipal"
+                        },
+                        {
+                            "name": "Ningo Prampram District"
+                        },
+                        {
+                            "name": "Shai Osudoku District"
+                        },
+                        {
+                            "name": "Tema Metropolitan"
+                        },
+                        {
+                            "name": "Kpone Katamanso District"
+                        }
+                    ]
+                },
+                {
+                    "name": "Northern Region",
+                    "abbreviation": "NR",
+                    "lgas": [
+                        {
+                            "name": "Bole District"
+                        },
+                        {
+                            "name": "Bunkpurugu-Yunyoo District"
+                        },
+                        {
+                            "name": "Central Region Gonja District"
+                        },
+                        {
+                            "name": "Chereponi District"
+                        },
+                        {
+                            "name": "East Gonja District"
+                        },
+                        {
+                            "name": "East Mamprusi District"
+                        },
+                        {
+                            "name": "Gushegu District"
+                        },
+                        {
+                            "name": "Karaga District"
+                        },
+                        {
+                            "name": "Kpandai District"
+                        },
+                        {
+                            "name": "Kumbungu District"
+                        },
+                        {
+                            "name": "Mamprugu Moaduri District"
+                        },
+                        {
+                            "name": "Mion District"
+                        },
+                        {
+                            "name": "Nanumba North District"
+                        },
+                        {
+                            "name": "Nanumba South District"
+                        },
+                        {
+                            "name": "North Gonja District"
+                        },
+                        {
+                            "name": "Saboba District"
+                        },
+                        {
+                            "name": "Sagnarigu District"
+                        },
+                        {
+                            "name": "Savelugu/Nanton Municipal"
+                        },
+                        {
+                            "name": "Sawla-Tuna-Kalba District"
+                        },
+                        {
+                            "name": "Tamale Metropolitan"
+                        },
+                        {
+                            "name": "Tatale/Sanguli District"
+                        },
+                        {
+                            "name": "Tolon District"
+                        },
+                        {
+                            "name": "West Gonja District"
+                        },
+                        {
+                            "name": "West Mamprusi District"
+                        },
+                        {
+                            "name": "Yendi Municipal"
+                        },
+                        {
+                            "name": "Zabzugu District"
+                        }
+                    ]
+                },
+                {
+                    "name": "Upper East Region",
+                    "abbreviation": "UE",
+                    "lgas": [
+                        {
+                            "name": "Bawku Municipal"
+                        },
+                        {
+                            "name": "Bawku West District"
+                        },
+                        {
+                            "name": "Binduri District"
+                        },
+                        {
+                            "name": "Bolgatanga Municipal"
+                        },
+                        {
+                            "name": "Bongo District"
+                        },
+                        {
+                            "name": "Builsa North District"
+                        },
+                        {
+                            "name": "Builsa South District"
+                        },
+                        {
+                            "name": "Garu-Tempane District"
+                        },
+                        {
+                            "name": "Kassena Nankana Municipal"
+                        },
+                        {
+                            "name": "Kassena Nankana West District"
+                        },
+                        {
+                            "name": "Nabdam District"
+                        },
+                        {
+                            "name": "Pusiga District"
+                        },
+                        {
+                            "name": "Talensi District"
+                        }
+                    ]
+                },
+                {
+                    "name": "Upper West Region",
+                    "abbreviation": "UW",
+                    "lgas": [
+                        {
+                            "name": "Daffiama Bussie Issa District"
+                        },
+                        {
+                            "name": "Jirapa District"
+                        },
+                        {
+                            "name": "Lambussie District"
+                        },
+                        {
+                            "name": "Lawra District"
+                        },
+                        {
+                            "name": "Nadowli Kaleo District"
+                        },
+                        {
+                            "name": "Nandom District"
+                        },
+                        {
+                            "name": "Sissala East District"
+                        },
+                        {
+                            "name": "Sissala West District"
+                        },
+                        {
+                            "name": "Wa East District"
+                        },
+                        {
+                            "name": "Wa Municipal"
+                        },
+                        {
+                            "name": "Wa West District"
+                        }
+                    ]
+                },
+                {
+                    "name": "Volta Region",
+                    "abbreviation": "VR",
+                    "lgas": [
+                        {
+                            "name": "Adaklu District"
+                        },
+                        {
+                            "name": "Afadjato South District"
+                        },
+                        {
+                            "name": "Agotime Ziope District"
+                        },
+                        {
+                            "name": "Akatsi North District"
+                        },
+                        {
+                            "name": "Akatsi South District"
+                        },
+                        {
+                            "name": "Biakoye District"
+                        },
+                        {
+                            "name": "Central Region Tongu District"
+                        },
+                        {
+                            "name": "Ho Municipal"
+                        },
+                        {
+                            "name": "Ho West District"
+                        },
+                        {
+                            "name": "Hohoe Municipal"
+                        },
+                        {
+                            "name": "Jasikan District"
+                        },
+                        {
+                            "name": "Kadjebi District"
+                        },
+                        {
+                            "name": "Keta Municipal"
+                        },
+                        {
+                            "name": "Ketu North District"
+                        },
+                        {
+                            "name": "Ketu South Municipal"
+                        },
+                        {
+                            "name": "Kpando Municipal"
+                        },
+                        {
+                            "name": "Krachi East District"
+                        },
+                        {
+                            "name": "Krachi Nchumuru District"
+                        },
+                        {
+                            "name": "Krachi West District"
+                        },
+                        {
+                            "name": "Nkwanta North District"
+                        },
+                        {
+                            "name": "Nkwanta South District"
+                        },
+                        {
+                            "name": "North Dayi District"
+                        },
+                        {
+                            "name": "North Tongu District"
+                        },
+                        {
+                            "name": "South Dayi District"
+                        },
+                        {
+                            "name": "South Tongu District"
+                        }
+                    ]
+                },
+                {
+                    "name": "Western Region",
+                    "abbreviation": "WR",
+                    "lgas": [
+                        {
+                            "name": "Ahanta West District"
+                        },
+                        {
+                            "name": "Amenfi Central Region District"
+                        },
+                        {
+                            "name": "Amenfi East District"
+                        },
+                        {
+                            "name": "Amenfi West District"
+                        },
+                        {
+                            "name": "Aowin District"
+                        },
+                        {
+                            "name": "Bia East District"
+                        },
+                        {
+                            "name": "Bia West District"
+                        },
+                        {
+                            "name": "Bibiani-Anhwiaso Bekwai District"
+                        },
+                        {
+                            "name": "Bodi District"
+                        },
+                        {
+                            "name": "Ellembelle District"
+                        },
+                        {
+                            "name": "Jomoro District"
+                        },
+                        {
+                            "name": "Juabuso District"
+                        },
+                        {
+                            "name": "Mpohor District"
+                        },
+                        {
+                            "name": "Nzema East Municipal"
+                        },
+                        {
+                            "name": "Prestea-Huni Valley District"
+                        },
+                        {
+                            "name": "Sefwi Akontombra District"
+                        },
+                        {
+                            "name": "Sefwi Wiawso Municipal"
+                        },
+                        {
+                            "name": "Sekondi Takoradi Metropolitan"
+                        },
+                        {
+                            "name": "Shama District"
+                        },
+                        {
+                            "name": "Suaman District"
+                        },
+                        {
+                            "name": "Tarkwa Nsuaem Municipal"
+                        },
+                        {
+                            "name": "Wassa East District"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
