@@ -1,7 +1,9 @@
 import React from 'react'
+import { render, screen } from '@testing-library/react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
 import ExportListButton from '../../../oldComponents/ExportListButton'
+import { I18nProvider } from '../../../providers/I18nProvider'
 import { Items } from '../../../utils/metaReducers/items'
 import { Table } from '../../../utils/metaReducers/table'
 import { RouterList } from './RouterList'
@@ -22,10 +24,15 @@ describe('RouterList', () => {
     reducedFilters: [],
   }
 
-  const element = shallow(<RouterList {...props} />)
+  const { asFragment } = render(
+    <I18nProvider>
+      <RouterList {...props} />
+    </I18nProvider>
+  )
 
   it('should render RouterList correctly without export button', () => {
-    expect(element).toMatchSnapshot()
-    expect(element.find(ExportListButton)).toHaveLength(1)
+    expect(asFragment()).toMatchSnapshot()
+
+    expect(screen.getByTestId('RouterListExportButton')).toBeNull()
   })
 })
