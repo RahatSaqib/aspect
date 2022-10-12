@@ -9,8 +9,6 @@ module.exports = {
     jobFunctions,
   },
   plugin: '',
-  autoAcknowledgeOlderThanDays: null,
-  numberToLeaveUnacknowledged: null,
   maxDaysDeviceOffline: 7,
   maxDaysDeviceNoResults: 14,
   dueDaysInventoryStockout: 30,
