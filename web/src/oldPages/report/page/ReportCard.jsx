@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Card, CardActionArea, CardActions, CardContent, Grid, Typography } from '@mui/material'
 import useI18n from '../../../hooks/useI18n'
-import messages from '../../../messages/report'
+import { report as messages } from '../../../messages'
 
 const styles = {
   formatCard: {

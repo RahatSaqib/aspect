@@ -13,7 +13,7 @@ import { getFieldErrorProps } from '../Formik/Helpers'
 import messages from '../messages'
 
 const CronForm = props => {
-  const { className, classNames, formik, id } = props
+  const { className, formik, id } = props
   const { cronRecurrency: initialCronRecurrency = null } = formik.initialValues
   const { updateField, toggleEdit } = useFormikContext()
   const { error, helperText } = getFieldErrorProps(formik, id)
@@ -47,11 +47,11 @@ const CronForm = props => {
               control={<Radio color="primary" value="2" onChange={() => setShowCron(true)} checked={showCron} />}
               label={formatMessage(messages.newRecurrency)}
             />
-            {showCron ? <Cron onChange={handleOnChange} className={className} classNames={classNames} /> : true}
+            {showCron ? <Cron onChange={handleOnChange} className={className} /> : true}
           </FormGroup>
         </>
       ) : (
-        <Cron onChange={handleOnChange} className={className} classNames={classNames} />
+        <Cron onChange={handleOnChange} className={className} />
       )}
       {error && helperText ? <FormHelperText error>{helperText}</FormHelperText> : null}
     </FormControl>
@@ -60,12 +60,11 @@ const CronForm = props => {
 
 CronForm.defaultProps = {
   className: '',
-  classNames: {},
 }
 
 CronForm.propTypes = {
   className: PropTypes.string,
-  classNames: PropTypes.objectOf(PropTypes.shape),
+
   id: PropTypes.string.isRequired,
 
   formik: PropTypes.oneOfType([PropTypes.object]).isRequired,

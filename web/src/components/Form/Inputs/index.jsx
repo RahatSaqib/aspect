@@ -22,10 +22,9 @@ const Inputs = {
 }
 
 const AspectInput = props => {
-  const componentProps = { ...props }
   const Component = Inputs[props.controlType.component]
 
-  return Component ? <Component {...componentProps} /> : null
+  return Component ? <Component {...props} /> : null
 }
 
 export default AspectInput
