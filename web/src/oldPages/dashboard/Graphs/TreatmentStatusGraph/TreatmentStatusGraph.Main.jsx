@@ -7,6 +7,7 @@ import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import isEmpty from 'lodash/isEmpty'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
+import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
@@ -15,7 +16,7 @@ import {
 } from '../../../../components/Graphs/Helpers/Formatters'
 import messages from '../../../../components/Graphs/intlMessages'
 import useI18n from '../../../../hooks/useI18n'
-import styles from './styles.css'
+import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -37,7 +38,7 @@ const baseConfig = {
   formatDate: 'MMM',
 }
 
-const GraphContainer = ({ assaysFromState, whiteListed, rawData, showLabel }) => {
+const TreatmentStatusGraphMain = ({ assaysFromState, whiteListed, rawData, showLabel }) => {
   const { formatMessage } = useI18n()
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
@@ -93,10 +94,12 @@ const GraphContainer = ({ assaysFromState, whiteListed, rawData, showLabel }) =>
             type="barLegacyTreatment"
             i18nKeys={i18nKeys}
           />
-        ) : null}
+        ) : (
+          <EmptyGraph type="bar" />
+        )}
       </div>
     </Grid>
   )
 }
 
-export default GraphContainer
+export default TreatmentStatusGraphMain

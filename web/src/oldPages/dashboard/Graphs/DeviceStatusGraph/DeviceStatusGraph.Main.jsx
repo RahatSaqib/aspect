@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
+import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
@@ -14,7 +15,7 @@ import messages from '../../../../components/Graphs/intlMessages'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
-import styles from './styles.css'
+import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -112,7 +113,9 @@ const DeviceStatusGraphMain = ({ assaysFromState, showLabel, filterSelection }) 
             type="stackedDeviceActivity"
             i18nKeys={i18nKey}
           />
-        ) : null}
+        ) : (
+          <EmptyGraph type="bar" />
+        )}
       </div>
     </Grid>
   )

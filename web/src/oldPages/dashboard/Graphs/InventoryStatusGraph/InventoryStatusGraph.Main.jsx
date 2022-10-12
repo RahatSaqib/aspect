@@ -6,12 +6,13 @@ import isEmpty from 'lodash/isEmpty'
 import sortBy from 'lodash/sortBy'
 import { useQuery } from 'react-query'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
+import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
 import messages from '../../../../components/Graphs/intlMessages'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
-import styles from './styles.css'
+import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -113,7 +114,9 @@ const InventoryStatusGraphMain = ({ assaysFromState, showLabel, filterSelection 
             type="barInventory"
             i18nKeys={i18nKeys}
           />
-        ) : null}
+        ) : (
+          <EmptyGraph type="bar" />
+        )}
       </div>
     </Grid>
   )
