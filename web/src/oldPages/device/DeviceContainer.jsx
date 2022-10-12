@@ -1,13 +1,9 @@
 import React, { useState } from 'react'
 import { Tab, Tabs } from '@mui/material'
-import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
-import styles from './DeviceContainer.css'
 import DeviceList from './list/DeviceList'
-
-const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   statusesTabTitle: {
@@ -37,33 +33,11 @@ export const DeviceContainer = () => {
   }
 
   return (
-    <div className={cssClasses('Container')}>
-      <div className={cssClasses('tabs__container')}>
-        <Tabs
-          indicatorColor="primary"
-          textColor="inherit"
-          value={activeTab}
-          onChange={handleChange}
-          TabIndicatorProps={{ style: { height: '0px' } }}
-        >
-          <Tab
-            label={formatMessage(messages.statusesTabTitle)}
-            className={cssClasses('tabs__tab', {
-              'tabs__tab--active': activeTab === 'statuses',
-              'tabs__tab--inactive': activeTab !== 'statuses',
-            })}
-            value="statuses"
-          />
-          <Tab
-            label={formatMessage(messages.workloadTabTitle)}
-            className={cssClasses('tabs__tab', {
-              'tabs__tab--active': activeTab !== 'statuses',
-              'tabs__tab--inactive': activeTab === 'statuses',
-            })}
-            value="workload"
-          />
-        </Tabs>
-      </div>
+    <div>
+      <Tabs value={activeTab} onChange={handleChange}>
+        <Tab label={formatMessage(messages.statusesTabTitle)} value="statuses" />
+        <Tab label={formatMessage(messages.workloadTabTitle)} value="workload" />
+      </Tabs>
       {activeTab === 'statuses' ? <DeviceList /> : null}
     </div>
   )

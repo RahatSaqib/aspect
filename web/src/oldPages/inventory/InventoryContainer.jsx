@@ -20,8 +20,6 @@ const messages = defineMessages({
     defaultMessage: 'Inventory Log',
   },
 })
-const currentTabStyle = (currentTab, activeTab) =>
-  currentTab === activeTab ? 'tabs__tab--active' : 'tabs__tab--inactive'
 
 export const InventoryContainer = () => {
   const location = useLocation()
@@ -56,26 +54,10 @@ export const InventoryContainer = () => {
   }
   return (
     <div className={cssClasses('Container')}>
-      <div className={cssClasses('tabs__container')}>
-        <Tabs
-          indicatorColor="primary"
-          textColor="inherit"
-          value={activeTab}
-          onChange={handleChange}
-          TabIndicatorProps={{ style: { height: '0px' } }}
-        >
-          <Tab
-            label={tabsConfig.supplies.label}
-            className={cssClasses('tabs__tab', currentTabStyle('supplies', activeTab))}
-            value={tabsConfig.supplies.path}
-          />
-          <Tab
-            label={tabsConfig.inventoryLog.label}
-            className={cssClasses('tabs__tab', currentTabStyle('log', activeTab))}
-            value={tabsConfig.inventoryLog.path}
-          />
-        </Tabs>
-      </div>
+      <Tabs value={activeTab} onChange={handleChange}>
+        <Tab label={tabsConfig.supplies.label} value={tabsConfig.supplies.path} />
+        <Tab label={tabsConfig.inventoryLog.label} value={tabsConfig.inventoryLog.path} />
+      </Tabs>
       {activeTab === 'supplies' ? (
         <InventoryItemsList navigate={navigate} location={location} />
       ) : (
