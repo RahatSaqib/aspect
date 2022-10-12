@@ -18,6 +18,8 @@ const DEFAULT_SETTINGS = {
     countiesLabel: 'Counties',
     lgaLabel: 'LGA',
     lgasLabel: 'LGAs',
+
+    showFilterDisplayResult: false,
   },
 }
 
