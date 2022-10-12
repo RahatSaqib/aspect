@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import useI18n from '../../../hooks/useI18n'
 import SelectField from '../../shared/SelectField'
 import daysStockLeftOptions from './daysStockLeftOptions'

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
-import TableBody from '@mui/material/TableBody'
+import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import { Helmet } from 'react-helmet'
@@ -82,7 +81,7 @@ export const SiteList = ({ navigate, location }) => {
     { key: 'name', label: intl.formatMessage(messages.siteName), sortable: true },
     { key: 'state', label: getCustomMessage(messages, 'state', user), sortable: true },
     { key: 'lga', label: getCustomMessage(messages, 'lga', user), sortable: true },
-    { key: 'siteId', label: intl.formatMessage(messages.externalId), sortable: true },
+    { key: 'externalId', label: intl.formatMessage(messages.externalId), sortable: true },
     { key: 'totalDevices', label: intl.formatMessage(messages.totalDevices), sortable: true },
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
     { key: 'siteIssues', label: intl.formatMessage(messages.siteIssues) },

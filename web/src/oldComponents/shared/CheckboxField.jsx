@@ -1,5 +1,5 @@
 import React from 'react'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import { FormControlLabel } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import PropTypes from 'prop-types'
 import AspectCheckbox from './AspectCheckbox'

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import TableBody from '@mui/material/TableBody'
+import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import filter from 'lodash/filter'

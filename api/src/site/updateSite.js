@@ -1,30 +1,26 @@
 const Boom = require('@hapi/boom')
-const { getConstraints } = require('../auth/constraints')
+const { getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
 const { getExistingSiteExcludingCurrent, updateSite, checkSiteAccess } = require('./common/db')
+const { throwExistingSiteError } = require('./common/validations')
 
 module.exports = async function (request) {
   const { auth, params, payload } = request
 
-  const siteParams = await normalizeParameters(payload)
+  const user = await getUserFromCredentials(auth.credentials)
 
-  try {
-    await validate(params.siteId, auth.credentials, siteParams)
-  } catch (error) {
-    if (Boom.isBoom(error)) {
-      return error
-    }
-    throw error
-  }
+  const siteParams = await normalizeParameters(payload, user.countryId)
+
+  await validate(params.siteId, auth.credentials, siteParams)
 
   await updateSite(params.siteId, siteParams)
 
   return params.siteId
 }
 
-async function normalizeParameters(payload) {
-  const payloadWithGeographyId = await transformGeographyFromUpdates(payload)
+async function normalizeParameters(payload, countryId) {
+  const payloadWithGeographyId = await transformGeographyFromUpdates(payload, countryId)
   return normalizeSiteParameters(payloadWithGeographyId)
 }
 
@@ -45,12 +41,7 @@ async function validateConstraints(siteId, credentials) {
 
 async function validateNonRepeatedSite(siteId, { name, shortName, externalId }) {
   const existingSite = await getExistingSiteExcludingCurrent(siteId, name, shortName, externalId)
-
   if (existingSite) {
-    let message = name === existingSite.name ? `A site with the name '${name}' already exists. \n` : ''
-    message += shortName === existingSite.shortName ? `A site with the shortName '${shortName}' already exists. \n` : ''
-    message += externalId === existingSite.externalId ? `A site with siteId '${externalId}' already exists. \n` : ''
-
-    throw Boom.conflict(message)
+    throwExistingSiteError(name, shortName, externalId, existingSite)
   }
 }

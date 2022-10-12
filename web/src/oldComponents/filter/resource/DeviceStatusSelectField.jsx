@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import { injectIntl, defineMessages } from 'react-intl'

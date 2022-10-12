@@ -1,5 +1,5 @@
 import React from 'react'
-import { ThemeProvider } from '@mui/material/styles'
+import { ThemeProvider } from '@mui/material'
 import { jssPreset } from '@mui/styles'
 import { create } from 'jss'
 import isNumber from 'lodash/isNumber'

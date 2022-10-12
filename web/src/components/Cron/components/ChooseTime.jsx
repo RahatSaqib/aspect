@@ -1,6 +1,5 @@
 import React from 'react'
-import { MenuItem, TextField } from '@mui/material'
-import Stack from '@mui/material/Stack'
+import { MenuItem, TextField, Stack } from '@mui/material'
 import classNames from 'classnames/bind'
 import { range } from 'ramda'
 import useI18n from '../../../hooks/useI18n'

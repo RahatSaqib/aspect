@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import { defineMessages, injectIntl } from 'react-intl'

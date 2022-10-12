@@ -1,7 +1,7 @@
 import React from 'react'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import IconButton from '@mui/material/IconButton'
+import { IconButton } from '@mui/material'
 import classnames from 'classnames/bind'
 import { compose, setDisplayName } from 'recompose'
 import styles from './Accordion.css'

@@ -1,5 +1,5 @@
 import React from 'react'
-import Card from '@mui/material/Card'
+import { Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import styles from './DataTableCard.css'

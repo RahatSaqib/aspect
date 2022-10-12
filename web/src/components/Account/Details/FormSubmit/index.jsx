@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 
 const FormSubmit = ({ label, type, color, action, formik }) => {
   const { isValid, isSubmitting } = formik

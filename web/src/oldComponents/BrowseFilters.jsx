@@ -74,6 +74,7 @@ const enhance = compose(
             if (!filtersParams.has(filterKey)) {
               filtersParams.delete('resultCategoryId')
               filtersParams.delete('resultCategory2Id')
+              filtersParams.delete('resultCategoryGroupId')
             }
             break
           }

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import TextField from '@mui/material/TextField'
+import { TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import noop from 'lodash/noop'
 import omit from 'lodash/omit'

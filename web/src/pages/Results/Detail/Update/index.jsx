@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
+import { CircularProgress } from '@mui/material'
 import findIndex from 'lodash/findIndex'
 import PropTypes from 'prop-types'
 import { FaNotesMedical } from 'react-icons/fa'

@@ -1,6 +1,5 @@
 import React from 'react'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
+import { FormControl, FormHelperText } from '@mui/material'
 import { useFormikContext } from 'formik'
 import get from 'lodash/get'
 import PropTypes from 'prop-types'
