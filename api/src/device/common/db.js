@@ -202,22 +202,23 @@ async function getResultCategoriesByAssay(assayId) {
     .first()
 }
 
-function getFirstAndLastResults(dataConstraints) {
+function getFirstAndLastResults(dataConstraints, assayId) {
   return knex('Result as r')
     .modify(addConstraints, dataConstraints, { result: 'r' })
     .groupBy('deviceId')
     .select({
-      deviceId: 'id',
+      deviceId: 'deviceId',
       firstEndedOn: knex.raw('MIN(endedOn)'),
       lastEndedOn: knex.raw('MAX(endedOn)'),
     })
+    .where('assayId', assayId)
     .as('firstAndLastResults')
 }
 
-function getDeviceWorkload(extraColumns, dataConstraints) {
+function getDeviceWorkload(extraColumns, dataConstraints, assayId) {
   return knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin(getFirstAndLastResults(), 'd.id', 'firstAndLastResults.deviceId')
+    .leftJoin(getFirstAndLastResults(dataConstraints, assayId), 'd.id', 'firstAndLastResults.deviceId')
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .modify(q => {
@@ -229,8 +230,10 @@ function getDeviceWorkload(extraColumns, dataConstraints) {
       'dms.i18nKey as deviceStatus',
       'd.lastPingOn',
       'firstAndLastResults.firstEndedOn as firstResultEndedOn',
-      'firstAndLastResults.lastEndedOn as lastResultEndedOn'
+      'firstAndLastResults.lastEndedOn as lastResultEndedOn',
+      knex.raw('COUNT(r.id) as total')
     )
+    .where('r.assayId', assayId)
     .groupBy('r.deviceId')
 }
 

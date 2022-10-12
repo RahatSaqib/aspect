@@ -74,7 +74,7 @@ const listWorkload = async request => {
     ]
   }
 
-  const data = await getDeviceWorkload(extraColumns, dataConstraints)
+  const data = await getDeviceWorkload(extraColumns, dataConstraints, assayId)
   extraColumns = extraColumns.map(ec => omit(ec, 'selector'))
   return { ok: true, total: 0, length: 0, data, extraColumns }
 }
