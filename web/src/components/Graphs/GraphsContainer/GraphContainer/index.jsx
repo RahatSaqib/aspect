@@ -3,6 +3,7 @@ import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
+import { graphMessages as messages } from '../../../../messages'
 import PermissionsProvider from '../../../../providers/PermissionsProvider'
 import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
 import AspectCard from '../../../AspectCard'
@@ -10,7 +11,6 @@ import CardSelectors from '../../CardSelectors'
 import GraphRender from '../../GraphRender'
 import { extractOptionValue } from '../../Helpers/Formatters'
 import styles from '../GraphsContainer.css'
-import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 
