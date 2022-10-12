@@ -126,6 +126,7 @@ const sanitizerByConfigKey = {
   hasStock: defaultSanitizer,
   lotNumber: defaultSanitizer,
   contactStatus: defaultSanitizer,
+  displayResult: defaultSanitizer,
 }
 
 export const setFiltersForLast30Days = searchParams => {

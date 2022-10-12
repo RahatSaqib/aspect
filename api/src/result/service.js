@@ -128,7 +128,7 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     return Boom.badRequest()
   }
 
-  const displayResult = query.displayResult || 'actual'
+  const displayResult = query.displayResult || 'all'
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials, { displayResult })
@@ -248,7 +248,7 @@ async function getResultsForExport(auth, query) {
     return Boom.badRequest()
   }
 
-  const displayResult = query.displayResult || 'actual'
+  const displayResult = query.displayResult || 'all'
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials, { displayResult })
@@ -1961,7 +1961,7 @@ function getBaseQueryForResults() {
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
-  const displayResult = query.displayResult || 'actual'
+  const displayResult = query.displayResult || 'all'
 
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
