@@ -300,6 +300,15 @@ const messages = {
       id: 'filter.popover.deviceStatus',
       defaultMessage: 'Device Status',
     },
+
+    displayResult: {
+      id: 'filter.popover.displayResult',
+      defaultMessage: 'Display Result',
+    },
+    selectDisplayResult: {
+      id: 'filter.popover.selectDisplayResult',
+      defaultMessage: 'Select result scope...',
+    },
   }),
 }
 

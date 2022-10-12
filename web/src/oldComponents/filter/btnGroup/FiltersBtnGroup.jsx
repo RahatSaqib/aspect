@@ -29,6 +29,21 @@ const revokedOptions = [
     name: 'true',
   },
 ]
+const displayResultOptions = [
+  {
+    id: 'all',
+    // see values for names in `./messages.js`
+    name: 'displayAllResults',
+  },
+  {
+    id: 'actual',
+    name: 'displayActualResults',
+  },
+  {
+    id: 'excluded',
+    name: 'displayExcludedResults',
+  },
+]
 
 const enhance = compose(
   pure,
@@ -361,6 +376,13 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         deviceTypeName: deviceTypeItems
           .find(it => it.get('externalId') === deviceType, EMPTY_CONTEXT, EMPTY_MAP)
           .get('name'),
+      })
+    ),
+    displayResult: makeButton(displayResult =>
+      formatMessage(messages.withDisplayResult, {
+        displayResult: formatMessage(
+          messages[displayResultOptions.find(it => it.id === displayResult, EMPTY_CONTEXT, EMPTY_MAP).name]
+        ),
       })
     ),
     externalId: makeButton(externalId =>

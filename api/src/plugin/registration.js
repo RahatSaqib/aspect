@@ -18,6 +18,8 @@ const DEFAULT_SETTINGS = {
     countiesLabel: 'Counties',
     lgaLabel: 'LGA',
     lgasLabel: 'LGAs',
+
+    showFilterDisplayResult: false,
   },
 }
 
@@ -74,6 +76,7 @@ const plugins = {
     onPatientAdded,
     onPatientUpdated,
     getCustomFields,
+    modifyQueryToExcludeResult,
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -85,6 +88,7 @@ const plugins = {
     postProcessMergeResult: require('./partner/Malawi/postProcessMergeResult'),
     postProcessUpdateSite: require('./partner/Malawi/postProcessUpdateSite'),
     onResultLogged: require('./partner/Malawi/onResultLogged'),
+    modifyQueryToExcludeResult: require('./partner/Malawi/modifyQueryToExcludeResult'),
   },
   gxconnect: {
     preProcessCreateDevice: require('./deviceType/CepheidGeneXpert/preProcessCreateDevice'),
@@ -333,6 +337,13 @@ async function transformMergeResultPayload(context) {
  */
 async function getCustomFields() {
   return null
+}
+
+/**
+ *
+ */
+function modifyQueryToExcludeResult(/* queryBuilder, constraints, aliases */) {
+  // nothing to do by default
 }
 
 /**
