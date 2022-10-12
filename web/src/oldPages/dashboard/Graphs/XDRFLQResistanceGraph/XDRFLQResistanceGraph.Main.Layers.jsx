@@ -34,10 +34,19 @@ const layerProps = {
   strokeWidth: 3,
 }
 
-export const FqrToMtbPercentageLine = propsFromBarGraph => (
-  <Line {...propsFromBarGraph} layerProps={{ ...layerProps, valueFieldName: 'FqrToMtbPercentage' }} />
-)
-
-export default {
-  FqrToMtbPercentageLine,
+const FqrToMtbPercentageLine = propsFromBarGraph => {
+  return <Line {...propsFromBarGraph} layerProps={{ ...layerProps, valueFieldName: 'FqrToMtbPercentage' }} />
 }
+
+const FqrToMtbPercentageLineWithLabel = propsFromBarGraph => {
+  return (
+    <Line
+      {...propsFromBarGraph}
+      showLabel
+      showDecimals={2}
+      layerProps={{ ...layerProps, valueFieldName: 'FqrToMtbPercentage' }}
+    />
+  )
+}
+
+export { FqrToMtbPercentageLine, FqrToMtbPercentageLineWithLabel }

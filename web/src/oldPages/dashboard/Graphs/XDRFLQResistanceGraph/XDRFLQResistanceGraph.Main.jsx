@@ -5,11 +5,12 @@ import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
 import AxisRightLayer from '../../../../components/Graphs/BarGraph/AxisRightLayer'
+import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
-import styles from './styles.css'
-import { FqrToMtbPercentageLine } from './XDRFLQResistanceGraph.Main.Layers'
+import styles from '../styles.css'
+import { FqrToMtbPercentageLine, FqrToMtbPercentageLineWithLabel } from './XDRFLQResistanceGraph.Main.Layers'
 
 const cssClasses = classnames.bind(styles)
 
@@ -22,7 +23,6 @@ const baseConfig = {
     { name: 'FqrDetected', colorId: 'caseDetected', target: 'bar' },
     { name: 'FqrToMtbPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
   ],
-  layers: [FqrToMtbPercentageLine, AxisRightLayer],
   clickThrough: false,
   axisRightProps: {
     fieldName: 'FqrToMtbPercentage',
@@ -64,7 +64,13 @@ const XDRFLQResistanceGraphMain = ({ assaysFromState, showLabel, filterSelection
         {graphData && !isEmpty(graphData) ? (
           <AspectResponsiveBar
             assaysFromState={assaysFromState}
-            config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#333' }}
+            config={{
+              ...baseConfig,
+              layers: [showLabel ? FqrToMtbPercentageLineWithLabel : FqrToMtbPercentageLine, AxisRightLayer],
+              showLabel,
+              showDecimals: 0,
+              labelTextColor: '#333',
+            }}
             data={graphData}
             keys={graphKeys}
             indexBy="month"
@@ -83,7 +89,9 @@ const XDRFLQResistanceGraphMain = ({ assaysFromState, showLabel, filterSelection
             type="bar-line"
             i18nKeys={i18nKeys}
           />
-        ) : null}
+        ) : (
+          <EmptyGraph type="bar" />
+        )}
       </div>
     </Grid>
   )

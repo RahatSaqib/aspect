@@ -1,0 +1,3 @@
+import TrendInYearsRifDetectedGraph from './TrendInYearsRifDetectedGraph'
+
+export default TrendInYearsRifDetectedGraph

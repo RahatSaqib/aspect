@@ -14,12 +14,12 @@ import {
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import ErrorBoundary from '../../../../components/ErrorBoundary'
-import graphsContainerMessages from '../../../../components/Graphs/GraphsContainer/messages'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
+import { graphMessages } from '../../../../messages'
+import styles from '../styles.css'
 import DeviceStatusGraphMain from './InventoryStatusGraph.Main'
-import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -34,14 +34,14 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
       <Grid container className={cssClasses('Graph_Container')}>
         <Grid item xs={12}>
           <Card>
-            <CardHeader title={formatMessage(graphsContainerMessages.inventoryGraphStatus)} />
+            <CardHeader title={formatMessage(graphMessages.inventoryGraphStatus)} />
             <CardContent>
               <Grid container spacing={8} className={cssClasses('Graph_Content')}>
                 <Grid item xs={12} md={12} lg={3}>
                   <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
                     <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
                       <FormControlLabel
-                        label={formatMessage(graphsContainerMessages.showValuesLabel)}
+                        label={formatMessage(graphMessages.showValuesLabel)}
                         control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
                       />
                     </Grid>
