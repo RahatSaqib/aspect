@@ -41,24 +41,28 @@ const listWorkload = async request => {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const { assayId } = query
+  const assay = await getAssay(assayId)
 
   const resultCategoryAssay = await getResultCategoriesByAssay(assayId)
-  const resultCategory1ResultsI18nKey = resultCategoryAssay.resultCategory1ResultsI18nKey.split(',')
-  const resultCategory1ResultsId = resultCategoryAssay.resultCategory1ResultsId.split(',')
-  const resultCategory2ResultsI18nKey = resultCategoryAssay.resultCategory2ResultsI18nKey.split(',')
-  const resultCategory2ResultsId = resultCategoryAssay.resultCategory2ResultsId.split(',')
+  const resultCategory1ResultsI18nKey = resultCategoryAssay.resultCategory1ResultsI18nKey?.split(',') || []
+  const resultCategory1ResultsId = resultCategoryAssay.resultCategory1ResultsId?.split(',') || []
+  const resultCategory2ResultsI18nKey = resultCategoryAssay.resultCategory2ResultsI18nKey?.split(',') || []
+  const resultCategory2ResultsId = resultCategoryAssay.resultCategory2ResultsId?.split(',') || []
 
-  let extraColumns = buildExtraColumns(
-    1,
-    resultCategory1ResultsId,
-    resultCategory1ResultsI18nKey,
-    resultCategoryAssay.resultCategory1LabelI18nKey
-  )
+  let extraColumns = []
 
-  const assay = await getAssay(assayId)
+  if (resultCategory1ResultsId !== null) {
+    extraColumns = buildExtraColumns(
+      1,
+      resultCategory1ResultsId,
+      resultCategory1ResultsI18nKey,
+      resultCategoryAssay.resultCategory1LabelI18nKey
+    )
+  }
+
   if (assay.externalId === 'GxMtbXdr') {
     extraColumns = [...extraColumns, ...xdrExtraColumns]
-  } else {
+  } else if (resultCategory1ResultsId !== null) {
     extraColumns = [
       ...extraColumns,
       ...buildExtraColumns(

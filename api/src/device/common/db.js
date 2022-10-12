@@ -189,7 +189,7 @@ async function getResultCategoriesByAssay(assayId) {
   return knex('ResultCategoryGroup as rcg')
     .innerJoin('Assay as a', 'rcg.assayId', 'a.id')
     .leftJoin('ResultCategory as rc1', 'rcg.resultCategory1Id', 'rc1.id')
-    .leftJoin('ResultCategory as rc2', 'rcg.resultCategory1Id', 'rc2.id')
+    .leftJoin('ResultCategory as rc2', 'rcg.resultCategory2Id', 'rc2.id')
     .where('a.id', assayId)
     .select({
       resultCategory1LabelI18nKey: 'a.resultCategory1I18nKey',
