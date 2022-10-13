@@ -1,6 +1,44 @@
 const _ = require('lodash')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/date')
 
+const assayAvatarColorsIcon = {
+  tb: {
+    backgroundColour: 'purple',
+    foregroundColour: 'secondary',
+    contentIcon: null,
+  },
+  hcv: {
+    backgroundColour: 'secondary',
+    foregroundColour: 'primary',
+    contentIcon: null,
+  },
+  hiv: {
+    backgroundColour: 'orange',
+    foregroundColour: 'secondary',
+    contentIcon: null,
+  },
+  ebola: {
+    backgroundColour: 'secondary',
+    foregroundColour: 'primary',
+    contentIcon: null,
+  },
+  covid: {
+    backgroundColour: 'purple',
+    foregroundColour: 'secondary',
+    contentIcon: null,
+  },
+  hbv: {
+    backgroundColour: 'secondary',
+    foregroundColour: 'primary',
+    contentIcon: null,
+  },
+  default: {
+    backgroundColour: 'orange',
+    foregroundColour: 'secondary',
+    contentIcon: null,
+  },
+}
+
 // transformed data
 const getTransformedData = (data, setDelivered, followUps, comments) =>
   _.map(data, d => ({
@@ -137,6 +175,20 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
     reportableSiteId: d.reportableSiteId,
     diseaseExternalId: d.diseaseExternalId,
     diseaseName: d.diseaseName,
+    // assay avatar
+    assayAvatar: {
+      contentI18nKey: d.contentI18nKey,
+      contentText: d.contentText,
+      backgroundColour: assayAvatarColorsIcon[d.diseaseExternalId]
+        ? assayAvatarColorsIcon[d.diseaseExternalId].backgroundColour
+        : assayAvatarColorsIcon.default.backgroundColour,
+      foregroundColour: assayAvatarColorsIcon[d.diseaseExternalId]
+        ? assayAvatarColorsIcon[d.diseaseExternalId].foregroundColour
+        : assayAvatarColorsIcon.default.foregroundColour,
+      contentIcon: assayAvatarColorsIcon[d.diseaseExternalId]
+        ? assayAvatarColorsIcon[d.diseaseExternalId].contentIcon
+        : assayAvatarColorsIcon.default.contentIcon,
+    },
   }))
 
 module.exports = {

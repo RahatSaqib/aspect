@@ -274,6 +274,15 @@ const downloadResultResponseValidationV2 = () => {
             .positive()
             .description('The id of last entry in ResultStatusLog for current result'),
           reportableSiteId: Joi.number().allow(null).description('Reportable siteId of the patient'),
+          assayAvatar: Joi.object()
+            .description('The assay avatar')
+            .keys({
+              contentI18nKey: Joi.string().allow(null).description('Translation key for the content text'),
+              contentText: Joi.string().allow(null).description('Name of the content text'),
+              backgroundColour: Joi.string().allow(null).description('Background color code'),
+              foregroundColour: Joi.string().allow(null).description('Foreground color code'),
+              contentIcon: Joi.string().allow(null).description('Icon of content'),
+            }),
         })
       ),
   })
