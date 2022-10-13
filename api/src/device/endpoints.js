@@ -305,17 +305,7 @@ const routes = [
       auth: { scope: ['device:view'] },
       validate: {
         query: {
-          hasResults: Joi.number()
-            .allow('')
-            .min(0)
-            .max(1)
-            .description('Filter for getting devices that can have results'),
-          hasConnectivity: Joi.number()
-            .allow('')
-            .min(0)
-            .max(1)
-            .description('Filter for getting devices that can have connectivity'),
-          assayId: Joi.number().description('Filter for assay ID'),
+          assayId: Joi.number().description('Filter for assay ID').required(),
           deviceName: Joi.string().allow('').description('Filter for device name'),
           deviceMaintenanceStatusId: Joi.array()
             .items(Joi.string())
@@ -325,7 +315,6 @@ const routes = [
           ...validateAllGeographyFilterParams(),
           ...validateDateRangeParams(true),
           ...validateSortPageParams(
-            // TODO: Add 'availabilityRate' Sort Page Param
             'name',
             'deviceStatus',
             'lastPingOn',
