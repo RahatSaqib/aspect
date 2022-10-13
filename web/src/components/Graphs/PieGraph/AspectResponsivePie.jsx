@@ -11,6 +11,37 @@ import styles from './PieGraph.css'
 
 const cssClasses = classnames.bind(styles)
 
+const config = (type, data, displayMethod) => {
+  switch (true) {
+    case type === 'doughnut':
+      return {
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        data,
+        radius: 0.65,
+        endAngle: 360,
+        interactive: false,
+      }
+
+    case type === 'solid':
+      return {
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        data,
+        radius: 0,
+        endAngle: 360,
+        interactive: false,
+      }
+
+    default:
+      return {
+        margin: { top: 30, right: 30, bottom: 30, left: 30 },
+        data: percentageOrActualForPie(data, displayMethod),
+        radius: 0.8,
+        endAngle: -360,
+        interactive: true,
+      }
+  }
+}
+
 const AspectResponsivePie = ({
   assaysFromState,
   averages,
@@ -23,38 +54,8 @@ const AspectResponsivePie = ({
   i18nKeys,
   config: baseConfig,
 }) => {
-  const { id: graphId, showLabel, labelTextColor } = baseConfig
+  const { id: graphId, showLabel, labelTextColor, showDecimals = 2 } = baseConfig
   const { formatNumber: intlFormatNumber, formatMessage } = useI18n()
-  const config = (type, data, displayMethod) => {
-    switch (true) {
-      case type === 'doughnut':
-        return {
-          margin: { top: 0, right: 0, bottom: 0, left: 0 },
-          data,
-          radius: 0.65,
-          endAngle: 360,
-          interactive: false,
-        }
-
-      case type === 'solid':
-        return {
-          margin: { top: 0, right: 0, bottom: 0, left: 0 },
-          data,
-          radius: 0,
-          endAngle: 360,
-          interactive: false,
-        }
-
-      default:
-        return {
-          margin: { top: 30, right: 30, bottom: 30, left: 30 },
-          data: percentageOrActualForPie(data, displayMethod),
-          radius: 0.8,
-          endAngle: -360,
-          interactive: true,
-        }
-    }
-  }
 
   return (
     <div className={cssClasses(componentClasses)}>
@@ -65,7 +66,7 @@ const AspectResponsivePie = ({
         innerRadius={config(type).radius}
         enableRadialLabels={false}
         enableSlicesLabels={!!showLabel}
-        sliceLabel={d => `${parseFloat(d.value).toFixed(2)}%`}
+        sliceLabel={d => `${parseFloat(d.value).toFixed(showDecimals)}%`}
         slicesLabelsTextColor={labelTextColor}
         padAngle={-1}
         startAngle={0}

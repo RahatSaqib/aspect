@@ -1,17 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import ErrorBoundary from '../../../../components/ErrorBoundary'
+import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
 import messages from '../../../../components/Graphs/intlMessages'
 import AspectResponsivePie from '../../../../components/Graphs/PieGraph/AspectResponsivePie'
 import useI18n from '../../../../hooks/useI18n'
-import styles from './styles.css'
+import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -101,7 +102,9 @@ const TestsOverTimeGraphSide = ({ assaysFromState, data, endPointParams, showLab
               displayMethod="percentage"
               componentClasses={['piegraph__container']}
             />
-          ) : null}
+          ) : (
+            <EmptyGraph type="pie" />
+          )}
         </div>
       </Grid>
     </ErrorBoundary>

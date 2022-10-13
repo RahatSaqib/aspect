@@ -1,6 +1,6 @@
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
-import Tooltip from '@mui/material/Tooltip'
+import { Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import isNumber from 'lodash/isNumber'

@@ -333,7 +333,8 @@ async function savePerson(request, updatablePersonFields) {
     },
     {}
   )
-  const changedPersonFields = await transformGeographyFromUpdates(changedFields)
+  const changedPersonFields = await transformGeographyFromUpdates(changedFields, dataConstraints.country.id)
+
   const changedTags = !tagsAreEqual(payload.tags, personDetails.tags.map(t => t.title).join(','))
 
   if (changedTags) {
@@ -385,7 +386,7 @@ async function createPerson(request) {
     updatedBy: currentlyLoggedInUser.id,
   }
 
-  const changedPersonFields = await transformGeographyFromUpdates(changedFields)
+  const changedPersonFields = await transformGeographyFromUpdates(changedFields, currentlyLoggedInUser.countryId)
   if (changedFields.countryId) {
     changedPersonFields.lastCountryId = changedFields.countryId
   }

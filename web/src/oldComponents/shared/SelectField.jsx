@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
+import { MenuItem, TextField } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import classNames from 'classnames'
 import isArray from 'lodash/isArray'

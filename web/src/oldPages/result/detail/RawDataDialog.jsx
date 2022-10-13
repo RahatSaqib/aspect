@@ -1,6 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import LinearProgress from '@mui/material/LinearProgress'
+import { Button, LinearProgress } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import { connect } from 'react-redux'
 import { compose, withHandlers, lifecycle, withProps } from 'recompose'

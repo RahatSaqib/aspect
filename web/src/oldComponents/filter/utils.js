@@ -126,6 +126,7 @@ const sanitizerByConfigKey = {
   hasStock: defaultSanitizer,
   lotNumber: defaultSanitizer,
   contactStatus: defaultSanitizer,
+  displayResult: defaultSanitizer,
 }
 
 export const setFiltersForLast30Days = searchParams => {
@@ -376,6 +377,9 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
               break
             case 'expirationDate':
               result.expirationDate = true
+              break
+            case 'displayResult':
+              result.displayResult = true
               break
             default:
               break

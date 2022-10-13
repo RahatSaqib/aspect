@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import Grid from '@mui/material/Grid'
-import Paper from '@mui/material/Paper'
+import { Grid, Paper } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import get from 'lodash/get'

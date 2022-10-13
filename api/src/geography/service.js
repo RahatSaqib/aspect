@@ -223,17 +223,22 @@ async function lgaSelectList(request) {
 /**
  * Adds geographyId field to @see {updates}, searching in DB for a record matching countryId, stateId and lgaId
  * @param {Object} updates - Object with countryId, stateId and lgaId data.
+ * @param {number} fallbackCountryId - default country Id of no countryId is specified. This prevents the method to return a wrong country
+ * if no one is specified, as in a multi country environment this could be a problem. Although, returning the first geography in DB is still
+ * the default behaviour if this parameter is not specified.
  * @returns - Input object transformed, now containing geographyId field added, with matching id if a record is found or null if not.
  */
-async function transformGeographyFromUpdates(updates) {
+async function transformGeographyFromUpdates(updates, fallbackCountryId) {
   const geoFieldNames = ['countryId', 'stateId', 'lgaId']
   const geoFields = _.pick(updates, geoFieldNames)
   const transformedFields = _.omit(updates, geoFieldNames)
 
-  if (!_.isEmpty(geoFields)) {
-    const geography = await knex('Geography').where(geoFields).first('id')
-    transformedFields.geographyId = geography ? geography.id : null
+  if (!geoFields?.countryId) {
+    geoFields.countryId = fallbackCountryId
   }
+  const geography = await knex('Geography').where(geoFields).first('id')
+  transformedFields.geographyId = geography ? geography.id : null
+
   return transformedFields
 }
 

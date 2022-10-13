@@ -1,7 +1,5 @@
 import React from 'react'
-import Input from '@mui/material/Input'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
+import { Input, MenuItem, Select } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import omit from 'lodash/omit'
 import useI18n from '../../hooks/useI18n'

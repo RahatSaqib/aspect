@@ -1,5 +1,5 @@
 import React from 'react'
-import Chip from '@mui/material/Chip'
+import { Chip } from '@mui/material'
 import classnames from 'classnames/bind'
 import { array, func, oneOfType } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'

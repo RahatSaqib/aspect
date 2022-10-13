@@ -12,6 +12,8 @@ const settings = {
     countiesLabel: 'Districts',
     lgaLabel: 'District',
     lgasLabel: 'Districts',
+
+    showFilterDisplayResult: true,
   },
 }
 

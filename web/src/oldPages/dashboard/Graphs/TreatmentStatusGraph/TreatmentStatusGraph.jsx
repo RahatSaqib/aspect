@@ -1,18 +1,17 @@
 import React, { useState } from 'react'
-import { Card, CardContent, CardHeader, Switch, FormControlLabel } from '@mui/material'
-import Grid from '@mui/material/Grid'
+import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import { useQuery } from 'react-query'
 import ErrorBoundary from '../../../../components/ErrorBoundary'
-import graphsContainerMessages from '../../../../components/Graphs/GraphsContainer/messages'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
+import { graphMessages } from '../../../../messages'
 import { getWhitelistedAssays } from '../../../../utils/utils/graph'
-import styles from './styles.css'
+import styles from '../styles.css'
 import MainGraph from './TreatmentStatusGraph.Main'
 import SideGraph from './TreatmentStatusGraph.Side'
 
@@ -53,14 +52,14 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
       <Grid container className={cssClasses('Graph_Container')}>
         <Grid item xs={12}>
           <Card>
-            <CardHeader title={formatMessage(graphsContainerMessages.treatmentGraphStatusMonthly)} />
+            <CardHeader title={formatMessage(graphMessages.treatmentGraphStatusMonthly)} />
             <CardContent>
               <Grid container spacing={8} className={cssClasses('Graph_Content')}>
                 <Grid item xs={12} md={12} lg={3}>
                   <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
                     <Grid item xs={12} md={12} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
                       <FormControlLabel
-                        label={formatMessage(graphsContainerMessages.showValuesLabel)}
+                        label={formatMessage(graphMessages.showValuesLabel)}
                         control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
                       />
                     </Grid>

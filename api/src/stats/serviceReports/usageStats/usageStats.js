@@ -63,17 +63,22 @@ async function getEmailsSent(dataConstraints, params) {
 }
 
 async function getDevicesReporting(dataConstraints, params) {
-  const { count } = await knex('Device as d')
-    .leftJoin('Result as r', 'd.id', 'r.deviceId')
-    .leftJoin('Site as s', 's.id', 'd.siteId')
-    .leftJoin('Geography as g', 'g.id', 's.geographyId')
-    .modify(filterDateRangeParams, params, 'r.createdOn')
-    .modify(addConstraints, dataConstraints, { site: 's', device: 'd', geography: 'g' })
-    .modify(filterParams, params, { siteName: 's.name', stateId: 'g.stateId', lgaId: 'g.lgaId' })
-    .groupBy('d.id')
-    .having(knex.raw('count(r.id) > 0'))
-    .count('d.id as count')
+  const { count } = await knex(
+    knex('Device as d')
+      .leftJoin('Result as r', 'd.id', 'r.deviceId')
+      .leftJoin('Site as s', 's.id', 'd.siteId')
+      .leftJoin('Geography as g', 'g.id', 's.geographyId')
+      .modify(filterDateRangeParams, params, 'r.createdOn')
+      .modify(addConstraints, dataConstraints, { site: 's', device: 'd', geography: 'g' })
+      .modify(filterParams, params, { siteName: 's.name', stateId: 'g.stateId', lgaId: 'g.lgaId' })
+      .groupBy('d.id')
+      .having(knex.raw('count(r.id) > 0'))
+      .select('d.id')
+      .as('b')
+  )
+    .count('* as count')
     .first()
+
   return count
 }
 

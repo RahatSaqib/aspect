@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
@@ -8,10 +8,11 @@ import pick from 'lodash/pick'
 import reduce from 'lodash/reduce'
 import ErrorBoundary from '../../../../components/ErrorBoundary'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
+import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
 import messages from '../../../../components/Graphs/intlMessages'
 import useI18n from '../../../../hooks/useI18n'
-import styles from './styles.css'
+import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -105,7 +106,9 @@ const TestsOverTimeGraphMain = ({ assaysFromState, data, endPointParams, showLab
               displayLegend
               type="bar"
             />
-          ) : null}
+          ) : (
+            <EmptyGraph type="bar" />
+          )}
         </div>
       </Grid>
     </ErrorBoundary>

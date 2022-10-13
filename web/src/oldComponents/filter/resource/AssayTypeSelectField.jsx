@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'

@@ -128,8 +128,10 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     return Boom.badRequest()
   }
 
+  const displayResult = query.displayResult || 'all'
+
   // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials, { displayResult })
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   // get total count for paging
@@ -246,8 +248,10 @@ async function getResultsForExport(auth, query) {
     return Boom.badRequest()
   }
 
+  const displayResult = query.displayResult || 'all'
+
   // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials, { displayResult })
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   const getCount = resultQuery.clone().count('r.id as total').first()
@@ -1957,6 +1961,7 @@ function getBaseQueryForResults() {
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
+  const displayResult = query.displayResult || 'all'
 
   const resultQuery = getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
@@ -2095,6 +2100,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       country: 'c',
       disease: 'dis',
       showUnapprovedDevices,
+      displayResult,
     })
 
   return resultQuery

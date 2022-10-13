@@ -1,5 +1,5 @@
 import React from 'react'
-import Typography from '@mui/material/Typography'
+import { Typography } from '@mui/material'
 import useI18n from '../../../hooks/useI18n'
 import { cronMessages as messages } from '../../../messages/index'
 

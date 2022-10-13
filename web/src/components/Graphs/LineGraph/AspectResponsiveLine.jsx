@@ -38,7 +38,7 @@ const AspectResponsiveLine = ({
   const i18n = useI18n()
   const { formatMessage } = i18n
   const graphsToHaveCustomLegend = []
-  const { id: graphId, sortByKeys } = baseConfig
+  const { id: graphId, sortByKeys, showLabel, showDecimals } = baseConfig
   let filteredData = data
   if (sortByKeys?.length) {
     const firstDataItem = first(sortBy(data, sortByKeys))
@@ -155,6 +155,8 @@ const AspectResponsiveLine = ({
           indexBy={indexBy}
           colorBy="index"
           enableLabel={false}
+          enablePointLabel={!!showLabel}
+          pointLabel={t => `${parseFloat(t.y).toFixed(showDecimals)}`}
           enableGridY={enableGridY}
           enableGridX={enableGridX}
           gridYValues={gridYValues}
@@ -166,7 +168,7 @@ const AspectResponsiveLine = ({
           axisRight={null}
           labelSkipWidth={12}
           labelSkipHeight={12}
-          animate
+          animate={false}
           motionStiffness={90}
           motionDamping={15}
           colors={v => generateColorForValue(v.id, graphId)}

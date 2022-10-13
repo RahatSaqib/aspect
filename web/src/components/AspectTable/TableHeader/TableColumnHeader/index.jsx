@@ -1,5 +1,5 @@
 import React from 'react'
-import TableSortLabel from '@mui/material/TableSortLabel'
+import { TableSortLabel } from '@mui/material'
 import classnames from 'classnames/bind'
 import { bool, func, string } from 'prop-types'
 import styles from '../../Table.css'

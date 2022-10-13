@@ -1,7 +1,5 @@
 import React from 'react'
-import Checkbox from '@mui/material/Checkbox'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormGroup from '@mui/material/FormGroup'
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import styles from '../DailyStatus.css'

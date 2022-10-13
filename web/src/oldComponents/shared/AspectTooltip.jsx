@@ -1,5 +1,5 @@
 import React from 'react'
-import Tooltip from '@mui/material/Tooltip'
+import { Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import IconProvider from '../../components/IconProvider'

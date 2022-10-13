@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import isEmpty from 'lodash/isEmpty'
+import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import {
   formatDataByGraphType,
   getGraphKeysFromResults,
@@ -15,7 +16,7 @@ import {
 import messages from '../../../../components/Graphs/intlMessages'
 import AspectResponsivePie from '../../../../components/Graphs/PieGraph/AspectResponsivePie'
 import useI18n from '../../../../hooks/useI18n'
-import styles from './styles.css'
+import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -26,7 +27,7 @@ const params = {
 
 const i18nKeys = { Confirmed: 'Confirmed', NotConfirmed: 'NotConfirmed' }
 
-const GraphContainer = ({ assaysFromState, whiteListed, rawData, showLabel }) => {
+const TreatmentStatusGraphSide = ({ assaysFromState, whiteListed, rawData, showLabel }) => {
   const { formatMessage } = useI18n()
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
@@ -83,10 +84,12 @@ const GraphContainer = ({ assaysFromState, whiteListed, rawData, showLabel }) =>
             i18nKeys={i18nKeys}
             config={{ id: 'treatmentStatusMonthlyPie', showLabel, labelTextColor: '#333' }}
           />
-        ) : null}
+        ) : (
+          <EmptyGraph type="pie" />
+        )}
       </div>
     </Grid>
   )
 }
 
-export default GraphContainer
+export default TreatmentStatusGraphSide
