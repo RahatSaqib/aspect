@@ -296,12 +296,11 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                   endpoint: SAMPLE_TYPES.ENDPOINT,
                   hideIfNoOptions: false,
                   queryKey: SAMPLE_TYPES.KEY,
-                  normalizeLoadedData: response => {
-                    return getBaseOptions(response, {
+                  normalizeLoadedData: response =>
+                    getBaseOptions(response, {
                       formatMessage,
                       propNameForI18n: 'i18nKey',
-                    })
-                  },
+                    }),
                   isClearable: true,
                 },
                 label: 'Sample Type',
