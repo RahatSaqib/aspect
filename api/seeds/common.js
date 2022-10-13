@@ -14,7 +14,7 @@ const followUpFixture = require('./fixtures/FollowUp.json')
 const timezone = require('./fixtures/TimeZone.json')
 const upsertResultCategoryGroup = require('./common/upsert_result_category_group')
 const defaultJobFunctionsFixture = require('./fixtures/jobFunctions')
-const gxResultCategoryGroups = require('./fixtures/ResultCategoryGroupGeneXpert')
+const resultCategoryGroups = require('./fixtures/resultCategoryGroupBase')
 const gxPatientDataSchema = require('./fixtures/geneXpertDevice/geneXpertPatientDataSchema.json')
 const geneXpertResultDataSchemaMTBRif = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBRif.json')
 const geneXpertResultDataSchemaMTBXdr = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaMTBXdr.json')
@@ -705,7 +705,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
   await utils.addFollowUps(knex, followUpFixture, null, assayExternalIds)
 
   const existingAssayExternalIds = await knex('Assay').whereIn('externalId', assayExternalIds).pluck('externalId')
-  await upsertResultCategoryGroup(knex, gxResultCategoryGroups, existingAssayExternalIds)
+  await upsertResultCategoryGroup(knex, resultCategoryGroups, existingAssayExternalIds)
 }
 
 async function createAssay(

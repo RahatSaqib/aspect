@@ -173,7 +173,73 @@ async function deleteDevice(deviceId, trknex) {
   await trknex('Device').where('id', deviceId).del()
 }
 
+/**
+ * Gets an object containing the i18n keys, the result categories ids, and category labels for the result category 1 and 2
+ * @returns An object with the next shape:
+ * {
+ *   resultCategory1LabelI18nKey,   // The i18nKey of the resultCategory1 label for the assay
+ *   resultCategory2LabelI18nKey,   // The i18nKey of the resultCategory2 label for the assay
+ *   resultCategory1ResultsId,      // A csv containing the list of possible result category 1 ids for the assay
+ *   resultCategory1ResultsI18nKey, // A csv containing the list of possible result category 1 i18n keys for the assay (same order than resultCategory1ResultsId)
+ *   resultCategory2ResultsId,      // A csv containing the list of possible result category 2 ids for the assay
+ *   resultCategory2ResultsId       // A csv containing the list of possible result category 2 i18n keys for the assay (same order than resultCategory2ResultsId)
+ * }
+ */
+async function getResultCategoriesByAssay(assayId) {
+  return knex('ResultCategoryGroup as rcg')
+    .innerJoin('Assay as a', 'rcg.assayId', 'a.id')
+    .leftJoin('ResultCategory as rc1', 'rcg.resultCategory1Id', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'rcg.resultCategory2Id', 'rc2.id')
+    .where('a.id', assayId)
+    .select({
+      resultCategory1LabelI18nKey: 'a.resultCategory1I18nKey',
+      resultCategory2LabelI18nKey: 'a.resultCategory2I18nKey',
+      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id)'),
+      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey)'),
+      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id)'),
+      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey)'),
+    })
+    .first()
+}
+
+function getFirstAndLastResults(dataConstraints, assayId) {
+  return knex('Result as r')
+    .modify(addConstraints, dataConstraints, { result: 'r' })
+    .groupBy('deviceId')
+    .select({
+      deviceId: 'deviceId',
+      firstEndedOn: knex.raw('MIN(endedOn)'),
+      lastEndedOn: knex.raw('MAX(endedOn)'),
+    })
+    .where('assayId', assayId)
+    .as('firstAndLastResults')
+}
+
+function getDeviceWorkload(extraColumns, dataConstraints, assayId) {
+  return knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin(getFirstAndLastResults(dataConstraints, assayId), 'd.id', 'firstAndLastResults.deviceId')
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .modify(q => {
+      extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
+    })
+    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' })
+    .select(
+      'd.name',
+      'dms.i18nKey as deviceStatus',
+      'd.lastPingOn',
+      'firstAndLastResults.firstEndedOn as firstResultEndedOn',
+      'firstAndLastResults.lastEndedOn as lastResultEndedOn',
+      knex.raw('COUNT(r.id) as total')
+    )
+    .where('r.assayId', assayId)
+    .groupBy('r.deviceId')
+}
+
 module.exports = {
+  getDeviceWorkload,
+  getResultCategoriesByAssay,
   getSourceDevices,
   getTargetDevice,
   mergeIssuesFromDuplicatedResults,
