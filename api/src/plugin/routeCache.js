@@ -22,10 +22,10 @@ class RouteCache {
   }
 
   // filter versioned routes which are supporting requested endpoints
-  async getAvailableRoutes(routesList, request) {
+  async getAvailableRoutes(routesList, requestedPath) {
     const availableRoutes = []
     routesList.map(url => {
-      if (url.replace(/v\d+[\\/]/gi, '').trim() === request.path) {
+      if (url.replace(/v\d+[\\/]/gi, '').trim() === requestedPath) {
         const parseVersionNumber = url.match(/\d+/)
         const versionNumber = parseVersionNumber && parseInt(parseVersionNumber[0], 10)
         if (versionNumber) {
@@ -34,25 +34,24 @@ class RouteCache {
       }
       return url
     })
-    return { [request.path]: availableRoutes }
+    return { [requestedPath]: availableRoutes }
   }
 
   // return matched routes value
-  async getCachedAvailableRoutes(routesList, request) {
+  async appendAndGetAllCachedRoutes(routesList, requestedPath) {
     // checking if the routes exists to cached list of routes
-    const cachedRoutes = this.routesCache.get(routestMatchCacheKey)
-    if (!_.isEmpty(cachedRoutes) && cachedRoutes[request.path]) {
-      return cachedRoutes
+    const allCachedRoutes = this.routesCache.get(routestMatchCacheKey)
+    if (!_.isEmpty(allCachedRoutes) && allCachedRoutes[requestedPath]) {
+      return allCachedRoutes
     }
 
     // if not found matching routes in cache then set those routes to cache
-    const routesVersions = await this.getAvailableRoutes(routesList, request)
+    const routesVersions = await this.getAvailableRoutes(routesList, requestedPath)
     if (_.isEmpty(routesVersions)) {
       this.setCacheValue(routestMatchCacheKey, routesVersions)
     } else {
       this.setCacheValue(routestMatchCacheKey, { ...routesVersions, ...this.routesCache.get(routestMatchCacheKey) })
     }
-
     return this.routesCache.get(routestMatchCacheKey)
   }
 
@@ -71,9 +70,9 @@ class RouteCache {
 // singleton pattern for cache  to avoid multiple instances
 // singleton pattern class
 class RouteCacheSingleton {
-  static getInstance(table) {
+  static getInstance(server) {
     if (!RouteCacheSingleton.instance) {
-      RouteCacheSingleton.instance = new RouteCache(table)
+      RouteCacheSingleton.instance = new RouteCache(server.table())
     }
     return RouteCacheSingleton.instance
   }
