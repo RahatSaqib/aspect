@@ -297,7 +297,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                   hideIfNoOptions: false,
                   queryKey: SAMPLE_TYPES.KEY,
                   normalizeLoadedData: response => {
-                    return getBaseOptions(response.data, {
+                    return getBaseOptions(response, {
                       formatMessage,
                       propNameForI18n: 'i18nKey',
                     })
