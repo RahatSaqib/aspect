@@ -215,9 +215,9 @@ function getFirstAndLastResults(dataConstraints, assayId) {
     .as('firstAndLastResults')
 }
 
-function getDeviceWorkload(extraColumns, dataConstraints, query) {
+async function getDeviceWorkload(extraColumns, dataConstraints, query) {
   const { assayId } = query
-  return knex('Device as d')
+  const q = knex('Device as d')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -236,22 +236,21 @@ function getDeviceWorkload(extraColumns, dataConstraints, query) {
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .leftJoin(getFirstAndLastResults(dataConstraints, assayId), 'd.id', 'firstAndLastResults.deviceId')
     .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
-    .modify(sortPageParams, query, 'name')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
-      deviceApprovalId: 'd.deviceApprovalId',
-      deviceTypeId: 'd.deviceTypeId',
-      deviceType: 'dt.externalId',
-      hasConnectivity: 'dc.hasConnectivity',
-      type: 'dt.name',
       siteExternalId: 's.externalId',
       siteName: 's.name',
       siteId: 's.id',
       deviceMaintenanceStatusId: 'dms.id',
     })
+    .andWhere('dtc.hasResults', true)
+
+  const { total } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as total')).first()
+  const data = await q
+    .modify(sortPageParams, query, 'name')
     .select(
       'd.name',
       'dms.i18nKey as deviceStatus',
@@ -263,8 +262,9 @@ function getDeviceWorkload(extraColumns, dataConstraints, query) {
     .modify(q => {
       extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
     })
-    .andWhere('dtc.hasResults', true)
     .groupBy('d.id')
+  const { length } = data
+  return { total, data, length }
 }
 
 module.exports = {
