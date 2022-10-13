@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
@@ -148,6 +148,11 @@ const FILTERS_CONFIG = [
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },
+  {
+    displayResult: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => !!dependencies.showFilterDisplayResult,
+  },
   {
     onlyReportableResults: true,
     requiredPermissions: ['assay:view'],
@@ -307,7 +312,14 @@ const ResultList = () => {
   const location = useLocation()
   const {
     jwt: { permissions: userPermissions },
+    displayPreferences: { showFilterDisplayResult },
   } = useAuthState()
+  const dependencies = useMemo(
+    () => ({
+      showFilterDisplayResult,
+    }),
+    [showFilterDisplayResult]
+  )
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
@@ -332,7 +344,7 @@ const ResultList = () => {
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
 
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, dependencies)
   const params = { ...pagination, ...filters }
   delete params.assayOverride
 
@@ -356,8 +368,11 @@ const ResultList = () => {
     setIsLoading(tableLoading)
   }, [tableLoading])
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized, value: searchParams } = searchSanitizer(location, dependencies)
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
+      searchParams.get('filters') || '',
+      dependencies
+    )
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
@@ -378,7 +393,7 @@ const ResultList = () => {
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     setFilters(getFilters(filtersParams))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
+  }, [location, dependencies])
 
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {

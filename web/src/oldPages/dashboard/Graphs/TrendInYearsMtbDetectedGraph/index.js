@@ -1,0 +1,3 @@
+import TrendInYearsMtbDetectedGraph from './TrendInYearsMtbDetectedGraph'
+
+export default TrendInYearsMtbDetectedGraph
