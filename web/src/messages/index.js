@@ -10,6 +10,7 @@ import resultCategory from './resultCategory'
 import resultCategoryType from './resultCategoryType'
 import resultTreatmentStatusMessages from './resultTreatmentStatusMessages'
 import resultWorkflowStatusMessages from './resultWorkflowStatusMessages'
+import sampleType from './sampleType'
 import { validations } from './validations'
 
 export {
@@ -26,5 +27,6 @@ export {
   resultWorkflowStatusMessages,
   resultTreatmentStatusMessages,
   validations,
+  sampleType,
   graphMessages,
 }

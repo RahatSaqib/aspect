@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-30T17:11:05.070Z\n"
+"POT-Creation-Date: 2022-10-11T19:12:20.750Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1161,6 +1161,13 @@ msgstr ""
 "Basado en los últimos 30 días, representa el porcentaje de resultados con "
 "errores en comparación con el número total de resultados realizados"
 
+#. [filter.sampleType.sampleTypeBlood]
+#. defaultMessage is:
+#. Blood
+#: extracted_strings.json
+msgid "Blood"
+msgstr "Sangre"
+
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
@@ -1243,6 +1250,13 @@ msgstr "Prueba COVID-19"
 #: extracted_strings.json
 msgid "CREATE"
 msgstr "CREAR"
+
+#. [filter.sampleType.sampleTypeCSF]
+#. defaultMessage is:
+#. CSF
+#: extracted_strings.json
+msgid "CSF"
+msgstr "CSF"
 
 #. [pages.ListExport.exportCsv]
 #. defaultMessage is:
@@ -2044,7 +2058,7 @@ msgstr "Crear"
 #. Create Notification
 #: extracted_strings.json
 msgid "Create Notification"
-msgstr "Crear sitio"
+msgstr "Crear notificación"
 
 #. [pages.SiteList.createSite]
 #. defaultMessage is:
@@ -2145,6 +2159,13 @@ msgstr "Campos personalizados"
 #: extracted_strings.json
 msgid "Custom Fields Average Completion"
 msgstr "Campos personalizados Finalización media"
+
+#. [filter.sampleType.sampleTypeDBS]
+#. defaultMessage is:
+#. DBS
+#: extracted_strings.json
+msgid "DBS"
+msgstr "DBS"
 
 #. [months.december]
 #. defaultMessage is:
@@ -2737,14 +2758,14 @@ msgstr "Dispositivos con el servicio interrumpido"
 #. Devices from LGA
 #: extracted_strings.json
 msgid "Devices from LGA"
-msgstr "Desde..."
+msgstr "Dispositivos de LGA"
 
 #. [pages.NotificationDetail.SelectLabTitle]
 #. defaultMessage is:
 #. Devices from Lab
 #: extracted_strings.json
 msgid "Devices from Lab"
-msgstr "Laboratorio:"
+msgstr "Dispositivos de laboratorio"
 
 #. [component.Widget.unusedModulesTitle]
 #. defaultMessage is:
@@ -2855,6 +2876,13 @@ msgstr "¿Desea desactivar"
 #: extracted_strings.json
 msgid "Do you want to enable"
 msgstr "¿Desea habilitar"
+
+#. [page.contacts.person.removeAssignment]
+#. defaultMessage is:
+#. Do you want to remove below assignment?
+#: extracted_strings.json
+msgid "Do you want to remove below assignment?"
+msgstr "¿Desea eliminar la siguiente asignación?"
 
 #. [jobFunction.donor]
 #. defaultMessage is:
@@ -2973,6 +3001,13 @@ msgstr "Editar"
 #: extracted_strings.json
 msgid "Edit Notification"
 msgstr "Editar notificación"
+
+#. [filter.sampleType.sampleTypeEffusion]
+#. defaultMessage is:
+#. Effusion
+#: extracted_strings.json
+msgid "Effusion"
+msgstr "Derrame"
 
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
@@ -3532,7 +3567,7 @@ msgstr "Caduca {date}"
 #. Expiring in days
 #: extracted_strings.json
 msgid "Expiring in days"
-msgstr "que expira"
+msgstr "Expiración en días"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
@@ -3896,6 +3931,13 @@ msgstr "GP no detectado - NP detectado"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP no detectado - NP no detectado"
+
+#. [filter.sampleType.sampleTypeGastricLavage]
+#. defaultMessage is:
+#. Gastric Lavage
+#: extracted_strings.json
+msgid "Gastric Lavage"
+msgstr "Lavado gástrico"
 
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
@@ -4669,7 +4711,7 @@ msgstr "Inventario"
 #. Inventory Expiring
 #: extracted_strings.json
 msgid "Inventory Expiring"
-msgstr "que expira"
+msgstr "Inventario que expira"
 
 #. [pages.NewInventoryDialogForm.defaultConsumableName]
 #. defaultMessage is:
@@ -4714,6 +4756,13 @@ msgstr "Inventario en mano"
 #: extracted_strings.json
 msgid "Is at least {minLength} characters long"
 msgstr "Tiene al menos {minLength} caracteres"
+
+#. [filter.sampleType.sampleTypeIsolate]
+#. defaultMessage is:
+#. Isolate
+#: extracted_strings.json
+msgid "Isolate"
+msgstr "Aislar"
 
 #. [pages.TableCell.issueBasedNotification]
 #. defaultMessage is:
@@ -4842,7 +4891,7 @@ msgstr "LPA"
 #. Lab Admin
 #: extracted_strings.json
 msgid "Lab Admin"
-msgstr "Laboratorio:"
+msgstr "Administración del laboratorio"
 
 #. [jobFunction.labManager]
 #. defaultMessage is:
@@ -4856,7 +4905,7 @@ msgstr "Director de laboratorio"
 #. Lab User
 #: extracted_strings.json
 msgid "Lab User"
-msgstr "Laboratorio:"
+msgstr "Usuario de laboratorio"
 
 #. [pages.Milestones.resultSiteName]
 #. defaultMessage is:
@@ -5916,7 +5965,7 @@ msgstr "Mover la columna a la derecha"
 #. N/A
 #: extracted_strings.json
 msgid "N/A"
-msgstr "N/A"
+msgstr "No applica"
 
 #. [pages.resultTreatmentPanel.note]
 #. defaultMessage is:
@@ -5980,6 +6029,13 @@ msgstr "NTP"
 #: extracted_strings.json
 msgid "Name"
 msgstr "Nombre"
+
+#. [filter.sampleType.sampleTypeNasalSwab]
+#. defaultMessage is:
+#. Nasal Swab
+#: extracted_strings.json
+msgid "Nasal Swab"
+msgstr "Hisopo nasal"
 
 #. [pages.NotificationDetail.Area.National]
 #. defaultMessage is:
@@ -6670,6 +6726,9 @@ msgstr "Solicitado"
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
+#. [filter.sampleType.sampleTypeOther]
+#. defaultMessage is:
+#. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Otro"
@@ -6904,6 +6963,13 @@ msgstr "Detalle de la persona"
 #: extracted_strings.json
 msgid "Phone"
 msgstr "Teléfono"
+
+#. [filter.sampleType.sampleTypePlasma]
+#. defaultMessage is:
+#. Plasma
+#: extracted_strings.json
+msgid "Plasma"
+msgstr "Plasma"
 
 #. [errorResponseMessages.common.notFound.resolution]
 #. defaultMessage is:
@@ -7387,6 +7453,13 @@ msgstr "Provisionado"
 #: extracted_strings.json
 msgid "Purged"
 msgstr "Purgado"
+
+#. [filter.sampleType.sampleTypePus]
+#. defaultMessage is:
+#. Pus
+#: extracted_strings.json
+msgid "Pus"
+msgstr "Pus"
 
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
@@ -7874,6 +7947,9 @@ msgstr "Resuelto"
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
+#. [pages.ResultList.resultCategoryResult]
+#. defaultMessage is:
+#. Result
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
@@ -8107,6 +8183,13 @@ msgstr "SMS enviados MTD"
 #: extracted_strings.json
 msgid "SMS was sent to:"
 msgstr "SMS fue enviado a:"
+
+#. [filter.sampleType.sampleTypeSaliva]
+#. defaultMessage is:
+#. Saliva
+#: extracted_strings.json
+msgid "Saliva"
+msgstr "Saliva"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -9246,6 +9329,13 @@ msgstr "El mensaje SMS no debe tener más de 144 caracteres"
 msgid "Source devices"
 msgstr "Dispositivo origen"
 
+#. [filter.sampleType.sampleTypeSputum]
+#. defaultMessage is:
+#. Sputum
+#: extracted_strings.json
+msgid "Sputum"
+msgstr "Esputo"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -9307,6 +9397,9 @@ msgstr "Estado/Región"
 #. defaultMessage is:
 #. Status
 #. [pages.ResultWorkflowStatusLog.logStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.ResultList.resultCategoryStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
@@ -11233,7 +11326,7 @@ msgstr "Sitio"
 #. When stock is...
 #: extracted_strings.json
 msgid "When stock is..."
-msgstr "Suministro en stock"
+msgstr "Cuando el stock es..."
 
 #. [pages.NotificationDetail.whenDeviceDidNotSendResultsForMoreThan]
 #. defaultMessage is:
@@ -11741,7 +11834,7 @@ msgstr "min."
 #. n/a
 #: extracted_strings.json
 msgid "n/a"
-msgstr "n/a"
+msgstr "no aplica"
 
 #. [filter.btnGroup.whoseNameOrEmailIncludes]
 #. defaultMessage is:
@@ -11977,13 +12070,6 @@ msgstr "el estado del tratamiento es {treatmentStatusName}"
 msgid "type is {deviceTypeName}"
 msgstr "el tipo es {deviceTypeName}"
 
-#. [server.userFriendly.message]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "indefinido"
-
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
@@ -12174,6 +12260,9 @@ msgstr "{unit} calibraciones totales"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
+
+#~ msgid "undefined"
+#~ msgstr "indefinido"
 
 #~ msgid "Demo Device"
 #~ msgstr "Dispositivo de demostración"
