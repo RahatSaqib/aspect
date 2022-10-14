@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react'
+import { useLocation, useNavigate } from 'react-router'
 import DataTableHead from './DataTableHead'
 
 export const useSortFilter = ({ navigate, location, sortColumnKey: sortCol, sortColumnDir: sortDir }) => {
@@ -26,7 +27,10 @@ export const useSortFilter = ({ navigate, location, sortColumnKey: sortCol, sort
   return { onSortColumn }
 }
 
-const BrowseDataTableHead = ({ navigate, location, ...restProps }) => {
+const BrowseDataTableHead = restProps => {
+  const navigate = useNavigate()
+  const location = useLocation()
+
   const { sortColumnKey, sortColumnDir } = restProps
   const { onSortColumn } = useSortFilter({
     navigate,

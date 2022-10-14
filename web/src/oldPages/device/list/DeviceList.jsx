@@ -249,7 +249,7 @@ export const DeviceListWithProps = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
-    <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+    <BrowseFilters config={reducedFilters}>
       <PermissionsProvider permissions={['device:admin']}>
         <AspectButton
           onClick={() => {

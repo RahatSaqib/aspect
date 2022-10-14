@@ -116,12 +116,7 @@ export const InventoryLogWithProps = ({
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
       <NavTitle title={intl.formatMessage(messages.inventoryLogTitle)} />
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        config={reducedFilters}
-        dateFilterLabel={intl.formatMessage(messages.date)}
-      />
+      <BrowseFilters config={reducedFilters} dateFilterLabel={intl.formatMessage(messages.date)} />
       <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
         <DataTableProgressBar disabled={!isLoading} />
         {!hasItems && <BrowseEmptyList navigate={navigate} location={location} />}

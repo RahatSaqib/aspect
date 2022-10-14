@@ -136,7 +136,7 @@ export const ReporterListWithProps = ({
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.reportersTitle)} />
       <NavTitle title={formatMessage(messages.reportersTitle)} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+      <BrowseFilters config={reducedFilters} />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!isLoading} />
 

@@ -237,7 +237,7 @@ export const PersonList = ({
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.contactsTitle)} />
       <NavTitle title={formatMessage(messages.contactsTitle)} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+      <BrowseFilters config={reducedFilters}>
         <AddNewButton type="button" color="primary" variant="contained" browseButton onClick={showNewContactPage}>
           {formatMessage(messages.addContact)}
         </AddNewButton>

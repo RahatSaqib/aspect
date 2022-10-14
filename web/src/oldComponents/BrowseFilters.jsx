@@ -2,6 +2,7 @@ import React from 'react'
 import classnames from 'classnames/bind'
 import replace from 'lodash/replace'
 import { connect } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router'
 import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import {
   exportFormatTypes,
@@ -124,27 +125,29 @@ const enhance = compose(
 
 export const BrowseFilters = ({
   children,
-  navigate,
-  location,
   onRemoveFilterItem,
   reducedSource,
   dateFormat,
   showBrowseDropdown = true,
   ...restProps
-}) => (
-  <div className={cssClasses('Container')}>
-    <FiltersBtnGroup
-      filters={restProps.filters}
-      onRemoveFilterItem={onRemoveFilterItem}
-      className={cssClasses('FiltersBtnGroup')}
-    >
-      {showBrowseDropdown && <BrowseNavDropdown navigate={navigate} location={location} source={reducedSource} />}
-    </FiltersBtnGroup>
-    {children}
+}) => {
+  const navigate = useNavigate()
+  const location = useLocation()
 
-    <FiltersPanel className={cssClasses('FiltersPanel')} dateFormat={dateFormat} {...restProps} />
-  </div>
-)
+  return (
+    <div className={cssClasses('Container')}>
+      <FiltersBtnGroup
+        filters={restProps.filters}
+        onRemoveFilterItem={onRemoveFilterItem}
+        className={cssClasses('FiltersBtnGroup')}
+      >
+        {showBrowseDropdown && <BrowseNavDropdown navigate={navigate} location={location} source={reducedSource} />}
+      </FiltersBtnGroup>
+      {children}
+      <FiltersPanel className={cssClasses('FiltersPanel')} dateFormat={dateFormat} {...restProps} />
+    </div>
+  )
+}
 
 export const navigations = [
   {

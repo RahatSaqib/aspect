@@ -168,9 +168,7 @@ const ReportIndex = () => {
       <Helmet title={intl.formatMessage(messages.reportsTitle)} />
       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
       <DataTableProgressBar disabled={!showProgressBar} />
-      {visibleFilters && (
-        <BrowseFilters navigate={navigate} location={location} config={visibleFilters} showBrowseDropdown={false} />
-      )}
+      {visibleFilters && <BrowseFilters config={visibleFilters} showBrowseDropdown={false} />}
       <Grid
         container
         spacing={16}

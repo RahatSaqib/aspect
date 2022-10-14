@@ -238,12 +238,7 @@ export const ResultListWithProps = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.resultsTitle)} />
     <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
-    <BrowseFilters
-      navigate={navigate}
-      location={location}
-      config={reducedFilters}
-      askConfirmationForExport={table.total > 1000}
-    />
+    <BrowseFilters config={reducedFilters} askConfirmationForExport={table.total > 1000} />
     <DataTableCard key={`DataTableCard--table-Result-list---${location.key}`}>
       <DataTableProgressBar disabled={!isLoading} />
 

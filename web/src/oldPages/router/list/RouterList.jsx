@@ -189,7 +189,7 @@ export const RouterList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.routersTitle)} />
     <NavTitle title={intl.formatMessage(messages.routersTitle)} />
-    <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+    <BrowseFilters config={reducedFilters} />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       <ExportListButton
