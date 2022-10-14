@@ -1,11 +1,8 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import identity from 'lodash/identity'
 import styles from './ButtonGroup.css'
 
 const cssClasses = classnames.bind(styles)
-
-const enhance = identity
 
 const ButtonGroup = ({ isolated, adjacent, className, children }) => (
   <div
@@ -18,4 +15,4 @@ const ButtonGroup = ({ isolated, adjacent, className, children }) => (
   </div>
 )
 
-export default enhance(ButtonGroup)
+export default ButtonGroup
