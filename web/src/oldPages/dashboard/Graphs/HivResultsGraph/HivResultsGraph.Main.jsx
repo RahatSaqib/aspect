@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
@@ -14,16 +14,20 @@ import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-const baseConfig = {
-  id: 'hivByCategory1Monthly',
-  clickThrough: {
-    allow: true,
-    baseUrl: '/browse/result?filters=',
-    baseAssay: 'abbottM2000DBSHivVL',
-    keys: ['resultCategoryId', 'indexBy', 'diseaseId'],
-  },
-  indexBy: 'month',
-  formatDate: 'MMM',
+const getBaseConfig = (assays = []) => {
+  const [baseAssay] = assays
+  return {
+    id: 'hivByCategory1Monthly',
+    clickThrough: {
+      assays,
+      allow: true,
+      baseUrl: '/browse/result?filters=',
+      baseAssay,
+      keys: ['resultCategoryId', 'indexBy', 'assay'],
+    },
+    indexBy: 'month',
+    formatDate: 'MMM',
+  }
 }
 
 const HivResultsGraphMain = ({ assaysFromState, data, endPointParams, showLabel }) => {
@@ -31,6 +35,10 @@ const HivResultsGraphMain = ({ assaysFromState, data, endPointParams, showLabel 
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
+  const baseConfig = useMemo(() => {
+    const assays = endPointParams.filter(it => !!it.assay).map(it => it.assay)
+    return getBaseConfig(assays)
+  }, [endPointParams])
 
   function buildI18nKeys() {
     let i18nKeysCollection = {}
