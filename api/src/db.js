@@ -80,17 +80,17 @@ function filterParams(queryBuilder, params, filters) {
  * @param {String} dateColumnName Date field to filter on. Should include the alias (e.g. 'r.endedOn').
  * @param {Object} config Config object. `{allowNulls: true}` should be used if you are filtering on left joined tables.
  */
-function filterDateRangeParams(queryBuilder, params, dateColumnName, { allowNulls = false } = {}) {
-  if (params.minDate && params.minDate.toString() !== 'Invalid Date') {
+function filterDateRangeParams(queryBuilder, { minDate, maxDate }, dateColumnName, { allowNulls = false } = {}) {
+  if (minDate && minDate.toString() !== 'Invalid Date') {
     queryBuilder.where(function () {
-      this.where(dateColumnName, '>=', params.minDate)
+      this.where(dateColumnName, '>=', minDate)
       if (allowNulls) this.orWhereNull(dateColumnName)
     })
   }
 
-  if (params.maxDate && params.maxDate.toString() !== 'Invalid Date') {
+  if (maxDate && maxDate.toString() !== 'Invalid Date') {
     queryBuilder.where(function () {
-      this.where(dateColumnName, '<', params.maxDate)
+      this.where(dateColumnName, '<', maxDate)
       if (allowNulls) this.orWhereNull(dateColumnName)
     })
   }
