@@ -332,17 +332,7 @@ const routes = [
           ok: Joi.bool().required().description('False if there was some sort of error'),
           total: Joi.number().required().description('The total number of devices that match the given filters'),
           length: Joi.number().required().description('The number of devices included in this response'),
-          data: Joi.array().required().description('The devices'),
-          // .items(
-          //   Joi.object().keys({
-          //     name: Joi.string().required().description('The name of the device'),
-          //     deviceStatus: Joi.string().allow('', null).description('The connector status'),
-          //     lastPingOn: Joi.date().allow(null).description('When the device last pinged'),
-          //     firstResultConductedOn: Joi.date().allow(null).description('When the device generate first result'),
-          //     lastResultConductedOn: Joi.date().allow(null).description('When the device generate last result'),
-          //     totalTests: Joi.number().description('The number of total tests in the period'),
-          //   })
-          // ),
+          data: Joi.array().required().description('The devices and the workload for each result category'),
           extraColumns: Joi.array()
             .allow(null)
             .optional()
