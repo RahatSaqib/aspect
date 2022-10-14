@@ -75,18 +75,24 @@ function filterParams(queryBuilder, params, filters) {
 
 /**
  * Apply a date filter to a knex query, given a date range.
- * @param {*} queryBuilder
- * @param {*} params This are the URL params received for applying in the query
- * @param {*} dateColumnName Because we can have other fields for date like for example expirationdate or endedon
- * @param {*} dateParamName This is how the date max and min are named in the url
+ * @param {knex} queryBuilder
+ * @param {Object} params Object with minDate and maxDate properties to use as filter.
+ * @param {String} dateColumnName Date field to filter on. Should include the alias (e.g. 'r.endedOn').
+ * @param {Object} config Config object. `{allowNulls: true}` should be used if you are filtering on left joined tables.
  */
-function filterDateRangeParams(queryBuilder, params, dateColumnName, dateParamName = 'Date') {
-  if (params[`min${dateParamName}`] && params[`min${dateParamName}`].toString() !== 'Invalid Date') {
-    queryBuilder.where(dateColumnName, '>=', params[`min${dateParamName}`])
+function filterDateRangeParams(queryBuilder, { minDate, maxDate }, dateColumnName, { allowNulls = false } = {}) {
+  if (minDate && minDate.toString() !== 'Invalid Date') {
+    queryBuilder.where(function () {
+      this.where(dateColumnName, '>=', minDate)
+      if (allowNulls) this.orWhereNull(dateColumnName)
+    })
   }
 
-  if (params[`max${dateParamName}`] && params[`max${dateParamName}`].toString() !== 'Invalid Date') {
-    queryBuilder.where(dateColumnName, '<', params[`max${dateParamName}`])
+  if (maxDate && maxDate.toString() !== 'Invalid Date') {
+    queryBuilder.where(function () {
+      this.where(dateColumnName, '<', maxDate)
+      if (allowNulls) this.orWhereNull(dateColumnName)
+    })
   }
 }
 // helper function for run, transact and migration

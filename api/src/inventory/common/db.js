@@ -179,7 +179,11 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
 
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
     .modify(filterDateRangeParams, query, 'il.createdOn')
-    .modify(filterDateRangeParams, query, 'il.expiresOn', 'ExpirationDate')
+    .modify(
+      filterDateRangeParams,
+      { minDate: query.minExpirationDate, maxDate: query.maxExpirationDate },
+      'il.expiresOn'
+    )
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
