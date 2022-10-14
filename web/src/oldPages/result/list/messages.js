@@ -130,6 +130,14 @@ const messages = {
       id: 'pages.ResultList.resultCategoryResistance',
       defaultMessage: 'Resistance',
     },
+    resultCategoryResult: {
+      id: 'pages.ResultList.resultCategoryResult',
+      defaultMessage: 'Result',
+    },
+    resultCategoryStatus: {
+      id: 'pages.ResultList.resultCategoryStatus',
+      defaultMessage: 'Status',
+    },
     resultCategory2Name: {
       id: 'pages.ResultList.resultCategory1Name',
       defaultMessage: 'Category 2',

@@ -8,10 +8,10 @@ import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { compose, lifecycle } from 'recompose'
+import useI18n from '../../../hooks/useI18n'
 import DetailBackBar from '../../../oldComponents/DetailBackBar'
 import { Unit } from '../../../oldComponents/pureGrids'
 import AlertType from '../../../oldComponents/shared/AlertType'
-import { i18nWrapper } from '../../../providers/I18nProvider/index'
 import { fetchTask } from '../../../store/TaskRedux'
 import { formatRelative } from '../../../utils/utils/dateFormat'
 import styles from './TaskDetail.css'
@@ -70,7 +70,7 @@ export const TaskDetail = ({
   // --- injected by recompose ---
   onBackClick,
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     task && (
       <div>

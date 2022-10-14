@@ -12,7 +12,7 @@ export const getBaseOptions = (
   const { ok, data } = response
   if (ok) {
     options = data.map(item => {
-      const msg = propNameForI18n && formatMessage ? messages[propNameForI18n] : null
+      const msg = propNameForI18n && formatMessage ? messages[item[propNameForI18n]] : null
       return {
         label: msg ? formatMessage(msg) : item[propNameForLabel],
         value: item[propNameForValue],
