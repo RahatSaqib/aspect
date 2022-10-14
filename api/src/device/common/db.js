@@ -1,4 +1,4 @@
-const { knex } = require('../../db')
+const { knex, filterParams, sortPageParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
 async function getSourceDevices(sourceDevicesIds) {
@@ -203,8 +203,8 @@ async function getResultCategoriesByAssay(assayId) {
 }
 
 function getFirstAndLastResults(dataConstraints, assayId) {
-  return knex('Result as r')
-    .modify(addConstraints, dataConstraints, { result: 'r' })
+  return knex('Result as _r')
+    .modify(addConstraints, dataConstraints, { result: '_r' })
     .groupBy('deviceId')
     .select({
       deviceId: 'deviceId',
@@ -215,16 +215,42 @@ function getFirstAndLastResults(dataConstraints, assayId) {
     .as('firstAndLastResults')
 }
 
-function getDeviceWorkload(extraColumns, dataConstraints, assayId) {
-  return knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin(getFirstAndLastResults(dataConstraints, assayId), 'd.id', 'firstAndLastResults.deviceId')
+async function getDeviceWorkload(extraColumns, dataConstraints, query) {
+  const { assayId } = query
+  const q = knex('Device as d')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('State as st', 'g.stateId', 'st.id')
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Result as r', joinResultQuery => {
+      joinResultQuery.on('d.id', 'r.deviceId').andOn('r.assayId', knex.raw(assayId))
+
+      if (query.minDate) joinResultQuery.andOn('r.endedOn', '>', knex.raw(`'${query.minDate.toISOString()}'`))
+
+      if (query.maxDate) joinResultQuery.andOn('r.endedOn', '<=', knex.raw(`'${query.maxDate.toISOString()}'`))
+    })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .modify(q => {
-      extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
+    .leftJoin(getFirstAndLastResults(dataConstraints, assayId), 'd.id', 'firstAndLastResults.deviceId')
+    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      siteExternalId: 's.externalId',
+      siteName: 's.name',
+      siteId: 's.id',
+      deviceMaintenanceStatusId: 'dms.id',
     })
-    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' })
+    .andWhere('dtc.hasResults', true)
+
+  const { total } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as total')).first()
+  const data = await q
+    .modify(sortPageParams, query, 'name')
     .select(
       'd.name',
       'dms.i18nKey as deviceStatus',
@@ -233,8 +259,12 @@ function getDeviceWorkload(extraColumns, dataConstraints, assayId) {
       'firstAndLastResults.lastEndedOn as lastResultEndedOn',
       knex.raw('COUNT(r.id) as total')
     )
-    .where('r.assayId', assayId)
-    .groupBy('r.deviceId')
+    .modify(q => {
+      extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
+    })
+    .groupBy('d.id')
+  const { length } = data
+  return { total, data, length }
 }
 
 module.exports = {
