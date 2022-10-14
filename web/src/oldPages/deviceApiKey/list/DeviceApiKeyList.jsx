@@ -363,13 +363,7 @@ export const DeviceApiKeyList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.title)} />
     <NavTitle title={intl.formatMessage(messages.title)} />
-    <BrowseFilters
-      navigate={navigate}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-      onClickExport={onExportClick}
-    >
+    <BrowseFilters navigate={navigate} location={location} config={reducedFilters} onClickExport={onExportClick}>
       <AspectButton onClick={onOpenGeneratorDialog} type="button" color="primary" variant="contained" browseButton>
         {intl.formatMessage(messages.generate)}
       </AspectButton>
@@ -489,7 +483,6 @@ export const DeviceApiKeyList = ({
         <BrowseTablePaginator
           navigate={navigate}
           location={location}
-          intl={intl}
           paginatorStatus={messages.paginatorStatus}
           total={table.total}
           pageAt={pageAt}

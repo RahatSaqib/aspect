@@ -222,7 +222,6 @@ export const InventoryItemsListWithProps = ({
       <BrowseFilters
         navigate={navigate}
         location={location}
-        intl={intl}
         config={reducedFilters}
         dateFilterLabel={intl.formatMessage(messages.expiresOn)}
       >
@@ -308,7 +307,6 @@ export const InventoryItemsListWithProps = ({
           <BrowseTablePaginator
             navigate={navigate}
             location={location}
-            intl={intl}
             paginatorStatus={messages.paginatorStatus}
             total={table.total}
             pageAt={pageAt}

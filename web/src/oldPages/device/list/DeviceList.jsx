@@ -249,7 +249,7 @@ export const DeviceListWithProps = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
     <NavTitle title={intl.formatMessage(messages.devicesTitle)} />
-    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
+    <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
       <PermissionsProvider permissions={['device:admin']}>
         <AspectButton
           onClick={() => {
@@ -300,7 +300,6 @@ export const DeviceListWithProps = ({
         <BrowseTablePaginator
           navigate={navigate}
           location={location}
-          intl={intl}
           paginatorStatus={messages.paginatorStatus}
           total={total}
           pageAt={pageAt}

@@ -114,7 +114,7 @@ export const SiteList = ({ navigate, location }) => {
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.sitesTitle)} />
       <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
-      <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
+      <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
         <AspectButton
           type="button"
           color="primary"

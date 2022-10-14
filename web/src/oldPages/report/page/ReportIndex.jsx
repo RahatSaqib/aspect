@@ -169,13 +169,7 @@ const ReportIndex = () => {
       <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
       <DataTableProgressBar disabled={!showProgressBar} />
       {visibleFilters && (
-        <BrowseFilters
-          navigate={navigate}
-          location={location}
-          intl={intl}
-          config={visibleFilters}
-          showBrowseDropdown={false}
-        />
+        <BrowseFilters navigate={navigate} location={location} config={visibleFilters} showBrowseDropdown={false} />
       )}
       <Grid
         container

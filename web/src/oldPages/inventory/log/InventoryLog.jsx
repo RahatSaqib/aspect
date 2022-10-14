@@ -33,26 +33,11 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    date: true,
-    requiredPermissions: [],
-  },
-  {
-    onlyTransfers: true,
-    requiredPermissions: [],
-  },
-  {
-    lotNumber: true,
-    requiredPermissions: [],
-  },
-  {
-    expirationDate: true,
-    requiredPermissions: [],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
+  { date: true, requiredPermissions: [] },
+  { onlyTransfers: true, requiredPermissions: [] },
+  { lotNumber: true, requiredPermissions: [] },
+  { expirationDate: true, requiredPermissions: [] },
 ]
 
 const availableSortCol = [
@@ -134,7 +119,6 @@ export const InventoryLogWithProps = ({
       <BrowseFilters
         navigate={navigate}
         location={location}
-        intl={intl}
         config={reducedFilters}
         dateFilterLabel={intl.formatMessage(messages.date)}
       />
@@ -165,7 +149,6 @@ export const InventoryLogWithProps = ({
           <BrowseTablePaginator
             navigate={navigate}
             location={location}
-            intl={intl}
             pageSizeButtonKeys={[10, 25, 50, 100]}
             paginatorStatus={messages.paginatorStatus}
             total={total}
@@ -173,7 +156,7 @@ export const InventoryLogWithProps = ({
             pageSize={pageSize}
           />
         )}
-      </DataTableCard>{' '}
+      </DataTableCard>
     </div>
   )
 }
