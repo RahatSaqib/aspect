@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { TableBody, Table } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
+import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import useWorkload from '../../../hooks/device/useWorkload'
 import useI18n from '../../../hooks/useI18n'
@@ -17,6 +18,7 @@ import {
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
+import colMessages from '../../../oldPages/result/list/messages'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
 import messages from './messages'
@@ -26,15 +28,11 @@ import styles from './Workload.css'
 const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
-  { consumable: true, requiredPermissions: [] },
   { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { siteName: true, requiredPermissions: ['site:view'] },
   { date: true, requiredPermissions: [] },
-  { onlyTransfers: true, requiredPermissions: [] },
-  { lotNumber: true, requiredPermissions: [] },
-  { expirationDate: true, requiredPermissions: [] },
+  { assayId: true, requiredPermissions: [] },
+  { deviceName: true, requiredPermissions: ['device'] },
+  { deviceMaintenanceStatus: true, requiredPermissions: [] },
 ]
 
 const availableSortCol = [
@@ -56,15 +54,24 @@ const Workload = () => {
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
   const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState()
 
-  const { isError, isLoading, data = false, error } = useWorkload({ ...requestParams, assayId: 4 })
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
+
+  const { isError, isLoading, data = false, error } = useWorkload(requestParams)
 
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
 
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
+
+  const mostResultsAssay = useSelector(
+    ({ assay }) =>
+      assay.items
+        .toJS()
+        .filter(a => a.hasResults)
+        .sort((a, b) => b.resultCount - a.resultCount)[0]
+  )
 
   useEffect(() => {
     const { value: searchParams } = searchSanitizer(location, {})
@@ -72,12 +79,16 @@ const Workload = () => {
     searchParams.set('filters', filtersParams)
     if (firstLoad) {
       setFiltersForLast30Days(searchParams)
+      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+      filtersParams.set('assayId', +mostResultsAssay.id)
+      searchParams.set('filters', filtersParams)
       setFirstLoad(false)
       navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
 
     const filters = getFilters(filtersParams)
     setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize])
 
   if (isError) throw new Error(error)
@@ -93,8 +104,8 @@ const Workload = () => {
     { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
-      label: `${formatMessage(messages[c.resultCategoryLabelI18nKey])} ${formatMessage(
-        messages[c.resultCategoryI18nKey]
+      label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
+        colMessages[c.resultCategoryI18nKey]
       )}`,
       sortable: false,
     })),

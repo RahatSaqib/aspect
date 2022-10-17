@@ -9,6 +9,9 @@ const getDeviceWorkload = async params =>
     extraColumns: response.extraColumns,
   }))
 
-const useWorkload = params => useQuery([DEVICE_KEY, params], () => getDeviceWorkload(params), { enabled: !!params })
+const useWorkload = params =>
+  useQuery([DEVICE_KEY, params], () => getDeviceWorkload(params), {
+    enabled: !!(params && params.assayId),
+  })
 
 export default useWorkload
