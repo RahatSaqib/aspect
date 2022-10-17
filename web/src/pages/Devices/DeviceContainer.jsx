@@ -3,7 +3,8 @@ import { Tab, Tabs } from '@mui/material'
 import { defineMessages } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
-import DeviceList from './list/DeviceList'
+import DeviceList from '../../oldPages/device/list/DeviceList'
+import Workload from './Workload'
 
 const messages = defineMessages({
   statusesTabTitle: {
@@ -24,7 +25,7 @@ export const DeviceContainer = () => {
 
   const handleChange = (e, v) => {
     setActiveTab(v)
-    if (activeTab === 'statuses') {
+    if (v === 'statuses') {
       const searchParams = new URLSearchParams()
       searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
@@ -38,7 +39,7 @@ export const DeviceContainer = () => {
         <Tab label={formatMessage(messages.statusesTabTitle)} value="statuses" />
         <Tab label={formatMessage(messages.workloadTabTitle)} value="workload" />
       </Tabs>
-      {activeTab === 'statuses' ? <DeviceList /> : null}
+      {activeTab === 'statuses' ? <DeviceList /> : <Workload />}
     </div>
   )
 }

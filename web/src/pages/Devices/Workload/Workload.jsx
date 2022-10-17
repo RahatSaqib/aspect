@@ -104,7 +104,12 @@ const Workload = () => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.workloadTitle)} />
-      <BrowseFilters config={reducedFilters} dateFilterLabel={formatMessage(messages.date)} />
+      <BrowseFilters
+        navigate={navigate}
+        location={location}
+        config={reducedFilters}
+        dateFilterLabel={formatMessage(messages.date)}
+      />
       <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
         <DataTableProgressBar disabled={!isLoading} />
         {workloadList.length ? (
