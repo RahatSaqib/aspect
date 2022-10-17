@@ -1,10 +1,13 @@
 import React from 'react'
 import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import { MdKeyboardArrowLeft } from 'react-icons/md'
 import styles from './DetailBackBar.css'
 
 const cssClasses = classnames.bind(styles)
+
+const enhance = identity
 
 export const DetailBackBar = ({ onBackClick, title, children }) => (
   <div className={cssClasses('Container')}>
@@ -16,4 +19,4 @@ export const DetailBackBar = ({ onBackClick, title, children }) => (
   </div>
 )
 
-export default DetailBackBar
+export default enhance(DetailBackBar)

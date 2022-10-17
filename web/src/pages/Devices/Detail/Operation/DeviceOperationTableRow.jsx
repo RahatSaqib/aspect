@@ -8,6 +8,8 @@ import { formatDate } from '../../../../utils/utils/dateFormat'
 
 const cssClasses = classnames.bind(styles)
 
+const enhance = identity
+
 const formatterByType = partial(
   // TODO: Extract to a shared module
   (formatterBy, type) => formatterBy[type] || formatterBy.default,
@@ -36,4 +38,4 @@ const DeviceOperationTableRow = ({ intl, deviceOperation, deviceOperationSchema,
   </TableRow>
 )
 
-export default DeviceOperationTableRow
+export default enhance(DeviceOperationTableRow)

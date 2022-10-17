@@ -1,5 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import { FaCircle } from 'react-icons/fa'
 import { injectIntl } from 'react-intl'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../components/shared/tableBody'
@@ -8,6 +9,8 @@ import { formatRelative } from '../../../utils/utils/dateFormat'
 import styles from './NotificationDeliveryTableRow.css'
 
 const cssClasses = classnames.bind(styles)
+
+const enhance = identity(injectIntl)
 
 const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -24,4 +27,4 @@ const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
   </TableRow>
 )
 
-export default injectIntl(NotificationDeliveryTableRow)
+export default enhance(NotificationDeliveryTableRow)

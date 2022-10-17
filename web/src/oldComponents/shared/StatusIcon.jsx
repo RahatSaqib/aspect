@@ -1,7 +1,10 @@
 import React from 'react'
 import CircleIcon from '@mui/icons-material/Circle'
 import { Tooltip } from '@mui/material'
+import identity from 'lodash/identity'
 import PropTypes from 'prop-types'
+
+const enhance = identity
 
 const StatusIcon = ({ status, title }) => {
   const statusToColor = {
@@ -28,4 +31,4 @@ StatusIcon.defaultProps = {
   title: '',
 }
 
-export default StatusIcon
+export default enhance(StatusIcon)

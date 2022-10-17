@@ -1,5 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import { FaExclamationTriangle } from 'react-icons/fa'
 import useI18n from '../../../hooks/useI18n'
 import AlertType from '../../../oldComponents/shared/AlertType'
@@ -9,6 +10,8 @@ import { formatRelative } from '../../../utils/utils/dateFormat'
 import styles from './TaskTableRow.css'
 
 const cssClasses = classnames.bind(styles)
+
+const enhance = identity
 
 const TaskTableRow = ({ messages, task, ...restProps }) => {
   const intl = useI18n()
@@ -63,4 +66,4 @@ function addEllipsis(words) {
   return words
 }
 
-export default TaskTableRow
+export default enhance(TaskTableRow)

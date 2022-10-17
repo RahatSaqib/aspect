@@ -1,8 +1,11 @@
 import React from 'react'
 import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import styles from './CardTitle.css'
 
 const cssClasses = classnames.bind(styles)
+
+const enhance = identity
 
 export const Title = ({ className, icon, title, renderRight = () => false }) => (
   <div className={cssClasses('Title', className)}>
@@ -17,4 +20,4 @@ export const Title = ({ className, icon, title, renderRight = () => false }) => 
   </div>
 )
 
-export default Title
+export default enhance(Title)

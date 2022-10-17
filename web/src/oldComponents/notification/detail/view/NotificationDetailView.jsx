@@ -2,6 +2,7 @@ import React from 'react'
 import { Card, TableBody, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import subDays from 'date-fns/subDays'
+import identity from 'lodash/identity'
 import includes from 'lodash/includes'
 import { Helmet } from 'react-helmet'
 import { MdRefresh } from 'react-icons/md'
@@ -21,6 +22,8 @@ const MockTogglBtn = withStateHandlers(props => ({ inverse: !!props.inverse }), 
     ({ inverse }) =>
     () => ({ inverse: !inverse }),
 })(AspectButton)
+
+const enhance = identity
 
 const BUTTON_THEME = {
   primary: cssClasses('Button--primary'),
@@ -424,4 +427,4 @@ export const NotificationDetailView = ({
   </div>
 )
 
-export default NotificationDetailView
+export default enhance(NotificationDetailView)

@@ -1,9 +1,12 @@
 import React from 'react'
 import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import AspectButton from '../shared/AspectButton'
 import styles from './ColoredButton.css'
 
 const cssClasses = classnames.bind(styles)
+
+const enhance = identity
 
 const ColoredButton = ({
   neutral = true,
@@ -31,4 +34,4 @@ const ColoredButton = ({
   </AspectButton>
 )
 
-export default ColoredButton
+export default enhance(ColoredButton)

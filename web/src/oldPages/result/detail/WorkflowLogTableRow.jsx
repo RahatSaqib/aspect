@@ -1,10 +1,13 @@
 import React from 'react'
 import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import styles from '../../components/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../components/shared/tableBody'
 import { formatDate } from '../../utils/utils/dateFormat'
 
 const cssClasses = classnames.bind(styles)
+
+const enhance = identity
 
 const WorkflowLogTableRow = ({ workflowLog, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -14,4 +17,4 @@ const WorkflowLogTableRow = ({ workflowLog, ...restProps }) => (
   </TableRow>
 )
 
-export default WorkflowLogTableRow
+export default enhance(WorkflowLogTableRow)

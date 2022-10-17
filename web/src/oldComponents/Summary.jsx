@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
+import identity from 'lodash/identity'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
@@ -7,6 +8,8 @@ import { Unit } from './pureGrids'
 import styles from './Summary.css'
 
 const cssClasses = classnames.bind(styles)
+
+const enhance = identity
 
 const descriptionSection = (description, to, action) => (
   <div className={cssClasses('Summary__Description')}>
@@ -56,4 +59,4 @@ Summary.defaultProps = {
   cols: '3',
 }
 
-export default Summary
+export default enhance(Summary)
