@@ -21,8 +21,10 @@ import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import NavTitle from '../../../oldComponents/NavTitle'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import requirePermissions from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
@@ -165,6 +167,11 @@ const FILTERS_CONFIG = [
   },
   { onlyTreatmentRequired: true, requiredPermissions: [] },
 ]
+
+// eslint-disable-next-line no-unused-vars
+const AddNewButton = requirePermissions({
+  permissions: ['result:edit'],
+})(AspectButton)
 
 const onRowClick =
   (navigate, location) =>
