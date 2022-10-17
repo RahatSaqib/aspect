@@ -212,7 +212,12 @@ export const CaseList = ({
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.resultsTitle)} />
       <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
-      <BrowseFilters config={reducedFilters} askConfirmationForExport={table.total > 1000} />
+      <BrowseFilters
+        navigate={navigate}
+        location={location}
+        config={reducedFilters}
+        askConfirmationForExport={table.total > 1000}
+      />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}

@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import AspectTable from '../../../components/AspectTable'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
 import { Shell, ShellContent } from '../../../components/Shell'
@@ -25,6 +25,7 @@ const FILTERS_CONFIG = [
 const NotificationList = () => {
   const intl = useI18n()
   const navigate = useNavigate()
+  const location = useLocation()
   const {
     jwt: { permissions: userPermissions },
   } = useAuthState()
@@ -34,7 +35,7 @@ const NotificationList = () => {
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
       <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
       <div className={cssClasses('filters__container')}>
-        <BrowseFilters config={reducedFilters}>
+        <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
           <AspectButton
             type="button"
             color="primary"

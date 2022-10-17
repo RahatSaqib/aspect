@@ -219,7 +219,12 @@ export const InventoryItemsListWithProps = ({
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
-      <BrowseFilters config={reducedFilters} dateFilterLabel={intl.formatMessage(messages.expiresOn)}>
+      <BrowseFilters
+        navigate={navigate}
+        location={location}
+        config={reducedFilters}
+        dateFilterLabel={intl.formatMessage(messages.expiresOn)}
+      >
         <PermissionsProvider permissions={['inventory:edit']}>
           <AddNewButton
             type="button"
