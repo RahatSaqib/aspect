@@ -288,6 +288,7 @@ export const TaskList = ({
           <BrowseTablePaginator
             navigate={navigate}
             location={location}
+            intl={intl}
             paginatorStatus={messages.paginatorStatus}
             total={table.total}
             pageAt={pageAt}

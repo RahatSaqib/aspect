@@ -35,7 +35,7 @@ const NotificationList = () => {
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
       <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
       <div className={cssClasses('filters__container')}>
-        <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+        <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
           <AspectButton
             type="button"
             color="primary"

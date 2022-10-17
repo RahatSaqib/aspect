@@ -248,6 +248,7 @@ export const ResultListWithProps = ({
     <BrowseFilters
       navigate={navigate}
       location={location}
+      intl={intl}
       config={reducedFilters}
       askConfirmationForExport={table.total > 1000}
     />
@@ -291,6 +292,7 @@ export const ResultListWithProps = ({
         <BrowseTablePaginator
           navigate={navigate}
           location={location}
+          intl={intl}
           timedMessageUsed={sortCol === 'endedOn'}
           paginatorStatus={messages.paginatorStatus}
           total={total}

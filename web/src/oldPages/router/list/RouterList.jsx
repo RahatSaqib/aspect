@@ -189,7 +189,7 @@ export const RouterList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.routersTitle)} />
     <NavTitle title={intl.formatMessage(messages.routersTitle)} />
-    <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       <ExportListButton
@@ -250,6 +250,7 @@ export const RouterList = ({
         <BrowseTablePaginator
           navigate={navigate}
           location={location}
+          intl={intl}
           className={cssClasses('BrowseTablePaginator')}
           paginatorStatus={messages.paginatorStatus}
           total={table.total}
