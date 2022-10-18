@@ -476,6 +476,31 @@ const usageStats = {
   ],
 }
 
+const deviceReport = {
+  name: 'Device Report',
+  description: 'All devices statistics along with MTB/Rif as well as MTB ULTRA results',
+  i18nKey: 'Device_Report',
+  i18nKeyDescription: 'Device_Report_description',
+  externalId: 'device_report',
+  fileName: 'DeviceReport',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 150,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDeviceReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -487,6 +512,7 @@ module.exports = {
   geneXpertIssues,
   deviceUtilizationReport,
   deviceCalibrationReport,
+  deviceReport,
   allResults,
   utilizationPerInstrumentDayReport,
   moduleActivityReport,
