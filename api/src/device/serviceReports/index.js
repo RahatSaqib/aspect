@@ -15,6 +15,7 @@ const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getUser } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
+const { getDeviceReportData } = require('./deviceReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -426,6 +427,17 @@ async function getModuleStatusReport(auth, query) {
   }
 }
 
+async function getDeviceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const rows = await getDeviceReportData(dataConstraints, query)
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -436,4 +448,5 @@ module.exports = {
   getDeviceCapacityReport,
   getModuleActivityReport,
   getModuleStatusReport,
+  getDeviceReport,
 }
