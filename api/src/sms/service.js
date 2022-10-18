@@ -67,7 +67,6 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   const sms = await knex('SmsMessage as sm')
     .where({ 'sm.id': smsMessageId })
     .first('sm.message', 'sm.phoneNumber as cell')
-
   const { cell, message } = sms || {}
   logger.debug(` Sending ${smsMessageId} to ${cell} with ${message}`, {
     reLabel: 'aspect:sms:send',
@@ -78,10 +77,12 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   // assume status is 'Sent'
   const { Sent: messageStatusIdSent, Error: messageStatusIdError } = await allMessageStatusToId()
   let messageStatusId = messageStatusIdSent
-
+  let errorData = null
   // send sms
-  await sendSms(cell, message).catch(() => {
+  await sendSms(cell, message).catch(ex => {
+    errorData = { ...ex, cell, message }
     // set status to 'Error'
+
     messageStatusId = messageStatusIdError
   })
 
@@ -89,6 +90,7 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   await knex('SmsMessage').where({ id: smsMessageId }).update({
     messageStatusId,
     updatedOn: new Date(),
+    errorData,
   })
 
   // dispatch SMS_MESSAGE_SENT to MQ
