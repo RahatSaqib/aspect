@@ -36,6 +36,10 @@ function addClientRoutes(server) {
   server.route(require('./resultCategoryGroup/endpoints').routes.map(decorateClientAPI()))
 }
 
+function addMobileRoutes(server) {
+  server.route(require('./mobileApi/result/endpoints').routes.map(decorateMobileAPI('result')))
+}
+
 function addDeviceRoutes(server) {
   server.route(require('./deviceApi/endpoints').routes.map(decorateDeviceAPI('device')))
 }
@@ -50,6 +54,14 @@ function decorateClientAPI(module) {
   // must always be authenticated using Client JWT
   const scope = ['+clientApi']
   const strategies = ['clientApi']
+
+  return decorateAPI({ module, scope, strategies })
+}
+
+function decorateMobileAPI(module) {
+  // must always be authenticated using Client JWT
+  const scope = ['+mobileApi']
+  const strategies = ['mobileApi']
 
   return decorateAPI({ module, scope, strategies })
 }
@@ -218,6 +230,7 @@ function validateDateRangeParams(isoDateFormatExpected = false) {
 
 module.exports = {
   addClientRoutes,
+  addMobileRoutes,
   addDeviceRoutes,
   addDeviceRawRoutes,
   asyncHandler,
