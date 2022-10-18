@@ -9,6 +9,26 @@ async function getTargetDevice(targetDeviceId) {
   return knex('Device').where('id', targetDeviceId).first('id', 'siteId', 'deviceTypeId')
 }
 
+/**
+ * Builds a knex query object including all 'join' and 'where' for managing constraints.
+ * @param {object} dataConstraints
+ * @param {object} options An object representing the dataConstraints options, including the constraint-table-name definition, and also additional configurations like showUnapprovedDevices and showDecommissionedDevices. For example: { assay: 'a', showUnapprovedDevices: true, showDecommissionedDevices: true }
+ * @returns The knex query object.
+ */
+function getDeviceBaseQuery(dataConstraints, options) {
+  return knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      deviceType: 'dt',
+      ...(options || {}),
+    })
+}
+
+const getNotDecommissionedDevices = dataConstraints =>
+  getDeviceBaseQuery(dataConstraints, { showUnapprovedDevices: true })
+
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
   const {
     sourceDevice: { id: sourceDeviceId },
@@ -197,4 +217,5 @@ module.exports = {
   deleteDeviceFromFactTables,
   deleteDeviceSiteHistory,
   deleteDevice,
+  getNotDecommissionedDevices,
 }
