@@ -80,7 +80,7 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   let errorData = null
   // send sms
   await sendSms(cell, message).catch(ex => {
-    errorData = { ...ex, cell, message }
+    errorData = JSON.stringify({ ...ex, cell, message })
     // set status to 'Error'
 
     messageStatusId = messageStatusIdError
