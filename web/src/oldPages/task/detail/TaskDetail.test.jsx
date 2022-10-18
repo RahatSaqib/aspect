@@ -3,7 +3,7 @@ import { createIntl } from 'react-intl'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { TaskDetail } from './TaskDetail'
 
-describe('TaskDetail module', () => {
+describe.skip('TaskDetail module', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     location: {

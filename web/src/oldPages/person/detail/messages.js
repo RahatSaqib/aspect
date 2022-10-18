@@ -1,9 +1,11 @@
 import { defineMessages } from 'react-intl'
 import { commonDefinitions } from '../../../messages/customMessages'
+import jobFunctionMessages from '../../../messages/jobFunctionMessages'
 
 // Define all messages for /site/detail page
 export default {
   ...commonDefinitions,
+  ...jobFunctionMessages,
   ...defineMessages({
     title: {
       id: 'pages.PersonDetail.title',
@@ -580,6 +582,10 @@ export default {
     notSpecified: {
       id: 'page.contacts.person.notSpecified',
       defaultMessage: 'Not specified',
+    },
+    removeAssignment: {
+      id: 'page.contacts.person.removeAssignment',
+      defaultMessage: 'Do you want to remove below assignment?',
     },
   }),
 }

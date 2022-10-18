@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { resultCategory, resultCategoryType, commonDefinitions } from '../../../messages'
+import { resultCategory, resultCategoryType, commonDefinitions, sampleType } from '../../../messages'
 import resultCategoryAssayMessages from '../../../oldPages/result/list/messages'
 
 const messagesResult = defineMessages({
@@ -93,4 +93,5 @@ export default {
   ...resultCategoryType,
   ...messagesResult,
   ...resultCategoryAssayMessages,
+  ...sampleType,
 }

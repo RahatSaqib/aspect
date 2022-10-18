@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-30T17:11:05.070Z\n"
+"POT-Creation-Date: 2022-10-11T19:12:20.750Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -961,7 +961,7 @@ msgstr "Ҷавоби миёнаи тасдиқшуда"
 #. Average Days for Instrument Replacement.
 #: extracted_strings.json
 msgid "Average Days for Instrument Replacement."
-msgstr "Рӯзҳои миёна барои иваз кардани асбоб"
+msgstr "Рӯзҳои миёна барои иваз кардани асбоб."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -1152,6 +1152,13 @@ msgstr ""
 "Дар асоси 30 рӯзи охир, фоизи натиҷаҳоро бо хатогиҳо нисбат ба шумораи "
 "умумии натиҷаҳои иҷрошуда ифода мекунад"
 
+#. [filter.sampleType.sampleTypeBlood]
+#. defaultMessage is:
+#. Blood
+#: extracted_strings.json
+msgid "Blood"
+msgstr "Хун"
+
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
@@ -1234,6 +1241,13 @@ msgstr "Санҷиши COVID-19"
 #: extracted_strings.json
 msgid "CREATE"
 msgstr "Эҷод кунед"
+
+#. [filter.sampleType.sampleTypeCSF]
+#. defaultMessage is:
+#. CSF
+#: extracted_strings.json
+msgid "CSF"
+msgstr "CSF"
 
 #. [pages.ListExport.exportCsv]
 #. defaultMessage is:
@@ -2137,6 +2151,13 @@ msgstr "Майдонҳои фармоишӣ"
 msgid "Custom Fields Average Completion"
 msgstr "Анҷоми миёнаи Майдонҳои фармоишӣ"
 
+#. [filter.sampleType.sampleTypeDBS]
+#. defaultMessage is:
+#. DBS
+#: extracted_strings.json
+msgid "DBS"
+msgstr "DBS"
+
 #. [months.december]
 #. defaultMessage is:
 #. DEC
@@ -2847,6 +2868,13 @@ msgstr "Оё шумо мехоҳед, ки хомӯш кунед"
 msgid "Do you want to enable"
 msgstr "Мехоҳед фаъол созед"
 
+#. [page.contacts.person.removeAssignment]
+#. defaultMessage is:
+#. Do you want to remove below assignment?
+#: extracted_strings.json
+msgid "Do you want to remove below assignment?"
+msgstr "Мехоҳед супориши зерро нест кунед?"
+
 #. [jobFunction.donor]
 #. defaultMessage is:
 #. Donor
@@ -2964,6 +2992,13 @@ msgstr "Таҳрир"
 #: extracted_strings.json
 msgid "Edit Notification"
 msgstr "Таҳрири огоҳинома"
+
+#. [filter.sampleType.sampleTypeEffusion]
+#. defaultMessage is:
+#. Effusion
+#: extracted_strings.json
+msgid "Effusion"
+msgstr "Эффузия"
 
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
@@ -3885,6 +3920,13 @@ msgstr "GP ошкор нашудааст - NP ошкор"
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP ошкор нашудааст - NP ошкор нашудааст"
 
+#. [filter.sampleType.sampleTypeGastricLavage]
+#. defaultMessage is:
+#. Gastric Lavage
+#: extracted_strings.json
+msgid "Gastric Lavage"
+msgstr "Шустани меъда"
+
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
 #. GeneXpert COVID-19
@@ -4702,6 +4744,13 @@ msgstr "Инвентаризатсия дар даст"
 msgid "Is at least {minLength} characters long"
 msgstr "Дарозии ҳадди аққал {minLength} аломат аст"
 
+#. [filter.sampleType.sampleTypeIsolate]
+#. defaultMessage is:
+#. Isolate
+#: extracted_strings.json
+msgid "Isolate"
+msgstr "Ҷудо кардан"
+
 #. [pages.TableCell.issueBasedNotification]
 #. defaultMessage is:
 #. Issue Based
@@ -4836,7 +4885,7 @@ msgstr "Администратори лаборатория"
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
-msgstr "Лаборатория:"
+msgstr "Мудири лаборатория"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -5750,10 +5799,7 @@ msgstr "Микроскопия"
 #. Minutes
 #: extracted_strings.json
 msgid "Minutes"
-msgstr ""
-"Аз сабаби хатогии \"{errorMessage}\" {fileType} гузориши \"{reportName}\" "
-"тавлид нашуд. Лутфан, пас аз чанд дақиқа бори дигар кӯшиш кунед. Агар хатогӣ "
-"идома ёбад, барои дастгирӣ бо маъмури худ тамос гиред."
+msgstr "Дакикахо"
 
 #. [legends.Unknown.resultCategoryMissing]
 #. defaultMessage is:
@@ -5784,9 +5830,7 @@ msgstr "Модул"
 #. Module Disabled
 #: extracted_strings.json
 msgid "Module Disabled"
-msgstr ""
-"Вақти миёна (дар рӯз) байни вақте ки модул хомӯш карда шуд ва силсилаи "
-"модули дигар дар ҳамон як слот ошкор карда мешавад."
+msgstr "Модул ғайрифаъол"
 
 #. [forms.formItem.moduleName]
 #. defaultMessage is:
@@ -5970,6 +6014,13 @@ msgstr "NTP"
 #: extracted_strings.json
 msgid "Name"
 msgstr "Ном"
+
+#. [filter.sampleType.sampleTypeNasalSwab]
+#. defaultMessage is:
+#. Nasal Swab
+#: extracted_strings.json
+msgid "Nasal Swab"
+msgstr "Тампончаи бинӣ"
 
 #. [pages.NotificationDetail.Area.National]
 #. defaultMessage is:
@@ -6328,9 +6379,7 @@ msgstr "Мумкин нест"
 #. Not specified
 #: extracted_strings.json
 msgid "Not specified"
-msgstr ""
-"Сервер арзишҳои дар ин майдонҳои филтр муқарраршударо рад кард. Гурӯҳи "
-"техникии мо огоҳ карда шудааст ва ҳарчи зудтар ба мушкилот машғул хоҳад шуд."
+msgstr "Муайян нашудааст"
 
 #. [pages.resultTreatmentPanel.notYetConfirmedOnTreatment]
 #. defaultMessage is:
@@ -6664,6 +6713,9 @@ msgstr "Фармоиш дод"
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
+#. [filter.sampleType.sampleTypeOther]
+#. defaultMessage is:
+#. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Дигар"
@@ -6898,6 +6950,13 @@ msgstr "Тафсилоти шахс"
 #: extracted_strings.json
 msgid "Phone"
 msgstr "Телефон"
+
+#. [filter.sampleType.sampleTypePlasma]
+#. defaultMessage is:
+#. Plasma
+#: extracted_strings.json
+msgid "Plasma"
+msgstr "Плазма"
 
 #. [errorResponseMessages.common.notFound.resolution]
 #. defaultMessage is:
@@ -7383,6 +7442,13 @@ msgstr "Таъмин карда шудааст"
 #: extracted_strings.json
 msgid "Purged"
 msgstr "Тоза карда шуд"
+
+#. [filter.sampleType.sampleTypePus]
+#. defaultMessage is:
+#. Pus
+#: extracted_strings.json
+msgid "Pus"
+msgstr "чирк"
 
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
@@ -7870,6 +7936,9 @@ msgstr "Хал карда шуд"
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
+#. [pages.ResultList.resultCategoryResult]
+#. defaultMessage is:
+#. Result
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
@@ -8102,6 +8171,13 @@ msgstr "SMS фиристода MTD"
 #: extracted_strings.json
 msgid "SMS was sent to:"
 msgstr "SMS фиристода шуд:"
+
+#. [filter.sampleType.sampleTypeSaliva]
+#. defaultMessage is:
+#. Saliva
+#: extracted_strings.json
+msgid "Saliva"
+msgstr "гилро"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -9239,6 +9315,13 @@ msgstr "Паёми SMS набояд аз 144 аломат зиёд бошад"
 msgid "Source devices"
 msgstr "Дастгоҳҳои манбаъ"
 
+#. [filter.sampleType.sampleTypeSputum]
+#. defaultMessage is:
+#. Sputum
+#: extracted_strings.json
+msgid "Sputum"
+msgstr "Балғам"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -9300,6 +9383,9 @@ msgstr "Давлат/минтақа"
 #. defaultMessage is:
 #. Status
 #. [pages.ResultWorkflowStatusLog.logStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.ResultList.resultCategoryStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
@@ -9732,9 +9818,9 @@ msgid ""
 "interruption will be the date range between the device was flagged as \"Down "
 "for repair\" and when it back to be active again"
 msgstr ""
-"Давомнокии миёнаи қатъи хидмат, бо рӯз. Давраи танаффус ин диапазони санаи "
-"байни дастгоҳ ҳамчун \"Барои таъмир\" қайд карда шуда ва вақте ки он дубора "
-"фаъол мешавад, хоҳад буд."
+"Давомнокии миёнаи қатъи хидмат, дар рӯз. Давраи танаффус ин диапазони санаи "
+"байни дастгоҳ ҳамчун \"Барои таъмир поён\" қайд карда мешавад ва вақте ки он "
+"дубора фаъол мешавад"
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
@@ -11630,7 +11716,7 @@ msgstr "вақти миёна барои иваз кардани модулҳо�
 #. data
 #: extracted_strings.json
 msgid "data"
-msgstr "Маълумот"
+msgstr "маълумот"
 
 #. [pages.resultTreatmentPanel.days]
 #. defaultMessage is:
@@ -11965,13 +12051,6 @@ msgstr "ҳолати табобат {treatmentStatusName} аст"
 msgid "type is {deviceTypeName}"
 msgstr "навъи {deviceTypeName}"
 
-#. [server.userFriendly.message]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "номуайян"
-
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
@@ -12160,6 +12239,9 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, ҷамъ, як {# натиҷа} дигар {# натиҷа} })"
+
+#~ msgid "undefined"
+#~ msgstr "номуайян"
 
 #~ msgid "Demo Device"
 #~ msgstr "Дастгоҳи намоишӣ"
