@@ -1,118 +1,156 @@
 {
   "data": [
     {
+      "name": "MTB",
+      "i18nKey": "assayTypeMtb",
+      "externalId": "assayTypeMtb",
+      "abbreviation": "TB"
+    },
+    {
+      "name": "Rif",
+      "i18nKey": "assayTypeRif",
+      "externalId": "assayTypeRif",
+      "abbreviation": "RIF"
+    },
+    {
       "name": "MTB/Rif",
       "i18nKey": "assayTypeMtbRif",
       "externalId": "assayTypeMtbRif",
-      "abbreviation":"TB"
+      "abbreviation": "TB"
+    },
+    {
+      "name": "MTB/XDR",
+      "i18nKey": "assayTypeMtbXdr",
+      "externalId": "assayTypeMtbXdr",
+      "abbreviation": "XDR"
     },
     {
       "name": "Ebola",
       "i18nKey": "assayTypeEbola",
       "externalId": "assayTypeEbola",
-      "abbreviation":"EB"
+      "abbreviation": "EB"
     },
     {
       "name": "HIV VL",
       "i18nKey": "assayTypeHivVl",
       "externalId": "assayTypeHivVl",
-      "abbreviation":"HIV"
+      "abbreviation": "HIV"
     },
     {
       "name": "HBV VL",
       "i18nKey": "assayTypeHbvVl",
       "externalId": "assayTypeHbvVl",
-      "abbreviation":"HBV"
+      "abbreviation": "HBV"
     },
     {
       "name": "HIV Qual",
       "i18nKey": "assayTypeHivQual",
       "externalId": "assayTypeHivQual",
-      "abbreviation":"HIV"
+      "abbreviation": "HIV"
     },
     {
       "name": "CD4 Count",
       "i18nKey": "assayTypeCD4",
       "externalId": "assayTypeCD4",
-      "abbreviation":"CD4"
+      "abbreviation": "CD4"
     },
     {
       "name": "EID",
       "i18nKey": "assayTypeEid",
       "externalId": "assayTypeEid",
-      "abbreviation":"EID"
+      "abbreviation": "EID"
     },
     {
       "name": "HCV",
       "i18nKey": "assayTypeHcv",
       "externalId": "assayTypeHcv",
-      "abbreviation":"HCV"
-
+      "abbreviation": "HCV"
     },
     {
       "name": "Lipid Panel",
       "i18nKey": "assayTypeLipidPanel",
       "externalId": "assayTypeLipidPanel",
-      "abbreviation":"LP"
+      "abbreviation": "LP"
     },
     {
       "name": "Zika",
       "i18nKey": "assayTypeZika",
       "externalId": "assayTypeZika",
-      "abbreviation":"ZK"
+      "abbreviation": "ZK"
     },
     {
       "name": "Dengue",
       "i18nKey": "assayTypeDengue",
       "externalId": "assayTypeDengue",
-      "abbreviation":"DG"
+      "abbreviation": "DG"
     },
     {
       "name": "TB AST",
       "i18nKey": "assayTypeTbAst",
       "externalId": "assayTypeTbAst",
-      "abbreviation":"TB"
+      "abbreviation": "TB"
     },
     {
       "name": "TB G&D",
       "i18nKey": "assayTypeTbGnd",
       "externalId": "assayTypeTbGnd",
-      "abbreviation":"TB"
+      "abbreviation": "TB"
     },
     {
       "name": "Microscopy",
       "i18nKey": "microscopy",
       "externalId": "microscopy",
-      "abbreviation":"TB"
+      "abbreviation": "TB"
     },
     {
       "name": "Unknown",
       "i18nKey": "assayTypeUnknown",
       "externalId": "assayTypeUnknown",
-      "abbreviation":"UK"
+      "abbreviation": "UK"
     },
     {
       "name": "Generic RDT",
       "i18nKey": "genericRDT",
       "externalId": "genericRDT",
-      "abbreviation":"RDT"
+      "abbreviation": "RDT"
     },
     {
       "name": "GenoType Test Strip",
       "i18nKey": "genoTypeTestStrip",
       "externalId": "genoTypeTestStrip",
-      "abbreviation":"GTTS"
+      "abbreviation": "GTS"
     },
     {
       "name": "COVID-19 Test",
       "i18nKey": "covid19",
       "externalId": "covid19",
-      "abbreviation":"CV"
+      "abbreviation": "CV"
     }
   ],
   "relationships": [
     {
+      "externalId": "assayTypeMtb",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "assayTypeRif",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
       "externalId": "assayTypeMtbRif",
+      "diseaseId": {
+        "table": "Disease",
+        "externalId": "tb"
+      }
+    },
+    {
+      "externalId": "assayTypeMtbXdr",
       "diseaseId": {
         "table": "Disease",
         "externalId": "tb"

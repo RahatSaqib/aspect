@@ -26,14 +26,8 @@ describe('Permissions', () => {
 
   before(() =>
     runTestWithKnex(async knex => {
-      ;[{ id: countryId }] = [
-        await knex('Country')
-          .where('abbreviation', countryAbbreviation)
-          .first('id'),
-      ]
-      ;[{ id: jobFunctionId }] = [
-        await knex('JobFunction').where({ partnerId: partner1 }).first(),
-      ]
+      ;[{ id: countryId }] = [await knex('Country').where('abbreviation', countryAbbreviation).first('id')]
+      ;[{ id: jobFunctionId }] = [await knex('JobFunction').where({ partnerId: partner1 }).first()]
       ;[{ id: siteId, name: siteName, geographyId }] = [
         await knex('Site as s')
           .join('Geography as g', 's.geographyId', 'g.id')
@@ -56,7 +50,9 @@ describe('Permissions', () => {
 
   describe('Get permissions', () => {
     const path = `/api/job-function/permissions/${personId}/${partner1}`
-    shared.checkToken(server, path)
+    before(() => {
+      shared.checkToken(server, path)
+    })
     it('should return 200 and list of permissions for current person and partner', done => {
       server
         .get(path)
@@ -132,9 +128,7 @@ describe('Permissions', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
           // list must NOT contain item we just removed
-          const jf = res.body.data.find(
-            x => x.personId === personId && x.jobFunctionId === jobFunctionId
-          )
+          const jf = res.body.data.find(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
           assert.isUndefined(jf)
           //
           done()
@@ -164,9 +158,7 @@ describe('Permissions', () => {
           assert.property(item, 'jobFunctionId')
           assert.property(item, 'personId')
           // list must contain item we just added
-          item = res.body.data.find(
-            x => x.personId === personId && x.jobFunctionId === jobFunctionId
-          )
+          item = res.body.data.find(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
           assert.typeOf(item, 'Object')
           // get 'jobId' to use in next steps
           jobId = item.id
@@ -195,9 +187,7 @@ describe('Permissions', () => {
           assert.property(item, 'jobFunctionId')
           assert.property(item, 'personId')
           // list must contain item we just added
-          item = res.body.data.find(
-            x => x.personId === personId && x.jobFunctionId === jobFunctionId
-          )
+          item = res.body.data.find(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
           assert.typeOf(item, 'Object')
           // get 'jobId' to use in next steps
           jobId = item.id
@@ -216,10 +206,7 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
-          assert.equal(
-            res.body.message,
-            `Can not find person with id=${wrongValue}`
-          )
+          assert.equal(res.body.message, `Can not find person with id=${wrongValue}`)
           //
           done()
         })
@@ -246,10 +233,7 @@ describe('Permissions', () => {
     before(() =>
       runTestWithKnex(async knex => {
         //
-        const jobContext = await knex('JobContext')
-          .where({ jobId, siteId })
-          .whereNull('geographyId')
-          .first()
+        const jobContext = await knex('JobContext').where({ jobId, siteId }).whereNull('geographyId').first()
         cleanJobContext = !jobContext
       })
     )
@@ -257,10 +241,7 @@ describe('Permissions', () => {
     after(() =>
       runTestWithKnex(async knex => {
         if (cleanJob || cleanJobContext) {
-          await knex('JobContext')
-            .where({ jobId, siteId })
-            .whereNull('geographyId')
-            .del()
+          await knex('JobContext').where({ jobId, siteId }).whereNull('geographyId').del()
         }
       })
     )
@@ -277,9 +258,7 @@ describe('Permissions', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
           // list must NOT contain item we just removed
-          const item = res.body.data.find(
-            x => x.jobId === jobId && x.siteId === siteId && !x.geographyId
-          )
+          const item = res.body.data.find(x => x.jobId === jobId && x.siteId === siteId && !x.geographyId)
           assert.isUndefined(item)
           //
           done()
@@ -306,9 +285,7 @@ describe('Permissions', () => {
           assert.property(item, 'personId')
           assert.property(item, 'jobFunctionId')
           // list must contain item we just added
-          item = res.body.data.find(
-            x => x.jobId === jobId && x.siteId === siteId && !x.geographyId
-          )
+          item = res.body.data.find(x => x.jobId === jobId && x.siteId === siteId && !x.geographyId)
           assert.typeOf(item, 'Object')
           //
           done()
@@ -322,10 +299,7 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 409) // Boom.conflict
-          assert.equal(
-            res.body.message,
-            'Either geographyId or siteId (not both) is needed to manage JobContext'
-          )
+          assert.equal(res.body.message, 'Either geographyId or siteId (not both) is needed to manage JobContext')
           //
           done()
         })
@@ -337,10 +311,7 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 409) // Boom.conflict
-          assert.equal(
-            res.body.message,
-            'Either geographyId or siteId (not both) is needed to manage JobContext'
-          )
+          assert.equal(res.body.message, 'Either geographyId or siteId (not both) is needed to manage JobContext')
           //
           done()
         })
@@ -352,10 +323,7 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 417) // Boom.expectationFailed
-          assert.equal(
-            res.body.message,
-            'Either jobId or (personId and jobFunctionId) is needed to manage JobContext'
-          )
+          assert.equal(res.body.message, 'Either jobId or (personId and jobFunctionId) is needed to manage JobContext')
           //
           done()
         })
@@ -367,10 +335,7 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
-          assert.equal(
-            res.body.message,
-            `Missing job with specified jobId=${wrongValue}`
-          )
+          assert.equal(res.body.message, `Missing job with specified jobId=${wrongValue}`)
           //
           done()
         })
@@ -382,10 +347,7 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
-          assert.equal(
-            res.body.message,
-            `Missing site with specified siteId=${wrongValue}`
-          )
+          assert.equal(res.body.message, `Missing site with specified siteId=${wrongValue}`)
           //
           done()
         })
@@ -397,10 +359,7 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
-          assert.equal(
-            res.body.message,
-            `Missing geography with specified geographyId=${wrongValue}`
-          )
+          assert.equal(res.body.message, `Missing geography with specified geographyId=${wrongValue}`)
           //
           done()
         })
@@ -412,10 +371,7 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 417) // Boom.expectationFailed
-          assert.equal(
-            res.body.message,
-            'Only Admin with same partnerId as Job/JobFunction can manage Jobs'
-          )
+          assert.equal(res.body.message, 'Only Admin with same partnerId as Job/JobFunction can manage Jobs')
           //
           done()
         })
@@ -425,14 +381,8 @@ describe('Permissions', () => {
   // -----------------------------------------------
   // testing 3 similar tables - JobFunctionDashboardWidget, JobFunctionPermission
   // -----------------------------------------------
-  describe(
-    'JobFunction <--> Dashboard Widgets',
-    assertBaseItems('JobFunctionDashboardWidget')
-  )
-  describe(
-    'JobFunction <-> Permissions',
-    assertBaseItems('JobFunctionPermission')
-  )
+  describe('JobFunction <--> Dashboard Widgets', assertBaseItems('JobFunctionDashboardWidget'))
+  describe('JobFunction <-> Permissions', assertBaseItems('JobFunctionPermission'))
   // helper function for all 3 tables
   function assertBaseItems(tableName) {
     let refTable
@@ -463,9 +413,7 @@ describe('Permissions', () => {
         runTestWithKnex(async knex => {
           allRefIds = await knex(refTable).orderBy('id').pluck('id')
           // checkpoint of all existing items before test to restore them after
-          initialItems = await knex(tableName)
-            .where({ jobFunctionId })
-            .select('jobFunctionId', fieldName)
+          initialItems = await knex(tableName).where({ jobFunctionId }).select('jobFunctionId', fieldName)
         })
       )
       //
@@ -490,11 +438,7 @@ describe('Permissions', () => {
             assert.property(res.body, 'data')
             assert.typeOf(res.body.data, 'array')
             // list must NOT contain items we just removed
-            const item = res.body.data.find(
-              x =>
-                x.jobFunctionId === jobFunctionId &&
-                items.includes(x[fieldName])
-            )
+            const item = res.body.data.find(x => x.jobFunctionId === jobFunctionId && items.includes(x[fieldName]))
             assert.isUndefined(item)
             //
             done()
@@ -517,11 +461,7 @@ describe('Permissions', () => {
             assert.property(item, fieldName)
             assert.property(item, 'jobFunctionId')
             // list must contain items we just added
-            item = res.body.data.find(
-              x =>
-                x.jobFunctionId === jobFunctionId &&
-                items.includes(x[fieldName])
-            )
+            item = res.body.data.find(x => x.jobFunctionId === jobFunctionId && items.includes(x[fieldName]))
             assert.typeOf(item, 'Object')
             //
             done()
@@ -542,9 +482,7 @@ describe('Permissions', () => {
     before(() =>
       runTestWithKnex(async knex => {
         ;[{ id: jobFunctionClinicianId }] = [
-          await knex('JobFunction')
-            .where({ partnerId: partner1, name: 'Clinician' })
-            .first('id'),
+          await knex('JobFunction').where({ partnerId: partner1, name: 'Clinician' }).first('id'),
         ]
 
         const jobProps = { personId, jobFunctionId: jobFunctionClinicianId }
@@ -556,9 +494,7 @@ describe('Permissions', () => {
         } else {
           const jobContextProps = { jobId: job.id, siteId }
           // check if JobContext exists
-          const jobContext = await knex('JobContext')
-            .where(jobContextProps)
-            .first()
+          const jobContext = await knex('JobContext').where(jobContextProps).first()
           if (!jobContext) {
             // if such JobContext is missing - keep it's properties to remove it in after()
             toCleanUp.jobContextProps = jobContextProps
@@ -634,10 +570,7 @@ describe('Permissions', () => {
           assert.isAtLeast(items.length, 1)
 
           const item = items.find(
-            x =>
-              x.personId === personId &&
-              x.jobFunctionId === jobFunctionClinicianId &&
-              x.siteId === siteId
+            x => x.personId === personId && x.jobFunctionId === jobFunctionClinicianId && x.siteId === siteId
           )
           assertItemProperties(item)
           assert.equal(item.siteName, siteName)
@@ -666,9 +599,7 @@ describe('Permissions', () => {
           const items = res.body.data
           assert.typeOf(items, 'array')
 
-          const item = items.find(
-            x => x.personId === personId && x.jobContextId === jobContextId
-          )
+          const item = items.find(x => x.personId === personId && x.jobContextId === jobContextId)
           assert.isUndefined(item)
 
           done()

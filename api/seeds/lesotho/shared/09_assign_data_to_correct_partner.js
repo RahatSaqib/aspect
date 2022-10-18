@@ -1,48 +1,36 @@
 const _ = require('lodash')
 const { baseGxAlertMigration } = require('../../common')
 const geographyFromGxAlert = require('./fixtures/geography.json')
-const {
-  fixture: jobFunctionsFixture,
-} = require('../../common/fixtures/jobFunctions')
-
+const jobFunctionsFixture = require('./fixtures/jobFunctions')
 const { diseaseToId } = require('../../../src/shared/dictionary')
 
 module.exports = async function (
   knex,
-  partnerName,
-  adminName,
-  gxAlertDeviceApiKey,
   sitesFromGxAlert,
   contactsFromGxAlert,
   geneXpertAssayExternalIds,
   customFieldsFromGxAlert,
-  diseaseExternalId
+  diseaseExternalId,
+  partnerData
 ) {
-  const { id: partnerId } = await knex('Partner')
-    .where('name', partnerName)
-    .first('id')
+  const { partnerName, adminUserName, gxAlertDeviceApiKey } = partnerData
+  const { id: partnerId } = await knex('Partner').where('name', partnerName).first('id')
   const siteExternalIds = sitesFromGxAlert.map(site => site.externalId)
-  const siteIds = await knex('Site')
-    .whereIn('externalId', siteExternalIds)
-    .pluck('id')
+  const siteIds = await knex('Site').whereIn('externalId', siteExternalIds).pluck('id')
   await knex('Site').whereIn('id', siteIds).update('partnerId', partnerId)
   await knex('Device').whereIn('siteId', siteIds).update('partnerId', partnerId)
   await knex('Result').whereIn('siteId', siteIds).update('partnerId', partnerId)
 
   const diseaseId = await diseaseToId(diseaseExternalId)
   const personUsernames = _.uniq([
-    ...contactsFromGxAlert
-      .filter(contact => !!contact.username)
-      .map(contact => contact.username),
-    adminName,
+    ...contactsFromGxAlert.filter(contact => !!contact.username).map(contact => contact.username),
+    adminUserName,
   ])
   const personIds = await knex('User as u')
     .join('Person as p', 'u.id', 'p.userId')
     .whereIn('u.name', personUsernames)
     .pluck('p.id')
-  await knex('Person')
-    .whereIn('id', personIds)
-    .update({ partnerId, lastPartnerId: partnerId })
+  await knex('Person').whereIn('id', personIds).update({ partnerId, lastPartnerId: partnerId })
   const jobContextIds = await knex('JobFunction as jf')
     .join('Job as j', 'jf.id', 'j.jobFunctionId')
     .join('JobContext as jc', 'j.id', 'jc.jobId')
@@ -52,7 +40,7 @@ module.exports = async function (
   await baseGxAlertMigration(
     {
       admin: {
-        name: adminName,
+        name: adminUserName,
       },
       partner: {
         name: partnerName,
@@ -68,6 +56,7 @@ module.exports = async function (
       geneXpertAssayExternalIds,
       customFieldsFromGxAlert,
     },
-    knex
+    knex,
+    partnerData
   )
 }

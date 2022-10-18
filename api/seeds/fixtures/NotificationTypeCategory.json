@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "name": "Issue-Based",
+      "externalId": "issueBased",
+      "triggerCondition": {
+        "action": "ISSUE_CREATED",
+        "method": "issueBased"
+      }
+    },
+    {
+      "name": "Result-Based",
+      "externalId": "resultBased",
+      "triggerCondition": {
+        "action": "RESULT_LOGGED",
+        "method": "resultBased"
+      }
+    },
+    {
+      "name": "Report-Based",
+      "externalId": "reportBased",
+      "triggerCondition": {
+        "action": "REPORT_READY_TO_DELIVER",
+        "method": "reportBased"
+      }
+    }
+  ]
+}

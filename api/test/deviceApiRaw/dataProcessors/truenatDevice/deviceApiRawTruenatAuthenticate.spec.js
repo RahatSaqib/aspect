@@ -1,0 +1,189 @@
+const { addHours, subHours } = require('date-fns')
+const bcrypt = require('bcrypt')
+const { assert } = require('chai')
+
+const { knex } = require('../../../../src/db')
+const { passwordSaltRounds } = require('../../../../src/config')
+const { randomToken } = require('../../../../src/deviceApi/apiKey')
+const server = require('../../../utils/testUtils')
+
+const saltRounds = parseInt(passwordSaltRounds, 10)
+
+describe('Device API Raw routes for Truenat Authentication', () => {
+  const deviceApiRawPath = '/device/raw/truelab/devices/login'
+  const validApiKey = {
+    token: randomToken(),
+    username: 'valid-device',
+    password: 'valid-password',
+    expiresOn: addHours(new Date(), 1),
+  }
+  const expiredApiKey = {
+    token: randomToken(),
+    username: 'expired-token',
+    password: 'expired-token-password',
+    expiresOn: subHours(new Date(), 1),
+  }
+
+  before(async () => {
+    const now = new Date()
+    const { id: userId } = await knex('User').first('id')
+
+    const truenatDeviceType = await knex.from('DeviceType').where('externalId', 'molbioTruenat').first()
+    const partner = await knex.from('Partner').where('name', 'Partner One').first()
+    const geography = await knex
+      .from('Country as c')
+      .join('Geography as g', 'g.countryId', 'c.id')
+      .where('c.abbreviation', 'US')
+      .andWhere('g.stateId', null)
+      .andWhere('g.lgaId', null)
+      .first('g.*')
+    const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
+    const deviceCapacity = await knex('DeviceCapacity')
+      .where({ deviceTypeId: truenatDeviceType.id })
+      .where({ partnerId: partner.id })
+      .where({ defaultForDeviceType: 1 })
+      .first('id')
+    const [siteId] = await knex('Site').insert({
+      name: 'Some Site for Some Truenat Device',
+      shortName: 'SSF',
+      externalId: 'SSF',
+      partnerId: partner.id,
+      geographyId: geography.id,
+      city: 'Sparks',
+      street1: '7 Loveton Circle',
+      zip: '21152',
+      longitude: 17.0,
+      latitude: 95.0,
+      createdOn: now,
+      updatedOn: now,
+    })
+    const [deviceId] = await knex('Device').insert({
+      partnerId: partner.id,
+      siteId,
+      geographyId: geography.id,
+      deviceTypeId: truenatDeviceType.id,
+      deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
+      deviceApprovalId: approvedDeviceApproval.id,
+      name: 'Some Truenat Device',
+      shortName: 'TRUENAT',
+      configurationData: '{}',
+      putInService: now,
+      lastSeenOn: now,
+      createdOn: now,
+      updatedOn: now,
+    })
+    const [validApiKeyId] = await knex('DeviceApiKey').insert({
+      ...validApiKey,
+      password: bcrypt.hashSync(validApiKey.password, saltRounds),
+      deviceId,
+      siteId,
+      revoked: false,
+      createdOn: now,
+      createdBy: userId,
+      updatedOn: now,
+      updatedBy: userId,
+      partnerId: partner.id,
+    })
+    validApiKey.id = validApiKeyId
+    const [expiredApiKeyId] = await knex('DeviceApiKey').insert({
+      ...expiredApiKey,
+      password: bcrypt.hashSync(expiredApiKey.password, saltRounds),
+      deviceId,
+      siteId,
+      revoked: false,
+      createdOn: now,
+      createdBy: userId,
+      updatedOn: now,
+      updatedBy: userId,
+      partnerId: partner.id,
+    })
+    expiredApiKey.id = expiredApiKeyId
+  })
+
+  after(async () => {
+    const { deviceId: validDeviceId, siteId: validSiteId } = await knex('DeviceApiKey as dak')
+      .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+      .where('dak.id', validApiKey.id)
+      .first('dak.deviceId', 'd.siteId')
+    const { deviceId: expiredDeviceId, siteId: expiredSiteId } = await knex('DeviceApiKey as dak')
+      .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+      .where('dak.id', expiredApiKey.id)
+      .first('dak.deviceId', 'd.siteId')
+    await knex('DeviceApprovalLog').where('deviceId', validDeviceId).delete()
+    await knex('DeviceApprovalLog').where('deviceId', expiredDeviceId).delete()
+    await knex('DeviceLog').where('deviceId', validDeviceId).delete()
+    await knex('DeviceLog').where('deviceId', expiredDeviceId).delete()
+
+    await knex('DeviceApiRaw').where('deviceApiKeyId', validApiKey.id).delete()
+    await knex('DeviceApiRaw').where('deviceApiKeyId', expiredApiKey.id).delete()
+    await knex('DeviceApiKey').where('id', validApiKey.id).orWhere('deviceId', validDeviceId).delete()
+    await knex('DeviceApiKey').where('id', expiredApiKey.id).orWhere('deviceId', expiredDeviceId).delete()
+    await knex('Device').where('id', validDeviceId).delete()
+    await knex('Device').where('id', expiredDeviceId).delete()
+    await knex('Site').where('id', validSiteId).delete()
+    await knex('Site').where('id', expiredSiteId).delete()
+  })
+
+  describe('with a valid API key', () => {
+    it('should respond with the API Key token in the body', async () => {
+      const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
+        Username: validApiKey.username,
+        Password: validApiKey.password,
+      })
+      assert.equal(response.statusCode, 200)
+      assert.equal(response.body.token, `Bearer ${validApiKey.token}`)
+      assert.equal(response.body.username, validApiKey.username)
+      assert.isTrue(response.body.success)
+    })
+  })
+
+  describe('with an expired API key', () => {
+    it('should respond with a renewed API Key token in the body', async () => {
+      const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
+        Username: expiredApiKey.username,
+        Password: expiredApiKey.password,
+      })
+      assert.equal(response.statusCode, 200)
+      assert.notEqual(response.body.token, `Bearer ${expiredApiKey.token}`)
+      assert.equal(response.body.username, expiredApiKey.username)
+      assert.isTrue(response.body.success)
+    })
+  })
+
+  describe('with invalid credentials', () => {
+    it('should return a 401 (unauthenticated) response', async () => {
+      const incorrectPasswordResponse = await server
+        .post(deviceApiRawPath)
+        .set('Content-type', 'application/json')
+        .send({
+          Username: validApiKey.username,
+          Password: 'some-random-password',
+        })
+      assert.equal(incorrectPasswordResponse.statusCode, 401)
+      assert.isUndefined(incorrectPasswordResponse.body.token)
+      assert.equal(incorrectPasswordResponse.body.message, `{"username":"${validApiKey.username}","success":false}`)
+
+      const incorrectUsernameResponse = await server
+        .post(deviceApiRawPath)
+        .set('Content-type', 'application/json')
+        .send({
+          Username: 'some-non-existent-username',
+          Password: validApiKey.password,
+        })
+      assert.equal(incorrectUsernameResponse.statusCode, 401)
+      assert.isUndefined(incorrectUsernameResponse.body.token)
+      assert.equal(incorrectUsernameResponse.body.message, `{"username":"some-non-existent-username","success":false}`)
+
+      const incorrectCredentialsResponse = await server
+        .post(deviceApiRawPath)
+        .set('Content-type', 'application/json')
+        .send({
+          Username: 'no_such_username',
+          Password: 'wrong_Pa55w()rd',
+        })
+      assert.equal(incorrectCredentialsResponse.statusCode, 401)
+      assert.isUndefined(incorrectCredentialsResponse.body.token)
+      assert.equal(incorrectCredentialsResponse.body.message, `{"username":"no_such_username","success":false}`)
+    })
+  })
+})

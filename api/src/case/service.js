@@ -1,14 +1,8 @@
 const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams } = require('../db')
-const {
-  getConstraints,
-  addPartnerQueryConstraints,
-} = require('../auth/constraints')
+const { getConstraints, addPartnerQueryConstraints } = require('../auth/constraints')
 const { caseAdded, caseUpdated } = require('./actions')
-const {
-  getPartnerPluginName,
-  getDeviceTypePluginName,
-} = require('../plugin/utils')
+const { getPartnerPluginName, getDeviceTypePluginName } = require('../plugin/utils')
 const { processUsingDataSourceQuery } = require('../stringTemplate/service')
 
 function validateCaseIdentifier(_case) {
@@ -78,10 +72,7 @@ async function removeCase(_case) {
 
 async function updateCase(whereFields, updateFields, { messageContext } = {}) {
   await knex('PatientCase').where(whereFields).update(updateFields)
-  const caseIds = await knex('PatientCase')
-    .where(whereFields)
-    .select('id')
-    .pluck('id')
+  const caseIds = await knex('PatientCase').where(whereFields).pluck('id')
   if (messageContext && caseIds.length) {
     // queue message for each affected Case row
     if (!messageContext.caseUpdated) {
@@ -142,11 +133,10 @@ async function getCases({ query, auth }) {
       'sos.name as sampleOriginSite',
       'd.name as diseaseName',
       'd.id as diseaseId',
+      'd.i18nkey as diseaseI18nKey',
       'd.externalId as diseaseExternalId',
-      knex.raw(`'Active' as status`),
-      knex.raw(
-        'JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'
-      ),
+      knex.raw("'Active' as status"),
+      knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
       'cs.createdOn',
       'cs.updatedOn',
       'uc.name as createdBy',
@@ -156,10 +146,7 @@ async function getCases({ query, auth }) {
 
   const getCount = casesQuery.clone().count('r.id as count').first()
 
-  const getItems = casesQuery
-    .clone()
-    .modify(sortPageParams, query, 'externalId')
-    .select()
+  const getItems = casesQuery.clone().modify(sortPageParams, query, 'externalId').select()
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -187,9 +174,7 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
   const partnerPluginName = await getPartnerPluginName({ caseId })
   const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
   await messageContext.run(async knex => {
-    const { patientId: existingPatientIdForCase } = await knex('PatientCase')
-      .where('id', caseId)
-      .first('patientId')
+    const { patientId: existingPatientIdForCase } = await knex('PatientCase').where('id', caseId).first('patientId')
     const { patientId: patientIdFromLatestResult } =
       (await knex('Result as r')
         .join('Sample as s', 'r.sampleId', 's.id')
@@ -199,15 +184,8 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
           this.whereNotNull('s.patientId')
         })
         .first('s.patientId')) || {}
-    if (
-      patientIdFromLatestResult &&
-      patientIdFromLatestResult !== existingPatientIdForCase
-    ) {
-      await updateCase(
-        { id: caseId },
-        { patientId: patientIdFromLatestResult },
-        { messageContext }
-      )
+    if (patientIdFromLatestResult && patientIdFromLatestResult !== existingPatientIdForCase) {
+      await updateCase({ id: caseId }, { patientId: patientIdFromLatestResult }, { messageContext })
     }
   })
   // exec plugin
@@ -257,12 +235,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
   return messageContext.run(async knex => {
     // Linking the result service here to avoid cyclic
     //   references between this service and case service
-    const {
-      getResultForStringTemplateProcessing,
-    } = require('../result/service')
-    const {
-      RESULT_STRING_TEMPLATE_FIELDS,
-    } = require('../result/querySelectors')
+    const { getResultForStringTemplateProcessing } = require('../result/service')
+    const { RESULT_STRING_TEMPLATE_FIELDS } = require('../result/query')
     const result = await getResultForStringTemplateProcessing(
       resultId,
       [
@@ -296,17 +270,15 @@ async function onResultLogged({ resultId }, { messageContext }) {
         (resultCategory1Reportable || resultCategory2Reportable)
       ) {
         let { reliableCaseExternalId: caseExternalId } =
-          (await processUsingDataSourceQuery(
-            { ...result, reliableCaseExternalIdTemplate },
-            ['reliableCaseExternalIdTemplate']
-          )) || {}
+          (await processUsingDataSourceQuery({ ...result, reliableCaseExternalIdTemplate }, [
+            'reliableCaseExternalIdTemplate',
+          ])) || {}
         const isReliableCaseId = !!caseExternalId
         if (!caseExternalId) {
           ;({ unreliableCaseExternalId: caseExternalId } =
-            (await processUsingDataSourceQuery(
-              { ...result, unreliableCaseExternalIdTemplate },
-              ['unreliableCaseExternalIdTemplate']
-            )) || {})
+            (await processUsingDataSourceQuery({ ...result, unreliableCaseExternalIdTemplate }, [
+              'unreliableCaseExternalIdTemplate',
+            ])) || {})
         }
         if (caseExternalId) {
           // Get the case that matched the case ID in the payload
@@ -361,9 +333,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             (isReliableCaseId && existingCaseId !== caseId) ||
             (!isReliableCaseId && !existingCaseId && otherCaseId)
           ) {
-            await knex('Result')
-              .where('id', resultId)
-              .update({ patientCaseId: otherCaseId })
+            await knex('Result').where('id', resultId).update({ patientCaseId: otherCaseId })
             caseId = otherCaseId
             // TODO: If the old case is now empty, should it be purged?
             //       We need to consider if there is a use case for cases
@@ -373,9 +343,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             //       https://ops.systemone.id/browse/ASP-1453
           }
           if (caseId && existingPatientId) {
-            await knex('PatientCase')
-              .where('id', caseId)
-              .update({ patientId: existingPatientId })
+            await knex('PatientCase').where('id', caseId).update({ patientId: existingPatientId })
           }
         }
       }

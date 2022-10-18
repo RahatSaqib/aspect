@@ -2,7 +2,7 @@ const Email = require('email-templates')
 const path = require('path')
 const { promisify } = require('util')
 const _ = require('lodash')
-const encode = promisify(require('node-base64-image').encode)
+const { encode } = require('node-base64-image')
 const readdir = promisify(require('fs').readdir)
 
 async function process(templateName, tokenValues, locale) {
@@ -33,11 +33,7 @@ async function process(templateName, tokenValues, locale) {
   return result
 }
 
-async function generateAttachment(
-  pathToFile,
-  mimeType = 'application/octet-stream',
-  disposition = 'attachment'
-) {
+async function generateAttachment(pathToFile, mimeType = 'application/octet-stream', disposition = 'attachment') {
   return {
     content: await encode(pathToFile, { string: true, local: true }),
     mimeType,
@@ -64,11 +60,7 @@ async function getInlineImageAttachments(htmlContent) {
 
         if (mimeType) {
           attachments.push(
-            await generateAttachment(
-              path.join(__dirname, 'templates', directoryItems[i]),
-              mimeType,
-              'inline'
-            )
+            await generateAttachment(path.join(__dirname, 'templates', directoryItems[i]), mimeType, 'inline')
           )
         }
       }

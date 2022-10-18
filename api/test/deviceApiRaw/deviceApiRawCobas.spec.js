@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const { run } = require('../../src/db')
 
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -7,7 +8,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Device API Raw routes for cobas', () => {
   // eslint-disable-next-line no-unused-vars
@@ -21,14 +22,8 @@ describe('Device API Raw routes for cobas', () => {
       const now = new Date()
       const { id: userId } = await knex('User').first('id')
 
-      const cobasDeviceType = await knex
-        .from('DeviceType')
-        .where('externalId', 'COBAS4800')
-        .first()
-      const partner = await knex
-        .from('Partner')
-        .where('name', 'Partner One')
-        .first()
+      const cobasDeviceType = await knex.from('DeviceType').where('externalId', 'COBAS4800').first()
+      const partner = await knex.from('Partner').where('name', 'Partner One').first()
       const geography = await knex
         .from('Country as c')
         .join('Geography as g', 'g.countryId', 'c.id')
@@ -36,10 +31,7 @@ describe('Device API Raw routes for cobas', () => {
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
-      const approvedDeviceApproval = await knex
-        .from('DeviceApproval')
-        .where('token', 'approved')
-        .first()
+      const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
       const deviceCapacity = await knex('DeviceCapacity')
         .where({ deviceTypeId: cobasDeviceType.id })
         .where({ partnerId: partner.id })
@@ -74,7 +66,7 @@ describe('Device API Raw routes for cobas', () => {
         createdOn: now,
         updatedOn: now,
       })
-      ;[apiKeyId] = await knex('DeviceApiKey').insert({
+      await knex('DeviceApiKey').insert({
         token: validApiKeyToken,
         deviceId,
         siteId,
@@ -90,9 +82,11 @@ describe('Device API Raw routes for cobas', () => {
   after(() =>
     run(async knex => {
       await waitAsyncComplete()
-      const { id: deviceApiKeyId, deviceId, siteId } = await knex(
-        'DeviceApiKey as dak'
-      )
+      const {
+        id: deviceApiKeyId,
+        deviceId,
+        siteId,
+      } = await knex('DeviceApiKey as dak')
         .leftJoin('Device as d', 'dak.deviceId', 'd.id')
         .where('dak.token', validApiKeyToken)
         .first('dak.id', 'dak.deviceId', 'd.siteId')
@@ -100,10 +94,7 @@ describe('Device API Raw routes for cobas', () => {
       await knex('DeviceLog').where('deviceId', deviceId).delete()
 
       await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-      await knex('DeviceApiKey')
-        .where('token', validApiKeyToken)
-        .orWhere('deviceId', deviceId)
-        .delete()
+      await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
       await knex('Device').where('id', deviceId).delete()
       await knex('Site').where('id', siteId).delete()
     })
@@ -121,13 +112,9 @@ describe('Device API Raw routes for cobas', () => {
         .set('Authorization', `Bearer ${validApiKeyToken}`)
         .set('Content-type', 'application/json')
         .send(payload)
-      const deviceApiRawRecord = await knex('DeviceApiRaw')
-        .where({ id: response.body.deviceApiRawId })
-        .first()
+      const deviceApiRawRecord = await knex('DeviceApiRaw').where({ id: response.body.deviceApiRawId }).first()
       assert.equal(response.statusCode, 200)
-      expect(JSON.parse(deviceApiRawRecord.rawData).payload).to.deep.equal(
-        payload
-      )
+      expect(JSON.parse(deviceApiRawRecord.rawData).payload).to.deep.equal(payload)
       expect(response.body.deviceId).to.equal(deviceId)
       expect(response.body.deviceLogId).to.be.above(0)
     }))

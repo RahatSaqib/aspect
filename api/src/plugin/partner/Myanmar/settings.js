@@ -5,6 +5,13 @@ const settings = {
     dateTimeFormat: 'd/M/yyyy HH:mm:ss',
     utilizationRateThreshold: 0.9,
     errorRateThreshold: 0.03,
+
+    stateLabel: 'Region/State',
+    statesLabel: 'Regions/States',
+    countyLabel: 'District',
+    countiesLabel: 'Districts',
+    lgaLabel: 'District',
+    lgasLabel: 'Districts',
   },
 }
 

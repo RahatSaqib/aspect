@@ -1,11 +1,6 @@
 const _ = require('lodash')
 
-async function onGxAlertAuthenticated({
-  gxUser: { tags = [] },
-  partnerId,
-  personId,
-  knex,
-}) {
+async function onGxAlertAuthenticated({ gxUser: { tags = [] }, partnerId, personId, knex }) {
   if (_.some(tags, tag => tag.indexOf('EID+') > -1)) {
     const eidPositiveTagForPerson = await knex('Tag as t')
       .leftJoin('PersonTag as pt', function () {

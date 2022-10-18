@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
+const config = require('../../config')
 const { createSalt, encrypt } = require('../../shared/encryption')
 const { deviceApiRawStatusToId } = require('../../shared/dictionary')
 const { knex } = require('../../db')
@@ -22,9 +23,7 @@ class DataProcessor {
     this.messageContext = messageContext
     this.encryptRawData = true
     this.saveRequestAsReady = this.saveRequestAsReady.bind(this)
-    this.populateFromDeviceApiRawRecord = this.populateFromDeviceApiRawRecord.bind(
-      this
-    )
+    this.populateFromDeviceApiRawRecord = this.populateFromDeviceApiRawRecord.bind(this)
     this.start = this.start.bind(this)
     this.responseReadyPromise = this.responseReadyPromise.bind(this)
     this.dataProcessorErrorPromise = this.dataProcessorErrorPromise.bind(this)
@@ -46,7 +45,7 @@ class DataProcessor {
       credentials: { token },
     } = auth
     const now = new Date()
-    const deviceApiKey = await knex('DeviceApiKey').where({ token }).first()
+    const deviceApiKey = token ? await knex('DeviceApiKey').where({ token }).first() : null
     let salt = null
     let rawData = JSON.stringify(
       _.pick(
@@ -73,7 +72,7 @@ class DataProcessor {
     const [deviceApiRawId] = await knex('DeviceApiRaw').insert({
       rawData,
       salt,
-      deviceApiKeyId: deviceApiKey.id,
+      deviceApiKeyId: _.get(deviceApiKey, 'id'),
       deviceApiKeySnapshot: JSON.stringify(deviceApiKey),
       deviceApiRawStatusId: await deviceApiRawStatusToId('Ready'),
       dataProcessor: this.name,
@@ -107,8 +106,7 @@ class DataProcessor {
 
   async start() {
     try {
-      const actionIsForThisDataProcessorInstance = action =>
-        action.deviceApiRawId === this.id
+      const actionIsForThisDataProcessorInstance = action => action.deviceApiRawId === this.id
       const dataProcessorMessageHandlerSpec = {
         shouldHandle: actionIsForThisDataProcessorInstance,
         allowInfiniteListeners: true,
@@ -148,27 +146,17 @@ class DataProcessor {
       ]
 
       const lockedId = await deviceApiRawStatusToId('Locked')
-      const deviceApiRawRecord = await knex('DeviceApiRaw')
-        .where('id', this.id)
-        .first()
+      const deviceApiRawRecord = await knex('DeviceApiRaw').where('id', this.id).first()
       if (deviceApiRawRecord.deviceApiRawStatusId === lockedId) {
-        throw Boom.locked(
-          'The raw message record has already been locked for processing',
-          { deviceApiRawId: this.id }
-        )
+        throw Boom.locked('The raw message record has already been locked for processing', { deviceApiRawId: this.id })
       }
       await this.updateDeviceApiRawStatus('Locked')
 
-      this.messageContext.queue.subscribe(
-        'deviceApiRaw',
-        this.listenerEndpoints,
-        this.timeoutMilliseconds
-      )
+      this.messageContext.queue.subscribe('deviceApiRaw', this.listenerEndpoints, this.timeoutMilliseconds)
       // Wait for consumers, for this DataProcessor instance, to be registered on the queue's channel
       const getDataProcessorConsumersListeningToQueue = () =>
         Object.values(this.listenerEndpoints[0].actions).map(
-          action =>
-            this.messageContext.queue.channel.consumers[action.consumerTag]
+          action => this.messageContext.queue.channel.consumers[action.consumerTag]
         )
       let ensureConsumers = getDataProcessorConsumersListeningToQueue()
       await Promise.each(_.range(1, 100), async waitMs => {
@@ -180,11 +168,7 @@ class DataProcessor {
         return Promise.reject(new Error('subscribed'))
       })
         .then(waitMsArray => {
-          throw new Error(
-            `${this.name} ${this.id} still unsubscribed after ${_.sum(
-              waitMsArray
-            )} milliseconds`
-          )
+          throw new Error(`${this.name} ${this.id} still unsubscribed after ${_.sum(waitMsArray)} milliseconds`)
         })
         .catch(err => {
           if (err.message === 'subscribed') {
@@ -231,13 +215,8 @@ class DataProcessor {
       .then(action => {
         if (_.get(action, 'error.isBoom')) {
           const errorPayload = _.get(action, 'error.output.payload', {})
-          const statusCode =
-            _.get(action, 'error.output.statusCode') ||
-            _.get(errorPayload, 'statusCode')
-          const error = Boom.boomify(
-            new Error(_.get(errorPayload, 'message')),
-            { statusCode }
-          )
+          const statusCode = _.get(action, 'error.output.statusCode') || _.get(errorPayload, 'statusCode')
+          const error = Boom.boomify(new Error(_.get(errorPayload, 'message')), { statusCode })
           if (_.get(action, 'error.data')) {
             error.data = _.get(action, 'error.data')
           }
@@ -271,48 +250,38 @@ class DataProcessor {
 
   // TODO: FIX: When the server is terminated, running data processors don't call this, leaving messages on the queue and blocking future data processors.
   async unsubscribe() {
-    await Promise.each(
-      this.listenerEndpoints,
-      async (listenerEndpoint, index) =>
-        Promise.each(Object.keys(listenerEndpoint.actions), async type => {
-          const action = listenerEndpoint.actions[type]
-          const queueName = `aspect_deviceApiRaw_${index}_actions_${type}`
-          const topic = `aspect.actions.${type}.${action.bindingKey}`
-          if (this.messageContext.queue.channel.consumers[action.consumerTag]) {
-            this.messageContext.queue.unsubscribe(
-              queueName,
-              topic,
-              action.consumerTag
-            )
-            await Promise.each(_.range(1, 100), async waitMs => {
-              if (
-                !_.isNil(
-                  this.messageContext.queue.channel.consumers[
-                    action.consumerTag
-                  ]
-                )
-              ) {
-                await Promise.delay(waitMs)
-                return Promise.resolve(waitMs)
-              }
-              return Promise.reject(new Error('unsubscribed'))
+    await Promise.each(this.listenerEndpoints, async (listenerEndpoint, index) =>
+      Promise.each(Object.keys(listenerEndpoint.actions), async type => {
+        const action = listenerEndpoint.actions[type]
+        const queueName = `${config.amqp.name}_deviceApiRaw_${index}_actions_${type}`
+        const topic = `aspect.actions.${type}.${action.bindingKey}`
+        if (this.messageContext.queue.channel.consumers[action.consumerTag]) {
+          this.messageContext.queue.unsubscribe(queueName, topic, action.consumerTag)
+          this.messageContext.queue.channel.unbindQueue(queueName, 'aspect', topic)
+          this.messageContext.queue.channel.cancel(action.consumerTag)
+          await Promise.each(_.range(1, 100), async waitMs => {
+            if (!_.isNil(this.messageContext.queue.channel.consumers[action.consumerTag])) {
+              await Promise.delay(waitMs)
+              return Promise.resolve(waitMs)
+            }
+            return Promise.reject(new Error('unsubscribed'))
+          })
+            .then(waitMsArray => {
+              throw new Error(
+                `${this.name} ${this.id} still subscribed to ${action.consumerTag} after ${_.sum(
+                  waitMsArray
+                )} milliseconds`
+              )
             })
-              .then(waitMsArray => {
-                throw new Error(
-                  `${this.name} ${this.id} still subscribed to ${
-                    action.consumerTag
-                  } after ${_.sum(waitMsArray)} milliseconds`
-                )
-              })
-              .catch(err => {
-                if (err.message !== 'unsubscribed') {
-                  throw err
-                }
-              })
-          } else {
-            return Promise.resolve()
-          }
-        })
+            .catch(err => {
+              if (err.message !== 'unsubscribed') {
+                throw err
+              }
+            })
+        } else {
+          return Promise.resolve()
+        }
+      })
     )
   }
 }
@@ -321,9 +290,7 @@ class SynchronousDataProcessor extends DataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.handlerFunction = this.handlerFunction.bind(this)
-    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
-      this
-    )
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(this)
     this.onDeviceRawMessageReady = this.onDeviceRawMessageReady.bind(this)
   }
 
@@ -352,9 +319,7 @@ class AsynchronousDataProcessor extends DataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.handlerFunction = this.handlerFunction.bind(this)
-    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(
-      this
-    )
+    this.onDeviceRawMessageProcessed = this.onDeviceRawMessageProcessed.bind(this)
     this.onDeviceRawMessageReady = this.onDeviceRawMessageReady.bind(this)
   }
 

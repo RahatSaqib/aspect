@@ -21,6 +21,7 @@ const SELECT_LIST_FIELDS = [
   'a.patientDataSchema',
   'a.abbreviation',
   'at.abbreviation as assayTypeAbbreviation',
+  knex.raw('SUM(f.resultCount) as resultCount'),
 ]
 
 const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
@@ -31,6 +32,16 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rca.assayId',
   'rca.emphasize',
   'rca.requirestreatment',
+]
+
+const SELECT_LIST_RESULT_CATEGORY_GROUP_FIELDS = [
+  'rcg.id',
+  'rcg.externalId',
+  'rcg.name',
+  'rcg.i18nKey',
+  'rcg.resultCategory1Id',
+  'rcg.resultCategory2Id',
+  'rcg.assayId',
 ]
 
 async function listAssaysResultSchema(request) {
@@ -95,18 +106,23 @@ async function listAssays(request) {
 
   // get all assays that have results that user has access to
   const dataConstraints = await getConstraints(auth.credentials)
-  const usedAssayIds = await knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', result: 'r' })
-    .distinct('r.assayId')
-    .pluck('assayId')
+  const usedAssay = knex('FactResultsDeviceByAssay as f')
+    .innerJoin('Device as d', 'f.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'f.assayId', 'a.id')
+    .modify(addConstraints, dataConstraints, { device: 'd', assay: 'a' })
+    .where('f.resultCount', '>', 0)
+    .groupBy('f.assayId')
+    .select({
+      assayId: 'f.assayId',
+      resultCount: knex.raw('SUM(f.resultCount)'),
+    })
 
   // no get the assays with a field for hasResults
   const assayQuery = knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .leftJoin(usedAssay.as('f'), 'a.id', 'f.assayId')
     .modify(addConstraints, dataConstraints, {
       assayType: 'at',
       assay: 'a',
@@ -114,38 +130,36 @@ async function listAssays(request) {
       disease: 'd',
     })
     .modify(filterParams, query, { name: 'a.name' })
+    .groupBy('a.id')
 
   // get total count for paging
   const getCount = assayQuery.clone().count('a.id as count').first()
 
   // get rows
-  const getItems = assayQuery
-    .clone()
-    .modify(sortPageParams, query, 'name')
-    .select(SELECT_LIST_FIELDS)
+  const getItems = assayQuery.clone().modify(sortPageParams, query, 'name').select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
   const [{ count: total }, rawAssays] = await Promise.all([getCount, getItems])
 
+  // list of assayId's for using in next queries
+  const assayIds = _.map(rawAssays, 'id')
+
   // get resultCategories for all assays
   const rawResultCategories = await knex('ResultCategory as rc')
     .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
-    .whereIn('rca.assayId', _.map(rawAssays, 'id'))
+    .whereIn('rca.assayId', assayIds)
     .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
-
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
+
+  const rawResultCategoryGroups = await knex('ResultCategoryGroup as rcg')
+    .whereIn('rcg.assayId', assayIds)
+    .select(SELECT_LIST_RESULT_CATEGORY_GROUP_FIELDS)
+  const resultCategoryGroupsByAssayId = _.groupBy(rawResultCategoryGroups, 'assayId')
 
   const rawPartnerAssays = await knex('PartnerAssay as pa')
     .innerJoin('Partner as p', 'pa.partnerId', 'p.id')
-    .whereIn('pa.assayId', _.map(rawAssays, 'id'))
-    .distinct(
-      'pa.assayId',
-      'pa.partnerId',
-      'p.name as partnerName',
-      'pa.canCreate',
-      'pa.canDelete',
-      'pa.canEdit'
-    )
+    .whereIn('pa.assayId', assayIds)
+    .distinct('pa.assayId', 'pa.partnerId', 'p.name as partnerName', 'pa.canCreate', 'pa.canDelete', 'pa.canEdit')
   const abilitiesByAssayId = _.groupBy(rawPartnerAssays, 'assayId')
 
   // map rawAssays with extra values
@@ -161,15 +175,14 @@ async function listAssays(request) {
     }
     return {
       ...assay,
-      hasResults: usedAssayIds.includes(assay.id),
+      hasResults: assay.resultCount > 0,
       resultDataSchema: JSON.parse(assay.resultDataSchema),
       resultCategories: resultCategoriesByAssayId[assay.id],
+      resultCategoryGroups: resultCategoryGroupsByAssayId[assay.id],
       abilities,
-      patientDataSchema:
-        assay.patientDataSchema && JSON.parse(assay.patientDataSchema),
+      patientDataSchema: assay.patientDataSchema && JSON.parse(assay.patientDataSchema),
     }
   })
-
   const result = { ok: true, total, length: assays.length, data: assays }
 
   return result
@@ -199,7 +212,8 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
     .modify((queryBuilder, assayId) => {
-      if (assayId) queryBuilder.where('a.id', assayId)
+      if (assayId && _.isArray(assayId)) queryBuilder.whereIn('a.id', assayId)
+      else if (assayId && !_.isArray(assayId)) queryBuilder.where('a.id', assayId)
     }, assayId)
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
@@ -208,14 +222,7 @@ async function getAllAssaySchemas(partnerId, userId, assayId = null) {
       assayType: 'at',
     })
     .where('d.partnerId', partnerId)
-    .distinct(
-      'a.id',
-      'a.name',
-      'a.externalId',
-      'at.diseaseId',
-      'a.resultDataSchema',
-      'a.patientDataSchema'
-    )
+    .distinct('a.id', 'a.name', 'a.externalId', 'at.diseaseId', 'a.resultDataSchema', 'a.patientDataSchema')
   return query
 }
 

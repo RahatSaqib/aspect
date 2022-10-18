@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Person List module CaseList component should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Cases"
+  />
+  <Connect(lifecycle(Component))
+    title="Cases"
+  />
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    askConfirmationForExport={false}
+    intl={
+      Object {
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+      }
+    }
+    location={
+      Object {
+        "search": "",
+      }
+    }
+    navigate={[Function]}
+  />
+  <DataTableCard
+    key="DataTableCard--table-undefined"
+  >
+    <DataTableProgressBar
+      disabled={true}
+    />
+    <pure(withHandlers(EmptyList))
+      location={
+        Object {
+          "search": "",
+        }
+      }
+      navigate={[Function]}
+    />
+  </DataTableCard>
+</div>
+`;

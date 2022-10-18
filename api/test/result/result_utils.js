@@ -9,8 +9,8 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 
-function calculateDateForResult() {
-  const daysToSubtract = Math.ceil(Math.random() ** 4 * 60)
+function calculateDateForResult(withinLastXDays = 60) {
+  const daysToSubtract = Math.ceil(Math.random() ** 4 * withinLastXDays)
   return subDays(new Date(), daysToSubtract)
 }
 
@@ -22,7 +22,8 @@ async function createResult(
   userId,
   resultDetails = {},
   sampleDetails = {},
-  createDeviceLogFromInstrument = false
+  createDeviceLogFromInstrument = false,
+  withinLastXDays = 60
 ) {
   const deviceApprovalApprovedId = await deviceApprovalToId('approved')
   let device = await knex('DeviceType as dt')
@@ -31,15 +32,23 @@ async function createResult(
     .join('Site as s', 'd.siteId', 's.id')
     .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
+    .leftOuterJoin(
+      'DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog',
+      'd.deviceMaintenanceStatusLogId',
+      'deviceMaintenanceStatusLog.id'
+    )
+    .leftOuterJoin(
+      'DeviceMaintenanceStatus AS deviceMaintenanceStatus',
+      'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
+      'deviceMaintenanceStatus.id'
+    )
     .where('dt.externalId', deviceTypeExternalId)
-    .where('a.externalId', assayExternalId)
+    .andWhere('a.externalId', assayExternalId)
     .andWhere('c.abbreviation', 'US')
     .andWhere('d.deviceApprovalId', deviceApprovalApprovedId)
-    .first('d.*')
+    .first('d.*', 'deviceMaintenanceStatus.externalId as deviceMaintenanceStatusExternalId')
   if (!device) {
-    const { id: geographyId } = await knex('Geography')
-      .whereNotNull('lgaId')
-      .first('id')
+    const { id: geographyId } = await knex('Geography').whereNotNull('lgaId').first('id')
     const auditFields = {
       createdBy: userId,
       createdOn: new Date(),
@@ -66,25 +75,26 @@ async function createResult(
       ...auditFields,
     })
     device = await knex('Device').where('id', deviceId).first()
+  } else if (device.deviceMaintenanceStatusExternalId === 'inactiveDecommissioned') {
+    await knex('Device').where('id', device.id).update({ deviceMaintenanceStatusLogId: null })
+    await knex('DeviceMaintenanceStatusLog').where('deviceId', device.id).del()
   }
   const site = await knex('Site').where('id', device.siteId).first()
-  const randomDate = calculateDateForResult()
-  const randomNumber = calculateDateForResult().getTime()
+  const randomDate = calculateDateForResult(withinLastXDays)
+  const randomNumber = calculateDateForResult(withinLastXDays).getTime()
 
   const sampleTypeId = await sampleTypeToId(sampleTypeExternalId)
   const sample = {
     externalId: `${dateFormat(randomDate, 'yy')}/${randomNumber}`,
-    collectedOn: calculateDateForResult(),
+    collectedOn: calculateDateForResult(withinLastXDays),
     sampleTypeId,
     originSiteId: site.id,
     ...sampleDetails,
   }
   const assay = await knex('Assay').where('externalId', assayExternalId).first()
-  sample.id = await knex('Sample').insert(sample)
+  ;[sample.id] = await knex('Sample').insert(sample)
   const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
-  const resultSourceDiagnosticDeviceId = await resultSourceToId(
-    'DiagnosticDevice'
-  )
+  const resultSourceDiagnosticDeviceId = await resultSourceToId('DiagnosticDevice')
   const resultCategories = await allResultCategoryToId()
   const resultTypePatientId = await resultTypeToId('Patient')
   const [resultId] = await knex('Result').insert({
@@ -97,10 +107,7 @@ async function createResult(
     deviceId: device.id,
     longitude: site.longitude,
     latitude: site.latitude,
-    resultSourceId:
-      deviceTypeExternalId === 'Aspect'
-        ? resultSourceEnteredByHandId
-        : resultSourceDiagnosticDeviceId,
+    resultSourceId: deviceTypeExternalId === 'Aspect' ? resultSourceEnteredByHandId : resultSourceDiagnosticDeviceId,
     resultTypeId: resultTypePatientId,
     sampleId: sample.id,
     resultCategory1: resultCategories.Unknown,

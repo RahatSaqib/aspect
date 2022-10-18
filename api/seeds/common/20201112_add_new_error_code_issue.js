@@ -1,11 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
-const {
-  seedIssueType,
-  seedIssueEventTriggersForPartner,
-  upsertNotificationTypes,
-} = require('../utils')
+const { seedIssueType, seedIssueEventTriggersForPartner, upsertNotificationTypes } = require('../utils')
 
 async function seed(knex) {
   const { partnerId, userId } = await knex('User as u')
@@ -31,6 +27,7 @@ async function seed(knex) {
     'AssaySpecificTerminationError2Module',
     'AssaySpecificTerminationError2Lot',
   ]
+  const notifications = []
   await Promise.each(issuesToInsert, async issue => {
     const issueTypeId = await seedIssueType(knex, issue, {
       userName: 'admin',
@@ -61,20 +58,21 @@ async function seed(knex) {
         })
         .first('id as jobFunctionAdminId'))
 
-    await upsertNotificationTypes(knex, [
-      {
-        issueTypeId: issueType.id,
-        messageTypeId: issueType.defaultMessageTypeId,
-        partnerId,
-        jobFunctionId: jobFunctionAdminId,
-        level: 1,
-        name: issueType.name,
-        ...auditFields,
-      },
-    ])
+    notifications.push({
+      issueTypeId: issueType.id,
+      messageTypeId: issueType.defaultMessageTypeId,
+      partnerId,
+      jobFunctionId: jobFunctionAdminId,
+      level: 1,
+      name: issueType.name,
+      ...auditFields,
+    })
   })
-  await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: issuesToInsert,
-  })
+  await Promise.all([
+    upsertNotificationTypes(knex, notifications),
+    seedIssueEventTriggersForPartner(knex, partnerId, {
+      issueTypeWhitelist: issuesToInsert,
+    }),
+  ])
 }
 module.exports = seed

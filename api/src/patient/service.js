@@ -2,10 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { knex } = require('../db')
 const { patientAdded, patientUpdated } = require('./actions')
-const {
-  getPartnerPluginName,
-  getDeviceTypePluginName,
-} = require('../plugin/utils')
+const { getPartnerPluginName, getDeviceTypePluginName } = require('../plugin/utils')
 const { processUsingDataSourceQuery } = require('../stringTemplate/service')
 
 function validatePatientIdentifier(patient) {
@@ -55,11 +52,7 @@ async function addPatient(patient, { messageContext } = {}) {
     createdOn: new Date(),
     updatedOn: new Date(),
     ...patient,
-    data: !patient.data
-      ? '{}'
-      : !_.isString(patient.data)
-      ? JSON.stringify(patient.data)
-      : patient.data,
+    data: !patient.data ? '{}' : !_.isString(patient.data) ? JSON.stringify(patient.data) : patient.data,
   })
 
   if (messageContext) {
@@ -91,29 +84,16 @@ const mergeDeep = (baseValue, sourceValue) => {
     return baseValue
   }
   if (_.isArray(baseValue) && _.isArray(sourceValue)) {
-    return _.uniqBy(
-      [...(baseValue || []), ...(sourceValue || [])],
-      JSON.stringify
-    )
+    return _.uniqBy([...(baseValue || []), ...(sourceValue || [])], JSON.stringify)
   }
   if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
-    return _.mergeWith(
-      _.cloneDeep(baseValue),
-      _.cloneDeep(sourceValue),
-      mergeDeep
-    )
+    return _.mergeWith(_.cloneDeep(baseValue), _.cloneDeep(sourceValue), mergeDeep)
   }
   return sourceValue || baseValue
 }
 
-async function updatePatient(
-  whereFields,
-  updateFields,
-  { messageContext } = {}
-) {
-  const patientRecordsToUpdate = await knex('Patient')
-    .where(whereFields)
-    .select()
+async function updatePatient(whereFields, updateFields, { messageContext } = {}) {
+  const patientRecordsToUpdate = await knex('Patient').where(whereFields).select()
   // TODO: This is where we need to evaluate whether the patient
   //       data should be overwritten or not. We may want to take
   //       the data update out of this function and defer it to a
@@ -133,15 +113,10 @@ async function updatePatient(
       .where('id', patientToUpdate.id)
       .update({
         ...patientToUpdate,
-        data: _.isEmpty(patientToUpdate.data)
-          ? '{}'
-          : JSON.stringify(patientToUpdate.data),
+        data: _.isEmpty(patientToUpdate.data) ? '{}' : JSON.stringify(patientToUpdate.data),
       })
   )
-  const patientIds = await knex('Patient')
-    .where(whereFields)
-    .select('id')
-    .pluck('id')
+  const patientIds = await knex('Patient').where(whereFields).pluck('id')
   if (messageContext && patientIds.length) {
     // queue message for each affected Case row
     if (!messageContext.patientUpdated) {
@@ -180,12 +155,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
   return messageContext.run(async knex => {
     // Linking the result service here to avoid cyclic
     //   references between this service and case service
-    const {
-      getResultForStringTemplateProcessing,
-    } = require('../result/service')
-    const {
-      RESULT_STRING_TEMPLATE_FIELDS,
-    } = require('../result/querySelectors')
+    const { getResultForStringTemplateProcessing } = require('../result/service')
+    const { RESULT_STRING_TEMPLATE_FIELDS } = require('../result/query')
     const result = await getResultForStringTemplateProcessing(
       resultId,
       [
@@ -209,22 +180,17 @@ async function onResultLogged({ resultId }, { messageContext }) {
         updatedBy,
         partnerId,
       } = result
-      if (
-        reliablePatientExternalIdTemplate ||
-        unreliablePatientExternalIdTemplate
-      ) {
+      if (reliablePatientExternalIdTemplate || unreliablePatientExternalIdTemplate) {
         let { reliablePatientExternalId: patientExternalId } =
-          (await processUsingDataSourceQuery(
-            { ...result, reliablePatientExternalIdTemplate },
-            ['reliablePatientExternalIdTemplate']
-          )) || {}
+          (await processUsingDataSourceQuery({ ...result, reliablePatientExternalIdTemplate }, [
+            'reliablePatientExternalIdTemplate',
+          ])) || {}
         const isReliablePatientId = !!patientExternalId
         if (!patientExternalId) {
           ;({ unreliablePatientExternalId: patientExternalId } =
-            (await processUsingDataSourceQuery(
-              { ...result, unreliablePatientExternalIdTemplate },
-              ['unreliablePatientExternalIdTemplate']
-            )) || {})
+            (await processUsingDataSourceQuery({ ...result, unreliablePatientExternalIdTemplate }, [
+              'unreliablePatientExternalIdTemplate',
+            ])) || {})
         }
         if (patientExternalId) {
           // Get the patient that matched the patient ID in the payload
@@ -258,10 +224,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           )
           // If the patient ID for the result's sample & case has changed to an unknown patient ID
           //   update the case number on the existing case
-          if (
-            isReliablePatientId &&
-            (!otherPatientId || otherPatientId === patientId)
-          ) {
+          if (isReliablePatientId && (!otherPatientId || otherPatientId === patientId)) {
             await updatePatient(
               { id: patientId },
               {
@@ -280,14 +243,10 @@ async function onResultLogged({ resultId }, { messageContext }) {
             otherPatientId
           ) {
             if (sampleId) {
-              await knex('Sample')
-                .where('id', sampleId)
-                .update({ patientId: otherPatientId })
+              await knex('Sample').where('id', sampleId).update({ patientId: otherPatientId })
             }
             if (existingCaseId) {
-              await knex('PatientCase')
-                .where('id', existingCaseId)
-                .update({ patientId: otherPatientId })
+              await knex('PatientCase').where('id', existingCaseId).update({ patientId: otherPatientId })
             }
             // TODO: If the old patient is now empty (with no cases or samples),
             //       should it be purged?

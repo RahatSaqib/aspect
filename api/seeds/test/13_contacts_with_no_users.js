@@ -9,25 +9,12 @@ async function seed(knex) {
 
   await Promise.all(
     _.map(
-      [
-        'Jennifer',
-        'Monica',
-        'Chandler',
-        'Joy',
-        'Kate',
-        'Ross',
-        'Lisa',
-        'Robin',
-        'Ted',
-        'Julius',
-        'Nicholas',
-        'Galit',
-      ],
+      ['Jennifer', 'Monica', 'Chandler', 'Joy', 'Kate', 'Ross', 'Lisa', 'Robin', 'Ted', 'Julius', 'Nicholas', 'Galit'],
       async name => {
         const lastPartnerId = _.sample(partners).id
         const lastCountryId = _.sample([1, 2, 3, 4])
         const timezone = _.sample([
-          'Central Africa Time',
+          'South Africa Standard Time',
           'W. Central Africa Standard Time',
           'Eastern Standard Time',
           'Myanmar Standard Time',

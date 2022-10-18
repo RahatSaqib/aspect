@@ -1,76 +1,56 @@
-const webpack = require('webpack')
-const path = require('path')
-const merge = require('webpack-merge')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const { merge } = require('webpack-merge')
 const base = require('./base')
+
+/**
+ * To check locally if production build is good:
+ * 1. Install globally package `http-server`
+ * 2. Prepare production build by running `yarn dist`
+ * 3. in `dist` folder run `http-server --gzip` or `http-server --gzip -p XXXX`
+ *    where XXXX is port number. Open browser for `localhost:XXXX` - site
+ *    should work well if you have API running.
+ */
 
 const config = () => {
   process.env.ASPECT_TARGET = 'dist'
   process.env.NODE_ENV = 'production'
   process.env.BABEL_ENV = 'webpack'
 
-  return {
+  /**
+   * see all Configuration options -
+   * https://webpack.js.org/configuration
+   */
+  const config = {
     mode: 'production',
     output: {
+      clean: true, // clean 'dist' folder before emitting bundle files
       filename: '[name].[contenthash].js',
     },
     devtool: false,
-    module: {
-      rules: [
-        {
-          test: /\.css$/,
-          use: [
-            {
-              loader: MiniCssExtractPlugin.loader,
-            },
-            {
-              loader: 'css-loader',
-              options: {
-                sourceMap: true,
-              },
-            },
-          ],
-        },
-      ],
-    },
     plugins: [
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
+      /**
+       * extracts CSS into separate files
+       * see https://webpack.js.org/plugins/mini-css-extract-plugin/
+       */
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
         chunkFilename: '[id].[contenthash].css',
       }),
-      new FaviconsWebpackPlugin({
-        logo: path.join(__dirname, '../src/template/favicon.png'),
-        prefix: 'icons-[hash]-',
-        persistentCache: false,
-        inject: true,
-        background: '#fff',
-        // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
-        icons: {
-          android: true,
-          appleIcon: true,
-          appleStartup: false,
-          coast: false,
-          favicons: true,
-          firefox: true,
-          opengraph: false,
-          twitter: false,
-          yandex: false,
-          windows: false,
-        },
-      }),
-      new webpack.NamedChunksPlugin(),
-      new webpack.HashedModuleIdsPlugin(),
+      /**
+       * generate `gz` files for all js/css files in bundle
+       * see https://webpack.js.org/plugins/compression-webpack-plugin/
+       */
       new CompressionPlugin({
-        filename: '[path].gz[query]',
+        filename: '[path][base].gz',
         algorithm: 'gzip',
-        test: /\.(js|css)(\.map)?$/,
+        test: /\.(js|css)$/,
         threshold: 10240,
       }),
       new CaseSensitivePathsPlugin(),
@@ -81,46 +61,57 @@ const config = () => {
       }),
     ],
     optimization: {
+      /**
+       * see all Optimization options -
+       * https://webpack.js.org/configuration/optimization/
+       */
+      moduleIds: 'deterministic',
+      chunkIds: 'named',
       minimize: true,
       runtimeChunk: 'single',
+      usedExports: true,
       splitChunks: {
         chunks: 'all',
-        minSize: 30000,
-        minChunks: 1,
-        maxAsyncRequests: 5,
-        maxInitialRequests: 3,
-        name: true,
         cacheGroups: {
           vendor: {
             chunks: 'all',
             test: /[\\/]node_modules[\\/]/,
             name: 'vendor',
+            reuseExistingChunk: true,
           },
           main: {
             chunks: 'all',
-            minChunks: 2,
             reuseExistingChunk: true,
-            enforce: true,
           },
         },
       },
       minimizer: [
+        /**
+         * minify JS -
+         * https://webpack.js.org/plugins/terser-webpack-plugin/
+         */
         new TerserPlugin(),
-        new OptimizeCSSAssetsPlugin({
-          assetNameRegExp: /\.css$/g,
-          cssProcessorOptions: {
-            safe: true,
-            autoprefixer: { disable: true },
-            mergeLonghand: false,
-            discardComments: {
-              removeAll: true,
-            },
+        /**
+         * optimize and minify CSS
+         * see https://webpack.js.org/plugins/css-minimizer-webpack-plugin/
+         */
+        new CssMinimizerPlugin({
+          test: /\.css$/g,
+          minify: CssMinimizerPlugin.cssoMinify,
+          minimizerOptions: {
+            preset: [
+              'default',
+              {
+                discardComments: { removeAll: true },
+              },
+            ],
           },
-          canPrint: true,
         }),
       ],
     },
   }
+
+  return merge(base(process.env.NODE_ENV), config)
 }
 
-module.exports = merge.smart(base, config())
+module.exports = config()

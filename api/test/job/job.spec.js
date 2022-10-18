@@ -7,10 +7,11 @@ const { assert } = chai
 
 describe('Job routes', () => {
   const path = '/api/job-function/select-list'
+  before(() => {
+    shared.checkToken(server, path)
+  })
 
   describe('GET', () => {
-    shared.checkToken(server, path)
-
     it('should return a tree structure of partners and job functions', done => {
       server
         .get(path)

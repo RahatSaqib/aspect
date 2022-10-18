@@ -4,9 +4,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { addMinutes } = require('date-fns')
 
-const {
-  processUsingDataSourceQuery,
-} = require('../../src/stringTemplate/service')
+const { processUsingDataSourceQuery } = require('../../src/stringTemplate/service')
 const {
   messageSeverityToId,
   issueTypeToId,
@@ -18,8 +16,7 @@ const getPositiveCategoriesExternalIds = require('../../src/resultCategory/servi
 
 const currentMonth = new Date().getMonth()
 const canProceed = date => {
-  const percentPositiveResultNotified =
-    new Date(date).getMonth() === currentMonth ? 90 : 85
+  const percentPositiveResultNotified = new Date(date).getMonth() === currentMonth ? 90 : 85
   return _.random(0, 100) <= percentPositiveResultNotified
 }
 const getMessage = async (result, messageTemplate) => {
@@ -48,12 +45,10 @@ async function seed(knex) {
   const issueTypeId = issueTypes.ResultReceived
   await seedIssueTypeTemplates(knex, 'ResultReceived', { partnerId, userId })
 
-  const {
-    alertTemplate,
-    emailTemplate,
-    smsTemplate,
-    messageTypeId,
-  } = await getPositiveResultIssueProps(knex, issueTypeId)
+  const { alertTemplate, emailTemplate, smsTemplate, messageTypeId } = await getPositiveResultIssueProps(
+    knex,
+    issueTypeId
+  )
   // get notificationTypeId
   const { id: notificationTypeId } = await knex('NotificationType')
     .where({
@@ -84,33 +79,24 @@ async function seed(knex) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Issue as i', 'r.id', 'i.resultId')
     .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-    .leftOuterJoin(
-      'DeviceApproval as deviceApproval',
-      'd.deviceApprovalId',
-      'deviceApproval.id'
-    )
+    .leftOuterJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
     .whereIn('rc.externalid', getPositiveCategoriesExternalIds())
     .whereRaw(
       `
       (
         (
-          YEAR(r.endedOn) = YEAR(CURRENT_DATE) 
-          AND 
-          MONTH(r.endedOn) = MONTH(CURRENT_DATE)
+          r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
         )
         OR
         (
-          YEAR(r.endedOn) = YEAR(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
-          AND 
-          MONTH(r.endedOn) = MONTH(DATE_ADD(CURRENT_DATE, INTERVAL -1 MONTH))
+          r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+          AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
         )
       )
       `
     )
     .where(function () {
-      this.where('deviceApproval.token', 'approved').orWhereNull(
-        'deviceApproval.token'
-      )
+      this.where('deviceApproval.token', 'approved').orWhereNull('deviceApproval.token')
     })
     .select(
       'r.id as resultId',
@@ -217,9 +203,7 @@ async function getPositiveResultIssueProps(knex, issueTypeId) {
     .innerJoin('MessageType as mt', 'it.defaultMessageTypeId', 'mt.id')
     .where('it.id', issueTypeId)
 
-  const [{ messageTypeId }] = await baseQuery
-    .clone()
-    .select('mt.id as messageTypeId')
+  const [{ messageTypeId }] = await baseQuery.clone().select('mt.id as messageTypeId')
   const [alertTemplate] = await baseQuery
     .clone()
     .innerJoin('AlertTemplate as at', 'mt.alertTemplateId', 'at.id')
@@ -242,11 +226,7 @@ async function getPositiveResultIssueProps(knex, issueTypeId) {
 }
 
 // ***********************************************************************
-async function seedIssueTypeTemplates(
-  knex,
-  issueTypeExternalId,
-  { partnerId, userId }
-) {
+async function seedIssueTypeTemplates(knex, issueTypeExternalId, { partnerId, userId }) {
   const now = new Date()
   const auditFields = {
     createdOn: now,
@@ -280,9 +260,7 @@ async function seedIssueTypeTemplates(
     smsTemplateId: result1PositiveSmsTemplateId,
   })
   // set defaultMessageTypeId in IssueType to have both email and sms templates defined
-  await knex('IssueType')
-    .where('id', issueTypeId)
-    .update({ defaultMessageTypeId: resul1PositiveMessageTypeId })
+  await knex('IssueType').where('id', issueTypeId).update({ defaultMessageTypeId: resul1PositiveMessageTypeId })
 
   await knex('NotificationType').insert({
     partnerId,

@@ -1,0 +1,16 @@
+const INVENTORY_LIST = {
+  ENDPOINT: '/inventory',
+  KEY: 'INVENTORY_LIST',
+}
+
+const INVENTORY_LIST_GROUP_BY_SITE = {
+  ENDPOINT: '/inventory/group-by-site',
+  KEY: 'INVENTORY_LIST_GROUP_BY_SITE',
+}
+
+const INVENTORY_LOG = {
+  ENDPOINT: '/inventory/log',
+  KEY: 'INVENTORY_LOG',
+}
+
+export { INVENTORY_LIST, INVENTORY_LIST_GROUP_BY_SITE, INVENTORY_LOG }

@@ -5,13 +5,15 @@ const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
 
 const { knex } = require('../db')
-const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
+const { parseDateOrDefault, formatDateOrDefault, getFormattedDateTimeWithTimezone } = require('../shared/date')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
+handlebars.registerHelper('localizedDate', localizedDate)
 handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
 handlebars.registerHelper('formatDate', formatDate)
+handlebars.registerHelper('formatPhone', formatPhone)
 handlebars.registerHelper('toLowerCase', toLowerCase)
 handlebars.registerHelper('mapValue', mapValue)
 handlebars.registerHelper('defaultTo', defaultTo)
@@ -20,10 +22,7 @@ handlebars.registerHelper('escapeLines', escapeLines)
 handlebars.registerHelper('urlEncode', urlEncode)
 handlebars.registerHelper('tryMergeResultCategories', tryMergeResultCategories)
 handlebars.registerHelper('isRegexMatch', isRegexMatch)
-handlebars.registerHelper(
-  'extractValueFromRegexCaptureGroup',
-  extractValueFromRegexCaptureGroup
-)
+handlebars.registerHelper('extractValueFromRegexCaptureGroup', extractValueFromRegexCaptureGroup)
 handlebars.registerHelper('toInt', toInt)
 handlebars.registerHelper('maxViralLoadValue', maxViralLoadValue)
 handlebars.registerHelper({
@@ -36,10 +35,7 @@ handlebars.registerHelper({
   and: (...rest) => Array.prototype.slice.call(rest).every(Boolean),
   or: (...rest) => Array.prototype.slice.call(rest, 0, -1).some(Boolean),
 })
-handlebars.registerHelper(
-  'customFieldValueFromLabel',
-  customFieldValueFromLabel
-)
+handlebars.registerHelper('customFieldValueFromLabel', customFieldValueFromLabel)
 handlebars.registerHelper('coalesce', coalesce)
 
 // See unit tests for examples
@@ -53,7 +49,7 @@ function getMustacheTokensInString(inputString) {
   return inputString.match(/{{\s*[\w.[\]\s]+\s*}}/g)
 }
 
-function addDataSourceToQuery(queryBuilder, aliases) {
+function addDataSourceToQuery(queryBuilder, aliases, resultId) {
   // TODO generalize to other aliases and make joined tables and field names unique
   // similar to auth/constraints
   const { message, notification } = aliases
@@ -69,12 +65,24 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
-      .leftJoin('Assay as a', `r.assayId`, 'a.id')
+      .leftJoin('Geography as rg', `r.geographyId`, 'rg.id')
+      .leftJoin('Country as rc', `rg.countryId`, 'rc.id')
+      .leftJoin('Site as rs', 'r.reportableSiteId', 'rs.id')
+      .leftJoin('Assay as a', assayJoin => {
+        if (resultId) {
+          assayJoin.on('r.assayId', 'a.id')
+        } else {
+          assayJoin.on('dt.id', 'a.deviceTypeId')
+        }
+      })
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
       .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .leftJoin('Partner as pr', 'pr.id', 'r.partnerId')
+      .leftJoin('TimeZone as devicetz', 'd.timezone', 'devicetz.id')
+      .leftJoin('TimeZone as sitetz', 's.timezoneId', 'sitetz.id')
+      .leftJoin('TimeZone as countrytz', 'rc.timezone', 'countrytz.id')
       .select(
         's.id as siteId',
         's.externalId as siteExternalId',
@@ -91,11 +99,14 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'g.id as geographyId',
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
+        knex.raw('coalesce(c.countryCode,rc.countryCode) as countryCode'),
+        knex.raw('coalesce(c.abbreviation,rc.abbreviation) as countryAbbreviation'),
         'd.id as deviceId',
         'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'd.serial as deviceSerial',
+        'd.lastInstrumentSerial as lastInstrumentSerial',
         'dt.externalId as deviceTypeExternalId',
         'r.resultData',
         'r.patientData as resultPatientData',
@@ -116,8 +127,11 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'a.externalId as assayExternalId',
         'a.name as assayName',
         'sample.externalId as sampleExternalId',
+        'sample.collectedOn as sampleCollectedOn',
         'rc1.externalId as resultCategory1ExternalId',
-        'rc2.externalId as resultCategory2ExternalId'
+        'rc2.externalId as resultCategory2ExternalId',
+        'rs.name as reportableSiteName',
+        knex.raw('COALESCE(devicetz.timezone, sitetz.timezone, countrytz.timezone) as timezone')
       )
   }
 
@@ -125,11 +139,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
     queryBuilder
       .leftJoin('Issue as i', `${notification}.issueId`, 'i.id')
       .leftJoin('IssueType as it', `i.issueTypeId`, 'it.id')
-      .leftJoin(
-        'NotificationType as nt',
-        `${notification}.notificationTypeId`,
-        'nt.id'
-      )
+      .leftJoin('NotificationType as nt', `${notification}.notificationTypeId`, 'nt.id')
       .select(
         'i.createdOn as issueCreatedOn',
         'i.dueOn as issueDueOn',
@@ -150,6 +160,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *    siteExternalId: string
  *    siteName: string
  *    countryName: string
+ *    countryCode: int
  *    siteShortName: string
  *    siteStreet1: string
  *    siteStreet2: string
@@ -195,24 +206,16 @@ function addDataSourceToQuery(queryBuilder, aliases) {
  *   The object must also contain the template strings that will be processed:
  * @param  {Array} templateFields: the keys in the data object that contain the string templates to be processed
  *   EG: [ 'emailSubjectTemplate', 'emailBodyTemplate' ]
- * @param  {object} options: how the template will be processed
- *  {
- *    dynamic: true/false (required ti be tru when using numberOfDays handleBars helper or processing a JSON string template)
- *  }
  * @return an object containing the processed string templates as specified in templateFields
  *   EG: { emailSubject: 'The processed subject string', emailBody: 'The processed body string' }
  */
-async function processUsingDataSourceQuery(data, templateFields, options = {}) {
+async function processUsingDataSourceQuery(data, templateFields) {
   const ds = await getBaseDataSource(data)
+
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
-
-    if (options.dynamic) {
-      memo[fieldName] = processUsingDynamicHelpers(template, ds)
-    } else {
-      memo[fieldName] = processUsingHandlebarsSyntax(template, ds)
-    }
+    memo[fieldName] = processUsingDynamicHelpers(template, ds)
     return memo
   }, {})
 }
@@ -222,6 +225,8 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  * @param  {object} data the result record with the following properties:
  *  {
  *    partnerPlugin: string
+ *    countryName: string
+ *    countryCode: int
  *    siteExternalId: string
  *    siteName: string
  *    siteShortName: string
@@ -266,6 +271,10 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
  *  }
  * @return a nested JSON object containing the data from the result record
  *  {
+      country: {
+        name: countryName,
+        dialingCode: countryCode,
+      },
       site: {
         id: siteExternalId,
         name: siteName,
@@ -335,17 +344,13 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
 async function getBaseDataSource(data) {
   const d = data || {}
   const { loadPlugin } = require('../plugin/registration')
-  const { displayPreferences = {} } = await loadPlugin(
-    [d.partnerPlugin],
-    'settings'
-  )
+  const { displayPreferences = {} } = await loadPlugin([d.partnerPlugin], 'settings')
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
-  const isHardwareIssue = d.issueTypeExternalId
-    ? d.issueTypeExternalId.indexOf('Hardware') === 0
-    : false
+  const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   return {
     country: {
       name: d.countryName,
+      dialingCode: d.countryCode,
     },
     site: {
       id: d.siteExternalId,
@@ -374,6 +379,7 @@ async function getBaseDataSource(data) {
       lastSeenOn: d.deviceLastSeenOn,
       lastPingOn: d.deviceLastPingOn,
       serial: d.deviceSerial,
+      lastInstrumentSerial: d.lastInstrumentSerial,
     },
     result: {
       data: d.resultData ? JSON.parse(d.resultData) : {},
@@ -413,6 +419,7 @@ async function getBaseDataSource(data) {
       category2: {
         id: d.resultCategory2ExternalId,
       },
+      reportableSiteName: d.reportableSiteName,
     },
     person: {
       name: d.personName,
@@ -425,7 +432,7 @@ async function getBaseDataSource(data) {
       occurrences: isHardwareIssue
         ? issueData.totalErrors // <-- 'totalErrors' is defined in analyzeDeviceHardwareError()
         : issueData.resultsWithErrors,
-      errorCode: isHardwareIssue ? issueData.errorCode : d.resultErrorCode,
+      errorCode: issueData.errorCodes,
     },
     log: {
       startedOn: isHardwareIssue ? issueData.startedOn : null,
@@ -434,6 +441,7 @@ async function getBaseDataSource(data) {
       type: d.notificationTypeName,
     },
     displayPreferences,
+    timezone: d.timezone,
   }
 }
 
@@ -455,20 +463,31 @@ function processUsingDynamicHelpers(template, ds) {
    * - process template - this replaces {{isoDate ...}} and all other placeholders with actual values
    * - then replace tokens '${openMustaches}' and '${closeMustaches}' with corresponding mustaches
    * - process template - this replaces {{numberOfDays ...}} with actual value
+   * if template contains one of the following mustached string
+   * - device.lastSeenOn
+   * - device.lastPingOn
+   * - result.startedOn
+   * - result.endedOn
+   * - result.createdOn
+   * - result.sample.collectedOn
+   * then process it changing the format to localizedDate (Wed Aug 24 2022 02:25:32 GMT-4)
    * otherwise - process template in one step
    */
-  const dynamicTemplate = template.replace(
-    /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
-    (str, match) =>
-      `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
-  )
+  const dynamicTemplate = template
+    .replace(
+      /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
+      (str, match) => `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
+    )
+    .replace(
+      /{{\s*(device.lastSeenOn|device.lastPingOn|result.startedOn|result.endedOn|result.createdOn|result.sample.collectedOn)\s*}}/g,
+      (str, match) => `\${openMustaches}localizedDate ${match} timezone\${closeMustaches}`
+    )
+
   let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
 
   if (dynamicTemplate !== template) {
     message = processUsingHandlebarsSyntax(
-      message
-        .replace(/\${openMustaches}/g, '{{')
-        .replace(/\${closeMustaches}/g, '}}'),
+      message.replace(/\${openMustaches}/g, '{{').replace(/\${closeMustaches}/g, '}}'),
       ds
     )
   }
@@ -497,8 +516,12 @@ function isoDate(date) {
   return parsed == null ? null : parsed.toISOString()
 }
 
+function localizedDate(date, timezone) {
+  return date && getFormattedDateTimeWithTimezone(date, timezone)
+}
+
 function getArgumentFromOptions(options, keyInOptionsHash) {
-  if (typeof options === 'string') {
+  if (['string', 'number', 'undefined', 'null', 'boolean', 'symbol'].includes(typeof options)) {
     return options
   }
   return _.get(options, ['hash', keyInOptionsHash])
@@ -509,9 +532,32 @@ function formatDate(date, options) {
     return date
   }
   const dateFormat =
-    getArgumentFromOptions(options, 'formatString') ||
-    _.get(this, 'displayPreferences.dateFormat', 'yyyy-MM-dd')
+    getArgumentFromOptions(options, 'formatString') || _.get(this, 'displayPreferences.dateFormat', 'yyyy-MM-dd')
   return formatDateOrDefault(date, dateFormat)
+}
+
+function formatPhone(phoneNumber, options) {
+  if (_.isNil(phoneNumber) || !phoneNumber.replace(/\s/, '')) {
+    return ''
+  }
+  const countryDialingCode = `${getArgumentFromOptions(options, 'dialingCode') || ''}`.replace(/[\s-\\+]/, '')
+  let sanitizedPhoneNumber = phoneNumber.replace(/[\s-]/, '')
+  if (countryDialingCode) {
+    if (sanitizedPhoneNumber.indexOf(countryDialingCode) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(countryDialingCode.length)
+    } else if (sanitizedPhoneNumber.indexOf(`0${countryDialingCode}`) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(countryDialingCode.length + 1)
+    } else if (sanitizedPhoneNumber.indexOf(`00${countryDialingCode}`) === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(countryDialingCode.length + 2)
+    }
+    if (sanitizedPhoneNumber.indexOf('0') === 0) {
+      sanitizedPhoneNumber = sanitizedPhoneNumber.substr(1)
+    }
+    if (sanitizedPhoneNumber.indexOf('+') !== 0) {
+      sanitizedPhoneNumber = `+${countryDialingCode}${sanitizedPhoneNumber}`
+    }
+  }
+  return sanitizedPhoneNumber
 }
 
 function toLowerCase(stringValue) {
@@ -525,11 +571,7 @@ function toLowerCase(stringValue) {
 }
 
 function safeString(value) {
-  if (
-    _.isNil(value) ||
-    value instanceof handlebars.SafeString ||
-    typeof value !== 'string'
-  ) {
+  if (_.isNil(value) || value instanceof handlebars.SafeString || typeof value !== 'string') {
     return value
   }
   return new handlebars.SafeString(value)
@@ -604,10 +646,7 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
     'NoResult',
   ]
   for (let i = 0; i < orderedPriorityCategories.length; i++) {
-    const foundPriorityCategory = priorityResult(
-      resultCategories,
-      orderedPriorityCategories[i]
-    )
+    const foundPriorityCategory = priorityResult(resultCategories, orderedPriorityCategories[i])
     if (foundPriorityCategory) {
       return foundPriorityCategory
     }
@@ -659,13 +698,8 @@ function extractNumericViralLoadValue(value) {
     return { numericValue: raw, text: raw.toString() }
   }
   if (typeof raw === 'string') {
-    const numericStringValue = (
-      rawValue(extractValueFromRegexCaptureGroup(raw, '([\\d|\\s|\\.]+)')) || ''
-    ).trim()
-    const numericStringValueWithoutWhiteSpace = numericStringValue.replace(
-      /\s/,
-      ''
-    )
+    const numericStringValue = (rawValue(extractValueFromRegexCaptureGroup(raw, '([\\d|\\s|\\.]+)')) || '').trim()
+    const numericStringValueWithoutWhiteSpace = numericStringValue.replace(/\s/, '')
     const numericValue = parseFloat(numericStringValueWithoutWhiteSpace)
     if (!Number.isNaN(numericValue)) {
       if (isRegexMatch(raw, '>[\\d|\\s|\\.]+')) {

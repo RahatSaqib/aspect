@@ -1,4 +1,5 @@
 require('dotenv-safe').config()
+const _ = require('lodash')
 
 const port = process.env.PORT || 8080
 const host = '127.0.0.1'
@@ -12,6 +13,9 @@ module.exports = {
   passwordAttempts: process.env.passwordAttempts,
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
+  isDevelopment: process.env.NODE_ENV === 'development',
+  environment: process.env.NODE_ENV,
+  countryName: process.env.countryName || 'DEV',
   db: {
     connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,
     host: process.env['db.host'],
@@ -21,11 +25,24 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
     timezone: 'UTC',
+    ssl: true,
   },
   log: {
+    file: {
+      logLevel: process.env['log.file.logLevel'] || 'info',
+      labelsWhiteList: process.env['log.file.labelsWhiteList'] || null,
+      labelsBlackList: process.env['log.file.labelsBlackList'] || null,
+      path: process.env['log.file.path'] || null,
+      format: process.env['log.file.format'] || 'text',
+    },
+    logLevel: process.env['log.console.logLevel'] || 'info',
+    format: process.env['log.console.format'] || 'text',
+    labelsWhiteList: process.env['log.console.labelsWhiteList'] || null,
+    labelsBlackList: process.env['log.console.labelsBlackList'] || null,
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),
     },
+    mail: { logLevel: process.env['log.mail.logLevel'] || 'alert' },
   },
   file: {
     reference: {
@@ -34,7 +51,7 @@ module.exports = {
   },
   amqp: {
     url: process.env['amqp.url'],
-    name: process.env['amqp.name'] || 'aspect',
+    name: `${process.env['amqp.name'] || 'aspect'}${process.env['scheduler.enabled'] === 'true' ? '' : '_for_testing'}`,
   },
   swagger: {
     enabled: process.env['swagger.enabled'] === 'true',
@@ -46,6 +63,13 @@ module.exports = {
     pathPrefixSize: parseInt(process.env['swagger.pathPrefixSize'] || '1', 10),
     apiUrlSegment: process.env['swagger.apiUrlSegment'] || '',
   },
+  email: {
+    host: process.env['email.host'] || 'smtp.sendgrid.net',
+    port: process.env['email.port'] || 2525,
+    user: process.env['email.user'],
+    password: process.env['email.password'],
+    fromEmail: process.env['email.fromEmail'],
+  },
   sms: {
     twilio: {
       accountSid: process.env.twilioAccountSid,
@@ -53,19 +77,26 @@ module.exports = {
       fromNumber: process.env.twilioFromNumber,
       messagingServiceSid: process.env.twilioMessagingServiceSid,
     },
+    adn: {
+      api_key: process.env['adn.api_key'] || null,
+      api_secret: process.env['adn.api_secret'] || null,
+      url: process.env['adn.url'] || null,
+    },
   },
   admin: {
     email: process.env['admin.email'],
     cell: process.env['admin.cell'],
+  },
+  manager: {
+    email: process.env['manager.email'],
+    cell: process.env['manager.cell'],
   },
   plugin: {},
   webhook: {},
   scheduler: {
     enabled: process.env['scheduler.enabled'] === 'true',
     cron: {
-      logDeviceMaintenanceStatus:
-        process.env['scheduler.cron.logDeviceMaintenanceStatus'] ||
-        '0 18 * * *',
+      logDeviceMaintenanceStatus: process.env['scheduler.cron.logDeviceMaintenanceStatus'] || '0 18 * * *',
     },
   },
   encryption: {
@@ -91,15 +122,30 @@ function configureOptional(config) {
     config.firebase = { serverKey: firebase }
   }
   // load sentry
-  const ravenDsn = process.env['raven.dsn']
-  if (ravenDsn) {
-    config.raven = { dsn: ravenDsn }
+  const sentryDsn = process.env['sentry.dsn']
+  if (sentryDsn) {
+    config.sentry = {
+      dsn: sentryDsn,
+      logLevel: process.env['sentry.logLevel'],
+      ignoreErrors: getArrayFromString('sentry.ignoreErrors', []),
+      sanitizeKeys: getArrayFromString('sentry.sanitizeKeys', [
+        'patientId',
+        'sampleId',
+        'patient',
+        'password',
+        'email',
+        'email2',
+        'cell',
+      ]),
+    }
   }
 
   // set knex seeds
   const seedsDirectory = process.env['seeds.directory']
   if (seedsDirectory) {
-    config.seeds = { directory: seedsDirectory }
+    if (!_.includes(seedsDirectory, '/test') && !_.includes(seedsDirectory, '/development'))
+      config.seeds = { directory: [seedsDirectory, './seeds/zz_shared/'] }
+    else config.seeds = { directory: [seedsDirectory] }
   }
 
   // plugin data
@@ -152,6 +198,14 @@ function getBooleanOrDefault(key, defaultValue) {
     return defaultValue
   }
   return value === 'true'
+}
+
+function getArrayFromString(key, defaultValue) {
+  const value = process.env[key]
+  if (value == null) {
+    return defaultValue
+  }
+  return value.split('|')
 }
 
 function getSwaggerSchemes(httpEnabled, httpsEnabled) {

@@ -1,19 +1,16 @@
 const _ = require('lodash')
 const { subDays, addMilliseconds, subMinutes } = require('date-fns')
-const { assert, expect } = require('chai')
+const chai = require('chai')
+const chaiSubset = require('chai-subset')
+
+const { assert, expect } = chai.use(chaiSubset)
 const Promise = require('bluebird')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { run } = require('../../src/db')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
-const {
-  processUsingHandlebarsSyntax,
-} = require('../../src/stringTemplate/service')
+const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
+const { processUsingHandlebarsSyntax } = require('../../src/stringTemplate/service')
 // action creators
 const { factDataCategoryLow } = require('../../src/fact/actions')
 const { getDataCategoryStatus } = require('../../src/fact/service')
@@ -29,7 +26,7 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const patients = require('../../seeds/test/fixtures/patients.json')
-const { getRandomTBPatientData } = require('../../seeds/commonTbresults')
+const { getRandomGeneXpertPatientData } = require('../../seeds/commonTBResults')
 
 const totalPatients = patients.length
 
@@ -41,19 +38,10 @@ const USER_RO_NAME = 'myanmar_ro1'
 const now = new Date()
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  const daysToSubtract =
-    resultTimeFrameInDays -
-    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
+function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {
+  const daysToSubtract = resultTimeFrameInDays - Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
+  return addMilliseconds(subDays(now, daysToSubtract), _.random(randomMillisToAdd))
 }
 
 async function initUserAndJobs(knex, partnerId, siteId) {
@@ -135,13 +123,9 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
       // get partnerId
       partner = await getPartner(knex, partnerName)
       partnerId = partner.id
-      const { id: myanmarAdminId } = await knex('User as u')
-        .where('u.name', 'myanmar_admin')
-        .first('u.id')
+      const { id: myanmarAdminId } = await knex('User as u').where('u.name', 'myanmar_admin').first('u.id')
 
-      const { id: labUserId } = await knex('User')
-        .where({ name: USER_LU_NAME })
-        .first()
+      const { id: labUserId } = await knex('User').where({ name: USER_LU_NAME }).first()
 
       // get 1st site for current partner and labUser
       const {
@@ -178,12 +162,8 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
       const resultSourceId = await resultSourceToId('Generated')
       const resultTypeId = await resultTypeToId('Patient')
       const resultMtbNumber = 100
-      const {
-        Detected: resultCategoryDetectedId,
-      } = await allResultCategoryToId()
-      const { id: assayGeneXpertMtbRifId } = await knex('Assay')
-        .where({ externalId: 'GxMtbRif' })
-        .first()
+      const { Detected: resultCategoryDetectedId } = await allResultCategoryToId()
+      const { id: assayGeneXpertMtbRifId } = await knex('Assay').where({ externalId: 'GxMtbRif' }).first()
 
       samples = []
       resultIds = []
@@ -194,15 +174,11 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
         _.map(_.range(resultMtbNumber / 2), async i => {
           const sample = {
             externalId: `TEST-TB-${i}`,
-            collectedOn: calculateDateForResult(
-              i,
-              resultMtbNumber,
-              millisInMinute
-            ),
+            collectedOn: calculateDateForResult(i, resultMtbNumber, millisInMinute),
             sampleTypeId,
             originSiteId: siteId,
           }
-          sample.id = await knex('Sample').insert(sample)
+          ;[sample.id] = await knex('Sample').insert(sample)
           samples.push(sample)
         })
       )
@@ -213,16 +189,11 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
           const sample = samples[i % samples.length]
 
           // get sample patient
-          const patient = getRandomTBPatientData(totalPatients - 1, patients)
+          const patient = getRandomGeneXpertPatientData(totalPatients - 1, patients)
 
           // set values for all categories
           dataCategories.forEach(category => {
-            const {
-              fieldNames,
-              externalId: categoryToken,
-              cutoffPercentage,
-              validValues,
-            } = category
+            const { fieldNames, externalId: categoryToken, cutoffPercentage, validValues } = category
             if (categoryToken === categoryTokenWithIssue) {
               totalValid = cutoffPercentage - 1
             }
@@ -313,9 +284,7 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
         dateTo: now,
       }
       // get item for our testing category
-      const dataCategory = dataCategories.find(
-        x => x.externalId === categoryTokenWithIssue
-      )
+      const dataCategory = dataCategories.find(x => x.externalId === categoryTokenWithIssue)
       const { externalId: categoryToken, name: categoryName } = dataCategory
       const props = { period, siteId, dataCategory }
       const periodName = period.name
@@ -371,18 +340,10 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
       issueIds.push(issue.id)
 
       // compare requested issueType with saved in db
-      assert.equal(
-        issue.issueType,
-        issueType,
-        `issue types do not match - ${issueType} and ${issue.issueType}`
-      )
+      assert.equal(issue.issueType, issueType, `issue types do not match - ${issueType} and ${issue.issueType}`)
 
       // issue should have status Active
-      assert.equal(
-        issue.issueStatus,
-        'Active',
-        `issueStatus (${issue.issueStatus}) is not Active`
-      )
+      assert.equal(issue.issueStatus, 'Active', `issueStatus (${issue.issueStatus}) is not Active`)
 
       // get issue notifications sorted by Job Function
       const notifications = await knex('Notification as n')

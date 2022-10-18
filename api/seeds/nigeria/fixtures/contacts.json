@@ -1,0 +1,5358 @@
+[
+  {
+    "personName": "SH IWO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "iwo_dots",
+    "password": "JXrT45",
+    "personCell": "+2348036336614",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Iwo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "IWO"
+      }
+    ]
+  },
+  {
+    "personName": "AGBOGBO PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "agbogbo_dots",
+    "password": "vTR569",
+    "personCell": "+2348033555135",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Iwo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "AGBOGBO"
+      }
+    ]
+  },
+  {
+    "personName": "FEESU PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "feesu_dots",
+    "password": "x989MJ",
+    "personCell": "+2348037829055",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Iwo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "FEESU"
+      }
+    ]
+  },
+  {
+    "personName": "KARA PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "kara_dots",
+    "password": "87dsS8",
+    "personCell": "+2348033635221",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Iwo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "KARA"
+      }
+    ]
+  },
+  {
+    "personName": "SH EDE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ede_dots",
+    "password": "fVj49Y",
+    "personCell": "+2347063780133",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ede South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "EDE"
+      }
+    ]
+  },
+  {
+    "personName": "JAGUNJAGUN PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "jagunjagun_dots",
+    "password": "t33aK2",
+    "personCell": "+2348060086073",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ede South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "JAGUNJAGUN"
+      }
+    ]
+  },
+  {
+    "personName": "OJA TIMI PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oja_dots",
+    "password": "94T3Dt",
+    "personCell": "+2347061846506",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ede South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "OJA TIMI"
+      }
+    ]
+  },
+  {
+    "personName": "MASIFA PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "masifa_dots",
+    "password": "Dk84Zz",
+    "personCell": "+2348163315663",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ejigbo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "MASIFA"
+      }
+    ]
+  },
+  {
+    "personName": "SH OKE OGBO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oke_ogbo_dots",
+    "password": "g97EyS",
+    "personCell": "+2348062960825",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "OKE OGBO"
+      }
+    ]
+  },
+  {
+    "personName": "OLORUNSHINDARA HOSPITAL",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "olorunindara_dots",
+    "password": "3cN8jJ",
+    "personCell": "+2349037966360",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "OLORUNINDARA HOSPITAL"
+      }
+    ]
+  },
+  {
+    "personName": "SAKO IGBALA HOSPITAL",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "sako_dots",
+    "password": "6Pgyk9",
+    "personCell": "+2348060195902",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "SAKO IGBALA HOSPITAL"
+      }
+    ]
+  },
+  {
+    "personName": "ALAFIA HOSPITAL",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "alafia_dots",
+    "password": "55jF2y",
+    "personCell": "+2348034649909",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ALAFIA HOSPITAL"
+      }
+    ]
+  },
+  {
+    "personName": "ONIGBODOGI PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "onigbodogi_dots",
+    "password": "rUg229",
+    "personCell": "+2348069792667",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ONIGBODOGI PHC"
+      }
+    ]
+  },
+  {
+    "personName": "ENUWA PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "enuwa_dots",
+    "password": "8rRDm5",
+    "personCell": "+2347031859909",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ENUWA"
+      }
+    ]
+  },
+  {
+    "personName": "ELEYELE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "eleyele_dots",
+    "password": "QC57dA",
+    "personCell": "+2348035645094",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ELEYELE"
+      }
+    ]
+  },
+  {
+    "personName": "ARUBIEWE CHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "arubiewe_dots",
+    "password": "n7cHC8",
+    "personCell": "+2347062212575",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ARUBIEWE CHC"
+      }
+    ]
+  },
+  {
+    "personName": "OKOOKO PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "okooko_dots",
+    "password": "95FUdk",
+    "personCell": "+2348031893812",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "OKOOKO"
+      }
+    ]
+  },
+  {
+    "personName": "MORO PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "moro_dots",
+    "password": "Pj97Vd",
+    "personCell": "+2348163247310",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "MORO"
+      }
+    ]
+  },
+  {
+    "personName": "SH ILESA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ilesa_dots",
+    "password": "e4yB86",
+    "personCell": "+2347033673535",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ILESA DOTS"
+      }
+    ]
+  },
+  {
+    "personName": "ADETI PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "adeti_dots",
+    "password": "uM69Gj",
+    "personCell": "+2348034483168",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ADETI"
+      }
+    ]
+  },
+  {
+    "personName": "ISOKUN PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "isokun_dots",
+    "password": "Cm55Gp",
+    "personCell": "+2348166586929",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ISOKUN"
+      }
+    ]
+  },
+  {
+    "personName": "SH IKIRE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ikire_dots",
+    "password": "zxTx89",
+    "personCell": "+2347060497838",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Irewole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "SH IKIRE"
+      }
+    ]
+  },
+  {
+    "personName": "SH ASUBIARO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "asubiaro_dots",
+    "password": "Ss5W6k",
+    "personCell": "+2348060692761",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Osogbo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ASUBIARO"
+      }
+    ]
+  },
+  {
+    "personName": "ODI OLOWO PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "odi_dots",
+    "password": "bPA678",
+    "personCell": "+2348136795762",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Osogbo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ODI OLOWO"
+      }
+    ]
+  },
+  {
+    "personName": "ISALE AGBARA PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "isale_dots",
+    "password": "2GzF35",
+    "personCell": "+2348038710189",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Osogbo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ISALE AGBARA"
+      }
+    ]
+  },
+  {
+    "personName": "OKE BAALE PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oke_baale_dots",
+    "password": "yb56Rk",
+    "personCell": "+2348136795762",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Osogbo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "OKE BAALE"
+      }
+    ]
+  },
+  {
+    "personName": "IFON PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ifon_dots",
+    "password": "R98EYk",
+    "personCell": "+2348033401327",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Orolu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "IFON"
+      }
+    ]
+  },
+  {
+    "personName": "ALGON PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "algon_dots",
+    "password": "47Hy6p",
+    "personCell": "+2347034719146",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ola oluwa"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "ALGON"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Moniya",
+    "personEmailAddress": "tunrayoakingbeyin@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghmoniya_dots",
+    "password": "n2BtRG",
+    "personCell": "07067176150",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Moniya"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Igboho",
+    "personEmailAddress": "serifat90@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghigboho_dots",
+    "password": "fyLSU9",
+    "personCell": "08051686730",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Orelope"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Igboho"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Agbongbon",
+    "personEmailAddress": "serifatoladimeji007@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "agbongbon_dots",
+    "password": "dcuT5P",
+    "personCell": "08035632096",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Agbongbon"
+      }
+    ]
+  },
+  {
+    "personName": "Idi Ogungun Primary Health Center",
+    "personEmailAddress": "bilaukehinde@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "idi_dots",
+    "password": "qsMSK8",
+    "personCell": "08054033411",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Idi Ogungun Primary Health Center"
+      }
+    ]
+  },
+  {
+    "personName": "St Peter General Hospital",
+    "personEmailAddress": "oyindamolaagoola@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "stpeter_dots",
+    "password": "qhhahg",
+    "personCell": "08051192859",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "St Peter General Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Omi Adio Primary Health Center",
+    "personEmailAddress": "omolaraadesiyan1@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "omi_dots",
+    "password": "mjjrpq",
+    "personCell": "08034646586",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ido"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Omi Adio Primary Health Center"
+      }
+    ]
+  },
+  {
+    "personName": "Alegongo Primary Health Center",
+    "personEmailAddress": "oyindamolaomowumi46@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "alegongo_dots",
+    "password": "adyxfs",
+    "personCell": "08052344809",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Lagelu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Alegongo Primary Health Center"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Iwo Road",
+    "personEmailAddress": "ajokeade0518@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "iworoad_dots",
+    "password": "8yTLnk",
+    "personCell": "08053444331",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Iwo Road"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Molete",
+    "personEmailAddress": "dammyjacob374@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "molete_dots",
+    "password": "UrH4v4",
+    "personCell": "08035772255",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Molete"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Adeoyo",
+    "personEmailAddress": "seunadebola@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghadeoyo_dots",
+    "password": "Y5sBPB",
+    "personCell": "08038012049",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Adeoyo"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Odo Ona Elewe",
+    "personEmailAddress": "jusuyeomolara@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "phcodo_dots",
+    "password": "NUkj6p",
+    "personCell": "0810 176 6026",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Odo Ona Elewe"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Eruwa",
+    "personEmailAddress": "aworindeoluwaseun31@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "gheruwa_dots",
+    "password": "kPpdgW",
+    "personCell": "0806 633 4593",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hospital Eruwa"
+      }
+    ]
+  },
+  {
+    "personName": "Gh Igbo Ora",
+    "personEmailAddress": "okegbemuakinlolu1@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghigbo_dots",
+    "password": "QVXtJR",
+    "personCell": "09035348084",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Gh Igbo Ora"
+      }
+    ]
+  },
+  {
+    "personName": "Chest Hospital Jericho",
+    "personEmailAddress": "christieadebimpe@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "jericho_dots",
+    "password": "VmAVGW",
+    "personCell": "08036976413",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GCH Jericho Ibadan"
+      }
+    ]
+  },
+  {
+    "personName": "Ring Road State Hospital",
+    "personEmailAddress": "kunle222@yahoo.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ring_dots",
+    "password": "X2agjs",
+    "personCell": "07055012111",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ring-Road State Hosp. Ibadan"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Adaramagbo",
+    "personEmailAddress": "oluyinkaajayi74@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "adaramagbo_dots",
+    "password": "27Qc7G",
+    "personCell": "08033935325",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Adaramagbo"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Ojoo",
+    "personEmailAddress": "doyinsticojo@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ojoo_dots",
+    "password": "t9Nemk",
+    "personCell": "09037406685",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Ojoo"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Saki",
+    "personEmailAddress": "alarapeserifatarike@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghsaki_dots",
+    "password": "YYy76K",
+    "personCell": "08077800387",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Saki West"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Saki"
+      }
+    ]
+  },
+  {
+    "personName": "2nd Division Hospital",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "nddivision_dots",
+    "password": "4hdut3",
+    "personCell": "08106397600",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "2 Division Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Apete",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "apete_dots",
+    "password": "YabfmA",
+    "personCell": "08034080021",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ido"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Apete"
+      }
+    ]
+  },
+  {
+    "personName": "Sh Oyo",
+    "personEmailAddress": "olojedechristiannah@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oyo_dots",
+    "password": "pSVa8Y",
+    "personCell": "08057209991",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oyo East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, OYO"
+      }
+    ]
+  },
+  {
+    "personName": "Sh Ogbomosho",
+    "personEmailAddress": "oyetundeeo9@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ogbomoo_dots",
+    "password": "xjwZu6",
+    "personCell": "08066443117",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogbomosho South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sh Ogbomosho"
+      }
+    ]
+  },
+  {
+    "personName": "Odo Oba Phc",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "odo_dots",
+    "password": "sQKvhU",
+    "personCell": "08162180175",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogo Oluwa"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Odo Oba Phc"
+      }
+    ]
+  },
+  {
+    "personName": "Iseyin Gh",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "iseyin_dots",
+    "password": "TFD5Pc",
+    "personCell": "08038094176",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Iseyin"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Iseyin Gh"
+      }
+    ]
+  },
+  {
+    "personName": "Phc Ajibode",
+    "personEmailAddress": "oluwakayodemaryoluwafunke@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ajibode_dots",
+    "password": "bKGBy8",
+    "personCell": "08110806093",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Akinyele"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Phc Ajibode"
+      }
+    ]
+  },
+  {
+    "personName": "Lautech Teaching Hospital",
+    "personEmailAddress": "olaniyijohn95@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "lautechth_dots",
+    "password": "SjU66k",
+    "personCell": "08033597979",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogbomosho North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "LAUTECH Teaching Hosp., Osogbo"
+      }
+    ]
+  },
+  {
+    "personName": "Lad Medical Centre",
+    "personEmailAddress": "naimotatanda@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ladmedical_dots",
+    "password": "LvdkTh",
+    "personCell": "08032512206",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Lad Medical Centre"
+      }
+    ]
+  },
+  {
+    "personName": "Durojaiye Hospital",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "durojaiye_dots",
+    "password": "YvtpMt",
+    "personCell": "08020823557",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Durojaiye Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Alafara",
+    "personEmailAddress": "oluyemiagboola1972@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "alafara_dots",
+    "password": "FJ8yPT",
+    "personCell": "08163630211",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Alafara"
+      }
+    ]
+  },
+  {
+    "personName": "Hansens Disease Centre",
+    "personEmailAddress": "debbygrace5@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "hansens_dots",
+    "password": "2LFBhc",
+    "personCell": "8034240090",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Hansens Disease Centre"
+      }
+    ]
+  },
+  {
+    "personName": "Chest Clinic, State Hospital Ijaye",
+    "personEmailAddress": "adelokikib@yahoo.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ijaye_dots",
+    "password": "ukUSj8",
+    "personCell": "8066570063",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital Ijaye, Abeokuta"
+      }
+    ]
+  },
+  {
+    "personName": "Sacred Heart Hospital, Lantoro",
+    "personEmailAddress": "victordawodu247@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "lantoro_dots",
+    "password": "pLa6Xt",
+    "personCell": "8038271484",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sacred Heart Hosp."
+      }
+    ]
+  },
+  {
+    "personName": "Federal Medical Centre, Abeokuta",
+    "personEmailAddress": " adetona.tolulope@yahoo.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "abeokuta_dots",
+    "password": "529Cbc",
+    "personCell": "0803 577 8186",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Abeokuta South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "FMC Abeokuta"
+      }
+    ]
+  },
+  {
+    "personName": "Ota",
+    "personEmailAddress": "adesinabankefadaini@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "phcota_dots",
+    "password": "vQjaaH",
+    "personCell": "08029548439",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ota"
+      }
+    ]
+  },
+  {
+    "personName": "Atan Health Centre",
+    "personEmailAddress": "aderiyemmanuel@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "atan_dots",
+    "password": "DJys9g",
+    "personCell": "07082430295",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Atan Health Centre"
+      }
+    ]
+  },
+  {
+    "personName": "State Hospital Ota",
+    "personEmailAddress": "makujoy1972@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "shota_dots",
+    "password": "gk2ZSk",
+    "personCell": "08139691019",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Ota"
+      }
+    ]
+  },
+  {
+    "personName": "Oluwalogbon Medical Centre",
+    "personEmailAddress": "olurindeiyabo@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oluwalogbon_dots",
+    "password": "PPSPaa",
+    "personCell": "08130158362",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ado-Odo/Ota"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Oluwalogbon Medical Centre"
+      }
+    ]
+  },
+  {
+    "personName": "State Hospital, Ilaro",
+    "personEmailAddress": "hungeot2010@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "shilaro_dots",
+    "password": "B6VYcH",
+    "personCell": "08030153839",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital, Ilaro"
+      }
+    ]
+  },
+  {
+    "personName": "Health Centre, Isaga Owode",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "isaga_dots",
+    "password": "H6LBzm",
+    "personCell": "07065439693",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa South"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Health Centre, Isaga Owode"
+      }
+    ]
+  },
+  {
+    "personName": "Olose",
+    "personEmailAddress": "olajideelizabeth337@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "olose_dots",
+    "password": "kj52vP",
+    "personCell": "08037019490",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Olose"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Ifo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ifo_dots",
+    "password": "xwjCYW",
+    "personCell": "08062542570",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ifo, Ogun State"
+      }
+    ]
+  },
+  {
+    "personName": "HC Agbado",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "agbado_dots",
+    "password": "8TVe4r",
+    "personCell": "09063926072",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ifo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "HC Agbado"
+      }
+    ]
+  },
+  {
+    "personName": "Obada Prim Health Centre",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "obada_dots",
+    "password": "pwGmf2",
+    "personCell": "08050595049",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Obada Prim Health Centre"
+      }
+    ]
+  },
+  {
+    "personName": "State Hospital Ijebu Ode",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "shijebu_dots",
+    "password": "7dGQHs",
+    "personCell": "08034495998",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu Ode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "SH Ijebu-Ode"
+      }
+    ]
+  },
+  {
+    "personName": "Health Centre, Idobi(Oke Oyinbo)",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "idobi_dots",
+    "password": "ejfuuE",
+    "personCell": "08033601131",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu Ode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Health Centre, Idobi(Oke Oyinbo)"
+      }
+    ]
+  },
+  {
+    "personName": "General Hosp Iperu",
+    "personEmailAddress": "mutiyatotemoye@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "iperu_dots",
+    "password": "9N2ruc",
+    "personCell": "8029526349",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ikenne"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "General Hosp Iperu"
+      }
+    ]
+  },
+  {
+    "personName": "General Hosp Idiroko",
+    "personEmailAddress": "joke-agelusi2015@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "idiroko_dots",
+    "password": "xjSLes",
+    "personCell": "08060401313",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ipokia"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Idiroko Ogun State"
+      }
+    ]
+  },
+  {
+    "personName": "General Hospital Isara",
+    "personEmailAddress": "nil",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "isara_dots",
+    "password": "FAch8b",
+    "personCell": "8075893041",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Remo North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "State Hospital Isara Ogun State"
+      }
+    ]
+  },
+  {
+    "personName": "CMPC OOUTH Sagamu",
+    "personEmailAddress": "gogunkoya@yahoo.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "cmpc_dots",
+    "password": "aC7hVs",
+    "personCell": "8033525790",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Sagamu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "OOUTH Sagamu"
+      }
+    ]
+  },
+  {
+    "personName": "Itori",
+    "personEmailAddress": "164adeola@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "itori_dots",
+    "password": "VpV4qC",
+    "personCell": "08169413908",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ewekoro"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Itori"
+      }
+    ]
+  },
+  {
+    "personName": "GH Ijebu Ife",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ghijebu_dots",
+    "password": "d9mcwW",
+    "personCell": "8163459112",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ijebu Ife"
+      }
+    ]
+  },
+  {
+    "personName": "GH Owode",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "owode_dots",
+    "password": "wS7jhZ",
+    "personCell": "8035144894",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Obafemi Owode"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Owode-Egba Ogun State"
+      }
+    ]
+  },
+  {
+    "personName": "Obantoko",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "obantoko_dots",
+    "password": "XUwz3F",
+    "personCell": "8094684263",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Odeda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Obantoko"
+      }
+    ]
+  },
+  {
+    "personName": "GH Imeko",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "imeko_dots",
+    "password": "2LFBhc",
+    "personCell": "8032160453",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Imeko Afon"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Imeko"
+      }
+    ]
+  },
+  {
+    "personName": "GH Ayetoro",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ayetoro_dots",
+    "password": "d6Fsvy",
+    "personCell": "8062753960",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Yewa North"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH Ayetoro"
+      }
+    ]
+  },
+  {
+    "personName": "Abigi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "abigi_dots",
+    "password": "pLa6Xt",
+    "personCell": "8072321414",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ogun Waterside"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Abigi"
+      }
+    ]
+  },
+  {
+    "personName": "M IJARI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ijari_dots",
+    "password": "SL6xh6",
+    "personCell": "8055231265",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Ijebu North East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "M IJARI"
+      }
+    ]
+  },
+  {
+    "personName": "Odogbolu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "odogbolu_dots",
+    "password": "DJys9g",
+    "personCell": "8162380547",
+    "geographies": [
+      {
+        "stateName": "Ogun",
+        "lgaName": "Odogbolu"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Odogbolu"
+      }
+    ]
+  },
+  {
+    "personName": "NIMR",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "nimr_dots",
+    "password": "cgKg77",
+    "personCell": "08060077387",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "NIMR3"
+      }
+    ]
+  },
+  {
+    "personName": "Orthopedic National Hospital Igbobi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "orthopedic_dots",
+    "password": "4dFr3R",
+    "personCell": "07055067933",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Orthopedic National Hospital Igbobi"
+      }
+    ]
+  },
+  {
+    "personName": "Mainland GH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "mainland_dots",
+    "password": "hG5R6d",
+    "personCell": "08034743512",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Mainland Hospital Yaba"
+      }
+    ]
+  },
+  {
+    "personName": "Ori Okuta",
+    "personEmailAddress": "alukoronke@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ori_dots",
+    "password": "XGFLyr",
+    "personCell": "08082139998",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ori Okuta"
+      }
+    ]
+  },
+  {
+    "personName": "Tolu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "tolu_dots",
+    "password": "ZaMmcY",
+    "personCell": "08037481325",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Tolu"
+      }
+    ]
+  },
+  {
+    "personName": "Akerele",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "akerele_dots",
+    "password": "SX2qZ5",
+    "personCell": "08028586778",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Akerele"
+      }
+    ]
+  },
+  {
+    "personName": "LUTH",
+    "personEmailAddress": "adetunjiolutope@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "luth_dots",
+    "password": "TRyeKX",
+    "personCell": "08034299611",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "LUTH Idi-Araba"
+      }
+    ]
+  },
+  {
+    "personName": "Emmanuel (EOOCC)",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "emmanuel_dots",
+    "password": "yczAFz",
+    "personCell": "08164852080",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Emmanuel (EOOCC)"
+      }
+    ]
+  },
+  {
+    "personName": "Olowogbowo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "olowogbowo_dots",
+    "password": "rTL8k3",
+    "personCell": "08023676330",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Olowogbowo"
+      }
+    ]
+  },
+  {
+    "personName": "Oloja",
+    "personEmailAddress": "jodedina@gymail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "oloja_dots",
+    "password": "d7rSRz",
+    "personCell": "08130607886",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Oloja"
+      }
+    ]
+  },
+  {
+    "personName": "Ebute Metta HC",
+    "personEmailAddress": "morokejulianah@gmil.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ebute_dots",
+    "password": "Fha76y",
+    "personCell": "008034967718",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ebute Metta HC"
+      }
+    ]
+  },
+  {
+    "personName": "Fed Med Centre",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "fedmed_dots",
+    "password": "99gf82",
+    "personCell": "08091339773",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Fed Med Centre"
+      }
+    ]
+  },
+  {
+    "personName": "Harvey Road HC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "harvey_dots",
+    "password": "jBjRyC",
+    "personCell": "08062926550",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Harvey Road HC"
+      }
+    ]
+  },
+  {
+    "personName": "Ijede GH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ijede_dots",
+    "password": "LmHYeQ",
+    "personCell": "08034992944",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ijede GH"
+      }
+    ]
+  },
+  {
+    "personName": "Onikan HC",
+    "personEmailAddress": "ologun.omowumi@lagosstate.gov.ng",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "onikan_dots",
+    "password": "hPFTw6",
+    "personCell": "080166157417",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Onikan HC"
+      }
+    ]
+  },
+  {
+    "personName": "Shomolu GH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "shomolu_dots",
+    "password": "7az3Hu",
+    "personCell": "08023295676",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "GH, Shomolu"
+      }
+    ]
+  },
+  {
+    "personName": "Ita Elewa",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ita_dots",
+    "password": "LSNDqw",
+    "personCell": "08164852080",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ita Elewa"
+      }
+    ]
+  },
+  {
+    "personName": "Ajegunle ilo",
+    "personEmailAddress": "modinatadefunke2015@gmail.com",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ajegunle_dots",
+    "password": "MLrJqj",
+    "personCell": "08083170701",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ajegunle ilo"
+      }
+    ]
+  },
+  {
+    "personName": "Mowo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "mowo_dots",
+    "password": "egXxm6",
+    "personCell": "08029317409",
+    "geographies": [
+      {
+        "stateName": "Lagos",
+        "lgaName": "Lagos"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Mowo"
+      }
+    ]
+  },
+  {
+    "personName": "Aderemi PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "aderemi_dots",
+    "password": "wdralech1",
+    "personCell": "8036364944",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife Central"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Aderemi PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Total PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "total_dots",
+    "password": "kuhastax3",
+    "personCell": "7061346654",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Isokan"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Total PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Sabo Owoope",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "sabo_owoope_dots",
+    "password": "matyptia4",
+    "personCell": "8035876308",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Olorunda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Sabo Owoope"
+      }
+    ]
+  },
+  {
+    "personName": "Lautech Hospital",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "lautech_dots",
+    "password": "J8s2zPep",
+    "personCell": "8038002539",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Olorunda"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Lautech Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Popo Olupona PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "olupona_dots",
+    "password": "xhouneth2",
+    "personCell": "8068331019",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Aiyedire"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Popo Olupona PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Wesley Guild",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "wesley_dots",
+    "password": "iplainsy8",
+    "personCell": "8033567435",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Wesley Guild"
+      }
+    ]
+  },
+  {
+    "personName": "Irojo PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "irojo_dots",
+    "password": "kayeampt6",
+    "personCell": "7031845823",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Irojo PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Imo PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "imo_dots",
+    "password": "chestalr5",
+    "personCell": "7038184897",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ilesa East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Imo PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Ayedaade PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ayedaade_dots",
+    "password": "orymperi3",
+    "personCell": "8166682737",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Irewole"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ayedaade PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Popo PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "popo_dots",
+    "password": "hashonya3",
+    "personCell": "7055539528",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ejigbo"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Popo PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Ikoyi PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ikoyi_dots",
+    "password": "dupticiv8",
+    "personCell": "7069768332",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Isokan"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ikoyi PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Ifelodun PHC",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Clinician"],
+    "username": "ifelodun_dots",
+    "password": "odhomewi6",
+    "personCell": "8039339216",
+    "geographies": [
+      {
+        "stateName": "Osun",
+        "lgaName": "Ife East"
+      }
+    ],
+    "sites": [
+      {
+        "shortName": "Ifelodun PHC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr Bello Umar Tmbuwal",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "drbut20@yahoo.co.uk",
+    "username": "drbut20@yahoo.co.uk",
+    "password": "PB96L",
+    "personCell": "8064761989",
+    "geographies": [
+      {
+        "stateName": "Sokoto"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Dr Sanusi Ridwan",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abuumar012@gmail.com",
+    "username": "abuumar012@gmail.com",
+    "password": "AP78N",
+    "personCell": "8034535079",
+    "geographies": [
+      {
+        "stateName": "Sokoto"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Sani Yakubu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "saniyakubu914@gmail.com",
+    "username": "saniyakubu914@gmail.com",
+    "password": "KS40O",
+    "personCell": "8134722554",
+    "geographies": [
+      {
+        "stateName": "Sokoto"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Bashiru Umar",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "umarubashiru494@gmail.com",
+    "username": "umarubashiru494@gmail.com",
+    "password": "IJ30S",
+    "personCell": "7085253688",
+    "geographies": [
+      {
+        "stateName": "Sokoto"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Chika Maidamma",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "chikamaidamma@gmail.com",
+    "username": "chikamaidamma@gmail.com",
+    "password": "LE54I",
+    "personCell": "8036076919",
+    "geographies": [
+      {
+        "stateName": "Sokoto"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Mohammed Zayyanu Umar",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "zugsok@gmail.com",
+    "username": "zugsok@gmail.com",
+    "password": "RS37S",
+    "personCell": "8067135312",
+    "geographies": [
+      {
+        "stateName": "Sokoto"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Sanusi Sani",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sanisanusi92@gmail.com",
+    "username": "sanisanusi92@gmail.com",
+    "password": "BT55L",
+    "personCell": "8068197800",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Binji"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Musa Ladan",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "musaladan32@gmail.com",
+    "username": "musaladan32@gmail.com",
+    "password": "OJ20R",
+    "personCell": "8065198693",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Bodinga"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Muhammad Saad",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "muhammadsaad7685@gmail.cm",
+    "username": "muhammadsaad7685@gmail.cm",
+    "password": "XR39X",
+    "personCell": "814827685",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Dange Shuni"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Shamsudeen Haruna",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "shamsudeen68@gmail.com",
+    "username": "shamsudeen68@gmail.com",
+    "password": "MZ11G",
+    "personCell": "8033193954",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Gada"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Bashar Umar",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "basharumar13@gmail.com",
+    "username": "basharumar13@gmail.com",
+    "password": "JZ65M",
+    "personCell": "8064764049",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Gwadabawa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Ahmed Ila",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "",
+    "username": "aila",
+    "password": "UQ98N",
+    "personCell": "8136786161",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Goronyo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Auwal Shehu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "shehuauwal858@gmail.com",
+    "username": "shehuauwal858@gmail.com",
+    "password": "QB72J",
+    "personCell": "8053593048",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Gudu"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Ibrahim Muhammad",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ibrahimabdullahi90@gmail.com",
+    "username": "ibrahimabdullahi90@gmail.com",
+    "password": "JT43O",
+    "personCell": "8069365426",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Illela"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Lawali Abdullahi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abdullahilawali@gmail.com",
+    "username": "abdullahilawali@gmail.com",
+    "password": "KV31V",
+    "personCell": "8147070565",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Isa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Balkisu Yusuf",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bilsadiq143@gmail.com",
+    "username": "bilsadiq143@gmail.com",
+    "password": "UT10M",
+    "personCell": "7065457917",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Kebbe"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Abdullahi Yusuf Tunga",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "tunga1865@gmai.com",
+    "username": "tunga1865@gmai.com",
+    "password": "SM80S",
+    "personCell": "8029467839",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Kware"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Nuhu Bunu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nuhubunuumar@gmail.com",
+    "username": "nuhubunuumar@gmail.com",
+    "password": "JM71J",
+    "personCell": "7066477324",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Rabah"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Yakubu Hussaini",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "yakubuhussainigb@gmail.com",
+    "username": "yakubuhussainigb@gmail.com",
+    "password": "CY20W",
+    "personCell": "8067574928",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Sabon birni"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Fodio Muhammad",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "fodiyomuhdsgr@gmail.com",
+    "username": "fodiyomuhdsgr@gmail.com",
+    "password": "GW45U",
+    "personCell": "8038220523",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Shagari"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Balkisu Muhammed",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "balkisumuhammad2018@gmail.com",
+    "username": "balkisumuhammad2018@gmail.com",
+    "password": "TF82A",
+    "personCell": "8038506364",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Silame"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Kulu Garba",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "kulugarba@gmail.com",
+    "username": "kulugarba@gmail.com",
+    "password": "IQ81O",
+    "personCell": "8068786996",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Sokoto North"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Wadata Hali",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "wadatahali15@gmail.com",
+    "username": "wadatahali15@gmail.com",
+    "password": "BX98Z",
+    "personCell": "8065968215",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Sokoto South"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Bello Musa",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bellomusa913@gmail.com",
+    "username": "bellomusa913@gmail.com",
+    "password": "KY13T",
+    "personCell": "8069014510",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Tambuwal"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Hassan Ibrahim",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "hassanibrahim202@gmail.com",
+    "username": "hassanibrahim202@gmail.com",
+    "password": "QD41Q",
+    "personCell": "8038528042",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Tangaza"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Abubakar Jabbi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "Ajabbiabubakar6@gmail.com",
+    "username": "Ajabbiabubakar6@gmail.com",
+    "password": "BC33Z",
+    "personCell": "8039670942",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Tureta"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Zainab Adamu Mohd",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "zainabadamu4@gmail.com",
+    "username": "zainabadamu4@gmail.com",
+    "password": "UY16P",
+    "personCell": "7066390020",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Wamako"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Shehu Usman Hiliya",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "usmanmoddibo33@gmail.com",
+    "username": "usmanmoddibo33@gmail.com",
+    "password": "VC21Y",
+    "personCell": "8034521484",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Wurno"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Nasiru Abubakar",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nasiruyabo2015@gmail.com",
+    "username": "nasiruyabo2015@gmail.com",
+    "password": "IJ84D",
+    "personCell": "8068634895",
+    "geographies": [
+      {
+        "stateName": "Sokoto",
+        "lgaName": "Yabo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Dr. Ibrahim Aliyu Umar",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "gano109@gmail.com",
+    "username": "gano109@gmail.com",
+    "password": "BW33Z",
+    "personCell": "08032206568",
+    "geographies": [
+      {
+        "stateName": "Kano"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Hamza Shuaibu Fagge",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "hamzafagge@yahoo.com",
+    "username": "hamzafagge@yahoo.com",
+    "password": "NA88V",
+    "personCell": "08032878180",
+    "geographies": [
+      {
+        "stateName": "Kano"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Aminu Tukur",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "tukur79@gmail.com",
+    "username": "tukur79@gmail.com",
+    "password": "QL83M",
+    "personCell": "08032212508",
+    "geographies": [
+      {
+        "stateName": "Kano"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Sani Balarabe",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sanibalarabe251@yahoo.com",
+    "username": "sanibalarabe251@yahoo.com",
+    "password": "PB97R",
+    "personCell": "08038521403",
+    "geographies": [
+      {
+        "stateName": "Kano"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Sumayya Sani Chindo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sumayyasaniabubakar2006@gmail.com",
+    "username": "sumayyasaniabubakar2006@gmail.com",
+    "password": "VG64S",
+    "personCell": "08103441589",
+    "geographies": [
+      {
+        "stateName": "Kano"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Wada Ibrahim Gaya",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abbansayyadi1111@gmail.com",
+    "username": "abbansayyadi1111@gmail.com",
+    "password": "GK33S",
+    "personCell": "08067371285",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Ajingi"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Bello Dikko",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bellodikkofr@gmail.com.",
+    "username": "bellodikkofr@gmail.com.",
+    "password": "MD80F",
+    "personCell": "07046740409",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Albasu"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Hamisu Aliyu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "hamisualiyubichi73@gmail.com",
+    "username": "hamisualiyubichi73@gmail.com",
+    "password": "DZ67D",
+    "personCell": "08067135602",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Bagwai"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Umar Gambo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "umargambodamo@gmail.com",
+    "username": "umargambodamo@gmail.com",
+    "password": "GF72U",
+    "personCell": "08035181661",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Bebeji"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Muhammad Usman",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "muhdusmansnn@gmail.com.",
+    "username": "muhdusmansnn@gmail.com.",
+    "password": "JC72Z",
+    "personCell": "08069176885",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Bichi"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Bashir Haruna",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bashirharuna999@yahoo.com.",
+    "username": "bashirharuna999@yahoo.com.",
+    "password": "DU17H",
+    "personCell": "08061151617",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Bunkure"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Dahiru Abdulkadir",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "dahiruabdulkadir684@gmail.com",
+    "username": "dahiruabdulkadir684@gmail.com",
+    "password": "LP59U",
+    "personCell": "08036611046",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Dala"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Sunusi Galadima",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sunusigaladima93@gmail.com",
+    "username": "sunusigaladima93@gmail.com",
+    "password": "PT64O",
+    "personCell": "08065349093",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Dambatta"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Abubakar Ibrahim",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abubakaribrahim6718@gmail.com",
+    "username": "abubakaribrahim6718@gmail.com",
+    "password": "WF20H",
+    "personCell": "07067180669",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Dawakin Kudu"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Yusuf Yusuf",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "yusufyusuf002017@gmail.com.",
+    "username": "yusufyusuf002017@gmail.com.",
+    "password": "HB67P",
+    "personCell": "08166200131",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Dawakin Tofa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Salisu H.Abdullahi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "salisudgw47@gmail.com.",
+    "username": "salisudgw47@gmail.com.",
+    "password": "DZ99F",
+    "personCell": "07038434065",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Doguwa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Ibrahim Abdullahi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ibbkhabib@gmail.com",
+    "username": "ibbkhabib@gmail.com",
+    "password": "EB76H",
+    "personCell": "08034039463",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Fagge"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Isyaku Abdullahi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "isyakuwangara31@gmail.com",
+    "username": "isyakuwangara31@gmail.com",
+    "password": "QF17E",
+    "personCell": "08065425098",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Gabasawa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Abbas Mahammed Dando",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "dandoabbasmuhammad4152@gmail.com",
+    "username": "dandoabbasmuhammad4152@gmail.com",
+    "password": "LL47F",
+    "personCell": "08086584152",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Garko"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Abdulkadir Malam",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abdulkadirmalam@gmail.com",
+    "username": "abdulkadirmalam@gmail.com",
+    "password": "IG96T",
+    "personCell": "08065534507",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Garun Mallam"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Ashiru Hassan",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ashiruhassan66@gmail.com",
+    "username": "ashiruhassan66@gmail.com",
+    "password": "VP22G",
+    "personCell": "07061845434",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Gaya"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Muhammad Safiyanu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "msafiyanu7@gmail.com.",
+    "username": "msafiyanu7@gmail.com.",
+    "password": "YQ39Z",
+    "personCell": "08068145023",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Gezawa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Abdullahi Shehu Abduwa",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abdullahiabduwa@gmail.com",
+    "username": "abdullahiabduwa@gmail.com",
+    "password": "NO66C",
+    "personCell": "08033515709",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Gwale"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Rabiu Lawan",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "rabiulgaro@gmail.com.",
+    "username": "rabiulgaro@gmail.com.",
+    "password": "FI36H",
+    "personCell": "08067999542",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Gwarzo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Garba Labaran",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "maibakifamilyrmg@gmail.com.",
+    "username": "maibakifamilyrmg@gmail.com.",
+    "password": "UT91X",
+    "personCell": "08034548558",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Kabo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Mukhtar Datti Gwarzo",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "mukhtardatti@gmail.com",
+    "username": "mukhtardatti@gmail.com",
+    "password": "LC29D",
+    "personCell": "08036973837",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "KMC"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Bala Ango",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "balaango39@gmail.com",
+    "username": "balaango39@gmail.com",
+    "password": "VV26T",
+    "personCell": "09024731722",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Karaye"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Auwalu Danladi Idris",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "auwaluidiris@gmail.com",
+    "username": "auwaluidiris@gmail.com",
+    "password": "CL70J",
+    "personCell": "08034262917",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Kibiya"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Ali Ibrahim Sani",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "aliibrahimsani@gmail.com",
+    "username": "aliibrahimsani@gmail.com",
+    "password": "NB98K",
+    "personCell": "08060601172",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Kiru"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Sani Danguda",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sdanguda@gmail.com.",
+    "username": "sdanguda@gmail.com.",
+    "password": "FN40K",
+    "personCell": "08064980174",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Kunchi"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Asma'u Sani",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "asmausani600@gmail.com.",
+    "username": "asmausani600@gmail.com.",
+    "password": "XJ69M",
+    "personCell": "08065282044",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Kumbotso"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Adamu I Salihi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "g316518@gmail.com",
+    "username": "g316518@gmail.com",
+    "password": "JZ54Y",
+    "personCell": "09026863051",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Kura"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Saidu Abdulkadir",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "saiduabdulkadir2016@gmail.com.",
+    "username": "saiduabdulkadir2016@gmail.com.",
+    "password": "CW13M",
+    "personCell": "08029594301",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Madobi"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Aminu Suleiman",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "aminusulaimandambatta@gmail.com",
+    "username": "aminusulaimandambatta@gmail.com",
+    "password": "VJ15L",
+    "personCell": "07036661492",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Makoda"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Tajo Umar Inusawa",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "tajoumarinusawa@gmail.com",
+    "username": "tajoumarinusawa@gmail.com",
+    "password": "OH79Y",
+    "personCell": "08069442141",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Minjibir"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Sani Danladi",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sanidanladi11@gmail.com",
+    "username": "sanidanladi11@gmail.com",
+    "password": "KS89V",
+    "personCell": "08065926870",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Nasarawa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Auwal Ado",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "auwaluado983@gmail.com.",
+    "username": "auwaluado983@gmail.com.",
+    "password": "MS16J",
+    "personCell": "08103106679",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Rano"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Hassan Isah",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "isahhassan855@gmail.com",
+    "username": "isahhassan855@gmail.com",
+    "password": "IG55G",
+    "personCell": "07081137505",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Rimin Gado"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Aliyu Anas",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "aliyuanas18@gmail.com",
+    "username": "aliyuanas18@gmail.com",
+    "password": "CI45Y",
+    "personCell": "08032412627",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Rogo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Saidu Munkaila",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "saidumunkaila840@gmail.com",
+    "username": "saidumunkaila840@gmail.com",
+    "password": "NF11Q",
+    "personCell": "08067677927",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Shanono"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Suleiman Abba Dal",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "suleimanabba90@gmail.com",
+    "username": "suleimanabba90@gmail.com",
+    "password": "FV40T",
+    "personCell": "08065990420",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Sumaila"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Abba Uba Albasu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abbaubaalbasu@gmail.com",
+    "username": "abbaubaalbasu@gmail.com",
+    "password": "UI11A",
+    "personCell": "08082818486",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Takai"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Bello Ibrahim",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "belloibrahim401@gmail.com",
+    "username": "belloibrahim401@gmail.com",
+    "password": "RP49Q",
+    "personCell": "07035676677",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Tarauni"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Sani Shafiu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sanishafiu28@gmail.com",
+    "username": "sanishafiu28@gmail.com",
+    "password": "WD16T",
+    "personCell": "08036472287",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Tofa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Aminu Ismail",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "aminuismail887@gmail.com",
+    "username": "aminuismail887@gmail.com",
+    "password": "AP83F",
+    "personCell": "08065990433",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Tsanyawa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Nazifi Muhammad",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nazifimuhammad2@gmail.com",
+    "username": "nazifimuhammad2@gmail.com",
+    "password": "DG88M",
+    "personCell": "08080793527",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Tudun Wada"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Muktar Abdu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "muktarabdul73@gmail.com",
+    "username": "muktarabdul73@gmail.com",
+    "password": "GG94N",
+    "personCell": "08025254534",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Ungogo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Abdullahi Hussaini",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ajijitar7@gmail.com",
+    "username": "ajijitar7@gmail.com",
+    "password": "FH39A",
+    "personCell": "08066009166",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Warawa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Ghaji Ahmad",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "teemahrealf138@gmail.com",
+    "username": "teemahrealf138@gmail.com",
+    "password": "ZG20O",
+    "personCell": "08036892500",
+    "geographies": [
+      {
+        "stateName": "Kano",
+        "lgaName": "Wudil"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "DR VICTOR ORIS-ONYIRI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "mastervictor@hotmail.co.uk",
+    "username": "mastervictor@hotmail.co.uk",
+    "password": "AN48B",
+    "personCell": "08163774613",
+    "geographies": [
+      {
+        "stateName": "Rivers"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "COMRD. TAMUNO-ADOKI,TONYE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "corrchemist@yahoo.com",
+    "username": "corrchemist@yahoo.com",
+    "password": "TQ94X",
+    "personCell": "08036735470",
+    "geographies": [
+      {
+        "stateName": "Rivers"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "MR AKARA OKWUCHI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "akaraokwuchi@yahoo.com",
+    "username": "akaraokwuchi@yahoo.com",
+    "password": "YN57I",
+    "personCell": "08063458747",
+    "geographies": [
+      {
+        "stateName": "Rivers"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "JEPHTHAH AJIH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "jephthahajih@yahoo.com",
+    "username": "jephthahajih@yahoo.com",
+    "password": "YM14T",
+    "personCell": "08036702649",
+    "geographies": [
+      {
+        "stateName": "Rivers"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "GEORGE ORAFIRI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "firidimmee@gmail.com",
+    "username": "firidimmee@gmail.com",
+    "password": "DK54U",
+    "personCell": "08033422682",
+    "geographies": [
+      {
+        "stateName": "Rivers"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "GLORIA OGINI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "glorianyanabo@gmail.com",
+    "username": "glorianyanabo@gmail.com",
+    "password": "YY54C",
+    "personCell": "08135316364",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "CHARITY E. ALLEN",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "allencharie@yahoo.com",
+    "username": "allencharie@yahoo.com",
+    "password": "GB40I",
+    "personCell": "08064870422",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ahoada East"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "THOMPSON JACOB",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "thompsonjacob701@gmail.com",
+    "username": "thompsonjacob701@gmail.com",
+    "password": "ZL58F",
+    "personCell": "08152354994",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ahoada West"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ELIZABETH DAVIES",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "dirielizabeth@g.mail.com",
+    "username": "dirielizabeth@g.mail.com",
+    "password": "NH39Q",
+    "personCell": "07065682828",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Akuku-Toru"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "IKORI LILY ENEUNYE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "lilyasuk.roo21@gmail.com",
+    "username": "lilyasuk.roo21@gmail.com",
+    "password": "IK63V",
+    "personCell": "09023590342",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Andoni"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "AFONYAA WILLIE JOE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ambiyibo1@yahoo.com",
+    "username": "ambiyibo1@yahoo.com",
+    "password": "MR81T",
+    "personCell": "08037248692",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Asari-Toru"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ABIGIAL GIFT",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bgail4me@yahoo.com",
+    "username": "bgail4me@yahoo.com",
+    "password": "ZF11Q",
+    "personCell": "08051519562",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Bonny"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "BAGSHAW IBITE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ibite94@gmail.com",
+    "username": "ibite94@gmail.com",
+    "password": "OT11G",
+    "personCell": "08039317348",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Degema"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OFFOR GERALDINE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "geralbaby2016@gmail.com",
+    "username": "geralbaby2016@gmail.com",
+    "password": "PZ90K",
+    "personCell": "07061345171",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Eleme"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "CHIOMA WICHE-CHIMEKWA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nelwiche@gmail.com",
+    "username": "nelwiche@gmail.com",
+    "password": "HE56S",
+    "personCell": "08032668648",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Emohua"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "GODPOWER ONYECHE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "godpoweronyeche2@gmail.com",
+    "username": "godpoweronyeche2@gmail.com",
+    "password": "PB96W",
+    "personCell": "08051595813",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Etche"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "PRETTY BONKOO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "barrypretty27@gmail.com",
+    "username": "barrypretty27@gmail.com",
+    "password": "CD81L",
+    "personCell": "08069492840",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Gokana"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "EKWEBELEM CHI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ekwebelemaugustus@gmail.com",
+    "username": "ekwebelemaugustus@gmail.com",
+    "password": "UN89A",
+    "personCell": "08035083989",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ikwerre"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "DONALD WIKERE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "donaldwikere@gmail.com",
+    "username": "donaldwikere@gmail.com",
+    "password": "PP39P",
+    "personCell": "08068422299",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Khana"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "BEATRICE ANYAWA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "beatriceanyawa@gmail.com",
+    "username": "beatriceanyawa@gmail.com",
+    "password": "RO63Q",
+    "personCell": "08039375887",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Obio/Akpor"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "EDEMEDE VICTOR",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "edemedevictor@gmail.com",
+    "username": "edemedevictor@gmail.com",
+    "password": "EB56B",
+    "personCell": "08135015701",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "TUBONEMI NYENGIBI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "tnyegibi@gmail.com",
+    "username": "tnyegibi@gmail.com",
+    "password": "UN67E",
+    "personCell": "07054292557",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogu/Bolo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "IMAMINA ODIA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "mabelfimie@yahoo,com",
+    "username": "mabelfimie@yahoo,com",
+    "password": "NW24J",
+    "personCell": "08055130989",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Okrika"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ONYECHE STEPHEN",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "onyechestephen2016@gmail.com",
+    "username": "onyechestephen2016@gmail.com",
+    "password": "VH54E",
+    "personCell": "08055857958",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Omuma"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ELIZABETH DIRI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "elizabethdiri@gmail.com",
+    "username": "elizabethdiri@gmail.com",
+    "password": "IU19K",
+    "personCell": "08032675077",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Opobo/Nkoro"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ADIELE CHINONYEREM",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "chinosadiele@gmail.com",
+    "username": "chinosadiele@gmail.com",
+    "password": "CQ75V",
+    "personCell": "08064058807",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Oyigbo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "NKECHI IKPEAZU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ikpeazunkechi@gmail.com",
+    "username": "ikpeazunkechi@gmail.com",
+    "password": "GH25R",
+    "personCell": "08135015701",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Port Harcourt"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "NTUUDEE AUGUSTINE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ntuudeeaugustine@gmail.com",
+    "username": "ntuudeeaugustine@gmail.com",
+    "password": "RE68J",
+    "personCell": "08068240871",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Tai"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "DR. O.J BABALOLA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sumjohnbabloo68@yahoo.com",
+    "username": "sumjohnbabloo68@yahoo.com",
+    "password": "GQ66S",
+    "personCell": "08033952827",
+    "geographies": [
+      {
+        "stateName": "Oyo"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "OYEBAMIJI ABIMBOLA ESTHER",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "esbim@yahoo.com",
+    "username": "esbim@yahoo.com",
+    "password": "UF69F",
+    "personCell": "08038018253",
+    "geographies": [
+      {
+        "stateName": "Oyo"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "SANUSI ESTHER OLUFUNMILOLA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sanusilola@gmail.com",
+    "username": "sanusilola@gmail.com",
+    "password": "FP98L",
+    "personCell": "08166526770",
+    "geographies": [
+      {
+        "stateName": "Oyo"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "MAKINDE ADEKUNLE OMOTOSO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "kunlemakinde2009@yahoo.com",
+    "username": "kunlemakinde2009@yahoo.com",
+    "password": "QG18C",
+    "personCell": "08038610591",
+    "geographies": [
+      {
+        "stateName": "Oyo"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "OYEBAMIJI ABIMBOLA ESTHER",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "esbim@yahoo.com",
+    "username": "esbim@yahoo.com",
+    "password": "OF76T",
+    "personCell": "08038018253",
+    "geographies": [
+      {
+        "stateName": "Oyo"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "BILAU KEHINDE BIODUN",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bilaukehinde@gmail.com",
+    "username": "bilaukehinde@gmail.com",
+    "password": "XD10F",
+    "personCell": "08161361094",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "AGBOOLA OLUYEMI A",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "oluyemiagboola1972@gmail.com",
+    "username": "oluyemiagboola1972@gmail.com",
+    "password": "TC58I",
+    "personCell": "08164930171",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-East"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ODENIYI RAFAT IYABODE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "iyabodeodeniyi@gmail.com",
+    "username": "iyabodeodeniyi@gmail.com",
+    "password": "JT89I",
+    "personCell": "07033375264",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan North-West"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OLADIMEJI BOLADE SERIFAT",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "oladimejiserifat007@gmail.com",
+    "username": "oladimejiserifat007@gmail.com",
+    "password": "NU21T",
+    "personCell": "08097728429",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-East"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OKEWUYI JACOB OLADUNNI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "dammyjacobs374@gmail.com",
+    "username": "dammyjacobs374@gmail.com",
+    "password": "FJ89F",
+    "personCell": "08035772255",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibadan South-West"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OKEGBEMI AKINLOLU OLANIYI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "okegbemiakinlolu1@gmail.com",
+    "username": "okegbemiakinlolu1@gmail.com",
+    "password": "TU54U",
+    "personCell": "09035348084",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa Central"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OKE OLUBUNMI TAIWO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "olubunmioket@gmail.com",
+    "username": "olubunmioket@gmail.com",
+    "password": "SG47Z",
+    "personCell": "08177253946",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa East"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "TAIWO ALICE FUNMILADE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "olufunmiladealice@gmail.com",
+    "username": "olufunmiladealice@gmail.com",
+    "password": "VS95E",
+    "personCell": "08059764879",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ibarapa North"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "SADIQ HAMEEDAT ADEPEJU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "adepejusadiq86@gmail.com",
+    "username": "adepejusadiq86@gmail.com",
+    "password": "QJ91M",
+    "personCell": "08034080021",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ido"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OKUNOYE MEDINAT ADELAYO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "adigunayo74@gmail.com",
+    "username": "adigunayo74@gmail.com",
+    "password": "ES19Y",
+    "personCell": "08170017475",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Irepo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OLALEKAN YISA ADEYEMI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "olalekanyisa1@gmail.com",
+    "username": "olalekanyisa1@gmail.com",
+    "password": "ES26A",
+    "personCell": "08038094176",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Iseyin"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ARIORI LYDIA ADENIKE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ariorlydia360@gmail.com",
+    "username": "ariorlydia360@gmail.com",
+    "password": "OX87A",
+    "personCell": "08168903300",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Itesiwaju"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OYEDOKUN FATIMOT OLAMIDE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "oyedokunfatimo1980@gmail.com",
+    "username": "oyedokunfatimo1980@gmail.com",
+    "password": "FR27H",
+    "personCell": "08052528098",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Iwajowa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "BALOGUN FAUSAT FOLASADE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "folasadebalogun@gmail.com",
+    "username": "folasadebalogun@gmail.com",
+    "password": "GL66X",
+    "personCell": "08060378145",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Kajola"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OLAYIWOLA KABIRU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "olayiwolakabiruoyewumi@gmail.com",
+    "username": "olayiwolakabiruoyewumi@gmail.com",
+    "password": "HD36I",
+    "personCell": "08034989262",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Lagelu"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ADEWALE FUNMILAYO SERAH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "funmiabioje01@gmail.com",
+    "username": "funmiabioje01@gmail.com",
+    "password": "UE41N",
+    "personCell": "08034813383",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogbomosho North"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "AKANGBE AMINAT NIKE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nikeakangbe@gmail.com",
+    "username": "nikeakangbe@gmail.com",
+    "password": "AW12W",
+    "personCell": "07039315339",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogbomosho South"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "AKANBI OYEBAMIJI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "akanbioyebamiji2017@yahoo.com",
+    "username": "akanbioyebamiji2017@yahoo.com",
+    "password": "QB40E",
+    "personCell": "07031263896",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ogo Oluwa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "OLANIREGUN RAMOTA MORADEYO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "rebeccamoradeyo@gmail.com",
+    "username": "rebeccamoradeyo@gmail.com",
+    "password": "AY83U",
+    "personCell": "08059730135",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Olorunsogo"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "AJAYI OLAYINKA IYABODE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "oluyinkaajayi74@gmail.com",
+    "username": "oluyinkaajayi74@gmail.com",
+    "password": "MP72B",
+    "personCell": "08033935325",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oluyole"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "AKINTUNDE IYABO JOKE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "akintundeiyabojoke283@gmail.com",
+    "username": "akintundeiyabojoke283@gmail.com",
+    "password": "KO13W",
+    "personCell": "08082736584",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ona Ara"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ADEBAYO SERIFAT ADERINOLA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "serifat90@gmail.com",
+    "username": "serifat90@gmail.com",
+    "password": "XL15F",
+    "personCell": "08051686730",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Orelope"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "TAIWO AMOS AYODELE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "aataye702@gmail.com",
+    "username": "aataye702@gmail.com",
+    "password": "VC19W",
+    "personCell": "08038435649",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Ori Ire"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "AWOJOBI HEZEKIAH ADEBIYI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "adebiyi.awojobi@yahoo.com",
+    "username": "adebiyi.awojobi@yahoo.com",
+    "password": "OB26S",
+    "personCell": "08101709258",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oyo East"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "AYOOLA HABIBAT TITILOPE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "ayoolaH.t@gmail.com",
+    "username": "ayoolaH.t@gmail.com",
+    "password": "PA80E",
+    "personCell": "07067135464",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Oyo West"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ADEOLA CHARLOTTE ADEBIMPE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "adeolabimpe286@gmail",
+    "username": "adeolabimpe286@gmail",
+    "password": "GL20U",
+    "personCell": "08084385635",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Saki East"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "FAYEMI OLUWOLE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "wolefayemi05@gmail.com",
+    "username": "wolefayemi05@gmail.com",
+    "password": "EU15T",
+    "personCell": "07033094600",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Saki West"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "POPOOLA SERAH ADEWEMIMO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "popoolaserahadewemimo@gmail.com",
+    "username": "popoolaserahadewemimo@gmail.com",
+    "password": "LZ93L",
+    "personCell": "08034821115",
+    "geographies": [
+      {
+        "stateName": "Oyo",
+        "lgaName": "Surulere"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Dr. ABUBAKAR SADIQ IDRIS",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sadiqidris@gmail.com",
+    "username": "sadiqidris@gmail.com",
+    "password": "XA43Z",
+    "personCell": "07031992126",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "Dr. Sani Aminu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "saniaminu741@gmail.com",
+    "username": "saniaminu741@gmail.com",
+    "password": "DZ42B",
+    "personCell": "8061699773",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "FATIMA SAEED USMAN",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bintabkubau@gmail.com",
+    "username": "bintabkubau@gmail.com",
+    "password": "OE90O",
+    "personCell": "08039295291",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "HABIBA J ABUBAKAR",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "habeeba559@gmail.com",
+    "username": "habeeba559@gmail.com",
+    "password": "BA28W",
+    "personCell": "08030639857",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "EMMANUEL CHRISTOPHER",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "christopheremmanuel39@gmail.com",
+    "username": "christopheremmanuel39@gmail.com",
+    "password": "BK91V",
+    "personCell": "08038874472",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "RITA NUHU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nuhurita@gmail.com",
+    "username": "nuhurita@gmail.com",
+    "password": "ZR20S",
+    "personCell": "07062999049",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "MAYASATU A GIDADO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "mayasatugidado79@gmail.com",
+    "username": "mayasatugidado79@gmail.com",
+    "password": "QL95U",
+    "personCell": "08065303563",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "GRACE UMARU KUMBEN",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "kumbengrace@gmail.com",
+    "username": "kumbengrace@gmail.com",
+    "password": "PR16U",
+    "personCell": "07069251659",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "HAUWA MUSA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "haumusmed24@gmail.com",
+    "username": "haumusmed24@gmail.com",
+    "password": "NJ33K",
+    "personCell": "08033004286",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "ABEDNEGO ABUI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "christopheremmanuel39@gmail.com",
+    "username": "christopheremmanuel39@gmail.com",
+    "password": "CG49I",
+    "personCell": "08097002393",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "AISHA USMAN TANKO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "aishtusman62@gmail.com",
+    "username": "aishtusman62@gmail.com",
+    "password": "QS10H",
+    "personCell": "08061388721",
+    "geographies": [
+      {
+        "stateName": "Kaduna"
+      }
+    ],
+    "tags": ["STBLCP"]
+  },
+  {
+    "personName": "ABDULLAHI MOHD",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abdullahimuhammadbg46@gmail.com",
+    "username": "abdullahimuhammadbg46@gmail.com",
+    "password": "RQ79M",
+    "personCell": "08032220688",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Birnin Gwari"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ABUBAKAR IBRAHIM",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "aibrahimbng75@gmail.com",
+    "username": "aibrahimbng75@gmail.com",
+    "password": "HF12I",
+    "personCell": "0805105610",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Birnin Gwari"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "LYDIA S ADAMU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "adamulydia1@gmail.com",
+    "username": "adamulydia1@gmail.com",
+    "password": "UA27W",
+    "personCell": "0805105611",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Chikun"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "SOLOMON YERO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "solomonyero7@gmail.com",
+    "username": "solomonyero7@gmail.com",
+    "password": "RP44J",
+    "personCell": "0805105612",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Chikun"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "NURA HASHIMU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nurahash01@gmail.com",
+    "username": "nurahash01@gmail.com",
+    "password": "RX74H",
+    "personCell": "08094741237",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Giwa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "YAU BABAJO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "yaubabajo1@gmail.com",
+    "username": "yaubabajo1@gmail.com",
+    "password": "BQ68X",
+    "personCell": "08039304639",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Giwa"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "MUNTAKA MOHD",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "muntakamuhdanda gmail.com",
+    "username": "muntakamuhdanda gmail.com",
+    "password": "YA51Y",
+    "personCell": "08067394355",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Igabi"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ABDULKAREEM S SAMBO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abdulkareemsambo8@gmail.com",
+    "username": "abdulkareemsambo8@gmail.com",
+    "password": "OB59K",
+    "personCell": "08036422504",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Igabi"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "SHEHU LAWAL",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "shehulawal86@gmail.com",
+    "username": "shehulawal86@gmail.com",
+    "password": "TE73U",
+    "personCell": "8060978177",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Ikara"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "SAIDU MOHD YAHAYA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "saidumohammdyahaya@gmail.com",
+    "username": "saidumohammdyahaya@gmail.com",
+    "password": "YZ39J",
+    "personCell": "8061604648",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Ikara"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "YAKUBU MARKUS",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "yakubumarkus112@gmail.com",
+    "username": "yakubumarkus112@gmail.com",
+    "password": "JY44E",
+    "personCell": "7038341576",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Jaba"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "SHIMNOM F PETER",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "",
+    "username": "speter",
+    "password": "AA60A",
+    "personCell": "7039378005",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Jaba"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "DENNIS A.BABA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "dbaba3941@gmail.com",
+    "username": "dbaba3941@gmail.com",
+    "password": "RK75U",
+    "personCell": "08175959825",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Jema'a"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Alisabatu Bako",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bakoalice26@gmail.com",
+    "username": "bakoalice26@gmail.com",
+    "password": "KU14W",
+    "personCell": "08068242501",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Jema'a"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "HOSEA SHEKARAU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "hoseashekarau591@gmail.com",
+    "username": "hoseashekarau591@gmail.com",
+    "password": "SH63K",
+    "personCell": "08151757231",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kachia"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "DINATU BAHAGO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "",
+    "username": "dbahago",
+    "password": "SG82J",
+    "personCell": "08025616851",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kachia"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "HASHIMU SULEIMAN",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "hash986@gmail.com",
+    "username": "hash986@gmail.com",
+    "password": "JC28G",
+    "personCell": "08032496565",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kaduna North"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Hauwa Murtala",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nanakhadijah068@gmail.com",
+    "username": "nanakhadijah068@gmail.com",
+    "password": "VN67W",
+    "personCell": "08033486211",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kaduna North"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "LAITU IBRAHIM",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "laituibrahim@gmail.com",
+    "username": "laituibrahim@gmail.com",
+    "password": "UO75X",
+    "personCell": "08036086001",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kaduna South"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "TURE BELLO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "",
+    "username": "tbello",
+    "password": "ZI84Q",
+    "personCell": "08033155605",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kaduna South"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "MICAH THOMAS",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "tmicah110@gmail.com",
+    "username": "tmicah110@gmail.com",
+    "password": "WW58R",
+    "personCell": "07038247044",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kagarko"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "JOSIAH DANIEL",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "danieljosiah394@gmail.com",
+    "username": "danieljosiah394@gmail.com",
+    "password": "DG42R",
+    "personCell": "08065660409",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kagarko"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "HAMISU ADO",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "hamisuado49@gmail.com",
+    "username": "hamisuado49@gmail.com",
+    "password": "IA23E",
+    "personCell": "8034656600",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kajuru"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Charity Augustine",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "augustinecharity592@gmail.com",
+    "username": "augustinecharity592@gmail.com",
+    "password": "CM74Y",
+    "personCell": "7033315783",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kajuru"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "JOYCE K LA’AH",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "joyceklaah@gmail.com",
+    "username": "joyceklaah@gmail.com",
+    "password": "QW33P",
+    "personCell": "8024347321",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kaura"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "CALEB BONAT",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "calebbonat@gmail.com",
+    "username": "calebbonat@gmail.com",
+    "password": "RT54L",
+    "personCell": "8061569710",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kaura"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "MAITALA GARBA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "maitalagarba@gmail.com",
+    "username": "maitalagarba@gmail.com",
+    "password": "KP48Y",
+    "personCell": "7014016941",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kauru"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "DAUDA ABDULKADIR",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "abdulkadirdauda@gmail.com",
+    "username": "abdulkadirdauda@gmail.com",
+    "password": "MY54Q",
+    "personCell": "7056284250",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kauru"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Iliyasu Aliyu",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "Iliyasualiyu2@gmail.com",
+    "username": "Iliyasualiyu2@gmail.com",
+    "password": "WY46F",
+    "personCell": "7014016941",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kubau"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Yushau Sale",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "yusheusaleanc@gmail.com",
+    "username": "yusheusaleanc@gmail.com",
+    "password": "TC67J",
+    "personCell": "8063437372",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kubau"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "JIBRIL DALHATU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "jibrildalhatuhkygmail.com",
+    "username": "jibrildalhatuhkygmail.com",
+    "password": "AX78T",
+    "personCell": "08085034411",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kudan"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "NUHU YAHAYA",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "nuhuyahayahkygmail.com",
+    "username": "nuhuyahayahkygmail.com",
+    "password": "QC61V",
+    "personCell": "07080051579",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Kudan"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ISA ABUBAKAR",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sasofkrosha@gmail.com",
+    "username": "sasofkrosha@gmail.com",
+    "password": "NX52Y",
+    "personCell": "8033533523",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Lere"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "GARBA UMAR TIYAYE",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "umartiyayegarba@gmail.com",
+    "username": "umartiyayegarba@gmail.com",
+    "password": "FI19I",
+    "personCell": "8035087567",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Lere"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "LAWAL ABDULLAHI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "adoibrahim113@gmail.com",
+    "username": "adoibrahim113@gmail.com",
+    "password": "FG42I",
+    "personCell": "07063005708",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Makarfi"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Umar Bala",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "umarbmakarfi@gmail.com",
+    "username": "umarbmakarfi@gmail.com",
+    "password": "OZ24R",
+    "personCell": "08030898733",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Makarfi"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "ADO IBRAHIM",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "adoibrahim113@gmail.com",
+    "username": "adoibrahim113@gmail.com",
+    "password": "AZ32C",
+    "personCell": "7063311489",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Sabon Gari"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "RABI ABDULLAHI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "rabiabdullahi000@gmail.com",
+    "username": "rabiabdullahi000@gmail.com",
+    "password": "RW76Q",
+    "personCell": "8038621458",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Sabon Gari"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Bagyanja D. John",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "bagyangjadjohn@jgmail.com",
+    "username": "bagyangjadjohn@jgmail.com",
+    "password": "JR95V",
+    "personCell": "08069216432",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Sanga"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "SUNDAY KAJANG",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "kajangsunday@gmai.com",
+    "username": "kajangsunday@gmai.com",
+    "password": "MI77Z",
+    "personCell": "7066272339",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Sanga"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "RABIU YUSU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "sobary89@yahoo.com",
+    "username": "sobary89@yahoo.com",
+    "password": "SP40P",
+    "personCell": "08028144430",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Soba"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "CHRISTOPHER SANKWAI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "christopherawansankwai@gmail.com",
+    "username": "christopherawansankwai@gmail.com",
+    "password": "HY53Q",
+    "personCell": "9077605535",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Zangon Kataf"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "Gideon Tauna",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "gideontauna73@gmail.com",
+    "username": "gideontauna73@gmail.com",
+    "password": "RN82I",
+    "personCell": "08131624688",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Zangon Kataf"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "FAISAL ABDULLAHI",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "faisalabdullahi228@gmail.com",
+    "username": "faisalabdullahi228@gmail.com",
+    "password": "TM59T",
+    "personCell": "08038784266",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Zaria"
+      }
+    ],
+    "tags": ["TBLS"]
+  },
+  {
+    "personName": "YAHAYA SAIDU",
+    "timezone": "W. Central Africa Standard Time",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "saiduzaria1@gmail.com",
+    "username": "saiduzaria1@gmail.com",
+    "password": "YH85I",
+    "personCell": "08034861231",
+    "geographies": [
+      {
+        "stateName": "Kaduna",
+        "lgaName": "Zaria"
+      }
+    ],
+    "tags": ["TBLS"]
+  }
+]

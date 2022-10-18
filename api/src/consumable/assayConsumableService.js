@@ -12,6 +12,7 @@ const SELECT_LIST_FIELDS = [
   'u.shortName as unitShortName',
   'a.name as assayName',
   'a.i18nKey as assayI18nKey',
+  'c.strategy',
 ]
 
 async function getConsumableAssays(request) {
@@ -28,10 +29,7 @@ async function getConsumableAssays(request) {
     .join('Unit as u', 'c.unit', 'u.id')
     .join('Assay as a', 'ca.assayId', 'a.id')
     .leftJoin('PartnerConsumable as pc', function () {
-      this.on('ca.consumableId', 'pc.consumableId').andOn(
-        'pc.partnerId',
-        knex.raw(dataConstraints.partner.id)
-      )
+      this.on('ca.consumableId', 'pc.consumableId').andOn('pc.partnerId', knex.raw(dataConstraints.partner.id))
     })
     .modify(addConstraints, dataConstraints, { assay: 'a' })
     .where('ca.consumableId', consumableId)
@@ -47,10 +45,7 @@ function selectAssayConsumables(knex, dataConstraints, assayId, consumableId) {
       .join('Unit as u', 'c.unit', 'u.id')
       .join('Assay as a', 'ca.assayId', 'a.id')
       .leftJoin('PartnerConsumable as pc', function () {
-        this.on('ca.consumableId', 'pc.consumableId').andOn(
-          'pc.partnerId',
-          knex.raw(partnerId)
-        )
+        this.on('ca.consumableId', 'pc.consumableId').andOn('pc.partnerId', knex.raw(partnerId))
       })
       .modify(addConstraints, dataConstraints, { assay: 'a' })
       .where(function () {
@@ -77,11 +72,7 @@ async function getAssayConsumables(request) {
   } = request
 
   const dataContraints = await getConstraints(auth.credentials)
-  const assayConsumables = await selectAssayConsumables(
-    query('Get assay consumable'),
-    dataContraints,
-    assayId
-  )
+  const assayConsumables = await selectAssayConsumables(query('Get assay consumable'), dataContraints, assayId)
 
   return { ok: true, data: assayConsumables }
 }
@@ -95,14 +86,10 @@ async function createAssayConsumable(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   try {
-    await query('Insert assay consumable')
-      .insert({ assayId, consumableId, quantity })
-      .into('ConsumableAssay')
+    await query('Insert assay consumable').insert({ assayId, consumableId, quantity }).into('ConsumableAssay')
   } catch (err) {
     if (err.code === 'ER_DUP_ENTRY') {
-      return Boom.conflict(
-        'There is already an record for this assay and consumable'
-      )
+      return Boom.conflict('There is already an record for this assay and consumable')
     }
     throw err
   }

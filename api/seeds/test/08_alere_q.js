@@ -1,18 +1,11 @@
 module.exports = require('../utils').seed(seed, __filename)
-
 const { rowsAsObject } = require('../utils')
-const {
-  deviceTypeCategoryToId,
-  assayTypeToId,
-  resultSourceToId,
-  unitToId,
-} = require('../../src/shared/dictionary')
+const { deviceTypeCategoryToId, assayTypeToId, resultSourceToId } = require('../../src/shared/dictionary')
+const upsertConsumables = require('../common/upsert_consumables')
 
 async function seed(knex) {
   // Skip this seed file if we already have an AlereFtpConnector Device Type
-  const alereFtpConnectorDeviceType = await knex('DeviceType')
-    .where('externalId', 'AlereFtpConnector')
-    .first('id')
+  const alereFtpConnectorDeviceType = await knex('DeviceType').where('externalId', 'AlereFtpConnector').first('id')
   if (alereFtpConnectorDeviceType) {
     return
   }
@@ -30,7 +23,7 @@ async function seed(knex) {
   // Reuse previously seeded "static" data
   const deviceTypes = await rowsAsObject(knex, 'DeviceType', 'externalId')
 
-  const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
+  await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
     abbreviation: 'Q HIV detect',
     i18nKey: 'assayAlereQHiv12Detect',
@@ -162,7 +155,7 @@ async function seed(knex) {
       },
     }),
   })
-  const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
+  await knex('Assay').insert({
     name: 'Alere q HIV-1/2 VL plasma',
     abbreviation: 'Q HIV Plasma',
     i18nKey: 'assayAlereQHiv12VLPlasma',
@@ -307,30 +300,5 @@ async function seed(knex) {
     }),
   })
 
-  const piece = await unitToId('Piece')
-  const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert({
-    name: 'Alere q HIV-1/2 Detect Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Alere',
-  })
-  const [alereQHiv12VLPlasmaCartridgeId] = await knex('Consumable').insert({
-    name: 'Alere q HIV-1/2 VL Plasma Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Alere',
-  })
-
-  await knex('ConsumableAssay').insert([
-    {
-      assayId: alereQHiv12DetectAssayId,
-      consumableId: alereQHiv12DetectCartridgeId,
-      quantity: 1,
-    },
-    {
-      assayId: alereQHiv12VLPlasmaAssayId,
-      consumableId: alereQHiv12VLPlasmaCartridgeId,
-      quantity: 1,
-    },
-  ])
+  await upsertConsumables(knex, true, ['assayAlereQHiv12Detect', 'assayAlereQHiv12VLPlasma'])
 }

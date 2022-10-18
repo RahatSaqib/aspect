@@ -7,39 +7,29 @@ const { patientData } = require('./fixtures/geneXpertPatientDataSchema.json')
 async function seed(knex) {
   // Grant access to sites
   // Reuse previously seeded "static" data
-  const { id: permissionSiteEditId } = await knex('Permission')
+
+  const { id: permissionSiteAdminId } = await knex('Permission')
     .where('module', 'site')
-    .where('activity', 'edit')
+    .where('activity', 'admin')
     .first('id')
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where('name', 'Admin')
-    .first('id')
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').first('id')
 
-  const { jobFunctionId } = await knex('JobFunctionPermission')
+  const { jobFunctionId } = knex('JobFunctionPermission')
     .where('jobFunctionId', jobFunctionIdAdmin)
-    .where('permissionId', permissionSiteEditId)
+    .where('permissionId', permissionSiteAdminId)
     .first('jobFunctionId')
 
   if (!jobFunctionId)
     await knex('JobFunctionPermission').insert([
       {
         jobFunctionId: jobFunctionIdAdmin,
-        permissionId: permissionSiteEditId,
+        permissionId: permissionSiteAdminId,
       },
     ])
   await upsertGeneXpertDeviceTypeAndAssays(
     knex,
-    [
-      'GxUnknown',
-      'GxHcv',
-      'GxHiv',
-      'GxMtbRif',
-      'GxMtbRifUltra',
-      'GxHiv1Vl',
-      'GxHiv1Qual',
-      'GxEbola',
-    ],
+    ['GxUnknown', 'GxHcv', 'GxHiv', 'GxMtbRif', 'GxMtbRifUltra', 'GxHiv1Vl', 'GxHiv1Qual', 'GxEbola'],
     patientData
   )
 }

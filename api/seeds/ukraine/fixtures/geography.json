@@ -6,9 +6,9 @@
       "a3": "UKR",
       "culture": "uk-UA",
       "countryCode": "380",
-      "timezone": "Eastern European Time",
+      "timezone": "E. Europe Standard Time",
       "portNumber": null,
-      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "exportColumns": "DeploymentDescription|TestEndedOn|Assayname|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
       "states": [
@@ -4841,6 +4841,101 @@
             },
             {
               "name": "Zhytomyr Raion"
+            }
+          ]
+        },
+        {
+          "name": "Potlava Oblast",
+          "lgas": [
+            {
+              "name": "Poltava"
+            },
+            {
+              "name": "Horishni Plavni"
+            },
+            {
+              "name": "Kremenchuk"
+            },
+            {
+              "name": "Lubny"
+            },
+            {
+              "name": "Myrhorod"
+            },
+            {
+              "name": "Chornukhy"
+            },
+            {
+              "name": "Chutove"
+            },
+            {
+              "name": "Dykanka"
+            },
+            {
+              "name": "Hadiach"
+            },
+            {
+              "name": "Hlobyne"
+            },
+            {
+              "name": "Hrebinka"
+            },
+            {
+              "name": "Karlivka"
+            },
+            {
+              "name": "Khorol"
+            },
+            {
+              "name": "Kobeliaky"
+            },
+            {
+              "name": "Kotelva"
+            },
+            {
+              "name": "Kozelshchyna"
+            },
+            {
+              "name": "Kremenchuk"
+            },
+            {
+              "name": "Lokhvytsia"
+            },
+            {
+              "name": "Lubny"
+            },
+            {
+              "name": "Mashivka"
+            },
+            {
+              "name": "Myrhorod"
+            },
+            {
+              "name": "Novi Sanzhary"
+            },
+            {
+              "name": "Orzhytsia"
+            },
+            {
+              "name": "Poltava"
+            },
+            {
+              "name": "Pyriatyn"
+            },
+            {
+              "name": "Reshetylivka"
+            },
+            {
+              "name": "Semenivka"
+            },
+            {
+              "name": "Shyshaky"
+            },
+            {
+              "name": "Velyka Bahachka"
+            },
+            {
+              "name": "Zinkiv"
             }
           ]
         }

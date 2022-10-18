@@ -5,11 +5,7 @@ async function up(knex) {
     tblDashboardWidget.string('externalId').nullable()
   })
 
-  const { quantity } = await knex
-    .select('titleI18nKey')
-    .from('DashboardWidget')
-    .count('* as quantity')
-    .first()
+  const { quantity } = await knex.select('titleI18nKey').from('DashboardWidget').count('* as quantity').first()
 
   if (quantity > 0) {
     await knex('DashboardWidget')

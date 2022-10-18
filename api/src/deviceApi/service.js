@@ -1,12 +1,10 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
+const Promise = require('bluebird')
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
-const {
-  deviceApprovalToId,
-  deviceTypeToPlugin,
-} = require('../shared/dictionary')
+const { deviceApprovalToId, deviceTypeToPlugin, deviceMaintenanceTypeToId } = require('../shared/dictionary')
 const {
   resultUpdated,
   resultLogged,
@@ -25,7 +23,11 @@ const {
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
-const { shouldTriggerHardwareErrorAnalysis } = require('../plugin/utils')
+const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
+const logger = require('../shared/logger')
+const { getTbResultsStats } = require('./pakistan/pakistanTbService')
+
+const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
@@ -50,27 +52,15 @@ const addPluginDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
   transformInitialPayload: true,
 })
 
-const updateDeviceConfigurationHandler = deviceApiHandler(
-  updateDeviceConfigurationWithContext
-)
+const updateDeviceConfigurationHandler = deviceApiHandler(updateDeviceConfigurationWithContext)
 
-const addDeviceOperationHandler = deviceApiHandler(
-  addDeviceOperationWithContext
-)
+const addDeviceOperationHandler = deviceApiHandler(addDeviceOperationWithContext)
 
 const mergeResultHandler = deviceApiHandler(mergeResultWithContext)
 
-async function getHandlerOptionsFromContext(
-  handler,
-  { pluginNames: plugins = [] },
-  defaultHandlerOptions = {}
-) {
+async function getHandlerOptionsFromContext(handler, { pluginNames: plugins = [] }, defaultHandlerOptions = {}) {
   const handlerOptionGroups = await loadPlugin(plugins, 'handlerOptions')
-  return _.merge(
-    {},
-    defaultHandlerOptions,
-    handlerOptionGroups[handler.name] || {}
-  )
+  return _.merge({}, defaultHandlerOptions, handlerOptionGroups[handler.name] || {})
 }
 
 async function getHandlerOptionsFromRequest(
@@ -113,29 +103,27 @@ async function getHandlerOptionsFromRequest(
     plugins = [...plugins, deviceTypePluginName]
   }
   const handlerOptionGroups = await loadPlugin(plugins, 'handlerOptions')
-  return _.merge(
-    {},
-    defaultHandlerOptions,
-    handlerOptionGroups[handler.name] || {}
-  )
+  return _.merge({}, defaultHandlerOptions, handlerOptionGroups[handler.name] || {})
 }
 
 function deviceApiHandler(handler, defaultHandlerOptions = {}) {
   return asyncHandler(async request => {
-    const { error, context } = await createDeviceApiContext(
-      handler,
-      request,
-      defaultHandlerOptions
-    )
+    logger.debug('createDeviceApiContext', {
+      reLabel: 'deviceApi:createDeviceApiContext',
+    })
+    const { error, context } = await createDeviceApiContext(handler, request, defaultHandlerOptions)
     if (error) {
+      logger.debug('Update logs because an error', {
+        reLabel: 'deviceApi:deviceApiHandler',
+      })
       await updateLogs(request)
       return error
     }
-    let handlerOptions = await getHandlerOptionsFromContext(
-      handler,
-      context,
-      defaultHandlerOptions
-    )
+    logger.debug('getting handler options from context', {
+      reLabel: 'deviceApi:deviceApiHandler',
+    })
+
+    let handlerOptions = await getHandlerOptionsFromContext(handler, context, defaultHandlerOptions)
     const { updateDeviceLog = false } = handlerOptions
     const { device, now } = context
     const deviceId = device.id
@@ -149,6 +137,10 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
     if (updateDeviceLog) {
       // TODO DeviceLog handle non-JSON payloads
       deviceLogRawMessage = JSON.stringify(request.plugins.rawPayload)
+
+      logger.debug('need to ensure DeviceLog is inserted even if failure below', {
+        reLabel: 'deviceApi:deviceApiHandler',
+      })
 
       // need to ensure DeviceLog is inserted even if failure below
       ;[deviceLogId] = await knex('DeviceLog').insert({
@@ -167,7 +159,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
 
       // update timestamps as necessary for original device
       const originalDeviceId = context.device.id
-      await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+      await updateDeviceData(context, handlerOptions, remoteAddress)
 
       // invoke delegate handler
       response = await handler(context)
@@ -175,21 +167,15 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
       // If handler changes device (e.g. GxAlert plugin), update timestamps
       // for new device as necessary
       if (context.device.id !== originalDeviceId) {
-        handlerOptions = await getHandlerOptionsFromContext(
-          handler,
-          context,
-          defaultHandlerOptions
-        )
-        await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+        handlerOptions = await getHandlerOptionsFromContext(handler, context, defaultHandlerOptions)
+        await updateDeviceData(context, handlerOptions, remoteAddress)
       }
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
         const { deviceLogUpdate } = context
         if (deviceLogUpdate != null) {
-          await knex('DeviceLog')
-            .where({ id: deviceLogId })
-            .update(deviceLogUpdate)
+          await knex('DeviceLog').where({ id: deviceLogId }).update(deviceLogUpdate)
         }
       }
     })
@@ -197,12 +183,8 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
   })
 }
 
-async function updateDeviceTimestamps(
-  context,
-  handlerOptions = {},
-  remoteAddress
-) {
-  const { knex, pluginNames: plugins, device } = context
+async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
+  const { knex, pluginNames: plugins, device, payload } = context
   const { updatePing = false } = handlerOptions
 
   const deviceUpdates = {}
@@ -210,12 +192,20 @@ async function updateDeviceTimestamps(
   const getDeviceSeenOn = await loadPlugin(plugins, 'getDeviceSeenOn')
   const deviceSeenOn = await getDeviceSeenOn(context)
   if (deviceSeenOn != null) {
+    logger.debug('update deviceSeenOn', {
+      reLabel: 'deviceApi:updateDeviceData',
+    })
+
     // flag as seen even if handler fails
     deviceUpdates.lastSeenOn = deviceSeenOn
     context.messageContext.dispatch(deviceSeen(device.id))
   }
 
   if (updatePing) {
+    logger.debug('update device ping on', {
+      reLabel: 'deviceApi:updateDeviceData',
+    })
+
     const getDevicePingOn = await loadPlugin(plugins, 'getDevicePingOn')
     const devicePingOn = await getDevicePingOn(context)
     if (devicePingOn != null) {
@@ -223,6 +213,9 @@ async function updateDeviceTimestamps(
       deviceUpdates.lastPingFromIp = remoteAddress
     }
   }
+
+  const instrumentSerial = _.get(payload, 'result.instrument.serial', null)
+  if (instrumentSerial) deviceUpdates.lastInstrumentSerial = instrumentSerial
 
   if (!_.isEmpty(deviceUpdates)) {
     await knex('Device').where({ id: device.id }).update(deviceUpdates)
@@ -233,23 +226,26 @@ async function addDeviceDataWithContext(context) {
   let response = {}
   const { pluginNames: plugins } = context
 
-  const preProcessAddDeviceData = await loadPlugin(
-    plugins,
-    'preProcessAddDeviceData'
-  )
+  logger.debug("Loading device plugin's preProcessAddDeviceData", {
+    reLabel: 'deviceApi:preProcessAddDeviceData',
+  })
+  const preProcessAddDeviceData = await loadPlugin(plugins, 'preProcessAddDeviceData')
+  logger.debug('Processing preProcessAddDeviceData', {
+    reLabel: 'deviceApi:preProcessAddDeviceData',
+  })
   await preProcessAddDeviceData(context)
 
   const { knex, now, payload, device } = context
-  const { name, site, result, configuration, log } = payload
-  let { operation } = payload
+  const { configuration, includeDeviceConfiguration, log, name, operation, result, site, getFormsDefinition } = payload
 
   if (name) {
-    await knex('Device')
-      .where({ id: device.id })
-      .update({ name, updatedOn: now })
+    await knex('Device').where({ id: device.id }).update({ name, updatedOn: now })
   }
 
   if (site) {
+    logger.debug('executing updateSiteWithContext', {
+      reLabel: 'deviceApi:updateSiteWithContext',
+    })
     response = {
       ...response,
       ...(await updateSiteWithContext(context.withPayload(site))),
@@ -257,15 +253,34 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (configuration) {
+    logger.debug('executing updateSiteWithContext', {
+      reLabel: 'deviceApi:updateDeviceConfigurationWithContext',
+    })
     response = {
       ...response,
-      ...(await updateDeviceConfigurationWithContext(
-        context.withPayload(configuration)
-      )),
+      ...(await updateDeviceConfigurationWithContext(context.withPayload(configuration))),
+    }
+  }
+  if (includeDeviceConfiguration) {
+    logger.debug('executing getConnectionSettings', {
+      reLabel: 'deviceApi:getConnectionSettings',
+    })
+    response = {
+      ...response,
+      ...(await getConnectionSettings(context)),
     }
   }
 
+  if (getFormsDefinition) {
+    response = {
+      ...response,
+      ...(await getCustomFields(context)),
+    }
+  }
   if (operation) {
+    logger.debug('executing addDeviceOperationWithContext', {
+      reLabel: 'deviceApi:addDeviceOperationWithContext',
+    })
     response = {
       ...response,
       ...(await addDeviceOperationWithContext(context.withPayload(operation))),
@@ -273,6 +288,9 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (result) {
+    logger.debug('executing mergeResultWithContext', {
+      reLabel: 'deviceApi:mergeResultWithContext',
+    })
     response = {
       ...response,
       ...(await mergeResultWithContext(context.withPayload(result))),
@@ -280,53 +298,136 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (log) {
-    let { data } = log
-    if (log.source === 'GeneXpert' && data) {
-      if (_.isString(data)) {
-        data = JSON.parse(data)
-      }
-      if (_.isString(data.details)) {
-        data.details = JSON.parse(data.details)
-      }
-
-      operation = {
-        id: data.externalId,
-        startedOn: data.occurredOn,
-        data: {
-          type: 'gx-log',
-          logFileName: data.logFileName,
-          logLevel: data.logLevel,
-          details: data.details,
-        },
-      }
-
-      const contextWithPayload = context.withPayload(operation)
+    if (log.source === 'GeneXpert' && log.data) {
       response = {
         ...response,
-        ...(await addDeviceOperationWithContext(contextWithPayload)),
+        ...(await processGeneXpertLogs(context, log.data, now)),
       }
-      // check if stored in table 'DeviceOperation' entry is
-      // hardware error and dispatch MQ action if needed
-      const {
-        messageContext,
-        partnerId,
-        payload,
-        parent: {
-          deviceLogUpdate: { deviceOperationId },
-        },
-      } = contextWithPayload
-      await shouldTriggerHardwareErrorAnalysis(
-        knex,
-        messageContext,
-        partnerId,
-        device,
-        payload,
-        deviceOperationId
-      )
     }
   }
 
   return response
+}
+
+async function processGeneXpertLogs(context, data, now) {
+  if (_.isString(data)) {
+    data = JSON.parse(data)
+  }
+
+  /**
+   * Notice section of `.try` in  `logPayload` in `endpoint.js` -
+   * if single log item is posted then wrap it into the array
+   */
+  if (_.isPlainObject(data)) {
+    data = [data]
+  }
+
+  /**
+   * Process all log items one by one
+   * - and return array `response.logIds` with only those id's which where processed
+   * - and store in table DeviceOperation array of successfully processed items
+   */
+  const calibrationDeviceMaintenanceTypeId = await deviceMaintenanceTypeToId('calibration')
+  const options = {
+    calibrationDeviceMaintenanceTypeId,
+    now,
+  }
+
+  let processedLogIds = []
+  await Promise.each(data, async logItem => {
+    try {
+      const logItemId = await processLogItem(context, logItem, options)
+      /**
+       * Skip touching `processedLogIds` for Cepheid db-based system logs
+       * Notice that processedLogIds are needed in GxConnect to mark record in SQLite
+       * table `Logs` that it has been processed well in Aspect.
+       * We do not mark records in Cepheid db `system_log` but only keep
+       * `settings.LastProcessedSystemLogTimeForAspect` and store it in setting.jsn.
+       */
+      if (logItem.logFileName !== 'GeneXpert DB') {
+        processedLogIds = [...processedLogIds, logItemId]
+      }
+    } catch (e) {
+      /**
+       * if error happened then we do not return this logId as processed,
+       * meaning that it will be sent again next scheduler run
+       */
+      logger.debug(`execution of processLogItem for log entry with externalId=${logItem.externalId} has failed`, {
+        reLabel: 'deviceApi:processLogItem',
+      })
+    }
+  })
+
+  return {
+    logIds: processedLogIds,
+  }
+}
+
+async function processLogItem(context, logItem, options) {
+  const { calibrationDeviceMaintenanceTypeId, now } = options
+  const { externalId, logFileName, logLevel, occurredOn } = logItem
+  let { details } = logItem
+  if (_.isString(details)) {
+    details = JSON.parse(details)
+  }
+  const { device, knex } = context
+  const payload = {
+    id: externalId,
+    startedOn: occurredOn,
+    data: {
+      type: 'gx-log',
+      logFileName,
+      logLevel,
+      details,
+    },
+  }
+
+  logger.debug('executing processLogItem', {
+    reLabel: 'deviceApi:processLogItem',
+  })
+
+  const { id: deviceOperationId } = await addDeviceOperation(knex, device.id, payload, now)
+
+  // check if stored in table 'DeviceOperation' entry is
+  // hardware error and dispatch MQ action if needed
+  await shouldTriggerHardwareErrorAnalysis(context.messageContext, device, payload, deviceOperationId)
+  // process 'calibration' log item
+  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId)
+
+  return logItem.externalId
+}
+
+async function getConnectionSettings(context) {
+  const {
+    knex,
+    device: { id: deviceId, partnerId },
+  } = context
+  const { data } =
+    (await knex('DeviceConfiguration as dc')
+      .join('Geography as g', 'g.id', 'dc.geographyId')
+      .join('Device as d', 'd.deviceTypeId', 'dc.deviceTypeId')
+      .join('Geography as deviceGeography', 'd.geographyId', 'deviceGeography.id')
+      .where({
+        'd.id': deviceId,
+        'd.deviceTypeId': knex.raw('dc.deviceTypeId'),
+        'dc.partnerId': partnerId,
+        'g.countryId': knex.raw('deviceGeography.countryId'),
+      })
+      .andWhere(builder =>
+        builder.whereNull('d.connectSettingsSentOn').orWhere('d.connectSettingsSentOn', '<', knex.raw('dc.updatedOn'))
+      )
+      .andWhere(builder => {
+        builder
+          .whereNull('g.stateId')
+          .orWhere(orBuilder =>
+            orBuilder.whereNotNull('g.stateId').andWhere('g.stateId', knex.raw('deviceGeography.stateId'))
+          )
+      })
+      .orderBy('g.stateId', 'DESC')
+      .first('data')) || {}
+
+  if (!_.isEmpty(data)) await knex('Device').update({ connectSettingsSentOn: new Date() }).where({ id: deviceId })
+  return { deviceConfiguration: _.isEmpty(data) ? null : JSON.parse(data) }
 }
 
 async function getDeviceDataWithContext(context) {
@@ -340,9 +441,7 @@ async function getDeviceDataWithContext(context) {
   // only include device data if approved
   const deviceApproved = device.approval === 'approved'
   const includeConfig = deviceApproved && includeAll
-  const includeOp =
-    deviceApproved &&
-    (includeAll || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
+  const includeOp = deviceApproved && (includeAll || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
 
   const response = { requestedOn: now.toISOString() }
   if (includeDevice) {
@@ -364,10 +463,7 @@ async function getDeviceDataWithContext(context) {
     }
 
     if (includeConfig) {
-      const config = await getDeviceConfigurationFromDeviceLog(
-        knex,
-        deviceLog.id
-      )
+      const config = await getDeviceConfigurationFromDeviceLog(knex, deviceLog.id)
       if (config != null) {
         response.configuration = config
       }
@@ -380,7 +476,6 @@ async function getDeviceDataWithContext(context) {
       }
     }
   }
-
   return response
 }
 
@@ -408,21 +503,26 @@ async function updateDeviceConfigurationWithContext(context) {
     now,
     pluginNames: plugins,
   } = context
-
-  const preProcess = await loadPlugin(
-    plugins,
-    'preProcessUpdateDeviceConfiguration'
-  )
+  const preProcess = await loadPlugin(plugins, 'preProcessUpdateDeviceConfiguration')
   await preProcess(context)
 
   await updateDeviceConfiguration(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
-  const postProcess = await loadPlugin(
-    plugins,
-    'postProcessUpdateDeviceConfiguration'
-  )
+  const postProcess = await loadPlugin(plugins, 'postProcessUpdateDeviceConfiguration')
   const postProcessResult = await postProcess(context)
+
   return postProcessResult
+}
+const getCustomFields = async context => {
+  const {
+    knex,
+    device: { id: deviceId, partnerId },
+    pluginNames: plugins,
+  } = context
+  let CustomFields = null
+  const customFields = await loadPlugin(plugins, 'getCustomFields')
+  if (customFields) CustomFields = _.get(await customFields(knex, partnerId, deviceId), 'CustomFields')
+  return { CustomFields }
 }
 
 async function getDeviceOperationWithContext(context) {
@@ -496,15 +596,8 @@ async function updateSiteWithContext(context) {
     })
   }
 
-  const postProcessUpdateSite = await loadPlugin(
-    plugins,
-    'postProcessUpdateSite'
-  )
-  await postProcessUpdateSite(
-    pluginContext,
-    { id: site.id, externalId: siteExternalId },
-    { id: device.siteId }
-  )
+  const postProcessUpdateSite = await loadPlugin(plugins, 'postProcessUpdateSite')
+  await postProcessUpdateSite(pluginContext, { id: site.id, externalId: siteExternalId }, { id: device.siteId })
 }
 
 async function mergeResultWithContext(context) {
@@ -528,51 +621,33 @@ async function mergeResultWithContext(context) {
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
 
-  const transformPayload = await loadPlugin(
-    plugins,
-    'transformMergeResultPayload'
-  )
+  const transformPayload = await loadPlugin(plugins, 'transformMergeResultPayload')
   const transformedPayload = await transformPayload(pluginContext)
-  const {
-    processedResult: result,
-    existingResult: previousResult,
-  } = await mergeResult(knex, deviceId, transformedPayload, { now })
+  const { processedResult: result, existingResult: previousResult } = await mergeResult(
+    knex,
+    deviceId,
+    transformedPayload,
+    { now }
+  )
   context.addDeviceLogUpdate('resultId', result.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
-  const postProcessResult = await postProcess(
-    pluginContext,
-    result,
-    previousResult
-  )
+  const postProcessResult = await postProcess(pluginContext, result, previousResult)
   return postProcessResult
 }
 
-async function createDeviceApiContext(
-  handler,
-  originalRequest,
-  defaultHandlerOptions
-) {
-  const handlerOptions = await getHandlerOptionsFromRequest(
-    handler,
-    originalRequest,
-    defaultHandlerOptions
-  )
+async function createDeviceApiContext(handler, originalRequest, defaultHandlerOptions) {
+  const handlerOptions = await getHandlerOptionsFromRequest(handler, originalRequest, defaultHandlerOptions)
   const request = {
     auth: originalRequest.auth,
     params: originalRequest.params,
     payload: originalRequest.payload,
     query: originalRequest.query,
   }
-  const {
-    createDevice = false,
-    deviceLogType = DEVICE_LOG_TYPE_NONE,
-  } = handlerOptions
+  const { createDevice = false, deviceLogType = DEVICE_LOG_TYPE_NONE } = handlerOptions
 
-  const messageContext = originalRequest.plugins.messageContext.bindActionCreators(
-    {
-      resultUpdated,
-    }
-  )
+  const messageContext = originalRequest.plugins.messageContext.bindActionCreators({
+    resultUpdated,
+  })
 
   const { auth } = request
   const now = new Date()
@@ -599,6 +674,7 @@ async function createDeviceApiContext(
       'd.serial',
       'd.macAddress',
       'd.configurationData',
+      'd.connectSettingsSentOn',
       'd.lastSeenOn',
       'd.putInService',
       'da.token as approval',
@@ -606,20 +682,21 @@ async function createDeviceApiContext(
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',
       'dtc.name as deviceTypeCategory',
-      'c.abbreviation as countryAbbreviation'
+      'c.abbreviation as countryAbbreviation',
+      'dak.token'
     )
   if (handlerOptions.transformInitialPayload && request.params.pluginName) {
-    const transformInitialPayload = await loadPlugin(
-      [request.params.pluginName],
-      'transformInitialPayload'
-    )
+    logger.debug('Set up transforminitialpayload plugin function', {
+      reLabel: 'deviceApi:createDeviceApiContext',
+    })
+    const transformInitialPayload = await loadPlugin([request.params.pluginName], 'transformInitialPayload')
 
-    if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation)
-      request.payload = await transformInitialPayload(
-        originalRequest,
-        existingDeviceAndData.countryAbbreviation
-      )
-    else request.payload = await transformInitialPayload(originalRequest)
+    if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation) {
+      logger.debug('Transforming the payload base on the function plugin', {
+        reLabel: 'deviceApi:createDeviceApiContext',
+      })
+      request.payload = await transformInitialPayload(originalRequest, existingDeviceAndData.countryAbbreviation)
+    } else request.payload = await transformInitialPayload(originalRequest)
   }
 
   let device = null
@@ -684,9 +761,7 @@ async function createDeviceApiContext(
     context.deviceLog = lastDeviceLog || null
 
     return {
-      error:
-        lastDeviceLog == null &&
-        Boom.notFound('Cannot find Logs records for the specific device'),
+      error: lastDeviceLog == null && Boom.notFound('Cannot find Logs records for the specific device'),
       context,
     }
   }
@@ -698,7 +773,9 @@ async function createDeviceApiContext(
 function createNewDeviceFromRequest(request, now) {
   return transact(async knex => {
     const { auth } = request
-
+    logger.debug('Create new device from request', {
+      reLabel: 'deviceApi:createNewDeviceFromRequest',
+    })
     // Find API Key to use as template for new device
     const partnerApiKey = await knex('DeviceApiKey as k')
       .where({
@@ -710,31 +787,21 @@ function createNewDeviceFromRequest(request, now) {
       .first('k.id', 'k.partnerId', 'k.geographyId', 'k.siteId', 'p.plugin')
     if (partnerApiKey == null) {
       return {
-        error: Boom.notFound(
-          'Cannot find available API Key when creating new device'
-        ),
+        error: Boom.notFound('Cannot find available API Key when creating new device'),
       }
     }
-    const deviceTypePlugin = await deviceTypeToPlugin(
-      _.get(request, 'payload.type.id')
-    )
+    const deviceTypePlugin = await deviceTypeToPlugin(_.get(request, 'payload.type.id'))
     const apiKey = _.assign({}, partnerApiKey, {
       plugins: [_.get(partnerApiKey, 'plugin'), deviceTypePlugin],
     })
 
     // Require Device Type when creating device
-    const transformNewDevicePayload = await loadPlugin(
-      apiKey.plugins,
-      'transformNewDevicePayload'
-    )
+    const transformNewDevicePayload = await loadPlugin(apiKey.plugins, 'transformNewDevicePayload')
     const payload = await transformNewDevicePayload({
       payload: request.payload,
     })
 
-    const preProcessCreateDevice = await loadPlugin(
-      apiKey.plugins,
-      'preProcessCreateDevice'
-    )
+    const preProcessCreateDevice = await loadPlugin(apiKey.plugins, 'preProcessCreateDevice')
     const existingDevice = await preProcessCreateDevice(request, now)
 
     if (!_.isEmpty(existingDevice)) {
@@ -744,26 +811,32 @@ function createNewDeviceFromRequest(request, now) {
     const deviceTypeExternalId = _.get(payload, 'type.id', null)
     if (deviceTypeExternalId == null) {
       return {
-        error: Boom.badRequest(
-          'Must specify device type on first request with new key'
-        ),
+        error: Boom.badRequest('Must specify device type on first request with new key'),
       }
     }
 
+    const siteExternalId = _.get(payload, 'site.id', null)
+    let defaultSite = {}
+    logger.debug(siteExternalId && !apiKey.geographyId && !apiKey.siteId, {
+      reLabel: 'deviceApi:createNewDevice',
+    })
+    if (siteExternalId && !apiKey.geographyId && !apiKey.siteId)
+      defaultSite = await knex('Site as s').where('externalId', siteExternalId).first()
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,
       serial: payload.serial,
       partnerId: apiKey.partnerId,
-      siteId: apiKey.siteId,
-      geographyId: apiKey.geographyId,
+      siteId: apiKey.siteId || _.get(defaultSite, 'id', null),
+      geographyId: apiKey.geographyId || _.get(defaultSite, 'geographyId', null),
       approval: apiKey.siteId ? 'approved' : 'provisioned',
+      timezone: _.get(payload, 'configuration.data.timezone', null),
     })
-
+    logger.debug('Assign new device an api key', {
+      reLabel: 'deviceApi:createNewDeviceFromRequest',
+    })
     // Assign new device to API Key
-    await knex('DeviceApiKey')
-      .where({ id: apiKey.id })
-      .update({ deviceId: device.id, updatedOn: now })
+    await knex('DeviceApiKey').where({ id: apiKey.id }).update({ deviceId: device.id, updatedOn: now })
 
     return { device, error }
   })
@@ -817,27 +890,19 @@ class DeviceApiContext {
 function addDeviceLogResultConstraints(queryBuilder) {
   queryBuilder
     .join('Result as r', 'dl.resultId', 'r.id')
-    .join(
-      'ResultWorkflowLog as resultworkflowsl',
-      'r.resultWorkflowStatusLogId',
-      'resultworkflowsl.id'
-    )
-    .join(
-      'ResultWorkflowStatus as rws',
-      'resultworkflowsl.resultWorkflowStatusId',
-      'rws.id'
-    )
+    .join('ResultWorkflowLog as resultworkflowsl', 'r.resultWorkflowStatusLogId', 'resultworkflowsl.id')
+    .join('ResultWorkflowStatus as rws', 'resultworkflowsl.resultWorkflowStatusId', 'rws.id')
     .where('rws.externalId', 'Deliverable')
     .where('rws.externalId', '<>', 'Purged')
 }
 
-async function onResultUpdated(
-  { resultId, deviceLogId, userId },
-  { messageContext }
-) {
+async function onResultUpdated({ resultId, deviceLogId, userId }, { messageContext }) {
   if (!resultId) {
     throw new Error('Must specify resultId in Action')
   }
+  logger.debug(`onResultUpdated inserting in DeviceLog table for resultId:${resultId}`, {
+    reLabel: 'deviceApi:onResultUpdated',
+  })
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
@@ -874,22 +939,20 @@ async function onResultLogged(action, context) {
         .leftJoin('Device as d', 'r.deviceId', 'd.id')
         .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
         .where({ 'r.id': action.resultId })
-        .first(
-          'p.plugin as partnerPluginName',
-          'dt.plugin as deviceTypePluginName'
-        )) || {}
-    const pluginOnResultLogged = await loadPlugin(
-      [partnerPluginName, deviceTypePluginName],
-      'onResultLogged'
-    )
-    await pluginOnResultLogged(action, context)
-    context.messageContext.queue.dispatch(
-      resultLoggedProcessed(action.resultId, action.deviceLogId),
-      undefined,
+        .first('p.plugin as partnerPluginName', 'dt.plugin as deviceTypePluginName')) || {}
+    logger.debug(
+      [
+        `onResultLogged locating the plugin function on resultId:${action.resultId} for partnerPlugin:${partnerPluginName} or devicePlugin:${deviceTypePluginName}`,
+      ],
       {
-        expiration: 60000,
+        reLabel: 'deviceApi:onResultLogged',
       }
     )
+    const pluginOnResultLogged = await loadPlugin([partnerPluginName, deviceTypePluginName], 'onResultLogged')
+    await pluginOnResultLogged(action, context)
+    context.messageContext.queue.dispatch(resultLoggedProcessed(action.resultId, action.deviceLogId), undefined, {
+      expiration: 60000,
+    })
   })
 }
 
@@ -959,12 +1022,8 @@ async function getNotificationsByCountry(knex) {
       'c.a3 as A3',
       'c.name as Country',
       knex.raw("date(date_format(n.createdOn,'%Y-%m-01')) as Date"),
-      knex.raw(
-        'sum(case when emailMessageId  is not null then 1 else 0 end) as Email '
-      ),
-      knex.raw(
-        'sum(case when smsMessageId is not null then 1 else 0 end) as Sms '
-      )
+      knex.raw('sum(case when emailMessageId  is not null then 1 else 0 end) as Email '),
+      knex.raw('sum(case when smsMessageId is not null then 1 else 0 end) as Sms ')
     )
     .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
     .orderBy('Date', 'asc')
@@ -1017,4 +1076,6 @@ module.exports = {
   onResultUpdated,
   onResultLogged,
   getHealthStatsHandler,
+  getCustomFields,
+  getResultPakistanHandler,
 }

@@ -1,9 +1,5 @@
 const Joi = require('@hapi/joi')
-const {
-  asyncHandler,
-  validateDateRangeParams,
-  validateSortPageParams,
-} = require('../routes')
+const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const {
   summaryDashboard,
   targetDashboard,
@@ -33,9 +29,46 @@ const routes = [
           dashboard: Joi.string()
             .allow('', null)
             .valid('home', 'operational')
-            .description(
-              'Dashboard token where requested data to be displayed'
-            ),
+            .description('Dashboard token where requested data to be displayed'),
+        },
+      },
+      response: {
+        schema: {
+          ok: Joi.bool().required(),
+          data: Joi.array().items(
+            Joi.object().keys({
+              id: Joi.number().integer().required(),
+              title: Joi.string().max(255).required(),
+              titleI18nKey: Joi.string().max(255).allow('', null),
+              subTitle: Joi.string().max(255).allow('', null),
+              subTitleI18nKey: Joi.string().max(255).allow('', null),
+              link: Joi.string().max(500).allow('', null),
+              externalId: Joi.string().max(500).required(),
+              description: Joi.string().max(500).allow('', null),
+              descriptionI18nKey: Joi.string().max(255).allow('', null),
+              dashboards: Joi.string().max(2048).allow('', null),
+              linkParams: Joi.string().max(255).allow('', null),
+              percentage: Joi.string()
+                .optional()
+                .allow('', null)
+                .description('returns the percetage with the format ##%'),
+              options: Joi.alternatives().try(Joi.string(), Joi.object()).allow(null, ''),
+              icon: Joi.string().max(50).allow('', null),
+              statUnit: Joi.string().max(50).allow('', null),
+              statUnitI18nKey: Joi.string().max(255).allow('', null),
+              statStatus: Joi.string().max(255).allow('', null),
+              statStatusI18nKey: Joi.string().max(255).allow('', null),
+              extraUnit: Joi.string().max(50).allow('', null),
+              extraUnitI18nKey: Joi.string().max(255).allow('', null),
+              extraLabel: Joi.string().max(255).allow('', null),
+              extraLabelI18nKey: Joi.string().max(255).allow('', null),
+              dashboardWidgetId: Joi.number().integer().required(),
+              count: Joi.alternatives().try(Joi.string().max(50), Joi.number()).required(),
+              unit: Joi.alternatives().try(Joi.string().max(50), Joi.number()).allow(null, ''),
+              extra: Joi.string().max(1024).allow('', null),
+              alert: Joi.alternatives().try(Joi.string(), Joi.object()).allow(null, ''),
+            })
+          ),
         },
       },
     },
@@ -104,12 +137,7 @@ const routes = [
       validate: {
         query: {
           siteId: Joi.number().allow('').description('Filter for Site ID'),
-          ...validateSortPageParams(
-            'issueStatusSortOrder',
-            'siteName',
-            'deviceName',
-            'message'
-          ),
+          ...validateSortPageParams('issueStatusSortOrder', 'siteName', 'deviceName', 'message'),
         },
       },
     },
@@ -120,19 +148,12 @@ const routes = [
     handler: asyncHandler(activityOverTimeDashboard),
     config: {
       description: 'Device Activity Rate Over Time',
-      notes:
-        'Gets the number of devices grouped by activity category, by day, in the given date range',
+      notes: 'Gets the number of devices grouped by activity category, by day, in the given date range',
       auth: { scope: ['site', 'device', 'dashboard'] },
       validate: {
         query: {
-          minDate: Joi.date()
-            .iso()
-            .required()
-            .description('From Date, inclusive'),
-          maxDate: Joi.date()
-            .iso()
-            .required()
-            .description('To Date, inclusive'),
+          minDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('From Date, inclusive'),
+          maxDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('To Date, inclusive'),
         },
       },
       response: {
@@ -140,32 +161,20 @@ const routes = [
           allowUnknown: false,
         },
         schema: Joi.object().keys({
-          ok: Joi.bool()
-            .required()
-            .description('False if there was some sort of error'),
+          ok: Joi.bool().required().description('False if there was some sort of error'),
           data: Joi.array()
             .required()
-            .description(
-              'List of days in the given date range along with activity category counts'
-            )
+            .description('List of days in the given date range along with activity category counts')
             .items(
               Joi.object().keys({
-                date: Joi.date().description(
-                  'Day that the aggregations were calculated for'
-                ),
-                devicesActive: Joi.number().description(
-                  'The number of devices that were active that day'
-                ),
-                devicesInactive: Joi.number().description(
-                  'The number of devices that were inactive that day'
-                ),
-                devicesTotal: Joi.number().description(
-                  'The total number of devices in the system as of that day'
-                ),
+                date: Joi.date().description('Day that the aggregations were calculated for'),
+                devicesActive: Joi.number().description('The number of devices that were active that day'),
+                devicesInactive: Joi.number().description('The number of devices that were inactive that day'),
+                devicesTotal: Joi.number().description('The total number of devices in the system as of that day'),
                 inactiveUnknown: Joi.number().description(
                   'The number of inactive "Unknown" devices in the system as of that day'
                 ),
-                inactiveNoResultsReported: Joi.number().description(
+                inactiveNoTestsPerformed: Joi.number().description(
                   'The number of inactive "NoResultsReported" devices in the system as of that day'
                 ),
                 inactiveOutOfInventory: Joi.number().description(
@@ -174,14 +183,21 @@ const routes = [
                 inactiveDownForRepair: Joi.number().description(
                   'The number of inactive "DownForRepair" devices in the system as of that day'
                 ),
-                inactiveConnectivity: Joi.number().description(
-                  'The number of inactive "Connectivity" devices in the system as of that day'
-                ),
                 inactiveDecommissioned: Joi.number().description(
                   'The number of inactive "Decommissioned" devices in the system as of that day'
                 ),
-                isWeekendOrHoliday: Joi.bool().description(
-                  'Indicates whether the day is a weekend day or a holiday.'
+                isWeekendOrHoliday: Joi.bool().description('Indicates whether the day is a weekend day or a holiday.'),
+                inactiveNoStaff: Joi.number().description(
+                  'The number of inactive "No Staff" devices in the system as of that day'
+                ),
+                inactiveNoSamples: Joi.number().description(
+                  'The number of inactive "No Samples" devices in the system as of that day'
+                ),
+                inactiveNoPower: Joi.number().description(
+                  'The number of inactive "No Power" devices in the system as of that day'
+                ),
+                inactiveOther: Joi.number().description(
+                  'The number of inactive "Other" devices in the system as of that day'
                 ),
               })
             ),

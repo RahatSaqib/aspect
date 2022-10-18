@@ -14,15 +14,9 @@ async function createStreamFromFileReference(knex, fileReferenceId) {
 }
 
 async function getPathFromFileReferenceId(knex, fileReferenceId) {
-  const ref = await knex('FileReference')
-    .where({ id: fileReferenceId })
-    .first('name')
+  const ref = await knex('FileReference').where({ id: fileReferenceId }).first('name')
   if (ref != null) {
-    const refPath = path.join(
-      config.file.reference.directory,
-      String(fileReferenceId),
-      ref.name
-    )
+    const refPath = path.join(config.file.reference.directory, String(fileReferenceId), ref.name)
     return refPath
   }
   return null

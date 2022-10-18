@@ -8,14 +8,7 @@ const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 const now = new Date()
 async function seed(knex) {
-  const {
-    partnerId,
-    labGeographyId,
-    labSiteId,
-    labName,
-    labExternalId,
-    countryId,
-  } = await knex('Partner as p')
+  const { partnerId, labGeographyId, labSiteId, labName, labExternalId, countryId } = await knex('Partner as p')
     .join('Device as d', 'p.id', 'd.partnerId')
     .join('Site as s', 's.id', 'd.siteId')
     .join('Geography as g', 's.geographyId', 's.geographyId')
@@ -31,9 +24,7 @@ async function seed(knex) {
       'g.countryId'
     )
 
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -41,9 +32,9 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const covidDeviceTypes = (
-    await upsertCovidDeviceTypes(knex, partnerId)
-  ).filter(deviceType => deviceType.externalId !== 'Aspect')
+  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex, partnerId)).filter(
+    deviceType => deviceType.externalId !== 'Aspect'
+  )
   await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
   const deviceTypeAssays = {}
   await Promise.each(
@@ -69,10 +60,7 @@ async function seed(knex) {
       await knex('Device').insert({
         ...auditFields,
         name: `${labName} ${covidDeviceType.name}`.substr(0, 255),
-        shortName: `${labExternalId}_${covidDeviceType.externalId}`.substr(
-          0,
-          45
-        ),
+        shortName: `${labExternalId}_${covidDeviceType.externalId}`.substr(0, 45),
         deviceTypeId: covidDeviceType.id,
         deviceApprovalId: deviceApprovalApprovedId,
         partnerId,
@@ -82,12 +70,8 @@ async function seed(knex) {
         ...auditFields,
         lastPingOn: new Date(+now),
         lastSeenOn: new Date(+now),
-        hostId: _.times(8, () =>
-          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
-        serial: _.times(24, () =>
-          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
+        hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+        serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
       })
     }
   })

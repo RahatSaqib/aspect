@@ -24,7 +24,7 @@ describe('account details endpoints', () => {
         })
       })
 
-      it('Should respond with a the data returned from the service', done => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {
@@ -49,7 +49,7 @@ describe('account details endpoints', () => {
         })
       })
 
-      it('Should respond with a the data returned from the service', done => {
+      it('Should respond with the data returned from the service', done => {
         endpointUtils
           .callHandlerOn(endpoint)
           .handleResponseWith(response => {

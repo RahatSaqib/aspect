@@ -1,0 +1,16 @@
+{
+  "ct1": 29.0,
+  "ct2": 12.1,
+  "ct3": 19.8,
+  "status": "Complete",
+  "labName": "City TB Lab",
+  "ctLabel1": "Control Ct",
+  "ctLabel2": "Rif Resistance",
+  "ctLabel3": "Rif Resistance",
+  "testName": "Truenat MTB",
+  "ctResult1": "Detected",
+  "ctResult2": "Detected",
+  "ctResult3": "Detected",
+  "finalResult": "Rif Resistance Detected",
+  "validityStatus": "Valid"
+}

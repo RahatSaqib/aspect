@@ -7,7 +7,16 @@
       "order": 0,
       "caption": "QC1 value",
       "i18nKeyCaption": "i18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "condition": [
+        {
+          "conjunction": "AND",
+          "propToCompare": "anySymptomsOrSignsAtTimeOfSpecimenCollection",
+          "valueToCompare": "unknown",
+          "operator": "!==",
+          "conjunctionGroupName": "anySymptomsOrSignsAtTimeOfSpecimenCollectionGroup"
+        }
+      ]
     },
     {
       "name": "QC2",

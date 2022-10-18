@@ -1,0 +1,207 @@
+{
+  "CustomFields": {
+    "Fields": [
+      {
+        "Id": 117,
+        "Name": "ReferringHealthFacilityProvince",
+        "ExternalId": "ReferringHealthFacilityProvince",
+        "Label": "Referring Health Facility Province",
+        "Control": "AutoComplete",
+        "Type": "string",
+        "DisplayOrder": 40,
+        "InputControlData": {
+          "optional": true,
+          "options": [
+            {
+              "value": "Punjab",
+              "text": "Punjab",
+              "displayOrder": 0
+            },
+            {
+              "value": "Sindh",
+              "text": "Sindh",
+              "displayOrder": 1
+            },
+            {
+              "value": "Balochistan",
+              "text": "Balochistan",
+              "displayOrder": 3
+            },
+            {
+              "value": "Khyber Pakhtunkhwa",
+              "text": "Khyber Pakhtunkhwa",
+              "displayOrder": 4
+            },
+            {
+              "value": "FATA",
+              "text": "FATA",
+              "displayOrder": 5
+            },
+            {
+              "value": "Azad Jammu & Kahmir",
+              "text": "Azad Jammu & Kahmir",
+              "displayOrder": 6
+            },
+            {
+              "value": "Gilgit Baltistan",
+              "text": "Gilgit Baltistan",
+              "displayOrder": 7
+            },
+            {
+              "value": "Islamabad & CT",
+              "text": "Islamabad & CT",
+              "displayOrder": 8
+            }
+          ]
+        }
+      },
+      {
+        "Id": 118,
+        "Name": "ReferringHealthFacilityDistrict",
+        "ExternalId": "ReferringHealthFacilityDistrict",
+        "Label": "Referring Health Facility District",
+        "Control": "AutoComplete",
+        "Type": "string",
+        "DisplayOrder": 45,
+        "InputControlData": {
+          "optional": false,
+          "options": [
+            {
+              "value": "Attock",
+              "text": "Attock",
+              "displayOrder": 0,
+              "state": "Punjab"
+            },
+            {
+              "value": "Bahawalnagar",
+              "text": "Bahawalnagar",
+              "displayOrder": 1,
+              "state": "Punjab"
+            },
+            {
+              "value": "Bahawalpur",
+              "text": "Bahawalpur",
+              "displayOrder": 2,
+              "state": "Punjab"
+            },
+            {
+              "value": "Thatha",
+              "text": "Thatha",
+              "displayOrder": 22,
+              "state": "Sindh"
+            },
+            {
+              "value": "Umerkot",
+              "text": "Umerkot",
+              "displayOrder": 23,
+              "state": "Sindh"
+            },
+            {
+              "value": "Zhob",
+              "text": "Zhob",
+              "displayOrder": 27,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Ziarat",
+              "text": "Ziarat",
+              "displayOrder": 28,
+              "state": "Balochistan"
+            },
+            {
+              "value": "Abbottabad",
+              "text": "Abbottabad",
+              "displayOrder": 0,
+              "state": "KP"
+            },
+            {
+              "value": "Bannu",
+              "text": "Bannu",
+              "displayOrder": 1,
+              "state": "KP"
+            },
+            {
+              "value": "Battagram",
+              "text": "Battagram",
+              "displayOrder": 2,
+              "state": "KP"
+            },
+            {
+              "value": "Tank",
+              "text": "Tank",
+              "displayOrder": 22,
+              "state": "KP"
+            },
+            {
+              "value": "Upper Dir",
+              "text": "Upper Dir",
+              "displayOrder": 23,
+              "state": "KP"
+            },
+            {
+              "value": "Bajour Agency",
+              "text": "Bajour Agency",
+              "displayOrder": 0,
+              "state": "FATA"
+            },
+            {
+              "value": "Khyber Agency",
+              "text": "Khyber Agency",
+              "displayOrder": 1,
+              "state": "FATA"
+            },
+            {
+              "value": "Bagh",
+              "text": "Bagh",
+              "displayOrder": 0,
+              "state": "AJK"
+            },
+            {
+              "value": "Bhimber",
+              "text": "Bhimber",
+              "displayOrder": 1,
+              "state": "AJK"
+            },
+            {
+              "value": "Poonch",
+              "text": "Poonch",
+              "displayOrder": 8,
+              "state": "AJK"
+            },
+            {
+              "value": "Sudhnoti",
+              "text": "Sudhnoti",
+              "displayOrder": 9,
+              "state": "AJK"
+            },
+            {
+              "value": "Astore",
+              "text": "Astore",
+              "displayOrder": 0,
+              "state": "GB"
+            },
+            {
+              "value": "Skardu",
+              "text": "Skardu",
+              "displayOrder": 9,
+              "state": "GB"
+            },
+            {
+              "value": "Islamabad",
+              "text": "Islamabad",
+              "displayOrder": 0,
+              "state": "ICT"
+            }
+          ],
+          "filters": [
+            {
+              "operator": "=",
+              "refId": 117,
+              "propName": "state"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

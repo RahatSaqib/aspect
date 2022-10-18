@@ -1,10 +1,6 @@
 module.exports = require('../src/db').migration(up, down)
 
-const {
-  addCreateFieldsNullable,
-  addUpdateFieldsNullable,
-  addTimestamps,
-} = require('./utils/index')
+const { addCreateFieldsNullable, addUpdateFieldsNullable, addTimestamps } = require('./utils/index')
 
 async function up(knex) {
   await knex.schema.table('Partner', x => {
@@ -13,16 +9,8 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('FactInventoryConsumptionRate', x => {
-    x.integer('siteId')
-      .unsigned()
-      .notNullable()
-      .references('id')
-      .inTable('Site')
-    x.integer('consumableId')
-      .unsigned()
-      .notNullable()
-      .references('id')
-      .inTable('Consumable')
+    x.integer('siteId').unsigned().notNullable().references('id').inTable('Site')
+    x.integer('consumableId').unsigned().notNullable().references('id').inTable('Consumable')
     x.integer('days').unsigned().notNullable()
     // for 'rate' use float - because daily rate is calculated as "totals for last 10 days with at least 1 test"/10
     x.float('rate').notNullable()
@@ -36,7 +24,6 @@ async function up(knex) {
     issueStatusSeverity.string('i18nKey').notNullable()
     issueStatusSeverity.string('externalId').notNullable()
     issueStatusSeverity.integer('sortOrder').unsigned().notNullable()
-    issueStatusSeverity.charset('utf8')
   })
 
   await knex('IssueStatusSeverity').insert({
@@ -79,7 +66,6 @@ async function up(knex) {
     fileContentType.string('mimeType')
     // plain html | png jpeg | mpeg | webm | json octet-stream
     fileContentType.string('mimeSubtype')
-    fileContentType.charset('utf8')
   })
 
   await knex.schema.createTable('FileReference', fileReference => {
@@ -95,17 +81,10 @@ async function up(knex) {
     fileReference.integer('length')
     addCreateFieldsNullable(fileReference)
     addUpdateFieldsNullable(fileReference)
-    fileReference.charset('utf8')
   })
 
   await knex.schema.createTable('ResultFileReference', resultFileReference => {
-    resultFileReference
-      .integer('resultId')
-      .unsigned()
-      .notNullable()
-      .index()
-      .references('id')
-      .inTable('Result')
+    resultFileReference.integer('resultId').unsigned().notNullable().index().references('id').inTable('Result')
     resultFileReference
       .integer('fileReferenceId')
       .unsigned()
@@ -114,7 +93,6 @@ async function up(knex) {
       .references('id')
       .inTable('FileReference')
     resultFileReference.primary(['resultId', 'fileReferenceId'])
-    resultFileReference.charset('utf8')
   })
 
   await knex.schema.createTable('WebhookTemplate', webhookTemplate => {
@@ -146,75 +124,31 @@ async function up(knex) {
     webhookTemplate.string('fileName')
     addCreateFieldsNullable(webhookTemplate)
     addUpdateFieldsNullable(webhookTemplate)
-    webhookTemplate.charset('utf8')
   })
 
   await knex.schema.createTable('WebhookMessage', webhookMessage => {
     webhookMessage.increments('id')
-    webhookMessage
-      .integer('webhookTemplateId')
-      .unsigned()
-      .references('id')
-      .inTable('WebhookTemplate')
-      .notNullable()
-    webhookMessage
-      .integer('messageStatusId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageStatus')
-      .notNullable()
-    webhookMessage
-      .integer('personId')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-    webhookMessage
-      .integer('siteId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Site')
-    webhookMessage
-      .integer('deviceId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Device')
-    webhookMessage
-      .integer('resultId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Result')
-    webhookMessage
-      .integer('fileReferenceId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('FileReference')
+    webhookMessage.integer('webhookTemplateId').unsigned().references('id').inTable('WebhookTemplate').notNullable()
+    webhookMessage.integer('messageStatusId').unsigned().references('id').inTable('MessageStatus').notNullable()
+    webhookMessage.integer('personId').unsigned().references('id').inTable('Person')
+    webhookMessage.integer('siteId').unsigned().index().references('id').inTable('Site')
+    webhookMessage.integer('deviceId').unsigned().index().references('id').inTable('Device')
+    webhookMessage.integer('resultId').unsigned().index().references('id').inTable('Result')
+    webhookMessage.integer('fileReferenceId').unsigned().index().references('id').inTable('FileReference')
     // Full URL with template vars replaced
     webhookMessage.string('url')
     webhookMessage.specificType('headers', 'JSON')
     webhookMessage.specificType('params', 'JSON')
     webhookMessage.text('payload')
     addTimestamps(webhookMessage)
-    webhookMessage.charset('utf8')
   })
 
   await knex.schema.table('MessageType', messageType => {
-    messageType
-      .integer('webhookTemplateId')
-      .unsigned()
-      .references('id')
-      .inTable('WebhookTemplate')
+    messageType.integer('webhookTemplateId').unsigned().references('id').inTable('WebhookTemplate')
   })
 
   await knex.schema.table('Notification', notification => {
-    notification
-      .integer('webhookMessageId')
-      .unsigned()
-      .references('id')
-      .inTable('WebhookMessage')
+    notification.integer('webhookMessageId').unsigned().references('id').inTable('WebhookMessage')
   })
 }
 

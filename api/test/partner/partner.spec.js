@@ -7,10 +7,10 @@ const { assert } = chai
 
 describe('Partner routes', () => {
   const path = '/api/partner'
-
-  describe('GET', () => {
+  before(() => {
     shared.checkToken(server, path)
-
+  })
+  describe('GET', () => {
     it('should return a list of partners when using valid token', done => {
       server
         .get(path)

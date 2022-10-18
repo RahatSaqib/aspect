@@ -1,0 +1,395 @@
+const _ = require('lodash')
+const Promise = require('bluebird')
+const Boom = require('@hapi/boom')
+const { formatDateOrDefault, parseDateOrDefault } = require('../../../shared/date')
+const { getRemoteAddress } = require('../../../shared/request')
+const { SynchronousDataProcessor } = require('../_base')
+const { postPayloadFromDevice } = require('../../../device/service')
+const { deviceSeen } = require('../../../device/actions')
+const { transact } = require('../../../db')
+const {
+  resultSourceToId,
+  resultTypeToId,
+  allSampleTypeToId,
+  allResultCategoryToId,
+  allResultWorkflowStatusToId,
+} = require('../../../shared/dictionary')
+const { resultLogged } = require('../../../result/actions')
+
+const sampleTypeMappings = { Sputum: 'Sputum' }
+
+class TruenatResult extends SynchronousDataProcessor {
+  constructor(request, messageContext) {
+    super(request, messageContext)
+    this.encryptRawData = false
+    this.timeoutMilliseconds = 60000
+    this.processRequest = this.processRequest.bind(this)
+    this.getResponse = this.getResponse.bind(this)
+    this.response = {}
+  }
+
+  static async canProcessRequest(request) {
+    const { params } = request
+    const path = _.get(params, 'params', '').toLowerCase()
+    return Promise.resolve(path.startsWith('truelab/results/upload'))
+  }
+
+  async processRequest() {
+    const { request } = this
+    const { auth, payload } = request
+    this.response = { deviceApiRawId: this.id }
+    const utcNow = new Date()
+
+    try {
+      await transact(async knex => {
+        const {
+          deviceId,
+          partnerId,
+          siteId,
+          geographyId,
+          longitude,
+          latitude,
+          deviceDefaultReportableSiteId,
+          siteExternalId,
+          deviceTypeExternalId,
+        } = await getDeviceDetailsFromApiKey(knex, auth.credentials.token)
+
+        if (!deviceId) {
+          throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
+        }
+
+        const {
+          rawMessage,
+          patientName,
+          patientId,
+          sampleTypeName,
+          testName,
+          patientAge,
+          patientGender,
+          resultStatus,
+          finalResult,
+          validityStatus,
+          senderOperator,
+          labName,
+          doctorName,
+          ctLabel1,
+          ct1,
+          ctResult1,
+          ctLabel2,
+          ct2,
+          ctResult2,
+          cLabel3,
+          ct3,
+          ctResult3,
+          notes,
+          date,
+          time,
+        } = getDetailsFromRequest(request)
+
+        const assay = await getAssay(knex, testName)
+
+        const sampleExternalId = generateSampleExternalId(
+          deviceTypeExternalId,
+          assay.abbreviation,
+          siteExternalId,
+          patientId || patientName,
+          sampleTypeName
+        )
+        const sampleTypeId = await getSampleTypeId(sampleTypeName)
+        const sampleId = await getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, deviceDefaultReportableSiteId)
+
+        const resultCategory1 = await determineResultCategory1Id(finalResult, assay.externalId)
+
+        const resultTime = parseDateOrDefault(`${date} ${time}`, {
+          formatString: 'yyyy-MM-dd HH-mm-ss',
+          backupDate: utcNow,
+        })
+        let resultExternalId = generateResultExternalId(sampleExternalId, resultTime)
+        const existingResult = await knex('Result')
+          .where({ externalId: resultExternalId, deviceId })
+          .orWhere({ sampleId, siteId, assayId: assay.id })
+          .first()
+
+        const resultSourceId = await resultSourceToId('DiagnosticDevice')
+        const resultTypeId = await resultTypeToId('Patient')
+        const newResultDetails = {
+          partnerId,
+          geographyId,
+          siteId,
+          deviceId,
+          assayId: assay.id,
+          longitude,
+          latitude,
+          resultSourceId,
+          resultTypeId,
+          patientData: JSON.stringify({
+            doctorName,
+            id: patientId,
+            patientName,
+            gender: patientGender,
+            age: patientAge,
+          }),
+          resultData: JSON.stringify({
+            finalResult,
+            status: resultStatus,
+            validityStatus,
+            ctLabel1,
+            ct1,
+            ctResult1,
+            ctLabel2,
+            ct2,
+            ctResult2,
+            cLabel3,
+            ct3,
+            ctResult3,
+            labName,
+            testName,
+          }),
+          rawData: rawMessage,
+          updatedOn: utcNow,
+          sampleId,
+          resultCategory1,
+          senderOperator,
+          notes,
+          reportableSiteId: _.get(existingResult, 'reportableSiteId') || deviceDefaultReportableSiteId || siteId,
+        }
+        if (resultTime) {
+          newResultDetails.startedOn = resultTime
+          if (['Complete', 'Aborted'].includes(resultStatus)) {
+            newResultDetails.endedOn = resultTime
+          }
+        }
+        const result = {
+          createdOn: utcNow,
+          ...(existingResult || {}),
+          ...newResultDetails,
+          externalId: resultExternalId,
+        }
+        if (!result.id) {
+          const [resultId] = await knex('Result').insert(result)
+          result.id = resultId
+        } else {
+          resultExternalId = existingResult.externalId
+          await knex('Result').where('id', result.id).update(newResultDetails)
+        }
+
+        const deviceLogId = await postPayloadFromDevice(
+          {
+            deviceId,
+            source: 'Diagnostic Device POST',
+            senderIp: getRemoteAddress(request),
+            resultId: result.id,
+            rawMessage: JSON.stringify(request.plugins.rawPayload),
+          },
+          knex
+        )
+
+        await logResultWorkflow(
+          knex,
+          this.messageContext,
+          result.id,
+          resultStatus,
+          validityStatus,
+          senderOperator,
+          labName,
+          utcNow,
+          result.resultWorkflowStatusLogId,
+          deviceLogId
+        )
+
+        this.messageContext.dispatch(deviceSeen(deviceId))
+        this.response.resultExternalId = resultExternalId
+      })
+      this.response.success = true
+      this.responseStatusCode = 201
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(JSON.stringify(payload))
+      throw e
+    }
+  }
+
+  async getResponse() {
+    return Promise.resolve(this.response)
+  }
+}
+
+async function getDeviceDetailsFromApiKey(knex, deviceApiToken) {
+  const deviceDetails = await knex('DeviceApiKey as dak')
+    .join('Device as d', 'dak.deviceId', 'd.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .where('dak.token', deviceApiToken)
+    .first(
+      'dak.deviceId',
+      'd.partnerId',
+      'd.siteId',
+      's.geographyId',
+      's.longitude',
+      's.latitude',
+      'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
+      's.externalId as siteExternalId',
+      'dt.externalId as deviceTypeExternalId'
+    )
+  return deviceDetails || {}
+}
+
+function getDetailsFromRequest(request) {
+  const {
+    payload,
+    plugins: { rawPayload },
+  } = request
+  return {
+    rawMessage: JSON.stringify(rawPayload),
+    patientName: _.get(payload, 'PatientName'),
+    patientId: _.get(payload, 'PatientID'),
+    sampleTypeName: _.get(payload, 'SampleType'),
+    testName: _.get(payload, 'TestName'),
+    patientAge: _.get(payload, 'Age'),
+    patientGender: _.get(payload, 'Gender'),
+    resultStatus: _.get(payload, 'Status'),
+    finalResult: _.get(payload, 'FinalResult'),
+    validityStatus: _.get(payload, 'ValidityStatus'),
+    senderOperator: _.get(payload, 'User'),
+    labName: _.get(payload, 'LabName'),
+    doctorName: _.get(payload, 'DoctorName'),
+    ctLabel1: _.get(payload, 'CtLabel1'),
+    ct1: _.get(payload, 'Ct1'),
+    ctResult1: _.get(payload, 'CtResult1'),
+    ctLabel2: _.get(payload, 'CtLabel2'),
+    ct2: _.get(payload, 'Ct2'),
+    ctResult2: _.get(payload, 'CtResult2'),
+    cLabel3: _.get(payload, 'CtLabel3'),
+    ct3: _.get(payload, 'Ct3'),
+    ctResult3: _.get(payload, 'CtResult3'),
+    notes: _.get(payload, 'Notes'),
+    date: _.get(payload, 'Date'),
+    time: _.get(payload, 'Time'),
+  }
+}
+
+async function getAssay(knex, testName) {
+  const assayExternalId =
+    {
+      MTB: 'assayTruenatMtb',
+      'MTB Plus': 'assayTruenatMtbPlus',
+      'MTB RIF': 'assayTruenatRif',
+    }[testName] || 'assayTruenatUnknown'
+  const assay = await knex('Assay').where('externalId', assayExternalId).first()
+  return assay
+}
+
+function generateSampleExternalId(
+  deviceTypeExternalId,
+  assayAbbreviation,
+  siteExternalId,
+  patientIdOrName,
+  sampleTypeName
+) {
+  return `${deviceTypeExternalId}_${assayAbbreviation}_${siteExternalId}_${patientIdOrName}_${
+    sampleTypeMappings[sampleTypeName] || 'Unknown'
+  }`
+}
+
+async function getSampleTypeId(sampleTypeName) {
+  const sampleTypeIds = await allSampleTypeToId()
+  const sampleTypeId = sampleTypeMappings[sampleTypeName] ? sampleTypeIds[sampleTypeMappings[sampleTypeName]] : null
+  return sampleTypeId
+}
+
+async function getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, originSiteId) {
+  let { id: sampleId } = (await knex('Sample').where('externalId', sampleExternalId).first('id')) || {}
+  if (!sampleId) {
+    ;[sampleId] = await knex('Sample').insert({
+      externalId: sampleExternalId,
+      sampleTypeId,
+      originSiteId,
+    })
+  }
+  return sampleId
+}
+
+function generateResultExternalId(sampleExternalId, dateReceived) {
+  return `${sampleExternalId}_${formatDateOrDefault(dateReceived, 'yyyyMMddhhmmss')}`
+}
+
+async function determineResultCategory1Id(finalResult, assayExternalId) {
+  const resultCategoryIds = await allResultCategoryToId()
+  const resultCategory1Id =
+    assayExternalId === 'assayTruenatUnknown'
+      ? resultCategoryIds.Unknown
+      : {
+          Positive: resultCategoryIds.Detected,
+          Detected: resultCategoryIds.Detected,
+          Negative: resultCategoryIds.NotDetected,
+          'Not Detected': resultCategoryIds.NotDetected,
+          Invalid: resultCategoryIds.Invalid,
+          Indeterminate: resultCategoryIds.Indeterminate,
+          Error: resultCategoryIds.Error,
+        }[finalResult]
+  return resultCategory1Id || resultCategoryIds.Missing
+}
+
+async function logResultWorkflow(
+  knex,
+  messageContext,
+  resultId,
+  resultStatus,
+  validityStatus,
+  operator,
+  labName,
+  utcNow,
+  currentResultWorkflowStatusLogId,
+  deviceLogId
+) {
+  const resultWorkflowStatuses = await allResultWorkflowStatusToId()
+  let resultWorkflowStatusId = resultWorkflowStatuses.InProgress
+  if (validityStatus === 'Error') {
+    resultWorkflowStatusId = resultWorkflowStatuses.Error
+  } else if (['Aborted', 'User Stopped', 'Complete'].includes(resultStatus)) {
+    resultWorkflowStatusId = resultWorkflowStatuses.Processed
+  }
+  const resultWorkflowLog = {
+    resultId,
+    resultWorkflowStatusId,
+    operator,
+    reason: `Data from ${labName}`,
+    changedOn: utcNow,
+    createdOn: utcNow,
+  }
+  let resultWorkflowStatusLogId = null
+  const resultWorkflowStatusPriority = [
+    resultWorkflowStatuses.Purged,
+    resultWorkflowStatuses.Flagged,
+    resultWorkflowStatuses.Acknowledged,
+    resultWorkflowStatuses.Delivered,
+    resultWorkflowStatuses.Deliverable,
+    resultWorkflowStatuses.Validated,
+    resultWorkflowStatuses.Error,
+    resultWorkflowStatuses.Processed,
+    resultWorkflowStatuses.InProgress,
+    resultWorkflowStatuses.Ordered,
+    resultWorkflowStatuses.OK,
+  ]
+  if (!currentResultWorkflowStatusLogId) {
+    ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
+    messageContext.dispatch(resultLogged(resultId, deviceLogId))
+  } else {
+    const existingResultWorkflowLog = await knex('ResultWorkflowLog')
+      .where('id', currentResultWorkflowStatusLogId)
+      .first()
+    if (
+      !existingResultWorkflowLog ||
+      resultWorkflowStatusPriority.indexOf(resultWorkflowStatusId) <
+        resultWorkflowStatusPriority.indexOf(existingResultWorkflowLog.resultWorkflowStatusId)
+    ) {
+      ;[resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert(resultWorkflowLog)
+      messageContext.dispatch(resultLogged(resultId, deviceLogId))
+    }
+  }
+  if (resultWorkflowStatusLogId) {
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
+  }
+}
+
+module.exports = TruenatResult

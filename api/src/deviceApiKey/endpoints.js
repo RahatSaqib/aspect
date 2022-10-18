@@ -7,9 +7,7 @@ const {
   revokeDeviceApiKey,
   createDeviceApiKey,
 } = require('./service')
-const {
-  validateAllGeographyFilterParams,
-} = require('../geography/requestValidation')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { exportDeviceApiKeys } = require('./serviceReports')
 
 function listDeviceApiKeysBaseConfig() {
@@ -19,23 +17,12 @@ function listDeviceApiKeysBaseConfig() {
       query: {
         partnerId: Joi.number().allow('').description('Filter for partner ID'),
         siteName: Joi.string().allow('').description('Filter for site name'),
-        deviceName: Joi.string()
-          .allow('')
-          .description('Filter for device name'),
+        deviceName: Joi.string().allow('').description('Filter for device name'),
+        revoked: Joi.number().integer().optional().description('Filter by revoked'),
         // query param 'format' is applicable only for handler 'exportDeviceApiKeys'
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
+        format: Joi.string().allow('').description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
-        ...validateSortPageParams(
-          'createdOn',
-          'token',
-          'partner',
-          'country',
-          'site',
-          'device',
-          'revoked'
-        ),
+        ...validateSortPageParams('createdOn', 'token', 'partner', 'country', 'site', 'device', 'revoked'),
       },
     },
   }
@@ -45,7 +32,7 @@ const routes = [
   {
     method: 'GET',
     path: '/deviceApiKey',
-    handler: asyncHandler(listDeviceApiKeys),
+    handler: listDeviceApiKeys,
     config: {
       description: 'DeviceApiKey List',
       notes: 'Pageable and sortable list of deviceApiKeys',
@@ -90,9 +77,7 @@ const routes = [
       auth: { scope: ['deviceApiKey:edit'] },
       validate: {
         payload: {
-          count: Joi.number()
-            .description('Number of deviceApiKeys should be generated')
-            .required(),
+          count: Joi.number().description('Number of deviceApiKeys should be generated').required(),
           countryId: Joi.number().allow('').description('Country ID'),
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
@@ -110,9 +95,7 @@ const routes = [
       auth: { scope: ['deviceApiKey:edit'] },
       validate: {
         payload: {
-          deviceApiKeyIds: Joi.array()
-            .items(Joi.number())
-            .description('DeviceApiKey IDs'),
+          deviceApiKeyIds: Joi.array().items(Joi.number()).description('DeviceApiKey IDs'),
           deviceId: Joi.number().allow('').description('Device ID'),
           countryId: Joi.number().allow('').description('Country ID'),
           partnerId: Joi.number().allow('').description('Partner ID'),
@@ -131,9 +114,7 @@ const routes = [
       auth: { scope: ['deviceApiKey:edit'] },
       validate: {
         params: {
-          deviceApiKeyId: Joi.number()
-            .description('DeviceApiKey id')
-            .required(),
+          deviceApiKeyId: Joi.number().description('DeviceApiKey id').required(),
         },
         payload: {
           revoked: Joi.bool().required(),

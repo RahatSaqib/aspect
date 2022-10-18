@@ -11,59 +11,13 @@ describe('inventory endpoints', () => {
     return _.find(endpoints.routes, { method, path })
   }
 
-  describe('GET', () => {
-    describe('/inventory', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('GET', '/inventory', {
-          async listInventoryItems() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-
-    describe('/inventory/group-by-site', () => {
-      let endpoint
-      const expectedResponse = { value: 'Expected result' }
-
-      beforeEach(() => {
-        endpoint = setupRoute('GET', '/inventory/group-by-site', {
-          async listInventoryItemsGroupedBySite() {
-            return expectedResponse
-          },
-        })
-      })
-      it('Should respond with the data returned from the service', done => {
-        endpointUtils
-          .callHandlerOn(endpoint)
-          .handleResponseWith(response => {
-            assert.deepEqual(response, expectedResponse)
-          })
-          .thenCall(done)
-          .execute()
-      })
-    })
-  })
-
   describe('PUT', () => {
     describe('/inventory/add/{inventoryItemId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/add/{inventoryItemId}', {
+        endpoint = setupRoute('PUT', '/inventory/add', {
           async addInventory() {
             return expectedResponse
           },
@@ -80,12 +34,12 @@ describe('inventory endpoints', () => {
       })
     })
 
-    describe('/inventory/remove/{inventoryItemId}', () => {
+    describe('/inventory/remove', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/remove/{inventoryItemId}', {
+        endpoint = setupRoute('PUT', '/inventory/remove', {
           async removeInventory() {
             return expectedResponse
           },
@@ -102,12 +56,12 @@ describe('inventory endpoints', () => {
       })
     })
 
-    describe('/inventory/transfer/{inventoryItemId}', () => {
+    describe('/inventory/transfer', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/transfer/{inventoryItemId}', {
+        endpoint = setupRoute('PUT', '/inventory/transfer', {
           async transferInventory() {
             return expectedResponse
           },

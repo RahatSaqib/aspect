@@ -17,7 +17,7 @@ SELECT CONCAT(
   '","portNumber":', Country.PortNumber,
   ',"exportColumns":"', Country.ExportColumns,
   '","inventoryDaysThreshold":', Country.InventoryDaysThreshold,
-  ',"monthStartsOnDay":', Country.MonthStartsOnDay,
+  ',"monthStartsOnDay":', IFNULL(Country.MonthStartsOnDay, '1'),
   ',"states":[') AS countryJSON
 FROM Country
 WHERE Country.Name IS NOT NULL
@@ -48,7 +48,7 @@ COALESCE(CONCAT('"longitude": ', CAST(deployment.Longitude AS CHAR), ','), ''),
 COALESCE(CONCAT('"stateName": "', state.Name, '",'), ''),
 COALESCE(CONCAT('"lgaName": "', lga.Name, '",'), ''),
 '"name": "', deployment.Description, '",',
-COALESCE(CONCAT('"shortname": "', deployment.ShortName, '",'), ''),
+COALESCE(CONCAT('"shortName": "', deployment.ShortName, '",'), ''),
 '"timeZoneId": "', deployment.TimeZoneId, '"',
 COALESCE(
   CONCAT(

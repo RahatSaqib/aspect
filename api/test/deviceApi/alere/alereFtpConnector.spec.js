@@ -2,12 +2,7 @@ const _ = require('lodash')
 
 const chai = require('chai')
 const subDays = require('date-fns/subDays')
-const {
-  postToDeviceApi,
-  getMaxDeviceId,
-  getDeviceType,
-  getDevicesWithIdLargerThan,
-} = require('../utils')
+const { postToDeviceApi, getMaxDeviceId, getDeviceType, getDevicesWithIdLargerThan } = require('../utils')
 const { getLocalDateTimeStringInUtc } = require('../../../src/shared/date')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
@@ -50,12 +45,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
         let maxDeviceIdBefore = -1
 
         const context = createTestContext(server)
-        const {
-          beforeCreateAlereFtpConnectorApiKey,
-          useAlereDeviceSerialNumber,
-          runTest,
-          afterCleanUp,
-        } = context
+        const { beforeCreateAlereFtpConnectorApiKey, useAlereDeviceSerialNumber, runTest, afterCleanUp } = context
 
         const basicResultPayload = {
           sample: {
@@ -89,8 +79,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
             hiv1OResult: 'Undetected',
             negativeControl: 'Pass',
             errorCode: '0',
-            sourceFile:
-              './watch\\partner_name\\07-05_FIRST1_2018-09-05-10-05-51.csv',
+            sourceFile: './watch\\partner_name\\07-05_FIRST1_2018-09-05-10-05-51.csv',
             testName: 'Alere\xe2\x84\xa2 q HIV-1/2 VL plasma',
             softwareVersion: '0.24.5',
             analysisCheck: 'Pass',
@@ -127,15 +116,9 @@ describe('Device API routes for Alere FTP Connector Device', () => {
         describe('and the device serial number changes', () => {
           it('should create a new device', () =>
             runTest(async knex => {
-              const alereFtpConnectorDeviceType = await getDeviceType(
-                'AlereFtpConnector',
-                knex
-              )
+              const alereFtpConnectorDeviceType = await getDeviceType('AlereFtpConnector', knex)
               const alereDeviceType = await getDeviceType('AlereQ', knex)
-              const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
-                maxDeviceIdBefore,
-                knex
-              )
+              const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
               expect(devicesCreatedDuringTestBefore).to.containSubset([
                 {
                   deviceTypeId: alereFtpConnectorDeviceType.id,
@@ -155,10 +138,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                   result: basicResultPayload,
                 }),
               })
-              const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
-                maxDeviceIdBefore,
-                knex
-              )
+              const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
               expect(devicesCreatedDuringTestAfter).to.containSubset([
                 {
                   deviceTypeId: alereFtpConnectorDeviceType.id,
@@ -174,19 +154,14 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                   deviceTypeId: alereDeviceType.id,
                 },
               ])
-              expect(devicesCreatedDuringTestAfter.length).to.be.above(
-                devicesCreatedDuringTestBefore.length
-              )
+              expect(devicesCreatedDuringTestAfter.length).to.be.above(devicesCreatedDuringTestBefore.length)
             }))
         })
 
         describe('but device serial number remains the same', () => {
           it('should not create a new device update the the existing device', () =>
             runTest(async knex => {
-              const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
-                maxDeviceIdBefore,
-                knex
-              )
+              const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
               const { deviceAuth, basicDevicePayload } = context
               await postToDeviceApi({
                 authHeader: deviceAuth,
@@ -194,14 +169,9 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                   result: basicResultPayload,
                 }),
               })
-              const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
-                maxDeviceIdBefore,
-                knex
-              )
+              const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(maxDeviceIdBefore, knex)
 
-              expect(devicesCreatedDuringTestAfter.length).to.equal(
-                devicesCreatedDuringTestBefore.length
-              )
+              expect(devicesCreatedDuringTestAfter.length).to.equal(devicesCreatedDuringTestBefore.length)
             }))
         })
       })
@@ -252,8 +222,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
         hiv1OResult: 'Undetected',
         negativeControl: 'Pass',
         errorCode: '0',
-        sourceFile:
-          './watch\\partner_name\\07-05_FIRST1_2018-09-05-10-05-51.csv',
+        sourceFile: './watch\\partner_name\\07-05_FIRST1_2018-09-05-10-05-51.csv',
         testName: 'Alere q HIV-1/2 Detect',
         softwareVersion: '0.20.12',
         analysisCheck: 'Pass',
@@ -347,10 +316,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           sampleOriginSiteId: currentAlereDevice.siteId,
           sampleTypeId: null,
           resultData: resultPayloadWithNewStartDate.data,
-          startedOn: getLocalDateTimeStringInUtc(
-            testStartedOn,
-            'America/New_York'
-          ),
+          startedOn: getLocalDateTimeStringInUtc(testStartedOn, 'America/New_York'),
           consumableSerial: resultPayloadWithNewStartDate.consumable.serial,
           consumableExpirationDate: null,
           consumableLot: null,
@@ -385,9 +351,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
         await waitForApproximately(2, 'seconds')
 
         const afterResultDetailsFirstResponse = await getLastResult()
-        expect(afterResultDetailsFirstResponse.id).to.be.above(
-          beforeResultDetails.id
-        )
+        expect(afterResultDetailsFirstResponse.id).to.be.above(beforeResultDetails.id)
         const currentAlereDevice = await getCurrentAlereDevice()
 
         expect(afterResultDetailsFirstResponse).to.containSubset({
@@ -405,10 +369,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           sampleOriginSiteId: currentAlereDevice.siteId,
           sampleTypeId: null,
           resultData: basicResultPayload.data,
-          startedOn: getLocalDateTimeStringInUtc(
-            testStartedOn,
-            'America/New_York'
-          ),
+          startedOn: getLocalDateTimeStringInUtc(testStartedOn, 'America/New_York'),
           consumableSerial: basicResultPayload.consumable.serial,
           consumableExpirationDate: null,
           consumableLot: null,
@@ -419,11 +380,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           errorCode: null,
         })
 
-        const resultPayloadWithUpatedTestData = _.merge(
-          {},
-          resultPayloadWithTestData,
-          { sampleCollectedOn: now }
-        )
+        const resultPayloadWithUpatedTestData = _.merge({}, resultPayloadWithTestData, { sampleCollectedOn: now })
         await postToDeviceApi({
           authHeader: deviceAuth,
           payload: _.merge({}, basicDevicePayload, {
@@ -434,31 +391,26 @@ describe('Device API routes for Alere FTP Connector Device', () => {
         await waitForApproximately(2, 'seconds')
 
         const afterResultDetailsSecondResponse = await getLastResult()
-        expect(afterResultDetailsFirstResponse.id).to.equal(
-          afterResultDetailsSecondResponse.id
-        )
+        expect(afterResultDetailsFirstResponse.id).to.equal(afterResultDetailsSecondResponse.id)
         expect(afterResultDetailsSecondResponse).to.containSubset({
           deviceId: afterResultDetailsFirstResponse.deviceId,
           siteId: afterResultDetailsFirstResponse.siteId,
           geographyId: afterResultDetailsFirstResponse.geographyId,
           assay: afterResultDetailsFirstResponse.assay,
           assayVersion: afterResultDetailsFirstResponse.assayVersion,
-          resultWorkflowStatus:
-            afterResultDetailsFirstResponse.resultWorkflowStatus,
+          resultWorkflowStatus: afterResultDetailsFirstResponse.resultWorkflowStatus,
           resultSource: afterResultDetailsFirstResponse.resultSource,
           resultType: afterResultDetailsFirstResponse.resultType,
           resultCategory1: afterResultDetailsFirstResponse.resultCategory1,
           resultCategory2: afterResultDetailsFirstResponse.resultCategory2,
           sampleId: afterResultDetailsFirstResponse.sampleId,
-          sampleOriginSiteId:
-            afterResultDetailsFirstResponse.sampleOriginSiteId,
+          sampleOriginSiteId: afterResultDetailsFirstResponse.sampleOriginSiteId,
           sampleTypeId: afterResultDetailsFirstResponse.sampleTypeId,
           resultData: afterResultDetailsFirstResponse.resultData,
           startedOn: afterResultDetailsFirstResponse.startedOn,
           endedOn: afterResultDetailsFirstResponse.endedOn,
           consumableSerial: afterResultDetailsFirstResponse.consumableSerial,
-          consumableExpirationDate:
-            afterResultDetailsFirstResponse.consumableExpirationDate,
+          consumableExpirationDate: afterResultDetailsFirstResponse.consumableExpirationDate,
           consumableLot: afterResultDetailsFirstResponse.consumableLot,
           instrumentSerial: afterResultDetailsFirstResponse.instrumentSerial,
           senderVersion: afterResultDetailsFirstResponse.senderVersion,
@@ -466,9 +418,9 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           notes: afterResultDetailsFirstResponse.notes,
           errorCode: afterResultDetailsFirstResponse.errorCode,
         })
-        expect(
-          new Date(afterResultDetailsSecondResponse.updatedOn)
-        ).to.be.above(new Date(afterResultDetailsFirstResponse.updatedOn))
+        expect(new Date(afterResultDetailsSecondResponse.updatedOn)).to.be.above(
+          new Date(afterResultDetailsFirstResponse.updatedOn)
+        )
       }))
 
     it('should belong to the Alere device, not the Alere FTP Connector device', () =>
@@ -488,9 +440,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
         })
         const resultDetails = await getLastResult()
         const currentAlereDevice = await getCurrentAlereDevice()
-        expect(currentAlereDevice.deviceTypeId).to.not.equal(
-          context.device.deviceTypeId
-        )
+        expect(currentAlereDevice.deviceTypeId).to.not.equal(context.device.deviceTypeId)
         expect(resultDetails.deviceId).to.equal(currentAlereDevice.id)
       }))
 
@@ -516,43 +466,6 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           .pluck('deviceId')
           .distinct()
         assert.deepEqual(deviceIdsInDeviceLogsForResult, [context.device.id])
-      }))
-
-    it('should convert the result start/end date into UTC and store created/updated on in UTC', () =>
-      runTest(async () => {
-        const { deviceAuth, basicDevicePayload } = context
-        const testStartedOn = '2020-08-10T14:00:00'
-
-        const resultPayloadWithNewStartDate = _.merge({}, basicResultPayload, {
-          startedOn: testStartedOn,
-        })
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            result: resultPayloadWithNewStartDate,
-          }),
-        })
-
-        const afterResultDetails = await getLastResult()
-
-        // this device is located in the America/New_York time zone, so we have to
-        // convert testStartedOn to UTC in order to compare it to the value in the database
-        expect(afterResultDetails.startedOn.getTime()).to.equal(
-          getLocalDateTimeStringInUtc(
-            testStartedOn,
-            'America/New_York'
-          ).getTime()
-        )
-
-        expect(afterResultDetails.createdOn.getTime()).to.be.closeTo(
-          Date.now(),
-          2000
-        )
-
-        expect(afterResultDetails.updatedOn.getTime()).to.be.closeTo(
-          Date.now(),
-          2000
-        )
       }))
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
@@ -620,10 +533,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
               consumableId: consumableAssay.consumableId,
               siteId: alereDevice.siteId,
               quantityOnHand: initialQuantityOnHand,
-              updatedOn: subDays(
-                new Date(resultPayloadWithTestData.startedOn),
-                1
-              ),
+              updatedOn: subDays(new Date(resultPayloadWithTestData.startedOn), 1),
             })
           } else {
             ;({ id: inventoryItemId } = _.head(inventoryItemsAtSite))
@@ -631,23 +541,14 @@ describe('Device API routes for Alere FTP Connector Device', () => {
               .where('id', inventoryItemId)
               .update({
                 quantityOnHand: initialQuantityOnHand,
-                updatedOn: subDays(
-                  new Date(resultPayloadWithTestData.startedOn),
-                  1
-                ),
+                updatedOn: subDays(new Date(resultPayloadWithTestData.startedOn), 1),
               })
           }
 
           const inventoryLogsBefore = await knex('InventoryLog as il')
             .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
             .where({ inventoryItemId })
-            .select(
-              'il.consumableId',
-              'il.siteId',
-              'cr.name as consumableReason',
-              'il.resultId',
-              'il.quantity'
-            )
+            .select('il.consumableId', 'il.siteId', 'cr.name as consumableReason', 'il.resultId', 'il.quantity')
 
           await postToDeviceApi({
             authHeader: deviceAuth,
@@ -667,24 +568,13 @@ describe('Device API routes for Alere FTP Connector Device', () => {
           })
 
           const resultDetails = await getLastResult()
-          const inventoryItem = await knex('InventoryItem')
-            .where({ id: inventoryItemId })
-            .first()
-          assert.equal(
-            inventoryItem.quantityOnHand,
-            _.max([0, initialQuantityOnHand - consumableAssay.quantity])
-          )
+          const inventoryItem = await knex('InventoryItem').where({ id: inventoryItemId }).first()
+          assert.equal(inventoryItem.quantityOnHand, _.max([0, initialQuantityOnHand - consumableAssay.quantity]))
 
           const inventoryLogsAfter = await knex('InventoryLog as il')
             .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
             .where({ inventoryItemId })
-            .select(
-              'il.consumableId',
-              'il.siteId',
-              'cr.name as consumableReason',
-              'il.resultId',
-              'il.quantity'
-            )
+            .select('il.consumableId', 'il.siteId', 'cr.name as consumableReason', 'il.resultId', 'il.quantity')
           expect(inventoryLogsAfter).to.containSubset([
             ...inventoryLogsBefore,
             {
@@ -695,9 +585,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
               quantity: consumableAssay.quantity,
             },
           ])
-          expect(inventoryLogsAfter).to.have.lengthOf(
-            inventoryLogsBefore.length + 1
-          )
+          expect(inventoryLogsAfter).to.have.lengthOf(inventoryLogsBefore.length + 1)
         }))
 
       describe('when the test already exists in the database', () => {
@@ -709,11 +597,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
               .where({ 'dt.externalId': basicDevicePayload.type.id })
               .andWhere('ca.quantity', '>', 0)
-              .first(
-                'ca.consumableId',
-                'ca.quantity',
-                'a.externalId as assayId'
-              )
+              .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
 
             assert.isNotEmpty(consumableAssay)
             assert.isAbove(consumableAssay.quantity, 0)
@@ -751,10 +635,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                 consumableId: consumableAssay.consumableId,
                 siteId: alereDevice.siteId,
                 quantityOnHand: initialQuantityOnHand,
-                updatedOn: subDays(
-                  new Date(resultPayloadWithTestData2.startedOn),
-                  1
-                ),
+                updatedOn: subDays(new Date(resultPayloadWithTestData2.startedOn), 1),
               })
             } else {
               ;({ id: inventoryItemId } = _.head(inventoryItemsAtSite))
@@ -762,10 +643,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
                 .where('id', inventoryItemId)
                 .update({
                   quantityOnHand: initialQuantityOnHand,
-                  updatedOn: subDays(
-                    new Date(resultPayloadWithTestData2.startedOn),
-                    1
-                  ),
+                  updatedOn: subDays(new Date(resultPayloadWithTestData2.startedOn), 1),
                 })
             }
 
@@ -777,9 +655,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
             })
 
             const resultDetailsAfterFirstPost = await getLastResult()
-            const inventoryItemAfterFirstPost = await knex('InventoryItem')
-              .where({ id: inventoryItemId })
-              .first()
+            const inventoryItemAfterFirstPost = await knex('InventoryItem').where({ id: inventoryItemId }).first()
             assert.equal(
               inventoryItemAfterFirstPost.quantityOnHand,
               _.max([0, initialQuantityOnHand - consumableAssay.quantity])
@@ -788,13 +664,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
             const inventoryLogsAfterFirstPost = await knex('InventoryLog as il')
               .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
               .where({ inventoryItemId })
-              .select(
-                'il.consumableId',
-                'il.siteId',
-                'cr.name as consumableReason',
-                'il.resultId',
-                'il.quantity'
-              )
+              .select('il.consumableId', 'il.siteId', 'cr.name as consumableReason', 'il.resultId', 'il.quantity')
             expect(inventoryLogsAfterFirstPost).to.containSubset([
               {
                 consumableId: inventoryItemAfterFirstPost.consumableId,
@@ -817,31 +687,15 @@ describe('Device API routes for Alere FTP Connector Device', () => {
             })
 
             const resultDetailsAfterSecondPost = await getLastResult()
-            const inventoryItemAfterSecondPost = await knex('InventoryItem')
-              .where({ id: inventoryItemId })
-              .first()
-            expect(resultDetailsAfterSecondPost).to.containSubset(
-              _.omit(resultDetailsAfterFirstPost, 'updatedOn')
-            )
-            expect(inventoryItemAfterSecondPost).to.deep.equal(
-              inventoryItemAfterFirstPost
-            )
+            const inventoryItemAfterSecondPost = await knex('InventoryItem').where({ id: inventoryItemId }).first()
+            expect(resultDetailsAfterSecondPost).to.containSubset(_.omit(resultDetailsAfterFirstPost, 'updatedOn'))
+            expect(inventoryItemAfterSecondPost).to.deep.equal(inventoryItemAfterFirstPost)
 
-            const inventoryLogsAfterSecondPost = await knex(
-              'InventoryLog as il'
-            )
+            const inventoryLogsAfterSecondPost = await knex('InventoryLog as il')
               .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
               .where({ inventoryItemId })
-              .select(
-                'il.consumableId',
-                'il.siteId',
-                'cr.name as consumableReason',
-                'il.resultId',
-                'il.quantity'
-              )
-            expect(inventoryLogsAfterSecondPost).to.deep.equal(
-              inventoryLogsAfterFirstPost
-            )
+              .select('il.consumableId', 'il.siteId', 'cr.name as consumableReason', 'il.resultId', 'il.quantity')
+            expect(inventoryLogsAfterSecondPost).to.deep.equal(inventoryLogsAfterFirstPost)
           }))
       })
     })

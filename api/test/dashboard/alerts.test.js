@@ -16,15 +16,13 @@ describe('dashboard widgets alerts', () => {
         deviceName: 'GeneXpert',
       },
       externalId: 'geneXpertDevices',
-      description:
-        'The number of approved GeneXpert devices (excluding decommissioned devices).',
+      description: 'The number of approved GeneXpert devices (excluding decommissioned devices).',
       descriptionI18nKey: 'geneXpertDevices',
-      dashboards:
-        '{"operational": {"groupI18nKey": "summaryWidgetGroupConnectivity"}}',
+      dashboards: '{"operational": {"groupI18nKey": "summaryWidgetGroupConnectivity"}}',
       options: {},
       icon: 'MdDesktopWindows',
       statUnit: '{unit} last month',
-      statUnitI18nKey: 'dashboardWidgetUnitGeneXpertDevices',
+      statUnitI18nKey: 'lastMonth',
       statStatus: null,
       statStatusI18nKey: null,
       extraUnit: null,

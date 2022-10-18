@@ -1,21 +1,14 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
-const {
-  upsertMGITDeviceTypeAndAssays,
-  upsertCultureAssays,
-} = require('../commonTB')
+const { upsertMGITDeviceTypeAndAssays, upsertCultureAssays } = require('../commonTB')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
-  const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId(
-    'Information System'
-  )
+  const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId('Information System')
 
   const { id: deviceTypeHainGenoScanId } =
-    (await knex('DeviceType')
-      .where('externalId', 'HainGenoScan')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'HainGenoScan').first('id')) || {}
   if (!deviceTypeHainGenoScanId) {
     await knex('DeviceType').insert({
       externalId: 'HainGenoScan',
@@ -25,11 +18,9 @@ async function seed(knex) {
     })
   }
 
-  let { id: deviceTypeSenaiteLimsId } =
-    (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) ||
-    {}
+  let { id: deviceTypeSenaiteLimsId } = (await knex('DeviceType').where('externalId', 'SenaiteLims').first('id')) || {}
   if (!deviceTypeSenaiteLimsId) {
-    deviceTypeSenaiteLimsId = await knex('DeviceType').insert({
+    ;[deviceTypeSenaiteLimsId] = await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
       name: 'Senaite LIMS',
       manufacturer: 'Senaite',

@@ -1,0 +1,28 @@
+.datepicker__wrapper {
+  width: 100%;
+}
+
+.datepicker__no-value .datepicker__clearButton {
+  display: none;
+}
+
+.datepicker__TextField {
+  margin-bottom: 0 !important;
+}
+
+.datepicker__clearButton {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAgMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+DQo8cGF0aCBkPSJNMTQuMzQ4IDE0Ljg0OWMtMC40NjkgMC40NjktMS4yMjkgMC40NjktMS42OTcgMGwtMi42NTEtMy4wMzAtMi42NTEgMy4wMjljLTAuNDY5IDAuNDY5LTEuMjI5IDAuNDY5LTEuNjk3IDAtMC40NjktMC40NjktMC40NjktMS4yMjkgMC0xLjY5N2wyLjc1OC0zLjE1LTIuNzU5LTMuMTUyYy0wLjQ2OS0wLjQ2OS0wLjQ2OS0xLjIyOCAwLTEuNjk3czEuMjI4LTAuNDY5IDEuNjk3IDBsMi42NTIgMy4wMzEgMi42NTEtMy4wMzFjMC40NjktMC40NjkgMS4yMjgtMC40NjkgMS42OTcgMHMwLjQ2OSAxLjIyOSAwIDEuNjk3bC0yLjc1OCAzLjE1MiAyLjc1OCAzLjE1YzAuNDY5IDAuNDY5IDAuNDY5IDEuMjI5IDAgMS42OTh6Ij48L3BhdGg+PC9zdmc+DQo=');
+  background-repeat: no-repeat;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  bottom: 6px;
+  top: unset;
+  opacity: 0.2;
+}
+.datepicker__clearButton:after {
+  display: none;
+}
+.datepicker__clearButton:hover {
+  opacity: 0.4;
+}

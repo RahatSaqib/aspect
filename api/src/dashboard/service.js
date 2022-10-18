@@ -6,7 +6,6 @@ const {
   getConstraints,
   addConstraints,
   canViewSites,
-  canViewDevices,
   canViewResults,
   canViewInventories,
   canEditInventories,
@@ -14,7 +13,6 @@ const {
 const { getUser, hasPermissions } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 const { queryValue } = require('../shared/sql-2-knex')
-const { canView } = require('../auth/constraints')
 const { addExtraData } = require('./options')
 
 const resultsTransmittedDashboard = require('./resultsTransmitted')
@@ -39,8 +37,7 @@ const i18nKeys = {
 
 async function getDashboardWidget({ id, partnerId }, options) {
   const { layout, dashboard = 'home' } = options
-  const tableName =
-    layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
+  const tableName = layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
   const widgets = knex('DashboardWidget as w')
     .innerJoin(`${tableName} as sw`, 'w.id', 'sw.dashboardWidgetId')
     .innerJoin('JobFunctionDashboardWidget as jfw', 'w.id', 'jfw.widgetId')
@@ -57,21 +54,9 @@ async function getDashboardWidget({ id, partnerId }, options) {
         this.orWhereNull('w.dashboards')
       }
     })
-    .select(['w.*', 'sw.*'])
+    .distinct(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
   return widgets
-}
-
-function getWidgetLink(widget, auth) {
-  const linkParts = widget.link ? widget.link.split('/') : []
-  if (
-    linkParts.length === 3 &&
-    linkParts[1] === 'browse' &&
-    (!canView(auth, `${linkParts[2]}:`) || !canView(auth, 'browse:'))
-  ) {
-    return null
-  }
-  return widget.link
 }
 
 async function summaryDashboard(request) {
@@ -84,42 +69,28 @@ async function summaryDashboard(request) {
   const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
   const data = await Promise.all(
     widgets.map(async widget => {
-      widget.link = getWidgetLink(widget, request.auth)
-      const count = await queryValue(
-        widget.sqlForIndicator,
-        dataConstraints,
-        query
-      )
-      const unit = await queryValue(
-        widget.sqlForStatUnit,
-        dataConstraints,
-        query
-      )
+      const { sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget
+      const unit = await queryValue(sqlForStatUnit, dataConstraints, query)
+      const extra = await queryValue(sqlForExtra, dataConstraints, query)
+      const { cnt: countCnt, ...restCountProps } = (await queryValue(sqlForIndicator, dataConstraints, query)) || {
+        cnt: null,
+      }
 
-      const extra = await queryValue(widget.sqlForExtra, dataConstraints, query)
-      widget = _.assign(
-        _.omit(widget, [
-          'sqlForIndicator',
-          'sqlForStatUnit',
-          'sqlForExtra',
-          'sortOrder',
-        ]),
-        {
-          count: count ? count.cnt : 0,
-          unit: unit ? unit.cnt : null,
-          extra: extra ? extra.cnt : null,
-        }
-      )
+      widget = _.assign(_.omit(widget, ['sqlForIndicator', 'sqlForStatUnit', 'sqlForExtra', 'sortOrder']), {
+        count: countCnt || 0,
+        unit: unit ? unit.cnt : null,
+        extra: extra ? extra.cnt : null,
+        ...restCountProps,
+      })
 
-      if (!_.isEmpty(widget.options)) {
-        widget.options = JSON.parse(widget.options)
+      if (!_.isEmpty(options)) {
+        widget.options = JSON.parse(options)
         addExtraData(widget)
       }
 
       return widget
     })
   )
-
   return { ok: true, data }
 }
 
@@ -143,11 +114,7 @@ async function targetDashboard(request) {
 
   const data = await Promise.all(
     widgets.map(async widget => {
-      const count = await queryValue(
-        widget.sqlForIndicator,
-        dataConstraints,
-        query
-      )
+      const count = await queryValue(widget.sqlForIndicator, dataConstraints, query)
 
       const target = await knex('Target as t')
         .innerJoin('Geography as g', 't.geographyId', 'g.id')
@@ -158,25 +125,13 @@ async function targetDashboard(request) {
         .sum('t.targetValue as cnt')
         .first()
 
-      const dataCollection = await queryValue(
-        widget.sqlForDataCollection,
-        dataConstraints,
-        query
-      )
+      const dataCollection = await queryValue(widget.sqlForDataCollection, dataConstraints, query)
 
-      return _.assign(
-        _.pick(widget, [
-          'id',
-          'title',
-          'thresholdPercentageDataCollection',
-          'link',
-        ]),
-        {
-          count: count ? count.cnt : 0,
-          target: target ? Math.round(target.cnt / targetDivide) : 0,
-          dataCollection: dataCollection ? dataCollection.cnt : 0,
-        }
-      )
+      return _.assign(_.pick(widget, ['id', 'title', 'thresholdPercentageDataCollection', 'link']), {
+        count: count ? count.cnt : 0,
+        target: target ? Math.round(target.cnt / targetDivide) : 0,
+        dataCollection: dataCollection ? dataCollection.cnt : 0,
+      })
     })
   )
   return { ok: true, data }
@@ -191,13 +146,7 @@ async function resultDashboard(request) {
   const siteQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .select(
-      's.id',
-      's.name',
-      'st.abbreviation as stateAbbr',
-      's.latitude',
-      's.longitude'
-    )
+    .select('s.id', 's.name', 'st.abbreviation as stateAbbr', 's.latitude', 's.longitude')
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -219,11 +168,7 @@ async function resultDashboard(request) {
               assay: 'a',
             })
             .groupBy('rc.externalId', 'a.assayTypeId', 'd.siteId')
-            .select(
-              'rc.externalId as resultCategory1ExternalId',
-              'a.assayTypeId',
-              'd.siteId'
-            )
+            .select('rc.externalId as resultCategory1ExternalId', 'a.assayTypeId', 'd.siteId')
             .sum('f.resultCount as cnt'),
           knex('AssayType as at')
             .innerJoin('Assay as a', 'at.id', 'a.assayTypeId')
@@ -237,71 +182,51 @@ async function resultDashboard(request) {
             .select(
               'at.id',
               'at.name as assayTypeName',
-              knex.raw(
-                'GROUP_CONCAT(rc.externalId) as rawResultCategoryExternalIds'
-              ),
+              knex.raw('GROUP_CONCAT(rc.externalId) as rawResultCategoryExternalIds'),
               knex.raw('GROUP_CONCAT(rc.name) as rawResultCategoryNames')
             ),
         ]
       : [[], [], []]
   )
-  const resultCntBySiteIdByAssayTypeId = _.mapValues(
-    _.groupBy(resultCnt, 'assayTypeId'),
-    it => _.groupBy(it, 'siteId')
-  )
+  const resultCntBySiteIdByAssayTypeId = _.mapValues(_.groupBy(resultCnt, 'assayTypeId'), it => _.groupBy(it, 'siteId'))
   const resultCntBySiteId = _.groupBy(resultCnt, 'siteId')
-  siteList.forEach(it =>
-    _.set(it, 'count', _.sum(_.map(resultCntBySiteId[it.id], 'cnt')))
-  )
+  siteList.forEach(it => _.set(it, 'count', _.sum(_.map(resultCntBySiteId[it.id], 'cnt'))))
 
   const resultSummaryList = assayTypes
-    .map(
-      ({
-        id,
-        assayTypeName,
-        rawResultCategoryExternalIds,
-        rawResultCategoryNames,
-      }) => {
-        const resultCategoryExternalIds = _.uniq(
-          rawResultCategoryExternalIds.split(',')
-        )
-        const resultCategoryNames = _.uniq(rawResultCategoryNames.split(','))
-        const data = _.sortBy(
-          _.map(resultCntBySiteIdByAssayTypeId[`${id}`], (it, siteId) =>
+    .map(({ id, assayTypeName, rawResultCategoryExternalIds, rawResultCategoryNames }) => {
+      const resultCategoryExternalIds = _.uniq(rawResultCategoryExternalIds.split(','))
+      const resultCategoryNames = _.uniq(rawResultCategoryNames.split(','))
+      const data = _.sortBy(
+        _.map(resultCntBySiteIdByAssayTypeId[`${id}`], (it, siteId) =>
+          _.reduce(
+            it,
+            (acc, { resultCategory1ExternalId, cnt }) => {
+              acc[resultCategory1ExternalId] = cnt
+              acc.total += cnt
+              return acc
+            },
             _.reduce(
-              it,
-              (acc, { resultCategory1ExternalId, cnt }) => {
-                acc[resultCategory1ExternalId] = cnt
-                acc.total += cnt
+              resultCategoryExternalIds,
+              (acc, name) => {
+                acc[name] = 0
                 return acc
               },
-              _.reduce(
-                resultCategoryExternalIds,
-                (acc, name) => {
-                  acc[name] = 0
-                  return acc
-                },
-                { siteId, total: 0 }
-              )
+              { siteId, total: 0 }
             )
-          ),
-          it => -1 * it.total
-        )
+          )
+        ),
+        it => -1 * it.total
+      )
 
-        return {
-          assayTypeName,
-          data,
-          resultCategories: _.zipWith(
-            resultCategoryExternalIds,
-            resultCategoryNames,
-            (externalId, name) => ({
-              externalId,
-              name,
-            })
-          ),
-        }
+      return {
+        assayTypeName,
+        data,
+        resultCategories: _.zipWith(resultCategoryExternalIds, resultCategoryNames, (externalId, name) => ({
+          externalId,
+          name,
+        })),
       }
-    )
+    })
     .filter(({ data }) => !_.isEmpty(data))
 
   const result = {
@@ -335,10 +260,12 @@ async function getConsumablesList(auth, dataConstraints) {
       device: 'd',
       assay: 'a',
     })
-    .groupBy('c.id', 's.id')
+    .groupBy('c.id', 'c.externalId', 's.id')
     .select(
       's.id as siteId',
       'c.id as consumableId',
+      'c.externalId as consumableExternalId',
+      'c.i18nKey as i18nKey',
       'c.name as consumableName',
       knex.raw(
         "sum(it.externalId = 'InventoryStockout' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntStockout"
@@ -347,7 +274,6 @@ async function getConsumablesList(auth, dataConstraints) {
         "sum(it.externalId = 'InventoryStockExpiring' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntExpiring"
       )
     )
-
   return consumables
 }
 
@@ -399,10 +325,12 @@ async function inventoryItemDashboard(request) {
           _.isObject
         )
         if (!_.isEmpty(result)) {
-          const { consumableId, consumableName } = list[0]
+          const { consumableId, consumableName, consumableExternalId, i18nKey } = list[0]
           acc.push({
             consumableId,
+            consumableExternalId,
             consumableName,
+            i18nKey,
             data: result,
             affectedSiteIds,
           })
@@ -434,21 +362,11 @@ async function getSiteList(auth, dataConstraints) {
       site: 's',
       geography: 'g',
     })
-    .select(
-      's.id',
-      's.name',
-      'st.abbreviation as stateAbbr',
-      's.latitude',
-      's.longitude'
-    )
+    .select('s.id', 's.name', 'st.abbreviation as stateAbbr', 's.latitude', 's.longitude')
   return siteList
 }
 
 async function getDeviceList(auth, dataConstraints) {
-  if (!canViewDevices(auth)) {
-    return []
-  }
-
   const deviceList = await knex('Device as d')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
@@ -470,9 +388,7 @@ async function getDeviceList(auth, dataConstraints) {
       'd.id',
       'd.siteId',
       'it.externalId as issueType',
-      knex.raw(
-        "sum(ist.externalId not in ('Inactive', 'OK', 'Resolved')) as totalIssues"
-      ),
+      knex.raw("sum(ist.externalId not in ('Inactive', 'OK', 'Resolved')) as totalIssues"),
       knex.raw(
         "sum((it.externalId = 'DeviceNoResults' or it.externalId = 'DeviceOffline') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntNoResults"
       ),
@@ -481,39 +397,36 @@ async function getDeviceList(auth, dataConstraints) {
       )
     )
     .then(items =>
-      items.reduce(
-        (memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
-          let device = memo.find(x => x.id === id)
-          if (!device) {
-            device = {
-              id,
-              siteId,
-              // Fully Operational = Devices that don't have any issues or all are OK/Resolved
-              fullyOperational: true,
-              // Not Reporting = Devices that have issue "Device No Results"
-              offline: false,
-              // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
-              errorRate: false,
-            }
-            memo.push(device)
+      items.reduce((memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
+        let device = memo.find(x => x.id === id)
+        if (!device) {
+          device = {
+            id,
+            siteId,
+            // Fully Operational = Devices that don't have any issues or all are OK/Resolved
+            fullyOperational: true,
+            // Not Reporting = Devices that have issue "Device No Results"
+            offline: false,
+            // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
+            errorRate: false,
           }
+          memo.push(device)
+        }
 
-          if (totalIssues) {
-            device.fullyOperational = false
-          }
+        if (totalIssues) {
+          device.fullyOperational = false
+        }
 
-          if (cntNoResults) {
-            device.offline = true
-          }
+        if (cntNoResults) {
+          device.offline = true
+        }
 
-          if (cntErrorRate) {
-            device.errorRate = true
-          }
+        if (cntErrorRate) {
+          device.errorRate = true
+        }
 
-          return memo
-        },
-        []
-      )
+        return memo
+      }, [])
     )
   return deviceList
 }
@@ -550,9 +463,7 @@ async function siteDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const siteList = await getSiteList(auth, dataConstraints)
-  const assayResultCategoryList = await getAssayResultCategoryList(
-    dataConstraints
-  )
+  const assayResultCategoryList = await getAssayResultCategoryList(dataConstraints)
 
   const result = {
     data: {
@@ -567,10 +478,7 @@ async function siteDashboard(request) {
 async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
-  const dataConstraints = await getConstraints(
-    auth.credentials,
-    'actionDashboard'
-  )
+  const dataConstraints = await getConstraints(auth.credentials, 'actionDashboard')
 
   const alertMessages = await knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
@@ -638,35 +546,18 @@ async function actionDashboard(request) {
       'i.consumableId'
     )
 
-  const alertMessagesByIssue = _.map(
-    _.values(_.groupBy(alertMessages, 'issueId')),
-    issueMessages => {
-      const highestLevelMessage = _.head(
-        _.orderBy(issueMessages, 'notificationTypeLevel', 'desc')
-      )
-      highestLevelMessage.message = processDynamicMessage(
-        highestLevelMessage.message
-      )
-      if (
-        highestLevelMessage.canAcknowledge &&
-        highestLevelMessage.personId !== user.personId
-      ) {
-        highestLevelMessage.canAcknowledge = 0
-      }
-      return highestLevelMessage
+  const alertMessagesByIssue = _.map(_.values(_.groupBy(alertMessages, 'issueId')), issueMessages => {
+    const highestLevelMessage = _.head(_.orderBy(issueMessages, 'notificationTypeLevel', 'desc'))
+    highestLevelMessage.message = processDynamicMessage(highestLevelMessage.message)
+    if (highestLevelMessage.canAcknowledge && highestLevelMessage.personId !== user.personId) {
+      highestLevelMessage.canAcknowledge = 0
     }
-  )
-  const shouldAddStockLevelUpdateActions = await hasPermissions(auth, [
-    'dashboard:actionInventoryLevelUpdate',
-  ])
+    return highestLevelMessage
+  })
+  const shouldAddStockLevelUpdateActions = await hasPermissions(auth, ['dashboard:actionInventoryLevelUpdate'])
 
   if (shouldAddStockLevelUpdateActions) {
-    await addStockLevelUpdateActions(
-      auth,
-      dataConstraints,
-      alertMessagesByIssue,
-      query.siteId
-    )
+    await addStockLevelUpdateActions(auth, dataConstraints, alertMessagesByIssue, query.siteId)
   }
 
   const allActionByCategory = _.flowRight(
@@ -683,19 +574,12 @@ async function actionDashboard(request) {
   return result
 }
 
-async function addStockLevelUpdateActions(
-  auth,
-  dataConstraints,
-  actionDashboardAlertMessages,
-  siteId = null
-) {
+async function addStockLevelUpdateActions(auth, dataConstraints, actionDashboardAlertMessages, siteId = null) {
   const inventoryCutoff = subDays(new Date(), 30)
   let inventoryOutdated = false
 
   if (canViewInventories(auth)) {
-    const { id: assayId } = await knex('Assay')
-      .where('externalId', 'GxMtbRif')
-      .first('id')
+    const { id: assayId } = await knex('Assay').where('externalId', 'GxMtbRif').first('id')
 
     const inventoryItems = await knex('Site as s')
       .join('ConsumableAssay as ca', 'ca.assayId', assayId)
@@ -734,9 +618,7 @@ async function addStockLevelUpdateActions(
           if (inventoryItem) {
             alertMessage.totalInStock = inventoryItem.totalInStock
             alertMessage.consumableId = inventoryItem.consumableId
-            inventoryOutdated = inventoryItem.updatedOn
-              ? inventoryItem.updatedOn < inventoryCutoff
-              : false
+            inventoryOutdated = inventoryItem.updatedOn ? inventoryItem.updatedOn < inventoryCutoff : false
           } else {
             alertMessage.totalInStock = 0
             alertMessage.consumableId = null
@@ -758,38 +640,34 @@ async function addStockLevelUpdateActions(
       }
     })
     // Add consumables by site that aren't in issues
-    _.forEach(
-      inventoryItemsBySite,
-      ([{ siteId, siteName, totalInStock, consumableId }]) => {
-        actionDashboardAlertMessages.push({
-          // ID is needed in UI to distinguish table rows
-          id: `inventoryLevelUpdate_${consumableId}_${siteId}`,
-          siteId,
-          deviceId: null,
-          resultId: null,
-          message: 'Stock Level', // TODO: i18n this message
-          siteName,
-          deviceName: null,
-          issueId: null,
-          status: totalInStock <= 0 ? 'Active' : 'OK',
-          statusI18nKey:
-            totalInStock <= 0 ? 'issueStatusActive' : 'issueStatusOk',
-          issueStatusSortOrder: totalInStock <= 0 ? 0 : 5,
-          issueStatusSeverityExternalId: totalInStock <= 0 ? 'High' : 'Low',
-          statusDate: new Date(),
-          issueType: 'Stock Level Update',
-          issueTypeExternalId: 'StockLevelUpdate',
-          issueTypeI18nKey: 'stockLevelUpdateIssue',
-          issueCategory: 'ReagentHealth',
-          issueCategoryI18nKey: 'issueCategoryReagentHealth',
-          canAcknowledge: 0,
-          canEdit: canEditInventories(auth),
-          totalInStock,
-          consumableId,
-          personId: dataConstraints.person.id,
-        })
-      }
-    )
+    _.forEach(inventoryItemsBySite, ([{ siteId, siteName, totalInStock, consumableId }]) => {
+      actionDashboardAlertMessages.push({
+        // ID is needed in UI to distinguish table rows
+        id: `inventoryLevelUpdate_${consumableId}_${siteId}`,
+        siteId,
+        deviceId: null,
+        resultId: null,
+        message: 'Stock Level', // TODO: i18n this message
+        siteName,
+        deviceName: null,
+        issueId: null,
+        status: totalInStock <= 0 ? 'Active' : 'OK',
+        statusI18nKey: totalInStock <= 0 ? 'issueStatusActive' : 'issueStatusOk',
+        issueStatusSortOrder: totalInStock <= 0 ? 0 : 5,
+        issueStatusSeverityExternalId: totalInStock <= 0 ? 'High' : 'Low',
+        statusDate: new Date(),
+        issueType: 'Stock Level Update',
+        issueTypeExternalId: 'StockLevelUpdate',
+        issueTypeI18nKey: 'stockLevelUpdateIssue',
+        issueCategory: 'ReagentHealth',
+        issueCategoryI18nKey: 'issueCategoryReagentHealth',
+        canAcknowledge: 0,
+        canEdit: canEditInventories(auth),
+        totalInStock,
+        consumableId,
+        personId: dataConstraints.person.id,
+      })
+    })
   }
 }
 
@@ -805,10 +683,7 @@ async function getAssayResultCategoryList(dataConstraints) {
     .where('rca.requiresTreatment', 1)
     .groupBy('at.id', 'at.name', 'rc.name')
     .orderBy('at.name', 'rc.name')
-    .select(
-      knex.raw(`CONCAT(at.id,'-',rc.id) as id`),
-      knex.raw(`CONCAT(at.name,': ',rc.name) as name`)
-    )
+    .select(knex.raw(`CONCAT(at.id,'-',rc.id) as id`), knex.raw(`CONCAT(at.name,': ',rc.name) as name`))
 
   return assayResultCategory
 }

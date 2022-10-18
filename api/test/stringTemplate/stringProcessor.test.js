@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const Promise = require('bluebird')
@@ -5,32 +6,23 @@ const { assert, expect } = require('chai')
 const { convertToTimeZone } = require('date-fns-timezone')
 
 const { runTest } = require('../utils/generatorFunctionUtils')
-const {
-  formatDateOrDefault,
-  parseDateOrDefault,
-} = require('../../src/shared/date')
+const { formatDateOrDefault, parseDateOrDefault } = require('../../src/shared/date')
 
 describe('stringTemplate', () => {
   describe('processUsingHandlebarsSyntax', () => {
-    const {
-      processUsingHandlebarsSyntax,
-    } = require('../../src/stringTemplate/service')
+    const { processUsingHandlebarsSyntax } = require('../../src/stringTemplate/service')
 
     it('should replace matching words in the template string', () => {
-      const sampleString =
-        'Device in {{site.state}}, {{site.country}} is currently offline'
-      const expectedResult =
-        'Device in Ohio, United States is currently offline'
+      const sampleString = 'Device in {{site.state}}, {{site.country}} is currently offline'
+      const expectedResult = 'Device in Ohio, United States is currently offline'
       const site = {
         shortName: 'Cuyoga, OH #1',
         state: 'Ohio',
         country: 'United States',
       }
-      return runTest(processUsingHandlebarsSyntax, [sampleString, { site }])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      )
+      return runTest(processUsingHandlebarsSyntax, [sampleString, { site }])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      })
     })
 
     it('should handle missing word replacements in input inputObject', () => {
@@ -43,11 +35,9 @@ describe('stringTemplate', () => {
           country: 'United States',
         },
       }
-      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      )
+      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      })
     })
 
     it('should handle missing value in the input object', () => {
@@ -59,18 +49,15 @@ describe('stringTemplate', () => {
           country: 'United States',
         },
       }
-      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      )
+      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      })
     })
 
     it('should handle multiple objects in the input object', () => {
       const sampleString =
         'New {{result.assayName}} result from Device {{device.shortName}} at {{site.state}}, {{site.country}}'
-      const expectedResult =
-        'New HivVl result from Device Eldoret #1 at Uasin Gishu, Kenya'
+      const expectedResult = 'New HivVl result from Device Eldoret #1 at Uasin Gishu, Kenya'
       const site = {
         state: 'Uasin Gishu',
         country: 'Kenya',
@@ -85,17 +72,13 @@ describe('stringTemplate', () => {
         assayName: 'HivVl',
         sampleId: 'GRP-HIV-2',
       }
-      return runTest(processUsingHandlebarsSyntax, [
-        sampleString,
-        { site, device, result },
-      ])(resultString => {
+      return runTest(processUsingHandlebarsSyntax, [sampleString, { site, device, result }])(resultString => {
         assert.deepEqual(resultString, expectedResult)
       })
     })
 
     it('should format date without display preferences', () => {
-      const sampleString =
-        'Device {{device.shortName}} is offline since {{formatDate data.offlineOn}}'
+      const sampleString = 'Device {{device.shortName}} is offline since {{formatDate data.offlineOn}}'
       const expectedResult = 'Device  is offline since 2018-08-01'
       const inputObject = {
         device: {
@@ -106,16 +89,13 @@ describe('stringTemplate', () => {
           offlineOn: '2018-08-01',
         },
       }
-      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      )
+      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      })
     })
 
     it('should format date with display preferences', () => {
-      const sampleString =
-        'Device {{device.shortName}} is offline since {{formatDate data.offlineOn }}'
+      const sampleString = 'Device {{device.shortName}} is offline since {{formatDate data.offlineOn }}'
       const expectedResult = 'Device  is offline since 1/8/2018'
       const inputObject = {
         device: {
@@ -129,11 +109,9 @@ describe('stringTemplate', () => {
           dateFormat: 'd/M/yyyy',
         },
       }
-      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      )
+      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      })
     })
   })
 
@@ -143,14 +121,11 @@ describe('stringTemplate', () => {
       timeFormat: 'HH:mm:ss',
       dateTimeFormat: 'd/M/yyyy HH:mm:ss',
     }
-    const { processUsingDataSourceQuery } = proxyquire(
-      '../../src/stringTemplate/service',
-      {
-        '../plugin/registration': {
-          loadPlugin: async () => Promise.resolve({ displayPreferences }),
-        },
-      }
-    )
+    const { processUsingDataSourceQuery } = proxyquire('../../src/stringTemplate/service', {
+      '../plugin/registration': {
+        loadPlugin: async () => Promise.resolve({ displayPreferences }),
+      },
+    })
 
     const patientExternalId = 'PATIENT-SYS123655'
     const messageDataSource = {
@@ -205,15 +180,10 @@ L|1`,
 
     describe('formatDate helper', () => {
       it('should format date with display preferences as default', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          'Offline since {{formatDate device.lastSeenOn}}'
-        )
+        const message = await runProcessUsingDataSourceQuery('Offline since {{formatDate device.lastSeenOn}}')
         assert.equal(
           message.payload,
-          `Offline since ${formatDateOrDefault(
-            messageDataSource.deviceLastSeenOn,
-            displayPreferences.dateFormat
-          )}`
+          `Offline since ${formatDateOrDefault(messageDataSource.deviceLastSeenOn, displayPreferences.dateFormat)}`
         )
       })
 
@@ -224,10 +194,7 @@ L|1`,
         )
         assert.equal(
           message.payload,
-          `Offline since ${formatDateOrDefault(
-            messageDataSource.deviceLastSeenOn,
-            specifiedFormat
-          )}`
+          `Offline since ${formatDateOrDefault(messageDataSource.deviceLastSeenOn, specifiedFormat)}`
         )
       })
     })
@@ -295,23 +262,15 @@ L|1`,
         )
         assert.equal(
           message.payload,
-          `Offline since ${formatDateOrDefault(
-            messageDataSource.deviceLastSeenOn,
-            specifiedFormat
-          )}`
+          `Offline since ${formatDateOrDefault(messageDataSource.deviceLastSeenOn, specifiedFormat)}`
         )
       })
     })
 
     describe('toLowerCase helper', () => {
       it('should format a string value to lower case', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          `Device {{toLowerCase device.name}} is offline`
-        )
-        assert.equal(
-          message.payload,
-          `Device ${messageDataSource.deviceName.toLowerCase()} is offline`
-        )
+        const message = await runProcessUsingDataSourceQuery(`Device {{toLowerCase device.name}} is offline`)
+        assert.equal(message.payload, `Device ${messageDataSource.deviceName.toLowerCase()} is offline`)
       })
     })
 
@@ -325,15 +284,11 @@ L|1`,
           CHBAH: 'B',
         }
         const message = await runProcessUsingDataSourceQuery(
-          `External Facility Code for {{device.name}} is {{mapValue site.id valueMap='${JSON.stringify(
-            valueMap
-          )}'}}`
+          `External Facility Code for {{device.name}} is {{mapValue site.id valueMap='${JSON.stringify(valueMap)}'}}`
         )
         assert.equal(
           message.payload,
-          `External Facility Code for ${messageDataSource.deviceName} is ${
-            valueMap[messageDataSource.siteExternalId]
-          }`
+          `External Facility Code for ${messageDataSource.deviceName} is ${valueMap[messageDataSource.siteExternalId]}`
         )
       })
 
@@ -343,14 +298,9 @@ L|1`,
           SOMEOTHERVALUE: 'B',
         }
         const message = await runProcessUsingDataSourceQuery(
-          `External Facility Code for {{device.name}} is {{mapValue site.id valueMap='${JSON.stringify(
-            valueMap
-          )}'}}`
+          `External Facility Code for {{device.name}} is {{mapValue site.id valueMap='${JSON.stringify(valueMap)}'}}`
         )
-        assert.equal(
-          message.payload,
-          `External Facility Code for ${messageDataSource.deviceName} is `
-        )
+        assert.equal(message.payload, `External Facility Code for ${messageDataSource.deviceName} is `)
       })
     })
 
@@ -370,9 +320,7 @@ L|1`,
       })
 
       it('should still return nothing when default value is not specified', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          `Device's pants Size is {{defaultTo device.pantsSize}}`
-        )
+        const message = await runProcessUsingDataSourceQuery(`Device's pants Size is {{defaultTo device.pantsSize}}`)
         assert.equal(message.payload, `Device's pants Size is `)
       })
     })
@@ -398,29 +346,17 @@ L|1`,
 
     describe('enclose helper', () => {
       it('should return the value enclosed in the characters specified', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          `Device's name is {{enclose device.name '"'}}`
-        )
-        assert.equal(
-          message.payload,
-          `Device's name is "${messageDataSource.deviceName}"`
-        )
+        const message = await runProcessUsingDataSourceQuery(`Device's name is {{enclose device.name '"'}}`)
+        assert.equal(message.payload, `Device's name is "${messageDataSource.deviceName}"`)
       })
 
       it('should allow more explicit declarations', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          `Device's name is {{enclose device.name with='"'}}`
-        )
-        assert.equal(
-          message.payload,
-          `Device's name is "${messageDataSource.deviceName}"`
-        )
+        const message = await runProcessUsingDataSourceQuery(`Device's name is {{enclose device.name with='"'}}`)
+        assert.equal(message.payload, `Device's name is "${messageDataSource.deviceName}"`)
       })
 
       it('should return the original value string when value is nil', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          `Device's pants Size is {{enclose device.pantsSize '"'}}`
-        )
+        const message = await runProcessUsingDataSourceQuery(`Device's pants Size is {{enclose device.pantsSize '"'}}`)
         assert.equal(message.payload, `Device's pants Size is `)
       })
 
@@ -439,15 +375,10 @@ L|1`,
 
     describe('escapeLines helper', () => {
       it('should escape line breaks and trim each line', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          'RESULT NOTES: {{escapeLines result.notes}}'
-        )
+        const message = await runProcessUsingDataSourceQuery('RESULT NOTES: {{escapeLines result.notes}}')
         assert.equal(
           message.payload,
-          `RESULT NOTES: ${_.map(
-            messageDataSource.resultNotes.split('\n'),
-            line => line.trim()
-          ).join('\\n')}`
+          `RESULT NOTES: ${_.map(messageDataSource.resultNotes.split('\n'), line => line.trim()).join('\\n')}`
         )
       })
 
@@ -456,34 +387,20 @@ L|1`,
           'Result module serial is {{escapeLines result.moduleSerial}}'
         )
         assert.equal(message.payload, 'Result module serial is ')
-        message = await runProcessUsingDataSourceQuery(
-          'Result module name is {{escapeLines result.moduleName}}'
-        )
+        message = await runProcessUsingDataSourceQuery('Result module name is {{escapeLines result.moduleName}}')
         assert.equal(message.payload, 'Result module name is ')
       })
 
       it('should do nothing when the value contains no line breaks', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          `Device's name is {{escapeLines device.name}}`
-        )
-        assert.equal(
-          message.payload,
-          `Device's name is ${messageDataSource.deviceName}`
-        )
+        const message = await runProcessUsingDataSourceQuery(`Device's name is {{escapeLines device.name}}`)
+        assert.equal(message.payload, `Device's name is ${messageDataSource.deviceName}`)
       })
     })
 
     describe('urlEncode helper', () => {
       it('should return the URL encoded value', async () => {
-        const message = await runProcessUsingDataSourceQuery(
-          `Result error notes: {{urlEncode result.errorNotes}}`
-        )
-        assert.equal(
-          message.payload,
-          `Result error notes: ${encodeURIComponent(
-            messageDataSource.resultErrorNotes
-          )}`
-        )
+        const message = await runProcessUsingDataSourceQuery(`Result error notes: {{urlEncode result.errorNotes}}`)
+        assert.equal(message.payload, `Result error notes: ${encodeURIComponent(messageDataSource.resultErrorNotes)}`)
       })
     })
 
@@ -633,10 +550,7 @@ L|1`,
         message = await runProcessUsingDataSourceQuery(template, {
           resultData: `{"numericValue":"999"}`,
         })
-        assert.equal(
-          message.payload,
-          `Numeric Value is NOT greater than 8888.88`
-        )
+        assert.equal(message.payload, `Numeric Value is NOT greater than 8888.88`)
       })
     })
 
@@ -671,10 +585,7 @@ L|1`,
         assert.equal(
           message.payload,
           `Offline since ${encodeURIComponent(
-            `"${formatDateOrDefault(
-              messageDataSource.deviceLastSeenOn,
-              specifiedFormat
-            ).toLowerCase()}"`
+            `"${formatDateOrDefault(messageDataSource.deviceLastSeenOn, specifiedFormat).toLowerCase()}"`
           )}`
         )
       })
@@ -821,10 +732,7 @@ L|1`,
             'NoResult',
           ]
           for (let i = 0; i < orderedPriorityCategories.length; i++) {
-            const foundPriorityCategory = priorityResult(
-              resultCategories,
-              orderedPriorityCategories[i]
-            )
+            const foundPriorityCategory = priorityResult(resultCategories, orderedPriorityCategories[i])
             if (foundPriorityCategory) {
               return foundPriorityCategory
             }
@@ -1047,10 +955,7 @@ L|1`,
         await Promise.each(useCases, async useCase => {
           const dataSource = { ...messageDataSource, ...useCase }
           const formData = JSON.parse(dataSource.resultFormData)
-          const message = await runProcessUsingDataSourceQuery(
-            template,
-            useCase
-          )
+          const message = await runProcessUsingDataSourceQuery(template, useCase)
           const resultData = JSON.parse(dataSource.resultData)
           assert.equal(
             message.payload,
@@ -1059,33 +964,15 @@ L|1`,
               `%22redcap_data_access_group%22%3A%22${encodeURIComponent(
                 dataSource.siteExternalId.toLowerCase()
               )}%22%2C%20` +
-              `%22first_name%22%3A%22${encodeURIComponent(
-                formData.nameOfPatient
-              )}%22%2C%20` +
-              `%22surname%22%3A%22${encodeURIComponent(
-                formData.surnameOfPatient
-              )}%22%2C%20` +
-              `%22hospital_number%22%3A%22${encodeURIComponent(
-                formData.hospitalNumber
-              )}%22%2C%20` +
-              `%22site_code%22%3A%22${
-                redCapSiteCodes[dataSource.siteExternalId]
-              }%22%2C%20` +
-              `%22ward_cubicle%22%3A%22${encodeURIComponent(
-                formData.ward
-              )}%22%2C%20` +
-              `%22sample_category%22%3A%22${encodeURIComponent(
-                formData.sampleType
-              )}%22%2C%20` +
-              `%22instrument_ca%22%3A%22${
-                redCapDeviceTypeCodes[dataSource.deviceTypeExternalId]
-              }%22%2C%20` +
-              `%22assayhiv%22%3A%22${
-                redCapAssayCodes[dataSource.assayExternalId]
-              }%22%2C%20` +
-              `%22sample_barcode%22%3A%22${encodeURIComponent(
-                dataSource.sampleExternalId
-              )}%22%2C%20` +
+              `%22first_name%22%3A%22${encodeURIComponent(formData.nameOfPatient)}%22%2C%20` +
+              `%22surname%22%3A%22${encodeURIComponent(formData.surnameOfPatient)}%22%2C%20` +
+              `%22hospital_number%22%3A%22${encodeURIComponent(formData.hospitalNumber)}%22%2C%20` +
+              `%22site_code%22%3A%22${redCapSiteCodes[dataSource.siteExternalId]}%22%2C%20` +
+              `%22ward_cubicle%22%3A%22${encodeURIComponent(formData.ward)}%22%2C%20` +
+              `%22sample_category%22%3A%22${encodeURIComponent(formData.sampleType)}%22%2C%20` +
+              `%22instrument_ca%22%3A%22${redCapDeviceTypeCodes[dataSource.deviceTypeExternalId]}%22%2C%20` +
+              `%22assayhiv%22%3A%22${redCapAssayCodes[dataSource.assayExternalId]}%22%2C%20` +
+              `%22sample_barcode%22%3A%22${encodeURIComponent(dataSource.sampleExternalId)}%22%2C%20` +
               `%22sample_taken%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
                   convertToTimeZone(formData.timeSampleTaken, {
@@ -1104,15 +991,9 @@ L|1`,
                       )
                     ]
               }%22%2C%20` +
-              `%22error_code1%22%3A%22${encodeURIComponent(
-                dataSource.resultErrorCode || ''
-              )}%22%2C%20` +
-              `%22poc_viral_load%22%3A%22${encodeURIComponent(
-                dataSource.expectedPocVl
-              )}%22%2C%20` +
-              `%22ct_value%22%3A%22${
-                _.get(resultData, ['probes', 'probeCCT']) || '0'
-              }%22%2C%20` +
+              `%22error_code1%22%3A%22${encodeURIComponent(dataSource.resultErrorCode || '')}%22%2C%20` +
+              `%22poc_viral_load%22%3A%22${encodeURIComponent(dataSource.expectedPocVl)}%22%2C%20` +
+              `%22ct_value%22%3A%22${_.get(resultData, ['probes', 'probeCCT']) || '0'}%22%2C%20` +
               `%22result_instrument%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
                   convertToTimeZone(formData.timeInstrumentResulted, {
@@ -1128,9 +1009,7 @@ L|1`,
             decodeURIComponent(
               message.payload.substr(
                 message.payload.indexOf('&data=') + '&data='.length,
-                message.payload.indexOf('&returnContent=') -
-                  message.payload.indexOf('&data=') -
-                  '&data='.length
+                message.payload.indexOf('&returnContent=') - message.payload.indexOf('&data=') - '&data='.length
               )
             )
           )
@@ -1147,8 +1026,7 @@ L|1`,
                 site_code: redCapSiteCodes[dataSource.siteExternalId],
                 ward_cubicle: formData.ward,
                 sample_category: formData.sampleType,
-                instrument_ca:
-                  redCapDeviceTypeCodes[dataSource.deviceTypeExternalId],
+                instrument_ca: redCapDeviceTypeCodes[dataSource.deviceTypeExternalId],
                 assayhiv: redCapAssayCodes[dataSource.assayExternalId],
                 sample_barcode: dataSource.sampleExternalId,
                 sample_taken: formatDateOrDefault(
@@ -1159,10 +1037,7 @@ L|1`,
                 ),
                 point_of_care_instrument_r:
                   redCapResultCategoryCodes[
-                    tryMergeResultCategories(
-                      dataSource.resultCategory1ExternalId,
-                      dataSource.resultCategory2ExternalId
-                    )
+                    tryMergeResultCategories(dataSource.resultCategory1ExternalId, dataSource.resultCategory2ExternalId)
                   ],
                 error_code1: dataSource.resultErrorCode || '',
                 poc_viral_load: dataSource.expectedPocVl,
@@ -1182,10 +1057,7 @@ L|1`,
         const template =
           'New Result Uploaded {{result.sample.id}} from {{device.name}}. ' +
           'Please login to Aspect and enter additional details'
-        const message = await runProcessUsingDataSourceQuery(
-          template,
-          messageDataSource
-        )
+        const message = await runProcessUsingDataSourceQuery(template, messageDataSource)
         assert.equal(
           message.payload,
           `New Result Uploaded ${messageDataSource.sampleExternalId}` +
@@ -1382,10 +1254,7 @@ L|1`,
         await Promise.each(useCases, async useCase => {
           const dataSource = { ...messageDataSource, ...useCase }
           const formData = JSON.parse(dataSource.resultFormData)
-          const message = await runProcessUsingDataSourceQuery(
-            template,
-            useCase
-          )
+          const message = await runProcessUsingDataSourceQuery(template, useCase)
           const patientData = JSON.parse(dataSource.resultPatientData)
           assert.equal(
             message.payload,
@@ -1529,10 +1398,7 @@ L|1`,
         ]
         await Promise.each(useCases, async useCase => {
           const dataSource = { ...messageDataSource, ...useCase }
-          const message = await runProcessUsingDataSourceQuery(
-            template,
-            useCase
-          )
+          const message = await runProcessUsingDataSourceQuery(template, useCase)
           const messagePayload = JSON.parse(message.payload)
           expect(messagePayload).to.containSubset({
             auth_key: checkTbAppAuthKey,
@@ -1550,57 +1416,55 @@ L|1`,
 
     describe('use cases for Philippines', () => {
       it('should process ITIS "REST API" urls', async () => {
-        const philippinesITISSystemKey = 't3$+P@s5h!'
-        const philippinesITISWebApiUrl =
-          'http://itis.doh.gov.ph:3005/pushtbexam'
+        const philippinesITISWebApiUrl = 'http://itis.doh.gov.ph:3005/pushtbexam'
         const genderValueMap = { Male: 'M', Female: 'F' }
         const postTreatmentReasonForExaminationCodes = {
-          '1': '938563',
-          '2': '938564',
-          '3': '938565',
-          '4': '938566',
+          1: '938563',
+          2: '938564',
+          3: '938565',
+          4: '938566',
         }
         const monthOfTreatmentReasonForExaminationCodes = {
-          '1': '938496',
-          '2': '938497',
-          '3': '938498',
-          '4': '938499',
-          '5': '938500',
-          '6': '938501',
-          '7': '938502',
-          '8': '938503',
-          '9': '938504',
-          '10': '938505',
-          '11': '938506',
-          '12': '938507',
-          '13': '938508',
-          '14': '938509',
-          '15': '938510',
-          '16': '938511',
-          '17': '938512',
-          '18': '938513',
-          '19': '938514',
-          '20': '938515',
-          '21': '938516',
-          '22': '938517',
-          '23': '938518',
-          '24': '938519',
-          '25': '938520',
-          '26': '938521',
-          '27': '938522',
-          '28': '938523',
-          '29': '938524',
-          '30': '938525',
-          '31': '938526',
-          '32': '938558',
-          '33': '938559',
-          '34': '938560',
-          '35': '938561',
-          '36': '938562',
-          '37': '938677',
-          '38': '938730',
-          '39': '938731',
-          '40': '938732',
+          1: '938496',
+          2: '938497',
+          3: '938498',
+          4: '938499',
+          5: '938500',
+          6: '938501',
+          7: '938502',
+          8: '938503',
+          9: '938504',
+          10: '938505',
+          11: '938506',
+          12: '938507',
+          13: '938508',
+          14: '938509',
+          15: '938510',
+          16: '938511',
+          17: '938512',
+          18: '938513',
+          19: '938514',
+          20: '938515',
+          21: '938516',
+          22: '938517',
+          23: '938518',
+          24: '938519',
+          25: '938520',
+          26: '938521',
+          27: '938522',
+          28: '938523',
+          29: '938524',
+          30: '938525',
+          31: '938526',
+          32: '938558',
+          33: '938559',
+          34: '938560',
+          35: '938561',
+          36: '938562',
+          37: '938677',
+          38: '938730',
+          39: '938731',
+          40: '938732',
         }
         const registrationGroupCodes = {
           New: '938610',
@@ -1696,9 +1560,7 @@ L|1`,
         }
         const itisDateFormat = 'yyyy-MM-dd'
         const template =
-          `${philippinesITISWebApiUrl}/${encodeURIComponent(
-            philippinesITISSystemKey
-          )}` +
+          `${philippinesITISWebApiUrl}/gX%40leR%2B%21Ti%24` +
           `/TB_CASE_NUMBER/{{urlEncode (defaultTo (coalesce result.patient.tbCaseNumber result.patient.id) 'NULL')}}` +
           `/SPECIMEN_CODE/{{urlEncode (defaultTo result.sample.id 'NULL')}}` +
           `/REQUESTING_FACILITY/{{urlEncode (defaultTo (coalesce result.sample.originSite.id result.patient.referringHealthFacility) 'NULL')}}` +
@@ -1727,9 +1589,7 @@ L|1`,
           `/PATIENT_MIDDLE_NAME/{{urlEncode (defaultTo result.patient.middleInitialOrName 'NULL')}}` +
           `/PATIENT_AGE/{{defaultTo (extractValueFromRegexCaptureGroup result.patient.age expression='^(\\d*)(.*)$' groupNumber=1) 'NULL'}}` +
           `/PATIENT_ADDRESS/{{urlEncode (defaultTo result.patient.address 'NULL')}}` +
-          `/SEX/{{defaultTo (mapValue result.patient.sex '${JSON.stringify(
-            genderValueMap
-          )}') 'NULL'}}` +
+          `/SEX/{{defaultTo (mapValue result.patient.sex '${JSON.stringify(genderValueMap)}') 'NULL'}}` +
           `/PATIENT_MOBILE_NUMBER/{{urlEncode (defaultTo (coalesce result.patient.phone (customFieldValueFromLabel result.data.customFieldData 'Patient Phone')) 'NULL')}}` +
           `/PATIENT_LANDLINE_NUMBER/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient\\'s Landline No.') 'NULL')}}` +
           `/PATIENT_EMAIL/{{urlEncode (defaultTo (customFieldValueFromLabel result.data.customFieldData 'Patient\\'s Email Address') 'NULL')}}` +
@@ -1869,9 +1729,7 @@ L|1`,
           `/VISUAL_APPEARANCE/{{defaultTo (mapValue result.sample.data.appearance '${JSON.stringify(
             visualAppearanceCodes
           )}') 'NULL'}}` +
-          `/EXAM_TYPE/{{defaultTo (mapValue result.assay.id '${JSON.stringify(
-            examTypes
-          )}') 'NULL'}}` +
+          `/EXAM_TYPE/{{defaultTo (mapValue result.assay.id '${JSON.stringify(examTypes)}') 'NULL'}}` +
           `/EXAM_RESULT/` +
           `{{#if (eq result.assay.id 'assaySmear')}}` +
           `%7B%22RESULT%22%3A%22{{defaultTo (mapValue result.category1.id '${JSON.stringify(
@@ -2251,214 +2109,115 @@ L|1`,
         ]
         await Promise.each(useCases, async useCase => {
           const dataSource = { ...messageDataSource, ...useCase }
-          const resultData = dataSource.resultData
-            ? JSON.parse(dataSource.resultData)
-            : {}
-          const resultPatientData = dataSource.resultPatientData
-            ? JSON.parse(dataSource.resultPatientData)
-            : {}
+          const resultData = dataSource.resultData ? JSON.parse(dataSource.resultData) : {}
+          const resultPatientData = dataSource.resultPatientData ? JSON.parse(dataSource.resultPatientData) : {}
           const resultSample = {
             id: dataSource.sampleExternalId,
             originSite: {
               id: dataSource.sampleOriginSiteExternalId,
             },
             collectedOn: dataSource.sampleCollectedOn,
-            data: dataSource.sampleData
-              ? JSON.parse(dataSource.sampleData)
-              : {},
+            data: dataSource.sampleData ? JSON.parse(dataSource.sampleData) : {},
           }
           let examResult = null
           if (dataSource.assayExternalId === 'assaySmear') {
             examResult = {
-              RESULT:
-                smearResultCodeMappings[dataSource.resultCategory1ExternalId] ||
-                '6',
+              RESULT: smearResultCodeMappings[dataSource.resultCategory1ExternalId] || '6',
               NUM_AFB: 'N/A',
             }
-          } else if (
-            ['GxMtbRif', 'GxMtbRifUltra'].includes(dataSource.assayExternalId)
-          ) {
+          } else if (['GxMtbRif', 'GxMtbRifUltra'].includes(dataSource.assayExternalId)) {
             examResult = {
-              MTB:
-                xpertResultCodeMappings[dataSource.resultCategory1ExternalId] ||
-                '3',
-              RIF:
-                xpertRifResultCodeMappings[
-                  dataSource.resultCategory2ExternalId
-                ] || '6',
+              MTB: xpertResultCodeMappings[dataSource.resultCategory1ExternalId] || '3',
+              RIF: xpertRifResultCodeMappings[dataSource.resultCategory2ExternalId] || '6',
             }
           } else if (
             dataSource.assayExternalId === 'assayTbLamp' &&
-            ['Negative', 'Positive'].includes(
+            ['Negative', 'Positive'].includes(dataSource.resultCategory1ExternalId)
+          ) {
+            examResult = {
+              RESULT: tbLampResultCodeMappings[dataSource.resultCategory1ExternalId] || '3',
+            }
+          } else if (
+            ['assayBdMgitGnd', 'assayGenericCulture'].includes(dataSource.assayExternalId) &&
+            ['NotDetected', 'Detected', 'PositiveMTB', 'PositiveMOTT', 'Contaminated', 'Missing', 'Unknown'].includes(
               dataSource.resultCategory1ExternalId
             )
           ) {
             examResult = {
-              RESULT:
-                tbLampResultCodeMappings[
-                  dataSource.resultCategory1ExternalId
-                ] || '3',
+              RESULT: cultureResultCodeMappings[dataSource.resultCategory1ExternalId] || '4',
             }
           } else if (
-            ['assayBdMgitGnd', 'assayGenericCulture'].includes(
-              dataSource.assayExternalId
-            ) &&
-            [
-              'NotDetected',
-              'Detected',
-              'PositiveMTB',
-              'PositiveMOTT',
-              'Contaminated',
-              'Missing',
-              'Unknown',
-            ].includes(dataSource.resultCategory1ExternalId)
-          ) {
-            examResult = {
-              RESULT:
-                cultureResultCodeMappings[
-                  dataSource.resultCategory1ExternalId
-                ] || '4',
-            }
-          } else if (
-            ['assayBdMgitAst', 'assayGenericDst'].includes(
-              dataSource.assayExternalId
-            ) &&
-            ['Detected', 'PositiveMTB'].includes(
-              dataSource.resultCategory1ExternalId
-            ) &&
-            ['Resistant', 'Susceptible', 'Contaminated'].includes(
-              dataSource.resultCategory2ExternalId
-            )
+            ['assayBdMgitAst', 'assayGenericDst'].includes(dataSource.assayExternalId) &&
+            ['Detected', 'PositiveMTB'].includes(dataSource.resultCategory1ExternalId) &&
+            ['Resistant', 'Susceptible', 'Contaminated'].includes(dataSource.resultCategory2ExternalId)
           ) {
             examResult = {
               H:
                 dstResultCodeMappings[
                   _.get(resultData, 'encodedResult.isoniazid') ||
-                    mgitSireStatusToEncodedMappings[
-                      _.get(resultData, 'INH.sirStatus')
-                    ] ||
+                    mgitSireStatusToEncodedMappings[_.get(resultData, 'INH.sirStatus')] ||
                     'NOT DONE'
                 ] || 'ND',
               R:
                 dstResultCodeMappings[
                   _.get(resultData, 'encodedResult.rifampicin') ||
-                    mgitSireStatusToEncodedMappings[
-                      _.get(resultData, 'RIF.sirStatus')
-                    ] ||
+                    mgitSireStatusToEncodedMappings[_.get(resultData, 'RIF.sirStatus')] ||
                     'NOT DONE'
                 ] || 'ND',
-              Z:
-                dstResultCodeMappings[
-                  _.get(resultData, 'encodedResult.pyrazinamide') || 'NOT DONE'
-                ] || 'ND',
+              Z: dstResultCodeMappings[_.get(resultData, 'encodedResult.pyrazinamide') || 'NOT DONE'] || 'ND',
               E:
                 dstResultCodeMappings[
                   _.get(resultData, 'encodedResult.ethambutol') ||
-                    mgitSireStatusToEncodedMappings[
-                      _.get(resultData, 'EMB.sirStatus')
-                    ] ||
+                    mgitSireStatusToEncodedMappings[_.get(resultData, 'EMB.sirStatus')] ||
                     'NOT DONE'
                 ] || 'ND',
               S:
                 dstResultCodeMappings[
                   _.get(resultData, 'encodedResult.streptomycin') ||
-                    mgitSireStatusToEncodedMappings[
-                      _.get(resultData, 'S.sirStatus')
-                    ] ||
+                    mgitSireStatusToEncodedMappings[_.get(resultData, 'S.sirStatus')] ||
                     'NOT DONE'
                 ] || 'ND',
-              Km:
-                dstResultCodeMappings[
-                  _.get(resultData, 'encodedResult.kanamycin') || 'NOT DONE'
-                ] || 'ND',
-              Cm:
-                dstResultCodeMappings[
-                  _.get(resultData, 'encodedResult.capreomycin') || 'NOT DONE'
-                ] || 'ND',
-              Ofx:
-                dstResultCodeMappings[
-                  _.get(resultData, 'encodedResult.ofloxacin') || 'NOT DONE'
-                ] || 'ND',
-              Lfx:
-                dstResultCodeMappings[
-                  _.get(resultData, 'encodedResult.levofloxacin') || 'NOT DONE'
-                ] || 'ND',
+              Km: dstResultCodeMappings[_.get(resultData, 'encodedResult.kanamycin') || 'NOT DONE'] || 'ND',
+              Cm: dstResultCodeMappings[_.get(resultData, 'encodedResult.capreomycin') || 'NOT DONE'] || 'ND',
+              Ofx: dstResultCodeMappings[_.get(resultData, 'encodedResult.ofloxacin') || 'NOT DONE'] || 'ND',
+              Lfx: dstResultCodeMappings[_.get(resultData, 'encodedResult.levofloxacin') || 'NOT DONE'] || 'ND',
               Cs: 'ND',
-              Am:
-                dstResultCodeMappings[
-                  _.get(resultData, 'encodedResult.amikacin') || 'NOT DONE'
-                ] || 'ND',
+              Am: dstResultCodeMappings[_.get(resultData, 'encodedResult.amikacin') || 'NOT DONE'] || 'ND',
             }
           } else if (
             dataSource.assayExternalId === 'assayLPA' &&
-            ['NotDetected', 'Invalid', 'PositiveMTB'].includes(
-              dataSource.resultCategory1ExternalId
-            )
+            ['NotDetected', 'Invalid', 'PositiveMTB'].includes(dataSource.resultCategory1ExternalId)
           ) {
             examResult = {
-              MTB:
-                lpaMtbResultCodeMappings[dataSource.resultCategory1ExternalId],
-              H:
-                lpaHighLowResistanceCodeMappings[
-                  _.get(resultData, 'encodedResult.isoniazid')
-                ] || '3',
-              R:
-                lpaResistanceCodeMappings[
-                  _.get(resultData, 'encodedResult.rifampicin')
-                ] || '3',
-              FQ:
-                lpaResistanceCodeMappings[
-                  _.get(resultData, 'encodedResult.fluoroquinolones')
-                ] || '3',
-              SLI:
-                dstResultCodeMappings[
-                  _.get(resultData, 'encodedResult.aminoglycoside')
-                ] || '3',
+              MTB: lpaMtbResultCodeMappings[dataSource.resultCategory1ExternalId],
+              H: lpaHighLowResistanceCodeMappings[_.get(resultData, 'encodedResult.isoniazid')] || '3',
+              R: lpaResistanceCodeMappings[_.get(resultData, 'encodedResult.rifampicin')] || '3',
+              FQ: lpaResistanceCodeMappings[_.get(resultData, 'encodedResult.fluoroquinolones')] || '3',
+              SLI: dstResultCodeMappings[_.get(resultData, 'encodedResult.aminoglycoside')] || '3',
             }
           }
           let reasonFormExamination = 'NULL'
           if (/^PT\d*/i.test(resultPatientData.monthOfTreatment)) {
             reasonFormExamination =
-              postTreatmentReasonForExaminationCodes[
-                /^PT(\d*)/i.exec(resultPatientData.monthOfTreatment)[1]
-              ]
+              postTreatmentReasonForExaminationCodes[/^PT(\d*)/i.exec(resultPatientData.monthOfTreatment)[1]]
           } else if (
             resultPatientData.treatmentSchedule &&
-            resultPatientData.treatmentSchedule.toLocaleLowerCase() ===
-              'diagnosis'
+            resultPatientData.treatmentSchedule.toLocaleLowerCase() === 'diagnosis'
           ) {
             reasonFormExamination = '938492'
-          } else if (
-            ['bas', 'baseline'].includes(
-              (resultPatientData.treatmentSchedule || '').toLowerCase()
-            )
-          ) {
+          } else if (['bas', 'baseline'].includes((resultPatientData.treatmentSchedule || '').toLowerCase())) {
             reasonFormExamination = '938493'
           } else if (/\d*/.test(resultPatientData.monthOfTreatment)) {
             reasonFormExamination =
-              monthOfTreatmentReasonForExaminationCodes[
-                /(\d*)/.exec(resultPatientData.monthOfTreatment)[1]
-              ]
+              monthOfTreatmentReasonForExaminationCodes[/(\d*)/.exec(resultPatientData.monthOfTreatment)[1]]
           }
-          const message = await runProcessUsingDataSourceQuery(
-            template,
-            useCase,
-            ['urlTemplate']
-          )
+          const message = await runProcessUsingDataSourceQuery(template, useCase, ['urlTemplate'])
           expect(message.url).to.equal(
-            `${philippinesITISWebApiUrl}/${encodeURIComponent(
-              philippinesITISSystemKey
-            )}` +
-              `/TB_CASE_NUMBER/${encodeURIComponent(
-                resultPatientData.id || 'NULL'
-              )}` +
-              `/SPECIMEN_CODE/${encodeURIComponent(
-                resultSample.id || 'NULL'
-              )}` +
+            `${philippinesITISWebApiUrl}/gX%40leR%2B%21Ti%24` +
+              `/TB_CASE_NUMBER/${encodeURIComponent(resultPatientData.id || 'NULL')}` +
+              `/SPECIMEN_CODE/${encodeURIComponent(resultSample.id || 'NULL')}` +
               `/REQUESTING_FACILITY/${encodeURIComponent(
-                resultSample.originSite.id ||
-                  resultPatientData.referringHealthFacility ||
-                  'NULL'
+                resultSample.originSite.id || resultPatientData.referringHealthFacility || 'NULL'
               )}` +
               `/DATE_OF_REQUEST/${
                 formatDateOrDefault(
@@ -2468,61 +2227,35 @@ L|1`,
                   itisDateFormat
                 ) || 'NULL'
               }` +
-              `/FACILITY_CONTACT/${encodeURIComponent(
-                resultPatientData.facilityContactNumber || 'NULL'
-              )}` +
-              `/REQUESTING_PHYSICIAN/${encodeURIComponent(
-                resultPatientData.requestingPhysician || 'NULL'
-              )}` +
-              `/PATIENT_LAST_NAME/${encodeURIComponent(
-                resultPatientData.lastName || 'NULL'
-              )}` +
-              `/PATIENT_FIRST_NAME/${encodeURIComponent(
-                resultPatientData.firstName || 'NULL'
-              )}` +
-              `/PATIENT_MIDDLE_NAME/${encodeURIComponent(
-                resultPatientData.middleInitialOrName || 'NULL'
-              )}` +
+              `/FACILITY_CONTACT/${encodeURIComponent(resultPatientData.facilityContactNumber || 'NULL')}` +
+              `/REQUESTING_PHYSICIAN/${encodeURIComponent(resultPatientData.requestingPhysician || 'NULL')}` +
+              `/PATIENT_LAST_NAME/${encodeURIComponent(resultPatientData.lastName || 'NULL')}` +
+              `/PATIENT_FIRST_NAME/${encodeURIComponent(resultPatientData.firstName || 'NULL')}` +
+              `/PATIENT_MIDDLE_NAME/${encodeURIComponent(resultPatientData.middleInitialOrName || 'NULL')}` +
               `/PATIENT_AGE/${
-                _.isNil(resultPatientData.age) ||
-                _.isNil(
-                  resultPatientData.age
-                    .toString()
-                    .match(new RegExp(/^(\d*)(.*)$/, 'g'))
-                )
+                _.isNil(resultPatientData.age) || _.isNil(resultPatientData.age.toString().match(/^(\d*)(.*)$/g))
                   ? 'NULL'
-                  : new RegExp(/^(\d*)(.*)$/, 'g').exec(
-                      resultPatientData.age.toString()
-                    )[1] || 'NULL'
+                  : /^(\d*)(.*)$/g.exec(resultPatientData.age.toString())[1] || 'NULL'
               }` +
-              `/PATIENT_ADDRESS/${encodeURIComponent(
-                resultPatientData.address || 'NULL'
-              )}` +
-              `/SEX/${
-                { Male: 'M', Female: 'F' }[resultPatientData.sex] || 'NULL'
-              }` +
+              `/PATIENT_ADDRESS/${encodeURIComponent(resultPatientData.address || 'NULL')}` +
+              `/SEX/${{ Male: 'M', Female: 'F' }[resultPatientData.sex] || 'NULL'}` +
               `/PATIENT_MOBILE_NUMBER/${encodeURIComponent(
-                (
-                  (resultData.customFieldData || []).find(
-                    customField => customField.label === 'Patient Phone'
-                  ) || {}
-                ).value ||
+                ((resultData.customFieldData || []).find(customField => customField.label === 'Patient Phone') || {})
+                  .value ||
                   resultPatientData.phone ||
                   'NULL'
               )}` +
               `/PATIENT_LANDLINE_NUMBER/${encodeURIComponent(
                 (
                   (resultData.customFieldData || []).find(
-                    customField =>
-                      customField.label === "Patient's Landline No."
+                    customField => customField.label === "Patient's Landline No."
                   ) || {}
                 ).value || 'NULL'
               )}` +
               `/PATIENT_EMAIL/${encodeURIComponent(
                 (
                   (resultData.customFieldData || []).find(
-                    customField =>
-                      customField.label === "Patient's Email Address"
+                    customField => customField.label === "Patient's Email Address"
                   ) || {}
                 ).value || 'NULL'
               )}` +
@@ -2541,15 +2274,8 @@ L|1`,
                   OTHER: '938616',
                 }[resultPatientData.registrationGroup] || '938616'
               }` +
-              `/SPECIMEN_TYPE/${
-                { Sputum: '0', Isolates: '1', Others: '1' }[
-                  resultSample.data.type
-                ] || 'NULL'
-              }` +
-              `/REPEAT_COLLECTION/${
-                { Yes: '1', No: '0' }[resultSample.data.repeatCollection] ||
-                'NULL'
-              }` +
+              `/SPECIMEN_TYPE/${{ Sputum: '0', Isolates: '1', Others: '1' }[resultSample.data.type] || 'NULL'}` +
+              `/REPEAT_COLLECTION/${{ Yes: '1', No: '0' }[resultSample.data.repeatCollection] || 'NULL'}` +
               `/PRESUMPTIVE_TB_DSDR/${
                 {
                   'Presumptive DS-TB': '0',
@@ -2586,19 +2312,12 @@ L|1`,
                   assayLPA: 'LPA',
                 }[dataSource.assayExternalId]
               }` +
-              `/EXAM_RESULT/${
-                examResult === null
-                  ? 'NULL'
-                  : encodeURIComponent(JSON.stringify(examResult))
-              }` +
+              `/EXAM_RESULT/${examResult === null ? 'NULL' : encodeURIComponent(JSON.stringify(examResult))}` +
               `/DATE_OF_RELEASE/${
                 formatDateOrDefault(
-                  parseDateOrDefault(
-                    _.get(resultData, 'encodedResult.dateReleased'),
-                    {
-                      defaultDate: null,
-                    }
-                  ),
+                  parseDateOrDefault(_.get(resultData, 'encodedResult.dateReleased'), {
+                    defaultDate: null,
+                  }),
                   itisDateFormat
                 ) || 'NULL'
               }` +

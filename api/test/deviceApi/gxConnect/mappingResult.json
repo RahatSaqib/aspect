@@ -1,0 +1,107 @@
+{
+  "CustomFields": {
+    "Fields": [
+      {
+        "Id": 2,
+        "Name": "PlainField",
+        "ExternalId": "PlainField",
+        "Help": "PlainField value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 1,
+        "InputControlData": {}
+      },
+      {
+        "Name": "ConditionalField",
+        "ExternalId": "ConditionalField",
+        "Help": "ConditionalField value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 0,
+        "InputControlData": {
+          "displayConditions": [
+            {
+              "conjunction": "AND",
+              "operator": "!=",
+              "refId": 2,
+              "value": "unknown"
+            }
+          ]
+        }
+      },
+      {
+        "Id": 4,
+        "Name": "ValidationField (Min 1 max 12)",
+        "ExternalId": "ValidationFieldMin1Max12",
+        "Label": "ValidationField",
+        "Help": "ValidationField value",
+        "Control": "TextBox",
+        "Type": "int",
+        "DisplayOrder": 2,
+        "InputControlData": {
+          "minValue": 1,
+          "maxValue": 12
+        }
+      },
+      {
+        "Id": 5,
+        "Name": "ProbeB",
+        "ExternalId": "ProbeB",
+        "Label": "Probe B",
+        "Help": "Probe B value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 6,
+        "DbColumn": "PatientPhone"
+      },
+      {
+        "Id": 8,
+        "Name": "ProbeSpc",
+        "ExternalId": "ProbeSpc",
+        "Label": "Probe Spc",
+        "Help": "Probe Spc value",
+        "Control": "TextBox",
+        "Type": "string",
+        "DisplayOrder": 15
+      },
+      {
+        "Name": "underlyingConditionsAndComorbidity",
+        "ExternalId": "UnderlyingConditionsAndComorbidity",
+        "Label": "any Underlaying condition?",
+        "Control": "RadioButton",
+        "Type": "string",
+        "DisplayOrder": 0,
+        "InputControlData": {
+          "optional": true,
+          "options": [
+            {
+              "value": "no",
+              "text": "No"
+            },
+            {
+              "value": "yes",
+              "text": "Yes"
+            },
+            {
+              "value": "unknown",
+              "text": "Unknown"
+            }
+          ]
+        }
+      },
+      {
+        "Id": 15,
+        "Name": "probeDendpt",
+        "ExternalId": "ProbeDendpt",
+        "Label": "Probe D Endpt",
+        "Help": "Probe D Endpt value",
+        "Control": "TextBox",
+        "Type": "int",
+        "DisplayOrder": 22,
+        "InputControlData": {
+          "minValue": 0
+        }
+      }
+    ]
+  }
+}

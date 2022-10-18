@@ -5,22 +5,13 @@ const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addForms } = require('../relativeObjectsSeeds')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
-const {
-  commonUpserts,
-  upsertJobFunctionPermission,
-  upsertJobFunction,
-} = require('../common')
+const { commonUpserts } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
-const {
-  normalizeTreatmentStatusDistributionByResults,
-  addCovidResults,
-} = require('../commonGenerateResults')
+const { normalizeTreatmentStatusDistributionByResults, addCovidResults } = require('../commonGenerateResults')
 const config = require('../../src/config')
-const {
-  partnerTypeToId,
-  deviceApprovalToId,
-} = require('../../src/shared/dictionary')
+const { partnerTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 const utils = require('../utils')
+const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
@@ -34,9 +25,7 @@ const now = new Date()
 async function seed(knex) {
   utils.hasSeededStaticData = true
   const resultCategoryPositiveId = await resultCategoryToId('Positive')
-  const { id: countryId } = await knex('Country')
-    .where('name', 'Wakanda')
-    .first('id')
+  const { id: countryId } = await knex('Country').where('name', 'Wakanda').first('id')
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
@@ -58,9 +47,7 @@ async function seed(knex) {
     plugin: 'wakanda',
   })
 
-  const countryWakanda = geography.countries.find(
-    country => country.abbreviation === 'WK'
-  )
+  const countryWakanda = geography.countries.find(country => country.abbreviation === 'WK')
 
   const countryData = _.pick(countryWakanda, [
     'abbreviation',
@@ -82,76 +69,26 @@ async function seed(knex) {
     {
       countries: [countryWakanda],
     },
-    'WK'
+    'WK',
+    null,
+    null,
+    {
+      fixtures: {
+        jobFunctions: jobFunctionsFixtureWakanda,
+      },
+    }
   )
 
-  // Give permission to dashboard, browse, sites, results, devices, reporters
-  const modules = await utils.getPermissionModules(knex)
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').where({ partnerId }).first('id')
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where('name', 'Admin')
+  const { id: jobFunctionIdClinician } = await knex('JobFunction')
+    .where('name', 'Clinician')
     .where({ partnerId })
     .first('id')
 
-  await upsertJobFunctionPermission(knex, jobFunctionIdAdmin, [
-    modules.demo.edit,
-    modules.issue.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.reporter.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
-
-  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
-    .where('name', 'Regional Officer')
-    .where({ partnerId })
-    .first('id')
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdRegionalOfficer, [
-    modules.demo.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
-
-  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
-    .where('name', 'Lab User')
-    .where({ partnerId })
-    .first('id')
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdLabUser, [
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.device.edit,
-    modules.assay.edit,
-    modules.browse.view,
-    modules.person.view,
-  ])
-
-  const covidDeviceTypes = (
-    await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)
-  ).filter(deviceType => deviceType.externalId !== 'Aspect')
+  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)).filter(
+    deviceType => deviceType.externalId !== 'Aspect'
+  )
   const deviceTypeAssays = {}
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),
@@ -184,13 +121,9 @@ async function seed(knex) {
         _.map(state.lgas, async lga => {
           if (lga.cities) {
             // one lab for every lga that has clinics/cities:
-            const { id: lgaId } = await knex('Lga')
-              .where('name', lga.name)
-              .first('id')
+            const { id: lgaId } = await knex('Lga').where('name', lga.name).first('id')
 
-            const { id: geographyId } = await knex('Geography')
-              .where({ lgaId })
-              .first('id')
+            const { id: geographyId } = await knex('Geography').where({ lgaId }).first('id')
 
             const labData = {
               partnerId,
@@ -210,17 +143,11 @@ async function seed(knex) {
             countryData.labs.push(labData)
 
             // add device to the lab
-            const deviceType =
-              covidDeviceTypes[
-                state.lgas.indexOf(lga) % covidDeviceTypes.length
-              ]
+            const deviceType = covidDeviceTypes[state.lgas.indexOf(lga) % covidDeviceTypes.length]
             const device = {
               ...auditFields,
               name: `${labData.name} ${deviceType.name}`.substr(0, 255),
-              shortName: `${labData.externalId}_${deviceType.externalId}`.substr(
-                0,
-                45
-              ),
+              shortName: `${labData.externalId}_${deviceType.externalId}`.substr(0, 45),
               deviceTypeId: deviceType.id,
               deviceApprovalId: deviceApprovalApprovedId,
               partnerId: labData.partnerId,
@@ -230,32 +157,20 @@ async function seed(knex) {
               ...auditFields,
               lastPingOn: new Date(+now),
               lastSeenOn: new Date(+now),
-              hostId: _.times(8, () =>
-                String.fromCharCode(
-                  65 + _.random(25) + (_.random(1) > 0 ? 32 : 0)
-                )
-              ).join(''),
-              serial: _.times(24, () =>
-                String.fromCharCode(
-                  65 + _.random(25) + (_.random(1) > 0 ? 32 : 0)
-                )
-              ).join(''),
+              hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+              serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
             }
 
-            device.id = await knex('Device').insert(device)
+            ;[device.id] = await knex('Device').insert(device)
             countryData.devices.push(device)
 
             // add clinics in the LGA
             await Promise.all(
               _.map(lga.cities, async city => {
                 // add clinic
-                const { id: lgaId } = await knex('Lga')
-                  .where('name', lga.name)
-                  .first('id')
+                const { id: lgaId } = await knex('Lga').where('name', lga.name).first('id')
 
-                const { id: geographyId } = await knex('Geography')
-                  .where({ lgaId })
-                  .first('id')
+                const { id: geographyId } = await knex('Geography').where({ lgaId }).first('id')
 
                 const clinicData = {
                   partnerId,
@@ -298,10 +213,7 @@ async function seed(knex) {
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
     .where('at.externalId', 'covid19')
     .select('a.*')
-  const covidPositiveResults = _.filter(
-    covidResults,
-    result => result.resultCategory1 === resultCategoryPositiveId
-  )
+  const covidPositiveResults = _.filter(covidResults, result => result.resultCategory1 === resultCategoryPositiveId)
   await addCovidResults(
     knex,
     resultNumber,
@@ -317,27 +229,6 @@ async function seed(knex) {
   const firstClinic = clinicList[0]
   const secondClinic = clinicList[1]
 
-  const jobFunctionIdClinician = await upsertJobFunction(
-    knex,
-    'Clinician',
-    partnerId
-  )
-
-  await upsertJobFunctionPermission(knex, jobFunctionIdClinician, [
-    modules.demo.edit,
-    modules.patient.edit,
-    modules.case.edit,
-    modules.site.edit,
-    modules.result.edit,
-    modules.dashboard.summary,
-    modules.dashboard.result,
-    modules.account.edit,
-    modules.assay.edit,
-    modules.device.view,
-    modules.browse.view,
-    modules.person.view,
-  ])
-
   // Create User
   const [userIdFirstClinic] = await knex('User').insert({
     name: 'covid_clinic_1',
@@ -348,9 +239,7 @@ async function seed(knex) {
     failedPasswordAttempts: 0,
   })
 
-  const { id: siteIdFirstClinic } = await knex('Site')
-    .where('externalId', firstClinic.externalId)
-    .first('id')
+  const { id: siteIdFirstClinic } = await knex('Site').where('externalId', firstClinic.externalId).first('id')
 
   // create Person
   const [personIdFirstClinic] = await knex('Person').insert({
@@ -361,7 +250,7 @@ async function seed(knex) {
     lastCountryId: countryId,
     timezone: countryData.timezone,
     culture: 'en',
-    canLogin: true,
+    canLogIn: true,
     createdBy: adminId,
     createdOn: now,
     updatedBy: adminId,
@@ -390,9 +279,7 @@ async function seed(knex) {
     failedPasswordAttempts: 0,
   })
 
-  const { id: siteIdSecondClinic } = await knex('Site')
-    .where('externalId', secondClinic.externalId)
-    .first('id')
+  const { id: siteIdSecondClinic } = await knex('Site').where('externalId', secondClinic.externalId).first('id')
 
   // create Person
   const [personIdSecondClinic] = await knex('Person').insert({
@@ -403,7 +290,7 @@ async function seed(knex) {
     lastCountryId: countryId,
     timezone: countryData.timezone,
     culture: 'en',
-    canLogin: true,
+    canLogIn: true,
     createdBy: adminId,
     createdOn: now,
     updatedBy: adminId,
@@ -427,10 +314,7 @@ async function seed(knex) {
     knex,
     await knex('Result as r')
       .join('ResultCategoryAssay as rca', function () {
-        this.on('r.assayId', 'rca.assayId').andOn(
-          'r.resultCategory1',
-          'rca.resultCategoryId'
-        )
+        this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
       })
       .whereIn(
         'r.assayId',
@@ -443,7 +327,7 @@ async function seed(knex) {
   )
 
   // add follow ups
-  await utils.addFollowUps(knex, [partnerId], followUp)
+  await utils.addFollowUps(knex, followUp, [partnerId])
 
   const statWidgets = await knex('DashboardWidget')
     .whereIn('titleI18nKey', [

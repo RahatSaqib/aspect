@@ -4,23 +4,18 @@
 const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
+const Sentry = require('@sentry/node')
 
 const config = require('./config')
 const { version } = require('../package.json')
-const {
-  addClientRoutes,
-  addDeviceRoutes,
-  addDeviceRawRoutes,
-} = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
-const { startScheduler } = require('./scheduler')
+const { startScheduler } = require('./scheduler/scheduler')
 const { addLoggers } = require('./logger/service')
-const {
-  plugin: deviceApiKeyPlugin,
-  validateApiKeyAuthBasic,
-} = require('./deviceApi/deviceApiKeyPlugin')
-const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
+const logger = require('./shared/logger')
+const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
+const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
 
 const { port } = config
 const server = new Hapi.server({
@@ -38,7 +33,7 @@ const server = new Hapi.server({
     validate: {
       failAction: async (request, h, err) => {
         // log and respond with the full error
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err)
         throw err
       },
     },
@@ -48,18 +43,27 @@ server.validator(Joi)
 
 const {
   swagger: { enabled: swaggerEnabled },
-  raven,
 } = config
 
-// Load Raven (Sentry) plugin if configured
-const ravenPlugins = raven
-  ? [
-      {
-        plugin: require('hapi-raven'),
-        options: { dsn: raven.dsn },
-      },
-    ]
-  : []
+const sentryPlugins =
+  config.sentry && !config.isDevelopment
+    ? [
+        {
+          plugin: require('hapi-sentry'),
+          options: {
+            client: {
+              dsn: config.sentry.dsn,
+              environment: config.environment,
+              ignoreErrors: config.sentry.ignoreErrors,
+              sanitizeKeys: config.sentry.sanitizeKeys,
+            },
+            scope: {
+              tags: [{ name: 'Country', value: config.countryName }],
+            },
+          },
+        },
+      ]
+    : []
 
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
@@ -97,41 +101,40 @@ const rawPayloadPlugin = {
   register: async server => {
     server.ext('onPostAuth', (request, h) => {
       request.plugins.rawPayload = request.payload
+      if (request.payload) Sentry.setContext('payload', request.payload)
       return h.continue
     })
   },
 }
 
+const queueName = config.amqp.name
+
 const messageQueuePlugin = {
   name: 'messageQueue',
   version,
-  register: async server =>
-    createMessageQueue(config.amqp.name)
-      .then(queue => {
-        addLoggers(server, queue)
-        addSubscriptions(queue)
-        if (config.scheduler.enabled) {
-          startScheduler(queue)
-        }
-        return queue
+  register: async server => {
+    try {
+      const queue = await createMessageQueue(queueName)
+
+      server.ext('onPreHandler', (request, h) => {
+        request.plugins.messageContext = queue.createMessageContext('aspect_request')
+        return h.continue
       })
-      .then(queue => {
-        return continueUnprocessedRawData(queue).then(() => {
-          server.ext('onPreHandler', (request, h) => {
-            request.plugins.messageContext = queue.createMessageContext(
-              'aspect_request'
-            )
-            return h.continue
-          })
-        })
-      })
-      .catch(err => {
-        console.error(err) // eslint-disable-line no-console
-      }),
+
+      addLoggers(server, queue)
+      await addSubscriptions(queue)
+      if (config.scheduler.enabled) {
+        startScheduler(queue)
+      }
+    } catch (err) {
+      logger.error(err)
+    }
+  },
 }
 
 const plugins = [
-  ...ravenPlugins,
+  // logging framework
+  require('./shared/hapi-logger'),
   require('@hapi/inert'), // eslint-disable-line import/order
   ...swaggerPlugins,
   // JWT for authentication in client API
@@ -143,11 +146,16 @@ const plugins = [
   // Basic authentication in Device API
   require('@hapi/basic'), // eslint-disable-line import/order
 
+  // Unauthenticated access to public Device API Raw Endpoints
+  deviceApiRawUnauthenticatedPlugin,
+
   // Set payload prior to validation transformation
   rawPayloadPlugin,
 
   // Set message queue
   messageQueuePlugin,
+  // Set sentry hapi pugin
+  ...sentryPlugins,
 ]
 
 const start = async () => {
@@ -162,9 +170,9 @@ const start = async () => {
     server.events.on('log', (event, tags) => {
       if (tags.error) {
         const { error } = event
-        console.error('-------------------') // eslint-disable-line no-console
-        console.error(error || event) // eslint-disable-line no-console
-        console.error('-------------------') // eslint-disable-line no-console
+        logger.error('-------------------')
+        logger.error(error || event)
+        logger.error('-------------------')
       }
     })
     server.ext('onPreResponse', function (request, h) {
@@ -183,7 +191,6 @@ const start = async () => {
   // Authentication strategies and Authorization Scopes
   // ==========================================================================
   // ==========================================================================
-
   // use config: { auth: false } on route definition to disable authentication
   // Device API uses API Keys
   server.auth.strategy('deviceApiKey', 'deviceApiKey')
@@ -191,6 +198,7 @@ const start = async () => {
     allowEmptyUsername: true,
     ...validateApiKeyAuthBasic,
   })
+  server.auth.strategy('deviceApiRawUnauthenticated', 'deviceApiRawUnauthenticated')
 
   // Client API uses JWT
   server.auth.strategy('clientApi', 'jwt', {
@@ -199,12 +207,8 @@ const start = async () => {
       let isValid = true
       let errorMessage = null
       // if user has to accept license, deny all requests except to the license api:
-      if (
-        decoded.hasToAcceptLicenseId &&
-        request.url.pathname.indexOf('/api/auth/license') === -1
-      ) {
-        errorMessage =
-          "The user you're trying to login didn't accept the license"
+      if (decoded.hasToAcceptLicenseId && request.url.pathname.indexOf('/api/auth/license') === -1) {
+        errorMessage = "The user you're trying to login didn't accept the license"
         isValid = false
       }
       // can specify either module or permission, e.g. "device" or "device:view"
@@ -218,10 +222,7 @@ const start = async () => {
       const modules = decoded.permissions
         ? _.uniq(
             _.map(
-              _.filter(
-                decoded.permissions,
-                permission => permission.indexOf(':') > 0
-              ),
+              _.filter(decoded.permissions, permission => permission.indexOf(':') > 0),
               permission => permission.substr(0, permission.indexOf(':'))
             )
           )
@@ -244,7 +245,10 @@ const start = async () => {
   server.route({
     method: 'GET',
     path: '/',
-    handler: () => 'Hello! The API is at /api.',
+    handler: () => ({
+      message: 'Hello! The API is at /api.',
+      version,
+    }),
     config: {
       auth: false,
     },
@@ -261,7 +265,7 @@ const start = async () => {
           addClientRoutes(server)
           resolve()
         }).catch(err => {
-          console.error(err) // eslint-disable-line no-console
+          logger.error(err)
           throw err
         }),
     },
@@ -283,7 +287,7 @@ const start = async () => {
           addDeviceRoutes(server)
           resolve()
         }).catch(err => {
-          console.error(err) // eslint-disable-line no-console
+          logger.error(err)
           throw err
         }),
     },
@@ -310,7 +314,7 @@ const start = async () => {
           // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
           resolve()
         }).catch(err => {
-          console.error(err) // eslint-disable-line no-console
+          logger.error(err)
           throw err
         }),
     },
@@ -326,9 +330,10 @@ const start = async () => {
   // =======================
   try {
     await server.start()
-    console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
+    logger.info(`Magic happens at http://localhost:${port}`)
   } catch (err) {
-    console.error(err) // eslint-disable-line no-console
+    logger.error(err)
+    Sentry.captureException(err)
   }
 }
 

@@ -1,15 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
-const {
-  getIssueEventTriggerSubscriptions,
-  triggerIssue,
-  updateIssueStatus,
-} = require('./service')
-const {
-  onIssueCreated,
-  onIssueTriggered,
-  onEscalateIssues,
-} = require('./escalations')
+const { getIssueEventTriggerSubscriptions, triggerIssue, updateIssueStatus } = require('./service')
+const { onEscalateIssues, onIssueTriggered } = require('./escalations')
 const { onResolveIssues } = require('./resolutions')
 
 const routes = [
@@ -20,7 +12,7 @@ const routes = [
     config: {
       description: 'Update Issue Status',
       notes: 'Update the status of an issue',
-      auth: { scope: ['notification:edit'] },
+      auth: { scope: ['notification:edit', 'issue:edit'] },
       validate: {
         params: {
           issueId: Joi.number().integer().positive().description('Issue Id'),
@@ -41,14 +33,8 @@ const routes = [
       auth: { scope: ['notification:edit', 'issue:edit'] },
       validate: {
         payload: {
-          issueType: Joi.string()
-            .required()
-            .description(
-              'Issue Type as of value of `externalId` from table IssueType'
-            ),
-          data: Joi.object()
-            .allow(null)
-            .description('The json object with data for corresponding action'),
+          issueType: Joi.string().required().description('Issue Type as of value of `externalId` from table IssueType'),
+          data: Joi.object().allow(null).description('The json object with data for corresponding action'),
         },
       },
     },
@@ -59,9 +45,8 @@ const subscriptions = [
   getIssueEventTriggerSubscriptions,
   {
     actions: {
-      ISSUE_CREATED: onIssueCreated,
-      ISSUE_TRIGGERED: onIssueTriggered,
       ESCALATE_ISSUES: onEscalateIssues,
+      ISSUE_TRIGGERED: onIssueTriggered,
       RESOLVE_ISSUES: onResolveIssues,
     },
   },

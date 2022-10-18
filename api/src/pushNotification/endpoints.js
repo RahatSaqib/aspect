@@ -1,7 +1,4 @@
-const {
-  onPushNotificationMessageCreated,
-  onPushNotificationMessageReadyForSending,
-} = require('./service')
+const { onPushNotificationMessageCreated, onPushNotificationMessageReadyForSending } = require('./service')
 
 const subscriptions = [
   {

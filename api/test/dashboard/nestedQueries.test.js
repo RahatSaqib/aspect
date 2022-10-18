@@ -57,9 +57,7 @@ describe('Parse nested queries', () => {
       match = balancedParentheses.all.find(x => x.innerText === 'siteId')
       assert.equal(match.children.length, 0)
 
-      match = balancedParentheses.all.find(
-        x => x.innerText === 'NOW() - INTERVAL 1 MONTH'
-      )
+      match = balancedParentheses.all.find(x => x.innerText === 'NOW() - INTERVAL 1 MONTH')
       assert.equal(match.children.length, 1)
 
       match = balancedParentheses.all.find(
@@ -110,20 +108,14 @@ describe('Parse nested queries', () => {
   })
 
   describe('Execute query with sub-query in FROM clause', () => {
-    const { sqlForStatUnit: sql } = DashboardWidgetExtended.stat.find(
-      x => x.externalId === 'errorRate'
-    )
+    const { sqlForStatUnit: sql } = DashboardWidgetExtended.stat.find(x => x.externalId === 'errorRate')
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
       assert.equal(nestedQueries.all.length, 1)
 
       const dataConstraints = {}
       const urlQuery = {}
-      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
-        sql,
-        dataConstraints,
-        urlQuery
-      )
+      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql, dataConstraints, urlQuery)
 
       return run(async knex => {
         await assertQuery(knex, sqlBuilder, sql)
@@ -132,20 +124,14 @@ describe('Parse nested queries', () => {
   })
 
   describe('Execute query with sub-query in JOIN clause', () => {
-    const { sqlForStatUnit: sql } = DashboardWidgetExtended.stat.find(
-      x => x.externalId === 'stockouts'
-    )
+    const { sqlForStatUnit: sql } = DashboardWidgetExtended.stat.find(x => x.externalId === 'stockouts')
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
       assert.equal(nestedQueries.all.length, 1)
 
       const dataConstraints = {}
       const urlQuery = {}
-      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
-        sql,
-        dataConstraints,
-        urlQuery
-      )
+      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql, dataConstraints, urlQuery)
 
       return run(async knex => {
         await assertQuery(knex, sqlBuilder, sql)
@@ -187,9 +173,7 @@ describe('Parse nested queries', () => {
               INNER JOIN Partner p on s.partnerId = p.id
               LEFT OUTER JOIN Geography as g on s.geographyId = g.id
             WHERE
-              YEAR(r.endedOn) = YEAR(NOW())
-              AND
-              MONTH(r.endedOn) = MONTH(NOW())
+              r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
             GROUP BY DATE(r.endedOn)
           ) as t1
         ) as avgCurrentMonth,
@@ -203,9 +187,8 @@ describe('Parse nested queries', () => {
               INNER JOIN Partner p on s.partnerId = p.id
               LEFT OUTER JOIN Geography as g on s.geographyId = g.id
             WHERE
-              YEAR(r.endedOn) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-              AND
-              MONTH(r.endedOn) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+              r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+              AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
             GROUP BY DATE(r.endedOn)
           ) as t2
         ) as avgLastMonth
@@ -233,11 +216,7 @@ describe('Parse nested queries', () => {
 
       const dataConstraints = {}
       const urlQuery = {}
-      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
-        sql,
-        dataConstraints,
-        urlQuery
-      )
+      const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql, dataConstraints, urlQuery)
 
       return run(async knex => {
         await assertQuery(knex, sqlBuilder, sql)
@@ -251,11 +230,7 @@ describe('Parse nested queries', () => {
         const dataConstraints = {}
         const urlQuery = {}
         const sql = widget.sqlForIndicator
-        const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
-          sql,
-          dataConstraints,
-          urlQuery
-        )
+        const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql, dataConstraints, urlQuery)
         return run(async knex => {
           await assertQuery(knex, sqlBuilder, sql)
         })

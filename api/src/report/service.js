@@ -5,24 +5,47 @@ require('isomorphic-fetch')
 const Promise = require('bluebird')
 
 const config = require('../config')
-const { knex } = require('../db')
+const { filterParams, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const logger = require('../shared/logger')
 
 async function getReports(request) {
-  const { auth } = request
+  const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
   const reportsQuery = knex('Report as r')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
+    .innerJoin('JobFunction as jf', 'jf.id', 'jfr.jobFunctionId')
+    .innerJoin('Job as j', 'jf.id', 'j.jobFunctionId')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .modify(addConstraints, dataConstraints, { person: 'p' })
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
-
   const getItems = reportsQuery
     .clone()
+    .modify(filterParams, query, {
+      reportName: (queryBuilder, value) => {
+        queryBuilder.whereRaw(
+          `(
+            r.name LIKE CONCAT('%', ?, '%')
+            OR
+            r.description LIKE CONCAT('%', ?, '%')
+          )`,
+          [value, value]
+        )
+      },
+    })
     .orderBy('r.sortOrder', 'asc')
-    .select('r.name', 'r.description', 'r.externalId', 'r.sortOrder')
-
+    .distinct(
+      'r.name',
+      'r.description',
+      'r.externalId',
+      'r.sortOrder',
+      'r.i18nKey',
+      'r.i18nKeyDescription',
+      'r.exportExcel',
+      'r.exportCsv'
+    )
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, data }
@@ -30,21 +53,29 @@ async function getReports(request) {
 
 async function getReportDetails(auth, externalId) {
   const dataConstraints = await getConstraints(auth.credentials)
+
+  if ((await knex('Report').where({ externalId }).first()) === null)
+    throw Boom.badRequest('The requested report does not exist')
+
   const report = await knex('Report as r')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
+    .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .modify(addConstraints, dataConstraints, { person: 'p' })
     .where('r.externalId', externalId)
     .select(
       'r.description',
       'r.externalId',
-      'r.fileName',
-      'r.geographyId',
+      knex.raw('IFNULL(jfr.fileName, r.fileName) as fileName'),
       'r.id',
       'r.i18nKey',
       'r.name',
-      'r.partnerId'
+      'r.exportCsv',
+      'r.exportExcel'
     )
     .first()
+
+  if (!report) throw Boom.forbidden("You don't have access to the requested report")
 
   report.sheets = await knex('ReportSheet')
     .where('reportId', report.id)
@@ -60,154 +91,15 @@ async function getReportDetails(auth, externalId) {
   return report
 }
 
-async function listReports(request) {
-  const { query } = request
-
-  const data = _.sortBy(
-    [
-      {
-        id: 1,
-        deploymentName: 'PIH Lilongwe',
-        moduleSerial: 998533,
-        dateOfError: '2016-03-12',
-        error: '401',
-        totalTestsRun: 2030,
-        totalErrors: 7,
-      },
-      {
-        id: 2,
-        deploymentName: 'Harare National Lab',
-        moduleSerial: 585845,
-        dateOfError: '2015-10-28',
-        error: '5007',
-        totalTestsRun: 661,
-        totalErrors: 2,
-      },
-      {
-        id: 3,
-        deploymentName: 'Kenyatta National Hospital',
-        moduleSerial: 904834,
-        dateOfError: '2015-11-19',
-        error: '5000',
-        totalTestsRun: 5810,
-        totalErrors: 56,
-      },
-      {
-        id: 4,
-        deploymentName: 'Akron Labs',
-        moduleSerial: 857673,
-        dateOfError: '2015-05-20',
-        error: '8000',
-        totalTestsRun: 661,
-        totalErrors: 23,
-      },
-      {
-        id: 5,
-        deploymentName: 'Kampala National Lab',
-        moduleSerial: 233341,
-        dateOfError: '2016-04-22',
-        error: '8080',
-        totalTestsRun: 1210,
-        totalErrors: 12,
-      },
-      {
-        id: 6,
-        deploymentName: 'Eldoret Regional Lab',
-        moduleSerial: 128533,
-        dateOfError: '2016-09-17',
-        error: '501',
-        totalTestsRun: 661,
-        totalErrors: 5,
-      },
-      {
-        id: 7,
-        deploymentName: 'Arusha Regiional Lab',
-        moduleSerial: 618601,
-        dateOfError: '2016-12-23',
-        error: '504',
-        totalTestsRun: 378,
-        totalErrors: 2,
-      },
-      {
-        id: 8,
-        deploymentName: 'Maputo National Lab',
-        moduleSerial: 354601,
-        dateOfError: '2014-01-07',
-        error: '7001',
-        totalTestsRun: 2315,
-        totalErrors: 17,
-      },
-      {
-        id: 9,
-        deploymentName: 'Accra National Lab',
-        moduleSerial: 499501,
-        dateOfError: '2016-05-01',
-        error: '2020',
-        totalTestsRun: 65,
-        totalErrors: 1,
-      },
-      {
-        id: 10,
-        deploymentName: 'Manila National Lab',
-        moduleSerial: 134353,
-        dateOfError: '2017-06-15',
-        error: '5001',
-        totalTestsRun: 4321,
-        totalErrors: 79,
-      },
-      {
-        id: 11,
-        deploymentName: 'Jakarta National Lab',
-        moduleSerial: 234533,
-        dateOfError: '2013-04-09',
-        error: '5019',
-        totalTestsRun: 991,
-        totalErrors: 43,
-      },
-      {
-        id: 12,
-        deploymentName: 'Mahindra Regional Lab',
-        moduleSerial: 618601,
-        dateOfError: '2012-10-30',
-        error: '4884',
-        totalTestsRun: 2388,
-        totalErrors: 29,
-      },
-      {
-        id: 13,
-        deploymentName: 'Bombay Regional Lab',
-        moduleSerial: 618533,
-        dateOfError: '2016-01-29',
-        error: '2442',
-        totalTestsRun: 1838,
-        totalErrors: 13,
-      },
-    ],
-    query.sortCol || _.identity
-  )
-
-  const total = data.length
-
-  const result = { ok: true, total, data, length: data.length }
-
-  return result
-}
-
 function proxyGxReport(request, reply) {
   return proxyGxReportAsync(request)
     .then(resp => {
       reply(resp.body)
-        .header(
-          'Content-Type',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-        .header(
-          'Content-Disposition',
-          `attachment; filename="${request.params.reportName}.xlsx"`
-        )
+        .header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        .header('Content-Disposition', `attachment; filename="${request.params.reportName}.xlsx"`)
     })
     .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+      logger.error(err)
       throw err
     })
 }
@@ -250,9 +142,7 @@ async function proxyGxReportAsync(request) {
   const stateNames = _.uniq(_.map(sites, 'stateName'))
   const siteNames = _.uniq(_.map(sites, 'siteName'))
   if (stateNames.length !== 1 && !isAdmin) {
-    throw Boom.badRequest(
-      'Cannot find single assigned state for logged in user'
-    )
+    throw Boom.badRequest('Cannot find single assigned state for logged in user')
   }
   const [stateName] = stateNames.length === 1 ? stateNames : []
   const [deviceName] = siteNames.length === 1 ? siteNames : []
@@ -271,6 +161,5 @@ async function proxyGxReportAsync(request) {
 module.exports = {
   getReports,
   getReportDetails,
-  listReports,
   proxyGxReport,
 }

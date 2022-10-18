@@ -1,24 +1,14 @@
 const _ = require('lodash')
 const { format } = require('date-fns')
 const Promise = require('bluebird')
-const {
-  assayTypeToId,
-  assayToId,
-  resultSourceToId,
-  resultCategoryToId,
-} = require('../src/shared/dictionary')
+const { assayTypeToId, assayToId, resultSourceToId, resultCategoryToId } = require('../src/shared/dictionary')
 const AssayBdMgitAstResultDataSchema = require('./fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('./fixtures/AssayBdMgitGndResultDataSchema.json')
 const MGITPatientDataSchema = require('./fixtures/MGITPatientDataSchema.json')
-const {
-  seedPartnerAssay,
-  seedPartnerDisease,
-  getLinkedResultDate,
-  getDateFields,
-} = require('./utils')
+const { seedPartnerAssay, seedPartnerDisease, getLinkedResultDate, getDateFields } = require('./utils')
 const { deviceTypeCategoryToId } = require('../src/shared/dictionary')
 
-async function getMGITResultFromTBPossitive(result, assaysMGIT, devicesMGIT) {
+async function getMGITResultFromTBPositive(result, assaysMGIT, devicesMGIT) {
   const randomDateMgit = getLinkedResultDate(result)
   const now = new Date()
   const assay = _.sample(assaysMGIT)
@@ -44,12 +34,17 @@ async function upsertMGITDeviceTypeAndAssays(
   assayBdMgitAstResultDataSchema = AssayBdMgitAstResultDataSchema
 ) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
-  const deviceTypeBDMGITId = await knex('DeviceType').insert({
-    externalId: 'BDMGIT',
-    name: 'BD MGIT',
-    manufacturer: 'Becton Dickinson',
-    deviceTypeCategoryId: labDeviceTypeCategoryId,
-  })
+
+  let { id: deviceTypeBDMGITId } = (await knex('DeviceType').where('externalId', 'BDMGIT').first('id')) || {}
+
+  if (!deviceTypeBDMGITId) {
+    ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
+      externalId: 'BDMGIT',
+      name: 'BD MGIT',
+      manufacturer: 'Becton Dickinson',
+      deviceTypeCategoryId: labDeviceTypeCategoryId,
+    })
+  }
 
   const assayBdMgitAst = {
     name: 'BD MGIT AST',
@@ -63,11 +58,10 @@ async function upsertMGITDeviceTypeAndAssays(
     resultDataSchema: JSON.stringify(assayBdMgitAstResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayBdMgitAstId } =
-    (await knex('Assay').where('externalId', 'assayBdMgitAst').first('id')) ||
-    {}
+  let { id: assayBdMgitAstId } = (await knex('Assay').where('externalId', 'assayBdMgitAst').first('id')) || {}
+
   if (!assayBdMgitAstId) {
-    assayBdMgitAstId = await knex('Assay').insert({
+    ;[assayBdMgitAstId] = await knex('Assay').insert({
       ...assayBdMgitAst,
       externalId: 'assayBdMgitAst',
     })
@@ -117,11 +111,9 @@ async function upsertMGITDeviceTypeAndAssays(
     resultDataSchema: JSON.stringify(assayBdMgitGndResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayBdMgitGndId } =
-    (await knex('Assay').where('externalId', 'assayBdMgitGnd').first('id')) ||
-    {}
+  let { id: assayBdMgitGndId } = (await knex('Assay').where('externalId', 'assayBdMgitGnd').first('id')) || {}
   if (!assayBdMgitGndId) {
-    assayBdMgitGndId = await knex('Assay').insert({
+    ;[assayBdMgitGndId] = await knex('Assay').insert({
       ...assayBdMgitGnd,
       externalId: 'assayBdMgitGnd',
     })
@@ -218,17 +210,15 @@ async function upsertCultureAssays(
     deviceTypeId: deviceTypeLIMSId,
     resultSourceId: await resultSourceToId('LIMS'),
     resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'resultCategoryMTB',
+    resultCategory1i18nKey: 'resultCategoryMtb',
     resultCategory2Label: 'Resistance',
     resultCategory2i18nKey: 'resultCategoryResistance',
     resultDataSchema: JSON.stringify(dstResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayGenericDstId } =
-    (await knex('Assay').where('externalId', 'assayGenericDst').first('id')) ||
-    {}
+  let { id: assayGenericDstId } = (await knex('Assay').where('externalId', 'assayGenericDst').first('id')) || {}
   if (!assayGenericDstId) {
-    assayGenericDstId = await knex('Assay').insert({
+    ;[assayGenericDstId] = await knex('Assay').insert({
       ...assayGenericDst,
       externalId: 'assayGenericDst',
     })
@@ -285,19 +275,14 @@ async function upsertCultureAssays(
     resultDataSchema: JSON.stringify(cultureResultDataSchema),
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
-  let { id: assayGenericCultureId } =
-    (await knex('Assay')
-      .where('externalId', 'assayGenericCulture')
-      .first('id')) || {}
+  let { id: assayGenericCultureId } = (await knex('Assay').where('externalId', 'assayGenericCulture').first('id')) || {}
   if (!assayGenericCultureId) {
-    assayGenericCultureId = await knex('Assay').insert({
+    ;[assayGenericCultureId] = await knex('Assay').insert({
       ...assayGenericCulture,
       externalId: 'assayGenericCulture',
     })
   } else {
-    await knex('Assay')
-      .where('id', assayGenericCultureId)
-      .update(assayGenericCulture)
+    await knex('Assay').where('id', assayGenericCultureId).update(assayGenericCulture)
   }
   values.splice(-2, 2)
   const resultCategoryCultureId = await knex('ResultCategoryAssay')
@@ -318,12 +303,16 @@ async function upsertCultureAssays(
     })
   )
 
+  await knex('ResultCategoryAssay')
+    .update({ requiresTreatment: 1 })
+    .where({ resultCategoryId: await resultCategoryToId('PositiveMTB') })
+
   await seedPartnerAssay(knex)
   await seedPartnerDisease(knex)
 }
 
 module.exports = {
   upsertMGITDeviceTypeAndAssays,
-  getMGITResultFromTBPossitive,
+  getMGITResultFromTBPositive,
   upsertCultureAssays,
 }

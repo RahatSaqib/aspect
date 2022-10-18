@@ -1,0 +1,54 @@
+@import '../../../theme/variables.css';
+
+.legend__container {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  flex-wrap: wrap;
+  max-width: 170px;
+}
+
+.legend__container--solid {
+  height: 100%;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.legend__title,
+.legend__subTotals,
+.legend__subTitle {
+  font-size: 18px;
+  color: var(--aspect-color-black-2);
+}
+
+.legend__subTitle {
+  font-weight: 700;
+}
+
+.legend__average {
+  font-size: 48px;
+  font-weight: 900;
+}
+
+.legend__average--solid {
+  font-size: 28px;
+  font-weight: 600;
+  color: white;
+}
+
+.legend__average--doughnut {
+  font-size: 18px;
+  font-weight: 600;
+  color: var('--tundora');
+}
+
+.legend__averageDirectionContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var('--eastern-blue-2');
+  font-weight: 600;
+}

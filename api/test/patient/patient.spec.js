@@ -2,13 +2,7 @@ const { assert } = require('chai')
 const { getFirstPatient, getFirstPartnerId } = require('./utils')
 const { knex } = require('../../src/db')
 const { getAdminId } = require('../utils/authUtils')
-const {
-  addPatient,
-  getPatientId,
-  removePatient,
-  updatePatient,
-  onResultLogged,
-} = require('../../src/patient/service')
+const { addPatient, getPatientId, removePatient, updatePatient, onResultLogged } = require('../../src/patient/service')
 const { createMessageContext, waitForAction } = require('../utils/mqUtils')
 const { patientAdded, patientUpdated } = require('../../src/patient/actions')
 const { createResult } = require('../result/result_utils')
@@ -20,8 +14,7 @@ describe('patient/service', () => {
   let messageContext
 
   // helpers
-  const getExternalId = () =>
-    `${Date.now()}_${Math.floor(Math.random() * 10000)}`
+  const getExternalId = () => `${Date.now()}_${Math.floor(Math.random() * 10000)}`
   const mockPatient = externalId => {
     return {
       createdBy: adminId,
@@ -64,17 +57,13 @@ describe('patient/service', () => {
       assert.isArray(patientIds)
       assert.isNotEmpty(patientIds)
 
-      await Promise.all(
-        patientIds.map(caseId => waitForAction(patientUpdated(caseId)))
-      )
+      await Promise.all(patientIds.map(caseId => waitForAction(patientUpdated(caseId))))
     })
   })
 
   describe('remove', () => {
-    it('Should remove ptient', async () => {
-      const objPatient = mockPatient(
-        `non existent externalId ${Math.floor(Math.random() * 10000)}`
-      )
+    it('Should remove patient', async () => {
+      const objPatient = mockPatient(`non existent externalId ${Math.floor(Math.random() * 10000)}`)
 
       await addPatient(objPatient)
       await removePatient(objPatient)
@@ -95,15 +84,9 @@ describe('patient/service', () => {
 
     it("Providing a non existent externalId, partnerId and allowing create it, should create a new atient and return it's id", async () => {
       const createIfNonExistent = true
-      const objPatient = mockPatient(
-        `non existent externalId ${Math.floor(Math.random() * 10000)}`
-      )
+      const objPatient = mockPatient(`non existent externalId ${Math.floor(Math.random() * 10000)}`)
 
-      const patientId = await getPatientId(
-        objPatient,
-        createIfNonExistent,
-        adminId
-      )
+      const patientId = await getPatientId(objPatient, createIfNonExistent, adminId)
       await removePatient(objPatient)
       assert.isNotNull(patientId)
     })
@@ -111,9 +94,7 @@ describe('patient/service', () => {
     it("Providing a non existent externalId, partnerId and not allowing create it, shouldn't create a new patient and return null", async () => {
       const createIfNonExistent = false
 
-      const objPatient = mockPatient(
-        `non existent externalId ${Math.floor(Math.random() * 10000)}`
-      )
+      const objPatient = mockPatient(`non existent externalId ${Math.floor(Math.random() * 10000)}`)
 
       const patientId = await getPatientId(objPatient, createIfNonExistent)
       assert.isNull(patientId)
@@ -130,38 +111,22 @@ describe('patient/service', () => {
     let latestSiteIdBeforeTests
 
     before(async () => {
-      ;({ id: latestSampleIdBeforeTests } = await knex('Sample')
-        .max('id as id')
-        .first())
-      ;({ id: latestResultIdBeforeTests } = await knex('Result')
-        .max('id as id')
-        .first())
-      ;({ id: latestPatientIdBeforeTests } = await knex('Patient')
-        .max('id as id')
-        .first())
-      ;({ id: latestDeviceIdBeforeTests } = await knex('Device')
-        .max('id as id')
-        .first())
-      ;({ id: latestSiteIdBeforeTests } = await knex('Site')
-        .max('id as id')
-        .first())
+      ;({ id: latestSampleIdBeforeTests } = await knex('Sample').max('id as id').first())
+      ;({ id: latestResultIdBeforeTests } = await knex('Result').max('id as id').first())
+      ;({ id: latestPatientIdBeforeTests } = await knex('Patient').max('id as id').first())
+      ;({ id: latestDeviceIdBeforeTests } = await knex('Device').max('id as id').first())
+      ;({ id: latestSiteIdBeforeTests } = await knex('Site').max('id as id').first())
 
-      partnerId = (
-        await knex('Partner').where('name', 'Partner One').first('id')
-      ).id
+      partnerId = (await knex('Partner').where('name', 'Partner One').first('id')).id
       adminId = await getAdminId()
-      otherUserId = (
-        await knex('User').where('name', '<>', 'admin').first('id')
-      ).id
+      otherUserId = (await knex('User').where('name', '<>', 'admin').first('id')).id
     })
 
     after(async () => {
       await knex('Result').where('id', '>', latestResultIdBeforeTests).del()
       await knex('Sample').where('id', '>', latestSampleIdBeforeTests).del()
       await knex('Patient').where('id', '>', latestPatientIdBeforeTests).del()
-      await knex('DeviceLog')
-        .where('deviceId', '>', latestDeviceIdBeforeTests)
-        .del()
+      await knex('DeviceLog').where('deviceId', '>', latestDeviceIdBeforeTests).del()
       await knex('Device').where('id', '>', latestDeviceIdBeforeTests).del()
       await knex('Site').where('id', '>', latestSiteIdBeforeTests).del()
     })
@@ -195,49 +160,27 @@ describe('patient/service', () => {
       reliablePatientIdTemplateLike,
       unreliablePatientIdTemplateLike
     ) {
-      const {
-        resultCategoryId,
-        deviceTypeExternalId,
-        assayExternalId,
-      } = await knex('PartnerAssay as pa')
+      const { resultCategoryId, deviceTypeExternalId, assayExternalId } = await knex('PartnerAssay as pa')
         .join('Assay as a', 'pa.assayId', 'a.id')
         .join('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
         .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
         .where('pa.partnerId', partnerId)
         .andWhere(function () {
           if (reliablePatientIdTemplateLike) {
-            this.where(
-              'pa.reliablePatientExternalIdTemplate',
-              'LIKE',
-              reliablePatientIdTemplateLike
-            )
+            this.where('pa.reliablePatientExternalIdTemplate', 'LIKE', reliablePatientIdTemplateLike)
             if (unreliablePatientIdTemplateLike) {
-              this.andWhere(
-                'pa.unreliablePatientExternalIdTemplate',
-                'LIKE',
-                unreliablePatientIdTemplateLike
-              )
+              this.andWhere('pa.unreliablePatientExternalIdTemplate', 'LIKE', unreliablePatientIdTemplateLike)
             }
           } else if (!unreliablePatientIdTemplateLike) {
-            this.whereNull('pa.reliablePatientExternalIdTemplate').andWhere(
-              function () {
-                this.whereNull('pa.reliablePatientExternalIdTemplate')
-              }
-            )
+            this.whereNull('pa.reliablePatientExternalIdTemplate').andWhere(function () {
+              this.whereNull('pa.reliablePatientExternalIdTemplate')
+            })
           } else {
-            this.where(
-              'pa.unreliablePatientExternalIdTemplate',
-              'LIKE',
-              unreliablePatientIdTemplateLike
-            )
+            this.where('pa.unreliablePatientExternalIdTemplate', 'LIKE', unreliablePatientIdTemplateLike)
           }
         })
         .andWhere('rca.reportable', reportable)
-        .first(
-          'rca.resultCategoryId',
-          'dt.externalId as deviceTypeExternalId',
-          'a.externalId as assayExternalId'
-        )
+        .first('rca.resultCategoryId', 'dt.externalId as deviceTypeExternalId', 'a.externalId as assayExternalId')
       return {
         resultCategoryId,
         deviceTypeExternalId,
@@ -246,11 +189,7 @@ describe('patient/service', () => {
     }
 
     it('Should not automatically create or update a patient when no patient ID template is specified for the assay', async () => {
-      const {
-        resultCategoryId,
-        deviceTypeExternalId,
-        assayExternalId,
-      } = await getResultCategoryDeviceTypeAndAssay()
+      const { resultCategoryId, deviceTypeExternalId, assayExternalId } = await getResultCategoryDeviceTypeAndAssay()
       const patientExternalId = `PATIENT-${new Date().getTime()}`
       const resultId = await createResult(
         partnerId,
@@ -272,21 +211,14 @@ describe('patient/service', () => {
       const patientsLastUpdatedOnBefore = await getLastPatientUpdatedOn()
       await onResultLogged({ resultId }, mockMessageContext())
       const patientsLastUpdatedOnAfter = await getLastPatientUpdatedOn()
-      assert.equal(
-        patientsLastUpdatedOnBefore.toISOString(),
-        patientsLastUpdatedOnAfter.toISOString()
-      )
+      assert.equal(patientsLastUpdatedOnBefore.toISOString(), patientsLastUpdatedOnAfter.toISOString())
       const patientAfter = await getPatientFromResultId(resultId)
       assert.isNotOk(patientAfter.externalId)
     })
 
     describe('when a reliable patient ID template is specified', () => {
       it("should automatically create a patient when the patient doesn't exist", async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '%result.formData.patientId%'
         )
@@ -312,11 +244,7 @@ describe('patient/service', () => {
       })
 
       it('should automatically move the sample & case to another patient', async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '%result.formData.patientId%'
         )
@@ -366,11 +294,7 @@ describe('patient/service', () => {
       })
 
       it('should automatically update the patient ID', async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '%result.formData.patientId%'
         )
@@ -423,10 +347,7 @@ describe('patient/service', () => {
             0,
             '%result.formData.patientId%'
           )
-          const {
-            resultCategoryId,
-            deviceTypeExternalId,
-          } = resultCategoryDeviceTypeAndAssay
+          const { resultCategoryId, deviceTypeExternalId } = resultCategoryDeviceTypeAndAssay
           ;({ assayExternalId } = resultCategoryDeviceTypeAndAssay)
           patientExternalId = `PATIENT-${new Date().getTime()}`
           resultId = await createResult(
@@ -473,12 +394,8 @@ describe('patient/service', () => {
             partnerId,
             data: '{}',
           })
-          const { sampleId } = await knex('Result')
-            .where('id', resultId)
-            .first('sampleId')
-          await knex('Sample')
-            .where('id', sampleId)
-            .update({ patientId: moveFromPatientId })
+          const { sampleId } = await knex('Result').where('id', resultId).first('sampleId')
+          await knex('Sample').where('id', sampleId).update({ patientId: moveFromPatientId })
           await knex('Result')
             .where('id', resultId)
             .update({
@@ -495,11 +412,7 @@ describe('patient/service', () => {
 
     describe('when an unreliable patient ID template is specified', () => {
       it("should automatically create a patient when the patient doesn't exist", async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
           "%extractValueFromRegexCaptureGroup result.rawData expression='^P%"
@@ -532,11 +445,7 @@ L|1`,
       })
 
       it('should NOT automatically move the sample & case to another patient', async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
           "%extractValueFromRegexCaptureGroup result.rawData expression='^P%"
@@ -601,11 +510,7 @@ L|1`,
       })
 
       it('should NOT update an existing patient ID', async () => {
-        const {
-          resultCategoryId,
-          deviceTypeExternalId,
-          assayExternalId,
-        } = await getResultCategoryDeviceTypeAndAssay(
+        const { resultCategoryId, deviceTypeExternalId, assayExternalId } = await getResultCategoryDeviceTypeAndAssay(
           1,
           '',
           "%extractValueFromRegexCaptureGroup result.rawData expression='^P%"

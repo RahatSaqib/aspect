@@ -148,15 +148,11 @@ describe('result endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute(
-          'GET',
-          '/result/workflow-status-logs/{resultId}',
-          {
-            async listWorkflowStatusLog() {
-              return expectedResponse
-            },
-          }
-        )
+        endpoint = setupRoute('GET', '/result/workflow-status-logs/{resultId}', {
+          async listWorkflowStatusLog() {
+            return expectedResponse
+          },
+        })
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils
@@ -230,15 +226,11 @@ describe('result endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute(
-          'GET',
-          '/result/clinical-indicator-aggregations',
-          {
-            async clinicalIndicatorAggregations() {
-              return expectedResponse
-            },
-          }
-        )
+        endpoint = setupRoute('GET', '/result/clinical-indicator-aggregations', {
+          async clinicalIndicatorAggregations() {
+            return expectedResponse
+          },
+        })
       })
 
       it('Should respond with the data returned from the service', done => {

@@ -1,14 +1,11 @@
 const chai = require('chai')
-const {
-  createTestContext,
-  getDeviceConfigurationData,
-  getLastDeviceOperationData,
-} = require('./utils')
+const { createTestContext, getDeviceConfigurationData, getLastDeviceOperationData } = require('./utils')
+const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
 
 const { assert } = chai
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
@@ -57,10 +54,7 @@ describe('Device API approval tests', () => {
             assert.equal(res.status, 200)
           })
         const configPost1 = await getDeviceConfigurationData(knex, deviceId)
-        assert.deepEqual(
-          { shouldChangeThisThing: 'b', ...configPre },
-          configPost1
-        )
+        assert.deepEqual({ shouldChangeThisThing: 'b', ...configPre }, configPost1)
         const opPost1 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual({ shouldChangeThisOtherThing: 'c' }, opPost1)
 
@@ -72,10 +66,7 @@ describe('Device API approval tests', () => {
             assert.equal(res.status, 200)
           })
         const configPost2 = await getDeviceConfigurationData(knex, deviceId)
-        assert.deepEqual(
-          { shouldChangeThisThing: 'c', ...configPre },
-          configPost2
-        )
+        assert.deepEqual({ shouldChangeThisThing: 'c', ...configPre }, configPost2)
 
         await server
           .post(deviceOperationPath)
@@ -86,18 +77,6 @@ describe('Device API approval tests', () => {
           })
         const opPost2 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual({ shouldChangeThisOtherThing: 'e' }, opPost2)
-
-        await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.isNotOk(res.body.configuration)
-            assert.isNotOk(res.body.operation)
-            assert.isNotOk(res.body.result)
-            assert.equal(res.body.approval.id, 'assigned')
-          })
       }))
   })
 })

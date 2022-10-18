@@ -1,5 +1,4 @@
 const chai = require('chai')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const shared = require('../utils/sharedToken')
 const { knex } = require('../../src/db')
 
@@ -22,7 +21,6 @@ const assertResult = response => {
 
 describe('Result Transfer', () => {
   const path = '/api/result'
-  shared.checkToken(server, path)
 
   describe('POST', () => {
     let result
@@ -35,19 +33,16 @@ describe('Result Transfer', () => {
     const timeStampNewest = new Date(2020, 1, 21).getTime()
 
     before(async () => {
+      shared.checkToken(server, path)
       // get list of results accessible for current user
-      let response = await server
-        .set('Authorization', `Bearer ${shared.token}`)
-        .get(path)
+      let response = await server.set('Authorization', `Bearer ${shared.token}`).get(path)
 
       assert.equal(response.statusCode, 200)
       assert.isAtLeast(response.body.data.length, 1)
       const resultId = response.body.data[0].id
 
       // get result by resultId
-      response = await server
-        .set('Authorization', `Bearer ${shared.token}`)
-        .get(`${path}/${resultId}`)
+      response = await server.set('Authorization', `Bearer ${shared.token}`).get(`${path}/${resultId}`)
 
       assertResult(response)
       result = response.body.data
@@ -57,9 +52,7 @@ describe('Result Transfer', () => {
       ;[{ reportableSiteId, resultStatusLogId }] = [result]
 
       // get list of accessible sites for current user
-      response = await server
-        .set('Authorization', `Bearer ${shared.token}`)
-        .get(`/api/site`)
+      response = await server.set('Authorization', `Bearer ${shared.token}`).get(`/api/site`)
       assert.equal(response.statusCode, 200)
       assert.isAtLeast(response.body.data.length, 1)
       const sites = response.body.data
@@ -71,9 +64,7 @@ describe('Result Transfer', () => {
 
     after(async () => {
       // restore initial data
-      await knex('Result')
-        .where('id', result.id)
-        .update({ reportableSiteId, resultStatusLogId })
+      await knex('Result').where('id', result.id).update({ reportableSiteId, resultStatusLogId })
       await knex('ResultStatusLog')
         // assume resultStatusLogId is 0 if `result` didn't have any record in ResultStatusLog
         .where('id', '>', resultStatusLogId || 0)
@@ -100,19 +91,18 @@ describe('Result Transfer', () => {
       assert.equal(transferredOn.length, 24)
     })
 
-    it('should return an error if result does not exist', () =>
-      runTestWithKnex(async knex => {
-        // get max resultId
-        const [{ resultId }] = await knex('Result').max('id as resultId')
+    it('should return an error if result does not exist', async () => {
+      // get max resultId
+      const [{ resultId }] = await knex('Result').max('id as resultId')
 
-        // transfer unknown resultId
-        const response = await server
-          .set('Authorization', `Bearer ${shared.token}`)
-          .post(`${path}/transfer/${resultId + 1}`)
-          .send({ siteId: 1 })
+      // transfer unknown resultId
+      const response = await server
+        .set('Authorization', `Bearer ${shared.token}`)
+        .post(`${path}/transfer/${resultId + 1}`)
+        .send({ siteId: 1 })
 
-        assert.equal(response.statusCode, 404)
-      }))
+      assert.equal(response.statusCode, 404)
+    })
 
     it('Should NOT transfer result to newSite2 because of older timeStamp', async () => {
       const response = await server
@@ -148,9 +138,7 @@ describe('Result Transfer', () => {
 
       // check if comment stored
       const { resultStatusLogId } = testResult
-      const logData = await knex('ResultStatusLog')
-        .where('id', resultStatusLogId)
-        .first('data')
+      const logData = await knex('ResultStatusLog').where('id', resultStatusLogId).first('data')
       const log = JSON.parse(logData.data)
       assert.equal(comment, log.comment)
     })

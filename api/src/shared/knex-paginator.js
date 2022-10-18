@@ -1,11 +1,7 @@
-const KnexQueryBuilder = require('knex/lib/query/builder')
+const Knex = require('knex')
 
 module.exports = function (knex) {
-  KnexQueryBuilder.prototype.paginate = function (
-    perPage = 10,
-    page = 1,
-    isLengthAware = false
-  ) {
+  Knex.QueryBuilder.extend('paginate', function (perPage = 10, page = 1, isLengthAware = false) {
     // Object that will be returned
     let paginator = {}
 
@@ -37,17 +33,11 @@ module.exports = function (knex) {
       if (this.clone().toSQL().sql.toLowerCase().indexOf('group by') !== -1) {
         promises.push(
           knex.raw(
-            `select count(*) as total from (${this.clone()
-              .clearSelect()
-              .clearOrder()
-              .count('*')
-              .toString()}) as q`
+            `select count(*) as total from (${this.clone().clearSelect().clearOrder().count('*').toString()}) as q`
           )
         )
       } else {
-        promises.push(
-          this.clone().clearSelect().clearOrder().count('* as total').first()
-        )
+        promises.push(this.clone().clearSelect().clearOrder().count('* as total').first())
       }
     } else {
       // eslint-disable-next-line no-unused-vars
@@ -84,9 +74,5 @@ module.exports = function (knex) {
 
       return paginator
     })
-  }
-
-  knex.queryBuilder = function queryBuilder() {
-    return new KnexQueryBuilder(knex.client)
-  }
+  })
 }

@@ -29,11 +29,7 @@ async function preProcessAddDeviceData(context) {
         (await knex('Partner as p')
           .join('Device as d', 'p.id', 'd.partnerId')
           .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-          .innerJoin(
-            'DeviceTypeCategory as dtc',
-            'dtc.id',
-            'dt.deviceTypeCategoryId'
-          )
+          .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
           .leftJoin('Geography as g', 'd.geographyId', 'g.id')
           .leftJoin('Country as c', 'g.countryId', 'c.id')
           .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -61,20 +57,13 @@ async function preProcessAddDeviceData(context) {
       if (hivGxAlertDeviceDetails) {
         context.device = hivGxAlertDeviceDetails
         context.partnerId = hivGxAlertDeviceDetails.partnerId
-        await knex('DeviceLog')
-          .where('id', context.deviceLogId)
-          .update({ deviceId: hivGxAlertDeviceDetails.id })
-        const indexOfLesothoTbPluginName = context.pluginNames.indexOf(
-          'lesothoTb'
-        )
+        await knex('DeviceLog').where('id', context.deviceLogId).update({ deviceId: hivGxAlertDeviceDetails.id })
+        const indexOfLesothoTbPluginName = context.pluginNames.indexOf('lesothoTb')
         if (indexOfLesothoTbPluginName) {
           context.pluginNames.splice(indexOfLesothoTbPluginName, 1)
         }
         if (hivGxAlertDeviceDetails.partnerPluginName) {
-          context.pluginNames = [
-            hivGxAlertDeviceDetails.partnerPluginName,
-            ...context.pluginNames,
-          ]
+          context.pluginNames = [hivGxAlertDeviceDetails.partnerPluginName, ...context.pluginNames]
         }
       }
     }

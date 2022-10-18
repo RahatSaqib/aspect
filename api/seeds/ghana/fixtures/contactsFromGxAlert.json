@@ -1,0 +1,5238 @@
+[
+    {
+        "personName": "Stefan Baumgartner",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "brichards@systemone.id",
+        "personPhone": "+14133064770",
+        "personCell": "+14135485003",
+        "username": "admin",
+        "timezone": "Eastern Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Admin",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "username": "ghana",
+        "timezone": "Greenwich Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Eric Akorly",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ericakorly@yahoo.com",
+        "personCell": "+233244075247",
+        "timezone": "UTC",
+        "hidePatientId": true,
+        "hideSampleId": true,
+        "hideNotes": true,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "WEIJA/GBAWE"
+            }
+        ]
+    },
+    {
+        "personName": "Israel Evans Tettey",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "israeltettey@gmail.com",
+        "personCell": "+233246645038",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Kasoa Polyclinic"
+            }
+        ]
+    },
+    {
+        "personName": "Nathaniel Ashon",
+        "personTitle": "IT Personnel",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "nattyashon@yahoo.com",
+        "personCell": "+233273725783",
+        "username": "nattyashon@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": true,
+        "hideSampleId": true,
+        "hideNotes": true,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Richard Sereboe",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "sereboekr@yahoo.co.uk",
+        "personCell": "+233207210951",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Trust Hospital"
+            }
+        ]
+    },
+    {
+        "personName": "John Amissah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "paabio@yahoo.com",
+        "personCell": "+233264734431",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Achimota Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Mantse Isaac",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "kodzoshalomcaleb@gmail",
+        "personCell": "+233243630952",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "LEKMA Hosp Lab"
+            }
+        ]
+    },
+    {
+        "personName": "Samuel Kudzawu",
+        "personTitle": "NTP Lab IT",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "skudzay@yahoo.com",
+        "username": "skudzay",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Michael Amo Omari",
+        "personTitle": "Deputy Chief Biomedical Scientist",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "mcyomari@gmail.com",
+        "username": "mcyomari@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Honesty Mensah Ganu",
+        "personTitle": "Principal Medical Laboratory Scientist",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "ganumensah@gmail.com",
+        "username": "ganumensah",
+        "timezone": "Eastern Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Felix Sorvor",
+        "personTitle": "Medical Lab Scientist",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "solvolysis@yahoo.com",
+        "username": "solvolysis@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Dr Anthony Ashinyo",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "aashinyo@yahoo.com",
+        "username": "aashinyo@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Volta Region"
+            }
+        ]
+    },
+    {
+        "personName": "Lambert Kweku Ankomah",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "lambertanko2013@gmail.com",
+        "personCell": "+233 243445979",
+        "username": "lambertanko2013@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region"
+            }
+        ]
+    },
+    {
+        "personName": "Angela Quaye",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "angiebless100@gmail.com",
+        "personCell": "+233 243132755",
+        "username": "angiebless100@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Eastern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Mawuko Mensah",
+        "personTitle": "NTP IT Admin",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "m.mawuko@gmail.com",
+        "personCell": "+233 243017600",
+        "username": "m.mawuko@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Charles Kofi Eshun",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "charles8esnhun@gmail.com",
+        "personCell": "+233 243822907",
+        "username": "charles8esnhun@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Central Region"
+            }
+        ]
+    },
+    {
+        "personName": "Mintah Yeboah K.",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "mikyafari@gmail.com",
+        "personCell": "+233 249443932",
+        "username": "mikyafari@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper West Region"
+            }
+        ]
+    },
+    {
+        "personName": "Abu Accrachie",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "abuaccra@yahoo.com",
+        "personCell": "+233 024464013",
+        "username": "abuaccra@yahoo.com",
+        "timezone": "Greenwich Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Northern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Obeng-Hinneh",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "emmanuel.ohinneh@yahoo.com",
+        "personCell": "+233 24464013",
+        "username": "emmanuel.ohinneh@yahoo.com",
+        "timezone": "Greenwich Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Brong-Ahafo Region."
+            }
+        ]
+    },
+    {
+        "personName": "Sulemana Abdul-Majeed",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "sule.majeed@gmail.com",
+        "personPhone": "+233 246523605",
+        "personCell": "+233 206648576",
+        "username": "sule.majeed@gmail.com",
+        "timezone": "Greenwich Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper East Region"
+            }
+        ]
+    },
+    {
+        "personName": "Kofi Sroda",
+        "personTitle": "Regional TB Coordinaator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "efosoroda@yahoo.com",
+        "personCell": "+233 208159681",
+        "username": "efosroda@yahoo.com",
+        "timezone": "Greenwich Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Ashanti Region"
+            }
+        ]
+    },
+    {
+        "personName": "Dr Teye",
+        "personTitle": "Regional TB Coordinaator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "bdviesteye@yahoo.com",
+        "personCell": "+233 0244709445",
+        "username": "bdviesteye@yahoo.com",
+        "timezone": "Greenwich Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Greater Accra Region"
+            }
+        ]
+    },
+    {
+        "personName": "Charles Agede",
+        "personTitle": "Regional Medical Lab Scientist",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "charleagede@yahoo.com",
+        "personCell": "+233 244721513",
+        "username": "charleagede@yahoo.com",
+        "timezone": "Greenwich Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Volta Region"
+            }
+        ]
+    },
+    {
+        "personName": "George Damptey Danquah",
+        "personTitle": "Regional Medical Lab Scientist",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "yawdan67@yahoo.com",
+        "personCell": "+233 244605634",
+        "username": "yawdan67@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Eastern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Dr Tony Basignaa",
+        "personTitle": "Regional Medical Lab Scientist",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "tbasingnaa@yahoo.com",
+        "personCell": "+233 506320080",
+        "username": "tbasingnaa@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper West Region"
+            }
+        ]
+    },
+    {
+        "personName": "Abass  Abdul Karim",
+        "personTitle": "Regional Medical Lab Scientist",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "abass.komei@yahoo.com",
+        "personCell": "+233 200261009",
+        "username": "abass.komei@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Northern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Admin1",
+        "personTitle": "Lab IT",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "skudzay@yahoo.com",
+        "personPhone": "+233 208115280",
+        "username": "skudzay1",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Zeleke Alebachew",
+        "personTitle": "TB Technical Advisor",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "zalebachew@gmail.com",
+        "username": "zalebachew@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Felix Kwame Afutu",
+        "personTitle": "Head, Monitoring & Evaluation",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "kwami.afutu@ghsmail.org",
+        "username": "kwami.afutu@ghsmail.org",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Dr Yaw Adusi-Poku",
+        "personTitle": "Programme Manager, NTP",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "togobay@yahoo.com",
+        "username": "togobay@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Raymond Gockah",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "gockah@gmail.com",
+        "username": "gockah@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Mabel Tetteh",
+        "personTitle": "Regiional Parent",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "mayttees2000@yahoo.com",
+        "username": "mayttees2000@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Brong-Ahafo Region."
+            }
+        ]
+    },
+    {
+        "personName": "Brad Cunnigham",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "bcunningham@systemone.id",
+        "personCell": "+27614874693",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "ERIC ARYEE",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ricus74@yahoo.com",
+        "personCell": "+233209166508",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Madina Polyclini"
+            }
+        ]
+    },
+    {
+        "personName": "BOAHEN EMMANUEL A S",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "kakrasangara@gmail.com",
+        "personCell": "+233246399163",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "WA West "
+            }
+        ]
+    },
+    {
+        "personName": "Nuhaila Issaka Koray",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nuhailako@yahoo.co.uk",
+        "personCell": "+233244972370",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "UW Regional Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Gameli Emmanuel Adzraku",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "gameliea@yahoo.com",
+        "personCell": "+233509543271",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Nadowli Dis. Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Botchway Benjamin",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "botchway6887@gmail.com",
+        "personCell": "+233247579374",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Lawra Hosp Lab"
+            }
+        ]
+    },
+    {
+        "personName": "James Alorwu",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "jalorke@gmail.com",
+        "personCell": "+233246109076",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Tumu Dist Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "James Adongo",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "quest2nyaba0017@gail.com",
+        "personCell": "+233207359685",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Nandom Hospital"
+            }
+        ]
+    },
+    {
+        "personName": "Honesty Mensah Ganu",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ganumensah@gmail,com",
+        "personCell": "+233264776691",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Nandom Hospital"
+            }
+        ]
+    },
+    {
+        "personName": "KENNETH OWUSU AGYEMANG",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "kowusuagyemang@gmail.com",
+        "personCell": "+233244116678",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Akatsi Dist Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Christian Amisah Samuel",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "paa0244824903@gmail.com",
+        "personCell": "+233244824903",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Tain Dist Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Honesty Mensah Ganu",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ganumensah2gmail.com",
+        "personCell": "+233264776691",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Enoch Barnie",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "barnie.enoch@yahoo.com",
+        "personCell": "+233249392170",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Sene Dist Hosp. "
+            }
+        ]
+    },
+    {
+        "personName": "Victor Kwame Adjomah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "victorjaguar10@gmail.com",
+        "personCell": "+233545487834",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Atebubu Mun Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Yaw Sam",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "vennsamm@yahoo.com",
+        "personCell": "+233243342468",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Konongo Mun. Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Stanley Mangortey",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "stanlauspy@yahoo.com",
+        "username": "stanlauspy@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper East Region"
+            }
+        ]
+    },
+    {
+        "personName": "Charles Nkansah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "slimedlx23517@yahoo.com",
+        "personCell": "+233247626378",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "NKENKAASU GOV"
+            }
+        ]
+    },
+    {
+        "personName": "Abigail Kwakye-Fosu",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "abynaah@yahoo.co.uk",
+        "personCell": "+2332435566185",
+        "timezone": "UTC",
+        "hidePatientId": true,
+        "hideSampleId": true,
+        "hideNotes": true,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Obuasi Gov't Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Suleiman Ahmed",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "sulmed2010@gmail.com",
+        "personCell": "+233208611448",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Bekwai Muni Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Obeng Joseph K",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "obengjoseph163@gmail.com",
+        "personCell": "+233502271112",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "DonkorkromPresby"
+            }
+        ]
+    },
+    {
+        "personName": "Justice Boamah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "opaninboamah@gmail.com",
+        "personCell": "+233202829090",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Agogo"
+            }
+        ]
+    },
+    {
+        "personName": "Samuel Asante Tweneboa",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "asantetsam@gmail.com",
+        "personCell": "+233243476555",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Juaben Hosp. Lab"
+            }
+        ]
+    },
+    {
+        "personName": "Enoch Opoku Anoh",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "enozia2003@yahoo.com",
+        "personCell": "+233243424581",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Agroyesum  Hospi"
+            }
+        ]
+    },
+    {
+        "personName": "Daniel Arthur",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "daniiboy057@gmail.com",
+        "personCell": "+233244544622",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Ashanti Mampong "
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Opoku",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "opokye@gmail.com",
+        "personCell": "+233551218356",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "SDA Hosp, Asaman"
+            }
+        ]
+    },
+    {
+        "personName": "Buabeng Vincent",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "buabeng2b@yahoo.com",
+        "personCell": "+233201741788",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Kwahu Gov't H."
+            }
+        ]
+    },
+    {
+        "personName": "Raymond Charles Ehiem",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nanaehiem@gmail.com",
+        "personCell": "+233224211072",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St Patrick's H"
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Sarifu",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "akatwumnuel@hotmail.com",
+        "personCell": "+233243249541",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Nkawkaw"
+            }
+        ]
+    },
+    {
+        "personName": "Kweku Abiw-Abaidoo",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "fatherabiw@gmail.com",
+        "personCell": "+233244972396",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Nkawie-Toase"
+            }
+        ]
+    },
+    {
+        "personName": "Yobo Mireku",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "kingyobo@gmail.com",
+        "personCell": "+233502309417",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Enyiresi Gov't h"
+            }
+        ]
+    },
+    {
+        "personName": "Christian Nelson",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "niinelson@yahoo.com",
+        "personCell": "+233244996992",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Kibi Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Steve Adansi",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "stevorica@yahoo.com",
+        "personCell": "+233242038236",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Gideon Addai",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "giddyasante@yahoo.com",
+        "personCell": "+233249337718",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Suhum Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Janet Alpha",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "lpjane2003@yahoo.com",
+        "personCell": "+233208073545",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Effia Nkwanta Ho"
+            }
+        ]
+    },
+    {
+        "personName": "Isaac Yaw Asamoah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ikeyass@yahoo.co.uk",
+        "personCell": "+233244519627",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "PRAMSO"
+            }
+        ]
+    },
+    {
+        "personName": "Nixon N. Somuah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nixonnsomuah@yahoo.com",
+        "personCell": "+233244252800",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Nsawam Gov't H."
+            }
+        ]
+    },
+    {
+        "personName": "Josephine Amissah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "josephineamissah207@gmail.com",
+        "personCell": "+233246837432",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Frank Biney",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "frankbiny@yahoo.com",
+        "personCell": "+233249000484",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Asamankese Gov't"
+            }
+        ]
+    },
+    {
+        "personName": "Tahiru Seidu Akadigo",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "taakad@yahoo.com",
+        "personCell": "+233244360924",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Essam Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Benedict R. N. Addo Adams",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "bennyaddoadams@gmail.com",
+        "personCell": "+233244829181",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Oda Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Isaac Sarsah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "law.sarsah@yahoo.com",
+        "personCell": "+233542631194",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Akwatia Hospital"
+            }
+        ]
+    },
+    {
+        "personName": "Dzodanu Eben",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "sparklezee225@yahoo.com",
+        "personCell": "+233247901109",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Kade Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Isaac Oboakoh",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "kboakoh@yahoo.co.uk",
+        "personCell": "+233243689983",
+        "username": "kboakoh@yahoo.co.uk",
+        "timezone": "Eastern Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Mary K. Tetteh",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "smartimay2020@gmail.com",
+        "personCell": "+233243853596",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Begro District Hospi"
+            }
+        ]
+    },
+    {
+        "personName": "Arko Hubert",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "arkobert@yahoo.com",
+        "personCell": "+233244936282",
+        "timezone": "UTC",
+        "hidePatientId": true,
+        "hideSampleId": true,
+        "hideNotes": true,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Asesewa Gov't Ho"
+            }
+        ]
+    },
+    {
+        "personName": "Wisdom D. Ogbordjor",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ogbordjor@yahoo.com",
+        "personCell": "+233243687283",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "VRA Hospital Akosomb"
+            },
+            {
+                "shortName": "VRA Hospital Ako"
+            }
+        ]
+    },
+    {
+        "personName": "Munkaila Ibrahim",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "Benjaminnyorkeh17@gmail.com",
+        "personCell": "+233208170082",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Stephen Ofori Yirenkyi",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "lydiayirenkyi@yahoo.com",
+        "personCell": "+233209103038",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Eastern R. Hospi"
+            }
+        ]
+    },
+    {
+        "personName": "Robert Adedze-Kpodo",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "robertkpodo@gmail.com",
+        "personCell": "+233208199340",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Sogakope Hospita"
+            }
+        ]
+    },
+    {
+        "personName": "Munkaila Ibrahim",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ibmunkaila555@gmail.com",
+        "personCell": "+233208170082",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "TETTEH QUARSHIE"
+            }
+        ]
+    },
+    {
+        "personName": "Bright Dela Glover",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233200440005",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Bright Dela Glover",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "dellahgbc1983@gmail",
+        "personCell": "+233200440005",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Keta Mun Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Akwelem Ebenezer",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ben_poison@yahoo.com",
+        "personCell": "+233244845484",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Alex Amegbletor",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "aamegbletor@yahoo.com",
+        "personCell": "+233243582912",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Dzodze Hospital"
+            }
+        ]
+    },
+    {
+        "personName": "Samauel Akonor",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "paapsalm@yahoo.com",
+        "personCell": "+233244566825",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Bole Dist Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Gameli Nudo",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "gamelinudo@gmail.com",
+        "personCell": "+233206872874",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Ho Teaching "
+            }
+        ]
+    },
+    {
+        "personName": "Theophilus Quaye",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "sirosy@yahoo.com",
+        "personCell": "+233243723680",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St Anne's Damong"
+            }
+        ]
+    },
+    {
+        "personName": "Vordzorgbe Gilbert",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "delavord@hotmail.com",
+        "personCell": "+233543123420",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Kpando Catholic "
+            }
+        ]
+    },
+    {
+        "personName": "Klutse Fianko",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "fiankok@yahoo.com",
+        "personCell": "+233244792348",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Hohoe Mun Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Moses Banyeh",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "mosesbanyeh@gmail.com",
+        "personCell": "+233507554477",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Felix Sorvor",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "sorvolysis@yahoo.com",
+        "personCell": "+233208195210",
+        "username": "sorvolysis@yahoo.com",
+        "timezone": "Eastern Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Charles Kwami Gedzeah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233244286270",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Charles Kwami Gedzeah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "cedzea@gmail.com",
+        "personCell": "+233244286270",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Papase Hosp Lab"
+            }
+        ]
+    },
+    {
+        "personName": "Adase Morkporkpor",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "morkporkporadase@gmail.com",
+        "personCell": "+233243050711",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Nkwanta South"
+            }
+        ]
+    },
+    {
+        "personName": "Wisdom Kushiator",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "kushwise@gmail.com",
+        "personCell": "+233202303586",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Felix Sorvor",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "Sorvolysis2yahoo.com",
+        "personCell": "+233208195210",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Salaga Dist Gov'"
+            }
+        ]
+    },
+    {
+        "personName": "Nakoja John",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nakojosmall@gmail.com",
+        "personCell": "+233246529686",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Kpassa Health Ce"
+            }
+        ]
+    },
+    {
+        "personName": "Oduro-Boakye Kwasi",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "oduroboakye@yahoo.com",
+        "personCell": "+233244436386",
+        "username": "oduroboakye@yahoo.com",
+        "timezone": "Eastern Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "DANIEL ADIGBLI",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "dadigbli5@gmail.com",
+        "personCell": "+233244139791",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Krachi West Dist"
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Amenu",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "emaaco7@gmail.com",
+        "personCell": "+233242814340",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Zabzugu Dist Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Amos Setordzi Mensah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "amossetordzi@gmail.com",
+        "personCell": "+233245786397",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Worawora Gov't "
+            }
+        ]
+    },
+    {
+        "personName": "Nabei Jacob Nignan",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nabeijake3@yahoo.com",
+        "personCell": "+233205516111",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Saboba Hospi"
+            }
+        ]
+    },
+    {
+        "personName": "Roger Isaah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "rogerisaah08@gmail.com",
+        "personCell": "+233249685459",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Nalerigu Medical"
+            }
+        ]
+    },
+    {
+        "personName": "Daniel T. P. Anabah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "danielanabah@yahoo.com",
+        "personCell": "+233244768305",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Bawku Presby H"
+            }
+        ]
+    },
+    {
+        "personName": "Awini A. Joshua",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "jawiniadoliba@yahoo.com",
+        "personCell": "+233242530806",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Garu Health C."
+            }
+        ]
+    },
+    {
+        "personName": "Anankor Jonas",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "anankorjonas@yahoo.com",
+        "personCell": "+233542746348",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Zebila "
+            }
+        ]
+    },
+    {
+        "personName": "Kwabena Fosu",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "kobbykf@gmail.com",
+        "personCell": "+233246115897",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "UER Hosp. Bolga"
+            },
+            {
+                "shortName": "Upper east Regional "
+            }
+        ]
+    },
+    {
+        "personName": "Ernest H. K. Aguze",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "erneyhak2011@yahoo.com",
+        "personCell": "+233243513642",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Builsa North Distric"
+            },
+            {
+                "shortName": "Sandema Dist Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Ramzy Bugri Anafo",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "rambugri2012@yahoo.com",
+        "personCell": "+233242956101",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "War Memorial Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Gershon Doh",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "gershondoh6@gmail.com",
+        "personCell": "+233244179852",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Bibiani"
+            }
+        ]
+    },
+    {
+        "personName": "Ernest Gockah-Adapoe",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "egockah1@gmail.com",
+        "personCell": "+233244637767",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Dunkwa-On-Offin "
+            }
+        ]
+    },
+    {
+        "personName": "KENNETH KYE-AMOAH",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "kenamoa@yahoo.co.uk",
+        "personCell": "+233208555547",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Sefwi Wiaso Municipa"
+            },
+            {
+                "shortName": "Sefwi Wiawso"
+            }
+        ]
+    },
+    {
+        "personName": "Frimpong Francis",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nanakwasifrimpong.ff@gmail.com",
+        "personCell": "+233247809102",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Juaboso Gov't H"
+            }
+        ]
+    },
+    {
+        "personName": "MBORT ATTAN-AYIBO",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "mbortagnes@gmail.com",
+        "personCell": "+233507404885",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Enchi Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Sarah Andoh",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "andop2001@yahoo.com",
+        "personCell": "+233242686506",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Asankragua"
+            }
+        ]
+    },
+    {
+        "personName": "Wisdom Selase Mensah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "wisymens12@gmail.com",
+        "personCell": "+233244195754",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Wassa Akro Govt"
+            }
+        ]
+    },
+    {
+        "personName": "Frank Angate",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233246725811",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Prestea Government H"
+            }
+        ]
+    },
+    {
+        "personName": "Frank Angate",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "fangate99@gmail.com",
+        "personCell": "+233246725811",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Prestea Gov't H"
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Osei",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "lorddoe20@gmail.com",
+        "personCell": "+233244785091",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Tarkwa Mun. Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Vincent Tabiim Ntilitukbe",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "tabiim@yahoo.com",
+        "personCell": "+233208750189",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Pru Catholic Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Sylvester Onumah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "sylvesteronumah@gmail.com",
+        "personCell": "+233278290904",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Axim Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Owusu Frank",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "owusufrank2007@yahoo.com",
+        "personCell": "+233242973464",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St. Theresa's H."
+            }
+        ]
+    },
+    {
+        "personName": "HAROLD AMEGBLETOR",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "haroldam@yahoo.com",
+        "personCell": "+233245962777",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "ST. MARTIN DE PORRES"
+            }
+        ]
+    },
+    {
+        "personName": "Isaac Owusu",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "iowusunyamekye@gmail.com",
+        "personCell": "+233244990271",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Kintampo Mun H"
+            }
+        ]
+    },
+    {
+        "personName": "Philemon Owusu Peprah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "apostledrphile@gmail.com",
+        "personCell": "+233246106046",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Half Assini Govt "
+            }
+        ]
+    },
+    {
+        "personName": "Anthony Appiah Mensah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "apanme83@yahoo.com",
+        "personCell": "+233247241342",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "HOLY FAMILY TECH"
+            }
+        ]
+    },
+    {
+        "personName": "Christopher Nkrumah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233277370506",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Wenchi"
+            }
+        ]
+    },
+    {
+        "personName": "Honesty Mensah Ganu",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ganumensah@yahoo.com",
+        "personCell": "+233264776691",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Gyan Bernard",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "bengeee70@yahoo.com",
+        "personCell": "+233205854718",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Sampa Government Hos"
+            },
+            {
+                "shortName": "Sampa Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Lawrence Dzata",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "larrydzat@yahoo.com",
+        "personCell": "+233244885864",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Saltpond Mun. H"
+            }
+        ]
+    },
+    {
+        "personName": "Jerry Johnson Kwame",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "myjkwame@gmail.com",
+        "personCell": "+233243725497",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Abura Dunkwa "
+            }
+        ]
+    },
+    {
+        "personName": "Sulemani Nicanor Fuseini",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "sfuseini88@gmail.com",
+        "personCell": "+233207475497",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Dormaa Presby H"
+            }
+        ]
+    },
+    {
+        "personName": "Clement Evans Aryee",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "cearyee@yahoo.com",
+        "personCell": "+233244483017",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Goaso Mun Hospit"
+            }
+        ]
+    },
+    {
+        "personName": "Paul Ntiamoah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ntiamoahp@yahoo.com",
+        "personCell": "+233208598758",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Hwediem Catholic"
+            }
+        ]
+    },
+    {
+        "personName": "ebo bennin",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ebobennin@gmail.com",
+        "personCell": "+233543320674",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Breman Asikuma"
+            }
+        ]
+    },
+    {
+        "personName": "George Kumah Khumalo",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "drkhumaloo@yahoo.com",
+        "personCell": "+233244180430",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "BONO R. HOSPITAL"
+            }
+        ]
+    },
+    {
+        "personName": "Esther Yirenkyiwaa",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "eyirenkyiwaa@gmail.com",
+        "personCell": "+233243966565",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Ajumko District"
+            }
+        ]
+    },
+    {
+        "personName": "Michael Adu Gyamfi A.",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233244783324",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Michael Adu Gyamfi A.",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nanaadugh@yahoo.com",
+        "personCell": "+233244783324",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "SAMUEL BAAH",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "baah7860@gmail.com",
+        "personCell": "+233264127203",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Agona Swedru "
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Nani",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233244766979",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Dangbe East "
+            }
+        ]
+    },
+    {
+        "personName": "bernadette hammond",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "naa.dette@yahoo.com",
+        "personCell": "+233244531490",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "WINNEBA MUN. HOS"
+            }
+        ]
+    },
+    {
+        "personName": "Patience Bortie",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "bortiepatience@yahoo.com",
+        "personCell": "+233243253568",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Samuel Kudzawu",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "skudzy@yahoo.com",
+        "personCell": "+233208115280",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "ANDREW   A VORMAWOR",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "anddyvorm@gmail.com",
+        "personCell": "+233244182799",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St. Luke's Apam"
+            }
+        ]
+    },
+    {
+        "personName": "Josephine Banini",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "jobanini@yahoo.com",
+        "personCell": "+233208187460",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Ashaiman Poly"
+            }
+        ]
+    },
+    {
+        "personName": "Douglas Darko",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "darkodouglas44@gmail.com",
+        "personCell": "+233243528584",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Shai Osudoku "
+            }
+        ]
+    },
+    {
+        "personName": "Martin Peprah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "mpeprah29@yahoo.com",
+        "personCell": "+233208915254",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Ga W. Muni Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Hilda Smith",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "quanuasmith@gmail.com",
+        "username": "quanuasmith@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Eastern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Mahama Yakubu",
+        "personTitle": "District TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "Yakmah12@yahoo.com",
+        "personCell": "+233 24-585-1997",
+        "username": "yakmah12@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper East Region",
+                "lgaName": "Bawku Municipal"
+            }
+        ]
+    },
+    {
+        "personName": "Simon Adjei Affa",
+        "personTitle": "District TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "octhniel2@yahoo.co.uk",
+        "personCell": "+233 0201748926",
+        "username": "octhniel2@yahoo.co.uk",
+        "timezone": "Morocco Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper East Region",
+                "lgaName": "Bawku West District"
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Konlan",
+        "personTitle": "District TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "Konlanemmanuel271@yahoo.com",
+        "personPhone": "+233 206097006",
+        "personCell": "+233 243217759",
+        "username": "Konlanemmanuel271@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper East Region",
+                "lgaName": "Bolgatanga Municipal"
+            }
+        ]
+    },
+    {
+        "personName": "Mercy Baah",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "mercy.baah28@yahoo.com",
+        "username": "mercy.baah28@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper West Region"
+            }
+        ]
+    },
+    {
+        "personName": "Sahadatu Abdul-Rahman",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "baziniyili@gmail.com",
+        "username": "baziniyili@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Central Region"
+            }
+        ]
+    },
+    {
+        "personName": "Adelaide Sackey",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "naadzaa6k@yahoo.com",
+        "username": "naadzaa6k@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Greater Accra Region"
+            }
+        ]
+    },
+    {
+        "personName": "Samuel Apau-Danso",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "freesamd@yahoo.com",
+        "username": "freesamd@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region"
+            }
+        ]
+    },
+    {
+        "personName": "Cynthia Oware",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "cynthiaoware@yahoo.co.uk",
+        "username": "cynthiaoware@yahoo.co.uk",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Ashanti Region"
+            }
+        ]
+    },
+    {
+        "personName": "Benjamin Adziwi",
+        "personTitle": "Regional Parent",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "badziwi@gmail.com",
+        "username": "badziwi@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Dr.Patrick Bampoh",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "pbampoh@yahoo.co.uk",
+        "personCell": "+233 0208166686",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Northern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Maxwell Nuamah Appiah",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "maxwellnuamah@yahoo.co.uk",
+        "personCell": "+233 0206300208",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region"
+            }
+        ]
+    },
+    {
+        "personName": "Farida Abdulai",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "ridanjel@gmail.com",
+        "personCell": "+233 0264967691",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Greater Accra Region"
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Kasu",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "kasu_s@yahoo.com",
+        "personCell": "+233 0244087676",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Volta Region"
+            }
+        ]
+    },
+    {
+        "personName": "Kwaku Asiedu Adjei-Manu",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "kwakuaam@yahoo.com",
+        "personCell": "+233 0205771029",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Brong-Ahafo Region."
+            }
+        ]
+    },
+    {
+        "personName": "Dorcas Obiri-Yeboah",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "dobiri-yeboah@ucc.edu.gh",
+        "personCell": "+233 0244527387",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Central Region"
+            }
+        ]
+    },
+    {
+        "personName": "ElizabethTabitha Botchway",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "temea1985@yahoo.com",
+        "personCell": "+233 0202640522",
+        "username": "temea1985@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Central Region"
+            }
+        ]
+    },
+    {
+        "personName": "Joseph Baah Obeng",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "jobeng@gmail.com",
+        "personCell": "+233 0244630047",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Ashanti Region"
+            }
+        ]
+    },
+    {
+        "personName": "Alberta Biritwum-Nyarko",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "abnyarko@yahoo.com",
+        "personCell": "+233 0244785208",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Eastern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Francisca Akorfa Zigah",
+        "personTitle": "Pharmacist",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "akorfzig@yahoo.com",
+        "personCell": "+233 0204957061",
+        "username": "akorfzig@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Tsige Danso-Bamfo",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "tsigedanso@gmail.com",
+        "personCell": "+233 0243121632",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Chest Clinic Lab"
+            }
+        ]
+    },
+    {
+        "personName": "Abraham Adjei",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "olu061@yahoo.com",
+        "personPhone": "+233 0208132493",
+        "personCell": "+233 0208132443",
+        "username": "olu061@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Lilian Addai",
+        "personTitle": "Doctor",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "lilianaddai@yahoo.com",
+        "personCell": "+233 0206300698",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Mutala Mohammed",
+        "personTitle": "Regional M&E Officer",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "mutalam20@gmail.com",
+        "personCell": "+233 246553780",
+        "username": "mutalam20@gmail.com",
+        "timezone": "Morocco Standard Time",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region"
+            }
+        ]
+    },
+    {
+        "personName": "Josephine Owusu Yeboah",
+        "personTitle": "District TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "joygh3@yahoo.com",
+        "personCell": "+233 242219504",
+        "username": "joygh3@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Ahanta West District"
+            }
+        ]
+    },
+    {
+        "personName": "Owusu Boakye Yiadom",
+        "personTitle": "District TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "owusuboakyeyiadom@yahoo.com",
+        "personCell": "+233 243105107",
+        "username": "owusuboakyeyiadom@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Aowin District"
+            }
+        ]
+    },
+    {
+        "personName": "Alexander Ampofo",
+        "personTitle": "District TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "averyampofo87@gmail.com",
+        "personCell": "+233 244295213",
+        "username": "averyampofo87@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Bia East District"
+            }
+        ]
+    },
+    {
+        "personName": "Edem",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personCell": "+233 244960139",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "CAPE COAST "
+            }
+        ]
+    },
+    {
+        "personName": "BERTRAND ACKOM - ASAMOAH",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "frediove8@yahoo.com",
+        "personCell": "+233248712423",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Philemon Owusu Peprah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nuhuumarabeka@gmail.com",
+        "personCell": "+233246106046",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Half Assini Govt "
+            }
+        ]
+    },
+    {
+        "personName": "Davis Sarpong",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "davis.sarpong@gmail.com",
+        "personCell": "+233244123421",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Davis Sarpong",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "davis.sarpong@yahoo.com",
+        "personCell": "+233244123421",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Sampa Gov't Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Gideon Agbeshie",
+        "personTitle": "Regional M&E Officer",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "gagbeshie@hotmail.com",
+        "personCell": "+233 203400071",
+        "username": "gagbeshie@hotmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Central Region"
+            }
+        ]
+    },
+    {
+        "personName": "Dr Tabitha Botchway",
+        "personTitle": "Referral Clinician",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "temea1985@yahoo.com",
+        "personCell": "+233 202640522",
+        "username": "temea1985@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Central Region"
+            }
+        ]
+    },
+    {
+        "personName": "Bernard Wadie",
+        "personTitle": "Data Manager",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "nanawadie01@gmail.com",
+        "username": "nanawadie01@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Dziedzorm Awalime",
+        "personTitle": "M&E",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "dawalime@gmail.com",
+        "personCell": "+233 243163067",
+        "username": "dawalime@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Greater Accra Region"
+            }
+        ]
+    },
+    {
+        "personName": "Pius Agbeviadey",
+        "personTitle": "Regional TB M&E Officer",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "piusagbaviadey@ymail.com",
+        "personCell": "+233 244623588",
+        "username": "piusagbaviadey@ymail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Volta Region"
+            }
+        ]
+    },
+    {
+        "personName": "Mark O. kyeremeh",
+        "personTitle": "Regional TB M&E Officer",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "markkyeremehoppong@yahoo.com",
+        "personCell": "+233 240909705",
+        "username": "markkyeremehoppong@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Brong-Ahafo Region."
+            }
+        ]
+    },
+    {
+        "personName": "Isaac Arko",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "isaacarko8@gmail.com",
+        "personCell": "+233 249722641",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Bia West District"
+            }
+        ]
+    },
+    {
+        "personName": "Doris Verome",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "dverome@yahoo.com",
+        "personCell": "+233 506973052",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Bibiani-Anhwiaso Bekwai District"
+            }
+        ]
+    },
+    {
+        "personName": "Osei Assibey",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "aoseiassibey@gmgail.com",
+        "personCell": "+233 207415719",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Bodi District"
+            }
+        ]
+    },
+    {
+        "personName": "Jacob Busi",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "jacobbusi@gmail.com",
+        "personCell": "+233 265152604",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Ellembelle District"
+            }
+        ]
+    },
+    {
+        "personName": "Joseph Azabiri",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "azabire@gmail.com",
+        "personCell": "+233 242146415",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Jomoro District"
+            }
+        ]
+    },
+    {
+        "personName": "Alfred Anyoka",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "alfredanyoka@yahoo.com",
+        "personCell": "+233 246497935",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Juabuso District"
+            }
+        ]
+    },
+    {
+        "personName": "Charles Bonney Ghartey",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "bonighart@yahoo.com",
+        "personCell": "+233 244417506",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Mpohor District"
+            }
+        ]
+    },
+    {
+        "personName": "Norbert Dadzie",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "norbgyee1@gmail.com",
+        "personCell": "+233 50893661",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Nzema East Municipal"
+            }
+        ]
+    },
+    {
+        "personName": "Robert Nteful",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "robertnterful@yahoo.com",
+        "personCell": "+233 246249488",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Sefwi Akontombra District"
+            }
+        ]
+    },
+    {
+        "personName": "Abraham Koyaara",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "domokoyaara@yahoo.com",
+        "personCell": "+233 540996167",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Sefwi Wiawso Municipal"
+            }
+        ]
+    },
+    {
+        "personName": "Francis Cudjoe",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "nzehkwame@yahoo.com",
+        "personCell": "+233 502124344",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Shama District"
+            }
+        ]
+    },
+    {
+        "personName": "Richard Adu Twum",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "ages440@gmail.com",
+        "personCell": "+233 202235841",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Suaman District"
+            }
+        ]
+    },
+    {
+        "personName": "Mercy Amoakoaa Owusu",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "amamoakoa@gmail.com",
+        "personCell": "+233 509932370",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Sekondi Takoradi Metropolitan"
+            }
+        ]
+    },
+    {
+        "personName": "Mathilda Afua Aggrey",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "afuaaggrey2016@gmail.com",
+        "personCell": "+233 244537773",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Sekondi Takoradi Metropolitan"
+            }
+        ]
+    },
+    {
+        "personName": "Mercy Nkrumah",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "mercynkrumah1982@yahoo.com",
+        "personCell": "+233 206896195",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Tarkwa Nsuaem Municipal"
+            }
+        ]
+    },
+    {
+        "personName": "Kwadwo Osei Sarfo",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "oseikwadwo7@yahoo.com",
+        "personCell": "+233 243151164",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Amenfi Central Region District"
+            }
+        ]
+    },
+    {
+        "personName": "Dennis Jubin",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "dennisjubin82@yahoo.com",
+        "personCell": "+233 242935562",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Wassa East District"
+            }
+        ]
+    },
+    {
+        "personName": "Richard Ofori",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "lutherguy01@yahoo.com",
+        "personCell": "+233 246913310",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Richard Owusu Gyamfi",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "owusugyamfirichard@gmail.com",
+        "personCell": "+233 0246444904",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Amenfi West District"
+            }
+        ]
+    },
+    {
+        "personName": "Michael Azumah",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personCell": "+233 249463297",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region",
+                "lgaName": "Juabuso District"
+            }
+        ]
+    },
+    {
+        "personName": "Gertrude Dzigbordi Agbeshie",
+        "personTitle": "Regional TB Coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personCell": "+233 542376086",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper West Region"
+            }
+        ]
+    },
+    {
+        "personName": "Seyram Kemawor",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "skemawor20000@gmail.com",
+        "personCell": "+233243769807",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Battor Cath. Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Isaac Gedzah",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "isaacgedzah@yahoo.com",
+        "personCell": "+233 242307534",
+        "username": "isaacgedzah@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Battor Cath. Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Maxwell Afeke",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "narkafek@gmail.com",
+        "personCell": "+233244194422",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Juaben Hosp. Lab"
+            }
+        ]
+    },
+    {
+        "personName": "Musah Samuel Salifu",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personCell": "+233 200908502",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St. Theresa's H."
+            }
+        ]
+    },
+    {
+        "personName": "Francis Yaw Adjei",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personCell": "+233 244897022",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St. Theresa's H."
+            }
+        ]
+    },
+    {
+        "personName": "Tableau Extract",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "developer@systemone.id",
+        "username": "tableau_gh",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Samuel Aborah",
+        "personTitle": "Dr",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "samuelaborah@yahoo.com",
+        "personPhone": "+233 0242240052",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Emmanuel Steve Blankson",
+        "personTitle": "Dr",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "blanksonemmanuel@yahoo.com",
+        "personPhone": "+233 0506826680",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper West Region"
+            }
+        ]
+    },
+    {
+        "personName": "Akwelem Ebenezer",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ben-poison@yahoo.com",
+        "personCell": "+233244845484",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Ketu South"
+            }
+        ]
+    },
+    {
+        "personName": "Prince Gyasi",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "pringyasi7@gmail.com",
+        "username": "pringyasi7@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Northern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Kwaku Adu-Gyamfi",
+        "personTitle": "Dr",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "drkwakugyamfi@gmail.com",
+        "personPhone": "+233 0249166226",
+        "personCell": "+233 0209513231",
+        "username": "drkwakugyamfi@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Western Region"
+            }
+        ]
+    },
+    {
+        "personName": "Susuan Bruce",
+        "personTitle": "Pharmacist",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "susuanatwerefour@gmail.com",
+        "personPhone": "+233 0244878690",
+        "username": "susuanatwerefour@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Suuk Wahab Laar",
+        "personTitle": "M&E",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "suukwahab@gmail.com",
+        "personPhone": "+233 0203444699",
+        "username": "suukwahab@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper East Region"
+            }
+        ]
+    },
+    {
+        "personName": "Ibrahim Mohammed",
+        "personTitle": "NO",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "mobrams@gmail.com",
+        "personPhone": "+233 0244013920",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "War Memorial Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Livingstone Boafour",
+        "personTitle": "M&E",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "livingstonboafour@yahoo.co.uk",
+        "personPhone": "+233 0245030814",
+        "username": "livingstonboafour@yahoo.co.uk",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Ashanti Region"
+            }
+        ]
+    },
+    {
+        "personName": "Felicia Vuu",
+        "personTitle": "SNO",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "tracycykess1@gmail.com",
+        "personPhone": "+233 0240682694",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Tamale Central "
+            }
+        ]
+    },
+    {
+        "personName": "Bugri Amos Adapalala",
+        "personTitle": "Dr",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "adapalala@yahoo.com",
+        "personPhone": "+233 0244047070",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Tamale Central "
+            }
+        ]
+    },
+    {
+        "personName": "Gameli Seshie",
+        "personTitle": "M&E",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "gaseshie@yahoo.co.uk",
+        "personCell": "+233 209185521",
+        "username": "gaseshie@yahoo.co.uk",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Eastern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Martha Sackey",
+        "personTitle": "EQA Coordinator, Regional",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personCell": "+233 244712502",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Jacob Ankrah",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ankrahjake@gmail.com",
+        "personCell": "+233 2029254372",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Tamale Central "
+            }
+        ]
+    },
+    {
+        "personName": "Ackom-Asamoah Bertrand",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "akomabee@yahoo.com",
+        "personCell": "+233248712423",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St Francis Xavie"
+            }
+        ]
+    },
+    {
+        "personName": "John Blankson",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "scoroo@yahoo.com",
+        "personCell": "+233558223559",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "G.A.Regional Hos"
+            }
+        ]
+    },
+    {
+        "personName": "Kwaku Bubuamah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "wannkayy@yahoo.com",
+        "personCell": "+233244255381",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "37 Military Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "Evans Adu Brown",
+        "personTitle": "District TB coordinator",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "adubrownevans9@gmail.com",
+        "personCell": "+233 543149244",
+        "username": "adubrownevans9@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Ashanti Region",
+                "lgaName": "Amansie West District"
+            }
+        ]
+    },
+    {
+        "personName": "Ebenezer Kofi Mensah",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personCell": "+233 249287262",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Effia Nkwanta Ho"
+            }
+        ]
+    },
+    {
+        "personName": "Comfort Nyameba Opoku",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "razakamari77@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "LEKMA Hosp Lab"
+            }
+        ]
+    },
+    {
+        "personName": "Mawuko Mensah",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "m.mawuko@gmai.com",
+        "personCell": "+233243017600",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Honesty Mensah Ganu",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ganumensah@gmain.com",
+        "personCell": "+233264776691",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Chest Clinic Lab"
+            }
+        ]
+    },
+    {
+        "personName": "Thomas Gyampomah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233244618640",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "KATH"
+            }
+        ]
+    },
+    {
+        "personName": "HONESTY GANU",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ganumensah@gmail.co",
+        "personCell": "+233244776691",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "REGIONAL HOSPITAL BOLGATANGA",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "rhlbuer.ghs@gmail.com",
+        "personCell": "+233505080449",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Dr. Akosua Gyimah",
+        "personTitle": "National Coordinator",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "aagyimah@yahoo.co.uk",
+        "personCell": "+233 244643136",
+        "username": "aagyimah@yahoo.co.uk",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "Dzigbordi Gertrude",
+        "personTitle": "Regional M&E",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "dzidzihealth@gmail.com",
+        "personCell": "+233 542376086",
+        "username": "dzidzihealth@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Upper West Region"
+            }
+        ]
+    },
+    {
+        "personName": "Kennedy Komla Sekyi",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "kenritason99@gmail.com",
+        "personCell": "+233233203468500",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "LYDIA KONADU DONKOR",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "leekonadu@gmail.com",
+        "personCell": "+233209923785",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Atua Gov't H."
+            }
+        ]
+    },
+    {
+        "personName": "JOSEPH ESSON",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "esson.joseph@gmail.com",
+        "personCell": "+233243762371",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Sefwi Wiawso"
+            }
+        ]
+    },
+    {
+        "personName": "Theophilus Afum",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "theophilusafum@gmail.com",
+        "personCell": "+233203861027",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "NMIMR"
+            }
+        ]
+    },
+    {
+        "personName": "Emmanuel Kyeremanteng",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "solidbrains@hotmail.com",
+        "personCell": "+233 208179910",
+        "username": "solidbrains@hotmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Ashanti Region"
+            }
+        ]
+    },
+    {
+        "personName": "Akosua Maame Brefowaa Owusu-Ansah",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "akosua0283@gmail.com",
+        "username": "akosua0283@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Brong-Ahafo Region."
+            }
+        ]
+    },
+    {
+        "personName": "Esther",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "estherb1984@yahoo.com",
+        "personCell": "+233 0243757063",
+        "username": "estherb1984@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Eastern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Doris",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "dverome@yahoo.com",
+        "personCell": "+233 050697 3052",
+        "username": "dverome@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Bibiani"
+            }
+        ]
+    },
+    {
+        "personName": "Odarkie",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "odarkie@yahoo.co.uk",
+        "username": "odarkie@yahoo.co.uk",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Dr. Elizabeth Agyare",
+        "personTitle": "Referral Clinician",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "amaesiwa@yahoo.com",
+        "personCell": "+233 244837618",
+        "username": "amaesiwa@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Central Region"
+            }
+        ]
+    },
+    {
+        "personName": "Dr. Otiwaa Apeani Azu",
+        "personTitle": "Snr. Pharmacist",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "chamelly43@gmail.com",
+        "personCell": "+233 243235990",
+        "username": "chamelly43@gmail.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Ashanti Region"
+            }
+        ]
+    },
+    {
+        "personName": "Dr. C. Asiedu-Neizer",
+        "personTitle": "Clinician",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "chrisneizer@gmail.com",
+        "personCell": "+233 206655081",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Ashanti Region"
+            }
+        ]
+    },
+    {
+        "personName": "Bickman Duut",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "dbikmann@gmail.com",
+        "personCell": "+233 208556176",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Brong-Ahafo Region."
+            }
+        ]
+    },
+    {
+        "personName": "Haruna Seidu",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "seidu2k@gmail.com",
+        "personCell": "+233 208606236",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Brong-Ahafo Region."
+            }
+        ]
+    },
+    {
+        "personName": "Dr. Patrick Bampoh",
+        "personTitle": "Referral Clinician",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "pbampoh@yahoo.co.uk",
+        "personCell": "+233 242611832",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Northern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Francis Kpadonou",
+        "personTitle": "Reg TB Coord.",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "francickpadonou@yahoo.com",
+        "personCell": "+233 244664291",
+        "username": "francickpadonou@yahoo.com",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Northern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Justice Dery Koku-Anu",
+        "personTitle": "Pharmasist",
+        "jobFunctions": [
+            "Regional Officer"
+        ],
+        "personEmailAddress": "kokjus2010@yahoo.com",
+        "personCell": "+233 208294071",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {
+                "stateName": "Northern Region"
+            }
+        ]
+    },
+    {
+        "personName": "Nuhu  Muniru Guinko",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "nuhumuniru9@gmail.com",
+        "personCell": "+233209590867",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Ga W. Muni Hosp"
+            }
+        ]
+    },
+    {
+        "personName": "James Sampah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "ekowsampah@yahoo.com",
+        "personCell": "+233243188238",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St Patrick's H"
+            }
+        ]
+    },
+    {
+        "personName": "Ernest Gockah",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "egockah@gmail.com",
+        "personCell": "+233244637767",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Dunkwa-On-Offin "
+            }
+        ]
+    },
+    {
+        "personName": "Edem",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233244960139",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "CAPE COAST "
+            }
+        ]
+    },
+    {
+        "personName": "Felix Sorvor",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "solvolsis@yahoo.com",
+        "personCell": "+233208195210",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Brad",
+        "jobFunctions": [
+            "Admin"
+        ],
+        "personEmailAddress": "bcunningham@systemone.co",
+        "username": "brad",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "geographies": [
+            {}
+        ]
+    },
+    {
+        "personName": "ERNEST H. K. AGUZE",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "erneyhak201@yahoo.com",
+        "personCell": "+233243513642",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "New Abirem Gov't"
+            }
+        ]
+    },
+    {
+        "personName": "Mawuko Mensah",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "m.mawuko@gfmail.com",
+        "personCell": "+233243017600",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Eastern R. Hospi"
+            }
+        ]
+    },
+    {
+        "personName": "JOSHUA MAWUNYO NYADUDZI",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "joshuanaba@gmail.com",
+        "personCell": "+233241871239",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "St. Luke's Apam"
+            }
+        ]
+    },
+    {
+        "personName": "KOBENA AMISSAH THOMFORD",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "Kabathom@gmail.com",
+        "personCell": "+233547429506",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "NKENKAASU GOV"
+            }
+        ]
+    },
+    {
+        "personName": "Mawko Mensa",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "m.mawko@gmail.com",
+        "personCell": "+233243017600",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true
+    },
+    {
+        "personName": "Kabutey Nartey",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personCell": "+233 0244032831",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Begro"
+            }
+        ]
+    },
+    {
+        "personName": "Ernest Aguze",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personCell": "+233 0243513642",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "New Abirem Gov't"
+            }
+        ]
+    },
+    {
+        "personName": "Rejoice Agyeiwaa Arthur",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "rejarth@gmail.com",
+        "personCell": "+233 501402104",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "KCCR"
+            }
+        ]
+    },
+    {
+        "personName": "Eliaja Addo Bonney",
+        "personTitle": "Lab Manager",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personCell": "+233 244748170",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "BECHEM "
+            }
+        ]
+    },
+    {
+        "personName": "ELIJAH ADDO BONNEY",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "eliijahabonney@gmail.com",
+        "personCell": "+233244748170",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "BECHEM "
+            }
+        ]
+    },
+    {
+        "personName": "ENOCK ADJETEY",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "adjeteyenock2013@gmail.com",
+        "personCell": "+233540423199",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "GOASO M. HOSPIT"
+            }
+        ]
+    },
+    {
+        "personName": "MICHAEL AMO OMARI",
+        "personTitle": "Installer",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233248164778",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "GOASO M. HOSPIT"
+            }
+        ]
+    },
+    {
+        "personName": "FRANK ANGATE",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "fangate1997@yahoo.com",
+        "personCell": "+233246725811",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Prestea Gov't H"
+            },
+            {
+                "shortName": "PRESTEA GOVERNMENT H"
+            }
+        ]
+    },
+    {
+        "personName": "Yaw Sam",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "",
+        "personCell": "+233201782488",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Obuasi Gov't Hos"
+            },
+            {
+                "shortName": "Obuasi Government Ho"
+            }
+        ]
+    },
+    {
+        "personName": "OBED ODOI ASIEDU",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "obedodoi@gmail.com",
+        "personCell": "+233540691749",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Bono R. Hospital"
+            }
+        ]
+    },
+    {
+        "personName": "Dr. Amina Bello",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "amalanda2001@yahoo.com",
+        "personCell": "+233242376931",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "Tamale Central Hospi"
+            }
+        ]
+    },
+    {
+        "personName": "OPOKU EMMANUEL KWAKU",
+        "personTitle": "Lab Contact",
+        "jobFunctions": [
+            "Lab User"
+        ],
+        "personEmailAddress": "eopokukwaku@gmail.com",
+        "personCell": "+233203114072",
+        "timezone": "UTC",
+        "hidePatientId": false,
+        "hideSampleId": false,
+        "hideNotes": false,
+        "getPasswordFromGxAlert": true,
+        "sites": [
+            {
+                "shortName": "SDA HOSPITAL - ASAMA"
+            }
+        ]
+    }
+]

@@ -1,0 +1,2117 @@
+[
+  {
+    "state": "Kano",
+    "lga": "AJINGI",
+    "site": "AJINGI COTTAGE"
+  },
+  {
+    "state": "Kano",
+    "lga": "AJINGI",
+    "site": "TORANKE HEALTH CLINIC"
+  },
+  {
+    "state": "Kano",
+    "lga": "AJINGI",
+    "site": "MAKARYA MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "AJINGI",
+    "site": "BALARE MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "AJINGI",
+    "site": "CHULA HEALTH CLINIC"
+  },
+  {
+    "state": "Kano",
+    "lga": "ALBASU",
+    "site": "ALBASU PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "ALBASU",
+    "site": "TSANGAYA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "ALBASU",
+    "site": "GAGARAMI HEALTH POST"
+  },
+  {
+    "state": "Kano",
+    "lga": "ALBASU",
+    "site": "HUNGU PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "BAGWAI",
+    "site": "ABBAS PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "BAGWAI",
+    "site": "DANGADA MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "BAGWAI",
+    "site": "GOGORI MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "BEBEJI",
+    "site": "BEBEJI GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "BEBEJI",
+    "site": "TIGA GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "BICHI",
+    "site": "Bichi General Hosptal"
+  },
+  {
+    "state": "Kano",
+    "lga": "BICHI",
+    "site": "SAYE MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "BICHI",
+    "site": "Dan Zabuwa MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "BICHI",
+    "site": "Malikawa Garu MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "BICHI",
+    "site": "KARARI HEALTH POST"
+  },
+  {
+    "state": "Kano",
+    "lga": "BUNKURE",
+    "site": "BUNKURE PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "BUNKURE",
+    "site": "GURJIYA MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "Umma Zaria Health Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "Gobirawa Health Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "KURNA HEALTH CLINIC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "YALWA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "DALA MCH"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "Waziri Shehu Gidado Hospital (WSGGH)"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "Mailafiya Sanka PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "Burhana HC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "Gwammaja MCH"
+  },
+  {
+    "state": "Kano",
+    "lga": "DALA",
+    "site": "Kofar Ruwa BHC (A)"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dambatta",
+    "site": "Dambatta General Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dambatta",
+    "site": "Fagwalawa CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dambatta",
+    "site": "KORE MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dambatta",
+    "site": "San-Sani Health post"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dambatta",
+    "site": "TSARAKA HEALTH POST"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Kudu",
+    "site": "Dawakin Kudu General Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Kudu",
+    "site": "DAWAKI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Kudu",
+    "site": "DAWAKIJI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Kudu",
+    "site": "GANO PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Kudu",
+    "site": "Dawakin Kudu General Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Kudu",
+    "site": "TSAKUWA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Tofa",
+    "site": "Dawakin Tofa GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Tofa",
+    "site": "DAWANAU BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Tofa",
+    "site": "DANDALAMA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Tofa",
+    "site": "Kwa PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Dawakin Tofa",
+    "site": "JALLI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DOGUWA",
+    "site": "DOGUWA GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "DOGUWA",
+    "site": "BURJI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DOGUWA",
+    "site": "Dadin Kowa MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DOGUWA",
+    "site": "Dadin Kowa MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "DOGUWA",
+    "site": "Doguwa BHC (BI)"
+  },
+  {
+    "state": "Kano",
+    "lga": "DOGUWA",
+    "site": "FALGORE MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Sabo Garba MCH"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Galadima Health Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Wafa PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Fatima Ganduje PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Kwachiri PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Sheik Musa Kallah PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Tudun Bojuwa Health Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Rijiyar Lemo MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Rijiyar Lemo MCH"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Jaba MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Middle Road Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "FAGGE",
+    "site": "Yammata Health clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "GABASAWA",
+    "site": "Zakirai MBHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GABASAWA",
+    "site": "S.U Nursing Home Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "GABASAWA",
+    "site": "Gabasawa MBHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GABASAWA",
+    "site": "Garin Danga MBHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GABASAWA",
+    "site": "Zugachi MBHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWARZO",
+    "site": "GWARZO GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWARZO",
+    "site": "GETSO COTTAGE"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWARZO",
+    "site": "KWAMI MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWARZO",
+    "site": "Jama'a MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWARZO",
+    "site": "LAKWAYA MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GARKO",
+    "site": "GARKO MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GARKO",
+    "site": "DAL MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GARKO",
+    "site": "Garwaji HP"
+  },
+  {
+    "state": "Kano",
+    "lga": "GARKO",
+    "site": "Ahip PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Garun Mallam",
+    "site": "Dakasoye Health Post"
+  },
+  {
+    "state": "Kano",
+    "lga": "Garun Mallam",
+    "site": "KADAWA CIKI HC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Garun Mallam",
+    "site": "Yadakwari BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Garun Mallam",
+    "site": "Garun malam BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GAYA",
+    "site": "GAYA GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "GAYA",
+    "site": "Nafisatu Mahmoud Health Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "GEZAWA",
+    "site": "Jogana Dispensary"
+  },
+  {
+    "state": "Kano",
+    "lga": "GEZAWA",
+    "site": "Gezawa General Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "GEZAWA",
+    "site": "Tsamiyar kara MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWALE",
+    "site": "Gwale MCH"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWALE",
+    "site": "Dorayi Karama PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWALE",
+    "site": "KABUGA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWALE",
+    "site": "Jaeen PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWALE",
+    "site": "Dausayi Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWALE",
+    "site": "Soft care Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWALE",
+    "site": "Ivory Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "GWALE",
+    "site": "PRISON CLINIC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KABO",
+    "site": "Garo CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KABO",
+    "site": "Gude Health Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "KABO",
+    "site": "Hauwaden Bango MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KABO",
+    "site": "Kabo Cottage Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "KABO",
+    "site": "GAMMO MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "Murtala Muhd Spec. Hosp. 1 (Adult)"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "Maramara MCH"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "Hasiya Bayero Paediatric Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "GANDU PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "Murtala Muhd Spec. Hosp. 2 (Paed)"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "YAN AWAKI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "SHARADA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "Unguwar Gini PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "MAYANKA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kano Municipal",
+    "site": "TUKUNTAWA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KARAYE",
+    "site": "TURAWA MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KARAYE",
+    "site": "KARAYE CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KIBIYA",
+    "site": "Kibiya PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KIBIYA",
+    "site": "Fammar PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KIBIYA",
+    "site": "GUNDA HEALTH POST"
+  },
+  {
+    "state": "Kano",
+    "lga": "KIRU",
+    "site": "KIRU CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KIRU",
+    "site": "Kafin Maiyaki BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KIRU",
+    "site": "ALFIJIR CLINIC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KIRU",
+    "site": "Bennatu Taimako Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kumbotso",
+    "site": "SHEKA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kumbotso",
+    "site": "PANSHEKARA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kumbotso",
+    "site": "MARIRI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kumbotso",
+    "site": "Kumbotso CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kumbotso",
+    "site": "GURUNGAWA MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kumbotso",
+    "site": "Maikalwa"
+  },
+  {
+    "state": "Kano",
+    "lga": "Kumbotso",
+    "site": "Nasihi Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "KUNCHI",
+    "site": "GWARMAI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KUNCHI",
+    "site": "Shuwaki MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KUNCHI",
+    "site": "Kunchi MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KURA",
+    "site": "KARFI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KURA",
+    "site": "DUKAWA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KURA",
+    "site": "Sani Mashal PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "KURA",
+    "site": "Kura General Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "KURA",
+    "site": "Dan Hassan PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "MADOBI",
+    "site": "Akilu Memorial Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "MADOBI",
+    "site": "BURJI MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "MADOBI",
+    "site": "Kwamkwaso Cottage Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "MADOBI",
+    "site": "KAURAN MATA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "MAKODA",
+    "site": "KANTUDU MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "MAKODA",
+    "site": "MAKODA MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "MAKODA",
+    "site": "Bare-Bari Hp"
+  },
+  {
+    "state": "Kano",
+    "lga": "MINJIBIR",
+    "site": "MINJIBIR GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "MINJIBIR",
+    "site": "KUNYA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "MINJIBIR",
+    "site": "Geranya Health Post"
+  },
+  {
+    "state": "Kano",
+    "lga": "MINJIBIR",
+    "site": "Gandirwawa PH"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "MAWTH"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "Sir Muhd Sunusi Special Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "GWAGWARWA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "GAMA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "GAMA MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "Tudun Murtala Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "KAWAJI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "Dawakin Dakata PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "HOTORO NORTH PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "NASARAWA",
+    "site": "Giginyu BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "RANO",
+    "site": "Rano Genrel Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "RANO",
+    "site": "RURUM MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "RIMIN GADO",
+    "site": "RIMIN GADO CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "RIMIN GADO",
+    "site": "GULU MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "ROGO",
+    "site": "FULATAN BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "ROGO",
+    "site": "ZAREWA BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "SHANONO",
+    "site": "SHANONO CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "SHANONO",
+    "site": "KADAMU MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "SHANONO",
+    "site": "TSAURE PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "SHANONO",
+    "site": "SHAKOGI HEALTH POST"
+  },
+  {
+    "state": "Kano",
+    "lga": "SUMAILA",
+    "site": "GEDIYA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "SUMAILA",
+    "site": "Gani MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "SUMAILA",
+    "site": "RIMI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "SUMAILA",
+    "site": "SUMAILA GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "TAKAI",
+    "site": "Takai NYSC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TAKAI",
+    "site": "Zuga Dispensary Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "TAKAI",
+    "site": "Ali Alkhali Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "TAKAI",
+    "site": "Danbazau H/post"
+  },
+  {
+    "state": "Kano",
+    "lga": "TAKAI",
+    "site": "KACHAKO PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "Unguwa UKU PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "DANTSINKE PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "Kyauyen Alu PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "HOTORO PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "TARAUNI PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "Alnoury Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "Aminu Kano Teaching Hospital (AKTH)"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "Abubakar Rimi Television Clinic (ARTV)"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "Jaoji PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TARAUNI",
+    "site": "Hausawa MCH"
+  },
+  {
+    "state": "Kano",
+    "lga": "TOFA",
+    "site": "TOFA CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TOFA",
+    "site": "LAMBU MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TSANYAWA",
+    "site": "TSANYAWA CHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TSANYAWA",
+    "site": "YARGWANDA BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TSANYAWA",
+    "site": "Dumbulun BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TSANYAWA",
+    "site": "YANKAMAYE PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "TSANYAWA",
+    "site": "HARBAU BHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Tudun Wada",
+    "site": "Tudun Wada PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "Tudun Wada",
+    "site": "Ruwan Tabo Health Post"
+  },
+  {
+    "state": "Kano",
+    "lga": "Tudun Wada",
+    "site": "Yarmariya Health Post"
+  },
+  {
+    "state": "Kano",
+    "lga": "UNGOGO",
+    "site": "Ungogo PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "UNGOGO",
+    "site": "Galula Health Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "UNGOGO",
+    "site": "DANTAMASHE PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "UNGOGO",
+    "site": "Rijiyar Zaki PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "UNGOGO",
+    "site": "Tudun Fulani PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "UNGOGO",
+    "site": "Yadakunya Hospital"
+  },
+  {
+    "state": "Kano",
+    "lga": "WARAWA",
+    "site": "KWIWA GABAS HP"
+  },
+  {
+    "state": "Kano",
+    "lga": "WARAWA",
+    "site": "Tanagar Health Post"
+  },
+  {
+    "state": "Kano",
+    "lga": "WARAWA",
+    "site": "Gogel Health Post"
+  },
+  {
+    "state": "Kano",
+    "lga": "WARAWA",
+    "site": "WARAWA PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "WARAWA",
+    "site": "Polac Clinic"
+  },
+  {
+    "state": "Kano",
+    "lga": "WARAWA",
+    "site": "KATARKAWA HEALTH POST"
+  },
+  {
+    "state": "Kano",
+    "lga": "WUDIL",
+    "site": "WUDIL GENERAL HOSPITAL"
+  },
+  {
+    "state": "Kano",
+    "lga": "WUDIL",
+    "site": "INDABO PHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "WUDIL",
+    "site": "DARKI MPHC"
+  },
+  {
+    "state": "Kano",
+    "lga": "WUDIL",
+    "site": "ALHILAL CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "ZONAL HOSPITAL ABUA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "AGADA 1 MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "AGNES MEMO CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "AYAMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "ELOK H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "EMOH H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "AKANI H/F"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "OBARANY H/F"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "OGBEMA MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Abua/Odual",
+    "site": "OGBOLOMA H/F"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "Abarikpo Health Centre"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "GBEYE CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "EDEOHA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "IHUABA HEALTH CENTRE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "MPHCC IHUAMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "IHUGBOGO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "IHUOWO H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "ODIABIDI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "Odiajie MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "Odiemudie Health Centre"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "OGBELE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "OGBO H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "MPHCC ULA-ELUDA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "AHOADA PRISON"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "OCHIGBA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "ODIEMEREYIE HC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "OKPOROWO MPHCC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA EAST",
+    "site": "ULA-UPATA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "MBIAMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "AKINIMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "MPHC IKODI"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "MPHC ODEREKE-UBIE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "OKARKI MODEL H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "OKOGBE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "ODIOKU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "Ogbologbolo Health Centre"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "UBETER H/F"
+  },
+  {
+    "state": "Rivers",
+    "lga": "AHOADA WEST",
+    "site": "Ukpeliede MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Akuku-Toru",
+    "site": "ABONNEMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Akuku-Toru",
+    "site": "GENERAL HOSPITAL ABONNEMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Akuku-Toru",
+    "site": "OBONOMA DOTS CENTRE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Akuku-Toru",
+    "site": "IDAMA CHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ANDONI",
+    "site": "IKURU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ANDONI",
+    "site": "UYEADA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ANDONI",
+    "site": "NGO HEALTH CENTRE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ANDONI",
+    "site": "AGWUF-OBOLO H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ANDONI",
+    "site": "ASARAMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ANDONI",
+    "site": "EBUKUMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ANDONI",
+    "site": "EGWEDE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ANDONI",
+    "site": "INYONG ORONG H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ASARI-TORU",
+    "site": "MPHC BUGUMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ASARI-TORU",
+    "site": "MPHC IDO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ASARI-TORU",
+    "site": "PHC ANGULAMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ASARI-TORU",
+    "site": "KRAKRAMA CHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "BONNY",
+    "site": "CHANNELS CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "BONNY",
+    "site": "CHC BONNY"
+  },
+  {
+    "state": "Rivers",
+    "lga": "DEGEMA",
+    "site": "CHC DEGEMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "DEGEMA",
+    "site": "DATELINE SP. HOSP."
+  },
+  {
+    "state": "Rivers",
+    "lga": "DEGEMA",
+    "site": "BILLE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "DEGEMA",
+    "site": "USOKUN H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "DEGEMA",
+    "site": "ZONAL HOSP."
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "ALESA HEALTH POST"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "ALETO HP"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "BELLWOOD HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "DAUGTERS OF CHARITY"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "DUVAL CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "MIRAYEN CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "MPHC AGBONCHIA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "MPHC AKPAJO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "MPHC ONNE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "NCHIA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ELEME",
+    "site": "Riv Portal Eteo"
+  },
+  {
+    "state": "Rivers",
+    "lga": "EMOHUA",
+    "site": "CHC IBAA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "EMOHUA",
+    "site": "CHC NDELE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "EMOHUA",
+    "site": "CHC OMUDIOGA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "EMOHUA",
+    "site": "CHC RUMUJI"
+  },
+  {
+    "state": "Rivers",
+    "lga": "EMOHUA",
+    "site": "Ogbakiri Health Centre"
+  },
+  {
+    "state": "Rivers",
+    "lga": "EMOHUA",
+    "site": "MPHC RUMUEWHOR"
+  },
+  {
+    "state": "Rivers",
+    "lga": "EMOHUA",
+    "site": "SAVIOUR'S FOUNDATION HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ETCHE",
+    "site": "EGWI  H/CENTRE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ETCHE",
+    "site": "IWC OKOMOKO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ETCHE",
+    "site": "OZUZU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "ETCHE",
+    "site": "UMUEBULU COTT. HOSP"
+  },
+  {
+    "state": "Rivers",
+    "lga": "GOKANA",
+    "site": "B.DERE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "GOKANA",
+    "site": "BARAKO H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "GOKANA",
+    "site": "BODO GH"
+  },
+  {
+    "state": "Rivers",
+    "lga": "GOKANA",
+    "site": "BOMU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "GOKANA",
+    "site": "KPOR H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "GOKANA",
+    "site": "MPHC BIARA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "GOKANA",
+    "site": "YEGHE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "GOKANA",
+    "site": "Z.H TERABOR"
+  },
+  {
+    "state": "Rivers",
+    "lga": "IKWERRE",
+    "site": "MPHC ALUU"
+  },
+  {
+    "state": "Rivers",
+    "lga": "IKWERRE",
+    "site": "Elele health centre"
+  },
+  {
+    "state": "Rivers",
+    "lga": "IKWERRE",
+    "site": "CHC IGWURUTA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "IKWERRE",
+    "site": "PAMAX Hospital"
+  },
+  {
+    "state": "Rivers",
+    "lga": "IKWERRE",
+    "site": "GENERAL HOSPITAL ISIOKPO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "KHANA",
+    "site": "ADEWON MEDICAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "KHANA",
+    "site": "BORI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "KHANA",
+    "site": "BEERI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "KHANA",
+    "site": "WIIYAAKARA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "KHANA",
+    "site": "IWC BORI"
+  },
+  {
+    "state": "Rivers",
+    "lga": "KHANA",
+    "site": "POPE JOHN PAUL II CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "KHANA",
+    "site": "Z.H BORI"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "WOJI COTTAGE HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "AKPOR H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "CHEST CLINIC RUMUIGBO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "College Of Health Tech. Port-Harcourt"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "DATTA MEDICAL CENTRE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "MPHC ELELENWO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "IMMANUEL HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "IRIEBE MHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "KENDOX CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "MPHC ENEKA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "QUEENS CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "RUMUEME MHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "RUMUKWURUSHI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "RUMUODOMAYA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OBIO/AKPOR",
+    "site": "UPTH"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OGU/BOLO",
+    "site": "BHC BOLO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OGU/BOLO",
+    "site": "CHUKU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OGU/BOLO",
+    "site": "GEN. HOSP. OGU"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OGU/BOLO",
+    "site": "AMA HEALTH CENTRE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OGU/BOLO",
+    "site": "CHC OGU"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OGU/BOLO",
+    "site": "WAKAMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OKRIKA",
+    "site": "MPHC GEORGE AMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OKRIKA",
+    "site": "MPHC ISAKA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OKRIKA",
+    "site": "ISLAND MATERNITY"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OKRIKA",
+    "site": "OGAN H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OKRIKA",
+    "site": "MPHC OGBOGBO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OKRIKA",
+    "site": "OKUJAGU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "EBERI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "OBIOHIA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "OFEH H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "OHIM/OYORO H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "OYORO MHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "REDEMPTION HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "REVIVAL CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "SUCCESS HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "UMUAJULOKE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "UMUNJU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "UMUOGBA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "UMUOKE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OMUMA",
+    "site": "UMUOKWA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "AKABTA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "AKABUKA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "CHC OMOKU"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "EGI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "ELIETA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "EREMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "FOUNATION CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "Gbeye Hospital Port-Harcourt Annex"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "GENERAL HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "IDU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "MGBEDE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "MPHC AGGAH"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "NDONI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "OBIRIKOM H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "OBITE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "OBOBURU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "OGBOGU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "OHIAUGA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "Ogba/Egbema/Ndoni",
+    "site": "OKWUZI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OPOBO/NKORO",
+    "site": "MPHC KALAIBIAMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OPOBO/NKORO",
+    "site": "MPHC MINIMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OPOBO/NKORO",
+    "site": "NKORO H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OPOBO/NKORO",
+    "site": "CHC OPOBO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "OKACHUKWU MATERNITY AND CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "CANNAN CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "OYIGBO H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "EZINNE HOSPITAL & MATERNITY"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "FATHER FARM CLININC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "HERRITAGE MEDICARE HOSP."
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "LIFE CARE CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "IMIRIWANYI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "UMUSIA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "OBEAKPU MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "PHCN COTTAGE HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "ROYAL NEMASCOPE HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "OYIGBO",
+    "site": "UCHECHUKU MATERNITY"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "ABULOMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "AMADI AMA MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "AZUABIE MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "BMSH"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "BUNDU AMA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "CHURCH HILL H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "ELEKAHIA MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "IBIFUBARA CLINIC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "MERIDAN HOSP"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "MGBUNDUKWU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "MILITARY HOSPITAL"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "MORNING STAR"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "NAVY MEDICAL CENTRE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "OKURU AMA MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "OMEGA HOSP."
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "OROGBUM H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "OZUBOKO MPHC"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "PORT HARCOURT PRISON"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "POTTS JOHNSON H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "RESOURCE CENTER"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "SICK BAY"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "ST. PATRICKS"
+  },
+  {
+    "state": "Rivers",
+    "lga": "PORT HARCOURT",
+    "site": "STANDARD CARE HOSP."
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "MDG KIRA"
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "GODSWILL HOSP."
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "MPHC BARA-ALE"
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "BUNU H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "MPHC KOROKORO"
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "KOROMA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "KPITE H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "NONWA H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "BAN-OGOI H/C"
+  },
+  {
+    "state": "Rivers",
+    "lga": "TAI",
+    "site": "PHC UEKEN TAI"
+  }
+]

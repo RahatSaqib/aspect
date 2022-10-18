@@ -1,9 +1,0 @@
-@import '../../globals/variables.css';
-
-.ColoredNumber--Error {
-  color: var(--aspect-color-mandy);
-}
-
-.ColoredNumber--Success {
-  color: var(--aspect-color-mantis);
-}

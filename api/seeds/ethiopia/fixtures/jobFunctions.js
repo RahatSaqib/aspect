@@ -1,10 +1,19 @@
+const {
+  admin,
+  regionalOfficer,
+  labUser,
+  clinician,
+  remoteHealthWorker,
+  mergeJobFunctions,
+  technician,
+} = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
-  {
-    name: 'Admin',
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'assay',
-        activity: 'edit',
+        activity: 'view',
       },
       {
         module: 'device',
@@ -38,10 +47,13 @@ module.exports = [
         module: 'dashboard',
         activity: 'summary',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
-  },
-  {
-    name: 'Regional Officer',
+  }),
+  mergeJobFunctions(regionalOfficer, {
     permissions: [
       {
         module: 'assay',
@@ -79,10 +91,13 @@ module.exports = [
         module: 'dashboard',
         activity: 'summary',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
-  },
-  {
-    name: 'Lab User',
+  }),
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'assay',
@@ -120,10 +135,85 @@ module.exports = [
         module: 'dashboard',
         activity: 'summary',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
-  },
-  {
-    name: 'Remote Health Worker',
+  }),
+  mergeJobFunctions(clinician, {
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(remoteHealthWorker, {
     permissions: [
       {
         module: 'assay',
@@ -159,12 +249,13 @@ module.exports = [
       },
       {
         module: 'account',
-        activity: 'view',
+        activity: 'edit',
       },
       {
-        module: 'reporter',
+        module: 'report',
         activity: 'view',
       },
     ],
-  },
+  }),
+  technician,
 ]

@@ -4,11 +4,7 @@ const chai = require('chai')
 const {
   pushNotification: { testDeviceTokenId },
 } = require('../../src/config')
-const {
-  messageStatusToId,
-  issueTypeToId,
-  issueStatusToId,
-} = require('../../src/shared/dictionary')
+const { messageStatusToId, issueTypeToId, issueStatusToId } = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
 const { queuePurge } = require('../utils/mqUtils')
 
@@ -34,22 +30,22 @@ class PushNotificationTestContext {
       const {
         auth: { user },
       } = this
-      const { userId } = await knex('User')
-        .where({ name: user })
-        .first('id as userId')
+      const { userId } = await knex('User').where({ name: user }).first('id as userId')
       assert.isOk(userId, `Cannot find user ${user}`)
       this.userId = userId
 
       // read 1st push notification template
-      const { id: pushNotificationTemplateId } = await knex(
-        'PushNotificationTemplate'
-      ).first('id')
+      const { id: pushNotificationTemplateId } = await knex('PushNotificationTemplate').first('id')
       assert.isOk(pushNotificationTemplateId)
 
       // read 1st Result and coresponding siteId/deviceId
-      const { siteId, deviceId, partnerId, geographyId } = await knex(
-        'Result'
-      ).first('id', 'siteId', 'deviceId', 'partnerId', 'geographyId')
+      const { siteId, deviceId, partnerId, geographyId } = await knex('Result').first(
+        'id',
+        'siteId',
+        'deviceId',
+        'partnerId',
+        'geographyId'
+      )
 
       const issueTypeId = await issueTypeToId('NewResultsAvailable')
       const issueStatusId = await issueStatusToId('Active')
@@ -74,7 +70,7 @@ class PushNotificationTestContext {
       })
 
       // add issue
-      this.issueId = await knex('Issue').insert({
+      ;[this.issueId] = await knex('Issue').insert({
         issueTypeId,
         issueStatusId,
         partnerId,
@@ -90,7 +86,7 @@ class PushNotificationTestContext {
       assert.isOk(this.issueId)
 
       // add sample push notification message
-      this.messageId = await knex('PushNotificationMessage').insert({
+      ;[this.messageId] = await knex('PushNotificationMessage').insert({
         pushNotificationTemplateId,
         messageStatusId,
         personId: userId,
@@ -103,7 +99,7 @@ class PushNotificationTestContext {
       assert.isOk(this.messageId)
 
       // add notification
-      this.notificationId = await knex('Notification').insert({
+      ;[this.notificationId] = await knex('Notification').insert({
         notificationTypeId,
         issueId: this.issueId,
         personId: userId,
@@ -136,9 +132,7 @@ class PushNotificationTestContext {
 
       // remove message
       if (this.messageId) {
-        await knex('PushNotificationMessage')
-          .where('id', this.messageId)
-          .delete()
+        await knex('PushNotificationMessage').where('id', this.messageId).delete()
       }
 
       // remove issue

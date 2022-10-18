@@ -38,13 +38,7 @@ async function auditInventoryStockout({
 // -----------------------------
 // totalDaysUnexpiredInventoryItemsLast - is used also in plugin Myanmar/issueResolutions.js
 // -----------------------------
-async function totalDaysUnexpiredInventoryItemsLast({
-  knex,
-  siteId,
-  consumableId,
-  dailyRate,
-  dueDays,
-}) {
+async function totalDaysUnexpiredInventoryItemsLast({ knex, siteId, consumableId, dailyRate, dueDays }) {
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
     .where(function () {
@@ -122,12 +116,7 @@ async function auditInventoryStockExpiring({
 // -----------------------------
 // totalWastedInventoryItems - is used also in plugin Myanmar/issueResolutions.js
 // -----------------------------
-async function totalWastedInventoryItems({
-  knex,
-  siteId,
-  consumableId,
-  dailyRate,
-}) {
+async function totalWastedInventoryItems({ knex, siteId, consumableId, dailyRate }) {
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
     .where({ siteId, consumableId })
@@ -136,9 +125,7 @@ async function totalWastedInventoryItems({
     .select(
       'quantityOnHand',
       'expiresOn',
-      knex.raw(
-        `CAST(GREATEST(DATEDIFF(expiresOn, NOW()), 0) AS SIGNED INTEGER) AS expiresInDays`
-      )
+      knex.raw(`CAST(GREATEST(DATEDIFF(expiresOn, NOW()), 0) AS SIGNED INTEGER) AS expiresInDays`)
     )
 
   // take into account expiration dates - calculate how long items last
@@ -165,37 +152,29 @@ async function totalWastedInventoryItems({
 // -----------------------------
 // resolveEscalate
 // -----------------------------
-async function resolveEscalate({
-  knex,
-  siteId,
-  issueType,
-  resolver,
-  escalator,
-}) {
+async function resolveEscalate({ knex, siteId, issueType, resolver, escalator }) {
   // get all Active issues of this type for current siteId
   const issueTypeId = await issueTypeToId(issueType)
-  const issueStatusId = await issueStatusToId('Active')
-  const issues = await knex('Issue')
-    .where({ siteId, issueTypeId, issueStatusId })
-    .select('id')
+  if (issueTypeId) {
+    const issueStatusId = await issueStatusToId('Active')
+    const issues = await knex('Issue').where({ siteId, issueTypeId, issueStatusId }).select('id')
 
-  // loop through all active issues and
-  _.each(issues, ({ id: issueId }) => {
-    // try to resolve issue (i.e. for Myanmar it runs function in /plugin/partner/Myanmar/issueResolutions.js)
-    if (resolver) resolver(issueId)
+    // loop through all active issues and
+    _.each(issues, ({ id: issueId }) => {
+      // try to resolve issue (i.e. for Myanmar it runs function in /plugin/partner/Myanmar/issueResolutions.js)
+      if (resolver) resolver(issueId)
 
-    // try to escalate issue
-    if (escalator) escalator(issueId)
-  })
+      // try to escalate issue
+      if (escalator) escalator(issueId)
+    })
+  }
 }
 
 // -----------------------------
 // isStockEmpty
 // -----------------------------
 async function isStockEmpty(knex, siteId, consumableId) {
-  const inventoryItem = await knex('InventoryItem')
-    .where({ siteId, consumableId })
-    .first()
+  const inventoryItem = await knex('InventoryItem').where({ siteId, consumableId }).first()
   const { quantityOnHand } = inventoryItem || {}
   // return true if quantityOnHand is null or 0
   return !quantityOnHand

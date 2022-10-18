@@ -1,11 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const differenceInHours = require('date-fns/differenceInHours')
-const {
-  getTimeZoneById,
-  getDateOrDefault,
-  getLocalDateTimeStringInUtc,
-} = require('../../../shared/date')
+const { getTimeZoneById, getDateOrDefault, getLocalDateTimeStringInUtc } = require('../../../shared/date')
 const { allTimeZoneToId } = require('../../../shared/dictionary')
 const { createUniqueIdForResult } = require('../../../result/service')
 
@@ -32,33 +28,20 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
   const instrumentSerial = _.get(payload, 'instrument.serial', null)
   const startedOn = getDateOrDefault(payload, 'startedOn', null)
   if (!startedOn) {
-    throw Boom.badRequest(
-      'Start date is required for a result from an Alere device'
-    )
+    throw Boom.badRequest('Start date is required for a result from an Alere device')
   }
 
-  const convertedTimeZone = getTimeZoneById(
-    await allTimeZoneToId(),
-    device.timezone
-  )
+  const convertedTimeZone = getTimeZoneById(await allTimeZoneToId(), device.timezone)
 
   // The start/end time from Alere is reported without a time zone
   // designator. We treat it as local time of the device and then translate it to UTC
   if (payload.startedOn) {
-    payload.startedOn = getLocalDateTimeStringInUtc(
-      startedOn.toISOString(),
-      convertedTimeZone
-    )
+    payload.startedOn = getLocalDateTimeStringInUtc(startedOn.toISOString(), convertedTimeZone)
   }
 
   const sampleId = _.get(payload, 'sample.id', null)
 
-  const resultExternalId = createUniqueIdForResult(
-    instrumentSerial,
-    startedOn,
-    startedOn,
-    sampleId
-  )
+  const resultExternalId = createUniqueIdForResult(instrumentSerial, startedOn, startedOn, sampleId)
   payload.id = resultExternalId
 
   const existingResult = await knex
@@ -80,10 +63,7 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
   const pickedUpOn = getDateOrDefault(payload, 'data.pickedUpOn', null)
   if (existingResult) {
     // Are we setting this result to NO RESULT?
-    if (
-      !_.isEmpty(_.get(payload, 'category', [])) &&
-      _.every(_.get(payload, 'category'), { id: 'NoResult' })
-    ) {
+    if (!_.isEmpty(_.get(payload, 'category', [])) && _.every(_.get(payload, 'category'), { id: 'NoResult' })) {
       // Has the result already been determined?
       if (
         _.get(existingResult, 'resultCategory1') !== 'NoResult' ||
@@ -97,8 +77,7 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
       if (pickedUpOn) {
         const existingResultEndedOn = getDateOrDefault(payload, 'endedOn', now)
         if (
-          (existingResultEndedOn === startedOn ||
-            existingResultEndedOn > pickedUpOn) &&
+          (existingResultEndedOn === startedOn || existingResultEndedOn > pickedUpOn) &&
           differenceInHours(pickedUpOn, startedOn) < 5
         ) {
           payload.endedOn = pickedUpOn

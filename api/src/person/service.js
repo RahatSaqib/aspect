@@ -1,23 +1,12 @@
 const _ = require('lodash')
-const Boom = require('boom')
+const Boom = require('@hapi/boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
-const {
-  clientTypes,
-  revokeUsersToken,
-  lockedOutUser,
-} = require('../auth/service')
-
-const getPeople = () =>
-  knex('Person as p')
-    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Job as j', 'p.id', 'j.personId')
-    .leftJoin('JobContext as jc', 'jc.jobId', 'j.id')
-    .leftJoin('Site as s', 'jc.siteId', 's.id')
+const { clientTypes, revokeUsersToken, lockedOutUser } = require('../auth/service')
+const { getPeopleBase } = require('../shared/utilsPerson')
+const { updateTagsById, tagsAreEqual } = require('../tag/service')
 
 async function listPeople(request) {
   const { auth, query } = request
@@ -25,7 +14,7 @@ async function listPeople(request) {
 
   const { geographicLevel, tags } = query
 
-  const personQuery = getPeople()
+  const personQuery = getPeopleBase()
     .leftJoin('Geography as jcg', 'jc.geographyId', 'jcg.id')
     .leftJoin('PersonTag as pt', 'p.id', 'pt.personId')
     .leftJoin('Tag as t', 'pt.tagId', 't.id')
@@ -35,27 +24,26 @@ async function listPeople(request) {
       lgaId: 'g.lgaId',
       contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
       siteId: 'jc.siteId',
+      contactStatus: 'p.disabled',
     })
     .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
     .where(qb => {
       if (dataConstraints.partner.id) {
-        qb.whereNull('p.partnerId').orWhere(
-          'p.partnerId',
-          dataConstraints.partner.id
-        )
+        qb.whereNull('p.partnerId').orWhere('p.partnerId', dataConstraints.partner.id)
+      }
+    })
+    .where(qb => {
+      if (query?.onlyUsersNotDisabled) {
+        qb.where('p.disabled', 0)
       }
     })
 
   switch (geographicLevel) {
     case 'state':
-      personQuery.andWhere(qb =>
-        qb.whereNotNull('jcg.stateId').whereNull('jcg.lgaId')
-      )
+      personQuery.andWhere(qb => qb.whereNotNull('jcg.stateId').whereNull('jcg.lgaId'))
       break
     case 'lga':
-      personQuery.andWhere(qb =>
-        qb.whereNotNull('jcg.lgaId').whereNull('jc.siteId')
-      )
+      personQuery.andWhere(qb => qb.whereNotNull('jcg.lgaId').whereNull('jc.siteId'))
       break
     case 'lab':
       personQuery.andWhere(qb => qb.whereNotNull('jc.siteId'))
@@ -69,16 +57,14 @@ async function listPeople(request) {
   }
 
   // get total count for paging
-  const getCount = personQuery
-    .clone()
-    .select(knex.raw('count(distinct p.id) as total'))
-    .first()
+  const getCount = personQuery.clone().select(knex.raw('count(distinct p.id) as total')).first()
 
   const getJobFunctionNames = knex('Job as j')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
     .where('j.personId', '=', knex.raw('p.id'))
     .select(knex.raw('group_concat(jf.name separator "; ")'))
     .as('level')
+
   const getTags = knex('Tag as t')
     .innerJoin('PersonTag as pt', 't.id', 'pt.tagId')
     .innerJoin('Partner as prt', 't.partnerId', 'prt.id')
@@ -95,6 +81,8 @@ async function listPeople(request) {
     .select(
       'p.id',
       'p.name',
+      'p.disabled',
+      'p.disabledOn',
       getJobFunctionNames,
       'st.name as state',
       'l.name as lga',
@@ -105,14 +93,34 @@ async function listPeople(request) {
   // return result when both queries are finished
   const [{ total }, data] = await Promise.all([getCount, getItems])
 
+  const personIds = data.map(({ id }) => id)
+  const personTags = await knex('Tag as t')
+    .innerJoin('PersonTag as pt', 't.id', 'pt.tagId')
+    .innerJoin('Partner as prt', 't.partnerId', 'prt.id')
+    .whereIn('pt.personId', personIds)
+    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    .select('t.title as tagName', 't.id as tagId', 'pt.personId')
+  data.forEach(item => {
+    item.tagDetails = personTags
+      .filter(personTag => item.id === personTag.personId)
+      .map(({ tagName, tagId }) => ({ tagName, tagId }))
+  })
+
   return { ok: true, total, data, length: data.length }
+}
+
+async function listPeopleForSelectList(request) {
+  request.query.size = 'all'
+  request.query.onlyUsersNotDisabled = true
+  const response = await listPeople(request)
+  return response
 }
 
 async function availableContacts(request) {
   const { auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const data = await getPeople()
+  const data = await getPeopleBase()
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .groupBy('p.id')
     .select('p.name', 'p.id')
@@ -129,10 +137,8 @@ async function assignContact(request) {
   let { jobId } = personDetails
 
   if (!jobId) {
-    const { id: jobFunctionIdDefault } = await knex('JobFunction')
-      .where({ name: 'Lab User' })
-      .first('id')
-    jobId = await knex('Job').insert({
+    const { id: jobFunctionIdDefault } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
+    ;[jobId] = await knex('Job').insert({
       personId: personDetails.id,
       jobFunctionId: jobFunctionIdDefault,
     })
@@ -203,11 +209,7 @@ async function validateContact(request) {
 
   const site = await getSite(siteId, dataConstraints)
 
-  const personDetails = await getPersonDetails(id).modify(
-    addConstraints,
-    dataConstraints,
-    { geography: 'g' }
-  )
+  const personDetails = await getPersonDetails(id, dataConstraints)
 
   return {
     siteId,
@@ -216,8 +218,8 @@ async function validateContact(request) {
   }
 }
 
-function getPersonDetails(personId) {
-  return query('Get person details')
+async function getPersonDetails(personId, dataConstraints) {
+  const personDetails = await query('Get person details')
     .from('Person as p')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .leftJoin('User as u', 'p.userId', 'u.id')
@@ -225,6 +227,7 @@ function getPersonDetails(personId) {
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftOuterJoin('Job as j', 'p.id', 'j.personId')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where({ 'p.id': personId })
     .first(
       'p.id',
@@ -237,7 +240,7 @@ function getPersonDetails(personId) {
       'p.phone',
       'p.cell',
       'g.countryId',
-      'g.id as geogId',
+      'g.id as geographyId',
       'g.stateId',
       'g.lgaId',
       'p.zip',
@@ -253,14 +256,27 @@ function getPersonDetails(personId) {
       'l.name as lgaName',
       'u.lockedOut as userLockedOut',
       'p.canLogIn',
+      'p.disabled',
+      'p.disabledOn',
       'j.id as jobId'
     )
+  if (personDetails) {
+    const tags = await query('Get person tags')
+      .from('Person as p')
+      .join('PersonTag as pt', 'pt.personId', 'p.id')
+      .join('Tag as t', 'pt.tagId', 't.id')
+      .where({ 'p.id': personId })
+      .select('t.title')
+
+    personDetails.tags = tags.map(t => t.title)
+  }
+  return personDetails
 }
 
 async function showPerson(request) {
-  const { params } = request
-
-  const personDetails = await getPersonDetails(params.personId)
+  const { params, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const personDetails = await getPersonDetails(params.personId, dataConstraints)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
@@ -284,7 +300,7 @@ async function showPerson(request) {
 }
 
 async function savePerson(request, updatablePersonFields) {
-  const { params, payload } = request
+  const { params, payload, auth } = request
 
   _.mapKeys(payload, (value, key) => {
     if (value === '') {
@@ -293,19 +309,21 @@ async function savePerson(request, updatablePersonFields) {
   })
 
   // TODO: check access level permissions
-  const currentlyLoggedInUser = await userService.getUser(
-    request.auth.credentials.name
-  )
-
-  const personDetails = await getPersonDetails(params.personId)
+  const currentlyLoggedInUser = await userService.getUser(request.auth.credentials.name)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const personDetails = await getPersonDetails(params.personId, dataConstraints)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
+
   const changedFields = _.reduce(
     payload,
     (result, value, key) => {
       if (
-        _.includes(updatablePersonFields, key) &&
+        _.includes(
+          updatablePersonFields.filter(f => f !== 'tags'),
+          key
+        ) &&
         key in personDetails &&
         personDetails[key] !== value
       ) {
@@ -315,19 +333,21 @@ async function savePerson(request, updatablePersonFields) {
     },
     {}
   )
-
   const changedPersonFields = await transformGeographyFromUpdates(changedFields)
+  const changedTags = !tagsAreEqual(payload.tags, personDetails.tags.map(t => t.title).join(','))
+
+  if (changedTags) {
+    await updateTagsById(params.personId, 'person', payload.tags, auth)
+    changedPersonFields.updatedOn = new Date()
+  }
+
   if (!_.isEmpty(changedPersonFields)) {
-    if (
-      changedFields.countryId &&
-      personDetails.lastCountryId !== changedFields.countryId
-    ) {
+    if (changedFields.countryId && personDetails.lastCountryId !== changedFields.countryId) {
       changedPersonFields.lastCountryId = changedFields.countryId
     }
 
     changedFields.updatedOn = new Date()
     changedFields.updatedBy = currentlyLoggedInUser.id
-
     await query('Save person details')
       .from('Person as p')
       .where({ 'p.id': personDetails.id })
@@ -344,8 +364,7 @@ async function savePerson(request, updatablePersonFields) {
 }
 
 async function createPerson(request) {
-  const { payload } = request
-  const { name } = payload
+  const { payload, auth } = request
 
   _.mapKeys(payload, (value, key) => {
     if (value === '') {
@@ -353,15 +372,7 @@ async function createPerson(request) {
     }
   })
 
-  // if user with specified 'name' exists - return Boom
-  const person = await knex('Person').where({ name }).first()
-  if (person) {
-    return Boom.conflict('Person with requested name already exists')
-  }
-
-  const currentlyLoggedInUser = await userService.getUser(
-    request.auth.credentials.name
-  )
+  const currentlyLoggedInUser = await userService.getUser(request.auth.credentials.name)
 
   const changedFields = {
     // 'payload' contains at least one required field - 'name'
@@ -379,8 +390,15 @@ async function createPerson(request) {
     changedPersonFields.lastCountryId = changedFields.countryId
   }
 
-  const [personId] = await knex('Person').insert(changedPersonFields)
-  const personDetails = await getPersonDetails(personId)
+  const changedPersonFieldsWithoutTags = _.omit(changedPersonFields, 'tags')
+
+  const [personId] = await knex('Person').insert(changedPersonFieldsWithoutTags)
+  if (changedPersonFields?.tags) {
+    await updateTagsById(personId, 'person', changedPersonFields.tags, auth)
+    changedPersonFieldsWithoutTags.updatedOn = new Date()
+  }
+  const dataConstraints = await getConstraints(auth.credentials)
+  const personDetails = await getPersonDetails(personId, dataConstraints)
   personDetails.jobFunctions = []
 
   return { ok: true, data: personDetails }
@@ -394,13 +412,19 @@ async function updatePerson(request) {
     'email2',
     'phone',
     'cell',
+    'culture',
     'countryId',
     'stateId',
     'lgaId',
     'zip',
     'notes',
     'lastPartnerId',
+    'timezone',
+    'tags',
     'canLogIn',
+    'hidePatientId',
+    'hideSampleId',
+    'hideNotes',
   ])
 }
 
@@ -415,12 +439,15 @@ async function listRefreshTokens(request) {
 
   const tokenQuery = knex('RefreshToken as r')
     .innerJoin('Person as p', 'r.userId', 'p.userId')
-    .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
+    .leftJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: clientTypes.app })
     .modify(addConstraints, dataConstraints, { partner: 'prt', geography: 'g' })
 
-  const getCount = tokenQuery.clone().count('r.clientId as count').first()
+  const getCount = knex
+    .from(tokenQuery.clone().select(knex.raw("CONCAT(p.name, ':', r.clientName) as id")).as('reporterIds'))
+    .countDistinct('id as count')
+    .first()
 
   const getItems = tokenQuery
     .clone()
@@ -435,56 +462,31 @@ async function listRefreshTokens(request) {
       deviceName: 'r.clientName',
       revoked: 'r.revoked',
       diseaseId: 'dis.id',
+      contactStatus: 'p.disabled',
     })
     .leftJoin('ResultDownloadLog as rdl', queryBuilder => {
       queryBuilder.on('rdl.createdBy', 'r.userId')
       if (query.minDate) {
-        queryBuilder.andOn(
-          'rdl.createdOn',
-          '>=',
-          knex.raw('?', [query.minDate])
-        )
+        queryBuilder.andOn('rdl.createdOn', '>=', knex.raw('?', [query.minDate]))
       }
       if (query.maxDate) {
-        queryBuilder.andOn(
-          'rdl.createdOn',
-          '<=',
-          knex.raw('?', [query.maxDate])
-        )
+        queryBuilder.andOn('rdl.createdOn', '<=', knex.raw('?', [query.maxDate]))
       }
     })
     .leftJoin('Result as rt', 'rt.id', 'rdl.resultId')
     .leftJoin('Assay as a', 'a.id', 'rt.assayId')
     .leftJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
-    .leftJoin(
-      'ResultTreatmentStatusLog as rtsl',
-      'rtsl.id',
-      'rt.treatmentStatusLogId'
-    )
-    .leftJoin(
-      'ResultTreatmentStatus as rts',
-      'rts.id',
-      'rtsl.resultTreatmentStatusId'
-    )
-    .leftJoin(
-      'ResultWorkflowLog as rwl',
-      'rwl.id',
-      'rt.resultWorkflowStatusLogId'
-    )
-    .leftJoin(
-      'ResultWorkflowStatus as rws',
-      'rws.id',
-      'rwl.resultWorkflowStatusId'
-    )
+    .leftJoin('ResultTreatmentStatusLog as rtsl', 'rtsl.id', 'rt.treatmentStatusLogId')
+    .leftJoin('ResultTreatmentStatus as rts', 'rts.id', 'rtsl.resultTreatmentStatusId')
+    .leftJoin('ResultWorkflowLog as rwl', 'rwl.id', 'rt.resultWorkflowStatusLogId')
+    .leftJoin('ResultWorkflowStatus as rws', 'rws.id', 'rwl.resultWorkflowStatusId')
     .leftJoin('ResultCategoryAssay as rca', queryBuilder => {
-      queryBuilder
-        .on('rca.resultCategoryId', 'rt.resultCategory1')
-        .andOn('rca.assayId', 'rt.assayId')
+      queryBuilder.on('rca.resultCategoryId', 'rt.resultCategory1').andOn('rca.assayId', 'rt.assayId')
     })
-    .groupBy('r.clientId', 'p.name', 'r.clientName')
+    .groupBy('p.name', 'r.clientName')
     .select(
-      'r.clientId as id',
+      knex.raw("CONCAT(p.name, ':', r.clientName) as id"),
       'p.name as user',
       'r.clientName as deviceName',
       'r.createdOn',
@@ -502,10 +504,9 @@ async function listRefreshTokens(request) {
         "sum(case when rts.externalId = 'OnTreatment' AND rca.requiresTreatment = '1' then 1 else 0 end) as totalOnTreatment"
       ),
       knex.raw('count(distinct rdl.resultId) as delivered'),
-      knex.raw(
-        "sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp"
-      )
+      knex.raw("sum(case when rca.requiresTreatment = '1' then 1 else 0 end) as requiresFollowUp")
     )
+    .distinct()
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, length: data.length, data }
@@ -513,11 +514,9 @@ async function listRefreshTokens(request) {
 
 async function updateRefreshToken(request) {
   const { params, payload } = request
-  const selectedToken = await knex('RefreshToken')
-    .where('clientId', params.refreshTokenId)
-    .update({
-      revoked: payload.revoked,
-    })
+  const selectedToken = await knex('RefreshToken').where('clientId', params.refreshTokenId).update({
+    revoked: payload.revoked,
+  })
 
   if (selectedToken !== 1) {
     return Boom.notFound()
@@ -531,8 +530,31 @@ async function updateRefreshToken(request) {
     },
   }
 }
+
+async function updatePersonStatus(request) {
+  const {
+    auth: { credentials },
+    params: { personId },
+    method,
+  } = request
+  const { id: disabledBy } = await userService.getUser(credentials.name)
+  const person = await knex('Person')
+    .where('id', personId)
+    .update(
+      method === 'delete'
+        ? {
+            disabled: true,
+            disabledOn: new Date(),
+            disabledBy,
+          }
+        : { disabled: false, disabledOn: null, disabledBy: null }
+    )
+  return { ok: true, data: person }
+}
+
 module.exports = {
   listPeople,
+  listPeopleForSelectList,
   listRefreshTokens,
   availableContacts,
   assignContact,
@@ -542,4 +564,5 @@ module.exports = {
   createPerson,
   updatePersonUserPreferences,
   updateRefreshToken,
+  updatePersonStatus,
 }

@@ -1,0 +1,3 @@
+src/providers/I18nProvider/date-fns-locales/**/*.js
+coverage/
+dist/

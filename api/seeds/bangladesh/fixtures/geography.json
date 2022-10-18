@@ -1,0 +1,258 @@
+{
+  "countries": [
+    {
+      "abbreviation": "BD",
+      "name": "Bangladesh",
+      "a3": "BGD",
+      "culture": "en-US",
+      "countryCode": "880",
+      "timezone": "Bangladesh Standard Time",
+      "portNumber": null,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": null,
+      "states": [
+        {
+          "name": "Barisal Division",
+          "abbreviation": "BD-A",
+          "lgas": [
+            {
+              "name": "Barisal District"
+            },
+            {
+              "name": "Barguna District"
+            },
+            {
+              "name": "Bhola District"
+            },
+            {
+              "name": "Jhalokati District"
+            },
+            {
+              "name": "Patuakhali District"
+            },
+            {
+              "name": "Pirojpur District"
+            }
+          ]
+        },
+        {
+          "name": "Chittagong Division",
+          "abbreviation": "BD-B",
+          "lgas": [
+            {
+              "name": "Brahmanbaria District"
+            },
+            {
+              "name": "Comilla District"
+            },
+            {
+              "name": "Chandpur District"
+            },
+            {
+              "name": "Lakshmipur District"
+            },
+            {
+              "name": "Noakhali District"
+            },
+            {
+              "name": "Feni District"
+            },
+            {
+              "name": "Khagrachhari District"
+            },
+            {
+              "name": "Rangamati District"
+            },
+            {
+              "name": "Bandarban District"
+            },
+            {
+              "name": "Chittagong District"
+            },
+            {
+              "name": "Cox's Bazar District"
+            }
+          ]
+        },
+        {
+          "name": "Dhaka Division",
+          "abbreviation": "BD-C",
+          "lgas": [
+            {
+              "name": "Dhaka District"
+            },
+            {
+              "name": "Gazipur District"
+            },
+            {
+              "name": "Kishoreganj District"
+            },
+            {
+              "name": "Manikganj District"
+            },
+            {
+              "name": "Munshiganj District"
+            },
+            {
+              "name": "Narayanganj District"
+            },
+            {
+              "name": "Narsingdi District"
+            },
+            {
+              "name": "Tangail District"
+            },
+            {
+              "name": "Faridpur District"
+            },
+            {
+              "name": "Gopalganj District"
+            },
+            {
+              "name": "Madaripur District"
+            },
+            {
+              "name": "Rajbari District"
+            },
+            {
+              "name": "Shariatpur District"
+            }
+          ]
+        },
+        {
+          "name": "Khulna Division",
+          "abbreviation": "BD-D",
+          "lgas": [
+            {
+              "name": "Bagerhat District"
+            },
+            {
+              "name": "Chuadanga District"
+            },
+            {
+              "name": "Jashore District"
+            },
+            {
+              "name": "Jhenaidah District"
+            },
+            {
+              "name": "Khulna District"
+            },
+            {
+              "name": "Kushtia District"
+            },
+            {
+              "name": "Magura District"
+            },
+            {
+              "name": "Meherpur District"
+            },
+            {
+              "name": "Narail District"
+            },
+            {
+              "name": "Satkhira District"
+            }
+          ]
+        },
+        {
+          "name": "Mymensingh Division",
+          "abbreviation": "BD-H",
+          "lgas": [
+            {
+              "name": "Mymensingh District"
+            },
+            {
+              "name": "Netrokona District"
+            },
+            {
+              "name": "Jamalpur District"
+            },
+            {
+              "name": "Sherpur District"
+            }
+          ]
+        },
+        {
+          "name": "Rajshahi Division",
+          "abbreviation": "BD-E",
+          "lgas": [
+            {
+              "name": "Rajshahi"
+            },
+            {
+              "name": "Natore"
+            },
+            {
+              "name": "Pabna"
+            },
+            {
+              "name": "Bogura"
+            },
+            {
+              "name": "Chapainawabganj"
+            },
+            {
+              "name": "Joypurhat"
+            },
+            {
+              "name": "Naogaon"
+            },
+            {
+              "name": "Sirajganj"
+            }
+          ]
+        },
+        {
+          "name": "Rangpur",
+          "abbreviation": "BD-F",
+          "lgas": [
+            {
+              "name": "Dinajpur District"
+            },
+            {
+              "name": "Kurigram District"
+            },
+            {
+              "name": "Gaibandha District"
+            },
+            {
+              "name": "Lalmonirhat District"
+            },
+            {
+              "name": "Nilphamari District"
+            },
+            {
+              "name": "Panchagarh District"
+            },
+            {
+              "name": "Rangpur District"
+            },
+            {
+              "name": "Thakurgaon District"
+            }
+          ]
+        },
+        {
+          "name": "Sylhet Division",
+          "abbreviation": "BD-G",
+          "lgas": [
+            {
+              "name": "Habiganj District"
+            },
+            {
+              "name": "Moulvibazar District"
+            },
+            {
+              "name": "Sunamganj District"
+            },
+            {
+              "name": "Sylhet District"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

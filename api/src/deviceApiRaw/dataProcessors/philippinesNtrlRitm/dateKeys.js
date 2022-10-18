@@ -1,0 +1,15 @@
+module.exports = [
+  'Date of Birth',
+  'Date of Admission',
+  'Date and Time of Specimen Collection',
+  'Date and Time of Specimen Receipt',
+  'Date and Time of Release of AFB Result',
+  'MRF Date Encoded',
+  'Date transfered to DST',
+  'Date and Time of Release of TBC Result',
+  'Date and Time of Release of DST Result',
+  'Date and Time of Release of Gx Result',
+  'Smear Result 1 Date Collected',
+  'Smear Result 2 Date Collected',
+  'Smear Result 3 Date Collected',
+]

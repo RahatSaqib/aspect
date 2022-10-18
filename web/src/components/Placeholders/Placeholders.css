@@ -1,0 +1,44 @@
+.container {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.trigger_button {
+  font-size: 16px;
+  margin: -2px 5px 0;
+  line-height: normal;
+  height: 24px;
+  width: 24px;
+}
+.trigger_button:hover {
+  background-color: #eee !important;
+}
+.trigger_button div {
+  height: 16px;
+}
+
+.menu-header {
+  font-weight: bold;
+  font-size: 12px;
+  padding: 0 0 8px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  word-spacing: 5px;
+}
+.menu-section-header {
+  font-weight: bold !important;
+  opacity: 1 !important;
+}
+.menu-item {
+  color: #34717c !important;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+}
+.menu-item-icon {
+  font-size: 16px;
+  margin: 1px 5px 0 0;
+}

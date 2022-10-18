@@ -1,12 +1,5 @@
 require('isomorphic-fetch')
-const {
-  createFetch,
-  base,
-  accept,
-  header,
-  method,
-  body,
-} = require('http-client')
+const { createFetch, base, accept, header, method, body } = require('http-client')
 const { subMonths, startOfMonth } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
@@ -16,9 +9,7 @@ const { deviceTypeToId } = require('../../shared/dictionary')
 const { formatDateOrDefault, parseDateOrDefault } = require('../../shared/date')
 
 function utcDate(localDateTime) {
-  return parseDateOrDefault(
-    `${formatDateOrDefault(localDateTime, 'yyyy-MM-dd')}T00:00:00.000Z`
-  )
+  return parseDateOrDefault(`${formatDateOrDefault(localDateTime, 'yyyy-MM-dd')}T00:00:00.000Z`)
 }
 
 function timeSeconds(dateTime) {
@@ -29,20 +20,15 @@ async function checkUptimeRobot({ messageContext }) {
   return messageContext.run(async knex => {
     const aspectDeviceTypeId = await deviceTypeToId('Aspect')
 
-    const aspectDeviceIds = await knex('Device')
-      .where('deviceTypeId', aspectDeviceTypeId)
-      .select('id')
-      .pluck('id')
+    const aspectDeviceIds = await knex('Device').where('deviceTypeId', aspectDeviceTypeId).pluck('id')
 
     if (!_.isEmpty(aspectDeviceIds)) {
       const now = new Date()
       const startCurrentMonth = utcDate(startOfMonth(now))
       const startOfLastMonth = utcDate(startOfMonth(subMonths(now, 1)))
-      const lastMonthAndThisMonthRange = `${timeSeconds(
-        startOfLastMonth
-      )}_${timeSeconds(startCurrentMonth)}-${timeSeconds(
+      const lastMonthAndThisMonthRange = `${timeSeconds(startOfLastMonth)}_${timeSeconds(
         startCurrentMonth
-      )}_${timeSeconds(now)}`
+      )}-${timeSeconds(startCurrentMonth)}_${timeSeconds(now)}`
       const uptimeRobotFetch = createFetch(
         method('POST'),
         base('https://api.uptimerobot.com'),
@@ -58,15 +44,11 @@ async function checkUptimeRobot({ messageContext }) {
       try {
         const resp = await uptimeRobotFetch('/v2/getMonitors')
         if (resp.status !== 200) {
-          throw new Error(
-            `${resp.status} ${resp.statusText} ${JSON.stringify(resp)}`
-          )
+          throw new Error(`${resp.status} ${resp.statusText} ${JSON.stringify(resp)}`)
         }
         const uptimeRobotResponseJson = JSON.stringify(await resp.json())
         await Promise.each(aspectDeviceIds, async aspectDeviceId => {
-          const factDeviceExternalSource = await knex(
-            'FactDeviceExternalSource'
-          )
+          const factDeviceExternalSource = await knex('FactDeviceExternalSource')
             .where('deviceId', aspectDeviceId)
             .andWhere('sourceName', 'uptimeRobot')
             .first()

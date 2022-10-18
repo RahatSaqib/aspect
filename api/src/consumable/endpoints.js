@@ -1,9 +1,6 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const {
-  listConsumableTypes,
-  listConsumableReasons,
-} = require('./consumableService')
+const { listConsumableTypes, listConsumableReasons } = require('./consumableService')
 const {
   getConsumableAssays,
   getAssayConsumables,
@@ -23,10 +20,28 @@ const routes = [
       auth: { scope: ['inventory'] },
       validate: {
         query: {
-          name: Joi.string()
-            .allow('')
-            .description('Filter for consumable type'),
+          name: Joi.string().allow('').description('Filter for consumable type'),
           ...validateSortPageParams('name'),
+        },
+      },
+      response: {
+        schema: {
+          ok: Joi.bool().required(),
+          total: Joi.number().integer().required(),
+          length: Joi.number().integer().required(),
+          data: Joi.array().items(
+            Joi.object().keys({
+              id: Joi.number().integer().required(),
+              name: Joi.string().max(255).allow('', null),
+              unit: Joi.string().max(50).allow('', null),
+              unitShortName: Joi.string().max(50).allow('', null),
+              canExpire: Joi.number().integer(),
+              manufacturer: Joi.string().max(500).allow('', null),
+              autoInclude: Joi.number().integer(),
+              showLot: Joi.number().integer().required(),
+              showExpirationDate: Joi.number().integer().required(),
+            })
+          ),
         },
       },
     },
@@ -41,10 +56,24 @@ const routes = [
       auth: { scope: ['inventory'] },
       validate: {
         query: {
-          name: Joi.string()
-            .allow('')
-            .description('Filter for consumable reason'),
+          name: Joi.string().allow('').description('Filter for consumable reason'),
           ...validateSortPageParams('name'),
+        },
+      },
+      response: {
+        schema: {
+          ok: Joi.bool().required(),
+          total: Joi.number().integer().required(),
+          length: Joi.number().integer().required(),
+          data: Joi.array().items(
+            Joi.object().keys({
+              id: Joi.number().integer().required(),
+              name: Joi.string().max(255).allow('', null),
+              i18nKey: Joi.string().max(255).allow('', null),
+              decrease: Joi.number().integer(),
+              reset: Joi.number().integer(),
+            })
+          ),
         },
       },
     },
@@ -54,13 +83,30 @@ const routes = [
     path: '/consumable-assays/{consumableId}',
     handler: asyncHandler(getConsumableAssays),
     config: {
-      description:
-        'Gets the consumable quantities for each assay for a specific consumable',
+      description: 'Gets the consumable quantities for each assay for a specific consumable',
       notes: 'Returns a list of assay consumable records',
       auth: { scope: ['assay'] },
       validate: {
         params: {
           consumableId: Joi.number().integer().positive().required(),
+        },
+      },
+      response: {
+        schema: {
+          ok: Joi.bool().required(),
+          data: Joi.array().items(
+            Joi.object().keys({
+              consumableId: Joi.number().integer().required(),
+              assayId: Joi.number().integer().required(),
+              quantity: Joi.number(),
+              consumableName: Joi.string().max(255).allow('', null),
+              unitName: Joi.string().max(255).allow('', null),
+              unitShortName: Joi.string().max(50).allow('', null),
+              assayName: Joi.string().max(255).allow('', null),
+              assayI18nKey: Joi.string().max(255).allow('', null),
+              strategy: Joi.string().optional().allow(null, ''),
+            })
+          ),
         },
       },
     },
@@ -76,6 +122,24 @@ const routes = [
       validate: {
         params: {
           assayId: Joi.number().integer().positive().required(),
+        },
+      },
+      response: {
+        schema: {
+          ok: Joi.bool().required(),
+          data: Joi.array().items(
+            Joi.object().keys({
+              consumableId: Joi.number().integer().required(),
+              assayId: Joi.number().integer().required(),
+              quantity: Joi.number(),
+              consumableName: Joi.string().max(255).allow('', null),
+              unitName: Joi.string().max(255).allow('', null),
+              unitShortName: Joi.string().max(50).allow('', null),
+              assayName: Joi.string().max(255).allow('', null),
+              assayI18nKey: Joi.string().max(255).allow('', null),
+              strategy: Joi.string().optional().allow(null, ''),
+            })
+          ),
         },
       },
     },
@@ -96,9 +160,7 @@ const routes = [
             .positive()
             .precision(2)
             .required()
-            .description(
-              'Amount of consumable used per test (up to 2 decimal places)'
-            ),
+            .description('Amount of consumable used per test (up to 2 decimal places)'),
         },
       },
     },
@@ -121,9 +183,7 @@ const routes = [
             .positive()
             .precision(2)
             .required()
-            .description(
-              'Amount of consumable used per test (up to 2 decimal places)'
-            ),
+            .description('Amount of consumable used per test (up to 2 decimal places)'),
         },
       },
     },

@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InventoryLog module InventoryLog component should render correctly 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "store": Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(Symbol.observable): [Function],
+      },
+      "subscription": Object {
+        "addNestedSub": [Function],
+        "getListeners": [Function],
+        "handleChangeWrapper": [Function],
+        "isSubscribed": [Function],
+        "notifyNestedSubs": [Function],
+        "trySubscribe": [Function],
+        "tryUnsubscribe": [Function],
+      },
+    }
+  }
+>
+  <AuthProvider>
+    <InventoryLogWithProps
+      dispatch={[Function]}
+      intl={
+        Object {
+          "$t": [Function],
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
+          "formatDate": [Function],
+          "formatDateTimeRange": [Function],
+          "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
+          "formatList": [Function],
+          "formatListToParts": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatNumberToParts": [Function],
+          "formatPlural": [Function],
+          "formatRelativeTime": [Function],
+          "formatTime": [Function],
+          "formatTimeToParts": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
+            "getListFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "onError": [Function],
+          "onWarn": [Function],
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
+        }
+      }
+      isLoading={false}
+      items={
+        Immutable.Record {
+          "byId": Immutable.Map {},
+          "currentIdList": Immutable.List [],
+        }
+      }
+      location={
+        Object {
+          "search": "",
+        }
+      }
+      navigate={[Function]}
+      onAddInventorySubmit={[Function]}
+      onReceiveInventorySubmit={[Function]}
+      onRemoveInventorySubmit={[Function]}
+      pageAt={0}
+      pageSize={10}
+      reducedFilters={null}
+      showTransferInventoryDialog={[Function]}
+      sortCol="siteName"
+      sortDir="asc"
+      table={
+        Immutable.Record {
+          "loading": false,
+          "sortCol": "name",
+          "sortDir": "asc",
+          "page": 0,
+          "pageSize": 10,
+          "total": 0,
+          "extraColumns": Immutable.List [],
+          "groupBy": Immutable.List [],
+        }
+      }
+    />
+  </AuthProvider>
+</ContextProvider>
+`;

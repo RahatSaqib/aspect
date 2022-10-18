@@ -15,6 +15,7 @@ module.exports = {
       'dashboardWidgetValidResultsPc',
       'utilizationRate',
       'activeDevices',
+      'activeDevicesCnt',
       'stockouts',
       'deviceDaysActive',
       'errorRate',
@@ -22,7 +23,7 @@ module.exports = {
       'avgTimeToUpload',
       'moduleSwaps',
       'instrumentsReplaced',
-      'unusedModules',
+      'percentageOfModulesFunctioning',
       'averageRecipientsOfEmail',
       'averageRecipientsOfSms',
       'averageLengthOfSms',
@@ -33,6 +34,8 @@ module.exports = {
       'averageDurationServiceInterruption',
       'percentageOfDaysWithServiceInterruption',
       'serverUptimeTitle',
+      'deviceCalibrationPastDue',
+      'deviceCalibratedWhenDue',
     ])
   ),
 }

@@ -1,0 +1,44 @@
+[
+  {
+    "resultText": "MTB Detected|Rif Resistance Not Detected",
+    "category1": "Detected",
+    "category2": "NotDetected",
+    "minLikelihood": 0,
+    "maxLikelihood": 20
+  },
+  {
+    "resultText": "MTB Detected|Rif Resistance Detected",
+    "category1": "Detected",
+    "category2": "Detected",
+    "minLikelihood": 21,
+    "maxLikelihood": 26
+  },
+  {
+    "resultText": "MTB Detected|Rif Indeterminate",
+    "category1": "Detected",
+    "category2": "Indeterminate",
+    "minLikelihood": 27,
+    "maxLikelihood": 28
+  },
+  {
+    "resultText": "ERROR",
+    "category1": "Error",
+    "category2": null,
+    "minLikelihood": 29,
+    "maxLikelihood": 34
+  },
+  {
+    "resultText": "Invalid",
+    "category1": "Invalid",
+    "category2": null,
+    "minLikelihood": 35,
+    "maxLikelihood": 38
+  },
+  {
+    "resultText": "Not Detected",
+    "category1": "NotDetected",
+    "category2": null,
+    "minLikelihood": 39,
+    "maxLikelihood": 100
+  }
+]

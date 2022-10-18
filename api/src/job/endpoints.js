@@ -19,13 +19,15 @@ const {
 // ---------------------------------------------------------------------------------------------
 // helpers
 // ---------------------------------------------------------------------------------------------
-const ok = Joi.boolean().required().description(
-  `
+const ok = Joi.boolean()
+  .required()
+  .description(
+    `
     True means workflow ran well, False - some non-breakable error happened.
     If both cases - see more details in other props (i.e. "data").
     FYI - breakable error is when return Boom.
     `
-)
+  )
 
 const jobResponse = {
   options: {
@@ -40,9 +42,7 @@ const jobResponse = {
         Joi.object().keys({
           id: Joi.number().required().description('Job.id'),
           personId: Joi.number().required().description('Job.personId'),
-          jobFunctionId: Joi.number()
-            .required()
-            .description('Job.jobFunctionId'),
+          jobFunctionId: Joi.number().required().description('Job.jobFunctionId'),
         })
       ),
   }),
@@ -60,19 +60,11 @@ const jobContextResponse = {
         Joi.object().keys({
           jobId: Joi.number().required().description('JobContext.jobId'),
           personId: Joi.number().required().description('Job.personId'),
-          jobFunctionId: Joi.number()
-            .required()
-            .description('Job.jobFunctionId'),
-          geographyId: Joi.number()
-            .allow(null)
-            .description('JobContext.geographyId'),
+          jobFunctionId: Joi.number().required().description('Job.jobFunctionId'),
+          geographyId: Joi.number().allow(null).description('JobContext.geographyId'),
           siteId: Joi.number().allow(null).description('JobContext.siteId'),
-          deviceTypeId: Joi.number()
-            .allow(null)
-            .description('JobContext.deviceTypeId'),
-          assayTypeId: Joi.number()
-            .allow(null)
-            .description('JobContext.assayTypeId'),
+          deviceTypeId: Joi.number().allow(null).description('JobContext.deviceTypeId'),
+          assayTypeId: Joi.number().allow(null).description('JobContext.assayTypeId'),
           assayId: Joi.number().allow(null).description('JobContext.assayId'),
         })
       ),
@@ -93,17 +85,11 @@ const personAssignmentsResponse = {
           // required
           // ----------
           personId: Joi.number().required().description('Job.personId'),
-          partnerId: Joi.number()
-            .required()
-            .description('JobFunction.personId'),
+          partnerId: Joi.number().required().description('JobFunction.personId'),
           jobContextId: Joi.number().required().description('JobContext.id'),
           jobId: Joi.number().required().description('JobContext.jobId'),
-          jobFunctionId: Joi.number()
-            .required()
-            .description('Job.jobFunctionId'),
-          jobFunctionName: Joi.string()
-            .required()
-            .description('JobFunction.name'),
+          jobFunctionId: Joi.number().required().description('Job.jobFunctionId'),
+          jobFunctionName: Joi.string().required().description('JobFunction.name'),
           countryId: Joi.number().required().description('Country.id'),
           countryName: Joi.string().required().description('Country.name'),
           // ----------
@@ -111,33 +97,21 @@ const personAssignmentsResponse = {
           // ----------
           siteId: Joi.number().allow(null).description('JobContext.siteId'),
           siteName: Joi.string().allow(null, '').description('Site.name'),
-          geographyId: Joi.number()
-            .allow(null)
-            .description('JobContext.geographyId'),
+          geographyId: Joi.number().allow(null).description('JobContext.geographyId'),
           stateId: Joi.number().allow(null).description('State.id'),
           stateName: Joi.string().allow(null, '').description('State.name'),
           lgaId: Joi.number().allow(null).description('Lga.id'),
           lgaName: Joi.string().allow(null, '').description('Lga.name'),
           deviceTypeId: Joi.number().allow(null).description('DeviceType.id'),
-          deviceTypeName: Joi.string()
-            .allow(null, '')
-            .description('DeviceType.name'),
+          deviceTypeName: Joi.string().allow(null, '').description('DeviceType.name'),
           diseaseId: Joi.number().allow(null).description('Disease.id'),
-          diseasei18nKey: Joi.string()
-            .allow(null, '')
-            .description('Disease.i18nKey'),
+          diseasei18nKey: Joi.string().allow(null, '').description('Disease.i18nKey'),
           diseaseName: Joi.string().allow(null, '').description('Disease.name'),
           assayTypeId: Joi.number().allow(null).description('AssayType.id'),
-          assayTypei18nKey: Joi.string()
-            .allow(null, '')
-            .description('AssayType.i18nKey'),
-          assayTypeName: Joi.string()
-            .allow(null, '')
-            .description('AssayType.name'),
+          assayTypei18nKey: Joi.string().allow(null, '').description('AssayType.i18nKey'),
+          assayTypeName: Joi.string().allow(null, '').description('AssayType.name'),
           assayId: Joi.number().allow(null).description('Assay.id'),
-          assayi18nKey: Joi.string()
-            .allow(null, '')
-            .description('Assay.i18nKey'),
+          assayi18nKey: Joi.string().allow(null, '').description('Assay.i18nKey'),
           assayName: Joi.string().allow(null, '').description('Assay.name'),
         })
       ),
@@ -189,7 +163,7 @@ const routes = [
     config: {
       description: 'Job Functions for Select List',
       notes: 'Tree structure of Partners and Job Functons',
-      auth: { scope: ['person'] },
+      auth: { scope: ['person', 'deviceApiKey'] },
     },
   },
   {
@@ -209,11 +183,7 @@ const routes = [
           data: Joi.array()
             .required()
             .description('Base list of permissions for person and partner')
-            .items(
-              Joi.string()
-                .required()
-                .description('in format "module:action", like "device:edit" ')
-            ),
+            .items(Joi.string().required().description('in format "module:action", like "device:edit" ')),
         }),
       },
     },
@@ -410,8 +380,7 @@ const routes = [
     path: '/job-function/assign-person-to-job-and-context',
     handler: asyncHandler(assignPersonTo),
     config: {
-      description:
-        'Assign specified person to Job Context with most granular input params',
+      description: 'Assign specified person to Job Context with most granular input params',
       notes: 'Assign specified person to Job Context',
       auth: { scope: ['person:edit'] },
       validate: {
@@ -427,7 +396,7 @@ const routes = [
           siteId: Joi.number().allow(null),
           // device/assay type
           diseaseId: Joi.number().allow(null),
-          deviceTypeId: Joi.number().allow(null),
+          deviceTypeId: Joi.string().allow(null).description('The device type external id'),
           assayTypeId: Joi.number().allow(null),
           assayId: Joi.number().allow(null),
         },

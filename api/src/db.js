@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { getSortPageParams, getSortParams, getPageParams } = require('./routes')
+const logger = require('./shared/logger')
 
 let knex = null // see load
 
@@ -10,29 +11,28 @@ function query() {
 // extracts the parameters related to sorting and paging from the candidate
 // params and modifies the query builder with the sort & paging modifications
 function sortPageParams(queryBuilder, params, defaultSort, sortColumnMapping) {
-  const sortingAndPagingValues = getSortPageParams(
-    params,
-    sortColumnMapping,
-    defaultSort
-  )
-  queryBuilder
-    .orderBy(sortingAndPagingValues.sortCol, sortingAndPagingValues.sortDir)
-    .limit(sortingAndPagingValues.size)
-    .offset(sortingAndPagingValues.skip)
+  const sortingAndPagingValues = getSortPageParams(params, sortColumnMapping, defaultSort)
+  queryBuilder.orderBy(sortingAndPagingValues.orderBy)
+  if (sortingAndPagingValues.size) {
+    queryBuilder.limit(sortingAndPagingValues.size).offset(sortingAndPagingValues.skip)
+  }
 }
 
 // extracts the parameters related to sorting from the candidate params and
 // modifies the query builder with the sort modifications
 function sortParams(queryBuilder, params, defaultSort, sortColumnMapping) {
-  const sortingValues = getSortParams(params, sortColumnMapping, defaultSort)
-  queryBuilder.orderBy(sortingValues.sortCol, sortingValues.sortDir)
+  const { orderBy } = getSortParams(params, sortColumnMapping, defaultSort)
+  queryBuilder.orderBy(orderBy)
 }
 
 // extracts the parameters related to paging from the candidate params and
 // modifies the query builder with the paging modifications
 function pageParams(queryBuilder, params) {
   const pagingValues = getPageParams(params)
-  queryBuilder.limit(pagingValues.size).offset(pagingValues.skip)
+  // missing `size` means no limitation in size and querying all items
+  if (pagingValues.size) {
+    queryBuilder.limit(pagingValues.size).offset(pagingValues.skip)
+  }
 }
 
 function getWhereArgs(columnName, paramValue) {
@@ -52,7 +52,9 @@ function filterParams(queryBuilder, params, filters) {
     if (_.isUndefined(params[paramName])) {
       return
     }
-    if (_.isArray(columnNameOrArray)) {
+    if (_.isFunction(columnNameOrArray)) {
+      columnNameOrArray(queryBuilder, params[paramName])
+    } else if (_.isArray(columnNameOrArray)) {
       queryBuilder.where(function () {
         // http://knexjs.org/#Builder-where
         columnNameOrArray.forEach(columnName => {
@@ -64,30 +66,33 @@ function filterParams(queryBuilder, params, filters) {
         })
       })
     } else if (_.isArray(params[paramName])) {
-      queryBuilder.whereIn(
-        ...getWhereArgs(columnNameOrArray, params[paramName])
-      )
+      queryBuilder.whereIn(...getWhereArgs(columnNameOrArray, params[paramName]))
     } else {
       queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
     }
   })
 }
 
-// extracts the parameters related to filtering from the candidate
-// params and modifies the query builder with the filter modifications
-function filterDateRangeParams(queryBuilder, params, dateColumnName) {
-  if (params.minDate) {
-    queryBuilder.where(dateColumnName, '>=', params.minDate)
+/**
+ * Apply a date filter to a knex query, given a date range.
+ * @param {*} queryBuilder
+ * @param {*} params This are the URL params received for applying in the query
+ * @param {*} dateColumnName Because we can have other fields for date like for example expirationdate or endedon
+ * @param {*} dateParamName This is how the date max and min are named in the url
+ */
+function filterDateRangeParams(queryBuilder, params, dateColumnName, dateParamName = 'Date') {
+  if (params[`min${dateParamName}`] && params[`min${dateParamName}`].toString() !== 'Invalid Date') {
+    queryBuilder.where(dateColumnName, '>=', params[`min${dateParamName}`])
   }
-  if (params.maxDate) {
-    queryBuilder.where(dateColumnName, '<', params.maxDate)
+
+  if (params[`max${dateParamName}`] && params[`max${dateParamName}`].toString() !== 'Invalid Date') {
+    queryBuilder.where(dateColumnName, '<', params[`max${dateParamName}`])
   }
 }
-
 // helper function for run, transact and migration
 const makeBlockRunner = block => blockArg =>
   block(blockArg).catch(err => {
-    console.error(err) // eslint-disable-line no-console
+    logger.error(err)
     throw err
   })
 

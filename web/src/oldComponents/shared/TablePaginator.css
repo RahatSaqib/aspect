@@ -1,0 +1,76 @@
+@import '../../theme/variables.css';
+
+:root {
+  --button-height: 36px;
+  --bordered-button-line-height: 34px;
+}
+
+.Container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px 0 0 0;
+  margin-bottom: -10px;
+}
+
+.Container__Content {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.Left {
+  composes: Container__Content;
+  flex-grow: 1;
+}
+
+.Left__Status {
+  line-height: var(--button-height);
+  padding: 0 20px;
+}
+
+.Left__Button {
+  margin: 0 5px !important;
+  font-size: 0;
+  min-width: 0;
+}
+
+@media screen and (--md-viewport) {
+  .Left__Button {
+    font-size: inherit;
+    min-width: 90px;
+  }
+}
+
+.Left__Button > svg {
+  font-size: medium;
+}
+
+.Left__Button--next > svg {
+  margin-left: 5px;
+  margin-right: 0;
+}
+
+.Right {
+  composes: Container__Content;
+  flex-grow: 0;
+  justify-content: flex-end;
+}
+
+.Right__Button {
+  margin: 0 10px !important;
+  padding: 0 !important;
+  min-width: 40px !important;
+  min-height: 35px !important;
+  font-weight: var(--lato-font-weight-bold) !important;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.Right__Button:not(.selected) {
+  color: var(--aspect-color-chill-blue-1) !important;
+  background-color: var(--aspect-color-grey-7) !important;
+}
+
+.Right__Button:last-child {
+  margin-right: 0;
+}

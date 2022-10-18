@@ -4,8 +4,10 @@ const {
   buildGeographySelectList,
   countrySelectList,
   stateSelectList,
+  stateSelectListForUser,
   lgaSelectList,
 } = require('./service')
+const getLevelByUserSelectList = require('./getLevelByUserSelectList')
 
 const routes = [
   {
@@ -32,8 +34,7 @@ const routes = [
     handler: asyncHandler(countrySelectList),
     config: {
       description: 'Country List With Selected Country',
-      notes:
-        'List of country IDs and Names With States Populated for Selected Country',
+      notes: 'List of country IDs and Names With States Populated for Selected Country',
       validate: {
         params: {
           countryId: Joi.number().description('Country ID').required(),
@@ -59,6 +60,21 @@ const routes = [
   },
   {
     method: 'GET',
+    path: '/geography/states/{stateId?}',
+    handler: asyncHandler(stateSelectListForUser),
+    config: {
+      description: 'State List',
+      notes: 'List of state IDs and Names',
+      auth: { scope: ['site'] },
+      validate: {
+        params: {
+          stateId: Joi.number().description('State ID').optional(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
     path: '/geography/state-select-list/{countryId}',
     handler: asyncHandler(stateSelectList),
     config: {
@@ -77,8 +93,7 @@ const routes = [
     handler: asyncHandler(stateSelectList),
     config: {
       description: 'State List With LGAs for Selected State',
-      notes:
-        'List of state IDs and Names with LGAs populated for selected state',
+      notes: 'List of state IDs and Names with LGAs populated for selected state',
       validate: {
         params: {
           countryId: Joi.number().description('Country ID').required(),
@@ -99,6 +114,16 @@ const routes = [
           stateId: Joi.number().description('State ID').required(),
         },
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/geography/level-by-user-select-list',
+    handler: getLevelByUserSelectList,
+    config: {
+      auth: { scope: ['notification'] },
+      description: 'Get levels by user',
+      notes: 'levels and Names',
     },
   },
 ]

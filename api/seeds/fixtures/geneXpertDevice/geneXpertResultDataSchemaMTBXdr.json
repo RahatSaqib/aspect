@@ -1,0 +1,9 @@
+{
+  "detectedResistance": {
+    "title": "Detected Resistance",
+    "type": "string",
+    "list": true,
+    "i18nKey": "detectedResistance",
+    "formatter": "joinArrayWithCommas"
+  }
+}

@@ -1,0 +1,594 @@
+{
+  "countries": [
+    {
+      "abbreviation": "AO",
+      "name": "Angola",
+      "a3": "AGO",
+      "culture": "pt-PT",
+      "countryCode": "244",
+      "timezone": "W. Central Africa Standard Time",
+      "portNumber": null,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": null,
+      "states": [
+        {
+          "name": "Bengo",
+          "lgas": [
+            {
+              "name": "Ambriz"
+            },
+            {
+              "name": "Bula-Atumba"
+            },
+            {
+              "name": "Dande"
+            },
+            {
+              "name": "Dembos"
+            },
+            {
+              "name": "Nambuangongo"
+            },
+            {
+              "name": "Pango-Aluquém"
+            }
+          ]
+        },
+        {
+          "name": "Benguela",
+          "lgas": [
+            {
+              "name": "Baía-Farta"
+            },
+            {
+              "name": "Balombo"
+            },
+            {
+              "name": "Benguela"
+            },
+            {
+              "name": "Bocoio"
+            },
+            {
+              "name": "Caimbambo"
+            },
+            {
+              "name": "Catumbela"
+            },
+            {
+              "name": "Chongorói"
+            },
+            {
+              "name": "Cubal"
+            },
+            {
+              "name": "Ganda"
+            },
+            {
+              "name": "Lobito"
+            }
+          ]
+        },
+        {
+          "name": "Bié",
+          "lgas": [
+            {
+              "name": "Andulo"
+            },
+            {
+              "name": "Camacupa"
+            },
+            {
+              "name": "Catabola"
+            },
+            {
+              "name": "Chinguar"
+            },
+            {
+              "name": "Chitembo"
+            },
+            {
+              "name": "Cuemba"
+            },
+            {
+              "name": "Cuíto (Kuito)"
+            },
+            {
+              "name": "Cunhinga"
+            },
+            {
+              "name": "N'Harea"
+            }
+          ]
+        },
+        {
+          "name": "Cabinda",
+          "lgas": [
+            {
+              "name": "Belize"
+            },
+            {
+              "name": "Buco-Zau"
+            },
+            {
+              "name": "Cabinda"
+            },
+            {
+              "name": "Cacongo"
+            }
+          ]
+        },
+        {
+          "name": "Cuando Cubango",
+          "lgas": [
+            {
+              "name": "Calai"
+            },
+            {
+              "name": "Cuangar"
+            },
+            {
+              "name": "Cuchi"
+            },
+            {
+              "name": "Cuito Cuanavale"
+            },
+            {
+              "name": "Dirico"
+            },
+            {
+              "name": "Mavinga"
+            },
+            {
+              "name": "Menongue"
+            },
+            {
+              "name": "Nancova"
+            },
+            {
+              "name": "Rivungo"
+            }
+          ]
+        },
+        {
+          "name": "Cuanza Norte",
+          "lgas": [
+            {
+              "name": "Ambaca"
+            },
+            {
+              "name": "Banga"
+            },
+            {
+              "name": "Bolongongo"
+            },
+            {
+              "name": "Cambambe"
+            },
+            {
+              "name": "Cazengo"
+            },
+            {
+              "name": "Golungo Alto"
+            },
+            {
+              "name": "Ngonguembo"
+            },
+            {
+              "name": "Lucala"
+            },
+            {
+              "name": "Quiculungo"
+            },
+            {
+              "name": "Samba Cajú"
+            }
+          ]
+        },
+        {
+          "name": "Cuanza Sul",
+          "lgas": [
+            {
+              "name": "Amboim (Gabela)"
+            },
+            {
+              "name": "Cassongue"
+            },
+            {
+              "name": "Conda"
+            },
+            {
+              "name": "Ebo"
+            },
+            {
+              "name": "Libolo (Calulo)"
+            },
+            {
+              "name": "Mussende"
+            },
+            {
+              "name": "Porto Amboim"
+            },
+            {
+              "name": "Quibala"
+            },
+            {
+              "name": "Quilenda"
+            },
+            {
+              "name": "Seles (Uku Seles)"
+            },
+            {
+              "name": "Sumbe (Ngangula)"
+            },
+            {
+              "name": "Waku-Kungo (Cela)"
+            }
+          ]
+        },
+        {
+          "name": "Cunene",
+          "lgas": [
+            {
+              "name": "Cahama"
+            },
+            {
+              "name": "Kuroka (Curoca)"
+            },
+            {
+              "name": "Kuvelai (Cuvelai)"
+            },
+            {
+              "name": "Kwanhama (Cuanhama)"
+            },
+            {
+              "name": "Namakunde (Namacunde)"
+            },
+            {
+              "name": "Ombadja"
+            }
+          ]
+        },
+        {
+          "name": "Huambo",
+          "lgas": [
+            {
+              "name": "Bailundo"
+            },
+            {
+              "name": "Caála"
+            },
+            {
+              "name": "Ekunha"
+            },
+            {
+              "name": "Huambo"
+            },
+            {
+              "name": "Katchiungo"
+            },
+            {
+              "name": "Londuimbali"
+            },
+            {
+              "name": "Longonjo"
+            },
+            {
+              "name": "Mungo"
+            },
+            {
+              "name": " Tchicala Tcholoanga"
+            },
+            {
+              "name": " Tchinjenje"
+            },
+            {
+              "name": "Ukuma"
+            }
+          ]
+        },
+        {
+          "name": "Huíla",
+          "lgas": [
+            {
+              "name": "Caconda"
+            },
+            {
+              "name": "Cacula"
+            },
+            {
+              "name": "Caluquembe"
+            },
+            {
+              "name": "Chibia"
+            },
+            {
+              "name": "Chicomba"
+            },
+            {
+              "name": "Chipindo"
+            },
+            {
+              "name": "Chiange (Gambos)"
+            },
+            {
+              "name": "Humpata"
+            },
+            {
+              "name": "Jamba"
+            },
+            {
+              "name": "Kuvango"
+            },
+            {
+              "name": "Lubango"
+            },
+            {
+              "name": "Matala"
+            },
+            {
+              "name": "Quilengues"
+            },
+            {
+              "name": "Quipungo"
+            }
+          ]
+        },
+        {
+          "name": "Luanda",
+          "lgas": [
+            {
+              "name": "Belas"
+            },
+            {
+              "name": "Cacuaco"
+            },
+            {
+              "name": "Ícolo e Bengo"
+            },
+            {
+              "name": "Cazenga"
+            },
+            {
+              "name": "Luanda"
+            },
+            {
+              "name": "Quiçama"
+            },
+            {
+              "name": "Viana"
+            }
+          ]
+        },
+        {
+          "name": "Luanda Norte",
+          "lgas": [
+            {
+              "name": "Capemba-Camulemba"
+            },
+            {
+              "name": "Cambulo"
+            },
+            {
+              "name": "Caungula"
+            },
+            {
+              "name": "Tchitato"
+            },
+            {
+              "name": "Cuango"
+            },
+            {
+              "name": "Cuilo"
+            },
+            {
+              "name": "Lóvua"
+            },
+            {
+              "name": "Lubalo"
+            },
+            {
+              "name": "Lucapa"
+            },
+            {
+              "name": "Shah-Muteba"
+            }
+          ]
+        },
+        {
+          "name": "Luanda Sul",
+          "lgas": [
+            {
+              "name": "Cacolo"
+            },
+            {
+              "name": "Dala"
+            },
+            {
+              "name": "Muconda"
+            },
+            {
+              "name": "Saurimo"
+            }
+          ]
+        },
+        {
+          "name": "Malanje",
+          "lgas": [
+            {
+              "name": "Cacuso"
+            },
+            {
+              "name": "Calandula"
+            },
+            {
+              "name": "Cambundi-Catembo"
+            },
+            {
+              "name": "Cangandala"
+            },
+            {
+              "name": "Caombo"
+            },
+            {
+              "name": "Cuaba Nzoji"
+            },
+            {
+              "name": "Kunda-dia-Base"
+            },
+            {
+              "name": "Luquembo"
+            },
+            {
+              "name": "Malanje"
+            },
+            {
+              "name": "Marimba"
+            },
+            {
+              "name": "Massango"
+            },
+            {
+              "name": "Mucari"
+            },
+            {
+              "name": "Quela"
+            },
+            {
+              "name": "Quirima"
+            }
+          ]
+        },
+        {
+          "name": "Moxico",
+          "lgas": [
+            {
+              "name": "Alto Zambeze (Cazombo)"
+            },
+            {
+              "name": "Bundas (Lumbala-N'guimbo)"
+            },
+            {
+              "name": "Camanongue"
+            },
+            {
+              "name": "Cameia (Lumeje)"
+            },
+            {
+              "name": "Léua"
+            },
+            {
+              "name": "Luau"
+            },
+            {
+              "name": "Luacano"
+            },
+            {
+              "name": "Luchazes"
+            },
+            {
+              "name": "Moxico (Luena)"
+            }
+          ]
+        },
+        {
+          "name": "Namibe",
+          "lgas": [
+            {
+              "name": "Bibala"
+            },
+            {
+              "name": "Camacuio"
+            },
+            {
+              "name": "Moçâmedes (Namibe until 2016)"
+            },
+            {
+              "name": "Tômbua"
+            },
+            {
+              "name": "Virei"
+            }
+          ]
+        },
+        {
+          "name": "Uíge",
+          "lgas": [
+            {
+              "name": "Alto Cauale"
+            },
+            {
+              "name": "Ambuila"
+            },
+            {
+              "name": "Bembe"
+            },
+            {
+              "name": "Buengas"
+            },
+            {
+              "name": "Bungo"
+            },
+            {
+              "name": "Damba"
+            },
+            {
+              "name": "Maquela do Zombo (Zombo)"
+            },
+            {
+              "name": "Milunga (formerly Macocola)"
+            },
+            {
+              "name": "Mucaba"
+            },
+            {
+              "name": "Negage"
+            },
+            {
+              "name": "Puri"
+            },
+            {
+              "name": "Quimbele"
+            },
+            {
+              "name": "Quitexe"
+            },
+            {
+              "name": "Sanza Pombo"
+            },
+            {
+              "name": "Songo"
+            },
+            {
+              "name": "Uíge"
+            }
+          ]
+        },
+        {
+          "name": "Uíge",
+          "lgas": [
+            {
+              "name": "Cuimba"
+            },
+            {
+              "name": "M'Banza Congo"
+            },
+            {
+              "name": "Nóqui"
+            },
+            {
+              "name": "N'zeto"
+            },
+            {
+              "name": "Soyo"
+            },
+            {
+              "name": "Tomboco"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

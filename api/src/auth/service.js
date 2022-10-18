@@ -8,6 +8,7 @@ const bcrypt = require('bcrypt')
 require('isomorphic-fetch')
 const emailUtil = require('../email/emailUtil')
 const templateProcessor = require('../email/templateProcessor')
+const logger = require('../shared/logger')
 
 const bcryptCompare = promisify(bcrypt.compare)
 const bcryptHash = promisify(bcrypt.hash)
@@ -16,6 +17,7 @@ const config = require('../config')
 const { query, knex } = require('../db')
 const { gxAlertAuthenticate } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
+const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 
 const clientTypes = {
   app: 'reporter_app',
@@ -26,13 +28,7 @@ async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
 
-const userProps = [
-  'u.lockedOut',
-  'u.failedPasswordAttempts',
-  'u.password',
-  'u.legacyPassword',
-  'u.id',
-  'u.name',
+const personProps = [
   'p.name as userName',
   'p.culture',
   'p.timezone',
@@ -42,14 +38,32 @@ const userProps = [
   'p.userId',
   'p.id as personId',
   'c.abbreviation as countryAbbreviation',
+  'p.phone',
+  'p.cell',
+  'p.email',
+  'p.disabled',
 ]
 
-function getUser(username) {
+const userProps = [
+  'u.lockedOut',
+  'u.failedPasswordAttempts',
+  'u.password',
+  'u.legacyPassword',
+  'u.id',
+  'u.name',
+  ...personProps,
+]
+
+function getUser(username, options = {}) {
+  const { partnerId = false } = options
   return query('Get basic user details')
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
     .where({ 'u.name': username })
+    .modify(q => {
+      if (partnerId) q.where('p.lastPartnerId', partnerId)
+    })
     .first(userProps)
 }
 
@@ -62,6 +76,14 @@ function getUserByPersonId(personId) {
     .first(userProps)
 }
 
+function getPersonByPersonId(personId) {
+  return query('Get user details for person')
+    .from('Person as p')
+    .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .where({ 'p.id': personId })
+    .first(personProps)
+}
+
 function getUserByUserId(userId) {
   return query('Get user details for user')
     .from('User as u')
@@ -72,32 +94,30 @@ function getUserByUserId(userId) {
 }
 
 function getUserId(username) {
-  return query('Get user ID for username')
-    .from('User as u')
-    .where({ 'u.name': username })
-    .first('u.id')
+  return query('Get user ID for username').from('User as u').where({ 'u.name': username }).first('u.id')
 }
 
 function getTokenExpiry(clientType, currentTime) {
-  const expiresTime =
-    clientType && clientType.includes(clientTypes.app)
-      ? 30 * 86400000
-      : 7 * 86400000
+  const expiresTime = clientType && clientType.includes(clientTypes.app) ? 30 * 86400000 : 7 * 86400000
   return new Date(currentTime.getTime() + expiresTime)
 }
 
-async function authenticate(request) {
+async function authenticate(request, response) {
   const { payload } = request
   let user = await getUser(payload.name)
   if (!user) {
     try {
       // no user with such username in Aspect yet - check it in GxAlert
       user = await gxAlertAuthenticate(payload.name, payload.password)
+      response.user = user
       if (!user) {
         // TODO: Check if what is wrong is the user or the password
-        return Boom.unauthorized(
-          'Authentication failed. Wrong username or password.'
-        )
+
+        const err = Boom.unauthorized('Authentication failed. Wrong username or password.', null, {
+          errorKeyCode: 'wrongUserOrPassword',
+        })
+        err.output.payload.data = err.data
+        return loginHistoryCodeDecorator(err, LOGIN_HISTORY_CODES.userNotExists)
       }
     } catch (err) {
       const data = {
@@ -105,21 +125,26 @@ async function authenticate(request) {
         message: err.message,
       }
       if (err.isConnectionError !== undefined) {
-        const boomMessage = err.isConnectionError
-          ? "Couldn't connect to GxAlert"
-          : 'There was a conflict with your credentials'
-        return Boom.conflict(boomMessage, data)
+        if (err.isConnectionError) return Boom.conflict("Couldn't connect to GxAlert", data)
+        return loginHistoryCodeDecorator(
+          Boom.unauthorized('There was a conflict with your GxAlert credentials', data),
+          LOGIN_HISTORY_CODES.unexpected
+        )
       }
 
-      return Boom.internal(
-        'Authentication failed because an internal server error',
-        data
+      return loginHistoryCodeDecorator(
+        Boom.internal('Authentication failed because an internal server error', data),
+        LOGIN_HISTORY_CODES.unexpected
       )
     }
   }
 
-  if (user.lockedOut === 1) {
-    return Boom.unauthorized('Your account is locked.')
+  if (user.lockedOut === 1 || user.disabled === 1) {
+    return loginHistoryCodeDecorator(
+      Boom.forbidden('Your account is locked.'),
+      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
+      user.id
+    )
   }
 
   // if password isn't a bcrypt hash, user was migrated from
@@ -128,8 +153,10 @@ async function authenticate(request) {
     // check login at GxAlert and return created/updated user from Aspect if login match in GxAlert
     user = await gxAlertAuthenticate(payload.name, payload.password)
     if (!user) {
-      return Boom.unauthorized(
-        'Authentication failed. Wrong username or password.'
+      return loginHistoryCodeDecorator(
+        Boom.unauthorized('Authentication failed. Wrong username or password.'),
+        LOGIN_HISTORY_CODES.gxAlertWrongPassword,
+        user.id
       )
     }
   } else {
@@ -138,21 +165,29 @@ async function authenticate(request) {
     const pwResult = await bcryptCompare(payload.password, user.password)
 
     if (!pwResult) {
-      const lock =
-        user.failedPasswordAttempts + 1 >= config.passwordAttempts ? 1 : 0
-      const updateFailedPass = query(
-        'Update failed password attempts and set locked out status on user'
-      )
+      const attempts = user.failedPasswordAttempts + 1
+      const lock = attempts >= config.passwordAttempts ? 1 : 0
+      const updateFailedPass = query('Update failed password attempts and set locked out status on user')
         .from('User')
         .where({ id: user.id })
         .update({
-          failedPasswordAttempts: user.failedPasswordAttempts + 1,
+          failedPasswordAttempts: attempts,
           lockedOut: lock,
         })
 
       await updateFailedPass
 
-      return Boom.unauthorized('Authentication failed. Wrong password.')
+      if (lock) {
+        logger.alert(`User account locked due to too many invalid login attempts
+        Username: ${payload.name}
+        Attempts: ${attempts}
+        `)
+      }
+      return loginHistoryCodeDecorator(
+        Boom.unauthorized('Authentication failed. Wrong username or password.'),
+        LOGIN_HISTORY_CODES.wrongPassword,
+        user.id
+      )
     }
   }
 
@@ -178,14 +213,12 @@ async function authenticate(request) {
     countryAbbreviation: user.countryAbbreviation,
   })
 
-  await query('Update failed password attempts to 0')
-    .from('User')
-    .where({ id: user.id })
-    .update({
-      failedPasswordAttempts: 0,
-      lastLogin: now,
-      lastActive: now,
-    })
+  response.user = user // to be consumed by loginHistoryWrapper
+  await query('Update failed password attempts to 0').from('User').where({ id: user.id }).update({
+    failedPasswordAttempts: 0,
+    lastLogin: now,
+    lastActive: now,
+  })
 
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
@@ -201,6 +234,7 @@ async function authenticate(request) {
     countryId: user.countryId,
     countryAbbreviation: user.countryAbbreviation,
     deviceTokenId,
+    userId: user.id,
   }
 }
 
@@ -287,15 +321,12 @@ async function refreshToken(request) {
   const expires = getTokenExpiry(data.clientType, now)
   const refreshToken = crypto.randomBytes(48).toString('base64')
 
-  await query('Update refresh token expiry date')
-    .from('RefreshToken')
-    .where({ token })
-    .update({
-      token: refreshToken,
-      expires,
-      updatedOn: now,
-      deviceTokenId,
-    })
+  await query('Update refresh token expiry date').from('RefreshToken').where({ token }).update({
+    token: refreshToken,
+    expires,
+    updatedOn: now,
+    deviceTokenId,
+  })
 
   const accessToken = await getAccessToken(data)
   const displayPreferences = await getDisplayPreferences(data)
@@ -310,6 +341,7 @@ async function refreshToken(request) {
     timezone: data.timezone || 'Eastern Standard Time',
     displayPreferences,
     countryAbbreviation: data.countryAbbreviation,
+    userId: data.id,
   }
 }
 
@@ -329,10 +361,7 @@ async function hasPermissions(auth, modules) {
 }
 
 // generate a new jwt for the given user data
-async function getAccessToken(
-  { id, name, partnerId, personId },
-  clientType = 'web'
-) {
+async function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
   const permissions = await query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
@@ -345,18 +374,14 @@ async function getAccessToken(
     .then(data => data.map(p => `${p.module}:${p.activity}`))
 
   const applicableLicense = await getApplicableLicense(personId, partnerId)
-  const geography = await getGeographyAccess(personId, partnerId)
 
   // create a new token
   const token = jwt.sign(
     {
       name,
       permissions,
-      geography,
       hasToAcceptLicenseId:
-        clientType.includes(clientTypes.app) ||
-        !applicableLicense ||
-        applicableLicense.acceptedOn
+        clientType.includes(clientTypes.app) || !applicableLicense || applicableLicense.acceptedOn
           ? null
           : applicableLicense.id,
     },
@@ -412,18 +437,12 @@ async function getDisplayPreferences({ partnerId }) {
   // If we require onload we get a cycle. This is cached so is safe
   // But it likely could be replaced if we dynamically register plugins
   const { loadPlugin } = require('../plugin/registration')
-  const { displayPreferences = {} } = await loadPlugin(
-    [_.get(prefs, 'plugin', null)],
-    'settings'
-  )
+  const { displayPreferences = {} } = await loadPlugin([_.get(prefs, 'plugin', null)], 'settings')
   return displayPreferences
 }
 
 function updateUser(userId, changedFields) {
-  return query('Update user details')
-    .from('User as u')
-    .where({ 'u.id': userId })
-    .update(changedFields)
+  return query('Update user details').from('User as u').where({ 'u.id': userId }).update(changedFields)
 }
 
 async function isUsernameAlreadyInUseBySomebodyElse(userId, username) {
@@ -444,25 +463,16 @@ async function getChangedFields(payload, existingRecord) {
     changedFields.name = payload.newUsername
   }
   if (payload.newPassword) {
-    const passwordsMatch = await bcryptCompare(
-      payload.newPassword,
-      existingRecord.password
-    )
+    const passwordsMatch = await bcryptCompare(payload.newPassword, existingRecord.password)
     if (!passwordsMatch) {
-      changedFields.password = await bcryptHash(
-        payload.newPassword,
-        parseInt(config.passwordSaltRounds, 10)
-      )
+      changedFields.password = await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10))
       changedFields.lastPasswordChange = new Date()
       if (existingRecord.legacyPassword) {
         changedFields.legacyPassword = 0
       }
     }
   }
-  if (
-    _.isBoolean(payload.userLockedOut) &&
-    payload.userLockedOut !== existingRecord.lockedOut
-  ) {
+  if (_.isBoolean(payload.userLockedOut) && payload.userLockedOut !== existingRecord.lockedOut) {
     changedFields.lockedOut = payload.userLockedOut
   }
   return changedFields
@@ -476,19 +486,13 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   if (!loggedInUser) {
     return Boom.notFound('User not Found')
   }
-  const pwResult = await bcryptCompare(
-    payload.currentPassword,
-    loggedInUser.password
-  )
+  const pwResult = await bcryptCompare(payload.currentPassword, loggedInUser.password)
   if (!pwResult) {
     return Boom.unauthorized('Incorrect password.')
   }
 
   if (payload.newUsername) {
-    const usernameNotAvailable = await isUsernameAlreadyInUseBySomebodyElse(
-      loggedInUser.id,
-      payload.newUsername
-    )
+    const usernameNotAvailable = await isUsernameAlreadyInUseBySomebodyElse(loggedInUser.id, payload.newUsername)
     if (usernameNotAvailable) {
       return usernameNotAvailable
     }
@@ -497,18 +501,12 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   const changedFields = await getChangedFields(payload, loggedInUser)
   const now = new Date()
   if (payload.newPassword) {
-    const passwordsMatch = await bcryptCompare(
-      payload.newPassword,
-      loggedInUser.password
-    )
+    const passwordsMatch = await bcryptCompare(payload.newPassword, loggedInUser.password)
     if (!passwordsMatch) {
       changedFields.lockedOut = 0
       changedFields.failedPasswordAttempts = 0
       changedFields.legacyPassword = 0
-      changedFields.password = await bcryptHash(
-        payload.newPassword,
-        parseInt(config.passwordSaltRounds, 10)
-      )
+      changedFields.password = await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10))
       changedFields.lastPasswordChange = now
     }
   }
@@ -571,9 +569,7 @@ async function createResetPasswordToken(request) {
       },
       users[0].culture
     )
-    const inlineImageAttachments = await templateProcessor.getInlineImageAttachments(
-      generatedEmail.html
-    )
+    const inlineImageAttachments = await templateProcessor.getInlineImageAttachments(generatedEmail.html)
 
     await emailUtil.sendEmail(
       params.email,
@@ -583,17 +579,12 @@ async function createResetPasswordToken(request) {
       inlineImageAttachments
     )
 
-    await query('Save reset password token')
-      .from('User as u')
-      .where('u.id', users[0].id)
-      .update({
-        resetPasswordToken,
-        resetPasswordTokenExpires: expires,
-      })
+    await query('Save reset password token').from('User as u').where('u.id', users[0].id).update({
+      resetPasswordToken,
+      resetPasswordTokenExpires: expires,
+    })
   } else if (users.length > 1) {
-    return Boom.conflict(
-      'Could not pinpoint the user from the email address provided'
-    )
+    return Boom.conflict('Could not pinpoint the user from the email address provided')
   }
 
   return {
@@ -621,10 +612,7 @@ async function updatePasswordWithResetPasswordToken(request) {
         lockedOut: 0,
         failedPasswordAttempts: 0,
         legacyPassword: 0,
-        password: await bcryptHash(
-          payload.newPassword,
-          parseInt(config.passwordSaltRounds, 10)
-        ),
+        password: await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
         lastPasswordChange: now,
         resetPasswordToken: null,
         resetPasswordTokenExpires: null,
@@ -669,9 +657,7 @@ async function updateUsernameAndPasswordForPerson(request) {
       await updateUser(userLinkedToPerson.id, changedFields)
     }
 
-    responseData.changedFields = Object.keys(
-      _.omit(changedFields, ['lastPasswordChange'])
-    )
+    responseData.changedFields = Object.keys(_.omit(changedFields, ['lastPasswordChange']))
     responseData.username = userLinkedToPerson.name
     responseData.userId = userLinkedToPerson.userId
   } else {
@@ -679,10 +665,7 @@ async function updateUsernameAndPasswordForPerson(request) {
       .from('User')
       .insert({
         name: payload.newUsername,
-        password: await bcryptHash(
-          payload.newPassword,
-          parseInt(config.passwordSaltRounds, 10)
-        ),
+        password: await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
         approved: 1,
         createdOn: new Date(),
         lockedOut: payload.userLockedOut || 0,
@@ -694,13 +677,10 @@ async function updateUsernameAndPasswordForPerson(request) {
     responseData.username = payload.newUsername
     responseData.userId = insertedUserId
   }
-  await query('update person for details')
-    .from('Person')
-    .where('id', params.personId)
-    .update({
-      userId: linkedUserId,
-      canLogIn: true,
-    })
+  await query('update person for details').from('Person').where('id', params.personId).update({
+    userId: linkedUserId,
+    canLogIn: true,
+  })
   return {
     ok: true,
     data: responseData,
@@ -708,9 +688,7 @@ async function updateUsernameAndPasswordForPerson(request) {
 }
 
 async function getApplicableLicense(personId, partnerId) {
-  const latestLicense = await query(
-    'Get latest applicable license and when user accepted it'
-  )
+  const latestLicense = await query('Get latest applicable license and when user accepted it')
     .from('License as l')
     .leftOuterJoin('LicensePerson as lp', function () {
       this.on('l.id', '=', 'lp.licenseId').andOn('lp.personId', '=', personId)
@@ -729,10 +707,7 @@ async function getLicense(request) {
     query: { licenseId },
   } = request
 
-  const license = await query('Get license')
-    .from('License')
-    .where('id', licenseId)
-    .first('id', 'createdOn', 'content')
+  const license = await query('Get license').from('License').where('id', licenseId).first('id', 'createdOn', 'content')
 
   return { ok: true, data: license }
 }
@@ -767,9 +742,7 @@ async function acceptLicense(request) {
 
 // / Revoke/Grant access to specific user
 async function revokeUsersToken(userId, revoke) {
-  await query(
-    'change revoked state for the specific user in refresh token tables'
-  )
+  await query('change revoked state for the specific user in refresh token tables')
     .from('RefreshToken')
     .where({ userId })
     .update({
@@ -779,12 +752,9 @@ async function revokeUsersToken(userId, revoke) {
 
 // Lockedout and grant access to login to specific user.
 async function lockedOutUser(userId, lockedOut) {
-  await query('change Lockout state for the specific user ')
-    .from('User')
-    .where({ id: userId })
-    .update({
-      lockedOut,
-    })
+  await query('change Lockout state for the specific user ').from('User').where({ id: userId }).update({
+    lockedOut,
+  })
 }
 
 async function getUserJobFunctions(request) {
@@ -811,5 +781,8 @@ module.exports = {
   lockedOutUser,
   hasPermissions,
   clientTypes,
+  getGeographyAccess,
   getUserJobFunctions,
+  getPersonByPersonId,
+  getDisplayPreferences,
 }

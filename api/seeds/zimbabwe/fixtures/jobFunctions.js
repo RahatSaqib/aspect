@@ -1,13 +1,38 @@
+const {
+  admin,
+  clinician,
+  donor,
+  ntp,
+  ntpNoResults,
+  technician,
+  deviceMaker,
+  labUser,
+  regionalOfficer,
+  systemOne,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
+const reports = require('./reports')
+
+const countryReports = Object.values(reports).map(report => report.externalId)
+
 module.exports = [
-  {
-    name: 'Admin',
+  mergeJobFunctions(admin, {
+    reports: [...admin.reports, ...countryReports],
     permissions: [
       {
-        module: 'assay',
+        module: 'account',
         activity: 'edit',
       },
       {
         module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
+        module: 'notification',
         activity: 'edit',
       },
       {
@@ -19,19 +44,11 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
         module: 'site',
         activity: 'edit',
       },
       {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
+        module: 'treatmentStatus',
         activity: 'edit',
       },
       {
@@ -39,16 +56,158 @@ module.exports = [
         activity: 'summary',
       },
       {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(clinician, {
+    reports: [...clinician.reports, ...countryReports],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'dashboard',
+        activity: 'result',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(donor, {
+    reports: [...donor.reports, ...countryReports],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(labUser, {
+    reports: [...labUser.reports, ...countryReports],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
         module: 'inventory',
         activity: 'edit',
       },
-    ],
-  },
-  {
-    name: 'Regional Officer',
-    permissions: [
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
       {
         module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
         activity: 'view',
       },
       {
@@ -60,6 +219,121 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(ntp, {
+    reports: [...ntp.reports, ...countryReports],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'result',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(ntpNoResults, {
+    reports: [...ntpNoResults.reports, ...countryReports],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'device',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(regionalOfficer, {
+    reports: [...regionalOfficer.reports, ...countryReports],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
         module: 'result',
         activity: 'edit',
       },
@@ -68,36 +342,15 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
         module: 'dashboard',
         activity: 'summary',
       },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-    ],
-  },
-  {
-    name: 'Lab User',
-    permissions: [
       {
         module: 'assay',
         activity: 'view',
       },
       {
-        module: 'person',
+        module: 'browse',
         activity: 'view',
       },
       {
@@ -105,33 +358,98 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'result',
-        activity: 'edit',
+        module: 'person',
+        activity: 'view',
       },
       {
-        module: 'treatmentStatus',
-        activity: 'edit',
+        module: 'report',
+        activity: 'view',
       },
       {
         module: 'site',
         activity: 'view',
       },
       {
-        module: 'browse',
+        module: 'task',
         activity: 'view',
       },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(systemOne, {
+    reports: [systemOne.reports, ...countryReports],
+  }),
+  mergeJobFunctions(technician, {
+    reports: [...technician.reports, ...countryReports],
+    permissions: [
       {
         module: 'account',
         activity: 'edit',
       },
       {
-        module: 'dashboard',
-        activity: 'summary',
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
       },
       {
         module: 'inventory',
-        activity: 'edit',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
       },
     ],
-  },
+  }),
+  mergeJobFunctions(deviceMaker, {
+    reports: [...deviceMaker.reports, ...countryReports],
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+    ],
+  }),
 ]

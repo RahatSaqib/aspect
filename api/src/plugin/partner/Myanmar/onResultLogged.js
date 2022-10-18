@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
+const Promise = require('bluebird')
 
 const {
   resultModuleTemperatureError,
@@ -12,15 +13,10 @@ const {
   resultModuleUnknownError,
   resultMachineUnknownError,
 } = require('../../../result/actions')
-const {
-  selectAssayConsumables,
-} = require('../../../consumable/assayConsumableService')
+const { selectAssayConsumables } = require('../../../consumable/assayConsumableService')
 const { inventoryReagentHealth } = require('../../../inventory/actions')
 const { resultCategoryToId } = require('../../../shared/dictionary')
-const {
-  getReplacedModuleSerials,
-  shouldTriggerModuleReplaced,
-} = require('../../utils')
+const { getReplacedModuleSerials, shouldTriggerModuleReplaced } = require('../../utils')
 
 const {
   MODULE_TEMPERATURE_ERROR_CODES,
@@ -64,7 +60,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
   await messageContext.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
-    const { deviceId, siteId } = result
+    const { deviceId, siteId, moduleName, moduleSerial, startedOn, instrumentSerial } = result
     const last30day = subDays(new Date(), 30)
     let reagentErrorRatio = 0
     let invalidReagentErrorRatio = 0
@@ -72,7 +68,16 @@ async function onResultLogged({ resultId }, { messageContext }) {
     // get all modules that were replaced so we can ignore them in the queries below:
     const replacedModuleSerials = await getReplacedModuleSerials(knex, deviceId)
 
-    await shouldTriggerModuleReplaced(knex, messageContext, resultId)
+    await shouldTriggerModuleReplaced(
+      knex,
+      messageContext,
+      resultId,
+      deviceId,
+      moduleSerial,
+      instrumentSerial,
+      moduleName,
+      startedOn
+    )
 
     // prepare query for device results
     const deviceErrorQuery = knex('Result as r')
@@ -92,9 +97,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .select(
             'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
-            )
+            knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName')
           )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
@@ -127,9 +130,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .select(
             'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
-            )
+            knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName')
           )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
@@ -149,9 +150,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .select(
             'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(r.moduleName, r.moduleSerial) as resultModuleName'
-            )
+            knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName')
           )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
@@ -163,10 +162,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             }
           })
         )
-      } else if (
-        PROCEDURAL_ERROR_CODES.includes(result.errorCode) &&
-        !machineIssueTriggured
-      ) {
+      } else if (PROCEDURAL_ERROR_CODES.includes(result.errorCode) && !machineIssueTriggured) {
         const modules = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
@@ -175,9 +171,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .whereNotIn('r.moduleSerial', moduleErrorSerials)
           .select(
             'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
-            )
+            knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName')
           )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
@@ -192,8 +186,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .where('r.moduleSerial', module.moduleSerial)
               .whereNotIn('r.moduleSerial', replacedModuleSerials)
               .count('r.id as moduleResultCount')
-            const prcntModuleError =
-              (module.errorCount / moduleResultCount) * 100
+            const prcntModuleError = (module.errorCount / moduleResultCount) * 100
             allModulesErr = allModulesErr && prcntModuleError > maxPrcntErrors
             // count errors from all modules
             allModulesTotalErrors += module.errorCount
@@ -208,22 +201,23 @@ async function onResultLogged({ resultId }, { messageContext }) {
           messageContext.resultMachineProceduralError(deviceId)
         } else {
           // Check for module procedural issue
-          _.map(modules, async module => {
-            const [{ moduleResultCount }] = await knex('Result as r')
-              .where('r.endedOn', '>=', last30day)
-              .where('r.moduleSerial', module.moduleSerial)
-              .whereNotIn('r.moduleSerial', replacedModuleSerials)
-              .count('r.id as moduleResultCount')
-            const prcntModuleError =
-              (module.errorCount / moduleResultCount) * 100
-            if (
-              prcntModuleError > maxPrcntErrors &&
-              // LU Generic Module: Minimum of 6 errors
-              module.errorCount >= minErrorsForLUGenericModuleIssue
-            ) {
-              messageContext.resultModuleProceduralError(deviceId, module)
-            }
-          })
+          await Promise.all(
+            _.map(modules, async module => {
+              const [{ moduleResultCount }] = await knex('Result as r')
+                .where('r.endedOn', '>=', last30day)
+                .where('r.moduleSerial', module.moduleSerial)
+                .whereNotIn('r.moduleSerial', replacedModuleSerials)
+                .count('r.id as moduleResultCount')
+              const prcntModuleError = (module.errorCount / moduleResultCount) * 100
+              if (
+                prcntModuleError > maxPrcntErrors &&
+                // LU Generic Module: Minimum of 6 errors
+                module.errorCount >= minErrorsForLUGenericModuleIssue
+              ) {
+                messageContext.resultModuleProceduralError(deviceId, module)
+              }
+            })
+          )
         }
       } else if (REAGENT_HEALTH_ERROR_CODES.includes(result.errorCode)) {
         const reagentErrorQuery = knex('Result as r')
@@ -235,8 +229,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           })
         ;[{ reagentErrorRatio }] = await reagentErrorQuery.clone().select(
           (() => {
-            const errorCount =
-              "sum(case when r.errorCode in (?) and rc.externalId='Error' then 1 else 0 end)"
+            const errorCount = "sum(case when r.errorCode in (?) and rc.externalId='Error' then 1 else 0 end)"
             const totalCount = 'count(distinct r.id)'
 
             return knex.raw(
@@ -245,9 +238,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             )
           })()
         )
-        ;[
-          { invalidReagentErrorRatio, invalidReagentErrorCount },
-        ] = await reagentErrorQuery.clone().select(
+        ;[{ invalidReagentErrorRatio, invalidReagentErrorCount }] = await reagentErrorQuery.clone().select(
           (() => {
             const errorCount =
               "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
@@ -258,9 +249,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
                 `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
                 [REAGENT_HEALTH_ERROR_CODES]
               ),
-              knex.raw(`${errorCount} as invalidReagentErrorCount`, [
-                REAGENT_HEALTH_ERROR_CODES,
-              ]),
+              knex.raw(`${errorCount} as invalidReagentErrorCount`, [REAGENT_HEALTH_ERROR_CODES]),
             ]
           })()
         )
@@ -286,9 +275,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .whereNull('r.errorCode') // must be null
           .select(
             'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
-            )
+            knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName')
           )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
@@ -302,10 +289,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .where('r.endedOn', '>=', last30day)
               .where('r.moduleSerial', module.moduleSerial)
               .count('r.id as moduleResultCount')
-            const prcntModuleError =
-              (module.errorCount / moduleResultCount) * 100
-            allModulesErr =
-              allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
+            const prcntModuleError = (module.errorCount / moduleResultCount) * 100
+            allModulesErr = allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
             totalResults[module.moduleSerial] = moduleResultCount
             allModulesTotalErrors += module.errorCount
           })
@@ -320,16 +305,15 @@ async function onResultLogged({ resultId }, { messageContext }) {
           messageContext.resultMachineUnknownError(deviceId)
         } else {
           // Check for module issue
-          _.map(modules, async module => {
+          await Promise.each(modules, async module => {
             const moduleResultCount = totalResults[module.moduleSerial]
-            const prcntModuleError =
-              (module.errorCount / moduleResultCount) * 100
+            const prcntModuleError = (module.errorCount / moduleResultCount) * 100
             if (
               prcntModuleError > maxPrcntErrors &&
               // LU Module Unknown Error: Minimum of 6 errors
               module.errorCount >= moduleMaxUnknownErrors
             ) {
-              messageContext.resultModuleUnknownError(deviceId, module)
+              return messageContext.resultModuleUnknownError(deviceId, module)
             }
           })
         }
@@ -360,8 +344,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     if (machineResultCount !== 0) {
       const prcntNoResult = (noResultCount / machineResultCount) * 100
       if (
-        (prcntNoResult > maxPrcntMachinePowerErrors &&
-          noResultCount >= machinePowerMinNoResults) ||
+        (prcntNoResult > maxPrcntMachinePowerErrors && noResultCount >= machinePowerMinNoResults) ||
         noResultCount + powerErrorCount > machinePowerMinErrorsNoResult
       ) {
         messageContext.resultMachinePowerError(deviceId)
@@ -379,8 +362,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         })
       ;[{ invalidResultRatio }] = await invalidResultQuery.clone().select(
         (() => {
-          const invalidCount =
-            "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
+          const invalidCount = "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
           const totalCount = 'count(distinct r.id)'
 
           return knex.raw(
@@ -392,8 +374,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         .clone()
         .select(
           (() => {
-            const invalidCount =
-              "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
+            const invalidCount = "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
             const totalCount = 'count(distinct r.id)'
 
             return knex.raw(
@@ -402,9 +383,10 @@ async function onResultLogged({ resultId }, { messageContext }) {
           })()
         )
         .groupBy(['r.consumableLot', 'r.assayId'])
-      _.forEach(invalidResultBatchRatios, ratio => {
+
+      await Promise.each(invalidResultBatchRatios, async ratio => {
         if (ratio.invalidResultRatio > invalidResultBatchRatio) {
-          createInventoryReagentHealthIssue(
+          await createInventoryReagentHealthIssue(
             knex,
             result.deviceId,
             result.partnerId,
@@ -420,7 +402,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         invalidReagentErrorRatio > maxInvalidReagentErrorRatio) &&
       invalidReagentErrorCount >= minErrorsInvalidsForReagentHealthIssue
     ) {
-      createInventoryReagentHealthIssue(
+      await createInventoryReagentHealthIssue(
         knex,
         result.deviceId,
         result.partnerId,
@@ -431,21 +413,9 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
-async function createInventoryReagentHealthIssue(
-  knex,
-  deviceId,
-  partnerId,
-  assayId,
-  dispatchAction
-) {
-  const assayConsumables = await selectAssayConsumables(
-    knex,
-    { partner: { id: partnerId } },
-    assayId
-  )
-  _.map(assayConsumables, async assayConsumable => {
-    dispatchAction(deviceId, assayConsumable.consumableId)
-  })
+async function createInventoryReagentHealthIssue(knex, deviceId, partnerId, assayId, dispatchAction) {
+  const assayConsumables = await selectAssayConsumables(knex, { partner: { id: partnerId } }, assayId)
+  await Promise.each(assayConsumables, async ({ consumableId }) => dispatchAction(deviceId, consumableId))
 }
 
 module.exports = onResultLogged

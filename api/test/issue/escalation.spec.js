@@ -3,19 +3,12 @@ const _ = require('lodash')
 const { subDays } = require('date-fns')
 const { run } = require('../../src/db')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
+const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 const { escalateIssues } = require('../../src/issue/actions')
 const { types: deviceActionTypes } = require('../../src/device/actions')
 const { types: resultActionTypes } = require('../../src/result/actions')
 const { getSite } = require('../utils/issueUtils')
-const {
-  deviceTypeToId,
-  deviceApprovalToId,
-} = require('../../src/shared/dictionary')
+const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 
 const { assert, expect } = chai
 
@@ -37,38 +30,20 @@ describe('Issue Escalation', () => {
     return knex('Device as d')
       .join('Geography as lgaGeography', 'd.geographyId', 'lgaGeography.id')
       .join('Geography as regionalGeography', function () {
-        this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull(
-          'regionalGeography.lgaId'
-        )
+        this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull('regionalGeography.lgaId')
       })
       .join('Country as c', 'lgaGeography.countryId', 'c.id')
       .join('Person as labUser', 'lgaGeography.id', 'labUser.geographyId')
       .join('Job as labUserJob', 'labUser.id', 'labUserJob.personId')
-      .join(
-        'JobFunction as labUserJobFunction',
-        'labUserJob.jobFunctionId',
-        'labUserJobFunction.id'
-      )
-      .join(
-        'JobContext as regionalContext',
-        'regionalGeography.id',
-        'regionalContext.geographyId'
-      )
-      .join(
-        'Job as regionalOfficerJob',
-        'regionalContext.jobId',
-        'regionalOfficerJob.id'
-      )
+      .join('JobFunction as labUserJobFunction', 'labUserJob.jobFunctionId', 'labUserJobFunction.id')
+      .join('JobContext as regionalContext', 'regionalGeography.id', 'regionalContext.geographyId')
+      .join('Job as regionalOfficerJob', 'regionalContext.jobId', 'regionalOfficerJob.id')
       .join(
         'JobFunction as regionalOfficerJobFunction',
         'regionalOfficerJob.jobFunctionId',
         'regionalOfficerJobFunction.id'
       )
-      .join(
-        'Person as regionalOfficer',
-        'regionalOfficerJob.personId',
-        'regionalOfficer.id'
-      )
+      .join('Person as regionalOfficer', 'regionalOfficerJob.personId', 'regionalOfficer.id')
       .where('c.abbreviation', countryAbbreviation)
       .andWhere(function () {
         this.where('d.partnerId', partnerId)
@@ -93,9 +68,7 @@ describe('Issue Escalation', () => {
   }
 
   async function getIssueEventStatus(knex, issueEventStatus) {
-    return knex('IssueEventStatus')
-      .where('externalId', issueEventStatus)
-      .first()
+    return knex('IssueEventStatus').where('externalId', issueEventStatus).first()
   }
 
   async function getIssue(knex, issueId) {
@@ -105,24 +78,13 @@ describe('Issue Escalation', () => {
   async function getIssueNotifications(knex, issueId) {
     ensureMySqlBeforeNestedTablesOptions(knex)
     return knex('Notification')
-      .join(
-        'NotificationType',
-        'Notification.notificationTypeId',
-        'NotificationType.id'
-      )
+      .join('NotificationType', 'Notification.notificationTypeId', 'NotificationType.id')
       .where('issueId', issueId)
       .options({ nestTables: true })
       .select()
   }
 
-  async function getNotificationType(
-    knex,
-    partnerId,
-    issueTypeId,
-    jobFunctionId,
-    level,
-    notificationTypeName
-  ) {
+  async function getNotificationType(knex, partnerId, issueTypeId, jobFunctionId, level, notificationTypeName) {
     return knex('NotificationType')
       .where({
         partnerId,
@@ -143,21 +105,10 @@ describe('Issue Escalation', () => {
       .first()
   }
 
-  async function createAndTriggerIssue(
-    knex,
-    partnerId,
-    device,
-    issueTypeId,
-    actionType,
-    level,
-    dateIssueRaised
-  ) {
+  async function createAndTriggerIssue(knex, partnerId, device, issueTypeId, actionType, level, dateIssueRaised) {
     const activeIssueStatus = await getIssueStatus(knex, 'Active')
-    const triggeredIssueEventStatus = await getIssueEventStatus(
-      knex,
-      'Triggered'
-    )
-    const issueId = await knex('Issue').insert({
+    const triggeredIssueEventStatus = await getIssueEventStatus(knex, 'Triggered')
+    const [issueId] = await knex('Issue').insert({
       issueTypeId,
       issueStatusId: activeIssueStatus.id,
       partnerId,
@@ -179,13 +130,7 @@ describe('Issue Escalation', () => {
     return issueId
   }
 
-  async function createNotification(
-    knex,
-    notificationTypeId,
-    issueId,
-    personId,
-    createdOn
-  ) {
+  async function createNotification(knex, notificationTypeId, issueId, personId, createdOn) {
     return knex('Notification').insert({
       notificationTypeId,
       issueId,
@@ -195,9 +140,7 @@ describe('Issue Escalation', () => {
   }
 
   async function cleanUpIssues(knex, issueIds) {
-    const notifications = await knex('Notification')
-      .whereIn('issueId', issueIds)
-      .select()
+    const notifications = await knex('Notification').whereIn('issueId', issueIds).select()
     const alertMessageIds = _.filter(
       _.uniq(_.map(notifications, 'alertMessageId')),
       alertMessageId => !_.isNull(alertMessageId)
@@ -223,10 +166,7 @@ describe('Issue Escalation', () => {
     return knex('Issue').whereIn('id', issueIds).del()
   }
 
-  async function createDeviceNoResult(
-    knex,
-    { countryAbbreviation, partnerId }
-  ) {
+  async function createDeviceNoResult(knex, { countryAbbreviation, partnerId }) {
     // get 1st site for current partner
     const {
       s: { id: siteId, geographyId },
@@ -347,10 +287,7 @@ describe('Issue Escalation', () => {
 
         afterEach(() =>
           run(async knex => {
-            await cleanUpIssues(knex, [
-              device1OfflineIssueId,
-              device2OfflineIssueId,
-            ])
+            await cleanUpIssues(knex, [device1OfflineIssueId, device2OfflineIssueId])
           })
         )
 
@@ -362,14 +299,8 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1OfflineIssue = await getIssue(
-                knex,
-                device1OfflineIssueId
-              )
-              const device2OfflineIssue = await getIssue(
-                knex,
-                device2OfflineIssueId
-              )
+              const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+              const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
               assert.equal(device1OfflineIssue.level, 2)
               assert.equal(device2OfflineIssue.level, 2)
@@ -377,15 +308,9 @@ describe('Issue Escalation', () => {
 
           it('notifications should be created for the level that the issue has been escalated to', () =>
             runTestWithKnex(async knex => {
-              let notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1OfflineIssueId
-              )
+              let notificationsForDevice1Issue = await getIssueNotifications(knex, device1OfflineIssueId)
               assert.isEmpty(notificationsForDevice1Issue)
-              let notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2OfflineIssueId
-              )
+              let notificationsForDevice2Issue = await getIssueNotifications(knex, device2OfflineIssueId)
               assert.isEmpty(notificationsForDevice2Issue)
 
               const waitForEscalateIssues = waitForAction(escalateIssues())
@@ -393,10 +318,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1OfflineIssueId
-              )
+              notificationsForDevice1Issue = await getIssueNotifications(knex, device1OfflineIssueId)
               expect(notificationsForDevice1Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -408,10 +330,7 @@ describe('Issue Escalation', () => {
                 },
               ])
 
-              notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2OfflineIssueId
-              )
+              notificationsForDevice2Issue = await getIssueNotifications(knex, device2OfflineIssueId)
               expect(notificationsForDevice2Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -428,21 +347,13 @@ describe('Issue Escalation', () => {
         describe("then ESCALATE_ISSUES is dispatched with one of the issue's ID", () => {
           it('that one issue should be escalated', () =>
             runTestWithKnex(async knex => {
-              const waitForEscalateIssues = waitForAction(
-                escalateIssues(device1OfflineIssueId)
-              )
+              const waitForEscalateIssues = waitForAction(escalateIssues(device1OfflineIssueId))
               messageContext.escalateIssues(device1OfflineIssueId)
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1OfflineIssue = await getIssue(
-                knex,
-                device1OfflineIssueId
-              )
-              const device2OfflineIssue = await getIssue(
-                knex,
-                device2OfflineIssueId
-              )
+              const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+              const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
               assert.equal(device1OfflineIssue.level, 2)
               assert.equal(device2OfflineIssue.level, 1)
@@ -458,11 +369,7 @@ describe('Issue Escalation', () => {
 
         beforeEach(() =>
           run(async knex => {
-            const regionalOfficerJobFunction = await getJobJunction(
-              knex,
-              partner.id,
-              'Regional Officer'
-            )
+            const regionalOfficerJobFunction = await getJobJunction(knex, partner.id, 'Regional Officer')
             const roNetworkNotificationType = await getNotificationType(
               knex,
               partner.id,
@@ -508,10 +415,7 @@ describe('Issue Escalation', () => {
 
         afterEach(() =>
           run(async knex => {
-            await cleanUpIssues(knex, [
-              device1OfflineIssueId,
-              device2OfflineIssueId,
-            ])
+            await cleanUpIssues(knex, [device1OfflineIssueId, device2OfflineIssueId])
           })
         )
 
@@ -523,14 +427,8 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1OfflineIssue = await getIssue(
-                knex,
-                device1OfflineIssueId
-              )
-              const device2OfflineIssue = await getIssue(
-                knex,
-                device2OfflineIssueId
-              )
+              const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+              const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
               assert.equal(device1OfflineIssue.level, 3)
               assert.equal(device2OfflineIssue.level, 3)
@@ -538,10 +436,7 @@ describe('Issue Escalation', () => {
 
           it('a notifications should be created for the level that the issue has been escalated to', () =>
             runTestWithKnex(async knex => {
-              let notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1OfflineIssueId
-              )
+              let notificationsForDevice1Issue = await getIssueNotifications(knex, device1OfflineIssueId)
               expect(notificationsForDevice1Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -552,10 +447,7 @@ describe('Issue Escalation', () => {
                   },
                 },
               ])
-              let notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2OfflineIssueId
-              )
+              let notificationsForDevice2Issue = await getIssueNotifications(knex, device2OfflineIssueId)
               expect(notificationsForDevice2Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -572,10 +464,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1OfflineIssueId
-              )
+              notificationsForDevice1Issue = await getIssueNotifications(knex, device1OfflineIssueId)
               expect(notificationsForDevice1Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -587,10 +476,7 @@ describe('Issue Escalation', () => {
                 },
               ])
 
-              notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2OfflineIssueId
-              )
+              notificationsForDevice2Issue = await getIssueNotifications(knex, device2OfflineIssueId)
               expect(notificationsForDevice2Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -637,10 +523,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const deviceOfflineIssue = await getIssue(
-                knex,
-                deviceOfflineIssueId
-              )
+              const deviceOfflineIssue = await getIssue(knex, deviceOfflineIssueId)
 
               assert.equal(deviceOfflineIssue.level, 1)
             }))
@@ -705,10 +588,7 @@ describe('Issue Escalation', () => {
 
         afterEach(() =>
           run(async knex => {
-            await cleanUpIssues(knex, [
-              device1NoResultsIssueId,
-              device2NoResultsIssueId,
-            ])
+            await cleanUpIssues(knex, [device1NoResultsIssueId, device2NoResultsIssueId])
           })
         )
 
@@ -720,14 +600,8 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1NoResultsIssue = await getIssue(
-                knex,
-                device1NoResultsIssueId
-              )
-              const device2NoResultsIssue = await getIssue(
-                knex,
-                device2NoResultsIssueId
-              )
+              const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+              const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
               assert.equal(device1NoResultsIssue.level, 2)
               assert.equal(device2NoResultsIssue.level, 2)
@@ -735,15 +609,9 @@ describe('Issue Escalation', () => {
 
           it('notifications should be created for the level that the issue has been escalated to', () =>
             runTestWithKnex(async knex => {
-              let notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1NoResultsIssueId
-              )
+              let notificationsForDevice1Issue = await getIssueNotifications(knex, device1NoResultsIssueId)
               assert.isEmpty(notificationsForDevice1Issue)
-              let notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2NoResultsIssueId
-              )
+              let notificationsForDevice2Issue = await getIssueNotifications(knex, device2NoResultsIssueId)
               assert.isEmpty(notificationsForDevice2Issue)
 
               const waitForEscalateIssues = waitForAction(escalateIssues())
@@ -751,10 +619,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1NoResultsIssueId
-              )
+              notificationsForDevice1Issue = await getIssueNotifications(knex, device1NoResultsIssueId)
               expect(notificationsForDevice1Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -766,10 +631,7 @@ describe('Issue Escalation', () => {
                 },
               ])
 
-              notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2NoResultsIssueId
-              )
+              notificationsForDevice2Issue = await getIssueNotifications(knex, device2NoResultsIssueId)
               expect(notificationsForDevice2Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -786,21 +648,13 @@ describe('Issue Escalation', () => {
         describe("then ESCALATE_ISSUES is dispatched with one of the issue's ID", () => {
           it('that one issue should be escalated', () =>
             runTestWithKnex(async knex => {
-              const waitForEscalateIssues = waitForAction(
-                escalateIssues(device1NoResultsIssueId)
-              )
+              const waitForEscalateIssues = waitForAction(escalateIssues(device1NoResultsIssueId))
               messageContext.escalateIssues(device1NoResultsIssueId)
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1NoResultsIssue = await getIssue(
-                knex,
-                device1NoResultsIssueId
-              )
-              const device2NoResultsIssue = await getIssue(
-                knex,
-                device2NoResultsIssueId
-              )
+              const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+              const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
               assert.equal(device1NoResultsIssue.level, 2)
               assert.equal(device2NoResultsIssue.level, 1)
@@ -816,11 +670,7 @@ describe('Issue Escalation', () => {
 
         beforeEach(() =>
           run(async knex => {
-            const regionalOfficerJobFunction = await getJobJunction(
-              knex,
-              partner.id,
-              'Regional Officer'
-            )
+            const regionalOfficerJobFunction = await getJobJunction(knex, partner.id, 'Regional Officer')
             const roNoResultsNotificationType = await getNotificationType(
               knex,
               partner.id,
@@ -866,10 +716,7 @@ describe('Issue Escalation', () => {
 
         afterEach(() =>
           run(async knex => {
-            await cleanUpIssues(knex, [
-              device1NoResultsIssueId,
-              device2NoResultsIssueId,
-            ])
+            await cleanUpIssues(knex, [device1NoResultsIssueId, device2NoResultsIssueId])
           })
         )
 
@@ -881,14 +728,8 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1NoResultsIssue = await getIssue(
-                knex,
-                device1NoResultsIssueId
-              )
-              const device2NoResultsIssue = await getIssue(
-                knex,
-                device2NoResultsIssueId
-              )
+              const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+              const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
               assert.equal(device1NoResultsIssue.level, 3)
               assert.equal(device2NoResultsIssue.level, 3)
@@ -896,10 +737,7 @@ describe('Issue Escalation', () => {
 
           it('a notifications should be created for the level that the issue has been escalated to', () =>
             runTestWithKnex(async knex => {
-              let notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1NoResultsIssueId
-              )
+              let notificationsForDevice1Issue = await getIssueNotifications(knex, device1NoResultsIssueId)
               expect(notificationsForDevice1Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -910,10 +748,7 @@ describe('Issue Escalation', () => {
                   },
                 },
               ])
-              let notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2NoResultsIssueId
-              )
+              let notificationsForDevice2Issue = await getIssueNotifications(knex, device2NoResultsIssueId)
               expect(notificationsForDevice2Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -930,10 +765,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1NoResultsIssueId
-              )
+              notificationsForDevice1Issue = await getIssueNotifications(knex, device1NoResultsIssueId)
               expect(notificationsForDevice1Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -945,10 +777,7 @@ describe('Issue Escalation', () => {
                 },
               ])
 
-              notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2NoResultsIssueId
-              )
+              notificationsForDevice2Issue = await getIssueNotifications(knex, device2NoResultsIssueId)
               expect(notificationsForDevice2Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -995,10 +824,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const deviceNoResultsIssue = await getIssue(
-                knex,
-                deviceNoResultsIssueId
-              )
+              const deviceNoResultsIssue = await getIssue(knex, deviceNoResultsIssueId)
 
               assert.equal(deviceNoResultsIssue.level, 1)
             }))
@@ -1015,10 +841,7 @@ describe('Issue Escalation', () => {
 
       before(() =>
         run(async knex => {
-          modulePowerErrorIssueType = await getIssueType(
-            knex,
-            'ModulePowerError'
-          )
+          modulePowerErrorIssueType = await getIssueType(knex, 'ModulePowerError')
           const device1Details = await getDevice(knex, {
             partnerId: partner.id,
             countryAbbreviation,
@@ -1066,10 +889,7 @@ describe('Issue Escalation', () => {
 
         afterEach(() =>
           run(async knex => {
-            await cleanUpIssues(knex, [
-              device1ModulePowerErrorIssueId,
-              device2ModulePowerErrorIssueId,
-            ])
+            await cleanUpIssues(knex, [device1ModulePowerErrorIssueId, device2ModulePowerErrorIssueId])
           })
         )
 
@@ -1081,14 +901,8 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1ModulePowerErrorIssue = await getIssue(
-                knex,
-                device1ModulePowerErrorIssueId
-              )
-              const device2ModulePowerErrorIssue = await getIssue(
-                knex,
-                device2ModulePowerErrorIssueId
-              )
+              const device1ModulePowerErrorIssue = await getIssue(knex, device1ModulePowerErrorIssueId)
+              const device2ModulePowerErrorIssue = await getIssue(knex, device2ModulePowerErrorIssueId)
 
               assert.equal(device1ModulePowerErrorIssue.level, 2)
               assert.equal(device2ModulePowerErrorIssue.level, 2)
@@ -1096,15 +910,9 @@ describe('Issue Escalation', () => {
 
           it('notifications should be created for the level that the issue has been escalated to', () =>
             runTestWithKnex(async knex => {
-              let notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1ModulePowerErrorIssueId
-              )
+              let notificationsForDevice1Issue = await getIssueNotifications(knex, device1ModulePowerErrorIssueId)
               assert.isEmpty(notificationsForDevice1Issue)
-              let notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2ModulePowerErrorIssueId
-              )
+              let notificationsForDevice2Issue = await getIssueNotifications(knex, device2ModulePowerErrorIssueId)
               assert.isEmpty(notificationsForDevice2Issue)
 
               const waitForEscalateIssues = waitForAction(escalateIssues())
@@ -1112,10 +920,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1ModulePowerErrorIssueId
-              )
+              notificationsForDevice1Issue = await getIssueNotifications(knex, device1ModulePowerErrorIssueId)
               expect(notificationsForDevice1Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -1127,10 +932,7 @@ describe('Issue Escalation', () => {
                 },
               ])
 
-              notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2ModulePowerErrorIssueId
-              )
+              notificationsForDevice2Issue = await getIssueNotifications(knex, device2ModulePowerErrorIssueId)
               expect(notificationsForDevice2Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -1147,21 +949,13 @@ describe('Issue Escalation', () => {
         describe("then ESCALATE_ISSUES is dispatched with one of the issue's ID", () => {
           it('that one issue should be escalated', () =>
             runTestWithKnex(async knex => {
-              const waitForEscalateIssues = waitForAction(
-                escalateIssues(device1ModulePowerErrorIssueId)
-              )
+              const waitForEscalateIssues = waitForAction(escalateIssues(device1ModulePowerErrorIssueId))
               messageContext.escalateIssues(device1ModulePowerErrorIssueId)
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1ModulePowerErrorIssue = await getIssue(
-                knex,
-                device1ModulePowerErrorIssueId
-              )
-              const device2ModulePowerErrorIssue = await getIssue(
-                knex,
-                device2ModulePowerErrorIssueId
-              )
+              const device1ModulePowerErrorIssue = await getIssue(knex, device1ModulePowerErrorIssueId)
+              const device2ModulePowerErrorIssue = await getIssue(knex, device2ModulePowerErrorIssueId)
 
               assert.equal(device1ModulePowerErrorIssue.level, 2)
               assert.equal(device2ModulePowerErrorIssue.level, 1)
@@ -1201,10 +995,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const modulePowerErrorIssue = await getIssue(
-                knex,
-                modulePowerErrorIssueId
-              )
+              const modulePowerErrorIssue = await getIssue(knex, modulePowerErrorIssueId)
 
               assert.equal(modulePowerErrorIssue.level, 1)
             }))
@@ -1221,10 +1012,7 @@ describe('Issue Escalation', () => {
 
       before(() =>
         run(async knex => {
-          moduleTemperatureErrorIssueType = await getIssueType(
-            knex,
-            'ModuleTemperatureError'
-          )
+          moduleTemperatureErrorIssueType = await getIssueType(knex, 'ModuleTemperatureError')
           const device1Details = await getDevice(knex, {
             partnerId: partner.id,
             countryAbbreviation,
@@ -1272,10 +1060,7 @@ describe('Issue Escalation', () => {
 
         afterEach(() =>
           run(async knex => {
-            await cleanUpIssues(knex, [
-              device1ModuleTemperatureErrorIssueId,
-              device2ModuleTemperatureErrorIssueId,
-            ])
+            await cleanUpIssues(knex, [device1ModuleTemperatureErrorIssueId, device2ModuleTemperatureErrorIssueId])
           })
         )
 
@@ -1287,14 +1072,8 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1ModuleTemperatureErrorIssue = await getIssue(
-                knex,
-                device1ModuleTemperatureErrorIssueId
-              )
-              const device2ModuleTemperatureErrorIssue = await getIssue(
-                knex,
-                device2ModuleTemperatureErrorIssueId
-              )
+              const device1ModuleTemperatureErrorIssue = await getIssue(knex, device1ModuleTemperatureErrorIssueId)
+              const device2ModuleTemperatureErrorIssue = await getIssue(knex, device2ModuleTemperatureErrorIssueId)
 
               assert.equal(device1ModuleTemperatureErrorIssue.level, 2)
               assert.equal(device2ModuleTemperatureErrorIssue.level, 2)
@@ -1302,15 +1081,9 @@ describe('Issue Escalation', () => {
 
           it('notifications should be created for the level that the issue has been escalated to', () =>
             runTestWithKnex(async knex => {
-              let notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1ModuleTemperatureErrorIssueId
-              )
+              let notificationsForDevice1Issue = await getIssueNotifications(knex, device1ModuleTemperatureErrorIssueId)
               assert.isEmpty(notificationsForDevice1Issue)
-              let notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2ModuleTemperatureErrorIssueId
-              )
+              let notificationsForDevice2Issue = await getIssueNotifications(knex, device2ModuleTemperatureErrorIssueId)
               assert.isEmpty(notificationsForDevice2Issue)
 
               const waitForEscalateIssues = waitForAction(escalateIssues())
@@ -1318,10 +1091,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              notificationsForDevice1Issue = await getIssueNotifications(
-                knex,
-                device1ModuleTemperatureErrorIssueId
-              )
+              notificationsForDevice1Issue = await getIssueNotifications(knex, device1ModuleTemperatureErrorIssueId)
               expect(notificationsForDevice1Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -1333,10 +1103,7 @@ describe('Issue Escalation', () => {
                 },
               ])
 
-              notificationsForDevice2Issue = await getIssueNotifications(
-                knex,
-                device2ModuleTemperatureErrorIssueId
-              )
+              notificationsForDevice2Issue = await getIssueNotifications(knex, device2ModuleTemperatureErrorIssueId)
               expect(notificationsForDevice2Issue).to.containSubset([
                 {
                   NotificationType: {
@@ -1353,23 +1120,13 @@ describe('Issue Escalation', () => {
         describe("then ESCALATE_ISSUES is dispatched with one of the issue's ID", () => {
           it('that one issue should be escalated', () =>
             runTestWithKnex(async knex => {
-              const waitForEscalateIssues = waitForAction(
-                escalateIssues(device1ModuleTemperatureErrorIssueId)
-              )
-              messageContext.escalateIssues(
-                device1ModuleTemperatureErrorIssueId
-              )
+              const waitForEscalateIssues = waitForAction(escalateIssues(device1ModuleTemperatureErrorIssueId))
+              messageContext.escalateIssues(device1ModuleTemperatureErrorIssueId)
               await waitForEscalateIssues
               await waitForIdle()
 
-              const device1ModuleTemperatureErrorIssue = await getIssue(
-                knex,
-                device1ModuleTemperatureErrorIssueId
-              )
-              const device2ModuleTemperatureErrorIssue = await getIssue(
-                knex,
-                device2ModuleTemperatureErrorIssueId
-              )
+              const device1ModuleTemperatureErrorIssue = await getIssue(knex, device1ModuleTemperatureErrorIssueId)
+              const device2ModuleTemperatureErrorIssue = await getIssue(knex, device2ModuleTemperatureErrorIssueId)
 
               assert.equal(device1ModuleTemperatureErrorIssue.level, 2)
               assert.equal(device2ModuleTemperatureErrorIssue.level, 1)
@@ -1409,10 +1166,7 @@ describe('Issue Escalation', () => {
               await waitForEscalateIssues
               await waitForIdle()
 
-              const moduleTemperatureErrorIssue = await getIssue(
-                knex,
-                moduleTemperatureErrorIssueId
-              )
+              const moduleTemperatureErrorIssue = await getIssue(knex, moduleTemperatureErrorIssueId)
 
               assert.equal(moduleTemperatureErrorIssue.level, 1)
             }))

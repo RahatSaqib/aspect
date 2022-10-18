@@ -1,6 +1,14 @@
+const {
+  admin,
+  clinician,
+  labUser,
+  regionalOfficer,
+  technician,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
-  {
-    name: 'Admin',
+  mergeJobFunctions(admin, {
     permissions: [
       {
         module: 'assay',
@@ -47,10 +55,6 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'reporter',
-        activity: 'edit',
-      },
-      {
         module: 'task',
         activity: 'edit',
       },
@@ -74,10 +78,22 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'edit',
       },
+      {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'router',
+        activity: 'view',
+      },
     ],
-  },
-  {
-    name: 'Regional Officer',
+    reports: ['xdr_devices_summary'],
+  }),
+  mergeJobFunctions(regionalOfficer, {
     permissions: [
       {
         module: 'assay',
@@ -144,9 +160,9 @@ module.exports = [
         activity: 'edit',
       },
     ],
-  },
-  {
-    name: 'Lab User',
+    reports: ['xdr_devices_summary'],
+  }),
+  mergeJobFunctions(labUser, {
     permissions: [
       {
         module: 'assay',
@@ -212,10 +228,14 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'view',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
-  },
-  {
-    name: 'Clinician',
+    reports: ['xdr_devices_summary'],
+  }),
+  mergeJobFunctions(clinician, {
     permissions: [
       {
         module: 'assay',
@@ -281,6 +301,12 @@ module.exports = [
         module: 'deviceApiKey',
         activity: 'view',
       },
+      {
+        module: 'report',
+        activity: 'view',
+      },
     ],
-  },
+    reports: ['xdr_devices_summary'],
+  }),
+  technician,
 ]

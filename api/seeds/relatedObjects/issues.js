@@ -1,14 +1,11 @@
-const {
-  allIssueCategoryToId,
-  allMessageSeverityToId,
-} = require('../../src/shared/dictionary')
+const { allIssueCategoryToId, allMessageSeverityToId } = require('../../src/shared/dictionary')
 
 const msgInstrumentReplaced = `{{device.name}}:
   Instrument "{{issue.data.replacedInstrumentSerial}}" has been replaced to
   "{{issue.data.newInstrumentSerial}}"
 `
 
-const getDeviceBaseHtml = ({ customPart, errorCode }) => `
+const getDeviceBaseHtml = ({ customPart }) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -48,7 +45,7 @@ const getDeviceBaseHtml = ({ customPart, errorCode }) => `
           </tr>
           <tr>
               <td>
-                Error Code
+                Error Code(s)
               </td>
               <td>
                 {{issue.errorCode}}
@@ -177,13 +174,13 @@ const getDeviceBaseHtml = ({ customPart, errorCode }) => `
 </html>
 `
 
-const getDeviceBaseText = ({ customPart, errorCode }) => `
+const getDeviceBaseText = ({ customPart }) => `
 This is an automated message from SystemOne Aspect created based on notification rules defined by Cepheid.
 Notification Rule
 
 Rule: {{notification.type}}
 
-Error Code: {{issue.errorCode}}
+Error Code(s): {{issue.errorCode}}
 
 Occurrences: {{issue.occurrences}}
 
@@ -231,15 +228,23 @@ const errorIssueEmailHtml = getDeviceBaseHtml({
   <<REPLACE WITH MODULE OR REAGENT>>
   <tr>
     <td>
-      Cartridge Type
+      Assay
     </td>
     <td>
-      {{result.assay.name}}
+      {{result.data.assay}}
     </td>
   </tr>
   <tr>
     <td>
-      Date/Time
+      Assay Version
+    </td>
+    <td>
+      {{result.data.assayVersion}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Date/Time (UTC)
     </td>
     <td>
       {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
@@ -254,9 +259,11 @@ System Serial: {{result.instrumentSerial}}
 
 <<REPLACE WITH MODULE OR REAGENT>>
 
-Cartridge Type: {{result.assay.name}}
+Assay: {{result.data.assay}}
 
-Date/Time: {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
+Assay Version: {{result.data.assayVersion}}
+
+Date/Time (UTC): {{formatDate (coalesce result.endedOn result.startedOn) formatString='yyyy-MM-dd HH:mm:ss'}}
 `,
 })
 
@@ -285,11 +292,8 @@ const errorIssueEmailTextLot = errorIssueEmailText.replace(
 
 // must correspond with 'Hardware*' items in IssueEventTrigger.json
 const hardwareMessage = {
-  1001: 'Temperature Drifted From Setpoint',
-  1002: 'Heater Temperature Differential Error',
   2005: 'Syringe Stall Error',
   2008: 'Syringe Pressure Too High',
-  2014: 'Thermistor Temperature Out of Range', // same as 4017 (see Excel in ASP-1831)
   2026: 'Ultrasonic Horn Current Out of Range',
   2032: 'Ultrasonic Horn Tuning Error',
   2035: 'Ultrasonic Horn Failure',
@@ -298,9 +302,7 @@ const hardwareMessage = {
   2097: 'Assay-Specific Termination #2',
   2126: 'Module was Reset',
   4008: 'Power Supply Voltage Out of Range',
-  4009: 'Heater A Temperature Unstable',
-  4012: 'Heater B Temperature Unstable',
-  4017: 'Thermistor Temperature Out of Range', // same as 2014 (see Excel in ASP-1831)
+  4017: 'Temperature Errors', // same as 2014 (see Excel in ASP-1831)
 }
 const hardwareErrorIssueEmailHtml = errorCode =>
   getDeviceBaseHtml({
@@ -311,12 +313,12 @@ const hardwareErrorIssueEmailHtml = errorCode =>
         System Serial
       </td>
       <td>
-        {{device.serial}}
+        {{device.lastInstrumentSerial}}
       </td>
     </tr>
     <tr>
       <td>
-        Date/Time
+        Date/Time (UTC)
       </td>
       <td>
         {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
@@ -328,9 +330,9 @@ const hardwareErrorIssueEmailText = errorCode =>
   getDeviceBaseText({
     errorCode,
     customPart: `
-System Serial: {{device.serial}}
+System Serial: {{device.lastInstrumentSerial}}
 
-Date/Time: {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
+Date/Time (UTC): {{formatDate log.startedOn formatString='yyyy-MM-dd HH:mm:ss'}}
   `,
   })
 
@@ -345,6 +347,10 @@ async function getBaseIssues(auditFields) {
         externalId: 'ResultReceived',
         i18nKey: 'issueTypeResultReceived',
         issueCategoryId: issueCategories.DataHealth,
+        hasTag: 0,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
       },
     },
     DeviceOffline: {
@@ -362,17 +368,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+        message: '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
         ...auditFields,
       },
       EmailTemplate: {
-        subject:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
-        body:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
-        htmlBody:
-          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
+        subject: '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+        body: '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+        htmlBody: '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
         ...auditFields,
       },
     },
@@ -391,16 +393,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
+        message: '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: No Testing',
-        body:
-          '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
-        htmlBody:
-          '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
+        body: '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
+        htmlBody: '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
         ...auditFields,
       },
     },
@@ -441,21 +440,17 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
+        message: 'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
+        message: 'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Critical Module Errors',
-        body:
-          'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
-        htmlBody:
-          'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
+        body: 'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
+        htmlBody: 'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
         ...auditFields,
       },
     },
@@ -494,22 +489,17 @@ async function getBaseIssues(auditFields) {
       },
       MessageType: { messageSeverityId: messageSeverities.Alert },
       AlertTemplate: {
-        message:
-          'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
+        message: 'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
+        message: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
         ...auditFields,
       },
       EmailTemplate: {
-        subject:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
-        body:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
-        htmlBody:
-          '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+        subject: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
+        body: '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+        htmlBody: '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
         ...auditFields,
       },
     },
@@ -528,17 +518,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}} has power errors on Module {{issue.data.moduleName}}; notify RO',
+        message: '{{device.name}} has power errors on Module {{issue.data.moduleName}}; notify RO',
         ...auditFields,
       },
       EmailTemplate: {
-        subject:
-          '{{device.name}} has power errors on module {{issue.data.moduleName}}',
-        body:
-          '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
-        htmlBody:
-          '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
+        subject: '{{device.name}} has power errors on module {{issue.data.moduleName}}',
+        body: '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
+        htmlBody: '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
         ...auditFields,
       },
     },
@@ -558,16 +544,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
+        message: '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Machine Temperature Errors',
-        body:
-          '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
+        body: '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
+        htmlBody: '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
         ...auditFields,
       },
     },
@@ -586,16 +569,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}}: Power error across machine, conduct troubleshooting.',
+        message: '{{device.name}}: Power error across machine, conduct troubleshooting.',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Power error across machine',
-        body:
-          '{{device.name}}: Power error across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
+        body: '{{device.name}}: Power error across machine, conduct troubleshooting.',
+        htmlBody: '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
         ...auditFields,
       },
     },
@@ -610,20 +590,17 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+        message: 'Possible module failure on module {{issue.data.moduleName}} contact engineer',
         ...auditFields,
       },
 
       SmsTemplate: {
-        message:
-          '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
+        message: '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Possible module failure',
-        body:
-          '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
+        body: '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
         htmlBody:
           '{{device.name}}: Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
         ...auditFields,
@@ -644,16 +621,13 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
+        message: '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
         ...auditFields,
       },
       EmailTemplate: {
         subject: '{{device.name}}: Procedural Errors',
-        body:
-          '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
-        htmlBody:
-          '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
+        body: '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
+        htmlBody: '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
         ...auditFields,
       },
     },
@@ -668,21 +642,17 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        message: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
       },
       SmsTemplate: {
-        message:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        message: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
       },
       EmailTemplate: {
         subject: 'Low Collection Rate',
-        body:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-        htmlBody:
-          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        body: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        htmlBody: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
         ...auditFields,
       },
     },
@@ -774,8 +744,7 @@ async function getBaseIssues(auditFields) {
       EmailTemplate: {
         subject: 'Machine Temperature Errors',
         body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
-        htmlBody:
-          'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
+        htmlBody: 'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -859,40 +828,6 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    ProbeCheckTooLowModule: {
-      issueType: {
-        name: 'Probe Check Too Low On Module',
-        externalId: 'ProbeCheckTooLowModule',
-        i18nKey: 'issueStatusProbeCheckTooLowModule',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: errorIssueSubject,
-        body: errorIssueEmailTextModule,
-        htmlBody: errorIssueEmailHtmlModule,
-        ...auditFields,
-      },
-    },
-    ProbeCheckTooLowLot: {
-      issueType: {
-        name: 'Probe Check Too Low On Lot',
-        externalId: 'ProbeCheckTooLowLot',
-        i18nKey: 'issueStatusProbesTooLow',
-        issueCategoryId: issueCategories.ReagentHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: errorIssueSubject,
-        body: errorIssueEmailTextLot,
-        htmlBody: errorIssueEmailHtmlLot,
-        ...auditFields,
-      },
-    },
     ProbeCheckTooHighModule: {
       issueType: {
         name: 'Probe Check Too High On Module',
@@ -931,8 +866,7 @@ async function getBaseIssues(auditFields) {
       issueType: {
         name: 'Failed To Verify Valid Background Error For Analyte On Module',
         externalId: 'FailedToVerifyValidBackgroundErrorForAnalyteModule',
-        i18nKey:
-          'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
+        i18nKey: 'issueStatusFailedToVerifyValidBackgroundErrorForAnalyteModule',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1108,6 +1042,23 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    SyringePressureTooHighModule: {
+      issueType: {
+        name: 'Syringe Pressure Too High On Module',
+        externalId: 'SyringePressureTooHighModule',
+        i18nKey: 'SyringePressureTooHighModule',
+        issueCategoryId: issueCategories.DeviceHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      EmailTemplate: {
+        subject: errorIssueSubject,
+        body: errorIssueEmailTextModule,
+        htmlBody: errorIssueEmailHtmlModule,
+        ...auditFields,
+      },
+    },
     SyringeStallErrorLot: {
       issueType: {
         name: 'Syringe Stall Error On Lot',
@@ -1248,40 +1199,6 @@ async function getBaseIssues(auditFields) {
     // --------------------------------------------------------
     // Hardware Issues - must correspond with 'Hardware*' items in IssueEventTrigger.json
     // --------------------------------------------------------
-    HardwareTemperatureDriftedFromSetPoint: {
-      issueType: {
-        name: hardwareMessage[1001],
-        externalId: 'HardwareTemperatureDriftedFromSetPoint',
-        i18nKey: 'issueHardwareTemperatureDriftedFromSetPoint',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(1001),
-        body: hardwareErrorIssueEmailText(1001),
-        htmlBody: hardwareErrorIssueEmailHtml(1001),
-        ...auditFields,
-      },
-    },
-    HardwareHeaterTemperatureDifferentialError: {
-      issueType: {
-        name: hardwareMessage[1002],
-        externalId: 'HardwareHeaterTemperatureDifferentialError',
-        i18nKey: 'issueHardwareHeaterTemperatureDifferentialError',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(1002),
-        body: hardwareErrorIssueEmailText(1002),
-        htmlBody: hardwareErrorIssueEmailHtml(1002),
-        ...auditFields,
-      },
-    },
     HardwareSyringeStallError: {
       issueType: {
         name: hardwareMessage[2005],
@@ -1313,23 +1230,6 @@ async function getBaseIssues(auditFields) {
         subject: getErrorIssueSubjectBase(2008),
         body: hardwareErrorIssueEmailText(2008),
         htmlBody: hardwareErrorIssueEmailHtml(2008),
-        ...auditFields,
-      },
-    },
-    HardwareThermistorTemperatureOutOfRange2014: {
-      issueType: {
-        name: hardwareMessage[2014],
-        externalId: 'HardwareThermistorTemperatureOutOfRange2014',
-        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange2014',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(2014),
-        body: hardwareErrorIssueEmailText(2014),
-        htmlBody: hardwareErrorIssueEmailHtml(2014),
         ...auditFields,
       },
     },
@@ -1445,12 +1345,6 @@ async function getBaseIssues(auditFields) {
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
       },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(2126),
-        body: hardwareErrorIssueEmailText(2126),
-        htmlBody: hardwareErrorIssueEmailHtml(2126),
-        ...auditFields,
-      },
     },
     HardwarePowerSupplyVoltageOutOfRange: {
       issueType: {
@@ -1469,45 +1363,11 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
-    HardwareHeaterATemperatureUnstable: {
-      issueType: {
-        name: hardwareMessage[4009],
-        externalId: 'HardwareHeaterATemperatureUnstable',
-        i18nKey: 'issueHardwareHeaterATemperatureUnstable',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(4009),
-        body: hardwareErrorIssueEmailText(4009),
-        htmlBody: hardwareErrorIssueEmailHtml(4009),
-        ...auditFields,
-      },
-    },
-    HardwareHeaterBTemperatureUnstable: {
-      issueType: {
-        name: hardwareMessage[4012],
-        externalId: 'HardwareHeaterBTemperatureUnstable',
-        i18nKey: 'issueHardwareHeaterBTemperatureUnstable',
-        issueCategoryId: issueCategories.DeviceHealth,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-      EmailTemplate: {
-        subject: getErrorIssueSubjectBase(4012),
-        body: hardwareErrorIssueEmailText(4012),
-        htmlBody: hardwareErrorIssueEmailHtml(4012),
-        ...auditFields,
-      },
-    },
-    HardwareThermistorTemperatureOutOfRange4017: {
+    HardwareTemperatureErrors: {
       issueType: {
         name: hardwareMessage[4017],
-        externalId: 'HardwareThermistorTemperatureOutOfRange4017',
-        i18nKey: 'issueHardwareThermistorTemperatureOutOfRange4017',
+        externalId: 'HardwareTemperatureErrors',
+        i18nKey: 'HardwareTemperatureErrors',
         issueCategoryId: issueCategories.DeviceHealth,
       },
       MessageType: {
@@ -1517,6 +1377,21 @@ async function getBaseIssues(auditFields) {
         subject: getErrorIssueSubjectBase(4017),
         body: hardwareErrorIssueEmailText(4017),
         htmlBody: hardwareErrorIssueEmailHtml(4017),
+        ...auditFields,
+      },
+    },
+    SiteWithLowFieldCompletionRate: {
+      issueType: {
+        name: 'Site with low field completion rate',
+        externalId: 'SiteWithLowFieldCompletionRate',
+        i18nKey: 'SiteWithLowFieldCompletionRate',
+        issueCategoryId: issueCategories.DataHealth,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: 'Site with low completion rate {{issue.data.completionRatePercentage}}%',
         ...auditFields,
       },
     },

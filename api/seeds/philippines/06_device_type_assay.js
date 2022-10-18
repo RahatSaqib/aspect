@@ -9,24 +9,16 @@ const {
 const AssayBdMgitAstResultDataSchema = require('../fixtures/AssayBdMgitAstResultDataSchema.json')
 const AssayBdMgitGndResultDataSchema = require('../fixtures/AssayBdMgitGndResultDataSchema.json')
 const { updateAssayResultCategoryTreatmentEmphasize } = require('../utils')
-const {
-  upsertMGITDeviceTypeAndAssays,
-  upsertCultureAssays,
-} = require('../commonTB')
+const { upsertMGITDeviceTypeAndAssays, upsertCultureAssays } = require('../commonTB')
 
 async function seed(knex) {
-  const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId(
-    'Information System'
-  )
+  const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId('Information System')
 
   let { id: deviceTypeNTRLDatabaseId } =
-    (await knex('DeviceType')
-      .where('externalId', 'NTRLDatabase')
-      .first('id')) || {}
+    (await knex('DeviceType').where('externalId', 'NTRLDatabase').first('id')) || {}
 
   if (deviceTypeNTRLDatabaseId) return
-
-  deviceTypeNTRLDatabaseId = await knex('DeviceType').insert({
+  ;[deviceTypeNTRLDatabaseId] = await knex('DeviceType').insert({
     externalId: 'PhilippinesNtrl',
     name: 'Philippines NTRL Database',
     manufacturer: 'NTRL',
@@ -158,10 +150,8 @@ async function seed(knex) {
       .filter(mgitDataValue => typeof mgitDataValue.order !== 'undefined')
       .map(mgitDataValue => mgitDataValue.order)
   )
-  ntrlDatabaseMGITCultureResultDataSchema.encodedResult.order =
-    maxOrderFromBdMgitGndResultDataSchema + 1
-  ntrlDatabaseMGITCultureResultDataSchema.resultSignOff.order =
-    maxOrderFromBdMgitGndResultDataSchema + 2
+  ntrlDatabaseMGITCultureResultDataSchema.encodedResult.order = maxOrderFromBdMgitGndResultDataSchema + 1
+  ntrlDatabaseMGITCultureResultDataSchema.resultSignOff.order = maxOrderFromBdMgitGndResultDataSchema + 2
 
   const ntrlDatabaseMGITDstResultDataSchema = {
     ...AssayBdMgitAstResultDataSchema,
@@ -172,10 +162,8 @@ async function seed(knex) {
       .filter(mgitDataValue => typeof mgitDataValue.order !== 'undefined')
       .map(mgitDataValue => mgitDataValue.order)
   )
-  ntrlDatabaseMGITDstResultDataSchema.encodedResult.order =
-    maxOrderFromBdMgitAstResultDataSchema + 1
-  ntrlDatabaseMGITDstResultDataSchema.resultSignOff.order =
-    maxOrderFromBdMgitAstResultDataSchema + 2
+  ntrlDatabaseMGITDstResultDataSchema.encodedResult.order = maxOrderFromBdMgitAstResultDataSchema + 1
+  ntrlDatabaseMGITDstResultDataSchema.resultSignOff.order = maxOrderFromBdMgitAstResultDataSchema + 2
 
   await upsertMGITDeviceTypeAndAssays(
     knex,
@@ -200,7 +188,7 @@ async function seed(knex) {
     deviceTypeId: deviceTypeNTRLDatabaseId,
     resultSourceId: await resultSourceToId('LIMS'),
     resultCategory1Label: 'MTB',
-    resultCategory1i18nKey: 'resultCategoryMTB',
+    resultCategory1i18nKey: 'resultCategoryMtb',
     resultCategory2Label: 'Resistance',
     resultCategory2i18nKey: 'resultCategoryResistance',
     resultDataSchema: JSON.stringify({
@@ -210,10 +198,9 @@ async function seed(knex) {
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
 
-  let { id: assayLpaId } =
-    (await knex('Assay').where('externalId', 'assayLpa').first('id')) || {}
+  let { id: assayLpaId } = (await knex('Assay').where('externalId', 'assayLpa').first('id')) || {}
   if (!assayLpaId) {
-    assayLpaId = await knex('Assay').insert(assayLpa)
+    ;[assayLpaId] = await knex('Assay').insert(assayLpa)
   } else {
     await knex('Assay').where('id', assayLpaId).update(assayLpa)
   }
@@ -272,10 +259,9 @@ async function seed(knex) {
     patientDataSchema: JSON.stringify(patientDataSchema),
   }
 
-  let { id: assaySmearId } =
-    (await knex('Assay').where('externalId', 'assaySmear').first('id')) || {}
+  let { id: assaySmearId } = (await knex('Assay').where('externalId', 'assaySmear').first('id')) || {}
   if (!assaySmearId) {
-    assaySmearId = await knex('Assay').insert(assaySmear)
+    ;[assaySmearId] = await knex('Assay').insert(assaySmear)
   } else {
     await knex('Assay').where('id', assaySmearId).update(assaySmear)
   }

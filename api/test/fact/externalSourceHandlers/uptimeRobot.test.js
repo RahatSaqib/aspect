@@ -42,12 +42,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
     })
   }
 
-  function mockContext(
-    updateSpy,
-    insertSpy,
-    aspectDeviceIds,
-    aspectDeviceUptimeRobotFact
-  ) {
+  function mockContext(updateSpy, insertSpy, aspectDeviceIds, aspectDeviceUptimeRobotFact) {
     const buildKnexSpy = () => table => {
       const knex = {
         insert: async (...rest) => {
@@ -99,10 +94,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
       const createFetchSpy = sinon.spy()
-      const uptimeRobotExternalFactHandler = mockOutUptimeRobotExternalFactHandler(
-        1,
-        createFetchSpy
-      )
+      const uptimeRobotExternalFactHandler = mockOutUptimeRobotExternalFactHandler(1, createFetchSpy)
       await uptimeRobotExternalFactHandler(mockContext(updateSpy, insertSpy))
       assert.isOk(createFetchSpy.notCalled)
       assert.isOk(updateSpy.notCalled)
@@ -153,12 +145,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
         uptimeRobotResponse
       )
       return uptimeRobotExternalFactHandler(
-        mockContext(
-          updateSpy,
-          insertSpy,
-          explicitAspectDeviceIds,
-          explicitAspectDeviceUptimeRobotFact
-        )
+        mockContext(updateSpy, insertSpy, explicitAspectDeviceIds, explicitAspectDeviceUptimeRobotFact)
       )
     }
 
@@ -166,11 +153,7 @@ describe('Uptime Robot External Source Fact Handler', () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
       const createFetchSpy = sinon.spy()
-      await runUptimeRobitExternalFactHandler(
-        updateSpy,
-        insertSpy,
-        createFetchSpy
-      )
+      await runUptimeRobitExternalFactHandler(updateSpy, insertSpy, createFetchSpy)
       assert.isOk(createFetchSpy.calledOnce)
       assert.isOk(updateSpy.calledOnce)
       assert.isOk(insertSpy.notCalled)
@@ -180,16 +163,9 @@ describe('Uptime Robot External Source Fact Handler', () => {
       const updateSpy = sinon.spy()
       const insertSpy = sinon.spy()
       const createFetchSpy = sinon.spy()
-      await runUptimeRobitExternalFactHandler(
-        updateSpy,
-        insertSpy,
-        createFetchSpy
-      )
+      await runUptimeRobitExternalFactHandler(updateSpy, insertSpy, createFetchSpy)
       assert.equal(updateSpy.getCalls()[0].args[0], 'FactDeviceExternalSource')
-      assert.equal(
-        updateSpy.getCalls()[0].args[1].data,
-        JSON.stringify(uptimeRobotResponse)
-      )
+      assert.equal(updateSpy.getCalls()[0].args[1].data, JSON.stringify(uptimeRobotResponse))
     })
 
     describe('and Aspect Device Uptime Robot Fact Not Already Present in Database', () => {
@@ -197,20 +173,11 @@ describe('Uptime Robot External Source Fact Handler', () => {
         const updateSpy = sinon.spy()
         const insertSpy = sinon.spy()
         const createFetchSpy = sinon.spy()
-        await runUptimeRobitExternalFactHandler(
-          updateSpy,
-          insertSpy,
-          createFetchSpy,
-          aspectDeviceIds,
-          null
-        )
+        await runUptimeRobitExternalFactHandler(updateSpy, insertSpy, createFetchSpy, aspectDeviceIds, null)
         assert.isOk(createFetchSpy.calledOnce)
         assert.isOk(updateSpy.notCalled)
         assert.isOk(insertSpy.calledOnce)
-        assert.equal(
-          insertSpy.getCalls()[0].args[0],
-          'FactDeviceExternalSource'
-        )
+        assert.equal(insertSpy.getCalls()[0].args[0], 'FactDeviceExternalSource')
         const insertedObject = insertSpy.getCalls()[0].args[1]
         assert.equal(insertedObject.deviceId, aspectDeviceIds[0])
         assert.equal(insertedObject.sourceName, 'uptimeRobot')

@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi')
-
 const { asyncHandler } = require('../routes')
+const { loginHistoryWrapper } = require('./loginHistory')
 
 const {
   authenticate,
@@ -20,7 +20,7 @@ const routes = [
   {
     method: 'POST',
     path: '/auth',
-    handler: asyncHandler(authenticate),
+    handler: loginHistoryWrapper(authenticate),
     config: {
       auth: false,
       description: 'Authenticate user',
@@ -42,7 +42,7 @@ const routes = [
           allowUnknown: true,
         },
         schema: {
-          access: Joi.string().required(),
+          access: Joi.string().required().max(2048),
           refresh: Joi.string().required(),
           clientId: Joi.string().required(),
           countryId: Joi.number(),
@@ -125,8 +125,7 @@ const routes = [
     config: {
       auth: false,
       description: 'Send Reset Password Token',
-      notes:
-        'Generate a new reset password token and send it to the user via email',
+      notes: 'Generate a new reset password token and send it to the user via email',
       validate: {
         params: {
           email: Joi.string().description('Email address').required(),
@@ -144,9 +143,7 @@ const routes = [
       notes: 'Returns the username so that the usr knows how to login',
       validate: {
         params: {
-          resetPasswordToken: Joi.string()
-            .description('Reset Password Token')
-            .required(),
+          resetPasswordToken: Joi.string().description('Reset Password Token').required(),
         },
         payload: {
           newPassword: Joi.string().max(100).required(),
@@ -161,6 +158,7 @@ const routes = [
     path: '/auth/update-person-login-details/{personId}',
     handler: asyncHandler(updateUsernameAndPasswordForPerson),
     config: {
+      auth: { scope: ['person:edit'] },
       description: 'Update username and password linked to a person',
       notes: 'Returns an array of the fields that were updated',
       validate: {
@@ -193,10 +191,7 @@ const routes = [
       notes: 'Loads the the license that applies to the current user',
       validate: {
         query: {
-          licenseId: Joi.number()
-            .description('License ID')
-            .required()
-            .description('ID of the license'),
+          licenseId: Joi.number().description('License ID').required().description('ID of the license'),
         },
       },
     },
@@ -207,8 +202,7 @@ const routes = [
     handler: asyncHandler(acceptLicense),
     config: {
       description: 'Accepts the given license for the current user',
-      notes:
-        'Looks up the license based on the give license ID and marks it as accepted for the current user',
+      notes: 'Looks up the license based on the give license ID and marks it as accepted for the current user',
       validate: {
         payload: {
           licenseId: Joi.number().required(),

@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Truenat MTB",
+    "abbreviation": "MTB",
+    "i18nKey": "assayTruenatMtb",
+    "externalId": "assayTruenatMtb",
+    "assayTypeId": "assayTypeMtb",
+    "deviceTypeId": "molbioTruenat",
+    "resultSourceId": "DiagnosticDevice",
+    "resultCategory1Label": "MTB",
+    "resultCategory1i18nKey": "resultCategoryMtb"
+  },
+  {
+    "name": "Truenat MTB Plus",
+    "abbreviation": "MTB",
+    "i18nKey": "assayTruenatMtbPlus",
+    "externalId": "assayTruenatMtbPlus",
+    "assayTypeId": "assayTypeMtb",
+    "deviceTypeId": "molbioTruenat",
+    "resultSourceId": "DiagnosticDevice",
+    "resultCategory1Label": "MTB",
+    "resultCategory1i18nKey": "resultCategoryMtb"
+  },
+  {
+    "name": "Truenat MTB-RIF Dx",
+    "abbreviation": "RIF",
+    "i18nKey": "assayTruenatRif",
+    "externalId": "assayTruenatRif",
+    "assayTypeId": "assayTypeRif",
+    "deviceTypeId": "molbioTruenat",
+    "resultSourceId": "DiagnosticDevice",
+    "resultCategory1Label": "Rif",
+    "resultCategory1i18nKey": "resultCategoryRif"
+  },
+  {
+    "name": "Truenat Unknown",
+    "abbreviation": "TNU",
+    "i18nKey": "assayTruenatUnknown",
+    "externalId": "assayTruenatUnknown",
+    "assayTypeId": "assayTypeUnknown",
+    "deviceTypeId": "molbioTruenat",
+    "resultSourceId": "DiagnosticDevice",
+    "resultCategory1Label": "Result",
+    "resultCategory1i18nKey": "resultText"
+  }
+]

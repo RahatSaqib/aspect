@@ -3,8 +3,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site A3: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site A3: calibration was successful',
       Calibrations: [
         {
           Site: 'Site A3',
@@ -20,8 +19,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site A4: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site A4: calibration was successful',
       Calibrations: [
         {
           Site: 'Site A4',
@@ -43,8 +41,7 @@ const deviceOperation = [
         {
           Site: 'Site A2',
           Source: 'ModuleStartCalibrationTask',
-          Message:
-            'start calibration failed because: Thermal Verification failed for device 2',
+          Message: 'start calibration failed because: Thermal Verification failed for device 2',
         },
       ],
     },
@@ -93,8 +90,7 @@ const deviceOperation = [
         {
           Site: 'Site A2',
           Source: 'ModuleStartCalibrationTask',
-          Message:
-            'start calibration failed because: Thermal Verification failed for device 2',
+          Message: 'start calibration failed because: Thermal Verification failed for device 2',
         },
       ],
     },
@@ -105,8 +101,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site A1: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site A1: calibration was successful',
       Calibrations: [
         {
           Site: 'Site A1',
@@ -128,8 +123,7 @@ const deviceOperation = [
         {
           Site: 'Site A2',
           Source: 'ModuleStartCalibrationTask',
-          Message:
-            'start calibration failed because: Thermal Verification failed for device 2',
+          Message: 'start calibration failed because: Thermal Verification failed for device 2',
         },
       ],
     },
@@ -188,8 +182,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site A2: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site A2: calibration was successful',
       Calibrations: [
         {
           Site: 'Site A2',
@@ -222,8 +215,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site A3: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site A3: calibration was successful',
       Calibrations: [
         {
           Site: 'Site A3',
@@ -239,8 +231,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site A4: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site A4: calibration was successful',
       Calibrations: [
         {
           Site: 'Site A4',
@@ -256,8 +247,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site A2: start calibration failed.  Retry with a new cartridge',
+      RawText: '<ModuleStartCalibrationTask>Site A2: start calibration failed.  Retry with a new cartridge',
       Calibrations: [
         {
           Site: 'Site A2',
@@ -289,8 +279,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site A1: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site A1: calibration was successful',
       Calibrations: [
         {
           Site: 'Site A1',
@@ -355,8 +344,7 @@ const deviceOperation = [
     details: {
       Errors: [
         {
-          Message:
-            'Cepheid System ID 803900:\r\nCheck power and connections, then retry.',
+          Message: 'Cepheid System ID 803900:\r\nCheck power and connections, then retry.',
           ErrorCode: '2006',
         },
       ],
@@ -404,8 +392,7 @@ const deviceOperation = [
     details: {
       Errors: [
         {
-          Message:
-            'Cepheid System ID 803900:\r\nCheck power and connections, then retry.',
+          Message: 'Cepheid System ID 803900:\r\nCheck power and connections, then retry.',
           ErrorCode: '2006',
         },
       ],
@@ -420,8 +407,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site B3: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site B3: calibration was successful',
       Calibrations: [
         {
           Site: 'Site B3',
@@ -437,8 +423,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site B4: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site B4: calibration was successful',
       Calibrations: [
         {
           Site: 'Site B4',
@@ -470,8 +455,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site B1: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site B1: calibration was successful',
       Calibrations: [
         {
           Site: 'Site B1',
@@ -487,8 +471,7 @@ const deviceOperation = [
     type: 'gx-log',
     details: {
       Errors: [],
-      RawText:
-        '<ModuleStartCalibrationTask>Site B2: calibration was successful',
+      RawText: '<ModuleStartCalibrationTask>Site B2: calibration was successful',
       Calibrations: [
         {
           Site: 'Site B2',

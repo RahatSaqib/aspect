@@ -1,8 +1,12 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 const fs = require('fs')
 const uuid = require('node-uuid')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const Promise = require('bluebird')
 const _ = require('lodash')
+const { formatDateOrDefault } = require('./date')
+
+const LANG_DEFAULT = 'en'
 
 // ---------------------------------
 // create missing directories in the path and return path back
@@ -124,10 +128,7 @@ async function generateExcelFile(props) {
   props.populateData(workbook)
 
   const dir = getExportDirectory() // get path for export directory
-  const ok = await writeExcelFile(
-    `${dir.full}/${props.outputFileName}`,
-    workbook
-  )
+  const ok = await writeExcelFile(`${dir.full}/${props.outputFileName}`, workbook)
   return { ok, url: `${dir.url}/${props.outputFileName}`, message }
 }
 
@@ -152,7 +153,7 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   items.forEach(dataItem => {
     const row = []
     fieldNames.forEach(fieldName => {
-      row.push(dataItem[fieldName])
+      row.push(formatCellContent(dataItem[fieldName]))
     })
     rows.push(row)
   })
@@ -178,7 +179,7 @@ async function generateCsvAttachment(outputFileName, { items, columns }) {
   items.forEach(dataItem => {
     const row = []
     columns.forEach(column => {
-      row.push(dataItem[column.key])
+      row.push(formatCellContent(dataItem[column.key]))
     })
     rows.push(row)
   })
@@ -191,6 +192,13 @@ async function generateCsvAttachment(outputFileName, { items, columns }) {
     fileName: outputFileName,
     disposition: 'attachment',
   }
+}
+
+function formatCellContent(cellContent) {
+  if (cellContent instanceof Date) {
+    cellContent = formatDateOrDefault(cellContent, 'yyyy-MM-dd HH:mm:ss')
+  }
+  return cellContent
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -222,6 +230,66 @@ function getContentType(fileExt) {
   }
 }
 
+// ----------------------------------------------------------------------------------------------
+function getTemplateFilePath(templateFolderPath, { lang, langDefault = LANG_DEFAULT, countryAbbreviation }) {
+  const countryAbbreviationLo = countryAbbreviation?.toLowerCase()
+  const baseFolderPath = `templates/${templateFolderPath}`
+  let filePath = null
+  let exists = null
+  /**
+   * 1. try to use file in country folder
+   */
+  if (countryAbbreviationLo) {
+    const countryFolderPath = `${baseFolderPath}/${countryAbbreviationLo}`
+    if (fs.existsSync(countryFolderPath)) {
+      filePath = `${countryFolderPath}/${lang}.xlsx`
+      exists = fs.existsSync(filePath)
+      if (exists) {
+        return { filePath, exists }
+      }
+      if (lang !== langDefault) {
+        filePath = `${countryFolderPath}/${langDefault}.xlsx`
+        exists = fs.existsSync(filePath)
+        if (exists) {
+          return { filePath, exists }
+        }
+      }
+    }
+  }
+
+  /**
+   * 2. try to use file in base folder of report template
+   */
+  // TODO: think how to differ files for the same language but different partners
+  // TODO: see Jira task - https://ops.systemone.id/browse/ASP-1451
+  filePath = `${baseFolderPath}/${lang}.xlsx`
+  // check if file exists, fallback to default language, throw error if no file found
+  exists = fs.existsSync(filePath)
+  if (!exists && lang !== langDefault) {
+    filePath = `${baseFolderPath}/${langDefault}.xlsx`
+    exists = fs.existsSync(filePath)
+  }
+
+  return { filePath, exists }
+}
+
+// ----------------------------------------------------------------------------------------------
+async function readTemplateFile(templateFolderPath, { lang, langDefault = LANG_DEFAULT, countryAbbreviation }) {
+  const { filePath, exists } = getTemplateFilePath(templateFolderPath, {
+    lang,
+    langDefault,
+    countryAbbreviation,
+  })
+
+  // throw exception if no file found
+  if (!exists) {
+    throw new Error(`File ${filePath} is missing`)
+  }
+
+  // return promise with file content
+  return readExcelFile(filePath)
+}
+
 module.exports = {
   createDirectory,
   generateCsvFile,
@@ -233,4 +301,5 @@ module.exports = {
   getExportDirectory,
   readExcelFile,
   readTextFile,
+  readTemplateFile,
 }

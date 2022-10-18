@@ -1,5 +1,5 @@
 const { addDays, format } = require('date-fns')
-
+const _ = require('lodash')
 // ----------- Action Types ---------------------
 const types = {
   INVENTORY_STOCKOUT: 'INVENTORY_STOCKOUT',
@@ -13,7 +13,7 @@ const types = {
  * Is called when inventory if going out-of-stock in [daysDue]
  */
 function inventoryStockout(siteId, consumableId, daysDue) {
-  if (!siteId || !consumableId || !daysDue) {
+  if (!siteId || !consumableId || _.isNaN(daysDue)) {
     throw new Error('Must specify siteId, consumableId, daysDue')
   }
 

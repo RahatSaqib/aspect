@@ -1,10 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { seedIssueEventTriggersForPartner } = require('./utils')
-const {
-  allIssueCategoryToId,
-  allMessageSeverityToId,
-} = require('../src/shared/dictionary')
+const { allIssueCategoryToId, allMessageSeverityToId } = require('../src/shared/dictionary')
 const { cleanUpIssues } = require('../test/utils/issueUtils')
 const { loadPlugin } = require('../src/plugin/registration')
 
@@ -35,8 +32,7 @@ async function removeOld(knex) {
   // alertTemplateId for this issue type to delete MessageType (see below)
   const { id: alertTemplateId } = await knex('AlertTemplate')
     .where({
-      message:
-        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+      message: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
     })
     .first()
 
@@ -67,16 +63,14 @@ async function removeOld(knex) {
   await knex('SmsTemplate')
     .where('id', '>', 0)
     .where({
-      message:
-        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+      message: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
     })
     .del()
 
   await knex('EmailTemplate')
     .where('id', '>', 0)
     .where({
-      body:
-        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+      body: '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
     })
     .del()
 }
@@ -89,9 +83,7 @@ async function seedDataCategory(knex, partnerName) {
   await removeOld(knex)
 
   // get partnerId and adminId
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first()
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
   const auditFields = {
     createdOn: now,
     updatedOn: now,
@@ -101,9 +93,7 @@ async function seedDataCategory(knex, partnerName) {
   // helper function
   const insert = async (tableName, whereClause, insertClause, index) => {
     let item = knex(tableName).where(whereClause)
-    item = _.isNil(index)
-      ? await item.first()
-      : await item.limit(1).offset(index).first()
+    item = _.isNil(index) ? await item.first() : await item.limit(1).offset(index).first()
 
     if (!item) {
       const [id] = await knex(tableName).insert(insertClause || whereClause)
@@ -302,9 +292,7 @@ async function seedDataCategory(knex, partnerName) {
 
 async function updateDataCategoryNotificationTypeForRO(knex, partnerName) {
   // get partnerId
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first()
+  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
 
   // ----------------------------------------------------------------------
   // get jobFunctionId

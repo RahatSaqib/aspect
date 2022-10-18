@@ -7,16 +7,13 @@ const { runTest } = require('../utils/generatorFunctionUtils')
 
 describe('issue evaluation', () => {
   function getIssueConditionsMet(sqlScriptContents = null) {
-    const { issueConditionsMet } = proxyquire(
-      '../../src/issue/issueEvaluation',
-      {
-        '../shared/io': {
-          readTextFile() {
-            return Promise.resolve(sqlScriptContents)
-          },
+    const { issueConditionsMet } = proxyquire('../../src/issue/issueEvaluation', {
+      '../shared/io': {
+        readTextFile() {
+          return Promise.resolve(sqlScriptContents)
         },
-      }
-    )
+      },
+    })
     return issueConditionsMet
   }
 
@@ -30,15 +27,9 @@ describe('issue evaluation', () => {
   ) {
     knex = {
       raw(query) {
-        let returnResults = _.filter(
-          queryReturns,
-          queryReturn => queryReturn.formattedEvaluationParameter === query
-        )
+        let returnResults = _.filter(queryReturns, queryReturn => queryReturn.formattedEvaluationParameter === query)
         if (_.isEmpty(returnResults)) {
-          returnResults = _.filter(
-            queryReturns,
-            queryReturn => !queryReturn.formattedEvaluationParameter
-          )
+          returnResults = _.filter(queryReturns, queryReturn => !queryReturn.formattedEvaluationParameter)
         }
         if (_.isEmpty(returnResults)) {
           returnResults = queryReturns
@@ -79,28 +70,18 @@ describe('issue evaluation', () => {
     }
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
-      assert.fail(
-        'An error should be thrown when an unrecognised evaluation method is passed'
-      )
+      assert.fail('An error should be thrown when an unrecognised evaluation method is passed')
     } catch (error) {
-      assert.equal(
-        error.message,
-        'Unrecognised evaluation method in condition unrecognised-method'
-      )
+      assert.equal(error.message, 'Unrecognised evaluation method in condition unrecognised-method')
     }
     conditions = {
       evaluationParameter: 'SELECT thing FROM stuff',
     }
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
-      assert.fail(
-        'An error should be thrown when an unrecognised evaluation method is passed'
-      )
+      assert.fail('An error should be thrown when an unrecognised evaluation method is passed')
     } catch (error) {
-      assert.equal(
-        error.message,
-        'Unrecognised evaluation method in condition null'
-      )
+      assert.equal(error.message, 'Unrecognised evaluation method in condition null')
     }
     conditions = [
       {
@@ -109,26 +90,16 @@ describe('issue evaluation', () => {
     ]
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
-      assert.fail(
-        'An error should be thrown when an unrecognised evaluation method is passed'
-      )
+      assert.fail('An error should be thrown when an unrecognised evaluation method is passed')
     } catch (error) {
-      assert.equal(
-        error.message,
-        'Unrecognised evaluation method(s) in condition unrecognised-method'
-      )
+      assert.equal(error.message, 'Unrecognised evaluation method(s) in condition unrecognised-method')
     }
     conditions = [{}]
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
-      assert.fail(
-        'An error should be thrown when an unrecognised evaluation method is passed'
-      )
+      assert.fail('An error should be thrown when an unrecognised evaluation method is passed')
     } catch (error) {
-      assert.equal(
-        error.message,
-        'Unrecognised evaluation method(s) in condition'
-      )
+      assert.equal(error.message, 'Unrecognised evaluation method(s) in condition')
     }
     conditions = [
       {
@@ -146,9 +117,7 @@ describe('issue evaluation', () => {
     ]
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
-      assert.fail(
-        'An error should be thrown when an unrecognised evaluation method is passed'
-      )
+      assert.fail('An error should be thrown when an unrecognised evaluation method is passed')
     } catch (error) {
       assert.equal(
         error.message,
@@ -197,8 +166,7 @@ describe('issue evaluation', () => {
         {
           operator: 'AND',
           evaluationMethod: 'inline-sql',
-          evaluationParameter:
-            'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+          evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
         },
       ],
     }
@@ -222,8 +190,7 @@ describe('issue evaluation', () => {
         {
           operator: 'AND',
           evaluationMethod: 'inline-sql',
-          evaluationParameter:
-            'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+          evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
         },
       ],
     }
@@ -243,8 +210,7 @@ describe('issue evaluation', () => {
         result: { colHeader: 1 },
       },
       {
-        formattedEvaluationParameter:
-          'SELECT anotherColumn FROM SOME_OTHER_TABLE',
+        formattedEvaluationParameter: 'SELECT anotherColumn FROM SOME_OTHER_TABLE',
         result: { colHeader: false },
       },
     ])
@@ -259,8 +225,7 @@ describe('issue evaluation', () => {
       },
       {
         evaluationMethod: 'inline-sql',
-        evaluationParameter:
-          'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+        evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
       },
     ]
     await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
@@ -292,8 +257,7 @@ describe('issue evaluation', () => {
         {
           operator: 'AND',
           evaluationMethod: 'inline-sql',
-          evaluationParameter:
-            'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+          evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
         },
       ],
     }
@@ -326,8 +290,7 @@ describe('issue evaluation', () => {
         {
           operator: 'AND',
           evaluationMethod: 'inline-sql',
-          evaluationParameter:
-            'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+          evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
         },
       ],
     }
@@ -347,8 +310,7 @@ describe('issue evaluation', () => {
         result: { colHeader: 1 },
       },
       {
-        formattedEvaluationParameter:
-          'SELECT anotherColumn FROM SOME_OTHER_TABLE',
+        formattedEvaluationParameter: 'SELECT anotherColumn FROM SOME_OTHER_TABLE',
         result: { colHeader: false },
       },
     ])
@@ -365,8 +327,7 @@ describe('issue evaluation', () => {
       },
       {
         evaluationMethod: 'inline-sql',
-        evaluationParameter:
-          'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+        evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
       },
     ]
     await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
@@ -398,8 +359,7 @@ describe('issue evaluation', () => {
         {
           operator: 'OR',
           evaluationMethod: 'inline-sql',
-          evaluationParameter:
-            'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+          evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
         },
       ],
     }
@@ -432,8 +392,7 @@ describe('issue evaluation', () => {
         {
           operator: 'OR',
           evaluationMethod: 'inline-sql',
-          evaluationParameter:
-            'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+          evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
         },
       ],
     }
@@ -457,8 +416,7 @@ describe('issue evaluation', () => {
         result: { colHeader: false },
       },
       {
-        formattedEvaluationParameter:
-          'SELECT anotherColumn FROM SOME_OTHER_TABLE',
+        formattedEvaluationParameter: 'SELECT anotherColumn FROM SOME_OTHER_TABLE',
         result: { colHeader: 0 },
       },
       {
@@ -482,8 +440,7 @@ describe('issue evaluation', () => {
         {
           operator: 'OR',
           evaluationMethod: 'inline-sql',
-          evaluationParameter:
-            'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+          evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
         },
       ],
     }
@@ -519,15 +476,13 @@ describe('issue evaluation', () => {
           },
           {
             evaluationMethod: 'inline-sql',
-            evaluationParameter:
-              'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+            evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
           },
         ],
       },
       {
         evaluationMethod: 'inline-sql',
-        evaluationParameter:
-          'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
+        evaluationParameter: 'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
       },
     ]
     await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
@@ -538,8 +493,7 @@ describe('issue evaluation', () => {
         result: { colHeader: 1 },
       },
       {
-        formattedEvaluationParameter:
-          'SELECT anotherColumn FROM SOME_OTHER_TABLE',
+        formattedEvaluationParameter: 'SELECT anotherColumn FROM SOME_OTHER_TABLE',
         result: { colHeader: false },
       },
     ])
@@ -598,8 +552,7 @@ describe('issue evaluation', () => {
         formattedEvaluationParameter: 'SELECT someField FROM SOME_TABLE',
       },
       {
-        formattedEvaluationParameter:
-          'SELECT otherField FROM OTHER_TABLE WHERE issueId = ?',
+        formattedEvaluationParameter: 'SELECT otherField FROM OTHER_TABLE WHERE issueId = ?',
         result: [],
       },
       {
@@ -613,25 +566,17 @@ describe('issue evaluation', () => {
     }
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
-      assert.fail(
-        'An error should be thrown when an SQL condition returns blank result'
-      )
+      assert.fail('An error should be thrown when an SQL condition returns blank result')
     } catch (error) {
-      assert.equal(
-        error.message,
-        "Inline SQL 'SELECT someField FROM SOME_TABLE' produced no result"
-      )
+      assert.equal(error.message, "Inline SQL 'SELECT someField FROM SOME_TABLE' produced no result")
     }
     conditions = {
       evaluationMethod: 'inline-sql',
-      evaluationParameter:
-        'SELECT otherField FROM OTHER_TABLE WHERE issueId = {{id}}',
+      evaluationParameter: 'SELECT otherField FROM OTHER_TABLE WHERE issueId = {{id}}',
     }
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
-      assert.fail(
-        'An error should be thrown when an SQL condition returns blank result'
-      )
+      assert.fail('An error should be thrown when an SQL condition returns blank result')
     } catch (error) {
       assert.equal(
         error.message,
@@ -644,14 +589,9 @@ describe('issue evaluation', () => {
     }
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
-      assert.fail(
-        'An error should be thrown when an SQL condition returns blank result'
-      )
+      assert.fail('An error should be thrown when an SQL condition returns blank result')
     } catch (error) {
-      assert.equal(
-        error.message,
-        "Inline SQL 'SELECT yetAnotherField FROM OTHER_TABLE' produced no result"
-      )
+      assert.equal(error.message, "Inline SQL 'SELECT yetAnotherField FROM OTHER_TABLE' produced no result")
     }
   })
 
@@ -667,20 +607,14 @@ describe('issue evaluation', () => {
       },
       {
         formattedEvaluationParameter: 'SELECT otherField FROM OTHER_TABLE',
-        result: [
-          { colHeader1: 0, colHeader2: 1 },
-          { colHeader1: 1 },
-          { colHeader1: 2 },
-        ],
+        result: [{ colHeader1: 0, colHeader2: 1 }, { colHeader1: 1 }, { colHeader1: 2 }],
       },
       {
-        formattedEvaluationParameter:
-          'SELECT otherField FROM OTHER_TABLE WHERE issueId = ?',
+        formattedEvaluationParameter: 'SELECT otherField FROM OTHER_TABLE WHERE issueId = ?',
         result: [{ colHeader: 5 }, { colHeader: 2 }],
       },
       {
-        formattedEvaluationParameter:
-          'SELECT yetAnotherField FROM OTHER_TABLE WHERE issueId = ?',
+        formattedEvaluationParameter: 'SELECT yetAnotherField FROM OTHER_TABLE WHERE issueId = ?',
         result: [{}, { colHeader: 2 }],
       },
     ])
@@ -693,24 +627,20 @@ describe('issue evaluation', () => {
     })
     conditions = {
       evaluationMethod: 'inline-sql',
-      evaluationParameter:
-        'SELECT otherField FROM OTHER_TABLE WHERE issueId = {{id}}',
+      evaluationParameter: 'SELECT otherField FROM OTHER_TABLE WHERE issueId = {{id}}',
     }
     await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
     conditions = {
       evaluationMethod: 'inline-sql',
-      evaluationParameter:
-        'SELECT yetAnotherField FROM OTHER_TABLE WHERE issueId = {{id}}',
+      evaluationParameter: 'SELECT yetAnotherField FROM OTHER_TABLE WHERE issueId = {{id}}',
     }
     try {
       await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
         assert.isNotOk(result)
       })
-      assert.fail(
-        'An error should be thrown when an SQL condition returns blank result'
-      )
+      assert.fail('An error should be thrown when an SQL condition returns blank result')
     } catch (error) {
       assert.equal(
         error.message,

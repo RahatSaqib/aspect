@@ -1,7 +1,7 @@
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
-const SELECT_LIST_FIELDS = ['dt.id', 'dt.name']
+const SELECT_LIST_FIELDS = ['dt.id', 'dt.name', 'dt.externalId']
 
 async function listDeviceTypesForSelectList(request) {
   const { auth } = request

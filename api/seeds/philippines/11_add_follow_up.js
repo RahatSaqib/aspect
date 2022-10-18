@@ -5,9 +5,7 @@ const { addFollowUps, removeFollowUps } = require('../utils')
 const followUp = require('./fixtures/FollowUp.json')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Philippines' })
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where({ name: 'Philippines' }).first('id')
 
   const followUps = await knex('FollowUp').pluck('externalId')
 
@@ -15,5 +13,5 @@ async function seed(knex) {
     await removeFollowUps(knex, [partnerId], externalId)
   })
 
-  await addFollowUps(knex, [partnerId], followUp)
+  await addFollowUps(knex, followUp, [partnerId])
 }

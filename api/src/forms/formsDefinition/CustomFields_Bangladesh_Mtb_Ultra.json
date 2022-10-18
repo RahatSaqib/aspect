@@ -1,0 +1,36 @@
+{
+  "fields": [
+    {
+      "id": 1202,
+      "name": "Repeat Test",
+      "i18nKey": "RepeatTesti18nKey",
+      "fieldType": "number",
+      "order": 201,
+      "title": "Repeat Test",
+      "caption": "Repeat Test",
+      "gxAlertDbColumn": "RepeatTest",
+      "i18nKeyCaption": "RepeatTesti18nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.1202.value",
+      "payloadDestinationPath": "patient.RepeatTest",
+      "items": [
+        {
+          "key": 0,
+          "value": "First or second",
+          "order": 0
+        },
+        {
+          "key": 1,
+          "value": "Follow-up",
+          "order": 10
+        },
+        {
+          "key": 2,
+          "value": "Repeat Baseline",
+          "order": 20
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

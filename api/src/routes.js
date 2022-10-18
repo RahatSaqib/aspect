@@ -1,104 +1,47 @@
 const Joi = require('@hapi/joi')
-
+const uniq = require('lodash/uniq')
+const logger = require('./shared/logger')
+const { REGEX_ISODATESTRING } = require('./shared/date')
+const { splitCsvWithTrim } = require('./shared/string')
 // Adds all API routes to the server
 function addClientRoutes(server) {
-  server.route(
-    require('./accountDetails/endpoints').routes.map(decorateClientAPI())
-  )
+  server.route(require('./accountDetails/endpoints').routes.map(decorateClientAPI()))
   server.route(require('./auth/endpoints').routes.map(decorateClientAPI()))
-  server.route(
-    require('./assay/endpoints').routes.map(decorateClientAPI('assay'))
-  )
-  server.route(
-    require('./demo/endpoints').routes.map(decorateClientAPI('demo'))
-  )
-  server.route(
-    require('./device/endpoints').routes.map(decorateClientAPI('device'))
-  )
-  server.route(
-    require('./deviceMaintenanceStatus/endpoints').routes.map(
-      decorateClientAPI('device')
-    )
-  )
-  server.route(
-    require('./deviceApiKey/endpoints').routes.map(
-      decorateClientAPI('deviceApiKey')
-    )
-  )
-  server.route(
-    require('./deviceOperation/endpoints').routes.map(
-      decorateClientAPI('device')
-    )
-  )
-  server.route(
-    require('./deviceType/endpoints').routes.map(decorateClientAPI('device'))
-  )
+  server.route(require('./assay/endpoints').routes.map(decorateClientAPI('assay')))
+  server.route(require('./demo/endpoints').routes.map(decorateClientAPI('demo')))
+  server.route(require('./device/endpoints').routes.map(decorateClientAPI('device')))
+  server.route(require('./deviceMaintenanceStatus/endpoints').routes.map(decorateClientAPI('device')))
+  server.route(require('./deviceApiKey/endpoints').routes.map(decorateClientAPI('deviceApiKey')))
+  server.route(require('./deviceOperation/endpoints').routes.map(decorateClientAPI('device')))
+  server.route(require('./deviceType/endpoints').routes.map(decorateClientAPI('device')))
   server.route(require('./geography/endpoints').routes.map(decorateClientAPI()))
-  server.route(
-    require('./person/endpoints').routes.map(decorateClientAPI('person'))
-  )
-  server.route(
-    require('./site/endpoints').routes.map(decorateClientAPI('site'))
-  )
-  server.route(
-    require('./result/endpoints').routes.map(decorateClientAPI('result'))
-  )
-  server.route(
-    require('./report/endpoints').routes.map(decorateClientAPI('report'))
-  )
-  server.route(
-    require('./partner/endpoints').routes.map(decorateClientAPI('partner'))
-  )
-  server.route(
-    require('./job/endpoints').routes.map(decorateClientAPI('person'))
-  )
-  server.route(
-    require('./consumable/endpoints').routes.map(decorateClientAPI('inventory'))
-  )
-  server.route(
-    require('./issue/endpoints').routes.map(decorateClientAPI('issue'))
-  )
-  server.route(
-    require('./notification/endpoints').routes.map(
-      decorateClientAPI('notification')
-    )
-  )
-  server.route(
-    require('./task/endpoints').routes.map(decorateClientAPI('task'))
-  )
-  server.route(
-    require('./inventory/endpoints').routes.map(decorateClientAPI('inventory'))
-  )
-  server.route(
-    require('./dashboard/endpoints').routes.map(decorateClientAPI('dashboard'))
-  )
+  server.route(require('./person/endpoints').routes.map(decorateClientAPI('person')))
+  server.route(require('./site/endpoints').routes.map(decorateClientAPI('site')))
+  server.route(require('./siteType/endpoints').routes.map(decorateClientAPI('siteType')))
+  server.route(require('./result/endpoints').routes.map(decorateClientAPI('result')))
+  server.route(require('./report/endpoints').routes.map(decorateClientAPI('report')))
+  server.route(require('./partner/endpoints').routes.map(decorateClientAPI('partner')))
+  server.route(require('./job/endpoints').routes.map(decorateClientAPI('person')))
+  server.route(require('./consumable/endpoints').routes.map(decorateClientAPI('inventory')))
+  server.route(require('./issue/endpoints').routes.map(decorateClientAPI('issue')))
+  server.route(require('./notification/endpoints').routes.map(decorateClientAPI('notification')))
+  server.route(require('./task/endpoints').routes.map(decorateClientAPI('task')))
+  server.route(require('./inventory/endpoints').routes.map(decorateClientAPI('inventory')))
+  server.route(require('./dashboard/endpoints').routes.map(decorateClientAPI('dashboard')))
   server.route(require('./tag/endpoints').routes.map(decorateClientAPI()))
-  server.route(
-    require('./server/endpoints').routes.map(decorateClientAPI('server'))
-  )
-  server.route(
-    require('./disease/endpoints').routes.map(decorateClientAPI('device'))
-  )
-  server.route(
-    require('./forms/endpoints').routes.map(decorateClientAPI('case'))
-  )
-  server.route(
-    require('./case/endpoints').routes.map(decorateClientAPI('case'))
-  )
+  server.route(require('./server/endpoints').routes.map(decorateClientAPI('server')))
+  server.route(require('./disease/endpoints').routes.map(decorateClientAPI('device')))
+  server.route(require('./forms/endpoints').routes.map(decorateClientAPI('case')))
+  server.route(require('./case/endpoints').routes.map(decorateClientAPI('case')))
+  server.route(require('./resultCategoryGroup/endpoints').routes.map(decorateClientAPI()))
 }
 
 function addDeviceRoutes(server) {
-  server.route(
-    require('./deviceApi/endpoints').routes.map(decorateDeviceAPI('device'))
-  )
+  server.route(require('./deviceApi/endpoints').routes.map(decorateDeviceAPI('device')))
 }
 
 function addDeviceRawRoutes(server) {
-  server.route(
-    require('./deviceApiRaw/endpoints').routes.map(
-      decorateDeviceAPI('device/raw')
-    )
-  )
+  server.route(require('./deviceApiRaw/endpoints').routes.map(decorateDeviceRawAPI('device/raw')))
 }
 
 // Decorates an API route with common configuration so
@@ -108,13 +51,7 @@ function decorateClientAPI(module) {
   const scope = ['+clientApi']
   const strategies = ['clientApi']
 
-  if (module) {
-    // If module specified, must have one of admin or `{module}:edit`
-    // in addition to any other listed in scope of routes.
-    scope.push('edit', `${module}:edit`)
-  }
-
-  return decorateAPI({ scope, strategies })
+  return decorateAPI({ module, scope, strategies })
 }
 
 function decorateDeviceAPI() {
@@ -124,7 +61,13 @@ function decorateDeviceAPI() {
   return decorateAPI({ scope, strategies })
 }
 
-function decorateAPI({ scope, strategies }) {
+function decorateDeviceRawAPI() {
+  const scope = ['+deviceApi']
+  const strategies = ['deviceApiBasic', 'deviceApiKey', 'deviceApiRawUnauthenticated']
+  return decorateAPI({ scope, strategies })
+}
+
+function decorateAPI({ module, scope, strategies }) {
   return route => {
     // add ['api'] tag by default so available in Hapi-Swagger
     let { config } = route
@@ -139,15 +82,33 @@ function decorateAPI({ scope, strategies }) {
     // If route is authenticated, add common configuration
     if (config.auth !== false) {
       // Require module scope to all routes
+      let { auth } = config
+      if (!auth) {
+        // could be undefined instead of explicitly false
+        auth = {}
+        config.auth = auth
+      }
+      auth.strategies = strategies.concat(auth.strategies || [])
+
       if (module) {
-        let { auth } = config
-        if (!auth) {
-          // could be undefined instead of explicitly false
-          auth = {}
-          config.auth = auth
+        // Always add access to the highest permission level
+        const scopeToAdd = ['admin', `${module}:admin`]
+
+        // Add access to :edit level if :view is specified
+        if (auth.scope) {
+          auth.scope.forEach(s => {
+            const destructuredScope = s.split(':')
+            if (destructuredScope.length > 1 && destructuredScope[1] === 'view') {
+              scopeToAdd.push(`${destructuredScope[0]}:edit`)
+              scopeToAdd.push(`${destructuredScope[0]}:admin`)
+            }
+
+            if (destructuredScope.length > 1 && destructuredScope[1] === 'edit')
+              scopeToAdd.push(`${destructuredScope[0]}:admin`)
+          })
         }
-        auth.strategies = strategies.concat(auth.strategies || [])
-        auth.scope = scope.concat(auth.scope || [])
+        // Merge configured and dynamically added permissions
+        auth.scope = uniq(scope.concat(auth.scope || []).concat(scopeToAdd))
       }
 
       // Add JWT Auth token query param configuration
@@ -173,11 +134,11 @@ function decorateAPI({ scope, strategies }) {
 
 function asyncHandler(handler) {
   return (request, reply) =>
-    handler(request)
+    handler(request, reply)
       .then(reply)
       .catch(err => {
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err)
         throw err
       })
 }
@@ -194,23 +155,33 @@ function getSortPageParams(params, sortColumnMapping, defaultSort) {
 // extracts and sanitizes the parameters related to sorting from the
 // candidate params and returns them as an object
 function getSortParams(params, sortColumnMapping, defaultSort) {
-  const result = {}
+  const orders = splitCsvWithTrim(params.sortDir, 'asc')
+  let columnNames = splitCsvWithTrim(params.sortCol, defaultSort)
 
-  result.sortCol =
-    sortColumnMapping && params.sortCol && sortColumnMapping[params.sortCol]
-      ? sortColumnMapping[params.sortCol]
-      : params.sortCol
-      ? params.sortCol
-      : defaultSort
-  result.sortDir = params.sortDir === 'desc' ? 'desc' : 'asc'
+  if (sortColumnMapping) {
+    columnNames = columnNames.map(name => sortColumnMapping[name] || name)
+  }
 
-  return result
+  const orderBy = columnNames.map((name, index) => ({
+    column: name,
+    order: orders[index] || 'asc',
+  }))
+
+  return { orderBy }
 }
 
 // extracts and sanitizes the parameters related to paging from the
 // candidate params and returns them as an object
 function getPageParams(params) {
   const result = {}
+
+  if (params.size === 'all') {
+    return {
+      page: 0,
+      skip: 0,
+      // don't define `size` prop here - meaning to get all available items
+    }
+  }
 
   result.page = parseInt(params.page, 10) || 0
   result.size = parseInt(params.size, 10) || 50
@@ -227,21 +198,21 @@ function validateSortPageParams(...sortColumns) {
             .valid(...sortColumns)
             .description('Sort on named column')
         : Joi.string().description('Sort on named column'),
-    sortDir: Joi.string()
-      .valid('asc', 'desc')
-      .description('Sort order ascending or descending'),
-    page: Joi.number()
-      .integer()
-      .min(0)
-      .description('Page index with 0 as first page'),
-    size: Joi.number().integer().positive().description('Page size'),
+    sortDir: Joi.string().valid('asc', 'desc').description('Sort order ascending or descending'),
+    page: Joi.number().integer().min(0).description('Page index with 0 as first page'),
+    size: Joi.alternatives().try(Joi.number().integer().positive(), Joi.string().allow('all')).description('Page size'),
   }
 }
 
-function validateDateRangeParams() {
+function validateDateRangeParams(isoDateFormatExpected = false) {
+  if (isoDateFormatExpected)
+    return {
+      minDate: Joi.date().iso().allow(null).description('From Date'),
+      maxDate: Joi.date().iso().allow(null).description('To Date'),
+    }
   return {
-    minDate: Joi.date().iso().allow(null).description('From Date'),
-    maxDate: Joi.date().iso().allow(null).description('To Date'),
+    minDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('From Date'),
+    maxDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('To Date'),
   }
 }
 

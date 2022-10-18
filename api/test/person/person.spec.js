@@ -1,22 +1,24 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Person routes', () => {
   const path = '/api/person'
   let countryId
-  describe('GET /person', () => {
-    shared.checkToken(server, path)
 
+  before(async () => {
+    shared.checkToken(server, path)
+  })
+
+  describe('GET /person', () => {
     it('should return a list of persons when using valid token', async () => {
-      const res = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')
@@ -107,6 +109,35 @@ describe('Person routes', () => {
         assert.equal(res.status, 200)
       })
     })
+
+    describe('/person/{personId}', () => {
+      it('Should update the person record', async () => {
+        const personObject = {
+          id: person.id,
+          name: 'Test Contact',
+        }
+        let {
+          body: { data: updatedPerson },
+        } = await server
+          .put(`${path}/${person.id}`)
+          .send({
+            ...personObject,
+            hidePatientId: '0',
+          })
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.isNotOk(updatedPerson.hidePatientId)
+        ;({
+          body: { data: updatedPerson },
+        } = await server
+          .put(`${path}/${person.id}`)
+          .send({
+            ...personObject,
+            hidePatientId: 'true',
+          })
+          .set('Authorization', `Bearer ${shared.token}`))
+        assert.isOk(updatedPerson.hidePatientId)
+      })
+    })
   })
 
   describe('POST', () => {
@@ -123,9 +154,7 @@ describe('Person routes', () => {
 
     describe('/person', () => {
       it('Should fail to create person because of missing required field `name`', async () => {
-        const res = await server
-          .post(`${path}`)
-          .set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.post(`${path}`).set('Authorization', `Bearer ${shared.token}`)
         assert.equal(res.status, 400)
       })
       it('Should create new person', async () => {
@@ -144,17 +173,6 @@ describe('Person routes', () => {
         assert.property(personDetails, 'countryId')
         // keep person id to remove it in after()
         testingPersonId = personDetails.id
-      })
-      it('Should fail to create person with same name', async () => {
-        const res = await server
-          .post(`${path}`)
-          .send({ name: testingPersonName, countryId })
-          .set('Authorization', `Bearer ${shared.token}`)
-        assert.equal(res.status, 409) // Boom.conflict
-        assert.equal(
-          res.body.message,
-          'Person with requested name already exists'
-        )
       })
     })
   })

@@ -1,0 +1,441 @@
+{
+  "fields": [
+    {
+      "id": 1101,
+      "name": "PatientName",
+      "title": "Patient Name",
+      "i18nKey": "PatientNameI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 110,
+      "gxAlertDbColumn": "PatientName",
+      "caption": "Patient Name",
+      "i18nKeyCaption": "PatientNameI18nCaptionKey",
+      "controlType": "textBox",
+      "payloadDestinationPath": "patient.PatientName"
+    },
+    {
+      "id": 1102,
+      "completionWeight": 10,
+      "name": "Age",
+      "title": "Age",
+      "i18nKey": "AgeFieldi18nKey",
+      "fieldType": "number",
+      "order": 120,
+      "gxAlertDbColumn": "PatientAge",
+      "caption": "Age",
+      "i18nKeyCaption": "Agei18nCaptionKey",
+      "controlType": "textBox",
+      "payloadDestinationPath": "patient.PatientAge",
+      "validation": [
+        {
+          "validationType": "integer",
+          "min": 0,
+          "max": 150,
+          "errorMessage": "The age should be a number between 1-150",
+          "errorMessageI18nKey": "AgeValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "id": 1103,
+      "name": "Gender",
+      "title": "Gender",
+      "i18nKey": "GenderI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 130,
+      "gxAlertDbColumn": "PatientGender",
+      "caption": "Gender",
+      "i18nKeyCaption": "Genderi18nCaptionKey",
+      "controlType": "comboBox",
+      "payloadDestinationPath": "patient.PatientGender",      
+      "items": [
+        {
+          "key": 1,
+          "value": "Male",
+          "order": 0
+        },
+        {
+          "key": 0,
+          "value": "Female",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": 1104,
+      "name": "Address",
+      "title": "Address",
+      "i18nKey": "AddressI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 140,
+      "gxAlertDbColumn": "PatientStreet",
+      "caption": "Address",
+      "i18nKeyCaption": "AddressI18nCaptionKey",
+      "payloadDestinationPath": "patient.PatientStreet",
+      "controlType": "textBox"
+    },
+    {
+      "id": 1105,
+      "name": "Mobile Number",
+      "title": "Mobile Number",
+      "i18nKey": "MobileNumberI18nkey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 150,
+      "gxAlertDbColumn": "PatientPhone",
+      "caption": "Mobile Number",
+      "i18nKeyCaption": "MobileNumberI18nKeyCaption",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.1105.value",
+      "payloadDestinationPath": "patient.PatientPhone"
+    },
+    {
+      "id": 1106,
+      "name": "Referring Facility",
+      "i18nKey": "ReferringFacilityI18nkey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 160,
+      "gxAlertDbColumn": "ReferringFacility",
+      "title": "Referring Facility",
+      "caption": "Referring Facility",
+      "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
+      "controlType": "autoComplete",
+      "payloadOriginPath": "data.customFieldData.1106.value",
+      "payloadDestinationPath": "patient.ReferringFacility",
+      "optionSource": "all-sites",
+      "customUrlMappingFields": {
+        "key": "externalId",
+        "value": "name"
+      }
+    },
+    {
+      "id": 12011,
+      "name": "TypeOfPatient",
+      "i18nKey": "TypeOfPatientI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 180,
+      "gxAlertDbColumn": "TypeOfPatient",
+      "title": "Type of Patient",
+      "caption": "Type of Patient",
+      "i18nKeyCaption": "TypeOfPatientI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.12011.value",
+      "payloadDestinationPath": "patient.TypeOfPatient",
+      "items": [
+        {
+          "key": "Failures_of_Category_I",
+          "value": "Failures of Category I",
+          "description": "remain positive at month 5 or later and smear negative patients who become smear positive at month 2",
+          "order": 0
+        },
+        {
+          "key": "Non_converters_of_Category_I",
+          "value": "Non converters of Category I",
+          "description": "remain positive at month 2-3",
+          "order": 10
+        },
+        {
+          "key": "Failures_of_Retreatment",
+          "value": "Failures of Retreatment",
+          "description": "remain positive at month 5 or later",
+          "order": 20
+        },
+        {
+          "key": "Non_converters_of_Retreatment",
+          "value": "Non converters of Retreatment",
+          "description": "remain positive at month 2-3",
+          "order": 30
+        },
+        {
+          "key": "Relapses",
+          "value": "Relapses",
+          "order": 40
+        },
+        {
+          "key": "Treatment_after_loss_to_follow_up",
+          "value": "Treatment after loss to follow up",
+          "order": 50
+        },
+        {
+          "key": "Close_contacts_of_DR_TB_patient_with_symptoms",
+          "value": "Close contacts of DR TB patient with symptoms",
+          "order": 60
+        },
+        {
+          "key": "HIV_infected_person_with_TB_SS",
+          "value": "HIV infected person, with TB S/S",
+          "order": 70
+        },
+        {
+          "key": "Others_Pulmonary_clinically_diagnosed",
+          "value": "Others - Pulmonary, clinically diagnosed",
+          "order": 80
+        },
+        {
+          "key": "Others_Extra_Pulmonary",
+          "value": "Others - Extra Pulmonary",
+          "order": 81
+        },
+        {
+          "key": "Others_Pulmonary_Bacteriologically_Confirmed",
+          "value": "Others - Pulmonary, Bacteriologically Confirmed",
+          "order": 82
+        },
+        {
+          "key": "Presumptive_Pulmonary_Smear_Negative_TB_Cases",
+          "value": "Presumptive Pulmonary Smear Negative TB Cases",
+          "order": 90
+        },
+        {
+          "key": "Presumptive_TB",
+          "value": "Presumptive TB",
+          "order": 95
+        }
+      ]
+    },
+    {
+      "id": 12012,
+      "name": "PatientHistory",
+      "i18nKey": "PatientHistoryI18nKey",
+      "fieldType": "text",
+      "completionWeight": 5,
+      "order": 190,
+      "gxAlertDbColumn": "PatientHistory",
+      "title": "Patient History",
+      "caption": "Patient History",
+      "i18nKeyCaption": "PatientHistoryI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.12012.value",
+      "payloadDestinationPath": "patient.PatientHistory",
+      "condition": [
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Close_contacts_of_DR_TB_patient_with_symptoms",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "HIV_infected_person_with_TB_SS",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Others_Pulmonary_clinically_diagnosed",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Others_Extra_Pulmonary",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Others_Pulmonary_Bacteriologically_Confirmed",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Presumptive_Pulmonary_Smear_Negative_TB_Cases",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Presumptive_TB",
+          "operator": "=",
+          "conjunction": "OR"
+        }
+      ],
+      "filters": [
+        {
+          "propToCompare": "TypeOfPatient",
+          "fieldToCompare": "scope",
+          "operator": "in"
+        }
+      ],
+      "items": [
+        {
+          "key": "unknown",
+          "value": "Unknown history",
+          "order": 0,
+          "scope": [
+            "Close_contacts_of_DR_TB_patient_with_symptoms",
+            "HIV_infected_person_with_TB_SS",
+            "Others_Pulmonary_clinically_diagnosed",
+            "Others_Extra_Pulmonary",
+            "Others_Pulmonary_Bacteriologically_Confirmed",
+            "Presumptive_Pulmonary_Smear_Negative_TB_Cases",
+            "Presumptive_TB"
+          ]
+        },
+        {
+          "key": "new",
+          "value": "New",
+          "order": 10,
+          "scope": [
+            "Close_contacts_of_DR_TB_patient_with_symptoms",
+            "HIV_infected_person_with_TB_SS",
+            "Others_Pulmonary_clinically_diagnosed",
+            "Others_Extra_Pulmonary",
+            "Others_Pulmonary_Bacteriologically_Confirmed",
+            "Presumptive_Pulmonary_Smear_Negative_TB_Cases",
+            "Presumptive_TB"
+          ]
+        },
+        {
+          "key": "treated",
+          "value": "Previously treated",
+          "order": 20,
+          "scope": [
+            "Close_contacts_of_DR_TB_patient_with_symptoms",
+            "HIV_infected_person_with_TB_SS",
+            "Others_Pulmonary_clinically_diagnosed",
+            "Others_Extra_Pulmonary",
+            "Presumptive_Pulmonary_Smear_Negative_TB_Cases"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12013,
+      "name": "PatientRetreatment",
+      "i18nKey": "PatientRetreatmentI18nKey",
+      "fieldType": "text",
+      "completionWeight": 5,
+      "order": 200,
+      "gxAlertDbColumn": "PatientRetreatment",
+      "title": "Patient Retreatment",
+      "caption": "Patient Retreatment",
+      "i18nKeyCaption": "PatientRetreatmentI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.12013.value",
+      "payloadDestinationPath": "patient.PatientRetreatment",
+      "condition": [
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Relapses",
+          "operator": "=",
+          "conjunction": "OR"
+        },
+        {
+          "propToCompare": "TypeOfPatient",
+          "valueToCompare": "Treatment_after_loss_to_follow_up",
+          "operator": "=",
+          "conjunction": "OR"
+        }
+      ],
+      "items": [
+        {
+          "key": "Category-I",
+          "value": "Category I",
+          "order": 0
+        },
+        {
+          "key": "Retreatment",
+          "text": "Retreatment",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": 1210,
+      "name": "HIV Status",
+      "i18nKey": "HIVStatusI18nKey",
+      "fieldType": "text",
+      "completionWeight": 5,
+      "order": 210,
+      "gxAlertDbColumn": "HIVStatus",
+      "title": "HIV Status",
+      "caption": "HIV Status",
+      "i18nKeyCaption": "HIVStatusI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.1210.value",
+      "payloadDestinationPath": "patient.HIVStatus",
+      "items": [
+        {
+          "key": "positive",
+          "value": "Positive",
+          "order": 10
+        },
+        {
+          "key": "negative",
+          "value": "Negative",
+          "order": 20
+        },
+        {
+          "key": "unknown",
+          "value": "Unknown",
+          "order": 99
+        }
+      ]
+    },
+    {
+      "id": 1211,
+      "name": "Sample Type",
+      "i18nKey": "SampleTypeI18nKey",
+      "fieldType": "text",
+      "completionWeight": 5,
+      "order": 220,
+      "gxAlertDbColumn": "SampleType",
+      "title": "Sample Type",
+      "caption": "Sample Type",
+      "i18nKeyCaption": "SampleTypeI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.1211.value",
+      "payloadDestinationPath": "patient.SampleType",
+      "items": [
+        {
+          "key": "pulmonary",
+          "value": "Pulmonary",
+          "order": 10
+        },
+        {
+          "key": "extra",
+          "value": "Extra-pulmonary",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": 1301,
+      "name": "TBRegistrationNumberPrevious",
+      "title": "TB Registration Number - Previous (if any)",
+      "i18nKey": "TBRegistrationNumberPreviousI18nKey",
+      "fieldType": "text",
+      "completionWeight": 5,
+      "order": 230,
+      "gxAlertDbColumn": "TBRegistrationNumberPrevious",
+      "caption": "TB Registration Number - Previous (if any)",
+      "i18nKeyCaption": "TBRegistrationNumberPreviousI18nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.1301.value",
+      "payloadDestinationPath": "patient.TBRegistrationNumberPrevious"
+    },
+    {
+      "id": 1302,
+      "name": "TBRegistrationNumberCurrent",
+      "title": "TB Registration Number - Current",
+      "i18nKey": "TBRegistrationNumberCurrentI18nKey",
+      "fieldType": "text",
+      "completionWeight": 5,
+      "order": 240,
+      "gxAlertDbColumn": "TBRegistrationNumberCurrent",
+      "caption": "TB Registration Number - Current",
+      "i18nKeyCaption": "TBRegistrationNumberCurrentI18nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.1302.value",
+      "payloadDestinationPath": "patient.TBRegistrationNumberCurrent"
+    }
+  ],
+  "refForms": []
+}

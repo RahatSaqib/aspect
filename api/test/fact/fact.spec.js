@@ -2,13 +2,13 @@ const chai = require('chai')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const { createTestContext } = require('../deviceApi/utils')
 const { waitForIdle } = require('../utils/mqUtils')
-
+const { knex } = require('../../src/db')
 const server = require('../utils/testUtils')
 
 const { assert } = chai
 
 const devicePostResultPath = '/device/result'
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
@@ -49,10 +49,7 @@ describe('Fact tables initial data', () => {
           .select('resultCount')
 
         // same?
-        assert.equal(
-          countInResultTable.resultCount,
-          countInFactTable.resultCount
-        )
+        assert.equal(countInResultTable.resultCount, countInFactTable.resultCount)
       }))
   })
 })

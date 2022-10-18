@@ -5,23 +5,13 @@ async function up(knex) {
     tbl.dropForeign('personId')
   })
   await knex.schema.table('SmsMessage', tbl => {
-    tbl
-      .integer('personId')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .alter()
+    tbl.integer('personId').unsigned().references('id').inTable('Person').alter()
   })
   await knex.schema.alterTable('EmailMessage', tbl => {
     tbl.dropForeign('personId')
   })
   await knex.schema.table('EmailMessage', tbl => {
-    tbl
-      .integer('personId')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .alter()
+    tbl.integer('personId').unsigned().references('id').inTable('Person').alter()
     tbl.text('to')
   })
   await knex.schema.table('EmailTemplate', tbl => {
@@ -30,24 +20,17 @@ async function up(knex) {
 }
 
 async function down(knex) {
-  await knex.schema.table('SmsMessage', tbl => {
-    tbl
-      .integer('personId')
-      .unsigned()
-      .notNullable()
-      .references('id')
-      .inTable('Person')
-      .alter()
+  await knex.schema.alterTable('SmsMessage', tbl => {
+    tbl.dropForeign('personId')
   })
-
+  await knex.schema.table('SmsMessage', tbl => {
+    tbl.integer('personId').unsigned().notNullable().references('id').inTable('Person').alter()
+  })
+  await knex.schema.alterTable('EmailMessage', tbl => {
+    tbl.dropForeign('personId')
+  })
   await knex.schema.table('EmailMessage', tbl => {
-    tbl
-      .integer('personId')
-      .unsigned()
-      .notNullable()
-      .references('id')
-      .inTable('Person')
-      .alter()
+    tbl.integer('personId').unsigned().notNullable().references('id').inTable('Person').alter()
     tbl.dropColumn('to')
   })
 

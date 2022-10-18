@@ -35,6 +35,11 @@
         "description": "Can view and edit lab devices"
     },
     {
+        "module": "device",
+        "activity": "admin",
+        "description": "Can delete and merge devices"
+    },
+    {
         "module": "inventory",
         "activity": "view",
         "description": "Can view inventory and the 'Consumables' panel on the dashboard"
@@ -83,6 +88,11 @@
         "module": "site",
         "activity": "edit",
         "description": "Can view, edit, and filter by sites"
+    },
+    {
+        "module": "site",
+        "activity": "admin",
+        "description": "Can disable sites"
     },
     {
         "module": "issue",

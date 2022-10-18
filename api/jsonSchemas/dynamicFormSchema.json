@@ -21,7 +21,6 @@
       "minItems": 1,
       "title": "The list of form Fields",
       "description": "The list of form Fields for filling the clinical response",
-      "additionalItems": true,
       "items": {
         "$id": "#/properties/fields/items",
         "type": "object",
@@ -30,11 +29,23 @@
         "description": "All the properties needed for this field to be rendered",
         "required": ["name", "i18nKey", "fieldType", "order"],
         "properties": {
+          "id": {
+            "$id": "#/properties/fields/items/properties/id",
+            "type": "integer",
+            "title": "The custom field id in gxalert, this will be removed",
+            "description": "The id of the field in gxalert"
+          },
+          "migrateFromId": {
+            "$id": "#/properties/fields/items/properties/migrateFromId",
+            "type": "integer",
+            "title": "The custom field MigrateFromId field in gxalert, this will be removed",
+            "description": "The MigrateFromId of the field in gxalert"
+          },
           "name": {
             "$id": "#/properties/fields/items/properties/name",
             "type": "string",
-            "title": "Field name",
-            "description": "The name of the field"
+            "title": "Field name it should be used as externalId",
+            "description": "The name of the field and its externalId"
           },
           "title": {
             "$id": "#/properties/fields/items/properties/title",
@@ -66,7 +77,29 @@
             "title": "Field type",
             "description": "Type of the data to be stored",
             "default": "text",
-            "enum": ["text", "password", "email", "number", "tel", "url"]
+            "enum": [
+              "text",
+              "password",
+              "email",
+              "patientCellphone",
+              "clinicianCellphone",
+              "number",
+              "tel",
+              "url",
+              "date"
+            ]
+          },
+          "payloadOriginPath": {
+            "$id": "#/properties/fields/items/properties/payloadOriginPath",
+            "type": "string",
+            "title": "Payload location path",
+            "description": "The path in the payload for getting this data"
+          },
+          "payloadDestinationPath": {
+            "$id": "#/properties/fields/items/properties/payloadDestinationPath",
+            "type": "string",
+            "title": "The path in the payload where it will be stored",
+            "description": "The path in the payload for getting this data"
           },
           "order": {
             "$id": "#/properties/fields/items/properties/order",
@@ -83,7 +116,10 @@
             "description": "This allow multiples files to be attached",
             "default": false,
             "dependencies": {
-              "typeOfOptionSource": { "required": ["filePicker"] }
+              "type": ["object"],
+              "typeOfOptionSource": {
+                "required": ["filePicker"]
+              }
             }
           },
           "controlType": {
@@ -102,6 +138,7 @@
               "autoComplete",
               "datePicker",
               "filePicker",
+              "label",
               "camera"
             ]
           },
@@ -134,7 +171,7 @@
               "required": ["validationType"],
               "properties": {
                 "validationType": {
-                  "$id": "#/properties/fields/items/properties/validation/items/validatinType",
+                  "$id": "#/properties/fields/items/properties/validation/items/validationType",
                   "type": "string",
                   "title": "The type of the validation",
                   "description": "This property is for defying the type of the validation we are going to perform",
@@ -147,7 +184,9 @@
                   "title": "Regular Expression to validate",
                   "description": "The regular expression to be matched",
                   "dependencies": {
-                    "validationType": { "required": ["regex"] }
+                    "validationType": {
+                      "required": ["regex"]
+                    }
                   }
                 },
                 "min": {
@@ -156,7 +195,9 @@
                   "title": "the minumun value",
                   "description": "The minimun value of the field",
                   "dependencies": {
-                    "validationType": { "required": ["integer", "float"] }
+                    "validationType": {
+                      "required": ["integer", "float"]
+                    }
                   }
                 },
                 "max": {
@@ -165,7 +206,9 @@
                   "title": "the maximun value",
                   "description": "The maximun value for the number field",
                   "dependencies": {
-                    "validationType": { "required": ["integer", "float"] }
+                    "validationType": {
+                      "required": ["integer", "float"]
+                    }
                   }
                 },
                 "minLength": {
@@ -174,7 +217,9 @@
                   "title": "Minimun length requiered",
                   "description": "The Minimun length for the string field",
                   "dependencies": {
-                    "validationType": { "required": ["string"] }
+                    "validationType": {
+                      "required": ["string"]
+                    }
                   }
                 },
                 "maxLength": {
@@ -183,7 +228,9 @@
                   "title": "Maximun length requiered",
                   "description": "The Maximun length for the string field",
                   "dependencies": {
-                    "validationType": { "required": ["string"] }
+                    "validationType": {
+                      "required": ["string"]
+                    }
                   }
                 },
                 "email": {
@@ -191,7 +238,9 @@
                   "type": "integer",
                   "title": "the email validation value value",
                   "dependencies": {
-                    "validationType": { "required": ["string"] }
+                    "validationType": {
+                      "required": ["string"]
+                    }
                   }
                 },
                 "errorMessage": {
@@ -240,13 +289,20 @@
                   "default": "",
                   "examples": ["propName"]
                 },
+                "gxAlertDbColumn": {
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/gxAlertDbColumn",
+                  "type": "string",
+                  "title": "The db column name for gxalert custom fields this will be removed in the sunset of gxalert",
+                  "default": "",
+                  "examples": ["gxAlertDbColumn"]
+                },
                 "operator": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/operator",
                   "type": "string",
                   "title": "The Operator Schema",
                   "description": "An explanation about the purpose of this instance.",
                   "default": "=",
-                  "enum": ["===", "!==", ">=", "<="]
+                  "enum": ["=", "===", "!==", ">=", "<="]
                 },
                 "fieldToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/fieldToCompare",
@@ -264,7 +320,7 @@
                 },
                 "valueToCompare": {
                   "$id": "#/properties/fields/items/properties/condition/items/properties/valueToCompare",
-                  "type": "string",
+                  "type": ["number", "string"],
                   "title": "The value of the property to be compared",
                   "description": "this is the right side of the condition value",
                   "examples": ["value"]
@@ -278,7 +334,7 @@
                   "enum": ["AND", "OR"]
                 },
                 "conjunctionGroup": {
-                  "$id": "#/properties/fields/items/properties/condition/items/properties/conjunction",
+                  "$id": "#/properties/fields/items/properties/condition/items/properties/conjunctionGroup",
                   "type": "string",
                   "title": "Conjuction Group",
                   "description": "Under the same group all the prepositions they are going to be enclosed by ()"
@@ -293,6 +349,126 @@
                 }
               ]
             }
+          },
+          "filters": {
+            "$id": "#/properties/fields/items/properties/filters",
+            "type": "array",
+            "title": "Condition for filtering a list",
+            "minItems": 0,
+            "description": "these are the conditions for filtering list based on a previous result",
+            "default": {},
+            "dependencies": {
+              "controlType": {
+                "required": [
+                  "comboBox",
+                  "radioButton",
+                  "checkBox",
+                  "list",
+                  "autoComplete"
+                ]
+              }
+            },
+            "items": {
+              "$id": "#/properties/fields/items/properties/filters/items",
+              "type": "object",
+              "title": "The condition preposition",
+              "description": "One part of the condition preposition",
+              "examples": [
+                {
+                  "fieldToCompare": "firstName",
+                  "valueToCompare": "David",
+                  "operator": "==="
+                }
+              ],
+              "required": ["operator"],
+              "properties": {
+                "propToCompare": {
+                  "$id": "#/properties/fields/items/properties/filters/items/properties/propToCompare",
+                  "type": "string",
+                  "title": "The name of the property for comparing the value",
+                  "description": "We are going to use this as a key for obtaining the property value for compearing the condition",
+                  "default": "",
+                  "examples": ["propName"]
+                },
+                "operator": {
+                  "$id": "#/properties/fields/items/properties/filters/items/properties/operator",
+                  "type": "string",
+                  "title": "The Operator Schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": "=",
+                  "enum": ["===", "!==", ">=", "<=", "not-selected", "in"]
+                },
+                "fieldToCompare": {
+                  "$id": "#/properties/fields/items/properties/filters/items/properties/fieldToCompare",
+                  "type": "string",
+                  "title": "The field name to compare",
+                  "description": "The name of the field into the tableNameToCompare table for doing the comparission",
+                  "examples": ["fieldName"]
+                },
+                "valueToCompare": {
+                  "$id": "#/properties/fields/items/properties/filters/items/properties/valueToCompare",
+                  "type": ["number", "string"],
+                  "title": "The value of the property to be compared",
+                  "description": "this is the right side of the condition value",
+                  "examples": ["value"]
+                }
+              },
+              "oneOf": [
+                {
+                  "required": ["propToCompare", "fieldToCompare"]
+                },
+                {
+                  "required": ["propToCompare", "valueToCompare"]
+                }
+              ]
+            }
+          },
+          "calculated": {
+            "$id": "#/properties/fields/items/properties/calculated",
+            "type": "object",
+            "title": "Calculated fields definition",
+            "minItems": 0,
+            "description": "these are the metadata for define the calculated fields.",
+            "default": {},
+            "dependencies": {
+              "controlType": {
+                "required": ["textBox", "label"]
+              }
+            },
+            "properties": {
+              "fieldId1": {
+                "$id": "#/properties/fields/items/properties/calculated/properties/fieldId1",
+                "type": "integer",
+                "title": "The id of the field 1 to use for this calculation",
+                "description": "We are going to use this reference to obtain the field id 1 value to use it as part of any calculation"
+              },
+              "fieldId2": {
+                "$id": "#/properties/fields/items/properties/calculated/properties/fieldId2",
+                "type": "integer",
+                "title": "The id of the field 2 to use for this calculation this is an optional property if it is not used it will take the fixed value",
+                "description": "We are going to use this reference to obtain the field id 2 value to use it as part of any calculation"
+              },
+              "fixedValue": {
+                "$id": "#/properties/fields/items/properties/calculated/properties/fixedValue",
+                "type": "string",
+                "title": "The value which one the field 1 will do the calculation in case field 2 where not provided",
+                "description": "The value which one the field 1 will do the calculation in case field 2 where not provided"
+              },
+              "function": {
+                "$id": "#/properties/fields/items/properties/calculated/properties/function",
+                "type": "string",
+                "title": "The function name who will do the calulation between the fields.",
+                "description": "The function name who will do the calulation between the fields.",
+                "enum": ["add", "substract", "datediff"]
+              },
+              "format": {
+                "$id": "#/properties/fields/items/properties/calculated/properties/format",
+                "type": "string",
+                "title": "The format applied to show the result of the calculation",
+                "description": "The format applied to show the result of the calculation"
+              }
+            },
+            "required": ["function", "fieldId1"]
           },
           "resultDbColumn": {
             "$id": "#/properties/fields/items/properties/resultDbColumn",
@@ -318,7 +494,13 @@
             "title": "The type of optionlist source",
             "description": "The option list source could be a fixed list, and aspect URL or a third party url",
             "default": "fixedList",
-            "enum": ["aspectUrl", "customUrl", "fixedList", "function"]
+            "enum": [
+              "aspectUrl",
+              "customUrl",
+              "fixedList",
+              "function",
+              "dataSource"
+            ]
           },
           "optionSource": {
             "$id": "#/properties/fields/items/properties/optionSource",
@@ -327,7 +509,9 @@
             "description": "url for an existing endpoint (Aspect or thirdparty one) for filling a list",
             "default": "https://demo.aspect.id/api",
             "dependencies": {
-              "typeOfOptionSource": { "required": ["aspectUrl", "customUrl"] }
+              "typeOfOptionSource": {
+                "required": ["aspectUrl", "customUrl"]
+              }
             }
           },
           "optionValues": {
@@ -335,7 +519,9 @@
             "type": "array",
             "title": "The fixed list ",
             "dependencies": {
-              "typeOfOptionSource": { "required": ["fixedList"] }
+              "typeOfOptionSource": {
+                "required": ["fixedList"]
+              }
             },
             "minItems": 1,
             "description": "This is the list of options to filled the dropdown list, checkbox/radio list or single lists",
@@ -411,7 +597,9 @@
             "description": "The response type of the custom url",
             "enum": ["json | xml"],
             "dependencies": {
-              "typeOfOptionSource": { "required": ["customUrl"] }
+              "typeOfOptionSource": {
+                "required": ["customUrl"]
+              }
             }
           },
           "functionModule": {
@@ -420,7 +608,9 @@
             "title": "The module name for the function",
             "description": "The module where the function is placed",
             "dependencies": {
-              "typeOfOptionSource": { "required": ["function"] }
+              "typeOfOptionSource": {
+                "required": ["function"]
+              }
             }
           },
           "functionName": {
@@ -429,7 +619,9 @@
             "title": "The function name",
             "description": "The function name which retrieves the option list",
             "dependencies": {
-              "typeOfOptionSource": { "required": ["function"] }
+              "typeOfOptionSource": {
+                "required": ["function"]
+              }
             }
           }
         }

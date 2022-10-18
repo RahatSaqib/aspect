@@ -4,11 +4,7 @@ const _ = require('lodash')
 const { subDays, subHours } = require('date-fns')
 const { knex } = require('../../src/db')
 
-const {
-  createMessageContext,
-  waitForAction,
-  waitForIdle,
-} = require('../utils/mqUtils')
+const { createMessageContext, waitForAction, waitForIdle } = require('../utils/mqUtils')
 const { resolveIssues, issueResolved } = require('../../src/issue/actions')
 const { types: deviceActionTypes } = require('../../src/device/actions')
 const {
@@ -48,10 +44,7 @@ describe('Issue Resolution', () => {
       activeIssueStatus = await getIssueStatus(knex, 'Active')
       resolvedIssueStatus = await getIssueStatus(knex, 'Resolved')
       triggeredIssueEventStatus = await getIssueEventStatus(knex, 'Triggered')
-      decommissionedDeviceApproval = await getDeviceApproval(
-        knex,
-        'decommissioned'
-      )
+      decommissionedDeviceApproval = await getDeviceApproval(knex, 'decommissioned')
       const testDeviceId1 = await createDeviceNoResult(knex, {
         partnerId: partner.id,
         countryAbbreviation,
@@ -91,9 +84,7 @@ describe('Issue Resolution', () => {
             })
             factDeviceFlagsToRemove.push(device1.id)
           } else {
-            await knex('FactDeviceFlag')
-              .where('deviceId', device1.id)
-              .update({ offline: 1 })
+            await knex('FactDeviceFlag').where('deviceId', device1.id).update({ offline: 1 })
             devicesToBringBackOnline.push(device1.id)
           }
         }
@@ -113,9 +104,7 @@ describe('Issue Resolution', () => {
             })
             factDeviceFlagsToRemove.push(device2.id)
           } else {
-            await knex('FactDeviceFlag')
-              .where('deviceId', device2.id)
-              .update({ offline: 1 })
+            await knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 1 })
             devicesToBringBackOnline.push(device2.id)
           }
         }
@@ -123,16 +112,12 @@ describe('Issue Resolution', () => {
 
       after(async () => {
         await Promise.all(
-          _.map(factDeviceFlagsToRemove, deviceId =>
-            knex('FactDeviceFlag').where('deviceId', deviceId).del()
-          )
+          _.map(factDeviceFlagsToRemove, deviceId => knex('FactDeviceFlag').where('deviceId', deviceId).del())
         )
 
         return Promise.all(
           _.map(devicesToBringBackOnline, deviceId =>
-            knex('FactDeviceFlag')
-              .where('deviceId', deviceId)
-              .update({ offline: 0 })
+            knex('FactDeviceFlag').where('deviceId', deviceId).update({ offline: 0 })
           )
         )
       })
@@ -158,9 +143,7 @@ describe('Issue Resolution', () => {
         })
       })
 
-      afterEach(() =>
-        cleanUpIssues(knex, [device1OfflineIssueId, device2OfflineIssueId])
-      )
+      afterEach(() => cleanUpIssues(knex, [device1OfflineIssueId, device2OfflineIssueId]))
 
       describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
         it('the issues should still be active', async () => {
@@ -168,14 +151,8 @@ describe('Issue Resolution', () => {
           messageContext.resolveIssues()
           await waitForResolveIssues
 
-          const device1OfflineIssue = await getIssue(
-            knex,
-            device1OfflineIssueId
-          )
-          const device2OfflineIssue = await getIssue(
-            knex,
-            device2OfflineIssueId
-          )
+          const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+          const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
           assert.equal(device1OfflineIssue.issueStatusId, activeIssueStatus.id)
           assert.equal(device2OfflineIssue.issueStatusId, activeIssueStatus.id)
@@ -184,20 +161,12 @@ describe('Issue Resolution', () => {
 
       describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
         it('the issues should still be active', async () => {
-          const waitForResolveIssue = waitForAction(
-            resolveIssues(device1OfflineIssueId)
-          )
+          const waitForResolveIssue = waitForAction(resolveIssues(device1OfflineIssueId))
           messageContext.resolveIssues(device1OfflineIssueId)
           await waitForResolveIssue
 
-          const device1OfflineIssue = await getIssue(
-            knex,
-            device1OfflineIssueId
-          )
-          const device2OfflineIssue = await getIssue(
-            knex,
-            device2OfflineIssueId
-          )
+          const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+          const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
           assert.equal(device1OfflineIssue.issueStatusId, activeIssueStatus.id)
           assert.equal(device2OfflineIssue.issueStatusId, activeIssueStatus.id)
@@ -206,112 +175,57 @@ describe('Issue Resolution', () => {
 
       describe('and then one of the devices come back online', () => {
         beforeEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ offline: 0 })
-          return knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ offline: 1 })
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ offline: 0 })
+          return knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 1 })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the online device only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
             messageContext.resolveIssues()
             await waitForIssueResolved
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
 
       describe('then both of the devices come back online', () => {
         beforeEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ offline: 0 })
-          return knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ offline: 0 })
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ offline: 0 })
+          return knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 0 })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', async () => {
-            const waitForDevice1IssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
-            const waitForDevice2IssueResolved = waitForAction(
-              issueResolved(device2OfflineIssueId)
-            )
+            const waitForDevice1IssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
+            const waitForDevice2IssueResolved = waitForAction(issueResolved(device2OfflineIssueId))
             messageContext.resolveIssues()
-            await Promise.all([
-              waitForDevice1IssueResolved,
-              waitForDevice2IssueResolved,
-            ])
+            await Promise.all([waitForDevice1IssueResolved, waitForDevice2IssueResolved])
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, resolvedIssueStatus.id)
           })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should still be resolved for the one issue only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
             messageContext.resolveIssues(device1OfflineIssueId)
             await waitForIssueResolved
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
@@ -320,9 +234,7 @@ describe('Issue Resolution', () => {
         let maintenanceReasonEventId
 
         beforeEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ offline: 1 })
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ offline: 1 })
           maintenanceReasonEventId = await createIssueEvent({
             knex,
             deviceId: device1.id,
@@ -332,46 +244,26 @@ describe('Issue Resolution', () => {
             createdOn: new Date(),
             options: { data: { reason: 'Flaky data connection' } },
           })
-          return knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ offline: 1 })
+          return knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 1 })
         })
 
         afterEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ offline: 0 })
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ offline: 0 })
           await knex('IssueEvent').where('id', maintenanceReasonEventId).del()
-          return knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ offline: 0 })
+          return knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 0 })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the device that has a reason specified only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
             messageContext.resolveIssues()
             await waitForIssueResolved
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
@@ -381,9 +273,7 @@ describe('Issue Resolution', () => {
         let maintenanceReasonEventId2
 
         beforeEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ offline: 1 })
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ offline: 1 })
           maintenanceReasonEventId1 = await createIssueEvent({
             knex,
             deviceId: device1.id,
@@ -393,9 +283,7 @@ describe('Issue Resolution', () => {
             createdOn: new Date(),
             options: { data: { reason: 'Flaky data connection' } },
           })
-          await knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ offline: 1 })
+          await knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 1 })
           maintenanceReasonEventId2 = await createIssueEvent({
             knex,
             deviceId: device2.id,
@@ -408,205 +296,105 @@ describe('Issue Resolution', () => {
         })
 
         afterEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ offline: 0 })
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ offline: 0 })
           await knex('IssueEvent').where('id', maintenanceReasonEventId1).del()
-          await knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ offline: 0 })
+          await knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 0 })
           await knex('IssueEvent').where('id', maintenanceReasonEventId2).del()
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', async () => {
-            const waitForDevice1IssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
-            const waitForDevice2IssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
+            const waitForDevice1IssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
+            const waitForDevice2IssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
             messageContext.resolveIssues()
-            await Promise.all([
-              waitForDevice1IssueResolved,
-              waitForDevice2IssueResolved,
-            ])
+            await Promise.all([waitForDevice1IssueResolved, waitForDevice2IssueResolved])
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, resolvedIssueStatus.id)
           })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should still be resolved for the one issue only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
             messageContext.resolveIssues(device1OfflineIssueId)
             await waitForIssueResolved
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
 
       describe('then one then the devices is decommissioned', () => {
         beforeEach(async () => {
-          await knex('Device')
-            .where('id', device1.id)
-            .update({ deviceApprovalId: decommissionedDeviceApproval.id })
-          await knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ offline: 1 })
+          await knex('Device').where('id', device1.id).update({ deviceApprovalId: decommissionedDeviceApproval.id })
+          await knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 1 })
         })
 
         afterEach(async () => {
-          await knex('Device')
-            .where('id', device1.id)
-            .update({ deviceApprovalId: device1.deviceApprovalId })
-          await knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ offline: 0 })
+          await knex('Device').where('id', device1.id).update({ deviceApprovalId: device1.deviceApprovalId })
+          await knex('FactDeviceFlag').where('deviceId', device2.id).update({ offline: 0 })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the decommissioned device only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
             messageContext.resolveIssues()
             await waitForIssueResolved
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
 
       describe('then both of the devices are decommissioned', () => {
         beforeEach(async () => {
-          await knex('Device')
-            .where('id', device1.id)
-            .update({ deviceApprovalId: decommissionedDeviceApproval.id })
-          await knex('Device')
-            .where('id', device2.id)
-            .update({ deviceApprovalId: decommissionedDeviceApproval.id })
+          await knex('Device').where('id', device1.id).update({ deviceApprovalId: decommissionedDeviceApproval.id })
+          await knex('Device').where('id', device2.id).update({ deviceApprovalId: decommissionedDeviceApproval.id })
         })
 
         afterEach(async () => {
-          await knex('Device')
-            .where('id', device1.id)
-            .update({ deviceApprovalId: device1.deviceApprovalId })
-          await knex('Device')
-            .where('id', device2.id)
-            .update({ deviceApprovalId: device2.deviceApprovalId })
+          await knex('Device').where('id', device1.id).update({ deviceApprovalId: device1.deviceApprovalId })
+          await knex('Device').where('id', device2.id).update({ deviceApprovalId: device2.deviceApprovalId })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', async () => {
-            const waitForDevice1IssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
-            const waitForDevice2IssueResolved = waitForAction(
-              issueResolved(device2OfflineIssueId)
-            )
+            const waitForDevice1IssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
+            const waitForDevice2IssueResolved = waitForAction(issueResolved(device2OfflineIssueId))
             messageContext.resolveIssues()
-            await Promise.all([
-              waitForDevice1IssueResolved,
-              waitForDevice2IssueResolved,
-            ])
+            await Promise.all([waitForDevice1IssueResolved, waitForDevice2IssueResolved])
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, resolvedIssueStatus.id)
           })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should still be resolved for the one issue only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1OfflineIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1OfflineIssueId))
             messageContext.resolveIssues(device1OfflineIssueId)
             await waitForIssueResolved
 
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
-            const device2OfflineIssue = await getIssue(
-              knex,
-              device2OfflineIssueId
-            )
+            const device1OfflineIssue = await getIssue(knex, device1OfflineIssueId)
+            const device2OfflineIssue = await getIssue(knex, device2OfflineIssueId)
 
-            assert.equal(
-              device1OfflineIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2OfflineIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1OfflineIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2OfflineIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
@@ -659,14 +447,12 @@ describe('Issue Resolution', () => {
           endedOn: now,
         })
 
-        const [resultWorkflowStatusId] = await knex('ResultWorkflowLog').insert(
-          {
-            resultId,
-            resultWorkflowStatusId: resultWorkflowStatus.id,
-            changedOn: now,
-            createdOn: now,
-          }
-        )
+        const [resultWorkflowStatusId] = await knex('ResultWorkflowLog').insert({
+          resultId,
+          resultWorkflowStatusId: resultWorkflowStatus.id,
+          changedOn: now,
+          createdOn: now,
+        })
         await knex('Result').where('id', resultId).update({
           resultWorkflowStatusLogId: resultWorkflowStatusId,
         })
@@ -675,10 +461,7 @@ describe('Issue Resolution', () => {
 
       before(async () => {
         deviceNoResultsIssueType = await getIssueType(knex, 'DeviceNoResults')
-        const noResultsSince = subDays(
-          new Date(),
-          partner.maxDaysDeviceNoResults + 1
-        )
+        const noResultsSince = subDays(new Date(), partner.maxDaysDeviceNoResults + 1)
         const device1Details = await getDevice(knex, {
           partnerId: partner.id,
           countryAbbreviation,
@@ -694,9 +477,7 @@ describe('Issue Resolution', () => {
             })
             factDeviceFlagsToRemove.push(device1.id)
           } else {
-            await knex('FactDeviceFlag')
-              .where('deviceId', device1.id)
-              .update({ noResults: 1 })
+            await knex('FactDeviceFlag').where('deviceId', device1.id).update({ noResults: 1 })
             devicesToResetNoResults.push(device1.id)
           }
         }
@@ -718,46 +499,28 @@ describe('Issue Resolution', () => {
             })
             factDeviceFlagsToRemove.push(device2.id)
           } else {
-            await knex('FactDeviceFlag')
-              .where('deviceId', device2.id)
-              .update({ noResults: 1 })
+            await knex('FactDeviceFlag').where('deviceId', device2.id).update({ noResults: 1 })
             devicesToResetNoResults.push(device2.id)
           }
         }
         now = new Date()
         admin = await knex('User').where({ name: 'myanmar_admin' }).first()
-        gxMtbRifAssay = await knex('Assay')
-          .where({ externalId: 'GxMtbRif' })
-          .first()
-        resultWorkflowStatus = await knex('ResultWorkflowStatus')
-          .where({ externalId: 'OK' })
-          .first()
-        resultSource = await knex('ResultSource')
-          .where({ externalId: 'DiagnosticDevice' })
-          .first()
-        resultType = await knex('ResultType')
-          .where({ externalId: 'Patient' })
-          .first()
-        sampleType = await knex('SampleType')
-          .where({ externalId: 'Sputum' })
-          .first()
-        noResultCategory = await knex('ResultCategory')
-          .where({ externalId: 'NoResult' })
-          .first()
+        gxMtbRifAssay = await knex('Assay').where({ externalId: 'GxMtbRif' }).first()
+        resultWorkflowStatus = await knex('ResultWorkflowStatus').where({ externalId: 'OK' }).first()
+        resultSource = await knex('ResultSource').where({ externalId: 'DiagnosticDevice' }).first()
+        resultType = await knex('ResultType').where({ externalId: 'Patient' }).first()
+        sampleType = await knex('SampleType').where({ externalId: 'Sputum' }).first()
+        noResultCategory = await knex('ResultCategory').where({ externalId: 'NoResult' }).first()
       })
 
       after(async () => {
         await Promise.all(
-          _.map(factDeviceFlagsToRemove, deviceId =>
-            knex('FactDeviceFlag').where('deviceId', deviceId).del()
-          )
+          _.map(factDeviceFlagsToRemove, deviceId => knex('FactDeviceFlag').where('deviceId', deviceId).del())
         )
 
         return Promise.all(
           _.map(devicesToResetNoResults, deviceId =>
-            knex('FactDeviceFlag')
-              .where('deviceId', deviceId)
-              .update({ noResults: 0 })
+            knex('FactDeviceFlag').where('deviceId', deviceId).update({ noResults: 0 })
           )
         )
       })
@@ -783,9 +546,7 @@ describe('Issue Resolution', () => {
         })
       })
 
-      afterEach(async () =>
-        cleanUpIssues(knex, [device1NoResultsIssueId, device2NoResultsIssueId])
-      )
+      afterEach(async () => cleanUpIssues(knex, [device1NoResultsIssueId, device2NoResultsIssueId]))
 
       describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
         it('the issues should still be active', async () => {
@@ -793,51 +554,25 @@ describe('Issue Resolution', () => {
           messageContext.resolveIssues()
           await waitForResolveIssues
 
-          const device1NoResultsIssue = await getIssue(
-            knex,
-            device1NoResultsIssueId
-          )
-          const device2NoResultsIssue = await getIssue(
-            knex,
-            device2NoResultsIssueId
-          )
+          const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+          const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-          assert.equal(
-            device1NoResultsIssue.issueStatusId,
-            activeIssueStatus.id
-          )
-          assert.equal(
-            device2NoResultsIssue.issueStatusId,
-            activeIssueStatus.id
-          )
+          assert.equal(device1NoResultsIssue.issueStatusId, activeIssueStatus.id)
+          assert.equal(device2NoResultsIssue.issueStatusId, activeIssueStatus.id)
         })
       })
 
       describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
         it('the issues should still be active', async () => {
-          const waitForResolveIssue = waitForAction(
-            resolveIssues(device1NoResultsIssueId)
-          )
+          const waitForResolveIssue = waitForAction(resolveIssues(device1NoResultsIssueId))
           messageContext.resolveIssues(device1NoResultsIssueId)
           await waitForResolveIssue
 
-          const device1NoResultsIssue = await getIssue(
-            knex,
-            device1NoResultsIssueId
-          )
-          const device2NoResultsIssue = await getIssue(
-            knex,
-            device2NoResultsIssueId
-          )
+          const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+          const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-          assert.equal(
-            device1NoResultsIssue.issueStatusId,
-            activeIssueStatus.id
-          )
-          assert.equal(
-            device2NoResultsIssue.issueStatusId,
-            activeIssueStatus.id
-          )
+          assert.equal(device1NoResultsIssue.issueStatusId, activeIssueStatus.id)
+          assert.equal(device2NoResultsIssue.issueStatusId, activeIssueStatus.id)
         })
       })
 
@@ -850,36 +585,20 @@ describe('Issue Resolution', () => {
         })
 
         afterEach(async () => {
-          await Promise.each(resultIdsToCleanUp, resultId =>
-            knex('Result').where('id', resultId).del()
-          )
+          await Promise.each(resultIdsToCleanUp, resultId => knex('Result').where('id', resultId).del())
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the online device only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1NoResultsIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1NoResultsIssueId))
             messageContext.resolveIssues()
             await waitForIssueResolved
 
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
@@ -893,64 +612,34 @@ describe('Issue Resolution', () => {
         })
 
         afterEach(async () => {
-          await Promise.each(resultIdsToCleanUp, resultId =>
-            knex('Result').where('id', resultId).del()
-          )
+          await Promise.each(resultIdsToCleanUp, resultId => knex('Result').where('id', resultId).del())
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for the other device should be resolved', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device2NoResultsIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device2NoResultsIssueId))
             messageContext.resolveIssues()
             await waitForIssueResolved
             await waitForIdle(3000)
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              activeIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, activeIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
           })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should be resolved for the one issue only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device2NoResultsIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device2NoResultsIssueId))
             messageContext.resolveIssues(device2NoResultsIssueId)
             await waitForIssueResolved
 
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              activeIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, activeIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
           })
         })
       })
@@ -959,12 +648,8 @@ describe('Issue Resolution', () => {
         let device1ConfigurationData
 
         beforeEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ noResults: 1 })
-          const device1ConfigurationData = JSON.parse(
-            device1.configurationData || '{}'
-          )
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ noResults: 1 })
+          const device1ConfigurationData = JSON.parse(device1.configurationData || '{}')
           await knex('Device')
             .where('id', device1.id)
             .update({
@@ -978,43 +663,25 @@ describe('Issue Resolution', () => {
         })
 
         afterEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ noResults: 0 })
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ noResults: 0 })
           await knex('Device')
             .where('id', device1.id)
             .update({
-              configurationData: _.isEmpty(device1ConfigurationData)
-                ? null
-                : JSON.stringify(device1ConfigurationData),
+              configurationData: _.isEmpty(device1ConfigurationData) ? null : JSON.stringify(device1ConfigurationData),
             })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the device that has a reason specified only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1NoResultsIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1NoResultsIssueId))
             messageContext.resolveIssues()
             await waitForIssueResolved
             await waitForIdle(2000)
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
@@ -1024,12 +691,8 @@ describe('Issue Resolution', () => {
         let device2ConfigurationData
 
         beforeEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ noResults: 1 })
-          const device1ConfigurationData = JSON.parse(
-            device1.configurationData || '{}'
-          )
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ noResults: 1 })
+          const device1ConfigurationData = JSON.parse(device1.configurationData || '{}')
           await knex('Device')
             .where('id', device1.id)
             .update({
@@ -1041,12 +704,8 @@ describe('Issue Resolution', () => {
               ),
             })
 
-          await knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ noResults: 1 })
-          const device2ConfigurationData = JSON.parse(
-            device2.configurationData || '{}'
-          )
+          await knex('FactDeviceFlag').where('deviceId', device2.id).update({ noResults: 1 })
+          const device2ConfigurationData = JSON.parse(device2.configurationData || '{}')
           await knex('Device')
             .where('id', device2.id)
             .update({
@@ -1060,219 +719,115 @@ describe('Issue Resolution', () => {
         })
 
         afterEach(async () => {
-          await knex('FactDeviceFlag')
-            .where('deviceId', device1.id)
-            .update({ noResults: 0 })
+          await knex('FactDeviceFlag').where('deviceId', device1.id).update({ noResults: 0 })
           await knex('Device')
             .where('id', device1.id)
             .update({
-              configurationData: _.isEmpty(device1ConfigurationData)
-                ? null
-                : JSON.stringify(device1ConfigurationData),
+              configurationData: _.isEmpty(device1ConfigurationData) ? null : JSON.stringify(device1ConfigurationData),
             })
 
-          await knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ noResults: 0 })
+          await knex('FactDeviceFlag').where('deviceId', device2.id).update({ noResults: 0 })
           await knex('Device')
             .where('id', device2.id)
             .update({
-              configurationData: _.isEmpty(device2ConfigurationData)
-                ? null
-                : JSON.stringify(device2ConfigurationData),
+              configurationData: _.isEmpty(device2ConfigurationData) ? null : JSON.stringify(device2ConfigurationData),
             })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', async () => {
-            const waitForDevice1IssueResolved = waitForAction(
-              issueResolved(device1NoResultsIssueId)
-            )
-            const waitForDevice2IssueResolved = waitForAction(
-              issueResolved(device2NoResultsIssueId)
-            )
+            const waitForDevice1IssueResolved = waitForAction(issueResolved(device1NoResultsIssueId))
+            const waitForDevice2IssueResolved = waitForAction(issueResolved(device2NoResultsIssueId))
             messageContext.resolveIssues()
-            await Promise.all([
-              waitForDevice1IssueResolved,
-              waitForDevice2IssueResolved,
-            ])
+            await Promise.all([waitForDevice1IssueResolved, waitForDevice2IssueResolved])
 
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
           })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('only the one issue should be resolved', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1NoResultsIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1NoResultsIssueId))
             messageContext.resolveIssues(device1NoResultsIssueId)
             await waitForIssueResolved
 
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
 
       describe('then one then the devices is decommissioned', () => {
         beforeEach(async () => {
-          await knex('Device')
-            .where('id', device1.id)
-            .update({ deviceApprovalId: decommissionedDeviceApproval.id })
-          await knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ noResults: 1 })
+          await knex('Device').where('id', device1.id).update({ deviceApprovalId: decommissionedDeviceApproval.id })
+          await knex('FactDeviceFlag').where('deviceId', device2.id).update({ noResults: 1 })
         })
 
         afterEach(async () => {
-          await knex('Device')
-            .where('id', device1.id)
-            .update({ deviceApprovalId: device1.deviceApprovalId })
-          await knex('FactDeviceFlag')
-            .where('deviceId', device2.id)
-            .update({ noResults: 0 })
+          await knex('Device').where('id', device1.id).update({ deviceApprovalId: device1.deviceApprovalId })
+          await knex('FactDeviceFlag').where('deviceId', device2.id).update({ noResults: 0 })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the decommissioned device only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1NoResultsIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1NoResultsIssueId))
             messageContext.resolveIssues()
             await waitForIssueResolved
             await waitForIdle(3000)
 
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })
 
       describe('then both of the devices are decommissioned', () => {
         beforeEach(async () => {
-          await knex('Device')
-            .where('id', device1.id)
-            .update({ deviceApprovalId: decommissionedDeviceApproval.id })
-          await knex('Device')
-            .where('id', device2.id)
-            .update({ deviceApprovalId: decommissionedDeviceApproval.id })
+          await knex('Device').where('id', device1.id).update({ deviceApprovalId: decommissionedDeviceApproval.id })
+          await knex('Device').where('id', device2.id).update({ deviceApprovalId: decommissionedDeviceApproval.id })
         })
 
         afterEach(async () => {
-          await knex('Device')
-            .where('id', device1.id)
-            .update({ deviceApprovalId: device1.deviceApprovalId })
-          await knex('Device')
-            .where('id', device2.id)
-            .update({ deviceApprovalId: device2.deviceApprovalId })
+          await knex('Device').where('id', device1.id).update({ deviceApprovalId: device1.deviceApprovalId })
+          await knex('Device').where('id', device2.id).update({ deviceApprovalId: device2.deviceApprovalId })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', async () => {
-            const waitForDevice1IssueResolved = waitForAction(
-              issueResolved(device1NoResultsIssueId)
-            )
-            const waitForDevice2IssueResolved = waitForAction(
-              issueResolved(device2NoResultsIssueId)
-            )
+            const waitForDevice1IssueResolved = waitForAction(issueResolved(device1NoResultsIssueId))
+            const waitForDevice2IssueResolved = waitForAction(issueResolved(device2NoResultsIssueId))
             messageContext.resolveIssues()
-            await Promise.all([
-              waitForDevice1IssueResolved,
-              waitForDevice2IssueResolved,
-            ])
+            await Promise.all([waitForDevice1IssueResolved, waitForDevice2IssueResolved])
 
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
           })
         })
 
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should still be resolved for the one issue only', async () => {
-            const waitForIssueResolved = waitForAction(
-              issueResolved(device1NoResultsIssueId)
-            )
+            const waitForIssueResolved = waitForAction(issueResolved(device1NoResultsIssueId))
             messageContext.resolveIssues(device1NoResultsIssueId)
             await waitForIssueResolved
 
-            const device1NoResultsIssue = await getIssue(
-              knex,
-              device1NoResultsIssueId
-            )
-            const device2NoResultsIssue = await getIssue(
-              knex,
-              device2NoResultsIssueId
-            )
+            const device1NoResultsIssue = await getIssue(knex, device1NoResultsIssueId)
+            const device2NoResultsIssue = await getIssue(knex, device2NoResultsIssueId)
 
-            assert.equal(
-              device1NoResultsIssue.issueStatusId,
-              resolvedIssueStatus.id
-            )
-            assert.equal(
-              device2NoResultsIssue.issueStatusId,
-              activeIssueStatus.id
-            )
+            assert.equal(device1NoResultsIssue.issueStatusId, resolvedIssueStatus.id)
+            assert.equal(device2NoResultsIssue.issueStatusId, activeIssueStatus.id)
           })
         })
       })

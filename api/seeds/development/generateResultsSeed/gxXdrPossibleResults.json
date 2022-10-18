@@ -1,0 +1,37 @@
+[
+  {
+    "resultText": "|MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected",
+    "category1": "NotDetected",
+    "category2": "NotDetected",
+    "minLikelihood": 0,
+    "maxLikelihood": 50
+  },
+  {
+    "resultText": "|MTB @label_result_detected||INH Resistance @label_result_not_detected|Low FLQ Resistance @label_result_not_detected||AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected",
+    "category1": "Detected",
+    "category2": "NotDetected",
+    "minLikelihood": 51,
+    "maxLikelihood": 75
+  },
+  {
+    "resultText": "|MTB @label_result_detected||INH Resistance @label_result_detected||FLQ Resistance @label_result_detected|AMK Resistance @label_result_not_detected|KAN Resistance @label_result_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_detected",
+    "category1": "Detected",
+    "category2": "Detected",
+    "minLikelihood": 76,
+    "maxLikelihood": 90
+  },
+  {
+    "resultText": "|MTB @label_result_detected||INH Resistance @label_result_indeterminate|||FLQ Resistance @label_result_indeterminate|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_indeterminate|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_indeterminate",
+    "category1": "Detected",
+    "category2": "Indeterminate",
+    "minLikelihood": 91,
+    "maxLikelihood": 95
+  },
+  {
+    "resultText": "|MTB @label_result_error||||||||",
+    "category1": "Error",
+    "category2": null,
+    "minLikelihood": 96,
+    "maxLikelihood": 100
+  }
+]

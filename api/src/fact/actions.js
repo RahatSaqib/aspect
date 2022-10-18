@@ -4,19 +4,19 @@ const types = {
   FACT_GENERATE_DEVICE_CONNECTIVITY: 'FACT_GENERATE_DEVICE_CONNECTIVITY',
   FACT_GENERATE_RESULT_COUNTS: 'FACT_GENERATE_RESULT_COUNTS',
   FACT_CHECK_INVENTORY_STOCK: 'FACT_CHECK_INVENTORY_STOCK',
-  FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES:
-    'FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES',
+  FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES: 'FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES',
   // for DataCategoryLow issue types
   FACT_DATA_CATEGORY_LOW_CHECK: 'FACT_DATA_CATEGORY_LOW_CHECK',
   FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS: 'FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS',
-  FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED:
-    'FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED',
-  FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT:
-    'FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT',
+  FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED: 'FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED',
+  FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT: 'FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT',
   FACT_DATA_CATEGORY_IS_LOW_OTHER: 'FACT_DATA_CATEGORY_IS_LOW_OTHER',
   FACT_NEW_RESULTS_AVAILABLE_CHECK: 'FACT_NEW_RESULTS_AVAILABLE_CHECK',
   FACT_NEW_RESULTS_AVAILABLE: 'FACT_NEW_RESULTS_AVAILABLE',
   FACT_CHECK_EXTERNAL_FACT_SOURCE: 'FACT_CHECK_EXTERNAL_FACT_SOURCE',
+  FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS: 'FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS',
+  FACT_CHECK_COMPLETION_RATE_PER_SITE: 'FACT_CHECK_COMPLETION_RATE_PER_SITE',
+  SITE_WITH_LOW_COMPLETION_RATE: 'SITE_WITH_LOW_COMPLETION_RATE',
 }
 
 /**
@@ -57,6 +57,16 @@ function factGenerateResultCounts(deviceId, options) {
  * Requests facts to be regenerated. Will be called on
  * schedule to run fact ETL
  */
+function factCheckCompletionRatePerSite() {
+  return {
+    type: types.FACT_CHECK_COMPLETION_RATE_PER_SITE,
+  }
+}
+
+/**
+ * Requests facts to be regenerated. Will be called on
+ * schedule to run fact ETL
+ */
 function factCheckInventoryStock() {
   return {
     type: types.FACT_CHECK_INVENTORY_STOCK,
@@ -89,20 +99,8 @@ function factDataCategoryLowCheck() {
  *
  * categoryToken, categoryName, periodName, siteId, percentage are required.
  */
-function factDataCategoryLow({
-  categoryToken,
-  categoryName,
-  periodName,
-  siteId,
-  percentage,
-}) {
-  if (
-    !categoryToken ||
-    !categoryName ||
-    !periodName ||
-    !siteId ||
-    isNil(percentage)
-  ) {
+function factDataCategoryLow({ categoryToken, categoryName, periodName, siteId, percentage }) {
+  if (!categoryToken || !categoryName || !periodName || !siteId || isNil(percentage)) {
     throw new Error(
       'Must specify each parameter - categoryToken, categoryName, periodName, siteId, percentage - for Data Category Low notification'
     )
@@ -138,9 +136,7 @@ function factNewResultsAvailableCheck() {
  */
 function factNewResultsAvailable({ siteId, numberOfResults }) {
   if (!siteId || !numberOfResults) {
-    throw new Error(
-      'Must specify siteId and numberOfResults - for new results available'
-    )
+    throw new Error('Must specify siteId and numberOfResults - for new results available')
   }
   return {
     type: types.FACT_NEW_RESULTS_AVAILABLE,
@@ -148,6 +144,22 @@ function factNewResultsAvailable({ siteId, numberOfResults }) {
     options: {
       siteId,
       numberOfResults,
+    },
+  }
+}
+
+function siteWithLowCompletionRateIssue({ siteId, geographyId, partnerId, completionRatePerSite: completionRate }) {
+  if (!siteId || isNil(completionRate)) {
+    throw new Error('Must specify siteId and completionRate for new Evaluation')
+  }
+  return {
+    type: types.SITE_WITH_LOW_COMPLETION_RATE,
+    siteId,
+    geographyId,
+    partnerId,
+    options: {
+      completionRate,
+      completionRatePercentage: (completionRate * 100).toFixed(2),
     },
   }
 }
@@ -164,6 +176,16 @@ function factExternalSourceCheck({ sourceName }) {
   }
 }
 
+/**
+ * Creates an action to fill custom fields completions
+ * for last 30 days
+ */
+function factFillCustomFieldsCompletionStatsLast30Days() {
+  return {
+    type: types.FACT_FILL_CUSTOM_FIELDS_COMPLETION_STATS_LAST_30_DAYS,
+  }
+}
+
 module.exports = {
   types,
   factGenerateDeviceConnectivity,
@@ -175,4 +197,7 @@ module.exports = {
   factNewResultsAvailableCheck,
   factNewResultsAvailable,
   factExternalSourceCheck,
+  factCheckCompletionRatePerSite,
+  siteWithLowCompletionRateIssue,
+  factFillCustomFieldsCompletionStatsLast30Days,
 }

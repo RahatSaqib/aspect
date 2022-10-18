@@ -10,8 +10,8 @@ const {
   allDeviceTypeCategoryToId,
   allResultCategoryToId,
   resultSourceToId,
-  unitToId,
 } = require('../../src/shared/dictionary')
+const upsertConsumables = require('../common/upsert_consumables')
 
 const now = new Date()
 
@@ -19,9 +19,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'admin' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -745,88 +743,7 @@ async function seed(knex) {
     assayId: assayGeneXpertHcvId,
   })
 
-  // Units
-  const piece = await unitToId('Piece')
-
-  // Consumable types
-  const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert TB Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
-
-  const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert TB Ultra Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
-
-  const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert({
-    name: 'GeneXpert Ebola Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
-
-  const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HIV-1 Viral Load Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
-
-  const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HCV Viral Load Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
-
-  const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HIV-1 Qual Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
-
-  // Assay Consumables
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxTbCartridgeId,
-    assayId: assayGeneXpertMtbRifId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxTbUltraCartridgeId,
-    assayId: assayGeneXpertMtbRifUltraId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxEbolaCartridgeId,
-    assayId: assayGeneXpertEbolaId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHcvVlCartridgeId,
-    assayId: assayGeneXpertHcvId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHiv1VlCartridgeId,
-    assayId: assayGeneXpertHiv1VlId,
-    quantity: 1,
-  })
-
-  await knex('ConsumableAssay').insert({
-    consumableId: consumableGxHiv1QualCartridgeId,
-    assayId: assayGeneXpertHiv1QualId,
-    quantity: 1,
-  })
+  await upsertConsumables(knex, true, ['GxMtbRif', 'GxMtbRifUltra', 'GxEbola', 'GxHiv1Vl', 'GxHcv', 'GxHiv1Qual'])
 
   // Create geographic hierarchy
   const countries = {}

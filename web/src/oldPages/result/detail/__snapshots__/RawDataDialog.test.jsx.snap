@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RawDataDialog module RawDataDialog component should render correctly 1`] = `
+<div>
+  <AspectDialog
+    autoScrollBodyContent={true}
+    dialogContentClasses={Object {}}
+    maxWidth="md"
+    modal={false}
+    open={true}
+    showCrossIcon={false}
+    title="Raw Result Data"
+  >
+    <div
+      style={
+        Object {
+          "paddingTop": "10px",
+        }
+      }
+    >
+      No log entries found for this result
+    </div>
+  </AspectDialog>
+</div>
+`;

@@ -1,18 +1,12 @@
 const { format } = require('date-fns')
-module.exports = require('../utils').seed(
-  seed,
-  `${__filename}-${format(new Date(), 'yyyy-MM-dd')}`
-)
+module.exports = require('../utils').seed(seed, `${__filename}-${format(new Date(), 'yyyy-MM-dd')}`)
 const _ = require('lodash')
 const Promise = require('bluebird')
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { resultCategoryToId } = require('../../src/shared/dictionary')
-const {
-  generateResults,
-  normalizeTreatmentStatusDistributionByResults,
-} = require('../commonGenerateResults')
-const { getMGITResultFromTBPossitive } = require('../commonTB')
+const { generateResults, normalizeTreatmentStatusDistributionByResults } = require('../commonGenerateResults')
+const { getMGITResultFromTBPositive } = require('../commonTB')
 
 async function seed(knex) {
   // Create admin user and audit fields
@@ -21,16 +15,8 @@ async function seed(knex) {
 
   const partnerOne = await knex('Partner').first()
   const partnerOneId = partnerOne.id
-  const results = await generateResults(
-    knex,
-    adminId,
-    partnerOneId,
-    patients,
-    errorCodes
-  )
-  const MGITAssays = await knex('Assay')
-    .whereIn('externalid', ['assayBdMgitAst', 'assayBdMgitGnd'])
-    .select('id')
+  const results = await generateResults(knex, adminId, partnerOneId, patients, errorCodes)
+  const MGITAssays = await knex('Assay').whereIn('externalid', ['assayBdMgitAst', 'assayBdMgitGnd']).select('id')
 
   const devicesMGIT = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -53,9 +39,7 @@ async function seed(knex) {
 
   await Promise.each(tbResults, async result => {
     if (devicesMGIT.length > 0 && MGITAssays && MGITAssays.length > 0)
-      return knex('Result').insert(
-        await getMGITResultFromTBPossitive(result, MGITAssays, devicesMGIT)
-      )
+      return knex('Result').insert(await getMGITResultFromTBPositive(result, MGITAssays, devicesMGIT))
   })
 
   // generate random treatment

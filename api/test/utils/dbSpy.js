@@ -9,15 +9,13 @@ function buildKnexSpy(resolveWith) {
     return knexSpy
   }
   for (const property in knex) {
-    if (
-      {}.hasOwnProperty.call(knex, property) &&
-      typeof knex[property] === 'function'
-    ) {
+    if ({}.hasOwnProperty.call(knex, property) && typeof knex[property] === 'function') {
       knexSpy[property] = returnKnexStub
       sinon.spy(knexSpy, property)
     }
   }
   knexSpy.modify = returnKnexStub
+  sinon.spy(knexSpy, 'modify')
   return knexSpy
 }
 

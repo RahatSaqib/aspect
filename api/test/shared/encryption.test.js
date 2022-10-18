@@ -18,10 +18,10 @@ describe('encryption shared util', () => {
         'bado jean y a': '8483070fdf94c900c3faac2777dd260c',
         'yameogo george': 'b4372be81bd3d5874ea39ff8750561e7',
         'SMP-106426': 'b667fc59ea6fa80de6e3a5e13edb05fb',
-        '17049199': '7647ff7bf741a5d2a920906371d8ad95',
-        '17049087': '39b40d62022af64c19436ea2fd762076',
-        '2301': '2b45c629e577731c4df84fc34f936a89',
-        '12224': 'eafd9b2037cb218fafd3aa05535c123e',
+        17049199: '7647ff7bf741a5d2a920906371d8ad95',
+        17049087: '39b40d62022af64c19436ea2fd762076',
+        2301: '2b45c629e577731c4df84fc34f936a89',
+        12224: 'eafd9b2037cb218fafd3aa05535c123e',
         '01-1601-17': 'acb6dbc6bbb71f10c41cd0b2201d2bff',
       }
 

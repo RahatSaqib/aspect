@@ -1,28 +1,25 @@
-function addSubscriptions(queue) {
-  queue.subscribe('logger', require('./logger/endpoints').subscriptions)
-  queue.subscribe('device', require('./device/endpoints').subscriptions)
-  queue.subscribe('deviceApi', require('./deviceApi/endpoints').subscriptions)
-  queue.subscribe(
-    'deviceApiRaw',
-    require('./deviceApiRaw/endpoints').subscriptions
-  )
-  queue.subscribe('fact', require('./fact/endpoints').subscriptions)
-  queue.subscribe('issue', require('./issue/endpoints').subscriptions)
-  queue.subscribe(
-    'notification',
-    require('./notification/endpoints').subscriptions
-  )
+const _ = require('lodash')
+const Promise = require('bluebird')
 
-  queue.subscribe('alert', require('./alert/endpoints').subscriptions)
-  queue.subscribe('email', require('./email/endpoints').subscriptions)
-  queue.subscribe('sms', require('./sms/endpoints').subscriptions)
-  queue.subscribe('webhook', require('./webhook/endpoints').subscriptions)
-  queue.subscribe(
-    'pushNotification',
-    require('./pushNotification/endpoints').subscriptions
-  )
-  queue.subscribe('case', require('./case/endpoints').subscriptions)
-  queue.subscribe('patient', require('./patient/endpoints').subscriptions)
+const subscribers = {
+  notificationType: require('./notificationType/subscriptions').subscriptions,
+  logger: require('./logger/endpoints').subscriptions,
+  device: require('./device/endpoints').subscriptions,
+  deviceApi: require('./deviceApi/endpoints').subscriptions,
+  deviceApiRaw: require('./deviceApiRaw/endpoints').subscriptions,
+  fact: require('./fact/endpoints').subscriptions,
+  issue: require('./issue/endpoints').subscriptions,
+  notification: require('./notification/endpoints').subscriptions,
+  alert: require('./alert/endpoints').subscriptions,
+  email: require('./email/endpoints').subscriptions,
+  sms: require('./sms/endpoints').subscriptions,
+  webhook: require('./webhook/endpoints').subscriptions,
+  pushNotification: require('./pushNotification/endpoints').subscriptions,
+  case: require('./case/endpoints').subscriptions,
+  patient: require('./patient/endpoints').subscriptions,
+}
+async function addSubscriptions(queue) {
+  await Promise.each(_.keys(subscribers), async key => queue.subscribe(key, subscribers[key]))
 }
 
 module.exports = { addSubscriptions }

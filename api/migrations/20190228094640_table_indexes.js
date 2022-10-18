@@ -25,13 +25,7 @@ async function up(knex) {
     _.map(messageTables, async tableName => {
       await knex.schema.alterTable(tableName, table => {
         table.dropForeign('deviceId')
-        table
-          .integer('deviceId')
-          .unsigned()
-          .references('id')
-          .inTable('Device')
-          .onDelete('CASCADE')
-          .alter()
+        table.integer('deviceId').unsigned().references('id').inTable('Device').onDelete('CASCADE').alter()
       })
     })
   )
@@ -49,12 +43,7 @@ async function down(knex) {
     _.map(messageTables, async tableName => {
       await knex.schema.alterTable(tableName, table => {
         table.dropForeign('deviceId')
-        table
-          .integer('deviceId')
-          .unsigned()
-          .references('id')
-          .inTable('Device')
-          .alter()
+        table.integer('deviceId').unsigned().references('id').inTable('Device').alter()
       })
     })
   )

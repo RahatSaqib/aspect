@@ -1,0 +1,102 @@
+import React from 'react'
+import { shallow } from 'enzyme'
+import Immutable from 'immutable'
+import sinon from 'sinon'
+import { mountWithTheme } from '../../../__setup__/common'
+import { LazyLoadItems, LazyLoadParent, LazyLoadChild } from '../../../store/GeographyRedux'
+import SelectField from '../../shared/SelectField'
+
+describe('CountrySelectField module', () => {
+  const { CountrySelectField } = require('./CountrySelectField')
+
+  const now = new Date()
+  const countriesForLocationSelector = new LazyLoadItems({
+    loading: false,
+    lastRefreshed: now,
+    items: Immutable.List([
+      new LazyLoadParent({
+        id: '1',
+        name: 'Nigeria',
+        children: new LazyLoadItems({
+          loading: false,
+          lastRefreshed: now,
+          items: Immutable.List([
+            new LazyLoadParent({
+              id: '1',
+              name: 'Lagos',
+              children: new LazyLoadItems({
+                loading: false,
+                lastRefreshed: now,
+                items: Immutable.List([
+                  new LazyLoadChild({
+                    id: '1',
+                    name: 'Apapa',
+                  }),
+                  new LazyLoadChild({
+                    id: '2',
+                    name: 'Mushin',
+                  }),
+                  new LazyLoadChild({
+                    id: '3',
+                    name: 'Ojo',
+                  }),
+                ]),
+              }),
+            }),
+            new LazyLoadParent({
+              id: '2',
+              name: 'Ogun',
+              children: new LazyLoadItems({
+                loading: false,
+                lastRefreshed: undefined,
+                items: Immutable.List([]),
+              }),
+            }),
+          ]),
+        }),
+      }),
+      new LazyLoadParent({
+        id: '2',
+        name: 'United States',
+        children: new LazyLoadItems({
+          loading: false,
+          lastRefreshed: undefined,
+          items: Immutable.List([]),
+        }),
+      }),
+    ]),
+  })
+
+  describe('CountrySelectField component', () => {
+    it('should trigger fetchCountriesForLocationSelector on mount', () => {
+      const props = {
+        countries: countriesForLocationSelector,
+        fetchCountriesForLocationSelector: sinon.spy(),
+        onCountryIdChange: sinon.spy(),
+        countryId: '1',
+      }
+      mountWithTheme(<CountrySelectField {...props} />)
+
+      expect(props.fetchCountriesForLocationSelector.calledOnce).toBe(true)
+    })
+
+    it('should trigger onCountryIdChange when value has been selected', () => {
+      const props = {
+        countries: countriesForLocationSelector,
+        fetchCountriesForLocationSelector: sinon.spy(),
+        onCountryIdChange: sinon.spy(),
+        countryId: '2',
+      }
+      const CountrySelectFieldWrapper = shallow(<CountrySelectField {...props} />)
+      const SelectFieldWrapper = CountrySelectFieldWrapper.find(SelectField)
+
+      SelectFieldWrapper.simulate('change', { target: { value: '2' } })
+      expect(props.onCountryIdChange.calledOnce).toBe(true)
+      expect(props.onCountryIdChange.calledWith('2')).toBe(true)
+
+      SelectFieldWrapper.simulate('change', { target: { value: undefined } })
+      expect(props.onCountryIdChange.calledTwice).toBe(true)
+      expect(props.onCountryIdChange.calledWith(undefined)).toBe(true)
+    })
+  })
+})

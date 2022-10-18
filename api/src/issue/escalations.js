@@ -5,17 +5,6 @@ const { issueConditionsMet } = require('./issueEvaluation')
 const { issueEventStatusToId } = require('../shared/dictionary')
 const { alertMessageUpdateAfterIssueDataChanged } = require('../alert/actions')
 
-async function onIssueCreated({ issueId }, { messageContext: context }) {
-  // Trigger escalation logic for level 1 as soon as issue is created,
-  // higher levels handled in escalateIssues in escalations.js
-  // escalation should be idempotent (as should response to other actions)
-  // so it's OK if this is "at least once"
-  // This also allows one message listener between created and escalated
-  // if logic is shared and avoids potential race condition.
-  context.bindActionCreators({ issueEscalated })
-  context.issueEscalated(issueId, 1)
-}
-
 async function onIssueTriggered({ issueId }, { messageContext: context }) {
   // Check issue escalation logic for specific issue when triggered so we
   // do not need to wait for for next scheduled check.
@@ -29,31 +18,19 @@ async function onEscalateIssues(action, { messageContext: context }) {
     alertMessageUpdateAfterIssueDataChanged,
   })
   return context.transact(async knex => {
-    const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(
-      knex,
-      action.issueId
-    )
+    const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(knex, action.issueId)
     if (_.isEmpty(openIssuesToCheck)) {
       return Promise.resolve()
     }
     return Promise.each(openIssuesToCheck, async issueEscalationTrigger => {
-      const shouldEscalate = await issueConditionsMet(
-        knex,
-        issueEscalationTrigger,
-        issueEscalationTrigger.conditions
-      )
+      const shouldEscalate = await issueConditionsMet(knex, issueEscalationTrigger, issueEscalationTrigger.conditions)
       if (shouldEscalate) {
         await knex('Issue')
           .where('id', issueEscalationTrigger.id)
           .update({ level: issueEscalationTrigger.escalateToLevel })
-        context.issueEscalated(
-          issueEscalationTrigger.id,
-          issueEscalationTrigger.escalateToLevel
-        )
+        context.issueEscalated(issueEscalationTrigger.id, issueEscalationTrigger.escalateToLevel)
       } else {
-        context.alertMessageUpdateAfterIssueDataChanged(
-          issueEscalationTrigger.id
-        )
+        context.alertMessageUpdateAfterIssueDataChanged(issueEscalationTrigger.id)
       }
     })
   })
@@ -107,7 +84,6 @@ async function findOpenIssuesToCheckForEscalation(knex, issueId) {
 }
 
 module.exports = {
-  onIssueCreated,
   onIssueTriggered,
   onEscalateIssues,
 }

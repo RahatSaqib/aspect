@@ -8,13 +8,13 @@ const config = require('../../src/config')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = require('./testUtils')
 
-async function getAccessToken(username, password) {
+async function getAccessToken(username, password, clientName = 'Mocha/Chai') {
   return server
     .post('/api/auth')
     .send({
       name: username,
       password,
-      clientName: 'Mocha/Chai',
+      clientName,
     })
     .then(res => res.body.access)
 }
@@ -41,13 +41,9 @@ async function createUser(
   if (!partner) {
     throw new Error(`partnerName ${partnerName} not found in the database`)
   }
-  const country = await knex('Country')
-    .where('abbreviation', countryAbbreviation)
-    .first()
+  const country = await knex('Country').where('abbreviation', countryAbbreviation).first()
   if (!country) {
-    throw new Error(
-      `countryAbbreviation ${countryAbbreviation} not found in the database`
-    )
+    throw new Error(`countryAbbreviation ${countryAbbreviation} not found in the database`)
   }
   const geography = await knex('Geography')
     .where('countryId', country.id)
@@ -112,7 +108,6 @@ async function createUser(
   const licenseIds = await knex('License as l')
     .whereNull('l.partnerId')
     .orWhere('l.partnerId', partner.id)
-    .select()
     .pluck('l.id')
   await Promise.each(licenseIds, async licenseId => {
     const licensePerson = await knex('LicensePerson')
@@ -144,9 +139,7 @@ async function createUser(
   })
   const jobFunctions = _.uniq(jobs.map(job => job.jobFunctionExternalId))
   await Promise.each(jobFunctions, async jobFunctionExternalId => {
-    const jobFunction = await knex('JobFunction')
-      .where('externalId', jobFunctionExternalId)
-      .first()
+    const jobFunction = await knex('JobFunction').where('externalId', jobFunctionExternalId).first()
     let jobId
     const job = await knex('Job')
       .where({
@@ -162,9 +155,7 @@ async function createUser(
         jobFunctionId: jobFunction.id,
       })
     }
-    const jobFunctionJobs = jobs.filter(
-      job => job.jobFunctionExternalId === jobFunctionExternalId
-    )
+    const jobFunctionJobs = jobs.filter(job => job.jobFunctionExternalId === jobFunctionExternalId)
     await knex('JobContext').where({ jobId }).del()
     await Promise.each(jobFunctionJobs, async jobFunctionJob => {
       let jobGeography = {}
@@ -200,25 +191,11 @@ async function createUser(
           })
           .first('g.*')
       }
-      const site =
-        (await knex('Site').where('externalId', job.siteExternalId).first()) ||
-        {}
-      const deviceType =
-        (await knex('DeviceType')
-          .where('externalId', job.deviceTypeExternalId)
-          .first()) || {}
-      const assayType =
-        (await knex('AssayType')
-          .where('externalId', job.assayTypeExternalId)
-          .first()) || {}
-      const assay =
-        (await knex('Assay')
-          .where('externalId', job.assayExternalId)
-          .first()) || {}
-      const disease =
-        (await knex('Disease')
-          .where('externalId', job.diseaseExternalId)
-          .first()) || {}
+      const site = (await knex('Site').where('externalId', job.siteExternalId).first()) || {}
+      const deviceType = (await knex('DeviceType').where('externalId', job.deviceTypeExternalId).first()) || {}
+      const assayType = (await knex('AssayType').where('externalId', job.assayTypeExternalId).first()) || {}
+      const assay = (await knex('Assay').where('externalId', job.assayExternalId).first()) || {}
+      const disease = (await knex('Disease').where('externalId', job.diseaseExternalId).first()) || {}
       await knex('JobContext').insert({
         jobId,
         geographyId: jobGeography.id,
@@ -237,19 +214,19 @@ async function removeUser(userId) {
   if (!userId) {
     return Promise.resolve()
   }
-  const personIds = await knex('Person')
-    .where({ userId })
-    .select('id')
-    .pluck('id')
-  const jobIds = await knex('Job')
-    .whereIn('personId', personIds)
-    .select('id')
-    .pluck('id')
+  const personIds = await knex('Person').where({ userId }).pluck('id')
+  const jobIds = await knex('Job').whereIn('personId', personIds).pluck('id')
   await knex('JobContext').whereIn('jobId', jobIds).del()
   await knex('Job').whereIn('id', jobIds).del()
   await knex('LicensePerson').whereIn('personId', personIds).del()
   await knex('Person').where({ userId }).del()
   await knex('RefreshToken').where({ userId }).del()
+  await knex('Result').where({ createdBy: userId }).del()
+  await knex('Device').where({ createdBy: userId }).del()
+  const siteIds = await knex('Site').where('createdBy', userId).pluck('id')
+  await knex('Sample').whereIn('originSiteId', siteIds).del()
+  await knex('Site').where({ createdBy: userId }).del()
+  await knex('LoginHistory').where('userId', '>', 0).del()
   await knex('User').where({ id: userId }).del()
 }
 

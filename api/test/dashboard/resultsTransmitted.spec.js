@@ -1,21 +1,14 @@
 const _ = require('lodash')
 
 const chai = require('chai')
-const {
-  format,
-  addDays,
-  subMinutes,
-  addMinutes,
-  subMonths,
-} = require('date-fns')
+const chaiSubset = require('chai-subset')
+const { format, addDays, subMinutes, addMinutes, subMonths } = require('date-fns')
 const Promise = require('bluebird')
 
 const { knex } = require('../../src/db')
 const shared = require('../utils/sharedToken')
 const {
   allResultCategoryToId,
-  allIssueStatusToId,
-  allIssueTypeToId,
   allSampleTypeToId,
   allResultSourceToId,
   resultTypeToId,
@@ -24,7 +17,7 @@ const {
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 // helper func for percentages
 const getPercent = (numerator, denominator) => {
   return denominator === 0 ? 0 : Math.round((100 * numerator) / denominator)
@@ -124,8 +117,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     // -----------------------------
     // helper
     const getLastId = async tableName => {
-      const [id] =
-        (await knex(tableName).orderBy('id', 'desc').pluck('id')) || []
+      const [id] = (await knex(tableName).orderBy('id', 'desc').pluck('id')) || []
       return id
     }
     // get last item id from tables we touch in test
@@ -133,9 +125,6 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
       deviceId: await getLastId('Device'),
       sampleId: await getLastId('Sample'),
       resultId: await getLastId('Result'),
-      issueId: await getLastId('Issue'),
-      emailMessageId: await getLastId('EmailMessage'),
-      smsMessageId: await getLastId('SmsMessage'),
     }
     // -----------------------------
     // get data for adding results
@@ -159,25 +148,13 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
       updatedBy: userId,
     }
     const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
-    const { Resolved: issueStatusResolvedId } = await allIssueStatusToId()
-    const {
-      ResultReceived: issueTypeResultReceivedId,
-    } = await allIssueTypeToId()
-    const {
-      DiagnosticDevice: resultSourceDiagnosticId,
-    } = await allResultSourceToId()
+    const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
     const resultTypePatientId = await resultTypeToId('Patient')
     const messageStatusSentId = await messageStatusToId('Sent')
-    const {
-      Detected: resultCategoryDetectedId,
-      NotDetected: resultCategoryNotDetectedId,
-    } = await allResultCategoryToId()
-    const [deviceTypeGeneXpertId] = await knex('DeviceType')
-      .where('externalId', 'CepheidGeneXpert')
-      .pluck('id')
-    ;[assayGeneXpertMtbRif] = [
-      await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name'),
-    ]
+    const { Detected: resultCategoryDetectedId, NotDetected: resultCategoryNotDetectedId } =
+      await allResultCategoryToId()
+    const [deviceTypeGeneXpertId] = await knex('DeviceType').where('externalId', 'CepheidGeneXpert').pluck('id')
+    ;[assayGeneXpertMtbRif] = [await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name')]
     const [emailTemplateId] = await knex('EmailTemplate').pluck('id')
     const [smsTemplateId] = await knex('SmsTemplate').pluck('id')
     // get existing device
@@ -189,9 +166,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     const [deviceId] = await knex('Device').insert({
       ..._.omit(device, ['id']),
     })
-    device = await knex('Device')
-      .where('id', deviceId)
-      .first('id', 'partnerId', 'geographyId', 'siteId')
+    device = await knex('Device').where('id', deviceId).first('id', 'partnerId', 'geographyId', 'siteId')
 
     const getResultCategoryId = isDetected => {
       return isDetected ? resultCategoryDetectedId : resultCategoryNotDetectedId
@@ -204,8 +179,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     // -----------------------------
     const { geographyId, siteId } = device
     await Promise.each(dataToSeed, async ({ midMonth, totalResults }) => {
-      const getRandomDate = () =>
-        new Date(`${format(midMonth, 'yyyy-MM')}-01T01:00:00.000Z`)
+      const getRandomDate = () => new Date(`${format(midMonth, 'yyyy-MM')}-01T01:00:00.000Z`)
       const samples = []
       await Promise.each(_.range(totalResults), async () => {
         const sample = {
@@ -214,7 +188,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           sampleTypeId: sampleTypeDBSId,
           originSiteId: siteId,
         }
-        sample.id = await knex('Sample').insert(sample)
+        ;[sample.id] = await knex('Sample').insert(sample)
         samples.push(sample)
       })
       let totalPositive = 0
@@ -240,9 +214,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
         // -----------------------------
         const resultElement = {
           ...auditFields,
-          externalId: `UQTB-${_.times(8, () =>
-            _.toUpper(_.random(36).toString(36))
-          ).join('')}`,
+          externalId: `UQTB-${_.times(8, () => _.toUpper(_.random(36).toString(36))).join('')}`,
           assayId: assayGeneXpertMtbRif.id,
           partnerId,
           geographyId,
@@ -267,28 +239,10 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
         const [resultId] = await knex('Result').insert(resultElement)
 
         if (resultCategory1 === resultCategoryDetectedId) {
-          // -----------------------------
-          // insert Issue
-          // -----------------------------
-          const [issueId] = await knex('Issue').insert({
-            issueTypeId: issueTypeResultReceivedId,
-            issueStatusId: issueStatusResolvedId,
-            partnerId,
-            geographyId,
-            siteId,
-            deviceId,
-            resultId,
-            level: 2,
-            createdOn: randomDate,
-            updatedOn: randomDate,
-          })
-
-          const [resultReceivedId] = await knex('IssueType')
-            .where({ externalId: 'ResultReceived' })
-            .pluck('id')
+          const [resultReceivedId] = await knex('IssueType').where({ externalId: 'ResultReceived' }).pluck('id')
           const [notificationId] = await knex('Notification').insert({
             notificationTypeId: resultReceivedId,
-            issueId,
+            resultId,
             personId,
             createdOn: new Date(),
           })
@@ -306,10 +260,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           if (totalPositive % 3 === 0) {
             totalViaEmail += 1
             // 50% of reported via email are reported within 2 hours
-            const date = addMinutes(
-              randomDate,
-              totalViaEmail % 2 === 0 ? 60 : 180
-            )
+            const date = addMinutes(randomDate, totalViaEmail % 2 === 0 ? 60 : 180)
             const [emailMessageId] = await knex('EmailMessage').insert({
               emailTemplateId,
               ...propsEmailSms,
@@ -328,10 +279,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           if (totalPositive % 4 === 0) {
             totalViaSms += 1
             // 50% of reported via sms are reported within 2 hours
-            const date = addMinutes(
-              randomDate,
-              totalViaSms % 2 === 0 ? 60 : 180
-            )
+            const date = addMinutes(randomDate, totalViaSms % 2 === 0 ? 60 : 180)
             const [smsMessageId] = await knex('SmsMessage').insert({
               smsTemplateId,
               ...propsEmailSms,
@@ -350,15 +298,14 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
 
   after(async () => {
     // helper
-    const reset = async (tableName, id = 0) =>
-      knex(tableName).where('id', '>', id).delete()
+    const reset = async (tableName, idName, id = 0) => knex(tableName).where(idName, '>', id).delete()
     // reset all data tables affected in test
-    await reset('Issue', initialState.issueId)
-    await reset('EmailMessage', initialState.emailMessageId)
-    await reset('SmsMessage', initialState.smsMessageId)
-    await reset('Result', initialState.resultId)
-    await reset('Sample', initialState.sampleId)
-    await reset('Device', initialState.deviceId)
+    await reset('Notification', 'resultId', initialState.resultId)
+    await reset('EmailMessage', 'resultId', initialState.resultId)
+    await reset('SmsMessage', 'resultId', initialState.resultId)
+    await reset('Result', 'id', initialState.resultId)
+    await reset('Sample', 'id', initialState.sampleId)
+    await reset('Device', 'id', initialState.deviceId)
   })
 
   it('should return data for Results Transmitted graph', async () => {
@@ -379,9 +326,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     // minimum 1 assay for current month
     assert.isAtLeast(data.length, 1)
 
-    const item = data.find(
-      ({ assayName }) => assayName === assayGeneXpertMtbRif.name
-    )
+    const item = data.find(({ assayName }) => assayName === assayGeneXpertMtbRif.name)
     assert.property(item, 'assayName')
     //
     assert.property(item, 'cntAll')
@@ -408,23 +353,11 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     const prev = getExpected(dataToSeed[1].totalResults)
 
     // changes since previous month
-    curr.percentPositiveChange = getChange(
-      curr.percentPositive,
-      prev.percentPositive
-    )
-    curr.percentReportedChange = getChange(
-      curr.percentReported,
-      prev.percentReported
-    )
-    curr.percentViaEmailChange = getChange(
-      curr.percentViaEmail,
-      prev.percentViaEmail
-    )
+    curr.percentPositiveChange = getChange(curr.percentPositive, prev.percentPositive)
+    curr.percentReportedChange = getChange(curr.percentReported, prev.percentReported)
+    curr.percentViaEmailChange = getChange(curr.percentViaEmail, prev.percentViaEmail)
     curr.percentViaSmsChange = getChange(curr.percentViaSms, prev.percentViaSms)
-    curr.percentWithin2HoursChange = getChange(
-      curr.percentWithin2Hours,
-      prev.percentWithin2Hours
-    )
+    curr.percentWithin2HoursChange = getChange(curr.percentWithin2Hours, prev.percentWithin2Hours)
 
     expect(item).to.containSubset({
       cntAll: curr.cntAll,

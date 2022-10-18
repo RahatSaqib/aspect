@@ -1,0 +1,28 @@
+{
+  "probes": {
+    "probeA": "NEG",
+    "probeB": "POS",
+    "probeC": "NO RESULT",
+    "probeD": "NEG",
+    "probeE": "POS",
+    "probeSpc": "NO RESULT",
+    "qc1": "YES",
+    "qc2": "No",
+    "probeACt": 12.32,
+    "probeBCt": 11.2,
+    "probeCCt": 12.5,
+    "probeDCt": 0.5,
+    "probeECt": 1.2,
+    "probeSpcCt": 5.78,
+    "qc1Ct": 1,
+    "qc2Ct": 0.007,
+    "probeAEndpt": 1.6,
+    "probeBEndpt": 2.33,
+    "probeCEndpt": 457,
+    "probeDEndpt": 12.43,
+    "probeEEndpt": 3.14,
+    "probeSpcEndpt": 8.9018,
+    "qc1Endpt": 0.1234,
+    "qc2Endpt": 1.22
+  }
+}

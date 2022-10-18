@@ -1,0 +1,8 @@
+const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_functions')
+const jobFunctionFixturePartnerOne = require('./fixtures/jobFunctions_partnerOne')
+const jobFunctionFixturePartnerTwo = require('./fixtures/jobFunctions_partnerTwo')
+
+module.exports = require('../utils').seed(async knex => {
+  await updateReportsAndJobFunctions(knex, jobFunctionFixturePartnerOne, 'Partner One')
+  await updateReportsAndJobFunctions(knex, jobFunctionFixturePartnerTwo, 'Partner Two')
+}, __filename)

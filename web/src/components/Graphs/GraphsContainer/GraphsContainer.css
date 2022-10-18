@@ -1,0 +1,6 @@
+.graph__containerGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  min-height: 350px;
+}

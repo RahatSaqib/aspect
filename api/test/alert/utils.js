@@ -25,9 +25,7 @@ class AlertTestContext {
       const {
         auth: { user },
       } = this
-      const { userId } = await knex('User')
-        .where({ name: user })
-        .first('id as userId')
+      const { userId } = await knex('User').where({ name: user }).first('id as userId')
       assert.isOk(userId, `Cannot find user ${user}`)
       this.userId = userId
 
@@ -38,17 +36,13 @@ class AlertTestContext {
       assert.isOk(alertTemplateId)
 
       // read 1st Result and corresponding siteId/deviceId
-      const { id: resultId, siteId, deviceId } = await knex('Result').first(
-        'id',
-        'siteId',
-        'deviceId'
-      )
+      const { id: resultId, siteId, deviceId } = await knex('Result').first('id', 'siteId', 'deviceId')
 
       const initialMessageStatusId = await messageStatusToId('Initial')
 
       // add sample alert message
       const now = new Date()
-      this.messageId = await knex('AlertMessage').insert({
+      ;[this.messageId] = await knex('AlertMessage').insert({
         alertTemplateId,
         messageStatusId: initialMessageStatusId,
         personId: userId,

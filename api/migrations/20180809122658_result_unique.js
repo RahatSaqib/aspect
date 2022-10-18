@@ -12,7 +12,6 @@ async function up(knex) {
     auditLog.string('userName')
     auditLog.specificType('data', 'JSON')
     auditLog.dateTime('createdOn').notNullable()
-    auditLog.charset('utf8')
   })
 }
 

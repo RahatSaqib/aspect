@@ -1,0 +1,83 @@
+name: "Backend .env"
+description: "Create and config backend .env file"
+inputs:
+  dbname:
+    description: "The name of the DB"
+    required: true
+  dbuser:
+    description: "The root user of the DB"
+    required: true
+  dbpassword:
+    description: "The root password for the DB"
+    required: true
+  TWILIOACCOUNTSID:
+    description: "TWILIOACCOUNTSID"
+    required: true
+  TWILIOAUTHTOKEN:
+    description: "TWILIOAUTHTOKEN"
+    required: true
+  TWILIOMESSAGINGSERVICESID:
+    description: "TWILIOMESSAGINGSERVICESID"
+    required: true
+  ENCRYPTIONPASSPHRASE:
+    description: "ENCRYPTIONPASSPHRASE"
+    required: true
+  ENCRYPTIONINITVECTOR:
+    description: "ENCRYPTIONINITVECTOR"
+    required: true
+  PUSHNOTIFICATIONTESTDEVICETOKENID:
+    description: "PUSHNOTIFICATIONTESTDEVICETOKENID"
+    required: true
+  FIREBASESERVERKEY:
+    description: "FIREBASESERVERKEY"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Create env file"
+      run: |
+        cp -R ./api/.env.example ./api/.env
+
+        echo admin.email='aspecttest@systemone.id' >> ./api/.env
+        echo admin.cell='+18888452610' >> ./api/.env
+
+        echo manager.email='aspecttest2@systemone.id' >> ./api/.env
+        echo manager.cell='+18888452610' >> ./api/.env
+
+        echo db.databaseName=${{ inputs.dbname }} >> ./api/.env
+        echo db.user=${{ inputs.dbuser }} >> ./api/.env
+        echo db.password=${{ inputs.dbpassword }} >> ./api/.env
+        echo twilioAccountSid=${{ inputs.TWILIOACCOUNTSID }} >> ./api/.env
+        echo twilioAuthToken=${{ inputs.TWILIOAUTHTOKEN }} >> ./api/.env
+        echo twilioMessagingServiceSid=${{ inputs.TWILIOMESSAGINGSERVICESID }} >> ./api/.env
+        echo encryption.passPhrase=${{ inputs.ENCRYPTIONPASSPHRASE }} >> ./api/.env
+        echo encryption.initVector=${{ inputs.ENCRYPTIONINITVECTOR }} >> ./api/.env
+        echo pushNotification.testDeviceTokenId=${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }} >> ./api/.env
+        echo firebase.serverKey=${{ inputs.FIREBASESERVERKEY }} >> ./api/.env
+
+        echo db.connectionLimit=100 >> ./api/.env
+        echo db.host=localhost >> ./api/.env
+        echo db.debug=false >> ./api/.env
+        echo passwordAttempts=5 >> ./api/.env
+        echo passwordSaltRounds=10 >> ./api/.env
+        echo gxAlertApi=https://admin.gxalert.com/api >> ./api/.env
+        echo file.reference.directory='./files' >> ./api/.env
+        echo amqp.url=amqp://localhost >> ./api/.env
+        echo seeds.directory='./seeds/test/' >> ./api/.env
+        echo seeds.resultMultiplier=2 >> ./api/.env
+        echo email.host='smtp.sendgrid.net' >> ./api/.env
+        echo email.port=2525 >> ./api/.env
+        echo email.user=apikey >> ./api/.env
+        echo email.fromEmail=support@gxalert.com >> ./api/.env
+        echo aspectUrl=http://aspect.id >> ./api/.env
+        echo swagger.enabled=false >> ./api/.env
+        echo swagger.host=false >> ./api/.env
+        echo useTwilio=true >> ./api/.env
+        echo twilioFromNumber='+14423337971' >> ./api/.env
+        echo plugin.commcare.apiKey=false >> ./api/.env
+        echo scheduler.enabled=true >> ./api/.env
+        echo webhook.redcap.url='asdf' >> ./api/.env
+        echo webhook.redcap.authToken='jkasd' >> ./api/.env
+        echo countryName='github-actions' >> ./api/.env
+      shell: bash

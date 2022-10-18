@@ -1,0 +1,12 @@
+.export-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  position: relative;
+}
+.export-icon-button {
+  font-size: 1.25rem !important;
+}
+.export-menu-root {
+  width: 150px;
+}

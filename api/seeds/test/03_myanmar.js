@@ -7,18 +7,9 @@ const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget')
 const { upsertJobFunction } = require('../common')
-const {
-  rowsAsObject,
-  getPermissionModules,
-  seedNotificationTypes,
-  seedIssues,
-} = require('../utils')
+const { rowsAsObject, getPermissionModules, seedNotificationTypes, seedIssues } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
-const {
-  deviceApprovalToId,
-  deviceTypeToId,
-  partnerTypeToId,
-} = require('../../src/shared/dictionary')
+const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
 
 const { seedDataCategory } = require('../dataCategoryLow')
 
@@ -30,9 +21,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 async function seed(knex) {
   const pluginName = 'myanmar'
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'myanmar_admin' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: 'myanmar_admin' }).first('id')
   if (existingAdminUser) {
     return
   }
@@ -68,15 +57,10 @@ async function seed(knex) {
 
   const modules = await getPermissionModules(knex)
 
-  const [myanmarCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'MMR' })
-    .select('c.id', 'c.culture', 'c.timezone')
+  const [myanmarCountry] = await knex('Country as c').where({ 'c.a3': 'MMR' }).select('c.id', 'c.culture', 'c.timezone')
   const countryId = myanmarCountry.id
 
-  const { id: myanmarGeographyId } = await knex('Geography')
-    .where({ countryId })
-    .whereNull('stateId', 'lgaId')
-    .first()
+  const { id: myanmarGeographyId } = await knex('Geography').where({ countryId }).whereNull('stateId', 'lgaId').first()
 
   const myanmarStates = await knex('Geography as g')
     .innerJoin('State as s', 's.id', 'g.stateId')
@@ -113,17 +97,9 @@ async function seed(knex) {
 
   const jobFunctionIdAdmin = await upsertJobFunction(knex, 'Admin', partnerId)
 
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId
-  )
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(knex, 'Regional Officer', partnerId)
 
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId
-  )
+  const jobFunctionIdLabUser = await upsertJobFunction(knex, 'Lab User', partnerId)
 
   const jobFunctionIds = {
     jobFunctionIdAdmin,
@@ -311,6 +287,7 @@ async function seed(knex) {
       lastPartnerId: partnerId,
       lastCountryId: countryId,
       geographyId: myanmarGeographyId,
+      cell: config.admin.cell,
       culture: myanmarCountry.culture,
       timezone: myanmarCountry.timezone,
       ...auditFields,
@@ -329,8 +306,7 @@ async function seed(knex) {
     const { id: siteGeographyId } = await knex('Geography')
       .where({
         countryId,
-        stateId: (statesByAbbreviation[site.stateAbbreviation] || { id: null })
-          .id,
+        stateId: (statesByAbbreviation[site.stateAbbreviation] || { id: null }).id,
         lgaId: (lgasByName[site.lgaName] || { id: null }).id,
       })
       .first()
@@ -404,6 +380,7 @@ async function seed(knex) {
       lastPartnerId: partnerId,
       lastCountryId: countryId,
       geographyId,
+      cell: config.admin.cell,
       culture: myanmarCountry.culture,
       timezone: myanmarCountry.timezone,
       ...auditFields,
@@ -434,9 +411,7 @@ async function seed(knex) {
       'descriptionI18nKey',
       'dashboards',
     ])
-    widgetData.dashboards = JSON.stringify(
-      widgetData.dashboards || { home: {} }
-    )
+    widgetData.dashboards = JSON.stringify(widgetData.dashboards || { home: {} })
 
     const [widgetId] = await knex('DashboardWidget').insert(widgetData)
     const statWidgetData = _.pick(widget, [
@@ -474,16 +449,10 @@ async function seed(knex) {
       'descriptionI18nKey',
       'dashboards',
     ])
-    widgetData.dashboards = JSON.stringify(
-      widgetData.dashboards || { home: {} }
-    )
+    widgetData.dashboards = JSON.stringify(widgetData.dashboards || { home: {} })
 
     const [widgetId] = await knex('DashboardWidget').insert(widgetData)
-    const statWidgetData = _.pick(widget, [
-      'sqlForDataCollection',
-      'thresholdPercentageDataCollection',
-      'targetToken',
-    ])
+    const statWidgetData = _.pick(widget, ['sqlForDataCollection', 'thresholdPercentageDataCollection', 'targetToken'])
     await knex('DashboardWidgetTarget').insert({
       dashboardWidgetId: widgetId,
       ...statWidgetData,
@@ -511,11 +480,7 @@ async function seed(knex) {
   // Fill Issue/AlertMessage/Notification table with some mock data
   const devices = await knex('Device').where({ partnerId })
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
-  const issueStatusAcknowledgedId = await getId(
-    knex,
-    'IssueStatus',
-    'Acknowledged'
-  )
+  const issueStatusAcknowledgedId = await getId(knex, 'IssueStatus', 'Acknowledged')
   const issueStatusOkId = await getId(knex, 'IssueStatus', 'OK')
   const messageStatusSentId = await getId(knex, 'MessageStatus', 'Sent')
 
@@ -546,19 +511,13 @@ async function seed(knex) {
   const luAlertMessages = {
     [issueTypes.DeviceOffline.id]: 'Cannot reach network for 12 days',
     [issueTypes.DeviceNoResults.id]: 'No testing for 9 days',
-    [issueTypes.ModuleFailureError.id]:
-      'Module A1: Critical errors; notify R.O.',
-    [issueTypes.ModuleTemperatureError.id]:
-      'Temperature errors on Module A2; notify R.O.',
+    [issueTypes.ModuleFailureError.id]: 'Module A1: Critical errors; notify R.O.',
+    [issueTypes.ModuleTemperatureError.id]: 'Temperature errors on Module A2; notify R.O.',
     [issueTypes.ModulePowerError.id]: 'Power errors on Module A3; notify RO',
-    [issueTypes.MachineTemperatureError.id]:
-      'Temperature errors across machine, conduct troubleshooting',
-    [issueTypes.MachinePowerError.id]:
-      'Power errors across machine, conduct troubleshooting',
-    [issueTypes.ModuleProceduralError.id]:
-      'Module A2 errors, conduct troubleshooting',
-    [issueTypes.MachineProceduralError.id]:
-      'Procedural errors across machine, conduct troubleshooting',
+    [issueTypes.MachineTemperatureError.id]: 'Temperature errors across machine, conduct troubleshooting',
+    [issueTypes.MachinePowerError.id]: 'Power errors across machine, conduct troubleshooting',
+    [issueTypes.ModuleProceduralError.id]: 'Module A2 errors, conduct troubleshooting',
+    [issueTypes.MachineProceduralError.id]: 'Procedural errors across machine, conduct troubleshooting',
     [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 89%',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
     [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
@@ -578,9 +537,8 @@ async function seed(knex) {
         .join('Job as j', 'jc.jobId', 'j.id')
         .where({ partnerId, jobFunctionId: jobFunctionIdRegionalOfficer })
     })
-    .orderBy('deviceId')
     .then(items =>
-      items.reduce((memo, row) => {
+      _.orderBy(items, ['deviceId']).reduce((memo, row) => {
         if (!memo[row.deviceId]) {
           memo[row.deviceId] = {}
         }
@@ -591,10 +549,7 @@ async function seed(knex) {
 
   await Promise.each(devices, async device => {
     await Promise.each(luIssueTypeIds, async issueTypeId => {
-      const issueStatusId =
-        issueTypeId === issueTypes.StockLevelUpdate.id
-          ? issueStatusOkId
-          : issueStatusActiveId
+      const issueStatusId = issueTypeId === issueTypes.StockLevelUpdate.id ? issueStatusOkId : issueStatusActiveId
       const [issueId] = await knex('Issue').insert({
         issueTypeId,
         issueStatusId,
@@ -655,13 +610,7 @@ async function seed(knex) {
         message: luAlertMessages[policy.issueTypeId],
         createdOn: now,
         updatedOn: now,
-        ..._.pick(policy, [
-          'alertTemplateId',
-          'personId',
-          'siteId',
-          'deviceId',
-          'resultId',
-        ]),
+        ..._.pick(policy, ['alertTemplateId', 'personId', 'siteId', 'deviceId', 'resultId']),
       })
 
       await knex('Notification').insert({
@@ -684,11 +633,9 @@ async function seed(knex) {
   ]
 
   const roAlertMessages = {
-    [issueTypes.DeviceOffline.id]:
-      'No contact for 12 days. If there is a reason for being inactive, add the reason',
+    [issueTypes.DeviceOffline.id]: 'No contact for 12 days. If there is a reason for being inactive, add the reason',
     [issueTypes.DeviceNoResults.id]: 'No testing for 9 days',
-    [issueTypes.ModuleProceduralError.id]:
-      'Module Temperature Issue for 2 days',
+    [issueTypes.ModuleProceduralError.id]: 'Module Temperature Issue for 2 days',
     [issueTypes.MachineProceduralError.id]: 'Machine Power Issue for 7 days',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
     [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 92%',
@@ -699,10 +646,7 @@ async function seed(knex) {
   issueIds = []
   await Promise.each(devices, async device => {
     await Promise.each(roIssueTypeIds, async issueTypeId => {
-      const issueStatusId =
-        issueTypeId === issueTypes.StockLevelUpdate.id
-          ? issueStatusOkId
-          : issueStatusActiveId
+      const issueStatusId = issueTypeId === issueTypes.StockLevelUpdate.id ? issueStatusOkId : issueStatusActiveId
       const [issueId] = await knex('Issue').insert({
         issueTypeId,
         issueStatusId,
@@ -741,9 +685,7 @@ async function seed(knex) {
     .join('AlertTemplate as at', 'at.id', 'mt.alertTemplateId')
     .where({ 'nt.partnerId': partnerId })
     .whereIn('i.id', issueIds)
-    .whereRaw('(nt.level < 3 or nt.issueTypeId = ?)', [
-      issueTypes.ReagentHealthError.id,
-    ])
+    .whereRaw('(nt.level < 3 or nt.issueTypeId = ?)', [issueTypes.ReagentHealthError.id])
     .where('nt.jobFunctionId', jobFunctionIdRegionalOfficer)
     .select(
       'nt.id as notificationTypeId',
@@ -769,13 +711,7 @@ async function seed(knex) {
         message,
         createdOn: now,
         updatedOn: now,
-        ..._.pick(policy, [
-          'alertTemplateId',
-          'personId',
-          'siteId',
-          'deviceId',
-          'resultId',
-        ]),
+        ..._.pick(policy, ['alertTemplateId', 'personId', 'siteId', 'deviceId', 'resultId']),
       })
 
       await knex('Notification').insert({

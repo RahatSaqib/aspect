@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExportListButton should not render the button 1`] = `""`;
+
+exports[`ExportListButton should shallow render export list correctly 1`] = `
+<div
+  className="export-button-wrapper"
+>
+  <ForwardRef(IconButton)
+    className="export-icon-button"
+    onClick={[Function]}
+    variant="contained"
+  >
+    <Memo(ForwardRef(CloudDownloadIcon))
+      style={
+        Object {
+          "fontSize": "1.25rem",
+        }
+      }
+    />
+  </ForwardRef(IconButton)>
+  <ForwardRef(Menu)
+    anchorEl={null}
+    anchorOrigin={
+      Object {
+        "horizontal": "left",
+        "vertical": "bottom",
+      }
+    }
+    classes={
+      Object {
+        "root": "export-menu-root",
+      }
+    }
+    onClose={[Function]}
+    open={false}
+    transformOrigin={
+      Object {
+        "horizontal": "center",
+        "vertical": "top",
+      }
+    }
+  >
+    <ForwardRef(MenuItem)
+      onClick={[Function]}
+    >
+      Excel
+    </ForwardRef(MenuItem)>
+    <ForwardRef(MenuItem)
+      onClick={[Function]}
+    >
+      CSV
+    </ForwardRef(MenuItem)>
+  </ForwardRef(Menu)>
+</div>
+`;

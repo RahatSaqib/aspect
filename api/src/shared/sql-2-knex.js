@@ -86,10 +86,7 @@ function getBalancedParentheses(sql) {
           const item = stack.pop()
           item.globalIndexEnd = currentIndex
           // cut text between parentheses
-          item.innerText = sql.substring(
-            item.globalIndexStart + 1,
-            item.globalIndexEnd
-          )
+          item.innerText = sql.substring(item.globalIndexStart + 1, item.globalIndexEnd)
           // if stack is not empty - add this item to 'children' array of it's parent
           // notice that 'children' contains only full matches, with open/close chars
           if (stack.length > 0) {
@@ -117,9 +114,7 @@ function getBalancedParentheses(sql) {
 
   // throw error if text has different number or open/close parentheses
   if (matches.length !== all.length) {
-    throw new Error(
-      'Malformed text - not all parentheses have open and/or close parts'
-    )
+    throw new Error('Malformed text - not all parentheses have open and/or close parts')
   }
 
   return {
@@ -156,10 +151,8 @@ function getNestedQueries(sql) {
         item.parent.subQueries.push(item)
 
         // set relative position within parent.innerText
-        item.localIndexStart =
-          item.globalIndexStart - item.parent.globalIndexStart - 1
-        item.localIndexEnd =
-          item.globalIndexEnd - item.parent.globalIndexStart - 1
+        item.localIndexStart = item.globalIndexStart - item.parent.globalIndexStart - 1
+        item.localIndexEnd = item.globalIndexEnd - item.parent.globalIndexStart - 1
       }
     }
   })
@@ -168,9 +161,7 @@ function getNestedQueries(sql) {
     all: balancedParentheses.all.filter(item => item.isQuery),
     // get all hierarchies of sub-queries - notice that 'tree'
     // contains only root items of each hierarchy
-    tree: balancedParentheses.all.filter(
-      item => item.isQuery && (!item.parent || !item.parent.isQuery)
-    ),
+    tree: balancedParentheses.all.filter(item => item.isQuery && (!item.parent || !item.parent.isQuery)),
   }
 }
 
@@ -387,16 +378,7 @@ function resolveOn(queryBuilder, condition) {
   let match
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(condition))) {
-    const [
-      ,
-      conjunction,
-      field,
-      unary,
-      operation,
-      between,
-      value0,
-      value,
-    ] = match
+    const [, conjunction, field, unary, operation, between, value0, value] = match
 
     let funcName
     if (conjunction) {
@@ -410,17 +392,13 @@ function resolveOn(queryBuilder, condition) {
       // 'IS NULL' or 'IS NOT NULL'
       // --------------------
       const unaryUp = unary.toUpperCase().replace(/\s/g, ' ')
-      funcName =
-        unaryUp === 'IS NULL' ? `${funcName}Null` : `${funcName}NotNull`
+      funcName = unaryUp === 'IS NULL' ? `${funcName}Null` : `${funcName}NotNull`
       queryBuilder[funcName](field)
     } else if (between) {
       // --------------------
       // BETWEEN _val1 AND _val
       // --------------------
-      queryBuilder[`${funcName}Between`](field, [
-        knex.raw(value0),
-        knex.raw(value),
-      ])
+      queryBuilder[`${funcName}Between`](field, [knex.raw(value0), knex.raw(value)])
     } else {
       const operationUp = operation.toUpperCase().replace(/\s/g, ' ')
       if (operationUp === 'IN' || operationUp === 'NOT IN') {
@@ -571,17 +549,7 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
   let sqlBuilder
   if (sqlQueryMatch) {
     // get all 8 captured groups defined in regex
-    const [
-      ,
-      selectPart,
-      fromPart,
-      joinPart,
-      wherePart,
-      groupByPart,
-      havingPart,
-      orderByPart,
-      limitPart,
-    ] = sqlQueryMatch
+    const [, selectPart, fromPart, joinPart, wherePart, groupByPart, havingPart, orderByPart, limitPart] = sqlQueryMatch
 
     const isSubQueryInSelect = isSubQueryInText(selectPart)
     if (isSubQueryInSelect) {
@@ -683,11 +651,7 @@ function convertSqlToKnex(sql, byToken = {}, params = {}) {
   return sqlBuilder
 }
 
-function tryConvertSqlStringToKnexQueryBuilder(
-  originalSql,
-  dataConstraints,
-  urlQuery
-) {
+function tryConvertSqlStringToKnexQueryBuilder(originalSql, dataConstraints, urlQuery) {
   let sql = trimSql(originalSql)
   const params = { dataConstraints, urlQuery }
   const treeOfSubQueries = getNestedQueries(sql).tree
@@ -713,11 +677,7 @@ async function queryValue(sql, dataConstraints, query) {
   let firstResult
   sql = trimSql(sql)
   if (sql) {
-    const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(
-      sql,
-      dataConstraints,
-      query
-    )
+    const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql, dataConstraints, query)
 
     try {
       if (sqlBuilder) {
@@ -727,10 +687,7 @@ async function queryValue(sql, dataConstraints, query) {
       }
     } catch (ex) {
       // eslint-disable-next-line no-console
-      console.error(
-        'ERROR in function queryValue (sql-2-knex.js):',
-        ex.toString()
-      )
+      console.error('ERROR in function queryValue (sql-2-knex.js):', ex.toString())
     }
 
     while (_.isArray(firstResult)) {

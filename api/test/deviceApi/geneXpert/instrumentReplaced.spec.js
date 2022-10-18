@@ -72,19 +72,12 @@ describe('Backward update db after getting tests from offline device', () => {
     })
     assert.equal(response.statusCode, 200)
 
-    const {
-      id: deviceId,
-      siteId,
-      geographyId,
-      partnerId,
-    } = response.body.device
+    const { id: deviceId, siteId, geographyId, partnerId } = response.body.device
 
     // wait a bit until all MQ jobs are finished after creating a new device
     await waitForIdle()
 
-    const waitForInstrumentReplaced = waitForAction(
-      deviceInstrumentReplaced(deviceId)
-    )
+    const waitForInstrumentReplaced = waitForAction(deviceInstrumentReplaced(deviceId))
 
     /**
      * 2. post new test with same module props but another instrumentSerial

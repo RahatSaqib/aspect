@@ -1,8 +1,4 @@
-const {
-  addCreateFieldsNullable,
-  addUpdateFieldsNullable,
-  addTimestamps,
-} = require('./utils/index')
+const { addCreateFieldsNullable, addUpdateFieldsNullable, addTimestamps } = require('./utils/index')
 
 module.exports = require('../src/db').migration(up, down)
 
@@ -14,7 +10,6 @@ async function up(knex) {
     template.text('data')
     addCreateFieldsNullable(template)
     addUpdateFieldsNullable(template)
-    template.charset('utf8')
   })
 
   await knex.schema.createTable('PushNotificationMessage', message => {
@@ -25,41 +20,15 @@ async function up(knex) {
       .references('id')
       .inTable('PushNotificationTemplate')
       .notNullable()
-    message
-      .integer('messageStatusId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageStatus')
-      .notNullable()
-    message
-      .integer('personId')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .notNullable()
-    message
-      .integer('siteId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Site')
-    message
-      .integer('deviceId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Device')
-    message
-      .integer('resultId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Result')
+    message.integer('messageStatusId').unsigned().references('id').inTable('MessageStatus').notNullable()
+    message.integer('personId').unsigned().references('id').inTable('Person').notNullable()
+    message.integer('siteId').unsigned().index().references('id').inTable('Site')
+    message.integer('deviceId').unsigned().index().references('id').inTable('Device')
+    message.integer('resultId').unsigned().index().references('id').inTable('Result')
     message.string('title', 1000)
     message.text('body')
     message.text('data')
     addTimestamps(message)
-    message.charset('utf8')
   })
 
   await knex.schema.alterTable('Notification', notification => {
@@ -73,11 +42,7 @@ async function up(knex) {
   })
 
   await knex.schema.alterTable('MessageType', messageType => {
-    messageType
-      .integer('pushNotificationTemplateId')
-      .unsigned()
-      .references('id')
-      .inTable('PushNotificationTemplate')
+    messageType.integer('pushNotificationTemplateId').unsigned().references('id').inTable('PushNotificationTemplate')
   })
 }
 

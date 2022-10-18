@@ -1,12 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { knex } = require('../db')
-const {
-  canView,
-  canEdit,
-  getConstraints,
-  addConstraints,
-} = require('../auth/constraints')
+const { canView, canEdit, getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = ['t.id', 't.title', 't.partnerId']
 
@@ -87,9 +82,7 @@ async function updateTags(request) {
   } = request
 
   if (!canEdit(auth, `${tagType}:`)) {
-    return Boom.forbidden(
-      `You are not permitted to update tags to this ${tagType}`
-    )
+    return Boom.forbidden(`You are not permitted to update tags to this ${tagType}`)
   }
 
   await updateTagsById(id, tagType, tags, auth)
@@ -100,26 +93,36 @@ async function updateTags(request) {
   }
 }
 
+/**
+ * Compare 2 csv strings of tags and return true if they have the same values.
+ * @param {String} source - tags in csv format
+ * @param {String} target - tags in csv format
+ * @returns True if the tags are the same or both strings are empty, null or undefined.
+ */
+function tagsAreEqual(source, target) {
+  if (!source && !target) return true
+  if (!source || !target) return false
+  const sourceArray = source?.split(',').map(v => v.trim()) ?? []
+  const targetArray = target?.split(',').map(v => v.trim()) ?? []
+
+  return (
+    sourceArray.length === targetArray.length &&
+    sourceArray.filter(t => !includesIgnoreCase(targetArray, t)).length === 0
+  )
+}
+
 async function updateTagsById(id, tagType, tags, auth) {
   const tableName = tagTableName(tagType)
   const idName = `${tagType}Id`
   const dataConstraints = await getConstraints(auth.credentials)
 
   const oldTags = _.map(await getTagsById(auth, id, tagType), 'title')
-  const allTagsByTitle = _.keyBy(await getAllTags(auth), tag =>
-    tag.title.toLowerCase()
-  )
+  const allTagsByTitle = _.keyBy(await getAllTags(auth), tag => tag.title.toLowerCase())
 
-  const newTags = _.split(tags, ',')
+  const newTags = tags ? [...new Set(tags.split(',').map(t => t.trim()))] : []
 
-  const tagsToBeDeleted = _.filter(
-    oldTags,
-    tag => !includesIgnoreCase(newTags, tag)
-  )
-  const tagsToBeAdded = _.filter(
-    newTags,
-    tag => !includesIgnoreCase(oldTags, tag)
-  )
+  const tagsToBeDeleted = _.filter(oldTags, tag => !includesIgnoreCase(newTags, tag))
+  const tagsToBeAdded = _.filter(newTags, tag => !includesIgnoreCase(oldTags, tag))
 
   await Promise.all(
     _.map(tagsToBeAdded, async tag => {
@@ -158,4 +161,5 @@ module.exports = {
   listTagsByType,
   updateTags,
   updateTagsById,
+  tagsAreEqual,
 }

@@ -2,8 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const amqp = require('amqplib')
 const EventEmitter = require('events')
-const debug = require('debug')('aspect:mq')
-
+const logger = require('./shared/logger')
 const config = require('./config')
 const { run, transact } = require('./db')
 
@@ -23,12 +22,13 @@ class MessageQueue {
     this.queues = []
     this.queueEmitActions = null
     this.messageContextIdx = 0
+    this.channel = null
     this.unsubscribe = this.unsubscribe.bind(this)
   }
 
   async connect() {
     if (!this.channel) {
-      debug(`connect ${this.name}`)
+      logger.debug(`connect ${this.name}`, { reLabel: 'aspect:mq:connect' })
       const connection = await amqp.connect(config.amqp.url)
       const channel = await connection.createChannel()
       await channel.assertExchange(exchange, 'topic', { durable: true })
@@ -41,15 +41,13 @@ class MessageQueue {
 
   async purge() {
     if (this.channel) {
-      debug(`purge ${this.name}`)
-      return Promise.all(
-        this.queues.map(queue => this.channel.purgeQueue(queue))
-      )
+      logger.debug(`purge ${this.name}`, { reLabel: 'aspect:mq:purge' })
+      return Promise.all(this.queues.map(queue => this.channel.purgeQueue(queue)))
     }
   }
 
   async close() {
-    debug(`close ${this.name}`)
+    logger.debug(`close ${this.name}`, { reLabel: 'aspect:mq:close' })
     if (this.channel) {
       await this.purge()
       await this.channel.close()
@@ -68,10 +66,10 @@ class MessageQueue {
       throw new Error('Actions must be object with string type')
     }
     const message = JSON.stringify(action)
-    const topic = bindingKey
-      ? `aspect.actions.${action.type}.${bindingKey}`
-      : `aspect.actions.${action.type}`
-    debug(`dispatch ${this.name} ${message}`)
+    const topic = bindingKey ? `aspect.actions.${action.type}.${bindingKey}` : `aspect.actions.${action.type}`
+    logger.debug(`dispatch ${this.name} ${message}`, {
+      reLabel: 'aspect:mq:dispatch',
+    })
     this.channel.publish(exchange, topic, Buffer.from(message), options)
   }
 
@@ -92,99 +90,125 @@ class MessageQueue {
    *
    *   Can specify multiple action types per subscription.
    */
-  subscribe(name, subscriptions, messageTtl) {
+  async subscribe(name, subscriptions, messageTtl) {
     if (_.isFunction(subscriptions)) {
       const subscribeName = `${this.name}_${name}_subscribe`
       const messageContext = this.createMessageContext(subscribeName)
-      this.subscribe(name, subscriptions({ messageContext }))
+      await this.subscribe(name, subscriptions({ messageContext }))
     } else if (_.isFunction(subscriptions.then)) {
-      subscriptions.then(subs => this.subscribe(name, subs))
+      const subs = await subscriptions
+      await this.subscribe(name, subs)
     } else if (_.isArray(subscriptions)) {
-      _.each(subscriptions, (subscription, subscriptionIndex) => {
+      await Promise.each(subscriptions, (subscription, subscriptionIndex) =>
         this.subscribe(`${name}_${subscriptionIndex}`, subscription)
-      })
+      )
     } else {
-      _.each(subscriptions.actions, (messageHandler, type) => {
-        let handlerFunction = async () => Promise.resolve()
-        let shouldHandle = () => true
-        let consumeOptions
-        let bindingKey = ''
-        let purgeOnStart = false
-        if (_.isFunction(messageHandler)) {
-          handlerFunction = messageHandler
-        } else {
-          ;({ handlerFunction } = messageHandler)
-          if (messageHandler.shouldHandle) {
-            ;({ shouldHandle } = messageHandler)
-          }
-          if (messageHandler.consumerTag) {
-            consumeOptions = {
-              consumerTag: messageHandler.consumerTag,
-            }
-          }
-          if (messageHandler.allowInfiniteListeners) {
-            const maxListeners = this.emitter.getMaxListeners()
-            if (maxListeners > 0) {
-              this.emitter.setMaxListeners(0)
-            }
-          }
-          if (messageHandler.bindingKey) {
-            bindingKey = `.${messageHandler.bindingKey}`
-          }
-          if (messageHandler.purgeOnStart) {
-            purgeOnStart = true
-          }
-        }
-        const { channel, name: queueName } = this
-        const subscribeName = `${queueName}_${name}_actions_${type}`
-        const topic = `aspect.actions.${type}${bindingKey}`
-        debug(`subscribe ${subscribeName} ${topic}`)
-        const queueOptions = messageTtl ? { messageTtl } : undefined
-        const { queue } = channel.assertQueue(subscribeName, queueOptions)
-        this.queues.push(queue)
-        channel.bindQueue(queue, exchange, topic)
-        if (purgeOnStart) {
-          channel.purgeQueue(queue)
-        }
-        channel.consume(
-          queue,
-          message => {
-            const content = message.content.toString()
-            const messageContext = this.createMessageContext(subscribeName)
-            const action = JSON.parse(content)
-            debug(`consume ${messageContext.id} ${content}`)
-            if (shouldHandle(action)) {
-              Promise.resolve(handlerFunction(action, { messageContext }))
-                .then(() => {
-                  // Do not ack until handlerFunction result resolves
-                  // Allows backpressure per consumer, if this is not needed can
-                  // return something (or nothing) that resolves immediately
-                  debug(`ack ${messageContext.id}`)
-                  this.channel.ack(message)
-                })
-                .catch(err => {
-                  console.error(err) // eslint-disable-line no-console
-                  // TODO nack/dead letter queue?
-                  this.channel.ack(message)
-                })
-            } else {
-              this.channel.nack(message)
-            }
-          },
-          consumeOptions
-        )
-      })
+      await Promise.each(_.keys(subscriptions.actions), async type => {
+        const messageHandler = subscriptions.actions[type]
+        await this.subscribeSingleAction(name, messageTtl, messageHandler, type)
+      }).catch(err => logger.error(err))
     }
   }
 
-  unsubscribe(queueName, topic, consumerTag) {
-    this.channel.cancel(consumerTag)
-    this.channel.unbindQueue(queueName, exchange, topic)
+  async subscribeSingleAction(name, messageTtl, messageHandler, type) {
+    let handlerFunction = async () => Promise.resolve()
+    let shouldHandle = () => true
+    let consumeOptions
+    let bindingKey = ''
+    let purgeOnStart = false
+    if (_.isFunction(messageHandler)) {
+      handlerFunction = messageHandler
+    } else {
+      ;({ handlerFunction } = messageHandler)
+      if (messageHandler.shouldHandle) {
+        ;({ shouldHandle } = messageHandler)
+      }
+      if (messageHandler.consumerTag) {
+        consumeOptions = {
+          consumerTag: messageHandler.consumerTag,
+        }
+      }
+      if (messageHandler.allowInfiniteListeners) {
+        const maxListeners = this.emitter.getMaxListeners()
+        if (maxListeners > 0) {
+          this.emitter.setMaxListeners(0)
+        }
+      }
+      if (messageHandler.bindingKey) {
+        bindingKey = `.${messageHandler.bindingKey}`
+      }
+      if (messageHandler.purgeOnStart) {
+        purgeOnStart = true
+      }
+    }
+    const { name: queueName } = this
+    const subscribeName = `${queueName}_${name}_actions_${type}`
+    const topic = `aspect.actions.${type}${bindingKey}`
+    logger.debug(`subscribe ${subscribeName} ${topic}`, {
+      reLabel: 'aspect:mq:subscribe',
+    })
+    const queueOptions = messageTtl ? { messageTtl } : undefined
+    const { queue } = await this.channel.assertQueue(subscribeName, queueOptions)
+
+    if (!this.queues.includes(queue)) this.queues.push(queue)
+    await this.channel.bindQueue(queue, exchange, topic)
+    if (purgeOnStart) {
+      await this.channel.purgeQueue(queue)
+    }
+    await this.channel.consume(
+      queue,
+      async message => {
+        if (!message) return
+        const content = message.content.toString()
+        const messageContext = this.createMessageContext(subscribeName)
+        const action = JSON.parse(content)
+        logger.debug(`consume ${messageContext.id} ${content}`, {
+          reLabel: 'aspect:mq:consume',
+        })
+        if (shouldHandle(action)) {
+          Promise.resolve(handlerFunction(action, { messageContext }))
+            .then(() => {
+              // Do not ack until handlerFunction result resolves
+              // Allows backpressure per consumer, if this is not needed can
+              // return something (or nothing) that resolves immediately
+              logger.debug(`ack ${messageContext.id}`, {
+                reLabel: 'aspect:mq:ack',
+              })
+              this.channel.ack(message)
+            })
+            .catch(err => {
+              logger.error(err, { reLabel: 'aspect:mq:error' })
+              // TODO nack/dead letter queue?
+              this.channel.ack(message)
+            })
+        } else {
+          this.channel.nack(message)
+        }
+      },
+      consumeOptions
+    )
+  }
+
+  async unsubscribe(queueName) {
+    const regex = `_${queueName.toLowerCase()}_.*_actions_`
+    const re = new RegExp(regex)
+    const selectedQueries = _.filter(this.queues, q => re.test(q))
+    await Promise.each(selectedQueries || [], async q => {
+      const { queue } = await this.channel.assertQueue(q)
+      if (queue) {
+        await this.channel.unbindQueue(queue, exchange, 'aspect.actions.#')
+        await this.channel.deleteQueue(q)
+
+        _.remove(this.queues, q => re.test(q))
+      }
+    })
   }
 
   async subscribeEmitActions() {
     if (this.queueEmitActions == null) {
-      debug('subscribeEmitActions')
+      logger.debug('subscribeEmitActions', {
+        reLabel: 'aspect:mq:subscribeEmitActions',
+      })
       const { channel } = this
       const { queue } = await channel.assertQueue('', { exclusive: true })
       this.queueEmitActions = queue
@@ -251,13 +275,13 @@ class MessageQueue {
        * we need to make sure our awaitable action (i.e. `predicate`)
        * exactly match emitted one.
        */
-      const awaitableAction = _.isPlainObject(predicate)
-        ? JSON.parse(JSON.stringify(predicate))
-        : predicate
+      const awaitableAction = _.isPlainObject(predicate) ? JSON.parse(JSON.stringify(predicate)) : predicate
       const check = _.iteratee(awaitableAction)
       const checkedListener = action => {
         if (check(action)) {
-          debug(`waitForAction resolve ${JSON.stringify(action)}`)
+          logger.debug(`waitForAction resolve ${JSON.stringify(action)}`, {
+            reLabel: 'aspect:mq',
+          })
           dispose()
           resolve(action)
         }
@@ -273,7 +297,7 @@ class MessageQueue {
               (_.isPlainObject(predicate)
                 ? `waitForAction timeout ${JSON.stringify(predicate)}`
                 : 'waitForAction timeout')
-            debug(rejectMessage)
+            logger.debug(rejectMessage, { reLabel: 'aspect:mq' })
             reject(new Error(rejectMessage))
           }
         }, timeout)
@@ -313,7 +337,7 @@ class MessageQueue {
       const idleIntervalId = setInterval(() => {
         timeIdle += idleTimeIncrement
         if (timeIdle >= idleTime) {
-          debug('waitForIdle resolve')
+          logger.debug('waitForIdle resolve', { reLabel: 'aspect:mq' })
           clearInterval(idleIntervalId)
           this.emitter.removeListener('action', clearTimeIdle)
           resolve()
@@ -345,13 +369,11 @@ class MessageContext {
 
     if (this.transaction) {
       // Queue actions until transaction committed
-      debug(
-        `dispatch delay ${this.id} ${JSON.stringify(action)} for ${bindingKey}`
-      )
+      logger.debug(`dispatch delay ${this.id} ${JSON.stringify(action)} for ${bindingKey}`, { reLabel: 'aspect:mq' })
       this.actions.push({ action, bindingKey })
     } else {
       // transaction complete, dispatch to MQ
-      debug(`dispatch ${this.id} ${JSON.stringify(action)} for ${bindingKey}`)
+      logger.debug(`dispatch ${this.id} ${JSON.stringify(action)} for ${bindingKey}`, { reLabel: 'aspect:mq' })
       this.queue.dispatch(action, bindingKey)
     }
   }
@@ -363,7 +385,7 @@ class MessageContext {
     this.transaction = transact(async knex => task(knex))
       .then(this.commit)
       .then(null, err => {
-        console.error(err) // eslint-disable-line no-console
+        logger.error(err, { reLabel: 'aspect:mq:transact' })
         this.rollback()
         throw err
       })
@@ -378,16 +400,14 @@ class MessageContext {
     if (this.isFinalState) {
       throw new Error('Cannot commit after final state, create new context')
     }
-    debug(`commit ${this.id}`)
+    logger.debug(`commit ${this.id}`, { reLabel: 'aspect:mq' })
     this.transaction = null
-    this.actions.forEach(({ action, bindingKey }) =>
-      this.dispatch(action, bindingKey)
-    )
+    this.actions.forEach(({ action, bindingKey }) => this.dispatch(action, bindingKey))
     this.isFinalState = true
   }
 
   rollback() {
-    debug(`rollback ${this.id}`)
+    logger.debug(`rollback ${this.id}`, { reLabel: 'aspect:mq' })
     if (this.isFinalState) {
       throw new Error('Cannot rollback after final state, create new context')
     }

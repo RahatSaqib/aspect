@@ -1,0 +1,13 @@
+.Dropdown {
+  margin: 0 0 8px;
+}
+
+.Dropdown__Icon {
+  color: var(--aspect-color-white-3);
+  font-size: 24px;
+}
+
+.Dropdown__Input {
+  cursor: pointer;
+  text-align: right;
+}

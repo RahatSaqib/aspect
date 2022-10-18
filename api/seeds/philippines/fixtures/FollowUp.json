@@ -4,6 +4,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -21,6 +22,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -38,6 +40,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -47,7 +50,7 @@
         "assayTbLamp"
       ],
       "type": "treatment",
-      "name": "Regimen 3: SSTR",
+      "name": "Regimen 3: SSOR",
       "externalId": "sst",
       "i18nKey": "sst"
     },
@@ -55,6 +58,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -72,6 +76,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -89,6 +94,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -106,6 +112,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -123,6 +130,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -140,6 +148,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -157,6 +166,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -174,6 +184,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -191,6 +202,7 @@
       "assays": [
         "GxMtbRif",
         "GxMtbRifUltra",
+        "GxMtbXdr",
         "assayBdMgitAst",
         "assayBdMgitGnd",
         "assayGenericDst",
@@ -206,7 +218,18 @@
     },
 
     {
-      "assays": [],
+      "assays": [
+        "GxMtbRif",
+        "GxMtbRifUltra",
+        "GxMtbXdr",
+        "assayBdMgitAst",
+        "assayBdMgitGnd",
+        "assayGenericDst",
+        "assayGenericCulture",
+        "assayLPA",
+        "assaySmear",
+        "assayTbLamp"
+      ],
       "type": "outcome",
       "name": "Cured",
       "externalId": "cured",

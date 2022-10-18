@@ -1,9 +1,25 @@
+const {
+  admin,
+  clinician,
+  labUser,
+  regionalOfficer,
+  mergeJobFunctions,
+  technician,
+} = require('../../fixtures/jobFunctionBase')
+
 module.exports = [
-  {
-    name: 'Admin',
+  mergeJobFunctions(admin, {
     permissions: [
       {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
         module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'case',
         activity: 'edit',
       },
       {
@@ -11,7 +27,47 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
         module: 'person',
+        activity: 'edit',
+      },
+      {
+        module: 'reporter',
+        activity: 'edit',
+      },
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'site',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(clinician, {
+    permissions: [
+      {
+        module: 'account',
         activity: 'edit',
       },
       {
@@ -23,23 +79,67 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
-        activity: 'edit',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
+        module: 'dashboard',
+        activity: 'result',
       },
       {
         module: 'dashboard',
         activity: 'summary',
       },
       {
+        module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
+      {
+        module: 'device',
+        activity: 'view',
+      },
+      {
+        module: 'deviceApiKey',
+        activity: 'view',
+      },
+      {
         module: 'inventory',
+        activity: 'view',
+      },
+      {
+        module: 'notification',
+        activity: 'view',
+      },
+      {
+        module: 'operationalData',
+        activity: 'view',
+      },
+      {
+        module: 'person',
+        activity: 'view',
+      },
+      {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+      {
+        module: 'task',
+        activity: 'view',
+      },
+      {
+        module: 'taskMenu',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(regionalOfficer, {
+    permissions: [
+      {
+        module: 'account',
         activity: 'edit',
       },
       {
@@ -47,16 +147,31 @@ module.exports = [
         activity: 'edit',
       },
       {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
         module: 'reporter',
         activity: 'edit',
       },
-    ],
-  },
-  {
-    name: 'Regional Officer',
-    permissions: [
+      {
+        module: 'result',
+        activity: 'edit',
+      },
+      {
+        module: 'treatmentStatus',
+        activity: 'edit',
+      },
+      {
+        module: 'dashboard',
+        activity: 'summary',
+      },
       {
         module: 'assay',
+        activity: 'view',
+      },
+      {
+        module: 'browse',
         activity: 'view',
       },
       {
@@ -68,6 +183,30 @@ module.exports = [
         activity: 'view',
       },
       {
+        module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'site',
+        activity: 'view',
+      },
+    ],
+  }),
+  mergeJobFunctions(labUser, {
+    permissions: [
+      {
+        module: 'account',
+        activity: 'edit',
+      },
+      {
+        module: 'case',
+        activity: 'edit',
+      },
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+      {
         module: 'result',
         activity: 'edit',
       },
@@ -76,44 +215,15 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'site',
-        activity: 'view',
-      },
-      {
-        module: 'browse',
-        activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
         module: 'dashboard',
         activity: 'summary',
       },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'case',
-        activity: 'edit',
-      },
-      {
-        module: 'reporter',
-        activity: 'edit',
-      },
-    ],
-  },
-  {
-    name: 'Lab User',
-    permissions: [
       {
         module: 'assay',
         activity: 'view',
       },
       {
-        module: 'person',
+        module: 'browse',
         activity: 'view',
       },
       {
@@ -121,41 +231,22 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'result',
-        activity: 'edit',
-      },
-      {
-        module: 'treatmentStatus',
-        activity: 'edit',
-      },
-      {
-        module: 'site',
+        module: 'person',
         activity: 'view',
       },
       {
-        module: 'browse',
+        module: 'report',
         activity: 'view',
-      },
-      {
-        module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'summary',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
-        module: 'case',
-        activity: 'edit',
       },
       {
         module: 'reporter',
         activity: 'view',
       },
+      {
+        module: 'site',
+        activity: 'view',
+      },
     ],
-  },
+  }),
+  technician,
 ]

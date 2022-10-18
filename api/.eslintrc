@@ -1,16 +1,11 @@
 {
-  "extends": [
-    "airbnb-base",
-    "prettier",
-    "prettier/flowtype"
-  ],
-  "plugins": [
-    "prettier"
-  ],
+  "extends": ["airbnb-base", "plugin:prettier/recommended", "plugin:lodash/canonical", "plugin:security/recommended"],
+  "plugins": ["prettier", "lodash", "no-only-tests"],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 2019,
-    "sourceType": "module"
+    "sourceType": "module",
+    "requireConfigFile": false
   },
   "env": {
     "amd": true,
@@ -21,19 +16,25 @@
   "rules": {
     "consistent-return": "off",
     "class-methods-use-this": "off",
+    "default-param-last": "off",
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "func-names": "off",
     "global-require": "off",
     "import/extensions": "off",
     "import/no-extraneous-dependencies": "off",
     "import/no-named-as-default": "off",
     "import/no-unresolved": "off",
+    "no-only-tests/no-only-tests": "warn",
+    "no-promise-executor-return": "off",
     "import/no-named-as-default-member": "off",
-    "max-classes-per-file": [
-      "error",
-      3
-    ],
+    "max-classes-per-file": ["error", 3],
     "max-len": [
-      "error", 
+      "error",
       {
         "code": 120,
         "ignoreComments": true,
@@ -60,6 +61,7 @@
       }
     ],
     "no-restricted-syntax": "off",
+    "no-return-assign": [2, "except-parens"],
     "no-shadow": "off",
     "no-use-before-define": "off",
     "no-unused-vars": ["warn", { "varsIgnorePattern": "[iI]gnored" }],
@@ -67,13 +69,20 @@
     "prettier/prettier": [
       "error",
       {
+        /**
+         * see https://prettier.io/docs/en/options.html
+         */
         "arrowParens": "avoid",
         "eol": "lf",
+        "parser": "babel",
         "semi": false,
         "singleQuote": true,
-        "trailingComma": "es5"
+        "trailingComma": "es5",
+        "printWidth": 120
       }
     ],
+    "object-curly-newline": ["error", { "consistent": true }],
+    "import/no-cycle": "off",
     "require-yield": "off",
     "no-confusing-arrow": [
       "error",
@@ -89,6 +98,44 @@
         "prev": "function",
         "next": "function"
       }
-    ]
+    ],
+    "lodash/collection-method-value": "off",
+    "lodash/consistent-compose": "off",
+    "lodash/identity-shorthand": "off",
+    "lodash/prefer-lodash-method": "off",
+    "lodash/prefer-includes": "off",
+    "lodash/prefer-noop": "off",
+    "lodash/prefer-find": "off",
+    "lodash/preferred-alias": "off",
+    "lodash/prefer-is-nil": "off",
+    "lodash/prop-shorthand": "off",
+    "lodash/prefer-times": "off",
+    "lodash/prefer-startswith": "off",
+    "lodash/prefer-lodash-chain": "off",
+    "lodash/prefer-constant": "off",
+    "lodash/prefer-lodash-typecheck": "off",
+    "lodash/path-style": "off",
+    "lodash/prefer-immutable-method": "off",
+    // disabled rules to avoid refactor, maybe we can enable them back to be consistent with 'web' rules
+    "lodash/import-scope": "off",
+    "lodash/prefer-invoke-map": "off",
+    "lodash/collection-ordering": "off",
+    "lodash/chaining": "off",
+    "lodash/chain-style": "off",
+    "lodash/matches-prop-shorthand": "off",
+    "lodash/matches-shorthand": "off",
+    "lodash/prefer-reject": "off",
+    "lodash/prefer-matches": "off",
+    "lodash/prefer-get": "off",
+    "lodash/prefer-map": "off",
+    "lodash/prefer-filter": "off",
+    "lodash/collection-return": "off",
+    "lodash/prefer-compact": "off",
+    "lodash/prefer-some": "off",
+    "security/detect-object-injection": "off",
+    "security/detect-non-literal-regexp": "off",
+    "security/detect-unsafe-regex": "off",
+    "security/detect-non-literal-require": "off",
+    "security/detect-non-literal-fs-filename": "off"
   }
 }

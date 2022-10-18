@@ -21,66 +21,36 @@ async function up(knex) {
   })
 
   await knex.schema.alterTable('DeviceApprovalLog', deviceApprovalLog => {
-    deviceApprovalLog
-      .integer('deviceApprovalId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('DeviceApproval')
-      .alter()
+    deviceApprovalLog.integer('deviceApprovalId').unsigned().index().references('id').inTable('DeviceApproval').alter()
   })
 
-  await knex.schema.createTable(
-    'DeviceMaintenanceStatus',
-    maintenanceStatus => {
-      maintenanceStatus.increments('id')
-      maintenanceStatus.string('name').notNullable()
-      maintenanceStatus.string('i18nKey').notNullable()
-      maintenanceStatus.string('externalId').unique().notNullable()
-      maintenanceStatus.boolean('active').notNullable()
-      maintenanceStatus.boolean('manuallySet').notNullable()
-    }
-  )
+  await knex.schema.createTable('DeviceMaintenanceStatus', maintenanceStatus => {
+    maintenanceStatus.increments('id')
+    maintenanceStatus.string('name').notNullable()
+    maintenanceStatus.string('i18nKey').notNullable()
+    maintenanceStatus.string('externalId').unique().notNullable()
+    maintenanceStatus.boolean('active').notNullable()
+    maintenanceStatus.boolean('manuallySet').notNullable()
+  })
 
-  await knex.schema.createTable(
-    'DeviceMaintenanceStatusLog',
-    maintenanceStatusLog => {
-      maintenanceStatusLog.increments('id')
-      maintenanceStatusLog
-        .integer('deviceId')
-        .unsigned()
-        .index()
-        .references('id')
-        .inTable('Device')
-        .onDelete('CASCADE')
-      maintenanceStatusLog
-        .integer('deviceMaintenanceStatusId')
-        .unsigned()
-        .index()
-        .references('id')
-        .inTable('DeviceMaintenanceStatus')
-        .notNullable()
-      maintenanceStatusLog.specificType('data', 'JSON').notNullable()
-      maintenanceStatusLog.date('day').index().notNullable()
-      maintenanceStatusLog.dateTime('createdOn').index().notNullable()
-      maintenanceStatusLog
-        .integer('createdBy')
-        .unsigned()
-        .index()
-        .references('id')
-        .inTable('User')
-        .onDelete('SET NULL')
-    }
-  )
-
-  await knex.schema.alterTable('Device', device => {
-    device
-      .integer('deviceApprovalId')
+  await knex.schema.createTable('DeviceMaintenanceStatusLog', maintenanceStatusLog => {
+    maintenanceStatusLog.increments('id')
+    maintenanceStatusLog.integer('deviceId').unsigned().index().references('id').inTable('Device').onDelete('CASCADE')
+    maintenanceStatusLog
+      .integer('deviceMaintenanceStatusId')
       .unsigned()
       .index()
       .references('id')
-      .inTable('DeviceApproval')
-      .alter()
+      .inTable('DeviceMaintenanceStatus')
+      .notNullable()
+    maintenanceStatusLog.specificType('data', 'JSON').notNullable()
+    maintenanceStatusLog.date('day').index().notNullable()
+    maintenanceStatusLog.dateTime('createdOn').index().notNullable()
+    maintenanceStatusLog.integer('createdBy').unsigned().index().references('id').inTable('User').onDelete('SET NULL')
+  })
+
+  await knex.schema.alterTable('Device', device => {
+    device.integer('deviceApprovalId').unsigned().index().references('id').inTable('DeviceApproval').alter()
     device
       .integer('deviceMaintenanceStatusLogId')
       .unsigned()
@@ -115,22 +85,10 @@ async function down(knex) {
   })
 
   await knex.schema.alterTable('DeviceStatusLog', deviceApprovalLog => {
-    deviceApprovalLog
-      .integer('deviceStatusId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('DeviceStatus')
-      .alter()
+    deviceApprovalLog.integer('deviceStatusId').unsigned().index().references('id').inTable('DeviceStatus').alter()
   })
   await knex.schema.alterTable('Device', device => {
-    device
-      .integer('deviceStatusId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('DeviceStatus')
-      .alter()
+    device.integer('deviceStatusId').unsigned().index().references('id').inTable('DeviceStatus').alter()
   })
 
   await knex.schema.dropTableIfExists('DeviceMaintenanceStatusLog')

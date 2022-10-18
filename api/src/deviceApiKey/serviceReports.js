@@ -4,7 +4,7 @@ const { exportData, getBaseReplacements } = require('../shared/excel')
 async function exportDeviceApiKeys(request, reply) {
   const { data } = await listDeviceApiKeys(request)
   const sheetData = {
-    dataRows: data,
+    data,
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }

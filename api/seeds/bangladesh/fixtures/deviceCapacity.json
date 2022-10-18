@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "deviceTypeExternalId": "CepheidGeneXpert",
+      "defaultForDeviceType": true,
+      "name": "4 modules",
+      "dailyCapacity": 8
+    },
+    {
+      "deviceTypeExternalId": "CepheidGeneXpert",
+      "defaultForDeviceType": false,
+      "name": "8 modules",
+      "dailyCapacity": 16
+    },
+    {
+      "deviceTypeExternalId": "CepheidGeneXpert",
+      "defaultForDeviceType": false,
+      "name": "16 modules",
+      "dailyCapacity": 32
+    },
+    {
+      "deviceTypeExternalId": "CepheidGeneXpert",
+      "defaultForDeviceType": false,
+      "name": "32 modules",
+      "dailyCapacity": 64
+    }
+  ]
+}

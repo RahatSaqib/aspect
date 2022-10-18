@@ -1,0 +1,4019 @@
+[
+  {
+    "username": "zonal_dots",
+    "personCell": "+2347030520098",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ZONAL HOSPITAL ABUA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "AGILE APAPA",
+    "password": "6HHYb"
+  },
+  {
+    "username": "agada_dots",
+    "personCell": "+2347051926649",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AGADA 1 MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "RESPECT JOSHUA",
+    "password": "jd54C"
+  },
+  {
+    "username": "agnes_dots",
+    "personCell": "+2348078403507",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AGNES MEMO CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ERELEOYE IDUKOMA",
+    "password": "F07of"
+  },
+  {
+    "username": "ayama_dots",
+    "personCell": "+2348063988733",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AYAMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GLORY OMU",
+    "password": "GW1c6"
+  },
+  {
+    "username": "elok_dots",
+    "personCell": "+2348068202244",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ELOK H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BETTER IWARISO",
+    "password": "rSxWn"
+  },
+  {
+    "username": "emoh_dots",
+    "personCell": "+2348108264397",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EMOH H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "IBIREPEGHAN IKULUGHAN",
+    "password": "LTU6E"
+  },
+  {
+    "username": "akani_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AKANI H/F"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "HAPPINESS FUBARA",
+    "password": "XlB9O"
+  },
+  {
+    "username": "obarany_dots",
+    "personCell": "+2348135316364",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OBARANY H/F"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GLORIA OGINI",
+    "password": "QO0f0"
+  },
+  {
+    "username": "ogbema_dots",
+    "personCell": "+2348067941521",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OGBEMA MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EELA IKULUGHAN",
+    "password": "94q9x"
+  },
+  {
+    "username": "ogboloma_dots",
+    "personCell": "+2348068728996",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Abua/Odual"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OGBOLOMA H/F"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "KING AKIO",
+    "password": "AE4HU"
+  },
+  {
+    "username": "abarikpo_dots",
+    "personCell": "+2348033294503",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Abarikpo Health Centre"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "PEACE MONDAY",
+    "password": "b5Hjh"
+  },
+  {
+    "username": "gbeye_dots",
+    "personCell": "+2348121515134",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "GBEYE CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OLIVIER OCHIOMA",
+    "password": "JLG74"
+  },
+  {
+    "username": "edeoha_dots",
+    "personCell": "+2348032922282",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EDEOHA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CHARLES OBIRI",
+    "password": "Ihkrp"
+  },
+  {
+    "username": "ihuaba_dots",
+    "personCell": "+2348067431919",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IHUABA HEALTH CENTRE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SILVERLINE ADIKAMA",
+    "password": "oo0RY"
+  },
+  {
+    "username": "ihuama_dots",
+    "personCell": "+2348063958577",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHCC IHUAMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "DARLING OBIRI",
+    "password": "LBwiM"
+  },
+  {
+    "username": "ihugbogo_dots",
+    "personCell": "+2347032033331",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IHUGBOGO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MERCY NWEYE",
+    "password": "1MxGp"
+  },
+  {
+    "username": "ihuowo_dots",
+    "personCell": "+2348066608126",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IHUOWO H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "INAMUIN CHIDI",
+    "password": "8P31b"
+  },
+  {
+    "username": "odiabidi_dots",
+    "personCell": "+2348068587816",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ODIABIDI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SOPHIA AYIA ",
+    "password": "Zq6GA"
+  },
+  {
+    "username": "odiajie_dots",
+    "personCell": "+2349029447173",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Odiajie MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ROSEMARY OBINI ",
+    "password": "Mo6g5"
+  },
+  {
+    "username": "odiemudie_dots",
+    "personCell": "+2347035423154",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Odiemudie Health Centre"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "FAITH EGBO",
+    "password": "JCI2d"
+  },
+  {
+    "username": "ogbele_dots",
+    "personCell": "+2348051875285",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OGBELE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "RECHEAL OKPARA",
+    "password": "DcWEN"
+  },
+  {
+    "username": "ogbo_dots",
+    "personCell": "+2348037530193",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OGBO H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ONYEKACHI ONYE",
+    "password": "0eX2g"
+  },
+  {
+    "username": "ula_eluda_dots",
+    "personCell": "+2348064870422",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHCC ULA-ELUDA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ALLEN CHARITY",
+    "password": "uh95O"
+  },
+  {
+    "username": "ahoada_dots",
+    "personCell": "+2348160146713",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AHOADA PRISON"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GIFT UBELE",
+    "password": "VH9AM"
+  },
+  {
+    "username": "ochigba_dots",
+    "personCell": "+2347082833387",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OCHIGBA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EGESON R. EGE ",
+    "password": "vGs7y"
+  },
+  {
+    "username": "odiemereyie_dots",
+    "personCell": "+2348061111641",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ODIEMEREYIE HC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EDIMA UKELA",
+    "password": "gb74n"
+  },
+  {
+    "username": "okporowo_dots",
+    "personCell": "+2348068204874",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OKPOROWO MPHCC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OGADIMA OCHIGBA",
+    "password": "a95qQ"
+  },
+  {
+    "username": "ula_dots",
+    "personCell": "+2347031327368",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA EAST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ULA-UPATA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "HOPE APPAH",
+    "password": "VP61e"
+  },
+  {
+    "username": "mbiama_dots",
+    "personCell": "+2347934601813",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MBIAMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "FRED UBUNEVIE",
+    "password": "EvqFb"
+  },
+  {
+    "username": "akinima_dots",
+    "personCell": "+2348063664349",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AKINIMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OSUAGI BILEKUME",
+    "password": "gzcZN"
+  },
+  {
+    "username": "ikodi_dots",
+    "personCell": "+234806807525",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC IKODI"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "TERESA NORMAKOH",
+    "password": "8K5MU"
+  },
+  {
+    "username": "odereke_dots",
+    "personCell": "+2348135025230",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC ODEREKE-UBIE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MAUREEN BARNABAS",
+    "password": "2P3Pj"
+  },
+  {
+    "username": "okarki_dots",
+    "personCell": "+2347058389764",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OKARKI MODEL H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SAMUEL ASIEBU",
+    "password": "PapL4"
+  },
+  {
+    "username": "okogbe_dots",
+    "personCell": "+2348132858098",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OKOGBE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EJIMADU UZHIYEKACHI",
+    "password": "eFW1W"
+  },
+  {
+    "username": "odioku_dots",
+    "personCell": "+2348063641357",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ODIOKU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MORGAN AMEZHI",
+    "password": "PLufx"
+  },
+  {
+    "username": "ogbologbolo_dots",
+    "personCell": "+2348130664098",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Ogbologbolo Health Centre"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "THOMPSON JACOB",
+    "password": "Fdfve"
+  },
+  {
+    "username": "ubeter_dots",
+    "personCell": "+2348134602544",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UBETER H/F"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EZEZUKE UBUNWUNE",
+    "password": "DL3Hm"
+  },
+  {
+    "username": "ukpeliede_dots",
+    "personCell": "+2348036921814",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "AHOADA WEST"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Ukpeliede MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CLINTON SUNDAY",
+    "password": "kbb2M"
+  },
+  {
+    "username": "hc_abonnema_dots",
+    "personCell": "+2348932678970",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Akuku-Toru"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ABONNEMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JOY OBENE",
+    "password": "hivCp"
+  },
+  {
+    "username": "gh_abonnema_dots",
+    "personCell": "+2348166793987",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Akuku-Toru"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "GENERAL HOSPITAL ABONNEMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OROLOBO JACK",
+    "password": "yUmN3"
+  },
+  {
+    "username": "obonoma_dots",
+    "personCell": "+2347061220895",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Akuku-Toru"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OBONOMA DOTS CENTRE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BEKINWARI WHYTE",
+    "password": "kme7a"
+  },
+  {
+    "username": "idama_dots",
+    "personCell": "+2347068724887",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Akuku-Toru"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IDAMA CHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SARAH EKINE",
+    "password": "cnV9u"
+  },
+  {
+    "username": "ikuru_dots",
+    "personCell": "+2348036525372",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ANDONI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IKURU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EFUKAKITA RUFUS",
+    "password": "31A0i"
+  },
+  {
+    "username": "uyeada_dots",
+    "personCell": "+2347065476024",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ANDONI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UYEADA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "DANIEL NTEOGULIE",
+    "password": "igA4n"
+  },
+  {
+    "username": "ngo_dots",
+    "personCell": "+2348934678130",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ANDONI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "NGO HEALTH CENTRE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NDE MOSES",
+    "password": "zv2Pm"
+  },
+  {
+    "username": "agwuf_dots",
+    "personCell": "+2348034244077",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ANDONI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AGWUF-OBOLO H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "FLORENCE IYO",
+    "password": "x0fX3"
+  },
+  {
+    "username": "asarama_dots",
+    "personCell": "+2349032325624",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ANDONI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ASARAMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "AWAJIMIMAM URIAH ",
+    "password": "4daj8"
+  },
+  {
+    "username": "ebukuma_dots",
+    "personCell": "+2349079167404",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ANDONI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EBUKUMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ROSELINE DARIUS",
+    "password": "Un87P"
+  },
+  {
+    "username": "egwede_dots",
+    "personCell": "+2348131229132",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ANDONI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EGWEDE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ASIPARA IBIWARI",
+    "password": "InNSJ"
+  },
+  {
+    "username": "inyong_dots",
+    "personCell": "+2348038965870",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ANDONI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "INYONG ORONG H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "DORIS JEREMIAH",
+    "password": "W846E"
+  },
+  {
+    "username": "buguma_dots",
+    "personCell": "+2347039452796",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ASARI-TORU"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC BUGUMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "KELVIN ELI",
+    "password": "JQ1cz"
+  },
+  {
+    "username": "ido_dots",
+    "personCell": "+2347081174347",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ASARI-TORU"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC IDO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JULIE GEORGE",
+    "password": "XIwHu"
+  },
+  {
+    "username": "angulama_dots",
+    "personCell": "+2347039292548",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ASARI-TORU"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "PHC ANGULAMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MCGREGOR ALBERT",
+    "password": "aH5d8"
+  },
+  {
+    "username": "krakrama_dots",
+    "personCell": "+2348068221730",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ASARI-TORU"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "KRAKRAMA CHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "IBILABA PAUL ",
+    "password": "Cd7uu"
+  },
+  {
+    "username": "channels_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "BONNY"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHANNELS CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NONSO UKACHUKWU",
+    "password": "6L08e"
+  },
+  {
+    "username": "chc_bonny_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "BONNY"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC BONNY"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SOBERE KARIBO",
+    "password": "6853z"
+  },
+  {
+    "username": "degema_dots",
+    "personCell": "+2347031380800",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "DEGEMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC DEGEMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "PETER WOKOMA ",
+    "password": "7UDV0"
+  },
+  {
+    "username": "dateline_dots",
+    "personCell": "+2348035054854",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "DEGEMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "DATELINE SP. HOSP."
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OBOLO MINI",
+    "password": "4TJjm"
+  },
+  {
+    "username": "bille_dots",
+    "personCell": "+2348036489170",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "DEGEMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BILLE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GOGOBA ROBERTS",
+    "password": "6hoIJ"
+  },
+  {
+    "username": "usokun_dots",
+    "personCell": "+2348034699381",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "DEGEMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "USOKUN H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "IBITE QUAKERS",
+    "password": "ZCr1V"
+  },
+  {
+    "username": "zh_degema_dots",
+    "personCell": "+2348164536864",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "DEGEMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ZONAL HOSP."
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ISOBOYE MICHEAL AMAFINA",
+    "password": "ZuXAH"
+  },
+  {
+    "username": "alesa_dots",
+    "personCell": "+2348063784144",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ALESA HEALTH POST"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "AMENYA SAKANWI",
+    "password": "P9EQ4"
+  },
+  {
+    "username": "aleto_dots",
+    "personCell": "+2348051804018",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ALETO HP"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GIFT OLUKA",
+    "password": "54s5k"
+  },
+  {
+    "username": "bellwood_dots",
+    "personCell": "+2347038029116",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BELLWOOD HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "TOCHI MADUFORO",
+    "password": "69FyU"
+  },
+  {
+    "username": "daugters_dots",
+    "personCell": "+2348157098810",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "DAUGTERS OF CHARITY"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "PRETTY BIRAGBARA",
+    "password": "ksIb5"
+  },
+  {
+    "username": "duval_dots",
+    "personCell": "+2347038889805",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "DUVAL CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "DR. AKURU",
+    "password": "D329V"
+  },
+  {
+    "username": "mirayen_dots",
+    "personCell": "+2348064730333",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MIRAYEN CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "KPAGH LESIRA",
+    "password": "BfNmM"
+  },
+  {
+    "username": "agbonchia_dots",
+    "personCell": "+2348033313895",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC AGBONCHIA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "LOVELYN BEN",
+    "password": "0QIqS"
+  },
+  {
+    "username": "akpajo_dots",
+    "personCell": "+2348068449818",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC AKPAJO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NYONO MONLE",
+    "password": "Qraw4"
+  },
+  {
+    "username": "onne_dots",
+    "personCell": "+2348032681416",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC ONNE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ELECHI STELLA",
+    "password": "2S5sJ"
+  },
+  {
+    "username": "nchia_dots",
+    "personCell": "+2348160384342",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "NCHIA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "STELLA NDUKWE",
+    "password": "Cj3sU"
+  },
+  {
+    "username": "riv_dots",
+    "personCell": "+2348132961759",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ELEME"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Riv Portal Eteo"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NEKABARI KUE",
+    "password": "7Hbk9"
+  },
+  {
+    "username": "ibaa_dots",
+    "personCell": "+2347033420204",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "EMOHUA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC IBAA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MR. CHISA MARVELOUS",
+    "password": "bniAo"
+  },
+  {
+    "username": "ndele_dots",
+    "personCell": "+2348064887420",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "EMOHUA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC NDELE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GLORY NSIRIM",
+    "password": "7G1s7"
+  },
+  {
+    "username": "omudioga_dots",
+    "personCell": "+234O8165783139",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "EMOHUA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC OMUDIOGA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "VINCENT EZEKANWO",
+    "password": "579Y9"
+  },
+  {
+    "username": "rumuji_dots",
+    "personCell": "+2348068392456",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "EMOHUA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC RUMUJI"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BLESSING DUMA",
+    "password": "BflHS"
+  },
+  {
+    "username": "ogbakiri_dots",
+    "personCell": "+2348038877733",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "EMOHUA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Ogbakiri Health Centre"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ABIGAIL EGWANWO",
+    "password": "tp1gX"
+  },
+  {
+    "username": "rumuewhor_dots",
+    "personCell": "+2348037790780",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "EMOHUA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC RUMUEWHOR"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MERCY ELENWO",
+    "password": "tS62v"
+  },
+  {
+    "username": "saviour_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "EMOHUA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "SAVIOUR'S FOUNDATION HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SAVIOUR'S FOUNDATION HOSPITAL",
+    "password": "Sn3p9"
+  },
+  {
+    "username": "egwi_dots",
+    "personCell": "+2348137931964",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ETCHE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EGWI  H/CENTRE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BLESSING IROULOR",
+    "password": "LWkqo"
+  },
+  {
+    "username": "iwc_dots",
+    "personCell": "+2348031742696",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ETCHE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IWC OKOMOKO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "IJEOMA IWEHA",
+    "password": "fkyw9"
+  },
+  {
+    "username": "ozuzu_dots",
+    "personCell": "+2348165583193",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ETCHE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OZUZU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GODSAVES NWAORDU",
+    "password": "s26Fz"
+  },
+  {
+    "username": "umuebulu_dots",
+    "personCell": "+2348032962038",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "ETCHE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UMUEBULU COTT. HOSP"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "VICTORIA NNODIM",
+    "password": "hZsNS"
+  },
+  {
+    "username": "bdere_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "GOKANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "B.DERE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "PABIA MONSI",
+    "password": "VU050"
+  },
+  {
+    "username": "barako_dots",
+    "personCell": "+2348032483305",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "GOKANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BARAKO H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BARATE BURABARI",
+    "password": "JvpxE"
+  },
+  {
+    "username": "bodo_dots",
+    "personCell": "+2348064619189",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "GOKANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BODO GH"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MEEGIA CHRISTIANA",
+    "password": "fC8g3"
+  },
+  {
+    "username": "bomu_dots",
+    "personCell": "+2348068916619",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "GOKANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BOMU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MR. BANBARI MONSI",
+    "password": "Sjg9p"
+  },
+  {
+    "username": "kpor_dots",
+    "personCell": "+2348142891134",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "GOKANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "KPOR H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BETA VERONICA",
+    "password": "UKqzp"
+  },
+  {
+    "username": "biara_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "GOKANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC BIARA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BARIBEFE BANORTE, FAITH FIRIMA",
+    "password": "bi8Ao"
+  },
+  {
+    "username": "yeghe_dots",
+    "personCell": "+2348063334378",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "GOKANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "YEGHE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MRS. BARITODUM PIAGBO",
+    "password": "E4l0x"
+  },
+  {
+    "username": "terabor_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "GOKANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Z.H TERABOR"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OKPALA CONFIDENCE",
+    "password": "Z5ilN"
+  },
+  {
+    "username": "aluu_dots",
+    "personCell": "+2348968671451",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "IKWERRE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC ALUU"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OGECHI GODSTIME EZE",
+    "password": "pt4oR"
+  },
+  {
+    "username": "elele_dots",
+    "personCell": "+2348069492065",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "IKWERRE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Elele health centre"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BLESSING NYENWE",
+    "password": "PziJl"
+  },
+  {
+    "username": "igwuruta_dots",
+    "personCell": "+2348063100510",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "IKWERRE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC IGWURUTA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "KATE AMADI",
+    "password": "R7pRQ"
+  },
+  {
+    "username": "pamax_dots",
+    "personCell": "+2348066276105",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "IKWERRE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "PAMAX Hospital"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JULIET ADA JOHN",
+    "password": "90h6f"
+  },
+  {
+    "username": "isiokpo_dots",
+    "personCell": "+2348060909639",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "IKWERRE"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "GENERAL HOSPITAL ISIOKPO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MERCY AMADI",
+    "password": "DhQAJ"
+  },
+  {
+    "username": "adewon_dots",
+    "personCell": "+2347050613245",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "KHANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ADEWON MEDICAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ROSELINE NWIBU",
+    "password": "td9zu"
+  },
+  {
+    "username": "bori_dots",
+    "personCell": "+2348063012989",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "KHANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BORI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NUMSU BARIKUI",
+    "password": "lB1pM"
+  },
+  {
+    "username": "beeri_dots",
+    "personCell": "+2348968836900",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "KHANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BEERI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MGBE NIABARI ",
+    "password": "x0D6w"
+  },
+  {
+    "username": "wiiyaakara_dots",
+    "personCell": "+2348933999962",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "KHANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "WIIYAAKARA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "PATIENCE DII",
+    "password": "6LJk8"
+  },
+  {
+    "username": "iwc_bori_dots",
+    "personCell": "+2348067935989",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "KHANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IWC BORI"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "VERONICA FADE K.",
+    "password": "i9g1C"
+  },
+  {
+    "username": "pope_dots",
+    "personCell": "+2348963512101",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "KHANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "POPE JOHN PAUL II CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SAMUEL LEGOR M.",
+    "password": "5Joqu"
+  },
+  {
+    "username": "zh_bori_dots",
+    "personCell": "+2348938180925",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "KHANA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Z.H BORI"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ESTHER DUMLE TOBOR",
+    "password": "1Lixd"
+  },
+  {
+    "username": "woji_dots",
+    "personCell": "+2348037608096",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "WOJI COTTAGE HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GRACE AKPAN",
+    "password": "CNGPm"
+  },
+  {
+    "username": "akpor_dots",
+    "personCell": "+2348063742193",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AKPOR H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "FELICIA DIKE",
+    "password": "8EAO3"
+  },
+  {
+    "username": "chest_dots",
+    "personCell": "+2347068680336",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHEST CLINIC RUMUIGBO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GRACE OKOCHA",
+    "password": "gKoye"
+  },
+  {
+    "username": "college_dots",
+    "personCell": "+2348104343378",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "College Of Health Tech. Port-Harcourt"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "PATIENCE ELEKWACHI",
+    "password": "Ttt8l"
+  },
+  {
+    "username": "datta_dots",
+    "personCell": "+2348055381805",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "DATTA MEDICAL CENTRE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CATHERINE C. IWU",
+    "password": "oAdhy"
+  },
+  {
+    "username": "elelenwo_dots",
+    "personCell": "+2348963421042",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC ELELENWO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CHARITY AGUMA",
+    "password": "VA952"
+  },
+  {
+    "username": "immanuel_dots",
+    "personCell": "+2348038738321",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IMMANUEL HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OJUE IKHU",
+    "password": "9Ucvn"
+  },
+  {
+    "username": "iriebe_dots",
+    "personCell": "+2348938875982",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IRIEBE MHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JULIE JUMBO",
+    "password": "vcqMe"
+  },
+  {
+    "username": "kendox_dots",
+    "personCell": "+2348160652277",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "KENDOX CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "LAURETTA AGOH",
+    "password": "rufjO"
+  },
+  {
+    "username": "eneka_dots",
+    "personCell": "+2348932935246",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC ENEKA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NGOFA BROWN",
+    "password": "h5Tkg"
+  },
+  {
+    "username": "queens_dots",
+    "personCell": "+2348032931059",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "QUEENS CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "KELECHI IMO",
+    "password": "Bz8cM"
+  },
+  {
+    "username": "rumueme_dots",
+    "personCell": "+2348033010057",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "RUMUEME MHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ISABELLA OWHONDA",
+    "password": "419pv"
+  },
+  {
+    "username": "rumukwurui_dots",
+    "personCell": "+2349094443841",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "RUMUKWURUSHI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "HAPPINESS CHIORLU",
+    "password": "1T8zG"
+  },
+  {
+    "username": "rumuodomaya_dots",
+    "personCell": "+2348068750639",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "RUMUODOMAYA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GIFT ADELE",
+    "password": "JVq36"
+  },
+  {
+    "username": "upth_dots",
+    "personCell": "+2348937845547",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OBIO/AKPOR"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UPTH"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "APPIAH JOY",
+    "password": "3ikv8"
+  },
+  {
+    "username": "bhc_dots",
+    "personCell": "+2348132154270",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OGU/BOLO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BHC BOLO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MIEIBAKA MARTIN BLESSING",
+    "password": "IhOXJ"
+  },
+  {
+    "username": "chuku_dots",
+    "personCell": "+2348033777376",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OGU/BOLO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHUKU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "TAMUNOIYOWUNA MINADIKI",
+    "password": "0p0f4"
+  },
+  {
+    "username": "ogu_dots",
+    "personCell": "+2348058278986",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OGU/BOLO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "GEN. HOSP. OGU"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JOAN ANGA",
+    "password": "tt62Z"
+  },
+  {
+    "username": "ama_dots",
+    "personCell": "+2349053130819",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OGU/BOLO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AMA HEALTH CENTRE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GODPOWER IDIKIALAMAMA",
+    "password": "IYv8f"
+  },
+  {
+    "username": "chc_ogu_dots",
+    "personCell": "+2347062473461",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OGU/BOLO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC OGU"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ELIZABETH EMMANUEL",
+    "password": "VHgoR"
+  },
+  {
+    "username": "wakama_dots",
+    "personCell": "+2347031553353",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OGU/BOLO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "WAKAMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ADOLPHUS JOHN",
+    "password": "D43Vy"
+  },
+  {
+    "username": "george_dots",
+    "personCell": "+2348036102513",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OKRIKA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC GEORGE AMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ASIME SAMUEL",
+    "password": "PxLQI"
+  },
+  {
+    "username": "isaka_dots",
+    "personCell": "+2348034731179",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OKRIKA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC ISAKA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "TAMUNOTONYE IWO",
+    "password": "np1kY"
+  },
+  {
+    "username": "island_dots",
+    "personCell": "+2347037274618",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OKRIKA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ISLAND MATERNITY"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "HANNAH NONJU",
+    "password": "mex4g"
+  },
+  {
+    "username": "ogan_dots",
+    "personCell": "+2348056177208",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OKRIKA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OGAN H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "INIABIPI INEBIA",
+    "password": "g6hZh"
+  },
+  {
+    "username": "ogbogbo_dots",
+    "personCell": "+2348156475254",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OKRIKA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC OGBOGBO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JANE KOKO",
+    "password": "fD5rA"
+  },
+  {
+    "username": "okujagu_dots",
+    "personCell": "+2347067021249",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OKRIKA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OKUJAGU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NGOZI FIBERESIMA",
+    "password": "7P77O"
+  },
+  {
+    "username": "eberi_dots",
+    "personCell": "+2347058911159",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EBERI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "FORTUNATE OKERE",
+    "password": "ENz9c"
+  },
+  {
+    "username": "obiohia_dots",
+    "personCell": "+2348076380085",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OBIOHIA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "AMADI BLESSING",
+    "password": "9BGZh"
+  },
+  {
+    "username": "ofeh_dots",
+    "personCell": "+2348073436702",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OFEH H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "HAPPINESS ANUCHA",
+    "password": "Dj9k7"
+  },
+  {
+    "username": "ohim/oyoro_dots",
+    "personCell": "+2347032256670",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OHIM/OYORO H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NWELELE PEACE",
+    "password": "b7DKp"
+  },
+  {
+    "username": "oyoro_dots",
+    "personCell": "+2348055350457",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OYORO MHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OLUCHI ANUCHA",
+    "password": "15d5z"
+  },
+  {
+    "username": "redemption_dots",
+    "personCell": "+2348165805391",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "REDEMPTION HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "UMUNNA ENDURANCE",
+    "password": "eLX6E"
+  },
+  {
+    "username": "revival_dots",
+    "personCell": "+2349066229974",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "REVIVAL CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CHINYERE CHINAKA",
+    "password": "WBIU4"
+  },
+  {
+    "username": "success_dots",
+    "personCell": "+2347031087438",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "SUCCESS HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "DOMNIC OVIA",
+    "password": "5ac6Z"
+  },
+  {
+    "username": "umuajuloke_dots",
+    "personCell": "+2348057575270",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UMUAJULOKE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GOODNEWS ONYENMA",
+    "password": "Jv4xC"
+  },
+  {
+    "username": "umunju_dots",
+    "personCell": "+2348055857104",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UMUNJU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NWANORUO ROSELINE",
+    "password": "2eo3B"
+  },
+  {
+    "username": "umuogba_dots",
+    "personCell": "+2348068450097",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UMUOGBA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ORJIMUO REGINA",
+    "password": "o730K"
+  },
+  {
+    "username": "umuoke_dots",
+    "personCell": "+2348073453428",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UMUOKE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ADIELE CALISTER",
+    "password": "wx86A"
+  },
+  {
+    "username": "umuokwa_dots",
+    "personCell": "+2348072433057",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OMUMA"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UMUOKWA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NDUKWU FELICIA",
+    "password": "Ff731"
+  },
+  {
+    "username": "akabta_dots",
+    "personCell": "+234O8068883948",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AKABTA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NED PAUL",
+    "password": "Eqv3U"
+  },
+  {
+    "username": "akabuka_dots",
+    "personCell": "+2348037803523",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AKABUKA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ENDURANCE ONITA",
+    "password": "xKSyl"
+  },
+  {
+    "username": "omoku_dots",
+    "personCell": "+2347068084869",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC OMOKU"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GLORIA AWARI",
+    "password": "Wtrua"
+  },
+  {
+    "username": "egi_dots",
+    "personCell": "+2347066850108",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EGI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ELENDU ONOUHA",
+    "password": "IlZLj"
+  },
+  {
+    "username": "elieta_dots",
+    "personCell": "+234O8032676491",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ELIETA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ELIZABETH AGBAM",
+    "password": "5gGFc"
+  },
+  {
+    "username": "erema_dots",
+    "personCell": "+234O8038688829",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EREMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "UCHE OWERRI",
+    "password": "TpsPk"
+  },
+  {
+    "username": "founation_dots",
+    "personCell": "+2348038945181",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "FOUNATION CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EJIAKU ROSEMARY",
+    "password": "QJmQ5"
+  },
+  {
+    "username": "annex_gbeye_dots",
+    "personCell": "+234O8036750549",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "Gbeye Hospital Port-Harcourt Annex"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "LORETTA EBUMLAN",
+    "password": "E1qM5"
+  },
+  {
+    "username": "general_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "GENERAL HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GENERAL HOSPITAL",
+    "password": "U04VI"
+  },
+  {
+    "username": "idu_dots",
+    "personCell": "+234O8066607595",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IDU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ROSELINE OKOROMAH",
+    "password": "HfBuT"
+  },
+  {
+    "username": "mgbede_dots",
+    "personCell": "+2348064898061",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MGBEDE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "IHIECHUKWU GODWIN",
+    "password": "7AHn4"
+  },
+  {
+    "username": "aggah_dots",
+    "personCell": "+2348033409058",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC AGGAH"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "VICTORIA UZAH",
+    "password": "5gGFc"
+  },
+  {
+    "username": "ndoni_dots",
+    "personCell": "+234O8035436782",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "NDONI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GIFT OKELEKE",
+    "password": "49In3"
+  },
+  {
+    "username": "obirikom_dots",
+    "personCell": "+2347062296282",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OBIRIKOM H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "PATIENCE NWAOBACHI",
+    "password": "58LHB"
+  },
+  {
+    "username": "obite_dots",
+    "personCell": "+234O8035755431",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OBITE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NAOMI OKPA",
+    "password": "MtV6h"
+  },
+  {
+    "username": "oboburu_dots",
+    "personCell": "+2347038078075",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OBOBURU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OZIOMA ORDU",
+    "password": "ib1p6"
+  },
+  {
+    "username": "ogbogu_dots",
+    "personCell": "+2348039382363",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OGBOGU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "BLESSING ISREAL",
+    "password": "Qu8po"
+  },
+  {
+    "username": "ohiauga_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OHIAUGA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OHIAUGA H/C",
+    "password": "gb74n"
+  },
+  {
+    "username": "okwuzi_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "Ogba/Egbema/Ndoni"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OKWUZI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CHARITY AGI",
+    "password": "QJmQ4"
+  },
+  {
+    "username": "kalaibiama_dots",
+    "personCell": "+2348066863701",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OPOBO/NKORO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC KALAIBIAMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JUSTINA TAMUNO",
+    "password": "8HUcr"
+  },
+  {
+    "username": "minima_dots",
+    "personCell": "+2348034791435",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OPOBO/NKORO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC MINIMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GODWIN OGOLO",
+    "password": "mL7wN"
+  },
+  {
+    "username": "nkoro_dots",
+    "personCell": "+2349127628280",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OPOBO/NKORO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "NKORO H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "FAITH PETERSIDE",
+    "password": "DkeWk"
+  },
+  {
+    "username": "opobo_dots",
+    "personCell": "+2347064778530",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OPOBO/NKORO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHC OPOBO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JUSTINA B. JAJA",
+    "password": "T3ZZS"
+  },
+  {
+    "username": "okachukwu_dots",
+    "personCell": "+2348037795960",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OKACHUKWU MATERNITY AND CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CHIDINMA NWACHUKWU",
+    "password": "4To64"
+  },
+  {
+    "username": "cannan_dots",
+    "personCell": "+2347035273352",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CANNAN CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ENYIOMA CONFIDENCE",
+    "password": "FQ4Z8"
+  },
+  {
+    "username": "oyigbo_dots",
+    "personCell": "+2348036036285",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OYIGBO H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OBASI CECILIA",
+    "password": "T3Qfd"
+  },
+  {
+    "username": "ezinne_dots",
+    "personCell": "+2347061039467",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "EZINNE HOSPITAL & MATERNITY"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CHIDINMA EBERECHUKWU",
+    "password": "nV2N0"
+  },
+  {
+    "username": "father_dots",
+    "personCell": "+2348035720786",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "FATHER FARM CLININC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "HAPPINESS NWUZI ",
+    "password": "U5tg9"
+  },
+  {
+    "username": "herritage_dots",
+    "personCell": "+2348058615372",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "HERRITAGE MEDICARE HOSP."
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ROWLAND DORIS",
+    "password": "I3Ast"
+  },
+  {
+    "username": "life_dots",
+    "personCell": "+2348067072359",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "LIFE CARE CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "IJEOMA NWAKANMA",
+    "password": "9ggql"
+  },
+  {
+    "username": "imiriwanyi_dots",
+    "personCell": "+2348037633518",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IMIRIWANYI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "LYNDA NWAEKE",
+    "password": "V5cb9"
+  },
+  {
+    "username": "umusia_dots",
+    "personCell": "+2347932349078",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UMUSIA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JOY NWADIUKO",
+    "password": "6tdAt"
+  },
+  {
+    "username": "obeakpu_dots",
+    "personCell": "+2349078687460",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OBEAKPU MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "CHINENYE WILLIAMS",
+    "password": "SACwH"
+  },
+  {
+    "username": "cottage_dots",
+    "personCell": "+2347039053900",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "PHCN COTTAGE HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "OSUJI JULIET",
+    "password": "AxfJ9"
+  },
+  {
+    "username": "royal_dots",
+    "personCell": "+2349133954479",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ROYAL NEMASCOPE HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "FAVOUR OKAFOR",
+    "password": "590xE"
+  },
+  {
+    "username": "uchechuku_dots",
+    "personCell": "+2347039411468",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "OYIGBO"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "UCHECHUKU MATERNITY"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "LILIAN DURU",
+    "password": "HN23j"
+  },
+  {
+    "username": "abuloma_dots",
+    "personCell": "+2348130002146",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ABULOMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GOSPEL DIMABO",
+    "password": "lAvHK"
+  },
+  {
+    "username": "amadi_dots",
+    "personCell": "+2348131229381",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AMADI AMA MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SOLOMON ADLINE",
+    "password": "E2lxb"
+  },
+  {
+    "username": "azuabie_dots",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "AZUABIE MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "AZUABIE MPHC",
+    "password": "b73Kc"
+  },
+  {
+    "username": "bmsh_dots",
+    "personCell": "+2347036611779",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BMSH"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ADOLPHUS JUDITH",
+    "password": "p1P36"
+  },
+  {
+    "username": "bundu_dots",
+    "personCell": "+234818996736",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BUNDU AMA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ELIZABETH SYLVANUS",
+    "password": "pdobF"
+  },
+  {
+    "username": "church_dots",
+    "personCell": "+234O8037236756",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "CHURCH HILL H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MONICA U. MARCUS",
+    "password": "751Y9"
+  },
+  {
+    "username": "elekahia_dots",
+    "personCell": "+2347035183098",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ELEKAHIA MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "Nyemachi Helen",
+    "password": "QF0Ly"
+  },
+  {
+    "username": "ibifubara_dots",
+    "personCell": "+2347038064254",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "IBIFUBARA CLINIC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GLORY UDOH, FLORENCE FRIDAY",
+    "password": "46bS9"
+  },
+  {
+    "username": "meridan_dots",
+    "personCell": "+2348033885315",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MERIDAN HOSP"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "ALICE UKWU",
+    "password": "j35be"
+  },
+  {
+    "username": "mgbundukwu_dots",
+    "personCell": "+234O8064323826                                                       ",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MGBUNDUKWU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "STELLA EJEKWU                                                                                                     ",
+    "password": "HR0Km"
+  },
+  {
+    "username": "military_dots",
+    "personCell": "+2348064057370",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MILITARY HOSPITAL"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "COMFORT DAGOGO",
+    "password": "L9bG5"
+  },
+  {
+    "username": "morning_dots",
+    "personCell": "+234O8064506926",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MORNING STAR"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "SISTER PATRICIA",
+    "password": "3V6NN"
+  },
+  {
+    "username": "navy_dots",
+    "personCell": "+2347032749827",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "NAVY MEDICAL CENTRE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NAVY MEDICAL CENTRE",
+    "password": "EZ0gi"
+  },
+  {
+    "username": "okuru_dots",
+    "personCell": "+2348038687025",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OKURU AMA MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "PRINCEWILL TELEMA",
+    "password": "df7pK"
+  },
+  {
+    "username": "omega_dots",
+    "personCell": "+2347032911389",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OMEGA HOSP."
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MATRON OGECHI",
+    "password": "EryQN"
+  },
+  {
+    "username": "orogbum_dots",
+    "personCell": "+2348038596088",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OROGBUM H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "IBISIKA MIEFAMA",
+    "password": "COdjT"
+  },
+  {
+    "username": "ozuboko_dots",
+    "personCell": "+2348066563586",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "OZUBOKO MPHC"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EGAM STELLA",
+    "password": "2Jk3Z"
+  },
+  {
+    "username": "port_dots",
+    "personCell": "+234O8038718488",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "PORT HARCOURT PRISON"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MR. ANUGWA MARTINS",
+    "password": "CNL8T"
+  },
+  {
+    "username": "potts_dots",
+    "personCell": "+2348034679008",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "POTTS JOHNSON H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "Obubeleye Sukubo",
+    "password": "zyHb1"
+  },
+  {
+    "username": "resource_dots",
+    "personCell": "+2348052782821",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "RESOURCE CENTER"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MRS MATILDA",
+    "password": "DvUeI"
+  },
+  {
+    "username": "sick_dots",
+    "personCell": "+2347033767230",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "SICK BAY"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JOB BEDONE",
+    "password": "0nnua"
+  },
+  {
+    "username": "st_patricks_dots",
+    "personCell": "+234O8083135225",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "ST. PATRICKS"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "HELLEN IYAYIEIGBOKHAN",
+    "password": "y1dMx"
+  },
+  {
+    "username": "standard_dots",
+    "personCell": "+2348080378544",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "PORT HARCOURT"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "STANDARD CARE HOSP."
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "IDARESIT ANDREW,ARORCHUKWU CHIDINMA",
+    "password": "zCUJ4"
+  },
+  {
+    "username": "mdg_dots",
+    "personCell": "+2349012333073",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MDG KIRA"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "GLADYS NTENE",
+    "password": "GyEyK"
+  },
+  {
+    "username": "godswill_dots",
+    "personCell": "+2348132952830",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "GODSWILL HOSP."
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "NWOGU CHIBUZOR",
+    "password": "g4BzZ"
+  },
+  {
+    "username": "bara_dots",
+    "personCell": "+2348137728299",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC BARA-ALE"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MONDAY DIKE",
+    "password": "09wAE"
+  },
+  {
+    "username": "bunu_dots",
+    "personCell": "+2347065381670",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BUNU H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "Tai",
+    "password": "t5wLZ"
+  },
+  {
+    "username": "korokoro_dots",
+    "personCell": "+2347038421729",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "MPHC KOROKORO"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "JOSEPH TOBA",
+    "password": "81D85"
+  },
+  {
+    "username": "koroma_dots",
+    "personCell": "+2348032376099",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "KOROMA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "STELLA AKWUE",
+    "password": "KV78M"
+  },
+  {
+    "username": "kpite_dots",
+    "personCell": "+2347062219734",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "KPITE H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "VERONICA NTEPTEP",
+    "password": "f04dg"
+  },
+  {
+    "username": "nonwa_dots",
+    "personCell": "+2348038735920",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "NONWA H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "EBENEZER NGBENE AGBAR",
+    "password": "N789N"
+  },
+  {
+    "username": "ban_dots",
+    "personCell": "+2348068240871",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "BAN-OGOI H/C"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "Tai",
+    "password": "6Km54"
+  },
+  {
+    "username": "ueken_dots",
+    "personCell": "+2348030705076",
+    "geographies": [
+      {
+        "stateName": "Rivers",
+        "lgaName": "TAI"
+      }
+    ],
+    "timezone": "W. Central Africa Standard Time",
+    "sites": [
+      {
+        "name": "PHC UEKEN TAI"
+      }
+    ],
+    "jobFunctions": ["Clinician"],
+    "personName": "MELUBARI ODIKE",
+    "password": "n0y46"
+  }
+]

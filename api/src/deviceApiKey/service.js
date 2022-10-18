@@ -1,15 +1,16 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
+const bcrypt = require('bcrypt')
+const addMinutes = require('date-fns/addMinutes')
+const { promisify } = require('util')
 
 const { knex, filterParams, sortPageParams } = require('../db')
-const {
-  getCellsByValue,
-  generateExcelFile,
-  generateCsvFile,
-} = require('../shared/io')
+const { getCellsByValue, generateExcelFile, generateCsvFile } = require('../shared/io')
 const { randomToken, groupToken } = require('../deviceApi/apiKey')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
+
+const bcryptCompare = promisify(bcrypt.compare)
 
 const SELECT_LIST_FIELDS = [
   'dak.id',
@@ -42,6 +43,7 @@ async function listDeviceApiKeys(request) {
       partnerId: 'dak.partnerId',
       siteName: 's.name',
       deviceName: 'd.name',
+      revoked: 'dak.revoked',
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -81,7 +83,7 @@ async function createDeviceApiKey(request) {
   const user = await knex('Person as p')
     .join('User as u', 'u.id', 'p.userId')
     .where('u.name', auth.credentials.name)
-    .first('u.id', 'p.lastPartnerId as partnerId')
+    .first('u.id', 'p.lastPartnerId as partnerId', 'p.geographyId')
   if (user == null || user.partnerId == null) {
     return Boom.badRequest('Cannot find partner for user')
   }
@@ -90,6 +92,7 @@ async function createDeviceApiKey(request) {
   await knex('DeviceApiKey').insert({
     token: apiKey.token,
     revoked: 0,
+    geographyId: user.geographyId,
     partnerId: user.partnerId,
     createdOn: now,
     createdBy: user.id,
@@ -156,30 +159,9 @@ async function exportDeviceApiKeys(request) {
     })
   } else if (query.format === 'csv') {
     const items = devices.data
-    const columnNames = [
-      'Created On',
-      'Key',
-      'Partner',
-      'Country',
-      'Site',
-      'Device',
-      'Revoked',
-    ]
-    const fieldNames = [
-      'createdOn',
-      'token',
-      'partner',
-      'country',
-      'site',
-      'device',
-      'revoked',
-    ]
-    result = await generateCsvFile(
-      'deviceApiKeys.csv',
-      items,
-      columnNames,
-      fieldNames
-    )
+    const columnNames = ['Created On', 'Key', 'Partner', 'Country', 'Site', 'Device', 'Revoked']
+    const fieldNames = ['createdOn', 'token', 'partner', 'country', 'site', 'device', 'revoked']
+    result = await generateCsvFile('deviceApiKeys.csv', items, columnNames, fieldNames)
   }
 
   return result
@@ -240,8 +222,7 @@ async function assignDeviceApiKeys(request) {
 
   if (payload.deviceId) {
     // If deviceId is set, we need to ensure that only one key is assigned to the device
-    if (payload.deviceApiKeyIds.length > 1)
-      throw new Error('When deviceId is set, only one key can be assigned')
+    if (payload.deviceApiKeyIds.length > 1) throw new Error('When deviceId is set, only one key can be assigned')
 
     // Revoke the other keys assigned to it
     await knex('DeviceApiKey')
@@ -276,11 +257,9 @@ async function assignDeviceApiKeys(request) {
 async function revokeDeviceApiKey(request) {
   const { params, payload } = request
 
-  const updatedCount = await knex('DeviceApiKey')
-    .where('id', params.deviceApiKeyId)
-    .update({
-      revoked: payload.revoked,
-    })
+  const updatedCount = await knex('DeviceApiKey').where('id', params.deviceApiKeyId).update({
+    revoked: payload.revoked,
+  })
 
   if (updatedCount !== 1) {
     return Boom.badRequest()
@@ -295,6 +274,41 @@ async function revokeDeviceApiKey(request) {
   }
 }
 
+async function lookupUsingCredentials(username, password) {
+  const nowTime = new Date().getTime()
+  const deviceApiKey = await knex('DeviceApiKey').where('username', username).first()
+  const pwResult = deviceApiKey
+    ? await bcryptCompare(password, _.get(deviceApiKey, 'password')).catch(() => false)
+    : false
+  if (!deviceApiKey || !pwResult) {
+    return {
+      authenticated: false,
+      reason: 'invalid',
+    }
+  }
+  if (deviceApiKey.revoked) {
+    return {
+      authenticated: false,
+      reason: 'revoked',
+      data: deviceApiKey,
+    }
+  }
+  if (deviceApiKey.expiresOn < nowTime) {
+    const newToken = randomToken()
+    const newExpiresOn = addMinutes(new Date(), 15)
+    deviceApiKey.token = newToken
+    deviceApiKey.expiresOn = newExpiresOn
+    await knex('DeviceApiKey').where('id', deviceApiKey.id).update({
+      token: newToken,
+      expiresOn: newExpiresOn,
+    })
+  }
+  return {
+    authenticated: true,
+    data: deviceApiKey,
+  }
+}
+
 module.exports = {
   listDeviceApiKeys,
   exportDeviceApiKeys,
@@ -302,4 +316,5 @@ module.exports = {
   createDeviceApiKey,
   assignDeviceApiKeys,
   revokeDeviceApiKey,
+  lookupUsingCredentials,
 }

@@ -1,0 +1,133 @@
+{
+  "fields": [
+    {
+      "id": 201,
+      "name": "Gender",
+      "title": "Gender",
+      "i18nKey": "Genderi18nKey",
+      "fieldType": "number",
+      "order": 1,
+      "caption": "Gender",
+      "gxAlertDbColumn": "PatientGender",
+      "i18nKeyCaption": "Genderi18nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": 1,
+          "value": "Male",
+          "order": 0
+        },
+        {
+          "key": 0,
+          "value": "Female",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": 202,
+      "name": "Age",
+      "title": "Age",
+      "i18nKey": "AgeFieldi18nKey",
+      "fieldType": "number",
+      "order": 2,
+      "gxAlertDbColumn": "PatientAgeYears",
+      "caption": "Age",
+      "i18nKeyCaption": "Agei18nCaptionKey",
+      "controlType": "textBox",
+      "validation": [
+        {
+          "validationType": "integer",
+          "min": 0,
+          "max": 150,
+          "errorMessage": "The age should be a number between 1-150",
+          "errorMessageI18nKey": "AgeValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "id": 203,
+      "name": "Retreatment Case",
+      "i18nKey": "RetreatCaseFieldi18nKey",
+      "fieldType": "number",
+      "order": 3,
+      "gxAlertDbColumn": "PreviouslyTreated",
+      "title": "Retreatment Case",
+      "caption": "Retreatment Case",
+      "i18nKeyCaption": "RetreatmentCasei18nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": 1,
+          "value": "Yes",
+          "order": 0
+        },
+        {
+          "key": 0,
+          "value": "No",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": 204,
+      "name": "Referring Facility",
+      "i18nKey": "ReferringFacilityI18nkey",
+      "fieldType": "text",
+      "order": 7,
+      "gxAlertDbColumn": "HealthFacility",
+      "title": "Referring Facility",
+      "caption": "Referring Facility",
+      "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
+      "controlType": "textBox",
+      "calculated": {
+        "fieldId1": 5,
+        "fixedValue": "now",
+        "function": "datediff",
+        "format": "week"
+      }
+    },
+    {
+      "id": 205,
+      "name": "Referring Clinician or Facility Phone Number (if known)",
+      "i18nKey": "ReferringClinicianI18nkey",
+      "fieldType": "text",
+      "order": 7,
+      "gxAlertDbColumn": "RequestorPhone",
+      "title": "Referring Clinician or Facility Phone Number (if known)",
+      "caption": "Referring Clinician or Facility Phone Number (if known)",
+      "i18nKeyCaption": "Referringphonei18nKeyCaption",
+      "controlType": "textBox"
+    },
+    {
+      "id": 206,
+      "name": "Repeat Test",
+      "i18nKey": "RepeatTesti18nKey",
+      "fieldType": "number",
+      "order": 7,
+      "title": "Repeat Test",
+      "caption": "Repeat Test",
+      "gxAlertDbColumn": "RepeatTest",
+      "i18nKeyCaption": "RepeatTesti18nCaptionKey",
+      "controlType": "comboBox",
+      "items": [
+        {
+          "key": 0,
+          "value": "First or second",
+          "order": 0
+        },
+        {
+          "key": 1,
+          "value": "Follow-up",
+          "order": 10
+        },
+        {
+          "key": 2,
+          "value": "Repeat Baseline",
+          "order": 20
+        }
+      ]
+    }
+  ],
+  "refForms": []
+}

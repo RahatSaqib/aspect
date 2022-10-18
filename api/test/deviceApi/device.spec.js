@@ -9,13 +9,10 @@ const {
   getLastDeviceOperationId,
   getDeviceFromApiKey,
 } = require('./utils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
+const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
+const { knex } = require('../../src/db')
 
 const { assert } = chai
 
@@ -25,7 +22,7 @@ const baseConfig = {
   firmwareUpdateRequired: 'no',
 }
 
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
@@ -37,8 +34,6 @@ const { deviceOffline, deviceOnline } = require('../../src/device/actions')
 describe('Device API routes', () => {
   const devicePath = '/device'
 
-  const { runTest } = context
-
   beforeEach(async () => {
     await context.createDeviceWithResult()
   })
@@ -47,378 +42,338 @@ describe('Device API routes', () => {
   describe('configuration', () => {
     const deviceConfigurationPath = '/device/configuration'
 
-    it('should add and merge device configuration', () =>
-      runTest(async knex => {
-        const { deviceAuth, deviceId } = context
+    it('should add and merge device configuration', async () => {
+      const { deviceAuth, deviceId } = context
+      let res
+      res = await server
+        .post(deviceConfigurationPath)
+        .set('Authorization', deviceAuth)
+        .send({ data: { a: 'b' } })
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
 
-        await server
-          .post(deviceConfigurationPath)
-          .set('Authorization', deviceAuth)
-          .send({ data: { a: 'b' } })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
-        const config1 = await getDeviceConfigurationData(knex, deviceId)
-        assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
+      const config1 = await getDeviceConfigurationData(knex, deviceId)
+      assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
 
-        await server
-          .post(deviceConfigurationPath)
-          .set('Authorization', deviceAuth)
-          .send({ data: { b: 3 } })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
-        const config2 = await getDeviceConfigurationData(knex, deviceId)
-        assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'b', b: 3 }))
+      res = await server
+        .post(deviceConfigurationPath)
+        .set('Authorization', deviceAuth)
+        .send({ data: { b: 3 } })
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
 
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            configuration: { data: { a: 'e', c: 2, d: false, e: { f: 'g' } } },
-          })
-          .then(res => {
-            assert.equal(res.status, 200)
-          })
-        const config3 = await getDeviceConfigurationData(knex, deviceId)
-        assert.deepEqual(
-          config3,
-          _.assign({}, baseConfig, {
-            a: 'e',
-            b: 3,
-            c: 2,
-            d: false,
-            e: { f: 'g' },
-          })
-        )
+      const config2 = await getDeviceConfigurationData(knex, deviceId)
+      assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'b', b: 3 }))
 
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({ configuration: { data: { e: { f: 'h' } } } })
-          .then(res => {
-            assert.equal(res.status, 200)
-          })
-        const config4 = await getDeviceConfigurationData(knex, deviceId)
-        assert.deepEqual(
-          config4,
-          _.assign({}, baseConfig, {
-            a: 'e',
-            b: 3,
-            c: 2,
-            d: false,
-            e: { f: 'h' },
-          })
-        )
-      }))
+      res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          configuration: { data: { a: 'e', c: 2, d: false, e: { f: 'g' } } },
+        })
+
+      assert.equal(res.status, 200)
+
+      const config3 = await getDeviceConfigurationData(knex, deviceId)
+      assert.deepEqual(
+        config3,
+        _.assign({}, baseConfig, {
+          a: 'e',
+          b: 3,
+          c: 2,
+          d: false,
+          e: { f: 'g' },
+        })
+      )
+
+      res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ configuration: { data: { e: { f: 'h' } } } })
+
+      assert.equal(res.status, 200)
+
+      const config4 = await getDeviceConfigurationData(knex, deviceId)
+      assert.deepEqual(
+        config4,
+        _.assign({}, baseConfig, {
+          a: 'e',
+          b: 3,
+          c: 2,
+          d: false,
+          e: { f: 'h' },
+        })
+      )
+    })
   })
 
   describe('operation', () => {
     const deviceOperationPath = '/device/operation'
 
-    it('should add and return device operation', () =>
-      runTest(async knex => {
-        const { deviceId, deviceAuth } = context
+    it('should add and return device operation', async () => {
+      const { deviceId, deviceAuth } = context
+      let res
+      res = await server
+        .post(deviceOperationPath)
+        .set('Authorization', deviceAuth)
+        .send({ data: { a: 'b' } })
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
 
-        await server
-          .post(deviceOperationPath)
-          .set('Authorization', deviceAuth)
-          .send({ data: { a: 'b' } })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
+      const op1 = await getLastDeviceOperationData(knex, deviceId)
+      assert.deepEqual(op1, { a: 'b' })
 
-        const op1 = await getLastDeviceOperationData(knex, deviceId)
-        assert.deepEqual(op1, { a: 'b' })
+      let previousOpId = null
+      let currentOpId = await getLastDeviceOperationId(knex, deviceId)
 
-        let previousOpId = null
-        let currentOpId = await getLastDeviceOperationId(knex, deviceId)
+      res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          operation: {
+            startedOn: '2013-12-01',
+            endedOn: '2013-12-01T01:30',
+            data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+          },
+        })
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
 
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            operation: {
-              startedOn: '2013-12-01',
-              endedOn: '2013-12-01T01:30',
-              data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-            },
-          })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
+      const op2 = await getLastDeviceOperation(knex, deviceId)
+      assert.deepEqual(op2.data, { a: 'b', c: 2, d: false, e: { f: 'g' } })
+      assert.deepEqual(op2.startedOn, new Date('2013-12-01'))
+      assert.deepEqual(op2.endedOn, new Date('2013-12-01T01:30'))
 
-        const op2 = await getLastDeviceOperation(knex, deviceId)
-        assert.deepEqual(op2.data, { a: 'b', c: 2, d: false, e: { f: 'g' } })
-        assert.deepEqual(op2.startedOn, new Date('2013-12-01'))
-        assert.deepEqual(op2.endedOn, new Date('2013-12-01T01:30'))
+      previousOpId = currentOpId
+      currentOpId = await getLastDeviceOperationId(knex, deviceId)
 
-        previousOpId = currentOpId
-        currentOpId = await getLastDeviceOperationId(knex, deviceId)
-
-        assert.notEqual(previousOpId, currentOpId)
-      }))
+      assert.notEqual(previousOpId, currentOpId)
+    })
   })
 
   describe('add and get device data', () => {
-    it('should add and return device data', () =>
-      runTest(async knex => {
-        const { deviceAuth, deviceId } = context
+    it('should add and return device data', async () => {
+      const { deviceAuth, deviceId } = context
+      let res
+      res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          configuration: { data: { a: 'b' } },
+          operation: { data: { a: 'b' } },
+        })
 
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            configuration: { data: { a: 'b' } },
-            operation: { data: { a: 'b' } },
-          })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
 
-        const config1 = await getDeviceConfigurationData(knex, deviceId)
-        const op1 = await getLastDeviceOperationData(knex, deviceId)
-        assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
-        assert.deepEqual(op1, { a: 'b' })
+      const config1 = await getDeviceConfigurationData(knex, deviceId)
+      const op1 = await getLastDeviceOperationData(knex, deviceId)
+      assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
+      assert.deepEqual(op1, { a: 'b' })
 
-        await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.configuration, 'Object')
-            assert.deepEqual(res.body.configuration.data, config1)
-            assert.typeOf(res.body.operation, 'Object')
-            assert.deepEqual(res.body.operation.data, op1)
-          })
+      res = await server.get(devicePath).set('Authorization', deviceAuth)
 
-        await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.typeOf(res.body.configuration, 'Object')
+      assert.deepEqual(res.body.configuration.data, config1)
+      assert.typeOf(res.body.operation, 'Object')
+      assert.deepEqual(res.body.operation.data, op1)
 
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            configuration: { data: { a: 'c', c: 2, d: false, e: { f: 'g' } } },
-            operation: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } },
-          })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
+      res = await server.get(devicePath).set('Authorization', deviceAuth)
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
 
-        const config2 = await getDeviceConfigurationData(knex, deviceId)
-        const op2 = await getLastDeviceOperationData(knex, deviceId)
-        assert.deepEqual(
-          config2,
-          _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } })
-        )
-        assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
-      }))
+      res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          configuration: { data: { a: 'c', c: 2, d: false, e: { f: 'g' } } },
+          operation: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } },
+        })
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+
+      const config2 = await getDeviceConfigurationData(knex, deviceId)
+      const op2 = await getLastDeviceOperationData(knex, deviceId)
+      assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } }))
+      assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
+    })
   })
 
   describe('add new device', () => {
-    const newDeviceContext = createTestContext(server, {
+    const newDeviceContext = createTestContext(knex, server, {
       user: 'reporter_admin',
       partner: 'Reporter',
       type: 'DaktariInSight',
     })
-    const { runTest } = newDeviceContext
 
     beforeEach(async () => {
       await newDeviceContext.createSites(['CHIZ'])
       await newDeviceContext.createDeviceApiKey()
     })
     afterEach(newDeviceContext.afterEach)
-    it('should create Device with approvalId and add log to DeviceApprovalLog table', () =>
-      runTest(async knex => {
-        const { apiKey, deviceAuth } = newDeviceContext
-        assert.isOk(apiKey)
+    it('should create Device with approvalId and add log to DeviceApprovalLog table', async () => {
+      const { apiKey, deviceAuth } = newDeviceContext
+      assert.isOk(apiKey)
 
-        const messageContext = await createMessageContext()
-        messageContext.bindActionCreators({ factGenerateDeviceConnectivity })
+      const messageContext = await createMessageContext()
+      messageContext.bindActionCreators({ factGenerateDeviceConnectivity })
 
-        // add device
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            type: { id: 'DaktariInSight' },
-            site: { id: 'CHIZ' },
-          })
-          .then(res => {
-            assert.equal(res.status, 200)
-          })
-        await waitForIdle()
+      // add device
+      let res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          type: { id: 'DaktariInSight' },
+          site: { id: 'CHIZ' },
+          configuration: {
+            data: {
+              timezone: 'Hawaiian Standard Time',
+            },
+          },
+        })
 
-        const newDevice = await getDeviceFromApiKey(knex, apiKey)
-        assert.isOk(newDevice)
-        assert.isOk(newDevice.name)
-        assert.equal(newDevice.serial, null)
+      assert.equal(res.status, 200)
 
-        const deviceLogs = await knex('DeviceApprovalLog as dl').where(
-          'dl.deviceId',
-          newDevice.id
-        )
-        assert.isOk(deviceLogs)
-        assert.propertyVal(newDevice, 'id', deviceLogs[0].deviceId)
-        assert.isAtLeast(deviceLogs.length, 1)
-        await waitForIdle()
+      await waitForIdle()
 
-        // ensure device exists on FactDeviceFlag table
-        const factDevice = await knex('FactDeviceFlag as fdf')
-          .where('fdf.deviceId', newDevice.id)
-          .select('fdf.deviceId', 'fdf.offline')
+      const newDevice = await getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(newDevice)
+      assert.isOk(newDevice.name)
+      assert.equal(newDevice.timezone, 'Hawaiian Standard Time')
+      assert.equal(newDevice.serial, null)
 
-        assert.equal(factDevice.length, 1)
-        assert.equal(factDevice[0].offline, 0)
+      const deviceLogs = await knex('DeviceApprovalLog as dl').where('dl.deviceId', newDevice.id)
+      assert.isOk(deviceLogs)
+      assert.propertyVal(newDevice, 'id', deviceLogs[0].deviceId)
+      assert.isAtLeast(deviceLogs.length, 1)
+      await waitForIdle()
 
-        // update last ping to a date earlier and greater than 7 days and ensure device marked as offline
-        const last8Day = subDays(new Date(), 8)
+      // ensure device exists on FactDeviceFlag table
+      const factDevice = await knex('FactDeviceFlag as fdf')
+        .where('fdf.deviceId', newDevice.id)
+        .select('fdf.deviceId', 'fdf.offline')
 
-        await knex('Device as d')
-          .where('d.id', factDevice[0].deviceId)
-          .update({ lastPingOn: last8Day })
+      assert.equal(factDevice.length, 1)
+      assert.equal(factDevice[0].offline, 0)
 
-        // Generate device offline facts and wait for offline action for new device
-        const waitForOffline = waitForAction(deviceOffline(newDevice.id))
-        messageContext.factGenerateDeviceConnectivity(newDevice.id)
-        await waitForOffline
-        await waitForIdle()
+      // update last ping to a date earlier and greater than 7 days and ensure device marked as offline
+      const last8Day = subDays(new Date(), 8)
 
-        const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
-          'fdf.deviceId',
-          newDevice.id
-        )
-        assert.equal(offlineFactDevice.offline, 1)
+      await knex('Device as d').where('d.id', factDevice[0].deviceId).update({ lastPingOn: last8Day })
 
-        const waitForOnline = waitForAction(deviceOnline(newDevice.id))
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            type: { id: 'DaktariInSight' },
-          })
-          .then(res => {
-            assert.equal(res.status, 200)
-          })
-        await waitForOnline
-        await waitForIdle()
+      // Generate device offline facts and wait for offline action for new device
+      const waitForOffline = waitForAction(deviceOffline(newDevice.id))
+      messageContext.factGenerateDeviceConnectivity(newDevice.id)
+      await waitForOffline
+      await waitForIdle()
 
-        const [onlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
-          'fdf.deviceId',
-          newDevice.id
-        )
-        assert.equal(onlineFactDevice.offline, 0)
-      }))
-    it('should assign the Device to the default capacity for the device type and partner', () =>
-      runTest(async knex => {
-        const { apiKey, deviceAuth } = newDeviceContext
-        assert.isOk(apiKey)
+      const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where('fdf.deviceId', newDevice.id)
+      assert.equal(offlineFactDevice.offline, 1)
 
-        // add device
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            type: { id: 'DaktariInSight' },
-            site: { id: 'CHIZ' },
-          })
-          .then(res => {
-            assert.equal(res.status, 200)
-          })
-        await waitForIdle()
+      const waitForOnline = waitForAction(deviceOnline(newDevice.id))
+      res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          type: { id: 'DaktariInSight' },
+        })
+      assert.equal(res.status, 200)
 
-        const newDevice = await getDeviceFromApiKey(knex, apiKey)
+      await waitForOnline
+      await waitForIdle()
 
-        const { id: deviceCapacityId } = await knex('DeviceCapacity')
-          .where({ deviceTypeId: newDevice.deviceTypeId })
-          .where({ partnerId: newDevice.partnerId })
-          .where({ defaultForDeviceType: 1 })
-          .first('id')
+      const [onlineFactDevice] = await knex('FactDeviceFlag as fdf').where('fdf.deviceId', newDevice.id)
+      assert.equal(onlineFactDevice.offline, 0)
+    })
 
-        assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
-      }))
-    it('should return shortName of 45 characters if shortName is greater than 45 when creating a device', () =>
-      runTest(async knex => {
-        const { apiKey, deviceAuth } = newDeviceContext
-        assert.isOk(apiKey)
+    it('should assign the Device to the default capacity for the device type and partner', async () => {
+      const { apiKey, deviceAuth } = newDeviceContext
+      assert.isOk(apiKey)
 
-        // add device
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            type: { id: 'DaktariInSight' },
-            site: { id: 'CHIZ' },
-            name:
-              'Chanayethazan 1 GeneXpert, Chanayethazan 2 GeneXpert and Patheingyi 1 GeneXpert',
-          })
-          .then(res => {
-            assert.equal(res.status, 200)
-          })
-        await waitForIdle()
+      // add device
+      const res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          type: { id: 'DaktariInSight' },
+          site: { id: 'CHIZ' },
+        })
 
-        const newDevice = await getDeviceFromApiKey(knex, apiKey)
+      assert.equal(res.status, 200)
 
-        assert.lengthOf(newDevice.shortName, 45)
-      }))
+      await waitForIdle()
+
+      const newDevice = await getDeviceFromApiKey(knex, apiKey)
+
+      const { id: deviceCapacityId } = await knex('DeviceCapacity')
+        .where({ deviceTypeId: newDevice.deviceTypeId })
+        .where({ partnerId: newDevice.partnerId })
+        .where({ defaultForDeviceType: 1 })
+        .first('id')
+
+      assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
+      // this is the site default timezone
+      assert.equal(newDevice.timezone, 'South Africa Standard Time')
+    })
+    it('should return shortName of 45 characters if shortName is greater than 45 when creating a device', async () => {
+      const { apiKey, deviceAuth } = newDeviceContext
+      assert.isOk(apiKey)
+
+      // add device
+      const res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          type: { id: 'DaktariInSight' },
+          site: { id: 'CHIZ' },
+          name: 'Chanayethazan 1 GeneXpert, Chanayethazan 2 GeneXpert and Patheingyi 1 GeneXpert',
+        })
+
+      assert.equal(res.status, 200)
+
+      await waitForIdle()
+
+      const newDevice = await getDeviceFromApiKey(knex, apiKey)
+
+      assert.lengthOf(newDevice.shortName, 45)
+    })
   })
 
   describe('add device Logs', () => {
-    it('should create add payload to DeviceLog on Joi failure', () =>
-      runTest(async knex => {
-        const { apiKey, deviceAuth } = context
-        assert.isOk(apiKey)
+    it('should create add payload to DeviceLog on Joi failure', async () => {
+      const { apiKey, deviceAuth } = context
+      assert.isOk(apiKey)
 
-        const [{ count: logLength1 }] = await knex('DeviceLog as dl').count(
-          'id as count'
-        )
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send({
-            site: {
-              data: `Device API Test - should create add payload to DeviceLog on Joi failure ${Date.now()}`,
-            },
-          })
-          .then(res => {
-            assert.equal(res.status, 400)
-          })
+      const [{ count: logLength1 }] = await knex('DeviceLog as dl').count('id as count')
+      const res = await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          site: {
+            data: `Device API Test - should create add payload to DeviceLog on Joi failure ${Date.now()}`,
+          },
+        })
 
-        const [{ count: logLength2 }] = await knex('DeviceLog as dl').count(
-          'id as count'
-        )
+      assert.equal(res.status, 400)
 
-        assert.equal(logLength1 + 1, logLength2)
-      }))
+      const [{ count: logLength2 }] = await knex('DeviceLog as dl').count('id as count')
+
+      assert.equal(logLength1 + 1, logLength2)
+    })
   })
   describe('return health stats of remote server', () => {
-    it('should return json with the servers stats.', () =>
-      runTest(async () => {
-        const { apiKey, deviceAuth } = context
-        assert.isOk(apiKey)
-        await server
-          .get(`${devicePath}/health-stats`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body.Countries, 'Array')
-            assert.typeOf(res.body.Devices, 'Array')
-            assert.typeOf(res.body.Tests, 'Array')
-            assert.typeOf(res.body.Notifications, 'Array')
-          })
-      }))
+    it('should return json with the servers stats.', async () => {
+      const { apiKey, deviceAuth } = context
+      assert.isOk(apiKey)
+      const res = await server.get(`${devicePath}/health-stats`).set('Authorization', deviceAuth)
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body.Countries, 'Array')
+      assert.typeOf(res.body.Devices, 'Array')
+      assert.typeOf(res.body.Tests, 'Array')
+      assert.typeOf(res.body.Notifications, 'Array')
+    })
   })
 })

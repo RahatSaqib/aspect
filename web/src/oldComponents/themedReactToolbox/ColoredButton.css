@@ -1,0 +1,25 @@
+@import '../../theme/variables.css';
+
+.ColoredButton--ship-cove.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
+  background-color: var(--aspect-color-ship-cove);
+  color: var(--aspect-color-white);
+  margin-right: 5px;
+}
+
+.ColoredButton--shakespeare.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
+  background-color: var(--aspect-color-shakespeare);
+  color: var(--aspect-color-white);
+  margin-right: 5px;
+}
+
+.ColoredButton--mountain.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
+  background-color: var(--aspect-color-mountain);
+  color: var(--aspect-color-white);
+  margin-right: 5px;
+}
+
+.ColoredButton--brink.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
+  background-color: var(--aspect-color-brink);
+  color: var(--aspect-color-white);
+  margin-right: 5px;
+}

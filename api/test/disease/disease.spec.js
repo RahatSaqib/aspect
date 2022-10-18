@@ -1,19 +1,20 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const shared = require('../utils/sharedToken')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Disease routes', () => {
   const path = '/api/diseases'
-  shared.checkToken(server, path)
+  before(() => {
+    shared.checkToken(server, path)
+  })
   describe('GET', () => {
     it('should return a list of disease when using valid token', async () => {
-      const diseaseResponse = await server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const diseaseResponse = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
       assert.equal(diseaseResponse.status, 200)
       assert.typeOf(diseaseResponse.body, 'Object')
       assert.property(diseaseResponse.body, 'data')
@@ -37,9 +38,7 @@ describe('Disease routes', () => {
       assert.property(disease, 'hasResults')
       assert.property(disease, 'externalId')
 
-      expect(
-        _.map(data, elem => ({ externalId: elem.externalId }))
-      ).to.containSubset([
+      expect(_.map(data, elem => ({ externalId: elem.externalId }))).to.containSubset([
         {
           externalId: 'tb',
         },

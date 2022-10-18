@@ -27,17 +27,10 @@ const mergeDeep = (baseValue, sourceValue) => {
     return baseValue
   }
   if (_.isArray(baseValue) && _.isArray(sourceValue)) {
-    return _.uniqBy(
-      [...(baseValue || []), ...(sourceValue || [])],
-      JSON.stringify
-    )
+    return _.uniqBy([...(baseValue || []), ...(sourceValue || [])], JSON.stringify)
   }
   if (_.isPlainObject(baseValue) || _.isPlainObject(sourceValue)) {
-    return _.mergeWith(
-      _.cloneDeep(baseValue),
-      _.cloneDeep(sourceValue),
-      mergeDeep
-    )
+    return _.mergeWith(_.cloneDeep(baseValue), _.cloneDeep(sourceValue), mergeDeep)
   }
   return sourceValue || baseValue
 }
@@ -74,6 +67,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
 
   static async canProcessRequest(request) {
     const { payload } = request
+    if (!payload) {
+      return false
+    }
     const sanitisedPayload = DefaultAbbottM2000.sanitisePayload(payload)
     return DefaultAbbottM2000.containsM2000AstmLineHeader(sanitisedPayload)
   }
@@ -87,9 +83,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
   // This method extracts the array value from specified field in the JSON object representation of the ASTM message
   arrayFromPossibleRepeatedASTMValue(jsonAstmObject, path) {
     if (_.get(jsonAstmObject, `${path}.items`)) {
-      return _.get(jsonAstmObject, `${path}.items`).map(i =>
-        _.get(jsonAstmObject, `${path}.${i}`)
-      )
+      return _.get(jsonAstmObject, `${path}.items`).map(i => _.get(jsonAstmObject, `${path}.${i}`))
     }
     if (!_.isEmpty(_.get(jsonAstmObject, `${path}.value`))) {
       return [_.get(jsonAstmObject, `${path}`)]
@@ -101,13 +95,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     if (!_.isEmpty(jsonAstmRecord.comments)) {
       return {
         comments: jsonAstmRecord.comments.map(commentId => ({
-          source: { I: 'Instrument' }[
-            _.get(jsonAstmRecord, `${commentId}.3.value`)
-          ],
+          source: { I: 'Instrument' }[_.get(jsonAstmRecord, `${commentId}.3.value`)],
           text: _.get(jsonAstmRecord, `${commentId}.4.value`),
-          type: { G: 'Result Comment', I: 'Exception String' }[
-            _.get(jsonAstmRecord, `${commentId}.5.value`)
-          ],
+          type: { G: 'Result Comment', I: 'Exception String' }[_.get(jsonAstmRecord, `${commentId}.5.value`)],
           rawData: _.get(jsonAstmRecord, `${commentId}.value`),
         })),
       }
@@ -121,9 +111,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         enquiries: jsonAstmRecord.enquiries.map(enquiryId => ({
           specimenId: _.get(jsonAstmRecord, `${enquiryId}.3.value`),
           assayCode: _.get(jsonAstmRecord, `${enquiryId}.5.value`),
-          statusCode: { O: 'Orders' }[
-            _.get(jsonAstmRecord, `${enquiryId}.13.value`)
-          ],
+          statusCode: { O: 'Orders' }[_.get(jsonAstmRecord, `${enquiryId}.13.value`)],
           rawData: _.get(jsonAstmRecord, `${enquiryId}.value`),
         })),
       }
@@ -135,46 +123,29 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     const parsedValue = parseDateOrDefault(value, {
       formatString: 'yyyyMMdd',
     })
-    return parsedValue
-      ? convertToTimeZone(parsedValue, { timeZone: 'UTC' })
-      : parsedValue
+    return parsedValue ? convertToTimeZone(parsedValue, { timeZone: 'UTC' }) : parsedValue
   }
 
   parseTime(value) {
     const parsedValue = parseDateOrDefault(value, {
       formatString: 'yyyyMMddHHmmss',
     })
-    return parsedValue
-      ? convertToTimeZone(parsedValue, { timeZone: 'UTC' })
-      : parsedValue
+    return parsedValue ? convertToTimeZone(parsedValue, { timeZone: 'UTC' }) : parsedValue
   }
 
-  bothResultsAreNumericAndFirstResultIsHigherThanTheSecond(
-    firstResult,
-    secondResult
-  ) {
+  bothResultsAreNumericAndFirstResultIsHigherThanTheSecond(firstResult, secondResult) {
     if (!firstResult || !secondResult) {
       return false
     }
-    if (
-      !isNumeric(firstResult.resultData.resultText) ||
-      !isNumeric(secondResult.resultData.resultText)
-    ) {
+    if (!isNumeric(firstResult.resultData.resultText) || !isNumeric(secondResult.resultData.resultText)) {
       return false
     }
-    return (
-      parseFloat(firstResult.resultData.resultText) >
-      parseFloat(secondResult.resultData.resultText)
-    )
+    return parseFloat(firstResult.resultData.resultText) > parseFloat(secondResult.resultData.resultText)
   }
 
   setupAssayMappings(assayIds, resultCategories) {
-    const processViralLoadResultsWithSameId = this.processViralLoadResultsWithSameId.bind(
-      this
-    )
-    const processDaanNCovid19ResultsWithSameId = this.processDaanNCovid19ResultsWithSameId.bind(
-      this
-    )
+    const processViralLoadResultsWithSameId = this.processViralLoadResultsWithSameId.bind(this)
+    const processDaanNCovid19ResultsWithSameId = this.processDaanNCovid19ResultsWithSameId.bind(this)
     return {
       '1mLDBSvOP': {
         id: assayIds.abbottM2000DBSHivVL,
@@ -321,12 +292,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     }
   }
 
-  convertJsonParsedASTMMessagesToResultDetails(
-    jsonAstmMessages,
-    assayMappings,
-    utcNow,
-    remoteAddress
-  ) {
+  convertJsonParsedASTMMessagesToResultDetails(jsonAstmMessages, assayMappings, utcNow, remoteAddress) {
     return jsonAstmMessages.reduce((results, jsonAstmMessage) => {
       const instrumentSerial = _.get(jsonAstmMessage, 'H.4.3.value')
       const messageSentOn = this.parseTime(_.get(jsonAstmMessage, 'H.13.value'))
@@ -360,240 +326,171 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       }
       results = [
         ...results,
-        ..._.get(jsonAstmMessage, 'H.patients', []).reduce(
-          (results, patientId) => {
-            const jsonAstmPatient = _.get(jsonAstmMessage, `H.${patientId}`)
-            const patientData = {
-              id: _.get(jsonAstmPatient, '4.value'), // Laboratory Patient ID
-              practicePatientId: _.get(jsonAstmPatient, '3.value'),
-              additionalPatientId: _.get(jsonAstmPatient, '5.value'),
-              name: _.get(jsonAstmPatient, '6.value'),
-              dateOfBirth: this.parseDate(_.get(jsonAstmPatient, '8.value')),
-              gender: { M: 'Male', F: 'Female', U: 'Unknown' }[
-                _.get(jsonAstmPatient, '9.value')
-              ],
-              ethnicOrigin: _.get(jsonAstmPatient, '10.value'),
-              address: _.get(jsonAstmPatient, '11.value'),
-              phone: _.get(jsonAstmPatient, '13.value'),
-              attendingPhysician: _.get(jsonAstmPatient, '14.value'),
-              height: _.get(jsonAstmPatient, '17.value'),
-              weight: _.get(jsonAstmPatient, '18.value'),
-              diet: _.get(jsonAstmPatient, '21.value'),
-              admissionOrDischargeDates: _.get(jsonAstmPatient, '24.value'),
-              admissionStatus: _.get(jsonAstmPatient, '25.value'),
-              location: _.get(jsonAstmPatient, '26.value'),
-              isolationStatus: _.get(jsonAstmPatient, '31.value'),
-              hospitalInstitution: _.get(jsonAstmPatient, '34.value'),
-              dosageCategory: _.get(jsonAstmPatient, '35.value'),
-              ...this.commentsFromJsonAstmRecord(jsonAstmPatient),
-            }
-            const patientDiagnoses = this.arrayFromPossibleRepeatedASTMValue(
-              jsonAstmPatient,
-              '19'
-            ).map(diagnosis => ({
-              code: _.get(diagnosis, '1.value'),
-              description: _.get(diagnosis, '2.value'),
-            }))
-            if (!_.isEmpty(patientDiagnoses)) {
-              patientData.diagnoses = patientDiagnoses
-            }
-            const patientMedications = this.arrayFromPossibleRepeatedASTMValue(
-              jsonAstmPatient,
-              '20'
-            ).map(medication => ({
-              name: _.get(medication, '1.value'),
-              level: _.get(medication, '2.value'),
-              startDate: _.get(medication, '3.value'),
-              endDate: _.get(medication, '4.value'),
-            }))
-            if (!_.isEmpty(patientMedications)) {
-              patientData.medications = patientMedications
-            }
-            results = [
-              ...results,
-              ..._.get(jsonAstmPatient, 'orders', []).reduce(
-                (results, orderId) => {
-                  const jsonAstmOrder = jsonAstmPatient[orderId]
-                  const sampleId = _.get(
-                    jsonAstmOrder,
-                    '3.1.value',
-                    _.get(
-                      jsonAstmOrder,
-                      '3.value',
-                      _.get(
-                        jsonAstmOrder,
-                        '4.1.value',
-                        _.get(jsonAstmOrder, '4.value')
-                      )
-                    )
-                  )
-                  const startedOnString = _.get(jsonAstmOrder, '7.value')
-                  const carouselId = _.get(
-                    jsonAstmOrder,
-                    '3.2.value',
-                    _.get(jsonAstmOrder, '4.2.value')
-                  )
-                  const wellPosition = _.get(
-                    jsonAstmOrder,
-                    '3.3.value',
-                    _.get(jsonAstmOrder, '4.3.value')
-                  )
-                  const deviceAssayCode = _.get(jsonAstmOrder, '5.4.value')
-                  const testOrder = {
-                    sample: {
-                      externalId: sampleId,
-                      collectedOn: this.parseTime(
-                        _.get(jsonAstmOrder, '8.value')
-                      ),
-                      sampleTypeExternalId: _.get(
-                        assayMappings,
-                        `${deviceAssayCode}.defaultSampleTypeExternalId`
-                      ),
+        ..._.get(jsonAstmMessage, 'H.patients', []).reduce((results, patientId) => {
+          const jsonAstmPatient = _.get(jsonAstmMessage, `H.${patientId}`)
+          const patientData = {
+            id: _.get(jsonAstmPatient, '4.value'), // Laboratory Patient ID
+            practicePatientId: _.get(jsonAstmPatient, '3.value'),
+            additionalPatientId: _.get(jsonAstmPatient, '5.value'),
+            name: _.get(jsonAstmPatient, '6.value'),
+            dateOfBirth: this.parseDate(_.get(jsonAstmPatient, '8.value')),
+            gender: { M: 'Male', F: 'Female', U: 'Unknown' }[_.get(jsonAstmPatient, '9.value')],
+            ethnicOrigin: _.get(jsonAstmPatient, '10.value'),
+            address: _.get(jsonAstmPatient, '11.value'),
+            phone: _.get(jsonAstmPatient, '13.value'),
+            attendingPhysician: _.get(jsonAstmPatient, '14.value'),
+            height: _.get(jsonAstmPatient, '17.value'),
+            weight: _.get(jsonAstmPatient, '18.value'),
+            diet: _.get(jsonAstmPatient, '21.value'),
+            admissionOrDischargeDates: _.get(jsonAstmPatient, '24.value'),
+            admissionStatus: _.get(jsonAstmPatient, '25.value'),
+            location: _.get(jsonAstmPatient, '26.value'),
+            isolationStatus: _.get(jsonAstmPatient, '31.value'),
+            hospitalInstitution: _.get(jsonAstmPatient, '34.value'),
+            dosageCategory: _.get(jsonAstmPatient, '35.value'),
+            ...this.commentsFromJsonAstmRecord(jsonAstmPatient),
+          }
+          const patientDiagnoses = this.arrayFromPossibleRepeatedASTMValue(jsonAstmPatient, '19').map(diagnosis => ({
+            code: _.get(diagnosis, '1.value'),
+            description: _.get(diagnosis, '2.value'),
+          }))
+          if (!_.isEmpty(patientDiagnoses)) {
+            patientData.diagnoses = patientDiagnoses
+          }
+          const patientMedications = this.arrayFromPossibleRepeatedASTMValue(jsonAstmPatient, '20').map(medication => ({
+            name: _.get(medication, '1.value'),
+            level: _.get(medication, '2.value'),
+            startDate: _.get(medication, '3.value'),
+            endDate: _.get(medication, '4.value'),
+          }))
+          if (!_.isEmpty(patientMedications)) {
+            patientData.medications = patientMedications
+          }
+          results = [
+            ...results,
+            ..._.get(jsonAstmPatient, 'orders', []).reduce((results, orderId) => {
+              const jsonAstmOrder = jsonAstmPatient[orderId]
+              const sampleId = _.get(
+                jsonAstmOrder,
+                '3.1.value',
+                _.get(jsonAstmOrder, '3.value', _.get(jsonAstmOrder, '4.1.value', _.get(jsonAstmOrder, '4.value')))
+              )
+              const startedOnString = _.get(jsonAstmOrder, '7.value')
+              const carouselId = _.get(jsonAstmOrder, '3.2.value', _.get(jsonAstmOrder, '4.2.value'))
+              const wellPosition = _.get(jsonAstmOrder, '3.3.value', _.get(jsonAstmOrder, '4.3.value'))
+              const deviceAssayCode = _.get(jsonAstmOrder, '5.4.value')
+              const testOrder = {
+                sample: {
+                  externalId: sampleId,
+                  collectedOn: this.parseTime(_.get(jsonAstmOrder, '8.value')),
+                  sampleTypeExternalId: _.get(assayMappings, `${deviceAssayCode}.defaultSampleTypeExternalId`),
+                },
+                assay: {
+                  code: deviceAssayCode,
+                },
+                sampleRunNumber: carouselId,
+                moduleName: wellPosition,
+                startedOn: this.parseTime(startedOnString),
+                resultData: {
+                  assayName: _.get(jsonAstmOrder, '5.5.value'),
+                  assayProtocol: _.get(jsonAstmOrder, '5.6.value'),
+                  priority: { S: 'STAT', R: 'Routine' }[_.get(jsonAstmOrder, '6.value')],
+                  testQualifier: { P: 'Primary', C: 'Correlation' }[_.get(jsonAstmOrder, '5.7.value')],
+                  collectedBy: _.get(jsonAstmOrder, '11.value'),
+                  actionCode:
+                    {
+                      C: 'Cancel Test Order',
+                      A: 'Add Test to Order',
+                      N: 'New Test Order',
+                      Q: 'Quality Control Result',
+                    }[_.get(jsonAstmOrder, '12.value')] || 'Patient Result',
+                  reportType: {
+                    F: 'Final Result',
+                    X: 'Test could not be performed',
+                  }[_.get(jsonAstmOrder, '26.value')],
+                  ...this.commentsFromJsonAstmRecord(jsonAstmOrder),
+                },
+              }
+              results = [
+                ...results,
+                ..._.get(jsonAstmOrder, 'results', ['']).reduce((results, resultId) => {
+                  const jsonAstmResult = jsonAstmOrder[resultId] || {
+                    3: {
+                      9: {
+                        value: 'F',
+                      },
                     },
-                    assay: {
-                      code: deviceAssayCode,
+                    13: {
+                      value: startedOnString,
                     },
-                    sampleRunNumber: carouselId,
-                    moduleName: wellPosition,
-                    startedOn: this.parseTime(startedOnString),
-                    resultData: {
-                      assayName: _.get(jsonAstmOrder, '5.5.value'),
-                      assayProtocol: _.get(jsonAstmOrder, '5.6.value'),
-                      priority: { S: 'STAT', R: 'Routine' }[
-                        _.get(jsonAstmOrder, '6.value')
-                      ],
-                      testQualifier: { P: 'Primary', C: 'Correlation' }[
-                        _.get(jsonAstmOrder, '5.7.value')
-                      ],
-                      collectedBy: _.get(jsonAstmOrder, '11.value'),
-                      actionCode:
-                        {
-                          C: 'Cancel Test Order',
-                          A: 'Add Test to Order',
-                          N: 'New Test Order',
-                          Q: 'Quality Control Result',
-                        }[_.get(jsonAstmOrder, '12.value')] || 'Patient Result',
-                      reportType: {
-                        F: 'Final Result',
-                        X: 'Test could not be performed',
-                      }[_.get(jsonAstmOrder, '26.value')],
-                      ...this.commentsFromJsonAstmRecord(jsonAstmOrder),
+                    14: {
+                      value: instrumentSerial,
                     },
                   }
-                  results = [
-                    ...results,
-                    ..._.get(jsonAstmOrder, 'results', ['']).reduce(
-                      (results, resultId) => {
-                        const jsonAstmResult = jsonAstmOrder[resultId] || {
-                          '3': {
-                            '9': {
-                              value: 'F',
-                            },
-                          },
-                          '13': {
-                            value: startedOnString,
-                          },
-                          '14': {
-                            value: instrumentSerial,
-                          },
-                        }
-                        const moduleSerial = _.get(jsonAstmResult, '14.value')
-                        const endedOnString = _.get(jsonAstmResult, '13.value')
-                        const resultDateString =
-                          startedOnString || endedOnString
-                        const result = {
-                          assay: {
-                            code: _.get(jsonAstmResult, '3.4.value'),
-                          },
-                          externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${
-                            resultDateString || ''
-                          }`,
-                          consumableLot: _.get(jsonAstmResult, '3.6.value'),
-                          consumableSerial: _.get(jsonAstmResult, '3.7.value'),
-                          senderOperator: _.get(
-                            jsonAstmResult,
-                            '11.2.value',
-                            _.get(jsonAstmResult, '11.1.value')
-                          ),
-                          endedOn:
-                            this.parseTime(endedOnString) || messageSentOn,
-                          moduleSerial,
-                          resultData: {
-                            assayName: _.get(jsonAstmResult, '3.5.value'),
-                            priority: { S: 'STAT', R: 'Routine' }[
-                              _.get(jsonAstmOrder, '6.value')
-                            ],
-                            resultType: {
-                              F: 'Final Result',
-                              P: 'Preliminary Result',
-                              I: 'Interpretation of Final Result',
-                            }[_.get(jsonAstmResult, '3.9.value')],
-                            referenceRanges: _.get(jsonAstmResult, '6.value'),
-                            abnormalFlags: this.arrayFromPossibleRepeatedASTMValue(
-                              jsonAstmResult,
-                              '7'
-                            ).map(abnormalFlag => abnormalFlag.value),
-                            resultText: _.get(jsonAstmResult, '4.value'),
-                            resultUnit: _.get(jsonAstmResult, '5.value'),
-                            resultStatus: {
-                              F: 'Final Result',
-                              R: 'Previously Transmitted Result',
-                            }[_.get(jsonAstmResult, '9.value')],
-                            orderOperatorId: _.get(
-                              jsonAstmResult,
-                              '11.1.value'
-                            ),
-                            controlConsumableLotNumber: _.get(
-                              jsonAstmResult,
-                              '3.8.value'
-                            ),
-                            ...this.commentsFromJsonAstmRecord(jsonAstmResult),
-                          },
-                          patientData,
-                        }
-                        const mergedResultData = _.mergeWith(
-                          _.mergeWith(
-                            _.cloneDeep(resultHeader),
-                            _.cloneDeep(testOrder),
-                            mergeDeep
-                          ),
-                          result,
-                          mergeDeep
-                        )
-                        results = [...results, mergedResultData]
-                        return results
-                      },
-                      []
-                    ),
-                  ]
+                  const moduleSerial = _.get(jsonAstmResult, '14.value')
+                  const endedOnString = _.get(jsonAstmResult, '13.value')
+                  const resultDateString = startedOnString || endedOnString
+                  const result = {
+                    assay: {
+                      code: _.get(jsonAstmResult, '3.4.value'),
+                    },
+                    externalId: `${sampleId}|${moduleSerial}|${carouselId}|${wellPosition}|${resultDateString || ''}`,
+                    consumableLot: _.get(jsonAstmResult, '3.6.value'),
+                    consumableSerial: _.get(jsonAstmResult, '3.7.value'),
+                    senderOperator: _.get(jsonAstmResult, '11.2.value', _.get(jsonAstmResult, '11.1.value')),
+                    endedOn: this.parseTime(endedOnString) || messageSentOn,
+                    moduleSerial,
+                    resultData: {
+                      assayName: _.get(jsonAstmResult, '3.5.value'),
+                      priority: { S: 'STAT', R: 'Routine' }[_.get(jsonAstmOrder, '6.value')],
+                      resultType: {
+                        F: 'Final Result',
+                        P: 'Preliminary Result',
+                        I: 'Interpretation of Final Result',
+                      }[_.get(jsonAstmResult, '3.9.value')],
+                      referenceRanges: _.get(jsonAstmResult, '6.value'),
+                      abnormalFlags: this.arrayFromPossibleRepeatedASTMValue(jsonAstmResult, '7').map(
+                        abnormalFlag => abnormalFlag.value
+                      ),
+                      resultText: _.get(jsonAstmResult, '4.value'),
+                      resultUnit: _.get(jsonAstmResult, '5.value'),
+                      resultStatus: {
+                        F: 'Final Result',
+                        R: 'Previously Transmitted Result',
+                      }[_.get(jsonAstmResult, '9.value')],
+                      orderOperatorId: _.get(jsonAstmResult, '11.1.value'),
+                      controlConsumableLotNumber: _.get(jsonAstmResult, '3.8.value'),
+                      ...this.commentsFromJsonAstmRecord(jsonAstmResult),
+                    },
+                    patientData,
+                  }
+                  const mergedResultData = _.mergeWith(
+                    _.mergeWith(_.cloneDeep(resultHeader), _.cloneDeep(testOrder), mergeDeep),
+                    result,
+                    mergeDeep
+                  )
+                  results = [...results, mergedResultData]
                   return results
-                },
-                []
-              ),
-            ]
-            return results
-          },
-          []
-        ),
+                }, []),
+              ]
+              return results
+            }, []),
+          ]
+          return results
+        }, []),
       ]
       return results
     }, [])
   }
 
-  quantitativePositiveControlsPassed(
-    highPositiveControlFinalResult,
-    lowPositiveControlFinalResult
-  ) {
+  quantitativePositiveControlsPassed(highPositiveControlFinalResult, lowPositiveControlFinalResult) {
     return this.bothResultsAreNumericAndFirstResultIsHigherThanTheSecond(
       highPositiveControlFinalResult,
       lowPositiveControlFinalResult
     )
   }
 
-  qualitativePositiveControlsPassed(
-    positiveControlFinalResult,
-    positiveControlPreliminaryResult
-  ) {
+  qualitativePositiveControlsPassed(positiveControlFinalResult, positiveControlPreliminaryResult) {
     return this.bothResultsAreNumericAndFirstResultIsHigherThanTheSecond(
       positiveControlFinalResult,
       positiveControlPreliminaryResult
@@ -601,27 +498,17 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
   }
 
   negativeControlPassed(negativeControlFinalResult) {
-    return ['Not detected', 'Negative'].includes(
-      negativeControlFinalResult.resultData.resultText
-    )
+    return ['Not detected', 'Negative'].includes(negativeControlFinalResult.resultData.resultText)
   }
 
   errorDetailsFromResult(finalResult, preliminaryResult) {
     const testExceptionComments = _.uniq([
-      ..._.get(finalResult, 'resultData.comments', []).filter(
-        comment => comment.type === 'Exception String'
-      ),
-      ..._.get(preliminaryResult, 'resultData.comments', []).filter(
-        comment => comment.type === 'Exception String'
-      ),
+      ..._.get(finalResult, 'resultData.comments', []).filter(comment => comment.type === 'Exception String'),
+      ..._.get(preliminaryResult, 'resultData.comments', []).filter(comment => comment.type === 'Exception String'),
     ])
-    const testExceptionCodes = _.uniq(
-      testExceptionComments.map(comment => comment.text.split(':')[0].trim())
-    )
+    const testExceptionCodes = _.uniq(testExceptionComments.map(comment => comment.text.split(':')[0].trim()))
     const errorCode = testExceptionCodes.join(',')
-    const errorNotes = _.uniq(
-      testExceptionComments.map(comment => comment.text)
-    ).join('\n')
+    const errorNotes = _.uniq(testExceptionComments.map(comment => comment.text)).join('\n')
     const errorDetails = {}
     if (errorCode) {
       errorDetails.errorCode = errorCode
@@ -636,20 +523,14 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     return {
       reportType: _.get(finalResult, 'resultData.reportType'),
       finalResultAbnormalFlags: _.get(finalResult, 'resultData.abnormalFlags'),
-      preliminaryResultAbnormalFlags: _.get(
-        preliminaryResult,
-        'resultData.abnormalFlags'
-      ),
+      preliminaryResultAbnormalFlags: _.get(preliminaryResult, 'resultData.abnormalFlags'),
       result: _.get(finalResult, 'resultData.resultText'),
       moduleName: _.get(finalResult, 'moduleName'),
       assayCode: _.get(finalResult, 'assay.code'),
       assayName: _.get(finalResult, 'resultData.assayName'),
       consumableLot: _.get(finalResult, 'consumableLot'),
       consumableSerial: _.get(finalResult, 'consumableSerial'),
-      controlConsumableLotNumber: _.get(
-        finalResult,
-        'resultData.controlConsumableLotNumber'
-      ),
+      controlConsumableLotNumber: _.get(finalResult, 'resultData.controlConsumableLotNumber'),
       endedOn: _.get(finalResult, 'endedOn'),
       moduleSerial: _.get(finalResult, 'moduleSerial'),
       orderOperatorId: _.get(finalResult, 'resultData.orderOperatorId'),
@@ -660,116 +541,103 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
   }
 
   convertQcResultDetailsToQcSummary(qualityControlResults, assayMappings) {
-    return _.uniq(
-      qualityControlResults.map(
-        qualityControlResult => qualityControlResult.assay.code
-      )
-    ).reduce((accumulator, assayCode) => {
-      const finalResults = qualityControlResults.filter(
-        qualityControlResult =>
-          qualityControlResult.assay.code === assayCode &&
-          qualityControlResult.resultData.resultType === 'Final Result'
-      )
-      const preliminaryResults = qualityControlResults.filter(
-        qualityControlResult =>
-          qualityControlResult.assay.code === assayCode &&
-          qualityControlResult.resultData.resultType === 'Preliminary Result'
-      )
-      const negativeQualityControlFinalResult = finalResults.find(
-        qualityControlResult =>
-          qualityControlResult.sample.externalId ===
-          assayMappings[assayCode].negativeControlSpecimenId
-      )
-      const negativeQualityControlPreliminaryResult = preliminaryResults.find(
-        qualityControlResult =>
-          qualityControlResult.sample.externalId ===
-          assayMappings[assayCode].negativeControlSpecimenId
-      )
-      if (assayMappings[assayCode].isQuantitative) {
-        const highPositiveQualityControlFinalResult = finalResults.find(
+    return _.uniq(qualityControlResults.map(qualityControlResult => qualityControlResult.assay.code)).reduce(
+      (accumulator, assayCode) => {
+        const finalResults = qualityControlResults.filter(
           qualityControlResult =>
-            qualityControlResult.sample.externalId ===
-            assayMappings[assayCode].highPositiveControlSpecimenId
+            qualityControlResult.assay.code === assayCode &&
+            qualityControlResult.resultData.resultType === 'Final Result'
         )
-        const highPositiveQualityControlPreliminaryResult = preliminaryResults.find(
+        const preliminaryResults = qualityControlResults.filter(
           qualityControlResult =>
-            qualityControlResult.sample.externalId ===
-            assayMappings[assayCode].highPositiveControlSpecimenId
+            qualityControlResult.assay.code === assayCode &&
+            qualityControlResult.resultData.resultType === 'Preliminary Result'
         )
-        const lowPositiveQualityControlFinalResult = finalResults.find(
+        const negativeQualityControlFinalResult = finalResults.find(
           qualityControlResult =>
-            qualityControlResult.sample.externalId ===
-            assayMappings[assayCode].lowPositiveControlSpecimenId
+            qualityControlResult.sample.externalId === assayMappings[assayCode].negativeControlSpecimenId
         )
-        const lowPositiveQualityControlPreliminaryResult = preliminaryResults.find(
+        const negativeQualityControlPreliminaryResult = preliminaryResults.find(
           qualityControlResult =>
-            qualityControlResult.sample.externalId ===
-            assayMappings[assayCode].lowPositiveControlSpecimenId
+            qualityControlResult.sample.externalId === assayMappings[assayCode].negativeControlSpecimenId
         )
-        const positiveControlPassed = this.quantitativePositiveControlsPassed(
-          highPositiveQualityControlFinalResult,
-          lowPositiveQualityControlFinalResult
-        )
-        accumulator[assayCode] = {
-          negativeControl: {
-            passed: this.negativeControlPassed(
-              negativeQualityControlFinalResult
-            ),
-            ...this.resultToQcSummaryResult(
-              negativeQualityControlFinalResult,
-              negativeQualityControlPreliminaryResult
-            ),
-          },
-          highPositiveControl: {
-            passed: positiveControlPassed,
-            ...this.resultToQcSummaryResult(
-              highPositiveQualityControlFinalResult,
-              highPositiveQualityControlPreliminaryResult
-            ),
-          },
-          lowPositiveControl: {
-            passed: positiveControlPassed,
-            ...this.resultToQcSummaryResult(
-              lowPositiveQualityControlFinalResult,
-              lowPositiveQualityControlPreliminaryResult
-            ),
-          },
+        if (assayMappings[assayCode].isQuantitative) {
+          const highPositiveQualityControlFinalResult = finalResults.find(
+            qualityControlResult =>
+              qualityControlResult.sample.externalId === assayMappings[assayCode].highPositiveControlSpecimenId
+          )
+          const highPositiveQualityControlPreliminaryResult = preliminaryResults.find(
+            qualityControlResult =>
+              qualityControlResult.sample.externalId === assayMappings[assayCode].highPositiveControlSpecimenId
+          )
+          const lowPositiveQualityControlFinalResult = finalResults.find(
+            qualityControlResult =>
+              qualityControlResult.sample.externalId === assayMappings[assayCode].lowPositiveControlSpecimenId
+          )
+          const lowPositiveQualityControlPreliminaryResult = preliminaryResults.find(
+            qualityControlResult =>
+              qualityControlResult.sample.externalId === assayMappings[assayCode].lowPositiveControlSpecimenId
+          )
+          const positiveControlPassed = this.quantitativePositiveControlsPassed(
+            highPositiveQualityControlFinalResult,
+            lowPositiveQualityControlFinalResult
+          )
+          accumulator[assayCode] = {
+            negativeControl: {
+              passed: this.negativeControlPassed(negativeQualityControlFinalResult),
+              ...this.resultToQcSummaryResult(
+                negativeQualityControlFinalResult,
+                negativeQualityControlPreliminaryResult
+              ),
+            },
+            highPositiveControl: {
+              passed: positiveControlPassed,
+              ...this.resultToQcSummaryResult(
+                highPositiveQualityControlFinalResult,
+                highPositiveQualityControlPreliminaryResult
+              ),
+            },
+            lowPositiveControl: {
+              passed: positiveControlPassed,
+              ...this.resultToQcSummaryResult(
+                lowPositiveQualityControlFinalResult,
+                lowPositiveQualityControlPreliminaryResult
+              ),
+            },
+          }
+        } else {
+          const positiveQualityControlFinalResult = finalResults.find(
+            qualityControlResult =>
+              qualityControlResult.sample.externalId === assayMappings[assayCode].positiveControlSpecimenId
+          )
+          const positiveQualityControlPreliminaryResult = preliminaryResults.find(
+            qualityControlResult =>
+              qualityControlResult.sample.externalId === assayMappings[assayCode].positiveControlSpecimenId
+          )
+          accumulator[assayCode] = {
+            negativeControl: {
+              passed: this.negativeControlPassed(negativeQualityControlFinalResult),
+              ...this.resultToQcSummaryResult(
+                negativeQualityControlFinalResult,
+                negativeQualityControlPreliminaryResult
+              ),
+            },
+            positiveControl: {
+              passed: this.qualitativePositiveControlsPassed(
+                positiveQualityControlFinalResult,
+                positiveQualityControlPreliminaryResult
+              ),
+              ...this.resultToQcSummaryResult(
+                positiveQualityControlFinalResult,
+                positiveQualityControlPreliminaryResult
+              ),
+            },
+          }
         }
-      } else {
-        const positiveQualityControlFinalResult = finalResults.find(
-          qualityControlResult =>
-            qualityControlResult.sample.externalId ===
-            assayMappings[assayCode].positiveControlSpecimenId
-        )
-        const positiveQualityControlPreliminaryResult = preliminaryResults.find(
-          qualityControlResult =>
-            qualityControlResult.sample.externalId ===
-            assayMappings[assayCode].positiveControlSpecimenId
-        )
-        accumulator[assayCode] = {
-          negativeControl: {
-            passed: this.negativeControlPassed(
-              negativeQualityControlFinalResult
-            ),
-            ...this.resultToQcSummaryResult(
-              negativeQualityControlFinalResult,
-              negativeQualityControlPreliminaryResult
-            ),
-          },
-          positiveControl: {
-            passed: this.qualitativePositiveControlsPassed(
-              positiveQualityControlFinalResult,
-              positiveQualityControlPreliminaryResult
-            ),
-            ...this.resultToQcSummaryResult(
-              positiveQualityControlFinalResult,
-              positiveQualityControlPreliminaryResult
-            ),
-          },
-        }
-      }
-      return accumulator
-    }, {})
+        return accumulator
+      },
+      {}
+    )
   }
 
   async getOrCreateSample(resultsWithSameId, deviceSiteId, knex) {
@@ -780,24 +648,16 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       const existingSamples = await knex('Sample as s')
         .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
         .where('s.externalId', result.sample.externalId)
-        .select(
-          's.id',
-          's.collectedOn',
-          's.originSiteId',
-          'st.externalId as sampleTypeExternalId'
-        )
+        .select('s.id', 's.collectedOn', 's.originSiteId', 'st.externalId as sampleTypeExternalId')
       if (!_.isEmpty(existingSamples)) {
         if (existingSamples.length === 1) {
           ;[sample] = existingSamples
         }
         if (_.isEmpty(sample)) {
-          const existingSamplesOfTypeFromDeviceSiteId = _.filter(
-            existingSamples,
-            {
-              sampleTypeExternalId: result.sample.sampleTypeExternalId,
-              originSiteId: deviceSiteId,
-            }
-          )
+          const existingSamplesOfTypeFromDeviceSiteId = _.filter(existingSamples, {
+            sampleTypeExternalId: result.sample.sampleTypeExternalId,
+            originSiteId: deviceSiteId,
+          })
           if (existingSamplesOfTypeFromDeviceSiteId.length === 1) {
             ;[sample] = existingSamplesOfTypeFromDeviceSiteId
           }
@@ -821,10 +681,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         const [sampleId] = await knex('Sample').insert(sample)
         sample.id = sampleId
       } else {
-        if (
-          result.sample.collectedOn &&
-          !dateEqual(sample.collectedOn, result.sample.collectedOn)
-        ) {
+        if (result.sample.collectedOn && !dateEqual(sample.collectedOn, result.sample.collectedOn)) {
           sample.collectedOn = result.sample.collectedOn
         }
         if (!sample.originSiteId && deviceSiteId) {
@@ -857,31 +714,21 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     if (_.isEmpty(resultsWithSameId)) {
       return {}
     }
-    const finalResult = resultsWithSameId.find(
-      result => result.resultData.resultType === 'Final Result'
-    )
+    const finalResult = resultsWithSameId.find(result => result.resultData.resultType === 'Final Result')
     const qualityControlSummary = _.get(
       qualityControlSummaries,
       [finalResult.sampleRunNumber, finalResult.assay.code],
       {}
     )
     const passedQualityControl =
-      !_.isEmpty(qualityControlSummary) &&
-      Object.values(qualityControlSummary).every(control => control.passed)
-    const cycleNumberResult = resultsWithSameId.find(
-      result => result.resultData.resultType === 'Preliminary Result'
-    )
+      !_.isEmpty(qualityControlSummary) && Object.values(qualityControlSummary).every(control => control.passed)
+    const cycleNumberResult = resultsWithSameId.find(result => result.resultData.resultType === 'Preliminary Result')
     const interpretationResult = resultsWithSameId.find(
-      result =>
-        result.resultData.resultType === 'Interpretation of Final Result'
+      result => result.resultData.resultType === 'Interpretation of Final Result'
     )
     const result = _.mergeWith(
-      _.cloneDeep(
-        _.omit(cycleNumberResult || {}, ['device', 'sample', 'assay'])
-      ),
-      _.cloneDeep(
-        _.omit(interpretationResult || {}, ['device', 'sample', 'assay'])
-      ),
+      _.cloneDeep(_.omit(cycleNumberResult || {}, ['device', 'sample', 'assay'])),
+      _.cloneDeep(_.omit(interpretationResult || {}, ['device', 'sample', 'assay'])),
       _.cloneDeep(_.omit(finalResult, ['device', 'sample', 'assay'])),
       {
         assayId: assayMappings[finalResult.assay.code].id,
@@ -894,10 +741,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         resultSourceId: resultSourceDiagnosticDeviceId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,
-        reportableSiteId:
-          sample.originSiteId ||
-          device.defaultReportableSiteId ||
-          device.siteId,
+        reportableSiteId: sample.originSiteId || device.defaultReportableSiteId || device.siteId,
         resultData: {
           passedQualityControl,
           qualityControlSummary,
@@ -908,40 +752,25 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     if (result.resultData.reportType !== 'Final Result') {
       result.resultCategory1 = resultCategories.Error
       result.resultCategory2 = null
-      const testExceptionComments = _.get(
-        result,
-        'resultData.comments',
-        []
-      ).filter(comment => comment.type === 'Exception String')
-      const testExceptionCodes = _.uniq(
-        testExceptionComments.map(comment => comment.text.split(':')[0].trim())
+      const testExceptionComments = _.get(result, 'resultData.comments', []).filter(
+        comment => comment.type === 'Exception String'
       )
+      const testExceptionCodes = _.uniq(testExceptionComments.map(comment => comment.text.split(':')[0].trim()))
       result.errorCode = [...testExceptionCodes].join(',')
-      result.errorNotes = _.uniq(
-        testExceptionComments.map(comment => comment.text)
-      ).join('\n')
+      result.errorNotes = _.uniq(testExceptionComments.map(comment => comment.text)).join('\n')
     } else if (!passedQualityControl) {
       result.resultCategory1 = resultCategories.Invalid
       result.resultCategory2 = null
     } else {
-      const resultCategoryMapping = _.get(assayMappings, [
-        finalResult.assay.code,
-        'resultCategories',
-      ])
-      const interpretationResultText = _.get(
-        interpretationResult,
-        'resultData.resultText',
-        ''
-      )
+      const resultCategoryMapping = _.get(assayMappings, [finalResult.assay.code, 'resultCategories'])
+      const interpretationResultText = _.get(interpretationResult, 'resultData.resultText', '')
       const interpretationResultCategoryId = interpretationResult
         ? _.get(resultCategoryMapping, ['I', interpretationResultText])
         : null
       const finalResultText = _.get(finalResult, 'resultData.resultText', '')
       const finalResultCategoryId =
         _.get(resultCategoryMapping, ['F', finalResultText]) ||
-        (isNumeric(finalResultText)
-          ? _.get(resultCategoryMapping, `F.Numeric`)
-          : undefined)
+        (isNumeric(finalResultText) ? _.get(resultCategoryMapping, `F.Numeric`) : undefined)
       if (interpretationResult) {
         result.resultCategory1 = interpretationResultCategoryId
         result.resultCategory2 = finalResultCategoryId
@@ -949,9 +778,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         result.resultCategory1 = finalResultCategoryId
       }
     }
-    result.notes = _.uniq(
-      (result.resultData.comments || []).map(comment => comment.text)
-    ).join('\n')
+    result.notes = _.uniq((result.resultData.comments || []).map(comment => comment.text)).join('\n')
     return result
   }
 
@@ -984,11 +811,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       resultTypePatientId
     )
     const resultWorkflowStatusId =
-      resultWorkflowStatuses[
-        result.resultCategory1 === resultCategories.Error
-          ? 'Error'
-          : 'Processed'
-      ]
+      resultWorkflowStatuses[result.resultCategory1 === resultCategories.Error ? 'Error' : 'Processed']
     return this.mergeResultRecord(result, resultWorkflowStatusId, utcNow, knex)
   }
 
@@ -1007,9 +830,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     sample,
     knex
   ) {
-    const orf1abGeneResults = resultsWithSameId.filter(
-      result => result.assay.code === 'Daan nCOVID-19 ORF LDA'
-    )
+    const orf1abGeneResults = resultsWithSameId.filter(result => result.assay.code === 'Daan nCOVID-19 ORF LDA')
     const orf1abGeneResult = this.convertASTMResultsWithSameIdAndAssayCodeToResult(
       orf1abGeneResults,
       sample,
@@ -1023,9 +844,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       resultSourceDiagnosticDeviceId,
       resultTypePatientId
     )
-    const nGeneResults = resultsWithSameId.filter(
-      result => result.assay.code === 'Daan Target N gene LDA'
-    )
+    const nGeneResults = resultsWithSameId.filter(result => result.assay.code === 'Daan Target N gene LDA')
     const nGeneResult = this.convertASTMResultsWithSameIdAndAssayCodeToResult(
       nGeneResults,
       sample,
@@ -1054,16 +873,14 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       resultDetails.resultCategory1 = resultCategories.Error
       resultDetails.resultCategory2 = null
       resultDetails.errorCode = _.uniq(
-        [
-          ...(orf1abGeneResult.errorCode || '').split(','),
-          ...(nGeneResult.errorCode || '').split(','),
-        ].filter(code => !!code)
+        [...(orf1abGeneResult.errorCode || '').split(','), ...(nGeneResult.errorCode || '').split(',')].filter(
+          code => !!code
+        )
       ).join(',')
       resultDetails.errorNotes = _.uniq(
-        [
-          ...(orf1abGeneResult.errorNotes || '').split('\n'),
-          ...(nGeneResult.errorNotes || '').split('\n'),
-        ].filter(note => !!note)
+        [...(orf1abGeneResult.errorNotes || '').split('\n'), ...(nGeneResult.errorNotes || '').split('\n')].filter(
+          note => !!note
+        )
       ).join('\n')
     } else if (
       orf1abGeneResult.resultCategory1 === resultCategories.Invalid ||
@@ -1071,36 +888,21 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     ) {
       resultDetails.resultCategory1 = resultCategories.Invalid
       resultDetails.resultCategory2 = null
-    } else if (
-      orf1abGeneResult.resultCategory1 !== nGeneResult.resultCategory1
-    ) {
+    } else if (orf1abGeneResult.resultCategory1 !== nGeneResult.resultCategory1) {
       resultDetails.resultCategory1 = resultCategories.Indeterminate
       resultDetails.resultCategory2 = null
     } else {
       resultDetails.resultCategory1 = orf1abGeneResult.resultCategory1
-      resultDetails.resultCategory2 =
-        orf1abGeneResult.resultCategory2 || nGeneResult.resultCategory2 || null
+      resultDetails.resultCategory2 = orf1abGeneResult.resultCategory2 || nGeneResult.resultCategory2 || null
     }
     const result = {
-      ..._.mergeWith(
-        _.cloneDeep(nGeneResult),
-        _.cloneDeep(orf1abGeneResult),
-        mergeDeep
-      ),
-      externalId:
-        _.get(orf1abGeneResult, 'externalId') ||
-        _.get(nGeneResult, 'externalId'),
+      ..._.mergeWith(_.cloneDeep(nGeneResult), _.cloneDeep(orf1abGeneResult), mergeDeep),
+      externalId: _.get(orf1abGeneResult, 'externalId') || _.get(nGeneResult, 'externalId'),
       ...resultDetails,
     }
     result.resultData.qualityControlSummary = {
-      'Daan nCOVID-19 ORF LDA': _.get(
-        orf1abGeneResult,
-        'resultData.qualityControlSummary'
-      ),
-      'Daan Target N gene LDA': _.get(
-        nGeneResult,
-        'resultData.qualityControlSummary'
-      ),
+      'Daan nCOVID-19 ORF LDA': _.get(orf1abGeneResult, 'resultData.qualityControlSummary'),
+      'Daan Target N gene LDA': _.get(nGeneResult, 'resultData.qualityControlSummary'),
     }
     if (
       !_.get(orf1abGeneResult, 'resultData.passedQualityControl') ||
@@ -1109,10 +911,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       result.resultData.passedQualityControl = false
     }
     result.notes = _.uniq(
-      [
-        ..._.get(orf1abGeneResult, 'notes', '').split('\n'),
-        ..._.get(nGeneResult, 'notes', '').split('\n'),
-      ].filter(note => !!note)
+      [..._.get(orf1abGeneResult, 'notes', '').split('\n'), ..._.get(nGeneResult, 'notes', '').split('\n')].filter(
+        note => !!note
+      )
     ).join('\n')
     return this.mergeResultRecord(result, resultWorkflowStatusId, utcNow, knex)
   }
@@ -1126,19 +927,13 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     if (existingResult) {
       result.id = existingResult.id
       existingResult.resultData = JSON.parse(existingResult.resultData || '{}')
-      existingResult.patientData = JSON.parse(
-        existingResult.patientData || '{}'
-      )
+      existingResult.patientData = JSON.parse(existingResult.patientData || '{}')
       existingResult.formData = JSON.parse(existingResult.formData || '{}')
       if (existingResult.notes) {
-        result.notes = _.uniq(
-          `${existingResult.notes}\n${result.notes}`.split('\n')
-        ).join('\n')
+        result.notes = _.uniq(`${existingResult.notes}\n${result.notes}`.split('\n')).join('\n')
       }
       const resultWorkflowStatusLog =
-        (await knex('ResultWorkflowLog')
-          .where('id', existingResult.resultWorkflowStatusLogId)
-          .first()) || {}
+        (await knex('ResultWorkflowLog').where('id', existingResult.resultWorkflowStatusLogId).first()) || {}
       if (
         [
           resultWorkflowStatuses.OK,
@@ -1148,9 +943,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           resultWorkflowStatuses.Processed,
         ].includes(resultWorkflowStatusLog.resultWorkflowStatusId)
       ) {
-        const [resultWorkflowStatusLogId] = await knex(
-          'ResultWorkflowLog'
-        ).insert({
+        const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
           resultId: existingResult.id,
           resultWorkflowStatusId,
           operator: result.senderOperator,
@@ -1165,34 +958,22 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         .where('id', result.id)
         .update({
           ...existingResult,
-          resultData: existingResult.resultData
-            ? JSON.stringify(existingResult.resultData)
-            : null,
-          patientData: existingResult.patientData
-            ? JSON.stringify(existingResult.patientData)
-            : null,
-          formData: existingResult.formData
-            ? JSON.stringify(existingResult.formData)
-            : null,
+          resultData: existingResult.resultData ? JSON.stringify(existingResult.resultData) : null,
+          patientData: existingResult.patientData ? JSON.stringify(existingResult.patientData) : null,
+          formData: existingResult.formData ? JSON.stringify(existingResult.formData) : null,
         })
     } else {
       result.createdOn = utcNow
       const [resultId] = await knex('Result').insert({
         ...result,
-        resultData: result.resultData
-          ? JSON.stringify(result.resultData)
-          : null,
-        patientData: result.patientData
-          ? JSON.stringify(result.patientData)
-          : null,
+        resultData: result.resultData ? JSON.stringify(result.resultData) : null,
+        patientData: result.patientData ? JSON.stringify(result.patientData) : null,
         formData: result.formData ? JSON.stringify(result.formData) : null,
       })
       result.id = resultId
     }
     if (!result.resultWorkflowStatusLogId) {
-      const [resultWorkflowStatusLogId] = await knex(
-        'ResultWorkflowLog'
-      ).insert({
+      const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
         resultId: result.id,
         resultWorkflowStatusId,
         operator: result.senderOperator,
@@ -1200,9 +981,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         changedOn: utcNow,
         createdOn: utcNow,
       })
-      await knex('Result')
-        .where('id', result.id)
-        .update({ resultWorkflowStatusLogId })
+      await knex('Result').where('id', result.id).update({ resultWorkflowStatusLogId })
     }
     return result
   }
@@ -1231,33 +1010,23 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       .map(parsedResult => _.get(parsedResult, 'assay.code'))
       .filter(assayCode => !Object.keys(assayMappings).includes(assayCode))
     if (!_.isEmpty(unknownAssayCodes)) {
-      throw Boom.badRequest(
-        `Unknown assay codes: ${_.uniq(unknownAssayCodes).join(', ')}`
-      )
+      throw Boom.badRequest(`Unknown assay codes: ${_.uniq(unknownAssayCodes).join(', ')}`)
     }
     const resultExternalIds = _.uniq(
       parsedResults
-        .filter(
-          parsedResult =>
-            _.get(parsedResult, 'resultData.actionCode') === 'Patient Result'
-        )
+        .filter(parsedResult => _.get(parsedResult, 'resultData.actionCode') === 'Patient Result')
         .map(parsedResult => parsedResult.externalId)
     )
 
     const qualityControlResults = parsedResults.filter(
-      parsedResult =>
-        _.get(parsedResult, 'resultData.actionCode') ===
-        'Quality Control Result'
+      parsedResult => _.get(parsedResult, 'resultData.actionCode') === 'Quality Control Result'
     )
 
     const qualityControlSummaries = _.uniq(
-      qualityControlResults.map(
-        qualityControlResult => qualityControlResult.sampleRunNumber
-      )
+      qualityControlResults.map(qualityControlResult => qualityControlResult.sampleRunNumber)
     ).reduce((qualityControlSummaries, sampleRunNumber) => {
       const qualityControlResultsForRun = qualityControlResults.filter(
-        qualityControlResult =>
-          qualityControlResult.sampleRunNumber === sampleRunNumber
+        qualityControlResult => qualityControlResult.sampleRunNumber === sampleRunNumber
       )
       const qualityControlSummariesForRun = this.convertQcResultDetailsToQcSummary(
         qualityControlResultsForRun,
@@ -1279,18 +1048,12 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
         configurationData: {
           comments: _.uniq(
             parsedResults
-              .filter(
-                parsedResult =>
-                  !_.isEmpty(_.get(parsedResult, 'device.comments'))
-              )
+              .filter(parsedResult => !_.isEmpty(_.get(parsedResult, 'device.comments')))
               .map(parsedResult => _.get(parsedResult, 'device.comments'))
           ),
           enquiries: _.uniq(
             parsedResults
-              .filter(
-                parsedResult =>
-                  !_.isEmpty(_.get(parsedResult, 'device.enquiries'))
-              )
+              .filter(parsedResult => !_.isEmpty(_.get(parsedResult, 'device.enquiries')))
               .map(parsedResult => _.get(parsedResult, 'device.enquiries'))
           ),
         },
@@ -1299,18 +1062,11 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
     )
 
     await transact(async knex => {
-      const deviceApiKey =
-        (await knex('DeviceApiKey')
-          .where('token', auth.credentials.token)
-          .first()) || {}
+      const deviceApiKey = (await knex('DeviceApiKey').where('token', auth.credentials.token).first()) || {}
       if (!deviceApiKey.deviceId) {
-        throw Boom.badRequest(
-          'Invalid device API key: Cannot determine which device this came from'
-        )
+        throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
       }
-      const deviceRecord = await knex('Device')
-        .where('id', deviceApiKey.deviceId)
-        .first()
+      const deviceRecord = await knex('Device').where('id', deviceApiKey.deviceId).first()
       const device = {
         ...deviceRecord,
         configurationData: JSON.parse(deviceRecord.configurationData),
@@ -1321,16 +1077,12 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       if (deviceDetailsInPayload.lastSeenOn >= device.lastSeenOn) {
         const deviceUpdates = _.mergeWith(
           _.cloneDeep(device),
-          _.cloneDeep(
-            _.omit(deviceDetailsInPayload, ['comments', 'enquiries', 'rawData'])
-          ),
+          _.cloneDeep(_.omit(deviceDetailsInPayload, ['comments', 'enquiries', 'rawData'])),
           { updatedOn: now },
           mergeDeep
         )
         if (!_.isNil(deviceUpdates.configurationData)) {
-          deviceUpdates.configurationData = JSON.stringify(
-            deviceUpdates.configurationData
-          )
+          deviceUpdates.configurationData = JSON.stringify(deviceUpdates.configurationData)
         }
         await knex('Device').where('id', device.id).update(deviceUpdates)
         const [configDeviceLogId] = await knex('DeviceLog').insert({
@@ -1341,66 +1093,43 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           senderIp: remoteAddress,
           rawMessage: deviceDetailsInPayload.rawData,
         })
-        this.response.deviceLogIds = [
-          ...this.response.deviceLogIds,
-          configDeviceLogId,
-        ]
+        this.response.deviceLogIds = [...this.response.deviceLogIds, configDeviceLogId]
         if (!_.isEmpty(deviceDetailsInPayload.comments)) {
-          const commentDeviceLogIds = await Promise.each(
-            deviceDetailsInPayload.comments,
-            async comment => {
-              const [commentDeviceLogId] = await knex('DeviceLog').insert({
-                deviceId: device.id,
-                source: this.name,
-                createdOn: now,
-                senderIp: remoteAddress,
-                rawMessage: comment.rawData,
-              })
-              return commentDeviceLogId
-            }
-          )
-          this.response.deviceLogIds = [
-            ...this.response.deviceLogIds,
-            ...commentDeviceLogIds,
-          ]
+          const commentDeviceLogIds = await Promise.each(deviceDetailsInPayload.comments, async comment => {
+            const [commentDeviceLogId] = await knex('DeviceLog').insert({
+              deviceId: device.id,
+              source: this.name,
+              createdOn: now,
+              senderIp: remoteAddress,
+              rawMessage: comment.rawData,
+            })
+            return commentDeviceLogId
+          })
+          this.response.deviceLogIds = [...this.response.deviceLogIds, ...commentDeviceLogIds]
         }
         if (!_.isEmpty(deviceDetailsInPayload.enquiries)) {
-          const enquiryDeviceLogIds = await Promise.each(
-            deviceDetailsInPayload.enquiries,
-            async comment => {
-              const [enquiryDeviceLogId] = await knex('DeviceLog').insert({
-                deviceId: device.id,
-                source: this.name,
-                createdOn: now,
-                senderIp: remoteAddress,
-                rawMessage: comment.rawData,
-              })
-              return enquiryDeviceLogId
-            }
-          )
-          this.response.deviceLogIds = [
-            ...this.response.deviceLogIds,
-            ...enquiryDeviceLogIds,
-          ]
+          const enquiryDeviceLogIds = await Promise.each(deviceDetailsInPayload.enquiries, async comment => {
+            const [enquiryDeviceLogId] = await knex('DeviceLog').insert({
+              deviceId: device.id,
+              source: this.name,
+              createdOn: now,
+              senderIp: remoteAddress,
+              rawMessage: comment.rawData,
+            })
+            return enquiryDeviceLogId
+          })
+          this.response.deviceLogIds = [...this.response.deviceLogIds, ...enquiryDeviceLogIds]
         }
       }
       this.messageContext.dispatch(deviceSeen(device.id))
       await Promise.each(resultExternalIds, async resultExternalId => {
-        const resultsWithSameId = parsedResults.filter(
-          parsedResult => parsedResult.externalId === resultExternalId
-        )
+        const resultsWithSameId = parsedResults.filter(parsedResult => parsedResult.externalId === resultExternalId)
         const assayCode = _.get(resultsWithSameId, '[0]assay.code')
-        const resultSourceDiagnosticDeviceId = await resultSourceToId(
-          'DiagnosticDevice'
-        )
+        const resultSourceDiagnosticDeviceId = await resultSourceToId('DiagnosticDevice')
         const resultTypePatientId = await resultTypeToId('Patient')
         const resultCategories = await allResultCategoryToId()
         const resultWorkflowStatuses = await allResultWorkflowStatusToId()
-        const sample = await this.getOrCreateSample(
-          resultsWithSameId,
-          device.siteId,
-          knex
-        )
+        const sample = await this.getOrCreateSample(resultsWithSameId, device.siteId, knex)
         const processResult = _.get(assayMappings, [assayCode, 'processResult'])
         const result = await processResult(
           resultsWithSameId,
@@ -1426,14 +1155,9 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
           resultId: result.id,
         })
         if (result.id) {
-          this.messageContext.dispatch(
-            resultLogged(result.id, resultDeviceLogId)
-          )
+          this.messageContext.dispatch(resultLogged(result.id, resultDeviceLogId))
         }
-        this.response.deviceLogIds = [
-          ...this.response.deviceLogIds,
-          resultDeviceLogId,
-        ]
+        this.response.deviceLogIds = [...this.response.deviceLogIds, resultDeviceLogId]
         // TODO: Inventory, reduce reagent and control reagent
       })
     })

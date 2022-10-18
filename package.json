@@ -1,0 +1,38 @@
+{
+  "name": "aspect",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:SystemOneId/aspect.git",
+  "devDependencies": {
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "lodash": "^4.17.21",
+    "make-runnable": "^1.3.10",
+    "prettier": "^2.7.1"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "start:api": "yarn --cwd ./api start",
+    "start:api:fresh": "yarn --cwd ./api start:fresh",
+    "start:web": "yarn --cwd ./web start",
+    "start:web:fresh": "yarn --cwd ./web start:fresh",
+    "actions:api": "yarn --cwd ./api start:ci",
+    "actions": "yarn actions:api",
+    "start:api:install": "yarn --cwd ./api install",
+    "start:api:seed": "yarn --cwd ./api db:reseedCI",
+    "start:api:bg": "yarn --cwd ./api start:background:pm2",
+    "api:lint": "yarn --cwd ./api lint",
+    "api:contract": "yarn --cwd ./api mocha:contract:ci",
+    "api:unit": "yarn --cwd ./api test:unit:ci",
+    "stop:api:bg": "yarn --cwd ./api stop:background:pm2",
+    "start:web:install": "yarn --cwd ./web install",
+    "start:web:server": "yarn --cwd ./web start:ci",
+    "web:test": "yarn --cwd ./web test:ci",
+    "web:lint": "yarn --cwd ./web lint",
+    "act": "act pull_request -P ubuntu-latest=node:14"
+  }
+}

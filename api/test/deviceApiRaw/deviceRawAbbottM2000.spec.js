@@ -1,4 +1,5 @@
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const path = require('path')
 const _ = require('lodash')
 const { convertToTimeZone } = require('date-fns-timezone')
@@ -10,14 +11,9 @@ const { waitForIdle } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
-const {
-  assayToId,
-  resultTypeToId,
-  resultSourceToId,
-  resultCategoryToId,
-} = require('../../src/shared/dictionary')
+const { assayToId, resultTypeToId, resultSourceToId, resultCategoryToId } = require('../../src/shared/dictionary')
 
 describe('Device API Raw routes for Abbott M2000', () => {
   let latestResultIdBeforeTests
@@ -33,14 +29,8 @@ describe('Device API Raw routes for Abbott M2000', () => {
   before(async () => {
     const now = new Date()
     const { id: userId } = await knex('User').first('id')
-    const abbottM2000DeviceType = await knex
-      .from('DeviceType')
-      .where('externalId', 'AbbottM2000')
-      .first()
-    const partner = await knex
-      .from('Partner')
-      .where('name', 'Partner One')
-      .first()
+    const abbottM2000DeviceType = await knex.from('DeviceType').where('externalId', 'AbbottM2000').first()
+    const partner = await knex.from('Partner').where('name', 'Partner One').first()
     const geography = await knex
       .from('Country as c')
       .join('Geography as g', 'g.countryId', 'c.id')
@@ -48,10 +38,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
       .andWhere('g.stateId', null)
       .andWhere('g.lgaId', null)
       .first('g.*')
-    const approvedDeviceApproval = await knex
-      .from('DeviceApproval')
-      .where('token', 'approved')
-      .first()
+    const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
     const deviceCapacity = await knex('DeviceCapacity')
       .where({ deviceTypeId: abbottM2000DeviceType.id })
       .where({ partnerId: partner.id })
@@ -97,25 +84,19 @@ describe('Device API Raw routes for Abbott M2000', () => {
       updatedOn: now,
       updatedBy: userId,
     })
-    ;({ id: latestSampleIdBeforeTests } = await knex('Sample')
-      .max('id as id')
-      .first())
-    ;({ id: latestResultIdBeforeTests } = await knex('Result')
-      .max('id as id')
-      .first())
-    ;({ id: latestCaseIdBeforeTests } = await knex('PatientCase')
-      .max('id as id')
-      .first())
-    ;({ id: latestPatientIdBeforeTests } = await knex('Patient')
-      .max('id as id')
-      .first())
+    ;({ id: latestSampleIdBeforeTests } = await knex('Sample').max('id as id').first())
+    ;({ id: latestResultIdBeforeTests } = await knex('Result').max('id as id').first())
+    ;({ id: latestCaseIdBeforeTests } = await knex('PatientCase').max('id as id').first())
+    ;({ id: latestPatientIdBeforeTests } = await knex('Patient').max('id as id').first())
   })
 
   after(async () => {
     await waitAsyncComplete()
-    const { id: deviceApiKeyId, deviceId, siteId } = await knex(
-      'DeviceApiKey as dak'
-    )
+    const {
+      id: deviceApiKeyId,
+      deviceId,
+      siteId,
+    } = await knex('DeviceApiKey as dak')
       .leftJoin('Device as d', 'dak.deviceId', 'd.id')
       .where('dak.token', validApiKeyToken)
       .first('dak.id', 'dak.deviceId', 'd.siteId')
@@ -128,30 +109,19 @@ describe('Device API Raw routes for Abbott M2000', () => {
           .where('r.deviceId', deviceId)
           .pluck('generatedResultId as id')
       })
-    const opIds = await knex('DeviceOperation')
-      .where('deviceId', deviceId)
-      .pluck('id')
+    const opIds = await knex('DeviceOperation').where('deviceId', deviceId).pluck('id')
     const issueIds = await knex('Issue').where('deviceId', deviceId).pluck('id')
     await knex('DeviceApprovalLog').where('deviceId', deviceId).delete()
-    await knex('DeviceLog')
-      .where('deviceId', deviceId)
-      .orWhereIn('resultId', resultIds)
-      .delete()
+    await knex('DeviceLog').where('deviceId', deviceId).orWhereIn('resultId', resultIds).delete()
     await knex('DeviceOperation').whereIn('id', opIds).delete()
     await knex('FactDeviceFlag').where('deviceId', deviceId).delete()
     await knex('DeviceSiteHistory').where('deviceId', deviceId).delete()
     await knex('FactResultsDevice').where('deviceId', deviceId).delete()
     await knex('FactResultsDeviceByAssay').where('deviceId', deviceId).delete()
-    await knex('FactResultsDeviceByCategory1')
-      .where('deviceId', deviceId)
-      .delete()
-    await knex('FactResultsDeviceByCategory1And2')
-      .where('deviceId', deviceId)
-      .delete()
+    await knex('FactResultsDeviceByCategory1').where('deviceId', deviceId).delete()
+    await knex('FactResultsDeviceByCategory1And2').where('deviceId', deviceId).delete()
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
-    await knex('ResultQualityControlLog')
-      .whereIn('resultId', resultIds)
-      .delete()
+    await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
     await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
     await knex('ResultGeneratedResult')
       .whereIn('sourceResultId', resultIds)
@@ -159,33 +129,24 @@ describe('Device API Raw routes for Abbott M2000', () => {
       .delete()
     await knex('ResultTag').whereIn('resultId', resultIds).delete()
     await knex('Result').whereIn('id', resultIds).delete()
-    const sampleIds = await knex('Result')
-      .whereIn('id', resultIds)
-      .pluck('sampleId')
+    const sampleIds = await knex('Result').whereIn('id', resultIds).pluck('sampleId')
     await knex('Sample').whereIn('id', sampleIds).delete()
     await knex('Sample').where('originSiteId', siteId).delete()
     await knex('DeviceApiRaw').where({ deviceApiKeyId }).delete()
-    await knex('DeviceApiKey')
-      .where('token', validApiKeyToken)
-      .orWhere('deviceId', deviceId)
-      .delete()
+    await knex('DeviceApiKey').where('token', validApiKeyToken).orWhere('deviceId', deviceId).delete()
     await knex('Device').where('id', deviceId).delete()
     await knex('Site').where('id', siteId).delete()
     const inventoryItemIds = await knex('InventoryItem as ii')
       .where('ii.siteId', siteId)
       .distinct('ii.id')
       .pluck('ii.id')
-    await knex('InventoryLog')
-      .whereIn('inventoryItemId', inventoryItemIds)
-      .delete()
+    await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
     await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
     await knex('IssueEvent')
       .whereIn('issueId', issueIds)
       .orWhere(function () {
         if (resultIds != null && resultIds.length > 0) {
-          this.whereRaw(
-            `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
-          )
+          this.whereRaw(`JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`)
         }
       })
       .delete()
@@ -266,10 +227,7 @@ aa.`
   })
 
   it('should parse the ASTM PKL messages and save the results in the database', async () => {
-    const payload = await readTextFile(
-      path.join(__dirname, 'abbottM2000DbsHivVl.pkl'),
-      'utf8'
-    )
+    const payload = await readTextFile(path.join(__dirname, 'abbottM2000DbsHivVl.pkl'), 'utf8')
 
     const response = await server
       .post(deviceApiRawPath)
@@ -280,14 +238,10 @@ aa.`
 
     assert.equal(response.body.deviceId, abbottM2000DeviceId)
     // make sure that result IDs were set in the device log entries
-    const deviceLogs = await knex('DeviceLog')
-      .whereIn('id', response.body.deviceLogIds)
-      .select()
+    const deviceLogs = await knex('DeviceLog').whereIn('id', response.body.deviceLogIds).select()
     // Result update/insert device logs
     const resultIds = _.uniq(
-      deviceLogs
-        .filter(deviceLog => !_.isNull(deviceLog.resultId))
-        .map(deviceLog => deviceLog.resultId)
+      deviceLogs.filter(deviceLog => !_.isNull(deviceLog.resultId)).map(deviceLog => deviceLog.resultId)
     )
     expect(resultIds).to.have.lengthOf.above(1)
     expect(resultIds).to.have.lengthOf(93)
@@ -323,10 +277,7 @@ aa.`
         expect(result.consumableSerial).to.equal('11176551')
       }
       expect(result.senderVersion).to.equal('1')
-      expect(result.updatedOn.getTime()).to.be.closeTo(
-        new Date().getTime(),
-        10000
-      )
+      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
       const resultData = JSON.parse(result.resultData)
       expect(resultData).to.containSubset({
         typeOfMessage: 'Production',
@@ -394,13 +345,8 @@ aa.`
   })
 
   it('should parse the ASTM RAW messages from an HIV Plasma VL plate, using HIV 0.2ml reagent protocol, and save the results in the database', async () => {
-    const payload = await readTextFile(
-      path.join(__dirname, 'abbottM2000PlasmaHivVlRaw.pkl'),
-      'utf8'
-    )
-    let patientCase = await knex('PatientCase')
-      .where('externalId', '36008/19')
-      .first()
+    const payload = await readTextFile(path.join(__dirname, 'abbottM2000PlasmaHivVlRaw.pkl'), 'utf8')
+    let patientCase = await knex('PatientCase').where('externalId', '36008/19').first()
     assert.isNotOk(patientCase)
     let patient = await knex('Patient').where('externalId', '36008/19').first()
     assert.isNotOk(patient)
@@ -413,14 +359,10 @@ aa.`
 
     assert.equal(response.body.deviceId, abbottM2000DeviceId)
     // make sure that result IDs were set in the device log entries
-    const deviceLogs = await knex('DeviceLog')
-      .whereIn('id', response.body.deviceLogIds)
-      .select()
+    const deviceLogs = await knex('DeviceLog').whereIn('id', response.body.deviceLogIds).select()
     // Result update/insert device logs
     const resultIds = _.uniq(
-      deviceLogs
-        .filter(deviceLog => !_.isNull(deviceLog.resultId))
-        .map(deviceLog => deviceLog.resultId)
+      deviceLogs.filter(deviceLog => !_.isNull(deviceLog.resultId)).map(deviceLog => deviceLog.resultId)
     )
     expect(resultIds).to.have.lengthOf.above(1)
     expect(resultIds).to.have.lengthOf(93)
@@ -456,10 +398,7 @@ aa.`
         expect(result.consumableSerial).to.equal('11763671')
       }
       expect(result.senderVersion).to.equal('1')
-      expect(result.updatedOn.getTime()).to.be.closeTo(
-        new Date().getTime(),
-        10000
-      )
+      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
       const resultData = JSON.parse(result.resultData)
       expect(resultData).to.containSubset({
         typeOfMessage: 'Production',
@@ -525,9 +464,7 @@ aa.`
       })
     })
     await waitForIdle(2000)
-    patientCase = await knex('PatientCase')
-      .where('externalId', '36008/19')
-      .first()
+    patientCase = await knex('PatientCase').where('externalId', '36008/19').first()
     patient = await knex('Patient').where('externalId', '36008/19').first()
     expect(patientCase).to.containSubset({
       reliable: 0,
@@ -536,10 +473,7 @@ aa.`
   })
 
   it('should parse the ASTM RAW messages from an HBV Plasma VL plate, using HBV 0.2ml reagent protocol, and save the results in the database', async () => {
-    const payload = await readTextFile(
-      path.join(__dirname, 'abbottM2000PlasmaHbvVlRaw.pkl'),
-      'utf8'
-    )
+    const payload = await readTextFile(path.join(__dirname, 'abbottM2000PlasmaHbvVlRaw.pkl'), 'utf8')
 
     const response = await server
       .post(deviceApiRawPath)
@@ -550,14 +484,10 @@ aa.`
 
     assert.equal(response.body.deviceId, abbottM2000DeviceId)
     // make sure that result IDs were set in the device log entries
-    const deviceLogs = await knex('DeviceLog')
-      .whereIn('id', response.body.deviceLogIds)
-      .select()
+    const deviceLogs = await knex('DeviceLog').whereIn('id', response.body.deviceLogIds).select()
     // Result update/insert device logs
     const resultIds = _.uniq(
-      deviceLogs
-        .filter(deviceLog => !_.isNull(deviceLog.resultId))
-        .map(deviceLog => deviceLog.resultId)
+      deviceLogs.filter(deviceLog => !_.isNull(deviceLog.resultId)).map(deviceLog => deviceLog.resultId)
     )
     expect(resultIds).to.have.lengthOf.above(1)
     expect(resultIds).to.have.lengthOf(45)
@@ -593,10 +523,7 @@ aa.`
         expect(result.consumableSerial).to.equal('11832001')
       }
       expect(result.senderVersion).to.equal('1')
-      expect(result.updatedOn.getTime()).to.be.closeTo(
-        new Date().getTime(),
-        10000
-      )
+      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
       const resultData = JSON.parse(result.resultData)
       expect(resultData).to.containSubset({
         typeOfMessage: 'Production',

@@ -1,0 +1,48 @@
+@import '../../theme/variables.css';
+
+.Container {
+  width: 97%;
+  padding: 12px 12px 12px 0;
+  font-size: 1rem;
+}
+
+.button {
+  background-color: var(--aspect-color-chill-blue-2);
+  color: white;
+  margin-left: 10px;
+  padding: 7px 7px 6px 6px;
+  border-radius: 21px;
+  position: relative;
+  margin-top: 6px;
+  text-decoration: none !important;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.button :hover {
+  background-color: var(--aspect-color-chill-blue-2) !important;
+  text-decoration: none !important;
+}
+
+.Container--large {
+  font-size: 1.15rem;
+}
+
+.Container__Label {
+  font-size: 0.75em;
+  color: var(--aspect-color-silver);
+  display: block;
+  padding: 0 0 2px 0;
+}
+
+.Container__Label--hidden {
+  display: none;
+}
+
+.Container__Value {
+  word-break: break-all;
+}
+
+.Container__Link {
+  margin-left: 10px;
+}

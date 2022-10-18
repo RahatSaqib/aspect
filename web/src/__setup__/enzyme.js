@@ -1,5 +1,5 @@
+const Adapter = require('@wojtekmaj/enzyme-adapter-react-17')
 const { configure } = require('enzyme')
-const Adapter = require('enzyme-adapter-react-16')
 require('babel-polyfill')
 
 configure({ adapter: new Adapter() })

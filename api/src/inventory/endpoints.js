@@ -1,83 +1,31 @@
 const Joi = require('@hapi/joi')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const {
-  validateAllGeographyFilterParams,
-} = require('../geography/requestValidation')
-const {
-  asyncHandler,
-  validateDateRangeParams,
-  validateSortPageParams,
-} = require('../routes')
-const {
-  listInventoryItems,
-  listInventoryItemsGroupedBySite,
+  listInventoryGroupedBySite,
   addInventory,
   removeInventory,
   transferInventory,
   receiveInventory,
-  updateInventoryStockLevel,
   getDaysByLocation,
+  modifyInventoryOnHand,
 } = require('./service')
-
+const listInventory = require('./listInventory')
+const listInventoryLog = require('./listInventoryLog')
 const { exportSupplies } = require('./serviceReports')
-
-const inventoryFilters = {
-  consumableId: Joi.number().integer().positive().allow('', null),
-  siteName: Joi.string().allow('', null),
-}
-
-const addRemoveInventoryCommonParams = {
-  inventoryItemId: Joi.number().integer().positive().allow('', null),
-}
-
-const transferReceiveInventoryCommonParams = {
-  inventoryItemId: Joi.number().integer().positive().required(),
-}
-
-const adjustInventoryCommonPayloadFields = {
-  consumableId: Joi.number().positive().required(),
-  lotNumber: Joi.string().max(255).allow('', null),
-  expiresOn: Joi.date().iso().allow(null),
-  quantity: Joi.number().positive().required(),
-  notes: Joi.string().max(2000).allow('', null),
-}
-
-const removeInventoryCommonPayloadFields = {
-  ...adjustInventoryCommonPayloadFields,
-  fromSiteId: Joi.number().integer().positive().required(),
-  reasonId: Joi.number().integer().positive().required(),
-}
-
-function listSuppliesBaseConfig() {
-  return {
-    auth: { scope: ['inventory:view', 'operationalData:view'] },
-    validate: {
-      query: {
-        format: Joi.string()
-          .allow('')
-          .description('File format for exporting data'),
-        ...inventoryFilters,
-        ...validateAllGeographyFilterParams(),
-        ...validateDateRangeParams(),
-        ...validateSortPageParams(
-          'consumableName',
-          'manufacturer',
-          'siteName',
-          'countryName',
-          'stateName',
-          'lgaName',
-          'quantityOnHand',
-          'expiresOn'
-        ),
-      },
-    },
-  }
-}
+const {
+  listSuppliesBaseConfig,
+  adjustInventoryCommonPayloadFields,
+  removeInventoryCommonPayloadFields,
+  modifyInventoryCommonPayloadFields,
+  inventoryFilters,
+} = require('./requestValidation')
 
 const routes = [
   {
     method: 'GET',
     path: '/inventory',
-    handler: asyncHandler(listInventoryItems),
+    handler: asyncHandler(listInventory),
     config: {
       description: 'List of Consumables on Hand At Site',
       notes: 'Pageable and sortable list of inventory items',
@@ -95,7 +43,38 @@ const routes = [
             'stateName',
             'lgaName',
             'quantityOnHand',
-            'expiresOn'
+            'expiresOn',
+            'daysStockLeft',
+            'projectedWaste',
+            'dailyConsumptionRate',
+            'lotNumber'
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/log',
+    handler: asyncHandler(listInventoryLog),
+    config: {
+      description: 'List of Inventory Transactions',
+      notes: 'Pageable and sortable list of inventory transactions',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          ...inventoryFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(
+            'createdOn',
+            'siteName',
+            'lotNumber',
+            'notes',
+            'movementReason',
+            'consumableName',
+            'expiresOn',
+            'quantity'
           ),
         },
       },
@@ -104,7 +83,7 @@ const routes = [
   {
     method: 'GET',
     path: '/inventory/group-by-site',
-    handler: asyncHandler(listInventoryItemsGroupedBySite),
+    handler: asyncHandler(listInventoryGroupedBySite),
     config: {
       description: 'List of Consumables on Hand Grouped by Site',
       notes: 'Pageable and sortable list of inventory items grouped by site',
@@ -144,8 +123,7 @@ const routes = [
     handler: asyncHandler(getDaysByLocation),
     config: {
       description: 'Get inventories availability by location',
-      notes:
-        'Returns list of inventory counts grouped by site/geography/state/lga',
+      notes: 'Returns list of inventory counts grouped by site/geography/state/lga',
       ...listSuppliesBaseConfig(),
       response: {
         options: {
@@ -153,37 +131,24 @@ const routes = [
         },
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False on any non-fatal error'),
-          total: Joi.number()
-            .required()
-            .description('The total number of items aggregated by consumable'),
+          total: Joi.number().required().description('The total number of items aggregated by consumable'),
           data: Joi.array()
             .allow(null)
             .items(
               Joi.object().keys({
                 consumableId: Joi.number().description('The consumable id'),
+                consumableExternalId: Joi.number().description('The consumable external id'),
                 consumableName: Joi.string().description('The consumable name'),
 
-                outOfStock: Joi.number().description(
-                  'Number of locations which are out of stock'
-                ),
-                upTo14: Joi.number().description(
-                  'Number of locations with inventories up to 14 days in stock'
-                ),
-                upTo30: Joi.number().description(
-                  'Number of locations with inventories up to 30 days in stock'
-                ),
-                upTo90: Joi.number().description(
-                  'Number of locations with inventories up to 90 days in stock'
-                ),
-                upTo180: Joi.number().description(
-                  'Number of locations with inventories up to 180 days in stock'
-                ),
+                outOfStock: Joi.number().description('Number of locations which are out of stock'),
+                upTo14: Joi.number().description('Number of locations with inventories up to 14 days in stock'),
+                upTo30: Joi.number().description('Number of locations with inventories up to 30 days in stock'),
+                upTo90: Joi.number().description('Number of locations with inventories up to 90 days in stock'),
+                upTo180: Joi.number().description('Number of locations with inventories up to 180 days in stock'),
                 moreThan180: Joi.number().description(
                   'Number of locations with inventories for more than 180 days in stock'
                 ),
-                notRecorded: Joi.number().description(
-                  'Number of locations with no recorded inventories in stock'
-                ),
+                notRecorded: Joi.number().description('Number of locations with no recorded inventories in stock'),
                 noConsumption: Joi.number().description(
                   'Number of locations which have not been consumed inventories so far'
                 ),
@@ -195,14 +160,13 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/add/{inventoryItemId}',
+    path: '/inventory/add',
     handler: asyncHandler(addInventory),
     config: {
       description: 'Add Inventory',
       notes: 'Adds quantity to inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: addRemoveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
           toSiteId: Joi.number().integer().positive().required(),
@@ -213,14 +177,13 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/remove/{inventoryItemId}',
+    path: '/inventory/remove',
     handler: asyncHandler(removeInventory),
     config: {
       description: 'Remove Inventory',
       notes: 'Removes quantity from inventory item at site',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: addRemoveInventoryCommonParams,
         payload: Joi.alternatives().try(
           Joi.object().keys({
             ...removeInventoryCommonPayloadFields,
@@ -237,14 +200,13 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/transfer/{inventoryItemId}',
+    path: '/inventory/transfer',
     handler: asyncHandler(transferInventory),
     config: {
       description: 'Transfer Inventory',
       notes: 'Transfers quantity from inventory item to in transit',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: transferReceiveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
           fromSiteId: Joi.number().integer().positive().required(),
@@ -256,14 +218,13 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/receive/{inventoryItemId}',
+    path: '/inventory/receive',
     handler: asyncHandler(receiveInventory),
     config: {
       description: 'Receive Inventory',
       notes: 'Received quantity from inventory item in transit',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: transferReceiveInventoryCommonParams,
         payload: {
           ...adjustInventoryCommonPayloadFields,
           fromSiteId: Joi.number().integer().positive().required(),
@@ -275,19 +236,15 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/inventory/{siteId}/{consumableId}',
-    handler: asyncHandler(updateInventoryStockLevel),
+    path: '/inventory/on-hand',
+    handler: asyncHandler(modifyInventoryOnHand),
     config: {
-      description: 'Update Inventory Stock Level At Site',
-      notes: 'Update the total quantity of a consumable at site',
+      description: 'Modify Inventory on Hand',
+      notes: 'Received quantity to modify inventory',
       auth: { scope: ['inventory:edit'] },
       validate: {
-        params: {
-          siteId: Joi.number().integer().positive().required(),
-          consumableId: Joi.number().integer().positive().required(),
-        },
         payload: {
-          quantity: Joi.number().min(0).required(),
+          ...modifyInventoryCommonPayloadFields,
         },
       },
     },

@@ -1,6 +1,6 @@
 const chai = require('chai')
 const _ = require('lodash')
-const { format: dateFormat } = require('date-fns')
+const { addHours, format: dateFormat } = require('date-fns')
 
 const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
@@ -59,18 +59,19 @@ describe('Result create and update routes', () => {
     'resultNotes',
   ]
 
+  before(async () => {
+    shared.checkToken(server, path)
+  })
+
   after(async () => {
     if (!_.isEmpty(resultIds)) {
-      await knex('ResultTreatmentStatusLog')
-        .whereIn('resultId', resultIds)
-        .del()
+      await knex('ResultTreatmentStatusLog').whereIn('resultId', resultIds).del()
 
       await knex('PatientCase')
-        .whereIn(
-          'id',
-          await knex('Result').whereIn('id', resultIds).pluck('patientCaseId')
-        )
+        .whereIn('id', await knex('Result').whereIn('id', resultIds).pluck('patientCaseId'))
         .del()
+
+      await knex('ResultTag').whereIn('resultId', resultIds).del()
 
       await knex('Result').whereIn('id', resultIds).del()
 
@@ -80,18 +81,18 @@ describe('Result create and update routes', () => {
   })
 
   describe('POST', () => {
-    shared.checkToken(server, path)
     it('Should create a new result', async () => {
       const resultPayload = {
         siteId: 1,
         deviceId: 2,
         assayId: await assayToId('DaktariHivVL'),
-        endedOn: now,
+        startedOn: now,
+        endedOn: addHours(now, 2),
         sampleId: 'A-SAMPLE-ID',
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        caseId: 'A-CASE-ID',
+        caseExternalId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Detected'),
         resultCategory2: await resultCategoryToId('Detected'),
         tags: 'tag 1,tag 2',
@@ -99,10 +100,7 @@ describe('Result create and update routes', () => {
       }
 
       // update with external ID
-      const res = await server
-        .post(path)
-        .send(resultPayload)
-        .set('Authorization', `Bearer${shared.token}`)
+      const res = await server.post(path).send(resultPayload).set('Authorization', `Bearer${shared.token}`)
 
       assert.equal(res.status, 200)
       resultId = res.body.data.id
@@ -119,13 +117,9 @@ describe('Result create and update routes', () => {
       })
 
       // check that case created and assigned
-      firstResultCase = await knex('PatientCase')
-        .where({ externalId: resultPayload.caseId })
-        .first()
-      const { patientCaseId: resultCaseId } = await knex('Result')
-        .where({ id: resultId })
-        .first('patientCaseId')
-      assert.equal(firstResultCase.externalId, resultPayload.caseId)
+      firstResultCase = await knex('PatientCase').where({ externalId: resultPayload.caseExternalId }).first()
+      const { patientCaseId: resultCaseId } = await knex('Result').where({ id: resultId }).first('patientCaseId')
+      assert.equal(firstResultCase.externalId, resultPayload.caseExternalId)
       assert.equal(resultCaseId, firstResultCase.id)
 
       // check tags
@@ -134,10 +128,7 @@ describe('Result create and update routes', () => {
         .where('rt.resultId', resultId)
         .select('title')
 
-      assert.deepEqual(
-        resultPayload.tags.split(',').sort(),
-        tags.map(t => t.title).sort()
-      )
+      assert.deepEqual(resultPayload.tags.split(',').sort(), tags.map(t => t.title).sort())
 
       // check assay was set correctly
       assert.equal(res.body.data.assay.externalId, 'DaktariHivVL')
@@ -145,11 +136,7 @@ describe('Result create and update routes', () => {
       // check that workflow status is set to deliverable
       assert.equal(res.body.data.resultWorkflowStatus, 'Ready for delivery')
       assert.equal(res.body.data.resultWorkflowLogReason, reason)
-      assert.closeTo(
-        new Date(res.body.data.updatedOn).getTime(),
-        new Date().getTime(),
-        5000
-      )
+      assert.closeTo(new Date(res.body.data.updatedOn).getTime(), new Date().getTime(), 5000)
 
       // remember for deletion
       resultIds.push(resultId)
@@ -160,20 +147,18 @@ describe('Result create and update routes', () => {
         siteId: 1,
         deviceId: 2,
         assayId: await assayToId('DaktariHivVL'),
-        endedOn: now,
+        startedOn: now,
+        endedOn: addHours(now, 2),
         sampleId: 'A-SAMPLE-ID',
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        caseId: 'A-CASE-ID',
+        caseExternalId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Error'),
       }
 
       // update with external ID
-      const res = await server
-        .post(path)
-        .send(resultPayload)
-        .set('Authorization', `Bearer${shared.token}`)
+      const res = await server.post(path).send(resultPayload).set('Authorization', `Bearer${shared.token}`)
 
       assert.equal(res.status, 200)
       resultId = res.body.data.id
@@ -181,11 +166,7 @@ describe('Result create and update routes', () => {
       // check that workflow status is set to error
       assert.equal(res.body.data.resultWorkflowStatus, 'Error')
       assert.equal(res.body.data.resultWorkflowLogReason, reason)
-      assert.closeTo(
-        new Date(res.body.data.updatedOn).getTime(),
-        new Date().getTime(),
-        5000
-      )
+      assert.closeTo(new Date(res.body.data.updatedOn).getTime(), new Date().getTime(), 5000)
 
       // remember for deletion
       resultIds.push(resultId)
@@ -195,21 +176,19 @@ describe('Result create and update routes', () => {
       const resultPayload = {
         siteId: 1,
         assayId: await assayToId('DaktariHivVL'),
-        endedOn: now,
+        startedOn: now,
+        endedOn: addHours(now, 2),
         sampleId: 'A-SAMPLE-ID',
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        caseId: 'A-CASE-ID',
+        caseExternalId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Detected'),
         resultCategory2: await resultCategoryToId('NotDetected'),
       }
 
       // update with external ID
-      const res = await server
-        .post(path)
-        .send(resultPayload)
-        .set('Authorization', `Bearer${shared.token}`)
+      const res = await server.post(path).send(resultPayload).set('Authorization', `Bearer${shared.token}`)
 
       assert.equal(res.status, 200)
       resultId = res.body.data.id
@@ -224,28 +203,24 @@ describe('Result create and update routes', () => {
         siteId: 1,
         deviceId: 2,
         assayId: await assayToId('DaktariHivVL'),
-        endedOn: now,
+        startedOn: now,
+        endedOn: addHours(now, 2),
         sampleId: 'A-SAMPLE-ID',
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        caseId: 'A-CASE-ID',
+        caseExternalId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Error'),
       }
 
       // update with external ID
-      const res = await server
-        .post(path)
-        .send(resultPayload)
-        .set('Authorization', `Bearer${shared.token}`)
+      const res = await server.post(path).send(resultPayload).set('Authorization', `Bearer${shared.token}`)
 
       assert.equal(res.status, 200)
       resultId = res.body.data.id
 
       // check that assigned to same case
-      const { patientCaseId: resultCaseId } = await knex('Result')
-        .where({ id: resultId })
-        .first('patientCaseId')
+      const { patientCaseId: resultCaseId } = await knex('Result').where({ id: resultId }).first('patientCaseId')
       assert.equal(firstResultCase.id, resultCaseId)
 
       // remember for deletion
@@ -256,29 +231,25 @@ describe('Result create and update routes', () => {
       const resultPayload = {
         siteId: 1,
         assayId: await assayToId('DaktariHivVL'),
-        endedOn: now,
+        startedOn: now,
+        endedOn: addHours(now, 2),
         sampleId: 'A-SAMPLE-ID',
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        caseId: 'A-NEW-CASE-ID',
+        caseExternalId: 'A-NEW-CASE-ID',
         resultCategory1: await resultCategoryToId('Detected'),
         resultCategory2: await resultCategoryToId('NotDetected'),
       }
 
       // update with external ID
-      const res = await server
-        .post(path)
-        .send(resultPayload)
-        .set('Authorization', `Bearer${shared.token}`)
+      const res = await server.post(path).send(resultPayload).set('Authorization', `Bearer${shared.token}`)
 
       assert.equal(res.status, 200)
       resultId = res.body.data.id
 
       // check that assigned to new case
-      const { patientCaseId: resultCaseId } = await knex('Result')
-        .where({ id: resultId })
-        .first('patientCaseId')
+      const { patientCaseId: resultCaseId } = await knex('Result').where({ id: resultId }).first('patientCaseId')
       assert.notEqual(firstResultCase.id, resultCaseId)
 
       // remember for deletion
@@ -287,15 +258,15 @@ describe('Result create and update routes', () => {
   })
 
   describe('PUT', () => {
-    shared.checkToken(server, path)
     it('Should update an existing result', async () => {
       const resultPayload = {
-        endedOn: now,
+        startedOn: now,
+        endedOn: addHours(now, 2),
         sampleId: 'A-SAMPLE-ID',
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        caseId: 'ANOTHER-CASE-ID',
+        caseExternalId: 'ANOTHER-CASE-ID',
         resultCategory1: await resultCategoryToId('NotDetected'),
         resultCategory2: await resultCategoryToId('NotDetected'),
         tags: 'tag 3',
@@ -323,13 +294,9 @@ describe('Result create and update routes', () => {
       })
 
       // check that case created and assigned
-      firstResultCase = await knex('PatientCase')
-        .where({ externalId: resultPayload.caseId })
-        .first()
-      const { patientCaseId: resultCaseId } = await knex('Result')
-        .where({ id: resultId })
-        .first('patientCaseId')
-      assert.equal(firstResultCase.externalId, resultPayload.caseId)
+      firstResultCase = await knex('PatientCase').where({ externalId: resultPayload.caseExternalId }).first()
+      const { patientCaseId: resultCaseId } = await knex('Result').where({ id: resultId }).first('patientCaseId')
+      assert.equal(firstResultCase.externalId, resultPayload.caseExternalId)
       assert.equal(resultCaseId, firstResultCase.id)
 
       // check tags
@@ -349,11 +316,7 @@ describe('Result create and update routes', () => {
       // check that workflow status is set to deliverable
       assert.equal(res.body.data.resultWorkflowStatus, 'Ready for delivery')
       assert.equal(res.body.data.resultWorkflowLogReason, reason)
-      assert.closeTo(
-        new Date(res.body.data.updatedOn).getTime(),
-        new Date().getTime(),
-        5000
-      )
+      assert.closeTo(new Date(res.body.data.updatedOn).getTime(), new Date().getTime(), 5000)
 
       // remember for deletion
       resultIds.push(resultId)
@@ -361,12 +324,13 @@ describe('Result create and update routes', () => {
 
     it('Should update an existing result and set workflow status to error if result was changed to error.', async () => {
       const resultPayload = {
-        endedOn: now,
+        startedOn: now,
+        endedOn: addHours(now, 2),
         sampleId: 'ANOTHER-SAMPLE-ID',
         sampleTypeId: 2,
         sampleCollectedOn: now,
         sampleOriginSiteId: 2,
-        caseId: 'A-CASE-ID',
+        caseExternalId: 'A-CASE-ID',
         resultCategory1: await resultCategoryToId('Error'),
       }
 
@@ -382,11 +346,7 @@ describe('Result create and update routes', () => {
       // check that workflow status is set to error
       assert.equal(res.body.data.resultWorkflowStatus, 'Error')
       assert.equal(res.body.data.resultWorkflowLogReason, reason)
-      assert.closeTo(
-        new Date(res.body.data.updatedOn).getTime(),
-        new Date().getTime(),
-        5000
-      )
+      assert.closeTo(new Date(res.body.data.updatedOn).getTime(), new Date().getTime(), 5000)
 
       // remember for deletion
       resultIds.push(resultId)
@@ -394,12 +354,13 @@ describe('Result create and update routes', () => {
 
     it('Should be assigned to a different case if the case ID was changed', async () => {
       const resultPayload = {
-        endedOn: now,
+        startedOn: now,
+        endedOn: addHours(now, 2),
         sampleId: 'A-SAMPLE-ID',
         sampleTypeId: 1,
         sampleCollectedOn: now,
         sampleOriginSiteId: 1,
-        caseId: 'A-BRAND-NEW-CASE-ID',
+        caseExternalId: 'A-BRAND-NEW-CASE-ID',
         resultCategory1: await resultCategoryToId('Detected'),
         resultCategory2: await resultCategoryToId('NotDetected'),
       }
@@ -414,13 +375,9 @@ describe('Result create and update routes', () => {
       resultId = res.body.data.id
 
       // check that assigned to new case
-      const newCase = await knex('PatientCase')
-        .where({ externalId: resultPayload.caseId })
-        .first()
-      const { patientCaseId: resultCaseId } = await knex('Result')
-        .where({ id: resultId })
-        .first('patientCaseId')
-      assert.equal(newCase.externalId, resultPayload.caseId)
+      const newCase = await knex('PatientCase').where({ externalId: resultPayload.caseExternalId }).first()
+      const { patientCaseId: resultCaseId } = await knex('Result').where({ id: resultId }).first('patientCaseId')
+      assert.equal(newCase.externalId, resultPayload.caseExternalId)
       assert.equal(resultCaseId, newCase.id)
 
       // remember for deletion

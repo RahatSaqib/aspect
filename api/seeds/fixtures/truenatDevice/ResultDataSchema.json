@@ -1,0 +1,72 @@
+{
+  "finalResult": {
+    "title": "Final Result",
+    "type": "string",
+    "order": 0
+  },
+  "status": {
+    "title": "Status",
+    "type": "string",
+    "order": 1
+  },
+  "validityStatus": {
+    "title": "Validity Status",
+    "type": "string",
+    "order": 2
+  },
+  "ctLabel1": {
+    "title": "Ct Label 1",
+    "type": "string",
+    "order": 3
+  },
+  "ct1": {
+    "title": "Ct1",
+    "type": "number",
+    "order": 4
+  },
+  "ctResult1": {
+    "title": "Ct Result 1",
+    "type": "string",
+    "order": 5
+  },
+  "ctLabel2": {
+    "title": "Ct Label 2",
+    "type": "string",
+    "order": 6
+  },
+  "ct2": {
+    "title": "Ct2",
+    "type": "number",
+    "order": 7
+  },
+  "ctResult2": {
+    "title": "Ct Result 2",
+    "type": "string",
+    "order": 8
+  },
+  "ctLabel3": {
+    "title": "Ct Label 31",
+    "type": "string",
+    "order": 9
+  },
+  "ct3": {
+    "title": "Ct3",
+    "type": "number",
+    "order": 10
+  },
+  "ctResult3": {
+    "title": "Ct Result 3",
+    "type": "string",
+    "order": 11
+  },
+  "labName": {
+    "title": "Lab Name",
+    "type": "string",
+    "order": 12
+  },
+  "testName": {
+    "title": "Test Name",
+    "type": "string",
+    "order": 13
+  }
+}

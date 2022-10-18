@@ -8,7 +8,7 @@ const server = require('../utils/testUtils')
 
 const { assert } = chai
 
-const context = createTestContext(server, {
+const context = createTestContext(knex, server, {
   user: 'admin',
   type: 'DaktariVirology',
   partner: 'Partner One',
@@ -17,13 +17,15 @@ const context = createTestContext(server, {
 describe('Tag routes', () => {
   const path = '/api/tag'
 
+  before(() => {
+    shared.checkToken(server, `${path}/result`)
+  })
+
   describe('GET', () => {
     beforeEach(async () => {
       await context.createDeviceWithResult()
       const { deviceId } = context
-      const { id: resultId } = await knex('Result as r')
-        .where({ deviceId })
-        .first('id')
+      const { id: resultId } = await knex('Result as r').where({ deviceId }).first('id')
       const res = await server
         .put(`${path}/result/${resultId}`)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -41,13 +43,8 @@ describe('Tag routes', () => {
     afterEach(async () => {
       await context.afterEach()
     })
-    // check the endpoint routes and authorizations
-    shared.checkToken(server, `${path}/result`)
-
     it('should return a list of tags when using valid token', async () => {
-      const res = await server
-        .get(`${path}/result`)
-        .set('Authorization', `Bearer ${shared.token}`)
+      const res = await server.get(`${path}/result`).set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 200)
       assert.typeOf(res.body, 'Object')

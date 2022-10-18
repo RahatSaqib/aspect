@@ -1,44 +1,35 @@
-// eslint-disable-next-line import/order
-const { addIssueTypes } = require('../relativeObjectsSeeds')
-
 module.exports = require('../utils').seed(seed, __filename)
 
-const ADMIN_PW = '8v5TMxkpzP'
 const RO_PW = 'u4W9wupFBA'
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
+const { addIssueTypes } = require('../relativeObjectsSeeds')
+const partnerData = require('./fixtures/partnerData')
 const { upsertJobFunction } = require('../common')
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget')
-const {
-  rowsAsObject,
-  getDefaultMessageTypes,
-  getPermissionModules,
-} = require('../utils')
-const {
-  deviceApprovalToId,
-  deviceTypeToId,
-  partnerTypeToId,
-} = require('../../src/shared/dictionary')
+const { rowsAsObject, getDefaultMessageTypes, getPermissionModules } = require('../utils')
+const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
+const upsertPartnerData = require('../common/upsert_partner_data')
 
 const now = new Date()
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
+const { adminUserName, adminPassword, deviceApiToken } = partnerData
+
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'myanmar_admin' })
-    .first('id')
+  const existingAdminUser = await knex('User').where({ name: adminUserName }).first('id')
   if (existingAdminUser) {
     return
   }
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
-    name: 'myanmar_admin',
-    password: bcrypt.hashSync(ADMIN_PW, saltRounds),
+    name: adminUserName,
+    password: bcrypt.hashSync(adminPassword, saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -51,27 +42,18 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const [partnerId] = await knex('Partner').insert({
-    name: 'Myanmar',
+  const partnerId = await upsertPartnerData(knex, {
+    ...partnerData,
     partnerTypeId: await partnerTypeToId('Operating'),
-    deviceLogHistoryDays: 365,
-    autoAcknowledgeOlderThanDays: 28,
-    numberToLeaveUnacknowledged: 15,
-    maxDaysDeviceOffline: 7,
-    serverUrl: 'https://myanmar.aspect.id',
   })
+
   await addIssueTypes(knex, partnerId, adminId, null)
   // Reuse previously seeded "static" data
   const defaultMessageTypes = await getDefaultMessageTypes(knex)
-  const [myanmarCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'MMR' })
-    .select('c.id', 'c.culture', 'c.timezone')
+  const [myanmarCountry] = await knex('Country as c').where({ 'c.a3': 'MMR' }).select('c.id', 'c.culture', 'c.timezone')
   const countryId = myanmarCountry.id
 
-  const { id: myanmarGeographyId } = await knex('Geography')
-    .where({ countryId })
-    .whereNull('stateId', 'lgaId')
-    .first()
+  const { id: myanmarGeographyId } = await knex('Geography').where({ countryId }).whereNull('stateId', 'lgaId').first()
 
   const myanmarStates = await knex('Geography as g')
     .innerJoin('State as s', 's.id', 'g.stateId')
@@ -80,7 +62,7 @@ async function seed(knex) {
     .select('s.id', 's.name', 's.abbreviation')
 
   // create site for GxAlert device
-  const gxAlertSiteId = await knex('Site').insert({
+  const [gxAlertSiteId] = await knex('Site').insert({
     ...auditFields,
     name: 'GxAlert Site',
     shortName: 'GxA Site',
@@ -92,7 +74,7 @@ async function seed(knex) {
   })
 
   // insert GxAlert device
-  const gxAlertDeviceId = await knex('Device').insert({
+  const [gxAlertDeviceId] = await knex('Device').insert({
     ...auditFields,
     name: 'GxAlert',
     deviceTypeId: await deviceTypeToId('GxAlert'),
@@ -107,7 +89,7 @@ async function seed(knex) {
   })
 
   await knex('DeviceApiKey').insert({
-    token: 'ukpjat39531egjy4pc20',
+    token: deviceApiToken,
     revoked: 0,
     partnerId,
     geographyId: myanmarGeographyId,
@@ -146,44 +128,34 @@ async function seed(knex) {
     modules.dashboard.target,
   ])
 
-  const jobFunctionIdRegionalOfficer = await upsertJobFunction(
-    knex,
-    'Regional Officer',
-    partnerId,
-    [
-      modules.device.edit,
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.view,
-      modules.issue.edit,
-      modules.actionDashboard.edit,
-      modules.inventory.edit,
-      modules.dashboard.summary,
-      modules.dashboard.action,
-      modules.dashboard.report,
-      modules.dashboard.siteFilter,
-      modules.dashboard.actionInventoryLevelUpdate,
-      modules.dashboard.target,
-    ]
-  )
+  const jobFunctionIdRegionalOfficer = await upsertJobFunction(knex, 'Regional Officer', partnerId, [
+    modules.device.edit,
+    modules.result.edit,
+    modules.site.edit,
+    modules.assay.view,
+    modules.issue.edit,
+    modules.actionDashboard.edit,
+    modules.inventory.edit,
+    modules.dashboard.summary,
+    modules.dashboard.action,
+    modules.dashboard.report,
+    modules.dashboard.siteFilter,
+    modules.dashboard.actionInventoryLevelUpdate,
+    modules.dashboard.target,
+  ])
 
-  const jobFunctionIdLabUser = await upsertJobFunction(
-    knex,
-    'Lab User',
-    partnerId,
-    [
-      modules.result.edit,
-      modules.site.edit,
-      modules.assay.view,
-      modules.issue.edit,
-      modules.inventory.edit,
-      modules.device.edit,
-      modules.dashboard.summary,
-      modules.dashboard.action,
-      modules.dashboard.report,
-      modules.dashboard.actionInventoryLevelUpdate,
-    ]
-  )
+  const jobFunctionIdLabUser = await upsertJobFunction(knex, 'Lab User', partnerId, [
+    modules.result.edit,
+    modules.site.edit,
+    modules.assay.view,
+    modules.issue.edit,
+    modules.inventory.edit,
+    modules.device.edit,
+    modules.dashboard.summary,
+    modules.dashboard.action,
+    modules.dashboard.report,
+    modules.dashboard.actionInventoryLevelUpdate,
+  ])
 
   // Admin Job
   const [jobIdAdmin] = await knex('Job').insert({
@@ -199,10 +171,7 @@ async function seed(knex) {
   const targetTokens = ['Total', 'MDR', 'Smear', 'HIV', 'Children']
   await Promise.all(
     _.map(myanmarStates, async state => {
-      const regionUserName = `${state.name
-        .replace(/\W/gi, '')
-        .toLowerCase()
-        .trim()}_ro`
+      const regionUserName = `${state.name.replace(/\W/gi, '').toLowerCase().trim()}_ro`
       const { id: regionId } = await knex('Geography')
         .where({
           countryId,
@@ -645,8 +614,7 @@ async function seed(knex) {
       escalateToLevel: 3,
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
+        evaluationParameter: './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
       }),
       createdOn: now,
       updatedOn: now,

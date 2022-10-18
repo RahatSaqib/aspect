@@ -1,8 +1,4 @@
-const {
-  onPatientAdded,
-  onPatientUpdated,
-  onResultLogged,
-} = require('./service')
+const { onPatientAdded, onPatientUpdated, onResultLogged } = require('./service')
 
 const subscriptions = [
   {

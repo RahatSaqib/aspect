@@ -1,0 +1,221 @@
+@import '../../../theme/variables.css';
+
+.dailystatus__container {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.clinic__container {
+  display: flex;
+  align-items: center;
+  margin: 2px 0;
+  justify-content: flex-start;
+}
+
+.clinic__name {
+  width: 330px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: right;
+  padding: 0 10px 0;
+  font-size: 14.4px;
+}
+
+.clinic__dayrow {
+  display: flex;
+  padding: 2px 0;
+}
+
+.clinic__day {
+  background-color: white;
+  color: transparent;
+  transition: background-color 0.2s ease;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.clinic__day--null {
+  background-color: transparent;
+}
+
+/*
+ * Statuses targeted:
+ * active
+ * reportedActive
+ * inactiveUnknown
+ * inactiveNoTestsPerformed
+ * inactiveOutOfInventory
+ * inactiveDownForRepair
+ * inactiveConnectivity
+ * inactiveDecommissioned
+ */
+
+.clinic__day--weekend {
+  background-color: var('--aspect-device-weekend');
+}
+
+.clinic__day--active,
+.clinic__day--reportedActive {
+  background-color: var('--aspect-device-active');
+  color: var('--aspect-color-black-2');
+}
+
+.clinic__day--inactive {
+  background-color: var('--aspect-device-inactiveConnectivity');
+}
+
+.clinic__day--inactiveNoTestsPerformed {
+  background-color: var('--aspect-device-inactiveNoTestsPerformed');
+}
+
+.clinic__day--inactiveDownForRepair {
+  background-color: var('--aspect-device-inactiveDownForRepair');
+}
+
+.clinic__day--inactiveUnknown {
+  background-color: var('--aspect-device-inactiveUnknown');
+}
+
+.clinic__day--inactiveOutOfInventory {
+  background-color: var('--aspect-device-inactiveOutOfInventory');
+}
+
+.clinic__day--noResultsReported {
+  background-color: var('--aspect-device-inactiveNoTestsPerformed');
+}
+
+.clinic__day--inactiveConnectivity {
+  background-color: var('--aspect-device-inactiveConnectivity');
+}
+
+.clinic__day--inactiveDecommissioned {
+  background-color: var('--aspect-device-inactiveDecommissioned');
+}
+.clinic__day--inactiveNoStaff {
+  background-color: var('--aspect-device-inactiveNoStaff');
+}
+.clinic__day--inactiveNoSamples {
+  background-color: var('--aspect-device-inactiveNoSamples');
+}
+.clinic__day--inactiveNoPower {
+  background-color: var('--aspect-device-inactiveNoPower');
+}
+.clinic__day--inactiveOther {
+  background-color: var('--aspect-device-inactiveOther');
+}
+
+.status__checkbox {
+  transform: scale(1.5) !important;
+  margin: 0 10px 0 !important;
+}
+
+.status__checkbox--all {
+  color: var('--aspect-color-cyan') !important;
+  background-color: transparent;
+}
+.status__checkbox--active,
+.status__checkbox--reportedActive {
+  color: var('--aspect-device-active') !important;
+}
+.status__checkbox--inactiveUnknown {
+  color: var('--aspect-device-inactiveUnknown') !important;
+}
+.status__checkbox--inactiveNoTestsPerformed {
+  color: var('--aspect-device-inactiveNoTestsPerformed') !important;
+}
+.status__checkbox--inactiveOutOfInventory {
+  color: var('--aspect-device-inactiveOutOfInventory') !important;
+}
+.status__checkbox--inactiveDownForRepair {
+  color: var('--aspect-device-inactiveDownForRepair') !important;
+}
+.status__checkbox--inactiveConnectivity {
+  color: var('--aspect-device-inactiveConnectivity') !important;
+}
+.status__checkbox--inactiveDecommissioned {
+  color: var('--aspect-device-inactiveDecommissioned') !important;
+}
+.status__checkbox--inactiveNoStaff {
+  color: var('--aspect-device-inactiveNoStaff') !important;
+}
+.status__checkbox--inactiveNoSamples {
+  color: var('--aspect-device-inactiveNoSamples') !important;
+}
+.status__checkbox--inactiveNoPower {
+  color: var('--aspect-device-inactiveNoPower') !important;
+}
+.status__checkbox--inactiveOther {
+  color: var('--aspect-device-inactiveOther') !important;
+}
+
+.clinic__day--future {
+  border-radius: 20%;
+  border: 1px dashed #fafcff;
+}
+
+.clinic__testtotal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 15px;
+  border: 1px solid #333333;
+  background: white;
+  font-size: 11px;
+}
+
+.dates__row {
+  display: flex;
+  height: 30px;
+}
+
+.dates__spacer {
+  width: 330px;
+}
+
+.dates__dayContainer {
+  display: flex;
+}
+
+.dates__dayBlock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.35rem, 0.6rem, 0.75rem);
+  text-transform: uppercase;
+}
+
+.statuses__spacer {
+  width: 415px;
+}
+
+.statuses__row {
+  display: flex;
+  min-height: 120px;
+}
+
+.statuses__container {
+  margin: 20px 18px;
+}
+
+.statuses__status {
+  width: 80%;
+}
+
+.statuses__statusroot {
+  margin-top: 5px !important;
+}
+
+.statuses__statuslabel {
+  margin-right: 10px !important;
+}
+
+.dailyStatus__spinner {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

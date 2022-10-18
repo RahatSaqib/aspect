@@ -1,6 +1,6 @@
 const { get, merge } = require('lodash')
 const Boom = require('@hapi/boom')
-
+const strategies = require('../inventory/strategies')
 const { postProcessMergeResult } = require('../deviceApi/result')
 
 const DEFAULT_SETTINGS = {
@@ -8,8 +8,16 @@ const DEFAULT_SETTINGS = {
     dateFormat: 'yyyy-MM-dd',
     timeFormat: 'HH:mm:ss',
     dateTimeFormat: 'yyyy-MM-dd HH:mm:ss',
+    dayMonthFormat: 'MM/dd',
     utilizationRateThreshold: 0.8,
     errorRateThreshold: 0.05,
+
+    stateLabel: 'State',
+    statesLabel: 'States',
+    countyLabel: 'County',
+    countiesLabel: 'Counties',
+    lgaLabel: 'LGA',
+    lgasLabel: 'LGAs',
   },
 }
 
@@ -42,6 +50,7 @@ const plugins = {
     issueEscalations: {},
     dataCategories: {},
     filtersOpenIssues: require('../issue/filterConditions'),
+    inventoryStrategy: strategies,
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -64,11 +73,13 @@ const plugins = {
     onCaseUpdated,
     onPatientAdded,
     onPatientUpdated,
+    getCustomFields,
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
   },
   malawi: {
+    settings: require('./partner/Malawi/settings'),
     transformNewDevicePayload: require('./partner/Malawi/transformNewDevicePayload'),
     preProcessGetResult: require('./partner/Malawi/preProcessGetResult'),
     postProcessMergeResult: require('./partner/Malawi/postProcessMergeResult'),
@@ -83,6 +94,7 @@ const plugins = {
     transformMergeResultPayload: require('./deviceType/CepheidGeneXpert/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/CepheidGeneXpert/preProcessMergeResult'),
     onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
+    getCustomFields: require('./deviceType/GxConnect/customFields/customFields'),
   },
   gxalert: {
     getDeviceSeenOn: require('./deviceType/GxAlert/getDeviceSeenOn'),
@@ -105,11 +117,7 @@ const plugins = {
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
   alereftpconnector: {
-    handlerOptions: merge(
-      {},
-      DEFAULT_HANDLER_OPTIONS,
-      require('./deviceType/AlereFtpConnector/handlerOptions')
-    ),
+    handlerOptions: merge({}, DEFAULT_HANDLER_OPTIONS, require('./deviceType/AlereFtpConnector/handlerOptions')),
     getDeviceSeenOn: require('./deviceType/AlereFtpConnector/getDeviceSeenOn'),
     preProcessAddDeviceData: require('./deviceType/AlereFtpConnector/preProcessAddDeviceData'),
     preProcessMergeResult: require('./deviceType/AlereFtpConnector/preProcessMergeResult'),
@@ -137,6 +145,11 @@ const plugins = {
     onResultLogged: require('./partner/Philippines/onResultLogged'),
     issueTriggers: require('./partner/Philippines/issueTriggers'),
     issueResolutions: require('./partner/Philippines/issueResolutionConditions'),
+    transformMergeResultPayload: require('./partner/Philippines/transformMergeResultPayload'),
+    settings: require('./partner/Philippines/settings'),
+  },
+  pakistan: {
+    settings: require('./partner/Pakistan/settings'),
   },
 }
 
@@ -314,6 +327,15 @@ async function transformMergeResultPayload(context) {
 }
 
 /**
+ * In daily details we are going to send the custom fields configured.
+ * This function will return the daily details to be shared with all the gxconnect deployments.
+ *
+ */
+async function getCustomFields() {
+  return null
+}
+
+/**
  * RESULT_LOGGED action has been published referencing
  * a result handled by this plugin
  */
@@ -363,4 +385,5 @@ async function onPatientUpdated(/* { patientId }, { messageContext } */) {
 
 module.exports = {
   loadPlugin,
+  DEFAULT_SETTINGS,
 }

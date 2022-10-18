@@ -4,9 +4,7 @@ const Promise = require('bluebird')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const { userId } = await knex('User')
-    .where({ name: 'Admin' })
-    .first('id as userId')
+  const { userId } = await knex('User').where({ name: 'Admin' }).first('id as userId')
 
   // read 1st Result and coresponding
   const issues = await knex('Issue as i')

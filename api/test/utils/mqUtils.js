@@ -7,9 +7,7 @@ const config = require('../../src/config')
 let sharedQueue = null
 async function queueConnect() {
   if (sharedQueue == null) {
-    sharedQueue = await createMessageQueue(
-      `${config.amqp.name}_test_device_api`
-    )
+    sharedQueue = await createMessageQueue(`${config.amqp.name}`)
   }
   return sharedQueue
 }
@@ -18,6 +16,11 @@ async function queuePurge() {
   const queue = await queueConnect()
   await queue.waitForIdle(QUEUE_IDLE_TIME)
   await queue.purge()
+}
+
+async function subscribe(subscriptionName, subscription) {
+  const queue = await queueConnect()
+  await queue.subscribe(subscriptionName, subscription)
 }
 
 async function createMessageContext() {
@@ -50,4 +53,5 @@ module.exports = {
   waitForAction,
   waitForIdle,
   dispatchAndWaitForAction,
+  subscribe,
 }

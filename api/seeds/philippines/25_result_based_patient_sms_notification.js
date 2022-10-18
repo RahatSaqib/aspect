@@ -1,19 +1,13 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const { getPartnerByName } = require('../utils')
-const {
-  messageSeverityToId,
-  issueCategoryToId,
-  issueEventStatusToId,
-} = require('../../src/shared/dictionary')
+const { messageSeverityToId, issueCategoryToId, issueEventStatusToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByName(knex, 'Philippines')
   await knex('Partner').where('id', partnerId).update('plugin', 'philippines')
   const now = new Date()
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
+  const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
 
   const auditFields = {
     createdOn: now,
@@ -23,8 +17,8 @@ async function seed(knex) {
   }
   const smsDateFormat = 'dd/MM/yyyy'
   const [patientSmsTemplateId] = await knex('SmsTemplate').insert({
-    message: `Your {{result.assay.name}} result tested last {{formatDate result.patient.dateReceived formatString='${smsDateFormat}'}} is already available. Please contact {{result.patient.referringHealthFacility}} to schedule a follow-up consultation`,
-    phoneNumber: `{{result.patient.phone}}`,
+    message: `Your {{result.assay.name}} result tested last {{formatDate (coalesce result.endedOn result.startedOn result.patient.dateReceived) formatString='${smsDateFormat}'}} is already available. Please contact {{defaultTo (coalesce result.patient.referringHealthFacility result.reportableSiteName) 'your health facility'}} to schedule a follow-up consultation`,
+    phoneNumber: `{{(formatPhone result.patient.phone result.country.dialingCode)}}`,
     ...auditFields,
   })
   const messageSeverityAlertId = await messageSeverityToId('Alert')
@@ -72,13 +66,9 @@ async function seed(knex) {
     updatedOn: auditFields.updatedOn,
   })
 
-  const { id: issueTypeResultUpdatedId } = await knex('IssueType')
-    .where('externalId', 'ResultUpdated')
-    .first('id')
+  const { id: issueTypeResultUpdatedId } = await knex('IssueType').where('externalId', 'ResultUpdated').first('id')
 
-  const { id: resultUpdatedIssueEventTriggerId } = await knex(
-    'IssueEventTrigger'
-  )
+  const { id: resultUpdatedIssueEventTriggerId } = await knex('IssueEventTrigger')
     .where('issueTypeId', issueTypeResultUpdatedId)
     .andWhere('issueEventStatusId', triggeredIssueEventStatusId)
     .andWhere('partnerId', partnerId)

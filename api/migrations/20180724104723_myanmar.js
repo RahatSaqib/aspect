@@ -4,34 +4,14 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.table('Issue', issue => {
-    issue
-      .integer('consumableId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Consumable')
+    issue.integer('consumableId').unsigned().index().references('id').inTable('Consumable')
   })
 
   await knex.schema.createTable('PartnerConsumable', partnerConsumable => {
-    partnerConsumable
-      .integer('partnerId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Partner')
-      .notNullable()
-    partnerConsumable
-      .integer('consumableId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Consumable')
-      .notNullable()
+    partnerConsumable.integer('partnerId').unsigned().index().references('id').inTable('Partner').notNullable()
+    partnerConsumable.integer('consumableId').unsigned().index().references('id').inTable('Consumable').notNullable()
     partnerConsumable.boolean('autoInclude').notNullable().defaultTo(0)
-    partnerConsumable
-      .boolean('allowStockUpdateFromActionDashboard')
-      .notNullable()
-      .defaultTo(0)
+    partnerConsumable.boolean('allowStockUpdateFromActionDashboard').notNullable().defaultTo(0)
     partnerConsumable.unique(['partnerId', 'consumableId'])
   })
 
@@ -49,14 +29,8 @@ async function up(knex) {
   })
 
   await knex.schema.table('AlertTemplate', alertTemplate => {
-    alertTemplate
-      .boolean('hideWhenSiteFilterIsSelected')
-      .notNullable()
-      .defaultTo(0)
-    alertTemplate
-      .boolean('hideWhenSiteFilterIsNotSelected')
-      .notNullable()
-      .defaultTo(0)
+    alertTemplate.boolean('hideWhenSiteFilterIsSelected').notNullable().defaultTo(0)
+    alertTemplate.boolean('hideWhenSiteFilterIsNotSelected').notNullable().defaultTo(0)
   })
 }
 
@@ -67,12 +41,7 @@ async function down(knex) {
   })
 
   await knex.schema.table('Consumable', consumable => {
-    consumable
-      .integer('partnerId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Partner')
+    consumable.integer('partnerId').unsigned().index().references('id').inTable('Partner')
     consumable.boolean('autoInclude').notNullable().defaultTo(0)
   })
 
@@ -92,9 +61,6 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('PartnerConsumable')
 
   await knex.schema.table('AlertTemplate', alertTemplate => {
-    alertTemplate.dropColumns(
-      'hideWhenSiteFilterIsSelected',
-      'hideWhenSiteFilterIsNotSelected'
-    )
+    alertTemplate.dropColumns('hideWhenSiteFilterIsSelected', 'hideWhenSiteFilterIsNotSelected')
   })
 }

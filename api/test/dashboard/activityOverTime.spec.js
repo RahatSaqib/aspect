@@ -1,16 +1,7 @@
 const _ = require('lodash')
 
 const chai = require('chai')
-const {
-  addDays,
-  format,
-  isWeekend,
-  addMinutes,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-  parseISO,
-} = require('date-fns')
+const { addDays, format, isWeekend, addMinutes, subMonths, startOfMonth, endOfMonth, parseISO } = require('date-fns')
 const Promise = require('bluebird')
 const server = require('../utils/testUtils')
 
@@ -29,7 +20,6 @@ const { assert } = chai
 
 describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time', () => {
   const path = '/api/dashboard/operational-data/activity-over-time'
-  shared.checkToken(server, path)
 
   const now = parseISO(new Date().toISOString())
   const previousMonth = subMonths(now, 1)
@@ -41,23 +31,21 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
   let assayGeneXpertMtbRif
   const weekDays = []
   before(async () => {
+    shared.checkToken(server, path)
     // -----------------------------
     // current id's in some touched tables - to delete all
     // new records in after()
     // -----------------------------
     // helper
     const getLastId = async tableName => {
-      const [id] =
-        (await knex(tableName).orderBy('id', 'desc').pluck('id')) || []
+      const [id] = (await knex(tableName).orderBy('id', 'desc').pluck('id')) || []
       return id
     }
     // get last item id from tables we touch in test
     initialState = {
       sampleId: await getLastId('Sample'),
       resultId: await getLastId('Result'),
-      deviceMaintenanceStatusLogId: await getLastId(
-        'DeviceMaintenanceStatusLog'
-      ),
+      deviceMaintenanceStatusLogId: await getLastId('DeviceMaintenanceStatusLog'),
     }
     // -----------------------------
     // get data for adding results
@@ -75,18 +63,12 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
       updatedBy: userId,
     }
     const { DBS: sampleTypeDBSId } = await allSampleTypeToId()
-    const {
-      DiagnosticDevice: resultSourceDiagnosticId,
-    } = await allResultSourceToId()
+    const { DiagnosticDevice: resultSourceDiagnosticId } = await allResultSourceToId()
     const resultTypePatientId = await resultTypeToId('Patient')
-    const {
-      Detected: resultCategoryDetectedId,
-      NotDetected: resultCategoryNotDetectedId,
-    } = await allResultCategoryToId()
+    const { Detected: resultCategoryDetectedId, NotDetected: resultCategoryNotDetectedId } =
+      await allResultCategoryToId()
     const deviceMaintenanceStatusToId = await allDeviceMaintenanceStatusToId()
-    ;[assayGeneXpertMtbRif] = [
-      await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name'),
-    ]
+    ;[assayGeneXpertMtbRif] = [await knex('Assay').where('externalId', 'GxMtbRif').first('id', 'name')]
     const device = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -124,7 +106,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         sampleTypeId: sampleTypeDBSId,
         originSiteId: siteId,
       }
-      sample.id = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
       samples.push(sample)
     })
     await Promise.each(_.range(totalResults), async i => {
@@ -139,9 +121,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
       // -----------------------------
       const resultElement = {
         ...auditFields,
-        externalId: `UQTB-${_.times(8, () =>
-          _.toUpper(_.random(36).toString(36))
-        ).join('')}`,
+        externalId: `UQTB-${_.times(8, () => _.toUpper(_.random(36).toString(36))).join('')}`,
         assayId: assayGeneXpertMtbRif.id,
         partnerId,
         geographyId,
@@ -186,11 +166,11 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
 
     await addDmsl(weekDays[1], deviceMaintenanceStatusToId.reportedActive)
     //
-    statusId = deviceMaintenanceStatusToId.inactiveUnknown
+    statusId = deviceMaintenanceStatusToId.inactiveNoTestsPerformed
     await addDmsl(weekDays[2], statusId)
     await addDmsl(weekDays[3], statusId)
     //
-    statusId = deviceMaintenanceStatusToId.inactiveNoResultsReported
+    statusId = deviceMaintenanceStatusToId.inactiveUnknown
     await addDmsl(weekDays[4], statusId)
     await addDmsl(weekDays[5], statusId)
     await addDmsl(weekDays[6], statusId)
@@ -204,23 +184,15 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     await addDmsl(weekDays[10], statusId)
     await addDmsl(weekDays[11], statusId)
     //
-    statusId = deviceMaintenanceStatusToId.inactiveConnectivity
-    await addDmsl(weekDays[12], statusId)
-    await addDmsl(weekDays[13], statusId)
-    //
     statusId = deviceMaintenanceStatusToId.inactiveDecommissioned
     await addDmsl(weekDays[14], statusId)
   })
 
   after(async () => {
     // helper
-    const reset = async (tableName, id) =>
-      knex(tableName).where('id', '>', id).delete()
+    const reset = async (tableName, id) => knex(tableName).where('id', '>', id).delete()
     // reset all data tables affected in test
-    await reset(
-      'DeviceMaintenanceStatusLog',
-      initialState.deviceMaintenanceStatusLogId
-    )
+    await reset('DeviceMaintenanceStatusLog', initialState.deviceMaintenanceStatusLogId)
     await reset('Result', initialState.resultId)
     await reset('Sample', initialState.sampleId || 0)
   })
@@ -254,20 +226,15 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     assert.property(item, 'devicesTotal')
     //
     assert.property(item, 'inactiveUnknown')
-    assert.property(item, 'inactiveNoResultsReported')
+    assert.property(item, 'inactiveNoTestsPerformed')
     assert.property(item, 'inactiveOutOfInventory')
     assert.property(item, 'inactiveDownForRepair')
-    assert.property(item, 'inactiveConnectivity')
     assert.property(item, 'inactiveDecommissioned')
     assert.property(item, 'isWeekendOrHoliday')
 
     // helper func
     const getItem = weekdayIndex =>
-      data.find(
-        ({ date }) =>
-          format(date, 'yyyy-MM-dd') ===
-          format(weekDays[weekdayIndex], 'yyyy-MM-dd')
-      )
+      data.find(({ date }) => format(date, 'yyyy-MM-dd') === format(weekDays[weekdayIndex], 'yyyy-MM-dd'))
     // ----------------
     // assert statuses to corresponding week-days by week-day indices
     // ----------------
@@ -275,12 +242,12 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     assert.isAtLeast(getItem(1).devicesTotal, 1)
     assert.isAtLeast(getItem(1).devicesActive, 1)
     //
-    assert.isAtLeast(getItem(2).inactiveUnknown, 1)
-    assert.isAtLeast(getItem(3).inactiveUnknown, 1)
+    assert.isAtLeast(getItem(2).inactiveNoTestsPerformed, 1)
+    assert.isAtLeast(getItem(3).inactiveNoTestsPerformed, 1)
     //
-    assert.isAtLeast(getItem(4).inactiveNoResultsReported, 1)
-    assert.isAtLeast(getItem(5).inactiveNoResultsReported, 1)
-    assert.isAtLeast(getItem(6).inactiveNoResultsReported, 1)
+    assert.isAtLeast(getItem(4).inactiveUnknown, 1)
+    assert.isAtLeast(getItem(5).inactiveUnknown, 1)
+    assert.isAtLeast(getItem(6).inactiveUnknown, 1)
     //
     assert.isAtLeast(getItem(7).inactiveOutOfInventory, 1)
     assert.isAtLeast(getItem(8).inactiveOutOfInventory, 1)
@@ -288,9 +255,6 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     //
     assert.isAtLeast(getItem(10).inactiveDownForRepair, 1)
     assert.isAtLeast(getItem(11).inactiveDownForRepair, 1)
-    //
-    assert.isAtLeast(getItem(12).inactiveConnectivity, 1)
-    assert.isAtLeast(getItem(13).inactiveConnectivity, 1)
     //
     assert.isAtLeast(getItem(14).inactiveDecommissioned, 1)
   })

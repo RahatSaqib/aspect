@@ -8,6 +8,7 @@ const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const geography = require('./fixtures/geography.json')
 const { commonUpserts } = require('../common')
+const jobFunctionsFixtureCameroon = require('./fixtures/jobFunctions_cameroon')
 
 module.exports = require('../utils').seed(seed, __filename)
 
@@ -42,12 +43,16 @@ async function seed(knex) {
     partnerId,
     adminId,
     {
-      countries: [
-        geography.countries.find(country => country.abbreviation === 'CM'),
-      ],
+      countries: [geography.countries.find(country => country.abbreviation === 'CM')],
     },
     'CM',
-    'fkhrolf5kovl5ynya44h'
+    'fkhrolf5kovl5ynya44h',
+    null,
+    {
+      fixtures: {
+        jobFunctions: jobFunctionsFixtureCameroon,
+      },
+    }
   )
 
   // Grant access to sites
@@ -57,9 +62,7 @@ async function seed(knex) {
     .where('activity', 'edit')
     .first('id')
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where('name', 'Admin')
-    .first('id')
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').first('id')
 
   if (
     !(await knex('JobFunctionPermission')

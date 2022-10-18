@@ -1,0 +1,24 @@
+name: 'Setup Front-end'
+description: 'Clone, install and build front-end'
+runs:
+  using: "composite"
+  steps:
+    - name: 'Checkout repo'
+      uses: actions/checkout@v2
+
+    - name: 'Setup NODE'
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ./web/**/node_modules
+        key: ${{ runner.os }}-modules-${{ hashFiles('./web/**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-web
+
+    - name: 'Install Node Modules'
+      run: 'yarn start:web:install'
+      shell: bash

@@ -1,0 +1,98 @@
+{
+  "countries": [
+    {
+      "abbreviation": "LS",
+      "name": "Lesotho",
+      "a3": "LSO",
+      "culture": "EN",
+      "countryCode": "226",
+      "timezone": "South Africa Standard Time",
+      "portNumber": 3029,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Berea",
+          "lgas": [
+            {
+              "name": "Teyateyaneng"
+            }
+          ]
+        },
+        {
+          "name": "Butha-Buthe",
+          "lgas": [
+            {
+              "name": "Butha-Buthe"
+            }
+          ]
+        },
+        {
+          "name": "Leribe",
+          "lgas": [
+            {
+              "name": "Hlotse"
+            }
+          ]
+        },
+        {
+          "name": "Mafeteng",
+          "lgas": [
+            {
+              "name": "Mafeteng"
+            }
+          ]
+        },
+        {
+          "name": "Maseru",
+          "lgas": [
+            {
+              "name": "Maseru"
+            }
+          ]
+        },
+        {
+          "name": "Mohale's Hoek",
+          "lgas": [
+            {
+              "name": "Mohale's Hoek"
+            }
+          ]
+        },
+        {
+          "name": "Mokhotlong",
+          "lgas": [
+            {
+              "name": "Mokhotlong"
+            }
+          ]
+        },
+        {
+          "name": "Qacha's Nek",
+          "lgas": [
+            {
+              "name": "Qacha's Nek"
+            }
+          ]
+        },
+        {
+          "name": "Quthing",
+          "lgas": [
+            {
+              "name": "Quthing"
+            }
+          ]
+        },
+        {
+          "name": "Thaba-Tseka",
+          "lgas": [
+            {
+              "name": "Thaba-Tseka"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

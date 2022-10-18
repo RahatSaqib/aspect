@@ -1,20 +1,23 @@
 const _ = require('lodash')
 const chai = require('chai')
+const chaiSubset = require('chai-subset')
 const shared = require('../utils/sharedToken')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
 const { run } = require('../../src/db')
 
 const server = require('../utils/testUtils')
 
-const { assert, expect } = chai
+const { assert, expect } = chai.use(chaiSubset)
 
 describe('Assay Consumable Routes', () => {
   describe('Consumable Type Route', () => {
     const path = '/api/inventory/consumable-types'
 
-    describe('GET', () => {
+    before(() => {
       shared.checkToken(server, path)
+    })
 
+    describe('GET', () => {
       it('should return a list of consumable types when using valid token', done => {
         server
           .get(path)
@@ -42,9 +45,11 @@ describe('Assay Consumable Routes', () => {
   describe('Consumable Reason Route', () => {
     const path = '/api/inventory/consumable-reason'
 
-    describe('GET', () => {
+    before(() => {
       shared.checkToken(server, path)
+    })
 
+    describe('GET', () => {
       it('should return a list of consumable reasons when using valid token', done => {
         server
           .get(path)
@@ -94,35 +99,23 @@ describe('Assay Consumable Routes', () => {
               },
             ]
           )
-          tbDiseaseManagerAuthAccessToken = await getAccessToken(
-            tbDiseaseManagerUsername,
-            tbDiseaseManagerPassword
-          )
+          tbDiseaseManagerAuthAccessToken = await getAccessToken(tbDiseaseManagerUsername, tbDiseaseManagerPassword)
 
-          hivManagerUserId = await createUser(
-            'Partner One',
-            'US',
-            hivManagerUsername,
-            hivManagerPassword,
-            [
-              {
-                jobFunctionExternalId: 'manager',
-                assayTypeExternalId: 'assayTypeCD4',
-              },
-              {
-                jobFunctionExternalId: 'manager',
-                assayTypeExternalId: 'assayTypeHivQual',
-              },
-              {
-                jobFunctionExternalId: 'manager',
-                assayTypeExternalId: 'assayTypeHivVl',
-              },
-            ]
-          )
-          hivManagerAuthAccessToken = await getAccessToken(
-            hivManagerUsername,
-            hivManagerPassword
-          )
+          hivManagerUserId = await createUser('Partner One', 'US', hivManagerUsername, hivManagerPassword, [
+            {
+              jobFunctionExternalId: 'manager',
+              assayTypeExternalId: 'assayTypeCD4',
+            },
+            {
+              jobFunctionExternalId: 'manager',
+              assayTypeExternalId: 'assayTypeHivQual',
+            },
+            {
+              jobFunctionExternalId: 'manager',
+              assayTypeExternalId: 'assayTypeHivVl',
+            },
+          ])
+          hivManagerAuthAccessToken = await getAccessToken(hivManagerUsername, hivManagerPassword)
         })
 
         after(async () => {
@@ -318,9 +311,7 @@ describe('Assay Consumable Routes', () => {
       describe('POST', () => {
         afterEach(() =>
           run(async knex => {
-            await knex('ConsumableAssay')
-              .where({ consumableId, assayId })
-              .delete()
+            await knex('ConsumableAssay').where({ consumableId, assayId }).delete()
           })
         )
         it('should return a newly created assay consumable when using valid token, consumable id and an assay id', done => {
@@ -359,16 +350,11 @@ describe('Assay Consumable Routes', () => {
                 })
                 .set('Authorization', `Bearer ${shared.token}`)
                 .end((err, res) => {
-                  assert.equal(
-                    res.status,
-                    409,
-                    'We should not be able to post a duplicate assay consumable'
-                  )
+                  assert.equal(res.status, 409, 'We should not be able to post a duplicate assay consumable')
                   assert.deepEqual(res.body, {
                     statusCode: 409,
                     error: 'Conflict',
-                    message:
-                      'There is already an record for this assay and consumable',
+                    message: 'There is already an record for this assay and consumable',
                   })
 
                   server
@@ -399,9 +385,7 @@ describe('Assay Consumable Routes', () => {
         )
         afterEach(() =>
           run(async knex => {
-            await knex('ConsumableAssay')
-              .where({ consumableId, assayId })
-              .delete()
+            await knex('ConsumableAssay').where({ consumableId, assayId }).delete()
           })
         )
         it('should return the updated assay consumable when using valid token, consumable id and an assay id', done => {
@@ -453,9 +437,7 @@ describe('Assay Consumable Routes', () => {
         )
         afterEach(() =>
           run(async knex => {
-            await knex('ConsumableAssay')
-              .where({ consumableId, assayId })
-              .delete()
+            await knex('ConsumableAssay').where({ consumableId, assayId }).delete()
           })
         )
         it('should remove the assay consumable from the system', done => {
@@ -488,22 +470,20 @@ describe('Assay Consumable Routes', () => {
 // helper functions
 // -----------------------------------
 async function getTestAssayId(knex) {
-  const { id: assayId } = await knex('Assay')
-    .where({ externalId: 'GxMtbRif' })
-    .first('id')
+  const { id: assayId } = await knex('Assay').where({ externalId: 'GxMtbRif' }).first('id')
   return assayId
 }
 
 async function createTestConsumable(knex) {
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'Partner One')
-    .first('id')
+  const { id: partnerId } = await knex('Partner').where('name', 'Partner One').first('id')
 
   const [consumableId] = await knex('Consumable').insert({
     name: 'Test Cartridge',
     unit: 1,
     canExpire: 1,
     manufacturer: 'Daktari',
+    externalId: 'DaktariCartridge',
+    i18nKey: 'DaktariCartridge',
   })
 
   await knex('PartnerConsumable').insert({

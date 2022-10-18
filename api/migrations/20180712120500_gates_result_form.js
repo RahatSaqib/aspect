@@ -4,21 +4,10 @@ async function up(knex) {
   await knex.raw('SET foreign_key_checks = 0')
 
   await knex.schema.createTable('ResultForm', resultForm => {
-    resultForm
-      .integer('partnerId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Partner')
-    resultForm
-      .integer('assayId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Assay')
+    resultForm.integer('partnerId').unsigned().index().references('id').inTable('Partner')
+    resultForm.integer('assayId').unsigned().index().references('id').inTable('Assay')
     resultForm.specificType('formSchema', 'JSON')
     resultForm.primary(['partnerId', 'assayId'])
-    resultForm.charset('utf8')
   })
 
   await knex.schema.table('Result', result => {

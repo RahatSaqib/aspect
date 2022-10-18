@@ -1,0 +1,16 @@
+{
+  "ct1": 20.2,
+  "ct2": 16.0,
+  "ct3": 9.3,
+  "status": "Complete",
+  "labName": "Village TB Lab",
+  "ctLabel1": "Control Ct",
+  "ctLabel2": "MTB",
+  "ctLabel3": "MTB",
+  "testName": "Truenat MTB",
+  "ctResult1": "Detected",
+  "ctResult2": "Detected",
+  "ctResult3": "Detected",
+  "finalResult": "Detected",
+  "validityStatus": "Valid"
+}

@@ -6,7 +6,7 @@
       "a3": "MWI",
       "culture": "ny-MW",
       "countryCode": "265",
-      "timezone": "Central Africa Time",
+      "timezone": "South Africa Standard Time",
       "portNumber": 2952,
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
       "inventoryDaysThreshold": 21,
@@ -197,23 +197,11 @@
           "lgas": [
             {
               "name": "Winston",
-              "cities": [
-                "Winston",
-                "Mobile",
-                "Selma",
-                "Independence",
-                "Durham"
-              ]
+              "cities": ["Winston", "Mobile", "Selma", "Independence", "Durham"]
             },
             {
               "name": "Pike",
-              "cities": [
-                "Pike",
-                "Warren",
-                "Turner",
-                "Carter",
-                "West Pike"
-              ]
+              "cities": ["Pike", "Warren", "Turner", "Carter", "West Pike"]
             },
             {
               "name": "Lawrence",
@@ -251,13 +239,7 @@
             },
             {
               "name": "Tucson",
-              "cities": [
-                "Tucson",
-                "Middleton",
-                "Wyler",
-                "Madrid",
-                "Louden"
-              ]
+              "cities": ["Tucson", "Middleton", "Wyler", "Madrid", "Louden"]
             },
             {
               "name": "Yuma",
@@ -271,13 +253,7 @@
             },
             {
               "name": "Maricopa",
-              "cities": [
-                "Maricopa",
-                "Saunter",
-                "Simi",
-                "Lima",
-                "Clarendon"
-              ]
+              "cities": ["Maricopa", "Saunter", "Simi", "Lima", "Clarendon"]
             }
           ],
           "lat": 33.729759,
@@ -525,13 +501,7 @@
             },
             {
               "name": "Lancaster",
-              "cities": [
-                "Lancaster",
-                "Hampton",
-                "Franklin",
-                "Marden",
-                "Exeter"
-              ]
+              "cities": ["Lancaster", "Hampton", "Franklin", "Marden", "Exeter"]
             }
           ],
           "lat": 41.12537,
@@ -579,13 +549,7 @@
           "lgas": [
             {
               "name": "Wayne",
-              "cities": [
-                "Wooster",
-                "Mansfield",
-                "Croydon",
-                "Wayne",
-                "Oberlin"
-              ]
+              "cities": ["Wooster", "Mansfield", "Croydon", "Wayne", "Oberlin"]
             },
             {
               "name": "Cuyahoga",
