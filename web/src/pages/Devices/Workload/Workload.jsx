@@ -30,7 +30,7 @@ const cssClasses = classnames.bind(styles)
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { date: true, requiredPermissions: [] },
-  { assayId: true, requiredPermissions: [] },
+  { singleAssayId: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: ['device'] },
   { deviceMaintenanceStatus: true, requiredPermissions: [] },
 ]
@@ -87,9 +87,8 @@ const Workload = () => {
     }
 
     const filters = getFilters(filtersParams)
-    setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize])
+    setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, assayId: mostResultsAssay.id, ...filters })
+  }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize, mostResultsAssay.id])
 
   if (isError) throw new Error(error)
 
@@ -115,12 +114,7 @@ const Workload = () => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.workloadTitle)} />
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        config={reducedFilters}
-        dateFilterLabel={formatMessage(messages.date)}
-      />
+      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
       <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
         <DataTableProgressBar disabled={!isLoading} />
         {workloadList.length ? (

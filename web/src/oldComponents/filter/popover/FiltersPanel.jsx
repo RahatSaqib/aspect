@@ -477,6 +477,22 @@ export const FiltersPanel = ({
               </div>
             )}
 
+            {config.singleAssayId && !config.onlyDisease && (
+              <div className={cssClasses('Control')}>
+                <AssaySelectField
+                  allItemText={formatMessage(messages.all)}
+                  value={filters.assayId}
+                  onAssayChange={onAssayChange}
+                  diseaseId={filters.diseaseId}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectAssay)}
+                  floatingLabelText={formatMessage(messages.assay)}
+                  style={{ verticalAlign: 'bottom' }}
+                  multiple={false}
+                />
+              </div>
+            )}
+
             {config.assayId && !config.onlyDisease && (
               <div className={cssClasses('Control')}>
                 <AssaySelectField

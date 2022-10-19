@@ -357,6 +357,9 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
             case 'consumable':
               result.consumable = true
               break
+            case 'singleAssayId':
+              result.singleAssayId = true
+              break
             case 'assayId':
               result.assayId = true
               break
