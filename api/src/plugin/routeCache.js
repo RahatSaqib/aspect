@@ -31,6 +31,55 @@ class RouteCache {
         if (versionNumber) {
           availableRoutes.push(versionNumber)
         }
+      } else {
+        const matchingPath = routesList.find(path => path.toLowerCase() === requestedPath.toLowerCase())
+        if (matchingPath) {
+          return matchingPath
+        }
+
+        // check segment length if its matching or not
+        const requestedPathSegments = requestedPath.split('/').filter(segment => segment !== '')
+        const potentialMatchingConfiguredPaths = routesList.filter(path => {
+          const subPath = path.substring(1)
+          return (
+            subPath
+              .replace(/v\d+[\\/]/gi, '')
+              .trim()
+              .split('/').length === requestedPathSegments.length
+          )
+        })
+
+        // checking path parameter match or not
+        const paramRegex = /\{\w+\}/gi
+        const potentialMatchingConfiguredPathWithSegments = potentialMatchingConfiguredPaths.map(path => {
+          const subPath = path.substring(1)
+          return {
+            path,
+            segments: subPath
+              .replace(/v\d+[\\/]/gi, '')
+              .trim()
+              .split('/')
+              .map(segment => ({
+                name: segment,
+                mustMatch: !paramRegex.test(segment),
+              })),
+          }
+        })
+        for (let i = 0; i < potentialMatchingConfiguredPathWithSegments.length; i++) {
+          if (
+            potentialMatchingConfiguredPathWithSegments[i].segments.every(
+              (segment, ii) =>
+                !segment.mustMatch || segment.name.toLowerCase() === requestedPathSegments[ii].toLowerCase()
+            )
+          ) {
+            url = potentialMatchingConfiguredPathWithSegments[i].path
+            const parseVersionNumber = url.match(/\d+/)
+            const versionNumber = parseVersionNumber && parseInt(parseVersionNumber[0], 10)
+            if (versionNumber && !availableRoutes.includes(versionNumber)) {
+              availableRoutes.push(versionNumber)
+            }
+          }
+        }
       }
       return url
     })
