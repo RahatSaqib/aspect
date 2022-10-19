@@ -26,22 +26,10 @@ const messages = {
   ...deviceApprovalMessages,
   ...deviceStatusMessages,
   ...defineMessages({
-    profile: {
-      id: 'pages.DeviceDetail.profile',
-      defaultMessage: 'Profile',
-    },
-    operation: {
-      id: 'pages.DeviceDetail.operation',
-      defaultMessage: 'Operation',
-    },
-    alerts: {
-      id: 'pages.DeviceDetail.alerts',
-      defaultMessage: 'Alerts',
-    },
-    edit: {
-      id: 'pages.DeviceDetail.edit',
-      defaultMessage: 'Edit',
-    },
+    profile: { id: 'pages.DeviceDetail.profile', defaultMessage: 'Profile' },
+    operation: { id: 'pages.DeviceDetail.operation', defaultMessage: 'Operation' },
+    alerts: { id: 'pages.DeviceDetail.alerts', defaultMessage: 'Alerts' },
+    edit: { id: 'pages.DeviceDetail.edit', defaultMessage: 'Edit' },
   }),
 }
 
@@ -83,35 +71,16 @@ export const DeviceDetail = props => {
           notes: values.notes,
         })
       ),
-    {
-      onSuccess,
-    }
+    { onSuccess }
   )
   const { mutate: onCalibrationSubmit } = useMutation(
     values =>
-      dispatch(
-        updateDeviceMaintenance({
-          externalId: 'calibration',
-          device: Immutable.fromJS(device),
-          values,
-        })
-      ),
-    {
-      onSuccess,
-    }
+      dispatch(updateDeviceMaintenance({ externalId: 'calibration', device: Immutable.fromJS(device), values })),
+    { onSuccess }
   )
   const { mutate: onWarrantySubmit } = useMutation(
-    values =>
-      dispatch(
-        updateDeviceMaintenance({
-          externalId: 'warranty',
-          device: Immutable.fromJS(device),
-          values,
-        })
-      ),
-    {
-      onSuccess,
-    }
+    values => dispatch(updateDeviceMaintenance({ externalId: 'warranty', device: Immutable.fromJS(device), values })),
+    { onSuccess }
   )
 
   const dateRange = searchParams.get('dateRange') || '30'
@@ -120,13 +89,7 @@ export const DeviceDetail = props => {
     const searchParams = new URLSearchParams(location.search)
     searchParams.set('dateRange', dateRange)
 
-    navigate(
-      {
-        ...location,
-        search: `?${searchParams.toString()}`,
-      },
-      { replace: true }
-    )
+    navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
   }
 
   return (

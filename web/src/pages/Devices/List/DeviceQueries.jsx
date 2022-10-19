@@ -1,5 +1,5 @@
-import fetchWrapperForQueries from '../../components/QueryFetch'
-import { getFilters } from '../../oldComponents/filter/utils'
+import fetchWrapperForQueries from '../../../components/QueryFetch'
+import { getFilters } from '../../../oldComponents/filter/utils'
 
 async function getExportableFile(filtersParams, fileFormat, sortCol, sortDir, page, pageSize, reportName) {
   const filters = getFilters(filtersParams)
