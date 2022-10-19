@@ -665,6 +665,94 @@ describe('Mobile API Result download routes v2 with available custom api-version
       }
     }
 
+    function assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(response, numberOfResults) {
+      assertReporterResultDownloadResponse(response)
+
+      assert.equal(response.body.total, numberOfResults)
+      assert.equal(response.body.length, numberOfResults)
+      assert.isAtLeast(response.body.awaitingTreatment, 0)
+      if (!_.isNil(response.body.nextPage)) {
+        assert.isAtLeast(response.body.nextPage, 0)
+      }
+      expect(response).to.containSubset({
+        body: {
+          data: [
+            {
+              assayAvatar: {
+                contentI18nKey: 'assayTypeMtbRif',
+                contentText: 'TB',
+                backgroundColour: 'purple',
+                foregroundColour: 'secondary',
+                contentIcon: null,
+              },
+            },
+          ],
+        },
+      })
+
+      assert.equal(Object.keys(response.body.data[0]).length, 25)
+      assert.property(response.body.data[0], 'id')
+      assert.property(response.body.data[0], 'externalId')
+      assert.property(response.body.data[0], 'endedOn')
+      assert.property(response.body.data[0], 'updatedOn')
+      assert.property(response.body.data[0], 'assayExternalId')
+      assert.property(response.body.data[0], 'siteName')
+      assert.property(response.body.data[0], 'reportableSiteId')
+      assert.property(response.body.data[0], 'sampleOriginSiteId')
+      assert.property(response.body.data[0], 'firstViewedOn')
+      assert.property(response.body.data[0], 'deviceName')
+      assert.property(response.body.data[0], 'resultCategory1ExternalId')
+      assert.property(response.body.data[0], 'resultCategory2ExternalId')
+      assert.property(response.body.data[0], 'workflowStatus')
+      assert.property(response.body.data[0], 'treatmentStatus')
+      assert.property(response.body.data[0], 'patientData')
+      assert.property(response.body.data[0], 'resultData')
+      assert.property(response.body.data[0], 'sample')
+      assert.property(response.body.data[0], 'comments')
+      assert.property(response.body.data[0], 'followUps')
+      assert.property(response.body.data[0], 'assayAvatar')
+      if (response.body.data[0].followUps) {
+        assert.typeOf(response.body.data[0].followUps, 'array')
+        assert.property(response.body.data[0].followUps[0], 'id')
+        assert.property(response.body.data[0].followUps[0], 'externalId')
+        assert.property(response.body.data[0].followUps[0], 'followUpTypeExternalId')
+        assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
+        assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
+        assert.property(response.body.data[0].followUps[0], 'followUpName')
+        assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
+        assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
+        assert.property(response.body.data[0].followUps[0], 'date')
+        assert.property(response.body.data[0].followUps[0], 'createdOn')
+        assert.property(response.body.data[0].followUps[0], 'updatedOn')
+      }
+    }
+
+    it('should return a paged list of results and update them to delivered with assayAvatar purple', async () => {
+      const res = await server
+        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `31`)
+      assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(res, totalResults)
+
+      // we're not awaiting the insert before returning in service.js, so need a delay here
+      await Promise.delay(1000)
+
+      // check if the download is register in the table.
+      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
+        .join('Result as r', 'rdl.resultId', 'r.id')
+        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
+        .whereIn(
+          'rdl.resultId',
+          _.map(res.body.data, elem => elem.id)
+        )
+        .where('rs.externalId', 'Delivered')
+        .count('rdl.id as count')
+        .first()
+
+      assert.isAtLeast(totalResult, res.body.length)
+    })
+
     it('should return a paged list of results and update them to delivered', async () => {
       const res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
@@ -922,6 +1010,94 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         assert.property(response.body.data[0].followUps[0], 'updatedOn')
       }
     }
+
+    function assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(response, numberOfResults) {
+      assertReporterResultDownloadResponse(response)
+
+      assert.equal(response.body.total, numberOfResults)
+      assert.equal(response.body.length, numberOfResults)
+      assert.isAtLeast(response.body.awaitingTreatment, 0)
+      if (!_.isNil(response.body.nextPage)) {
+        assert.isAtLeast(response.body.nextPage, 0)
+      }
+      expect(response).to.containSubset({
+        body: {
+          data: [
+            {
+              assayAvatar: {
+                contentI18nKey: 'assayTypeMtbRif',
+                contentText: 'TB',
+                backgroundColour: 'purple',
+                foregroundColour: 'secondary',
+                contentIcon: null,
+              },
+            },
+          ],
+        },
+      })
+
+      assert.equal(Object.keys(response.body.data[0]).length, 25)
+      assert.property(response.body.data[0], 'id')
+      assert.property(response.body.data[0], 'externalId')
+      assert.property(response.body.data[0], 'endedOn')
+      assert.property(response.body.data[0], 'updatedOn')
+      assert.property(response.body.data[0], 'assayExternalId')
+      assert.property(response.body.data[0], 'siteName')
+      assert.property(response.body.data[0], 'reportableSiteId')
+      assert.property(response.body.data[0], 'sampleOriginSiteId')
+      assert.property(response.body.data[0], 'firstViewedOn')
+      assert.property(response.body.data[0], 'deviceName')
+      assert.property(response.body.data[0], 'resultCategory1ExternalId')
+      assert.property(response.body.data[0], 'resultCategory2ExternalId')
+      assert.property(response.body.data[0], 'workflowStatus')
+      assert.property(response.body.data[0], 'treatmentStatus')
+      assert.property(response.body.data[0], 'patientData')
+      assert.property(response.body.data[0], 'resultData')
+      assert.property(response.body.data[0], 'sample')
+      assert.property(response.body.data[0], 'comments')
+      assert.property(response.body.data[0], 'followUps')
+      assert.property(response.body.data[0], 'assayAvatar')
+      if (response.body.data[0].followUps) {
+        assert.typeOf(response.body.data[0].followUps, 'array')
+        assert.property(response.body.data[0].followUps[0], 'id')
+        assert.property(response.body.data[0].followUps[0], 'externalId')
+        assert.property(response.body.data[0].followUps[0], 'followUpTypeExternalId')
+        assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
+        assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
+        assert.property(response.body.data[0].followUps[0], 'followUpName')
+        assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
+        assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
+        assert.property(response.body.data[0].followUps[0], 'date')
+        assert.property(response.body.data[0].followUps[0], 'createdOn')
+        assert.property(response.body.data[0].followUps[0], 'updatedOn')
+      }
+    }
+
+    it('should return a paged list of results and update them to delivered with assayAvatar purple', async () => {
+      const res = await server
+        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `31`)
+      assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(res, totalResults)
+
+      // we're not awaiting the insert before returning in service.js, so need a delay here
+      await Promise.delay(1000)
+
+      // check if the download is register in the table.
+      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
+        .join('Result as r', 'rdl.resultId', 'r.id')
+        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
+        .whereIn(
+          'rdl.resultId',
+          _.map(res.body.data, elem => elem.id)
+        )
+        .where('rs.externalId', 'Delivered')
+        .count('rdl.id as count')
+        .first()
+
+      assert.isAtLeast(totalResult, res.body.length)
+    })
 
     it('should return a paged list of results and update them to delivered', async () => {
       const res = await server
