@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { TableBody, Table } from '@mui/material'
 import classnames from 'classnames/bind'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
+import subtractDays from 'date-fns/subDays'
 import { Helmet } from 'react-helmet'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
@@ -9,12 +12,7 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import {
-  reduceFiltersConfig,
-  getFilters,
-  sanitizeFiltersStringBy,
-  setFiltersForLast30Days,
-} from '../../../oldComponents/filter/utils'
+import { reduceFiltersConfig, getFilters, sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
@@ -32,7 +30,6 @@ const FILTERS_CONFIG = [
   { date: true, requiredPermissions: [] },
   { singleAssayId: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: ['device'] },
-  { deviceMaintenanceStatus: true, requiredPermissions: [] },
 ]
 
 const availableSortCol = [
@@ -51,9 +48,7 @@ const Workload = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { formatMessage } = useI18n()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState()
 
@@ -76,19 +71,21 @@ const Workload = () => {
   useEffect(() => {
     const { value: searchParams } = searchSanitizer(location, {})
     const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
-    searchParams.set('filters', filtersParams)
+
     if (firstLoad) {
-      setFiltersForLast30Days(searchParams)
-      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-      filtersParams.set('assayId', +mostResultsAssay.id)
+      const now = new Date()
+      filtersParams.set('minDate', startOfDay(subtractDays(now, now.getDate() - 1)).toJSON())
+      filtersParams.set('maxDate', endOfDay(now).toJSON())
+      filtersParams.set('singleAssayId', mostResultsAssay.id)
       searchParams.set('filters', filtersParams)
       setFirstLoad(false)
       navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
 
     const filters = getFilters(filtersParams)
-    setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, assayId: mostResultsAssay.id, ...filters })
-  }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize, mostResultsAssay.id])
+    setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize])
 
   if (isError) throw new Error(error)
 
@@ -100,7 +97,6 @@ const Workload = () => {
     { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true },
     { key: 'firstResultConductedOn', label: formatMessage(messages.firstResultConductedOn), sortable: true },
     { key: 'lastResultConductedOn', label: formatMessage(messages.lastResultConductedOn), sortable: true },
-    { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
       label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
@@ -108,6 +104,7 @@ const Workload = () => {
       )}`,
       sortable: false,
     })),
+    { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
   ]
   const extraColumnsProps = extraColumns.map(ec => ec.fieldId)
 

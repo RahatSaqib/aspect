@@ -26,9 +26,7 @@ const NotificationList = () => {
   const intl = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   return (
     <Fragment>

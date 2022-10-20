@@ -311,7 +311,7 @@ const ResultList = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const {
-    jwt: { permissions: userPermissions },
+    userPermissions,
     displayPreferences: { showFilterDisplayResult },
   } = useAuthState()
   const dependencies = useMemo(

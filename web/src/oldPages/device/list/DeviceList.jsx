@@ -450,10 +450,7 @@ export const DeviceList = () => {
   const { mutate: mergeDevices } = useMergeDevices()
   const intl = useI18n()
   const navigate = useNavigate()
-  const {
-    jwt: { permissions: userPermissions },
-    displayPreferences,
-  } = useAuthState()
+  const { userPermissions, displayPreferences } = useAuthState()
   const location = useLocation()
 
   const [items, setItems] = useState(new Items())
