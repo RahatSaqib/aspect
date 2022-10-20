@@ -15,7 +15,7 @@ async function getTargetDevice(targetDeviceId) {
  * @param {object} options An object representing the dataConstraints options, including the constraint-table-name definition, and also additional configurations like showUnapprovedDevices and showDecommissionedDevices. For example: { assay: 'a', showUnapprovedDevices: true, showDecommissionedDevices: true }
  * @returns The knex query object.
  */
-function getDeviceBaseQuery(dataConstraints, options) {
+function getDeviceBaseQuery2(dataConstraints, options) {
   return knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -27,7 +27,7 @@ function getDeviceBaseQuery(dataConstraints, options) {
 }
 
 const getNotDecommissionedDevices = dataConstraints =>
-  getDeviceBaseQuery(dataConstraints, { showUnapprovedDevices: true })
+  getDeviceBaseQuery2(dataConstraints, { showUnapprovedDevices: true })
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
   const {
