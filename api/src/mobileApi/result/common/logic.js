@@ -112,7 +112,8 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
 const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
   _.map(data, d => {
     const assayAvatar = assayAvatarColorsIcon[d.diseaseExternalId]
-    const assayAvatarDefault = assayAvatarColorsIcon.default
+      ? assayAvatarColorsIcon[d.diseaseExternalId]
+      : assayAvatarColorsIcon.default
     return {
       id: d.id,
       externalId: d.externalId,
@@ -185,9 +186,9 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
       assayAvatar: {
         contentI18nKey: d.contentI18nKey,
         contentText: d.contentText,
-        backgroundColour: assayAvatar ? assayAvatar.backgroundColour : assayAvatarDefault.backgroundColour,
-        foregroundColour: assayAvatar ? assayAvatar.foregroundColour : assayAvatarDefault.foregroundColour,
-        contentIcon: assayAvatar ? assayAvatar.contentIcon : assayAvatarDefault.contentIcon,
+        backgroundColour: assayAvatar.backgroundColour,
+        foregroundColour: assayAvatar.foregroundColour,
+        contentIcon: assayAvatar.contentIcon,
       },
     }
   })
