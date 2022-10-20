@@ -54,6 +54,14 @@ const enhance = compose(
       ({ setIsShown }) =>
       () =>
         setIsShown(isShown => !isShown),
+    onSingleAssayChange:
+      ({ onChangeFilters }) =>
+      singleAssayId =>
+        onChangeFilters({
+          singleAssayId,
+          resultCategoryId: null,
+          resultCategoryGroupId: null,
+        }),
     onAssayChange:
       ({ onChangeFilters }) =>
       assayId =>
@@ -287,6 +295,7 @@ export const FiltersPanel = ({
   onStateIdChange,
   onLgaIdChange,
   onAssayChange,
+  onSingleAssayChange,
   onDiseaseChange,
   onResultCategoryChange,
   onConsumableIdChange,
@@ -480,9 +489,8 @@ export const FiltersPanel = ({
             {config.singleAssayId && !config.onlyDisease && (
               <div className={cssClasses('Control')}>
                 <AssaySelectField
-                  allItemText={formatMessage(messages.all)}
-                  value={filters.assayId}
-                  onAssayChange={onAssayChange}
+                  value={filters.singleAssayId}
+                  onAssayChange={onSingleAssayChange}
                   diseaseId={filters.diseaseId}
                   floatingLabelFixed
                   hintText={formatMessage(messages.selectAssay)}

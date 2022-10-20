@@ -94,6 +94,7 @@ const makeKeySanitizer =
     defaultSanitizer({ a, k, config })
 
 const sanitizerByConfigKey = {
+  singleAssayId: defaultSanitizer,
   assayId: defaultSanitizer,
   assayAndResultCategory: makeArraySanitizer(groups.assayAndResultCategory),
   geography: makeArraySanitizer(groups.geography),

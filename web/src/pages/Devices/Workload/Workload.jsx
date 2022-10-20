@@ -23,6 +23,14 @@ import messages from './messages'
 import TableRow from './TableRow'
 import styles from './Workload.css'
 
+// I am not table to switch between assays, the data table is not refreshing.
+// When you remove the assay, is not refreshing the table and always is showing TB specific columns.
+// When there isn't any assay selected you should remove the assay specific columns like MTB detected, not Detected, etc.
+
+// I requested nicolas to add the State, lga and the site for the query, so after he will introduce, please added to the table.
+
+// There are some missing translations for the status, you should check what we are actually doing in device table.
+
 const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [

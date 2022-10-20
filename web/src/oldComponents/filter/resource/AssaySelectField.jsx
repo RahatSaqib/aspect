@@ -86,6 +86,7 @@ export class AssaySelectField extends PureComponent {
           : assayItem.get('name')) || assayItem.get('name')
       )
     }
+
     return (
       <SelectField
         {...restProps}
@@ -94,7 +95,7 @@ export class AssaySelectField extends PureComponent {
         disabled={isSingleAssay || validFilteredAssays(validAssays).size <= 1}
         multiple={rest.multiple}
       >
-        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+        {rest.multiple ? <MenuItem value="all">{allItemText}</MenuItem> : null}
         {validFilteredAssays(validAssays).map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
             {textForAssayItem(a)}
