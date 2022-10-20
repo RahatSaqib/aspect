@@ -223,6 +223,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('State as st', 'g.stateId', 'st.id')
+    .innerJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Result as r', joinResultQuery => {
@@ -257,6 +258,9 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       'd.lastPingOn',
       'firstAndLastResults.firstEndedOn as firstResultEndedOn',
       'firstAndLastResults.lastEndedOn as lastResultEndedOn',
+      'st.name as stateName',
+      'lg.name as lgaName',
+      's.name as siteName',
       knex.raw('COUNT(r.id) as total')
     )
     .modify(q => {
