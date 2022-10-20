@@ -147,6 +147,20 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
   const { dateFormat } = getAspectDisplayPreferences().toJS()
 
   const buttonBy = {
+    singleAssayId: (filterKey, props) => {
+      const {
+        assayItems,
+        filters: { assayId },
+      } = props
+      const assayIds = isArray(assayId) ? assayId : [assayId]
+      return assayIds.map((__, index) =>
+        makeButton(value =>
+          formatMessage(
+            messages[assayItems.find(it => it.get('id') === value, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')]
+          )
+        )(filterKey, props, index)
+      )
+    },
     assayId: (filterKey, props) => {
       const {
         assayItems,
