@@ -323,17 +323,25 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
 async function sendNotificationsToPeople(txKnex, context, people, policy, action) {
   const now = new Date()
 
-  // Issue notification to every person assigned, (subscriber will create as necessary)
+  // Reduce the collection of persons to only one per person ID with access to the result or issue (reducing persons with multiple job functions)
+  const personsToNotify = new Set()
   await Promise.all(
     people.map(async person => {
       const shouldNotifyToPerson = await shouldNotify(txKnex, action, person.id, person.jobFunctionId)
       if (shouldNotifyToPerson != null) {
-        await createNotificationIfNotCreatedAlready(
-          action,
-          { personId: person.id, policy, now },
-          { messageContext: context, knex: txKnex }
-        )
+        personsToNotify.add(person.id)
       }
+    })
+  )
+
+  // Process the persons and send notifications
+  await Promise.all(
+    [...personsToNotify].map(async personId => {
+      await createNotificationIfNotCreatedAlready(
+        action,
+        { personId, policy, now },
+        { messageContext: context, knex: txKnex }
+      )
     })
   )
 }
@@ -400,7 +408,6 @@ async function createNotificationIfNotCreatedAlready(
       }
     })
     .first()
-
   if (!existingNotification) {
     notification.createdOn = now
     const messageStatusId = await messageStatusToId('Initial')
@@ -452,7 +459,6 @@ async function createNotificationIfNotCreatedAlready(
       }
 
       const [notificationId] = await knex('Notification').insert(notification)
-
       context.notificationCreated(notificationId)
     }
   }
