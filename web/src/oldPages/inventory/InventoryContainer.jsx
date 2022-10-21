@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
+import { Tab, Tabs } from '@mui/material'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../hooks/useI18n'

@@ -8,7 +8,7 @@ import orderBy from 'lodash/orderBy'
 import { oneOfType, object } from 'prop-types'
 import Select, { components } from 'react-select'
 import useI18n from '../../hooks/useI18n'
-import assayTranslations from '../../messages/assay.js'
+import { assay as assayTranslations } from '../../messages'
 import ClearIndicator from './ClearIndicator'
 import { getAspectTheme } from './index.jsx'
 import messages from './messages'
@@ -92,7 +92,7 @@ const FilterByAssayDropDown = ({ props: { actionComponentProps: config, action }
   }, [options, data, formatMessage, initByCountryDefault])
 
   return defaultValue ? (
-    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
       <div style={{ position: 'relative', width: '450px', zIndex: 99 }}>
         <Select
           autoBlur

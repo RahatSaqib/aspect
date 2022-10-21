@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'

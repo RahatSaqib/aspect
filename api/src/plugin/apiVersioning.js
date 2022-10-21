@@ -1,0 +1,139 @@
+/* eslint-disable no-restricted-globals */
+/* eslint-disable radix */
+const Boom = require('@hapi/boom')
+const Joi = require('@hapi/joi')
+const MediaType = require('media-type')
+const RouteCache = require('./routeCache')
+
+const internals = {
+  optionsSchema: Joi.object({
+    defaultVersion: Joi.number().required(),
+    versionHeader: Joi.string().trim().min(1).default('api-version'),
+    mobileApiPath: Joi.string().trim().min(1).default('/'),
+  }),
+}
+
+const getVersionFromRequestHeader = function (request, options) {
+  const apiVersionHeader = request.headers[options.versionHeader]
+
+  if (!isNaN(apiVersionHeader)) {
+    return parseInt(apiVersionHeader)
+  }
+
+  return null
+}
+
+const getVersionFromAcceptHeader = function (request) {
+  const acceptHeader = request.headers.accept
+  const media = MediaType.fromString(acceptHeader)
+
+  if (media.isValid() && /^vnd.[a-z][a-z0-9.!#$&^_-]{0,126}\.v[0-9]+$/i.test(media.subtype)) {
+    const version = media.subtypeFacets[media.subtypeFacets.length - 1].slice(1)
+    return parseInt(version)
+  }
+
+  return null
+}
+
+// Set a response header containing the version number
+const addVersionToResponseHeader = function (request, requestedVersion, options) {
+  const headerName = options.versionHeader
+  const { response } = request
+
+  if (request.response.isBoom) {
+    response.output.headers[headerName] = requestedVersion
+  } else {
+    response.header(headerName, requestedVersion)
+  }
+}
+
+const checkIfPathCanBePathDecoded = function (request) {
+  try {
+    decodeURI(request.path)
+  } catch (err) {
+    throw Boom.badRequest('Invalid path')
+  }
+}
+
+exports.name = 'apiVersioning'
+
+exports.version = '1.0'
+
+exports.register = (server, options) => {
+  const validateOptions = internals.optionsSchema.validate(options)
+  if (validateOptions.error) {
+    throw new Error(validateOptions.error)
+  }
+
+  // Use the validated and maybe converted values from Joi
+  options = validateOptions.value
+
+  server.ext('onRequest', async (request, h) => {
+    // Surface any URI decoding errors before calling server.match
+    checkIfPathCanBePathDecoded(request)
+
+    // First check for custom header
+    let requestedVersionNumber = getVersionFromRequestHeader(request, options)
+
+    // If no version check accept header
+    if (typeof requestedVersionNumber !== 'number') {
+      requestedVersionNumber = getVersionFromAcceptHeader(request, options)
+    }
+
+    // If there was a version by now check if it is valid
+    if (typeof requestedVersionNumber === 'number') {
+      // reading all registered routes
+      const routesCache = RouteCache.getInstance(server)
+      const allRoutesPaths = await routesCache.getCacheValueRoute()
+
+      // getting matching routes from cache
+      const requestedPath = request.path
+      const allVersionedRoutesInCache = await routesCache.appendAndGetAllCachedRoutes(allRoutesPaths, requestedPath)
+      const requestedVersionedRouteInCache = allVersionedRoutesInCache[requestedPath]
+      const latestVersionNumberOfRequestedRoute = requestedVersionedRouteInCache
+        ? Math.max(...requestedVersionedRouteInCache)
+        : options.defaultVersion
+      requestedVersionNumber =
+        latestVersionNumberOfRequestedRoute > requestedVersionNumber
+          ? options.defaultVersion
+          : latestVersionNumberOfRequestedRoute
+    }
+
+    // If there was no version by now use the default version
+    else {
+      requestedVersionNumber = options.defaultVersion
+    }
+
+    const versionedPath = `${options.mobileApiPath}v${requestedVersionNumber}${request.path.slice(
+      options.mobileApiPath.length - 1
+    )}`
+
+    let { method } = request
+    if (request.method === 'options') {
+      method = request.headers['access-control-request-method']
+      if (!method) {
+        throw Boom.badRequest('The Access-Control-Request-Method header must be set for CORS requests.')
+      }
+    }
+
+    const route = server.match(method, versionedPath)
+
+    if (route && route.path.indexOf(`${options.mobileApiPath}v${requestedVersionNumber}/`) === 0) {
+      request.setUrl(
+        `${options.mobileApiPath}v${requestedVersionNumber}${request.path.slice(options.mobileApiPath.length - 1)}${
+          request.url.search || ''
+        }`
+      ) // required to preserve query parameters
+    }
+
+    // Set version for usage in handler
+    request.pre.apiVersion = requestedVersionNumber
+
+    return h.continue
+  })
+
+  server.ext('onPreResponse', (request, h) => {
+    addVersionToResponseHeader(request, request.pre.apiVersion, options)
+    return h.continue
+  })
+}

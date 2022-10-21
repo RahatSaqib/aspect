@@ -1,7 +1,5 @@
 import React from 'react'
-import Card from '@mui/material/Card'
-import TableBody from '@mui/material/TableBody'
-import TextField from '@mui/material/TextField'
+import { Card, TableBody, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import subDays from 'date-fns/subDays'
 import identity from 'lodash/identity'

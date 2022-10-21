@@ -61,6 +61,7 @@ const Point = ({
     onMouseOut,
     onMouseMove,
   }
+
   if (shape === 'rect') {
     return (
       <rect
@@ -141,6 +142,8 @@ const Line = barGraphProps => {
     bars,
     keys: [firstBarNameInSeries],
     layerProps: { pointProps, tooltipProps, strokeWidth = 1 },
+    showLabel,
+    showDecimals,
   } = barGraphProps
 
   // bars of 1st series
@@ -150,11 +153,7 @@ const Line = barGraphProps => {
     .y(bar => getPointY(bar, barGraphProps))
 
   const coordinates = useMemo(
-    () =>
-      anchorBars.map(bar => ({
-        x: getPointX(bar, barGraphProps),
-        y: getPointY(bar, barGraphProps),
-      })),
+    () => anchorBars.map(bar => ({ x: getPointX(bar, barGraphProps), y: getPointY(bar, barGraphProps) })),
     [barGraphProps, anchorBars]
   )
 
@@ -175,15 +174,22 @@ const Line = barGraphProps => {
         style={{ pointerEvents: 'none', strokeDasharray: '3 3', strokeWidth }}
       />
       {anchorBars.map((bar, index) => (
-        <g key={bar.key} transform={`translate(${coordinates[index].x}, ${coordinates[index].y})`}>
-          <Point
-            stroke={lineColor}
-            pointProps={pointProps}
-            onMouseOver={event => onMouseOver(event, index)}
-            onMouseOut={onMouseOut}
-            onMouseMove={event => onMouseMove(event, index)}
-          />
-        </g>
+        <>
+          {showLabel ? (
+            <text x={coordinates[index].x + 10} y={coordinates[index].y - 5} fill="#000">
+              {parseFloat(barGraphProps.data[index][barGraphProps?.layerProps?.valueFieldName]).toFixed(showDecimals)}%
+            </text>
+          ) : null}
+          <g key={bar.key} transform={`translate(${coordinates[index].x}, ${coordinates[index].y})`}>
+            <Point
+              stroke={lineColor}
+              pointProps={pointProps}
+              onMouseOver={event => onMouseOver(event, index)}
+              onMouseOut={onMouseOut}
+              onMouseMove={event => onMouseMove(event, index)}
+            />
+          </g>
+        </>
       ))}
 
       {visibleTooltipIndex >= 0 ? (

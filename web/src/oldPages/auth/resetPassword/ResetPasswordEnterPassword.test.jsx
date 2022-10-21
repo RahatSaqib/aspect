@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import { shallow } from 'enzyme'
 import noop from 'lodash/noop'
 import { createIntl } from 'react-intl'

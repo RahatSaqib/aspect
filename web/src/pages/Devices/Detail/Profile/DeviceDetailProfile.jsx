@@ -1,9 +1,6 @@
 import React, { Fragment } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
-import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
+import { Button, Card, IconButton, Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
@@ -263,7 +260,7 @@ const DeviceDetailProfile = ({
     },
     {
       key: 'resultWorkflowStatusI18nkey',
-      formatter: value => formatMessage(resultMessages[value]),
+      formatter: value => (value ? formatMessage(resultMessages[value]) : ''),
       label: formatMessage(messages.resultWorkflowStatus),
       sortable: true,
     },

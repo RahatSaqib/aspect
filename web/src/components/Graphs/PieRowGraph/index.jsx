@@ -3,13 +3,12 @@ import PropTypes from 'prop-types'
 import AspectResponsiveRow from './AspectResponsiveRow'
 
 const PieRowGraph = ({ assaysFromState, averages, config, data, keys }) => {
-  const { displayMethod, componentClasses } = config
+  const { componentClasses } = config
   return (
     <AspectResponsiveRow
       assaysFromState={assaysFromState}
       averages={averages}
       data={data}
-      displayMethod={displayMethod}
       componentClasses={componentClasses}
       keys={keys}
     />

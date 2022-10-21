@@ -1,9 +1,6 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 import React from 'react'
-import LinearProgress from '@mui/material/LinearProgress'
-import StepContent from '@mui/material/StepContent'
-import StepLabel from '@mui/material/StepLabel'
-import Stepper from '@mui/material/Stepper'
+import { LinearProgress, StepContent, StepLabel, Stepper } from '@mui/material'
 import { shallow } from 'enzyme'
 import noop from 'lodash/noop'
 import { Hidden } from '../../../oldComponents/pureGrids'

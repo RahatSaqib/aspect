@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'

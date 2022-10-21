@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
+import { CircularProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
 import { func, array, object, oneOfType } from 'prop-types'

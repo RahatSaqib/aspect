@@ -1,8 +1,5 @@
 import React, { useEffect, useCallback, useState, useMemo } from 'react'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormGroup from '@mui/material/FormGroup'
-import Switch from '@mui/material/Switch'
-import TableBody from '@mui/material/TableBody'
+import { FormControlLabel, FormGroup, Switch, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import flowRight from 'lodash/flowRight'
@@ -267,7 +264,7 @@ export const InventoryItemsListWithProps = ({
                   </PermissionsProvider>
                 </ErrorBoundary>
               }
-              label="Inventory on hand"
+              label={intl.formatMessage(messages.inventoryOnHand)}
             />
           ) : null}
         </FormGroup>

@@ -18,6 +18,12 @@ Quick Start for development. Everything is explained in more detail throughout t
 
 ### New Development Setup
 
+#### RabbitMQ Installation
+
+- MAC OS: Follow steps from <https://www.rabbitmq.com/install-homebrew.html>
+- Windows: Follow steps from <https://www.rabbitmq.com/install-windows-manual.html>
+- Ubuntu: Follow steps from <https://www.rabbitmq.com/install-debian.html>
+
 #### Follow this guide for setting up MySQL and all other tools:
 
 - <https://systemone.youtrack.cloud/articles/ASP-A-27164676/Developer-Setup>
@@ -53,6 +59,13 @@ twilioMessagingServiceSid = "MG3ce426d5d330c9720bff0237690cba14"
 
 webhook.redcap.url= 'asdf'
 webhook.redcap.authToken= 'jkasd'
+
+# Alter user for native password in MySQL. Login as root user to perform it.
+ALTER USER 'username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+flush privileges;
+
+# MySQL set_mode, open my.cnf and add this sql-mode.
+sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
 
 # Run migrations
 yarn run knex migrate:latest
@@ -369,3 +382,34 @@ err.output.statusCode = 444
 err.reformat()
 return err
 ```
+
+## API Versioning
+
+API versioning supports multiple versions of api end points. This mechanism enables api versioning based on custom header api-version. We can support/target individual endpoint by implementing this mechanism. 
+
+API versioning plugin is stored in /src/plugin/apiVersioning.js
+
+- Check if an accept header OR a custom header (default api-version) is present and extract the version
+- If no version was extracted (e.g. no headers sent) use the default version
+- Check if a versioned route (like /v2/users) exists -> if so rewrite the url from /users to /v2/users, otherwise do nothing
+
+API versioning have three options
+- defaultVersion (required) : If any versioned endpoint is requested without api-version custom header, then it will take defaultVersion.
+- versionHeader (optional) : Configure this param if want to access different custom header instead of api-version
+- mobileApiPath (optional) : In case we have a base path different from / (example: /api/). Per default this is /.
+
+
+Following are the use-cases for the api versioning
+
+- If there is an endpoint with a matching version to the request, use that endpoint
+- If there are any versioned endpoints with a version, lower than the version specified in the request, use the highest version that is below the version specified in the request
+- If there are any un-versioned endpoints use this un-versioned endpoint
+
+### Testing with Postman
+
+To test API, go to Aspect API postman collection. 
+Select Environment - Aspect Local Development
+Go to Auth folder under Aspect API collection
+Select auth api and hit send button
+It will return success response with the Token
+

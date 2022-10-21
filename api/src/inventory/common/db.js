@@ -104,6 +104,7 @@ function getInventorySitesQuery(constraints, request) {
       knex.raw("CONCAT(c.id, '-', s.id) as id"),
       'c.id as consumableId',
       'c.name as consumableName',
+      'c.i18nKey as consumableNameI18nKey',
       'c.manufacturer',
       'c.canExpire',
       'u.shortName as unitShortName',
@@ -178,7 +179,11 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
 
   const inventoryLogQuery = getInventoryLogBaseQuery(knex, dataConstraints)
     .modify(filterDateRangeParams, query, 'il.createdOn')
-    .modify(filterDateRangeParams, query, 'il.expiresOn', 'ExpirationDate')
+    .modify(
+      filterDateRangeParams,
+      { minDate: query.minExpirationDate, maxDate: query.maxExpirationDate },
+      'il.expiresOn'
+    )
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',

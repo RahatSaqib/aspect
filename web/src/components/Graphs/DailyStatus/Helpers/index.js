@@ -66,7 +66,7 @@ const getDayTitle = ({
   if (checked && daysInSameStatus) {
     return maintenanceStatusName
       ? formatMessage(messages.toolTipTitleWithStatus, {
-          maintenanceStatusName,
+          maintenanceStatusName: formatMessage(messages[maintenanceStatusI18nKey]),
           daysInSameStatus,
           totalResults,
         })
@@ -76,12 +76,12 @@ const getDayTitle = ({
   }
   return isActive
     ? formatMessage(messages.toolTipTitleResultsReported, {
-        maintenanceStatusName,
+        maintenanceStatusName: formatMessage(messages[maintenanceStatusI18nKey]),
         totalResults,
       })
     : messages[maintenanceStatusI18nKey]
     ? formatMessage(messages[maintenanceStatusI18nKey])
-    : maintenanceStatusName
+    : ''
 }
 
 const setClassNames = (item, cssClasses) => {

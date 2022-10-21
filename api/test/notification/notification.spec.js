@@ -284,7 +284,7 @@ describe('Result Notifications triggers', () => {
       it('should NOT create a result based notification for particular lga BUT with unapproved Device', async () => {
         let notifications = await knex('Notification').whereIn('resultId', [insertedResultDetected]).distinct()
         const qtyOfNotifications = notifications.length
-        assert.isAtLeast(notifications.length, 0)
+        assert.equal(notifications.length, 0)
         const device = await knex('Device as d')
           .join('Result as r', 'r.deviceId', 'd.id')
           .where('r.id', insertedResultDetected)
@@ -493,9 +493,12 @@ describe('Result Notifications triggers', () => {
   describe('Filter by Person', () => {
     let adminId
     let managerId
+    let jobToRemoveId
 
     beforeEach(async () => {
       ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
+      const adminJob = await knex('Job').where({ personId: adminId }).first()
+      const adminJobContext = await knex('JobContext').where({ jobId: adminJob.id }).first()
 
       const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
       ;[managerId] = await knex('Person')
@@ -504,7 +507,12 @@ describe('Result Notifications triggers', () => {
 
       const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
 
-      // Notify to the person called "Admin" - Send notification
+      // Add an extra job to the Admin user - the system should send notifications by person, and not by job
+      ;[jobToRemoveId] = await knex('Job').insert({ ..._.omit(adminJob, 'id'), jobFunctionId: managerJobFunctionId })
+      await knex('JobContext').insert({ ..._.omit(adminJobContext, 'id'), jobId: jobToRemoveId })
+
+      // Notify to the person called "Admin" with job Admin - Send notification
+      // Notify to the person called "Admin" with job Manager - DO NOT send notification
       // Notify to a person assigned to the job function "Manager" - Send notification
       // Notify to a person assigned to the job function "Admin" - DO NOT send notification (the admin user was included as person)
       // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
@@ -516,19 +524,22 @@ describe('Result Notifications triggers', () => {
       await createTestContext(filterConditions)
     })
 
-    afterEach(removeTestContext)
+    afterEach(async () => {
+      // Remove the extra job added to the Admin user
+      await knex('JobContext').where({ jobId: jobToRemoveId }).delete()
+      await knex('Job').where({ id: jobToRemoveId }).delete()
+      await removeTestContext()
+    })
 
     it('should create a result based notification for particular person and job function', async () => {
       const resultId = insertedResultDetected
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
       await waitForIdle(3000)
-      const notifications = await knex('Notification')
-        .where({ resultId, notificationTypeId: ntId })
-        .distinct('resultId', 'notificationTypeId', 'personId')
+      const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId })
       const notificationToPerson = notifications.filter(n => n.personId === adminId)
       const notificationToJobFunction = notifications.filter(n => n.personId === managerId)
-      assert.isNotEmpty(notificationToPerson)
-      assert.isNotEmpty(notificationToJobFunction)
+      assert.equal(notificationToPerson.length, 1)
+      assert.equal(notificationToJobFunction.length, 1)
       assert.equal(notifications.length, 2)
     })
   })

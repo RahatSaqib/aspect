@@ -1,5 +1,5 @@
 import React from 'react'
-import MenuItem from '@mui/material/MenuItem'
+import { MenuItem } from '@mui/material'
 import { shallow } from 'enzyme'
 import includes from 'lodash/includes'
 import { createIntl } from 'react-intl'
@@ -8,7 +8,7 @@ import DateTimeInput from '../../shared/DateTimeInput'
 import SelectField from '../../shared/SelectField'
 import { DateRangeSelector } from './DateRangeSelector'
 
-describe.only('DateRangeSelector Component', () => {
+describe('DateRangeSelector Component', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     clearButtonTooltip: 'Clear',

@@ -1,5 +1,5 @@
 import React, { Children } from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import isArray from 'lodash/isArray'
@@ -8,6 +8,7 @@ import { MdClose } from 'react-icons/md'
 import { connect } from 'react-redux'
 import { compose, pure } from 'recompose'
 import useI18n from '../../../hooks/useI18n'
+import { commonDefinitions } from '../../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { isCountryFilterHidden } from '../utils'
 import styles from './FiltersBtnGroup.css'
@@ -28,16 +29,22 @@ const revokedOptions = [
     name: 'true',
   },
 ]
-const statusOptions = [
+const displayResultOptions = [
   {
-    id: '0',
-    name: 'Enabled',
+    id: 'all',
+    // see values for names in `./messages.js`
+    name: 'displayAllResults',
   },
   {
-    id: '1',
-    name: 'Disabled',
+    id: 'actual',
+    name: 'displayActualResults',
+  },
+  {
+    id: 'excluded',
+    name: 'displayExcludedResults',
   },
 ]
+
 const enhance = compose(
   pure,
   connect(
@@ -132,7 +139,7 @@ const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
     .find(it => assayIds.includes(it.get('id')), EMPTY_CONTEXT, EMPTY_MAP)
     .get('resultCategories', EMPTY_MAP)
     .find(it => it.get('id') === resultCategoryId, EMPTY_CONTEXT, EMPTY_MAP)
-    .get('name', '')
+    .get('i18nKey', '')
 }
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
@@ -235,13 +242,17 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
               resultCategoryName: `"${startCase(filters.assayOverride)}"`,
             }
           : {
-              resultCategoryName: getResultCategoryName(assayItems, filters.assayId, resultCategoryId),
+              resultCategoryName: formatMessage(
+                messages[getResultCategoryName(assayItems, filters.assayId, resultCategoryId)]
+              ),
             }
       )
     ),
     resultCategory2Id: makeButton((resultCategory2Id, { filters, assayItems }) =>
       formatMessage(messages.withResultCategory, {
-        resultCategoryName: getResultCategoryName(assayItems, filters.assayId, resultCategory2Id),
+        resultCategoryName: formatMessage(
+          messages[getResultCategoryName(assayItems, filters.assayId, resultCategory2Id)]
+        ),
       })
     ),
     resultCategoryGroupId: makeButton((resultCategoryGroupId, { filters, resultCategoryGroupItems }) => {
@@ -252,9 +263,13 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
               resultCategoryGroupName: `"${startCase(filters.assayOverride)}"`,
             }
           : {
-              resultCategoryGroupName: resultCategoryGroupItems
-                .find(it => it.get('externalId') === resultCategoryGroupId, EMPTY_CONTEXT, EMPTY_MAP)
-                .get('name'),
+              resultCategoryGroupName: formatMessage(
+                messages[
+                  resultCategoryGroupItems
+                    .find(it => it.get('externalId') === resultCategoryGroupId, EMPTY_CONTEXT, EMPTY_MAP)
+                    .get('i18nKey')
+                ]
+              ),
             }
       )
     }),
@@ -300,20 +315,28 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       })
     ),
     consumableId: makeButton((consumableId, { consumableItems }) =>
-      consumableItems.find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP).get('name')
+      formatMessage(
+        messages[consumableItems.find(it => it.get('id') === consumableId, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')]
+      )
     ),
     workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
       formatMessage(messages.withWorkflowStatus, {
-        workflowStatusName: workflowStatusItems
-          .find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        workflowStatusName: formatMessage(
+          messages[
+            workflowStatusItems.find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')
+          ]
+        ),
       })
     ),
     treatmentStatus: makeButton((treatmentStatus, { treatmentStatusItems }) =>
       formatMessage(messages.withTreatmentStatus, {
-        treatmentStatusName: treatmentStatusItems
-          .find(it => it.get('externalId') === treatmentStatus, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        treatmentStatusName: formatMessage(
+          messages[
+            treatmentStatusItems
+              .find(it => it.get('externalId') === treatmentStatus, EMPTY_CONTEXT, EMPTY_MAP)
+              .get('i18nKey')
+          ]
+        ),
       })
     ),
     deviceApprovalId: makeButton((deviceApprovalId, { deviceApprovalItems }) =>
@@ -353,6 +376,13 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         deviceTypeName: deviceTypeItems
           .find(it => it.get('externalId') === deviceType, EMPTY_CONTEXT, EMPTY_MAP)
           .get('name'),
+      })
+    ),
+    displayResult: makeButton(displayResult =>
+      formatMessage(messages.withDisplayResult, {
+        displayResult: formatMessage(
+          messages[displayResultOptions.find(it => it.id === displayResult, EMPTY_CONTEXT, EMPTY_MAP).name]
+        ),
       })
     ),
     externalId: makeButton(externalId =>
@@ -406,7 +436,8 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
     ),
     contactStatus: makeButton(status =>
       formatMessage(messages.contactEnabledStatus, {
-        contactStatus: statusOptions.find(it => it.id === status, EMPTY_CONTEXT, EMPTY_MAP).name,
+        contactStatus:
+          status === '0' ? formatMessage(commonDefinitions.enabled) : formatMessage(commonDefinitions.disabled),
       })
     ),
     connectorStatus: makeButton(connectorStatus =>

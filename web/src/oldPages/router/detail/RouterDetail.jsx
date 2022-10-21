@@ -1,15 +1,17 @@
 import React, { PureComponent } from 'react'
 import ModeEdit from '@mui/icons-material/Edit'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import Accordion from '@mui/material/Accordion'
-import AccordionDetails from '@mui/material/AccordionDetails'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import IconButton from '@mui/material/IconButton'
-import LinearProgress from '@mui/material/LinearProgress'
-import Tooltip from '@mui/material/Tooltip'
-import Typography from '@mui/material/Typography'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Card,
+  CardContent,
+  IconButton,
+  LinearProgress,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import isFinite from 'lodash/isFinite'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'

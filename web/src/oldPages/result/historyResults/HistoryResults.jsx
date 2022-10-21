@@ -1,21 +1,17 @@
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
-import Card from '@mui/material/Card'
-import IconButton from '@mui/material/IconButton'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import Tooltip from '@mui/material/Tooltip'
+import { Card, IconButton, Table, TableBody, Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import { MdFileDownload } from 'react-icons/md'
+import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import { i18nWrapper } from '../../../providers/I18nProvider/index'
 import messages from '../list/messages'
 import cssStyles from './HistoryResults.css'
 
@@ -36,7 +32,7 @@ export const Results = ({
   onExportClick,
   onRowClick,
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
 
   return (
     <section className={cssClasses('Section')}>
