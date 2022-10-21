@@ -1,6 +1,5 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import identity from 'lodash/identity'
 import useI18n from '../../../hooks/useI18n'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
@@ -9,8 +8,6 @@ import { formatRelative } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
-
-const enhance = identity
 
 const SiteTableRow = ({ site, onAlertClick, ...restProps }) => {
   const { formatMessage } = useI18n()
@@ -42,4 +39,4 @@ const SiteTableRow = ({ site, onAlertClick, ...restProps }) => {
   )
 }
 
-export default enhance(SiteTableRow)
+export default SiteTableRow

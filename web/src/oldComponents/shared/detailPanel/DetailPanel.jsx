@@ -2,7 +2,6 @@ import React from 'react'
 import { Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
-import identity from 'lodash/identity'
 import split from 'lodash/split'
 import { MdAssignment } from 'react-icons/md'
 import { compose, mapProps } from 'recompose'
@@ -15,8 +14,6 @@ import styles from './DetailPanel.css'
 const cssClasses = classnames.bind(styles)
 
 const EMPTY_MAP = Immutable.Map()
-
-const enhance = identity
 
 const format = (type, intl) =>
   type === 'number' ? intl.formatNumber : type === 'date' ? formatDate : type === 'time' ? formatDateTime : null
@@ -165,4 +162,4 @@ export const DetailPanel = ({ intl, data, schema, renderRightTitle, titleSection
   </Card>
 )
 
-export default enhance(DetailPanel)
+export default DetailPanel
