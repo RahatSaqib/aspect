@@ -59,7 +59,7 @@ const QuartersMtbDetectedGraphMain = ({ assaysFromState, showLabel, filterSelect
   return isLoading ? (
     <Loading />
   ) : (
-    <Grid item xs={12} md={12} lg={9}>
+    <Grid item xs={12} md={12} lg={10}>
       <div className={cssClasses('Graph_Wrapper')}>
         {graphData && !isEmpty(graphData) ? (
           <AspectResponsiveBar

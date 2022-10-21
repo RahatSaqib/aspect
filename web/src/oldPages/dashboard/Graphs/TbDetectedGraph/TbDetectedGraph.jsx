@@ -44,7 +44,7 @@ const TbDetectedGraph = ({ assaysFromState }) => {
             <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsTBDetected)} />
             <CardContent>
               <Grid container spacing={8} className={cssClasses('Graph_Content')}>
-                <Grid item xs={12} md={12} lg={3}>
+                <Grid item xs={12} md={12} lg={2}>
                   <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
                     <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
                       <FormControlLabel
@@ -54,7 +54,7 @@ const TbDetectedGraph = ({ assaysFromState }) => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={12} lg={9}>
+                <Grid item xs={12} md={12} lg={10}>
                   <Grid container>
                     <TbDetectedGraphMain
                       data={data.data}
