@@ -13,6 +13,8 @@ const TableRow = ({ item, extraColumns }) => {
     <Tr className={cssClasses('TableRow')}>
       <Td className={cssClasses('TableCell')}>{item.name}</Td>
       <Td className={cssClasses('TableCell')}>{formatMessage(messages[item.deviceStatus])}</Td>
+      <Td className={cssClasses('TableCell')}>{item.stateName}</Td>
+      <Td className={cssClasses('TableCell')}>{item.lgaName}</Td>
       <Td className={cssClasses('TableCell')}>{item.lastPingOn.replace('.000Z', '').split('T').join(' ')}</Td>
       <Td className={cssClasses('TableCell')}>
         {(item.firstResultConductedOn || '').replace('.000Z', '').split('T').join(' ') ||

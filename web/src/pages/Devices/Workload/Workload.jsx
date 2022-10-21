@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import useWorkload from '../../../hooks/device/useWorkload'
 import useI18n from '../../../hooks/useI18n'
+import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -22,12 +23,6 @@ import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/
 import messages from './messages'
 import TableRow from './TableRow'
 import styles from './Workload.css'
-
-// I am not table to switch between assays, the data table is not refreshing.
-// When you remove the assay, is not refreshing the table and always is showing TB specific columns.
-// When there isn't any assay selected you should remove the assay specific columns like MTB detected, not Detected, etc.
-
-// I requested nicolas to add the State, lga and the site for the query, so after he will introduce, please added to the table.
 
 // There are some missing translations for the status, you should check what we are actually doing in device table.
 
@@ -47,6 +42,8 @@ const availableSortCol = [
   'firstResultConductedOn',
   'lastResultConductedOn',
   'totalTests',
+  'stateName',
+  'lgaName',
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({ availableSortCol })
@@ -56,11 +53,11 @@ const Workload = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { formatMessage } = useI18n()
-  const { userPermissions } = useAuthState()
+  const user = useAuthState()
   const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState()
 
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.userPermissions, {})
 
   const { isError, isLoading, data = false, error } = useWorkload(requestParams)
 
@@ -102,16 +99,20 @@ const Workload = () => {
   const columns = [
     { key: 'name', label: formatMessage(messages.name), sortable: true },
     { key: 'deviceStatus', label: formatMessage(messages.deviceStatus), sortable: true },
+    { key: 'stateName', label: getCustomMessage(messages, 'state', user), sortable: true },
+    { key: 'lgaName', label: getCustomMessage(messages, 'lga', user), sortable: true },
     { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true },
     { key: 'firstResultConductedOn', label: formatMessage(messages.firstResultConductedOn), sortable: true },
     { key: 'lastResultConductedOn', label: formatMessage(messages.lastResultConductedOn), sortable: true },
-    ...extraColumns.map(c => ({
-      key: c.fieldId,
-      label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
-        colMessages[c.resultCategoryI18nKey]
-      )}`,
-      sortable: false,
-    })),
+    ...extraColumns.map(c => {
+      return {
+        key: c.fieldId,
+        label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
+          colMessages[c.resultCategoryI18nKey]
+        )}`,
+        sortable: false,
+      }
+    }),
     { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
   ]
   const extraColumnsProps = extraColumns.map(ec => ec.fieldId)
