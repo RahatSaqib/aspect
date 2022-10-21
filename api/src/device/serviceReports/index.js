@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = require('date-fns')
 const locales = require('date-fns/locale')
-const { getDeviceBaseQuery, listDevices } = require('../service')
+const { getDeviceBaseExtendedQuery, listDevices } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
 const { issueCategoryIntlToShortname, issueTypeToId } = require('../../shared/dictionary')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../../db')
@@ -71,7 +71,10 @@ function getMonthsDatefields(minDate, maxDate, culture) {
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints).whereNotIn('dt.externalId', ['Aspect', 'GxAlert'])
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints).whereNotIn('dt.externalId', [
+    'Aspect',
+    'GxAlert',
+  ])
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
@@ -149,7 +152,7 @@ async function getModuleSwapsReport(auth, query) {
 
   const issueTypeId = await issueTypeToId('ModuleReplaced')
   // get rows
-  const devices = await getDeviceBaseQuery(query, dataConstraints)
+  const devices = await getDeviceBaseExtendedQuery(query, dataConstraints)
     .clone()
     .innerJoin('Issue as i', 'i.deviceId', 'd.id')
     .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
@@ -272,7 +275,7 @@ async function getDeviceCapacityReport(auth, query) {
 
   minDate = minDate || addMonths(new Date(), -12).toISOString()
 
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
   const monthlyCapacity = deviceQuery
     .clone()
     .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')

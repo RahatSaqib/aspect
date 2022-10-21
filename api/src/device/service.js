@@ -39,7 +39,7 @@ const {
 const { lastDayOfMonthByOffsetAndResultEndedOn, whereWorkingDaysDateRange } = require('../shared/query')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
-const { getDeviceBaseQuery, getBasicsForDevicesReport } = require('./common/db')
+const { getDeviceBaseExtendedQuery, getBasicsForDevicesReport } = require('./common/db')
 
 function getSelectListFields(userTimeOffset, { lastSeenField } = {}) {
   return [
@@ -885,7 +885,7 @@ async function getErrorCodesByDeviceReport(auth, query) {
 async function getDevicesForRifResistanceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceBaseQuery(
+  const deviceQuery = getDeviceBaseExtendedQuery(
     {
       sortCol: 'name',
       sortDir: 'asc',
@@ -1631,7 +1631,7 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
 
 async function getDeviceCalibrationsForReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
@@ -1716,7 +1716,7 @@ module.exports = {
   deviceMaintenanceStatus,
   onDeviceMaintenanceStatusLogScheduled,
   getDeviceCalibrationsForReport,
-  getDeviceBaseQuery,
+  getDeviceBaseExtendedQuery,
   setStatusForDateRange,
   postPayloadFromDevice,
 }

@@ -3,7 +3,12 @@ const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('.
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
 
-function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = false, showDecommissionedDevices = false) {
+function getDeviceBaseExtendedQuery(
+  query,
+  dataConstraints,
+  showUnapprovedDevices = false,
+  showDecommissionedDevices = false
+) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
@@ -66,7 +71,7 @@ function getDeviceBaseQuery(query, dataConstraints, showUnapprovedDevices = fals
 
 async function getBasicsForDevicesReport(dataConstraints, query) {
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
 
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id').as('count').first()
@@ -101,7 +106,7 @@ async function getTargetDevice(targetDeviceId) {
  * @param {object} options An object representing the dataConstraints options, including the constraint-table-name definition, and also additional configurations like showUnapprovedDevices and showDecommissionedDevices. For example: { assay: 'a', showUnapprovedDevices: true, showDecommissionedDevices: true }
  * @returns The knex query object.
  */
-function getDeviceBaseQuery2(dataConstraints, options) {
+function getDeviceBaseQuery(dataConstraints, options) {
   return knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
@@ -113,7 +118,7 @@ function getDeviceBaseQuery2(dataConstraints, options) {
 }
 
 const getNotDecommissionedDevices = dataConstraints =>
-  getDeviceBaseQuery2(dataConstraints, { showUnapprovedDevices: true })
+  getDeviceBaseQuery(dataConstraints, { showUnapprovedDevices: true })
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
   const {
@@ -381,6 +386,7 @@ module.exports = {
   getDeviceWorkload,
   getResultCategoriesByAssay,
   getDeviceBaseQuery,
+  getDeviceBaseExtendedQuery,
   getBasicsForDevicesReport,
   getSourceDevices,
   getTargetDevice,
