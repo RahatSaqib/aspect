@@ -208,9 +208,7 @@ const ContactDetailsFormFormik = () => {
     newValues.canLogIn = values?.canLogIn === 1 || values?.canLogIn ? 1 : 0
     newValues.phone = replace(values.phone, / /g, '')
     newValues.cell = replace(values.cell, / /g, '')
-
-    newValues.tags = isArray(values.tags) ? values.tags.join(',') : values.tags
-
+    newValues.tags = values.tags ? (isString(values.tags) ? values.tags : values.tags.join(',')) : values.tags
     /* eslint-disable lodash/collection-return */
     map(newValues, (value, key) => {
       if (key === 'undefined' || isNil(value) || includes(omitValues, key)) delete newValues[key]
