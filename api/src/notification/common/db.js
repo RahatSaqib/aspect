@@ -72,6 +72,7 @@ async function getListNotifications(query, credentials) {
     .leftOuterJoin(knex.raw('Notification as n FORCE INDEX(notification_createdOn_notificationType_index)'), builder =>
       builder.on('nt.id', 'n.notificationTypeId').andOn(knex.raw('n.alertMessageId is null'))
     )
+    .leftOuterJoin('IssueType as it', 'nt.issueTypeId', 'it.id')
     .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
     .modify(filterParams, query, {
@@ -99,7 +100,8 @@ async function getListNotifications(query, credentials) {
       knex.raw(`GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`),
       columnCount('alert'),
       knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
-      'ntc.externalId as typeCategory'
+      'ntc.externalId as typeCategory',
+      'it.readyForNotification'
     )
 
   function columnCount(column) {
@@ -113,7 +115,6 @@ async function getListNotifications(query, credentials) {
   const getCount = knex.count('* as count').from(notificationQuery.clone().as('mainQuery')).first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
   return { ok: true, total, data, length: data.length }
 }
 

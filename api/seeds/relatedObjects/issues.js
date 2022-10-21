@@ -341,24 +341,13 @@ async function getBaseIssues(auditFields) {
   const issueCategories = await allIssueCategoryToId()
   const messageSeverities = await allMessageSeverityToId()
   const IssueDefinition = {
-    ResultReceived: {
-      issueType: {
-        name: 'Result Received',
-        externalId: 'ResultReceived',
-        i18nKey: 'issueTypeResultReceived',
-        issueCategoryId: issueCategories.DataHealth,
-        hasTag: 0,
-      },
-      MessageType: {
-        messageSeverityId: messageSeverities.Alert,
-      },
-    },
     DeviceOffline: {
       issueType: {
         name: 'Device Offline',
         externalId: 'DeviceOffline',
         i18nKey: 'issueStatusDeviceOffline',
         issueCategoryId: issueCategories.ConnectivityHealth,
+        readyForNotification: true,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -384,6 +373,7 @@ async function getBaseIssues(auditFields) {
         externalId: 'DeviceNoResults',
         i18nKey: 'issueStatusDeviceNoResults',
         issueCategoryId: issueCategories.ConnectivityHealth,
+        readyForNotification: true,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -410,6 +400,7 @@ async function getBaseIssues(auditFields) {
         i18nKey: 'issueTypeDeviceMaintenance',
         issueCategoryId: issueCategories.DeviceHealth,
         // defaultMessageTypeId: deviceMaintenanceMessageTypeId,
+        readyForNotification: true,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Recommendation,
@@ -756,6 +747,7 @@ async function getBaseIssues(auditFields) {
         externalId: 'ModuleReplaced',
         i18nKey: 'issueTypeModuleReplaced',
         issueCategoryId: issueCategories.DeviceHealth,
+        readyForNotification: true,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -778,6 +770,7 @@ async function getBaseIssues(auditFields) {
         externalId: 'ModuleDisabled',
         i18nKey: 'issueTypeModuleDisabled',
         issueCategoryId: issueCategories.DeviceHealth,
+        readyForNotification: true,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -936,6 +929,7 @@ async function getBaseIssues(auditFields) {
         externalId: 'InventoryStockExpiring',
         i18nKey: 'issueStatusInventoryStockExpiring',
         issueCategoryId: issueCategories.ReagentHealth,
+        readyForNotification: true,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -958,6 +952,7 @@ async function getBaseIssues(auditFields) {
         externalId: 'InstrumentReplaced',
         i18nKey: 'issueTypeInstrumentReplaced',
         issueCategoryId: issueCategories.DeviceHealth,
+        readyForNotification: true,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,
@@ -1386,6 +1381,7 @@ async function getBaseIssues(auditFields) {
         externalId: 'SiteWithLowFieldCompletionRate',
         i18nKey: 'SiteWithLowFieldCompletionRate',
         issueCategoryId: issueCategories.DataHealth,
+        readyForNotification: true,
       },
       MessageType: {
         messageSeverityId: messageSeverities.Alert,

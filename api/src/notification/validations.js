@@ -49,7 +49,21 @@ const optionsForSendXXX = {
   then: Joi.required(),
   otherwise: Joi.optional().allow('', null),
 }
-
+const listNotificationItem = {
+  id: Joi.number(),
+  name: Joi.string(),
+  totalTriggers: Joi.number(),
+  alertCount: Joi.number().allow(null),
+  jobFunctionsCount: Joi.number(),
+  jobFunctions: Joi.string().allow(null),
+  persons: Joi.string().allow(null),
+  sendToPatient: Joi.boolean().allow(null),
+  personsCount: Joi.number(),
+  typeCategory: Joi.string(),
+  lastTriggeredOn: Joi.date().iso().allow(null),
+  enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
+  readyForNotification: Joi.number().min(0).max(1).allow(null),
+}
 const resultBasedNotificationPayload = Joi.object({
   notificationType: Joi.string()
     /**
@@ -217,4 +231,5 @@ module.exports = {
   changeNotificationStatusPayload,
   saveNotificationResponse,
   NotificationSchema,
+  listNotificationItem,
 }

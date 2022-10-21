@@ -11,6 +11,7 @@ const {
   saveNotificationResponse,
   changeNotificationStatusPayload,
   NotificationSchema,
+  listNotificationItem,
 } = require('./validations')
 const saveNotification = require('./saveNotification')
 const saveStatusNotification = require('./saveStatusNotification')
@@ -44,24 +45,7 @@ const routes = [
           ok: Joi.bool().required().description('False on any non-fatal error'),
           total: Joi.number().required().description('The total number of notifications that match the given filters'),
           length: Joi.number().required().description('The number of notifications included in this response'),
-          data: Joi.array()
-            .allow(null)
-            .items(
-              Joi.object().keys({
-                id: Joi.number(),
-                name: Joi.string(),
-                totalTriggers: Joi.number(),
-                alertCount: Joi.number().allow(null),
-                jobFunctionsCount: Joi.number(),
-                jobFunctions: Joi.string().allow(null),
-                persons: Joi.string().allow(null),
-                sendToPatient: Joi.boolean().allow(null),
-                personsCount: Joi.number(),
-                typeCategory: Joi.string(),
-                lastTriggeredOn: Joi.date().iso().allow(null),
-                enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
-              })
-            ),
+          data: Joi.array().allow(null).items(Joi.object().keys(listNotificationItem)),
         }),
       },
     },
