@@ -1,84 +1,13 @@
 import React from 'react'
 import { MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
-import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import useI18n from '../../../hooks/useI18n'
+import { assay as messages } from '../../../messages'
 import { fetchAssayTypes } from '../../../store/AssayTypeRedux'
 import SelectField from '../../shared/SelectField'
-
-const messages = defineMessages({
-  assayTypeCD4: {
-    id: 'filter.AssayTypeSelectField.assayTypeCD4',
-    defaultMessage: 'CD4 Count',
-  },
-  covid19: {
-    id: 'filter.AssayTypeSelectField.covid19',
-    defaultMessage: 'COVID-19 Test',
-  },
-  assayTypeDengue: {
-    id: 'filter.AssayTypeSelectField.assayTypeDengue',
-    defaultMessage: 'Dengue',
-  },
-  assayTypeEbola: {
-    id: 'filter.AssayTypeSelectField.assayTypeEbola',
-    defaultMessage: 'Ebola',
-  },
-  assayTypeEid: {
-    id: 'filter.AssayTypeSelectField.assayTypeEid',
-    defaultMessage: 'EID',
-  },
-  genericRDT: {
-    id: 'filter.AssayTypeSelectField.genericRDT',
-    defaultMessage: 'Generic RDT',
-  },
-  genoTypeTestStrip: {
-    id: 'filter.AssayTypeSelectField.genoTypeTestStrip',
-    defaultMessage: 'GenoType Test Strip',
-  },
-  assayTypeHbvVl: {
-    id: 'filter.AssayTypeSelectField.assayTypeHbvVl',
-    defaultMessage: 'HBV VL',
-  },
-  assayTypeHcv: {
-    id: 'filter.AssayTypeSelectField.assayTypeHcv',
-    defaultMessage: 'HCV',
-  },
-  assayTypeHivQual: {
-    id: 'filter.AssayTypeSelectField.assayTypeHivQual',
-    defaultMessage: 'HIV Qual',
-  },
-  assayTypeHivVl: {
-    id: 'filter.AssayTypeSelectField.assayTypeHivVl',
-    defaultMessage: 'HIV VL',
-  },
-  assayTypeLipidPanel: {
-    id: 'filter.AssayTypeSelectField.assayTypeLipidPanel',
-    defaultMessage: 'Lipid Panel',
-  },
-  assayTypeMtbRif: {
-    id: 'filter.AssayTypeSelectField.assayTypeMtbRif',
-    defaultMessage: 'MTB/Rif',
-  },
-  assayTypeTbAst: {
-    id: 'filter.AssayTypeSelectField.assayTypeTbAst',
-    defaultMessage: 'TB AST',
-  },
-  assayTypeTbGnd: {
-    id: 'filter.AssayTypeSelectField.assayTypeTbGnd',
-    defaultMessage: 'TB G&D',
-  },
-  assayTypeUnknown: {
-    id: 'filter.AssayTypeSelectField.assayTypeUnknown',
-    defaultMessage: 'Unknown',
-  },
-  assayTypeZika: {
-    id: 'filter.AssayTypeSelectField.assayTypeZika',
-    defaultMessage: 'Zika',
-  },
-})
 
 const enhance = compose(
   pure,

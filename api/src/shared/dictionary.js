@@ -146,3 +146,20 @@ exports.getIdsByExternalId = async table => {
   })
   return mapping
 }
+
+/**
+ * Get specified dictionary by table and column names
+ */
+exports.getDictionary = async (table, column = 'id') => {
+  const fn = keyToObject(table, column)
+  const data = await fn()
+  return data
+}
+/**
+ * return cached values for column from specified table
+ */
+exports.getDictionarySync = (table, column = 'id') => {
+  const cache = tableCache[table]
+  if (!cache) return null
+  return cache[column]
+}

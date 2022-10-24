@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
@@ -26,7 +26,6 @@ import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import requirePermissions from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
-import { i18nWrapper } from '../../../providers/I18nProvider'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import {
@@ -41,116 +40,7 @@ import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './Resu
 import styles from './ResultList.css'
 
 const cssClasses = classnames.bind(styles)
-
-const FILTERS_CONFIG = [
-  {
-    assayAndResultCategory: true,
-    requiredPermissions: ['assay:view'],
-  },
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { date: true, requiredPermissions: [] },
-  { patientOrResearchId: true, requiredPermissions: [] },
-  { sampleId: true, requiredPermissions: [] },
-  { errorCode: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    reportableSiteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    reportableSiteId: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    deviceName: true,
-    requiredPermissions: ['device'],
-  },
-  {
-    deviceType: true,
-    requiredPermissions: [],
-  },
-  { sampleOriginSite: true, requiredPermissions: [] },
-  { workflowStatus: true, requiredPermissions: [] },
-  { treatmentStatus: true, requiredPermissions: [] },
-  {
-    onlyReportableResults: true,
-    requiredPermissions: ['assay:view'],
-  },
-  {
-    onlyDownloadedByReporter: true,
-    requiredPermissions: [],
-  },
-  {
-    onlyEverTransferred: true,
-    requiredPermissions: [],
-  },
-  { onlyTreatmentRequired: true, requiredPermissions: [] },
-]
-
-// eslint-disable-next-line no-unused-vars
-const AddNewButton = requirePermissions({
-  permissions: ['result:edit'],
-})(AspectButton)
-
-const onRowClick =
-  (navigate, location) =>
-  ({
-    currentTarget: {
-      dataset: { resultId },
-    },
-  }) => {
-    gotoResultDetails(navigate, location, resultId)
-  }
-
-const gotoResultDetails = (navigate, location, resultId) => {
-  const url = `/browse/result/${resultId || 'add'}`
-  gotoWithReturnUrl(url, navigate, location)
-}
-
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'endedOn',
-    'deviceName',
-    'sampleOriginSiteName',
-    'sampleId',
-    'errorCode',
-    'patientId',
-    'resultWorkflowStatus',
-    'treatmentStatusInfo',
-    'resultText',
-    'assayName',
-    /* --- table.extraColumns BEGIN --- */
-    'resultCategory1Name',
-    'resultCategory2Name',
-    'count',
-    'copies',
-    /* --- table.extraColumns END --- */
-  ],
-})
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-const filtersFromLocation = composeSanitizer(
-  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
-  searchSanitizer
-)
-
-const RESULT_PAGE_SIZE_BUTTON_KEYS = without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
-
-const messageByI18nKey = partial(
-  // Explicit declare messageBy[i18nKey] so that the keys are searchable.
-  (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
-  {
-    resultCategoryCopiesMl: (title, formatMessage) => formatMessage(messages.resultCategoryCopiesMl),
-    default: identity,
-  }
-)
-
-const getBaseColumns = (extraColumns = []) => {
-  const { formatMessage } = i18nWrapper()
+const getBaseColumns = (extraColumns = [], formatMessage) => {
   return Immutable.List(
     filter(
       [
@@ -223,6 +113,118 @@ const getBaseColumns = (extraColumns = []) => {
     )
   )
 }
+const FILTERS_CONFIG = [
+  {
+    assayAndResultCategory: true,
+    requiredPermissions: ['assay:view'],
+  },
+  { geography: true, requiredPermissions: [] },
+  { state: true, requiredPermissions: [] },
+  { lga: true, requiredPermissions: [] },
+  { date: true, requiredPermissions: [] },
+  { patientOrResearchId: true, requiredPermissions: [] },
+  { sampleId: true, requiredPermissions: [] },
+  { errorCode: true, requiredPermissions: [] },
+  {
+    siteName: true,
+    requiredPermissions: ['site:view'],
+  },
+  {
+    reportableSiteName: true,
+    requiredPermissions: ['site:view'],
+  },
+  {
+    reportableSiteId: true,
+    requiredPermissions: ['site:view'],
+  },
+  {
+    deviceName: true,
+    requiredPermissions: ['device'],
+  },
+  {
+    deviceType: true,
+    requiredPermissions: [],
+  },
+  { sampleOriginSite: true, requiredPermissions: [] },
+  { workflowStatus: true, requiredPermissions: [] },
+  { treatmentStatus: true, requiredPermissions: [] },
+  {
+    displayResult: true,
+    requiredPermissions: [],
+    isEnabled: dependencies => !!dependencies.showFilterDisplayResult,
+  },
+  {
+    onlyReportableResults: true,
+    requiredPermissions: ['assay:view'],
+  },
+  {
+    onlyDownloadedByReporter: true,
+    requiredPermissions: [],
+  },
+  {
+    onlyEverTransferred: true,
+    requiredPermissions: [],
+  },
+  { onlyTreatmentRequired: true, requiredPermissions: [] },
+]
+
+// eslint-disable-next-line no-unused-vars
+const AddNewButton = requirePermissions({
+  permissions: ['result:edit'],
+})(AspectButton)
+
+const onRowClick =
+  (navigate, location) =>
+  ({
+    currentTarget: {
+      dataset: { resultId },
+    },
+  }) => {
+    gotoResultDetails(navigate, location, resultId)
+  }
+
+const gotoResultDetails = (navigate, location, resultId) => {
+  const url = `/browse/result/${resultId || 'add'}`
+  gotoWithReturnUrl(url, navigate, location)
+}
+
+const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: [
+    'endedOn',
+    'deviceName',
+    'sampleOriginSiteName',
+    'sampleId',
+    'errorCode',
+    'patientId',
+    'resultWorkflowStatus',
+    'treatmentStatusInfo',
+    'resultText',
+    'assayName',
+    /* --- table.extraColumns BEGIN --- */
+    'resultCategory1Name',
+    'resultCategory2Name',
+    'count',
+    'copies',
+    /* --- table.extraColumns END --- */
+  ],
+})
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
+  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
+  searchSanitizer
+)
+
+const RESULT_PAGE_SIZE_BUTTON_KEYS = without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
+
+const messageByI18nKey = partial(
+  // Explicit declare messageBy[i18nKey] so that the keys are searchable.
+  (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
+  {
+    resultCategoryCopiesMl: (title, formatMessage) => formatMessage(messages.resultCategoryCopiesMl),
+    default: identity,
+  }
+)
+
 export const ResultListWithProps = ({
   intl,
   // history,
@@ -310,7 +312,14 @@ const ResultList = () => {
   const location = useLocation()
   const {
     jwt: { permissions: userPermissions },
+    displayPreferences: { showFilterDisplayResult },
   } = useAuthState()
+  const dependencies = useMemo(
+    () => ({
+      showFilterDisplayResult,
+    }),
+    [showFilterDisplayResult]
+  )
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
@@ -335,7 +344,7 @@ const ResultList = () => {
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
 
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, dependencies)
   const params = { ...pagination, ...filters }
   delete params.assayOverride
 
@@ -359,8 +368,11 @@ const ResultList = () => {
     setIsLoading(tableLoading)
   }, [tableLoading])
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
+    const { sanitized, value: searchParams } = searchSanitizer(location, dependencies)
+    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
+      searchParams.get('filters') || '',
+      dependencies
+    )
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
@@ -381,7 +393,7 @@ const ResultList = () => {
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     setFilters(getFilters(filtersParams))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
+  }, [location, dependencies])
 
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
@@ -392,7 +404,7 @@ const ResultList = () => {
       const newTable = receiveTableItems(table, totalItems, extraColumns)
       setTable(newTable)
 
-      setColumns(getBaseColumns(extraColumns))
+      setColumns(getBaseColumns(extraColumns, intl.formatMessage))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])

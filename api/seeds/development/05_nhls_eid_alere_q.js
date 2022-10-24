@@ -312,7 +312,7 @@ async function seed(knex) {
     deviceTypeId: deviceTypes.AlereQ.id,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
-    resultCategory1i18nKey: 'result',
+    resultCategory1i18nKey: 'resultCategoryResult',
     resultDataSchema: JSON.stringify({
       resultNo: { list: false, order: 1, type: 'string', title: 'Result No' },
       deviceSerial: {
@@ -416,7 +416,7 @@ async function seed(knex) {
     deviceTypeId: deviceTypes.AlereQ.id,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
-    resultCategory1i18nKey: 'result',
+    resultCategory1i18nKey: 'resultCategoryResult',
     resultDataSchema: JSON.stringify({
       resultNo: { list: false, order: 1, type: 'string', title: 'Result No' },
       deviceSerial: {

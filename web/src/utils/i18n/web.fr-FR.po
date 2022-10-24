@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-30T17:11:05.070Z\n"
+"POT-Creation-Date: 2022-10-11T19:12:20.750Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1170,6 +1170,13 @@ msgstr ""
 "Sur la base des 30 derniers jours, représente le pourcentage de résultats "
 "comportant des erreurs par rapport au nombre total de résultats effectués"
 
+#. [filter.sampleType.sampleTypeBlood]
+#. defaultMessage is:
+#. Blood
+#: extracted_strings.json
+msgid "Blood"
+msgstr "Sang"
+
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
@@ -1252,6 +1259,13 @@ msgstr "Test de COVID"
 #: extracted_strings.json
 msgid "CREATE"
 msgstr "CREER"
+
+#. [filter.sampleType.sampleTypeCSF]
+#. defaultMessage is:
+#. CSF
+#: extracted_strings.json
+msgid "CSF"
+msgstr "CSF"
 
 #. [pages.ListExport.exportCsv]
 #. defaultMessage is:
@@ -2155,6 +2169,13 @@ msgstr "Champs personnalisés"
 msgid "Custom Fields Average Completion"
 msgstr "Champs personnalisés Achèvement moyen"
 
+#. [filter.sampleType.sampleTypeDBS]
+#. defaultMessage is:
+#. DBS
+#: extracted_strings.json
+msgid "DBS"
+msgstr "DBS"
+
 #. [months.december]
 #. defaultMessage is:
 #. DEC
@@ -2865,6 +2886,13 @@ msgstr "Voulez-vous désactiver"
 msgid "Do you want to enable"
 msgstr "Voulez-vous activer"
 
+#. [page.contacts.person.removeAssignment]
+#. defaultMessage is:
+#. Do you want to remove below assignment?
+#: extracted_strings.json
+msgid "Do you want to remove below assignment?"
+msgstr "Voulez-vous supprimer l'affectation ci-dessous ?"
+
 #. [jobFunction.donor]
 #. defaultMessage is:
 #. Donor
@@ -2982,6 +3010,13 @@ msgstr "Modifier"
 #: extracted_strings.json
 msgid "Edit Notification"
 msgstr "Modifier la notification"
+
+#. [filter.sampleType.sampleTypeEffusion]
+#. defaultMessage is:
+#. Effusion
+#: extracted_strings.json
+msgid "Effusion"
+msgstr "Épanchement"
 
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
@@ -3905,6 +3940,13 @@ msgstr "GP non détecté - NP détecté"
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP non détecté - NP non détecté"
 
+#. [filter.sampleType.sampleTypeGastricLavage]
+#. defaultMessage is:
+#. Gastric Lavage
+#: extracted_strings.json
+msgid "Gastric Lavage"
+msgstr "Lavage gastrique"
+
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
 #. GeneXpert COVID-19
@@ -4721,6 +4763,13 @@ msgstr "Inventaire en main"
 #: extracted_strings.json
 msgid "Is at least {minLength} characters long"
 msgstr "Est-ce qu'au moins {minLength} caractères"
+
+#. [filter.sampleType.sampleTypeIsolate]
+#. defaultMessage is:
+#. Isolate
+#: extracted_strings.json
+msgid "Isolate"
+msgstr "Isoler"
 
 #. [pages.TableCell.issueBasedNotification]
 #. defaultMessage is:
@@ -5986,6 +6035,13 @@ msgstr "NTP"
 msgid "Name"
 msgstr "Prénom"
 
+#. [filter.sampleType.sampleTypeNasalSwab]
+#. defaultMessage is:
+#. Nasal Swab
+#: extracted_strings.json
+msgid "Nasal Swab"
+msgstr "Ecouvillon nasal"
+
 #. [pages.NotificationDetail.Area.National]
 #. defaultMessage is:
 #. National
@@ -6675,6 +6731,9 @@ msgstr "Commandé"
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
+#. [filter.sampleType.sampleTypeOther]
+#. defaultMessage is:
+#. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Autre"
@@ -6909,6 +6968,13 @@ msgstr "Détail de la personne"
 #: extracted_strings.json
 msgid "Phone"
 msgstr "Téléphone"
+
+#. [filter.sampleType.sampleTypePlasma]
+#. defaultMessage is:
+#. Plasma
+#: extracted_strings.json
+msgid "Plasma"
+msgstr "Plasma"
 
 #. [errorResponseMessages.common.notFound.resolution]
 #. defaultMessage is:
@@ -7393,6 +7459,13 @@ msgstr "Provisionné(e)"
 #: extracted_strings.json
 msgid "Purged"
 msgstr "Purgé"
+
+#. [filter.sampleType.sampleTypePus]
+#. defaultMessage is:
+#. Pus
+#: extracted_strings.json
+msgid "Pus"
+msgstr "Pus"
 
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
@@ -7879,6 +7952,9 @@ msgstr "Résolu"
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
+#. [pages.ResultList.resultCategoryResult]
+#. defaultMessage is:
+#. Result
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
@@ -8112,6 +8188,13 @@ msgstr "SMS envoyés ce mois"
 #: extracted_strings.json
 msgid "SMS was sent to:"
 msgstr "SMS a été envoyé à:"
+
+#. [filter.sampleType.sampleTypeSaliva]
+#. defaultMessage is:
+#. Saliva
+#: extracted_strings.json
+msgid "Saliva"
+msgstr "Salive"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -9247,6 +9330,13 @@ msgstr "Le message SMS ne doit pas dépasser 144 caractères"
 msgid "Source devices"
 msgstr "Appareils sources"
 
+#. [filter.sampleType.sampleTypeSputum]
+#. defaultMessage is:
+#. Sputum
+#: extracted_strings.json
+msgid "Sputum"
+msgstr "Crachats"
+
 #. [forms.formItem.startDate]
 #. defaultMessage is:
 #. Start Date
@@ -9308,6 +9398,9 @@ msgstr "Région"
 #. defaultMessage is:
 #. Status
 #. [pages.ResultWorkflowStatusLog.logStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.ResultList.resultCategoryStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.RouterDetail.fieldStatus]
@@ -11985,13 +12078,6 @@ msgstr "le statut du traitement est {treatmentStatusName}"
 msgid "type is {deviceTypeName}"
 msgstr "le type est {deviceTypeName}"
 
-#. [server.userFriendly.message]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "indéfini"
-
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
@@ -12184,6 +12270,9 @@ msgstr "{unit} total des étalonnages"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
+
+#~ msgid "undefined"
+#~ msgstr "indéfini"
 
 #~ msgid "Demo Device"
 #~ msgstr "Type d'appareil"
