@@ -290,7 +290,7 @@ export class DateRangeSelector extends PureComponent {
   }
 
   handleMinDateChange = date => {
-    this.props.onChangeDate(this.getDateRange(date.toJSON()))
+    this.props.onChangeDate(this.getDateRange(startOfDay(date).toJSON()))
   }
 
   handleDateRangeChange = ({ target: { value } }) => {
