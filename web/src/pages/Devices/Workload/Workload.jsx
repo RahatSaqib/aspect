@@ -25,11 +25,15 @@ import TableRow from './TableRow'
 import styles from './Workload.css'
 
 // There are some missing translations for the status, you should check what we are actually doing in device table.
+// assayId mandatory (no borrable)
+// BD MGIT columnas
 
 const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
+  { state: true, requiredPermissions: [] },
+  { lga: true, requiredPermissions: [] },
   { date: true, requiredPermissions: [] },
   { singleAssayId: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: ['device'] },
