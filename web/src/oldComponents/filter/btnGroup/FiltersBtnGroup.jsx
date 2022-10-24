@@ -20,29 +20,13 @@ const EMPTY_CONTEXT = null
 const EMPTY_MAP = Immutable.Map()
 
 const revokedOptions = [
-  {
-    id: '0',
-    name: 'false',
-  },
-  {
-    id: '1',
-    name: 'true',
-  },
+  { id: '0', name: 'false' },
+  { id: '1', name: 'true' },
 ]
 const displayResultOptions = [
-  {
-    id: 'all',
-    // see values for names in `./messages.js`
-    name: 'displayAllResults',
-  },
-  {
-    id: 'actual',
-    name: 'displayActualResults',
-  },
-  {
-    id: 'excluded',
-    name: 'displayExcludedResults',
-  },
+  { id: 'all', name: 'displayAllResults' },
+  { id: 'actual', name: 'displayActualResults' },
+  { id: 'excluded', name: 'displayExcludedResults' },
 ]
 
 const enhance = compose(
@@ -140,6 +124,15 @@ const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
     .get('resultCategories', EMPTY_MAP)
     .find(it => it.get('id') === resultCategoryId, EMPTY_CONTEXT, EMPTY_MAP)
     .get('i18nKey', '')
+}
+
+const getResultCategoryNameFromDisease = (assayItems, filterDiseaseId, resultCategoryId) => {
+  const assayIds = isArray(filterDiseaseId) ? filterDiseaseId : [filterDiseaseId]
+  const assaysMatchingDisease = assayItems.toJS().filter(i => assayIds.includes(i.diseaseId) && i.hasResults)
+  const matchingCategory = assaysMatchingDisease.length
+    ? assaysMatchingDisease[0].resultCategories.find(el => el.id === resultCategoryId)
+    : { i18nKey: '' }
+  return matchingCategory.i18nKey
 }
 
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
@@ -243,7 +236,12 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
             }
           : {
               resultCategoryName: formatMessage(
-                messages[getResultCategoryName(assayItems, filters.assayId, resultCategoryId)]
+                // diseaseId here is used to fix filtering from HIV graph
+                messages[
+                  filters.assayId
+                    ? getResultCategoryName(assayItems, filters.assayId, resultCategoryId)
+                    : getResultCategoryNameFromDisease(assayItems, filters.diseaseId, resultCategoryId)
+                ]
               ),
             }
       )
