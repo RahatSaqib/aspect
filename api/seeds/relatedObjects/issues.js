@@ -341,6 +341,18 @@ async function getBaseIssues(auditFields) {
   const issueCategories = await allIssueCategoryToId()
   const messageSeverities = await allMessageSeverityToId()
   const IssueDefinition = {
+    ResultReceived: {
+      issueType: {
+        name: 'Result Received',
+        externalId: 'ResultReceived',
+        i18nKey: 'issueTypeResultReceived',
+        issueCategoryId: issueCategories.DataHealth,
+        hasTag: 0,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+    },
     DeviceOffline: {
       issueType: {
         name: 'Device Offline',

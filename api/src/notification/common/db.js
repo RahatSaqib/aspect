@@ -187,7 +187,7 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
   const issueTypeId = notificationTypeExternalId !== 'issueBased' ? null : await issueTypeToId(issueTypeExternalId)
   const { id: reportId } =
     notificationTypeExternalId !== 'reportBased'
-      ? null
+      ? {}
       : reportExternalId
       ? await knex('Report').where({ externalId: reportExternalId }).first()
       : {}

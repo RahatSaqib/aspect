@@ -17,7 +17,7 @@ const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useI18n()
 
-  const { id, readyForNotification, name, enabled, totalTriggers } = item
+  const { id, readyForNotification, typeCategory, name, enabled, totalTriggers } = item
 
   const queryClient = useQueryClient()
   const refreshList = () => {
@@ -33,7 +33,7 @@ const NotificationsContextualMenu = ({ item }) => {
       icon: 'FaEdit',
       text: formatMessage(messages.editTitle),
       action: () => navigate(`/browse/notification/${id}`),
-      disabled: !!readyForNotification,
+      disabled: typeCategory === 'issueType' && !readyForNotification,
     },
     {
       icon: 'FaCopy',
