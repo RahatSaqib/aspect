@@ -1,5 +1,5 @@
 import React from 'react'
-import TextField from '@mui/material/TextField'
+import { TextField } from '@mui/material'
 import { useFormikContext } from 'formik'
 import PropTypes from 'prop-types'
 import FormHTMLLabel from '../FormHTMLLabel'

@@ -166,16 +166,16 @@ const notificationTypeSection = formatMessage => {
                   {
                     label: formatMessage(messages.notificationCreateGroupForSite),
                     options: [
-                      // {
-                      //   value: 'InventoryStockout',
-                      //   label: formatMessage(messages.notificationTypeLowInventory),
-                      //   icon: 'AiOutlineDashboard',
-                      // },
-                      // {
-                      //   value: 'InventoryStockExpiring',
-                      //   label: formatMessage(messages.notificationTypeExpiring),
-                      //   icon: 'AiOutlineDashboard',
-                      // },
+                      {
+                        value: 'InventoryStockout',
+                        label: formatMessage(messages.notificationTypeLowInventory),
+                        icon: 'AiOutlineDashboard',
+                      },
+                      {
+                        value: 'InventoryStockExpiring',
+                        label: formatMessage(messages.notificationTypeExpiring),
+                        icon: 'AiOutlineDashboard',
+                      },
                     ],
                   },
                   {
@@ -676,6 +676,7 @@ const sendSection = (formatMessage, jobFunctions) => {
                 isMulti: true,
                 isClearable: true,
                 queryKey: PERSON_SELECT_LIST.KEY,
+                placeholder: formatMessage(messages.selectPersonOption),
                 normalizeLoadedData: (response, formik) => {
                   const { values, setFieldValue } = formik
                   function makeLabel(name, state) {

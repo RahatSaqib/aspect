@@ -1,5 +1,4 @@
-import CircularProgress from '@mui/material/CircularProgress'
-import LinearProgress from '@mui/material/LinearProgress'
+import { CircularProgress, LinearProgress } from '@mui/material'
 import isEqual from 'lodash/isEqual'
 import { compose, lifecycle } from 'recompose'
 

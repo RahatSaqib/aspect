@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
+import { CircularProgress } from '@mui/material'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import unset from 'lodash/unset'

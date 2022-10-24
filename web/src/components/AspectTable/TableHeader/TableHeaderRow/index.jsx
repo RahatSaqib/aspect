@@ -1,5 +1,5 @@
 import React from 'react'
-import TableCell from '@mui/material/TableCell'
+import { TableCell } from '@mui/material'
 import { bool, func, oneOfType, array } from 'prop-types'
 import TableColumnGroupBy from '../TableColumnGroupBy'
 import TableColumnHeader from '../TableColumnHeader'

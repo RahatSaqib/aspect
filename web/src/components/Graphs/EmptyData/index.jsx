@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
@@ -54,21 +54,21 @@ const EmptyRowPieGraph = ({ title }) => {
   )
 }
 
-const EmptyGraph = ({ type }) => {
-  const barGraphs = ['bar', 'stacked', 'divergent', 'calendar', 'barLegacyTreatment', 'stackedDeviceActivity']
-  const pieGraphs = ['pie', 'pieLegacyTreatment']
-  const pieRowGraphs = ['pieRow']
-  const { formatMessage: intlFormatMessage } = useI18n()
+const barGraphs = ['bar', 'stacked', 'divergent', 'calendar', 'barLegacyTreatment', 'stackedDeviceActivity']
+const pieGraphs = ['pie', 'pieLegacyTreatment']
+const pieRowGraphs = ['pieRow']
 
-  return (
-    <Fragment>
-      {barGraphs.includes(type) && <EmptyBarGraph title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)} />}
-      {pieGraphs.includes(type) && <EmptyPieGraph title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)} />}
-      {pieRowGraphs.includes(type) && (
-        <EmptyRowPieGraph title={intlFormatMessage(messages.emptyGraphPlaceholderTitle)} />
-      )}
-    </Fragment>
-  )
+const EmptyGraph = ({ type }) => {
+  const { formatMessage } = useI18n()
+  const title = formatMessage(messages.emptyGraphPlaceholderTitle)
+
+  return barGraphs.includes(type) ? (
+    <EmptyBarGraph title={title} />
+  ) : pieGraphs.includes(type) ? (
+    <EmptyPieGraph title={title} />
+  ) : pieRowGraphs.includes(type) ? (
+    <EmptyRowPieGraph title={title} />
+  ) : null
 }
 
 EmptyGraph.propTypes = {

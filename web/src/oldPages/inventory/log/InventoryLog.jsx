@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import TableBody from '@mui/material/TableBody'
+import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import PropTypes from 'prop-types'

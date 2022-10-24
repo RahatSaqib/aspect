@@ -1,6 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
+import { Button, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import has from 'lodash/has'

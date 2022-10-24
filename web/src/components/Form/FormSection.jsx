@@ -1,5 +1,5 @@
 import React from 'react'
-import Grid from '@mui/material/Grid'
+import { Grid } from '@mui/material'
 import { FieldArray, useFormikContext } from 'formik'
 import PropTypes from 'prop-types'
 import { getVisibleRows } from './Formik/Helpers/index'

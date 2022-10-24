@@ -1,7 +1,19 @@
 import { defineMessages } from 'react-intl'
-import { assay, deviceApprovalMessages, deviceStatusMessages } from '../../../messages'
+import {
+  assay,
+  consumableMessages,
+  deviceApprovalMessages,
+  deviceStatusMessages,
+  resultCategory,
+  resultTreatmentStatusMessages,
+  resultWorkflowStatusMessages,
+} from '../../../messages'
 
 export const messages = {
+  ...consumableMessages,
+  ...resultCategory,
+  ...resultWorkflowStatusMessages,
+  ...resultTreatmentStatusMessages,
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...assay,
@@ -205,6 +217,23 @@ export const messages = {
     offline: {
       id: 'filter.btnGroup.offline',
       defaultMessage: 'Offline',
+    },
+
+    withDisplayResult: {
+      id: 'filter.btnGroup.withDisplayResult',
+      defaultMessage: 'display "{displayResult}"',
+    },
+    displayAllResults: {
+      id: 'filter.btnGroup.displayAllResults',
+      defaultMessage: 'All Results',
+    },
+    displayActualResults: {
+      id: 'filter.btnGroup.displayActualResults',
+      defaultMessage: 'Actual Results',
+    },
+    displayExcludedResults: {
+      id: 'filter.btnGroup.displayExcludedResults',
+      defaultMessage: 'Excluded Results',
     },
   }),
 }

@@ -1,7 +1,5 @@
 import React from 'react'
-import Card from '@mui/material/Card'
-import IconButton from '@mui/material/IconButton'
-import TableBody from '@mui/material/TableBody'
+import { Card, IconButton, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import PropTypes from 'prop-types'

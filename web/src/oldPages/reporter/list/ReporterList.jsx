@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import TableBody from '@mui/material/TableBody'
+import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import flowRight from 'lodash/flowRight'
@@ -19,7 +19,6 @@ import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
-import { i18nWrapper } from '../../../providers/I18nProvider'
 import { receiveList, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import {
@@ -132,7 +131,7 @@ export const ReporterListWithProps = ({
   pageSize,
   reducedFilters,
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.reportersTitle)} />

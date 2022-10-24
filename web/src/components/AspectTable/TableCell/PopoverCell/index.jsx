@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import Button from '@mui/material/Button'
-import Popover from '@mui/material/Popover'
+import { Button, Popover } from '@mui/material'
 import classnames from 'classnames/bind'
 import { array, number, object, oneOfType, string } from 'prop-types'
 import IconProvider from '../../../IconProvider'

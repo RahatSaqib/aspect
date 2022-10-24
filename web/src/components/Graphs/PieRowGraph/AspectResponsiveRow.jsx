@@ -10,7 +10,7 @@ import styles from './PieRowGraph.css'
 
 const cssClasses = classnames.bind(styles)
 
-const AspectResponsiveRow = ({ data, componentClasses }) => {
+const AspectResponsiveRow = ({ data, componentClasses, config }) => {
   const { formatMessage: intlFormatMessage } = useI18n()
 
   const headings = graphData => map(graphData[0], 'heading')
@@ -39,6 +39,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
             <div key={getRowKey(rowIndex)} className={cssClasses('piegraphs__row')}>
               {row.map(pie => {
                 const { value, type, link, heading } = pie
+                const skipConfig = type === 'solid' || (type === 'doughnut' && value[0].value === 0)
                 return (
                   <div key={`${heading}-${type}`} className={cssClasses('piegraphs__column')}>
                     <div className={cssClasses('piegraphs__columnGraph')}>
@@ -55,6 +56,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
                           keys={[]}
                           type={type}
                           link={link}
+                          config={skipConfig ? {} : config}
                         />
                       ) : null}
                     </div>
@@ -68,10 +70,14 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
     </div>
   )
 }
+AspectResponsiveRow.defaultProps = {
+  config: {},
+}
 
 AspectResponsiveRow.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array]).isRequired,
   componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  config: PropTypes.object,
 }
 
 export default AspectResponsiveRow

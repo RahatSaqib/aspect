@@ -1,5 +1,5 @@
 import React from 'react'
-import IconButton from '@mui/material/IconButton'
+import { IconButton } from '@mui/material'
 import classnames from 'classnames/bind'
 import { func, number } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'

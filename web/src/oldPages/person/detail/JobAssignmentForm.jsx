@@ -1,12 +1,12 @@
 import React from 'react'
-import Button from '@mui/material/Button'
-import MenuItem from '@mui/material/MenuItem'
+import { Button, MenuItem } from '@mui/material'
 import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import { connect } from 'react-redux'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage } from '../../../messages/customMessages'
+import jobFunctionMessages from '../../../messages/jobFunctionMessages'
 import CountrySelectField from '../../../oldComponents/filter/geography/CountrySelectField'
 import LgaSelectField from '../../../oldComponents/filter/geography/LgaSelectField'
 import StateSelectField from '../../../oldComponents/filter/geography/StateSelectField'
@@ -157,7 +157,7 @@ export const JobAssignmentForm = ({
           >
             {jobFunctions.map(x => (
               <MenuItem key={x.id} value={x.id}>
-                {x.name}
+                {formatMessage(jobFunctionMessages[x.externalId])}
               </MenuItem>
             ))}
           </SelectField>

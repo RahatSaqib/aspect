@@ -1,5 +1,5 @@
 import React from 'react'
-import Card from '@mui/material/Card'
+import { Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'

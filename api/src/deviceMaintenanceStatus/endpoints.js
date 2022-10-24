@@ -63,7 +63,7 @@ const routes = [
                   Joi.object().keys({
                     personId: Joi.number().required().description('Person Id'),
                     name: Joi.string().required().description('Person name'),
-                    email: Joi.string().optional().allow(null).description('Person email'),
+                    email: Joi.string().optional().allow('', null).description('Person email'),
                     phone: Joi.array().optional().items(Joi.string()),
                     disabled: Joi.bool().optional().allow(null).description('Flag if Person is disabled'),
                     disabledOn: Joi.date()

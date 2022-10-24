@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import { MdKeyboardArrowLeft } from 'react-icons/md'

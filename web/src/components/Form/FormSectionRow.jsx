@@ -1,6 +1,5 @@
 import React from 'react'
-import Grid from '@mui/material/Grid'
-import IconButton from '@mui/material/IconButton'
+import { Grid, IconButton } from '@mui/material'
 import classnames from 'classnames/bind'
 import uniqueId from 'lodash/uniqueId'
 import PropTypes from 'prop-types'

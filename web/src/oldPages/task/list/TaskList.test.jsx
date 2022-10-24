@@ -6,7 +6,7 @@ import { Items } from '../../../utils/metaReducers/items'
 import { Table } from '../../../utils/metaReducers/table'
 import { TaskList } from './TaskList'
 
-describe('TaskList module', () => {
+describe.skip('TaskList module', () => {
   const props = {
     intl: createIntl({ locale: 'en' }),
     location: {

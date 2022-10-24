@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
+import { CircularProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import useI18n from '../../../hooks/useI18n'
 import AspectCard from '../../AspectCard'

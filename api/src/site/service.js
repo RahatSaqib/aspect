@@ -5,8 +5,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
-
-const totalDevicesQuery = knex('Device as d').whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices')
+const { getNotDecommissionedDevices } = require('../device/common/db')
 
 const SELECT_LIST_FIELDS = [
   's.id',
@@ -15,7 +14,6 @@ const SELECT_LIST_FIELDS = [
   'st.name as state',
   'l.name as lga',
   's.createdOn',
-  totalDevicesQuery,
   's.externalId',
   'activeIssues.siteIssues',
   knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
@@ -30,7 +28,6 @@ const SELECT_SHOW_FIELDS = [
   'l.name as lga',
   'ct.name as country',
   's.createdOn',
-  totalDevicesQuery,
   'g.countryId',
   'g.stateId',
   'g.lgaId',
@@ -111,7 +108,13 @@ async function listSites(request) {
     .from(siteQuery.clone().select('s.id as siteId').distinct().as('innerQuery'))
     .first()
   // get rows
-  const getItems = siteQuery.clone().modify(sortPageParams, query, 'name').select(SELECT_LIST_FIELDS)
+  const getItems = siteQuery
+    .clone()
+    .modify(sortPageParams, query, 'name')
+    .select([
+      ...SELECT_LIST_FIELDS,
+      getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
+    ])
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -131,7 +134,10 @@ function getSite(siteId, dataConstraints) {
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('s.id', siteId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-    .first(SELECT_SHOW_FIELDS)
+    .first([
+      ...SELECT_SHOW_FIELDS,
+      getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
+    ])
     .select('t.name as siteType')
 }
 
@@ -146,16 +152,9 @@ async function showSite(request) {
   if (!site) {
     return Boom.notFound()
   }
-  site.devices = await knex('Device as d')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      deviceType: 'dt',
-    })
+  site.devices = await getNotDecommissionedDevices(dataConstraints)
     .where('siteId', params.siteId)
     .select('d.id', 'd.name', 'd.shortName', 'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'dtc.id as category')
-
   const result = { ok: true, data: site }
 
   return result

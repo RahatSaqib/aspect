@@ -109,12 +109,21 @@ const AspectResponsiveBar = props => {
   const i18n = useI18n()
   const { format, formatMessage } = i18n
 
-  const { id: graphId, sortByKeys, groupMode, fields, layers = [], showLabel, showDecimals } = baseConfig
+  const {
+    id: graphId,
+    sortByKeys,
+    groupMode,
+    fields,
+    layers = [],
+    showLabel,
+    showDecimals,
+    labelTextColor,
+  } = baseConfig
   const keysForBars = fields ? fields.filter(it => it.target === 'bar').map(it => it.name) : keys
   const filteredData = normalizeData(data, { sortByKeys })
   const generateConfig = (type, data) => {
     switch (true) {
-      case type === 'divergent':
+      case type === 'divergent': {
         return {
           legend: `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
           ylegend: false,
@@ -138,7 +147,7 @@ const AspectResponsiveBar = props => {
           margin: { top: 5, right: 0, bottom: 60, left: 0 },
           markers: [],
         }
-
+      }
       case type === 'barInventory': {
         const yAxisValues = generateTickValues(data, tickValuesYShape, keys, 'Y', true)
         return {
@@ -160,7 +169,7 @@ const AspectResponsiveBar = props => {
           markers: [],
         }
       }
-      case type === 'stackedDeviceActivity':
+      case type === 'stackedDeviceActivity': {
         return {
           legend: false,
           ylegend: false,
@@ -198,11 +207,10 @@ const AspectResponsiveBar = props => {
             },
           ],
         }
-
+      }
       case type === 'bar-line': {
         const groupMode = 'grouped'
         const yAxisValues = generateTickValues(data, tickValuesYShape, keysForBars, 'Y', true, { groupMode })
-
         return {
           legend: false,
           ylegend: false,
@@ -226,7 +234,6 @@ const AspectResponsiveBar = props => {
           margin: { top: 40, right: 60, bottom: 60, left: 60 },
         }
       }
-
       default:
         return {
           legend: false,
@@ -266,7 +273,7 @@ const AspectResponsiveBar = props => {
           onClick={(value, event) => setConfig({ value, event, baseConfig })}
           enableLabel={!!showLabel}
           label={d => `${parseFloat(d.value).toFixed(showDecimals)}`}
-          labelTextColor="#FFF"
+          labelTextColor={labelTextColor}
           enableGridY={config.enableGridY}
           enableGridX={config.enableGridX}
           gridYValues={config.gridYValues}
