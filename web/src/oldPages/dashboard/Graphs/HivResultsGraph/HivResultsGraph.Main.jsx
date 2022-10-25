@@ -1,0 +1,114 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect, useMemo } from 'react'
+import { Grid } from '@mui/material'
+import classnames from 'classnames/bind'
+import isEmpty from 'lodash/isEmpty'
+import reduce from 'lodash/reduce'
+import ErrorBoundary from '../../../../components/ErrorBoundary'
+import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
+import EmptyGraph from '../../../../components/Graphs/EmptyData'
+import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
+import messages from '../../../../components/Graphs/intlMessages'
+import useI18n from '../../../../hooks/useI18n'
+import styles from '../styles.css'
+
+const cssClasses = classnames.bind(styles)
+
+const getBaseConfig = (assays = []) => {
+  const [baseAssay] = assays
+  return {
+    id: 'hivByCategory1Monthly',
+    clickThrough: {
+      assays,
+      allow: true,
+      baseUrl: '/browse/result?filters=',
+      baseAssay,
+      keys: ['resultCategoryId', 'indexBy', 'assay'],
+    },
+    indexBy: 'month',
+    formatDate: 'MMM',
+  }
+}
+
+const HivResultsGraphMain = ({ assaysFromState, data, endPointParams, showLabel }) => {
+  const { formatMessage } = useI18n()
+  const [i18nKeys, setI18nKeys] = useState([])
+  const [graphData, setGraphData] = useState(false)
+  const [graphKeys, setGraphKeys] = useState(false)
+  const baseConfig = useMemo(() => {
+    const assays = endPointParams.filter(it => !!it.assay).map(it => it.assay)
+    return getBaseConfig(assays)
+  }, [endPointParams])
+
+  function buildI18nKeys() {
+    let i18nKeysCollection = {}
+    i18nKeysCollection = reduce(
+      data,
+      (acc, curr) => {
+        acc[curr.resultCategory1] = curr.resultCategory1I18nKey
+        return acc
+      },
+      {}
+    )
+    setI18nKeys(i18nKeysCollection)
+    return i18nKeysCollection
+  }
+
+  function formatRawData() {
+    const i18nKeysCollection = buildI18nKeys()
+
+    return formatDataByGraphType(
+      data,
+      'percentage',
+      false,
+      'MMM',
+      'month',
+      'resultCategory1',
+      i18nKeysCollection,
+      'bar',
+      endPointParams,
+      formatMessage,
+      messages
+    )
+  }
+
+  function setNewData(grouped) {
+    const keysFromGrouped = getGraphKeysFromResults(grouped, 'month')
+    setGraphData(grouped)
+    setGraphKeys(keysFromGrouped)
+  }
+
+  useEffect(() => {
+    const grouped = formatRawData()
+    setNewData(grouped)
+  }, [data])
+
+  return (
+    <ErrorBoundary>
+      <Grid item xs={12} md={8} lg={8}>
+        <div className={cssClasses('Graph_Wrapper')}>
+          {graphData && !isEmpty(graphData) ? (
+            <AspectResponsiveBar
+              assaysFromState={assaysFromState}
+              config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#333' }}
+              data={graphData}
+              keys={graphKeys}
+              indexBy="month"
+              formatDate="MMM"
+              tickValuesYShape="none"
+              tickValuesXShape="all"
+              displayMethod="percentage"
+              displayLegend
+              type="bar"
+              i18nKeys={i18nKeys}
+            />
+          ) : (
+            <EmptyGraph type="bar" />
+          )}
+        </div>
+      </Grid>
+    </ErrorBoundary>
+  )
+}
+
+export default HivResultsGraphMain

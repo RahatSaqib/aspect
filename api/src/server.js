@@ -8,7 +8,7 @@ const Sentry = require('@sentry/node')
 
 const config = require('./config')
 const { version } = require('../package.json')
-const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes } = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
@@ -16,6 +16,7 @@ const { addLoggers } = require('./logger/service')
 const logger = require('./shared/logger')
 const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
+const { getDictionary, getDictionarySync } = require('./shared/dictionary')
 
 const { port } = config
 const server = new Hapi.server({
@@ -160,7 +161,13 @@ const plugins = [
 
 const start = async () => {
   await server.register(plugins)
-
+  await server.register({
+    plugin: require('./plugin/apiVersioning'),
+    options: {
+      defaultVersion: 1,
+      mobileApiPath: '/mobile/api/',
+    },
+  })
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     // ==========================================================================
     // ==========================================================================
@@ -192,6 +199,27 @@ const start = async () => {
     })
   }
 
+  /**
+   * Make sure to read and cache some dictionaries
+   * to be able to get them in sync mode by `getDictionarySync`.
+   * As an example - this is needed to use some dictionaries in plugins
+   * which are called from plain function within `addConstraints()`.
+   * For more details see calling of plugin `modifyQueryToExcludeResult`
+   * in `api/src/auth/constraints.js`
+   */
+  server.ext('onRequest', async function (request, h) {
+    const dictionaryTables = [{ table: 'Assay', column: 'id' }]
+    await Promise.all(
+      dictionaryTables.map(async ({ table, column }) => {
+        if (!getDictionarySync(table, column)) {
+          // calling of async func `getDictionary` reads and caches specified table/column
+          return getDictionary(table, column)
+        }
+      })
+    )
+    return h.continue
+  })
+
   // ==========================================================================
   // ==========================================================================
   // Authentication strategies and Authorization Scopes
@@ -206,10 +234,9 @@ const start = async () => {
   })
   server.auth.strategy('deviceApiRawUnauthenticated', 'deviceApiRawUnauthenticated')
 
-  // Client API uses JWT
-  server.auth.strategy('clientApi', 'jwt', {
-    key: config.secret,
-    validate: async (decoded, request) => {
+  // Common function to validate scope based on the request
+  const validateApi = scopeApi => {
+    const validateFnc = async function (decoded, request) {
       let isValid = true
       let errorMessage = null
       // if user has to accept license, deny all requests except to the license api:
@@ -233,9 +260,23 @@ const start = async () => {
             )
           )
         : []
-      const scope = ['clientApi'].concat(modules, decoded.permissions || [])
+      const scope = [scopeApi].concat(modules, decoded.permissions || [])
       return { isValid, errorMessage, credentials: { scope, ...decoded } }
-    },
+    }
+    return validateFnc
+  }
+
+  // Client API uses JWT
+  server.auth.strategy('clientApi', 'jwt', {
+    key: config.secret,
+    validate: validateApi('clientApi'),
+    // TODO JWT verification algorithm verifyOptions: { algorithms: [ 'HS256' ] }
+  })
+
+  // Mobile API uses JWT
+  server.auth.strategy('mobileApi', 'jwt', {
+    key: config.secret,
+    validate: validateApi('mobileApi'),
     // TODO JWT verification algorithm verifyOptions: { algorithms: [ 'HS256' ] }
   })
 
@@ -327,6 +368,29 @@ const start = async () => {
     {
       routes: {
         prefix: '/device/raw',
+      },
+    }
+  )
+
+  // =======================
+  // Mobile API data route mounted under /mobile/api
+  // =======================
+  await server.register(
+    {
+      name: 'mobileApi',
+      version,
+      register: async server =>
+        new Promise(resolve => {
+          addMobileRoutes(server)
+          resolve()
+        }).catch(err => {
+          logger.error(err)
+          throw err
+        }),
+    },
+    {
+      routes: {
+        prefix: '/mobile/api',
       },
     }
   )

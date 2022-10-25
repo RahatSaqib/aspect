@@ -43,7 +43,7 @@ async function getConstraintsByDeviceAPIKey(apiKey) {
   return Promise.resolve()
 }
 
-async function getConstraints(credentials) {
+async function getConstraints(credentials, { displayResult = 'actual' } = {}) {
   const user = await getUserFromCredentials(credentials)
   if (!user) {
     return Promise.resolve()
@@ -58,6 +58,19 @@ async function getConstraints(credentials) {
     person: {
       id: user.personId,
     },
+    result: {
+      modify: null,
+    },
+  }
+
+  if (displayResult === 'actual' || displayResult === 'excluded') {
+    const { partnerId } = user
+    const { getPartnerPluginName } = require('../plugin/utils')
+    const partnerPluginName = await getPartnerPluginName({ partnerId })
+    if (partnerPluginName) {
+      const { loadPlugin } = require('../plugin/registration')
+      constraints.result.modify = await loadPlugin([partnerPluginName], 'modifyQueryToExcludeResult')
+    }
   }
 
   const jobContexts = await getContext(user)
@@ -497,6 +510,12 @@ function addOrConstraints(
   }
 }
 
+function addResultConstraints(queryBuilder, constraints, aliases) {
+  if (constraints.result?.modify) {
+    constraints.result.modify(queryBuilder, constraints, aliases)
+  }
+}
+
 function addConstraints(queryBuilder, constraints, receivedAliases) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
@@ -512,6 +531,7 @@ function addConstraints(queryBuilder, constraints, receivedAliases) {
   addPersonConstraints(queryBuilder, constraints, aliases)
   addGeographyConstraints(queryBuilder, constraints, aliases)
   addOrConstraints(queryBuilder, constraints, aliases)
+  addResultConstraints(queryBuilder, constraints, aliases)
 }
 
 function isNullInOrEqual(queryBuilder, columnName, value) {

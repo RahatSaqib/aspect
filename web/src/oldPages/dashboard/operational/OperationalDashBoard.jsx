@@ -2,29 +2,21 @@ import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import ErrorBoundary from '../../../components/ErrorBoundary'
-import deviceStatusGraphs from '../../../components/Graphs/GraphConfigurations/DeviceStatus'
-import inventoryStatusGraphs from '../../../components/Graphs/GraphConfigurations/Inventory'
-import resultsTransmittedGraphs from '../../../components/Graphs/GraphConfigurations/ResultsTransmitted'
-import GraphsContainer from '../../../components/Graphs/GraphsContainer'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'
 import { useAuthState } from '../../../providers/AuthProvider'
 import PermissionsProvider, { isGraphPermitted } from '../../../providers/PermissionsProvider'
+import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
+import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
+import ResultTransmittedGraph from '../Graphs/ResultTransmittedGraph'
 import SummaryStatus from '../status/SummaryStatus'
 import styles from './OperationalData.css'
 
 const cssClasses = classnames.bind(styles)
 
 const OperationalDashBoard = () => {
-  const { deviceStatus } = deviceStatusGraphs()
-  const { resultsTransmitted } = resultsTransmittedGraphs()
-  const { inventoryStatus } = inventoryStatusGraphs
-
   const auth = useAuthState()
-  const isPermittedToFetchAssays = isGraphPermitted({
-    auth,
-    permissions: ['assay'],
-  })
+  const isPermittedToFetchAssays = isGraphPermitted({ auth, permissions: ['assay'] })
 
   const {
     isError,
@@ -45,23 +37,15 @@ const OperationalDashBoard = () => {
         </PermissionsProvider>
       </ErrorBoundary>
 
-      <ErrorBoundary>
-        <PermissionsProvider permissions={['assay', '+operationalData']}>
-          {assays && assays.length ? <GraphsContainer assaysFromState={assays} config={resultsTransmitted} /> : null}
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={['site', 'device', 'dashboard', '+operationalData']}>
-          <GraphsContainer assaysFromState={[]} config={deviceStatus} />
-        </PermissionsProvider>
-      </ErrorBoundary>
-
-      <ErrorBoundary>
-        <PermissionsProvider permissions={['site', 'consumable', 'dashboard', '+operationalData']}>
-          <GraphsContainer assaysFromState={assays} config={inventoryStatus} />
-        </PermissionsProvider>
-      </ErrorBoundary>
+      <PermissionsProvider permissions={['operationalData']}>
+        <ResultTransmittedGraph />
+        {assays ? (
+          <>
+            <DeviceStatusGraph assaysFromState={assays} />
+            <InventoryStatusGraph assaysFromState={assays} />
+          </>
+        ) : null}
+      </PermissionsProvider>
     </Fragment>
   )
 }

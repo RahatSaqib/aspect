@@ -23,7 +23,7 @@ WidgetAlert.propTypes = {
   alert: PropTypes.shape({
     whenIs: PropTypes.string.isRequired,
     representing: PropTypes.string.isRequired,
-    comparedTo: PropTypes.isRequired,
+    comparedTo: PropTypes.oneOfType([PropTypes.array, PropTypes.string]),
   }).isRequired,
 }
 

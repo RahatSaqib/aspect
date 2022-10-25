@@ -13,13 +13,12 @@ import {
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import ErrorBoundary from '../../../../components/ErrorBoundary'
-import graphsContainerMessages from '../../../../components/Graphs/GraphsContainer/messages'
 import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
-import assayTranslations from '../../../../messages/assay'
-import styles from './styles.css'
+import { graphMessages, assay } from '../../../../messages'
+import styles from '../styles.css'
 import TestsOverTimeGraphMain from './TestsOverTimeGraph.Main'
 import TestsOverTimeGraphSide from './TestsOverTimeGraph.Side'
 
@@ -55,14 +54,14 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
       <Grid container className={cssClasses('Graph_Container')}>
         <Grid item xs={12}>
           <Card>
-            <CardHeader title={formatMessage(graphsContainerMessages.testsOverTimeTitle)} />
+            <CardHeader title={formatMessage(graphMessages.testsOverTimeTitle)} />
             <CardContent>
               <Grid container spacing={8} className={cssClasses('Graph_Content')}>
-                <Grid item xs={12} md={12} lg={3}>
+                <Grid item xs={12} md={12} lg={2}>
                   <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
                     <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
                       <FormControlLabel
-                        label={formatMessage(graphsContainerMessages.showValuesLabel)}
+                        label={formatMessage(graphMessages.showValuesLabel)}
                         control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
                       />
                     </Grid>
@@ -71,7 +70,7 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={12} lg={9}>
+                <Grid item xs={12} md={12} lg={10}>
                   <Grid container>
                     <TestsOverTimeGraphMain
                       data={data.data}
@@ -135,16 +134,11 @@ const AssayAutocomplete = ({ assaysFromState, value, onChange }) => {
       }}
       options={[optionAll, ...options]}
       groupBy={option => option.assayTypeAbbreviation}
-      getOptionLabel={option => formatMessage(assayTranslations[option.i18nKey])}
+      getOptionLabel={option => formatMessage(assay[option.i18nKey])}
       sx={{ minWidth: '120px' }}
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
-          <Chip
-            color="primary"
-            label={formatMessage(assayTranslations[option.i18nKey])}
-            size="small"
-            {...getTagProps({ index })}
-          />
+          <Chip color="primary" label={formatMessage(assay[option.i18nKey])} size="small" {...getTagProps({ index })} />
         ))
       }
       renderInput={params => <TextField {...params} />}

@@ -1,0 +1,2580 @@
+[
+    {
+        "externalId": "Kasoa Polyclinic",
+        "latitude": -1.212000,
+        "longitude": 5.566000,
+        "stateName": "Central Region",
+        "lgaName": "Awutu Senya East Municipal",
+        "name": "Kasoa Polyclinic Laboratory",
+        "shortName": "Kasoa Polyclinic",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Kasoa Polyclinic Laboratory",
+                "shortName": "Kasoa Polyclinic",
+                "macAddress": "MACA0369F907FDD",
+                "hostId": "KASOA POLYCLINIC LAB",
+                "serial": "Cepheid-60912SZ",
+                "gxAlertDeviceId": 1790
+            }
+        ]
+    },
+    {
+        "externalId": "La General Hosp",
+        "latitude": 0.059000,
+        "longitude": 5.804000,
+        "stateName": "Greater Accra Region",
+        "lgaName": "La Dade-Kotopong Municipal",
+        "name": "La General Hospital",
+        "shortName": "La General Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "La General Hospital",
+                "shortName": "La General Hosp",
+                "macAddress": "MAC",
+                "hostId": "La General Hospital",
+                "serial": "Cepheid-6021ZLC",
+                "gxAlertDeviceId": 1801
+            }
+        ]
+    },
+    {
+        "externalId": "Achimota Hosp",
+        "latitude": 0.059000,
+        "longitude": 5.804000,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Accra Metropolitan",
+        "name": "Achimota Hospital Laboratory",
+        "shortName": "Achimota Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Achimota Hospital Laboratory",
+                "shortName": "Achimota Hosp",
+                "macAddress": "MACA0369F906507",
+                "hostId": "Achimota Hospital La",
+                "serial": "Cepheid-60912S7",
+                "gxAlertDeviceId": 1804
+            }
+        ]
+    },
+    {
+        "externalId": "LEKMA Hosp Lab",
+        "latitude": 0.059000,
+        "longitude": 5.804000,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Ledzekuku-Krowor Municipal",
+        "name": "LEKMA Hospital Laboratory",
+        "shortName": "LEKMA Hosp Lab",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "LEKMA Hospital Laboratory",
+                "shortName": "LEKMA Hosp Lab",
+                "macAddress": "MACA0369F575AB3",
+                "hostId": "LEKMA Hospital Labor",
+                "serial": "Cepheid-520RX9K",
+                "gxAlertDeviceId": 1805
+            }
+        ]
+    },
+    {
+        "externalId": "Stefan's Test",
+        "name": "Stefan's Test",
+        "shortName": "Stefan's Test",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Stefan's Test",
+                "shortName": "Stefan's Test",
+                "macAddress": "MAC6003089BF88A",
+                "hostId": "Stefan's Test",
+                "serial": "DESKTOP-6EO9UUD",
+                "gxAlertDeviceId": 1806
+            }
+        ]
+    },
+    {
+        "externalId": "Madina Polyclini",
+        "latitude": 0.059000,
+        "longitude": 5.804000,
+        "stateName": "Greater Accra Region",
+        "lgaName": "La-Nkwantanang-Madina Municipal",
+        "name": "Madina Polyclinic-Kekele",
+        "shortName": "Madina Polyclini",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Madina Polyclinic-Kekele",
+                "shortName": "Madina Polyclini",
+                "macAddress": "MAC6805CA647251",
+                "hostId": "MADINA POLYCLINIC-KEKELE, ACCRA-GHANA",
+                "serial": "Cepheid-7382NK3",
+                "gxAlertDeviceId": 1807
+            }
+        ]
+    },
+    {
+        "externalId": "Nadowli Dis. Hos",
+        "latitude": -2.216000,
+        "longitude": 10.411000,
+        "stateName": "Upper West Region",
+        "lgaName": "Nadowli Kaleo District",
+        "name": "Nadowli District Hospital Laboratory",
+        "shortName": "Nadowli Dis. Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Nadowli District Hospital Laboratory",
+                "shortName": "Nadowli Dis. Hos",
+                "macAddress": "MACA0369F571CFC",
+                "hostId": "GENEXPERT",
+                "serial": "Cepheid-520RMB9",
+                "gxAlertDeviceId": 1811
+            }
+        ]
+    },
+    {
+        "externalId": "Anfoega R/C Hosp",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "North Dayi District",
+        "name": "Anfoega Catholic Hospital Laboratory",
+        "shortName": "Anfoega R/C Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Anfoega Catholic Hospital Laboratory",
+                "shortName": "Anfoega R/C Hosp",
+                "macAddress": "MAC40B0341B7017",
+                "hostId": "ANFOEGA CATHOLIC HOSPITAL LABORATORY",
+                "serial": "Cepheid-7361P82",
+                "gxAlertDeviceId": 1813
+            }
+        ]
+    },
+    {
+        "externalId": "Nandom Hospital",
+        "latitude": -2.216000,
+        "longitude": 10.411000,
+        "stateName": "Upper West Region",
+        "lgaName": "Nandom District",
+        "name": "St. Theresa's Hospital, Nandom",
+        "shortName": "Nandom Hospital",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "St. Theresa's Hospital, Nandom",
+                "shortName": "Nandom Hospital",
+                "macAddress": "MAC6805CA64B7B0",
+                "hostId": "St. Theresa's Hospital, Nandom",
+                "serial": "Cepheid-7382NJS",
+                "gxAlertDeviceId": 1816
+            }
+        ]
+    },
+    {
+        "externalId": "Akatsi Dist Hosp",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "Akatsi South District",
+        "name": "Akatsi District Hospital Laboratory",
+        "shortName": "Akatsi Dist Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Akatsi District Hospital Laboratory",
+                "shortName": "Akatsi Dist Hosp",
+                "macAddress": "MAC6805CA647235",
+                "hostId": "AKATSI DISTRICT HOSPITAL LABORATORY",
+                "serial": "Cepheid-7382NK1",
+                "gxAlertDeviceId": 1817
+            }
+        ]
+    },
+    {
+        "externalId": "Tain Dist Hosp",
+        "latitude": -1.654000,
+        "longitude": 7.700000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Tain District",
+        "name": "Tain District Hospital, Nsawkaw",
+        "shortName": "Tain Dist Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Tain District Hospital, Nsawkaw",
+                "shortName": "Tain Dist Hosp",
+                "macAddress": "MAC40B034197783",
+                "hostId": "Tain District Hospital, Nsawkaw",
+                "serial": "Cepheid-7361P5V",
+                "gxAlertDeviceId": 1818
+            }
+        ]
+    },
+    {
+        "externalId": "Sene Dist Hosp. ",
+        "latitude": -1.654000,
+        "longitude": 7.700000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Sene West District",
+        "name": "Sene District Hosp. Lab",
+        "shortName": "Sene Dist Hosp. ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Sene District Hosp. Lab",
+                "shortName": "Sene Dist Hosp. ",
+                "macAddress": "MAC6805CA6472BC",
+                "hostId": "Sene District Hosp. Lab",
+                "serial": "Cepheid-7382NK0",
+                "gxAlertDeviceId": 1819
+            }
+        ]
+    },
+    {
+        "externalId": "Daboase",
+        "latitude": -1.650000,
+        "longitude": 5.133000,
+        "stateName": "Western Region",
+        "lgaName": "Wassa East District",
+        "name": "Ahmadiyya Mission Hospital, Daboase",
+        "shortName": "Daboase",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Ahmadiyya Mission Hospital, Daboase",
+                "shortName": "Daboase",
+                "macAddress": "MAC6805CA647534",
+                "hostId": "Daboase",
+                "serial": "Cepheid-7382NJC",
+                "gxAlertDeviceId": 1820
+            }
+        ]
+    },
+    {
+        "externalId": "Atebubu Mun Hosp",
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Atebubu Amantin District",
+        "name": "Atebubu Municipal Hospital",
+        "shortName": "Atebubu Mun Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Atebubu Municipal Hospital",
+                "shortName": "Atebubu Mun Hosp",
+                "macAddress": "MAC",
+                "hostId": "Atebubu Municipal Hospital",
+                "serial": "Cepheid-7091D0K",
+                "gxAlertDeviceId": 1821
+            }
+        ]
+    },
+    {
+        "externalId": "Konongo Mun. Hos",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Asante Akim Central Region Municipal",
+        "name": "Konongo Municipal Hospital",
+        "shortName": "Konongo Mun. Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Konongo Municipal Hospital",
+                "shortName": "Konongo Mun. Hos",
+                "macAddress": "MAC6805CA64BBE5",
+                "hostId": "Konongo Municipal Hospital",
+                "serial": "Cepheid-7382NJX",
+                "gxAlertDeviceId": 1823
+            }
+        ]
+    },
+    {
+        "externalId": "New Edubiase Hos",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Adansi South District",
+        "name": "New Edubiase Hospital",
+        "shortName": "New Edubiase Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "New Edubiase Hospital",
+                "shortName": "New Edubiase Hos",
+                "macAddress": "MAC480FCF57042A",
+                "hostId": "New Edubiase",
+                "serial": "Cepheid-60912RN",
+                "gxAlertDeviceId": 1825
+            }
+        ]
+    },
+    {
+        "externalId": "Obuasi Gov't Hos",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Obuasi Municipal",
+        "name": "Obuasi Government Hospital Laboratory",
+        "shortName": "Obuasi Gov't Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Obuasi Government Hospital Laboratory",
+                "shortName": "Obuasi Gov't Hos",
+                "macAddress": "MACA0369F86133A",
+                "hostId": "Obuasi",
+                "serial": "Cepheid-6021ZNX",
+                "gxAlertDeviceId": 1826
+            }
+        ]
+    },
+    {
+        "externalId": "Effia Nkwanta Ho",
+        "latitude": -2.416000,
+        "longitude": 5.744000,
+        "stateName": "Western Region",
+        "lgaName": "Sekondi Takoradi Metropolitan",
+        "name": "Effia Nkwanta Reg Hospiutal, Takoradi",
+        "shortName": "Effia Nkwanta Ho",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Effia Nkwanta Reg Hospiutal, Takoradi",
+                "shortName": "Effia Nkwanta Ho",
+                "macAddress": "MAC6805CA6224A4",
+                "hostId": "LIS_Effia Nkwanta",
+                "serial": "Cepheid-7361PB5",
+                "gxAlertDeviceId": 1832
+            }
+        ]
+    },
+    {
+        "externalId": "Agroyesum  Hospi",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Amansie West District",
+        "name": "St Martin's Catholic Hospital. Agroyesum",
+        "shortName": "Agroyesum  Hospi",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "St Martin's Catholic Hospital. Agroyesum",
+                "shortName": "Agroyesum  Hospi",
+                "macAddress": "MAC6805CA64703E",
+                "hostId": "St Martin's Cath. Hosp. Agroyesum",
+                "serial": "Cepheid-7382NJR",
+                "gxAlertDeviceId": 1834
+            }
+        ]
+    },
+    {
+        "externalId": "Krachi West Dist",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "Krachi West District",
+        "name": "Krachi West District Hospital Laboratory",
+        "shortName": "Krachi West Dist",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Krachi West District Hospital Laboratory",
+                "shortName": "Krachi West Dist",
+                "macAddress": "MAC6805CA647673",
+                "hostId": "KRACHI WEST DISTRICT HOSPITAL LABORATORY",
+                "serial": "Cepheid-7382NHB",
+                "gxAlertDeviceId": 1836
+            }
+        ]
+    },
+    {
+        "externalId": "Nkawkaw",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Kwahu West Municipal",
+        "name": "Holy Family Hospital, Nkawkaw",
+        "shortName": "Nkawkaw",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Holy Family Hospital, Nkawkaw",
+                "shortName": "Nkawkaw",
+                "macAddress": "MACA0369F860EB4",
+                "hostId": "Holy Family Hospital Nkawkaw",
+                "serial": "Cepheid-6021ZNY",
+                "gxAlertDeviceId": 1839
+            }
+        ]
+    },
+    {
+        "externalId": "Enyiresi Gov't h",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Atiwa District",
+        "name": "Enyiresi Government Hospital",
+        "shortName": "Enyiresi Gov't h",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Enyiresi Government Hospital",
+                "shortName": "Enyiresi Gov't h",
+                "macAddress": "MACA0369F905957",
+                "hostId": "Enyiresi Government Hospital",
+                "serial": "Cepheid-60912SF",
+                "gxAlertDeviceId": 1841
+            }
+        ]
+    },
+    {
+        "externalId": "Kibi Gov't Hosp",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "East Akim Municipal",
+        "name": "Kibi Government Hospital",
+        "shortName": "Kibi Gov't Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Kibi Government Hospital",
+                "shortName": "Kibi Gov't Hosp",
+                "macAddress": "MACA0369F8887A6",
+                "hostId": "Kibi Government Hospital",
+                "serial": "Cepheid-6021ZN9",
+                "gxAlertDeviceId": 1842
+            }
+        ]
+    },
+    {
+        "externalId": "Suhum Gov't Hosp",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Suhum Municipal",
+        "name": "Suhum Government Hospital",
+        "shortName": "Suhum Gov't Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Suhum Government Hospital",
+                "shortName": "Suhum Gov't Hosp",
+                "macAddress": "MAC6805CA6474E4",
+                "hostId": "Suhum Government Hospital",
+                "serial": "Cepheid-7382NJ8",
+                "gxAlertDeviceId": 1843
+            }
+        ]
+    },
+    {
+        "externalId": "Kumasi South ",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Kumasi Metropolitan",
+        "name": "Kumasi South Regional Hospital",
+        "shortName": "Kumasi South ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Kumasi South Regional Hospital",
+                "shortName": "Kumasi South ",
+                "macAddress": "MACA0369F88814A",
+                "hostId": "Kumasi South",
+                "serial": "Cepheid-6021ZMV",
+                "gxAlertDeviceId": 1951
+            }
+        ]
+    },
+    {
+        "externalId": "Asamankese Gov't",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "West Akim Municipal",
+        "name": "Asamankese Government Hosital",
+        "shortName": "Asamankese Gov't",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Asamankese Government Hosital",
+                "shortName": "Asamankese Gov't",
+                "macAddress": "MACA0369F574F0E",
+                "hostId": "Asamankese Government Hosital",
+                "serial": "Cepheid-520RXC2",
+                "gxAlertDeviceId": 1848
+            }
+        ]
+    },
+    {
+        "externalId": "Oda Gov't Hosp",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Birim Central Region Municipal",
+        "name": "Oda Government Hospital",
+        "shortName": "Oda Gov't Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Oda Government Hospital",
+                "shortName": "Oda Gov't Hosp",
+                "macAddress": "MACA0369F9072ED",
+                "hostId": "Oda Government Hospital",
+                "serial": "Cepheid-60912VB",
+                "gxAlertDeviceId": 1849
+            }
+        ]
+    },
+    {
+        "externalId": "Akwatia Hospital",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Denkyembour District",
+        "name": "St. Dominc's Hospital, Akwatia",
+        "shortName": "Akwatia Hospital",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "St. Dominc's Hospital, Akwatia",
+                "shortName": "Akwatia Hospital",
+                "macAddress": "MACA0369F88940A",
+                "hostId": "St. Dominc's Hospital, Akwatia",
+                "serial": "Cepheid-6021DFD",
+                "gxAlertDeviceId": 1850
+            }
+        ]
+    },
+    {
+        "externalId": "Kade Gov't Hosp",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Kwaebibirem District",
+        "name": "Kade Government Hospital",
+        "shortName": "Kade Gov't Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Kade Government Hospital",
+                "shortName": "Kade Gov't Hosp",
+                "macAddress": "MAC40B0341CE74A",
+                "hostId": "Kade Government Hospital",
+                "serial": "Cepheid-7382NJZ",
+                "gxAlertDeviceId": 1851
+            }
+        ]
+    },
+    {
+        "externalId": "Asesewa Gov't Ho",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Upper Manya Krobo District",
+        "name": "Asesewa Gov't Hospital Laboratory",
+        "shortName": "Asesewa Gov't Ho",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Asesewa Gov't Hospital Laboratory",
+                "shortName": "Asesewa Gov't Ho",
+                "macAddress": "MACA0369F905C61",
+                "hostId": "Asesewa Government Hospital Laboratory",
+                "serial": "Cepheid-60912RW",
+                "gxAlertDeviceId": 1854
+            }
+        ]
+    },
+    {
+        "externalId": "Ankaase Meth Hos",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Afigya Kwabre District",
+        "name": "Methodist Faith Healing Hospi",
+        "shortName": "Ankaase Meth Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Methodist Faith Healing Hospi",
+                "shortName": "Ankaase Meth Hos",
+                "macAddress": "MACA0369F861299",
+                "hostId": "Ankaase Meth Hosp",
+                "serial": "Cepheid-6021ZLN",
+                "gxAlertDeviceId": 1855
+            }
+        ]
+    },
+    {
+        "externalId": "VRA Hospital Ako",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Asuogyaman District",
+        "name": "VRA Hospital Akosombo",
+        "shortName": "VRA Hospital Ako",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "VRA Hospital Akosombo",
+                "shortName": "VRA Hospital Ako",
+                "macAddress": "MACA0369F9081F5",
+                "hostId": "VRA Hospital Akosombo",
+                "serial": "Cepheid-60912TJ",
+                "gxAlertDeviceId": 1856
+            }
+        ]
+    },
+    {
+        "externalId": "Sogakope Hospita",
+        "stateName": "Volta Region",
+        "lgaName": "South Tongu District",
+        "name": "South Tongu District Hospital",
+        "shortName": "Sogakope Hospita",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "South Tongu District Hospital",
+                "shortName": "Sogakope Hospita",
+                "macAddress": "MACA0369F8880F3",
+                "hostId": "Sogakope",
+                "serial": "Cepheid-6021DD8",
+                "gxAlertDeviceId": 1859
+            }
+        ]
+    },
+    {
+        "externalId": "Keta Mun Hosp",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "Keta Municipal",
+        "name": "Keta Municipal Hospital",
+        "shortName": "Keta Mun Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Keta Municipal Hospital",
+                "shortName": "Keta Mun Hosp",
+                "macAddress": "MACA0369F9075C2",
+                "hostId": "Keta",
+                "serial": "Cepheid-60912RS",
+                "gxAlertDeviceId": 1936
+            }
+        ]
+    },
+    {
+        "externalId": "Dzodze Hospital",
+        "latitude": 0.993000,
+        "longitude": 6.223000,
+        "stateName": "Volta Region",
+        "lgaName": "Ketu North District",
+        "name": "St Anthony Hospital, Dzodze",
+        "shortName": "Dzodze Hospital",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "St Anthony Hospital, Dzodze",
+                "shortName": "Dzodze Hospital",
+                "macAddress": "MACA0369F575F97",
+                "hostId": "Dzodze",
+                "serial": "Cepheid-520RX8J",
+                "gxAlertDeviceId": 1862
+            }
+        ]
+    },
+    {
+        "externalId": "Dzodze Hospital",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "Ketu North District",
+        "name": "St Anthony Hospital, Dzodze",
+        "shortName": "Dzodze Hospital",
+        "timeZoneId": "UTC"
+    },
+    {
+        "externalId": "Bole Dist Hosp",
+        "latitude": -2.488000,
+        "longitude": 9.035000,
+        "stateName": "Northern Region",
+        "lgaName": "Bole District",
+        "name": "Bole District Hospital",
+        "shortName": "Bole Dist Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Bole District Hospital",
+                "shortName": "Bole Dist Hosp",
+                "macAddress": "MAC480FCF52A52B",
+                "hostId": "Bole District Hospital",
+                "serial": "Cepheid-60912V1",
+                "gxAlertDeviceId": 1863
+            }
+        ]
+    },
+    {
+        "externalId": "Ho Teaching ",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "Ho Municipal",
+        "name": "Ho Teaching Hospital",
+        "shortName": "Ho Teaching ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Ho Teaching Hospital",
+                "shortName": "Ho Teaching ",
+                "macAddress": "MAC6805CA1ECC39",
+                "hostId": "VRH,Ho",
+                "serial": "Cepheid-3450YRG",
+                "gxAlertDeviceId": 1943
+            }
+        ]
+    },
+    {
+        "externalId": "Kpando Catholic ",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "Kpando Municipal",
+        "name": "Margret Marquart Catholic Hospital, Kpando",
+        "shortName": "Kpando Catholic ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Margret Marquart Catholic Hospital, Kpando",
+                "shortName": "Kpando Catholic ",
+                "macAddress": "MACA0369F887F95",
+                "hostId": "Kpando",
+                "serial": "Cepheid-6021ZMR",
+                "gxAlertDeviceId": 1867
+            }
+        ]
+    },
+    {
+        "externalId": "Hohoe Mun Hosp",
+        "latitude": 0.477000,
+        "longitude": 7.154000,
+        "stateName": "Volta Region",
+        "lgaName": "Hohoe Municipal",
+        "name": "Hohoe Municipal Hospital",
+        "shortName": "Hohoe Mun Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Hohoe Municipal Hospital",
+                "shortName": "Hohoe Mun Hosp",
+                "macAddress": "MACA0369F571D01",
+                "hostId": "Hohoe",
+                "serial": "Cepheid-520RX9X",
+                "gxAlertDeviceId": 1868
+            }
+        ]
+    },
+    {
+        "externalId": "Tamale Central ",
+        "latitude": -0.967000,
+        "longitude": 9.353000,
+        "stateName": "Northern Region",
+        "lgaName": "Tamale Metropolitan",
+        "name": "Tamale Central Hospital",
+        "shortName": "Tamale Central ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Tamale Central Hospital",
+                "shortName": "Tamale Central ",
+                "macAddress": "MAC480FCF52A521",
+                "hostId": "GENEXPERT",
+                "serial": "Cepheid-60912V2",
+                "gxAlertDeviceId": 1869
+            }
+        ]
+    },
+    {
+        "externalId": "Nkwanta South",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "Nkwanta South District",
+        "name": "Nkwanta South Municipal Hospital",
+        "shortName": "Nkwanta South",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Nkwanta South Municipal Hospital",
+                "shortName": "Nkwanta South",
+                "macAddress": "MACA0369F889A69",
+                "hostId": "Nkwanta, VR",
+                "serial": "Cepheid-6021DFB",
+                "gxAlertDeviceId": 1871
+            }
+        ]
+    },
+    {
+        "externalId": "Salaga Dist Gov'",
+        "latitude": -0.967000,
+        "longitude": 9.353000,
+        "stateName": "Northern Region",
+        "lgaName": "East Gonja District",
+        "name": "Salaga District Gov't Hospital",
+        "shortName": "Salaga Dist Gov'",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Salaga District Gov't Hospital",
+                "shortName": "Salaga Dist Gov'",
+                "macAddress": "MACA0369F908134",
+                "hostId": "Salaga District Gov't Hospital",
+                "serial": "Cepheid-60912SB",
+                "gxAlertDeviceId": 1872
+            }
+        ]
+    },
+    {
+        "externalId": "Kpassa Health Ce",
+        "latitude": 0.550000,
+        "longitude": 8.217000,
+        "stateName": "Volta Region",
+        "lgaName": "Nkwanta North District",
+        "name": "Kpassa Health Center",
+        "shortName": "Kpassa Health Ce",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Kpassa Health Center",
+                "shortName": "Kpassa Health Ce",
+                "macAddress": "MACA0369F86116A",
+                "hostId": "Kpassa",
+                "serial": "Cepheid-6021ZLF",
+                "gxAlertDeviceId": 1873
+            }
+        ]
+    },
+    {
+        "externalId": "Zabzugu Dist Hos",
+        "latitude": 0.371000,
+        "longitude": 9.284000,
+        "stateName": "Northern Region",
+        "lgaName": "Zabzugu District",
+        "name": "Zabzugu District Hospital",
+        "shortName": "Zabzugu Dist Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Zabzugu District Hospital",
+                "shortName": "Zabzugu Dist Hos",
+                "macAddress": "MAC6805CA6472CA",
+                "hostId": "Zabzugu District Hospital",
+                "serial": "Cepheid-7382NHM",
+                "gxAlertDeviceId": 1875
+            }
+        ]
+    },
+    {
+        "externalId": "Worawora Gov't ",
+        "latitude": 0.367000,
+        "longitude": 7.517000,
+        "stateName": "Volta Region",
+        "lgaName": "Jasikan District",
+        "name": "Worawora Government Hospital",
+        "shortName": "Worawora Gov't ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Worawora Government Hospital",
+                "shortName": "Worawora Gov't ",
+                "macAddress": "MACA0369F908254",
+                "hostId": "Worawora",
+                "serial": "Cepheid-60912SH",
+                "gxAlertDeviceId": 1953
+            }
+        ]
+    },
+    {
+        "externalId": "Saboba Hospi",
+        "latitude": -0.009000,
+        "longitude": 9.917000,
+        "stateName": "Northern Region",
+        "lgaName": "Saboba District",
+        "name": "Assemblies of God Hospital, Saboba",
+        "shortName": "Saboba Hospi",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Assemblies of God Hospital, Saboba",
+                "shortName": "Saboba Hospi",
+                "macAddress": "MACA0369F8880EA",
+                "hostId": "Assemblies of God Hospital, Saboba",
+                "serial": "Cepheid-6021DDL",
+                "gxAlertDeviceId": 1877
+            }
+        ]
+    },
+    {
+        "externalId": "Nalerigu Medical",
+        "stateName": "Northern Region",
+        "lgaName": "East Mamprusi District",
+        "name": "Baptist Medical Centre, Nalerigu",
+        "shortName": "Nalerigu Medical",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Baptist Medical Centre, Nalerigu",
+                "shortName": "Nalerigu Medical",
+                "macAddress": "MACA0369F9075A5",
+                "hostId": "Baptist Medical Centre, Nalerigu",
+                "serial": "Cepheid-60912RP",
+                "gxAlertDeviceId": 1878
+            }
+        ]
+    },
+    {
+        "externalId": "Bawku Presby H",
+        "latitude": -0.804000,
+        "longitude": 10.779000,
+        "stateName": "Upper East Region",
+        "lgaName": "Bawku Municipal",
+        "name": "Presbyterian Hospital, Bawku",
+        "shortName": "Bawku Presby H",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Presbyterian Hospital, Bawku",
+                "shortName": "Bawku Presby H",
+                "macAddress": "MACA0369F8881E0",
+                "hostId": "GeneXpert",
+                "serial": "Cepheid-6021ZL2",
+                "gxAlertDeviceId": 1879
+            }
+        ]
+    },
+    {
+        "externalId": "Garu Health C.",
+        "latitude": -0.804000,
+        "longitude": 10.779000,
+        "stateName": "Upper East Region",
+        "lgaName": "Garu-Tempane District",
+        "name": "Garu Health Centre",
+        "shortName": "Garu Health C.",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Garu Health Centre",
+                "shortName": "Garu Health C.",
+                "macAddress": "MACA0369F86138A",
+                "hostId": "Garu Health Centre",
+                "serial": "Cepheid-6021ZL9",
+                "gxAlertDeviceId": 1880
+            }
+        ]
+    },
+    {
+        "externalId": "Sandema Dist Hos",
+        "latitude": -1.279000,
+        "longitude": 10.726000,
+        "stateName": "Upper East Region",
+        "lgaName": "Builsa North District",
+        "name": "Builsa North District Hospital, Sandema",
+        "shortName": "Sandema Dist Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Builsa North District Hospital, Sandema",
+                "shortName": "Sandema Dist Hos",
+                "macAddress": "MACA0369F907FDE",
+                "hostId": "Builsa North District Hospital, Sandema",
+                "serial": "Cepheid-60912S4",
+                "gxAlertDeviceId": 1883
+            }
+        ]
+    },
+    {
+        "externalId": "War Memorial Hos",
+        "latitude": -1.091000,
+        "longitude": 10.893000,
+        "stateName": "Upper East Region",
+        "lgaName": "Kassena Nankana Municipal",
+        "name": "War Memorial Hospital, Navrongo",
+        "shortName": "War Memorial Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "War Memorial Hospital, Navrongo",
+                "shortName": "War Memorial Hos",
+                "macAddress": "MAC480FCF52A503",
+                "hostId": "BLISGH",
+                "serial": "Cepheid-60912T7",
+                "gxAlertDeviceId": 1884
+            }
+        ]
+    },
+    {
+        "externalId": "Wassa Akro Govt",
+        "latitude": -2.084000,
+        "longitude": 5.787000,
+        "stateName": "Western Region",
+        "lgaName": "Amenfi East District",
+        "name": "Wassa Akropong Govt. hosp",
+        "shortName": "Wassa Akro Govt",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Wassa Akropong Govt. hosp",
+                "shortName": "Wassa Akro Govt",
+                "macAddress": "MAC480FCF318F86",
+                "hostId": "Wassa Akropong Govt. hosp",
+                "serial": "Cepheid-6021DD5",
+                "gxAlertDeviceId": 1892
+            }
+        ]
+    },
+    {
+        "externalId": "Prestea Gov't H",
+        "latitude": -2.140000,
+        "longitude": 5.438000,
+        "stateName": "Western Region",
+        "lgaName": "Prestea-Huni Valley District",
+        "name": "Prestea Government Hospital",
+        "shortName": "Prestea Gov't H",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Prestea Government Hospital",
+                "shortName": "Prestea Gov't H",
+                "macAddress": "MAC",
+                "hostId": "Prestea Government Hospital",
+                "serial": "Cepheid-60912T9",
+                "gxAlertDeviceId": 1893
+            }
+        ]
+    },
+    {
+        "externalId": "Tarkwa Mun. Hos",
+        "latitude": -1.984000,
+        "longitude": 5.300000,
+        "stateName": "Western Region",
+        "lgaName": "Tarkwa Nsuaem Municipal",
+        "name": "Tarkwa Municipal Hospital",
+        "shortName": "Tarkwa Mun. Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Tarkwa Municipal Hospital",
+                "shortName": "Tarkwa Mun. Hos",
+                "macAddress": "MACA0369F861312",
+                "hostId": "Tarkwa Municipal Hospital",
+                "serial": "Cepheid-6021ZNH",
+                "gxAlertDeviceId": 1894
+            }
+        ]
+    },
+    {
+        "externalId": "Pru Catholic Hos",
+        "latitude": -0.648000,
+        "longitude": 8.232000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Pru District",
+        "name": "Mathias Catholic Hospital, Pru",
+        "shortName": "Pru Catholic Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Mathias Catholic Hospital, Pru",
+                "shortName": "Pru Catholic Hos",
+                "macAddress": "MACA0369F9075C0",
+                "hostId": "Mathias Catholic Hospital",
+                "serial": "Cepheid-60912RJ",
+                "gxAlertDeviceId": 1896
+            }
+        ]
+    },
+    {
+        "externalId": "Axim Gov't Hosp",
+        "latitude": -2.235000,
+        "longitude": 4.866000,
+        "stateName": "Western Region",
+        "lgaName": "Nzema East Municipal",
+        "name": "Axim Government Hospital",
+        "shortName": "Axim Gov't Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Axim Government Hospital",
+                "shortName": "Axim Gov't Hosp",
+                "macAddress": "MAC6805CA669B80",
+                "hostId": "Axim Government Hospital",
+                "serial": "Cepheid-60912RH",
+                "gxAlertDeviceId": 1897
+            }
+        ]
+    },
+    {
+        "externalId": "Kintampo Mun H",
+        "latitude": -1.726000,
+        "longitude": 8.053000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Kintampo North Municipal",
+        "name": "Kintampo Municipal Hospital",
+        "shortName": "Kintampo Mun H",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Kintampo Municipal Hospital",
+                "shortName": "Kintampo Mun H",
+                "macAddress": "MAC480FCF5706EB",
+                "hostId": "Kintampo Municipal Hospital",
+                "serial": "Cepheid-60912ST",
+                "gxAlertDeviceId": 1901
+            }
+        ]
+    },
+    {
+        "externalId": "Wenchi",
+        "latitude": -2.105000,
+        "longitude": 7.739000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Wenchi Municipal",
+        "name": "Methodist Hospital Wenchi",
+        "shortName": "Wenchi",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Methodist Hospital Wenchi",
+                "shortName": "Wenchi",
+                "macAddress": "MACA0369F9064D5",
+                "hostId": "Methodist Hospital Wenchi",
+                "serial": "Cepheid-60912TM",
+                "gxAlertDeviceId": 1904
+            }
+        ]
+    },
+    {
+        "externalId": "Saltpond Mun. H",
+        "latitude": -4.341000,
+        "longitude": 56.243999,
+        "stateName": "Central Region",
+        "lgaName": "Mfantseman Municipal",
+        "name": "Saltpond Mun. Hospital",
+        "shortName": "Saltpond Mun. H",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Saltpond Mun. Hospital",
+                "shortName": "Saltpond Mun. H",
+                "macAddress": "MACA0369F907362",
+                "hostId": "Saltpond Mun. Hospital",
+                "serial": "Cepheid-60912V9",
+                "gxAlertDeviceId": 1908
+            }
+        ]
+    },
+    {
+        "externalId": "Abura Dunkwa ",
+        "latitude": -1.169000,
+        "longitude": 5.334000,
+        "stateName": "Central Region",
+        "lgaName": "Abura Asebu Kwamankese District",
+        "name": "Abura Dunkwa district Hospital",
+        "shortName": "Abura Dunkwa ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Abura Dunkwa district Hospital",
+                "shortName": "Abura Dunkwa ",
+                "macAddress": "MACA0369F57551A",
+                "hostId": "Abura Dunkwa dist. Hosp",
+                "serial": "Cepheid-520RX99",
+                "gxAlertDeviceId": 1909
+            }
+        ]
+    },
+    {
+        "externalId": "Berekum",
+        "latitude": -1.654000,
+        "longitude": 7.700000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Berekum Municipal",
+        "name": "Holy Family Hospital, Berekum",
+        "shortName": "Berekum",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Holy Family Hospital, Berekum",
+                "shortName": "Berekum",
+                "macAddress": "MACA0369F907592",
+                "hostId": "Holy Family Hospital, Berekum",
+                "serial": "Cepheid-60912VF",
+                "gxAlertDeviceId": 1910
+            }
+        ]
+    },
+    {
+        "externalId": "Twifo Praso Mun",
+        "latitude": -4.341000,
+        "longitude": 56.243999,
+        "stateName": "Central Region",
+        "lgaName": "Twifo Atti Morkwa District",
+        "name": "Twifo Praso Municipal Hospital",
+        "shortName": "Twifo Praso Mun",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Twifo Praso Municipal Hospital",
+                "shortName": "Twifo Praso Mun",
+                "macAddress": "MAC0050B620F7ED",
+                "hostId": "Twifo Praso Municipal Hospital",
+                "serial": "Cepheid-60912VG",
+                "gxAlertDeviceId": 1913
+            }
+        ]
+    },
+    {
+        "externalId": "Goaso Mun Hospit",
+        "latitude": -2.517000,
+        "longitude": 6.800000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Asunafo North Municipal",
+        "name": "Municipal Hospital Goaso",
+        "shortName": "Goaso Mun Hospit",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Municipal Hospital Goaso",
+                "shortName": "Goaso Mun Hospit",
+                "macAddress": "MAC480FCF4EFD12",
+                "hostId": "Municipal Hospital Goaso",
+                "serial": "Cepheid-60912SV",
+                "gxAlertDeviceId": 1914
+            }
+        ]
+    },
+    {
+        "externalId": "Breman Asikuma",
+        "latitude": -4.341000,
+        "longitude": 56.243999,
+        "stateName": "Central Region",
+        "lgaName": "Asikuma Odoben Brankwa District",
+        "name": "Our Lady Of Grace Hsp. Breman Asikuma",
+        "shortName": "Breman Asikuma",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Our Lady Of Grace Hsp. Breman Asikuma",
+                "shortName": "Breman Asikuma",
+                "macAddress": "MACA0369F907D8B",
+                "hostId": "Our Lady Of Grace Hsp. Breman Asikuma",
+                "serial": "Cepheid-60912SP",
+                "gxAlertDeviceId": 1916
+            }
+        ]
+    },
+    {
+        "externalId": "Agona Swedru ",
+        "latitude": -0.700000,
+        "longitude": 5.534000,
+        "stateName": "Central Region",
+        "lgaName": "Agona West Municipal",
+        "name": "Agona Swedru Municipal Hosp.",
+        "shortName": "Agona Swedru ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Agona Swedru Municipal Hosp.",
+                "shortName": "Agona Swedru ",
+                "macAddress": "MACA0369F9075B4",
+                "hostId": "Agona Swedru Municipal Hosp.",
+                "serial": "Cepheid-60912TX",
+                "gxAlertDeviceId": 1920
+            }
+        ]
+    },
+    {
+        "externalId": "Dangbe East ",
+        "latitude": 0.059000,
+        "longitude": 5.804000,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Ada East District",
+        "name": "Dangbe East District Hospital",
+        "shortName": "Dangbe East ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Dangbe East District Hospital",
+                "shortName": "Dangbe East ",
+                "macAddress": "MACA0369F9075C3",
+                "hostId": "Dangbe East District Hospital",
+                "serial": "Cepheid-60912V6",
+                "gxAlertDeviceId": 1921
+            }
+        ]
+    },
+    {
+        "externalId": "Ashaiman Poly",
+        "stateName": "Greater Accra Region",
+        "lgaName": "Ashaiman Municipal",
+        "name": "Ashaiman Polyclinic",
+        "shortName": "Ashaiman Poly",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Ashaiman Polyclinic",
+                "shortName": "Ashaiman Poly",
+                "macAddress": "MAC5065F348F11F",
+                "hostId": "Ashaiman",
+                "serial": "Cepheid-6021ZKX",
+                "gxAlertDeviceId": 1925
+            }
+        ]
+    },
+    {
+        "externalId": "Shai Osudoku ",
+        "latitude": 0.059000,
+        "longitude": 5.804000,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Shai Osudoku District",
+        "name": "Shai Osudoku District Hospital",
+        "shortName": "Shai Osudoku ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Shai Osudoku District Hospital",
+                "shortName": "Shai Osudoku ",
+                "macAddress": "MAC5065F348F1F9",
+                "hostId": "SODH,Dodowa",
+                "serial": "Cepheid-6021ZNR",
+                "gxAlertDeviceId": 1926
+            }
+        ]
+    },
+    {
+        "externalId": "Half Assini Govt ",
+        "latitude": -2.416000,
+        "longitude": 5.744000,
+        "stateName": "Western Region",
+        "lgaName": "Jomoro District",
+        "name": "Half Assini Govt Hospital, Jomoro",
+        "shortName": "Half Assini Govt ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Half Assini Govt Hospital, Jomoro",
+                "shortName": "Half Assini Govt ",
+                "macAddress": "MAC6805CA66A557",
+                "hostId": "Half Assini Govt Hospital",
+                "serial": "Cepheid-7452PWS",
+                "gxAlertDeviceId": 1929
+            }
+        ]
+    },
+    {
+        "externalId": "Sampa Gov't Hosp",
+        "latitude": -2.700000,
+        "longitude": 7.950000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Jaman North District",
+        "name": "Sampa Governvent Hospital",
+        "shortName": "Sampa Gov't Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Sampa Governvent Hospital",
+                "shortName": "Sampa Gov't Hosp",
+                "macAddress": "MAC6805CA66A6D2",
+                "hostId": "Sampa Governvent Hospital",
+                "serial": "Cepheid-7452PXH",
+                "gxAlertDeviceId": 1930
+            }
+        ]
+    },
+    {
+        "externalId": "Battor Cath. Hos",
+        "stateName": "Volta Region",
+        "lgaName": "North Tongu District",
+        "name": "Catholic Hospital, Battor",
+        "shortName": "Battor Cath. Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Catholic Hospital, Battor",
+                "shortName": "Battor Cath. Hos",
+                "macAddress": "MACD0BF9CDFF831",
+                "hostId": "Catholic Hospital, Battor",
+                "serial": "Cepheid-5040H81",
+                "gxAlertDeviceId": 1931
+            }
+        ]
+    },
+    {
+        "externalId": "Juaben Hosp. Lab",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Ejisu Juaben Municipal",
+        "name": "Juaben Government Hospital",
+        "shortName": "Juaben Hosp. Lab",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Juaben Government Hospital",
+                "shortName": "Juaben Hosp. Lab",
+                "macAddress": "MAC6805CA66A531",
+                "hostId": "Juaben Government Hospital",
+                "serial": "Cepheid-7452Q4G",
+                "gxAlertDeviceId": 1932
+            }
+        ]
+    },
+    {
+        "externalId": "Lawra Hosp Lab",
+        "latitude": -2.216000,
+        "longitude": 10.411000,
+        "stateName": "Upper West Region",
+        "lgaName": "Lawra District",
+        "name": "Lawra Municipal Hospital Lab",
+        "shortName": "Lawra Hosp Lab",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Lawra Municipal Hospital Lab",
+                "shortName": "Lawra Hosp Lab",
+                "macAddress": "MACA0369F907F64",
+                "hostId": "Lawra Municipal Hospital Lab",
+                "serial": "Cepheid-60912S9",
+                "gxAlertDeviceId": 1933
+            }
+        ]
+    },
+    {
+        "externalId": "CHC",
+        "name": "CHC AWA",
+        "shortName": "CHC",
+        "timeZoneId": "UTC"
+    },
+    {
+        "externalId": "Ashanti Mampong ",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Mampong Municipal ",
+        "name": "Mampong Municipal Hospital Laoratory",
+        "shortName": "Ashanti Mampong ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Mampong Municipal Hospital Laoratory",
+                "shortName": "Ashanti Mampong ",
+                "macAddress": "MACA0369F888149",
+                "hostId": "Ashanti Mampong",
+                "serial": "Cepheid-6021ZKV",
+                "gxAlertDeviceId": 1937
+            }
+        ]
+    },
+    {
+        "externalId": "Ketu South",
+        "latitude": 0.407000,
+        "longitude": 7.237000,
+        "stateName": "Volta Region",
+        "lgaName": "Ketu South Municipal",
+        "name": "Ketu South Municipal Hospital Laboratory",
+        "shortName": "Ketu South",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Ketu South Municipal Hospital Laboratory",
+                "shortName": "Ketu South",
+                "macAddress": "MAC480FCF570424",
+                "hostId": "Aflao",
+                "serial": "Cepheid-60912S5",
+                "gxAlertDeviceId": 1941
+            }
+        ]
+    },
+    {
+        "externalId": "Agogo",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Asante akim North District",
+        "name": "Agogo Presbyterian Hospital Laboratory",
+        "shortName": "Agogo",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Agogo Presbyterian Hospital Laboratory",
+                "shortName": "Agogo",
+                "macAddress": "MACA0369F9064F4",
+                "hostId": "Agogo",
+                "serial": "Cepheid-60912S2",
+                "gxAlertDeviceId": 1948
+            }
+        ]
+    },
+    {
+        "externalId": "Papase Hosp Lab",
+        "latitude": 7.733000,
+        "longitude": 0.500000,
+        "stateName": "Volta Region",
+        "lgaName": "Kadjebi District",
+        "name": "Mary Theresa Hospital, Dodi Papase",
+        "shortName": "Papase Hosp Lab",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Mary Theresa Hospital, Dodi Papase",
+                "shortName": "Papase Hosp Lab",
+                "macAddress": "MACA0369F905B5E",
+                "hostId": "Papase",
+                "serial": "Cepheid-60912T6",
+                "gxAlertDeviceId": 1950
+            }
+        ]
+    },
+    {
+        "externalId": "Juaboso Gov't H",
+        "latitude": -2.416000,
+        "longitude": 5.744000,
+        "stateName": "Western Region",
+        "lgaName": "Juabuso District",
+        "name": "Juaboso Government Hospital",
+        "shortName": "Juaboso Gov't H",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Juaboso Government Hospital",
+                "shortName": "Juaboso Gov't H",
+                "macAddress": "MAC6805CA697A78",
+                "hostId": "Juaboso Government Hospital",
+                "serial": "Cepheid-7452PTF",
+                "gxAlertDeviceId": 1955
+            }
+        ]
+    },
+    {
+        "externalId": "Nkawie-Toase",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Atwima Nwabiagya District",
+        "name": "Nkawie-Toase",
+        "shortName": "Nkawie-Toase",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Nkawie-Toase",
+                "shortName": "Nkawie-Toase",
+                "macAddress": "MACA0369F888096",
+                "hostId": "Nkawie-Toase",
+                "serial": "Cepheid-6021ZKW",
+                "gxAlertDeviceId": 1956
+            }
+        ]
+    },
+    {
+        "externalId": "SDA Hosp, Asaman",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Sekyere South District",
+        "name": "SDA Hospital, Asamang",
+        "shortName": "SDA Hosp, Asaman",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "SDA Hospital, Asamang",
+                "shortName": "SDA Hosp, Asaman",
+                "macAddress": "MACA0369F906E74",
+                "hostId": "SDA Hospital, Asamang",
+                "serial": "Cepheid-60912RL",
+                "gxAlertDeviceId": 1957
+            }
+        ]
+    },
+    {
+        "externalId": "St Francis Xavie",
+        "latitude": -4.341000,
+        "longitude": 56.243999,
+        "stateName": "Central Region",
+        "lgaName": "Assin North Municipal",
+        "name": "St. Francis Xavier Hospital, Assin Fosu",
+        "shortName": "St Francis Xavie",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "St. Francis Xavier Hospital, Assin Fosu",
+                "shortName": "St Francis Xavie",
+                "macAddress": "MAC6805CA8EA565",
+                "hostId": "St. Francis Xavier Hospital, Assin Fosu",
+                "serial": "Cepheid-8471W12",
+                "gxAlertDeviceId": 1958
+            }
+        ]
+    },
+    {
+        "externalId": "37 Military Hosp",
+        "latitude": 5.581070,
+        "longitude": -0.198970,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Accra Metropolitan",
+        "name": "37 Military Hospital",
+        "shortName": "37 Military Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "37 Military Hospital",
+                "shortName": "37 Military Hosp",
+                "macAddress": "MACD4BED90F24DB",
+                "hostId": "37 Military Hospital",
+                "serial": "Cepheid",
+                "gxAlertDeviceId": 1961
+            }
+        ]
+    },
+    {
+        "externalId": "G.A.Regional Hos",
+        "stateName": "Greater Accra Region",
+        "lgaName": "Accra Metropolitan",
+        "name": "Greater Accra Regional Hospital",
+        "shortName": "G.A.Regional Hos",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Greater Accra Regional Hospital",
+                "shortName": "G.A.Regional Hos",
+                "macAddress": "MAC",
+                "hostId": "Greater Accra Regional Hospital",
+                "serial": "cepheid-PC",
+                "gxAlertDeviceId": 1962
+            }
+        ]
+    },
+    {
+        "externalId": "Dormaa Presby H",
+        "latitude": -1.654000,
+        "longitude": 7.700000,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Dormaa Central/Municipal",
+        "name": "Presbyterian Hospital Dormaa Ahenkro",
+        "shortName": "Dormaa Presby H",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Presbyterian Hospital Dormaa Ahenkro",
+                "shortName": "Dormaa Presby H",
+                "macAddress": "MACA0369F5749BA",
+                "hostId": "Presby Hosp",
+                "serial": "Cepheid-520RMBB",
+                "gxAlertDeviceId": 1963
+            }
+        ]
+    },
+    {
+        "externalId": "St. Theresa's H.",
+        "latitude": 7.661730,
+        "longitude": -1.602920,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Nkoranza South Municipal ",
+        "name": "St. Theresa's Hospital, Nkoranza",
+        "shortName": "St. Theresa's H.",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "St. Theresa's Hospital, Nkoranza",
+                "shortName": "St. Theresa's H.",
+                "macAddress": "MACA0369F906775",
+                "hostId": "St. Theresa's Hospital, Nkoranza",
+                "serial": "Cepheid-60912RK",
+                "gxAlertDeviceId": 1964
+            }
+        ]
+    },
+    {
+        "externalId": "UW Regional Hosp",
+        "latitude": 10.062310,
+        "longitude": -2.497320,
+        "stateName": "Upper West Region",
+        "lgaName": "Wa Municipal",
+        "name": "UW Regional Hospital Lab, Wa",
+        "shortName": "UW Regional Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "UW Regional Hospital Lab, Wa",
+                "shortName": "UW Regional Hosp",
+                "macAddress": "MAC00D861617E19",
+                "hostId": "Upper West Regioal H",
+                "serial": "CPHD-J08XJW2",
+                "gxAlertDeviceId": 1968
+            }
+        ]
+    },
+    {
+        "externalId": "KATH",
+        "latitude": 6.697450,
+        "longitude": -1.629840,
+        "stateName": "Ashanti Region",
+        "lgaName": "Kumasi Metropolitan",
+        "name": "Komfo Anokye Teaching Hospital",
+        "shortName": "KATH",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Komfo Anokye Teaching Hospital",
+                "shortName": "KATH",
+                "macAddress": "MAC10E7C640FB17",
+                "hostId": "Komfo Anokye Teachin",
+                "serial": "Cepheid-8471W1Y",
+                "gxAlertDeviceId": 1974
+            }
+        ]
+    },
+    {
+        "externalId": "UER Hosp. Bolga",
+        "latitude": 10.789450,
+        "longitude": -0.856360,
+        "stateName": "Upper East Region",
+        "lgaName": "Bolgatanga Municipal",
+        "name": "UE Regional Hospital Lab, Bolgatanga",
+        "shortName": "UER Hosp. Bolga",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "UE Regional Hospital Lab, Bolgatanga",
+                "shortName": "UER Hosp. Bolga",
+                "macAddress": "MAC2C44FD12E516",
+                "hostId": "REGIONAL HOSPITAL BOLGATANGA",
+                "serial": "Cepheid-PC",
+                "gxAlertDeviceId": 1976
+            }
+        ]
+    },
+    {
+        "externalId": "Yendi Mun. Hosp.",
+        "latitude": 35.950222,
+        "longitude": 14.412222,
+        "stateName": "Northern Region",
+        "lgaName": "Yendi Municipal",
+        "name": "YENDI MUNICIPAL",
+        "shortName": "Yendi Mun. Hosp.",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "YENDI MUNICIPAL",
+                "shortName": "Yendi Mun. Hosp.",
+                "macAddress": "MACA0369F906E70",
+                "hostId": "YENDI MUNICIPAL",
+                "serial": "Cepheid-60912T2",
+                "gxAlertDeviceId": 1977
+            }
+        ]
+    },
+    {
+        "externalId": "Nsawam Gov't H.",
+        "latitude": 23.249662,
+        "longitude": 50.182419,
+        "stateName": "Eastern Region",
+        "lgaName": "Nsawam Adoagyire Municipal",
+        "name": "Nsawam Gov't Hospital",
+        "shortName": "Nsawam Gov't H.",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Nsawam Gov't Hospital",
+                "shortName": "Nsawam Gov't H.",
+                "macAddress": "MAC0050B620F9C0",
+                "hostId": "Nsawam Gov't Hospital",
+                "serial": "LAB-GENEXPERT",
+                "gxAlertDeviceId": 1978
+            }
+        ]
+    },
+    {
+        "externalId": "DonkorkromPresby",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "Kwahu Afram Plains North District",
+        "name": "Donkorkrom Presby Hospital Laboratory",
+        "shortName": "DonkorkromPresby",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Donkorkrom Presby Hospital Laboratory",
+                "shortName": "DonkorkromPresby",
+                "macAddress": "MACA0369F860F8F",
+                "hostId": "Presbyterian Hospital Donkorkrom Laboratory, Kwahu Afram Plains North",
+                "serial": "Cepheid-6021ZMN",
+                "gxAlertDeviceId": 1980
+            }
+        ]
+    },
+    {
+        "externalId": "TEMA GENERAL ",
+        "latitude": 5.617770,
+        "longitude": -0.016810,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Tema Metropolitan",
+        "name": "TEMA GENERAL HOSPITAL LABORATORY",
+        "shortName": "TEMA GENERAL ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "TEMA GENERAL HOSPITAL LABORATORY",
+                "shortName": "TEMA GENERAL ",
+                "macAddress": "MACA0369F906EA2",
+                "hostId": "TEMA GENERAL HOSPITAL LABORATORY",
+                "serial": "CepheidTMG",
+                "gxAlertDeviceId": 1981
+            }
+        ]
+    },
+    {
+        "externalId": "Begro",
+        "latitude": 23.249550,
+        "longitude": 50.182850,
+        "stateName": "Eastern Region",
+        "lgaName": "Fanteakwa District",
+        "name": "Fanteakwa District Hospital, Begro",
+        "shortName": "Begro",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Fanteakwa District Hospital, Begro",
+                "shortName": "Begro",
+                "macAddress": "MACA0369F88972E",
+                "hostId": "FANTEAKWA DISTRICT HOSPITAL LAB",
+                "serial": "Cepheid-6011N7Z",
+                "gxAlertDeviceId": 1983
+            }
+        ]
+    },
+    {
+        "externalId": "Tamale P.H.",
+        "latitude": 9.428591,
+        "longitude": -0.180053,
+        "stateName": "Northern Region",
+        "lgaName": "Tamale Metropolitan",
+        "name": "TamalePublic Health Reference Lab,",
+        "shortName": "Tamale P.H.",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "TamalePublic Health Reference Lab,",
+                "shortName": "Tamale P.H.",
+                "macAddress": "MAC0006030C0A16",
+                "hostId": "TamalePublic Health Reference Lab,",
+                "serial": "CPHD-J07XGVP",
+                "gxAlertDeviceId": 1984
+            }
+        ]
+    },
+    {
+        "externalId": "Kwahu Gov't H.",
+        "latitude": 6.405831,
+        "longitude": -0.451297,
+        "stateName": "Eastern Region",
+        "lgaName": "Kwahu South District",
+        "name": "Kwahu Government Hospital",
+        "shortName": "Kwahu Gov't H.",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Kwahu Government Hospital",
+                "shortName": "Kwahu Gov't H.",
+                "macAddress": "MAC00D861B8C608",
+                "hostId": "Kwahu Government Hospital",
+                "serial": "CPHD-0F04980",
+                "gxAlertDeviceId": 1986
+            }
+        ]
+    },
+    {
+        "externalId": "Atua Gov't H.",
+        "stateName": "Eastern Region",
+        "lgaName": "Lower Manya Krobo ",
+        "name": "Atua Government Hospital",
+        "shortName": "Atua Gov't H.",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Atua Government Hospital",
+                "shortName": "Atua Gov't H.",
+                "macAddress": "MAC00D861EF845C",
+                "hostId": "Atua Government Hospital",
+                "serial": "CPHD-0F05462",
+                "gxAlertDeviceId": 1987
+            }
+        ]
+    },
+    {
+        "externalId": "Sefwi Wiawso",
+        "latitude": 64.840393,
+        "longitude": -21.692499,
+        "stateName": "Western Region",
+        "lgaName": "Sefwi Wiawso Municipal",
+        "name": "SEFWI WIAWSO MUNICIPAL HOSPITAL",
+        "shortName": "Sefwi Wiawso",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "SEFWI WIAWSO MUNICIPAL HOSPITAL",
+                "shortName": "Sefwi Wiawso",
+                "macAddress": "MAC6C4B90B805E5",
+                "hostId": "SEFWI WIAWSO MUNICIPAL HOSPITAL",
+                "serial": "CPHD-9F04324",
+                "gxAlertDeviceId": 1988
+            }
+        ]
+    },
+    {
+        "externalId": "NMIMR",
+        "latitude": 5.646385,
+        "longitude": -0.181982,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Accra Metropolitan",
+        "name": "Noguchi Memorial Institute fof Medecal Reserche",
+        "shortName": "NMIMR",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Noguchi Memorial Institute fof Medecal Reserche",
+                "shortName": "NMIMR",
+                "macAddress": "MACD0BF9CDF98E8",
+                "hostId": "Noguchi Memorial Institute fof Medecal Reserche",
+                "serial": "Cepheid-5040H8H",
+                "gxAlertDeviceId": 1989
+            }
+        ]
+    },
+    {
+        "externalId": "Enchi Gov't Hosp",
+        "latitude": 64.840385,
+        "longitude": -21.692501,
+        "stateName": "Western Region",
+        "lgaName": "Aowin District",
+        "name": "Enchi Government Hospital",
+        "shortName": "Enchi Gov't Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Enchi Government Hospital",
+                "shortName": "Enchi Gov't Hosp",
+                "macAddress": "MAC5065F349F94B",
+                "hostId": "Enchi Government Hos",
+                "serial": "DESKTOP-M5OI8VN",
+                "gxAlertDeviceId": 1991
+            }
+        ]
+    },
+    {
+        "externalId": "Ga W. Muni Hosp",
+        "latitude": 5.806226,
+        "longitude": 0.052398,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Ga West Municipal",
+        "name": "Ga West Municipal Hospital, Amasaman",
+        "shortName": "Ga W. Muni Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Ga West Municipal Hospital, Amasaman",
+                "shortName": "Ga W. Muni Hosp",
+                "macAddress": "MACA0369F8612A9",
+                "hostId": "Ga West Municipal Ho",
+                "serial": "Cepheid-Cepheid",
+                "gxAlertDeviceId": 1997
+            }
+        ]
+    },
+    {
+        "externalId": "WA West ",
+        "latitude": 9.829221,
+        "longitude": -2.683860,
+        "stateName": "Upper West Region",
+        "lgaName": "Wa West District",
+        "name": "WA West District Hospital Lab. Wechiau",
+        "shortName": "WA West ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "WA West District Hospital Lab. Wechiau",
+                "shortName": "WA West ",
+                "macAddress": "MAC40B0341CE711",
+                "hostId": "WA West District Hospital Lab. Wechiau",
+                "serial": "WECHIAU",
+                "gxAlertDeviceId": 1998
+            }
+        ]
+    },
+    {
+        "externalId": "Essam Gov't Hosp",
+        "latitude": 5.426124,
+        "longitude": -2.128657,
+        "stateName": "Western Region",
+        "lgaName": "Bia West District",
+        "name": "Essam Government Hospital",
+        "shortName": "Essam Gov't Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Essam Government Hospital",
+                "shortName": "Essam Gov't Hosp",
+                "macAddress": "MAC6805CA64754F",
+                "hostId": "Essam Government Hospital",
+                "serial": "DESKTOP-IO5TC47",
+                "gxAlertDeviceId": 2003
+            }
+        ]
+    },
+    {
+        "externalId": "WEIJA/GBAWE",
+        "latitude": 5.570046,
+        "longitude": -0.333886,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Ga South Municipal",
+        "name": "WEIJA/GBAWE MUNICIPAL HOSPITAL",
+        "shortName": "WEIJA/GBAWE",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "WEIJA/GBAWE MUNICIPAL HOSPITAL",
+                "shortName": "WEIJA/GBAWE",
+                "macAddress": "MAC00D861EF79D7",
+                "hostId": "WEIJA/GBAWE MUNICIPAL HOSPITAL",
+                "serial": "CPHD-0F09563",
+                "gxAlertDeviceId": 2005
+            }
+        ]
+    },
+    {
+        "externalId": "KCCR",
+        "latitude": 6.802454,
+        "longitude": -1.454784,
+        "stateName": "Ashanti Region",
+        "lgaName": "Kumasi Metropolitan",
+        "name": "Kumasi Centre for Collaborative Research",
+        "shortName": "KCCR",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Kumasi Centre for Collaborative Research",
+                "shortName": "KCCR",
+                "macAddress": "MAC98FA9B8319B5",
+                "hostId": "Kumasi Centre for Collaborative Research",
+                "serial": "CPHD-9F03505",
+                "gxAlertDeviceId": 2006
+            }
+        ]
+    },
+    {
+        "externalId": "St Patrick's H",
+        "latitude": 6.931379,
+        "longitude": -1.667100,
+        "stateName": "Ashanti Region",
+        "lgaName": "Offinso Municipal",
+        "name": "St Patrick's Hospital, Offinso",
+        "shortName": "St Patrick's H",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "St Patrick's Hospital, Offinso",
+                "shortName": "St Patrick's H",
+                "macAddress": "MAC00D861624EAF",
+                "hostId": "St Patrick's Hospital, Offinso",
+                "serial": "CPHD-J093283",
+                "gxAlertDeviceId": 2008
+            }
+        ]
+    },
+    {
+        "externalId": "Dunkwa-On-Offin ",
+        "latitude": 5.961088,
+        "longitude": -1.782227,
+        "stateName": "Central Region",
+        "lgaName": "Upper Denkyira West District",
+        "name": "Dunkwa-On-Offin Municipal Hospital Laboratory",
+        "shortName": "Dunkwa-On-Offin ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Dunkwa-On-Offin Municipal Hospital Laboratory",
+                "shortName": "Dunkwa-On-Offin ",
+                "macAddress": "MAC0050B620F96B",
+                "hostId": "Dunkwa-On-Offin Municipal Hospital Laboratory",
+                "serial": "Cepheid-PC",
+                "gxAlertDeviceId": 2009
+            }
+        ]
+    },
+    {
+        "externalId": "CAPE COAST ",
+        "latitude": 5.107467,
+        "longitude": -1.243079,
+        "stateName": "Central Region",
+        "lgaName": "Cape Coast Metropolitan",
+        "name": "CAPE COAST TEACHING HOSPITAL",
+        "shortName": "CAPE COAST ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "CAPE COAST TEACHING HOSPITAL",
+                "shortName": "CAPE COAST ",
+                "macAddress": "MAC6805CA1EA238",
+                "hostId": "CAPE COAST TEACHING HOSPITAL",
+                "serial": "DTP-NTP-CCTH",
+                "gxAlertDeviceId": 2012
+            }
+        ]
+    },
+    {
+        "externalId": "Trust Hospital",
+        "latitude": 5.810153,
+        "longitude": 0.099524,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Accra Metropolitan",
+        "name": "Trust Hospital Laboratory",
+        "shortName": "Trust Hospital",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Trust Hospital Laboratory",
+                "shortName": "Trust Hospital",
+                "macAddress": "MACA0369F888784",
+                "hostId": "Trust Hospital Labor",
+                "serial": "Cepheid-6021ZN1",
+                "gxAlertDeviceId": 2015
+            }
+        ]
+    },
+    {
+        "externalId": "Bekwai Muni Hosp",
+        "latitude": 6.456707,
+        "longitude": -1.583750,
+        "stateName": "Ashanti Region",
+        "lgaName": "Bekwai Municipal",
+        "name": "Bekwai Municipal Hospital Lab",
+        "shortName": "Bekwai Muni Hosp",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Bekwai Municipal Hospital Lab",
+                "shortName": "Bekwai Muni Hosp",
+                "macAddress": "MACA0369F908182",
+                "hostId": "Bekwai Municipal Hos",
+                "serial": "Cepheid-60912VC",
+                "gxAlertDeviceId": 2019
+            }
+        ]
+    },
+    {
+        "externalId": "New Abirem Gov't",
+        "latitude": 6.344303,
+        "longitude": -0.998039,
+        "stateName": "Eastern Region",
+        "lgaName": "Birim North District",
+        "name": "New Abirem Gov't Hospital",
+        "shortName": "New Abirem Gov't",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "New Abirem Gov't Hospital",
+                "shortName": "New Abirem Gov't",
+                "macAddress": "MACA0369F907EE1",
+                "hostId": "LIS",
+                "serial": "Cepheid-60912TF",
+                "gxAlertDeviceId": 2021
+            }
+        ]
+    },
+    {
+        "externalId": "Chest Clinic Lab",
+        "latitude": 5.810153,
+        "longitude": 0.099524,
+        "stateName": "Greater Accra Region",
+        "lgaName": "Accra Metropolitan",
+        "name": "Chest Clinic Lab",
+        "shortName": "Chest Clinic Lab",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Chest Clinic Lab",
+                "shortName": "Chest Clinic Lab",
+                "macAddress": "MAC6805CA61F7FA",
+                "hostId": "Chest Clinic Lab",
+                "serial": "DESKTOP-NKOTR9J",
+                "gxAlertDeviceId": 2022
+            }
+        ]
+    },
+    {
+        "externalId": "Ajumko District",
+        "latitude": 5.348327,
+        "longitude": -0.771089,
+        "stateName": "Central Region",
+        "lgaName": "Ajumko Enyan Essiam District",
+        "name": "Ajumko District Hospital",
+        "shortName": "Ajumko District",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Ajumko District Hospital",
+                "shortName": "Ajumko District",
+                "macAddress": "MAC6805CA64B2C8",
+                "hostId": "Ajumko District Hospital",
+                "serial": "Cepheid-7382NJ1",
+                "gxAlertDeviceId": 2023
+            }
+        ]
+    },
+    {
+        "externalId": "Eastern R. Hospi",
+        "latitude": -0.448000,
+        "longitude": 6.414000,
+        "stateName": "Eastern Region",
+        "lgaName": "New Juaben Municipal",
+        "name": "Eastern Regional Hospital, Koforid",
+        "shortName": "Eastern R. Hospi",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Eastern Regional Hospital, Koforid",
+                "shortName": "Eastern R. Hospi",
+                "macAddress": "MAC00D861F75B28",
+                "hostId": "Eastern Regional Hospital, Koforid",
+                "serial": "CPHD-0F08122",
+                "gxAlertDeviceId": 2024
+            }
+        ]
+    },
+    {
+        "externalId": "BONO R. HOSPITAL",
+        "latitude": 7.338439,
+        "longitude": -2.330923,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Sunyani Municipal",
+        "name": "BONO REGIONAL HOSPITAL, SUNYANI",
+        "shortName": "BONO R. HOSPITAL",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "BONO REGIONAL HOSPITAL, SUNYANI",
+                "shortName": "BONO R. HOSPITAL",
+                "macAddress": "MAC10E7C641025F",
+                "hostId": "Brong Ahafo Regional",
+                "serial": "Cepheid-8471W2B",
+                "gxAlertDeviceId": 2026
+            }
+        ]
+    },
+    {
+        "externalId": "PRAMSO",
+        "latitude": 6.558010,
+        "longitude": -1.509616,
+        "stateName": "Ashanti Region",
+        "lgaName": "Bosomtwe District",
+        "name": "ST. MICHAEL'S HOSPITAL, PRAMSO",
+        "shortName": "PRAMSO",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "ST. MICHAEL'S HOSPITAL, PRAMSO",
+                "shortName": "PRAMSO",
+                "macAddress": "MAC6805CA61FC38",
+                "hostId": "St. Michael's Hosp",
+                "serial": "Cepheid-7361P1F",
+                "gxAlertDeviceId": 2029
+            }
+        ]
+    },
+    {
+        "externalId": "NKENKAASU GOV",
+        "latitude": -1.455000,
+        "longitude": 6.802000,
+        "stateName": "Ashanti Region",
+        "lgaName": "Offinso North District",
+        "name": "NKENKAASU GOVERNMENT HOSPITAL",
+        "shortName": "NKENKAASU GOV",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "NKENKAASU GOVERNMENT HOSPITAL",
+                "shortName": "NKENKAASU GOV",
+                "macAddress": "MAC6805CA63C5E0",
+                "hostId": "NKENKAASU GOVERNMENT HOSPITAL",
+                "serial": "Cepheid-7382NJD",
+                "gxAlertDeviceId": 2030
+            }
+        ]
+    },
+    {
+        "externalId": "WINNEBA MUN. HOS",
+        "latitude": 5.350060,
+        "longitude": -0.621340,
+        "stateName": "Central Region",
+        "lgaName": "Effutu Municipal",
+        "name": "WINNEBA MUNICIPAL HOSPITAL LABORATORY",
+        "shortName": "WINNEBA MUN. HOS",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "WINNEBA MUNICIPAL HOSPITAL LABORATORY",
+                "shortName": "WINNEBA MUN. HOS",
+                "macAddress": "MAC00D861617DAA",
+                "hostId": "WINNEBA MUNICIPAL HOSPITAL LABORATORY",
+                "serial": "CPHD-J08XJTZ",
+                "gxAlertDeviceId": 2033
+            }
+        ]
+    },
+    {
+        "externalId": "St. Luke's Apam",
+        "latitude": 5.724415,
+        "longitude": -1.376175,
+        "stateName": "Central Region",
+        "lgaName": "Gomoa West District",
+        "name": "St. Luke's Catholic Hospital, Apam",
+        "shortName": "St. Luke's Apam",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "St. Luke's Catholic Hospital, Apam",
+                "shortName": "St. Luke's Apam",
+                "macAddress": "MAC6C4B90D27BB4",
+                "hostId": "St. Luke's Catholic Hospital, Apam",
+                "serial": "CPHD-0F04973",
+                "gxAlertDeviceId": 2034
+            }
+        ]
+    },
+    {
+        "externalId": "TETTEH QUARSHIE",
+        "latitude": 6.446877,
+        "longitude": -0.377096,
+        "stateName": "Eastern Region",
+        "lgaName": "Akuapem North Municipal",
+        "name": "TETTEH QUARSHIE MEMORIAL HOSPITAL",
+        "shortName": "TETTEH QUARSHIE",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "TETTEH QUARSHIE MEMORIAL HOSPITAL",
+                "shortName": "TETTEH QUARSHIE",
+                "macAddress": "MAC00D861B6B472",
+                "hostId": "TETTEH QUARSHIE MEMO",
+                "serial": "CPH-04940",
+                "gxAlertDeviceId": 2035
+            }
+        ]
+    },
+    {
+        "externalId": "HOLY FAMILY TECH",
+        "latitude": 7.584971,
+        "longitude": -1.936401,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Techiman Municipal",
+        "name": "HOLY FAMILY HOSPITAL TECHIMAN",
+        "shortName": "HOLY FAMILY TECH",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "HOLY FAMILY HOSPITAL TECHIMAN",
+                "shortName": "HOLY FAMILY TECH",
+                "macAddress": "MACA0369F5756D4",
+                "hostId": "HOLY FAMILY HOSPITAL TECHIMAN",
+                "serial": "Cepheid-520RX8R",
+                "gxAlertDeviceId": 2036
+            }
+        ]
+    },
+    {
+        "externalId": "Hwediem Catholic",
+        "latitude": 6.934042,
+        "longitude": -2.359610,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Asutifi South District",
+        "name": "ST. Elizabeth Catholic Hospital. Hwidem",
+        "shortName": "Hwediem Catholic",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "ST. Elizabeth Catholic Hospital. Hwidem",
+                "shortName": "Hwediem Catholic",
+                "macAddress": "MACECB1D72F818E",
+                "hostId": "ST. Elizabeth Catholic Hospital. Hwidem",
+                "serial": "Cepheid-520RMB5",
+                "gxAlertDeviceId": 2039
+            }
+        ]
+    },
+    {
+        "externalId": "ST. MARTIN DE PORRES",
+        "latitude": 4.964505,
+        "longitude": -2.472958,
+        "stateName": "Western Region",
+        "lgaName": "Ellembelle District",
+        "name": "ST. MARTIN DE PORRES HOSP, EIKWE",
+        "shortName": "ST. MARTIN DE PORRES",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "ST. MARTIN DE PORRES HOSP, EIKWE",
+                "shortName": "ST. MARTIN DE PORRES",
+                "macAddress": "MACA0369FAECE8F",
+                "hostId": "ST. MARTIN DE PORRES HOSP, EIKWE",
+                "serial": "Cepheid-63833GJ",
+                "gxAlertDeviceId": 2040
+            }
+        ]
+    },
+    {
+        "externalId": "Bibiani",
+        "latitude": 5.426124,
+        "longitude": -2.128657,
+        "stateName": "Western Region",
+        "lgaName": "Bibiani-Anhwiaso Bekwai District",
+        "name": "Bibiani Municipal Hospital Laboratory",
+        "shortName": "Bibiani",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Bibiani Municipal Hospital Laboratory",
+                "shortName": "Bibiani",
+                "macAddress": "MAC480FCF31900A",
+                "hostId": "bibiani municipal hopsitl",
+                "serial": "Cepheid-6021DDV",
+                "gxAlertDeviceId": 2042
+            }
+        ]
+    },
+    {
+        "externalId": "Zebila ",
+        "latitude": 10.807048,
+        "longitude": -0.687029,
+        "stateName": "Upper East Region",
+        "lgaName": "Bawku West District",
+        "name": "Zebila District Hospital Laboratory",
+        "shortName": "Zebila ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Zebila District Hospital Laboratory",
+                "shortName": "Zebila ",
+                "macAddress": "MAC40B034197673",
+                "hostId": "Zebila District Hosp",
+                "serial": "DESKTOP-IK1845K",
+                "gxAlertDeviceId": 2043
+            }
+        ]
+    },
+    {
+        "externalId": "BECHEM ",
+        "latitude": 6.916885,
+        "longitude": -2.535097,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Tano South District",
+        "name": "BECHEM GOVERNMETNT HOSPITAL LABORATORY",
+        "shortName": "BECHEM ",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "BECHEM GOVERNMETNT HOSPITAL LABORATORY",
+                "shortName": "BECHEM ",
+                "macAddress": "MACA0369F571CBE",
+                "hostId": "BECHEM GOVERNMETNT HOSPITAL LABORATORY",
+                "serial": "Cepheid-520RX8L",
+                "gxAlertDeviceId": 2045
+            }
+        ]
+    },
+    {
+        "externalId": "Asankragua",
+        "latitude": 5.808673,
+        "longitude": -2.435268,
+        "stateName": "Western Region",
+        "lgaName": "Amenfi West District",
+        "name": "Thomas A. Rooney Mem Hosp, Asankragua",
+        "shortName": "Asankragua",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Thomas A. Rooney Mem Hosp, Asankragua",
+                "shortName": "Asankragua",
+                "macAddress": "MACA0369F8885DC",
+                "hostId": "FATHER THOMAS ALAN ROONY MEMORIAL HOSPITAL",
+                "serial": "Cepheid-6021ZMX",
+                "gxAlertDeviceId": 2047
+            }
+        ]
+    },
+    {
+        "externalId": "GOASO M. HOSPIT",
+        "latitude": 6.803546,
+        "longitude": -2.517239,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Asunafo North Municipal",
+        "name": "GOASO MUNICIPAL HOSPITAL",
+        "shortName": "GOASO M. HOSPIT",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "GOASO MUNICIPAL HOSPITAL",
+                "shortName": "GOASO M. HOSPIT",
+                "macAddress": "MACE0BE034C57BA",
+                "hostId": "GOASO MUNICIPAL HOSPITAL",
+                "serial": "Cepheid-1F29424",
+                "gxAlertDeviceId": 2049
+            }
+        ]
+    },
+    {
+        "externalId": "KATH",
+        "latitude": 6.800332,
+        "longitude": -1.518814,
+        "stateName": "Ashanti Region",
+        "lgaName": "Kumasi Metropolitan",
+        "name": "Komfo Anokye Teaching Hospital",
+        "shortName": "KATH",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Komfo Anokye Teaching Hospital",
+                "shortName": "KATH",
+                "macAddress": "MAC84E71400B6DD",
+                "hostId": "Komfo Anokye Teaching Hospital",
+                "serial": "Cepheid-1F27981",
+                "gxAlertDeviceId": 2052
+            }
+        ]
+    },
+    {
+        "externalId": "Bono R. Hospital",
+        "latitude": 7.338439,
+        "longitude": -2.330923,
+        "stateName": "Brong-Ahafo Region.",
+        "lgaName": "Sunyani Municipal",
+        "name": "Bono Regional Hospital, Sunyani",
+        "shortName": "Bono R. Hospital",
+        "timeZoneId": "UTC",
+        "devices": [
+            {
+                "name": "Bono Regional Hospital, Sunyani",
+                "shortName": "Bono R. Hospital",
+                "macAddress": "MACE0BE034C37BC",
+                "hostId": "Bono Regional Hospital, Sunyani",
+                "serial": "Cepheid-1F28248",
+                "gxAlertDeviceId": 2055
+            }
+        ]
+    }
+]
