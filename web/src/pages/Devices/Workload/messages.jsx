@@ -22,12 +22,12 @@ const messages = {
       id: 'pages.workload.lastPingOn',
       defaultMessage: 'Last Ping',
     },
-    firstResultConductedOn: {
-      id: 'pages.workload.firstResultConductedOn',
+    firstResultEndedOn: {
+      id: 'pages.workload.firstResultEndedOn',
       defaultMessage: 'First Result',
     },
-    lastResultConductedOn: {
-      id: 'pages.workload.lastResultConductedOn',
+    lastResultEndedOn: {
+      id: 'pages.workload.lastResultEndedOn',
       defaultMessage: 'Last Result',
     },
     totalTests: {
