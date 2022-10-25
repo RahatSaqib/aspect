@@ -36,7 +36,7 @@ const {
   getOffsetFromIsoDateString,
   getDateTimeProjectionInUserTimeZone,
 } = require('../shared/date')
-const { lastDayOfMonthByOffsetAndResultEndedOn, whereWorkingDaysDateRange } = require('../shared/query')
+const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../shared/query')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 
@@ -670,9 +670,9 @@ async function getDevicePerformance(request) {
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' })
+    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd', showUnapprovedDevices: true })
     .where('r.deviceId', deviceId)
-    .modify(whereWorkingDaysDateRange(startedOn, endedOn))
+    .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
     .select([
       knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
       knex.raw(`sum(rc1.name = 'Error') as errorCount`),
@@ -694,7 +694,7 @@ async function getDevicePerformance(request) {
     .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .modify(whereWorkingDaysDateRange(startedOn, endedOn))
+    .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
     .where('c.id', deviceCountry.countryId)
     .select([
       knex.raw('count(distinct r.id) as countryTotalResult'),
