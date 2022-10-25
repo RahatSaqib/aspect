@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import head from 'lodash/head'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { navigations } from './oldComponents/BrowseFilters'
-import DetailLayout from './oldComponents/DetailLayout'
 import { reduceNavLinks } from './oldComponents/filter/utils'
 import LoggedInLayout from './oldComponents/LoggedInLayout'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
@@ -73,31 +72,11 @@ const renderRedirectToBrowse = ({ permissions }) => {
   return <Navigate to={head(reducedNav).value || '/browse/device'} />
 }
 
-const renderTaskAggre = props => (
-  <DetailLayout>
-    <TaskAggre {...props} />
-  </DetailLayout>
-)
-const renderTaskDetail = props => (
-  <DetailLayout>
-    <TaskDetail {...props} />
-  </DetailLayout>
-)
-const renderAccountDetails = props => (
-  <DetailLayout>
-    <AccountDetails {...props} />
-  </DetailLayout>
-)
-const renderPersonDetail = props => (
-  <DetailLayout>
-    <PersonDetail {...props} />
-  </DetailLayout>
-)
-const renderClinicalHistory = props => (
-  <DetailLayout>
-    <ClinicalHistory {...props} />
-  </DetailLayout>
-)
+const renderTaskAggre = props => <TaskAggre {...props} />
+const renderTaskDetail = props => <TaskDetail {...props} />
+const renderAccountDetails = props => <AccountDetails {...props} />
+const renderPersonDetail = props => <PersonDetail {...props} />
+const renderClinicalHistory = props => <ClinicalHistory {...props} />
 const renderLoadableLogin = props => <LoadableLogin {...props} />
 const renderResetPassword = props => <ResetPassword {...props} />
 const renderLicense = props => <License {...props} />
@@ -161,26 +140,15 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
     navigate,
   }
 
-  if (isLoggedOut || loggedOutReason === 'idle') {
+  if (isLoggedOut || loggedOutReason === 'idle' || hasToAcceptLicenseId) {
     return (
       <SignedOutLayout>
         <RoutesPermissionProvider>
           <Routes>
             <Route path="/login" element={renderLoadableLogin(props)} />
             <Route path="/reset-password" element={renderResetPassword(props)} />
-            <Route path="*" element={getElement(props, null, renderRedirectToDashboard)} />
-          </Routes>
-        </RoutesPermissionProvider>
-      </SignedOutLayout>
-    )
-  }
-
-  if (hasToAcceptLicenseId) {
-    return (
-      <SignedOutLayout>
-        <RoutesPermissionProvider>
-          <Routes>
             <Route path="/license" element={renderLicense(props)} />
+            <Route path="*" element={getElement(props, null, renderRedirectToDashboard)} />
           </Routes>
         </RoutesPermissionProvider>
       </SignedOutLayout>
