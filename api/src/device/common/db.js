@@ -388,7 +388,7 @@ async function moduleAvailability(dataConstraints) {
   const [issueStatusActiveId] = await knex('IssueStatus').where({ name: 'Active' }).pluck('id')
 
   const lastResults = getResultBaseQuery(knex, dataConstraints)
-    .modify(modifiers.join.lastResultPerModule, knex)
+    .modify(modifiers.join.lastResultPerModuleBay, knex)
     .select([
       'r.deviceId',
       knex.raw('r.resultData ->> "$.moduleName" as moduleName'),
