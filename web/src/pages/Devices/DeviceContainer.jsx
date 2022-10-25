@@ -3,7 +3,7 @@ import { Tab, Tabs } from '@mui/material'
 import { defineMessages } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
-import DeviceList from '../../oldPages/device/list/DeviceList'
+import DeviceList from './List/DeviceList'
 import Workload from './Workload'
 
 const messages = defineMessages({
