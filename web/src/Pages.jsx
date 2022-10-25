@@ -15,7 +15,6 @@ import CaseDetails from './oldPages/case/details/CaseDetails'
 import CaseList from './oldPages/case/list/CaseList'
 import OperationalData from './oldPages/dashboard/operational/OperationalData'
 import LoadableStatus from './oldPages/dashboard/status/LoadableStatus'
-import DeviceList from './oldPages/device/list/DeviceList'
 import DeviceApiKeyList from './oldPages/deviceApiKey/list/DeviceApiKeyList'
 import InventoryContainer from './oldPages/inventory/InventoryContainer'
 import ClinicalHistory from './oldPages/patient/ClinicalHistory'
@@ -30,6 +29,7 @@ import TaskAggre from './oldPages/task/aggre/TaskAggre'
 import TaskDetail from './oldPages/task/detail/TaskDetail'
 import TaskList from './oldPages/task/list/TaskList'
 import DeviceDetail from './pages/Devices/Detail/DeviceDetail'
+import DeviceContainer from './pages/Devices/DeviceContainer'
 import NotFound from './pages/NotFound/NotFound'
 import NotificationDetail from './pages/Notification/NotificationFormPage'
 import NotificationDetailHistory from './pages/Notification/NotificationHistoryPage'
@@ -106,7 +106,7 @@ const renderLoadableStatus = () => <LoadableStatus />
 const renderTaskList = props => <TaskList {...props} />
 const renderOperationalData = props => <OperationalData {...props} />
 const renderReports = props => <ReportIndex {...props} />
-const renderDeviceList = props => <DeviceList {...props} />
+const renderDeviceList = props => <DeviceContainer {...props} />
 const renderDeviceDetail = props => <DeviceDetail {...props} />
 const renderDeviceApiKeyList = props => <DeviceApiKeyList {...props} />
 const renderCaseList = props => <CaseList {...props} />

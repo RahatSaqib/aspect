@@ -23,6 +23,7 @@ const revokedOptions = [
   { id: '0', name: 'false' },
   { id: '1', name: 'true' },
 ]
+// see values for names in `./messages.js`
 const displayResultOptions = [
   { id: 'all', name: 'displayAllResults' },
   { id: 'actual', name: 'displayActualResults' },
@@ -109,10 +110,10 @@ const makeButton = labelFn => (filterKey, props, index) => {
       className={cssClasses('Button')}
       color="secondary"
       variant="contained"
-      onClick={() => props.onRemoveFilterItem(filterKey, index)}
+      onClick={() => (props.permanent ? null : props.onRemoveFilterItem(filterKey, index))}
     >
       {labelFn(filterValue, props)}
-      <MdClose className={cssClasses('Button__icon')} />
+      {props.permanent ? null : <MdClose className={cssClasses('Button__icon')} />}
     </Button>
   )
 }
@@ -140,6 +141,20 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
   const { dateFormat } = getAspectDisplayPreferences().toJS()
 
   const buttonBy = {
+    singleAssayId: (filterKey, props) => {
+      const {
+        assayItems,
+        filters: { assayId },
+      } = props
+      const assayIds = isArray(assayId) ? assayId : [assayId]
+      return assayIds.map((__, index) =>
+        makeButton(value =>
+          formatMessage(
+            messages[assayItems.find(it => it.get('id') === value, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')]
+          )
+        )(filterKey, { ...props, permanent: true }, index)
+      )
+    },
     assayId: (filterKey, props) => {
       const {
         assayItems,
