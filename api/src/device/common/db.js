@@ -2,6 +2,7 @@ const _ = require('lodash')
 const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
+const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 
 function getDeviceBaseExtendedQuery(
   query,
@@ -382,6 +383,42 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
   return { total, data, length }
 }
 
+async function moduleAvailability(dataConstraints) {
+  const [issueTypeModuleDisabledId] = await knex('IssueType').where({ name: 'Module Disabled' }).pluck('id')
+  const [issueStatusActiveId] = await knex('IssueStatus').where({ name: 'Active' }).pluck('id')
+
+  const lastResults = getResultBaseQuery(knex, dataConstraints)
+    .modify(modifiers.join.lastResultPerModule, knex)
+    .select([
+      'r.deviceId',
+      knex.raw('r.resultData ->> "$.moduleName" as moduleName'),
+      'r.createdOn as resultDate',
+      'r.moduleSerial as moduleSerial',
+    ])
+    .whereRaw('r.resultData ->> "$.moduleName" is not null')
+
+  const moduleAvailabilityQuery = knex
+    .from(lastResults.as('lastResult'))
+    .leftJoin('Issue as issueModuleDisabled', function () {
+      this.on('issueModuleDisabled.deviceId', 'lastResult.deviceId')
+        .andOn('lastResult.moduleSerial', knex.raw('issueModuleDisabled.data ->> "$.moduleSerial"'))
+        .andOn('issueModuleDisabled.issueTypeId', issueTypeModuleDisabledId)
+        .andOn('issueModuleDisabled.issueStatusId', issueStatusActiveId)
+    })
+    .select([
+      'lastResult.deviceId',
+      knex.raw('sum(case when issueModuleDisabled.id is null then 1 else 0 end) as enabled'),
+      knex.raw('sum(case when issueModuleDisabled.id is null then 0 else 1 end) as disabled'),
+    ])
+    .groupBy('lastResult.deviceId')
+
+  return queryBuilder => {
+    queryBuilder.leftJoin(moduleAvailabilityQuery.as('moduleAvailability'), function () {
+      this.on('moduleAvailability.deviceId', 'd.id')
+    })
+  }
+}
+
 module.exports = {
   getDeviceWorkload,
   getResultCategoriesByAssay,
@@ -412,4 +449,5 @@ module.exports = {
   deleteDeviceSiteHistory,
   deleteDevice,
   getNotDecommissionedDevices,
+  moduleAvailability,
 }

@@ -1,6 +1,6 @@
 const { knex, sortPageParams, filterDateRangeParams } = require('../../db')
-const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
-const { getBasicsForDevicesReport } = require('../common/db')
+const { getBaseQuery: getResultBaseQuery } = require('../../result/query')
+const { getBasicsForDevicesReport, moduleAvailability } = require('../common/db')
 
 const xdrExtraColumns = ['INH', 'FLQ', 'AMK', 'KAN', 'CAP', 'ETH'].map(resistance =>
   knex.raw(`SUM(
@@ -14,9 +14,6 @@ const xdrExtraColumns = ['INH', 'FLQ', 'AMK', 'KAN', 'CAP', 'ETH'].map(resistanc
 )
 
 async function getDeviceReportData(dataConstraints, query) {
-  const [issueTypeModuleDisabledId] = await knex('IssueType').where({ name: 'Module Disabled' }).pluck('id')
-  const [issueStatusActiveId] = await knex('IssueStatus').where({ name: 'Active' }).pluck('id')
-
   const { deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(dataConstraints, query)
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
@@ -42,16 +39,6 @@ async function getDeviceReportData(dataConstraints, query) {
     ])
     .groupBy('r.deviceId')
 
-  const lastResults = getResultBaseQuery(knex, dataConstraints)
-    .modify(modifiers.join.lastResultPerModule, knex)
-    .select([
-      'r.deviceId',
-      knex.raw('r.resultData ->> "$.moduleName" as moduleName'),
-      'r.createdOn as resultDate',
-      'r.moduleSerial as moduleSerial',
-    ])
-    .whereRaw('r.resultData ->> "$.moduleName" is not null')
-
   const deviceInactiveDays = knex
     .from('DeviceMaintenanceStatusLog as dmsl')
     .select(['deviceId', knex.raw('SUM(CASE WHEN dms.active = 0 THEN 1 ELSE 0 END) as totalInactiveDays')])
@@ -60,29 +47,12 @@ async function getDeviceReportData(dataConstraints, query) {
     .whereRaw('DAYOFWEEK(createdOn) not in (1,7)')
     .groupBy(['deviceId', knex.raw('DATE(createdOn)')])
 
-  const moduleAvailability = knex
-    .from(lastResults.as('lastResult'))
-    .leftJoin('Issue as issueModuleDisabled', function () {
-      this.on('issueModuleDisabled.deviceId', 'lastResult.deviceId')
-        .andOn('lastResult.moduleSerial', knex.raw('issueModuleDisabled.data ->> "$.moduleSerial"'))
-        .andOn('issueModuleDisabled.issueTypeId', issueTypeModuleDisabledId)
-        .andOn('issueModuleDisabled.issueStatusId', issueStatusActiveId)
-    })
-    .select([
-      'lastResult.deviceId',
-      knex.raw('sum(case when issueModuleDisabled.id is null then 1 else 0 end) as enabled'),
-      knex.raw('sum(case when issueModuleDisabled.id is null then 0 else 1 end) as disabled'),
-    ])
-    .groupBy('lastResult.deviceId')
-
   return deviceQuery
     .clone()
     .join(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
-    .leftJoin(moduleAvailability.as('moduleAvailability'), function () {
-      this.on('moduleAvailability.deviceId', 'd.id')
-    })
+    .modify(await moduleAvailability(dataConstraints))
     .leftJoin(deviceInactiveDays.as('deviceInactiveDays'), function () {
       this.on('deviceInactiveDays.deviceId', 'd.id')
     })
