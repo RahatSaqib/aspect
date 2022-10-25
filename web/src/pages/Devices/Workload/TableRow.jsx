@@ -24,10 +24,10 @@ const TableRow = ({ item, extraColumns }) => {
         {(item.lastResultConductedOn || '').replace('.000Z', '').split('T').join(' ') ||
           formatMessage(messages.notAvailable)}
       </Td>
+      <Td className={cssClasses('TableCell')}>{item.total}</Td>
       {extraColumns.map(col => (
         <Td className={cssClasses('TableCell')}>{item[col]}</Td>
       ))}
-      <Td className={cssClasses('TableCell')}>{item.total}</Td>
     </Tr>
   )
 }
