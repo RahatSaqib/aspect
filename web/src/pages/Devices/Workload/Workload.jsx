@@ -7,8 +7,10 @@ import subtractDays from 'date-fns/subDays'
 import { Helmet } from 'react-helmet'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
-import useWorkload from '../../../hooks/device/useWorkload'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import useI18n from '../../../hooks/useI18n'
+import useWorkload from '../../../hooks/workload/useWorkload'
+import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
@@ -60,6 +62,8 @@ const Workload = () => {
   const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState()
 
+  const [download, setDownload] = useState({ fileFormat: '', enabled: false })
+
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.userPermissions, {})
 
   const { isError, isLoading, data = false, error } = useWorkload(requestParams)
@@ -75,7 +79,18 @@ const Workload = () => {
         .filter(a => a.hasResults)
         .sort((a, b) => b.resultCount - a.resultCount)[0]
   )
-
+  useWorkloadDownload({
+    ...requestParams,
+    ...download,
+  })
+  const onExcelClick = formatType => {
+    setDownload({ fileFormat: formatType, enabled: true })
+  }
+  useEffect(() => {
+    if (download.enabled) {
+      setDownload({ fileFormat: '', enabled: false })
+    }
+  }, [download])
   useEffect(() => {
     const { value: searchParams } = searchSanitizer(location, {})
     const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
@@ -126,6 +141,7 @@ const Workload = () => {
         <DataTableProgressBar disabled={!isLoading} />
         {workloadList.length ? (
           <>
+            <AspectExportListButton onExport={onExcelClick} visible={workloadList.length} reportName="DeviceWorkload" />
             <Table className={cssClasses('InventoryDataTable')}>
               <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
               <TableBody>

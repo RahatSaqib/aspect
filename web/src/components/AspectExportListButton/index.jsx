@@ -8,7 +8,7 @@ import styles from './AspectExportListButton.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const AspectExportListButtonWithProps = ({
+const AspectExportListButtonWithProps = ({
   onExport,
   visible = false,
   downloadStarted,
@@ -26,7 +26,7 @@ export const AspectExportListButtonWithProps = ({
     const getExport = onExport(format)
 
     getExport
-      .then(async ({ elem, fileFormat, reportName }) => {
+      ?.then(async ({ elem, fileFormat, reportName }) => {
         setDownloadStarted(false)
         const file = await elem.blob
         downloadFile(file, reportName, fileFormat)
