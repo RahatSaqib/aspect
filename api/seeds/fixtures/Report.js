@@ -478,7 +478,8 @@ const usageStats = {
 
 const deviceReport = {
   name: 'Device Report',
-  description: 'All devices statistics along with MTB/Rif as well as MTB ULTRA results',
+  description:
+    'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
   i18nKey: 'Device_Report',
   i18nKeyDescription: 'Device_Report_description',
   externalId: 'device_report',
