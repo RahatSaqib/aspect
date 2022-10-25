@@ -205,7 +205,7 @@ async function deleteDevice(deviceId, trknex) {
  *   resultCategory2ResultsId       // A csv containing the list of possible result category 2 i18n keys for the assay (same order than resultCategory2ResultsId)
  * }
  */
-async function getResultCategoriesByAssay(assayId) {
+function getResultCategoriesByAssay(assayId) {
   return knex('ResultCategoryGroup as rcg')
     .innerJoin('Assay as a', 'rcg.assayId', 'a.id')
     .leftJoin('ResultCategory as rc1', 'rcg.resultCategory1Id', 'rc1.id')

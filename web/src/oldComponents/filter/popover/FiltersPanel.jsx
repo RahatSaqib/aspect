@@ -1032,6 +1032,19 @@ export const FiltersPanel = ({
                 />
               </div>
             )}
+            {/* //TODO: not working, used only to load diseases and make HIV graph work */}
+            <div className={cssClasses('Control')}>
+              <DiseaseSelectField
+                allItemText={formatMessage(messages.all)}
+                onChange={onToggleEnabledDisabled}
+                name="diseaseId"
+                value={filters.diseaseId || ''}
+                floatingLabelFixed
+                hintText={formatMessage(messages.diseaseHint)}
+                floatingLabelText={formatMessage(messages.disease)}
+                style={{ display: 'none' }}
+              />
+            </div>
           </ErrorBoundary>
         </FallbackUntilDone>
       </div>

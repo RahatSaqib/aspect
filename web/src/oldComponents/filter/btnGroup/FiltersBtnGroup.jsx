@@ -127,6 +127,15 @@ const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
     .get('i18nKey', '')
 }
 
+const getResultCategoryNameFromDisease = (assayItems, filterDiseaseId, resultCategoryId) => {
+  const assayIds = isArray(filterDiseaseId) ? filterDiseaseId : [filterDiseaseId]
+  const assaysMatchingDisease = assayItems.toJS().filter(i => assayIds.includes(i.diseaseId) && i.hasResults)
+  const matchingCategory = assaysMatchingDisease.length
+    ? assaysMatchingDisease[0].resultCategories.find(el => el.id === resultCategoryId)
+    : { i18nKey: '' }
+  return matchingCategory.i18nKey
+}
+
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
   const { formatMessage, format } = useI18n()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
@@ -242,7 +251,12 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
             }
           : {
               resultCategoryName: formatMessage(
-                messages[getResultCategoryName(assayItems, filters.assayId, resultCategoryId)]
+                // diseaseId here is used to fix filtering from HIV graph
+                messages[
+                  filters.assayId
+                    ? getResultCategoryName(assayItems, filters.assayId, resultCategoryId)
+                    : getResultCategoryNameFromDisease(assayItems, filters.diseaseId, resultCategoryId)
+                ]
               ),
             }
       )
