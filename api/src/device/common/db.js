@@ -1,4 +1,4 @@
-const { knex } = require('../../db')
+const { knex, filterParams, sortPageParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
 async function getSourceDevices(sourceDevicesIds) {
@@ -8,6 +8,26 @@ async function getSourceDevices(sourceDevicesIds) {
 async function getTargetDevice(targetDeviceId) {
   return knex('Device').where('id', targetDeviceId).first('id', 'siteId', 'deviceTypeId')
 }
+
+/**
+ * Builds a knex query object including all 'join' and 'where' for managing constraints.
+ * @param {object} dataConstraints
+ * @param {object} options An object representing the dataConstraints options, including the constraint-table-name definition, and also additional configurations like showUnapprovedDevices and showDecommissionedDevices. For example: { assay: 'a', showUnapprovedDevices: true, showDecommissionedDevices: true }
+ * @returns The knex query object.
+ */
+function getDeviceBaseQuery(dataConstraints, options) {
+  return knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      deviceType: 'dt',
+      ...(options || {}),
+    })
+}
+
+const getNotDecommissionedDevices = dataConstraints =>
+  getDeviceBaseQuery(dataConstraints, { showUnapprovedDevices: true })
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
   const {
@@ -173,7 +193,107 @@ async function deleteDevice(deviceId, trknex) {
   await trknex('Device').where('id', deviceId).del()
 }
 
+/**
+ * Gets an object containing the i18n keys, the result categories ids, and category labels for the result category 1 and 2
+ * @returns An object with the next shape:
+ * {
+ *   resultCategory1LabelI18nKey,   // The i18nKey of the resultCategory1 label for the assay
+ *   resultCategory2LabelI18nKey,   // The i18nKey of the resultCategory2 label for the assay
+ *   resultCategory1ResultsId,      // A csv containing the list of possible result category 1 ids for the assay
+ *   resultCategory1ResultsI18nKey, // A csv containing the list of possible result category 1 i18n keys for the assay (same order than resultCategory1ResultsId)
+ *   resultCategory2ResultsId,      // A csv containing the list of possible result category 2 ids for the assay
+ *   resultCategory2ResultsId       // A csv containing the list of possible result category 2 i18n keys for the assay (same order than resultCategory2ResultsId)
+ * }
+ */
+function getResultCategoriesByAssay(assayId) {
+  return knex('ResultCategoryGroup as rcg')
+    .innerJoin('Assay as a', 'rcg.assayId', 'a.id')
+    .leftJoin('ResultCategory as rc1', 'rcg.resultCategory1Id', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'rcg.resultCategory2Id', 'rc2.id')
+    .where('a.id', assayId)
+    .select({
+      resultCategory1LabelI18nKey: 'a.resultCategory1I18nKey',
+      resultCategory2LabelI18nKey: 'a.resultCategory2I18nKey',
+      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id)'),
+      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey)'),
+      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id)'),
+      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey)'),
+    })
+    .first()
+}
+
+function getFirstAndLastResults(dataConstraints, assayId) {
+  return knex('Result as _r')
+    .modify(addConstraints, dataConstraints, { result: '_r' })
+    .groupBy('deviceId')
+    .select({
+      deviceId: 'deviceId',
+      firstEndedOn: knex.raw('MIN(endedOn)'),
+      lastEndedOn: knex.raw('MAX(endedOn)'),
+    })
+    .where('assayId', assayId)
+    .as('firstAndLastResults')
+}
+
+async function getDeviceWorkload(extraColumns, dataConstraints, query) {
+  const { assayId } = query
+  const q = knex('Device as d')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('State as st', 'g.stateId', 'st.id')
+    .innerJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .leftJoin('Result as r', joinResultQuery => {
+      joinResultQuery.on('d.id', 'r.deviceId').andOn('r.assayId', knex.raw(assayId))
+
+      if (query.minDate) joinResultQuery.andOn('r.endedOn', '>', knex.raw(`'${query.minDate.toISOString()}'`))
+
+      if (query.maxDate) joinResultQuery.andOn('r.endedOn', '<=', knex.raw(`'${query.maxDate.toISOString()}'`))
+    })
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .leftJoin(getFirstAndLastResults(dataConstraints, assayId), 'd.id', 'firstAndLastResults.deviceId')
+    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      siteExternalId: 's.externalId',
+      siteName: 's.name',
+      siteId: 's.id',
+      deviceMaintenanceStatusId: 'dms.id',
+    })
+    .andWhere('dtc.hasResults', true)
+
+  const { total } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as total')).first()
+  const data = await q
+    .modify(sortPageParams, query, 'name')
+    .select(
+      'd.name',
+      'dms.i18nKey as deviceStatus',
+      'd.lastPingOn',
+      'firstAndLastResults.firstEndedOn as firstResultEndedOn',
+      'firstAndLastResults.lastEndedOn as lastResultEndedOn',
+      'st.name as stateName',
+      'lg.name as lgaName',
+      's.name as siteName',
+      knex.raw('COUNT(r.id) as total')
+    )
+    .modify(q => {
+      extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
+    })
+    .groupBy('d.id')
+  const { length } = data
+  return { total, data, length }
+}
+
 module.exports = {
+  getDeviceWorkload,
+  getResultCategoriesByAssay,
   getSourceDevices,
   getTargetDevice,
   mergeIssuesFromDuplicatedResults,
@@ -197,4 +317,5 @@ module.exports = {
   deleteDeviceFromFactTables,
   deleteDeviceSiteHistory,
   deleteDevice,
+  getNotDecommissionedDevices,
 }

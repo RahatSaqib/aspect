@@ -1,13 +1,11 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import identity from 'lodash/identity'
 import isString from 'lodash/isString'
 import AccountEnableDisable from '../../../components/Account/AccountEnableDisable'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 
 const cssClasses = classnames.bind(styles)
-const enhance = identity
 
 const formatTags = tagsStr => {
   if (!tagsStr) return ''
@@ -65,4 +63,4 @@ const PersonTableRow = ({ person, personEditPermission, ...restProps }) => {
   )
 }
 
-export default enhance(PersonTableRow)
+export default PersonTableRow

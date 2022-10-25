@@ -20,9 +20,11 @@ const {
   onDeviceMaintenanceStatusLogScheduled,
 } = require('./service')
 const mergeDevices = require('./mergeDevices')
+const listWorkload = require('./listWorkload')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { taskTracker } = require('../scheduler/taskTracker')
+const { listWorkloadRequestSchema, listWorkloadResponseSchema } = require('./common/validations')
 
 function listDevicesBaseConfig() {
   return { ...listDevicesBaseRequest(), ...listDevicesBaseResponse() }
@@ -292,6 +294,18 @@ const routes = [
       description: 'Device List',
       notes: 'Pageable and sortable list of devices',
       ...listDevicesBaseConfig(),
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/workload',
+    handler: asyncHandler(listWorkload),
+    config: {
+      description: 'Device List',
+      notes: 'Pageable and sortable list of devices',
+      auth: { scope: ['device:view'] },
+      validate: listWorkloadRequestSchema,
+      response: listWorkloadResponseSchema,
     },
   },
   {

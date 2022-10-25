@@ -360,9 +360,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
   const intl = useI18n()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
 
   // >>>>>> Defining selectors <<<<<<
   const inventory = useSelector(state => state.inventory)

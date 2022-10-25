@@ -20,29 +20,14 @@ const EMPTY_CONTEXT = null
 const EMPTY_MAP = Immutable.Map()
 
 const revokedOptions = [
-  {
-    id: '0',
-    name: 'false',
-  },
-  {
-    id: '1',
-    name: 'true',
-  },
+  { id: '0', name: 'false' },
+  { id: '1', name: 'true' },
 ]
+// see values for names in `./messages.js`
 const displayResultOptions = [
-  {
-    id: 'all',
-    // see values for names in `./messages.js`
-    name: 'displayAllResults',
-  },
-  {
-    id: 'actual',
-    name: 'displayActualResults',
-  },
-  {
-    id: 'excluded',
-    name: 'displayExcludedResults',
-  },
+  { id: 'all', name: 'displayAllResults' },
+  { id: 'actual', name: 'displayActualResults' },
+  { id: 'excluded', name: 'displayExcludedResults' },
 ]
 
 const enhance = compose(
@@ -125,10 +110,10 @@ const makeButton = labelFn => (filterKey, props, index) => {
       className={cssClasses('Button')}
       color="secondary"
       variant="contained"
-      onClick={() => props.onRemoveFilterItem(filterKey, index)}
+      onClick={() => (props.permanent ? null : props.onRemoveFilterItem(filterKey, index))}
     >
       {labelFn(filterValue, props)}
-      <MdClose className={cssClasses('Button__icon')} />
+      {props.permanent ? null : <MdClose className={cssClasses('Button__icon')} />}
     </Button>
   )
 }
@@ -142,11 +127,34 @@ const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
     .get('i18nKey', '')
 }
 
+const getResultCategoryNameFromDisease = (assayItems, filterDiseaseId, resultCategoryId) => {
+  const assayIds = isArray(filterDiseaseId) ? filterDiseaseId : [filterDiseaseId]
+  const assaysMatchingDisease = assayItems.toJS().filter(i => assayIds.includes(i.diseaseId) && i.hasResults)
+  const matchingCategory = assaysMatchingDisease.length
+    ? assaysMatchingDisease[0].resultCategories.find(el => el.id === resultCategoryId)
+    : { i18nKey: '' }
+  return matchingCategory.i18nKey
+}
+
 const FiltersBtnGroup = ({ className, children, ...restProps }) => {
   const { formatMessage, format } = useI18n()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
 
   const buttonBy = {
+    singleAssayId: (filterKey, props) => {
+      const {
+        assayItems,
+        filters: { assayId },
+      } = props
+      const assayIds = isArray(assayId) ? assayId : [assayId]
+      return assayIds.map((__, index) =>
+        makeButton(value =>
+          formatMessage(
+            messages[assayItems.find(it => it.get('id') === value, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')]
+          )
+        )(filterKey, { ...props, permanent: true }, index)
+      )
+    },
     assayId: (filterKey, props) => {
       const {
         assayItems,
@@ -243,7 +251,12 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
             }
           : {
               resultCategoryName: formatMessage(
-                messages[getResultCategoryName(assayItems, filters.assayId, resultCategoryId)]
+                // diseaseId here is used to fix filtering from HIV graph
+                messages[
+                  filters.assayId
+                    ? getResultCategoryName(assayItems, filters.assayId, resultCategoryId)
+                    : getResultCategoryNameFromDisease(assayItems, filters.diseaseId, resultCategoryId)
+                ]
               ),
             }
       )

@@ -94,6 +94,7 @@ const makeKeySanitizer =
     defaultSanitizer({ a, k, config })
 
 const sanitizerByConfigKey = {
+  singleAssayId: defaultSanitizer,
   assayId: defaultSanitizer,
   assayAndResultCategory: makeArraySanitizer(groups.assayAndResultCategory),
   geography: makeArraySanitizer(groups.geography),
@@ -356,6 +357,9 @@ export const reduceFiltersConfig = (configObject, userPermissions, dependencies)
               break
             case 'consumable':
               result.consumable = true
+              break
+            case 'singleAssayId':
+              result.singleAssayId = true
               break
             case 'assayId':
               result.assayId = true
