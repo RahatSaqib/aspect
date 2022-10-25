@@ -1,8 +1,9 @@
 const { knex, sortPageParams, filterDateRangeParams } = require('../../db')
 const { getBaseQuery: getResultBaseQuery } = require('../../result/query')
+const { XDR_RESISTANCES } = require('../../shared/constants')
 const { getBasicsForDevicesReport, moduleAvailability } = require('../common/db')
 
-const xdrExtraColumns = ['INH', 'FLQ', 'AMK', 'KAN', 'CAP', 'ETH'].map(resistance =>
+const xdrExtraColumns = XDR_RESISTANCES.map(resistance =>
   knex.raw(`SUM(
   CASE WHEN
     JSON_SEARCH(
