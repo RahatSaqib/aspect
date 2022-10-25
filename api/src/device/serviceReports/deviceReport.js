@@ -1,43 +1,53 @@
 const { knex, sortPageParams, filterDateRangeParams } = require('../../db')
-const { getBaseQuery: getResultBaseQuery } = require('../../result/query')
+const {
+  getBaseQuery: getResultBaseQuery,
+  modifiers,
+  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
+} = require('../../result/query')
 const { XDR_RESISTANCES } = require('../../shared/constants')
 const { getBasicsForDevicesReport, moduleAvailability } = require('../common/db')
 
-const xdrExtraColumns = XDR_RESISTANCES.map(resistance =>
-  knex.raw(`SUM(
-  CASE WHEN
-    JSON_SEARCH(
-      r.resultData ->> '$.detectedResistance[*]',
-      'one',
-      '${resistance}'
-    ) IS NOT NULL
-  THEN 1 ELSE 0 END) AS ${resistance}`)
+const xdrExtraColumns = Object.fromEntries(
+  XDR_RESISTANCES.map(resistance => [
+    resistance,
+    knex.raw(`SUM(
+    CASE WHEN
+      JSON_SEARCH(
+        r.resultData ->> '$.detectedResistance[*]',
+        'one',
+        '${resistance}'
+      ) IS NOT NULL
+    THEN 1 ELSE 0 END)`),
+  ])
 )
 
 async function getDeviceReportData(dataConstraints, query) {
-  const { deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(dataConstraints, query)
+  const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
+  const {
+    mtbDetectedRifNotDetected,
+    mtbDetectedRifDetected,
+    mtbNotDetected,
+    mtbInvalid,
+    mtbError,
+    mtbNoResult,
+    mtbDetectedRifIndeterminate,
+  } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
-    .select([
-      'deviceId',
+    .modify(modifiers.join.resultCategory1)
+    .modify(modifiers.join.resultCategory2)
+    .select({
       ...xdrExtraColumns,
-      knex.raw(
-        `sum(case when r.resultCategory1 = ${resultCategoryIds.NotDetected} then 1 else 0 end) as totalMtbNegative`
-      ),
-      knex.raw(
-        `sum(case when r.resultCategory1 = ${resultCategoryIds.Detected} AND r.resultCategory2 = ${resultCategoryIds.NotDetected} then 1 else 0 end) as totalMtbSens`
-      ), //
-      knex.raw(
-        `sum(case when r.resultCategory1 = ${resultCategoryIds.Detected} AND r.resultCategory2 = ${resultCategoryIds.Detected} then 1 else 0 end) as totalMtbRes`
-      ), //
-      knex.raw(
-        `sum(case when r.resultCategory1 = ${resultCategoryIds.Detected} AND (r.resultCategory2 = ${resultCategoryIds.Indeterminate} OR r.resultCategory2 IS NULL) then 1 else 0 end) as totalMtbIndeterminate`
-      ),
-      knex.raw(`sum(case when r.resultCategory1 = ${resultCategoryIds.Error} then 1 else 0 end) as totalErrors`),
-      knex.raw(`sum(case when r.resultCategory1 = ${resultCategoryIds.NoResult} then 1 else 0 end) as mtbNoResult`),
-      knex.raw(`sum(case when r.resultCategory1 = ${resultCategoryIds.Invalid} then 1 else 0 end) as mtbInvalid`),
-      knex.raw('count(*) AS totalXpertTests'),
-    ])
+      deviceId: 'deviceId',
+      mtbNotDetected,
+      mtbDetectedRifNotDetected,
+      mtbDetectedRifDetected,
+      mtbDetectedRifIndeterminate,
+      mtbError,
+      mtbNoResult,
+      mtbInvalid,
+      totalXpertTests: knex.raw('count(*)'),
+    })
     .groupBy('r.deviceId')
 
   const deviceInactiveDays = knex
@@ -74,11 +84,11 @@ async function getDeviceReportData(dataConstraints, query) {
       knex.raw('IFNULL(resultsCount.CAP, 0) AS CAP'),
       knex.raw('IFNULL(resultsCount.ETH, 0) AS ETH'),
       knex.raw('IFNULL(deviceInactiveDays.totalInactiveDays, 0) AS totalInterruptedDays'),
-      knex.raw('IFNULL(resultsCount.totalMtbNegative, 0) AS totalMtbNegative'),
-      knex.raw('IFNULL(resultsCount.totalMtbSens, 0) AS totalMtbSens'),
-      knex.raw('IFNULL(resultsCount.totalMtbRes, 0) AS totalMtbRes'),
-      knex.raw('IFNULL(resultsCount.totalMtbIndeterminate, 0) AS totalMtbIndeterminate'),
-      knex.raw('IFNULL(resultsCount.totalErrors, 0) AS totalErrors'),
+      knex.raw('IFNULL(resultsCount.mtbNotDetected, 0) AS totalMtbNegative'),
+      knex.raw('IFNULL(resultsCount.mtbDetectedRifNotDetected, 0) AS totalMtbSens'),
+      knex.raw('IFNULL(resultsCount.mtbDetectedRifDetected, 0) AS totalMtbRes'),
+      knex.raw('IFNULL(resultsCount.mtbDetectedRifIndeterminate, 0) AS totalMtbIndeterminate'),
+      knex.raw('IFNULL(resultsCount.mtbError, 0) AS totalErrors'),
       knex.raw('IFNULL(resultsCount.mtbNoResult, 0) AS mtbNoResult'),
       knex.raw('IFNULL(resultsCount.mtbInvalid, 0) AS mtbInvalid'),
       knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertTests'),
