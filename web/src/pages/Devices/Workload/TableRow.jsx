@@ -17,11 +17,11 @@ const TableRow = ({ item, extraColumns }) => {
       <Td className={cssClasses('TableCell')}>{item.lgaName}</Td>
       <Td className={cssClasses('TableCell')}>{item.lastPingOn.replace('.000Z', '').split('T').join(' ')}</Td>
       <Td className={cssClasses('TableCell')}>
-        {(item.firstResultConductedOn || '').replace('.000Z', '').split('T').join(' ') ||
+        {(item.firstResultEndedOn || '').replace('.000Z', '').split('T').join(' ') ||
           formatMessage(messages.notAvailable)}
       </Td>
       <Td className={cssClasses('TableCell')}>
-        {(item.lastResultConductedOn || '').replace('.000Z', '').split('T').join(' ') ||
+        {(item.lastResultEndedOn || '').replace('.000Z', '').split('T').join(' ') ||
           formatMessage(messages.notAvailable)}
       </Td>
       <Td className={cssClasses('TableCell')}>{item.total}</Td>
