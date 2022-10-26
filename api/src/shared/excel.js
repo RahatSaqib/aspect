@@ -1059,6 +1059,9 @@ function appendColumnsToHeader(worksheet, columns, headerRow, totalHeaderRows) {
   // start from column next after the last defined (real) column
   let columnNumber = headerInfo.lastCellNumber + 1
   columns.forEach(column => {
+    if (column.width) {
+      worksheet.getColumn(columnNumber).width = column.width
+    }
     const hasSubHeaders = column.subHeaders?.length > 0
     const numMergeX = hasSubHeaders ? column.subHeaders.length : 1
 
