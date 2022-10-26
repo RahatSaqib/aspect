@@ -44,8 +44,8 @@ const availableSortCol = [
   'name',
   'deviceStatus',
   'lastPingOn',
-  'firstResultConductedOn',
-  'lastResultConductedOn',
+  'firstResultEndedOn',
+  'lastResultEndedOn',
   'totalTests',
   'stateName',
   'lgaName',
@@ -120,8 +120,9 @@ const Workload = () => {
     { key: 'stateName', label: getCustomMessage(messages, 'state', user), sortable: true },
     { key: 'lgaName', label: getCustomMessage(messages, 'lga', user), sortable: true },
     { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true },
-    { key: 'firstResultConductedOn', label: formatMessage(messages.firstResultConductedOn), sortable: true },
-    { key: 'lastResultConductedOn', label: formatMessage(messages.lastResultConductedOn), sortable: true },
+    { key: 'firstResultEndedOn', label: formatMessage(messages.firstResultEndedOn), sortable: true },
+    { key: 'lastResultEndedOn', label: formatMessage(messages.lastResultEndedOn), sortable: true },
+    { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
       label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
@@ -129,7 +130,6 @@ const Workload = () => {
       )}`,
       sortable: false,
     })),
-    { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
   ]
   const extraColumnsProps = extraColumns.map(ec => ec.fieldId)
 
