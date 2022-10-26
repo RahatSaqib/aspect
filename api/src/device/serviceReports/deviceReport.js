@@ -56,11 +56,12 @@ async function getDeviceReportData(dataConstraints, query) {
 
   const deviceInactiveDays = knex
     .from('DeviceMaintenanceStatusLog as dmsl')
-    .select(['deviceId', knex.raw('SUM(CASE WHEN dms.active = 0 THEN 1 ELSE 0 END) as totalInactiveDays')])
+    .select(['deviceId', knex.raw('COUNT(DISTINCT day) as totalInactiveDays')])
     .join('DeviceMaintenanceStatus as dms', 'dms.id', 'dmsl.deviceMaintenanceStatusId')
-    .modify(filterDateRangeParams, query, 'createdOn')
-    .whereRaw('DAYOFWEEK(createdOn) not in (1,7)')
-    .groupBy(['deviceId', knex.raw('DATE(createdOn)')])
+    .modify(filterDateRangeParams, query, 'day')
+    .whereRaw('DAYOFWEEK(day) not in (1,7)')
+    .where('active', 0)
+    .groupBy(['deviceId', 'active'])
 
   return deviceQuery
     .clone()
