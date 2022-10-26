@@ -5,7 +5,7 @@ const {
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
 } = require('../../result/query')
 const { XDR_RESISTANCES } = require('../../shared/constants')
-const { getBasicsForDevicesReport, moduleAvailability } = require('../common/db')
+const { getBasicsForDevicesReport, joinModuleAvailability } = require('../common/db')
 
 const xdrExtraColumns = Object.fromEntries(
   XDR_RESISTANCES.map(resistance => [
@@ -68,7 +68,7 @@ async function getDeviceReportData(dataConstraints, query) {
     .join(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
-    .modify(await moduleAvailability(dataConstraints))
+    .modify(await joinModuleAvailability(dataConstraints))
     .leftJoin(deviceInactiveDays.as('deviceInactiveDays'), function () {
       this.on('deviceInactiveDays.deviceId', 'd.id')
     })

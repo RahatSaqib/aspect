@@ -383,7 +383,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
   return { total, data, length }
 }
 
-async function moduleAvailability(dataConstraints) {
+async function joinModuleAvailability(dataConstraints) {
   const [issueTypeModuleDisabledId] = await knex('IssueType').where({ name: 'Module Disabled' }).pluck('id')
   const [issueStatusActiveId] = await knex('IssueStatus').where({ name: 'Active' }).pluck('id')
 
@@ -449,5 +449,5 @@ module.exports = {
   deleteDeviceSiteHistory,
   deleteDevice,
   getNotDecommissionedDevices,
-  moduleAvailability,
+  joinModuleAvailability,
 }

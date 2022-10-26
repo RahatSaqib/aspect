@@ -1,7 +1,7 @@
 const { knex } = require('../../db')
 const { filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
-const { moduleAvailability } = require('../common/db')
+const { joinModuleAvailability } = require('../common/db')
 
 async function getModuleStatusReportData(minDate, maxDate, dataConstraints, query) {
   const moduleReplacedIssuesForPeriod = knex('Issue as issueModuleReplaced')
@@ -20,7 +20,7 @@ async function getModuleStatusReportData(minDate, maxDate, dataConstraints, quer
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('State as state', 'state.id', 'g.stateId')
     .innerJoin('Lga as lga', 'lga.id', 'g.lgaId')
-    .modify(await moduleAvailability(dataConstraints))
+    .modify(await joinModuleAvailability(dataConstraints))
     .leftJoin(moduleReplacedIssuesForPeriod.as('mr'), function () {
       this.on('mr.deviceId', 'd.id')
     })
