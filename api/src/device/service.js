@@ -125,7 +125,10 @@ async function getListDevices(query, auth) {
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
   const resultCategoryErrorId = await resultCategoryToId('Error')
   const { assayId } = query
-  const assayFilter = assayId ? (_.isArray(assayId) ? assayId.join(',') : assayId) : null
+  /**
+   * `assayId` is number or array of numbers - cuz try(Joi.array().items(Joi.number()), Joi.number())
+   */
+  const assayFilter = assayId ? (_.isArray(assayId) ? assayId : [assayId]) : null
   const deviceQuery = knex('Device as d')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -136,11 +139,10 @@ async function getListDevices(query, auth) {
       knex('FactResultsDeviceByAssay as fact')
         .where('fact.days', 30)
         .modify(filter => {
-          if (assayFilter) filter.whereRaw('fact.assayId in (?)', assayFilter)
+          if (assayFilter) filter.whereIn('fact.assayId', assayFilter)
         })
         .groupBy('deviceId')
         .select('fact.deviceId', knex.raw('sum(resultCount) as resultCount'))
-
         .as('frd30'),
       'frd30.deviceId',
       'd.id'
@@ -149,20 +151,27 @@ async function getListDevices(query, auth) {
       knex('FactResultsDeviceByAssay as fact')
         .where('fact.days', 60)
         .modify(filter => {
-          if (assayFilter) filter.whereRaw('fact.assayId in (?)', assayFilter)
+          if (assayFilter) filter.whereIn('fact.assayId', assayFilter)
         })
         .groupBy('deviceId')
         .select('fact.deviceId', knex.raw('sum(resultCount) as resultCount'))
-
         .as('frd60'),
       'frd60.deviceId',
       'd.id'
     )
-    .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function () {
-      this.on('d.id', 'frd30Errors.deviceId')
-        .andOn('frd30Errors.days', 30)
-        .andOn('frd30Errors.resultCategory1', resultCategoryErrorId)
-    })
+    .leftJoin(
+      knex('FactResultsDeviceByCategory1 as fact')
+        .where('fact.days', 30)
+        .where('fact.resultCategory1', resultCategoryErrorId)
+        .modify(filter => {
+          if (assayFilter) filter.whereIn('fact.assayId', assayFilter)
+        })
+        .groupBy('fact.deviceId')
+        .select('fact.deviceId', knex.raw('sum(fact.resultCount) as resultCount'))
+        .as('frd30Errors'),
+      'frd30Errors.deviceId',
+      'd.id'
+    )
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
