@@ -16,7 +16,6 @@ import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -362,7 +361,6 @@ export const DeviceApiKeyList = ({
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.title)} />
-    <NavTitle title={intl.formatMessage(messages.title)} />
     <BrowseFilters
       navigate={navigate}
       location={location}

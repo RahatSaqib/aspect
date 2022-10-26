@@ -2,7 +2,6 @@ import Immutable from 'immutable'
 import { downloadFile, safeDownloadFile } from '../utils/utils/files'
 
 export const types = {
-  GLOBALS_SET_NAV_TITLE: 'GLOBALS_SET_NAV_TITLE',
   GLOBALS_SET_LAST_SERVER_RESPONSE_TIME: 'GLOBALS_SET_LAST_SERVER_RESPONSE_TIME',
   EXPORT_RESPONSE_FILE_RECEIVED: 'EXPORT_RESPONSE_FILE_RECEIVED',
   EXPORT_FILE_STARTED: 'EXPORT_FILE_STARTED',
@@ -19,12 +18,6 @@ export function setLastServerResponseTime(serverTime) {
   }
 }
 
-export function setNavTitle(title) {
-  return {
-    type: types.GLOBALS_SET_NAV_TITLE,
-    title,
-  }
-}
 export function onStartDownloading() {
   return {
     type: types.EXPORT_FILE_STARTED,

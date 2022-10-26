@@ -12,7 +12,6 @@ import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { useAuthState } from '../../../providers/AuthProvider/index'
@@ -113,7 +112,6 @@ export const SiteList = ({ navigate, location }) => {
   ) : (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-      <NavTitle title={intl.formatMessage(messages.sitesTitle)} />
       <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
         <AspectButton
           type="button"

@@ -29,7 +29,6 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
@@ -143,7 +142,7 @@ const getColumns = formatMessage => [
   },
 ]
 
-export const DeviceList = () => {
+const DeviceList = () => {
   const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
   const { formatMessage } = useI18n()
@@ -195,18 +194,9 @@ export const DeviceList = () => {
     navigate(`/browse/device/${deviceId}/alerts`)
   }
 
-  const {
-    data = false,
-    isError,
-    error,
-    isLoading,
-  } = useQuery(
+  const { data, isError, error, isLoading } = useQuery(
     [DEVICE_LIST.KEY, { params }],
-    async () =>
-      fetchWrapperForQueries({
-        endpoint: DEVICE_LIST.ENDPOINT,
-        params: { ...params, hasResults: 1 },
-      }),
+    async () => fetchWrapperForQueries({ endpoint: DEVICE_LIST.ENDPOINT, params: { ...params, hasResults: 1 } }),
     { enabled: !isEmpty(params) }
   )
 
@@ -249,7 +239,6 @@ export const DeviceList = () => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.devicesTitle)} />
-      <NavTitle title={formatMessage(messages.devicesTitle)} />
       <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
         <PermissionsProvider permissions={['device:admin']}>
           <AspectButton

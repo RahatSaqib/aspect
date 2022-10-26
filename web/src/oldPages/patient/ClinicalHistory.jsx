@@ -9,7 +9,6 @@ import { Helmet } from 'react-helmet'
 import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import DetailBackBar from '../../oldComponents/DetailBackBar'
-import NavTitle from '../../oldComponents/NavTitle'
 import ReadOnlyField from '../../oldComponents/shared/ReadOnlyField'
 import { fetchResultsByPatient } from '../../store/PatientRedux'
 import { formatDate, formatDateTime } from '../../utils/utils/dateFormat'
@@ -86,7 +85,6 @@ export const ClinicalHistory = props => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={`${intl.formatMessage(messages.patient)} ${patientId}`} />
-      <NavTitle title={`${intl.formatMessage(messages.patient)} ${patientId}`} />
       <DetailBackBar onBackClick={onBackClick} title={`${intl.formatMessage(messages.patient)} ${patientId}`} />
       <section className={cssClasses('Section', 'Section--first')}>
         <Grid container spacing={16}>

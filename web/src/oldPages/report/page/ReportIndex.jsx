@@ -13,7 +13,6 @@ import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
 import useI18n from '../../../hooks/useI18n'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import { sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { showError } from '../../../store/AppNotificationRedux'
@@ -164,7 +163,6 @@ const ReportIndex = () => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.reportsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
       <DataTableProgressBar disabled={!showProgressBar} />
       {visibleFilters && (
         <BrowseFilters
