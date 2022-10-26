@@ -214,10 +214,10 @@ function getResultCategoriesByAssay(assayId) {
     .select({
       resultCategory1LabelI18nKey: 'a.resultCategory1I18nKey',
       resultCategory2LabelI18nKey: 'a.resultCategory2I18nKey',
-      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id)'),
-      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey)'),
-      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id)'),
-      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey)'),
+      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id ORDER BY rc1.id ASC)'),
+      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey ORDER BY rc1.id ASC)'),
+      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id ORDER BY rc2.id ASC)'),
+      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey ORDER BY rc2.id ASC)'),
     })
     .first()
 }
@@ -244,7 +244,9 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('State as st', 'g.stateId', 'st.id')
     .innerJoin('Lga as lg', 'g.lgaId', 'lg.id')
-    .innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .innerJoin('Assay as a', joinAssay => {
+      joinAssay.on('dt.id', 'a.deviceTypeId').andOn('a.id', knex.raw(assayId))
+    })
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Result as r', joinResultQuery => {
       joinResultQuery.on('d.id', 'r.deviceId').andOn('r.assayId', knex.raw(assayId))
