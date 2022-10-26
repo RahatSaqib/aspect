@@ -31,6 +31,8 @@ async function getDeviceReportData(dataConstraints, query) {
     mtbError,
     mtbNoResult,
     mtbDetectedRifIndeterminate,
+    mtbDetected,
+    mtbTraceDetected,
   } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
@@ -46,6 +48,8 @@ async function getDeviceReportData(dataConstraints, query) {
       mtbError,
       mtbNoResult,
       mtbInvalid,
+      mtbDetected,
+      mtbTraceDetected,
       totalXpertTests: knex.raw('count(*)'),
     })
     .groupBy('r.deviceId')
@@ -85,6 +89,8 @@ async function getDeviceReportData(dataConstraints, query) {
       knex.raw('IFNULL(resultsCount.ETH, 0) AS ETH'),
       knex.raw('IFNULL(deviceInactiveDays.totalInactiveDays, 0) AS totalInterruptedDays'),
       knex.raw('IFNULL(resultsCount.mtbNotDetected, 0) AS totalMtbNegative'),
+      knex.raw('IFNULL(resultsCount.mtbDetected, 0) AS totalMtbDetected'),
+      knex.raw('IFNULL(resultsCount.mtbTraceDetected, 0) AS totalMtbTraceDetected'),
       knex.raw('IFNULL(resultsCount.mtbDetectedRifNotDetected, 0) AS totalMtbSens'),
       knex.raw('IFNULL(resultsCount.mtbDetectedRifDetected, 0) AS totalMtbRes'),
       knex.raw('IFNULL(resultsCount.mtbDetectedRifIndeterminate, 0) AS totalMtbIndeterminate'),
