@@ -75,7 +75,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/v2/result/{resultId}',
+    path: '/v2/results/{resultId}',
     handler: downloadResultByIdV2,
     config: {
       description: 'Result Sync',
