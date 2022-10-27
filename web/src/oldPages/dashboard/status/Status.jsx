@@ -81,7 +81,7 @@ const Status = () => {
             <TbDetectedGraph assaysFromState={assays} /> {/* 2 */}
             <TbResultsGraph assaysFromState={assays} /> {/* 3 */}
           </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...xdrPermissions]}>
+          <PermissionsProvider permissions={['dashboard', '+GxMtbXdr']}>
             <XDRResultsGraph assaysFromState={assays} /> {/* 4 */}
           </PermissionsProvider>
           <PermissionsProvider permissions={['dashboard', ...tbPermissions]}>
@@ -91,7 +91,7 @@ const Status = () => {
             <QuartersMtbDetectedGraph assaysFromState={assays} /> {/* 8 */}
             <QuartersRifDetectedGraph assaysFromState={assays} /> {/* 9 */}
           </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...xdrPermissions]}>
+          <PermissionsProvider permissions={['dashboard', '+GxMtbXdr']}>
             <XDRFLQResistanceGraph assaysFromState={assays} /> {/* 10 */}
           </PermissionsProvider>
           <PermissionsProvider permissions={['dashboard', ...covidPermissions]}>
