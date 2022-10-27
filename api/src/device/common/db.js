@@ -1,5 +1,97 @@
-const { knex, filterParams, sortPageParams } = require('../../db')
+const _ = require('lodash')
+const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
+const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
+const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
+
+function getDeviceBaseExtendedQuery(
+  query,
+  dataConstraints,
+  showUnapprovedDevices = false,
+  showDecommissionedDevices = false
+) {
+  const deviceQuery = knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
+    .where(queryBuilder => {
+      if (!query.deviceIds) {
+        return
+      }
+      queryBuilder.whereIn('d.id', query.deviceIds.split(','))
+    })
+    .modify(queryBuilder => {
+      if (query.assayId || query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+      if (query.assayId) {
+        const { assayId } = query
+        const assayIds = _.isArray(assayId) ? assayId : [assayId]
+        queryBuilder.whereIn('a.id', assayIds)
+      }
+      if (query.assayExternalId) queryBuilder.where('a.externalId', query.assayExternalId)
+      if (query.resultCategoryId)
+        queryBuilder
+          .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+          .where('rca.resultCategoryId', query.resultCategoryId)
+
+      if (query.resultCategory2Id)
+        queryBuilder
+          .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
+          .where('rca2.resultCategoryId', query.resultCategory2Id)
+    })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      deviceApprovalId: 'd.deviceApprovalId',
+      deviceTypeId: 'd.deviceTypeId',
+      deviceType: 'dt.externalId',
+      hasConnectivity: 'dc.hasConnectivity',
+      hasResults: 'dc.hasResults',
+      category: 'dc.name',
+      type: 'dt.name',
+      siteExternalId: 's.externalId',
+      siteName: 's.name',
+    })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      device: 'd',
+      deviceType: 'dt',
+      geography: 'g',
+      site: 's',
+      showDecommissionedDevices,
+      showUnapprovedDevices,
+    })
+  return deviceQuery
+}
+
+async function getBasicsForDevicesReport(dataConstraints, query) {
+  const resultCategoryIds = await allResultCategoryToId()
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
+
+  // get total count for paging
+  const getCount = deviceQuery.clone().countDistinct('d.id').as('count').first()
+  const queryResults = knex('Result as r')
+    .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      sample: 'sa',
+    })
+    .whereRaw('r.deviceId = d.id')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+
+  return {
+    getCount,
+    queryResults,
+    deviceQuery,
+    resultCategoryIds,
+  }
+}
 
 async function getSourceDevices(sourceDevicesIds) {
   return knex('Device').whereIn('id', sourceDevicesIds).select('id', 'lastPingOn', 'siteId', 'deviceTypeId')
@@ -293,9 +385,43 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
   return { total, data, length }
 }
 
+async function joinModuleAvailability(dataConstraints) {
+  const [issueTypeModuleDisabledId] = await knex('IssueType').where({ name: 'Module Disabled' }).pluck('id')
+  const [issueStatusActiveId] = await knex('IssueStatus').where({ name: 'Active' }).pluck('id')
+
+  const lastResults = getResultBaseQuery(knex, dataConstraints)
+    .modify(modifiers.join.lastResultPerModuleBay, knex)
+    .select(['r.deviceId', 'r.moduleSerial as moduleSerial'])
+    .whereRaw('r.moduleName is not null')
+
+  const moduleAvailabilityQuery = knex
+    .from(lastResults.as('lastResult'))
+    .leftJoin('Issue as issueModuleDisabled', function () {
+      this.on('issueModuleDisabled.deviceId', 'lastResult.deviceId')
+        .andOn('lastResult.moduleSerial', knex.raw('issueModuleDisabled.data ->> "$.moduleSerial"'))
+        .andOn('issueModuleDisabled.issueTypeId', issueTypeModuleDisabledId)
+        .andOn('issueModuleDisabled.issueStatusId', issueStatusActiveId)
+    })
+    .select([
+      'lastResult.deviceId',
+      knex.raw('sum(case when issueModuleDisabled.id is null then 1 else 0 end) as enabled'),
+      knex.raw('sum(case when issueModuleDisabled.id is null then 0 else 1 end) as disabled'),
+    ])
+    .groupBy('lastResult.deviceId')
+
+  return queryBuilder => {
+    queryBuilder.leftJoin(moduleAvailabilityQuery.as('moduleAvailability'), function () {
+      this.on('moduleAvailability.deviceId', 'd.id')
+    })
+  }
+}
+
 module.exports = {
   getDeviceWorkload,
   getResultCategoriesByAssay,
+  getDeviceBaseQuery,
+  getDeviceBaseExtendedQuery,
+  getBasicsForDevicesReport,
   getSourceDevices,
   getTargetDevice,
   mergeIssuesFromDuplicatedResults,
@@ -320,4 +446,5 @@ module.exports = {
   deleteDeviceSiteHistory,
   deleteDevice,
   getNotDecommissionedDevices,
+  joinModuleAvailability,
 }
