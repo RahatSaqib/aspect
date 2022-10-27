@@ -159,7 +159,7 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
     <LoggedInLayout>
       <RoutesPermissionProvider>
         <Routes>
-          <Route path="/" element={getElement(props, null, renderRedirectToDashboard)} />
+          <Route path="/login" element={getElement(props, null, renderRedirectToDashboard)} />
           <Route
             path="/dashboard"
             element={<RenderTo render={renderLoadableStatus} props={props} permissions={['dashboard:summary']} />}
