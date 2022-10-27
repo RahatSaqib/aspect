@@ -35,10 +35,7 @@ const modifiers = {
     lastResultPerModuleBay: (queryBuilder, knex, mainResultAlias = 'r') => {
       queryBuilder.join(
         knex('Result as ____lastResultPerModuleBay')
-          .groupBy(
-            '____lastResultPerModuleBay.deviceId',
-            knex.raw('____lastResultPerModuleBay.resultData ->> "$.moduleName"')
-          )
+          .groupBy('____lastResultPerModuleBay.deviceId', '____lastResultPerModuleBay.moduleName')
           .select('____lastResultPerModuleBay.deviceId')
           .max('____lastResultPerModuleBay.id as id')
           .as('____rmax'),

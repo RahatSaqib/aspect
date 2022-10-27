@@ -389,13 +389,8 @@ async function joinModuleAvailability(dataConstraints) {
 
   const lastResults = getResultBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.lastResultPerModuleBay, knex)
-    .select([
-      'r.deviceId',
-      knex.raw('r.resultData ->> "$.moduleName" as moduleName'),
-      'r.createdOn as resultDate',
-      'r.moduleSerial as moduleSerial',
-    ])
-    .whereRaw('r.resultData ->> "$.moduleName" is not null')
+    .select(['r.deviceId', 'r.moduleSerial as moduleSerial'])
+    .whereRaw('r.moduleName is not null')
 
   const moduleAvailabilityQuery = knex
     .from(lastResults.as('lastResult'))
