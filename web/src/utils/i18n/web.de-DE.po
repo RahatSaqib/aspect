@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-11T19:12:20.750Z\n"
+"POT-Creation-Date: 2022-10-27T16:20:31.030Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
@@ -385,6 +385,20 @@ msgstr "Aktuelle Fälle"
 msgid "Active status can't be edited"
 msgstr "Der aktive Status kann nicht bearbeitet werden"
 
+#. [pages.displayResultSelectField.Actual]
+#. defaultMessage is:
+#. Actual
+#: extracted_strings.json
+msgid "Actual"
+msgstr "Aktuell"
+
+#. [filter.btnGroup.displayActualResults]
+#. defaultMessage is:
+#. Actual Results
+#: extracted_strings.json
+msgid "Actual Results"
+msgstr "Erzielte Ergebnisse"
+
 #. [pages.NotificationDetail.actionAdd]
 #. defaultMessage is:
 #. Add
@@ -572,6 +586,9 @@ msgstr "Alle"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Alle HIV-Ergebnisse, bei denen das Virus nicht unterdrückt ist"
 
+#. [filter.btnGroup.displayAllResults]
+#. defaultMessage is:
+#. All Results
 #. [pages.ReportIndex.all_results]
 #. defaultMessage is:
 #. All Results
@@ -1742,6 +1759,9 @@ msgstr "Status des Anschlusses ist {connectorStatus}"
 msgid "Connector Version"
 msgstr "Stecker Version"
 
+#. [consumable.consumable]
+#. defaultMessage is:
+#. Consumable
 #. [filter.popover.consumable]
 #. defaultMessage is:
 #. Consumable
@@ -2644,6 +2664,9 @@ msgstr "Gerätehersteller"
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
 #. Device Name
+#. [pages.workload.name]
+#. defaultMessage is:
+#. Device Name
 #: extracted_strings.json
 msgid "Device Name"
 msgstr "Name des Geräts"
@@ -2829,6 +2852,13 @@ msgstr "Diskordant"
 #: extracted_strings.json
 msgid "Disease"
 msgstr "Krankheit"
+
+#. [filter.popover.displayResult]
+#. defaultMessage is:
+#. Display Result
+#: extracted_strings.json
+msgid "Display Result"
+msgstr "Ergebnis anzeigen"
 
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
@@ -3477,6 +3507,20 @@ msgstr "Jeder Wochentag"
 msgid "Excel"
 msgstr "Excel"
 
+#. [pages.displayResultSelectField.Excluded]
+#. defaultMessage is:
+#. Excluded
+#: extracted_strings.json
+msgid "Excluded"
+msgstr "Ausgeschlossen"
+
+#. [filter.btnGroup.displayExcludedResults]
+#. defaultMessage is:
+#. Excluded Results
+#: extracted_strings.json
+msgid "Excluded Results"
+msgstr "Ausgeschlossene Ergebnisse"
+
 #. [components.shared.execute]
 #. defaultMessage is:
 #. Execute
@@ -3785,6 +3829,13 @@ msgstr "Erste Freigabe durch"
 #: extracted_strings.json
 msgid "First Approved On"
 msgstr "Erste Freigabe am"
+
+#. [pages.workload.firstResultEndedOn]
+#. defaultMessage is:
+#. First Result
+#: extracted_strings.json
+msgid "First Result"
+msgstr "Erstes Ergebnis"
 
 #. [pages.DeviceDetailEdit.firstApproved]
 #. defaultMessage is:
@@ -4981,6 +5032,20 @@ msgstr "Letzter Monat"
 #: extracted_strings.json
 msgid "Last Month ({minDate} - {maxDate})"
 msgstr "Im vergangenen Monat ({minDate} - {maxDate})"
+
+#. [pages.workload.lastPingOn]
+#. defaultMessage is:
+#. Last Ping
+#: extracted_strings.json
+msgid "Last Ping"
+msgstr "Letzter Ping"
+
+#. [pages.workload.lastResultEndedOn]
+#. defaultMessage is:
+#. Last Result
+#: extracted_strings.json
+msgid "Last Result"
+msgstr "Letztes Ergebnis"
 
 #. [pages.DeviceList.lastResultConductedOn]
 #. defaultMessage is:
@@ -6945,6 +7010,13 @@ msgstr ""
 msgid "Performance"
 msgstr "Leistung"
 
+#. [pages.common.period]
+#. defaultMessage is:
+#. Period
+#: extracted_strings.json
+msgid "Period"
+msgstr "Zeitraum"
+
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
 #. Person Detail
@@ -8328,6 +8400,13 @@ msgstr "Speichern der Kontaktdetails fehlgeschlagen"
 msgid "Saving Login Details Failed"
 msgstr "Speichern der Anmeldedaten fehlgeschlagen"
 
+#. [errorResponseMessages.updateSite.PUT.default.title]
+#. defaultMessage is:
+#. Saving Site Failed
+#: extracted_strings.json
+msgid "Saving Site Failed"
+msgstr "Speichern der Seite fehlgeschlagen"
+
 #. [errorResponseMessages.saveUserPreferences.PUT.default.title]
 #. defaultMessage is:
 #. Saving User Preferences Failed
@@ -8682,6 +8761,13 @@ msgstr "Wartungsstatus auswählen..."
 msgid "Select partner..."
 msgstr "Partner auswählen..."
 
+#. [filter.popover.selectDisplayResult]
+#. defaultMessage is:
+#. Select result scope...
+#: extracted_strings.json
+msgid "Select result scope..."
+msgstr "Ergebnisbereich auswählen..."
+
 #. [filter.popover.selectResult]
 #. defaultMessage is:
 #. Select result...
@@ -8911,6 +8997,13 @@ msgstr "Einstellung Wartungsstatus fehlgeschlagen"
 #: extracted_strings.json
 msgid "Short Name"
 msgstr "Kurzer Name"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteShortNameRepeated]
+#. defaultMessage is:
+#. Short name is already in use
+#: extracted_strings.json
+msgid "Short name is already in use"
+msgstr "Kurzname ist bereits in Gebrauch"
 
 #. [pages.RouterDetail.fieldShortName]
 #. defaultMessage is:
@@ -9230,6 +9323,13 @@ msgstr "Standort-ID"
 msgid "Site Id"
 msgstr "Standort-ID"
 
+#. [errorResponseMessages.updateSite.PUT.409.siteIdRepeated]
+#. defaultMessage is:
+#. Site Id is already in use
+#: extracted_strings.json
+msgid "Site Id is already in use"
+msgstr "Site Id ist bereits in Gebrauch"
+
 #. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
@@ -9270,6 +9370,13 @@ msgstr "Standortkontakt"
 #: extracted_strings.json
 msgid "Site is required"
 msgstr "Standort ist erforderlich"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
+#. defaultMessage is:
+#. Site name is already in use
+#: extracted_strings.json
+msgid "Site name is already in use"
+msgstr "Der Name der Website ist bereits in Gebrauch"
 
 #. [browsePage.browseDropdown.sites]
 #. defaultMessage is:
@@ -9404,11 +9511,21 @@ msgstr "Bundesland/Region"
 #. [pages.TaskDetail.status]
 #. defaultMessage is:
 #. Status
+#. [pages.workload.deviceStatus]
+#. defaultMessage is:
+#. Status
 #. [pages.Notification.status]
 #. defaultMessage is:
 #. Status
 #: extracted_strings.json
 msgid "Status"
+msgstr "Status"
+
+#. [pages.DeviceDashboard.statusesTabTitle]
+#. defaultMessage is:
+#. Statuses
+#: extracted_strings.json
+msgid "Statuses"
 msgstr "Status"
 
 #. [component.Widget.stockNotRecordedTitle]
@@ -9505,10 +9622,10 @@ msgstr "Sonntag"
 msgid "Supplies"
 msgstr "Exportieren von Lieferungen fehlgeschlagen"
 
-#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
+#. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
-#. [pages.Status.inventoryGraphStatus.title]
+#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
 #. defaultMessage is:
 #. Supply in Stock
 #: extracted_strings.json
@@ -9748,10 +9865,10 @@ msgstr "Testverlauf"
 msgid "Testing Trends In Year"
 msgstr "Testtrends im Jahr"
 
-#. [component.Widget.dashboardWidgetUnitTests]
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
 #. defaultMessage is:
 #. Tests
-#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
+#. [component.Widget.dashboardWidgetUnitTests]
 #. defaultMessage is:
 #. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
@@ -10717,6 +10834,9 @@ msgstr "Ergebnisse insgesamt"
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [pages.InventoryLog.totalTests]
+#. defaultMessage is:
+#. Total Tests
 #: extracted_strings.json
 msgid "Total Tests"
 msgstr "Tests insgesamt"
@@ -10984,13 +11104,13 @@ msgstr "Passwort kann nicht zurückgesetzt werden"
 msgid "Ungroup Column"
 msgstr "Auflösen der Gruppenspalte"
 
+#. [filter.AssayTypeSelectField.assayTypeUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [legends.Unknown.resultCategoryUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceStatusSelectField.unknown]
@@ -11375,6 +11495,16 @@ msgstr "Innerhalb von 2 Stunden nach dem Test"
 #: extracted_strings.json
 msgid "Workflow Status"
 msgstr "Workflow-Status"
+
+#. [pages.DeviceDashboard.workloadTabTitle]
+#. defaultMessage is:
+#. Workload
+#. [pages.workload.workloadTitle]
+#. defaultMessage is:
+#. Workload
+#: extracted_strings.json
+msgid "Workload"
+msgstr "Arbeitsbelastung"
 
 #. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
 #. defaultMessage is:
@@ -11764,6 +11894,13 @@ msgstr "Gerätename enthält \"{deviceName}\""
 #: extracted_strings.json
 msgid "deviceId is in ({joinedIds})"
 msgstr "Geräte ID ist in ({joinedIds})"
+
+#. [filter.btnGroup.withDisplayResult]
+#. defaultMessage is:
+#. display "{displayResult}"
+#: extracted_strings.json
+msgid "display \"{displayResult}\""
+msgstr "anzeige \"{displayResult}\""
 
 #. [filter.btnGroup.errorCode]
 #. defaultMessage is:

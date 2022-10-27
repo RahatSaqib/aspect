@@ -285,4 +285,140 @@ export default defineMessages({
     id: 'resultCategoryGroup.gxMtbXdrMtbNoResult',
     defaultMessage: 'MTB No Result',
   },
+  AssayAbbottM2000DaanNCOVID19resultCategoryError: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryError',
+    defaultMessage: 'COVID-19 Region N Error',
+  },
+  abbottM2000PlasmaHivVLresultCategoryDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV not Detected',
+  },
+  abbottM2000PlasmaHivVLresultCategoryIndeterminate: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLIndeterminate',
+    defaultMessage: 'HIV Indeterminate',
+  },
+  abbottM2000PlasmaHivVLresultCategoryInvalid: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLInvalid',
+    defaultMessage: 'HIV Invalid',
+  },
+  abbottM2000PlasmaHivVLresultCategoryError: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLError',
+    defaultMessage: 'HIV Error',
+  },
+  abbottM2000PlasmaHivVLresultCategoryLessThan150: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLLessThan150',
+    defaultMessage: 'HIV < 150 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryLessThan40: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLLessThan40',
+    defaultMessage: 'HIV < 40 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryMoreThan40: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV >= 40 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryMoreThan150: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLMoreThan150',
+    defaultMessage: 'HIV >= 150 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryLessThan550: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLLessThan550',
+    defaultMessage: 'HIV < 550 cp/mL',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryDetected',
+    defaultMessage: 'HBV Detected',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryNotDetected',
+    defaultMessage: 'HBV Not Detected',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryIndeterminate: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryIndeterminate',
+    defaultMessage: 'HBV Indeterminate',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryError: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryError',
+    defaultMessage: 'HBV Error',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryInvalid: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryInvalid',
+    defaultMessage: 'HBV Invalid',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryLessThan40: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryLessThan40',
+    defaultMessage: 'HBV < 40 cp/mL',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryMoreThan40: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryMoreThan40',
+    defaultMessage: 'HBV >= 40 cp/mL',
+  },
+  abbottM2000DBSHivVLresultCategoryDetected: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000DBSHivVLresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryNotDetected',
+    defaultMessage: 'HIV Not Detected',
+  },
+  abbottM2000DBSHivVLresultCategoryInvalid: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryIndeterminate',
+    defaultMessage: 'HIV Invalid',
+  },
+  abbottM2000DBSHivVLresultCategoryError: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryError',
+    defaultMessage: 'HIV Error',
+  },
+  abbottM2000DBSHivVLresultCategoryLessThan150: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan150',
+    defaultMessage: 'HIV < 150 cp/mL',
+  },
+  abbottM2000DBSHivVLresultCategoryMoreThan150: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan150',
+    defaultMessage: 'HIV >= 150 cp/mL',
+  },
+  abbottM2000DBSHivVLresultCategoryLessThan550: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan550',
+    defaultMessage: 'HIV < 550 cp/mL',
+  },
+  abbottM2000DBSHivVLresultCategoryMoreThan550: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan550',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLresultCategoryDetected: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLresultCategoryDetected: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLresultCategoryDetected: {
+    id: 'resultCategoryGroup.abboresultCategoryttM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
 })

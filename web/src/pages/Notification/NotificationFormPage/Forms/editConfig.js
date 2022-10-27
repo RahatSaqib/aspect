@@ -284,6 +284,11 @@ const resultBasedSection = formatMessage => {
                   if (ok === true) {
                     const selectedAssay = data.find(({ externalId }) => externalId === selectedAssayId)
                     const { resultCategories = [], resultCategoryGroups } = selectedAssay || {}
+                    console.log(
+                      '🚀 ~ file: editConfig.js ~ line 287 ~ resultBasedSection ~ resultCategories = [], resultCategoryGroups',
+                      resultCategories,
+                      resultCategoryGroups
+                    )
                     const scope =
                       isArray(resultCategoryGroups) && !isEmpty(resultCategoryGroups)
                         ? 'ResultCategoryGroups'

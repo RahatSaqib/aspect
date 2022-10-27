@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-11T19:12:20.750Z\n"
+"POT-Creation-Date: 2022-10-27T16:20:31.030Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
@@ -385,6 +385,20 @@ msgstr "Активні випадки"
 msgid "Active status can't be edited"
 msgstr "Активний статус не можна редагувати"
 
+#. [pages.displayResultSelectField.Actual]
+#. defaultMessage is:
+#. Actual
+#: extracted_strings.json
+msgid "Actual"
+msgstr "Фактичний"
+
+#. [filter.btnGroup.displayActualResults]
+#. defaultMessage is:
+#. Actual Results
+#: extracted_strings.json
+msgid "Actual Results"
+msgstr "Фактичні результати"
+
 #. [pages.NotificationDetail.actionAdd]
 #. defaultMessage is:
 #. Add
@@ -574,6 +588,9 @@ msgstr "Усі"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Усі результати ВІЛ виникають там, де вірус не пригнічується"
 
+#. [filter.btnGroup.displayAllResults]
+#. defaultMessage is:
+#. All Results
 #. [pages.ReportIndex.all_results]
 #. defaultMessage is:
 #. All Results
@@ -1735,6 +1752,9 @@ msgstr "Статус конектора: {connectorStatus}"
 msgid "Connector Version"
 msgstr "Версія конектора"
 
+#. [consumable.consumable]
+#. defaultMessage is:
+#. Consumable
 #. [filter.popover.consumable]
 #. defaultMessage is:
 #. Consumable
@@ -2636,6 +2656,9 @@ msgstr "Device Maker"
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
 #. Device Name
+#. [pages.workload.name]
+#. defaultMessage is:
+#. Device Name
 #: extracted_strings.json
 msgid "Device Name"
 msgstr "Ім'я пристрою"
@@ -2821,6 +2844,13 @@ msgstr "Суперечливий"
 #: extracted_strings.json
 msgid "Disease"
 msgstr "Захворювання"
+
+#. [filter.popover.displayResult]
+#. defaultMessage is:
+#. Display Result
+#: extracted_strings.json
+msgid "Display Result"
+msgstr "Відображення результату"
 
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
@@ -3468,6 +3498,20 @@ msgstr "Кожен день тижня"
 msgid "Excel"
 msgstr "Excel"
 
+#. [pages.displayResultSelectField.Excluded]
+#. defaultMessage is:
+#. Excluded
+#: extracted_strings.json
+msgid "Excluded"
+msgstr "Виключено"
+
+#. [filter.btnGroup.displayExcludedResults]
+#. defaultMessage is:
+#. Excluded Results
+#: extracted_strings.json
+msgid "Excluded Results"
+msgstr "Виключені результати"
+
 #. [components.shared.execute]
 #. defaultMessage is:
 #. Execute
@@ -3775,6 +3819,13 @@ msgstr "Вперше затвердив"
 #: extracted_strings.json
 msgid "First Approved On"
 msgstr "Вперше затверджений"
+
+#. [pages.workload.firstResultEndedOn]
+#. defaultMessage is:
+#. First Result
+#: extracted_strings.json
+msgid "First Result"
+msgstr "Перший результат"
 
 #. [pages.DeviceDetailEdit.firstApproved]
 #. defaultMessage is:
@@ -4970,6 +5021,20 @@ msgstr "Останній місяць"
 #: extracted_strings.json
 msgid "Last Month ({minDate} - {maxDate})"
 msgstr "Останній місяць ({minDate} - {maxDate})"
+
+#. [pages.workload.lastPingOn]
+#. defaultMessage is:
+#. Last Ping
+#: extracted_strings.json
+msgid "Last Ping"
+msgstr "Останній пінг"
+
+#. [pages.workload.lastResultEndedOn]
+#. defaultMessage is:
+#. Last Result
+#: extracted_strings.json
+msgid "Last Result"
+msgstr "Останній результат"
 
 #. [pages.DeviceList.lastResultConductedOn]
 #. defaultMessage is:
@@ -6934,6 +6999,13 @@ msgstr ""
 msgid "Performance"
 msgstr "Продуктивність"
 
+#. [pages.common.period]
+#. defaultMessage is:
+#. Period
+#: extracted_strings.json
+msgid "Period"
+msgstr "Період"
+
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
 #. Person Detail
@@ -8308,6 +8380,13 @@ msgstr "Не вдалося зберегти контактні дані"
 msgid "Saving Login Details Failed"
 msgstr "Не вдалося зберегти дані для входу"
 
+#. [errorResponseMessages.updateSite.PUT.default.title]
+#. defaultMessage is:
+#. Saving Site Failed
+#: extracted_strings.json
+msgid "Saving Site Failed"
+msgstr "Врятувати сайт не вдалося"
+
 #. [errorResponseMessages.saveUserPreferences.PUT.default.title]
 #. defaultMessage is:
 #. Saving User Preferences Failed
@@ -8661,6 +8740,13 @@ msgstr "Виберіть стан технічного обслуговуван�
 msgid "Select partner..."
 msgstr "Виберіть партнера ..."
 
+#. [filter.popover.selectDisplayResult]
+#. defaultMessage is:
+#. Select result scope...
+#: extracted_strings.json
+msgid "Select result scope..."
+msgstr "Виберіть область результатів..."
+
 #. [filter.popover.selectResult]
 #. defaultMessage is:
 #. Select result...
@@ -8890,6 +8976,13 @@ msgstr "Помилка встановлення стану обслуговув�
 #: extracted_strings.json
 msgid "Short Name"
 msgstr "Коротке ім'я"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteShortNameRepeated]
+#. defaultMessage is:
+#. Short name is already in use
+#: extracted_strings.json
+msgid "Short name is already in use"
+msgstr "Скорочена назва вже використовується"
 
 #. [pages.RouterDetail.fieldShortName]
 #. defaultMessage is:
@@ -9208,6 +9301,13 @@ msgstr "Ідентифікатор сайту"
 msgid "Site Id"
 msgstr "Ідентифікатор сайту"
 
+#. [errorResponseMessages.updateSite.PUT.409.siteIdRepeated]
+#. defaultMessage is:
+#. Site Id is already in use
+#: extracted_strings.json
+msgid "Site Id is already in use"
+msgstr "Ідентифікатор сайту вже використовується"
+
 #. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
@@ -9248,6 +9348,13 @@ msgstr "Контакт сайту"
 #: extracted_strings.json
 msgid "Site is required"
 msgstr "Потрібний сайт"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
+#. defaultMessage is:
+#. Site name is already in use
+#: extracted_strings.json
+msgid "Site name is already in use"
+msgstr "Назва сайту вже використовується"
 
 #. [browsePage.browseDropdown.sites]
 #. defaultMessage is:
@@ -9382,12 +9489,22 @@ msgstr "Штат / регіон"
 #. [pages.TaskDetail.status]
 #. defaultMessage is:
 #. Status
+#. [pages.workload.deviceStatus]
+#. defaultMessage is:
+#. Status
 #. [pages.Notification.status]
 #. defaultMessage is:
 #. Status
 #: extracted_strings.json
 msgid "Status"
 msgstr "Статус"
+
+#. [pages.DeviceDashboard.statusesTabTitle]
+#. defaultMessage is:
+#. Statuses
+#: extracted_strings.json
+msgid "Statuses"
+msgstr "Статуси"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -9483,10 +9600,10 @@ msgstr "Неділя"
 msgid "Supplies"
 msgstr "Поставки"
 
-#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
+#. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
-#. [pages.Status.inventoryGraphStatus.title]
+#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
 #. defaultMessage is:
 #. Supply in Stock
 #: extracted_strings.json
@@ -9726,10 +9843,10 @@ msgstr "Історія випробувань"
 msgid "Testing Trends In Year"
 msgstr "Тестування тенденцій року"
 
-#. [component.Widget.dashboardWidgetUnitTests]
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
 #. defaultMessage is:
 #. Tests
-#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
+#. [component.Widget.dashboardWidgetUnitTests]
 #. defaultMessage is:
 #. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
@@ -10673,6 +10790,9 @@ msgstr "Всього результатів"
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [pages.InventoryLog.totalTests]
+#. defaultMessage is:
+#. Total Tests
 #: extracted_strings.json
 msgid "Total Tests"
 msgstr "Всього тестів"
@@ -10940,13 +11060,13 @@ msgstr "Не вдається скинути пароль"
 msgid "Ungroup Column"
 msgstr "Розгрупувати стовпець"
 
+#. [filter.AssayTypeSelectField.assayTypeUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [legends.Unknown.resultCategoryUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceStatusSelectField.unknown]
@@ -11328,6 +11448,16 @@ msgstr "Протягом 2 годин після тестування"
 #: extracted_strings.json
 msgid "Workflow Status"
 msgstr "Статус робочого процесу"
+
+#. [pages.DeviceDashboard.workloadTabTitle]
+#. defaultMessage is:
+#. Workload
+#. [pages.workload.workloadTitle]
+#. defaultMessage is:
+#. Workload
+#: extracted_strings.json
+msgid "Workload"
+msgstr "Навантаження"
 
 #. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
 #. defaultMessage is:
@@ -11713,6 +11843,13 @@ msgstr "назва пристрою включає \"{deviceName}\""
 #: extracted_strings.json
 msgid "deviceId is in ({joinedIds})"
 msgstr "deviceId знаходиться в ({joinedIds})"
+
+#. [filter.btnGroup.withDisplayResult]
+#. defaultMessage is:
+#. display "{displayResult}"
+#: extracted_strings.json
+msgid "display \"{displayResult}\""
+msgstr "display \"{displayResult}\""
 
 #. [filter.btnGroup.errorCode]
 #. defaultMessage is:
