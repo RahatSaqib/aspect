@@ -52,17 +52,17 @@ class RouteCache {
         // checking path parameter match or not
         const paramRegex = /\{\w+\}/gi
         const potentialMatchingConfiguredPathWithSegments = potentialMatchingConfiguredPaths.map(path => {
-          const subPath = path.substring(1)
           return {
             path,
-            segments: subPath
+            segments: path
               .replace(/v\d+[\\/]/gi, '')
               .trim()
               .split('/')
               .map(segment => ({
                 name: segment,
                 mustMatch: !paramRegex.test(segment),
-              })),
+              }))
+              .filter(segment => !!segment),
           }
         })
         for (let i = 0; i < potentialMatchingConfiguredPathWithSegments.length; i++) {
