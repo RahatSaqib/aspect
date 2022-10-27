@@ -8,7 +8,7 @@ import styles from './AspectExportListButton.css'
 
 const cssClasses = classnames.bind(styles)
 
-const AspectExportListButtonWithProps = ({
+export const AspectExportListButtonWithProps = ({
   onExport,
   visible = false,
   downloadStarted,
