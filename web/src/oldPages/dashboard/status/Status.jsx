@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useSelector, useDispatch } from 'react-redux'
