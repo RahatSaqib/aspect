@@ -55,7 +55,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/v1/result/{resultId}',
+    path: '/v1/results/{resultId}',
     handler: downloadResultById,
     config: {
       description: 'Result Sync',
