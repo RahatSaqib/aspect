@@ -128,6 +128,7 @@ const sanitizerByConfigKey = {
   lotNumber: defaultSanitizer,
   contactStatus: defaultSanitizer,
   displayResult: defaultSanitizer,
+  onlyTransfers: defaultSanitizer,
 }
 
 export const setFiltersForLast30Days = searchParams => {
