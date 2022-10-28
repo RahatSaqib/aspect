@@ -19,7 +19,7 @@ import { AuthProvider } from './providers/AuthProvider'
 import { I18nProvider } from './providers/I18nProvider'
 import { refreshStart } from './store/AuthRedux'
 import { actions as idleActions } from './store/IdleRedux'
-import theme from './theme'
+import getTheme from './theme'
 import translation from './utils/i18n/translation'
 import LocalStorage from './utils/LocalStorage'
 import { getTimezoneById } from './utils/utils/timezone'
@@ -121,32 +121,34 @@ const App = ({
     formats={formatsByTimezoneId(timezoneId)}
     onError={() => {}} // to not show console.error with MISSING_TRANSLATION
   >
-    <I18nProvider>
-      <RefreshToken refreshStart={refreshStart} />
-      <IdleDetection isLoggedOut={isLoggedOut} idleStart={idleStart} idleStop={idleStop} />
-      <LocalStorage
-        access={access}
-        refresh={refresh}
-        clientId={clientId}
-        culture={culture}
-        timezoneId={timezoneId}
-        displayPreferences={displayPreferences}
-        drawerOpen={drawerOpen}
-      />
-      <QueryClientProvider client={new QueryClient()}>
-        {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
-        <Router history={history}>
-          <Pages
-            countryId={countryId}
-            countryAbbreviation={countryAbbreviation}
-            hasToAcceptLicenseId={hasToAcceptLicenseId}
-            isLoggedOut={isLoggedOut}
-            loggedOutReason={loggedOutReason}
-            permissions={permissions}
-          />
-        </Router>
-      </QueryClientProvider>
-    </I18nProvider>
+    <ThemeProvider theme={getTheme(culture)}>
+      <I18nProvider>
+        <RefreshToken refreshStart={refreshStart} />
+        <IdleDetection isLoggedOut={isLoggedOut} idleStart={idleStart} idleStop={idleStop} />
+        <LocalStorage
+          access={access}
+          refresh={refresh}
+          clientId={clientId}
+          culture={culture}
+          timezoneId={timezoneId}
+          displayPreferences={displayPreferences}
+          drawerOpen={drawerOpen}
+        />
+        <QueryClientProvider client={new QueryClient()}>
+          {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
+          <Router history={history}>
+            <Pages
+              countryId={countryId}
+              countryAbbreviation={countryAbbreviation}
+              hasToAcceptLicenseId={hasToAcceptLicenseId}
+              isLoggedOut={isLoggedOut}
+              loggedOutReason={loggedOutReason}
+              permissions={permissions}
+            />
+          </Router>
+        </QueryClientProvider>
+      </I18nProvider>
+    </ThemeProvider>
   </IntlProvider>
 )
 
@@ -162,9 +164,7 @@ const AppWithProviders = ({ store }) => {
     <Provider store={store}>
       <AuthProvider>
         <JssProvider jss={jss}>
-          <ThemeProvider theme={theme}>
-            <ConnectedApp />
-          </ThemeProvider>
+          <ConnectedApp />
         </JssProvider>
       </AuthProvider>
     </Provider>

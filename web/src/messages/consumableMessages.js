@@ -73,4 +73,8 @@ export default defineMessages({
     id: 'consumable.truenatUnknownTestKit',
     defaultMessage: 'Truenat Unknown Test Kit',
   },
+  consumable: {
+    id: 'consumable.consumable',
+    defaultMessage: 'Consumable',
+  },
 })
