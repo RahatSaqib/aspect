@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import Immutable from 'immutable'
-import ExportListButton from '../../../oldComponents/ExportListButton'
+import AspectExportListButton from '../../../components/AspectExportListButton'
 import { makeItems } from '../../../utils/metaReducers/items'
 import { makeTable } from '../../../utils/metaReducers/table'
 
@@ -68,7 +68,7 @@ describe('Device Api Key List module', () => {
       const element = shallow(<DeviceApiKeyList {...props} />)
 
       expect(element).toMatchSnapshot()
-      expect(element.find(ExportListButton)).toHaveLength(1)
+      expect(element.find(AspectExportListButton)).toHaveLength(1)
     })
 
     it('should shallow render with items correctly', () => {

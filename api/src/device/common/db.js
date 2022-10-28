@@ -304,12 +304,16 @@ function getResultCategoriesByAssay(assayId) {
     .leftJoin('ResultCategory as rc2', 'rcg.resultCategory2Id', 'rc2.id')
     .where('a.id', assayId)
     .select({
+      resultCategory1Label: 'a.resultCategory1Label',
+      resultCategory2Label: 'a.resultCategory2Label',
       resultCategory1LabelI18nKey: 'a.resultCategory1I18nKey',
       resultCategory2LabelI18nKey: 'a.resultCategory2I18nKey',
-      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id ORDER BY rc1.id ASC)'),
-      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey ORDER BY rc1.id ASC)'),
-      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id ORDER BY rc2.id ASC)'),
-      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey ORDER BY rc2.id ASC)'),
+      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id)'),
+      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey)'),
+      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id)'),
+      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey)'),
+      resultCategory2ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc2.name)'),
+      resultCategory1ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc1.name)'),
     })
     .first()
 }
