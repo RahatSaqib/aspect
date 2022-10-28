@@ -65,7 +65,7 @@ async function getDeviceReportData(dataConstraints, query) {
 
   return deviceQuery
     .clone()
-    .join(resultsCount.as('resultsCount'), function () {
+    .leftJoin(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
     .modify(await joinModuleAvailability(dataConstraints))
