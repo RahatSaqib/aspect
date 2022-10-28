@@ -20,9 +20,6 @@ const theme = createTheme({
       hoverOpacity: 0.2,
     },
     primary: {
-      // light: lightGreen[500],
-      // main: lightGreen[600],
-      // dark: lightGreen[700],
       light: cyan[700],
       main: customPropertiesVariables['--ming'],
       dark: cyan[900],
@@ -33,6 +30,9 @@ const theme = createTheme({
       main: orange[700],
       dark: orange[700],
       contrastText: customPropertiesVariables['--aspect-color-white'],
+    },
+    white: {
+      main: '#FFF',
     },
   },
   shape: {
@@ -354,6 +354,9 @@ const theme = createTheme({
     MuiTextField: {
       defaultProps: {
         variant: 'standard',
+      },
+      MuiInputLabel: {
+        color: 'red',
       },
     },
   },

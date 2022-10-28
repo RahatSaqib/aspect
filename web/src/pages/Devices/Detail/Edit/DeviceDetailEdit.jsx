@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Card } from '@mui/material'
+import { Button, Card, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
 import PropTypes from 'prop-types'
@@ -34,10 +34,6 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
     setEditDeviceTags([...deviceTags])
   }
 
-  const onSiteIdChange = siteId => {
-    setEditDevice({ ...editDevice, siteId })
-  }
-
   const onAddTag = tagName => {
     if (tagName.trim().length === 0) return
     if (editDeviceTags.some(deviceTag => deviceTag.title.toLowerCase() === tagName.toLowerCase())) return
@@ -63,16 +59,48 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <form onSubmit={handleSubmit}>
+            <TextField
+              fullWidth
+              id="name"
+              label={intl.formatMessage(messages.name)}
+              value={device.name}
+              onChange={e => setEditDevice({ ...editDevice, name: e.target.value })}
+            />
+            <TextField
+              fullWidth
+              id="shortName"
+              label={intl.formatMessage(messages.shortName)}
+              value={device.shortName}
+              onChange={e => setEditDevice({ ...editDevice, shortName: e.target.value })}
+            />
             <SiteSelectField
               name="siteId"
               floatingLabelText={intl.formatMessage(messages.location)}
               disabled={!editable}
               value={editDevice.siteId}
-              onSiteChange={onSiteIdChange}
+              onSiteChange={siteId => setEditDevice({ ...editDevice, siteId })}
               fullWidth
               tabIndex="0"
               aria-haspopup
             />
+            <TextField
+              fullWidth
+              id="capacity"
+              label={intl.formatMessage(messages.capacity)}
+              value={device.dailyCapacity}
+              onChange={e => setEditDevice({ ...editDevice, dailyCapacity: e.target.value })}
+            />
+            <TextField
+              fullWidth
+              id="notes"
+              label={intl.formatMessage(messages.notes)}
+              value={device.notes}
+              onChange={e => setEditDevice({ ...editDevice, notes: e.target.value })}
+              multiline
+              maxRows={6}
+              minRows={3}
+            />
+
             <FormGroup label={intl.formatMessage(messages.tags)}>
               <TagInput
                 allowCreate
@@ -85,6 +113,50 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 disabled={!editable}
               />
             </FormGroup>
+
+            <TextField
+              fullWidth
+              id="deviceType"
+              label={intl.formatMessage(messages.deviceType)}
+              value={device.deviceType.name}
+              disabled
+            />
+            <TextField
+              fullWidth
+              id="serial"
+              label={intl.formatMessage(messages.serial)}
+              value={device.serial}
+              disabled
+            />
+            <TextField
+              fullWidth
+              id="hostId"
+              label={intl.formatMessage(messages.hostId)}
+              value={device.hostId}
+              disabled
+            />
+            <TextField
+              fullWidth
+              id="lastSeen"
+              label={intl.formatMessage(messages.lastSeen)}
+              value={device.lastSeen}
+              disabled
+            />
+            <TextField
+              fullWidth
+              id="lastPingOn"
+              label={intl.formatMessage(messages.lastPingOn)}
+              value={device.lastPingOn}
+              disabled
+            />
+            <TextField
+              fullWidth
+              id="createdOn"
+              label={intl.formatMessage(messages.createdOn)}
+              value={device.createdOn}
+              disabled
+            />
+
             <div className={cssClasses('Form__Actions')}>
               <ButtonGroup isolated>
                 <AspectButton
@@ -115,3 +187,31 @@ DeviceDetailEdit.propTypes = {
 }
 
 export default DeviceDetailEdit
+// For editing the fields should be:
+//    Default Reportable site it should be a dropdown with the sites available.
+//    Device Capacity
+//    name
+//    shortName
+//    notes
+
+// For Read-Only:
+//    Device Type
+//    serial
+//    hostId
+//    lastSeenOn
+//    lastPingOn
+//    createdOn
+
+// Missing fiedls:
+// tags?
+// macAddress
+// culture
+// timezone
+// lastPingFromIp
+// putInService
+// putInServiceSource
+// updatedOn
+// updatedBy
+// customFieldsSentOn
+// connectSettingsSentOn
+// lastInstrumentSerial

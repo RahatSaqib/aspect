@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react'
-import { LinearProgress } from '@mui/material'
+import { Box, LinearProgress } from '@mui/material'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
-import { Shell, ShellHeader, ShellContent } from '../../../components/Shell'
+import DetailHeader from '../../../components/DetailHeader'
 import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
@@ -93,8 +93,8 @@ export const DeviceDetail = props => {
   }
 
   return (
-    <Shell>
-      <ShellHeader title={device ? device.name : 'Devices'}>
+    <>
+      <DetailHeader name={device ? device.name : 'Devices'}>
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/${deviceId}` },
           { label: intl.formatMessage(messages.alerts), path: `/browse/device/${deviceId}/alerts` },
@@ -116,8 +116,8 @@ export const DeviceDetail = props => {
             {label}
           </AspectButton>
         ))}
-      </ShellHeader>
-      <ShellContent>
+      </DetailHeader>
+      <Box component="main" sx={{ pt: 8 }}>
         {isLoading ? (
           <LinearProgress />
         ) : (
@@ -163,8 +163,8 @@ export const DeviceDetail = props => {
             />
           </Routes>
         )}
-      </ShellContent>
-    </Shell>
+      </Box>
+    </>
   )
 }
 
