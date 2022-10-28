@@ -24,7 +24,7 @@ const getClinicianAccessToken = async () => {
 }
 
 describe('Mobile API Result download routes v1 without api version', () => {
-  const path = '/mobile/api/result/download'
+  const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
   let results = []
@@ -265,7 +265,7 @@ describe('Mobile API Result download routes v1 without api version', () => {
 })
 
 describe('Mobile API Result download routes v1 with available custom api-version 1', () => {
-  const path = '/mobile/api/result/download'
+  const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
   let results = []
@@ -513,7 +513,7 @@ describe('Mobile API Result download routes v1 with available custom api-version
 })
 
 describe('Mobile API Result download routes v2 with available custom api-version 2', () => {
-  const path = '/mobile/api/result/download'
+  const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
   let results = []
@@ -859,7 +859,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
 })
 
 describe('Mobile API Result download routes v2 with higher version', () => {
-  const path = '/mobile/api/result/download'
+  const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
   let results = []
