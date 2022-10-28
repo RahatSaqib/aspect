@@ -20,7 +20,7 @@ async function getModuleStatusReportData(minDate, maxDate, dataConstraints, quer
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('State as state', 'state.id', 'g.stateId')
     .innerJoin('Lga as lga', 'lga.id', 'g.lgaId')
-    .modify(await joinModuleAvailability(dataConstraints))
+    .modify(await joinModuleAvailability(dataConstraints, query))
     .leftJoin(moduleReplacedIssuesForPeriod.as('mr'), function () {
       this.on('mr.deviceId', 'd.id')
     })

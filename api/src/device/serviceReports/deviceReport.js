@@ -53,6 +53,7 @@ async function getDeviceReportData(dataConstraints, query) {
       totalXpertTests: knex.raw('count(*)'),
     })
     .groupBy('r.deviceId')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
 
   const deviceInactiveDays = knex
     .from('DeviceMaintenanceStatusLog as dmsl')
@@ -65,10 +66,10 @@ async function getDeviceReportData(dataConstraints, query) {
 
   return deviceQuery
     .clone()
-    .join(resultsCount.as('resultsCount'), function () {
+    .leftJoin(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
-    .modify(await joinModuleAvailability(dataConstraints))
+    .modify(await joinModuleAvailability(dataConstraints, query))
     .leftJoin(deviceInactiveDays.as('deviceInactiveDays'), function () {
       this.on('deviceInactiveDays.deviceId', 'd.id')
     })

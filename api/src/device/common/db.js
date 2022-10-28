@@ -18,7 +18,7 @@ function getDeviceBaseExtendedQuery(
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .where(queryBuilder => {
       if (!query.deviceIds) {
         return
@@ -385,7 +385,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
   return { total, data, length }
 }
 
-async function joinModuleAvailability(dataConstraints) {
+async function joinModuleAvailability(dataConstraints, query) {
   const [issueTypeModuleDisabledId] = await knex('IssueType').where({ name: 'Module Disabled' }).pluck('id')
   const [issueStatusActiveId] = await knex('IssueStatus').where({ name: 'Active' }).pluck('id')
 
@@ -393,6 +393,7 @@ async function joinModuleAvailability(dataConstraints) {
     .modify(modifiers.join.lastResultPerModuleBay, knex)
     .select(['r.deviceId', 'r.moduleSerial as moduleSerial'])
     .whereRaw('r.moduleName is not null')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
 
   const moduleAvailabilityQuery = knex
     .from(lastResults.as('lastResult'))
