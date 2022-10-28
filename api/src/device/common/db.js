@@ -18,7 +18,7 @@ function getDeviceBaseExtendedQuery(
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'g.stateId', 'lg.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .where(queryBuilder => {
       if (!query.deviceIds) {
         return
