@@ -408,6 +408,7 @@ const routes = [
           configurationData: Joi.object().description(
             'Device configuration data.  The valid keys are dependent on Device Type.'
           ),
+          deviceCapacityId: Joi.number(),
         },
       },
     },

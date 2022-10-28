@@ -498,6 +498,7 @@ async function updateDevice(request) {
       siteId: payload.siteId || device.siteId,
       deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
+      deviceCapacityId: payload.deviceCapacityId,
     })
 
   if (updatedCount !== 1) {
