@@ -1,4 +1,4 @@
-const { addDays, subDays, startOfMonth, endOfMonth, parseISO } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { inventoryStockout, inventoryStockExpiring } = require('../inventory/actions')
@@ -19,6 +19,7 @@ const {
 } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const { startOfDayUtc } = require('../shared/date')
+const { refreshFactResultsDeviceByTimeFrame } = require('./utils')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const daysToCalculateCountOfDeliveredResults = [30, 60]
@@ -392,65 +393,16 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         }
       })
     })
-    await Promise.each(timeFramesToCalculate, async timeFrame => {
-      // ...grouped by assay, resultCategory 1 & 2
-      const countsByCategories = await query
-        .clone()
-        .whereNotNull('r.assayId')
-        .whereNotNull('r.resultCategory1')
-        .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
-        .count('r.id as resultCount')
-        .modify(qb => {
-          if (resultEndedOn) {
-            // TODO: we'll have to account for different timeframes here if we ever want to calculate more than just month
-            qb.whereBetween('r.endedOn', [startOfMonth(parseISO(resultEndedOn)), endOfMonth(parseISO(resultEndedOn))])
-          }
-        })
-        .select(
-          'r.assayId',
-          'r.resultCategory1',
-          'r.resultCategory2',
-          knex.raw('DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame')
-        )
-      // if we didn't get an endedOn, generate all time frames since first result from device
-      await Promise.each(countsByCategories, async count => {
-        const factResultsDeviceByCategory1And2 = await knex('FactResultsDeviceByTimeFrame')
-          .where({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            resultCategory2: count.resultCategory2,
-            timeFrame,
-            startedOn: count.startedOnTimeFrame,
-          })
-          .first()
-        if (factResultsDeviceByCategory1And2) {
-          await knex('FactResultsDeviceByTimeFrame')
-            .where({
-              deviceId,
-              assayId: count.assayId,
-              resultCategory1: count.resultCategory1,
-              resultCategory2: count.resultCategory2,
-              timeFrame,
-              startedOn: count.startedOnTimeFrame,
-            })
-            .update({
-              resultCount: count.resultCount,
-              calculatedOn: now,
-            })
-        } else {
-          await knex('FactResultsDeviceByTimeFrame').insert({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            resultCategory2: count.resultCategory2,
-            timeFrame,
-            resultCount: count.resultCount,
-            calculatedOn: now,
-            startedOn: count.startedOnTimeFrame,
-          })
-        }
-      })
+
+    //
+    await refreshFactResultsDeviceByTimeFrame({
+      deviceId,
+      knex,
+      messageContext,
+      now,
+      query,
+      resultEndedOn,
+      timeFramesToCalculate,
     })
 
     // delete orphan data (=not updated in the loop)
