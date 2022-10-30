@@ -54,6 +54,14 @@ const enhance = compose(
       ({ setIsShown }) =>
       () =>
         setIsShown(isShown => !isShown),
+    onSingleAssayChange:
+      ({ onChangeFilters }) =>
+      singleAssayId =>
+        onChangeFilters({
+          singleAssayId,
+          resultCategoryId: null,
+          resultCategoryGroupId: null,
+        }),
     onAssayChange:
       ({ onChangeFilters }) =>
       assayId =>
@@ -287,6 +295,7 @@ export const FiltersPanel = ({
   onStateIdChange,
   onLgaIdChange,
   onAssayChange,
+  onSingleAssayChange,
   onDiseaseChange,
   onResultCategoryChange,
   onConsumableIdChange,
@@ -473,6 +482,21 @@ export const FiltersPanel = ({
                   hintText={formatMessage(messages.selectDisease)}
                   floatingLabelText={formatMessage(messages.disease)}
                   style={{ verticalAlign: 'bottom' }}
+                />
+              </div>
+            )}
+
+            {config.singleAssayId && !config.onlyDisease && (
+              <div className={cssClasses('Control')}>
+                <AssaySelectField
+                  value={filters.singleAssayId}
+                  onAssayChange={onSingleAssayChange}
+                  diseaseId={filters.diseaseId}
+                  floatingLabelFixed
+                  hintText={formatMessage(messages.selectAssay)}
+                  floatingLabelText={formatMessage(messages.assay)}
+                  style={{ verticalAlign: 'bottom' }}
+                  multiple={false}
                 />
               </div>
             )}
@@ -1008,6 +1032,19 @@ export const FiltersPanel = ({
                 />
               </div>
             )}
+            {/* //TODO: not working, used only to load diseases and make HIV graph work */}
+            <div className={cssClasses('Control')}>
+              <DiseaseSelectField
+                allItemText={formatMessage(messages.all)}
+                onChange={onToggleEnabledDisabled}
+                name="diseaseId"
+                value={filters.diseaseId || ''}
+                floatingLabelFixed
+                hintText={formatMessage(messages.diseaseHint)}
+                floatingLabelText={formatMessage(messages.disease)}
+                style={{ display: 'none' }}
+              />
+            </div>
           </ErrorBoundary>
         </FallbackUntilDone>
       </div>

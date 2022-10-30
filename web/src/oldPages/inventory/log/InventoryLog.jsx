@@ -181,9 +181,7 @@ export const InventoryLogWithProps = ({
 const InventoryLog = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
   const intl = useI18n()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
   const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState({})

@@ -3,6 +3,10 @@ import { defineMessages } from 'react-intl'
 import { i18nWrapper } from '../providers/I18nProvider'
 
 export const commonDefinitions = defineMessages({
+  period: {
+    id: 'pages.common.period',
+    defaultMessage: 'Period',
+  },
   selectPlaceholder: {
     id: 'pages.common.selectPlaceholder',
     defaultMessage: 'Select {entity}...',

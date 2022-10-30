@@ -50,6 +50,7 @@ async function sendSmsTwilio(cellNumber, message, twilioConf) {
     })
   } catch (e) {
     logger.error(e)
+    throw e
   }
   return clientCreated
 }

@@ -183,9 +183,7 @@ export const ReporterListWithProps = ({
 const ReporterList = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const queryClient = useQueryClient()
 
   const [items, setItems] = useState(new Items())
