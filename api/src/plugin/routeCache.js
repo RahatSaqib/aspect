@@ -40,18 +40,13 @@ class RouteCache {
         // check segment length if its matching or not
         const requestedPathSegments = requestedPath.split('/').filter(segment => segment !== '')
         const potentialMatchingConfiguredPaths = routesList.filter(path => {
-          return {
-            path,
-            segments: path
+          return (
+            path
               .replace(/v\d+[\\/]/gi, '')
               .trim()
               .split('/')
-              .map(segment => ({
-                name: segment,
-                mustMatch: !paramRegex.test(segment),
-              }))
-              .filter(segment => !!segment),
-          }
+              .filter(segment => !!segment).length === requestedPathSegments.length
+          )
         })
 
         // checking path parameter match or not
