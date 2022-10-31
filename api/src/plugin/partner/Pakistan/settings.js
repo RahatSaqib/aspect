@@ -1,8 +1,8 @@
 const settings = {
   displayPreferences: {
     dateFormat: 'dd-MM-yyyy',
-    timeFormat: 'HH:mm:ss',
-    dateTimeFormat: 'dd-MM-yyyy HH:mm:ss',
+    timeFormat: 'HH:mm',
+    dateTimeFormat: 'dd-MM-yyyy HH:mm',
     dayMonthFormat: 'dd-MM',
 
     stateLabel: 'Province/Territory',
