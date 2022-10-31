@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
-import { DEVICE_KEY, DEVICE_WORKLOAD_KEY_BY_ASSAY_ID_ENDPOINT } from './deviceKeys'
+import { DEVICE_KEY } from '../device/deviceKeys'
+import { DEVICE_WORKLOAD_KEY_BY_ASSAY_ID_ENDPOINT } from './workloadKeys'
 
 const getDeviceWorkload = async originalParams => {
   const params = { ...originalParams }

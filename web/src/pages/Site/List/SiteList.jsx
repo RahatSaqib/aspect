@@ -3,6 +3,7 @@ import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import { Helmet } from 'react-helmet'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useI18n from '../../../hooks/useI18n'
@@ -10,7 +11,6 @@ import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -97,7 +97,7 @@ export const SiteList = ({ navigate, location }) => {
 
   const onExcelClick = formatType => {
     if (!sanitized) {
-      setDownload({ fileFormat: formatType.id, enabled: true })
+      setDownload({ fileFormat: formatType, enabled: true })
     }
   }
 
@@ -128,7 +128,7 @@ export const SiteList = ({ navigate, location }) => {
           <BrowseEmptyList navigate={navigate} location={location} />
         ) : (
           <>
-            <ExportListButton onExcelClick={onExcelClick} onCsvClick={onExcelClick} reportName="Sites" visible />
+            <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
             <SiteDataTable className={cssClasses('SiteDataTable')}>
               <SiteDataTableHead
                 navigate={navigate}

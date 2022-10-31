@@ -7,6 +7,7 @@ import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useSelector, useDispatch } from 'react-redux'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import ErrorBoundary from '../../../components/ErrorBoundary/index'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
@@ -14,7 +15,6 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
@@ -269,12 +269,7 @@ export const InventoryItemsListWithProps = ({
       </DataTableCard>
       <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
         <DataTableProgressBar disabled={!isLoading} />
-        <ExportListButton
-          onExcelClick={onExcelClick}
-          onCsvClick={onExcelClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName="Supplies"
-        />
+        <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
         {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
         {!items.currentIdList.isEmpty() && (
           <InventoryDataTable className={cssClasses('InventoryDataTable')}>
@@ -388,7 +383,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
   // >>>>>> Defining callbacks <<<<<<
   const onExcelClick = useCallback(
     formatType => {
-      const format = formatType.id
+      const format = formatType
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
         exportSupplies(

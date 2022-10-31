@@ -99,6 +99,7 @@ const sanitizerByConfigKey = {
   assayAndResultCategory: makeArraySanitizer(groups.assayAndResultCategory),
   geography: makeArraySanitizer(groups.geography),
   state: defaultSanitizer,
+  connectorStatus: defaultSanitizer,
   lga: defaultSanitizer,
   date: makeArraySanitizer(groups.date),
   patientOrResearchId: defaultSanitizer,
@@ -109,6 +110,7 @@ const sanitizerByConfigKey = {
   siteName: defaultSanitizer,
   sampleOriginSite: defaultSanitizer,
   contactNameOrEmail: defaultSanitizer,
+  deviceType: defaultSanitizer,
   notificationName: defaultSanitizer,
   externalId: defaultSanitizer,
   revoked: defaultSanitizer,
@@ -128,6 +130,7 @@ const sanitizerByConfigKey = {
   lotNumber: defaultSanitizer,
   contactStatus: defaultSanitizer,
   displayResult: defaultSanitizer,
+  onlyTransfers: defaultSanitizer,
 }
 
 export const setFiltersForLast30Days = searchParams => {

@@ -17,7 +17,7 @@ import ErrorBoundary from '../../../../components/ErrorBoundary'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
-import { graphMessages } from '../../../../messages'
+import { graphMessages, consumableMessages } from '../../../../messages'
 import styles from '../styles.css'
 import DeviceStatusGraphMain from './InventoryStatusGraph.Main'
 
@@ -74,7 +74,7 @@ const ConsumableSelector = ({ onChange }) => {
   const { isLoading, data } = useQuery('data.inventoryConsumableSummaryList', async () =>
     fetchWrapperForQueries({ endpoint: '/dashboard/inventory-item' })
   )
-
+  const { formatMessage } = useI18n()
   useEffect(() => {
     if (data) {
       const opt = data.data.inventoryConsumableSummaryList.sort((a, b) =>
@@ -91,7 +91,7 @@ const ConsumableSelector = ({ onChange }) => {
     <Loading />
   ) : (
     <FormControl sx={{ width: '100%' }} variant="standard" size="small">
-      <InputLabel id="select-consumable">Consumable</InputLabel>
+      <InputLabel id="select-consumable">{formatMessage(consumableMessages.consumable)}</InputLabel>
       <Select
         labelId="select-consumable"
         value={innerValue}

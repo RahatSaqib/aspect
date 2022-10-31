@@ -1,15 +1,27 @@
 import { createTheme, lighten, alpha } from '@mui/material'
 import { cyan, grey, lightGreen, orange } from '@mui/material/colors'
+import { deDE, enUS, frFR, ptPT, ruRU, ukUA, esES, tgTJ, viVN } from '@mui/material/locale'
+import isEmpty from 'lodash/isEmpty'
 import { customPropertiesVariables } from './colors'
 
+const locale = {
+  'de-DE': deDE,
+  'en-US': enUS,
+  'fr-FR': frFR,
+  'pt-PT': ptPT,
+  'ru-RU': ruRU,
+  'uk-UA': ukUA,
+  'es-ES': esES,
+  'tg-TJ': tgTJ,
+  'vi-VN': viVN,
+}
 const themedColors = {
   text: customPropertiesVariables['--aspect-color-white'],
   primary: customPropertiesVariables['--ming'], // '--aspect-color-chill-blue-primary'
   secondary: customPropertiesVariables['--aspect-button-accent-color'],
   buttonBorderRadius: customPropertiesVariables['--aspect-button-border-radius'],
 }
-
-const theme = createTheme({
+const themeDefinition = {
   typography: {
     useNextVariants: true,
     fontWeightBold: 700,
@@ -360,6 +372,13 @@ const theme = createTheme({
       },
     },
   },
-})
+}
+const theme = createTheme(themeDefinition)
 
-export default theme
+const getTheme = culture => {
+  if (!isEmpty(culture)) {
+    return createTheme(themeDefinition, locale[culture])
+  }
+  return theme
+}
+export default getTheme

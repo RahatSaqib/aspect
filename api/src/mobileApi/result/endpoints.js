@@ -13,7 +13,7 @@ const {
 const routes = [
   {
     method: 'GET',
-    path: '/v1/result/download',
+    path: '/v1/results',
     handler: downloadResultsList,
     config: {
       description: 'Result Sync',
@@ -33,7 +33,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/v2/result/download',
+    path: '/v2/results',
     handler: downloadResultsListV2,
     config: {
       description: 'Result Sync',
