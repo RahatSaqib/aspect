@@ -1,7 +1,5 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import identity from 'lodash/identity'
-import { injectIntl } from 'react-intl'
 import useI18n from '../../../hooks/useI18n'
 import ColoredNumber from '../../../oldComponents/shared/ColoredNumber'
 import stylesShared from '../../../oldComponents/shared/DataTableRow.css'
@@ -14,8 +12,6 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 const sharedCssClasses = classnames.bind(stylesShared)
-
-const enhance = identity(injectIntl)
 
 const Rate = ({ it, messageId, threshold }) => {
   const { formatMessage } = useI18n()
@@ -103,4 +99,4 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
     </TableRow>
   )
 }
-export default enhance(DeviceTableRow)
+export default DeviceTableRow

@@ -206,4 +206,72 @@ export default defineMessages({
     id: 'filter.AssaySelectField.microscopy',
     defaultMessage: 'Microscopy',
   },
+  assayTypeCD4: {
+    id: 'filter.AssayTypeSelectField.assayTypeCD4',
+    defaultMessage: 'CD4 Count',
+  },
+  covid19: {
+    id: 'filter.AssayTypeSelectField.covid19',
+    defaultMessage: 'COVID-19 Test',
+  },
+  assayTypeDengue: {
+    id: 'filter.AssayTypeSelectField.assayTypeDengue',
+    defaultMessage: 'Dengue',
+  },
+  assayTypeEbola: {
+    id: 'filter.AssayTypeSelectField.assayTypeEbola',
+    defaultMessage: 'Ebola',
+  },
+  assayTypeEid: {
+    id: 'filter.AssayTypeSelectField.assayTypeEid',
+    defaultMessage: 'EID',
+  },
+  genericRDT: {
+    id: 'filter.AssayTypeSelectField.genericRDT',
+    defaultMessage: 'Generic RDT',
+  },
+  genoTypeTestStrip: {
+    id: 'filter.AssayTypeSelectField.genoTypeTestStrip',
+    defaultMessage: 'GenoType Test Strip',
+  },
+  assayTypeHbvVl: {
+    id: 'filter.AssayTypeSelectField.assayTypeHbvVl',
+    defaultMessage: 'HBV VL',
+  },
+  assayTypeHcv: {
+    id: 'filter.AssayTypeSelectField.assayTypeHcv',
+    defaultMessage: 'HCV',
+  },
+  assayTypeHivQual: {
+    id: 'filter.AssayTypeSelectField.assayTypeHivQual',
+    defaultMessage: 'HIV Qual',
+  },
+  assayTypeHivVl: {
+    id: 'filter.AssayTypeSelectField.assayTypeHivVl',
+    defaultMessage: 'HIV VL',
+  },
+  assayTypeLipidPanel: {
+    id: 'filter.AssayTypeSelectField.assayTypeLipidPanel',
+    defaultMessage: 'Lipid Panel',
+  },
+  assayTypeMtbRif: {
+    id: 'filter.AssayTypeSelectField.assayTypeMtbRif',
+    defaultMessage: 'MTB/Rif',
+  },
+  assayTypeTbAst: {
+    id: 'filter.AssayTypeSelectField.assayTypeTbAst',
+    defaultMessage: 'TB AST',
+  },
+  assayTypeTbGnd: {
+    id: 'filter.AssayTypeSelectField.assayTypeTbGnd',
+    defaultMessage: 'TB G&D',
+  },
+  assayTypeUnknown: {
+    id: 'filter.AssayTypeSelectField.assayTypeUnknown',
+    defaultMessage: 'Unknown',
+  },
+  assayTypeZika: {
+    id: 'filter.AssayTypeSelectField.assayTypeZika',
+    defaultMessage: 'Zika',
+  },
 })

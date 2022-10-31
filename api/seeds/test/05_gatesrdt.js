@@ -56,6 +56,7 @@ async function seed(knex) {
     deviceTypeId: deviceTypes.CommCareApp.id,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Status',
+    resultCategory1i18nKey: 'resultCategoryStatus',
     resultDataSchema: JSON.stringify({
       resultText: { list: true, order: 1, type: 'string', title: 'Result' },
       hcwResult: {

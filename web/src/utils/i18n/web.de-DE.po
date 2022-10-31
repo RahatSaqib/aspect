@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-30T17:11:05.070Z\n"
+"POT-Creation-Date: 2022-10-28T14:28:58.373Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
@@ -385,6 +385,20 @@ msgstr "Aktuelle Fälle"
 msgid "Active status can't be edited"
 msgstr "Der aktive Status kann nicht bearbeitet werden"
 
+#. [pages.displayResultSelectField.Actual]
+#. defaultMessage is:
+#. Actual
+#: extracted_strings.json
+msgid "Actual"
+msgstr "Aktuell"
+
+#. [filter.btnGroup.displayActualResults]
+#. defaultMessage is:
+#. Actual Results
+#: extracted_strings.json
+msgid "Actual Results"
+msgstr "Erzielte Ergebnisse"
+
 #. [pages.NotificationDetail.actionAdd]
 #. defaultMessage is:
 #. Add
@@ -572,6 +586,9 @@ msgstr "Alle"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Alle HIV-Ergebnisse, bei denen das Virus nicht unterdrückt ist"
 
+#. [filter.btnGroup.displayAllResults]
+#. defaultMessage is:
+#. All Results
 #. [pages.ReportIndex.all_results]
 #. defaultMessage is:
 #. All Results
@@ -1160,6 +1177,13 @@ msgstr ""
 "Stellt auf der Grundlage der letzten 30 Tage den Prozentsatz der Ergebnisse "
 "mit Fehlern im Vergleich zur Gesamtzahl der durchgeführten Ergebnisse dar"
 
+#. [filter.sampleType.sampleTypeBlood]
+#. defaultMessage is:
+#. Blood
+#: extracted_strings.json
+msgid "Blood"
+msgstr "Blut"
+
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
@@ -1219,6 +1243,13 @@ msgstr "COBAS 4800 VL"
 msgid "COVID Results"
 msgstr "COVID-Ergebnisse"
 
+#. [resultCategoryGroup.assayGXCovid19resultCategoryError]
+#. defaultMessage is:
+#. COVID-19 Error
+#: extracted_strings.json
+msgid "COVID-19 Error"
+msgstr "COVID-19 Fehler"
+
 #. [filter.AssaySelectField.assayGenericCovid19]
 #. defaultMessage is:
 #. COVID-19 Generic Test
@@ -1229,6 +1260,119 @@ msgstr "COVID-Ergebnisse"
 msgid "COVID-19 Generic Test"
 msgstr "COVID-19 Generischer Test"
 
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#: extracted_strings.json
+msgid "COVID-19 Inconclusive"
+msgstr "COVID-19 Nicht schlüssig"
+
+#. [resultCategoryGroup.assayGXCovid19resultCategoryInvalid]
+#. defaultMessage is:
+#. COVID-19 Invalid
+#: extracted_strings.json
+msgid "COVID-19 Invalid"
+msgstr "COVID-19 Ungültig"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayGXCovid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#: extracted_strings.json
+msgid "COVID-19 Negative"
+msgstr "COVID-19 Negativ"
+
+#. [resultCategoryGroup.assayGXCovid19resultCategoryNoResult]
+#. defaultMessage is:
+#. COVID-19 No Result
+#: extracted_strings.json
+msgid "COVID-19 No Result"
+msgstr "COVID-19 Kein Ergebnis"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#: extracted_strings.json
+msgid "COVID-19 Positive"
+msgstr "COVID-19 positiv"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#: extracted_strings.json
+msgid "COVID-19 Presumptive Positive"
+msgstr "COVID-19 Vermutlich positiv"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryError]
+#. defaultMessage is:
+#. COVID-19 Region N Error
+#: extracted_strings.json
+msgid "COVID-19 Region N Error"
+msgstr "COVID-19 Region N Fehler"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Region N Inconclusive
+#: extracted_strings.json
+msgid "COVID-19 Region N Inconclusive"
+msgstr "COVID-19 Region N Nicht schlüssig"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryInvalid]
+#. defaultMessage is:
+#. COVID-19 Region N Invalid
+#: extracted_strings.json
+msgid "COVID-19 Region N Invalid"
+msgstr "COVID-19 Region N Ungültig"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Region N Negative
+#: extracted_strings.json
+msgid "COVID-19 Region N Negative"
+msgstr "COVID-19 Region N Negativ"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Region N Positive
+#: extracted_strings.json
+msgid "COVID-19 Region N Positive"
+msgstr "COVID-19 Region N Positiv"
+
 #. [filter.AssayTypeSelectField.covid19]
 #. defaultMessage is:
 #. COVID-19 Test
@@ -1236,12 +1380,35 @@ msgstr "COVID-19 Generischer Test"
 msgid "COVID-19 Test"
 msgstr "COVID-19 Test"
 
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayGXCovid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#: extracted_strings.json
+msgid "COVID-19 Unknown"
+msgstr "COVID-19 Unbekannt"
+
 #. [pages.SiteDetail.buttonCreate]
 #. defaultMessage is:
 #. CREATE
 #: extracted_strings.json
 msgid "CREATE"
 msgstr "HINZUFÜGEN"
+
+#. [filter.sampleType.sampleTypeCSF]
+#. defaultMessage is:
+#. CSF
+#: extracted_strings.json
+msgid "CSF"
+msgstr "CSF"
 
 #. [pages.ListExport.exportCsv]
 #. defaultMessage is:
@@ -1728,6 +1895,9 @@ msgstr "Status des Anschlusses ist {connectorStatus}"
 msgid "Connector Version"
 msgstr "Stecker Version"
 
+#. [consumable.consumable]
+#. defaultMessage is:
+#. Consumable
 #. [filter.popover.consumable]
 #. defaultMessage is:
 #. Consumable
@@ -2144,6 +2314,13 @@ msgstr "Benutzerdefinierte Felder"
 #: extracted_strings.json
 msgid "Custom Fields Average Completion"
 msgstr "Benutzerdefinierte Felder Durchschnittliche Fertigstellung"
+
+#. [filter.sampleType.sampleTypeDBS]
+#. defaultMessage is:
+#. DBS
+#: extracted_strings.json
+msgid "DBS"
+msgstr "DBS"
 
 #. [months.december]
 #. defaultMessage is:
@@ -2623,6 +2800,9 @@ msgstr "Gerätehersteller"
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
 #. Device Name
+#. [pages.workload.name]
+#. defaultMessage is:
+#. Device Name
 #: extracted_strings.json
 msgid "Device Name"
 msgstr "Name des Geräts"
@@ -2809,6 +2989,13 @@ msgstr "Diskordant"
 msgid "Disease"
 msgstr "Krankheit"
 
+#. [filter.popover.displayResult]
+#. defaultMessage is:
+#. Display Result
+#: extracted_strings.json
+msgid "Display Result"
+msgstr "Ergebnis anzeigen"
+
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
 #. District
@@ -2854,6 +3041,13 @@ msgstr "Möchten Sie deaktivieren"
 #: extracted_strings.json
 msgid "Do you want to enable"
 msgstr "Möchten Sie Folgendes aktivieren"
+
+#. [page.contacts.person.removeAssignment]
+#. defaultMessage is:
+#. Do you want to remove below assignment?
+#: extracted_strings.json
+msgid "Do you want to remove below assignment?"
+msgstr "Möchten Sie die folgende Zuordnung aufheben?"
 
 #. [jobFunction.donor]
 #. defaultMessage is:
@@ -2972,6 +3166,13 @@ msgstr "Bearbeiten"
 #: extracted_strings.json
 msgid "Edit Notification"
 msgstr "Benachrichtigung bearbeiten"
+
+#. [filter.sampleType.sampleTypeEffusion]
+#. defaultMessage is:
+#. Effusion
+#: extracted_strings.json
+msgid "Effusion"
+msgstr "Erguss"
 
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
@@ -3442,6 +3643,20 @@ msgstr "Jeder Wochentag"
 msgid "Excel"
 msgstr "Excel"
 
+#. [pages.displayResultSelectField.Excluded]
+#. defaultMessage is:
+#. Excluded
+#: extracted_strings.json
+msgid "Excluded"
+msgstr "Ausgeschlossen"
+
+#. [filter.btnGroup.displayExcludedResults]
+#. defaultMessage is:
+#. Excluded Results
+#: extracted_strings.json
+msgid "Excluded Results"
+msgstr "Ausgeschlossene Ergebnisse"
+
 #. [components.shared.execute]
 #. defaultMessage is:
 #. Execute
@@ -3751,6 +3966,13 @@ msgstr "Erste Freigabe durch"
 msgid "First Approved On"
 msgstr "Erste Freigabe am"
 
+#. [pages.workload.firstResultEndedOn]
+#. defaultMessage is:
+#. First Result
+#: extracted_strings.json
+msgid "First Result"
+msgstr "Erstes Ergebnis"
+
 #. [pages.DeviceDetailEdit.firstApproved]
 #. defaultMessage is:
 #. First approved
@@ -3893,6 +4115,13 @@ msgstr "GP nicht erkannt - NP erkannt"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP nicht erkannt - NP nicht erkannt"
+
+#. [filter.sampleType.sampleTypeGastricLavage]
+#. defaultMessage is:
+#. Gastric Lavage
+#: extracted_strings.json
+msgid "Gastric Lavage"
+msgstr "Magenspülung"
 
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
@@ -4191,6 +4420,55 @@ msgstr "Abrufen der Reportdatei fehlgeschlagen"
 msgid "Group By Column"
 msgstr "Gruppieren nach Spalte"
 
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryLessThan40]
+#. defaultMessage is:
+#. HBV < 40 cp/mL
+#: extracted_strings.json
+msgid "HBV < 40 cp/mL"
+msgstr "HBV < 40 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryMoreThan40]
+#. defaultMessage is:
+#. HBV >= 40 cp/mL
+#: extracted_strings.json
+msgid "HBV >= 40 cp/mL"
+msgstr "HBV >= 40 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLResultCategoryDetected]
+#. defaultMessage is:
+#. HBV Detected
+#: extracted_strings.json
+msgid "HBV Detected"
+msgstr "HBV nachgewiesen"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryError]
+#. defaultMessage is:
+#. HBV Error
+#: extracted_strings.json
+msgid "HBV Error"
+msgstr "HBV-Fehler"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HBV Indeterminate
+#: extracted_strings.json
+msgid "HBV Indeterminate"
+msgstr "HBV Indeterminiert"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryInvalid]
+#. defaultMessage is:
+#. HBV Invalid
+#: extracted_strings.json
+msgid "HBV Invalid"
+msgstr "HBV Ungültig"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HBV Not Detected
+#: extracted_strings.json
+msgid "HBV Not Detected"
+msgstr "HBV nicht nachgewiesen"
+
 #. [filter.AssayTypeSelectField.assayTypeHbvVl]
 #. defaultMessage is:
 #. HBV VL
@@ -4208,12 +4486,238 @@ msgstr "HBV VL"
 msgid "HCV"
 msgstr "HCV"
 
+#. [resultCategoryGroup.assayGeneXpertHcvResultCategoryDetected]
+#. defaultMessage is:
+#. HCV Detected
+#: extracted_strings.json
+msgid "HCV Detected"
+msgstr "HCV entdeckt"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryError]
+#. defaultMessage is:
+#. HCV Error
+#: extracted_strings.json
+msgid "HCV Error"
+msgstr "HCV-Fehler"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryInvalid]
+#. defaultMessage is:
+#. HCV Invalid
+#: extracted_strings.json
+msgid "HCV Invalid"
+msgstr "HCV Ungültig"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryNoResult]
+#. defaultMessage is:
+#. HCV No Result
+#: extracted_strings.json
+msgid "HCV No Result"
+msgstr "HCV Kein Ergebnis"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryNotDetected]
+#. defaultMessage is:
+#. HCV Not Detected
+#: extracted_strings.json
+msgid "HCV Not Detected"
+msgstr "HCV nicht nachgewiesen"
+
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "HIV"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
+#. defaultMessage is:
+#. HIV < 1000 cp/mL
+#: extracted_strings.json
+msgid "HIV < 1000 cp/mL"
+msgstr "HIV < 1000 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#: extracted_strings.json
+msgid "HIV < 150 cp/mL"
+msgstr "HIV < 150 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan40]
+#. defaultMessage is:
+#. HIV < 40 cp/mL
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan40]
+#. defaultMessage is:
+#. HIV < 40 cp/mL
+#: extracted_strings.json
+msgid "HIV < 40 cp/mL"
+msgstr "HIV < 40 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#: extracted_strings.json
+msgid "HIV < 550 cp/mL"
+msgstr "HIV < 550 cp/ml"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryMoreThan1000]
+#. defaultMessage is:
+#. HIV >= 1000 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 1000 cp/mL"
+msgstr "HIV >= 1000 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 150 cp/mL"
+msgstr "HIV >= 150 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan40]
+#. defaultMessage is:
+#. HIV >= 40 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 40 cp/mL"
+msgstr "HIV >= 40 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 550 cp/mL"
+msgstr "HIV >= 550 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.AssayAbbottM2000HivEidResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1QualResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#: extracted_strings.json
+msgid "HIV Detected"
+msgstr "HIV erkannt"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#: extracted_strings.json
+msgid "HIV Error"
+msgstr "HIV-Fehler"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#: extracted_strings.json
+msgid "HIV Indeterminate"
+msgstr "HIV Unbestimmt"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#: extracted_strings.json
+msgid "HIV Invalid"
+msgstr "HIV Ungültig"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryNoResult]
+#. defaultMessage is:
+#. HIV No Result
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryNoResult]
+#. defaultMessage is:
+#. HIV No Result
+#: extracted_strings.json
+msgid "HIV No Result"
+msgstr "HIV Kein Ergebnis"
+
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#: extracted_strings.json
+msgid "HIV Not Detected"
+msgstr "HIV nicht erkannt"
 
 #. [filter.AssayTypeSelectField.assayTypeHivQual]
 #. defaultMessage is:
@@ -4228,6 +4732,13 @@ msgstr "HIV Qual"
 #: extracted_strings.json
 msgid "HIV VL"
 msgstr "HIV VL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV not Detected
+#: extracted_strings.json
+msgid "HIV not Detected"
+msgstr "HIV nicht erkannt"
 
 #. [pages.caseRow.diseaseNameHIVAIDS]
 #. defaultMessage is:
@@ -4711,6 +5222,13 @@ msgstr "Vorhandene Bestände"
 msgid "Is at least {minLength} characters long"
 msgstr "Ist mindestens {minLength} Zeichen lang"
 
+#. [filter.sampleType.sampleTypeIsolate]
+#. defaultMessage is:
+#. Isolate
+#: extracted_strings.json
+msgid "Isolate"
+msgstr "Isolieren"
+
 #. [pages.TableCell.issueBasedNotification]
 #. defaultMessage is:
 #. Issue Based
@@ -4932,6 +5450,20 @@ msgstr "Letzter Monat"
 #: extracted_strings.json
 msgid "Last Month ({minDate} - {maxDate})"
 msgstr "Im vergangenen Monat ({minDate} - {maxDate})"
+
+#. [pages.workload.lastPingOn]
+#. defaultMessage is:
+#. Last Ping
+#: extracted_strings.json
+msgid "Last Ping"
+msgstr "Letzter Ping"
+
+#. [pages.workload.lastResultEndedOn]
+#. defaultMessage is:
+#. Last Result
+#: extracted_strings.json
+msgid "Last Result"
+msgstr "Letztes Ergebnis"
 
 #. [pages.DeviceList.lastResultConductedOn]
 #. defaultMessage is:
@@ -5419,6 +5951,12 @@ msgstr "MTB"
 #. [resultCategoryGroup.gxMtbXdrMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [resultCategoryGroup.assayTruenatMtbResultCategoryDetected]
+#. defaultMessage is:
+#. MTB Detected
+#. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -5541,6 +6079,12 @@ msgstr "MTB erkannt XDR nicht erkannt"
 #. [resultCategoryGroup.gxMtbXdrMtbError]
 #. defaultMessage is:
 #. MTB Error
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryError]
+#. defaultMessage is:
+#. MTB Error
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryError]
+#. defaultMessage is:
+#. MTB Error
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -5561,6 +6105,12 @@ msgstr "MTB-Fehler"
 #. defaultMessage is:
 #. MTB Invalid
 #. [resultCategoryGroup.gxMtbXdrMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryInvalid]
 #. defaultMessage is:
 #. MTB Invalid
 #. [pages.filters.gxMtbRifMtbInvalid]
@@ -5585,6 +6135,12 @@ msgstr "MTB ungültig"
 #. [resultCategoryGroup.gxMtbXdrMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryNoResult]
+#. defaultMessage is:
+#. MTB No Result
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryNoResult]
+#. defaultMessage is:
+#. MTB No Result
 #. [pages.filters.gxMtbRifMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
@@ -5605,6 +6161,12 @@ msgstr "MTB Kein Ergebnis"
 #. defaultMessage is:
 #. MTB Not Detected
 #. [resultCategoryGroup.gxMtbXdrMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected
 #. [pages.filters.gxMtbRifMtbNotDetected]
@@ -5974,6 +6536,13 @@ msgstr "NTP"
 #: extracted_strings.json
 msgid "Name"
 msgstr "Name"
+
+#. [filter.sampleType.sampleTypeNasalSwab]
+#. defaultMessage is:
+#. Nasal Swab
+#: extracted_strings.json
+msgid "Nasal Swab"
+msgstr "Nasenabstrich"
 
 #. [pages.NotificationDetail.Area.National]
 #. defaultMessage is:
@@ -6665,6 +7234,9 @@ msgstr "Bestellt"
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
+#. [filter.sampleType.sampleTypeOther]
+#. defaultMessage is:
+#. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Andere"
@@ -6886,6 +7458,13 @@ msgstr ""
 msgid "Performance"
 msgstr "Leistung"
 
+#. [pages.common.period]
+#. defaultMessage is:
+#. Period
+#: extracted_strings.json
+msgid "Period"
+msgstr "Zeitraum"
+
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
 #. Person Detail
@@ -6899,6 +7478,13 @@ msgstr "Person Detail"
 #: extracted_strings.json
 msgid "Phone"
 msgstr "Telefon"
+
+#. [filter.sampleType.sampleTypePlasma]
+#. defaultMessage is:
+#. Plasma
+#: extracted_strings.json
+msgid "Plasma"
+msgstr "Plasma"
 
 #. [errorResponseMessages.common.notFound.resolution]
 #. defaultMessage is:
@@ -7387,6 +7973,13 @@ msgstr "Bereitgestellt"
 msgid "Purged"
 msgstr "Gereinigt"
 
+#. [filter.sampleType.sampleTypePus]
+#. defaultMessage is:
+#. Pus
+#: extracted_strings.json
+msgid "Pus"
+msgstr "Eiter"
+
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
 #. Q HIV VL
@@ -7874,6 +8467,9 @@ msgstr "Behoben"
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
+#. [pages.ResultList.resultCategoryResult]
+#. defaultMessage is:
+#. Result
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
@@ -7908,6 +8504,13 @@ msgstr "Ergebnis 2"
 msgid "Result Based"
 msgstr "Ergebnisbasiert"
 
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryContaminated]
+#. defaultMessage is:
+#. Result Contaminated
+#: extracted_strings.json
+msgid "Result Contaminated"
+msgstr "Ergebnis Kontaminiert"
+
 #. [pages.ReportIndex.resultCountsByHIVStatus]
 #. defaultMessage is:
 #. Result Counts by HIV status
@@ -7921,6 +8524,135 @@ msgstr "Ergebniszählungen nach HIV-Status"
 #: extracted_strings.json
 msgid "Result Details"
 msgstr "Ergebnisdetails"
+
+#. [resultCategoryGroup.assayBdMgitAstResultCategoryDetected]
+#. defaultMessage is:
+#. Result Detected
+#. [resultCategoryGroup.assayBdMgitGndResultCategoryDetected]
+#. defaultMessage is:
+#. Result Detected
+#: extracted_strings.json
+msgid "Result Detected"
+msgstr "Erkanntes Ergebnis"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
+#. defaultMessage is:
+#. Result Error
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryError]
+#. defaultMessage is:
+#. Result Error
+#: extracted_strings.json
+msgid "Result Error"
+msgstr "Ergebnis Fehler"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#. [resultCategoryGroup.assayTruenatUnknownresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#: extracted_strings.json
+msgid "Result Missing"
+msgstr "Ergebnis Fehlt"
+
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#: extracted_strings.json
+msgid "Result Negative"
+msgstr "Ergebnis Negativ"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryNotDetected]
+#. defaultMessage is:
+#. Result Not Detected
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryNotDetected]
+#. defaultMessage is:
+#. Result Not Detected
+#: extracted_strings.json
+msgid "Result Not Detected"
+msgstr "Ergebnis nicht erkannt"
+
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryPositive]
+#. defaultMessage is:
+#. Result Positive
+#: extracted_strings.json
+msgid "Result Positive"
+msgstr "Ergebnis positiv"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive1]
+#. defaultMessage is:
+#. Result Positive (+)
+#: extracted_strings.json
+msgid "Result Positive (+)"
+msgstr "Ergebnis Positiv (+)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive2]
+#. defaultMessage is:
+#. Result Positive (++)
+#: extracted_strings.json
+msgid "Result Positive (++)"
+msgstr "Ergebnis positiv (++)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive3]
+#. defaultMessage is:
+#. Result Positive (+++)
+#: extracted_strings.json
+msgid "Result Positive (+++)"
+msgstr "Ergebnis positiv (+++)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryPositiveMOTT]
+#. defaultMessage is:
+#. Result Positive MOTT
+#: extracted_strings.json
+msgid "Result Positive MOTT"
+msgstr "Ergebnis Positiv MOTT"
+
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryPositiveMTB]
+#. defaultMessage is:
+#. Result Positive MTB
+#: extracted_strings.json
+msgid "Result Positive MTB"
+msgstr "Ergebnis Positiv MTB"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryResistant]
+#. defaultMessage is:
+#. Result Resistant
+#: extracted_strings.json
+msgid "Result Resistant"
+msgstr "Ergebnis Resistent"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryScanty]
+#. defaultMessage is:
+#. Result Scanty (1-9/100)
+#: extracted_strings.json
+msgid "Result Scanty (1-9/100)"
+msgstr "Ergebnis dürftig (1-9/100)"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategorySuccess]
+#. defaultMessage is:
+#. Result Success
+#. [resultCategoryGroup.assayBdMgitGndresultCategorySuccess]
+#. defaultMessage is:
+#. Result Success
+#: extracted_strings.json
+msgid "Result Success"
+msgstr "Ergebnis Erfolg"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategorySusceptible]
+#. defaultMessage is:
+#. Result Susceptible
+#: extracted_strings.json
+msgid "Result Susceptible"
+msgstr "Ergebnis Anfällig"
 
 #. [forms.formItem.resultText]
 #. defaultMessage is:
@@ -7938,6 +8670,25 @@ msgstr "Ergebnis Text"
 #: extracted_strings.json
 msgid "Result Transfer Completed"
 msgstr "Ergebnis übertragen Abgeschlossen"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assayTruenatUnknownresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#: extracted_strings.json
+msgid "Result Unknown"
+msgstr "Ergebnis Unbekannt"
 
 #. [jobFunction.resultViewerNo]
 #. defaultMessage is:
@@ -8032,6 +8783,41 @@ msgstr "Widerrufen"
 msgid "Rif"
 msgstr "Rif"
 
+#. [resultCategoryGroup.assayTruenatRifresultCategoryError]
+#. defaultMessage is:
+#. Rif Error
+#: extracted_strings.json
+msgid "Rif Error"
+msgstr "Rif-Fehler"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryInvalid]
+#. defaultMessage is:
+#. Rif Invalid
+#: extracted_strings.json
+msgid "Rif Invalid"
+msgstr "Rif Ungültig"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryNoResult]
+#. defaultMessage is:
+#. Rif No Result
+#: extracted_strings.json
+msgid "Rif No Result"
+msgstr "Rif Kein Ergebnis"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryResistant]
+#. defaultMessage is:
+#. Rif Resistant
+#: extracted_strings.json
+msgid "Rif Resistant"
+msgstr "Rif-Beständig"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategorySusceptible]
+#. defaultMessage is:
+#. Rif Susceptible
+#: extracted_strings.json
+msgid "Rif Susceptible"
+msgstr "Rif-empfindlich"
+
 #. [pages.RouterList.router]
 #. defaultMessage is:
 #. Router
@@ -8107,6 +8893,13 @@ msgstr "SMS gesendet diesen Monat"
 #: extracted_strings.json
 msgid "SMS was sent to:"
 msgstr "SMS wurde gesendet an:"
+
+#. [filter.sampleType.sampleTypeSaliva]
+#. defaultMessage is:
+#. Saliva
+#: extracted_strings.json
+msgid "Saliva"
+msgstr "Speichel"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -8244,6 +9037,13 @@ msgstr "Speichern der Kontaktdetails fehlgeschlagen"
 #: extracted_strings.json
 msgid "Saving Login Details Failed"
 msgstr "Speichern der Anmeldedaten fehlgeschlagen"
+
+#. [errorResponseMessages.updateSite.PUT.default.title]
+#. defaultMessage is:
+#. Saving Site Failed
+#: extracted_strings.json
+msgid "Saving Site Failed"
+msgstr "Speichern der Seite fehlgeschlagen"
 
 #. [errorResponseMessages.saveUserPreferences.PUT.default.title]
 #. defaultMessage is:
@@ -8599,6 +9399,13 @@ msgstr "Wartungsstatus auswählen..."
 msgid "Select partner..."
 msgstr "Partner auswählen..."
 
+#. [filter.popover.selectDisplayResult]
+#. defaultMessage is:
+#. Select result scope...
+#: extracted_strings.json
+msgid "Select result scope..."
+msgstr "Ergebnisbereich auswählen..."
+
 #. [filter.popover.selectResult]
 #. defaultMessage is:
 #. Select result...
@@ -8828,6 +9635,13 @@ msgstr "Einstellung Wartungsstatus fehlgeschlagen"
 #: extracted_strings.json
 msgid "Short Name"
 msgstr "Kurzer Name"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteShortNameRepeated]
+#. defaultMessage is:
+#. Short name is already in use
+#: extracted_strings.json
+msgid "Short name is already in use"
+msgstr "Kurzname ist bereits in Gebrauch"
 
 #. [pages.RouterDetail.fieldShortName]
 #. defaultMessage is:
@@ -9147,6 +9961,13 @@ msgstr "Standort-ID"
 msgid "Site Id"
 msgstr "Standort-ID"
 
+#. [errorResponseMessages.updateSite.PUT.409.siteIdRepeated]
+#. defaultMessage is:
+#. Site Id is already in use
+#: extracted_strings.json
+msgid "Site Id is already in use"
+msgstr "Site Id ist bereits in Gebrauch"
+
 #. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
@@ -9187,6 +10008,13 @@ msgstr "Standortkontakt"
 #: extracted_strings.json
 msgid "Site is required"
 msgstr "Standort ist erforderlich"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
+#. defaultMessage is:
+#. Site name is already in use
+#: extracted_strings.json
+msgid "Site name is already in use"
+msgstr "Der Name der Website ist bereits in Gebrauch"
 
 #. [browsePage.browseDropdown.sites]
 #. defaultMessage is:
@@ -9241,6 +10069,13 @@ msgstr "SMS-Nachricht sollte nicht länger als 144 Zeichen sein"
 #: extracted_strings.json
 msgid "Source devices"
 msgstr "Quellgeräte"
+
+#. [filter.sampleType.sampleTypeSputum]
+#. defaultMessage is:
+#. Sputum
+#: extracted_strings.json
+msgid "Sputum"
+msgstr "Sputum"
 
 #. [forms.formItem.startDate]
 #. defaultMessage is:
@@ -9305,10 +10140,16 @@ msgstr "Bundesland/Region"
 #. [pages.ResultWorkflowStatusLog.logStatus]
 #. defaultMessage is:
 #. Status
+#. [pages.ResultList.resultCategoryStatus]
+#. defaultMessage is:
+#. Status
 #. [pages.RouterDetail.fieldStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.TaskDetail.status]
+#. defaultMessage is:
+#. Status
+#. [pages.workload.deviceStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.Notification.status]
@@ -9316,6 +10157,13 @@ msgstr "Bundesland/Region"
 #. Status
 #: extracted_strings.json
 msgid "Status"
+msgstr "Status"
+
+#. [pages.DeviceDashboard.statusesTabTitle]
+#. defaultMessage is:
+#. Statuses
+#: extracted_strings.json
+msgid "Statuses"
 msgstr "Status"
 
 #. [component.Widget.stockNotRecordedTitle]
@@ -9412,10 +10260,10 @@ msgstr "Sonntag"
 msgid "Supplies"
 msgstr "Exportieren von Lieferungen fehlgeschlagen"
 
-#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
+#. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
-#. [pages.Status.inventoryGraphStatus.title]
+#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
 #. defaultMessage is:
 #. Supply in Stock
 #: extracted_strings.json
@@ -9655,10 +10503,10 @@ msgstr "Testverlauf"
 msgid "Testing Trends In Year"
 msgstr "Testtrends im Jahr"
 
-#. [component.Widget.dashboardWidgetUnitTests]
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
 #. defaultMessage is:
 #. Tests
-#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
+#. [component.Widget.dashboardWidgetUnitTests]
 #. defaultMessage is:
 #. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
@@ -10624,6 +11472,9 @@ msgstr "Ergebnisse insgesamt"
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [pages.InventoryLog.totalTests]
+#. defaultMessage is:
+#. Total Tests
 #: extracted_strings.json
 msgid "Total Tests"
 msgstr "Tests insgesamt"
@@ -10891,13 +11742,13 @@ msgstr "Passwort kann nicht zurückgesetzt werden"
 msgid "Ungroup Column"
 msgstr "Auflösen der Gruppenspalte"
 
+#. [filter.AssayTypeSelectField.assayTypeUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [legends.Unknown.resultCategoryUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceStatusSelectField.unknown]
@@ -11282,6 +12133,16 @@ msgstr "Innerhalb von 2 Stunden nach dem Test"
 #: extracted_strings.json
 msgid "Workflow Status"
 msgstr "Workflow-Status"
+
+#. [pages.DeviceDashboard.workloadTabTitle]
+#. defaultMessage is:
+#. Workload
+#. [pages.workload.workloadTitle]
+#. defaultMessage is:
+#. Workload
+#: extracted_strings.json
+msgid "Workload"
+msgstr "Arbeitsbelastung"
 
 #. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
 #. defaultMessage is:
@@ -11672,6 +12533,13 @@ msgstr "Gerätename enthält \"{deviceName}\""
 msgid "deviceId is in ({joinedIds})"
 msgstr "Geräte ID ist in ({joinedIds})"
 
+#. [filter.btnGroup.withDisplayResult]
+#. defaultMessage is:
+#. display "{displayResult}"
+#: extracted_strings.json
+msgid "display \"{displayResult}\""
+msgstr "anzeige \"{displayResult}\""
+
 #. [filter.btnGroup.errorCode]
 #. defaultMessage is:
 #. error code includes "{errorCode}"
@@ -11984,13 +12852,6 @@ msgstr "Behandlungsstatus ist {treatmentStatusName}"
 msgid "type is {deviceTypeName}"
 msgstr "Typ ist {deviceTypeName}"
 
-#. [server.userFriendly.message]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "nicht definiert"
-
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
@@ -12181,6 +13042,12 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "lalalala"
+#~ msgstr "lalalala"
+
+#~ msgid "undefined"
+#~ msgstr "nicht definiert"
 
 #~ msgid "Demo Device"
 #~ msgstr "Demo-Gerät"

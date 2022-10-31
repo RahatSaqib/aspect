@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import identity from 'lodash/identity'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../hooks/useI18n'
 
@@ -15,8 +14,6 @@ const messages = defineMessages({
   },
 })
 
-const enhance = identity
-
 export const EmptyList = ({ onClearFilters }) => {
   const { formatMessage } = useI18n()
   return (
@@ -29,4 +26,4 @@ export const EmptyList = ({ onClearFilters }) => {
   )
 }
 
-export default enhance(EmptyList)
+export default EmptyList

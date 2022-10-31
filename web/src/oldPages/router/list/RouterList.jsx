@@ -7,10 +7,10 @@ import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -114,7 +114,7 @@ const enhance = compose(
     onExcelClick:
       ({ location, exportRouters, sortCol, sortDir, pageAt, table }) =>
       formatType => {
-        const format = formatType.id
+        const format = formatType
         const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           exportRouters(
@@ -192,9 +192,9 @@ export const RouterList = ({
     <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
-      <ExportListButton
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
+      <AspectExportListButton
+        data-testid="RouterListExportButton"
+        onExport={onExcelClick}
         visible={!items.currentIdList.isEmpty()}
         reportName="Routers"
       />

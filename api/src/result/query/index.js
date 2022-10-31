@@ -32,15 +32,12 @@ const modifiers = {
      * @param {*} knex
      * @param {*} mainResultAlias - Alias of the main result table you want to join to
      */
-    lastResultPerModule: (queryBuilder, knex, mainResultAlias = 'r') => {
+    lastResultPerModuleBay: (queryBuilder, knex, mainResultAlias = 'r') => {
       queryBuilder.join(
-        knex('Result as ____lastResultPerModule')
-          .groupBy(
-            '____lastResultPerModule.deviceId',
-            knex.raw('____lastResultPerModule.resultData ->> "$.moduleName"')
-          )
-          .select('____lastResultPerModule.deviceId')
-          .max('____lastResultPerModule.id as id')
+        knex('Result as ____lastResultPerModuleBay')
+          .groupBy('____lastResultPerModuleBay.deviceId', '____lastResultPerModuleBay.moduleName')
+          .select('____lastResultPerModuleBay.deviceId')
+          .max('____lastResultPerModuleBay.id as id')
           .as('____rmax'),
         function () {
           this.on(`${mainResultAlias}.id`, '____rmax.id')

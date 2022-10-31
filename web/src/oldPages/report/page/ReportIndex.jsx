@@ -49,9 +49,7 @@ const ReportIndex = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const intl = useI18n()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const [items, setItems] = useState()
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [visibleFilters, setVisibleFilters] = useState([])

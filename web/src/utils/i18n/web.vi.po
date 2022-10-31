@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-30T17:11:05.070Z\n"
+"POT-Creation-Date: 2022-10-28T14:28:58.373Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
@@ -382,6 +382,20 @@ msgstr "Ca nhiễm bệnh hiện tại"
 msgid "Active status can't be edited"
 msgstr "Không thể chỉnh sửa trạng thái hoạt động"
 
+#. [pages.displayResultSelectField.Actual]
+#. defaultMessage is:
+#. Actual
+#: extracted_strings.json
+msgid "Actual"
+msgstr "Thực tế"
+
+#. [filter.btnGroup.displayActualResults]
+#. defaultMessage is:
+#. Actual Results
+#: extracted_strings.json
+msgid "Actual Results"
+msgstr "Kết quả thực tế"
+
 #. [pages.NotificationDetail.actionAdd]
 #. defaultMessage is:
 #. Add
@@ -570,6 +584,9 @@ msgstr "Tất cả các"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Tất cả các kết quả HIV trong đó vi rút không bị ức chế"
 
+#. [filter.btnGroup.displayAllResults]
+#. defaultMessage is:
+#. All Results
 #. [pages.ReportIndex.all_results]
 #. defaultMessage is:
 #. All Results
@@ -1152,6 +1169,13 @@ msgstr ""
 "Dựa trên 30 ngày qua, biểu thị phần trăm kết quả có lỗi so với tổng số kết "
 "quả đã thực hiện"
 
+#. [filter.sampleType.sampleTypeBlood]
+#. defaultMessage is:
+#. Blood
+#: extracted_strings.json
+msgid "Blood"
+msgstr "Máu"
+
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
@@ -1211,6 +1235,13 @@ msgstr "COBAS 4800 VL"
 msgid "COVID Results"
 msgstr "Kết quả COVID"
 
+#. [resultCategoryGroup.assayGXCovid19resultCategoryError]
+#. defaultMessage is:
+#. COVID-19 Error
+#: extracted_strings.json
+msgid "COVID-19 Error"
+msgstr "Lỗi COVID-19"
+
 #. [filter.AssaySelectField.assayGenericCovid19]
 #. defaultMessage is:
 #. COVID-19 Generic Test
@@ -1221,6 +1252,119 @@ msgstr "Kết quả COVID"
 msgid "COVID-19 Generic Test"
 msgstr "Thử nghiệm chung COVID-19"
 
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#: extracted_strings.json
+msgid "COVID-19 Inconclusive"
+msgstr "COVID-19 Không độc quyền"
+
+#. [resultCategoryGroup.assayGXCovid19resultCategoryInvalid]
+#. defaultMessage is:
+#. COVID-19 Invalid
+#: extracted_strings.json
+msgid "COVID-19 Invalid"
+msgstr "COVID-19 không hợp lệ"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayGXCovid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#: extracted_strings.json
+msgid "COVID-19 Negative"
+msgstr "COVID-19 Âm tính"
+
+#. [resultCategoryGroup.assayGXCovid19resultCategoryNoResult]
+#. defaultMessage is:
+#. COVID-19 No Result
+#: extracted_strings.json
+msgid "COVID-19 No Result"
+msgstr "COVID-19 Không có kết quả"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#: extracted_strings.json
+msgid "COVID-19 Positive"
+msgstr "COVID-19 Tích cực"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#: extracted_strings.json
+msgid "COVID-19 Presumptive Positive"
+msgstr "COVID-19 Dương tính giả định"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryError]
+#. defaultMessage is:
+#. COVID-19 Region N Error
+#: extracted_strings.json
+msgid "COVID-19 Region N Error"
+msgstr "Lỗi COVID-19 Vùng N"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Region N Inconclusive
+#: extracted_strings.json
+msgid "COVID-19 Region N Inconclusive"
+msgstr "COVID-19 Vùng N Không độc quyền"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryInvalid]
+#. defaultMessage is:
+#. COVID-19 Region N Invalid
+#: extracted_strings.json
+msgid "COVID-19 Region N Invalid"
+msgstr "COVID-19 Vùng N Không hợp lệ"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Region N Negative
+#: extracted_strings.json
+msgid "COVID-19 Region N Negative"
+msgstr "COVID-19 Vùng N Phủ định"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Region N Positive
+#: extracted_strings.json
+msgid "COVID-19 Region N Positive"
+msgstr "COVID-19 Vùng N Tích cực"
+
 #. [filter.AssayTypeSelectField.covid19]
 #. defaultMessage is:
 #. COVID-19 Test
@@ -1228,12 +1372,35 @@ msgstr "Thử nghiệm chung COVID-19"
 msgid "COVID-19 Test"
 msgstr "Kiểm tra COVID-19"
 
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayGXCovid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#: extracted_strings.json
+msgid "COVID-19 Unknown"
+msgstr "COVID-19 Không xác định"
+
 #. [pages.SiteDetail.buttonCreate]
 #. defaultMessage is:
 #. CREATE
 #: extracted_strings.json
 msgid "CREATE"
 msgstr "Tạo"
+
+#. [filter.sampleType.sampleTypeCSF]
+#. defaultMessage is:
+#. CSF
+#: extracted_strings.json
+msgid "CSF"
+msgstr "CSF"
 
 #. [pages.ListExport.exportCsv]
 #. defaultMessage is:
@@ -1720,6 +1887,9 @@ msgstr "Tình trạng điều trị"
 msgid "Connector Version"
 msgstr "Phiên bản trình kết nối"
 
+#. [consumable.consumable]
+#. defaultMessage is:
+#. Consumable
 #. [filter.popover.consumable]
 #. defaultMessage is:
 #. Consumable
@@ -2135,6 +2305,13 @@ msgstr "Trường tùy chỉnh"
 #: extracted_strings.json
 msgid "Custom Fields Average Completion"
 msgstr "Mức hoàn thành trung bình của các trường tùy chỉnh"
+
+#. [filter.sampleType.sampleTypeDBS]
+#. defaultMessage is:
+#. DBS
+#: extracted_strings.json
+msgid "DBS"
+msgstr "DBS"
 
 #. [months.december]
 #. defaultMessage is:
@@ -2614,6 +2791,9 @@ msgstr "Demo thiết bị"
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
 #. Device Name
+#. [pages.workload.name]
+#. defaultMessage is:
+#. Device Name
 #: extracted_strings.json
 msgid "Device Name"
 msgstr "Tên thiết bị"
@@ -2800,6 +2980,13 @@ msgstr "Bất hòa"
 msgid "Disease"
 msgstr "Mầm bệnh"
 
+#. [filter.popover.displayResult]
+#. defaultMessage is:
+#. Display Result
+#: extracted_strings.json
+msgid "Display Result"
+msgstr "Hiển thị kết quả"
+
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
 #. District
@@ -2844,6 +3031,13 @@ msgstr "Bạn có muốn vô hiệu hóa"
 #. Do you want to enable
 #: extracted_strings.json
 msgid "Do you want to enable"
+msgstr "Bạn có muốn bật"
+
+#. [page.contacts.person.removeAssignment]
+#. defaultMessage is:
+#. Do you want to remove below assignment?
+#: extracted_strings.json
+msgid "Do you want to remove below assignment?"
 msgstr "Bạn có muốn bật"
 
 #. [jobFunction.donor]
@@ -2962,6 +3156,13 @@ msgstr "Sửa"
 #: extracted_strings.json
 msgid "Edit Notification"
 msgstr "Chỉnh sửa thông báo"
+
+#. [filter.sampleType.sampleTypeEffusion]
+#. defaultMessage is:
+#. Effusion
+#: extracted_strings.json
+msgid "Effusion"
+msgstr "Sự phóng khoáng"
 
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
@@ -3432,6 +3633,20 @@ msgstr "Hàng tuần, ngày"
 msgid "Excel"
 msgstr "Excel"
 
+#. [pages.displayResultSelectField.Excluded]
+#. defaultMessage is:
+#. Excluded
+#: extracted_strings.json
+msgid "Excluded"
+msgstr "Không bao gồm"
+
+#. [filter.btnGroup.displayExcludedResults]
+#. defaultMessage is:
+#. Excluded Results
+#: extracted_strings.json
+msgid "Excluded Results"
+msgstr "Kết quả bị loại trừ"
+
 #. [components.shared.execute]
 #. defaultMessage is:
 #. Execute
@@ -3740,6 +3955,13 @@ msgstr "Được chấp thuận đầu tiên bởi"
 msgid "First Approved On"
 msgstr "Được phê duyệt đầu tiên vào ngày"
 
+#. [pages.workload.firstResultEndedOn]
+#. defaultMessage is:
+#. First Result
+#: extracted_strings.json
+msgid "First Result"
+msgstr "Kết quả đầu tiên"
+
 #. [pages.DeviceDetailEdit.firstApproved]
 #. defaultMessage is:
 #. First approved
@@ -3882,6 +4104,13 @@ msgstr "GP không được phát hiện - NP được phát hiện"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP không được phát hiện - NP không được phát hiện"
+
+#. [filter.sampleType.sampleTypeGastricLavage]
+#. defaultMessage is:
+#. Gastric Lavage
+#: extracted_strings.json
+msgid "Gastric Lavage"
+msgstr "Rửa dạ dày"
 
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
@@ -4180,6 +4409,55 @@ msgstr "Lấy tệp báo cáo không thành công"
 msgid "Group By Column"
 msgstr "Nhóm theo cột"
 
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryLessThan40]
+#. defaultMessage is:
+#. HBV < 40 cp/mL
+#: extracted_strings.json
+msgid "HBV < 40 cp/mL"
+msgstr "HBV <40 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryMoreThan40]
+#. defaultMessage is:
+#. HBV >= 40 cp/mL
+#: extracted_strings.json
+msgid "HBV >= 40 cp/mL"
+msgstr "HBV> = 40 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLResultCategoryDetected]
+#. defaultMessage is:
+#. HBV Detected
+#: extracted_strings.json
+msgid "HBV Detected"
+msgstr "HBV được phát hiện"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryError]
+#. defaultMessage is:
+#. HBV Error
+#: extracted_strings.json
+msgid "HBV Error"
+msgstr "Lỗi HBV"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HBV Indeterminate
+#: extracted_strings.json
+msgid "HBV Indeterminate"
+msgstr "HBV không xác định"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryInvalid]
+#. defaultMessage is:
+#. HBV Invalid
+#: extracted_strings.json
+msgid "HBV Invalid"
+msgstr "HBV không hợp lệ"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HBV Not Detected
+#: extracted_strings.json
+msgid "HBV Not Detected"
+msgstr "HBV không được phát hiện"
+
 #. [filter.AssayTypeSelectField.assayTypeHbvVl]
 #. defaultMessage is:
 #. HBV VL
@@ -4197,12 +4475,238 @@ msgstr "HBV VL"
 msgid "HCV"
 msgstr "HCV"
 
+#. [resultCategoryGroup.assayGeneXpertHcvResultCategoryDetected]
+#. defaultMessage is:
+#. HCV Detected
+#: extracted_strings.json
+msgid "HCV Detected"
+msgstr "HCV được phát hiện"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryError]
+#. defaultMessage is:
+#. HCV Error
+#: extracted_strings.json
+msgid "HCV Error"
+msgstr "Lỗi HCV"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryInvalid]
+#. defaultMessage is:
+#. HCV Invalid
+#: extracted_strings.json
+msgid "HCV Invalid"
+msgstr "HCV không hợp lệ"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryNoResult]
+#. defaultMessage is:
+#. HCV No Result
+#: extracted_strings.json
+msgid "HCV No Result"
+msgstr "HCV Không có kết quả"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryNotDetected]
+#. defaultMessage is:
+#. HCV Not Detected
+#: extracted_strings.json
+msgid "HCV Not Detected"
+msgstr "HCV không được phát hiện"
+
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "HIV"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
+#. defaultMessage is:
+#. HIV < 1000 cp/mL
+#: extracted_strings.json
+msgid "HIV < 1000 cp/mL"
+msgstr "HIV <1000 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#: extracted_strings.json
+msgid "HIV < 150 cp/mL"
+msgstr "HIV <150 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan40]
+#. defaultMessage is:
+#. HIV < 40 cp/mL
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan40]
+#. defaultMessage is:
+#. HIV < 40 cp/mL
+#: extracted_strings.json
+msgid "HIV < 40 cp/mL"
+msgstr "HIV <40 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#: extracted_strings.json
+msgid "HIV < 550 cp/mL"
+msgstr "HIV <550 cp / mL"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryMoreThan1000]
+#. defaultMessage is:
+#. HIV >= 1000 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 1000 cp/mL"
+msgstr "HIV> = 1000 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 150 cp/mL"
+msgstr "HIV> = 150 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan40]
+#. defaultMessage is:
+#. HIV >= 40 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 40 cp/mL"
+msgstr "HIV> = 40 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 550 cp/mL"
+msgstr "HIV> = 550 cp / mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.AssayAbbottM2000HivEidResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1QualResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#: extracted_strings.json
+msgid "HIV Detected"
+msgstr "Phát hiện HIV"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#: extracted_strings.json
+msgid "HIV Error"
+msgstr "Lỗi HIV"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#: extracted_strings.json
+msgid "HIV Indeterminate"
+msgstr "HIV không xác định"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#: extracted_strings.json
+msgid "HIV Invalid"
+msgstr "HIV không hợp lệ"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryNoResult]
+#. defaultMessage is:
+#. HIV No Result
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryNoResult]
+#. defaultMessage is:
+#. HIV No Result
+#: extracted_strings.json
+msgid "HIV No Result"
+msgstr "HIV Không có kết quả"
+
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#: extracted_strings.json
+msgid "HIV Not Detected"
+msgstr "HIV không được phát hiện"
 
 #. [filter.AssayTypeSelectField.assayTypeHivQual]
 #. defaultMessage is:
@@ -4217,6 +4721,13 @@ msgstr "Chất lượng HIV"
 #: extracted_strings.json
 msgid "HIV VL"
 msgstr "VL HIV"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV not Detected
+#: extracted_strings.json
+msgid "HIV not Detected"
+msgstr "HIV không được phát hiện"
 
 #. [pages.caseRow.diseaseNameHIVAIDS]
 #. defaultMessage is:
@@ -4698,6 +5209,13 @@ msgstr "Hàng tồn kho"
 msgid "Is at least {minLength} characters long"
 msgstr "Dài ít nhất {minLength} ký tự"
 
+#. [filter.sampleType.sampleTypeIsolate]
+#. defaultMessage is:
+#. Isolate
+#: extracted_strings.json
+msgid "Isolate"
+msgstr "Cô Lập (Isolate)"
+
 #. [pages.TableCell.issueBasedNotification]
 #. defaultMessage is:
 #. Issue Based
@@ -4919,6 +5437,20 @@ msgstr "Tháng trước"
 #: extracted_strings.json
 msgid "Last Month ({minDate} - {maxDate})"
 msgstr "Tháng trước ({minDate} - {maxDate})"
+
+#. [pages.workload.lastPingOn]
+#. defaultMessage is:
+#. Last Ping
+#: extracted_strings.json
+msgid "Last Ping"
+msgstr "Ping cuối cùng"
+
+#. [pages.workload.lastResultEndedOn]
+#. defaultMessage is:
+#. Last Result
+#: extracted_strings.json
+msgid "Last Result"
+msgstr "Kết quả cuối cùng"
 
 #. [pages.DeviceList.lastResultConductedOn]
 #. defaultMessage is:
@@ -5406,6 +5938,12 @@ msgstr "MTB"
 #. [resultCategoryGroup.gxMtbXdrMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [resultCategoryGroup.assayTruenatMtbResultCategoryDetected]
+#. defaultMessage is:
+#. MTB Detected
+#. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -5528,6 +6066,12 @@ msgstr "MTB đã phát hiện XDR không được phát hiện"
 #. [resultCategoryGroup.gxMtbXdrMtbError]
 #. defaultMessage is:
 #. MTB Error
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryError]
+#. defaultMessage is:
+#. MTB Error
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryError]
+#. defaultMessage is:
+#. MTB Error
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -5548,6 +6092,12 @@ msgstr "Lỗi MTB"
 #. defaultMessage is:
 #. MTB Invalid
 #. [resultCategoryGroup.gxMtbXdrMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryInvalid]
 #. defaultMessage is:
 #. MTB Invalid
 #. [pages.filters.gxMtbRifMtbInvalid]
@@ -5572,6 +6122,12 @@ msgstr "MTB không hợp lệ"
 #. [resultCategoryGroup.gxMtbXdrMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryNoResult]
+#. defaultMessage is:
+#. MTB No Result
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryNoResult]
+#. defaultMessage is:
+#. MTB No Result
 #. [pages.filters.gxMtbRifMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
@@ -5592,6 +6148,12 @@ msgstr "MTB Không có kết quả"
 #. defaultMessage is:
 #. MTB Not Detected
 #. [resultCategoryGroup.gxMtbXdrMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected
 #. [pages.filters.gxMtbRifMtbNotDetected]
@@ -5963,6 +6525,13 @@ msgstr "NTP"
 #: extracted_strings.json
 msgid "Name"
 msgstr "Tên"
+
+#. [filter.sampleType.sampleTypeNasalSwab]
+#. defaultMessage is:
+#. Nasal Swab
+#: extracted_strings.json
+msgid "Nasal Swab"
+msgstr "Máy ngoáy mũi"
 
 #. [pages.NotificationDetail.Area.National]
 #. defaultMessage is:
@@ -6652,6 +7221,9 @@ msgstr "Đã đặt hàng"
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
+#. [filter.sampleType.sampleTypeOther]
+#. defaultMessage is:
+#. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Khác"
@@ -6873,6 +7445,13 @@ msgstr ""
 msgid "Performance"
 msgstr "Hiệu suất"
 
+#. [pages.common.period]
+#. defaultMessage is:
+#. Period
+#: extracted_strings.json
+msgid "Period"
+msgstr "Giai đoạn"
+
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
 #. Person Detail
@@ -6886,6 +7465,13 @@ msgstr "Chi tiết người"
 #: extracted_strings.json
 msgid "Phone"
 msgstr "Điện thoại"
+
+#. [filter.sampleType.sampleTypePlasma]
+#. defaultMessage is:
+#. Plasma
+#: extracted_strings.json
+msgid "Plasma"
+msgstr "Huyết tương"
 
 #. [errorResponseMessages.common.notFound.resolution]
 #. defaultMessage is:
@@ -7369,6 +7955,13 @@ msgstr "Đã cấp phép"
 #: extracted_strings.json
 msgid "Purged"
 msgstr "Thanh trừng"
+
+#. [filter.sampleType.sampleTypePus]
+#. defaultMessage is:
+#. Pus
+#: extracted_strings.json
+msgid "Pus"
+msgstr "Mủ"
 
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
@@ -7855,6 +8448,9 @@ msgstr "Giải quyết"
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
+#. [pages.ResultList.resultCategoryResult]
+#. defaultMessage is:
+#. Result
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
@@ -7889,6 +8485,13 @@ msgstr "Kết quả 2"
 msgid "Result Based"
 msgstr "Dựa trên kết quả"
 
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryContaminated]
+#. defaultMessage is:
+#. Result Contaminated
+#: extracted_strings.json
+msgid "Result Contaminated"
+msgstr "Kết quả bị ô nhiễm"
+
 #. [pages.ReportIndex.resultCountsByHIVStatus]
 #. defaultMessage is:
 #. Result Counts by HIV status
@@ -7902,6 +8505,135 @@ msgstr "Kết quả tính theo tình trạng HIV"
 #: extracted_strings.json
 msgid "Result Details"
 msgstr "Chi tiết kết quả"
+
+#. [resultCategoryGroup.assayBdMgitAstResultCategoryDetected]
+#. defaultMessage is:
+#. Result Detected
+#. [resultCategoryGroup.assayBdMgitGndResultCategoryDetected]
+#. defaultMessage is:
+#. Result Detected
+#: extracted_strings.json
+msgid "Result Detected"
+msgstr "Kết quả được phát hiện"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
+#. defaultMessage is:
+#. Result Error
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryError]
+#. defaultMessage is:
+#. Result Error
+#: extracted_strings.json
+msgid "Result Error"
+msgstr "Lỗi kết quả"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#. [resultCategoryGroup.assayTruenatUnknownresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#: extracted_strings.json
+msgid "Result Missing"
+msgstr "Kết quả bị thiếu"
+
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#: extracted_strings.json
+msgid "Result Negative"
+msgstr "Kết quả âm tính"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryNotDetected]
+#. defaultMessage is:
+#. Result Not Detected
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryNotDetected]
+#. defaultMessage is:
+#. Result Not Detected
+#: extracted_strings.json
+msgid "Result Not Detected"
+msgstr "Kết quả không được phát hiện"
+
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryPositive]
+#. defaultMessage is:
+#. Result Positive
+#: extracted_strings.json
+msgid "Result Positive"
+msgstr "Kết quả khả quan"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive1]
+#. defaultMessage is:
+#. Result Positive (+)
+#: extracted_strings.json
+msgid "Result Positive (+)"
+msgstr "Kết quả Tích cực (+)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive2]
+#. defaultMessage is:
+#. Result Positive (++)
+#: extracted_strings.json
+msgid "Result Positive (++)"
+msgstr "Kết quả Tích cực (++)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive3]
+#. defaultMessage is:
+#. Result Positive (+++)
+#: extracted_strings.json
+msgid "Result Positive (+++)"
+msgstr "Kết quả Tích cực (+++)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryPositiveMOTT]
+#. defaultMessage is:
+#. Result Positive MOTT
+#: extracted_strings.json
+msgid "Result Positive MOTT"
+msgstr "Kết quả tích cực MOTT"
+
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryPositiveMTB]
+#. defaultMessage is:
+#. Result Positive MTB
+#: extracted_strings.json
+msgid "Result Positive MTB"
+msgstr "Kết quả MTB dương tính"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryResistant]
+#. defaultMessage is:
+#. Result Resistant
+#: extracted_strings.json
+msgid "Result Resistant"
+msgstr "Kháng kết quả"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryScanty]
+#. defaultMessage is:
+#. Result Scanty (1-9/100)
+#: extracted_strings.json
+msgid "Result Scanty (1-9/100)"
+msgstr "Kết quả ít (1-9 / 100)"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategorySuccess]
+#. defaultMessage is:
+#. Result Success
+#. [resultCategoryGroup.assayBdMgitGndresultCategorySuccess]
+#. defaultMessage is:
+#. Result Success
+#: extracted_strings.json
+msgid "Result Success"
+msgstr "Kết quả thành công"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategorySusceptible]
+#. defaultMessage is:
+#. Result Susceptible
+#: extracted_strings.json
+msgid "Result Susceptible"
+msgstr "Kết quả có thể chấp nhận được"
 
 #. [forms.formItem.resultText]
 #. defaultMessage is:
@@ -7919,6 +8651,25 @@ msgstr "Văn bản kết quả"
 #: extracted_strings.json
 msgid "Result Transfer Completed"
 msgstr "Chuyển kết quả đã hoàn tất"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assayTruenatUnknownresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#: extracted_strings.json
+msgid "Result Unknown"
+msgstr "Kết quả không xác định"
 
 #. [jobFunction.resultViewerNo]
 #. defaultMessage is:
@@ -8013,6 +8764,41 @@ msgstr "Thu hồi"
 msgid "Rif"
 msgstr "Rif"
 
+#. [resultCategoryGroup.assayTruenatRifresultCategoryError]
+#. defaultMessage is:
+#. Rif Error
+#: extracted_strings.json
+msgid "Rif Error"
+msgstr "Lỗi Rif"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryInvalid]
+#. defaultMessage is:
+#. Rif Invalid
+#: extracted_strings.json
+msgid "Rif Invalid"
+msgstr "Rif không hợp lệ"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryNoResult]
+#. defaultMessage is:
+#. Rif No Result
+#: extracted_strings.json
+msgid "Rif No Result"
+msgstr "Rif Không có kết quả"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryResistant]
+#. defaultMessage is:
+#. Rif Resistant
+#: extracted_strings.json
+msgid "Rif Resistant"
+msgstr "Chống Rif"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategorySusceptible]
+#. defaultMessage is:
+#. Rif Susceptible
+#: extracted_strings.json
+msgid "Rif Susceptible"
+msgstr "Rif nhạy cảm"
+
 #. [pages.RouterList.router]
 #. defaultMessage is:
 #. Router
@@ -8088,6 +8874,13 @@ msgstr "SMS đã gửi MTD"
 #: extracted_strings.json
 msgid "SMS was sent to:"
 msgstr "SMS đã được gửi tới:"
+
+#. [filter.sampleType.sampleTypeSaliva]
+#. defaultMessage is:
+#. Saliva
+#: extracted_strings.json
+msgid "Saliva"
+msgstr "Nước bọt"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -8225,6 +9018,13 @@ msgstr "Lưu chi tiết liên hệ không thành công"
 #: extracted_strings.json
 msgid "Saving Login Details Failed"
 msgstr "Lưu chi tiết đăng nhập không thành công"
+
+#. [errorResponseMessages.updateSite.PUT.default.title]
+#. defaultMessage is:
+#. Saving Site Failed
+#: extracted_strings.json
+msgid "Saving Site Failed"
+msgstr "Lưu trang web không thành công"
 
 #. [errorResponseMessages.saveUserPreferences.PUT.default.title]
 #. defaultMessage is:
@@ -8580,6 +9380,13 @@ msgstr "Chọn trạng thái bảo trì ..."
 msgid "Select partner..."
 msgstr "Chọn đối tác ..."
 
+#. [filter.popover.selectDisplayResult]
+#. defaultMessage is:
+#. Select result scope...
+#: extracted_strings.json
+msgid "Select result scope..."
+msgstr "Chọn phạm vi kết quả ..."
+
 #. [filter.popover.selectResult]
 #. defaultMessage is:
 #. Select result...
@@ -8809,6 +9616,13 @@ msgstr "Đặt trạng thái bảo trì không thành công"
 #: extracted_strings.json
 msgid "Short Name"
 msgstr "Tên ngắn gọn"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteShortNameRepeated]
+#. defaultMessage is:
+#. Short name is already in use
+#: extracted_strings.json
+msgid "Short name is already in use"
+msgstr "Tên ngắn đã được sử dụng"
 
 #. [pages.RouterDetail.fieldShortName]
 #. defaultMessage is:
@@ -9127,6 +9941,13 @@ msgstr "ID Đơn vị"
 msgid "Site Id"
 msgstr "Số địa chỉ"
 
+#. [errorResponseMessages.updateSite.PUT.409.siteIdRepeated]
+#. defaultMessage is:
+#. Site Id is already in use
+#: extracted_strings.json
+msgid "Site Id is already in use"
+msgstr "Id trang web đã được sử dụng"
+
 #. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
@@ -9167,6 +9988,13 @@ msgstr "Địa chỉ liên hệ"
 #: extracted_strings.json
 msgid "Site is required"
 msgstr "Đơn vị là bắt buộc"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
+#. defaultMessage is:
+#. Site name is already in use
+#: extracted_strings.json
+msgid "Site name is already in use"
+msgstr "Tên trang web đã được sử dụng"
 
 #. [browsePage.browseDropdown.sites]
 #. defaultMessage is:
@@ -9221,6 +10049,13 @@ msgstr "Tin nhắn SMS không được dài hơn 144 ký tự"
 #: extracted_strings.json
 msgid "Source devices"
 msgstr "Nguồn thiết bị"
+
+#. [filter.sampleType.sampleTypeSputum]
+#. defaultMessage is:
+#. Sputum
+#: extracted_strings.json
+msgid "Sputum"
+msgstr "Đờm"
 
 #. [forms.formItem.startDate]
 #. defaultMessage is:
@@ -9285,10 +10120,16 @@ msgstr "Khu vực nhà nước"
 #. [pages.ResultWorkflowStatusLog.logStatus]
 #. defaultMessage is:
 #. Status
+#. [pages.ResultList.resultCategoryStatus]
+#. defaultMessage is:
+#. Status
 #. [pages.RouterDetail.fieldStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.TaskDetail.status]
+#. defaultMessage is:
+#. Status
+#. [pages.workload.deviceStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.Notification.status]
@@ -9296,6 +10137,13 @@ msgstr "Khu vực nhà nước"
 #. Status
 #: extracted_strings.json
 msgid "Status"
+msgstr "Trạng thái"
+
+#. [pages.DeviceDashboard.statusesTabTitle]
+#. defaultMessage is:
+#. Statuses
+#: extracted_strings.json
+msgid "Statuses"
 msgstr "Trạng thái"
 
 #. [component.Widget.stockNotRecordedTitle]
@@ -9392,10 +10240,10 @@ msgstr "Chủ nhật"
 msgid "Supplies"
 msgstr "Vật tư"
 
-#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
+#. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
-#. [pages.Status.inventoryGraphStatus.title]
+#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
 #. defaultMessage is:
 #. Supply in Stock
 #: extracted_strings.json
@@ -9635,10 +10483,10 @@ msgstr "Lịch sử kiểm tra"
 msgid "Testing Trends In Year"
 msgstr "Xu hướng thử nghiệm trong năm"
 
-#. [component.Widget.dashboardWidgetUnitTests]
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
 #. defaultMessage is:
 #. Tests
-#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
+#. [component.Widget.dashboardWidgetUnitTests]
 #. defaultMessage is:
 #. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
@@ -10575,6 +11423,9 @@ msgstr "Tổng kết quả"
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [pages.InventoryLog.totalTests]
+#. defaultMessage is:
+#. Total Tests
 #: extracted_strings.json
 msgid "Total Tests"
 msgstr "Tổng số đề thi"
@@ -10842,13 +11693,13 @@ msgstr "Không thể đặt lại mật khẩu"
 msgid "Ungroup Column"
 msgstr "Bỏ nhóm cột"
 
+#. [filter.AssayTypeSelectField.assayTypeUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [legends.Unknown.resultCategoryUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceStatusSelectField.unknown]
@@ -11232,6 +12083,16 @@ msgstr "Trong vòng 2 giờ kiểm tra"
 #: extracted_strings.json
 msgid "Workflow Status"
 msgstr "Trạng thái quy trình làm việc"
+
+#. [pages.DeviceDashboard.workloadTabTitle]
+#. defaultMessage is:
+#. Workload
+#. [pages.workload.workloadTitle]
+#. defaultMessage is:
+#. Workload
+#: extracted_strings.json
+msgid "Workload"
+msgstr "Khối lượng công việc"
 
 #. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
 #. defaultMessage is:
@@ -11619,6 +12480,13 @@ msgstr "tên thiết bị bao gồm \"{deviceName}\""
 msgid "deviceId is in ({joinedIds})"
 msgstr "deviceId ở trong ({joinedIds})"
 
+#. [filter.btnGroup.withDisplayResult]
+#. defaultMessage is:
+#. display "{displayResult}"
+#: extracted_strings.json
+msgid "display \"{displayResult}\""
+msgstr "hiển thị \"{displayResult}\""
+
 #. [filter.btnGroup.errorCode]
 #. defaultMessage is:
 #. error code includes "{errorCode}"
@@ -11930,13 +12798,6 @@ msgstr "tình trạng điều trị là {treatmentStatusName}"
 msgid "type is {deviceTypeName}"
 msgstr "loại là {deviceTypeName}"
 
-#. [server.userFriendly.message]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "chưa xác định"
-
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
@@ -12128,6 +12989,9 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, số nhiều, một {# kết quả} khác {# kết quả}})"
+
+#~ msgid "undefined"
+#~ msgstr "chưa xác định"
 
 #~ msgid "Demo Device"
 #~ msgstr "Demo thiết bị"

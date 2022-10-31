@@ -19,7 +19,6 @@ import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
-import { i18nWrapper } from '../../../providers/I18nProvider'
 import { receiveList, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import {
@@ -132,7 +131,7 @@ export const ReporterListWithProps = ({
   pageSize,
   reducedFilters,
 }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.reportersTitle)} />
@@ -184,9 +183,7 @@ export const ReporterListWithProps = ({
 const ReporterList = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const queryClient = useQueryClient()
 
   const [items, setItems] = useState(new Items())

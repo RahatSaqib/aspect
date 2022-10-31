@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-30T17:11:05.070Z\n"
+"POT-Creation-Date: 2022-10-28T14:28:58.373Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
@@ -384,6 +384,20 @@ msgstr "Ҳодисаҳои фаъол"
 msgid "Active status can't be edited"
 msgstr "Ҳолати фаъолро таҳрир кардан мумкин нест"
 
+#. [pages.displayResultSelectField.Actual]
+#. defaultMessage is:
+#. Actual
+#: extracted_strings.json
+msgid "Actual"
+msgstr "Воқеӣ"
+
+#. [filter.btnGroup.displayActualResults]
+#. defaultMessage is:
+#. Actual Results
+#: extracted_strings.json
+msgid "Actual Results"
+msgstr "Натиҷаҳои воқеӣ"
+
 #. [pages.NotificationDetail.actionAdd]
 #. defaultMessage is:
 #. Add
@@ -572,6 +586,9 @@ msgstr "Ҳама"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Ҳама натиҷаҳое ба вуҷуд меоянд, ки вируси ВНМО пахш карда намешавад"
 
+#. [filter.btnGroup.displayAllResults]
+#. defaultMessage is:
+#. All Results
 #. [pages.ReportIndex.all_results]
 #. defaultMessage is:
 #. All Results
@@ -961,7 +978,7 @@ msgstr "Ҷавоби миёнаи тасдиқшуда"
 #. Average Days for Instrument Replacement.
 #: extracted_strings.json
 msgid "Average Days for Instrument Replacement."
-msgstr "Рӯзҳои миёна барои иваз кардани асбоб"
+msgstr "Рӯзҳои миёна барои иваз кардани асбоб."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -1152,6 +1169,13 @@ msgstr ""
 "Дар асоси 30 рӯзи охир, фоизи натиҷаҳоро бо хатогиҳо нисбат ба шумораи "
 "умумии натиҷаҳои иҷрошуда ифода мекунад"
 
+#. [filter.sampleType.sampleTypeBlood]
+#. defaultMessage is:
+#. Blood
+#: extracted_strings.json
+msgid "Blood"
+msgstr "Хун"
+
 #. [pages.InventoryItemsList.breakOutByLot]
 #. defaultMessage is:
 #. Break out by lot
@@ -1211,6 +1235,13 @@ msgstr "COBAS 4800 VL"
 msgid "COVID Results"
 msgstr "Натиҷаҳои COVID"
 
+#. [resultCategoryGroup.assayGXCovid19resultCategoryError]
+#. defaultMessage is:
+#. COVID-19 Error
+#: extracted_strings.json
+msgid "COVID-19 Error"
+msgstr "Хатогии COVID-19"
+
 #. [filter.AssaySelectField.assayGenericCovid19]
 #. defaultMessage is:
 #. COVID-19 Generic Test
@@ -1221,6 +1252,119 @@ msgstr "Натиҷаҳои COVID"
 msgid "COVID-19 Generic Test"
 msgstr "Санҷиши умумии COVID-19"
 
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Inconclusive
+#: extracted_strings.json
+msgid "COVID-19 Inconclusive"
+msgstr "COVID-19 бенатиҷа"
+
+#. [resultCategoryGroup.assayGXCovid19resultCategoryInvalid]
+#. defaultMessage is:
+#. COVID-19 Invalid
+#: extracted_strings.json
+msgid "COVID-19 Invalid"
+msgstr "COVID-19 беэътибор аст"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayGXCovid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Negative
+#: extracted_strings.json
+msgid "COVID-19 Negative"
+msgstr "COVID-19 манфӣ"
+
+#. [resultCategoryGroup.assayGXCovid19resultCategoryNoResult]
+#. defaultMessage is:
+#. COVID-19 No Result
+#: extracted_strings.json
+msgid "COVID-19 No Result"
+msgstr "COVID-19 Натиҷае нест"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Positive
+#: extracted_strings.json
+msgid "COVID-19 Positive"
+msgstr "COVID-19 мусбат"
+
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayGXCovid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryPresumptivePositive]
+#. defaultMessage is:
+#. COVID-19 Presumptive Positive
+#: extracted_strings.json
+msgid "COVID-19 Presumptive Positive"
+msgstr "Эҳтимоли мусбати COVID-19"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryError]
+#. defaultMessage is:
+#. COVID-19 Region N Error
+#: extracted_strings.json
+msgid "COVID-19 Region N Error"
+msgstr "Хатогии минтақаи N COVID-19"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryInconclusive]
+#. defaultMessage is:
+#. COVID-19 Region N Inconclusive
+#: extracted_strings.json
+msgid "COVID-19 Region N Inconclusive"
+msgstr "COVID-19 Минтақаи N"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryInvalid]
+#. defaultMessage is:
+#. COVID-19 Region N Invalid
+#: extracted_strings.json
+msgid "COVID-19 Region N Invalid"
+msgstr "COVID-19 Минтақаи N беэътибор аст"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryNegative]
+#. defaultMessage is:
+#. COVID-19 Region N Negative
+#: extracted_strings.json
+msgid "COVID-19 Region N Negative"
+msgstr "COVID-19 Минтақаи N манфӣ"
+
+#. [resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryPositive]
+#. defaultMessage is:
+#. COVID-19 Region N Positive
+#: extracted_strings.json
+msgid "COVID-19 Region N Positive"
+msgstr "COVID-19 Минтақаи N мусбат"
+
 #. [filter.AssayTypeSelectField.covid19]
 #. defaultMessage is:
 #. COVID-19 Test
@@ -1228,12 +1372,35 @@ msgstr "Санҷиши умумии COVID-19"
 msgid "COVID-19 Test"
 msgstr "Санҷиши COVID-19"
 
+#. [resultCategoryGroup.assayGenericCovid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayGXCovid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayMP96Covid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#. [resultCategoryGroup.assayQS7Covid19resultCategoryUnknown]
+#. defaultMessage is:
+#. COVID-19 Unknown
+#: extracted_strings.json
+msgid "COVID-19 Unknown"
+msgstr "COVID-19 номаълум"
+
 #. [pages.SiteDetail.buttonCreate]
 #. defaultMessage is:
 #. CREATE
 #: extracted_strings.json
 msgid "CREATE"
 msgstr "Эҷод кунед"
+
+#. [filter.sampleType.sampleTypeCSF]
+#. defaultMessage is:
+#. CSF
+#: extracted_strings.json
+msgid "CSF"
+msgstr "CSF"
 
 #. [pages.ListExport.exportCsv]
 #. defaultMessage is:
@@ -1720,6 +1887,9 @@ msgstr "Ҳолати пайвасткунанда {connectorStatus} аст"
 msgid "Connector Version"
 msgstr "Версияи пайвасткунанда"
 
+#. [consumable.consumable]
+#. defaultMessage is:
+#. Consumable
 #. [filter.popover.consumable]
 #. defaultMessage is:
 #. Consumable
@@ -2136,6 +2306,13 @@ msgstr "Майдонҳои фармоишӣ"
 #: extracted_strings.json
 msgid "Custom Fields Average Completion"
 msgstr "Анҷоми миёнаи Майдонҳои фармоишӣ"
+
+#. [filter.sampleType.sampleTypeDBS]
+#. defaultMessage is:
+#. DBS
+#: extracted_strings.json
+msgid "DBS"
+msgstr "DBS"
 
 #. [months.december]
 #. defaultMessage is:
@@ -2615,6 +2792,9 @@ msgstr "Созандаи дастгоҳ"
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
 #. Device Name
+#. [pages.workload.name]
+#. defaultMessage is:
+#. Device Name
 #: extracted_strings.json
 msgid "Device Name"
 msgstr "Номи дастгоҳ"
@@ -2801,6 +2981,13 @@ msgstr "Ихтилоф"
 msgid "Disease"
 msgstr "Беморӣ"
 
+#. [filter.popover.displayResult]
+#. defaultMessage is:
+#. Display Result
+#: extracted_strings.json
+msgid "Display Result"
+msgstr "Натиҷаи ниҳоӣ"
+
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
 #. District
@@ -2846,6 +3033,13 @@ msgstr "Оё шумо мехоҳед, ки хомӯш кунед"
 #: extracted_strings.json
 msgid "Do you want to enable"
 msgstr "Мехоҳед фаъол созед"
+
+#. [page.contacts.person.removeAssignment]
+#. defaultMessage is:
+#. Do you want to remove below assignment?
+#: extracted_strings.json
+msgid "Do you want to remove below assignment?"
+msgstr "Мехоҳед супориши зерро нест кунед?"
 
 #. [jobFunction.donor]
 #. defaultMessage is:
@@ -2964,6 +3158,13 @@ msgstr "Таҳрир"
 #: extracted_strings.json
 msgid "Edit Notification"
 msgstr "Таҳрири огоҳинома"
+
+#. [filter.sampleType.sampleTypeEffusion]
+#. defaultMessage is:
+#. Effusion
+#: extracted_strings.json
+msgid "Effusion"
+msgstr "Эффузия"
 
 #. [errorResponseMessages.disconnected.default.message]
 #. defaultMessage is:
@@ -3434,6 +3635,20 @@ msgstr "Ҳар рӯзи ҳафта"
 msgid "Excel"
 msgstr "Excel"
 
+#. [pages.displayResultSelectField.Excluded]
+#. defaultMessage is:
+#. Excluded
+#: extracted_strings.json
+msgid "Excluded"
+msgstr "Хориҷ карда шудааст"
+
+#. [filter.btnGroup.displayExcludedResults]
+#. defaultMessage is:
+#. Excluded Results
+#: extracted_strings.json
+msgid "Excluded Results"
+msgstr "Натиҷаҳои хориҷшуда"
+
 #. [components.shared.execute]
 #. defaultMessage is:
 #. Execute
@@ -3742,6 +3957,13 @@ msgstr "Аввалин аз ҷониби"
 msgid "First Approved On"
 msgstr "Бори аввал тасдиқ карда шуд"
 
+#. [pages.workload.firstResultEndedOn]
+#. defaultMessage is:
+#. First Result
+#: extracted_strings.json
+msgid "First Result"
+msgstr "Натиҷаи аввал"
+
 #. [pages.DeviceDetailEdit.firstApproved]
 #. defaultMessage is:
 #. First approved
@@ -3884,6 +4106,13 @@ msgstr "GP ошкор нашудааст - NP ошкор"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP ошкор нашудааст - NP ошкор нашудааст"
+
+#. [filter.sampleType.sampleTypeGastricLavage]
+#. defaultMessage is:
+#. Gastric Lavage
+#: extracted_strings.json
+msgid "Gastric Lavage"
+msgstr "Шустани меъда"
 
 #. [filter.AssaySelectField.assayGXCovid19]
 #. defaultMessage is:
@@ -4182,6 +4411,55 @@ msgstr "Гирифтани файли гузориш ноком шуд"
 msgid "Group By Column"
 msgstr "Гурӯҳ аз рӯи сутун"
 
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryLessThan40]
+#. defaultMessage is:
+#. HBV < 40 cp/mL
+#: extracted_strings.json
+msgid "HBV < 40 cp/mL"
+msgstr "HBV < 40 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryMoreThan40]
+#. defaultMessage is:
+#. HBV >= 40 cp/mL
+#: extracted_strings.json
+msgid "HBV >= 40 cp/mL"
+msgstr "HBV > = 40 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLResultCategoryDetected]
+#. defaultMessage is:
+#. HBV Detected
+#: extracted_strings.json
+msgid "HBV Detected"
+msgstr "HBV ошкор карда шуд"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryError]
+#. defaultMessage is:
+#. HBV Error
+#: extracted_strings.json
+msgid "HBV Error"
+msgstr "Хатогии HBV"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HBV Indeterminate
+#: extracted_strings.json
+msgid "HBV Indeterminate"
+msgstr "HBV номуайян"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryInvalid]
+#. defaultMessage is:
+#. HBV Invalid
+#: extracted_strings.json
+msgid "HBV Invalid"
+msgstr "HBV беэътибор аст"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HBV Not Detected
+#: extracted_strings.json
+msgid "HBV Not Detected"
+msgstr "HBV ошкор нашудааст"
+
 #. [filter.AssayTypeSelectField.assayTypeHbvVl]
 #. defaultMessage is:
 #. HBV VL
@@ -4199,12 +4477,238 @@ msgstr "HBV VL"
 msgid "HCV"
 msgstr "HCV"
 
+#. [resultCategoryGroup.assayGeneXpertHcvResultCategoryDetected]
+#. defaultMessage is:
+#. HCV Detected
+#: extracted_strings.json
+msgid "HCV Detected"
+msgstr "HCV ошкор карда шуд"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryError]
+#. defaultMessage is:
+#. HCV Error
+#: extracted_strings.json
+msgid "HCV Error"
+msgstr "Хатогии HCV"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryInvalid]
+#. defaultMessage is:
+#. HCV Invalid
+#: extracted_strings.json
+msgid "HCV Invalid"
+msgstr "HCV беэътибор аст"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryNoResult]
+#. defaultMessage is:
+#. HCV No Result
+#: extracted_strings.json
+msgid "HCV No Result"
+msgstr "HCV натиҷа нест"
+
+#. [resultCategoryGroup.assayGeneXpertHcvresultCategoryNotDetected]
+#. defaultMessage is:
+#. HCV Not Detected
+#: extracted_strings.json
+msgid "HCV Not Detected"
+msgstr "HCV ошкор нашудааст"
+
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "ВИЧ"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
+#. defaultMessage is:
+#. HIV < 1000 cp/mL
+#: extracted_strings.json
+msgid "HIV < 1000 cp/mL"
+msgstr "ВНМО < 1000 cp/mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryLessThan150]
+#. defaultMessage is:
+#. HIV < 150 cp/mL
+#: extracted_strings.json
+msgid "HIV < 150 cp/mL"
+msgstr "ВНМО < 150 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan40]
+#. defaultMessage is:
+#. HIV < 40 cp/mL
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan40]
+#. defaultMessage is:
+#. HIV < 40 cp/mL
+#: extracted_strings.json
+msgid "HIV < 40 cp/mL"
+msgstr "ВНМО <40 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryLessThan550]
+#. defaultMessage is:
+#. HIV < 550 cp/mL
+#: extracted_strings.json
+msgid "HIV < 550 cp/mL"
+msgstr "ВНМО <550 cp/ml"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryMoreThan1000]
+#. defaultMessage is:
+#. HIV >= 1000 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 1000 cp/mL"
+msgstr "ВНМО >= 1000 cp/mL"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryMoreThan150]
+#. defaultMessage is:
+#. HIV >= 150 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 150 cp/mL"
+msgstr "ВНМО >= 150 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan40]
+#. defaultMessage is:
+#. HIV >= 40 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 40 cp/mL"
+msgstr "ВНМО >= 40 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryMoreThan550]
+#. defaultMessage is:
+#. HIV >= 550 cp/mL
+#: extracted_strings.json
+msgid "HIV >= 550 cp/mL"
+msgstr "ВНМО >= 550 cp/ml"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.AssayAbbottM2000HivEidResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1QualResultCategoryDetected]
+#. defaultMessage is:
+#. HIV Detected
+#: extracted_strings.json
+msgid "HIV Detected"
+msgstr "ВНМО ошкор карда шуд"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryError]
+#. defaultMessage is:
+#. HIV Error
+#: extracted_strings.json
+msgid "HIV Error"
+msgstr "Хатогии ВИЧ"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Indeterminate
+#: extracted_strings.json
+msgid "HIV Indeterminate"
+msgstr "ВИЧ номуайян"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryIndeterminate]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryInvalid]
+#. defaultMessage is:
+#. HIV Invalid
+#: extracted_strings.json
+msgid "HIV Invalid"
+msgstr "Эътилофи ВИЧ"
+
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryNoResult]
+#. defaultMessage is:
+#. HIV No Result
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryNoResult]
+#. defaultMessage is:
+#. HIV No Result
+#: extracted_strings.json
+msgid "HIV No Result"
+msgstr "ВИЧ натиҷа надорад"
+
+#. [resultCategoryGroup.abbottM2000DBSHivVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV Not Detected
+#: extracted_strings.json
+msgid "HIV Not Detected"
+msgstr "ВНМО ошкор нашудааст"
 
 #. [filter.AssayTypeSelectField.assayTypeHivQual]
 #. defaultMessage is:
@@ -4219,6 +4723,13 @@ msgstr "ВНМО Сифат"
 #: extracted_strings.json
 msgid "HIV VL"
 msgstr "ВИЧ ВЛ"
+
+#. [resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryNotDetected]
+#. defaultMessage is:
+#. HIV not Detected
+#: extracted_strings.json
+msgid "HIV not Detected"
+msgstr "ВНМО ошкор нашудааст"
 
 #. [pages.caseRow.diseaseNameHIVAIDS]
 #. defaultMessage is:
@@ -4702,6 +5213,13 @@ msgstr "Инвентаризатсия дар даст"
 msgid "Is at least {minLength} characters long"
 msgstr "Дарозии ҳадди аққал {minLength} аломат аст"
 
+#. [filter.sampleType.sampleTypeIsolate]
+#. defaultMessage is:
+#. Isolate
+#: extracted_strings.json
+msgid "Isolate"
+msgstr "Ҷудо кардан"
+
 #. [pages.TableCell.issueBasedNotification]
 #. defaultMessage is:
 #. Issue Based
@@ -4836,7 +5354,7 @@ msgstr "Администратори лаборатория"
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
-msgstr "Лаборатория:"
+msgstr "Мудири лаборатория"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -4923,6 +5441,20 @@ msgstr "Мохи гузашта"
 #: extracted_strings.json
 msgid "Last Month ({minDate} - {maxDate})"
 msgstr "Моҳи гузашта ({minDate} - {maxDate})"
+
+#. [pages.workload.lastPingOn]
+#. defaultMessage is:
+#. Last Ping
+#: extracted_strings.json
+msgid "Last Ping"
+msgstr "Пинги охирин"
+
+#. [pages.workload.lastResultEndedOn]
+#. defaultMessage is:
+#. Last Result
+#: extracted_strings.json
+msgid "Last Result"
+msgstr "Натиҷаи охирин"
 
 #. [pages.DeviceList.lastResultConductedOn]
 #. defaultMessage is:
@@ -5410,6 +5942,12 @@ msgstr "МТБ"
 #. [resultCategoryGroup.gxMtbXdrMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [resultCategoryGroup.assayTruenatMtbResultCategoryDetected]
+#. defaultMessage is:
+#. MTB Detected
+#. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -5532,6 +6070,12 @@ msgstr "MTB Detected XDR ошкор нашудааст"
 #. [resultCategoryGroup.gxMtbXdrMtbError]
 #. defaultMessage is:
 #. MTB Error
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryError]
+#. defaultMessage is:
+#. MTB Error
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryError]
+#. defaultMessage is:
+#. MTB Error
 #. [pages.filters.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -5552,6 +6096,12 @@ msgstr "Хатогии MTB"
 #. defaultMessage is:
 #. MTB Invalid
 #. [resultCategoryGroup.gxMtbXdrMtbInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryInvalid]
+#. defaultMessage is:
+#. MTB Invalid
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryInvalid]
 #. defaultMessage is:
 #. MTB Invalid
 #. [pages.filters.gxMtbRifMtbInvalid]
@@ -5576,6 +6126,12 @@ msgstr "MTB беэътибор аст"
 #. [resultCategoryGroup.gxMtbXdrMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryNoResult]
+#. defaultMessage is:
+#. MTB No Result
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryNoResult]
+#. defaultMessage is:
+#. MTB No Result
 #. [pages.filters.gxMtbRifMtbNoResult]
 #. defaultMessage is:
 #. MTB No Result
@@ -5596,6 +6152,12 @@ msgstr "MTB натиҷа нест"
 #. defaultMessage is:
 #. MTB Not Detected
 #. [resultCategoryGroup.gxMtbXdrMtbNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [resultCategoryGroup.assayTruenatMtbresultCategoryNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected
+#. [resultCategoryGroup.assayTruenatMtbPlusresultCategoryNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected
 #. [pages.filters.gxMtbRifMtbNotDetected]
@@ -5750,10 +6312,7 @@ msgstr "Микроскопия"
 #. Minutes
 #: extracted_strings.json
 msgid "Minutes"
-msgstr ""
-"Аз сабаби хатогии \"{errorMessage}\" {fileType} гузориши \"{reportName}\" "
-"тавлид нашуд. Лутфан, пас аз чанд дақиқа бори дигар кӯшиш кунед. Агар хатогӣ "
-"идома ёбад, барои дастгирӣ бо маъмури худ тамос гиред."
+msgstr "Дакикахо"
 
 #. [legends.Unknown.resultCategoryMissing]
 #. defaultMessage is:
@@ -5784,9 +6343,7 @@ msgstr "Модул"
 #. Module Disabled
 #: extracted_strings.json
 msgid "Module Disabled"
-msgstr ""
-"Вақти миёна (дар рӯз) байни вақте ки модул хомӯш карда шуд ва силсилаи "
-"модули дигар дар ҳамон як слот ошкор карда мешавад."
+msgstr "Модул ғайрифаъол"
 
 #. [forms.formItem.moduleName]
 #. defaultMessage is:
@@ -5970,6 +6527,13 @@ msgstr "NTP"
 #: extracted_strings.json
 msgid "Name"
 msgstr "Ном"
+
+#. [filter.sampleType.sampleTypeNasalSwab]
+#. defaultMessage is:
+#. Nasal Swab
+#: extracted_strings.json
+msgid "Nasal Swab"
+msgstr "Тампончаи бинӣ"
 
 #. [pages.NotificationDetail.Area.National]
 #. defaultMessage is:
@@ -6328,9 +6892,7 @@ msgstr "Мумкин нест"
 #. Not specified
 #: extracted_strings.json
 msgid "Not specified"
-msgstr ""
-"Сервер арзишҳои дар ин майдонҳои филтр муқарраршударо рад кард. Гурӯҳи "
-"техникии мо огоҳ карда шудааст ва ҳарчи зудтар ба мушкилот машғул хоҳад шуд."
+msgstr "Муайян нашудааст"
 
 #. [pages.resultTreatmentPanel.notYetConfirmedOnTreatment]
 #. defaultMessage is:
@@ -6664,6 +7226,9 @@ msgstr "Фармоиш дод"
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
 #. Other
+#. [filter.sampleType.sampleTypeOther]
+#. defaultMessage is:
+#. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Дигар"
@@ -6885,6 +7450,13 @@ msgstr ""
 msgid "Performance"
 msgstr "Намоиш"
 
+#. [pages.common.period]
+#. defaultMessage is:
+#. Period
+#: extracted_strings.json
+msgid "Period"
+msgstr "Давра"
+
 #. [pages.PersonDetail.title]
 #. defaultMessage is:
 #. Person Detail
@@ -6898,6 +7470,13 @@ msgstr "Тафсилоти шахс"
 #: extracted_strings.json
 msgid "Phone"
 msgstr "Телефон"
+
+#. [filter.sampleType.sampleTypePlasma]
+#. defaultMessage is:
+#. Plasma
+#: extracted_strings.json
+msgid "Plasma"
+msgstr "Плазма"
 
 #. [errorResponseMessages.common.notFound.resolution]
 #. defaultMessage is:
@@ -7383,6 +7962,13 @@ msgstr "Таъмин карда шудааст"
 #: extracted_strings.json
 msgid "Purged"
 msgstr "Тоза карда шуд"
+
+#. [filter.sampleType.sampleTypePus]
+#. defaultMessage is:
+#. Pus
+#: extracted_strings.json
+msgid "Pus"
+msgstr "чирк"
 
 #. [filter.AssaySelectField.assayQHivVl]
 #. defaultMessage is:
@@ -7870,6 +8456,9 @@ msgstr "Хал карда шуд"
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
+#. [pages.ResultList.resultCategoryResult]
+#. defaultMessage is:
+#. Result
 #. [pages.NotificationDetail.resultTitle]
 #. defaultMessage is:
 #. Result
@@ -7904,6 +8493,13 @@ msgstr "Натиҷаи 2"
 msgid "Result Based"
 msgstr "Дар асоси натиҷа"
 
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryContaminated]
+#. defaultMessage is:
+#. Result Contaminated
+#: extracted_strings.json
+msgid "Result Contaminated"
+msgstr "Натиҷаи заҳролудшуда"
+
 #. [pages.ReportIndex.resultCountsByHIVStatus]
 #. defaultMessage is:
 #. Result Counts by HIV status
@@ -7917,6 +8513,135 @@ msgstr "Ҳисобкунии натиҷаҳо аз рӯи ҳолати ВНМО"
 #: extracted_strings.json
 msgid "Result Details"
 msgstr "Тафсилоти натиҷа"
+
+#. [resultCategoryGroup.assayBdMgitAstResultCategoryDetected]
+#. defaultMessage is:
+#. Result Detected
+#. [resultCategoryGroup.assayBdMgitGndResultCategoryDetected]
+#. defaultMessage is:
+#. Result Detected
+#: extracted_strings.json
+msgid "Result Detected"
+msgstr "Натиҷа муайян карда шуд"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryError]
+#. defaultMessage is:
+#. Result Error
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryError]
+#. defaultMessage is:
+#. Result Error
+#: extracted_strings.json
+msgid "Result Error"
+msgstr "Хатогии натиҷа"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#. [resultCategoryGroup.assayTruenatUnknownresultCategoryMissing]
+#. defaultMessage is:
+#. Result Missing
+#: extracted_strings.json
+msgid "Result Missing"
+msgstr "Натиҷа нопадид"
+
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryNegative]
+#. defaultMessage is:
+#. Result Negative
+#: extracted_strings.json
+msgid "Result Negative"
+msgstr "Натиҷаи манфӣ"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryNotDetected]
+#. defaultMessage is:
+#. Result Not Detected
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryNotDetected]
+#. defaultMessage is:
+#. Result Not Detected
+#: extracted_strings.json
+msgid "Result Not Detected"
+msgstr "Натиҷа ошкор нашудааст"
+
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryPositive]
+#. defaultMessage is:
+#. Result Positive
+#: extracted_strings.json
+msgid "Result Positive"
+msgstr "Натиҷаи мусбӣ"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive1]
+#. defaultMessage is:
+#. Result Positive (+)
+#: extracted_strings.json
+msgid "Result Positive (+)"
+msgstr "Натиҷаи мусбӣ (+)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive2]
+#. defaultMessage is:
+#. Result Positive (++)
+#: extracted_strings.json
+msgid "Result Positive (++)"
+msgstr "Натиҷаи мусбӣ (++)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive3]
+#. defaultMessage is:
+#. Result Positive (+++)
+#: extracted_strings.json
+msgid "Result Positive (+++)"
+msgstr "Натиҷаи мусбӣ (+++)"
+
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryPositiveMOTT]
+#. defaultMessage is:
+#. Result Positive MOTT
+#: extracted_strings.json
+msgid "Result Positive MOTT"
+msgstr "Натиҷаи MOTT мусбат"
+
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryPositiveMTB]
+#. defaultMessage is:
+#. Result Positive MTB
+#: extracted_strings.json
+msgid "Result Positive MTB"
+msgstr "Натиҷаи мусбӣ MTB"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryResistant]
+#. defaultMessage is:
+#. Result Resistant
+#: extracted_strings.json
+msgid "Result Resistant"
+msgstr "Муқовимат ба натиҷа"
+
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryScanty]
+#. defaultMessage is:
+#. Result Scanty (1-9/100)
+#: extracted_strings.json
+msgid "Result Scanty (1-9/100)"
+msgstr "Натиҷаи ночиз (1-9/100)"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategorySuccess]
+#. defaultMessage is:
+#. Result Success
+#. [resultCategoryGroup.assayBdMgitGndresultCategorySuccess]
+#. defaultMessage is:
+#. Result Success
+#: extracted_strings.json
+msgid "Result Success"
+msgstr "Натиҷа Муваффақият"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategorySusceptible]
+#. defaultMessage is:
+#. Result Susceptible
+#: extracted_strings.json
+msgid "Result Susceptible"
+msgstr "Натиҷаи ҳассос"
 
 #. [forms.formItem.resultText]
 #. defaultMessage is:
@@ -7934,6 +8659,25 @@ msgstr "Матни натиҷа"
 #: extracted_strings.json
 msgid "Result Transfer Completed"
 msgstr "Интиқоли натиҷа анҷом ёфт"
+
+#. [resultCategoryGroup.assayBdMgitAstresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assayBdMgitGndresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#. [resultCategoryGroup.assayTruenatUnknownresultCategoryUnknown]
+#. defaultMessage is:
+#. Result Unknown
+#: extracted_strings.json
+msgid "Result Unknown"
+msgstr "Натиҷа номаълум"
 
 #. [jobFunction.resultViewerNo]
 #. defaultMessage is:
@@ -8027,6 +8771,41 @@ msgstr "Бекор карда шуд"
 msgid "Rif"
 msgstr "Риф"
 
+#. [resultCategoryGroup.assayTruenatRifresultCategoryError]
+#. defaultMessage is:
+#. Rif Error
+#: extracted_strings.json
+msgid "Rif Error"
+msgstr "Хатогии Rif"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryInvalid]
+#. defaultMessage is:
+#. Rif Invalid
+#: extracted_strings.json
+msgid "Rif Invalid"
+msgstr "Rif беэътибор аст"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryNoResult]
+#. defaultMessage is:
+#. Rif No Result
+#: extracted_strings.json
+msgid "Rif No Result"
+msgstr "Риф ҳеҷ натиҷа"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategoryResistant]
+#. defaultMessage is:
+#. Rif Resistant
+#: extracted_strings.json
+msgid "Rif Resistant"
+msgstr "Муқовимат ба Rif"
+
+#. [resultCategoryGroup.assayTruenatRifresultCategorySusceptible]
+#. defaultMessage is:
+#. Rif Susceptible
+#: extracted_strings.json
+msgid "Rif Susceptible"
+msgstr "Rif ҳассос"
+
 #. [pages.RouterList.router]
 #. defaultMessage is:
 #. Router
@@ -8102,6 +8881,13 @@ msgstr "SMS фиристода MTD"
 #: extracted_strings.json
 msgid "SMS was sent to:"
 msgstr "SMS фиристода шуд:"
+
+#. [filter.sampleType.sampleTypeSaliva]
+#. defaultMessage is:
+#. Saliva
+#: extracted_strings.json
+msgid "Saliva"
+msgstr "гилро"
 
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
@@ -8239,6 +9025,13 @@ msgstr "Захираи тафсилоти тамос ноком шуд"
 #: extracted_strings.json
 msgid "Saving Login Details Failed"
 msgstr "Захираи тафсилоти воридшавӣ ноком шуд"
+
+#. [errorResponseMessages.updateSite.PUT.default.title]
+#. defaultMessage is:
+#. Saving Site Failed
+#: extracted_strings.json
+msgid "Saving Site Failed"
+msgstr "Захираи сайт ноком шуд"
 
 #. [errorResponseMessages.saveUserPreferences.PUT.default.title]
 #. defaultMessage is:
@@ -8594,6 +9387,13 @@ msgstr "Ҳолати нигоҳдорӣ интихоб кунед..."
 msgid "Select partner..."
 msgstr "Шарикро интихоб кунед..."
 
+#. [filter.popover.selectDisplayResult]
+#. defaultMessage is:
+#. Select result scope...
+#: extracted_strings.json
+msgid "Select result scope..."
+msgstr "Миқёси натиҷаро интихоб кунед..."
+
 #. [filter.popover.selectResult]
 #. defaultMessage is:
 #. Select result...
@@ -8823,6 +9623,13 @@ msgstr "Танзими Ҳолати Нигоҳдорӣ ноком шуд"
 #: extracted_strings.json
 msgid "Short Name"
 msgstr "Номи кӯтоҳ"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteShortNameRepeated]
+#. defaultMessage is:
+#. Short name is already in use
+#: extracted_strings.json
+msgid "Short name is already in use"
+msgstr "Номи кӯтоҳ аллакай истифода мешавад"
 
 #. [pages.RouterDetail.fieldShortName]
 #. defaultMessage is:
@@ -9144,6 +9951,13 @@ msgstr "ID сайт"
 msgid "Site Id"
 msgstr "ID сайт"
 
+#. [errorResponseMessages.updateSite.PUT.409.siteIdRepeated]
+#. defaultMessage is:
+#. Site Id is already in use
+#: extracted_strings.json
+msgid "Site Id is already in use"
+msgstr "Id сайт аллакай истифода мешавад"
+
 #. [forms.formItem.siteName]
 #. defaultMessage is:
 #. Site Name
@@ -9184,6 +9998,13 @@ msgstr "Тамос бо сайт"
 #: extracted_strings.json
 msgid "Site is required"
 msgstr "Сайт талаб карда мешавад"
+
+#. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
+#. defaultMessage is:
+#. Site name is already in use
+#: extracted_strings.json
+msgid "Site name is already in use"
+msgstr "Номи сайт аллакай истифода мешавад"
 
 #. [browsePage.browseDropdown.sites]
 #. defaultMessage is:
@@ -9238,6 +10059,13 @@ msgstr "Паёми SMS набояд аз 144 аломат зиёд бошад"
 #: extracted_strings.json
 msgid "Source devices"
 msgstr "Дастгоҳҳои манбаъ"
+
+#. [filter.sampleType.sampleTypeSputum]
+#. defaultMessage is:
+#. Sputum
+#: extracted_strings.json
+msgid "Sputum"
+msgstr "Балғам"
 
 #. [forms.formItem.startDate]
 #. defaultMessage is:
@@ -9302,10 +10130,16 @@ msgstr "Давлат/минтақа"
 #. [pages.ResultWorkflowStatusLog.logStatus]
 #. defaultMessage is:
 #. Status
+#. [pages.ResultList.resultCategoryStatus]
+#. defaultMessage is:
+#. Status
 #. [pages.RouterDetail.fieldStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.TaskDetail.status]
+#. defaultMessage is:
+#. Status
+#. [pages.workload.deviceStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.Notification.status]
@@ -9314,6 +10148,13 @@ msgstr "Давлат/минтақа"
 #: extracted_strings.json
 msgid "Status"
 msgstr "Статус"
+
+#. [pages.DeviceDashboard.statusesTabTitle]
+#. defaultMessage is:
+#. Statuses
+#: extracted_strings.json
+msgid "Statuses"
+msgstr "Статусҳо"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -9409,10 +10250,10 @@ msgstr "Якшанбе"
 msgid "Supplies"
 msgstr "Таъминот"
 
-#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
+#. [pages.Status.inventoryGraphStatus.title]
 #. defaultMessage is:
 #. Supply in Stock
-#. [pages.Status.inventoryGraphStatus.title]
+#. [legends.Unknown.inventoryGraphStatusYAxisLegend]
 #. defaultMessage is:
 #. Supply in Stock
 #: extracted_strings.json
@@ -9652,10 +10493,10 @@ msgstr "Таърихи санҷиш"
 msgid "Testing Trends In Year"
 msgstr "Тамоюлҳои санҷиш дар сол"
 
-#. [component.Widget.dashboardWidgetUnitTests]
+#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
 #. defaultMessage is:
 #. Tests
-#. [pages.Status.covidGraphDailyMortalityAndRecoveryByGenderTests.pie]
+#. [component.Widget.dashboardWidgetUnitTests]
 #. defaultMessage is:
 #. Tests
 #. [pages.RouterDetail.fieldTotalNumberOfTests]
@@ -9732,9 +10573,9 @@ msgid ""
 "interruption will be the date range between the device was flagged as \"Down "
 "for repair\" and when it back to be active again"
 msgstr ""
-"Давомнокии миёнаи қатъи хидмат, бо рӯз. Давраи танаффус ин диапазони санаи "
-"байни дастгоҳ ҳамчун \"Барои таъмир\" қайд карда шуда ва вақте ки он дубора "
-"фаъол мешавад, хоҳад буд."
+"Давомнокии миёнаи қатъи хидмат, дар рӯз. Давраи танаффус ин диапазони санаи "
+"байни дастгоҳ ҳамчун \"Барои таъмир поён\" қайд карда мешавад ва вақте ки он "
+"дубора фаъол мешавад"
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
@@ -10608,6 +11449,9 @@ msgstr "Натиҷаҳои умумӣ"
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [pages.InventoryLog.totalTests]
+#. defaultMessage is:
+#. Total Tests
 #: extracted_strings.json
 msgid "Total Tests"
 msgstr "Санҷишҳои умумӣ"
@@ -10875,13 +11719,13 @@ msgstr "Паролро барқарор кардан ғайриимкон аст
 msgid "Ungroup Column"
 msgstr "Гурӯҳбандии сутун"
 
+#. [filter.AssayTypeSelectField.assayTypeUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.shared.deviceStatus.inactiveUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [legends.Unknown.resultCategoryUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
 #. [pages.DeviceStatusSelectField.unknown]
@@ -11267,6 +12111,16 @@ msgstr "Дар давоми 2 соат пас аз санҷиш"
 msgid "Workflow Status"
 msgstr "Ҳолати ҷараёни корӣ"
 
+#. [pages.DeviceDashboard.workloadTabTitle]
+#. defaultMessage is:
+#. Workload
+#. [pages.workload.workloadTitle]
+#. defaultMessage is:
+#. Workload
+#: extracted_strings.json
+msgid "Workload"
+msgstr "Сарбории кор"
+
 #. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
 #. defaultMessage is:
 #. XDR FLQ Resistance
@@ -11630,7 +12484,7 @@ msgstr "вақти миёна барои иваз кардани модулҳо�
 #. data
 #: extracted_strings.json
 msgid "data"
-msgstr "Маълумот"
+msgstr "маълумот"
 
 #. [pages.resultTreatmentPanel.days]
 #. defaultMessage is:
@@ -11652,6 +12506,13 @@ msgstr "номи дастгоҳ дорои \"{deviceName}\""
 #: extracted_strings.json
 msgid "deviceId is in ({joinedIds})"
 msgstr "ID-и дастгоҳ дар ({joinedIds}) аст"
+
+#. [filter.btnGroup.withDisplayResult]
+#. defaultMessage is:
+#. display "{displayResult}"
+#: extracted_strings.json
+msgid "display \"{displayResult}\""
+msgstr "намоиши \"{displayResult}\""
 
 #. [filter.btnGroup.errorCode]
 #. defaultMessage is:
@@ -11965,13 +12826,6 @@ msgstr "ҳолати табобат {treatmentStatusName} аст"
 msgid "type is {deviceTypeName}"
 msgstr "навъи {deviceTypeName}"
 
-#. [server.userFriendly.message]
-#. defaultMessage is:
-#. undefined
-#: extracted_strings.json
-msgid "undefined"
-msgstr "номуайян"
-
 #. [filter.btnGroup.dateTo]
 #. defaultMessage is:
 #. until {date}
@@ -12160,6 +13014,9 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, ҷамъ, як {# натиҷа} дигар {# натиҷа} })"
+
+#~ msgid "undefined"
+#~ msgstr "номуайян"
 
 #~ msgid "Demo Device"
 #~ msgstr "Дастгоҳи намоишӣ"

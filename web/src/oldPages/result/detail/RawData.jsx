@@ -1,10 +1,7 @@
 import React from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material'
-import identity from 'lodash/identity'
 import { ReadOnlyField } from '../../../oldComponents/shared/ReadOnlyFields'
-
-const enhance = identity
 
 const RawData = ({ createdOn, index, formatMessage, createdOnLabel, rawMessage }) => (
   <div style={{ paddingTop: '10px' }}>
@@ -28,4 +25,4 @@ const RawData = ({ createdOn, index, formatMessage, createdOnLabel, rawMessage }
   </div>
 )
 
-export default enhance(RawData)
+export default RawData

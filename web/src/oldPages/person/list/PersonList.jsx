@@ -7,18 +7,18 @@ import { defineMessages } from 'react-intl'
 import { connect, useSelector } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage, commonDefinitions } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import requirePermissions, { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
-import { i18nWrapper } from '../../../providers/I18nProvider/index'
 import { fetchPersons, exportContacts } from '../../../store/PersonRedux'
 import {
   makeSortPageSelector,
@@ -142,7 +142,7 @@ const enhance = compose(
     onExcelClick:
       ({ location, exportContacts, sortCol, sortDir, pageAt, table }) =>
       formatType => {
-        const format = formatType.id
+        const format = formatType
         const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           exportContacts(
@@ -224,7 +224,7 @@ export const PersonList = ({
   const AddNewButton = requirePermissions({
     permissions: ['person:edit'],
   })(AspectButton)
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useI18n()
 
   const { permissions: userPermissions } = useSelector(({ user }) => user.toJS().jwt)
 
@@ -245,12 +245,7 @@ export const PersonList = ({
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-        <ExportListButton
-          onExcelClick={onExcelClick}
-          onCsvClick={onExcelClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName={formatMessage(messages.contactsTitle)}
-        />
+        <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
 
         {!items.currentIdList.isEmpty() && (
           <PersonDataTable className={cssClasses('PersonDataTable')}>
