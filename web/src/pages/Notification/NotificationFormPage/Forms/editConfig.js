@@ -178,7 +178,6 @@ const notificationTypeSection = formatMessage => {
                     label: formatMessage(messages.notificationTypeIssueBased),
                     icon: 'AiOutlineIssuesClose',
 
-                    label: formatMessage(messages.notificationCreateGroupForSite),
                     options: [
                       {
                         value: 'InventoryStockout',
@@ -192,11 +191,11 @@ const notificationTypeSection = formatMessage => {
                       },
                     ],
                   },
-                  {
-                    value: 'reportBased',
-                    label: formatMessage(messages.notificationTypeReportBased),
-                    icon: 'AiOutlineSolution',
-                  },
+                  // {
+                  //   value: 'reportBased',
+                  //   label: formatMessage(messages.notificationTypeReportBased),
+                  //   icon: 'AiOutlineSolution',
+                  // },
                 ],
                 placeholder: formatMessage(messages.notificationType),
               },
