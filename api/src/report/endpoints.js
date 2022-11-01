@@ -49,7 +49,7 @@ const routes = [
   {
     method: 'GET',
     path: '/reports',
-    handler: asyncHandler(getReports),
+    handler: getReports,
     config: {
       description: 'List of Reports',
       notes: 'Reports scoped by user permissions, filterable by geography',
@@ -57,6 +57,7 @@ const routes = [
       validate: {
         query: {
           ...requestBaseQuery(),
+          availableForNotification: Joi.number().optional(),
         },
       },
       response: {
