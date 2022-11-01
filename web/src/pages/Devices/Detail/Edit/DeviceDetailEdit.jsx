@@ -5,6 +5,7 @@ import isEqual from 'lodash/isEqual'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
+import DeviceCapacitySelect from '../../../../components/DeviceCapacitySelect'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import useI18n from '../../../../hooks/useI18n'
@@ -63,14 +64,14 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               fullWidth
               id="name"
               label={intl.formatMessage(messages.name)}
-              value={device.name}
+              value={editDevice.name}
               onChange={e => setEditDevice({ ...editDevice, name: e.target.value })}
             />
             <TextField
               fullWidth
               id="shortName"
               label={intl.formatMessage(messages.shortName)}
-              value={device.shortName}
+              value={editDevice.shortName}
               onChange={e => setEditDevice({ ...editDevice, shortName: e.target.value })}
             />
             <SiteSelectField
@@ -83,18 +84,18 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               tabIndex="0"
               aria-haspopup
             />
-            <TextField
-              fullWidth
-              id="capacity"
+            <DeviceCapacitySelect
+              name="capacity"
+              deviceTypeId={editDevice.deviceType.externalId}
               label={intl.formatMessage(messages.capacity)}
-              value={device.dailyCapacity}
-              onChange={e => setEditDevice({ ...editDevice, dailyCapacity: e.target.value })}
+              value={editDevice.dailyCapacity}
+              onChange={value => setEditDevice({ ...editDevice, deviceCapacityId: value })}
             />
             <TextField
               fullWidth
               id="notes"
               label={intl.formatMessage(messages.notes)}
-              value={device.notes}
+              value={editDevice.notes}
               onChange={e => setEditDevice({ ...editDevice, notes: e.target.value })}
               multiline
               maxRows={6}
@@ -118,42 +119,42 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               fullWidth
               id="deviceType"
               label={intl.formatMessage(messages.deviceType)}
-              value={device.deviceType.name}
+              value={editDevice.deviceType.name}
               disabled
             />
             <TextField
               fullWidth
               id="serial"
               label={intl.formatMessage(messages.serial)}
-              value={device.serial}
+              value={editDevice.serial}
               disabled
             />
             <TextField
               fullWidth
               id="hostId"
               label={intl.formatMessage(messages.hostId)}
-              value={device.hostId}
+              value={editDevice.hostId}
               disabled
             />
             <TextField
               fullWidth
               id="lastSeen"
               label={intl.formatMessage(messages.lastSeen)}
-              value={device.lastSeen}
+              value={editDevice.lastSeen}
               disabled
             />
             <TextField
               fullWidth
               id="lastPingOn"
               label={intl.formatMessage(messages.lastPingOn)}
-              value={device.lastPingOn}
+              value={editDevice.lastPingOn}
               disabled
             />
             <TextField
               fullWidth
               id="createdOn"
               label={intl.formatMessage(messages.createdOn)}
-              value={device.createdOn}
+              value={editDevice.createdOn}
               disabled
             />
 

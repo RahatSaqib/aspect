@@ -10,7 +10,7 @@ const updateDeviceById = async (device, deviceId) => {
     params: {
       name: device.name,
       shortName: device.shortName,
-      dailyCapacity: device.dailyCapacity,
+      deviceCapacityId: device.deviceCapacityId,
       notes: device.notes,
       siteId: device.siteId,
       configurationData: device.configurationData,

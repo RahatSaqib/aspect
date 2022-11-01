@@ -500,6 +500,9 @@ async function updateDevice(request) {
       deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
       deviceCapacityId: payload.deviceCapacityId,
+      name: payload.name,
+      notes: payload.notes,
+      shortName: payload.shortName,
     })
 
   if (updatedCount !== 1) {

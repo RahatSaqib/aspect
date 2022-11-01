@@ -161,11 +161,14 @@ const routes = [
           deviceId: Joi.string().description('Device id').required(),
         },
         payload: {
-          siteId: Joi.number(),
           approvalToken: Joi.string(),
           configurationData: Joi.object().description(
             'Device configuration data.  The valid keys are dependent on Device Type.'
           ),
+          name: Joi.string().required().description('The name of the device'),
+          notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
+          shortName: Joi.string().allow('', null).description('The short name of the device'),
+          siteId: Joi.number(),
           deviceCapacityId: Joi.number(),
         },
       },
