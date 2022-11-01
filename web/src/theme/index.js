@@ -367,9 +367,6 @@ const themeDefinition = {
       defaultProps: {
         variant: 'standard',
       },
-      MuiInputLabel: {
-        color: 'red',
-      },
     },
   },
 }
