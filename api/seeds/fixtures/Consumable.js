@@ -189,34 +189,6 @@ const getConsumables = async () => {
       ],
     },
     {
-      name: 'Daktari CD4 Cartridge',
-      externalId: 'DaktariCD4Cartridge',
-      i18nKey: 'daktariCD4Cartridge',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Daktari',
-      assays: [
-        {
-          externalId: 'DaktariCD4',
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      name: 'Daktari HIV-VL Cartridge',
-      externalId: 'DaktariHivVLCartridge',
-      i18nKey: 'daktariHivVLCartridge',
-      unit: piece,
-      canExpire: 1,
-      manufacturer: 'Daktari',
-      assays: [
-        {
-          externalId: 'DaktariHivVL',
-          quantity: 1,
-        },
-      ],
-    },
-    {
       name: 'Truenat MTB Test Kit',
       externalId: 'truenatMTBTestKit',
       i18nKey: 'truenatMTBTestKit',
