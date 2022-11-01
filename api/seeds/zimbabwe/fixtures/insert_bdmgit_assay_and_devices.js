@@ -180,7 +180,6 @@ async function upsertMGITDevices(knex) {
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
     resultCategory1i18nKey: 'resultCategoryResult',
-
     resultDataSchema: JSON.stringify({
       no: {
         list: false,
@@ -656,7 +655,6 @@ async function upsertMGITDevices(knex) {
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
     resultCategory1i18nKey: 'resultCategoryResult',
-
     resultDataSchema: JSON.stringify({
       no: {
         list: false,
@@ -1527,7 +1525,6 @@ async function upsertMGITDevices(knex) {
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
     resultCategory1i18nKey: 'resultCategoryResult',
-
     resultDataSchema: JSON.stringify({
       no: {
         list: false,
@@ -2279,7 +2276,6 @@ async function upsertMGITDevices(knex) {
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Result',
     resultCategory1i18nKey: 'resultCategoryResult',
-
     resultDataSchema: JSON.stringify({
       no: {
         list: false,

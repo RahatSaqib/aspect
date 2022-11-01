@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useSelector, useDispatch } from 'react-redux'
@@ -35,20 +35,15 @@ const Status = () => {
   const { formatMessage } = useI18n()
   const dispatch = useDispatch()
 
-  const assaysComposed = useSelector(({ assay }) => assay.items)
-  const assays = useMemo(() => assaysComposed.toJS().filter(a => a.hasResults), [assaysComposed])
-
   useEffect(() => {
     dispatch(fetchAssays(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const allowed = options =>
-    assays.filter(({ externalId, hasResults }) => options.includes(externalId) && hasResults).map(e => e.externalId)
-
-  const tbPermissions = allowed(['GxMtbRif', 'GxMtbRifUltra'])
-  const xdrPermissions = allowed(['GxMtbXdr'])
-  const hivPermissions = allowed([
+  const assays = useSelector(({ assay }) => assay.items).toJS()
+  const tbPermissions = ['GxMtbRif', 'GxMtbRifUltra']
+  const xdrPermissions = ['GxMtbXdr']
+  const hivPermissions = [
     'abbottM2000DBSHivVL',
     'abbottM2000PlasmaHivVL',
     'assayAlereQHiv12Detect',
@@ -57,8 +52,8 @@ const Status = () => {
     'GxHiv1Vl',
     'QHivVL',
     'ReporterHivVL',
-  ])
-  const covidPermissions = allowed(['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19'])
+  ]
+  const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
   return (
     <div className={cssClasses('Container')} style={{ marginBottom: 0 }}>
@@ -77,36 +72,58 @@ const Status = () => {
           <PermissionsProvider permissions={['dashboard']}>
             <TestsOverTimeGraph assaysFromState={assays} /> {/* 1 */}
           </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...tbPermissions]}>
-            <TbDetectedGraph assaysFromState={assays} /> {/* 2 */}
-            <TbResultsGraph assaysFromState={assays} /> {/* 3 */}
-          </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...xdrPermissions]}>
-            <XDRResultsGraph assaysFromState={assays} /> {/* 4 */}
-          </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...tbPermissions]}>
-            <TrendInYearsAllTestsGraph assaysFromState={assays} /> {/* 5 */}
-            <TrendInYearsMtbDetectedGraph assaysFromState={assays} /> {/* 6 */}
-            <TrendInYearsRifDetectedGraph assaysFromState={assays} /> {/* 7 */}
-            <QuartersMtbDetectedGraph assaysFromState={assays} /> {/* 8 */}
-            <QuartersRifDetectedGraph assaysFromState={assays} /> {/* 9 */}
-          </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...xdrPermissions]}>
-            <XDRFLQResistanceGraph assaysFromState={assays} /> {/* 10 */}
-          </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...covidPermissions]}>
-            <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
-          </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...hivPermissions]}>
-            <HivResultsGraph assaysFromState={assays} /> {/* 12 */}
-          </PermissionsProvider>
+
+          {assays.some(a => tbPermissions.includes(a.externalId)) ? (
+            <PermissionsProvider permissions={['dashboard']}>
+              <TbDetectedGraph assaysFromState={assays} /> {/* 2 */}
+              <TbResultsGraph assaysFromState={assays} /> {/* 3 */}
+            </PermissionsProvider>
+          ) : null}
+
+          {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
+            <PermissionsProvider permissions={['dashboard']}>
+              <XDRResultsGraph assaysFromState={assays} /> {/* 4 */}
+            </PermissionsProvider>
+          ) : null}
+
+          {assays.some(a => tbPermissions.includes(a.externalId)) ? (
+            <PermissionsProvider permissions={['dashboard']}>
+              <TrendInYearsAllTestsGraph assaysFromState={assays} /> {/* 5 */}
+              <TrendInYearsMtbDetectedGraph assaysFromState={assays} /> {/* 6 */}
+              <TrendInYearsRifDetectedGraph assaysFromState={assays} /> {/* 7 */}
+              <QuartersMtbDetectedGraph assaysFromState={assays} /> {/* 8 */}
+              <QuartersRifDetectedGraph assaysFromState={assays} /> {/* 9 */}
+            </PermissionsProvider>
+          ) : null}
+
+          {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
+            <PermissionsProvider permissions={['dashboard']}>
+              <XDRFLQResistanceGraph assaysFromState={assays} /> {/* 10 */}
+            </PermissionsProvider>
+          ) : null}
+
+          {assays.some(a => covidPermissions.includes(a.externalId)) ? (
+            <PermissionsProvider permissions={['dashboard']}>
+              <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
+            </PermissionsProvider>
+          ) : null}
+
+          {assays.some(a => hivPermissions.includes(a.externalId)) ? (
+            <PermissionsProvider permissions={['dashboard']}>
+              <HivResultsGraph assaysFromState={assays} /> {/* 12 */}
+            </PermissionsProvider>
+          ) : null}
+
           <PermissionsProvider permissions={['dashboard', 'operationalData']}>
             <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
             <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
           </PermissionsProvider>
-          <PermissionsProvider permissions={['dashboard', ...hivPermissions]}>
-            <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
-          </PermissionsProvider>
+
+          {assays.some(a => hivPermissions.includes(a.externalId)) ? (
+            <PermissionsProvider permissions={['dashboard']}>
+              <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
+            </PermissionsProvider>
+          ) : null}
         </>
       ) : null}
 

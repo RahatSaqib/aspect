@@ -353,6 +353,8 @@ const getItemsV2 = (resultQuery, query) => {
       'r.endedOn',
       'r.updatedOn',
       'a.externalId as assayExternalId',
+      'at.i18nKey as contentI18nKey',
+      'at.abbreviation as contentText',
       'si.name as siteName',
       'd.name as deviceName',
       'rc1.externalId as resultCategory1ExternalId',

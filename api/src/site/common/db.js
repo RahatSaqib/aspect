@@ -21,4 +21,5 @@ async function updateSite(siteId, params) {
 async function checkSiteAccess(siteId, dataConstraints) {
   return knex('Site as s').where('s.id', siteId).modify(addConstraints, dataConstraints, { site: 's' }).first('s.id')
 }
+
 module.exports = { getExistingSite, getExistingSiteExcludingCurrent, updateSite, checkSiteAccess }
