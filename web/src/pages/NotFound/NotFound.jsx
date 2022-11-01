@@ -23,7 +23,7 @@ const NotFound = () => {
       <IconButton className={cssClasses('Container__Button')} onClick={() => navigate(-1)}>
         <ActionBack fontSize="large" />
       </IconButton>
-      <Link to="/">
+      <Link to="/dashboard">
         <IconButton className={cssClasses('Container__Button')}>
           <ActionHome fontSize="large" />
         </IconButton>
