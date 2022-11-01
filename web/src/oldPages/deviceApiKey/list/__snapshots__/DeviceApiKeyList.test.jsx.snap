@@ -9,9 +9,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     encodeSpecialCharacters={true}
     title="Device API Keys"
   />
-  <Connect(lifecycle(Component))
-    title="Device API Keys"
-  />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     intl={
       Object {
@@ -134,9 +131,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
   <HelmetWrapper
     defer={true}
     encodeSpecialCharacters={true}
-    title="Device API Keys"
-  />
-  <Connect(lifecycle(Component))
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
