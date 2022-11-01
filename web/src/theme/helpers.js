@@ -1,4 +1,4 @@
-export const getPickersLocalization = pickersTranslations => {
+const getPickersLocalization = pickersTranslations => {
   return {
     components: {
       MuiLocalizationProvider: {
@@ -9,3 +9,5 @@ export const getPickersLocalization = pickersTranslations => {
     },
   }
 }
+
+export default getPickersLocalization

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-28T14:28:58.373Z\n"
+"POT-Creation-Date: 2022-11-01T13:30:02.823Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3761,6 +3761,16 @@ msgstr "Експортувати список пристроїв"
 msgid "Exporting Contacts Failed"
 msgstr "Помилка експорту контактів"
 
+#. [errorResponseMessages.exportWorkload.GET.400.title]
+#. defaultMessage is:
+#. Exporting Device Workload Failed
+#. [errorResponseMessages.exportWorkload.GET.default.title]
+#. defaultMessage is:
+#. Exporting Device Workload Failed
+#: extracted_strings.json
+msgid "Exporting Device Workload Failed"
+msgstr "Не вдалося експортувати робоче навантаження пристрою"
+
 #. [errorResponseMessages.exportDeviceApiKeys.GET.400.title]
 #. defaultMessage is:
 #. Exporting DeviceApiKeys Failed
@@ -5070,6 +5080,9 @@ msgstr "Серійний номер інструменту"
 #. defaultMessage is:
 #. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.exportWorkload.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
 #: extracted_strings.json
@@ -12877,8 +12890,8 @@ msgstr "{count} з {total} днів"
 msgid ""
 "{daysInSameStatus, plural, one {# day} other {# days} } since last update"
 msgstr ""
-"{daysInSameStatus, plural, one {# day} other {# days} } з моменту останнього "
-"оновлення"
+"{daysInSameStatus, plural, one {# результат повідомлено} other {# результати "
+"повідомлено}} з моменту останнього оновлення"
 
 #. [pages.TableCell.timeClassification]
 #. defaultMessage is:
@@ -12943,7 +12956,7 @@ msgid ""
 "{# day} other {# days} }"
 msgstr ""
 "{maintenanceStatusName} ({totalResults}) для {daysInSameStatus, plural, one "
-"{# day} other {# days}}"
+"{# результат повідомлено} other {# результати повідомлено}})"
 
 #. [component.Widget.ytd]
 #. defaultMessage is:

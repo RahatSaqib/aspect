@@ -13,13 +13,12 @@ import { Provider, connect } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import history from './history'
-import useI18n from './hooks/useI18n'
 import IdleDetection from './oldComponents/IdleDetection'
 import { reasonTypes } from './oldPages/auth/loggedOutReasons'
 import RefreshToken from './oldPages/auth/login/RefreshToken'
 import Pages from './Pages'
 import { AuthProvider } from './providers/AuthProvider'
-import { I18nProvider } from './providers/I18nProvider'
+import { I18nProvider, dateFNSLocales } from './providers/I18nProvider'
 import { refreshStart } from './store/AuthRedux'
 import { actions as idleActions } from './store/IdleRedux'
 import getTheme from './theme'
@@ -94,10 +93,9 @@ const mapDispatchToProps = bindActionCreators.bind(null, {
   idleStart: idleActions.start,
   idleStop: idleActions.stop,
 })
-const MUILocalizationProvider = ({ children }) => {
-  const { dateFNSLocale } = useI18n()
+const MUILocalizationProvider = ({ children, culture }) => {
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocale}>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocales[culture]}>
       {children}
     </LocalizationProvider>
   )
@@ -133,26 +131,26 @@ const App = ({
   >
     <ThemeProvider theme={getTheme(culture)}>
       <I18nProvider>
-        <MUILocalizationProvider>
-          <RefreshToken key="refreshTokenProvider" refreshStart={refreshStart} />
-          <IdleDetection
-            key="IdleDetectionProvider"
-            isLoggedOut={isLoggedOut}
-            idleStart={idleStart}
-            idleStop={idleStop}
-          />
-          <LocalStorage
-            key="localStorageProvider"
-            access={access}
-            refresh={refresh}
-            clientId={clientId}
-            culture={culture}
-            timezoneId={timezoneId}
-            displayPreferences={displayPreferences}
-            drawerOpen={drawerOpen}
-          />
-          <QueryClientProvider key="queryClientProvider" client={new QueryClient()}>
-            {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
+        <RefreshToken key="refreshTokenProvider" refreshStart={refreshStart} />
+        <IdleDetection
+          key="IdleDetectionProvider"
+          isLoggedOut={isLoggedOut}
+          idleStart={idleStart}
+          idleStop={idleStop}
+        />
+        <LocalStorage
+          key="localStorageProvider"
+          access={access}
+          refresh={refresh}
+          clientId={clientId}
+          culture={culture}
+          timezoneId={timezoneId}
+          displayPreferences={displayPreferences}
+          drawerOpen={drawerOpen}
+        />
+        <QueryClientProvider key="queryClientProvider" client={new QueryClient()}>
+          {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
+          <MUILocalizationProvider culture={culture}>
             <Router key="routerProvider" history={history}>
               <Pages
                 key="pagesProvider"
@@ -164,8 +162,8 @@ const App = ({
                 permissions={permissions}
               />
             </Router>
-          </QueryClientProvider>
-        </MUILocalizationProvider>
+          </MUILocalizationProvider>
+        </QueryClientProvider>
       </I18nProvider>
     </ThemeProvider>
   </IntlProvider>

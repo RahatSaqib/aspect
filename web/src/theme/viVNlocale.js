@@ -1,5 +1,5 @@
 // This object is not Partial<PickersLocaleText> because it is the default values
-import { getPickersLocalization } from './helpers'
+import getPickersLocalization from './helpers'
 
 const viVNPickers = {
   // Calendar navigation
