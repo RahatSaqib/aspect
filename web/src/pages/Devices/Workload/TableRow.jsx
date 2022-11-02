@@ -15,7 +15,9 @@ const TableRow = ({ item, extraColumns }) => {
   return (
     <Tr className={cssClasses('TableRow')}>
       <Td className={cssClasses('TableCell')}>{item.name}</Td>
-      <Td className={cssClasses('TableCell')}>{formatMessage(messages[item.deviceStatus])}</Td>
+      <Td className={cssClasses('TableCell')}>
+        {item.deviceStatus ? formatMessage(messages[item.deviceStatus]) : formatMessage(messages.notAvailable)}
+      </Td>
       <Td className={cssClasses('TableCell')}>{item.stateName}</Td>
       <Td className={cssClasses('TableCell')}>{item.lgaName}</Td>
       <Td className={cssClasses('TableCell')}>
