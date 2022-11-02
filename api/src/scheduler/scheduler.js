@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const cron = require('node-cron')
+const cronStarter = require('../notification/reportBased/cronStarter')
 
 const {
   factGenerateDeviceConnectivity,
@@ -41,7 +42,7 @@ function startScheduler(queue) {
   dispatcher.factCheckCompletionRatePerSite()
   dispatcher.factFillCustomFieldsCompletionStatsLast30Days()
   dispatcher.resolveIssues()
-
+  cronStarter()
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('0 2 * * *', dispatcher.tryToContinueUnprocessedRawData) // daily at 2 am

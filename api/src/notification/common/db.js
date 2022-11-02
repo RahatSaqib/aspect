@@ -414,8 +414,21 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     }
   })
 }
+
+async function getReporBasedNotifications() {
+  const rbnQuery = knex('NotificationType as nt')
+    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
+    .where('ntc.externalId', 'reportBased')
+    .where('nt.enabled', 1)
+    .whereNotNull('nt.cronRecurrency')
+    .select('nt.id', 'nt.name', 'nt.cronRecurrency')
+
+  return rbnQuery
+}
+
 module.exports = {
   getListNotifications,
   saveNotificationType,
   getNotification,
+  getReporBasedNotifications,
 }
