@@ -12,9 +12,10 @@ const getCronHumanValue = (cronExpression, locale) => {
 
     return '-'
   } catch (ex) {
-    const days = cronExpression.split(' ')[5]
+    console.log('🚀 ~ file: utils.js ~ line 16 ~ getCronHumanValue ~ cronExpression', cronExpression)
+    const days = cronExpression[4]
 
-    return `${cronstrue.toString(cronExpression.replace(days, '*').toString().replace(/,/g, ' ').replace(/!/g, ','), {
+    return `${cronstrue.toString(cronExpression.toString().replace(days, '*').replace(/,/g, ' ').replace(/!/g, ','), {
       locale,
     })} ${days}`
   }

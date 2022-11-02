@@ -12,35 +12,32 @@ const Weekly = ({ cronExpression, onChange }) => {
 
   const changeHours = e => {
     const val = [...cronExpression]
-    val[0] = '0'
-    val[2] = `${e.target.value}`
+    val[1] = `${e.target.value}`
     onChange(val)
   }
   const changeMinutes = e => {
     const val = [...cronExpression]
-    val[0] = '0'
+
     val[1] = `${e.target.value}`
     onChange(val)
   }
   const onCheck = e => {
     const val = [...cronExpression]
-    val[0] = '0'
     if (e.target.checked) {
-      val[2] = `${val[2]}`.split('/').length > 1 ? '0' : val[2].toString()
-      val[3] = '?'
-      val[4] = '*'
-      if (val[5] === '*' || val[5] === '?' || val[5] === 'MON-FRI') {
-        val[5] = e.target.value
+      val[1] = `${val[1]}`.split('/').length > 1 ? '0' : val[1].toString()
+      val[2] = '?'
+      if (val[4] === '*' || val[4] === '1-5') {
+        val[4] = e.target.value
       } else {
-        val[5] = `${val[5]}!${e.target.value}`
+        val[4] = `${val[4]}!${e.target.value}`
       }
     } else {
-      val[5] = val[5].split('!')
-      if (val[5].length > 1) {
-        val[5].splice(val[5].indexOf(e.target.value), 1)
-        val[5] = val[5].toString().replace(/,/g, '!')
+      val[4] = val[4].split('!')
+      if (val[4].length > 1) {
+        val[4].splice(val[4].indexOf(e.target.value), 1)
+        val[4] = val[4].toString().replace(/,/g, '!')
       } else {
-        val[5] = '*'
+        val[4] = '*'
       }
     }
 
@@ -59,7 +56,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="MON"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('MON') !== -1}
+                  checked={cronExpression[4].search('1') !== -1}
                 />
               }
               label={formatMessage(messages.monday)}
@@ -71,7 +68,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="TUE"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('TUE') !== -1}
+                  checked={cronExpression[4].search('2') !== -1}
                 />
               }
               label={formatMessage(messages.tuesday)}
@@ -83,7 +80,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="WED"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('WED') !== -1}
+                  checked={cronExpression[4].search('3') !== -1}
                 />
               }
               label={formatMessage(messages.wednesday)}
@@ -95,7 +92,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="THU"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('THU') !== -1}
+                  checked={cronExpression[4].search('4') !== -1}
                 />
               }
               label={formatMessage(messages.thursday)}
@@ -107,7 +104,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="FRI"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('FRI') !== -1}
+                  checked={cronExpression[4].search('5') !== -1}
                 />
               }
               label={formatMessage(messages.friday)}
@@ -119,7 +116,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="SUN"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('SUN') !== -1}
+                  checked={cronExpression[4].search('6') !== -1}
                 />
               }
               label={formatMessage(messages.sunday)}
@@ -131,7 +128,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="SAT"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('SAT') !== -1}
+                  checked={cronExpression[4].search('7') !== -1}
                 />
               }
               label={formatMessage(messages.saturday)}
@@ -141,8 +138,8 @@ const Weekly = ({ cronExpression, onChange }) => {
       </Stack>
       <Stack direction="row" spacing={1} alignItems="center">
         <ChooseTime
-          hour={cronExpression[2]}
-          minute={cronExpression[1]}
+          hour={cronExpression[1]}
+          minute={cronExpression[2]}
           changeMinutes={changeMinutes}
           changeHours={changeHours}
         />

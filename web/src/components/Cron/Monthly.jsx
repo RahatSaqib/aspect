@@ -15,33 +15,29 @@ const Monthly = ({ cronExpression, onChange }) => {
   const onDayChange = e => {
     if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
       const val = [
-        '0',
+        cronExpression[0] === '*' ? '0' : cronExpression[0],
         cronExpression[1] === '*' ? '0' : cronExpression[1],
-        cronExpression[2] === '*' ? '0' : cronExpression[2],
-        cronExpression[3],
+        cronExpression[2],
         '1/1',
         '?',
-        '*',
       ]
-      val[3] = `${e.target.value}`
+      val[2] = `${e.target.value}`
       onChange(val)
     }
   }
   const onLastDayChange = e => {
     if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
       const val = [
-        '0',
+        cronExpression[0] === '*' ? '0' : cronExpression[0],
         cronExpression[1] === '*' ? '0' : cronExpression[1],
-        cronExpression[2] === '*' ? '0' : cronExpression[2],
-        cronExpression[3],
+        cronExpression[2],
         '1/1',
         '?',
-        '*',
       ]
       if (e.target.value === '') {
-        val[3] = ''
+        val[2] = ''
       } else {
-        val[3] = `L-${e.target.value}`
+        val[2] = `L-${e.target.value}`
       }
 
       onChange(val)
@@ -49,12 +45,12 @@ const Monthly = ({ cronExpression, onChange }) => {
   }
   const onAtHourChange = e => {
     const val = [...cronExpression]
-    val[2] = `${e.target.value}`
+    val[1] = `${e.target.value}`
     onChange(val)
   }
   const onAtMinuteChange = e => {
     const val = [...cronExpression]
-    val[1] = `${e.target.value}`
+    val[0] = `${e.target.value}`
     onChange(val)
   }
 
@@ -73,12 +69,10 @@ const Monthly = ({ cronExpression, onChange }) => {
                       onChange={() => {
                         setEvery('1')
                         onChange([
-                          '0',
+                          cronExpression[0] === '*' ? '0' : cronExpression[0],
                           cronExpression[1] === '*' ? '0' : cronExpression[1],
-                          cronExpression[2] === '*' ? '0' : cronExpression[2],
                           '1',
                           '1/1',
-                          '?',
                           '*',
                         ])
                       }}
@@ -87,7 +81,8 @@ const Monthly = ({ cronExpression, onChange }) => {
                   }
                   label={formatMessage(messages.dayOfEveryMonth)}
                 />
-                <FormControlLabel
+
+                {/* <FormControlLabel
                   control={
                     <Radio
                       color="primary"
@@ -95,12 +90,10 @@ const Monthly = ({ cronExpression, onChange }) => {
                       onChange={() => {
                         setEvery('4')
                         onChange([
-                          '0',
+                          cronExpression[0] === '*' ? '0' : cronExpression[0],
                           cronExpression[1] === '*' ? '0' : cronExpression[1],
-                          cronExpression[2] === '*' ? '0' : cronExpression[2],
                           `L-${1}`,
                           '*',
-                          '?',
                           '*',
                         ])
                       }}
@@ -108,11 +101,11 @@ const Monthly = ({ cronExpression, onChange }) => {
                     />
                   }
                   label={formatMessage(messages.daysBeforeEndMonth)}
-                />
+                /> */}
               </FormGroup>
             </Stack>
             <Stack direction="column" spacing={2} alignItems="flex-end" justifyContent="flex-end">
-              <FormGroup>
+              {/* <FormGroup>
                 <FormControlLabel
                   control={
                     <Radio
@@ -122,8 +115,8 @@ const Monthly = ({ cronExpression, onChange }) => {
                         setEvery('2')
                         onChange([
                           '0',
+                          cronExpression[0] === '*' ? '0' : cronExpression[0],
                           cronExpression[1] === '*' ? '0' : cronExpression[1],
-                          cronExpression[2] === '*' ? '0' : cronExpression[2],
                           'L',
                           '*',
                           '?',
@@ -144,8 +137,8 @@ const Monthly = ({ cronExpression, onChange }) => {
                         setEvery('3')
                         onChange([
                           '0',
+                          cronExpression[0] === '*' ? '0' : cronExpression[0],
                           cronExpression[1] === '*' ? '0' : cronExpression[1],
-                          cronExpression[2] === '*' ? '0' : cronExpression[2],
                           'LW',
                           '*',
                           '?',
@@ -157,7 +150,7 @@ const Monthly = ({ cronExpression, onChange }) => {
                   }
                   label={formatMessage(messages.lastWeekdayOfmonth)}
                 />
-              </FormGroup>
+              </FormGroup> */}
             </Stack>
           </Stack>
         </div>
@@ -193,8 +186,8 @@ const Monthly = ({ cronExpression, onChange }) => {
               disabled={every !== '4'}
             />
             <ChooseTime
-              hour={cronExpression[2]}
-              minute={cronExpression[1]}
+              hour={cronExpression[1]}
+              minute={cronExpression[0]}
               changeHours={onAtHourChange}
               changeMinutes={onAtMinuteChange}
             />

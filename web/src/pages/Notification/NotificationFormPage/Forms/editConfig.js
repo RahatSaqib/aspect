@@ -174,6 +174,11 @@ const notificationTypeSection = formatMessage => {
                     icon: 'GrTest',
                   },
                   {
+                    value: 'reportBased',
+                    label: formatMessage(messages.notificationTypeReportBased),
+                    icon: 'AiOutlineSolution',
+                  },
+                  {
                     value: 'issueBased',
                     label: formatMessage(messages.notificationTypeIssueBased),
                     icon: 'AiOutlineIssuesClose',
@@ -191,11 +196,6 @@ const notificationTypeSection = formatMessage => {
                       },
                     ],
                   },
-                  // {
-                  //   value: 'reportBased',
-                  //   label: formatMessage(messages.notificationTypeReportBased),
-                  //   icon: 'AiOutlineSolution',
-                  // },
                 ],
                 placeholder: formatMessage(messages.notificationType),
               },

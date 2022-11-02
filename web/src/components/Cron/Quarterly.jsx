@@ -14,33 +14,30 @@ const Quarterly = ({ cronExpression, onChange }) => {
   const onDayChange = e => {
     if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
       const val = [
-        '0',
+        cronExpression[0] === '*' ? '0' : cronExpression[0],
         cronExpression[1] === '*' ? '0' : cronExpression[1],
-        cronExpression[2] === '*' ? '0' : cronExpression[2],
-        cronExpression[3],
+        cronExpression[2],
         '*/3',
-        '?',
+
         '*',
       ]
-      val[3] = `${e.target.value}`
+      val[2] = `${e.target.value}`
       onChange(val)
     }
   }
   const onLastDayChange = e => {
     if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
       const val = [
-        '0',
+        cronExpression[0] === '*' ? '0' : cronExpression[0],
         cronExpression[1] === '*' ? '0' : cronExpression[1],
-        cronExpression[2] === '*' ? '0' : cronExpression[2],
-        cronExpression[3],
+        cronExpression[2],
         '*/3',
-        '?',
         '*',
       ]
       if (e.target.value === '') {
-        val[3] = ''
+        val[2] = ''
       } else {
-        val[3] = `L-${e.target.value}`
+        val[2] = `L-${e.target.value}`
       }
 
       onChange(val)
@@ -48,12 +45,12 @@ const Quarterly = ({ cronExpression, onChange }) => {
   }
   const onAtHourChange = e => {
     const val = [...cronExpression]
-    val[2] = `${e.target.value}`
+    val[1] = `${e.target.value}`
     onChange(val)
   }
   const onAtMinuteChange = e => {
     const val = [...cronExpression]
-    val[1] = `${e.target.value}`
+    val[0] = `${e.target.value}`
     onChange(val)
   }
 
@@ -71,12 +68,10 @@ const Quarterly = ({ cronExpression, onChange }) => {
                     onChange={() => {
                       setEvery('1')
                       onChange([
-                        '0',
+                        cronExpression[0] === '*' ? '0' : cronExpression[0],
                         cronExpression[1] === '*' ? '0' : cronExpression[1],
-                        cronExpression[2] === '*' ? '0' : cronExpression[2],
                         '1',
                         '*/3',
-                        '?',
                         '*',
                       ])
                     }}
@@ -93,12 +88,10 @@ const Quarterly = ({ cronExpression, onChange }) => {
                     onChange={() => {
                       setEvery('2')
                       onChange([
-                        '0',
+                        cronExpression[0] === '*' ? '0' : cronExpression[0],
                         cronExpression[1] === '*' ? '0' : cronExpression[1],
-                        cronExpression[2] === '*' ? '0' : cronExpression[2],
                         'L',
                         '*/3',
-                        '?',
                         '*',
                       ])
                     }}
@@ -115,12 +108,10 @@ const Quarterly = ({ cronExpression, onChange }) => {
                     onChange={() => {
                       setEvery('4')
                       onChange([
-                        '0',
+                        cronExpression[0] === '*' ? '0' : cronExpression[0],
                         cronExpression[1] === '*' ? '0' : cronExpression[1],
-                        cronExpression[2] === '*' ? '0' : cronExpression[2],
                         `L-${1}`,
                         '*/3',
-                        '?',
                         '*',
                       ])
                     }}
@@ -138,7 +129,7 @@ const Quarterly = ({ cronExpression, onChange }) => {
           <TextField
             id="outlined-number"
             label={formatMessage(messages.dayOfEveryQuarter)}
-            value={cronExpression[3]}
+            value={cronExpression[2]}
             onChange={onDayChange}
             type="number"
             InputLabelProps={{
@@ -155,7 +146,7 @@ const Quarterly = ({ cronExpression, onChange }) => {
             <TextField
               id="outlined-number"
               label={formatMessage(messages.daysBeforeEndQuarter)}
-              value={cronExpression[3].split('-')[1]}
+              value={cronExpression[2].split('-')[1]}
               onChange={onLastDayChange}
               type="number"
               className={classes('Input_Width')}
@@ -164,8 +155,8 @@ const Quarterly = ({ cronExpression, onChange }) => {
               disabled={every !== '4'}
             />
             <ChooseTime
-              hour={cronExpression[2]}
-              minute={cronExpression[1]}
+              hour={cronExpression[1]}
+              minute={cronExpression[0]}
               changeHours={onAtHourChange}
               changeMinutes={onAtMinuteChange}
             />
