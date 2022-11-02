@@ -137,6 +137,128 @@ const messages = defineMessages({
     id: 'pages.filters.gxMtbXdrMtbNoResult',
     defaultMessage: 'MTB No Result',
   },
+  assayGenericDstresultCategoryPositiveMTBresultCategorySusceptible: {
+    id: 'assayGenericDstresultCategoryPositiveMTBresultCategorySusceptible',
+    defaultMessage: 'MTB Positive MTB Resistance Susceptible',
+  },
+  assayGenericDstresultCategorySuccessresultCategorySusceptible: {
+    id: 'assayGenericDstresultCategorySuccessresultCategorySusceptible',
+    defaultMessage: 'MTB Success Resistance Susceptible',
+  },
+  assayGenericDstResultCategoryDetectedresultCategorySusceptible: {
+    id: 'assayGenericDstResultCategoryDetectedresultCategorySusceptible',
+    defaultMessage: 'MTB Detected Resistance Susceptible',
+  },
+  assayGenericDstresultCategoryPositiveMTBresultCategoryResistant: {
+    id: 'assayGenericDstresultCategoryPositiveMTBresultCategoryResistant',
+    defaultMessage: 'MTB Positive MTB Resistance Resistant',
+  },
+  assayGenericDstresultCategorySuccessresultCategoryResistant: {
+    id: 'assayGenericDstresultCategorySuccessresultCategoryResistant',
+    defaultMessage: 'MTB Success Resistance Resistant',
+  },
+  assayGenericDstResultCategoryDetectedresultCategoryResistant: {
+    id: 'assayGenericDstResultCategoryDetectedresultCategoryResistant',
+    defaultMessage: 'MTB Detected Resistance Resistant',
+  },
+  assayGenericDstResultCategoryDetected: {
+    id: 'assayGenericDstResultCategoryDetected',
+    defaultMessage: 'MTB Detected',
+  },
+  assayGenericDstresultCategoryNotDetected: {
+    id: 'assayGenericDstresultCategoryNotDetected',
+    defaultMessage: 'MTB Not Detected',
+  },
+  assayGenericDstresultCategoryInvalid: { id: 'assayGenericDstresultCategoryInvalid', defaultMessage: 'MTB Invalid' },
+  assayGenericDstresultCategoryError: { id: 'assayGenericDstresultCategoryError', defaultMessage: 'MTB Error' },
+  assayGenericDstresultCategorySuccess: { id: 'assayGenericDstresultCategorySuccess', defaultMessage: 'MTB Success' },
+  assayGenericDstresultCategoryMissing: { id: 'assayGenericDstresultCategoryMissing', defaultMessage: 'MTB Missing' },
+  assayGenericDstresultCategoryUnknown: { id: 'assayGenericDstresultCategoryUnknown', defaultMessage: 'MTB Unknown' },
+  assayGenericDstresultCategoryContaminated: {
+    id: 'assayGenericDstresultCategoryContaminated',
+    defaultMessage: 'MTB Contaminated',
+  },
+  assayGenericDstresultCategoryPositiveMOTT: {
+    id: 'assayGenericDstresultCategoryPositiveMOTT',
+    defaultMessage: 'MTB Positive MOTT',
+  },
+  assayGenericDstresultCategoryPositiveMTB: {
+    id: 'assayGenericDstresultCategoryPositiveMTB',
+    defaultMessage: 'MTB Positive MTB',
+  },
+  assayGenericCultureResultCategoryDetected: {
+    id: 'assayGenericCultureResultCategoryDetected',
+    defaultMessage: 'Culture Result Detected',
+  },
+  assayGenericCultureresultCategoryNotDetected: {
+    id: 'assayGenericCultureresultCategoryNotDetected',
+    defaultMessage: 'Culture Result Not Detected',
+  },
+  assayGenericCultureresultCategoryInvalid: {
+    id: 'assayGenericCultureresultCategoryInvalid',
+    defaultMessage: 'Culture Result Invalid',
+  },
+  assayGenericCultureresultCategoryError: {
+    id: 'assayGenericCultureresultCategoryError',
+    defaultMessage: 'Culture Result Error',
+  },
+  assayGenericCultureresultCategorySuccess: {
+    id: 'assayGenericCultureresultCategorySuccess',
+    defaultMessage: 'Culture Result Success',
+  },
+  assayGenericCultureresultCategoryMissing: {
+    id: 'assayGenericCultureresultCategoryMissing',
+    defaultMessage: 'Culture Result Missing',
+  },
+  assayGenericCultureresultCategoryUnknown: {
+    id: 'assayGenericCultureresultCategoryUnknown',
+    defaultMessage: 'Culture Result Unknown',
+  },
+  assayGenericCultureresultCategoryContaminated: {
+    id: 'assayGenericCultureresultCategoryContaminated',
+    defaultMessage: 'Culture Result Contaminated',
+  },
+  assayGenericCultureresultCategoryPositiveMOTT: {
+    id: 'assayGenericCultureresultCategoryPositiveMOTT',
+    defaultMessage: 'Culture Result Positive MOTT',
+  },
+  assayGenericCultureresultCategoryPositiveMTB: {
+    id: 'assayGenericCultureresultCategoryPositiveMTB',
+    defaultMessage: 'Culture Result Positive MTB',
+  },
+  assayLPAresultCategoryPositiveMTBresultCategorySusceptible: {
+    id: 'assayLPAresultCategoryPositiveMTBresultCategorySusceptible',
+    defaultMessage: 'MTB Positive MTB Resistance Susceptible',
+  },
+  assayLPAresultCategoryPositiveMTBresultCategoryResistant: {
+    id: 'assayLPAresultCategoryPositiveMTBresultCategoryResistant',
+    defaultMessage: 'MTB Positive MTB Resistance Resistant',
+  },
+  assayLPAresultCategoryNotDetected: { id: 'assayLPAresultCategoryNotDetected', defaultMessage: 'MTB Not Detected' },
+  assayLPAresultCategoryInvalid: { id: 'assayLPAresultCategoryInvalid', defaultMessage: 'MTB Invalid' },
+  assayLPAresultCategoryMissing: { id: 'assayLPAresultCategoryMissing', defaultMessage: 'MTB Missing' },
+  assayLPAresultCategoryUnknown: { id: 'assayLPAresultCategoryUnknown', defaultMessage: 'MTB Unknown' },
+  assayLPAresultCategoryPositiveMTB: { id: 'assayLPAresultCategoryPositiveMTB', defaultMessage: 'MTB Positive MTB' },
+  assaySmearResultCategoryDetected: { id: 'assaySmearResultCategoryDetected', defaultMessage: 'Smear Result Detected' },
+  assaySmearresultCategoryNotDetected: {
+    id: 'assaySmearresultCategoryNotDetected',
+    defaultMessage: 'Smear Result Not Detected',
+  },
+  assaySmearresultCategoryInvalid: { id: 'assaySmearresultCategoryInvalid', defaultMessage: 'Smear Result Invalid' },
+  assaySmearresultCategoryMissing: { id: 'assaySmearresultCategoryMissing', defaultMessage: 'Smear Result Missing' },
+  assaySmearresultCategoryUnknown: { id: 'assaySmearresultCategoryUnknown', defaultMessage: 'Smear Result Unknown' },
+  assaySmearresultCategoryPositive1: {
+    id: 'assaySmearresultCategoryPositive1',
+    defaultMessage: 'Smear Result Positive (+)',
+  },
+  assaySmearresultCategoryPositive2: {
+    id: 'assaySmearresultCategoryPositive2',
+    defaultMessage: 'Smear Result Positive (++)',
+  },
+  assaySmearresultCategoryPositive3: {
+    id: 'assaySmearresultCategoryPositive3',
+    defaultMessage: 'Smear Result Positive (+++)',
+  },
 })
 
 export default messages

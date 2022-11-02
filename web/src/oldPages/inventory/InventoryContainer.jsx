@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Tab, Tabs } from '@mui/material'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
+import { useLocation, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
 import styles from './InventoryContainer.css'
 import InventoryItemsList from './list/InventoryItemsList'
@@ -19,10 +20,10 @@ const messages = defineMessages({
     defaultMessage: 'Inventory Log',
   },
 })
-const currentTabStyle = (currentTab, activeTab) =>
-  currentTab === activeTab ? 'tabs__tab--active' : 'tabs__tab--inactive'
 
-export const InventoryContainer = ({ navigate, location }) => {
+export const InventoryContainer = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('supplies')
   const { formatMessage } = useI18n()
   const tabsConfig = {
@@ -53,26 +54,10 @@ export const InventoryContainer = ({ navigate, location }) => {
   }
   return (
     <div className={cssClasses('Container')}>
-      <div className={cssClasses('tabs__container')}>
-        <Tabs
-          indicatorColor="primary"
-          textColor="inherit"
-          value={activeTab}
-          onChange={handleChange}
-          TabIndicatorProps={{ style: { height: '0px' } }}
-        >
-          <Tab
-            label={tabsConfig.supplies.label}
-            className={cssClasses('tabs__tab', currentTabStyle('supplies', activeTab))}
-            value={tabsConfig.supplies.path}
-          />
-          <Tab
-            label={tabsConfig.inventoryLog.label}
-            className={cssClasses('tabs__tab', currentTabStyle('log', activeTab))}
-            value={tabsConfig.inventoryLog.path}
-          />
-        </Tabs>
-      </div>
+      <Tabs value={activeTab} onChange={handleChange}>
+        <Tab label={tabsConfig.supplies.label} value={tabsConfig.supplies.path} />
+        <Tab label={tabsConfig.inventoryLog.label} value={tabsConfig.inventoryLog.path} />
+      </Tabs>
       {activeTab === 'supplies' ? (
         <InventoryItemsList navigate={navigate} location={location} />
       ) : (

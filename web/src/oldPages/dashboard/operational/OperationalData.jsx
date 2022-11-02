@@ -13,8 +13,6 @@ import styles from './OperationalData.css'
 
 const cssClasses = classnames.bind(styles)
 
-const currentTabStyle = (currentTab, index) => (currentTab === index ? 'tabs__tab--active' : 'tabs__tab--inactive')
-
 export const OperationalData = () => {
   const { formatMessage } = useI18n()
   const { pathname } = useLocation()
@@ -36,26 +34,10 @@ export const OperationalData = () => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.title)} />
-      <div className={cssClasses('tabs__container')}>
-        <Tabs
-          indicatorColor="primary"
-          textColor="inherit"
-          value={currentTab}
-          onChange={(e, v) => navigate(v)}
-          TabIndicatorProps={{ style: { height: '0px' } }}
-        >
-          <Tab
-            label={tabsConfig.dashboard.label}
-            className={cssClasses('tabs__tab', currentTabStyle(currentTab, tabsConfig.dashboard.path))}
-            value={tabsConfig.dashboard.path}
-          />
-          <Tab
-            label={tabsConfig.dailyStatus.label}
-            className={cssClasses('tabs__tab', currentTabStyle(currentTab, tabsConfig.dailyStatus.path))}
-            value={tabsConfig.dailyStatus.path}
-          />
-        </Tabs>
-      </div>
+      <Tabs value={currentTab} onChange={(e, v) => navigate(v)}>
+        <Tab label={tabsConfig.dashboard.label} value={tabsConfig.dashboard.path} />
+        <Tab label={tabsConfig.dailyStatus.label} value={tabsConfig.dailyStatus.path} />
+      </Tabs>
       <Routes>
         <Route path="" element={<OperationalDashBoard />} />
         <Route path="daily-status" element={<OperationalDailyStatus />} />

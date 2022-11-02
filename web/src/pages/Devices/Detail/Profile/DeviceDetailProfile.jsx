@@ -102,6 +102,7 @@ const enhance = compose(
         const { sanitized, value: filtersParams } = filtersFromLocation(location)
 
         if (!sanitized) {
+          filtersParams.set('showUnapprovedDevices', true)
           filtersParams.set('deviceId', device.get('id'))
           fetchResults(filtersParams, sortCol, sortDir, pageAt, pageSize)
         }
@@ -111,6 +112,7 @@ const enhance = compose(
       () => {
         const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
+          filtersParams.set('showUnapprovedDevices', true)
           filtersParams.set('deviceId', device.get('id'))
           exportResults(filtersParams, 'xlsx', sortCol, sortDir, pageAt, pageSize, 'xlsx', 'deviceResults')
         }

@@ -1,70 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ExportListButton should not render the button 1`] = `""`;
+exports[`ExportListButton should not render the button 1`] = `
+<AspectExportListButtonWithProps
+  anchorEl={null}
+  disableCSV={false}
+  disableExcel={false}
+  downloadStarted={false}
+  setAnchorEl={[Function]}
+  setDownloadStarted={[Function]}
+  visible={false}
+/>
+`;
 
 exports[`ExportListButton should shallow render export list correctly 1`] = `
-<div>
-  <ForwardRef(IconButton)
-    className="DownloadButton"
-    onClick={[Function]}
-    variant="contained"
-  >
-    <Memo(ForwardRef(CloudDownloadIcon))
-      style={
-        Object {
-          "fontSize": "1.25rem",
-        }
-      }
-    />
-  </ForwardRef(IconButton)>
-  <ForwardRef(Popover)
-    anchorEl={0}
-    anchorOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "bottom",
-      }
-    }
-    id="simple-popover"
-    onClose={[Function]}
-    open={false}
-    transformOrigin={
-      Object {
-        "horizontal": "left",
-        "vertical": "top",
-      }
-    }
-  >
-    <ol
-      style={
-        Object {
-          "listStyleType": "none",
-          "margin": "5px 30px 5px 30px",
-          "padding": "5px",
-        }
-      }
-    >
-      <li>
-        <button
-          className="Reports_Button"
-          id="xlsx"
-          onClick={[Function]}
-          type="button"
-        >
-          Excel
-        </button>
-      </li>
-      <li>
-        <button
-          className="Reports_Button"
-          id="csv"
-          onClick={[Function]}
-          type="button"
-        >
-          CSV
-        </button>
-      </li>
-    </ol>
-  </ForwardRef(Popover)>
-</div>
+<AspectExportListButtonWithProps
+  anchorEl={null}
+  disableCSV={false}
+  disableExcel={false}
+  downloadStarted={false}
+  setAnchorEl={[Function]}
+  setDownloadStarted={[Function]}
+  visible={true}
+/>
 `;

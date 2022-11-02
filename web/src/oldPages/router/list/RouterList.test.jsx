@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { createIntl } from 'react-intl'
-import ExportListButton from '../../../oldComponents/ExportListButton'
+import AspectExportListButton from '../../../components/AspectExportListButton'
 import { Items } from '../../../utils/metaReducers/items'
 import { Table } from '../../../utils/metaReducers/table'
 import { RouterList } from './RouterList'
@@ -27,6 +27,6 @@ describe.skip('RouterList', () => {
 
   it('should render RouterList correctly without export button', () => {
     expect(element).toMatchSnapshot()
-    expect(element.find(ExportListButton)).toHaveLength(1)
+    expect(element.find(AspectExportListButton)).toHaveLength(1)
   })
 })

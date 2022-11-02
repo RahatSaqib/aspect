@@ -46,7 +46,7 @@ const NotificationFormPage = ({ id }) => {
   useNotification(notificationId, {
     enabled: !!intl && !!jobFunctions && !!partner,
     onSuccess: data => {
-      const { notificationType, name, emailSubject, emailBody } = data
+      const { notificationType, cronRecurrency, issueTypeId, reportId, name, emailSubject, emailBody } = data
       const { smsBody, webUrl, webBody, filterCondition, enabled } = data
 
       const filter = JSON.parse(filterCondition)
@@ -69,6 +69,11 @@ const NotificationFormPage = ({ id }) => {
         areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
         areaItemsLab: buildAreaItems(filter.deviceLevelId, 'lab', filter.areaItems),
         result: filter.result,
+        issueTypeId,
+        reportId,
+        hasRecurrency: !!cronRecurrency,
+        cronRecurrency,
+        cronRecurrencyFromDb: cronRecurrency,
         /**
          * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
          * to make sure all items in array are located in their positions
@@ -102,12 +107,8 @@ const NotificationFormPage = ({ id }) => {
     const formConfig = getFormConfig(intl.formatMessage, jobFunctions, partner, true)
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
-    if (formik.values.notificationType === 'resultBased') {
-      values.notificationType = formik.values.notificationType
-    } else {
-      values.notificationType = 'issueBased'
-      values.issueType = formik.values.notificationType
-    }
+
+    values.notificationType = formik.values.notificationType
     values.jobFunctions.map((jf, index) => {
       jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
       if (jf.tags === '') {
@@ -139,6 +140,11 @@ const NotificationFormPage = ({ id }) => {
     if (!values?.persons?.length) {
       unset(values, 'persons')
     }
+
+    if (!values?.hasRecurrency) {
+      delete values.cronRecurrency
+    }
+
     /**
      * fun little excercise to sanitise three different
      * areaItem fields (state|lga|lab) into a single DB field :)

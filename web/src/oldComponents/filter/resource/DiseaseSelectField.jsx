@@ -14,7 +14,7 @@ const enhance = compose(
   pure,
   setPropTypes({
     allItemText: PropTypes.string,
-    onDiseaseIdChange: PropTypes.func.isRequired,
+    onDiseaseIdChange: PropTypes.func,
     value: PropTypes.string,
   }),
   connect(
