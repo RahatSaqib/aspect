@@ -1,28 +1,39 @@
 import React from 'react'
 import classnames from 'classnames/bind'
+import isNil from 'lodash/isNil'
 import useI18n from '../../../hooks/useI18n'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as Tr, DataTableCell as Td } from '../../../oldComponents/shared/tableBody'
+import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
 const TableRow = ({ item, extraColumns }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage, format } = useI18n()
+  const { dateTimeFormat } = getAspectDisplayPreferences().toJS()
   return (
     <Tr className={cssClasses('TableRow')}>
       <Td className={cssClasses('TableCell')}>{item.name}</Td>
-      <Td className={cssClasses('TableCell')}>{formatMessage(messages[item.deviceStatus])}</Td>
+      <Td className={cssClasses('TableCell')}>
+        {item.deviceStatus ? formatMessage(messages[item.deviceStatus]) : formatMessage(messages.notAvailable)}
+      </Td>
       <Td className={cssClasses('TableCell')}>{item.stateName}</Td>
       <Td className={cssClasses('TableCell')}>{item.lgaName}</Td>
-      <Td className={cssClasses('TableCell')}>{item.lastPingOn.replace('.000Z', '').split('T').join(' ')}</Td>
       <Td className={cssClasses('TableCell')}>
-        {(item.firstResultEndedOn || '').replace('.000Z', '').split('T').join(' ') ||
-          formatMessage(messages.notAvailable)}
+        {isNil(item.lastPingOn)
+          ? formatMessage(messages.notAvailable)
+          : format(new Date(item.lastPingOn), dateTimeFormat)}
       </Td>
       <Td className={cssClasses('TableCell')}>
-        {(item.lastResultEndedOn || '').replace('.000Z', '').split('T').join(' ') ||
-          formatMessage(messages.notAvailable)}
+        {isNil(item.firstResultEndedOn)
+          ? formatMessage(messages.notAvailable)
+          : format(new Date(item.firstResultEndedOn), dateTimeFormat)}
+      </Td>
+      <Td className={cssClasses('TableCell')}>
+        {isNil(item.lastResultEndedOn)
+          ? formatMessage(messages.notAvailable)
+          : format(new Date(item.lastResultEndedOn), dateTimeFormat)}
       </Td>
       <Td className={cssClasses('TableCell')}>{item.total}</Td>
       {extraColumns.map(col => (

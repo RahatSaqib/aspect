@@ -137,6 +137,10 @@ const messagesBase = defineMessages({
     id: 'forms.formItem.removeRow',
     defaultMessage: 'Remove Row',
   },
+  newRecurrency: {
+    id: 'forms.formItem.newRecurrency',
+    defaultMessage: 'New recurrency',
+  },
 })
 
 const headerMessagesBase = {

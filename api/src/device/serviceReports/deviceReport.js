@@ -53,6 +53,7 @@ async function getDeviceReportData(dataConstraints, query) {
       totalXpertTests: knex.raw('count(*)'),
     })
     .groupBy('r.deviceId')
+    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'])
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
   const deviceInactiveDays = knex

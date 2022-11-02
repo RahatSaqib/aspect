@@ -49,6 +49,15 @@ import { itemMocked, assaysMocked } from './mocks/tooltips'
 
 describe('Graph Helpers', () => {
   describe('Data transformations for individual graphs', () => {
+    describe('Piechart: groupForPie', () => {
+      it('should group data by key correctly', () => {
+        const indexBy = 'cnt'
+        const keyToConsume = 'resultCategory1'
+        const filterBy = false
+        const grouped = groupForPie(pieDataActualFromAPIIn, keyToConsume, indexBy, filterBy)
+        expect(grouped).toEqual(pieDataActualFromAPIOut)
+      })
+    })
     describe('Barchart: groupByKey', () => {
       it('should group data by key correctly - normally for bar', () => {
         const indexBy = 'month'
@@ -58,16 +67,6 @@ describe('Graph Helpers', () => {
         const filterBy = false
         const grouped = groupByKey(barDataActualFromAPIIn, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
         expect(grouped).toEqual(barDataActualFromAPIOut)
-      })
-    })
-
-    describe('Piechart: groupForPie', () => {
-      it('should group data by key correctly', () => {
-        const indexBy = 'cnt'
-        const keyToConsume = 'resultCategory1'
-        const filterBy = false
-        const grouped = groupForPie(pieDataActualFromAPIIn, keyToConsume, indexBy, filterBy)
-        expect(grouped).toEqual(pieDataActualFromAPIOut)
       })
     })
 

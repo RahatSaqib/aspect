@@ -24,6 +24,7 @@ async function getReports(request) {
   const getItems = reportsQuery
     .clone()
     .modify(filterParams, query, {
+      availableForNotification: 'r.availableForNotification',
       reportName: (queryBuilder, value) => {
         queryBuilder.whereRaw(
           `(

@@ -1131,6 +1131,305 @@ const assayTruenatUnknownUnknown = {
   assayExternalId: 'assayTruenatUnknown',
 }
 
+const assayGenericDstPositiveMTBSusceptible = {
+  externalId: 'assayGenericDstPositiveMTBSusceptible',
+  i18nKey: 'assayGenericDstresultCategoryPositiveMTBresultCategorySusceptible',
+  name: 'MTB Positive MTB Resistance Susceptible',
+  resultCategory1ExternalId: 'PositiveMTB',
+  resultCategory2ExternalId: 'Susceptible',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstSuccessSusceptible = {
+  externalId: 'assayGenericDstSuccessSusceptible',
+  i18nKey: 'assayGenericDstresultCategorySuccessresultCategorySusceptible',
+  name: 'MTB Success Resistance Susceptible',
+  resultCategory1ExternalId: 'Success',
+  resultCategory2ExternalId: 'Susceptible',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstDetectedSusceptible = {
+  externalId: 'assayGenericDstDetectedSusceptible',
+  i18nKey: 'assayGenericDstResultCategoryDetectedresultCategorySusceptible',
+  name: 'MTB Detected Resistance Susceptible',
+  resultCategory1ExternalId: 'Detected',
+  resultCategory2ExternalId: 'Susceptible',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstPositiveMTBResistant = {
+  externalId: 'assayGenericDstPositiveMTBResistant',
+  i18nKey: 'assayGenericDstresultCategoryPositiveMTBresultCategoryResistant',
+  name: 'MTB Positive MTB Resistance Resistant',
+  resultCategory1ExternalId: 'PositiveMTB',
+  resultCategory2ExternalId: 'Resistant',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstSuccessResistant = {
+  externalId: 'assayGenericDstSuccessResistant',
+  i18nKey: 'assayGenericDstresultCategorySuccessresultCategoryResistant',
+  name: 'MTB Success Resistance Resistant',
+  resultCategory1ExternalId: 'Success',
+  resultCategory2ExternalId: 'Resistant',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstDetectedResistant = {
+  externalId: 'assayGenericDstDetectedResistant',
+  i18nKey: 'assayGenericDstResultCategoryDetectedresultCategoryResistant',
+  name: 'MTB Detected Resistance Resistant',
+  resultCategory1ExternalId: 'Detected',
+  resultCategory2ExternalId: 'Resistant',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstDetected = {
+  externalId: 'assayGenericDstDetected',
+  i18nKey: 'assayGenericDstResultCategoryDetected',
+  name: 'MTB Detected',
+  resultCategory1ExternalId: 'Detected',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstNotDetected = {
+  externalId: 'assayGenericDstNotDetected',
+  i18nKey: 'assayGenericDstresultCategoryNotDetected',
+  name: 'MTB Not Detected',
+  resultCategory1ExternalId: 'NotDetected',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstInvalid = {
+  externalId: 'assayGenericDstInvalid',
+  i18nKey: 'assayGenericDstresultCategoryInvalid',
+  name: 'MTB Invalid',
+  resultCategory1ExternalId: 'Invalid',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstError = {
+  externalId: 'assayGenericDstError',
+  i18nKey: 'assayGenericDstresultCategoryError',
+  name: 'MTB Error',
+  resultCategory1ExternalId: 'Error',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstSuccess = {
+  externalId: 'assayGenericDstSuccess',
+  i18nKey: 'assayGenericDstresultCategorySuccess',
+  name: 'MTB Success',
+  resultCategory1ExternalId: 'Success',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstMissing = {
+  externalId: 'assayGenericDstMissing',
+  i18nKey: 'assayGenericDstresultCategoryMissing',
+  name: 'MTB Missing',
+  resultCategory1ExternalId: 'Missing',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstUnknown = {
+  externalId: 'assayGenericDstUnknown',
+  i18nKey: 'assayGenericDstresultCategoryUnknown',
+  name: 'MTB Unknown',
+  resultCategory1ExternalId: 'Unknown',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstContaminated = {
+  externalId: 'assayGenericDstContaminated',
+  i18nKey: 'assayGenericDstresultCategoryContaminated',
+  name: 'MTB Contaminated',
+  resultCategory1ExternalId: 'Contaminated',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstPositiveMOTT = {
+  externalId: 'assayGenericDstPositiveMOTT',
+  i18nKey: 'assayGenericDstresultCategoryPositiveMOTT',
+  name: 'MTB Positive MOTT',
+  resultCategory1ExternalId: 'PositiveMOTT',
+  assayExternalId: 'assayGenericDst',
+}
+const assayGenericDstPositiveMTB = {
+  externalId: 'assayGenericDstPositiveMTB',
+  i18nKey: 'assayGenericDstresultCategoryPositiveMTB',
+  name: 'MTB Positive MTB',
+  resultCategory1ExternalId: 'PositiveMTB',
+  assayExternalId: 'assayGenericDst',
+}
+
+const assayGenericCultureDetected = {
+  externalId: 'assayGenericCultureDetected',
+  i18nKey: 'assayGenericCultureResultCategoryDetected',
+  name: 'Culture Result Detected',
+  resultCategory1ExternalId: 'Detected',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCultureNotDetected = {
+  externalId: 'assayGenericCultureNotDetected',
+  i18nKey: 'assayGenericCultureresultCategoryNotDetected',
+  name: 'Culture Result Not Detected',
+  resultCategory1ExternalId: 'NotDetected',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCultureInvalid = {
+  externalId: 'assayGenericCultureInvalid',
+  i18nKey: 'assayGenericCultureresultCategoryInvalid',
+  name: 'Culture Result Invalid',
+  resultCategory1ExternalId: 'Invalid',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCultureError = {
+  externalId: 'assayGenericCultureError',
+  i18nKey: 'assayGenericCultureresultCategoryError',
+  name: 'Culture Result Error',
+  resultCategory1ExternalId: 'Error',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCultureSuccess = {
+  externalId: 'assayGenericCultureSuccess',
+  i18nKey: 'assayGenericCultureresultCategorySuccess',
+  name: 'Culture Result Success',
+  resultCategory1ExternalId: 'Success',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCultureMissing = {
+  externalId: 'assayGenericCultureMissing',
+  i18nKey: 'assayGenericCultureresultCategoryMissing',
+  name: 'Culture Result Missing',
+  resultCategory1ExternalId: 'Missing',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCultureUnknown = {
+  externalId: 'assayGenericCultureUnknown',
+  i18nKey: 'assayGenericCultureresultCategoryUnknown',
+  name: 'Culture Result Unknown',
+  resultCategory1ExternalId: 'Unknown',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCultureContaminated = {
+  externalId: 'assayGenericCultureContaminated',
+  i18nKey: 'assayGenericCultureresultCategoryContaminated',
+  name: 'Culture Result Contaminated',
+  resultCategory1ExternalId: 'Contaminated',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCulturePositiveMOTT = {
+  externalId: 'assayGenericCulturePositiveMOTT',
+  i18nKey: 'assayGenericCultureresultCategoryPositiveMOTT',
+  name: 'Culture Result Positive MOTT',
+  resultCategory1ExternalId: 'PositiveMOTT',
+  assayExternalId: 'assayGenericCulture',
+}
+const assayGenericCulturePositiveMTB = {
+  externalId: 'assayGenericCulturePositiveMTB',
+  i18nKey: 'assayGenericCultureresultCategoryPositiveMTB',
+  name: 'Culture Result Positive MTB',
+  resultCategory1ExternalId: 'PositiveMTB',
+  assayExternalId: 'assayGenericCulture',
+}
+
+const assayLPAPositiveMTBSusceptible = {
+  externalId: 'assayLPAPositiveMTBSusceptible',
+  i18nKey: 'assayLPAresultCategoryPositiveMTBresultCategorySusceptible',
+  name: 'MTB Positive MTB Resistance Susceptible',
+  resultCategory1ExternalId: 'PositiveMTB',
+  resultCategory2ExternalId: 'Susceptible',
+  assayExternalId: 'assayLPA',
+}
+const assayLPAPositiveMTBResistant = {
+  externalId: 'assayLPAPositiveMTBResistant',
+  i18nKey: 'assayLPAresultCategoryPositiveMTBresultCategoryResistant',
+  name: 'MTB Positive MTB Resistance Resistant',
+  resultCategory1ExternalId: 'PositiveMTB',
+  resultCategory2ExternalId: 'Resistant',
+  assayExternalId: 'assayLPA',
+}
+const assayLPANotDetected = {
+  externalId: 'assayLPANotDetected',
+  i18nKey: 'assayLPAresultCategoryNotDetected',
+  name: 'MTB Not Detected',
+  resultCategory1ExternalId: 'NotDetected',
+  assayExternalId: 'assayLPA',
+}
+const assayLPAInvalid = {
+  externalId: 'assayLPAInvalid',
+  i18nKey: 'assayLPAresultCategoryInvalid',
+  name: 'MTB Invalid',
+  resultCategory1ExternalId: 'Invalid',
+  assayExternalId: 'assayLPA',
+}
+const assayLPAMissing = {
+  externalId: 'assayLPAMissing',
+  i18nKey: 'assayLPAresultCategoryMissing',
+  name: 'MTB Missing',
+  resultCategory1ExternalId: 'Missing',
+  assayExternalId: 'assayLPA',
+}
+const assayLPAUnknown = {
+  externalId: 'assayLPAUnknown',
+  i18nKey: 'assayLPAresultCategoryUnknown',
+  name: 'MTB Unknown',
+  resultCategory1ExternalId: 'Unknown',
+  assayExternalId: 'assayLPA',
+}
+const assayLPAPositiveMTB = {
+  externalId: 'assayLPAPositiveMTB',
+  i18nKey: 'assayLPAresultCategoryPositiveMTB',
+  name: 'MTB Positive MTB',
+  resultCategory1ExternalId: 'PositiveMTB',
+  assayExternalId: 'assayLPA',
+}
+
+const assaySmearDetected = {
+  externalId: 'assaySmearDetected',
+  i18nKey: 'assaySmearResultCategoryDetected',
+  name: 'Smear Result Detected',
+  resultCategory1ExternalId: 'Detected',
+  assayExternalId: 'assaySmear',
+}
+const assaySmearNotDetected = {
+  externalId: 'assaySmearNotDetected',
+  i18nKey: 'assaySmearresultCategoryNotDetected',
+  name: 'Smear Result Not Detected',
+  resultCategory1ExternalId: 'NotDetected',
+  assayExternalId: 'assaySmear',
+}
+const assaySmearInvalid = {
+  externalId: 'assaySmearInvalid',
+  i18nKey: 'assaySmearresultCategoryInvalid',
+  name: 'Smear Result Invalid',
+  resultCategory1ExternalId: 'Invalid',
+  assayExternalId: 'assaySmear',
+}
+const assaySmearMissing = {
+  externalId: 'assaySmearMissing',
+  i18nKey: 'assaySmearresultCategoryMissing',
+  name: 'Smear Result Missing',
+  resultCategory1ExternalId: 'Missing',
+  assayExternalId: 'assaySmear',
+}
+const assaySmearUnknown = {
+  externalId: 'assaySmearUnknown',
+  i18nKey: 'assaySmearresultCategoryUnknown',
+  name: 'Smear Result Unknown',
+  resultCategory1ExternalId: 'Unknown',
+  assayExternalId: 'assaySmear',
+}
+const assaySmearPositive1 = {
+  externalId: 'assaySmearPositive1',
+  i18nKey: 'assaySmearresultCategoryPositive1',
+  name: 'Smear Result Positive (+)',
+  resultCategory1ExternalId: 'Positive1',
+  assayExternalId: 'assaySmear',
+}
+const assaySmearPositive2 = {
+  externalId: 'assaySmearPositive2',
+  i18nKey: 'assaySmearresultCategoryPositive2',
+  name: 'Smear Result Positive (++)',
+  resultCategory1ExternalId: 'Positive2',
+  assayExternalId: 'assaySmear',
+}
+const assaySmearPositive3 = {
+  externalId: 'assaySmearPositive3',
+  i18nKey: 'assaySmearresultCategoryPositive3',
+  name: 'Smear Result Positive (+++)',
+  resultCategory1ExternalId: 'Positive3',
+  assayExternalId: 'assaySmear',
+}
+
 module.exports = [
   GxEbolaGPDetectedNPDetected,
   GxEbolaGPDetected,
@@ -1287,4 +1586,45 @@ module.exports = [
   assayTruenatRifInvalid,
   assayTruenatUnknownMissing,
   assayTruenatUnknownUnknown,
+  assayGenericDstPositiveMTBSusceptible,
+  assayGenericDstSuccessSusceptible,
+  assayGenericDstDetectedSusceptible,
+  assayGenericDstPositiveMTBResistant,
+  assayGenericDstSuccessResistant,
+  assayGenericDstDetectedResistant,
+  assayGenericDstDetected,
+  assayGenericDstNotDetected,
+  assayGenericDstInvalid,
+  assayGenericDstError,
+  assayGenericDstSuccess,
+  assayGenericDstMissing,
+  assayGenericDstUnknown,
+  assayGenericDstContaminated,
+  assayGenericDstPositiveMOTT,
+  assayGenericDstPositiveMTB,
+  assayGenericCultureDetected,
+  assayGenericCultureNotDetected,
+  assayGenericCultureInvalid,
+  assayGenericCultureError,
+  assayGenericCultureSuccess,
+  assayGenericCultureMissing,
+  assayGenericCultureUnknown,
+  assayGenericCultureContaminated,
+  assayGenericCulturePositiveMOTT,
+  assayGenericCulturePositiveMTB,
+  assayLPAPositiveMTBSusceptible,
+  assayLPAPositiveMTBResistant,
+  assayLPANotDetected,
+  assayLPAInvalid,
+  assayLPAMissing,
+  assayLPAUnknown,
+  assayLPAPositiveMTB,
+  assaySmearDetected,
+  assaySmearNotDetected,
+  assaySmearInvalid,
+  assaySmearMissing,
+  assaySmearUnknown,
+  assaySmearPositive1,
+  assaySmearPositive2,
+  assaySmearPositive3,
 ]
