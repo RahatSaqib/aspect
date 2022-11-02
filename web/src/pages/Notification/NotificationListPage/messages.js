@@ -1,4 +1,5 @@
 import { defineMessages } from 'react-intl'
+import report from '../../../messages/report'
 
 export const messages = defineMessages({
   createNotification: {
@@ -111,6 +112,7 @@ export const messages = defineMessages({
     id: 'pages.TableCell.resultBasedNotification',
     defaultMessage: 'Result Based',
   },
+  ...report,
 })
 
 export default messages
