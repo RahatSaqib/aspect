@@ -438,7 +438,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         )
       // if we didn't get an endedOn, generate all time frames since first result from device
       await Promise.each(countsByCategories, async count => {
-        const factResultsDeviceByCategory1And2 = await knex('FactResultsDeviceByTimeFrame')
+        const factResultsDeviceByTimeFrame = await knex('FactResultsDeviceByTimeFrame')
           .where({
             deviceId,
             assayId: count.assayId,
@@ -448,7 +448,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
             startedOn: count.startedOnTimeFrame,
           })
           .first()
-        if (factResultsDeviceByCategory1And2) {
+        if (factResultsDeviceByTimeFrame) {
           await knex('FactResultsDeviceByTimeFrame')
             .where({
               deviceId,
