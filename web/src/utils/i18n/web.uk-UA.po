@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-28T20:28:52.655Z\n"
+"POT-Creation-Date: 2022-11-01T21:02:34.710Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -588,10 +588,10 @@ msgstr "Усі"
 msgid "All HIV results where the virus is not suppressed"
 msgstr "Усі результати ВІЛ виникають там, де вірус не пригнічується"
 
-#. [filter.btnGroup.displayAllResults]
+#. [pages.ReportIndex.all_results]
 #. defaultMessage is:
 #. All Results
-#. [pages.ReportIndex.all_results]
+#. [filter.btnGroup.displayAllResults]
 #. defaultMessage is:
 #. All Results
 #: extracted_strings.json
@@ -2588,12 +2588,19 @@ msgstr "День кожного місяця (місяців)"
 msgid "Day of Every Quarter"
 msgstr "День кожного кварталу"
 
-#. [components.shared.daysBeforeEndMonth]
+#. [components.shared.daysBeforeEndQuarter]
 #. defaultMessage is:
 #. Day(s) before the end of the Quarter
 #: extracted_strings.json
 msgid "Day(s) before the end of the Quarter"
 msgstr "День(и) до закінчення Кварталу"
+
+#. [components.shared.daysBeforeEndMonth]
+#. defaultMessage is:
+#. Day(s) before the end of the month
+#: extracted_strings.json
+msgid "Day(s) before the end of the month"
+msgstr "День (дні) до кінця місяця"
 
 #. [pages.NotificationDetail.daysOffline]
 #. defaultMessage is:
@@ -2898,6 +2905,13 @@ msgstr "Не вдалося завантажити стан обслуговув
 #: extracted_strings.json
 msgid "Device Type"
 msgstr "Тип пристрою"
+
+#. [pages.ReportIndex.deviceUtilizationPerDayReport]
+#. defaultMessage is:
+#. Device Utilization per Day
+#: extracted_strings.json
+msgid "Device Utilization per Day"
+msgstr "Використання пристрою на день"
 
 #. [pages.WarrantyDialog.dialogTitle]
 #. defaultMessage is:
@@ -4820,6 +4834,13 @@ msgstr "ВІЛ не виявлено"
 msgid "HIV/AIDS"
 msgstr "ВІЛ / СНІД"
 
+#. [pages.NotificationDetail.New.hasRecurrency]
+#. defaultMessage is:
+#. Has Recurrency
+#: extracted_strings.json
+msgid "Has Recurrency"
+msgstr "Має рецидиви"
+
 #. [filter.popover.hasStock]
 #. defaultMessage is:
 #. Has Stock
@@ -5257,6 +5278,9 @@ msgstr "Закінчується термін зберігання запасі�
 msgid "Inventory Item"
 msgstr "Тип картриджу"
 
+#. [pages.ReportIndex.inventoryLog]
+#. defaultMessage is:
+#. Inventory Log
 #. [pages.InventoryDashboard.inventoryLogTitle]
 #. defaultMessage is:
 #. Inventory Log
@@ -5301,6 +5325,9 @@ msgstr "Принаймні {minLength} символів"
 msgid "Isolate"
 msgstr "Ізолювати"
 
+#. [pages.NotificationDetail.type.notificationTypeIssueBased]
+#. defaultMessage is:
+#. Issue Based
 #. [pages.TableCell.issueBasedNotification]
 #. defaultMessage is:
 #. Issue Based
@@ -5320,6 +5347,20 @@ msgstr "На основі проблеми"
 #: extracted_strings.json
 msgid "Issues"
 msgstr "Випуски"
+
+#. [pages.NotificationDetail.New.issues]
+#. defaultMessage is:
+#. Issues available
+#: extracted_strings.json
+msgid "Issues available"
+msgstr "Доступні випуски"
+
+#. [pages.NotificationDetail.New.issueType]
+#. defaultMessage is:
+#. Issues types
+#: extracted_strings.json
+msgid "Issues types"
+msgstr "Типи проблем"
 
 #. [errorResponseMessages.common.notFound.message]
 #. defaultMessage is:
@@ -5688,6 +5729,33 @@ msgid ""
 msgstr ""
 "Перерахування коефіцієнта опору RIF для всіх об’єктів, що займає найвище та "
 "найнижче місце"
+
+#. [pages.ReportIndex.inventoryLog_description]
+#. defaultMessage is:
+#. Lists all the inventory transactions in the filters scope
+#: extracted_strings.json
+msgid "Lists all the inventory transactions in the filters scope"
+msgstr "Відображає всі операції з запасами в області дії фільтрів"
+
+#. [pages.ReportIndex.reportCustomFieldsCompletion_description]
+#. defaultMessage is:
+#. Lists one row per site and shows the percentage of completion of each MTB custom field
+#: extracted_strings.json
+msgid ""
+"Lists one row per site and shows the percentage of completion of each MTB "
+"custom field"
+msgstr ""
+"Виводить по одному рядку для кожного сайту і показує відсоток заповнення "
+"кожного користувацького поля MTB"
+
+#. [pages.ReportIndex.xdrDevicesSummary_description]
+#. defaultMessage is:
+#. Lists sites/devices grouped by province showing main XDR parameters
+#: extracted_strings.json
+msgid "Lists sites/devices grouped by province showing main XDR parameters"
+msgstr ""
+"Перелік сайтів/пристроїв, згрупованих за областями, із зазначенням основних "
+"параметрів XDR"
 
 #. [errorResponseMessages.fetchAccountDetails.GET.default.title]
 #. defaultMessage is:
@@ -6538,6 +6606,13 @@ msgstr "Мобільний"
 msgid "Module"
 msgstr "Модуль"
 
+#. [pages.ReportIndex.moduleActivityReport]
+#. defaultMessage is:
+#. Module Activity Report
+#: extracted_strings.json
+msgid "Module Activity Report"
+msgstr "Звіт про діяльність модуля"
+
 #. [pages.Notification.type.ModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -6572,10 +6647,10 @@ msgstr "Замінено модуль"
 msgid "Module Serial"
 msgstr "Серійний номер модуля"
 
-#. [component.Widget.moduleSwapsTitle]
+#. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
-#. [pages.ReportIndex.moduleSwapsReport]
+#. [component.Widget.moduleSwapsTitle]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
@@ -6605,6 +6680,13 @@ msgstr "Понеділок"
 #: extracted_strings.json
 msgid "Month"
 msgstr "Місяць"
+
+#. [components.shared.monthly]
+#. defaultMessage is:
+#. Monthly
+#: extracted_strings.json
+msgid "Monthly"
+msgstr "Щомісяця"
 
 #. [legends.Unknown.resultCategoryMoreThan1000]
 #. defaultMessage is:
@@ -6813,6 +6895,13 @@ msgstr "Нова кількість в наявності"
 #: extracted_strings.json
 msgid "New Result"
 msgstr "Новий результат"
+
+#. [forms.formItem.newRecurrency]
+#. defaultMessage is:
+#. New recurrency
+#: extracted_strings.json
+msgid "New recurrency"
+msgstr "Новий рецидив"
 
 #. [pages.TablePaginator.newer]
 #. defaultMessage is:
@@ -7616,6 +7705,13 @@ msgstr "Відсоток Позитивний"
 msgid "Percent Reported"
 msgstr "Відсоток повідомлено"
 
+#. [pages.ReportIndex.reportCustomFieldsCompletion]
+#. defaultMessage is:
+#. Percent of custom fields completion for the MTB form
+#: extracted_strings.json
+msgid "Percent of custom fields completion for the MTB form"
+msgstr "Відсоток заповнення користувацьких полів для форми MTB"
+
 #. [pages.DeviceDetailProfile.percentageLegend]
 #. defaultMessage is:
 #. Percentage (%)
@@ -8254,7 +8350,7 @@ msgstr "Кількість для переказу"
 msgid "Quarter"
 msgstr "Квартал"
 
-#. [components.shared.monthly]
+#. [components.shared.quarterly]
 #. defaultMessage is:
 #. Quarterly
 #: extracted_strings.json
@@ -8467,6 +8563,20 @@ msgstr "Помилка видалення рекламних ресурсів"
 msgid "Report"
 msgstr "Звіт"
 
+#. [pages.NotificationDetail.type.notificationTypeReportBased]
+#. defaultMessage is:
+#. Report Based
+#: extracted_strings.json
+msgid "Report Based"
+msgstr "На основі звіту"
+
+#. [pages.ReportIndex.reportTBWorkloadSummary]
+#. defaultMessage is:
+#. Report of TB Workload Summary
+#: extracted_strings.json
+msgid "Report of TB Workload Summary"
+msgstr "Звіт про підсумки роботи у сфері протидії туберкульозу"
+
 #. [forms.formItem.reportableSite]
 #. defaultMessage is:
 #. Reportable Site
@@ -8531,6 +8641,9 @@ msgstr "Журналісти"
 msgid "Reporting Since"
 msgstr "Звітність з"
 
+#. [pages.ReportIndex.title]
+#. defaultMessage is:
+#. Reports
 #. [browsePage.browseDropdown.reports]
 #. defaultMessage is:
 #. Reports
@@ -8540,12 +8653,19 @@ msgstr "Звітність з"
 #. [pages.Status.reportsTitle]
 #. defaultMessage is:
 #. Reports
-#. [pages.ReportIndex.title]
+#. [pages.NotificationDetail.New.reportBaseType]
 #. defaultMessage is:
 #. Reports
 #: extracted_strings.json
 msgid "Reports"
 msgstr "Звіти"
+
+#. [pages.NotificationDetail.New.ReportsAvailable]
+#. defaultMessage is:
+#. Reports Available
+#: extracted_strings.json
+msgid "Reports Available"
+msgstr "Доступні звіти"
 
 #. [pages.DeviceList.lastSeenDescription]
 #. defaultMessage is:
@@ -9928,6 +10048,9 @@ msgstr ""
 #. [pages.DeviceList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device} other {# devices} }
+#. [pages.workload.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device} other {# devices} }
 #: extracted_strings.json
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
@@ -10040,6 +10163,20 @@ msgid ""
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, plural, one {# "
 "{name}} other {# {namePlural}} }"
+
+#. [pages.ReportIndex.moduleActivityReport_description]
+#. defaultMessage is:
+#. Shows devices with one or more inactive modules
+#: extracted_strings.json
+msgid "Shows devices with one or more inactive modules"
+msgstr "Показує пристрої з одним або декількома неактивними модулями"
+
+#. [pages.ReportIndex.usageStatistics_description]
+#. defaultMessage is:
+#. Shows stats about the use of the system.
+#: extracted_strings.json
+msgid "Shows stats about the use of the system."
+msgstr "Показує статистику використання системи."
 
 #. [pages.HorizontalAppBar.signOut]
 #. defaultMessage is:
@@ -10478,6 +10615,23 @@ msgstr "Успіху"
 #: extracted_strings.json
 msgid "Successfully"
 msgstr "Успішно"
+
+#. [pages.ReportIndex.reportTBWorkloadSummary_description]
+#. defaultMessage is:
+#. Summary of TB Workload grouped by month, quarter and year for all regions
+#: extracted_strings.json
+msgid ""
+"Summary of TB Workload grouped by month, quarter and year for all regions"
+msgstr ""
+"Підсумок роботи з ТБ, згрупований за місяцями, кварталами та роками для всіх "
+"регіонів"
+
+#. [pages.ReportIndex.xdrDevicesSummary]
+#. defaultMessage is:
+#. Summary table for XDR devices
+#: extracted_strings.json
+msgid "Summary table for XDR devices"
+msgstr "Зведена таблиця для пристроїв XDR"
 
 #. [components.shared.sunday]
 #. defaultMessage is:
@@ -11455,6 +11609,19 @@ msgstr ""
 "Цей звіт відображає відсоток активності пристроїв за місяць протягом "
 "обраного періоду часу. (За замовчуванням останні 12 місяців)"
 
+#. [pages.ReportIndex.deviceActivityPercentReport_description]
+#. defaultMessage is:
+#. This report shows the daily utilization of devices in the selected time period per day. The first sheet displays raw numbers, while the second sheet shows the utilization rate based on the device capacity
+#: extracted_strings.json
+msgid ""
+"This report shows the daily utilization of devices in the selected time "
+"period per day. The first sheet displays raw numbers, while the second sheet "
+"shows the utilization rate based on the device capacity"
+msgstr ""
+"Цей звіт показує щоденне використання пристроїв у вибраний період часу на "
+"день. Перший аркуш відображає необроблені числа, тоді як другий аркуш "
+"показує рівень використання на основі ємності пристрою"
+
 #. [pages.ReportIndex.listRResistantTestReport_description]
 #. defaultMessage is:
 #. This report shows the list of resistant tests
@@ -11686,7 +11853,7 @@ msgstr "Всього результатів"
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
-#. [pages.InventoryLog.totalTests]
+#. [pages.workload.totalTests]
 #. defaultMessage is:
 #. Total Tests
 #: extracted_strings.json
@@ -12006,6 +12173,13 @@ msgstr "Вгору"
 #: extracted_strings.json
 msgid "Update"
 msgstr "Оновити"
+
+#. [pages.ReportIndex.usageStatistics]
+#. defaultMessage is:
+#. Usage Statistics Report
+#: extracted_strings.json
+msgid "Usage Statistics Report"
+msgstr "Звіт про статистику використання"
 
 #. [pages.UpdateLoginDetails.userEnableLabel]
 #. defaultMessage is:
@@ -13326,9 +13500,6 @@ msgstr ""
 
 #~ msgid "calibration compliance"
 #~ msgstr "дотримання калібрування"
-
-#~ msgid "days unavailable"
-#~ msgstr "днів недоступний"
 
 #~ msgid "expiring"
 #~ msgstr "закінчується"
