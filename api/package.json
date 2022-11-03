@@ -158,11 +158,6 @@
     "sinon": "^14.0.1",
     "supertest": "^6.3.0"
   },
-  "lint-staged": {
-    "**/*.{js}": [
-      "yarn lint"
-    ]
-  },
   "resolutions": {
     "minimist": "1.2.6",
     "lodash": "^4.17.21",
