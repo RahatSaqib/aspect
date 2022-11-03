@@ -222,7 +222,6 @@
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.4.1",
     "url-search-params-polyfill": "^8.1.1",
-    "whatwg-fetch": "^3.6.2",
     "yup": "^0.32.11"
   },
   "resolutions": {
