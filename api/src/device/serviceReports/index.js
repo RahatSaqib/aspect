@@ -417,8 +417,7 @@ async function getModuleActivityReport(auth, query) {
 
 async function getModuleStatusReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate, maxDate } = query
-  const rows = await getModuleStatusReportData(minDate, maxDate, dataConstraints, query)
+  const rows = await getModuleStatusReportData(dataConstraints, query)
 
   return {
     ok: true,
