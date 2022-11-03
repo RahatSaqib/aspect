@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { Paper } from '@mui/material'
 import head from 'lodash/head'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { navigations } from './oldComponents/BrowseFilters'
@@ -40,152 +41,350 @@ import Welcome from './pages/Welcome'
 import { useAuthState } from './providers/AuthProvider'
 import { RoutesPermissionProvider } from './providers/RoutePermissions'
 
-const Auth = ({ required, page }) => {
-  const { userPermissions } = useAuthState()
-
-  return required && !isPermittedUser(userPermissions, { required }) ? <NotFound /> : page
+function useHashAndScroll() {
+  const location = useLocation()
+  useEffect(() => {
+    const { hash = '' } = location
+    setTimeout(() => {
+      const nodeList = document.querySelectorAll(`[name="${hash.replace('#', '')}"]`)
+      if (nodeList && nodeList.length) {
+        nodeList[0].scrollIntoView({ behavior: 'smooth' })
+      }
+    }, 0)
+  }, [location])
 }
 
-const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId }) => {
+const getElement = (props, permissions, render) => {
+  return <RenderTo render={render} props={props} permissions={permissions} />
+}
+const renderRedirectToLoginOr = ({ isLoggedOut, loggedOutReason, location }) => {
+  return isLoggedOut || loggedOutReason === 'idle' ? (
+    <Navigate replace to="/login" state={{ referrer: location, reason: loggedOutReason }} />
+  ) : null
+}
+const renderRedirectToLicenseOr = ({ location, hasToAcceptLicenseId }) => {
+  return hasToAcceptLicenseId ? (
+    <Navigate replace to="/license" state={{ referrer: location, licenseId: hasToAcceptLicenseId }} />
+  ) : null
+}
+const renderRedirectToDashboard = ({ location, permissions }) => {
+  let pathname = ''
+  if (isPermittedUser(permissions, { required: ['dashboard:summary'] })) {
+    pathname = '/dashboard'
+  } else if (isPermittedUser(permissions, { required: ['operationalData'] })) {
+    pathname = '/operational-data'
+  } else {
+    pathname = '/welcome'
+  }
+  return <Navigate replace to={pathname} state={{ referrer: location }} />
+}
+const renderRedirectToBrowse = ({ permissions }) => {
+  const reducedNav = reduceNavLinks(navigations, permissions)
+  return <Navigate to={head(reducedNav).value || '/browse/device'} />
+}
+
+const renderClinicalIndicators = () => (
+  <LoggedInLayout>
+    <div style={{ padding: 10 }}>
+      <Paper style={{ padding: 10 }}>Clinical Indicators is not implemented yet</Paper>
+    </div>
+  </LoggedInLayout>
+)
+
+const renderManage = () => (
+  <LoggedInLayout>
+    <div style={{ padding: 10 }}>
+      <Paper style={{ padding: 10 }}>Manage is not implemented yet</Paper>
+    </div>
+  </LoggedInLayout>
+)
+
+const renderTaskAggre = props => <TaskAggre {...props} />
+const renderTaskDetail = props => <TaskDetail {...props} />
+const renderAccountDetails = props => <AccountDetails {...props} />
+const renderPersonDetail = props => <PersonDetail {...props} />
+const renderClinicalHistory = props => <ClinicalHistory {...props} />
+
+const renderLoadableLogin = props => (
+  <SignedOutLayout>
+    <LoadableLogin {...props} />
+  </SignedOutLayout>
+)
+const renderResetPassword = props => (
+  <SignedOutLayout>
+    <ResetPassword {...props} />
+  </SignedOutLayout>
+)
+const renderNotFound = props => (
+  <SignedOutLayout>
+    <NotFound {...props} />
+  </SignedOutLayout>
+)
+const renderLicense = props => (
+  <SignedOutLayout>
+    <License {...props} />
+  </SignedOutLayout>
+)
+const renderLoadableStatus = () => (
+  <LoggedInLayout>
+    <LoadableStatus />
+  </LoggedInLayout>
+)
+const renderTaskList = props => (
+  <LoggedInLayout>
+    <TaskList {...props} />
+  </LoggedInLayout>
+)
+const renderOperationalData = props => (
+  <LoggedInLayout>
+    <OperationalData {...props} />
+  </LoggedInLayout>
+)
+const renderReports = props => (
+  <LoggedInLayout>
+    <ReportIndex {...props} />
+  </LoggedInLayout>
+)
+const renderDeviceList = props => (
+  <LoggedInLayout>
+    <DeviceContainer {...props} />
+  </LoggedInLayout>
+)
+const renderDeviceDetail = props => (
+  <LoggedInLayout>
+    <DeviceDetail {...props} />
+  </LoggedInLayout>
+)
+const renderDeviceApiKeyList = props => (
+  <LoggedInLayout>
+    <DeviceApiKeyList {...props} />
+  </LoggedInLayout>
+)
+const renderCaseList = props => (
+  <LoggedInLayout>
+    <CaseList {...props} />
+  </LoggedInLayout>
+)
+const renderRouterList = props => (
+  <LoggedInLayout>
+    <RouterList {...props} />
+  </LoggedInLayout>
+)
+const renderRouterDetail = props => (
+  <LoggedInLayout>
+    <RouterDetail {...props} />
+  </LoggedInLayout>
+)
+const renderReporterList = props => (
+  <LoggedInLayout>
+    <ReporterList {...props} />
+  </LoggedInLayout>
+)
+const renderResultList = props => (
+  <LoggedInLayout>
+    <ResultList {...props} />
+  </LoggedInLayout>
+)
+const renderResultDetail = props => (
+  <LoggedInLayout>
+    <ResultDetail {...props} />
+  </LoggedInLayout>
+)
+const renderSiteList = props => (
+  <LoggedInLayout>
+    <SiteList {...props} />
+  </LoggedInLayout>
+)
+const renderEditSite = props => (
+  <LoggedInLayout>
+    <EditSite {...props} />
+  </LoggedInLayout>
+)
+const renderSiteDetail = props => (
+  <LoggedInLayout>
+    <SiteDetail {...props} />
+  </LoggedInLayout>
+)
+const renderPersonList = props => (
+  <LoggedInLayout>
+    <PersonList {...props} />
+  </LoggedInLayout>
+)
+const renderInventoryContainer = props => (
+  <LoggedInLayout>
+    <InventoryContainer {...props} />
+  </LoggedInLayout>
+)
+const renderNotificationList = props => (
+  <LoggedInLayout>
+    <NotificationList {...props} />
+  </LoggedInLayout>
+)
+const renderNotificationDetail = props => (
+  <LoggedInLayout>
+    <NotificationDetail {...props} />
+  </LoggedInLayout>
+)
+const renderNotificationDetailHistory = props => (
+  <LoggedInLayout>
+    <NotificationDetailHistory {...props} />
+  </LoggedInLayout>
+)
+const renderWelcome = props => (
+  <LoggedInLayout>
+    <Welcome {...props} />
+  </LoggedInLayout>
+)
+const renderCaseDetails = props => (
+  <LoggedInLayout>
+    <CaseDetails {...props} />
+  </LoggedInLayout>
+)
+
+const renderRedirectToHomePage = () => {
+  return <Navigate replace to={{ pathname: '/' }} />
+}
+
+const isLoggedInAndOnLogin = ({ isLoggedOut, loggedOutReason, location }) => {
+  const { pathname } = location
+  const pathsToCheck = ['/login']
+  return !(isLoggedOut || loggedOutReason === 'idle') && pathsToCheck.includes(pathname)
+}
+
+const RenderTo = ({ props, permissions, render }) => {
+  const RedirectToLogin = renderRedirectToLoginOr(props)
+  if (RedirectToLogin) {
+    return RedirectToLogin
+  }
+  const RedirectToLicense = renderRedirectToLicenseOr(props)
+  if (RedirectToLicense) {
+    return RedirectToLicense
+  }
+  if (permissions) {
+    if (!isPermittedUser(props.permissions, { required: permissions })) return getElement(props, [], renderNotFound)
+  }
+  return render(props)
+}
+const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedOut, loggedOutReason }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { userPermissions, isLoggedOut } = useAuthState()
+  const { userPermissions } = useAuthState()
 
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
-
   const props = {
     countryId,
     countryAbbreviation,
     hasToAcceptLicenseId,
     isLoggedOut,
+    loggedOutReason,
     permissions: userPermissions,
     location,
     navigate,
   }
 
-  if (isLoggedOut || hasToAcceptLicenseId) {
-    return (
-      <SignedOutLayout>
-        <RoutesPermissionProvider>
-          <Routes>
-            <Route path="/login" element={<LoadableLogin />} />
-            <Route path="/reset-password" element={<ResetPassword {...props} />} />
-            <Route path="/license" element={<License />} />
-            <Route path="*" element={<Navigate replace to="/login" state={{ referrer: location }} />} />
-          </Routes>
-        </RoutesPermissionProvider>
-      </SignedOutLayout>
-    )
-  }
-
-  const destination = isPermittedUser(userPermissions, { required: ['dashboard:summary'] })
-    ? '/dashboard'
-    : isPermittedUser(userPermissions, { required: ['operationalData'] })
-    ? '/operational-data'
-    : '/welcome'
-
-  const browseDestination = head(reduceNavLinks(navigations, userPermissions)).value || '/browse/device'
-
+  useHashAndScroll()
   return (
-    <LoggedInLayout>
-      <RoutesPermissionProvider>
-        <Routes>
-          <Route path="/" element={<Navigate replace to={destination} />} />
-          <Route path="/login" element={<Navigate replace to={destination} />} />
-          <Route path="/dashboard" element={<Auth required={['dashboard:summary']} page={<LoadableStatus />} />} />
-          <Route path="/task-list" element={<Auth required={['task']} page={<TaskList {...props} />} />} />
-          <Route path="/task-list/aggre-list" element={<Auth required={['task']} page={<TaskAggre {...props} />} />} />
-          <Route path="/task-list/:taskId" element={<Auth required={['task']} page={<TaskDetail {...props} />} />} />
-          <Route
-            path="/operational-data/*"
-            element={<Auth required={['operationalData']} page={<OperationalData {...props} />} />}
-          />
-          <Route
-            path="/account-details/current/*"
-            element={<Auth required={['account']} page={<AccountDetails {...props} />} />}
-          />
-          <Route path="/reports" element={<Auth required={['report']} page={<ReportIndex {...props} />} />} />
-          <Route path="/browse" element={<Auth required={['browse']} page={<Navigate to={browseDestination} />} />} />
-          <Route
-            path="/browse/device"
-            element={<Auth required={['browse', 'device']} page={<DeviceContainer {...props} />} />}
-          />
-          <Route
-            path="/browse/device/:deviceId/*"
-            element={<Auth required={['browse', 'device']} page={<DeviceDetail {...props} />} />}
-          />
-          <Route
-            path="/browse/case/:caseId"
-            element={<Auth required={['browse', 'case:edit']} page={<CaseDetails {...props} />} />}
-          />
-          <Route path="/browse/case" element={<Auth required={['browse', 'case']} page={<CaseList {...props} />} />} />
-          <Route
-            path="/browse/patient/:patientId"
-            element={<Auth required={['browse', 'patient:edit']} page={<ClinicalHistory {...props} />} />}
-          />
-          <Route
-            path="/browse/deviceApiKey"
-            element={<Auth required={['browse', 'deviceApiKey']} page={<DeviceApiKeyList {...props} />} />}
-          />
-          <Route
-            path="/browse/router"
-            element={<Auth required={['browse', 'router']} page={<RouterList {...props} />} />}
-          />
-          <Route
-            path="/browse/router/:routerId"
-            element={<Auth required={['browse', 'router']} page={<RouterDetail {...props} />} />}
-          />
-          <Route
-            path="/browse/reporter"
-            element={<Auth required={['browse', 'reporter']} page={<ReporterList {...props} />} />}
-          />
-          <Route
-            path="/browse/result"
-            element={<Auth required={['browse', 'result']} page={<ResultList {...props} />} />}
-          />
-          <Route
-            path="/browse/result/:resultId/*"
-            element={<Auth required={['browse', 'result:edit']} page={<ResultDetail {...props} />} />}
-          />
-          <Route path="/browse/site" element={<Auth required={['browse', 'site']} page={<SiteList {...props} />} />} />
-          <Route
-            path="/browse/site/create"
-            element={<Auth required={['browse', 'site']} page={<EditSite {...props} />} />}
-          />
-          <Route
-            path="/browse/site/:siteId/*"
-            element={<Auth required={['browse', 'site']} page={<SiteDetail {...props} />} />}
-          />
-          <Route
-            path="/browse/person"
-            element={<Auth required={['browse', 'person']} page={<PersonList {...props} />} />}
-          />
-          <Route
-            path="/browse/person/:personId/*"
-            element={<Auth required={['browse', 'person:edit']} page={<PersonDetail {...props} />} />}
-          />
-          <Route
-            path="/browse/inventory/*"
-            element={<Auth required={['browse', 'inventory']} page={<InventoryContainer {...props} />} />}
-          />
-          <Route
-            path="/browse/notification"
-            element={<Auth required={['browse', 'notification']} page={<NotificationList {...props} />} />}
-          />
-          <Route
-            path="/browse/notification/:notificationId"
-            element={<Auth required={['browse', 'notification:edit']} page={<NotificationDetail {...props} />} />}
-          />
-          <Route
-            path="/browse/notification/:notificationId/history"
-            element={<Auth required={['browse', 'notification']} page={<NotificationDetailHistory {...props} />} />}
-          />
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/browse/report" element={<NotFound />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </RoutesPermissionProvider>
-    </LoggedInLayout>
+    <RoutesPermissionProvider>
+      <Routes>
+        <Route path="/" element={getElement(props, null, renderRedirectToDashboard)} />
+
+        <Route
+          path="/login"
+          element={isLoggedInAndOnLogin(props) ? renderRedirectToHomePage(props) : renderLoadableLogin(props)}
+        />
+
+        <Route path="/reset-password" element={renderResetPassword(props)} />
+
+        <Route path="/license" element={renderRedirectToLoginOr(props) || renderLicense(props)} />
+
+        <Route
+          path="/dashboard"
+          element={<RenderTo render={renderLoadableStatus} props={props} permissions={['dashboard:summary']} />}
+        />
+
+        <Route path="/task-list" element={getElement(props, ['task'], renderTaskList)} />
+        <Route path="/task-list/aggre-list" element={getElement(props, ['task'], renderTaskAggre)} />
+        <Route path="/task-list/:taskId" element={getElement(props, ['task'], renderTaskDetail)} />
+
+        <Route path="/operational-data/*" element={getElement(props, ['operationalData'], renderOperationalData)} />
+
+        <Route path="/account-details/current/*" element={getElement(props, ['account'], renderAccountDetails)} />
+
+        <Route
+          path="/clinical-indicators"
+          element={getElement(props, ['clinicalIndicators:view'], renderClinicalIndicators)}
+        />
+
+        <Route path="/reports" element={getElement(props, ['report'], renderReports)} />
+
+        <Route path="/manage" element={getElement(props, ['manage'], renderManage)} />
+
+        <Route path="/browse" element={getElement(props, ['browse'], renderRedirectToBrowse)} />
+
+        <Route path="/browse/device" element={getElement(props, ['browse', 'device'], renderDeviceList)} />
+        <Route
+          path="/browse/device/:deviceId/*"
+          element={getElement(props, ['browse', 'device'], renderDeviceDetail)}
+        />
+
+        <Route path="/browse/case/:caseId" element={getElement(props, ['browse', 'case:edit'], renderCaseDetails)} />
+        <Route path="/browse/case" element={getElement(props, ['browse', 'case'], renderCaseList)} />
+
+        <Route
+          path="/browse/patient/:patientId"
+          element={getElement(props, ['browse', 'patient:edit'], renderClinicalHistory)}
+        />
+
+        <Route
+          path="/browse/deviceApiKey"
+          element={getElement(props, ['browse', 'deviceApiKey'], renderDeviceApiKeyList)}
+        />
+
+        <Route path="/browse/router" element={getElement(props, ['browse', 'router'], renderRouterList)} />
+        <Route path="/browse/router/:routerId" element={getElement(props, ['browse', 'router'], renderRouterDetail)} />
+
+        <Route path="/browse/reporter" element={getElement(props, ['browse', 'reporter'], renderReporterList)} />
+
+        <Route path="/browse/result" element={getElement(props, ['browse', 'result'], renderResultList)} />
+        <Route
+          path="/browse/result/:resultId/*"
+          element={getElement(props, ['browse', 'result:edit'], renderResultDetail)}
+        />
+
+        <Route path="/browse/site" element={getElement(props, ['browse', 'site'], renderSiteList)} />
+        <Route path="/browse/site/create" element={getElement(props, ['browse', 'site'], renderEditSite)} />
+        <Route path="/browse/site/:siteId/*" element={getElement(props, ['browse', 'site'], renderSiteDetail)} />
+
+        <Route path="/browse/person" element={getElement(props, ['browse', 'person'], renderPersonList)} />
+        <Route
+          path="/browse/person/:personId/*"
+          element={getElement(props, ['browse', 'person:edit'], renderPersonDetail)}
+        />
+
+        <Route
+          path="/browse/inventory/*"
+          element={getElement(props, ['browse', 'inventory'], renderInventoryContainer)}
+        />
+
+        <Route
+          path="/browse/notification"
+          element={getElement(props, ['browse', 'notification'], renderNotificationList)}
+        />
+        <Route
+          path="/browse/notification/:notificationId"
+          element={getElement(props, ['browse', 'notification:edit'], renderNotificationDetail)}
+        />
+        <Route
+          path="/browse/notification/:notificationId/history"
+          element={getElement(props, ['browse', 'notification'], renderNotificationDetailHistory)}
+        />
+
+        <Route path="/browse/report" element={getElement(props, ['browse', 'report'], renderNotFound)} />
+
+        <Route path="/welcome" element={getElement(props, [], renderWelcome)} />
+        <Route path="*" element={getElement(props, [], renderNotFound)} />
+      </Routes>
+    </RoutesPermissionProvider>
   )
 }
 
