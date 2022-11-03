@@ -23,7 +23,7 @@ const getClinicianAccessToken = async () => {
   return res.body.access
 }
 
-describe.only('Mobile API Result download routes v1 without api version', () => {
+describe('Mobile API Result download routes v1 without api version', () => {
   const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
@@ -264,7 +264,7 @@ describe.only('Mobile API Result download routes v1 without api version', () => 
   })
 })
 
-describe('Mobile API Result download routes v1 with available custom api-version 1', () => {
+describe.only('Mobile API Result download routes v1 with available custom api-version 1', () => {
   const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
