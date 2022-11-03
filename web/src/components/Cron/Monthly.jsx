@@ -9,7 +9,7 @@ import styles from './styles.css'
 const classes = classNames.bind(styles)
 
 const Monthly = ({ cronExpression, onChange }) => {
-  const [every, setEvery] = useState('1')
+  const [every] = useState('1')
   const { formatMessage } = useI18n()
 
   const onDayChange = e => {
@@ -66,17 +66,16 @@ const Monthly = ({ cronExpression, onChange }) => {
                     <Radio
                       color="primary"
                       value="1"
-                      onChange={() => {
-                        setEvery('1')
-                        onChange([
-                          cronExpression[0] === '*' ? '0' : cronExpression[0],
-                          cronExpression[1] === '*' ? '0' : cronExpression[1],
-                          '1',
-                          '1/1',
-                          '*',
-                        ])
-                      }}
-                      checked={every === '1'}
+                      // onChange={() => {
+                      //   onChange([
+                      //     cronExpression[0] === '*' ? '0' : cronExpression[0],
+                      //     cronExpression[1] === '*' ? '0' : cronExpression[1],
+                      //     '1',
+                      //     '1/1',
+                      //     '*',
+                      //   ])
+                      // }}
+                      checked
                     />
                   }
                   label={formatMessage(messages.dayOfEveryMonth)}
@@ -160,15 +159,15 @@ const Monthly = ({ cronExpression, onChange }) => {
           <TextField
             id="outlined-number"
             label={formatMessage(messages.dayOfEveryMonth)}
-            value={cronExpression[3]}
+            value={cronExpression[2]}
             onChange={onDayChange}
             type="number"
             InputLabelProps={{
-              readOnly: every !== '1',
+              // readOnly: every !== '1',
               shrink: true,
             }}
             margin="normal"
-            disabled={every !== '1'}
+            // disabled={every !== '1'}
           />
         ) : null}
 

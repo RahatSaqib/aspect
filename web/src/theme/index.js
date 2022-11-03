@@ -1,6 +1,6 @@
 import { createTheme, lighten, alpha } from '@mui/material'
 import { cyan, grey, lightGreen, orange } from '@mui/material/colors'
-import { deDE, enUS, frFR, ptPT, ruRU, ukUA, esES, tgTJ, viVN } from '@mui/material/locale'
+import { deDE, enUS, frFR, ptPT, ruRU, ukUA, esES, viVN } from '@mui/material/locale'
 import isEmpty from 'lodash/isEmpty'
 import { customPropertiesVariables } from './colors'
 
@@ -12,7 +12,7 @@ const locale = {
   'ru-RU': ruRU,
   'uk-UA': ukUA,
   'es-ES': esES,
-  'tg-TJ': tgTJ,
+  'tg-TJ': ruRU,
   'vi-VN': viVN,
 }
 const themedColors = {

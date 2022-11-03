@@ -16,8 +16,8 @@ const classes = classNames.bind(styles)
 const DEFAULT_VALUE = ['0', '0', '1/1', '*', '*']
 const options = [
   { name: 'daily', Component: Daily, value: DEFAULT_VALUE },
-  { name: 'weekly', Component: Weekly, value: ['0', '0', '0', '*', '*'] },
-  { name: 'monthly', Component: Monthly, value: ['0', '0', '1', '1/1', '*'] },
+  { name: 'weekly', Component: Weekly, value: ['0', '0', '*', '*', '*'] },
+  { name: 'monthly', Component: Monthly, value: ['0', '0', '1', '*', '*'] },
   { name: 'quarterly', Component: Quarterly, value: ['0', '0', '1', '*/3', '*'] },
 ]
 
@@ -33,10 +33,10 @@ const Cron = ({ showResultText, showResultCron, onChange, value }) => {
     setSelectedTab(idx)
     if (!value) {
       setCronExpression(options[idx].value)
-      let newVal = ''
-      newVal = options[idx].value.toString().replace(/,/g, ' ')
-      newVal = newVal.replace(/!/g, ',')
-      onChange(newVal, getCronHumanValue(newVal, locale))
+      // let newVal = ''
+      // newVal = options[idx].value.toString().replace(/,/g, ' ')
+      // newVal = newVal.replace(/!/g, ',')
+      onChange(options[idx].value.toString(), getCronHumanValue(options[idx].value, locale))
     }
   }
 
@@ -48,10 +48,7 @@ const Cron = ({ showResultText, showResultCron, onChange, value }) => {
       val = ['0', '0', '1/1', '*', '*']
     }
 
-    let newVal = ''
-    newVal = val.toString().replace(/,/g, ' ')
-    newVal = newVal.replace(/!/g, ',')
-    onChange(newVal, getCronHumanValue(newVal, locale))
+    onChange(val, getCronHumanValue(val, locale))
   }
   const Selector = options[selectedTab].Component
 
@@ -67,7 +64,7 @@ const Cron = ({ showResultText, showResultCron, onChange, value }) => {
         <Selector key={options[selectedTab].name} cronExpression={cronExpression} onChange={onValueChange} />
         <DisplayCard
           textResult={showResultText && getCronHumanValue(cronExpression, locale)}
-          cronResult={showResultCron && cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ',')}
+          cronResult={showResultCron && cronExpression.join(' ')}
         />
       </CardContent>
     </Card>

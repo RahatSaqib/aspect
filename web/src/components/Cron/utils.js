@@ -1,10 +1,11 @@
 import cronstrue from 'cronstrue'
-import isEmpty from 'lodash/isEmpty'
+import isArray from 'lodash/isArray'
 
 const getCronHumanValue = (cronExpression, locale) => {
   try {
-    if (!isEmpty(cronExpression)) {
-      const val = cronstrue.toString(cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ','), { locale })
+    if (isArray(cronExpression)) {
+      const val = cronstrue.toString(`${cronExpression.join(' ')}`, { verbose: true, locale })
+
       if (val.search('undefined') === -1) {
         return val
       }
@@ -12,12 +13,8 @@ const getCronHumanValue = (cronExpression, locale) => {
 
     return '-'
   } catch (ex) {
-    console.log('🚀 ~ file: utils.js ~ line 16 ~ getCronHumanValue ~ cronExpression', cronExpression)
-    const days = cronExpression[4]
-
-    return `${cronstrue.toString(cronExpression.toString().replace(days, '*').replace(/,/g, ' ').replace(/!/g, ','), {
-      locale,
-    })} ${days}`
+    console.warn(ex)
+    return '-'
   }
 }
 
