@@ -42,7 +42,7 @@ function startScheduler(queue) {
   dispatcher.factCheckCompletionRatePerSite()
   dispatcher.factFillCustomFieldsCompletionStatsLast30Days()
   dispatcher.resolveIssues()
-  cronStarter()
+  cronStarter(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('0 2 * * *', dispatcher.tryToContinueUnprocessedRawData) // daily at 2 am
@@ -54,6 +54,7 @@ function startScheduler(queue) {
     '25 */2 * * *', // run every 2 hours at 25th minute past the hour
     dispatcher.factCalculateInventoryConsumptionRates
   )
+
   cron.schedule('30 7,22,37,52 * * * *', dispatcher.resolveIssues) // run every 15 minutes starting at 7m and 30s
 
   cron.schedule('0 7 * * *', dispatcher.factNewResultsAvailableCheck) // daily at 7am

@@ -49,8 +49,25 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
   )
 }
 
-async function reportBased() {
-  return () => true
+function reportBased() {
+  return async (action, { messageContext: context }) => {
+    const { notificationTypeId } = action
+    return context.run(async knex => {
+      const { notificationTypeCategoryId, filterCondition, reportId } = await knex('NotificationType')
+        .where({ id: notificationTypeId })
+        .first('notificationTypeCategoryId', 'filterCondition', 'reportId')
+      await createNotifications(
+        knex,
+        {
+          reportId,
+          filterCondition: JSON.parse(filterCondition),
+          notificationTypeCategoryId,
+          notificationTypeId,
+        },
+        context
+      )
+    })
+  }
 }
 module.exports = {
   issueBased,
