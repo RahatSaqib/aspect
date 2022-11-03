@@ -146,7 +146,6 @@ const App = ({
                 countryId={countryId}
                 countryAbbreviation={countryAbbreviation}
                 hasToAcceptLicenseId={hasToAcceptLicenseId}
-                isLoggedOut={isLoggedOut}
               />
             </Router>
           </MUILocalizationProvider>

@@ -46,10 +46,10 @@ const Auth = ({ required, page }) => {
   return required && !isPermittedUser(userPermissions, { required }) ? <NotFound /> : page
 }
 
-const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedOut }) => {
+const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { userPermissions } = useAuthState()
+  const { userPermissions, isLoggedOut } = useAuthState()
 
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
 
