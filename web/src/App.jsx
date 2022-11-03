@@ -9,7 +9,7 @@ import { IntlProvider } from 'react-intl'
 import { JssProvider } from 'react-jss'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
-import { Provider, connect } from 'react-redux'
+import { connect } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import history from './history'
@@ -86,92 +86,84 @@ const mapDispatchToProps = bindActionCreators.bind(null, {
   idleStart: idleActions.start,
   idleStop: idleActions.stop,
 })
-const MUILocalizationProvider = ({ children, culture }) => {
+
+const jss = create({ ...jssPreset(), insertionPoint: 'insertion-point-jss' })
+
+const AppWithProviders = () => {
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocales[culture]}>
-      {children}
-    </LocalizationProvider>
+    <AuthProvider>
+      <JssProvider jss={jss}>
+        <ConnectedApp />
+      </JssProvider>
+    </AuthProvider>
   )
 }
-const App = ({
-  // For IntlProvider
-  culture,
-  timezoneId,
-  // For other SideEffect components
-  access,
-  refresh,
-  clientId,
-  displayPreferences,
-  // dispatch to props
-  refreshStart,
-  idleStart,
-  idleStop,
-  // For render()
-  countryId,
-  countryAbbreviation,
-  hasToAcceptLicenseId,
-  isLoggedOut,
-}) => (
-  <IntlProvider
-    key={/* https://git.io/viGEA */ culture}
-    locale={culture === 'en-US' ? 'en' : culture}
-    messages={translation[culture]}
-    formats={formatsByTimezoneId(timezoneId)}
-    onError={() => {}} // to not show console.error with MISSING_TRANSLATION
-  >
-    <ThemeProvider theme={getTheme(culture)}>
-      <I18nProvider>
-        <RefreshToken key="refreshTokenProvider" refreshStart={refreshStart} />
-        <IdleDetection
-          key="IdleDetectionProvider"
-          isLoggedOut={isLoggedOut}
-          idleStart={idleStart}
-          idleStop={idleStop}
-        />
-        <LocalStorage
-          key="localStorageProvider"
-          access={access}
-          refresh={refresh}
-          clientId={clientId}
-          culture={culture}
-          timezoneId={timezoneId}
-          displayPreferences={displayPreferences}
-        />
-        <QueryClientProvider key="queryClientProvider" client={new QueryClient()}>
-          {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
-          <MUILocalizationProvider culture={culture}>
-            <Router key="routerProvider" history={history}>
-              <Pages
-                key="pagesProvider"
-                countryId={countryId}
-                countryAbbreviation={countryAbbreviation}
-                hasToAcceptLicenseId={hasToAcceptLicenseId}
-              />
-            </Router>
-          </MUILocalizationProvider>
-        </QueryClientProvider>
-      </I18nProvider>
-    </ThemeProvider>
-  </IntlProvider>
+
+const ConnectedApp = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  ({
+    // For IntlProvider
+    culture,
+    timezoneId,
+    // For other SideEffect components
+    access,
+    refresh,
+    clientId,
+    displayPreferences,
+    // dispatch to props
+    refreshStart,
+    idleStart,
+    idleStop,
+    // For render()
+    countryId,
+    countryAbbreviation,
+    hasToAcceptLicenseId,
+    isLoggedOut,
+  }) => (
+    <IntlProvider
+      key={/* https://git.io/viGEA */ culture}
+      locale={culture === 'en-US' ? 'en' : culture}
+      messages={translation[culture]}
+      formats={formatsByTimezoneId(timezoneId)}
+      onError={() => {}} // to not show console.error with MISSING_TRANSLATION
+    >
+      <ThemeProvider theme={getTheme(culture)}>
+        <I18nProvider>
+          <RefreshToken key="refreshTokenProvider" refreshStart={refreshStart} />
+          <IdleDetection
+            key="IdleDetectionProvider"
+            isLoggedOut={isLoggedOut}
+            idleStart={idleStart}
+            idleStop={idleStop}
+          />
+          <LocalStorage
+            key="localStorageProvider"
+            access={access}
+            refresh={refresh}
+            clientId={clientId}
+            culture={culture}
+            timezoneId={timezoneId}
+            displayPreferences={displayPreferences}
+          />
+          <QueryClientProvider key="queryClientProvider" client={new QueryClient()}>
+            {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocales[culture]}>
+              <Router key="routerProvider" history={history}>
+                <Pages
+                  key="pagesProvider"
+                  countryId={countryId}
+                  countryAbbreviation={countryAbbreviation}
+                  hasToAcceptLicenseId={hasToAcceptLicenseId}
+                />
+              </Router>
+            </LocalizationProvider>
+          </QueryClientProvider>
+        </I18nProvider>
+      </ThemeProvider>
+    </IntlProvider>
+  )
 )
-
-const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)
-
-const jss = create({
-  ...jssPreset(),
-  insertionPoint: 'insertion-point-jss',
-})
-
-const AppWithProviders = ({ store }) => {
-  return (
-    <Provider store={store}>
-      <AuthProvider>
-        <JssProvider jss={jss}>
-          <ConnectedApp />
-        </JssProvider>
-      </AuthProvider>
-    </Provider>
-  )
-}
 
 export default AppWithProviders

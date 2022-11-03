@@ -90,8 +90,8 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId }) => {
     <LoggedInLayout>
       <RoutesPermissionProvider>
         <Routes>
-          <Route path="/" element={<Navigate replace to={destination} state={{ referrer: location }} />} />
-          <Route path="/login" element={<Navigate replace to={destination} state={{ referrer: location }} />} />
+          <Route path="/" element={<Navigate replace to={destination} />} />
+          <Route path="/login" element={<Navigate replace to={destination} />} />
           <Route path="/dashboard" element={<Auth required={['dashboard:summary']} page={<LoadableStatus />} />} />
           <Route path="/task-list" element={<Auth required={['task']} page={<TaskList {...props} />} />} />
           <Route path="/task-list/aggre-list" element={<Auth required={['task']} page={<TaskAggre {...props} />} />} />

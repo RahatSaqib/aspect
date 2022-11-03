@@ -4,6 +4,7 @@ import React from 'react'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'
 import { render } from 'react-dom'
+import { Provider } from 'react-redux'
 import App from './App'
 import config from './config'
 import { hydrateFromLocalStorage, refreshStart } from './store/AuthRedux'
@@ -27,9 +28,14 @@ if (config.sentry && process.env.NODE_ENV === 'production') {
   })
   Sentry.setTag('Country', config.countryName || config.aspectApi)
 }
-// }
 
-const renderApp = () => render(<App store={store} />, document.getElementById('app'))
+const renderApp = () =>
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById('app')
+  )
 
 // let's see if we can get culture from local storage
 store.dispatch(hydrateFromLocalStorage(getAspectHydrateData()))
