@@ -3420,7 +3420,7 @@ async function seed(knex) {
       const routerId = routerIds[i]
       const device = {
         ...auditFields,
-        name: `${siteData.name} GeneXpert`,
+        name: `${siteData.name} ${i < 10 ? '&' : ''} GeneXpert`,
         shortName: `${siteData.city} GeneXpert`,
         deviceTypeId: deviceTypeGeneXpertId,
         deviceApprovalId: deviceApprovalApproved,

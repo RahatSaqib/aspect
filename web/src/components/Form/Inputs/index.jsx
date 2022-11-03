@@ -1,5 +1,6 @@
 import React from 'react'
 import Checkbox from './Checkbox'
+import CronForm from './CronForm'
 import { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone } from './DatePicker'
 import PlaceholderTextArea from './PlaceholderTextArea'
 import PlaceholderTextField from './PlaceholderTextField'
@@ -17,10 +18,12 @@ const Inputs = {
   datePickerNoTimezone: AspectDatePickerNoTimezone,
   select: AspectSelect,
   checkbox: Checkbox,
+  cron: CronForm,
 }
 
 const AspectInput = props => {
   const Component = Inputs[props.controlType.component]
+
   return Component ? <Component {...props} /> : null
 }
 

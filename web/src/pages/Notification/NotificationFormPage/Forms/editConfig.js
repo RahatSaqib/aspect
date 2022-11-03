@@ -2,7 +2,6 @@ import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
 import filter from 'lodash/filter'
 import intersectionBy from 'lodash/intersectionBy'
-import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import map from 'lodash/map'
@@ -12,12 +11,20 @@ import union from 'lodash/union'
 import uniqWith from 'lodash/uniqWith'
 import values from 'lodash/values'
 import xor from 'lodash/xor'
-import { getBaseData } from '../../../../components/Form/Formik/Helpers'
-import ASSAY_LIST from '../../../../components/QueryFetch/Assay'
 import { PERSON_SELECT_LIST } from '../../../../components/QueryFetch/Person'
 import { SITE_SELECT } from '../../../../components/QueryFetch/Site'
 import messages from '../messages'
 import styles from '../NotificationFormPage.css'
+import {
+  issueBasedSection,
+  calibrationSection,
+  deviceOfflineSection,
+  deviceNoResultsSection,
+  lowInventorySection,
+  stockExpiringSection,
+} from './issueBasedConfig'
+import { reportBasedSection } from './reportBasedConfig'
+import { resultBasedSection } from './resultBasedConfig'
 
 const cssClasses = classnames.bind(styles)
 
@@ -39,6 +46,8 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
   sections: [
     ...notificationTypeSection(formatMessage), // notification header (enabled/type)
     resultBasedSection(formatMessage), // only for ['resultBased']
+    issueBasedSection(formatMessage), // only for ['issueBased]
+    reportBasedSection(formatMessage),
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
     deviceOfflineSection(formatMessage, partner), // only for ['DeviceOffline']
@@ -148,23 +157,27 @@ const notificationTypeSection = formatMessage => {
           id: 0,
           items: [
             {
+              id: 'name',
+              controlType: { component: 'textField' },
+              fullWidth: true,
+              labelI18nKey: 'notificationTitle',
+            },
+            {
               id: 'notificationType',
               controlType: {
                 component: 'select',
                 hideIfNoOptions: false,
                 options: [
                   {
-                    label: formatMessage(messages.notificationCreateGroupForResults),
-                    options: [
-                      {
-                        value: 'resultBased',
-                        label: formatMessage(messages.notificationTypeResultBased),
-                        icon: 'AiOutlineSolution',
-                      },
-                    ],
+                    value: 'resultBased',
+                    label: formatMessage(messages.notificationTypeResultBased),
+                    icon: 'GrTest',
                   },
                   {
-                    label: formatMessage(messages.notificationCreateGroupForSite),
+                    value: 'issueBased',
+                    label: formatMessage(messages.notificationTypeIssueBased),
+                    icon: 'AiOutlineIssuesClose',
+
                     options: [
                       {
                         value: 'InventoryStockout',
@@ -178,46 +191,11 @@ const notificationTypeSection = formatMessage => {
                       },
                     ],
                   },
-                  {
-                    label: formatMessage(messages.notificationCreateGroupForDevices),
-                    options: [
-                      {
-                        value: 'DeviceNoResults',
-                        label: formatMessage(messages.notificationTypeNoResult),
-                        icon: 'AiOutlineFileExclamation',
-                      },
-                      {
-                        value: 'DeviceOffline',
-                        label: formatMessage(messages.notificationTypeOffline),
-                        icon: 'AiOutlineApi',
-                      },
-                      // { TODO:  Uncomment when the issue is ready.
-                      //   value: 'calibration',
-                      //   label: formatMessage(messages.notificationTypeCalibration),
-                      //   icon: 'AiOutlineTool',
-                      // },
-                      {
-                        value: 'ModuleReplaced',
-                        label: formatMessage(messages.notificationTypeModuleReplaced),
-                        icon: 'AiOutlineSwap',
-                      },
-                      {
-                        value: 'ModuleDisabled',
-                        label: formatMessage(messages.notificationTypeModuleDisabled),
-                        icon: 'AiOutlineBlock',
-                      },
-                      {
-                        value: 'UnusedModules',
-                        label: formatMessage(messages.notificationTypeModuleUnused),
-                        icon: 'AiOutlineExclamation',
-                      },
-                      {
-                        value: 'InstrumentReplaced',
-                        label: formatMessage(messages.notificationTypeInstrumentReplaced),
-                        icon: 'AiOutlineTool',
-                      },
-                    ],
-                  },
+                  // {
+                  //   value: 'reportBased',
+                  //   label: formatMessage(messages.notificationTypeReportBased),
+                  //   icon: 'AiOutlineSolution',
+                  // },
                 ],
                 placeholder: formatMessage(messages.notificationType),
               },
@@ -228,85 +206,11 @@ const notificationTypeSection = formatMessage => {
               },
               labelI18nKey: 'notificationType',
             },
-            {
-              id: 'name',
-              controlType: { component: 'textField' },
-              fullWidth: true,
-              labelI18nKey: 'notificationTitle',
-            },
           ],
         },
       ],
     },
   ]
-}
-
-const resultBasedSection = formatMessage => {
-  return {
-    id: 'whenResultIs',
-    label: 'whenResultIs',
-    labelI18nKey: 'whenResultIs',
-    visibleIf: values => ['resultBased'].includes(values.notificationType),
-    rows: [
-      {
-        id: 'result',
-        isMulti: true,
-        items: [
-          {
-            id: 'assayId',
-            controlType: {
-              component: 'select',
-              endpoint: ASSAY_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              queryKey: ASSAY_LIST.KEY,
-              normalizeLoadedData: response => {
-                const { ok, data } = response
-                const options = ok === true ? getBaseData(data, formatMessage, messages) : []
-                return options
-              },
-              placeholder: formatMessage(messages.assayPlaceholder),
-            },
-            labelI18nKey: 'assayTitle',
-          },
-          {
-            id: 'resultCategoryId',
-            controlType: {
-              component: 'select',
-              endpoint: ASSAY_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              isMulti: true,
-              queryKey: ASSAY_LIST.KEY,
-              normalizeLoadedData: (response, formik, subRowIndex) => {
-                let options = []
-                const { assayId: selectedAssayId } = formik.values.result[subRowIndex]
-                if (selectedAssayId) {
-                  const { ok, data } = response
-                  if (ok === true) {
-                    const selectedAssay = data.find(({ externalId }) => externalId === selectedAssayId)
-                    const { resultCategories = [], resultCategoryGroups } = selectedAssay || {}
-                    const scope =
-                      isArray(resultCategoryGroups) && !isEmpty(resultCategoryGroups)
-                        ? 'ResultCategoryGroups'
-                        : 'ResultCategories'
-                    options = getBaseData(
-                      scope === 'ResultCategoryGroups' ? resultCategoryGroups : resultCategories,
-                      formatMessage,
-                      messages
-                    )
-                    options = options.map(it => ({ ...it, scope }))
-                  }
-                }
-                return options
-              },
-              dependencies: ['result[{{subRowIndex}}].assayId'],
-              placeholder: formatMessage(messages.resultPlaceholder),
-            },
-            labelI18nKey: 'resultTitle',
-          },
-        ],
-      },
-    ],
-  }
 }
 
 const geographySection = formatMessage => {
@@ -326,6 +230,7 @@ const geographySection = formatMessage => {
               endpoint: '/geography/level-by-user-select-list',
               hideIfNoOptions: false,
               queryKey: 'GEOGRAPHY_LEVEL',
+
               normalizeLoadedData: response =>
                 response.map(i => ({ label: formatMessage(messages[`Area${i.name}`]), value: i.id })),
               placeholder: formatMessage(messages.SelectAreaPlaceholder),
@@ -335,215 +240,6 @@ const geographySection = formatMessage => {
           { id: 'areaItemsState', ...sharedAreaItemsConfig(formatMessage, stateSelectOptions, 'state') },
           { id: 'areaItemsLGA', ...sharedAreaItemsConfig(formatMessage, lgaSelectOptions, 'lga') },
           { id: 'areaItemsLab', ...sharedAreaItemsConfig(formatMessage, labSelectOptions, 'lab') },
-        ],
-      },
-    ],
-  }
-}
-
-const lowInventorySection = (formatMessage, partner) => {
-  return {
-    id: 'whenDeviceHasLessThan',
-    label: 'whenDeviceHasLessThan',
-    labelI18nKey: 'whenDeviceHasLessThan',
-    visibleIf: values => ['InventoryStockout'].includes(values.notificationType),
-    rows: [
-      {
-        id: 85,
-        items: [
-          {
-            id: 'daysOfInventoryLeft',
-            label: formatMessage(messages.daysOfInventoryLeft),
-            initialValue: [`${partner.dueDaysInventoryStockout}`],
-            type: 'readOnly',
-            controlType: {
-              component: 'select',
-              hideIfNoOptions: false,
-              options: [{ value: `${partner.dueDaysInventoryStockout}`, label: `${partner.dueDaysInventoryStockout}` }],
-            },
-            classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
-            },
-            labelI18nKey: 'daysOfInventoryLeft',
-          },
-        ],
-      },
-    ],
-  }
-}
-
-const deviceOfflineSection = (formatMessage, partner) => {
-  return {
-    id: 'whenDeviceHasBeenOfflineForMoreThan',
-    label: 'whenDeviceHasBeenOfflineForMoreThan',
-    labelI18nKey: 'whenDeviceHasBeenOfflineForMoreThan',
-    visibleIf: values => ['DeviceOffline'].includes(values.notificationType),
-    rows: [
-      {
-        id: 83,
-        items: [
-          {
-            id: 'daysOffline',
-            label: formatMessage(messages.daysOffline),
-            initialValue: [`${partner.maxDaysDeviceOffline}`],
-            type: 'readOnly',
-            controlType: {
-              component: 'select',
-              hideIfNoOptions: false,
-              options: [{ value: `${partner.maxDaysDeviceOffline}`, label: `${partner.maxDaysDeviceOffline}` }],
-            },
-            classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
-            },
-            labelI18nKey: 'daysOffline',
-          },
-        ],
-      },
-    ],
-  }
-}
-
-const deviceNoResultsSection = (formatMessage, partner) => {
-  return {
-    id: 'whenDeviceDidNotSendResultsForMoreThan',
-    label: 'whenDeviceDidNotSendResultsForMoreThan',
-    labelI18nKey: 'whenDeviceDidNotSendResultsForMoreThan',
-    visibleIf: values => ['DeviceNoResults'].includes(values.notificationType),
-    rows: [
-      {
-        id: 85,
-        items: [
-          {
-            id: 'daysNoResults',
-            label: formatMessage(messages.daysWithoutResults),
-            initialValue: [`${partner.maxDaysDeviceNoResults}`],
-            type: 'readOnly',
-            controlType: {
-              component: 'select',
-              hideIfNoOptions: false,
-              options: [{ value: `${partner.maxDaysDeviceNoResults}`, label: `${partner.maxDaysDeviceNoResults}` }],
-            },
-            classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
-            },
-            labelI18nKey: 'daysWithoutResults',
-          },
-        ],
-      },
-    ],
-  }
-}
-
-const stockExpiringSection = (formatMessage, partner) => {
-  return {
-    id: 'stockExpiring',
-    label: 'stockExpiring',
-    labelI18nKey: 'stockExpiring',
-    visibleIf: values => ['InventoryStockExpiring'].includes(values.notificationType),
-    rows: [
-      {
-        id: 81,
-        items: [
-          {
-            id: 'stockExpiring',
-            label: formatMessage(messages.stockExpiring),
-            initialValue: [`${partner.dueDaysInventoryStockExpiring}`],
-            type: 'readOnly',
-            controlType: {
-              component: 'select',
-              hideIfNoOptions: false,
-              options: [
-                {
-                  value: `${partner.dueDaysInventoryStockExpiring}`,
-                  label: `${partner.dueDaysInventoryStockExpiring}`,
-                },
-              ],
-            },
-            classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
-            },
-            labelI18nKey: 'daysStockExpiring',
-          },
-        ],
-      },
-    ],
-  }
-}
-
-const calibrationSection = formatMessage => {
-  return {
-    id: 'calibration',
-    label: 'calibration',
-    labelI18nKey: 'calibration',
-    visibleIf: values => ['calibration'].includes(values.notificationType),
-    rows: [
-      {
-        id: 181,
-        items: [
-          {
-            id: 'calibration',
-            label: formatMessage(messages.stockExpiring),
-            initialValue: ['30/60/90'],
-            type: 'readOnly',
-            controlType: {
-              component: 'select',
-              // endpoint: PERSON_SELECT_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              // queryKey: PERSON_SELECT_LIST.KEY,
-              options: [{ value: '30/60/90', label: '30/60/90' }],
-              // normalizeLoadedData: (response, formik) => {
-              //   const { values, setFieldValue } = formik
-              //   function makeLabel(name, state) {
-              //     const stateLabel = isEmpty(state) ? '' : ` (${state})`
-              //     return `${name} ${stateLabel}`
-              //   }
-              //   const { ok, data } = response
-              //   const options = [
-              //     { label: formatMessage(messages.optionPersonRoleSet), options: [] },
-              //     { label: formatMessage(messages.optionPersonRoleNotSet), options: [] },
-              //   ]
-              //   if (ok === true) {
-              //     const selected = intersectionBy(data, values.persons, 'id')
-              //     if (selected?.length) {
-              //       const initialValues = []
-              //       map(selected, ({ id, name, state }) =>
-              //         initialValues.push({ label: makeLabel(name, state), value: id, grouped: true })
-              //       )
-              //       values.persons = initialValues
-              //       setFieldValue('persons', initialValues)
-              //     }
-              //     const withJob = filter(data, item => !isEmpty(item.level))
-              //     const withoutJob = xor(data, withJob)
-              //     map(withJob, ({ id, name, state }) =>
-              //       options[0].options.push({ label: makeLabel(name, state), value: id, grouped: true })
-              //     )
-              //     map(withoutJob, ({ name, state }) =>
-              //       options[1].options.push({
-              //         label: makeLabel(name, state),
-              //         value: null,
-              //         disabled: true,
-              //         grouped: true,
-              //       })
-              //     )
-              //   }
-              //   return options?.length ? options : []
-              // },
-            },
-            classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
-            },
-            labelI18nKey: 'daysOfInventoryLeft',
-          },
         ],
       },
     ],

@@ -2,11 +2,11 @@ import React from 'react'
 import { AppBar, IconButton, MenuItem, Toolbar } from '@mui/material'
 import classnames from 'classnames/bind'
 import { FaUser } from 'react-icons/fa'
-import { defineMessages, injectIntl } from 'react-intl'
+import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { compose } from 'recompose'
-import { closeDrawer, userRequestedLogout } from '../../store/AuthRedux'
+import useI18n from '../../hooks/useI18n'
+import { userRequestedLogout } from '../../store/AuthRedux'
 import IconMenu from '../shared/IconMenu'
 import requirePermissions from '../shared/requirePermissions'
 import ConfluenceIcon from './ConfluenceIcon'
@@ -26,15 +26,8 @@ const messages = defineMessages({
 
 const cssClasses = classnames.bind(styles)
 
-const enhance = compose(
-  injectIntl,
-  connect(null, {
-    closeDrawer,
-    userRequestedLogout,
-  })
-)
-
-const HorizontalAppBar = ({ closeDrawer, userRequestedLogout, intl }) => {
+const HorizontalAppBar = ({ userRequestedLogout }) => {
+  const intl = useI18n()
   const navigate = useNavigate()
   const navigateRoot = () => navigate('/')
   const navigateCurrentAccountDetails = () => navigate('/account-details/current')
@@ -49,7 +42,7 @@ const HorizontalAppBar = ({ closeDrawer, userRequestedLogout, intl }) => {
           <ConfluenceIcon />
         </IconButton>
 
-        <LinkNavigation type="horizontal" onClick={closeDrawer} />
+        <LinkNavigation type="horizontal" onClick={() => {}} />
         <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
           <Account />
           <MenuItem onClick={userRequestedLogout}>{intl.formatMessage(messages.signOut)}</MenuItem>
@@ -59,4 +52,4 @@ const HorizontalAppBar = ({ closeDrawer, userRequestedLogout, intl }) => {
   )
 }
 
-export default enhance(HorizontalAppBar)
+export default connect(null, { userRequestedLogout })(HorizontalAppBar)
