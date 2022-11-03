@@ -23,6 +23,7 @@ import {
   lowInventorySection,
   stockExpiringSection,
 } from './issueBasedConfig'
+import notificationTypeSection from './notificationTypeSection'
 import { reportBasedSection } from './reportBasedConfig'
 import { resultBasedSection } from './resultBasedConfig'
 
@@ -125,94 +126,6 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
   }
 }
 
-const notificationTypeSection = formatMessage => {
-  return [
-    // notification enabled
-    {
-      id: 'section_notificationType_disable',
-      label: 'Enable',
-      labelI18nKey: 'notificationTypeEnable',
-      rows: [
-        {
-          id: 0,
-          items: [
-            {
-              id: 'enabled',
-              controlType: { component: 'checkbox' },
-              classNames: checkboxClassNames,
-              initialValue: true,
-              label: '',
-            },
-          ],
-        },
-      ],
-    },
-    // notification type/name
-    {
-      id: 'section_notificationType',
-      label: 'Notification Type',
-      labelI18nKey: 'notificationType',
-      rows: [
-        {
-          id: 0,
-          items: [
-            {
-              id: 'name',
-              controlType: { component: 'textField' },
-              fullWidth: true,
-              labelI18nKey: 'notificationTitle',
-            },
-            {
-              id: 'notificationType',
-              controlType: {
-                component: 'select',
-                hideIfNoOptions: false,
-                options: [
-                  {
-                    value: 'resultBased',
-                    label: formatMessage(messages.notificationTypeResultBased),
-                    icon: 'GrTest',
-                  },
-                  {
-                    value: 'reportBased',
-                    label: formatMessage(messages.notificationTypeReportBased),
-                    icon: 'AiOutlineSolution',
-                  },
-                  {
-                    value: 'issueBased',
-                    label: formatMessage(messages.notificationTypeIssueBased),
-                    icon: 'AiOutlineIssuesClose',
-
-                    options: [
-                      {
-                        value: 'InventoryStockout',
-                        label: formatMessage(messages.notificationTypeLowInventory),
-                        icon: 'AiOutlineDashboard',
-                      },
-                      {
-                        value: 'InventoryStockExpiring',
-                        label: formatMessage(messages.notificationTypeExpiring),
-                        icon: 'AiOutlineDashboard',
-                      },
-                    ],
-                  },
-                ],
-                placeholder: formatMessage(messages.notificationType),
-              },
-              classNames: {
-                itemContainer: cssClasses('min-width-100pc', 'tags-container'),
-                controlContainer: cssClasses('full-width-100pc'),
-                item: cssClasses('full-width-100pc'),
-              },
-              labelI18nKey: 'notificationType',
-            },
-          ],
-        },
-      ],
-    },
-  ]
-}
-
 const geographySection = formatMessage => {
   return {
     id: 'fromThisDevice',
@@ -275,6 +188,7 @@ const sendSection = (formatMessage, jobFunctions) => {
               controlType: { component: 'checkbox' },
               classNames: checkboxClassNames,
               labelI18nKey: 'web',
+              visibleIf: values => !['reportBased'].includes(values.notificationType),
             },
           ],
         },

@@ -143,6 +143,9 @@ const NotificationFormPage = ({ id }) => {
 
     if (!values?.hasRecurrency) {
       delete values.cronRecurrency
+    } else {
+      values.cronRecurrency = formik.values.cronRecurrency.cronExpression
+      values.reportFrecuency = formik.values.cronRecurrency.frecuency
     }
 
     /**

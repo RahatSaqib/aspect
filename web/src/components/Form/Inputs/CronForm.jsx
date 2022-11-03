@@ -5,6 +5,9 @@ import FormGroup from '@mui/material/FormGroup'
 import FormHelperText from '@mui/material/FormHelperText'
 import Radio from '@mui/material/Radio'
 import { useFormikContext } from 'formik'
+import isArray from 'lodash/isArray'
+import isEmpty from 'lodash/isEmpty'
+import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'
 import useI18n from '../../../hooks/useI18n'
 import Cron from '../../Cron/index'
@@ -15,25 +18,27 @@ import messages from '../messages'
 const CronForm = props => {
   const { className, formik, id } = props
   const { cronRecurrency: initialCronRecurrency = null } = formik.initialValues
+
   const { updateField, toggleEdit } = useFormikContext()
   const { error, helperText } = getFieldErrorProps(formik, id)
-  const [initialRecurrency] = useState(initialCronRecurrency)
+  const [initialRecurrency] = useState(
+    isNil(initialCronRecurrency) || isEmpty(initialCronRecurrency) ? null : initialCronRecurrency.split(' ')
+  )
   const [showCron, setShowCron] = useState(false)
-  const handleOnChange = value => {
-    updateField(id, value, { formik, toggleEdit })
+  const handleOnChange = (value, humanReadable, frecuency) => {
+    updateField(id, { cronExpression: value.join(' '), humanReadable, frecuency }, { formik, toggleEdit })
   }
-
   const { locale, formatMessage } = useI18n()
   return (
     <FormControl component="fieldset" fullWidth>
-      {initialRecurrency ? (
+      {isArray(initialRecurrency) ? (
         <>
           <FormGroup>
             <FormControlLabel
               control={
                 <Radio
                   color="primary"
-                  value={initialRecurrency}
+                  value={initialRecurrency.join(' ')}
                   checked={!showCron}
                   onChange={() => {
                     setShowCron(false)
@@ -47,7 +52,7 @@ const CronForm = props => {
               control={<Radio color="primary" value="2" onChange={() => setShowCron(true)} checked={showCron} />}
               label={formatMessage(messages.newRecurrency)}
             />
-            {showCron ? <Cron onChange={handleOnChange} className={className} /> : true}
+            {showCron ? <Cron onChange={handleOnChange} value={initialRecurrency} className={className} /> : true}
           </FormGroup>
         </>
       ) : (

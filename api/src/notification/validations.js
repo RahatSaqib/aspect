@@ -104,7 +104,14 @@ const resultBasedNotificationPayload = Joi.object({
       then: Joi.required(),
     })
     .description('To schedule the delivery of the email'),
-
+  reportFrecuency: Joi.string()
+    .when('hasRecurrency', {
+      // check first sendSms...
+      is: true,
+      otherwise: Joi.forbidden(),
+      then: Joi.required(),
+    })
+    .description('The frequency of the report'),
   result: Joi.array()
     .items(
       Joi.object().keys({

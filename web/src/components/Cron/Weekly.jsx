@@ -144,7 +144,7 @@ const Weekly = ({ cronExpression, onChange }) => {
       <Stack direction="row" spacing={1} alignItems="center">
         <ChooseTime
           hour={cronExpression[1]}
-          minute={cronExpression[2]}
+          minute={cronExpression[0]}
           changeMinutes={changeMinutes}
           changeHours={changeHours}
         />

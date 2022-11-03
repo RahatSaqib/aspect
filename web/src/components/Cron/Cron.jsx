@@ -21,22 +21,19 @@ const options = [
   { name: 'quarterly', Component: Quarterly, value: ['0', '0', '1', '*/3', '*'] },
 ]
 
-const Cron = ({ showResultText, showResultCron, onChange, value }) => {
+const Cron = ({ showResultText, showResultCron, onChange, value = null }) => {
   const { locale, formatMessage } = useI18n()
-  const [cronExpression, setCronExpression] = useState(DEFAULT_VALUE)
+  const [cronExpression, setCronExpression] = useState(value ?? DEFAULT_VALUE)
   const [selectedTab, setSelectedTab] = useState(0)
 
   useEffect(() => {
-    if (value) setCronExpression(value.toString().split(' '))
+    if (value) setCronExpression(value)
   }, [value])
   const onTabChange = idx => {
     setSelectedTab(idx)
     if (!value) {
       setCronExpression(options[idx].value)
-      // let newVal = ''
-      // newVal = options[idx].value.toString().replace(/,/g, ' ')
-      // newVal = newVal.replace(/!/g, ',')
-      onChange(options[idx].value.toString(), getCronHumanValue(options[idx].value, locale))
+      onChange(options[idx].value, getCronHumanValue(options[idx].value, locale), options[idx].name)
     }
   }
 
@@ -48,7 +45,7 @@ const Cron = ({ showResultText, showResultCron, onChange, value }) => {
       val = ['0', '0', '1/1', '*', '*']
     }
 
-    onChange(val, getCronHumanValue(val, locale))
+    onChange(val, getCronHumanValue(val, locale), options[selectedTab].name)
   }
   const Selector = options[selectedTab].Component
 
@@ -75,7 +72,7 @@ Cron.propTypes = {
   showResultText: PropTypes.bool,
   showResultCron: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.arrayOf(PropTypes.string),
 }
 
 Cron.defaultProps = {
