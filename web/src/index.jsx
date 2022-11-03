@@ -30,14 +30,6 @@ if (config.sentry && process.env.NODE_ENV === 'production') {
 }
 // }
 
-// polyfill intl if necessary
-// http://formatjs.io/guides/runtime-environments/
-if (!window.Intl) {
-  require('intl')
-  // TODO: base on user's locale
-  require('intl/locale-data/jsonp/en.js')
-}
-
 const renderApp = () => render(<App store={store} />, document.getElementById('app'))
 
 // let's see if we can get culture from local storage
