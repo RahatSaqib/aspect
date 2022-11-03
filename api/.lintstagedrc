@@ -1,6 +1,7 @@
 {
     "api/{src,test,migrations,seeds}/**/*.js": [
         "eslint --fix --max-warnings 0",    
-        "prettier --write"
+        "prettier --write",
+        "yarn lint"
     ]
 }
