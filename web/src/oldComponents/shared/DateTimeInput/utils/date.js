@@ -335,7 +335,9 @@ const checkIfParamsIsDate = (params, encode = true) => {
     const output = [] // {}
     map(params, (value, key) => {
       const values = isArray(value) ? value : [value]
-      return values.map(v => output.push(`${key}=${dateStringMatches.includes(key) ? iSOHelper(v, key) : v}`))
+      return values.map(v =>
+        output.push(`${key}=${dateStringMatches.includes(key) ? iSOHelper(v, key) : encodeURIComponent(v)}`)
+      )
     })
     return output
   }

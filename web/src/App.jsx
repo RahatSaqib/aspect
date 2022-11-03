@@ -12,7 +12,6 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import history from './history'
 import IdleDetection from './oldComponents/IdleDetection'
-import { reasonTypes } from './oldPages/auth/loggedOutReasons'
 import RefreshToken from './oldPages/auth/login/RefreshToken'
 import Pages from './Pages'
 import { AuthProvider } from './providers/AuthProvider'
@@ -54,14 +53,12 @@ const formatsByTimezoneId = timezoneId => {
 
 const mapStateToProps = state => {
   let isLoggedOut = false
-  let { loggedOutReason } = state.user
 
   const jwtExp = state.user.jwt.exp
   if (isNumber(jwtExp) && state.globals.lastServerResponseTime) {
     const isExpired = jwtExp < state.globals.lastServerResponseTime.getTime() / 1000
     if (isExpired) {
       isLoggedOut = true
-      loggedOutReason = reasonTypes.expiredJWT
     }
   } else {
     isLoggedOut = true
@@ -76,13 +73,9 @@ const mapStateToProps = state => {
     clientId: state.user.clientId,
     countryId: state.user.countryId,
     displayPreferences: state.user.displayPreferences,
-    drawerOpen: state.user.drawerOpen,
     countryAbbreviation: state.user.countryAbbreviation,
     hasToAcceptLicenseId: state.user.jwt.hasToAcceptLicenseId,
-    // For render()
     isLoggedOut,
-    loggedOutReason,
-    permissions: state.user.jwt.permissions,
   }
 }
 
@@ -101,7 +94,6 @@ const App = ({
   refresh,
   clientId,
   displayPreferences,
-  drawerOpen,
   // dispatch to props
   refreshStart,
   idleStart,
@@ -111,8 +103,6 @@ const App = ({
   countryAbbreviation,
   hasToAcceptLicenseId,
   isLoggedOut,
-  loggedOutReason,
-  permissions,
 }) => (
   <IntlProvider
     key={/* https://git.io/viGEA */ culture}
@@ -132,7 +122,6 @@ const App = ({
           culture={culture}
           timezoneId={timezoneId}
           displayPreferences={displayPreferences}
-          drawerOpen={drawerOpen}
         />
         <QueryClientProvider client={new QueryClient()}>
           {process.env.NODE_ENV !== 'production' ? <ReactQueryDevtools initialIsOpen /> : null}
@@ -142,8 +131,6 @@ const App = ({
               countryAbbreviation={countryAbbreviation}
               hasToAcceptLicenseId={hasToAcceptLicenseId}
               isLoggedOut={isLoggedOut}
-              loggedOutReason={loggedOutReason}
-              permissions={permissions}
             />
           </Router>
         </QueryClientProvider>
