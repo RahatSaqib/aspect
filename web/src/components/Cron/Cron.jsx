@@ -16,7 +16,7 @@ const classes = classNames.bind(styles)
 const DEFAULT_VALUE = ['0', '0', '1/1', '*', '*']
 const options = [
   { name: 'daily', Component: Daily, value: DEFAULT_VALUE },
-  { name: 'weekly', Component: Weekly, value: ['0', '0', '*', '*', '*'] },
+  { name: 'weekly', Component: Weekly, value: ['0', '0', '1/1', '*', '*'] },
   { name: 'monthly', Component: Monthly, value: ['0', '0', '1', '*', '*'] },
   { name: 'quarterly', Component: Quarterly, value: ['0', '0', '1', '*/3', '*'] },
 ]

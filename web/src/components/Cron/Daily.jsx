@@ -52,7 +52,7 @@ const Daily = ({ cronExpression, onChange }) => {
                 color="primary"
                 value="1"
                 onChange={() => {
-                  onChange(['0', '0', '*', '*', '*'])
+                  onChange(['0', '0', '1/1', '*', '*'])
                 }}
                 checked={cronExpression[4] === '*'}
               />

@@ -223,7 +223,7 @@ exports[`Cron Component snapshot test should shallow render export list correctl
       <p
         class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
       >
-        (0 0 00 1/1 * ? *)
+        (0 0 1/1 * *)
       </p>
     </div>
   </div>
