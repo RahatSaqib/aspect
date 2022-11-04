@@ -61,17 +61,11 @@ const Workload = () => {
   const user = useAuthState()
   const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState()
-
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.userPermissions, {})
-
   const { isError, isLoading, data = false, error } = useWorkload(requestParams)
-
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
-
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
-
   const mostResultsAssay = useSelector(
     ({ assay }) =>
       assay.items
@@ -79,18 +73,16 @@ const Workload = () => {
         .filter(a => a.hasResults)
         .sort((a, b) => b.resultCount - a.resultCount)[0]
   )
-  useWorkloadDownload({
-    ...requestParams,
-    ...download,
-  })
-  const onExcelClick = formatType => {
-    setDownload({ fileFormat: formatType, enabled: true })
-  }
+  useWorkloadDownload({ ...requestParams, ...download })
+
+  const onExcelClick = formatType => setDownload({ fileFormat: formatType, enabled: true })
+
   useEffect(() => {
     if (download.enabled) {
       setDownload({ fileFormat: '', enabled: false })
     }
   }, [download])
+
   useEffect(() => {
     const { value: searchParams } = searchSanitizer(location, {})
     const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
@@ -116,12 +108,12 @@ const Workload = () => {
 
   const columns = [
     { key: 'name', label: formatMessage(messages.name), sortable: true },
-    { key: 'deviceStatus', label: formatMessage(messages.deviceStatus), sortable: true },
-    { key: 'stateName', label: getCustomMessage(messages, 'state', user), sortable: true },
-    { key: 'lgaName', label: getCustomMessage(messages, 'lga', user), sortable: true },
-    { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true },
-    { key: 'firstResultEndedOn', label: formatMessage(messages.firstResultEndedOn), sortable: true },
-    { key: 'lastResultEndedOn', label: formatMessage(messages.lastResultEndedOn), sortable: true },
+    { key: 'deviceStatus', label: formatMessage(messages.deviceStatus), sortable: true, hiddenOn: 'xl' },
+    { key: 'stateName', label: getCustomMessage(messages, 'state', user), sortable: true, hiddenOn: 'xl' },
+    { key: 'lgaName', label: getCustomMessage(messages, 'lga', user), sortable: true, hiddenOn: 'xl' },
+    { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true, hiddenOn: 'xl' },
+    { key: 'firstResultEndedOn', label: formatMessage(messages.firstResultEndedOn), sortable: true, hiddenOn: 'xl' },
+    { key: 'lastResultEndedOn', label: formatMessage(messages.lastResultEndedOn), sortable: true, hiddenOn: 'xl' },
     { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
