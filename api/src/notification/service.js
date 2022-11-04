@@ -113,7 +113,6 @@ function issueConditionsMet(queryBuilder, filterCondition, aliases) {
 }
 
 async function createNotifications(knex, action, context) {
-  console.log('\x1b[1;36m', '🚀 ➜ file: service.js ➜ line 116 ➜ action', action)
   const now = new Date()
   const { filterCondition = null, notificationTypeCategoryId = 'issueBased' } = action
   const policies = await getNotificationPolicy(
