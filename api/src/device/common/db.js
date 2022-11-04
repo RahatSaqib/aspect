@@ -373,6 +373,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     .select(
       'd.name',
       'dms.i18nKey as deviceStatus',
+      'dms.name as deviceStatusLabel',
       'd.lastPingOn',
       'firstAndLastResults.firstEndedOn as firstResultEndedOn',
       'firstAndLastResults.lastEndedOn as lastResultEndedOn',

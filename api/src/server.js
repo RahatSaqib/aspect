@@ -16,7 +16,7 @@ const { addLoggers } = require('./logger/service')
 const logger = require('./shared/logger')
 const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
-const { getDictionary, getDictionarySync } = require('./shared/dictionary')
+const { initDictionaryTables } = require('./shared/dictionary')
 
 const { port } = config
 const server = new Hapi.server({
@@ -208,15 +208,7 @@ const start = async () => {
    * in `api/src/auth/constraints.js`
    */
   server.ext('onRequest', async function (request, h) {
-    const dictionaryTables = [{ table: 'Assay', column: 'id' }]
-    await Promise.all(
-      dictionaryTables.map(async ({ table, column }) => {
-        if (!getDictionarySync(table, column)) {
-          // calling of async func `getDictionary` reads and caches specified table/column
-          return getDictionary(table, column)
-        }
-      })
-    )
+    await initDictionaryTables()
     return h.continue
   })
 

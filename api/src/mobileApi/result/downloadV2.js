@@ -23,7 +23,7 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { size } = getPageParams(query)
 
-  const resultQuery = generateResultQueryV2(query, dataConstraints)
+  const resultQuery = generateResultQueryV2(query, dataConstraints, false)
 
   // return result when both queries are finished
   const [{ count: total }, data, { count: awaitingTreatment }] = await Promise.all([

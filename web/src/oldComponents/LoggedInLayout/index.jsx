@@ -16,8 +16,8 @@ export const LoggedInLayout = ({ children }) => {
   return (
     <div classnames={cssClasses('Layout')}>
       <div className={cssClasses('Panel')}>
-        <HorizontalAppBar />
         <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
+        <HorizontalAppBar />
         <div className={cssClasses('Page-Content')}>{children}</div>
         <IdleDialog intl={intl} />
         <AppNotificationDialog intl={intl} />

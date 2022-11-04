@@ -25,7 +25,10 @@ describe('LinkNavigation', () => {
   const User = Immutable.Record({
     jwt: { permissions: ['browse:view', 'dashboard:summary'] },
   })
-  const reduxState = { user: new User() }
+  const Globals = Immutable.Record({
+    lastServerResponseTime: new Date().getTime(),
+  })
+  const reduxState = { user: new User(), globals: new Globals() }
   const store = createStore(reducer, reduxState || initialState)
   const defaultProps = {
     onClick: () => false,

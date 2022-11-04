@@ -1,5 +1,4 @@
 // This is the entry point for our app
-import 'whatwg-fetch'
 import 'url-search-params-polyfill'
 import React from 'react'
 import * as Sentry from '@sentry/react'
@@ -28,7 +27,6 @@ if (config.sentry && process.env.NODE_ENV === 'production') {
   })
   Sentry.setTag('Country', config.countryName || config.aspectApi)
 }
-// }
 
 const renderApp = () => render(<App store={store} />, document.getElementById('app'))
 
