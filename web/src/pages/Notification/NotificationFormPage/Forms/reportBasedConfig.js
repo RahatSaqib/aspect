@@ -1,5 +1,3 @@
-import isEmpty from 'lodash/isEmpty'
-import isNil from 'lodash/isNil'
 import { REPORT_LIST } from '../../../../components/QueryFetch/Report'
 import messages from '../../NotificationListPage/messages'
 
@@ -32,20 +30,7 @@ const reportBasedSection = formatMessage => {
           },
         ],
       },
-      {
-        id: 2,
-        items: [
-          {
-            id: 'hasRecurrency',
-            label: 'Has recurrency',
-            labelI18nKey: 'hasRecurrency',
-            controlType: {
-              component: 'checkbox',
-            },
-            visibleIf: values => !isNil(values.reportId) && !isEmpty(values.reportId),
-          },
-        ],
-      },
+
       {
         id: 3,
         items: [
@@ -57,7 +42,6 @@ const reportBasedSection = formatMessage => {
             controlType: {
               component: 'cron',
             },
-            visibleIf: values => values.hasRecurrency === true && !isNil(values.reportId) && !isEmpty(values.reportId),
           },
         ],
       },

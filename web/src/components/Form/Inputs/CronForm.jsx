@@ -52,7 +52,7 @@ const CronForm = props => {
               control={<Radio color="primary" value="2" onChange={() => setShowCron(true)} checked={showCron} />}
               label={formatMessage(messages.newRecurrency)}
             />
-            {showCron ? <Cron onChange={handleOnChange} value={initialRecurrency} className={className} /> : true}
+            {showCron ? <Cron onChange={handleOnChange} value={null} className={className} /> : true}
           </FormGroup>
         </>
       ) : (

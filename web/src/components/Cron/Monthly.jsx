@@ -62,95 +62,12 @@ const Monthly = ({ cronExpression, onChange }) => {
             <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
               <FormGroup>
                 <FormControlLabel
-                  control={
-                    <Radio
-                      color="primary"
-                      value="1"
-                      // onChange={() => {
-                      //   onChange([
-                      //     cronExpression[0] === '*' ? '0' : cronExpression[0],
-                      //     cronExpression[1] === '*' ? '0' : cronExpression[1],
-                      //     '1',
-                      //     '1/1',
-                      //     '*',
-                      //   ])
-                      // }}
-                      checked
-                    />
-                  }
+                  control={<Radio color="primary" value="1" checked />}
                   label={formatMessage(messages.dayOfEveryMonth)}
                 />
-
-                {/* <FormControlLabel
-                  control={
-                    <Radio
-                      color="primary"
-                      value="4"
-                      onChange={() => {
-                        setEvery('4')
-                        onChange([
-                          cronExpression[0] === '*' ? '0' : cronExpression[0],
-                          cronExpression[1] === '*' ? '0' : cronExpression[1],
-                          `L-${1}`,
-                          '*',
-                          '*',
-                        ])
-                      }}
-                      checked={every === '4'}
-                    />
-                  }
-                  label={formatMessage(messages.daysBeforeEndMonth)}
-                /> */}
               </FormGroup>
             </Stack>
-            <Stack direction="column" spacing={2} alignItems="flex-end" justifyContent="flex-end">
-              {/* <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Radio
-                      color="primary"
-                      value="2"
-                      onChange={() => {
-                        setEvery('2')
-                        onChange([
-                          '0',
-                          cronExpression[0] === '*' ? '0' : cronExpression[0],
-                          cronExpression[1] === '*' ? '0' : cronExpression[1],
-                          'L',
-                          '*',
-                          '?',
-                          '*',
-                        ])
-                      }}
-                      checked={every === '2'}
-                    />
-                  }
-                  label={formatMessage(messages.lastDayOfMonth)}
-                />
-                <FormControlLabel
-                  control={
-                    <Radio
-                      color="primary"
-                      value="3"
-                      onChange={() => {
-                        setEvery('3')
-                        onChange([
-                          '0',
-                          cronExpression[0] === '*' ? '0' : cronExpression[0],
-                          cronExpression[1] === '*' ? '0' : cronExpression[1],
-                          'LW',
-                          '*',
-                          '?',
-                          '*',
-                        ])
-                      }}
-                      checked={every === '3'}
-                    />
-                  }
-                  label={formatMessage(messages.lastWeekdayOfmonth)}
-                />
-              </FormGroup> */}
-            </Stack>
+            <Stack direction="column" spacing={2} alignItems="flex-end" justifyContent="flex-end" />
           </Stack>
         </div>
       </Stack>
@@ -163,16 +80,13 @@ const Monthly = ({ cronExpression, onChange }) => {
             onChange={onDayChange}
             type="number"
             InputLabelProps={{
-              // readOnly: every !== '1',
               shrink: true,
             }}
             margin="normal"
-            // disabled={every !== '1'}
           />
         ) : null}
-
-        {every === '4' ? (
-          <Stack direction="row" spacing={1} alignItems="flex-start">
+        <Stack direction="row" spacing={1} alignItems="flex-start">
+          {every === '4' ? (
             <TextField
               id="outlined-number"
               label={formatMessage(messages.daysBeforeEndMonth)}
@@ -184,14 +98,14 @@ const Monthly = ({ cronExpression, onChange }) => {
               margin="normal"
               disabled={every !== '4'}
             />
-            <ChooseTime
-              hour={cronExpression[1]}
-              minute={cronExpression[0]}
-              changeHours={onAtHourChange}
-              changeMinutes={onAtMinuteChange}
-            />
-          </Stack>
-        ) : null}
+          ) : null}
+          <ChooseTime
+            hour={cronExpression[1]}
+            minute={cronExpression[0]}
+            changeHours={onAtHourChange}
+            changeMinutes={onAtMinuteChange}
+          />
+        </Stack>
       </Stack>
     </Stack>
   )

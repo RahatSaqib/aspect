@@ -119,24 +119,24 @@ const Weekly = ({ cronExpression, onChange }) => {
                 <Checkbox
                   color="primary"
                   type="checkbox"
-                  value="SUN"
-                  onChange={onCheck}
-                  checked={cronExpression[4].search('SUN') !== -1}
-                />
-              }
-              label={formatMessage(messages.sunday)}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  type="checkbox"
                   value="SAT"
                   onChange={onCheck}
                   checked={cronExpression[4].search('SAT') !== -1}
                 />
               }
               label={formatMessage(messages.saturday)}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  type="checkbox"
+                  value="SUN"
+                  onChange={onCheck}
+                  checked={cronExpression[4].search('SUN') !== -1}
+                />
+              }
+              label={formatMessage(messages.sunday)}
             />
           </FormGroup>
         </div>

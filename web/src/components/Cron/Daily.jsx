@@ -86,15 +86,13 @@ const Daily = ({ cronExpression, onChange }) => {
             margin="normal"
             disabled={cronExpression[4] !== '*'}
           />
-        ) : (
-          <ChooseTime
-            hour={cronExpression[1]}
-            minute={cronExpression[0]}
-            changeMinutes={changeMinutes}
-            changeHours={changeHours}
-            disabled={cronExpression[4] !== '1-5'}
-          />
-        )}
+        ) : null}
+        <ChooseTime
+          hour={cronExpression[1]}
+          minute={cronExpression[0]}
+          changeMinutes={changeMinutes}
+          changeHours={changeHours}
+        />
       </Stack>
     </Stack>
   )

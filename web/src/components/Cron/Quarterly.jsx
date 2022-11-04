@@ -93,14 +93,14 @@ const Quarterly = ({ cronExpression, onChange }) => {
               margin="normal"
               disabled={every !== '1'}
             />
-            <ChooseTime
-              hour={cronExpression[1]}
-              minute={cronExpression[0]}
-              changeHours={onAtHourChange}
-              changeMinutes={onAtMinuteChange}
-            />
           </>
         ) : null}
+        <ChooseTime
+          hour={cronExpression[1]}
+          minute={cronExpression[0]}
+          changeHours={onAtHourChange}
+          changeMinutes={onAtMinuteChange}
+        />
       </Stack>
     </Stack>
   )
