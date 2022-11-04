@@ -5,8 +5,6 @@ import useDeviceCapacityForSelect from '../../hooks/device/useDeviceCapacityForS
 const DeviceCapacitySelect = ({ name, label, value, onChange, deviceTypeId }) => {
   const { isLoading, data } = useDeviceCapacityForSelect(deviceTypeId)
 
-  const selected = data ? data.filter(i => i.dailyCapacity === value)[0].id : ''
-
   return (
     <span style={{ width: '100%' }}>
       {isLoading ? (
@@ -18,7 +16,7 @@ const DeviceCapacitySelect = ({ name, label, value, onChange, deviceTypeId }) =>
           label={label}
           fullWidth
           variant="standard"
-          value={selected}
+          value={(data.filter(i => i.dailyCapacity === value)[0] || { id: '' }).id}
           onChange={e => {
             onChange(e.target.value)
           }}
