@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
-import { TextField } from '@mui/material'
+import React from 'react'
+import { styled, TextField } from '@mui/material'
+import { MobileDatePicker } from '@mui/x-date-pickers'
+import { PickersDay } from '@mui/x-date-pickers/PickersDay'
 import classnames from 'classnames/bind'
-import enUS from 'date-fns/locale/en-US'
+import isEqual from 'date-fns/isEqual'
+import startOfDay from 'date-fns/startOfDay'
 import { useFormikContext } from 'formik'
 import get from 'lodash/get'
 import isBoolean from 'lodash/isBoolean'
@@ -10,43 +13,56 @@ import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
-import DatePicker, { registerLocale } from 'react-datepicker'
-import useI18n from '../../../hooks/useI18n'
 import { useAuthState } from '../../../providers/AuthProvider'
-import { formatDate, formatDateTime, getDateObject } from '../../../utils/utils/dateFormat'
-import messages from '../messages'
+import { getDateObject } from '../../../utils/utils/dateFormat'
 import styles from './DatePicker.css'
+
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
 const cssClasses = classnames.bind(styles)
+const CustomPickersDay = styled(PickersDay, {
+  shouldForwardProp: prop => prop !== 'dayIsBetween' && prop !== 'isFirstDay' && prop !== 'isLastDay',
+})(({ theme, dayIsBetween, isFirstDay, isLastDay }) => ({
+  ...(dayIsBetween && {
+    borderRadius: 0,
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    '&:hover, &:focus': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  }),
+  ...(isFirstDay && {
+    borderTopLeftRadius: '50%',
+    borderBottomLeftRadius: '50%',
+    borderTopRightRadius: '0%',
+    borderBottomRightRadius: '0%',
+  }),
+  ...(isLastDay && {
+    borderTopRightRadius: '50%',
+    borderBottomRightRadius: '50%',
+  }),
+}))
+const renderWeekPickerDay = (start, end, date, selectedDates, pickersDayProps) => {
+  const dayIsBetween = start <= date && end >= date
 
-const getDisplayValue = (value, showTimeSelect) => {
-  return value ? (showTimeSelect ? formatDateTime(value) : formatDate(value)) : null
+  const isFirstDay = isEqual(startOfDay(start), startOfDay(date)) // date.isSame(start, 'day')
+
+  const isLastDay = isEqual(startOfDay(end), startOfDay(date))
+
+  return (
+    <CustomPickersDay
+      {...pickersDayProps}
+      disableMargin
+      dayIsBetween={dayIsBetween}
+      isFirstDay={isFirstDay}
+      isLastDay={isLastDay}
+    />
+  )
 }
 
 const AspectDatePickerBase = props => {
-  const { formatMessage, formatDate } = useI18n()
-  const {
-    className,
-    culture,
-    dateFormat,
-    InputProps,
-    onChange,
-    placeholder,
-    showTimeSelect,
-    transformTimezone = true,
-    value,
-  } = props
-  registerLocale(culture, enUS)
-  const [selectedDate, setSelectedDate] = useState(
-    getDateObject(
-      transformTimezone || !value
-        ? value
-        : formatDate(new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' }), 'yyyy-MM-dd')
-    )
-  )
+  const { className, dateFormat, InputProps, onChange, placeholder, value } = props
 
-  // skip all 'null' and 'undefined' props
   const optionalProps = omitBy(
     pick(props, [
       'selectsStart',
@@ -72,22 +88,23 @@ const AspectDatePickerBase = props => {
       }
     }
     onChange(newValue)
-    setSelectedDate(newValue)
   }
 
   return (
-    <DatePicker
-      {...optionalProps}
-      wrapperClassName={cssClasses('datepicker__wrapper', {
-        'datepicker__no-value': !selectedDate,
-      })}
-      className={className}
-      showTimeSelect={showTimeSelect}
-      selected={selectedDate}
+    <MobileDatePicker
       dateFormat={dateFormat}
+      {...optionalProps}
+      label={placeholder}
+      value={value}
+      renderDay={(date, selectedDays, pickersDayProps) =>
+        renderWeekPickerDay(props.startDate, props.endDate, date, selectedDays, pickersDayProps)
+      }
       onChange={(date, event) => updateSelectDate(date, event)}
-      customInput={
+      disabled={InputProps.disabled}
+      className={className}
+      renderInput={params => (
         <TextField
+          {...params}
           {...omit(props, [
             'classNames',
             'dateFormat',
@@ -105,13 +122,7 @@ const AspectDatePickerBase = props => {
           ])}
           className={cssClasses('datepicker__TextField')}
         />
-      }
-      disabled={InputProps.disabled}
-      placeholderText={placeholder}
-      value={getDisplayValue(selectedDate, showTimeSelect)}
-      locale={culture}
-      clearButtonClassName={cssClasses('datepicker__clearButton')}
-      clearButtonTitle={formatMessage(messages.clearValue)}
+      )}
     />
   )
 }

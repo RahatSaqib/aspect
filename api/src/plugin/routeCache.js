@@ -62,7 +62,7 @@ class RouteCache {
                 name: segment,
                 mustMatch: !paramRegex.test(segment),
               }))
-              .filter(segment => !!segment),
+              .filter(segment => !!segment.name),
           }
         })
         for (let i = 0; i < potentialMatchingConfiguredPathWithSegments.length; i++) {
