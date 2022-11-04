@@ -5,6 +5,18 @@ const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...defineMessages({
+    serial: {
+      id: 'pages.DeviceDetailProfile.serial',
+      defaultMessage: 'Serial No',
+    },
+    hostId: {
+      id: 'pages.DeviceDetailProfile.hostId',
+      defaultMessage: 'Host',
+    },
+    createdOn: {
+      id: 'pages.DeviceDetailProfile.createdOn',
+      defaultMessage: 'Created On',
+    },
     deviceType: {
       id: 'pages.DeviceDetailProfile.deviceType',
       defaultMessage: 'Device type',
@@ -116,7 +128,7 @@ const messages = {
     },
     notes: {
       id: 'pages.DeviceDetailProfile.notes',
-      defaultMessage: 'notes',
+      defaultMessage: 'Notes',
     },
     buttonAddRecord: {
       id: 'pages.DeviceDetailProfile.buttonAddRecord',

@@ -14,7 +14,7 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
-import styles from '../DeviceDetail.css'
+import styles from '../styles.css'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
@@ -115,49 +115,6 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               />
             </FormGroup>
 
-            <TextField
-              fullWidth
-              id="deviceType"
-              label={intl.formatMessage(messages.deviceType)}
-              value={editDevice.deviceType.name}
-              disabled
-            />
-            <TextField
-              fullWidth
-              id="serial"
-              label={intl.formatMessage(messages.serial)}
-              value={editDevice.serial}
-              disabled
-            />
-            <TextField
-              fullWidth
-              id="hostId"
-              label={intl.formatMessage(messages.hostId)}
-              value={editDevice.hostId}
-              disabled
-            />
-            <TextField
-              fullWidth
-              id="lastSeen"
-              label={intl.formatMessage(messages.lastSeen)}
-              value={editDevice.lastSeen}
-              disabled
-            />
-            <TextField
-              fullWidth
-              id="lastPingOn"
-              label={intl.formatMessage(messages.lastPingOn)}
-              value={editDevice.lastPingOn}
-              disabled
-            />
-            <TextField
-              fullWidth
-              id="createdOn"
-              label={intl.formatMessage(messages.createdOn)}
-              value={editDevice.createdOn}
-              disabled
-            />
-
             <div className={cssClasses('Form__Actions')}>
               <ButtonGroup isolated>
                 <AspectButton
@@ -188,31 +145,3 @@ DeviceDetailEdit.propTypes = {
 }
 
 export default DeviceDetailEdit
-// For editing the fields should be:
-//    Default Reportable site it should be a dropdown with the sites available.
-//    Device Capacity
-//    name
-//    shortName
-//    notes
-
-// For Read-Only:
-//    Device Type
-//    serial
-//    hostId
-//    lastSeenOn
-//    lastPingOn
-//    createdOn
-
-// Missing fiedls:
-// tags?
-// macAddress
-// culture
-// timezone
-// lastPingFromIp
-// putInService
-// putInServiceSource
-// updatedOn
-// updatedBy
-// customFieldsSentOn
-// connectSettingsSentOn
-// lastInstrumentSerial

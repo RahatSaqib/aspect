@@ -7,13 +7,13 @@ import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-const DetailHeader = ({ name, children }) => {
+const DetailHeader = ({ name, children, back }) => {
   const navigate = useNavigate()
 
   return (
     <AppBar position="relative" color="white" elevation={0} className={cssClasses('AppBar')} component="nav">
       <Toolbar>
-        <Button onClick={() => navigate(-1)} color="primary">
+        <Button onClick={() => navigate(back || -1)} color="primary">
           <MdKeyboardArrowLeft size={48} />
         </Button>
         <Typography variant="h5" color="primary" component="div" className={cssClasses('Name')}>
