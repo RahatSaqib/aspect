@@ -49,12 +49,10 @@ const enhance = compose(
               pathname: '/',
             })
         )(location)
-        if (loggedOutReason === reasonTypes.idle) {
-          navigate(referrer, { replace: true })
-        } else if (loggedOutReason === reasonTypes.userRequested) {
+        if (loggedOutReason === reasonTypes.userRequested) {
           navigate('/', { replace: true })
         } else {
-          navigate(referrer)
+          navigate(referrer, { replace: true })
         }
       })
     }

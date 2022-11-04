@@ -5,6 +5,7 @@ const EventEmitter = require('events')
 const logger = require('./shared/logger')
 const config = require('./config')
 const { run, transact } = require('./db')
+const { initDictionaryTables } = require('./shared/dictionary')
 
 const exchange = 'aspect'
 
@@ -356,6 +357,10 @@ class MessageContext {
     this.transaction = null
     this.actions = []
     this.isFinalState = false
+  }
+
+  async initDictionaryTables() {
+    await initDictionaryTables()
   }
 
   clone() {
