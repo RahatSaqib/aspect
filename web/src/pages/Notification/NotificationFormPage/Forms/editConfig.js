@@ -175,6 +175,11 @@ const notificationTypeSection = formatMessage => ({
                     label: formatMessage(messages.notificationTypeResultBased),
                     icon: 'AiOutlineSolution',
                   },
+                  // {
+                  //   value: 'reportBased',
+                  //   label: formatMessage(messages.notificationTypeReportBased),
+                  //   icon: 'AiOutlineSolution',
+                  // },
                 ],
               },
               {
