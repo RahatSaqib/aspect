@@ -44,6 +44,7 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     items: [{ id: 'save', text: formatMessage(messages.save), action: 'save' }],
   },
   sections: [
+    enabledSection(formatMessage),
     notificationTypeSection(formatMessage), // notification header (enabled/type)
     issueBasedSection(formatMessage), // only for ['issueBased]
     resultBasedSection(formatMessage), // only for ['resultBased']
