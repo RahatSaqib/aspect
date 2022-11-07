@@ -192,7 +192,7 @@ describe('auth endpoints', () => {
       })
 
       describe('getToken', () => {
-        it("Should sign a token with the user's details", async () => {
+        it.only("Should sign a token with the user's details", async () => {
           const britishUser = {
             lockedOut: 0,
             failedPasswordAttempts: 0,
