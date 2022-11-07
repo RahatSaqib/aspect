@@ -109,7 +109,6 @@ const stockExpiringSection = (formatMessage, partner) => {
     label: 'stockExpiring',
     labelI18nKey: 'stockExpiring',
     visibleIf: values => {
-      console.log('\x1b[1;36m', '🚀 ➜ file: issueBasedConfig.js ➜ line 112 ➜ values', values)
       return ['InventoryStockExpiring'].includes(values.notificationType)
     },
     rows: [
