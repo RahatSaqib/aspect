@@ -308,12 +308,12 @@ function getResultCategoriesByAssay(assayId) {
       resultCategory2Label: 'a.resultCategory2Label',
       resultCategory1LabelI18nKey: 'a.resultCategory1I18nKey',
       resultCategory2LabelI18nKey: 'a.resultCategory2I18nKey',
-      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id)'),
-      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey)'),
-      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id)'),
-      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey)'),
-      resultCategory2ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc2.name)'),
-      resultCategory1ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc1.name)'),
+      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id ORDER BY rc1.id)'),
+      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey ORDER BY rc1.id)'),
+      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id ORDER BY rc2.id)'),
+      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey ORDER BY rc2.id)'),
+      resultCategory2ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc2.name ORDER BY rc2.id)'),
+      resultCategory1ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc1.name ORDER BY rc1.id)'),
     })
     .first()
 }
@@ -373,6 +373,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     .select(
       'd.name',
       'dms.i18nKey as deviceStatus',
+      'dms.name as deviceStatusLabel',
       'd.lastPingOn',
       'firstAndLastResults.firstEndedOn as firstResultEndedOn',
       'firstAndLastResults.lastEndedOn as lastResultEndedOn',
