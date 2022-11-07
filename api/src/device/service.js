@@ -105,6 +105,7 @@ const SELECT_SHOW_FIELDS = [
   'dt.configurationDataSchema',
   'dt.deviceOperationSchema',
   'dp.dailyCapacity',
+  'dp.id as dailyCapacityId',
   'frd30.resultCount as resultCountThisMonth',
   'frd60.resultCount as resultCount60',
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),

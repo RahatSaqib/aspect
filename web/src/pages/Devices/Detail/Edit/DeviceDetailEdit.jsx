@@ -88,8 +88,8 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               name="capacity"
               deviceTypeId={editDevice.deviceType.externalId}
               label={intl.formatMessage(messages.capacity)}
-              value={editDevice.dailyCapacity}
-              onChange={value => setEditDevice({ ...editDevice, deviceCapacityId: value })}
+              value={editDevice.dailyCapacityId}
+              onChange={dailyCapacityId => setEditDevice({ ...editDevice, dailyCapacityId })}
             />
             <TextField
               fullWidth

@@ -16,12 +16,10 @@ const DeviceCapacitySelect = ({ name, label, value, onChange, deviceTypeId }) =>
           label={label}
           fullWidth
           variant="standard"
-          value={(data.filter(i => i.dailyCapacity === value)[0] || { id: '' }).id}
-          onChange={e => {
-            onChange(e.target.value)
-          }}
+          value={value}
+          onChange={e => onChange(e.target.value)}
         >
-          {(data || []).map(device => (
+          {data.map(device => (
             <MenuItem key={device.id} value={device.id}>
               {device.dailyCapacity}
             </MenuItem>

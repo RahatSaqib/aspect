@@ -126,6 +126,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.undefinedValue',
       defaultMessage: 'n/a',
     },
+    dailyCapacity: {
+      id: 'pages.DeviceDetailProfile.dailyCapacity',
+      defaultMessage: 'Daily Capacity',
+    },
     notes: {
       id: 'pages.DeviceDetailProfile.notes',
       defaultMessage: 'Notes',
