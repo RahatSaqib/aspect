@@ -5,6 +5,10 @@ const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...defineMessages({
+    shortName: {
+      id: 'pages.DeviceDetailProfile.shortName',
+      defaultMessage: 'Short Name',
+    },
     serial: {
       id: 'pages.DeviceDetailProfile.serial',
       defaultMessage: 'Serial No',

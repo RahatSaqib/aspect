@@ -12,6 +12,7 @@ const DeviceCapacitySelect = ({ name, label, value, onChange, deviceTypeId }) =>
       ) : (
         <TextField
           select
+          disabled={data.length === 0}
           name={name}
           label={label}
           fullWidth

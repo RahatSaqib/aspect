@@ -313,6 +313,8 @@ const DeviceDetailProfile = ({
                 </Fragment>
               }
             />
+            <Summary title={formatMessage(messages.shortName)} description={device.get('shortName')} />
+
             <Summary
               title={
                 isMaintenanceStatusChangeDisabled ? (
