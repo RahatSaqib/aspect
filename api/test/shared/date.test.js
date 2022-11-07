@@ -187,21 +187,21 @@ describe('Shared Date Utility Functions', () => {
   describe('getOffsetFromTimeZone', () => {
     it('should return correct offSet from given timeZone', () => {
       const tzFixtures = [
-        { tz: 'America/Buenos_Aires', expectedOffset: '-03:00', obs: '' },
-        { tz: 'Asia/Baku', expectedOffset: '+04:00', obs: '' },
-        { tz: 'Asia/Dhaka', expectedOffset: '+06:00', obs: '' },
-        { tz: 'Pacific/Fiji', expectedOffset: '+12:00', obs: '' },
-        { tz: 'GMT', expectedOffset: '+00:00', obs: '' },
-        { tz: 'Canada/Atlantic', expectedOffset: '-03:00', obs: '' },
+        { tz: 'America/Buenos_Aires', expectedOffset: ['-03:00'], obs: '' },
+        { tz: 'Asia/Baku', expectedOffset: ['+04:00'], obs: '' },
+        { tz: 'Asia/Dhaka', expectedOffset: ['+06:00'], obs: '' },
+        { tz: 'Pacific/Fiji', expectedOffset: ['+12:00', '+13:00'], obs: '' },
+        { tz: 'GMT', expectedOffset: ['+00:00'], obs: '' },
+        { tz: 'Canada/Atlantic', expectedOffset: ['-03:00', '-04:00'], obs: '' },
         {
           tz: 'Failing Test Timezone',
-          expectedOffset: '+00:00',
+          expectedOffset: ['+00:00'],
           obs: ' (This timeZone must fail to be parsed, and should default to +00:00)',
         },
       ]
 
       for (const f of tzFixtures) {
-        assert.equal(
+        assert.oneOf(
           getOffsetFromTimeZone(f.tz),
           f.expectedOffset,
           `Cannot infer offSet from timeZone '${f.tz}'${f.obs}`
