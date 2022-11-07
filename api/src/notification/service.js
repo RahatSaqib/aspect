@@ -2,6 +2,7 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays } = require('date-fns')
+const crypto = require('crypto')
 const { knex, sortPageParams } = require('../db')
 const { getJobConstraints, addConstraints, getConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
@@ -158,6 +159,7 @@ async function createNotifications(knex, action, context) {
         )
       })
     }
+
     await Promise.each(policies, async policy => {
       if (_.isEmpty(jobFunctions) && _.isEmpty(persons)) {
         await createNotificationIfNotCreatedAlready(action, { policy, now }, { messageContext: context, knex })
@@ -327,23 +329,46 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
   const personsToNotify = new Set()
   await Promise.all(
     people.map(async person => {
-      const shouldNotifyToPerson = await shouldNotify(txKnex, action, person.id, person.jobFunctionId)
+      const shouldNotifyToPerson = true //  await shouldNotify(txKnex, action, person.id, person.jobFunctionId)
       if (shouldNotifyToPerson != null) {
         personsToNotify.add(person.id)
       }
     })
   )
 
-  // Process the persons and send notifications
-  await Promise.all(
-    [...personsToNotify].map(async personId => {
+  console.log('\x1b[1;36m', '🚀 ➜ file: service.js ➜ line 342 ➜ personsToNotify', people, personsToNotify)
+  if (action.reportId) {
+    const generatedReports = new Set([])
+
+    for (const personId of [...personsToNotify]) {
+      const constraints = await getConstraints({ personId })
+      delete constraints.person
+      // TODO: Improve to avoid collisions
+      const reportHash = crypto.createHash('md5').update(JSON.stringify(constraints)).digest('hex')
+
+      if (generatedReports.has(reportHash)) {
+        generatedReports.add(reportHash)
+        /// TODO: Generate report here!
+      }
+
       await createNotificationIfNotCreatedAlready(
         action,
-        { personId, policy, now },
+        { personId, policy, now, reportHash },
         { messageContext: context, knex: txKnex }
       )
-    })
-  )
+    }
+  } else {
+    // Process the persons and send notifications for issue and result based notifications
+    await Promise.all(
+      [...personsToNotify].map(async personId => {
+        await createNotificationIfNotCreatedAlready(
+          action,
+          { personId, policy, now },
+          { messageContext: context, knex: txKnex }
+        )
+      })
+    )
+  }
 }
 
 async function shouldNotify(txKnex, { issueId = null, resultId = null }, personId, jobFunctionId) {
