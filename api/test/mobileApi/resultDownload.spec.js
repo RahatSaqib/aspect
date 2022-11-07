@@ -264,7 +264,7 @@ describe('Mobile API Result download routes v1 without api version', () => {
   })
 })
 
-describe.only('Mobile API Result download routes v1 with available custom api-version 1', () => {
+describe('Mobile API Result download routes v1 with available custom api-version 1', () => {
   const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
@@ -512,7 +512,7 @@ describe.only('Mobile API Result download routes v1 with available custom api-ve
   })
 })
 
-describe.only('Mobile API Result download routes v2 with available custom api-version 2', () => {
+describe('Mobile API Result download routes v2 with available custom api-version 2', () => {
   const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
