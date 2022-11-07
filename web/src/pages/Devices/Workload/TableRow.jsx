@@ -15,22 +15,26 @@ const TableRow = ({ item, extraColumns }) => {
   return (
     <Tr className={cssClasses('TableRow')}>
       <Td className={cssClasses('TableCell')}>{item.name}</Td>
-      <Td className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
         {item.deviceStatus ? formatMessage(messages[item.deviceStatus]) : formatMessage(messages.notAvailable)}
       </Td>
-      <Td className={cssClasses('TableCell')}>{item.stateName}</Td>
-      <Td className={cssClasses('TableCell')}>{item.lgaName}</Td>
-      <Td className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
+        {item.stateName}
+      </Td>
+      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
+        {item.lgaName}
+      </Td>
+      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
         {isNil(item.lastPingOn)
           ? formatMessage(messages.notAvailable)
           : format(new Date(item.lastPingOn), dateTimeFormat)}
       </Td>
-      <Td className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
         {isNil(item.firstResultEndedOn)
           ? formatMessage(messages.notAvailable)
           : format(new Date(item.firstResultEndedOn), dateTimeFormat)}
       </Td>
-      <Td className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
         {isNil(item.lastResultEndedOn)
           ? formatMessage(messages.notAvailable)
           : format(new Date(item.lastResultEndedOn), dateTimeFormat)}
