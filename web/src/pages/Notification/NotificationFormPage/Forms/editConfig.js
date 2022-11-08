@@ -127,7 +127,7 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
   }
 }
 // notification enabled
-const enabledSection = formatMessage => ({
+const enabledSection = () => ({
   id: 'section_notificationType_disable',
   label: 'Enable',
   labelI18nKey: 'notificationTypeEnable',
