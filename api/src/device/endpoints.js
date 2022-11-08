@@ -21,6 +21,7 @@ const {
 } = require('./service')
 const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
+const listDeviceCapacity = require('./listDeviceCapacity')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const { taskTracker } = require('../scheduler/taskTracker')
 const {
@@ -33,6 +34,43 @@ const {
 const exportWorkload = require('./exportWorkload')
 
 const routes = [
+  {
+    method: 'GET',
+    path: '/device/capacity/select-list',
+    handler: asyncHandler(listDeviceCapacity),
+    config: {
+      description: 'Device List',
+      notes: 'Pageable and sortable list of devices',
+      auth: { scope: ['device:view', 'operationalData:view'] },
+      validate: {
+        query: {
+          deviceTypeId: Joi.string().description(
+            'The device type external ID of the device capacity configurations to take'
+          ),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.array()
+            .required()
+            .description('The list of device capacity configurations')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().required().description('The ID of the device capacity configuration'),
+                name: Joi.string().required().description('The name of the device capacity configuration'),
+                dailyCapacity: Joi.number()
+                  .required()
+                  .description('The number of tests that the configuration can perform'),
+              })
+            ),
+        }),
+      },
+    },
+  },
   {
     method: 'GET',
     path: '/device',
@@ -123,11 +161,15 @@ const routes = [
           deviceId: Joi.string().description('Device id').required(),
         },
         payload: {
-          siteId: Joi.number(),
           approvalToken: Joi.string(),
           configurationData: Joi.object().description(
             'Device configuration data.  The valid keys are dependent on Device Type.'
           ),
+          name: Joi.string().required().description('The name of the device'),
+          notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
+          shortName: Joi.string().allow('', null).description('The short name of the device'),
+          siteId: Joi.number(),
+          deviceCapacityId: Joi.number().allow(null).optional(),
         },
       },
     },

@@ -508,7 +508,8 @@ describe('Device Result API routes', () => {
 
         assert.equal(getResultResponse5.status, 200)
         assert.typeOf(getResultResponse5.body, 'Object')
-        assert.equal(getResultResponse5.body.name, deviceChangedName)
+        // The device shouldn't change its name
+        assert.notEqual(getResultResponse5.body.name, deviceChangedName)
       }))
 
     it('should set the origin site details of the sample', () =>

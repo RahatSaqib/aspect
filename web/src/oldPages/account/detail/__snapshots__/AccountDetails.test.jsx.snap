@@ -9,9 +9,6 @@ exports[`AccountDetails module AccountDetails component should shallow render co
     encodeSpecialCharacters={true}
     title="Account Details"
   />
-  <Connect(lifecycle(Component))
-    title="Account Details"
-  />
   <Routes>
     <Route
       element={

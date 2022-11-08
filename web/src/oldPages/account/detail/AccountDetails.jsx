@@ -7,7 +7,6 @@ import { connect } from 'react-redux'
 import { Routes, Route } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
 import ContactDetailsFormFormik from '../../../components/Account/Details'
-import NavTitle from '../../../oldComponents/NavTitle'
 import {
   fetchAccountDetails,
   saveContactDetails,
@@ -144,8 +143,6 @@ export class AccountDetails extends PureComponent {
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(accountDetailsMessages.title)} />
-        <NavTitle title={formatMessage(accountDetailsMessages.title)} />
-
         <Routes>
           <Route
             path=""

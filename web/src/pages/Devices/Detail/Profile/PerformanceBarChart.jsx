@@ -9,7 +9,7 @@ import { oneOfType, object, array, string, number } from 'prop-types'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../../../hooks/useI18n'
 import variables from '../../../../theme/colors'
-import styles from '../DeviceDetail.css'
+import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 

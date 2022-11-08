@@ -20,7 +20,6 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
@@ -244,7 +243,6 @@ export const ResultListWithProps = ({
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.resultsTitle)} />
-    <NavTitle title={intl.formatMessage(messages.resultsTitle)} />
     <BrowseFilters
       navigate={navigate}
       location={location}
