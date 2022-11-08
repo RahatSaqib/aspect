@@ -169,7 +169,7 @@ const routes = [
           notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number(),
-          deviceCapacityId: Joi.number(),
+          deviceCapacityId: Joi.number().allow(null).optional(),
         },
       },
     },
