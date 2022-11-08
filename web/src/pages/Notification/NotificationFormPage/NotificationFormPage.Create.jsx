@@ -96,8 +96,11 @@ const NotificationFormPage = () => {
       delete values.areaItemsLab
     }
 
-    if (!values?.hasRecurrency) {
+    if (values?.notificationType !== 'reportBased') {
       unset(values, 'cronRecurrency')
+    } else {
+      values.cronRecurrency = formik.values.cronRecurrency.cronExpression
+      values.reportFrecuency = formik.values.cronRecurrency.frecuency
     }
 
     submitNotification(

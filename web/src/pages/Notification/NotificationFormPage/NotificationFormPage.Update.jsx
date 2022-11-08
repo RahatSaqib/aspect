@@ -149,8 +149,11 @@ const NotificationFormPage = ({ id }) => {
       unset(values, 'persons')
     }
 
-    if (!values?.hasRecurrency) {
+    if (values?.notificationType !== 'reportBased') {
       delete values.cronRecurrency
+    } else {
+      values.cronRecurrency = formik.values.cronRecurrency.cronExpression
+      values.reportFrecuency = formik.values.cronRecurrency.frecuency
     }
 
     /**
