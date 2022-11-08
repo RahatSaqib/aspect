@@ -44,9 +44,10 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     items: [{ id: 'save', text: formatMessage(messages.save), action: 'save' }],
   },
   sections: [
-    ...notificationTypeSection(formatMessage), // notification header (enabled/type)
-    resultBasedSection(formatMessage), // only for ['resultBased']
+    enabledSection(formatMessage),
+    notificationTypeSection(formatMessage), // notification header (enabled/type)
     issueBasedSection(formatMessage), // only for ['issueBased]
+    resultBasedSection(formatMessage), // only for ['resultBased']
     reportBasedSection(formatMessage),
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
@@ -124,72 +125,55 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
     },
   }
 }
-
-const notificationTypeSection = formatMessage => {
-  return [
-    // notification enabled
+// notification enabled
+const enabledSection = formatMessage => ({
+  id: 'section_notificationType_disable',
+  label: 'Enable',
+  labelI18nKey: 'notificationTypeEnable',
+  rows: [
     {
-      id: 'section_notificationType_disable',
-      label: 'Enable',
-      labelI18nKey: 'notificationTypeEnable',
-      rows: [
+      id: 0,
+      items: [
         {
-          id: 0,
-          items: [
-            {
-              id: 'enabled',
-              controlType: { component: 'checkbox' },
-              classNames: checkboxClassNames,
-              initialValue: true,
-              label: '',
-            },
-          ],
+          id: 'enabled',
+          controlType: { component: 'checkbox' },
+          classNames: checkboxClassNames,
+          initialValue: true,
+          label: '',
         },
       ],
     },
-    // notification type/name
+  ],
+})
+
+// notification type/name
+const notificationTypeSection = formatMessage => ({
+  id: 'section_notificationType',
+  label: 'Notification Type',
+  labelI18nKey: 'notificationType',
+  rows: [
     {
-      id: 'section_notificationType',
-      label: 'Notification Type',
-      labelI18nKey: 'notificationType',
-      rows: [
+      id: 0,
+      items: [
         {
-          id: 0,
-          items: [
-            {
-              id: 'name',
-              controlType: { component: 'textField' },
-              fullWidth: true,
-              labelI18nKey: 'notificationTitle',
-            },
-            {
-              id: 'notificationType',
-              controlType: {
-                component: 'select',
-                hideIfNoOptions: false,
+          id: 'name',
+          controlType: { component: 'textField' },
+          fullWidth: true,
+          labelI18nKey: 'notificationTitle',
+        },
+        {
+          id: 'notificationType',
+          controlType: {
+            component: 'select',
+            hideIfNoOptions: false,
+            options: [
+              {
+                label: formatMessage(messages.notificationCreateGroupForResults),
                 options: [
                   {
                     value: 'resultBased',
                     label: formatMessage(messages.notificationTypeResultBased),
-                    icon: 'GrTest',
-                  },
-                  {
-                    value: 'issueBased',
-                    label: formatMessage(messages.notificationTypeIssueBased),
-                    icon: 'AiOutlineIssuesClose',
-
-                    options: [
-                      {
-                        value: 'InventoryStockout',
-                        label: formatMessage(messages.notificationTypeLowInventory),
-                        icon: 'AiOutlineDashboard',
-                      },
-                      {
-                        value: 'InventoryStockExpiring',
-                        label: formatMessage(messages.notificationTypeExpiring),
-                        icon: 'AiOutlineDashboard',
-                      },
-                    ],
+                    icon: 'AiOutlineSolution',
                   },
                   // {
                   //   value: 'reportBased',
@@ -197,21 +181,76 @@ const notificationTypeSection = formatMessage => {
                   //   icon: 'AiOutlineSolution',
                   // },
                 ],
-                placeholder: formatMessage(messages.notificationType),
               },
-              classNames: {
-                itemContainer: cssClasses('min-width-100pc', 'tags-container'),
-                controlContainer: cssClasses('full-width-100pc'),
-                item: cssClasses('full-width-100pc'),
+              {
+                label: formatMessage(messages.notificationCreateGroupForSite),
+                options: [
+                  {
+                    value: 'InventoryStockout',
+                    label: formatMessage(messages.notificationTypeLowInventory),
+                    icon: 'AiOutlineDashboard',
+                  },
+                  {
+                    value: 'InventoryStockExpiring',
+                    label: formatMessage(messages.notificationTypeExpiring),
+                    icon: 'AiOutlineDashboard',
+                  },
+                ],
               },
-              labelI18nKey: 'notificationType',
-            },
-          ],
+              {
+                label: formatMessage(messages.notificationCreateGroupForDevices),
+                options: [
+                  {
+                    value: 'DeviceNoResults',
+                    label: formatMessage(messages.notificationTypeNoResult),
+                    icon: 'AiOutlineFileExclamation',
+                  },
+                  {
+                    value: 'DeviceOffline',
+                    label: formatMessage(messages.notificationTypeOffline),
+                    icon: 'AiOutlineApi',
+                  },
+                  // { TODO:  Uncomment when the issue is ready.
+                  //   value: 'calibration',
+                  //   label: formatMessage(messages.notificationTypeCalibration),
+                  //   icon: 'AiOutlineTool',
+                  // },
+                  {
+                    value: 'ModuleReplaced',
+                    label: formatMessage(messages.notificationTypeModuleReplaced),
+                    icon: 'AiOutlineSwap',
+                  },
+                  {
+                    value: 'ModuleDisabled',
+                    label: formatMessage(messages.notificationTypeModuleDisabled),
+                    icon: 'AiOutlineBlock',
+                  },
+                  {
+                    value: 'UnusedModules',
+                    label: formatMessage(messages.notificationTypeModuleUnused),
+                    icon: 'AiOutlineExclamation',
+                  },
+                  {
+                    value: 'InstrumentReplaced',
+                    label: formatMessage(messages.notificationTypeInstrumentReplaced),
+                    icon: 'AiOutlineTool',
+                  },
+                ],
+              },
+            ],
+            placeholder: formatMessage(messages.notificationType),
+          },
+          classNames: {
+            itemContainer: cssClasses('min-width-100pc', 'tags-container'),
+            controlContainer: cssClasses('full-width-100pc'),
+            item: cssClasses('full-width-100pc'),
+          },
+          labelI18nKey: 'notificationType',
         },
       ],
     },
-  ]
-}
+  ],
+})
 
 const geographySection = formatMessage => {
   return {

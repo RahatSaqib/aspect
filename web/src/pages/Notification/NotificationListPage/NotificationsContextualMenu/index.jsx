@@ -33,7 +33,7 @@ const NotificationsContextualMenu = ({ item }) => {
       icon: 'FaEdit',
       text: formatMessage(messages.editTitle),
       action: () => navigate(`/browse/notification/${id}`),
-      disabled: typeCategory === 'issueType' && !readyForNotification,
+      disabled: typeCategory === 'issueBased' && !readyForNotification,
     },
     {
       icon: 'FaCopy',
