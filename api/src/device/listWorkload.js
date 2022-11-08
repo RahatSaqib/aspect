@@ -83,7 +83,7 @@ const listWorkload = async request => {
       ),
     ]
   }
-
+  query.size = 10e6
   const { total, length, data } = await getDeviceWorkload(extraColumns, dataConstraints, query)
   extraColumns = extraColumns.map(ec => omit(ec, 'selector'))
   return { ok: true, total, length, data, extraColumns }

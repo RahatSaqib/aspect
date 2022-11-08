@@ -23,6 +23,7 @@ import {
   lowInventorySection,
   stockExpiringSection,
 } from './issueBasedConfig'
+import notificationTypeSection from './notificationTypeSection'
 import { reportBasedSection } from './reportBasedConfig'
 import { resultBasedSection } from './resultBasedConfig'
 
@@ -44,6 +45,7 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     items: [{ id: 'save', text: formatMessage(messages.save), action: 'save' }],
   },
   sections: [
+    enabledSection(formatMessage),
     notificationTypeSection(formatMessage), // notification header (enabled/type)
     issueBasedSection(formatMessage), // only for ['issueBased]
     resultBasedSection(formatMessage), // only for ['resultBased']
@@ -125,7 +127,7 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
   }
 }
 // notification enabled
-const enabledSection = formatMessage => ({
+const enabledSection = () => ({
   id: 'section_notificationType_disable',
   label: 'Enable',
   labelI18nKey: 'notificationTypeEnable',
@@ -139,97 +141,6 @@ const enabledSection = formatMessage => ({
           classNames: checkboxClassNames,
           initialValue: true,
           label: '',
-        },
-      ],
-    },
-  ],
-})
-
-// notification type/name
-const notificationTypeSection = formatMessage => ({
-  id: 'section_notificationType',
-  label: 'Notification Type',
-  labelI18nKey: 'notificationType',
-  rows: [
-    {
-      id: 0,
-      items: [
-        {
-          id: 'name',
-          controlType: { component: 'textField' },
-          fullWidth: true,
-          labelI18nKey: 'notificationTitle',
-        },
-        {
-          id: 'notificationType',
-          controlType: {
-            component: 'select',
-            hideIfNoOptions: false,
-            options: [
-              {
-                label: formatMessage(messages.notificationCreateGroupForSite),
-                options: [
-                  {
-                    value: 'InventoryStockout',
-                    label: formatMessage(messages.notificationTypeLowInventory),
-                    icon: 'AiOutlineDashboard',
-                  },
-                  {
-                    value: 'InventoryStockExpiring',
-                    label: formatMessage(messages.notificationTypeExpiring),
-                    icon: 'AiOutlineDashboard',
-                  },
-                ],
-              },
-              {
-                label: formatMessage(messages.notificationCreateGroupForDevices),
-                options: [
-                  {
-                    value: 'DeviceNoResults',
-                    label: formatMessage(messages.notificationTypeNoResult),
-                    icon: 'AiOutlineFileExclamation',
-                  },
-                  {
-                    value: 'DeviceOffline',
-                    label: formatMessage(messages.notificationTypeOffline),
-                    icon: 'AiOutlineApi',
-                  },
-                  // { TODO:  Uncomment when the issue is ready.
-                  //   value: 'calibration',
-                  //   label: formatMessage(messages.notificationTypeCalibration),
-                  //   icon: 'AiOutlineTool',
-                  // },
-                  {
-                    value: 'ModuleReplaced',
-                    label: formatMessage(messages.notificationTypeModuleReplaced),
-                    icon: 'AiOutlineSwap',
-                  },
-                  {
-                    value: 'ModuleDisabled',
-                    label: formatMessage(messages.notificationTypeModuleDisabled),
-                    icon: 'AiOutlineBlock',
-                  },
-                  {
-                    value: 'UnusedModules',
-                    label: formatMessage(messages.notificationTypeModuleUnused),
-                    icon: 'AiOutlineExclamation',
-                  },
-                  {
-                    value: 'InstrumentReplaced',
-                    label: formatMessage(messages.notificationTypeInstrumentReplaced),
-                    icon: 'AiOutlineTool',
-                  },
-                ],
-              },
-            ],
-            placeholder: formatMessage(messages.notificationType),
-          },
-          classNames: {
-            itemContainer: cssClasses('min-width-100pc', 'tags-container'),
-            controlContainer: cssClasses('full-width-100pc'),
-            item: cssClasses('full-width-100pc'),
-          },
-          labelI18nKey: 'notificationType',
         },
       ],
     },

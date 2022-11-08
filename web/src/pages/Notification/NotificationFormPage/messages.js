@@ -111,6 +111,10 @@ export default defineMessages({
     id: 'pages.Notifications.group.forResults',
     defaultMessage: 'Notification for Results',
   },
+  notificationCreateGroupForReport: {
+    id: 'pages.Notifications.group.notificationCreateGroupForReport',
+    defaultMessage: 'Reports Notification',
+  },
   notificationTypeResultBased: {
     id: 'pages.NotificationDetail.type.ResultBased',
     defaultMessage: 'Result Based',

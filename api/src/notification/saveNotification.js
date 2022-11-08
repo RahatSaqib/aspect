@@ -24,7 +24,7 @@ module.exports = async function (request) {
 
   const { ok, notificationTypeId, error } = result
   if (!ok) {
-    return Boom.internal(`Can not save notification: ${error}`)
+    return new Boom(`Can not save notification: ${error}`)
   }
   if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
   messageContext.notificationTypeCreated(notificationTypeId)

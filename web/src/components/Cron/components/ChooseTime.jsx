@@ -37,9 +37,9 @@ const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
         className={classes('Input_Width')}
         label={formatMessage(messages.minutes)}
       >
-        {range(0, 60).map(m => (
+        {range(0, 4).map(m => (
           <MenuItem key={m} id={m} value={m}>
-            {m.toString().length < 2 ? `0${m}` : m}
+            {m === 0 ? `00` : m * 15}
           </MenuItem>
         ))}
       </TextField>
