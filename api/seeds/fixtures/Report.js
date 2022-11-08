@@ -62,7 +62,7 @@ const allResults = {
       query: {
         sortCol: 'endedOn',
         sortDir: 'desc',
-        templateFolderPath: 'export/results',
+        // templateFolderPath: 'export/results',
         maxNumberOfRecords: 50000,
         streamCSV: true,
       },

@@ -28,14 +28,13 @@ const REPORT_FAILED = 'REPORT_FAILED'
 const REPORT_FINISHED = 'REPORT_FINISHED'
 
 // ----------------------------------------------------------------------------------------------
-async function getSheetData(request, sheet, sharedResults) {
-  const { auth } = request
+async function getSheetData(auth, queryParams, sheet, sharedResults) {
   const { moduleName, functionName } = sheet
   const { nameOfSharedData, useNamedData } = sheet.query
   const sheetQuery = _.omit(sheet.query, ['nameOfSharedData', 'useNamedData'])
   const query = {
-    // filters defined on Reports page
-    ...request.query,
+    // filters defined on Reports page or from a scheduled report based notification
+    ...queryParams,
     // make sure to report all results (up to 1 million records)
     page: 0,
     size: 999999,
@@ -141,7 +140,7 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
   return items.map(x => x.name).join(', ')
 }
 
-async function getAllSheetsData(request, sheets) {
+async function getAllSheetsData(auth, query, sheets) {
   let boomError
   const dataSet = []
   const sharedResults = {}
@@ -157,7 +156,7 @@ async function getAllSheetsData(request, sheets) {
       total = null,
       dataSelector = null,
       sections,
-    } = await getSheetData(request, sheet, sharedResults)
+    } = await getSheetData(auth, query, sheet, sharedResults)
     if (Boom.isBoom(data)) {
       boomError = data
       return
@@ -184,17 +183,19 @@ async function getAllSheetsData(request, sheets) {
 // ----------------------------------------------------------------------------------------------
 async function createReport(request, reply) {
   const { auth, query, params } = request
-  const { externalId, templateFolderPath } = params
-  const { sheets, fileName, exportExcel } = await getReportDetails(auth, externalId)
+  const { externalId } = params
   const user = await getUser(auth.credentials.name)
-  const { countryAbbreviation, culture, partnerId, userName } = user
   const email = user.email || '-'
   const cell = user.cell || '-'
+  // ---------------------------------------------------------
+  // query: {...filters}
+  const { countryAbbreviation, culture, partnerId, userName, personId } = user
+  const { sheets, fileName, exportExcel } = await getReportDetails(externalId, { personId })
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
 
-  const data = await getAllSheetsData(request, sheets)
+  const data = await getAllSheetsData(auth, query, sheets)
   if (Boom.isBoom(data)) {
     throw data
   }
@@ -235,7 +236,7 @@ async function createReport(request, reply) {
     ...getMaxLimitPlaceHolders(),
     ...administrativeDivisionLabelPlaceHolders,
   ]
-
+  // ---------------------------------------------------------------------------------------
   if (extension === 'csv') {
     const [sheet] = sheets
     const { streamCSV } = sheet.query || {}
@@ -245,7 +246,7 @@ async function createReport(request, reply) {
     const dataBuffer = await renderExcelTemplateToCsv({
       countryAbbreviation,
       culture,
-      templateFolderPath: templateFolderPath || externalId,
+      templateFolderPath: externalId,
       data,
       replacements,
     })
@@ -260,7 +261,6 @@ async function createReport(request, reply) {
   const renderParams = {
     countryAbbreviation,
     culture,
-    templateFolderPath,
     externalId,
     data,
     replacements,
@@ -277,22 +277,12 @@ async function createReport(request, reply) {
 }
 
 async function renderExcelFile(params) {
-  const {
-    countryAbbreviation,
-    culture,
-    templateFolderPath,
-    externalId,
-    data,
-    replacements,
-    extension,
-    fileName,
-    reply,
-  } = params
+  const { countryAbbreviation, culture, externalId, data, replacements, extension, fileName, reply } = params
 
   const dataBuffer = await renderExcelTemplate({
     countryAbbreviation,
     culture,
-    templateFolderPath: templateFolderPath || externalId,
+    templateFolderPath: externalId,
     data,
     extension,
     replacements,
@@ -344,17 +334,7 @@ function transformRow(row, columns, dataSelector) {
 
 function renderExcelStream(params) {
   const stream = new Stream.PassThrough()
-  const {
-    countryAbbreviation,
-    culture,
-    templateFolderPath,
-    externalId,
-    data,
-    replacements,
-    extension,
-    fileName,
-    reply,
-  } = params
+  const { countryAbbreviation, culture, externalId, data, replacements, extension, fileName, reply } = params
   /**
    * process in another thread with `setInterval`
    */
@@ -367,7 +347,7 @@ function renderExcelStream(params) {
         stream,
         culture,
         countryAbbreviation,
-        templateFolderPath: templateFolderPath || externalId,
+        templateFolderPath: externalId,
         data,
         replacements,
       })

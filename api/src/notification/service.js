@@ -341,16 +341,19 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
     const generatedReports = new Set([])
 
     for (const personId of [...personsToNotify]) {
+      // eslint-disable-next-line no-await-in-loop
       const constraints = await getConstraints({ personId })
       delete constraints.person
-      // TODO: Improve to avoid collisions
+      // TODO: Improve to avoid collisions, include query params
       const reportHash = crypto.createHash('md5').update(JSON.stringify(constraints)).digest('hex')
 
       if (generatedReports.has(reportHash)) {
         generatedReports.add(reportHash)
+
         /// TODO: Generate report here!
       }
 
+      // eslint-disable-next-line no-await-in-loop
       await createNotificationIfNotCreatedAlready(
         action,
         { personId, policy, now, reportHash },
