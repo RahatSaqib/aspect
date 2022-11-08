@@ -14,7 +14,7 @@ async function getNotification(id) {
     .select(
       'ntc.name as notificationTypeName',
       'ntc.externalId as notificationType',
-      'it.externalId as issueTypeId',
+      'it.externalId as issueType',
       'r.externalId as reportId',
       'nt.name as name',
       'nt.filterCondition as filterCondition',
@@ -177,7 +177,7 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     webUrl,
     enabled,
     cronRecurrency = null,
-    issueTypeId: issueTypeExternalId,
+    issueType: issueTypeExternalId,
     reportId: reportExternalId,
     notificationType: notificationTypeExternalId,
   } = payload
