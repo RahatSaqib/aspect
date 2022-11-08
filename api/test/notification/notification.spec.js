@@ -815,7 +815,7 @@ describe('Notification routes', () => {
     assert.equal(res.body.message, 'Attempt to set to notifications persons without assigned jobs')
   })
 
-  it('PUT - Correct payload, filterCondition should be updated properly', async () => {
+  it.only('PUT - Correct payload, filterCondition should be updated properly', async () => {
     const res = await server.put(`${path}/${ntId}`).set('Authorization', `Bearer ${shared.token}`).send(basePayload)
 
     assert.equal(res.status, 200)
@@ -847,7 +847,7 @@ describe('Notification routes', () => {
       sendWeb: false,
       result: baseFilterCondition.result,
       enabled: true,
-      cronRecurrency: null,
+      reportFrecuency: null,
       issueTypeId: null,
     })
   })
