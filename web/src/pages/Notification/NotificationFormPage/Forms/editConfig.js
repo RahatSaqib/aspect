@@ -45,9 +45,10 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     items: [{ id: 'save', text: formatMessage(messages.save), action: 'save' }],
   },
   sections: [
-    ...notificationTypeSection(formatMessage), // notification header (enabled/type)
-    resultBasedSection(formatMessage), // only for ['resultBased']
+    enabledSection(formatMessage),
+    notificationTypeSection(formatMessage), // notification header (enabled/type)
     issueBasedSection(formatMessage), // only for ['issueBased]
+    resultBasedSection(formatMessage), // only for ['resultBased']
     reportBasedSection(formatMessage),
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
@@ -125,6 +126,26 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
     },
   }
 }
+// notification enabled
+const enabledSection = formatMessage => ({
+  id: 'section_notificationType_disable',
+  label: 'Enable',
+  labelI18nKey: 'notificationTypeEnable',
+  rows: [
+    {
+      id: 0,
+      items: [
+        {
+          id: 'enabled',
+          controlType: { component: 'checkbox' },
+          classNames: checkboxClassNames,
+          initialValue: true,
+          label: '',
+        },
+      ],
+    },
+  ],
+})
 
 const geographySection = formatMessage => {
   return {
@@ -188,7 +209,6 @@ const sendSection = (formatMessage, jobFunctions) => {
               controlType: { component: 'checkbox' },
               classNames: checkboxClassNames,
               labelI18nKey: 'web',
-              visibleIf: values => !['reportBased'].includes(values.notificationType),
             },
           ],
         },

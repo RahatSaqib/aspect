@@ -40,6 +40,11 @@ const NotificationFormPage = () => {
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
     values.notificationType = formik.values.notificationType
+    if (!['resultBased', 'reportBased'].includes(formik.values.notificationType)) {
+      values.issueType = formik.values.notificationType
+      values.notificationType = 'issueBased'
+    }
+
     values.jobFunctions.map((jf, index) => {
       jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
       if (jf.tags === '') {

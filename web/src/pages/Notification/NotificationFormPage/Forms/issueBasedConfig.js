@@ -108,7 +108,9 @@ const stockExpiringSection = (formatMessage, partner) => {
     id: 'stockExpiring',
     label: 'stockExpiring',
     labelI18nKey: 'stockExpiring',
-    visibleIf: values => ['InventoryStockExpiring'].includes(values.notificationType),
+    visibleIf: values => {
+      return ['InventoryStockExpiring'].includes(values.notificationType)
+    },
     rows: [
       {
         id: 81,

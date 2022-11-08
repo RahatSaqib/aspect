@@ -32,7 +32,7 @@ const NotificationSchema = Joi.object().keys({
       notificationType: Joi.string().required().description('Notification Type external Id'),
       name: Joi.string().required().description('Name of the notification'),
       filterCondition: Joi.string().allow(null).description('The condition Filters'),
-      issueTypeId: Joi.string().allow('', null).description('The external Id of the issueType'),
+      issueType: Joi.string().allow('', null).description('The external Id of the issueType'),
       reportId: Joi.string().allow('', null).description('The external Id of the report'),
       cronRecurrency: Joi.string().optional().allow('', null),
       emailSubject: Joi.string().allow(null).description('email subject'),
@@ -77,10 +77,10 @@ const resultBasedNotificationPayload = Joi.object({
     .valid('resultBased', 'issueBased', 'reportBased')
     .description('externalId of notification type')
     .required(),
-  issueTypeId: Joi.string().when('notificationType', {
+  issueType: Joi.string().when('notificationType', {
     is: 'issueBased',
-    otherwise: Joi.optional().allow('', null),
     then: Joi.required(),
+    otherwise: Joi.optional().allow('', null),
   }),
   reportId: Joi.string()
     .when('notificationType', {
