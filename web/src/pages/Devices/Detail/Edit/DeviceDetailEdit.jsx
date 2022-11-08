@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Card, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
+import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
@@ -28,7 +29,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const [editDevice, setEditDevice] = useState({ ...device })
   const [editDeviceTags, setEditDeviceTags] = useState([...deviceTags])
   const isPristine = isEqual(device, editDevice) && isEqual(deviceTags, editDeviceTags)
-  const isError = false
+  const [isError, setError] = useState(false)
 
   const onDiscardClick = () => {
     setEditDevice({ ...device })
@@ -59,20 +60,30 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
       <Helmet title={device.name} />
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
-          <form onSubmit={handleSubmit}>
+          <form>
             <TextField
               fullWidth
               id="name"
+              error={isEmpty(editDevice.name)}
+              required
               label={intl.formatMessage(messages.name)}
               value={editDevice.name}
-              onChange={e => setEditDevice({ ...editDevice, name: e.target.value })}
+              onChange={e => {
+                setEditDevice({ ...editDevice, name: e.target.value })
+                setError(isEmpty(e.target.value))
+              }}
             />
             <TextField
               fullWidth
               id="shortName"
+              error={isEmpty(editDevice.shortName)}
+              required
               label={intl.formatMessage(messages.shortName)}
               value={editDevice.shortName}
-              onChange={e => setEditDevice({ ...editDevice, shortName: e.target.value })}
+              onChange={e => {
+                setEditDevice({ ...editDevice, shortName: e.target.value })
+                setError(isEmpty(e.target.value))
+              }}
             />
             <SiteSelectField
               name="siteId"
