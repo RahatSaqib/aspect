@@ -502,6 +502,26 @@ const deviceReport = {
   ],
 }
 
+const allDevicesReport = {
+  name: 'All Devices',
+  description:
+    'Contains multiple sheets to export all the devices, to display information about the inventory on their sites, and also to export workload data.',
+  i18nKey: 'All_Devices_Report',
+  i18nKeyDescription: 'All_Devices_description',
+  externalId: 'all_devices',
+  fileName: 'AllDevices',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 150,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getAllDevicesReport',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -523,4 +543,5 @@ module.exports = {
   tbWorkloadSummary,
   xdrDevicesSummary,
   usageStats,
+  allDevicesReport,
 }

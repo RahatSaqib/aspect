@@ -327,7 +327,9 @@ function getFirstAndLastResults(dataConstraints, assayId) {
       firstEndedOn: knex.raw('MIN(endedOn)'),
       lastEndedOn: knex.raw('MAX(endedOn)'),
     })
-    .where('assayId', assayId)
+    .modify(q => {
+      if (assayId) q.where('assayId', assayId)
+    })
     .as('firstAndLastResults')
 }
 
@@ -453,4 +455,5 @@ module.exports = {
   deleteDevice,
   getNotDecommissionedDevices,
   joinModuleAvailability,
+  getFirstAndLastResults,
 }

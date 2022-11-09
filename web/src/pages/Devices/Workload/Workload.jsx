@@ -91,7 +91,7 @@ const Workload = () => {
       const now = new Date()
       filtersParams.set('minDate', startOfDay(subtractDays(now, now.getDate() - 1)).toJSON())
       filtersParams.set('maxDate', endOfDay(now).toJSON())
-      filtersParams.set('singleAssayId', mostResultsAssay.id)
+      filtersParams.set('singleAssayId', mostResultsAssay?.id)
       searchParams.set('filters', filtersParams)
       setFirstLoad(false)
       navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })

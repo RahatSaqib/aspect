@@ -16,6 +16,7 @@ const { getUser } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
 const { getDeviceReportData } = require('./deviceReport')
+const { getInventoryData } = require('./allDevicesReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -438,6 +439,14 @@ async function getDeviceReport(auth, query) {
   }
 }
 
+async function getAllDevicesReport(auth, query) {
+  const data = await getInventoryData(auth, query)
+  return {
+    ok: true,
+    data,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -449,4 +458,5 @@ module.exports = {
   getModuleActivityReport,
   getModuleStatusReport,
   getDeviceReport,
+  getAllDevicesReport,
 }
