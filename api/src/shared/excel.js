@@ -161,22 +161,19 @@ function getContentDispositionFilename(fileNamePrefix, extension) {
 }
 
 // ----------------------------------------------------------------------------------------------
-async function respondFile({ reply, dataBuffer, extension = 'xlsx', fileNamePrefix = 'report' }) {
+
+async function respondFile({
+  reply,
+  dataBuffer,
+  extension = 'xlsx',
+  fileNamePrefix = 'report',
+  streamResponse = false,
+}) {
   const reportFileName = getContentDispositionFilename(fileNamePrefix, extension)
   return reply
     .response(dataBuffer)
     .encoding('binary')
-    .type(getContentType(extension))
-    .header('content-disposition', `attachment; filename=${reportFileName};`)
-}
-
-// ----------------------------------------------------------------------------------------------
-async function respondStream({ reply, stream, extension = 'xlsx', fileNamePrefix = 'report' }) {
-  const reportFileName = getContentDispositionFilename(fileNamePrefix, extension)
-  return reply
-    .response(stream)
-    .encoding('binary')
-    .type(getContentType(extension))
+    .type(getContentType(extension, streamResponse))
     .header('content-disposition', `attachment; filename=${reportFileName};`)
 }
 
@@ -1132,7 +1129,6 @@ module.exports = {
   renderExcelTemplateToCsv,
   streamExcelTemplate,
   respondFile,
-  respondStream,
   getContentDispositionFilename,
   RELABEL_EXCEL,
 }

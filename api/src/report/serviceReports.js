@@ -13,7 +13,6 @@ const {
   renderExcelTemplate,
   streamExcelTemplate,
   respondFile,
-  respondStream,
   RELABEL_EXCEL,
   renderExcelTemplateToCsv,
 } = require('../shared/excel')
@@ -237,104 +236,62 @@ async function createReport(request, reply) {
     ...administrativeDivisionLabelPlaceHolders,
   ]
   // ---------------------------------------------------------------------------------------
+  let dataBuffer
+  let streamResponse = false
   if (extension === 'csv') {
     const [sheet] = sheets
     const { streamCSV } = sheet.query || {}
     if (streamCSV) {
-      return streamToCsv(data, reply, fileName)
+      streamResponse = true
+      dataBuffer = streamToCsv(data)
+    } else {
+      dataBuffer = await renderExcelTemplateToCsv({
+        countryAbbreviation,
+        culture,
+        templateFolderPath: externalId,
+        data,
+        replacements,
+      })
     }
-    const dataBuffer = await renderExcelTemplateToCsv({
-      countryAbbreviation,
-      culture,
-      templateFolderPath: externalId,
-      data,
-      replacements,
-    })
+  } else {
+    // response is xlsx
 
-    return respondFile({
-      dataBuffer,
-      extension,
-      fileNamePrefix: fileName,
-      reply,
-    })
+    // eslint-disable-next-line no-lonely-if
+    if (_.some(sheets, s => s.query.avoidStreaming)) {
+      // Response entire file if template has formats and formulae.
+      dataBuffer = await renderExcelTemplate({
+        countryAbbreviation,
+        culture,
+        templateFolderPath: externalId,
+        data,
+        extension,
+        replacements,
+      })
+    } else {
+      streamResponse = true
+      // Stream the response unless report has formats or formulae.
+      dataBuffer = renderExcelStream({
+        countryAbbreviation,
+        culture,
+        externalId,
+        data,
+        replacements,
+        extension,
+      })
+    }
   }
-  const renderParams = {
-    countryAbbreviation,
-    culture,
-    externalId,
-    data,
-    replacements,
-    extension,
-    fileName,
-    reply,
-  }
-  // Response entire file if template has formats and formulae.
-  if (_.some(sheets, s => s.query.avoidStreaming)) {
-    return renderExcelFile(renderParams)
-  }
-  // Stream the response unless report has formats or formulae.
-  return renderExcelStream(renderParams)
-}
-
-async function renderExcelFile(params) {
-  const { countryAbbreviation, culture, externalId, data, replacements, extension, fileName, reply } = params
-
-  const dataBuffer = await renderExcelTemplate({
-    countryAbbreviation,
-    culture,
-    templateFolderPath: externalId,
-    data,
-    extension,
-    replacements,
-  })
-
   return respondFile({
     dataBuffer,
     extension,
     fileNamePrefix: fileName,
     reply,
+    streamResponse,
   })
-}
-
-async function streamToCsv(dataset, reply, fileName) {
-  const worksheetData = dataset[0]
-
-  const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
-  /**
-   * replace base placeholders, i.e. <Dates>, <States>, etc in the header
-   */
-  const csvStream = csv.format({
-    headers: data.length > 0,
-    writeBOM: true,
-  })
-
-  if (data.length > 0) {
-    _.forEach(data, row => {
-      const rowNormalized = transformRow(row, [...fixedColumns, ...dynamicColumns], dataSelector)
-      csvStream.write(rowNormalized)
-    })
-  } else {
-    csvStream.write({ data: defaultNoDataMessage })
-  }
-  csvStream.end()
-  return reply
-    .response(csvStream)
-    .encoding('binary')
-    .type('stream/octet-stream')
-    .header('content-disposition', `attachment; filename=${fileName}-${new Date().toISOString()}.csv;`)
-}
-
-function transformRow(row, columns, dataSelector) {
-  const rowNormalized = {}
-  const value = dataSelector ? dataSelector(row) : row
-  columns.forEach(({ key, header }) => (rowNormalized[header] = value[key]))
-
-  return rowNormalized
 }
 
 function renderExcelStream(params) {
   const stream = new Stream.PassThrough()
-  const { countryAbbreviation, culture, externalId, data, replacements, extension, fileName, reply } = params
+  const { countryAbbreviation, culture, externalId, data, replacements } = params
   /**
    * process in another thread with `setInterval`
    */
@@ -377,13 +334,39 @@ function renderExcelStream(params) {
       clearInterval(intervalId)
     }
   }, 1000)
+  return stream
+}
 
-  return respondStream({
-    stream,
-    extension,
-    fileNamePrefix: fileName,
-    reply,
+function streamToCsv(dataset) {
+  const worksheetData = dataset[0]
+
+  const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
+  /**
+   * replace base placeholders, i.e. <Dates>, <States>, etc in the header
+   */
+  const csvStream = csv.format({
+    headers: data.length > 0,
+    writeBOM: true,
   })
+
+  if (data.length > 0) {
+    _.forEach(data, row => {
+      const rowNormalized = transformRow(row, [...fixedColumns, ...dynamicColumns], dataSelector)
+      csvStream.write(rowNormalized)
+    })
+  } else {
+    csvStream.write({ data: defaultNoDataMessage })
+  }
+  csvStream.end()
+  return csvStream
+}
+
+function transformRow(row, columns, dataSelector) {
+  const rowNormalized = {}
+  const value = dataSelector ? dataSelector(row) : row
+  columns.forEach(({ key, header }) => (rowNormalized[header] = value[key]))
+
+  return rowNormalized
 }
 
 module.exports = {
