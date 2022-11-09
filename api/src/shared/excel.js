@@ -156,25 +156,13 @@ function getHeaderRows(sheet, cellTableToken) {
 }
 
 // ----------------------------------------------------------------------------------------------
-function getContentDispositionFilename(fileNamePrefix, extension) {
-  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(/:/g, '-')
-}
 
-// ----------------------------------------------------------------------------------------------
-
-async function respondFile({
-  reply,
-  dataBuffer,
-  extension = 'xlsx',
-  fileNamePrefix = 'report',
-  streamResponse = false,
-}) {
-  const reportFileName = getContentDispositionFilename(fileNamePrefix, extension)
+async function respondFile({ reply, dataBuffer, extension = 'xlsx', fileName, streamResponse = false }) {
   return reply
     .response(dataBuffer)
     .encoding('binary')
     .type(getContentType(extension, streamResponse))
-    .header('content-disposition', `attachment; filename=${reportFileName};`)
+    .header('content-disposition', `attachment; filename=${fileName};`)
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -1129,6 +1117,5 @@ module.exports = {
   renderExcelTemplateToCsv,
   streamExcelTemplate,
   respondFile,
-  getContentDispositionFilename,
   RELABEL_EXCEL,
 }

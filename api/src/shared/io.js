@@ -111,6 +111,25 @@ async function writeCsvFile(fileName, workbook) {
   return await workbook.csv.writeFile(fileName).then(() => true) //eslint-disable-line
 }
 
+/**
+ * Writes a buffer or data stream into a file.
+ * @param {*} filename - fileName
+ * @param {*} data - stream object or data buffer. The method will detect which and act in response.
+ */
+async function writeDataToFile(filename, data) {
+  return new Promise(resolve => {
+    const writeStream = fs.createWriteStream(filename, { flags: 'w' })
+    if (Buffer.isBuffer(data)) {
+      writeStream.write(data)
+      writeStream.end()
+      resolve()
+    } else {
+      data.pipe(writeStream)
+      writeStream.on('close', resolve)
+    }
+  })
+}
+
 // ---------------------------------
 // generate Excel file for given template,
 // props = { templateFileName, outputFileName, populateData }
@@ -306,4 +325,5 @@ module.exports = {
   readExcelFile,
   readTextFile,
   readTemplateFile,
+  writeDataToFile,
 }

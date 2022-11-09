@@ -336,7 +336,6 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
     })
   )
 
-  console.log('\x1b[1;36m', '🚀 ➜ file: service.js ➜ line 342 ➜ personsToNotify', people, personsToNotify)
   if (action.reportId) {
     const generatedReports = new Set([])
 

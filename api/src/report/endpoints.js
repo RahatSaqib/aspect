@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateDateRangeParams } = require('../routes')
 const { getReports, proxyGxReport } = require('./service')
-const { downloadReport } = require('./serviceReports')
+const downloadReport = require('./donwloadReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
 function requestBaseQuery() {
@@ -84,7 +84,6 @@ const routes = [
       },
     },
   },
-
   {
     method: 'GET',
     path: '/report/{fileName}',

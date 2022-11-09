@@ -5,7 +5,6 @@ const _ = require('lodash')
 const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
 const { knex } = require('../db')
-const { getUser } = require('../auth/service')
 const { getReportDetails } = require('./service')
 const {
   getMaxLimitPlaceHolders,
@@ -182,7 +181,7 @@ async function getAllSheetsData(auth, query, sheets) {
 async function generateReport(externalId, query, auth, user, userPlaceHolders) {
   // query: {...filters}
   const { countryAbbreviation, culture, partnerId, userName, personId } = user
-  const { sheets, fileName, exportExcel } = await getReportDetails(externalId, { personId })
+  const { sheets, fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId })
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
@@ -229,6 +228,7 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
     ...administrativeDivisionLabelPlaceHolders,
   ]
   // ---------------------------------------------------------------------------------------
+  const fileName = getContentDispositionFilename(fileNamePrefix, extension)
   let dataBuffer
   let streamResponse = false
   if (extension === 'csv') {
@@ -273,35 +273,15 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
       })
     }
   }
+
   return { dataBuffer, streamResponse, fileName, extension }
 }
 
-// ----------------------------------------------------------------------------------------------
-async function downloadReport(request, reply) {
-  const { auth, query, params } = request
-  const { externalId } = params
-  const user = await getUser(auth.credentials.name)
-  const userPlaceHolders = {
-    email: user.email,
-    cell: user.cell,
-  }
-  // ---------------------------------------------------------
-  const { dataBuffer, streamResponse, fileName, extension } = generateReport(
-    externalId,
-    query,
-    auth,
-    user,
-    userPlaceHolders
-  )
-  // ---------------------------------------------------------------------------------------
-  return respondFile({
-    dataBuffer,
-    extension,
-    fileNamePrefix: fileName,
-    reply,
-    streamResponse,
-  })
+function getContentDispositionFilename(fileNamePrefix, extension) {
+  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(/:/g, '-')
 }
+
+// ----------------------------------------------------------------------------------------------
 
 function renderExcelStream(params) {
   const stream = new Stream.PassThrough()
@@ -384,5 +364,5 @@ function transformRow(row, columns, dataSelector) {
 }
 
 module.exports = {
-  downloadReport,
+  generateReport,
 }

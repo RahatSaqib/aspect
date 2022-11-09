@@ -65,7 +65,7 @@ async function getReportDetails(externalId, dataConstraints) {
     .select(
       'r.description',
       'r.externalId',
-      knex.raw('IFNULL(jfr.fileName, r.fileName) as fileName'),
+      knex.raw('IFNULL(jfr.fileName, r.fileName) as fileNamePrefix'),
       'r.id',
       'r.i18nKey',
       'r.name',
