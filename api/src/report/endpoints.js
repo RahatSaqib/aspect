@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateDateRangeParams } = require('../routes')
 const { getReports, proxyGxReport } = require('./service')
-const { createReport } = require('./serviceReports')
+const { downloadReport } = require('./serviceReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
 function requestBaseQuery() {
@@ -68,7 +68,7 @@ const routes = [
   {
     method: 'GET',
     path: '/reports/{externalId}',
-    handler: createReport,
+    handler: downloadReport,
     config: {
       description: 'Report Excel file',
       notes: 'Returns Excel file generated from template corresponding to externalId',

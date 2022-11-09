@@ -168,7 +168,7 @@ async function getAllSheetsData(auth, query, sheets) {
       sections,
       dataSelector,
       total,
-      // TODO: use i18n string, because `createReport()` uses locale file templates with all labels translated
+      // TODO: use i18n string, because `downloadReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
     }
   })
@@ -179,14 +179,7 @@ async function getAllSheetsData(auth, query, sheets) {
   return dataSet
 }
 
-// ----------------------------------------------------------------------------------------------
-async function createReport(request, reply) {
-  const { auth, query, params } = request
-  const { externalId } = params
-  const user = await getUser(auth.credentials.name)
-  const email = user.email || '-'
-  const cell = user.cell || '-'
-  // ---------------------------------------------------------
+async function generateReport(externalId, query, auth, user, userPlaceHolders) {
   // query: {...filters}
   const { countryAbbreviation, culture, partnerId, userName, personId } = user
   const { sheets, fileName, exportExcel } = await getReportDetails(externalId, { personId })
@@ -222,11 +215,11 @@ async function createReport(request, reply) {
     },
     {
       placeholder: '<UserEmail>',
-      value: email,
+      value: userPlaceHolders.email || '-',
     },
     {
       placeholder: '<UserMobilePhone>',
-      value: cell,
+      value: userPlaceHolders.cell || '-',
     },
     {
       placeholder: '<UserFullName>',
@@ -280,6 +273,27 @@ async function createReport(request, reply) {
       })
     }
   }
+  return { dataBuffer, streamResponse, fileName, extension }
+}
+
+// ----------------------------------------------------------------------------------------------
+async function downloadReport(request, reply) {
+  const { auth, query, params } = request
+  const { externalId } = params
+  const user = await getUser(auth.credentials.name)
+  const userPlaceHolders = {
+    email: user.email,
+    cell: user.cell,
+  }
+  // ---------------------------------------------------------
+  const { dataBuffer, streamResponse, fileName, extension } = generateReport(
+    externalId,
+    query,
+    auth,
+    user,
+    userPlaceHolders
+  )
+  // ---------------------------------------------------------------------------------------
   return respondFile({
     dataBuffer,
     extension,
@@ -370,5 +384,5 @@ function transformRow(row, columns, dataSelector) {
 }
 
 module.exports = {
-  createReport,
+  downloadReport,
 }
