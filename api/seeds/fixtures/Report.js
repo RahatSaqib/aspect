@@ -505,7 +505,7 @@ const deviceReport = {
 const allDevicesReport = {
   name: 'Devices and Sites Overview',
   description:
-    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
+    '[WORK IN PROGRESS] An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
   i18nKey: 'DevicesAndSitesOverview',
   i18nKeyDescription: 'DevicesAndSitesDescription',
   externalId: 'devices_and_sites_overview',
