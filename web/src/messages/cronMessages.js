@@ -10,7 +10,7 @@ export default defineMessages({
     defaultMessage: 'Monthly',
   },
   quarterly: {
-    id: 'components.shared.monthly',
+    id: 'components.shared.quarterly',
     defaultMessage: 'Quarterly',
   },
   weekly: {
@@ -76,7 +76,7 @@ export default defineMessages({
   },
 
   daysBeforeEndQuarter: {
-    id: 'components.shared.daysBeforeEndMonth',
+    id: 'components.shared.daysBeforeEndQuarter',
     defaultMessage: 'Day(s) before the end of the Quarter',
   },
   lastWeekdayOfmonth: {

@@ -1,0 +1,7 @@
+.AppBar {
+  z-index: 1000;
+}
+.Name {
+  flex-grow: 1;
+  display: block;
+}

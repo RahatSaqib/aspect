@@ -624,7 +624,7 @@ describe('Result Notifications triggers', () => {
         .distinct('resultId', 'notificationTypeId', 'personId', 'emailMessageId', 'smsMessageId')
       assert.equal(notificationsBefore.length, 0)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(3000)
+      await waitForIdle(5000)
       const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
       assert.equal(notifications.length, 1)
       const [notification] = notifications
@@ -815,7 +815,7 @@ describe('Notification routes', () => {
     assert.equal(res.body.message, 'Attempt to set to notifications persons without assigned jobs')
   })
 
-  it('PUT - Correct payload, filterCondition should be updated properly', async () => {
+  it.only('PUT - Correct payload, filterCondition should be updated properly', async () => {
     const res = await server.put(`${path}/${ntId}`).set('Authorization', `Bearer ${shared.token}`).send(basePayload)
 
     assert.equal(res.status, 200)
@@ -847,6 +847,8 @@ describe('Notification routes', () => {
       sendWeb: false,
       result: baseFilterCondition.result,
       enabled: true,
+      reportFrecuency: null,
+      issueTypeId: null,
     })
   })
 })

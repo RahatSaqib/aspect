@@ -150,16 +150,44 @@ exports.getIdsByExternalId = async table => {
 /**
  * Get specified dictionary by table and column names
  */
-exports.getDictionary = async (table, column = 'id') => {
+const getDictionary = async (table, column = 'id') => {
   const fn = keyToObject(table, column)
   const data = await fn()
   return data
 }
+exports.getDictionary = getDictionary
+
 /**
  * return cached values for column from specified table
  */
-exports.getDictionarySync = (table, column = 'id') => {
+const getDictionarySync = (table, column = 'id') => {
   const cache = tableCache[table]
   if (!cache) return null
   return cache[column]
+}
+exports.getDictionarySync = getDictionarySync
+
+/**
+ * Make sure to read and cache some dictionaries
+ * to be able to get them in sync mode by `getDictionarySync`.
+ * As an example - this is needed to use some dictionaries in plugins
+ * which are called by functions within `addConstraints()`.
+ * For more details see calling of plugin `modifyQueryToExcludeResult`
+ * in `api/src/auth/constraints.js`
+ *
+ * Pls notice that below func should be called for each context. When server start processing
+ * a request - do call this func in `server.js` in `onRequest` func.
+ * And call it also in messageContext thread too - to make MQ thread also have dictionary
+ * tables defined
+ */
+exports.initDictionaryTables = async () => {
+  const dictionaryTables = [{ table: 'Assay', column: 'id' }]
+  await Promise.all(
+    dictionaryTables.map(async ({ table, column }) => {
+      if (!getDictionarySync(table, column)) {
+        // calling of async func `getDictionary` reads and caches specified table/column
+        return getDictionary(table, column)
+      }
+    })
+  )
 }

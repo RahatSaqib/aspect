@@ -5,6 +5,22 @@ const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...defineMessages({
+    shortName: {
+      id: 'pages.DeviceDetailProfile.shortName',
+      defaultMessage: 'Short Name',
+    },
+    serial: {
+      id: 'pages.DeviceDetailProfile.serial',
+      defaultMessage: 'Serial No',
+    },
+    hostId: {
+      id: 'pages.DeviceDetailProfile.hostId',
+      defaultMessage: 'Host',
+    },
+    createdOn: {
+      id: 'pages.DeviceDetailProfile.createdOn',
+      defaultMessage: 'Created On',
+    },
     deviceType: {
       id: 'pages.DeviceDetailProfile.deviceType',
       defaultMessage: 'Device type',
@@ -114,9 +130,13 @@ const messages = {
       id: 'pages.DeviceDetailProfile.undefinedValue',
       defaultMessage: 'n/a',
     },
+    dailyCapacity: {
+      id: 'pages.DeviceDetailProfile.dailyCapacity',
+      defaultMessage: 'Daily Capacity',
+    },
     notes: {
       id: 'pages.DeviceDetailProfile.notes',
-      defaultMessage: 'notes',
+      defaultMessage: 'Notes',
     },
     buttonAddRecord: {
       id: 'pages.DeviceDetailProfile.buttonAddRecord',

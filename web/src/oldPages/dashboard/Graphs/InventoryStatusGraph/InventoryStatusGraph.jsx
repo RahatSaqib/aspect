@@ -17,7 +17,7 @@ import ErrorBoundary from '../../../../components/ErrorBoundary'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
-import { graphMessages } from '../../../../messages'
+import { graphMessages, consumableMessages } from '../../../../messages'
 import styles from '../styles.css'
 import DeviceStatusGraphMain from './InventoryStatusGraph.Main'
 
@@ -37,7 +37,7 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
             <CardHeader title={formatMessage(graphMessages.inventoryGraphStatus)} />
             <CardContent>
               <Grid container spacing={8} className={cssClasses('Graph_Content')}>
-                <Grid item xs={12} md={12} lg={3}>
+                <Grid item xs={12} md={12} lg={2}>
                   <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
                     <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
                       <FormControlLabel
@@ -50,7 +50,7 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={12} lg={9}>
+                <Grid item xs={12} md={12} lg={10}>
                   <Grid container>
                     <DeviceStatusGraphMain
                       assaysFromState={assaysFromState}
@@ -74,7 +74,7 @@ const ConsumableSelector = ({ onChange }) => {
   const { isLoading, data } = useQuery('data.inventoryConsumableSummaryList', async () =>
     fetchWrapperForQueries({ endpoint: '/dashboard/inventory-item' })
   )
-
+  const { formatMessage } = useI18n()
   useEffect(() => {
     if (data) {
       const opt = data.data.inventoryConsumableSummaryList.sort((a, b) =>
@@ -91,7 +91,7 @@ const ConsumableSelector = ({ onChange }) => {
     <Loading />
   ) : (
     <FormControl sx={{ width: '100%' }} variant="standard" size="small">
-      <InputLabel id="select-consumable">Consumable</InputLabel>
+      <InputLabel id="select-consumable">{formatMessage(consumableMessages.consumable)}</InputLabel>
       <Select
         labelId="select-consumable"
         value={innerValue}

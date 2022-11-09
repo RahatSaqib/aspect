@@ -15,7 +15,6 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
@@ -135,7 +134,6 @@ export const ReporterListWithProps = ({
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.reportersTitle)} />
-      <NavTitle title={formatMessage(messages.reportersTitle)} />
       <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!isLoading} />
@@ -183,9 +181,7 @@ export const ReporterListWithProps = ({
 const ReporterList = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const queryClient = useQueryClient()
 
   const [items, setItems] = useState(new Items())

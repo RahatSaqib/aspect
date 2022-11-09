@@ -11,15 +11,14 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
 import useI18n from '../../../hooks/useI18n'
+import messages from '../../../messages/report'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import { sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { showError } from '../../../store/AppNotificationRedux'
 import { makeSearchParamsSanitizer, composeSanitizer } from '../../../utils/selectors/searchParams'
 import { safeDownloadFile } from '../../../utils/utils/files'
-import messages from './messages'
 import ReportCard from './ReportCard'
 import styles from './ReportIndex.css'
 
@@ -49,9 +48,7 @@ const ReportIndex = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const intl = useI18n()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const [items, setItems] = useState()
   const [showProgressBar, setShowProgressBar] = useState(false)
   const [visibleFilters, setVisibleFilters] = useState([])
@@ -166,7 +163,6 @@ const ReportIndex = () => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.reportsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.reportsTitle)} />
       <DataTableProgressBar disabled={!showProgressBar} />
       {visibleFilters && (
         <BrowseFilters

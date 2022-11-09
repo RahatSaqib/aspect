@@ -46,7 +46,10 @@ const NotificationFormPage = ({ id }) => {
   useNotification(notificationId, {
     enabled: !!intl && !!jobFunctions && !!partner,
     onSuccess: data => {
-      const { notificationType, name, emailSubject, emailBody } = data
+      if (data.notificationType === 'issueBased') {
+        data.notificationType = data.issueType
+      }
+      const { notificationType, cronRecurrency, issueType, reportId, name, emailSubject, emailBody } = data
       const { smsBody, webUrl, webBody, filterCondition, enabled } = data
 
       const filter = JSON.parse(filterCondition)
@@ -69,6 +72,11 @@ const NotificationFormPage = ({ id }) => {
         areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
         areaItemsLab: buildAreaItems(filter.deviceLevelId, 'lab', filter.areaItems),
         result: filter.result,
+        issueType,
+        reportId,
+        hasRecurrency: !!cronRecurrency,
+        cronRecurrency,
+        cronRecurrencyFromDb: cronRecurrency,
         /**
          * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
          * to make sure all items in array are located in their positions
@@ -102,12 +110,13 @@ const NotificationFormPage = ({ id }) => {
     const formConfig = getFormConfig(intl.formatMessage, jobFunctions, partner, true)
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
-    if (formik.values.notificationType === 'resultBased') {
-      values.notificationType = formik.values.notificationType
-    } else {
-      values.notificationType = 'issueBased'
+
+    values.notificationType = formik.values.notificationType
+    if (!['resultBased', 'reportBased'].includes(formik.values.notificationType)) {
       values.issueType = formik.values.notificationType
+      values.notificationType = 'issueBased'
     }
+
     values.jobFunctions.map((jf, index) => {
       jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
       if (jf.tags === '') {
@@ -139,6 +148,14 @@ const NotificationFormPage = ({ id }) => {
     if (!values?.persons?.length) {
       unset(values, 'persons')
     }
+
+    if (values?.notificationType !== 'reportBased') {
+      delete values.cronRecurrency
+    } else {
+      values.cronRecurrency = formik.values.cronRecurrency.cronExpression
+      values.reportFrecuency = formik.values.cronRecurrency.frecuency
+    }
+
     /**
      * fun little excercise to sanitise three different
      * areaItem fields (state|lga|lab) into a single DB field :)

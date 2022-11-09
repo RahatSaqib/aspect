@@ -285,4 +285,530 @@ export default defineMessages({
     id: 'resultCategoryGroup.gxMtbXdrMtbNoResult',
     defaultMessage: 'MTB No Result',
   },
+  AssayAbbottM2000DaanNCOVID19resultCategoryError: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryError',
+    defaultMessage: 'COVID-19 Region N Error',
+  },
+  AssayAbbottM2000DaanNCOVID19resultCategoryInconclusive: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryInconclusive',
+    defaultMessage: 'COVID-19 Region N Inconclusive',
+  },
+  abbottM2000PlasmaHivVLResultCategoryDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLResultCategoryDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000PlasmaHivVLresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryNotDetected',
+    defaultMessage: 'HIV not Detected',
+  },
+  abbottM2000PlasmaHivVLresultCategoryIndeterminate: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryIndeterminate',
+    defaultMessage: 'HIV Indeterminate',
+  },
+  abbottM2000PlasmaHivVLresultCategoryInvalid: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryInvalid',
+    defaultMessage: 'HIV Invalid',
+  },
+  abbottM2000PlasmaHivVLresultCategoryError: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryError',
+    defaultMessage: 'HIV Error',
+  },
+  abbottM2000PlasmaHivVLresultCategoryLessThan150: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan150',
+    defaultMessage: 'HIV < 150 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryLessThan40: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan40',
+    defaultMessage: 'HIV < 40 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryMoreThan40: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan40',
+    defaultMessage: 'HIV >= 40 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryMoreThan150: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan150',
+    defaultMessage: 'HIV >= 150 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryLessThan550: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryLessThan550',
+    defaultMessage: 'HIV < 550 cp/mL',
+  },
+  abbottM2000PlasmaHbvVLResultCategoryDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLResultCategoryDetected',
+    defaultMessage: 'HBV Detected',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryNotDetected',
+    defaultMessage: 'HBV Not Detected',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryIndeterminate: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryIndeterminate',
+    defaultMessage: 'HBV Indeterminate',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryError: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryError',
+    defaultMessage: 'HBV Error',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryInvalid: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryInvalid',
+    defaultMessage: 'HBV Invalid',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryLessThan40: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryLessThan40',
+    defaultMessage: 'HBV < 40 cp/mL',
+  },
+  abbottM2000PlasmaHbvVLresultCategoryMoreThan40: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHbvVLresultCategoryMoreThan40',
+    defaultMessage: 'HBV >= 40 cp/mL',
+  },
+  abbottM2000DBSHivVLresultCategoryDetected: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  abbottM2000DBSHivVLresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryNotDetected',
+    defaultMessage: 'HIV Not Detected',
+  },
+  abbottM2000DBSHivVLresultCategoryInvalid: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryIndeterminate',
+    defaultMessage: 'HIV Invalid',
+  },
+  abbottM2000DBSHivVLresultCategoryError: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryError',
+    defaultMessage: 'HIV Error',
+  },
+  abbottM2000DBSHivVLresultCategoryLessThan150: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan150',
+    defaultMessage: 'HIV < 150 cp/mL',
+  },
+  abbottM2000DBSHivVLresultCategoryMoreThan150: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan150',
+    defaultMessage: 'HIV >= 150 cp/mL',
+  },
+  abbottM2000DBSHivVLresultCategoryLessThan550: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryLessThan550',
+    defaultMessage: 'HIV < 550 cp/mL',
+  },
+  abbottM2000PlasmaHivVLresultCategoryMoreThan550: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLresultCategoryMoreThan550',
+    defaultMessage: 'HIV >= 550 cp/mL',
+  },
+  abbottM2000DBSHivVLresultCategoryMoreThan550: {
+    id: 'resultCategoryGroup.abbottM2000DBSHivVLresultCategoryMoreThan550',
+    defaultMessage: 'HIV >= 550 cp/mL',
+  },
+  AssayAbbottM2000HivEidResultCategoryDetected: {
+    id: 'resultCategoryGroup.AssayAbbottM2000HivEidResultCategoryDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  AssayAbbottM2000HivEidresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryNotDetected',
+    defaultMessage: 'HIV Not Detected',
+  },
+  AssayAbbottM2000HivEidresultCategoryIndeterminate: {
+    id: 'resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryIndeterminate',
+    defaultMessage: 'HIV Indeterminate',
+  },
+  AssayAbbottM2000HivEidresultCategoryInvalid: {
+    id: 'resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryInvalid',
+    defaultMessage: 'HIV Invalid',
+  },
+  AssayAbbottM2000HivEidresultCategoryError: {
+    id: 'resultCategoryGroup.AssayAbbottM2000HivEidresultCategoryError',
+    defaultMessage: 'HIV Error',
+  },
+  abbottM2000PlasmaHivVLDetected: {
+    id: 'resultCategoryGroup.abbottM2000PlasmaHivVLDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  AssayAbbottM2000DaanNCOVID19resultCategoryInvalid: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryInvalid',
+    defaultMessage: 'COVID-19 Region N Invalid',
+  },
+
+  AssayAbbottM2000DaanNCOVID19resultCategoryNegative: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryNegative',
+    defaultMessage: 'COVID-19 Region N Negative',
+  },
+  abbottM2000DaanNCOVID19Inconclusive: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryNegative',
+    defaultMessage: 'COVID-19 Region N Negative',
+  },
+  AssayAbbottM2000DaanNCOVID19resultCategoryPositive: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryPositive',
+    defaultMessage: 'COVID-19 Region N Positive',
+  },
+  AssayAbbottM2000DBSHivVlresultCategoryMoreThan550: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryMoreThan550',
+    defaultMessage: 'HIV >= 550 cp/mL',
+  },
+  AssayAbbottM2000DBSHivVlresultCategoryLessThan550: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryLessThan550',
+    defaultMessage: 'HIV < 550 cp/mL',
+  },
+  AssayAbbottM2000DBSHivVlresultCategoryMoreThan150: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryMoreThan150',
+    defaultMessage: 'HIV >= 150 cp/mL',
+  },
+  AssayAbbottM2000DBSHivVlresultCategoryLessThan150: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryLessThan150',
+    defaultMessage: 'HIV < 150 cp/mL',
+  },
+  AssayAbbottM2000DBSHivVlresultCategoryError: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryError',
+    defaultMessage: 'HIV Error',
+  },
+  AssayAbbottM2000DBSHivVlresultCategoryInvalid: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryInvalid',
+    defaultMessage: 'HIV Invalid',
+  },
+  AssayAbbottM2000DBSHivVlresultCategoryIndeterminate: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryIndeterminate',
+    defaultMessage: 'HIV Indeterminate',
+  },
+  AssayAbbottM2000DBSHivVlresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlresultCategoryNotDetected',
+    defaultMessage: 'HIV Not Detected',
+  },
+  AssayAbbottM2000DBSHivVlResultCategoryDetected: {
+    id: 'resultCategoryGroup.AssayAbbottM2000DBSHivVlResultCategoryDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  assayBdMgitAstresultCategoryResistant: {
+    id: 'resultCategoryGroup.assayBdMgitAstresultCategoryResistant',
+    defaultMessage: 'Result Resistant',
+  },
+  assayBdMgitAstresultCategorySusceptible: {
+    id: 'resultCategoryGroup.assayBdMgitAstresultCategorySusceptible',
+    defaultMessage: 'Result Susceptible',
+  },
+  assayBdMgitAstresultCategoryUnknown: {
+    id: 'resultCategoryGroup.assayBdMgitAstresultCategoryUnknown',
+    defaultMessage: 'Result Unknown',
+  },
+  assayBdMgitAstresultCategoryMissing: {
+    id: 'resultCategoryGroup.assayBdMgitAstresultCategoryMissing',
+    defaultMessage: 'Result Missing',
+  },
+  assayBdMgitAstresultCategorySuccess: {
+    id: 'resultCategoryGroup.assayBdMgitAstresultCategorySuccess',
+    defaultMessage: 'Result Success',
+  },
+  assayBdMgitAstresultCategoryError: {
+    id: 'resultCategoryGroup.assayBdMgitAstresultCategoryError',
+    defaultMessage: 'Result Error',
+  },
+  assayBdMgitAstresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.assayBdMgitAstresultCategoryNotDetected',
+    defaultMessage: 'Result Not Detected',
+  },
+  assayBdMgitAstResultCategoryDetected: {
+    id: 'resultCategoryGroup.assayBdMgitAstResultCategoryDetected',
+    defaultMessage: 'Result Detected',
+  },
+
+  assayBdMgitGndresultCategoryPositive: {
+    id: 'resultCategoryGroup.assayBdMgitGndresultCategoryPositive',
+    defaultMessage: 'Result Positive',
+  },
+  assayBdMgitGndresultCategoryNegative: {
+    id: 'resultCategoryGroup.assayBdMgitGndresultCategoryNegative',
+    defaultMessage: 'Result Negative',
+  },
+  assayBdMgitGndresultCategoryUnknown: {
+    id: 'resultCategoryGroup.assayBdMgitGndresultCategoryUnknown',
+    defaultMessage: 'Result Unknown',
+  },
+  assayBdMgitGndresultCategoryMissing: {
+    id: 'resultCategoryGroup.assayBdMgitGndresultCategoryMissing',
+    defaultMessage: 'Result Missing',
+  },
+  assayBdMgitGndresultCategorySuccess: {
+    id: 'resultCategoryGroup.assayBdMgitGndresultCategorySuccess',
+    defaultMessage: 'Result Success',
+  },
+  assayBdMgitGndresultCategoryError: {
+    id: 'resultCategoryGroup.assayBdMgitGndresultCategoryError',
+    defaultMessage: 'Result Error',
+  },
+  assayBdMgitGndresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.assayBdMgitGndresultCategoryNotDetected',
+    defaultMessage: 'Result Not Detected',
+  },
+  assayBdMgitGndResultCategoryDetected: {
+    id: 'resultCategoryGroup.assayBdMgitGndResultCategoryDetected',
+    defaultMessage: 'Result Detected',
+  },
+  assayGenericCovid19resultCategoryPresumptivePositive: {
+    id: 'resultCategoryGroup.assayGenericCovid19resultCategoryPresumptivePositive',
+    defaultMessage: 'COVID-19 Presumptive Positive',
+  },
+  assayGenericCovid19resultCategoryPositive: {
+    id: 'resultCategoryGroup.assayGenericCovid19resultCategoryPositive',
+    defaultMessage: 'COVID-19 Positive',
+  },
+  assayGenericCovid19resultCategoryInconclusive: {
+    id: 'resultCategoryGroup.assayGenericCovid19resultCategoryInconclusive',
+    defaultMessage: 'COVID-19 Inconclusive',
+  },
+  assayGenericCovid19resultCategoryNegative: {
+    id: 'resultCategoryGroup.assayGenericCovid19resultCategoryNegative',
+    defaultMessage: 'COVID-19 Negative',
+  },
+  assayGenericCovid19resultCategoryUnknown: {
+    id: 'resultCategoryGroup.assayGenericCovid19resultCategoryUnknown',
+    defaultMessage: 'COVID-19 Unknown',
+  },
+  assayGXCovid19resultCategoryPresumptivePositive: {
+    id: 'resultCategoryGroup.assayGXCovid19resultCategoryPresumptivePositive',
+    defaultMessage: 'COVID-19 Presumptive Positive',
+  },
+  assayGXCovid19resultCategoryPositive: {
+    id: 'resultCategoryGroup.assayGXCovid19resultCategoryPositive',
+    defaultMessage: 'COVID-19 Positive',
+  },
+  assayGXCovid19resultCategoryInconclusive: {
+    id: 'resultCategoryGroup.assayGXCovid19resultCategoryInconclusive',
+    defaultMessage: 'COVID-19 Inconclusive',
+  },
+  assayGXCovid19resultCategoryNegative: {
+    id: 'resultCategoryGroup.assayGXCovid19resultCategoryNegative',
+    defaultMessage: 'COVID-19 Negative',
+  },
+  assayGXCovid19resultCategoryUnknown: {
+    id: 'resultCategoryGroup.assayGXCovid19resultCategoryUnknown',
+    defaultMessage: 'COVID-19 Unknown',
+  },
+  assayGXCovid19resultCategoryError: {
+    id: 'resultCategoryGroup.assayGXCovid19resultCategoryError',
+    defaultMessage: 'COVID-19 Error',
+  },
+  assayGXCovid19resultCategoryNoResult: {
+    id: 'resultCategoryGroup.assayGXCovid19resultCategoryNoResult',
+    defaultMessage: 'COVID-19 No Result',
+  },
+  assayGXCovid19resultCategoryInvalid: {
+    id: 'resultCategoryGroup.assayGXCovid19resultCategoryInvalid',
+    defaultMessage: 'COVID-19 Invalid',
+  },
+  assayGeneXpertHcvResultCategoryDetected: {
+    id: 'resultCategoryGroup.assayGeneXpertHcvResultCategoryDetected',
+    defaultMessage: 'HCV Detected',
+  },
+  assayGeneXpertHcvresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.assayGeneXpertHcvresultCategoryNotDetected',
+    defaultMessage: 'HCV Not Detected',
+  },
+  assayGeneXpertHcvresultCategoryInvalid: {
+    id: 'resultCategoryGroup.assayGeneXpertHcvresultCategoryInvalid',
+    defaultMessage: 'HCV Invalid',
+  },
+  assayGeneXpertHcvresultCategoryNoResult: {
+    id: 'resultCategoryGroup.assayGeneXpertHcvresultCategoryNoResult',
+    defaultMessage: 'HCV No Result',
+  },
+  assayGeneXpertHcvresultCategoryError: {
+    id: 'resultCategoryGroup.assayGeneXpertHcvresultCategoryError',
+    defaultMessage: 'HCV Error',
+  },
+  assayGeneXpertHiv1QualresultCategoryError: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryError',
+    defaultMessage: 'HIV Error',
+  },
+  assayGeneXpertHiv1QualresultCategoryNoResult: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryNoResult',
+    defaultMessage: 'HIV No Result',
+  },
+  assayGeneXpertHiv1QualresultCategoryInvalid: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryInvalid',
+    defaultMessage: 'HIV Invalid',
+  },
+  assayGeneXpertHiv1QualresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1QualresultCategoryNotDetected',
+    defaultMessage: 'HIV Not Detected',
+  },
+  assayGeneXpertHiv1QualResultCategoryDetected: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1QualResultCategoryDetected',
+    defaultMessage: 'HIV Detected',
+  },
+  assayGeneXpertHiv1VlresultCategoryMoreThan1000: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryMoreThan1000',
+    defaultMessage: 'HIV >= 1000 cp/mL',
+  },
+  assayGeneXpertHiv1VlresultCategoryLessThan1000: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000',
+    defaultMessage: 'HIV < 1000 cp/mL',
+  },
+  assayGeneXpertHiv1VlresultCategoryLessThan40: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan40',
+    defaultMessage: 'HIV < 40 cp/mL',
+  },
+  assayGeneXpertHiv1VlresultCategoryError: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryError',
+    defaultMessage: 'HIV Error',
+  },
+  assayGeneXpertHiv1VlresultCategoryNoResult: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryNoResult',
+    defaultMessage: 'HIV No Result',
+  },
+  assayGeneXpertHiv1VlresultCategoryInvalid: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryInvalid',
+    defaultMessage: 'HIV Invalid',
+  },
+  assayGeneXpertHiv1VlresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryNotDetected',
+    defaultMessage: 'HIV Not Detected',
+  },
+  assayMP96Covid19resultCategoryPresumptivePositive: {
+    id: 'resultCategoryGroup.assayMP96Covid19resultCategoryPresumptivePositive',
+    defaultMessage: 'COVID-19 Presumptive Positive',
+  },
+  assayMP96Covid19resultCategoryPositive: {
+    id: 'resultCategoryGroup.assayMP96Covid19resultCategoryPositive',
+    defaultMessage: 'COVID-19 Positive',
+  },
+  assayMP96Covid19resultCategoryInconclusive: {
+    id: 'resultCategoryGroup.assayMP96Covid19resultCategoryInconclusive',
+    defaultMessage: 'COVID-19 Inconclusive',
+  },
+  assayMP96Covid19resultCategoryNegative: {
+    id: 'resultCategoryGroup.assayMP96Covid19resultCategoryNegative',
+    defaultMessage: 'COVID-19 Negative',
+  },
+  assayMP96Covid19resultCategoryUnknown: {
+    id: 'resultCategoryGroup.assayMP96Covid19resultCategoryUnknown',
+    defaultMessage: 'COVID-19 Unknown',
+  },
+  assayQS7Covid19resultCategoryPresumptivePositive: {
+    id: 'resultCategoryGroup.assayQS7Covid19resultCategoryPresumptivePositive',
+    defaultMessage: 'COVID-19 Presumptive Positive',
+  },
+  assayQS7Covid19resultCategoryPositive: {
+    id: 'resultCategoryGroup.assayQS7Covid19resultCategoryPositive',
+    defaultMessage: 'COVID-19 Positive',
+  },
+  assayQS7Covid19resultCategoryInconclusive: {
+    id: 'resultCategoryGroup.assayQS7Covid19resultCategoryInconclusive',
+    defaultMessage: 'COVID-19 Inconclusive',
+  },
+  assayQS7Covid19resultCategoryNegative: {
+    id: 'resultCategoryGroup.assayQS7Covid19resultCategoryNegative',
+    defaultMessage: 'COVID-19 Negative',
+  },
+  assayQS7Covid19resultCategoryUnknown: {
+    id: 'resultCategoryGroup.assayQS7Covid19resultCategoryUnknown',
+    defaultMessage: 'COVID-19 Unknown',
+  },
+  assaySenaiteLIMSSmearMicroscopyresultCategoryScanty: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryScanty',
+    defaultMessage: 'Result Scanty (1-9/100)',
+  },
+  assaySenaiteLIMSSmearMicroscopyresultCategoryPositive3: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive3',
+    defaultMessage: 'Result Positive (+++)',
+  },
+  assaySenaiteLIMSSmearMicroscopyresultCategoryPositive2: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive2',
+    defaultMessage: 'Result Positive (++)',
+  },
+  assaySenaiteLIMSSmearMicroscopyresultCategoryPositive1: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryPositive1',
+    defaultMessage: 'Result Positive (+)',
+  },
+  assaySenaiteLIMSSmearMicroscopyresultCategoryNegative: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryNegative',
+    defaultMessage: 'Result Negative',
+  },
+  assaySenaiteLIMSSmearMicroscopyresultCategoryUnknown: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSSmearMicroscopyresultCategoryUnknown',
+    defaultMessage: 'Result Unknown',
+  },
+  assaySenaiteLIMSTbCultureresultCategoryPositiveMTB: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryPositiveMTB',
+    defaultMessage: 'Result Positive MTB',
+  },
+  assaySenaiteLIMSTbCultureresultCategoryPositiveMOTT: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryPositiveMOTT',
+    defaultMessage: 'Result Positive MOTT',
+  },
+  assaySenaiteLIMSTbCultureresultCategoryContaminated: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryContaminated',
+    defaultMessage: 'Result Contaminated',
+  },
+  assaySenaiteLIMSTbCultureresultCategoryNegative: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryNegative',
+    defaultMessage: 'Result Negative',
+  },
+  assaySenaiteLIMSTbCultureresultCategoryUnknown: {
+    id: 'resultCategoryGroup.assaySenaiteLIMSTbCultureresultCategoryUnknown',
+    defaultMessage: 'Result Unknown',
+  },
+  assayTruenatMtbresultCategoryError: {
+    id: 'resultCategoryGroup.assayTruenatMtbresultCategoryError',
+    defaultMessage: 'MTB Error',
+  },
+  assayTruenatMtbresultCategoryNoResult: {
+    id: 'resultCategoryGroup.assayTruenatMtbresultCategoryNoResult',
+    defaultMessage: 'MTB No Result',
+  },
+  assayTruenatMtbresultCategoryInvalid: {
+    id: 'resultCategoryGroup.assayTruenatMtbresultCategoryInvalid',
+    defaultMessage: 'MTB Invalid',
+  },
+  assayTruenatMtbresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.assayTruenatMtbresultCategoryNotDetected',
+    defaultMessage: 'MTB Not Detected',
+  },
+  assayTruenatMtbResultCategoryDetected: {
+    id: 'resultCategoryGroup.assayTruenatMtbResultCategoryDetected',
+    defaultMessage: 'MTB Detected',
+  },
+  assayTruenatMtbPlusresultCategoryError: {
+    id: 'resultCategoryGroup.assayTruenatMtbPlusresultCategoryError',
+    defaultMessage: 'MTB Error',
+  },
+  assayTruenatMtbPlusresultCategoryNoResult: {
+    id: 'resultCategoryGroup.assayTruenatMtbPlusresultCategoryNoResult',
+    defaultMessage: 'MTB No Result',
+  },
+  assayTruenatMtbPlusresultCategoryInvalid: {
+    id: 'resultCategoryGroup.assayTruenatMtbPlusresultCategoryInvalid',
+    defaultMessage: 'MTB Invalid',
+  },
+  assayTruenatMtbPlusresultCategoryNotDetected: {
+    id: 'resultCategoryGroup.assayTruenatMtbPlusresultCategoryNotDetected',
+    defaultMessage: 'MTB Not Detected',
+  },
+  assayTruenatMtbPlusResultCategoryDetected: {
+    id: 'resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected',
+    defaultMessage: 'MTB Detected',
+  },
+  assayTruenatRifresultCategoryResistant: {
+    id: 'resultCategoryGroup.assayTruenatRifresultCategoryResistant',
+    defaultMessage: 'Rif Resistant',
+  },
+  assayTruenatRifresultCategorySusceptible: {
+    id: 'resultCategoryGroup.assayTruenatRifresultCategorySusceptible',
+    defaultMessage: 'Rif Susceptible',
+  },
+  assayTruenatRifresultCategoryError: {
+    id: 'resultCategoryGroup.assayTruenatRifresultCategoryError',
+    defaultMessage: 'Rif Error',
+  },
+  assayTruenatRifresultCategoryNoResult: {
+    id: 'resultCategoryGroup.assayTruenatRifresultCategoryNoResult',
+    defaultMessage: 'Rif No Result',
+  },
+  assayTruenatRifresultCategoryInvalid: {
+    id: 'resultCategoryGroup.assayTruenatRifresultCategoryInvalid',
+    defaultMessage: 'Rif Invalid',
+  },
+  assayTruenatUnknownresultCategoryMissing: {
+    id: 'resultCategoryGroup.assayTruenatUnknownresultCategoryMissing',
+    defaultMessage: 'Result Missing',
+  },
+  assayTruenatUnknownresultCategoryUnknown: {
+    id: 'resultCategoryGroup.assayTruenatUnknownresultCategoryUnknown',
+    defaultMessage: 'Result Unknown',
+  },
 })

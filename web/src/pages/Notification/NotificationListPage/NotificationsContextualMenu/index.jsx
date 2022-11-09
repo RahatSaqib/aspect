@@ -16,7 +16,9 @@ const initialDeleteStatus = { showDialog: false, notificationId: 0 }
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useI18n()
-  const { id, typeCategory, name, enabled, totalTriggers } = item
+
+  const { id, readyForNotification, typeCategory, name, enabled, totalTriggers } = item
+
   const queryClient = useQueryClient()
   const refreshList = () => {
     queryClient.invalidateQueries(NOTIFICATION_LIST.KEY)
@@ -31,7 +33,7 @@ const NotificationsContextualMenu = ({ item }) => {
       icon: 'FaEdit',
       text: formatMessage(messages.editTitle),
       action: () => navigate(`/browse/notification/${id}`),
-      disabled: typeCategory !== 'resultBased',
+      disabled: typeCategory === 'issueBased' && !readyForNotification,
     },
     {
       icon: 'FaCopy',
@@ -99,9 +101,10 @@ const NotificationsContextualMenu = ({ item }) => {
 NotificationsContextualMenu.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    typeCategory: PropTypes.string,
+    readyForNotification: PropTypes.number,
     name: PropTypes.string,
     enabled: PropTypes.number,
+    typeCategory: PropTypes.number,
     totalTriggers: PropTypes.number,
   }).isRequired,
 }

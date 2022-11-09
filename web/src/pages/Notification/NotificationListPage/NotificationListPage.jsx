@@ -8,7 +8,6 @@ import { Shell, ShellContent } from '../../../components/Shell'
 import useI18n from '../../../hooks/useI18n'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import { reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { useAuthState } from '../../../providers/AuthProvider'
 import messages from './messages'
@@ -26,14 +25,11 @@ const NotificationList = () => {
   const intl = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   return (
     <Fragment>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
       <div className={cssClasses('filters__container')}>
         <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
           <AspectButton
