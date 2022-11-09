@@ -327,9 +327,7 @@ function getFirstAndLastResults(dataConstraints, assayId) {
       firstEndedOn: knex.raw('MIN(endedOn)'),
       lastEndedOn: knex.raw('MAX(endedOn)'),
     })
-    .modify(q => {
-      if (assayId) q.where('assayId', assayId)
-    })
+    .where('assayId', assayId)
     .as('firstAndLastResults')
 }
 
