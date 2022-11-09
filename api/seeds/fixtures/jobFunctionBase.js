@@ -23,7 +23,7 @@ const admin = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'all_devices',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -165,7 +165,7 @@ const manager = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'all_devices',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -263,7 +263,7 @@ const regionalOfficer = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'all_devices',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -916,7 +916,7 @@ const labManager = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'usage_statistics_report',
-    'all_devices',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -998,7 +998,7 @@ const labSupervisor = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'all_devices',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -1237,7 +1237,7 @@ const labAdmin = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'all_devices',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {

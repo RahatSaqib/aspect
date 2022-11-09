@@ -503,13 +503,13 @@ const deviceReport = {
 }
 
 const allDevicesReport = {
-  name: 'All Devices',
+  name: 'Devices and Sites Overview',
   description:
-    'Contains multiple sheets to export all the devices, to display information about the inventory on their sites, and also to export workload data.',
-  i18nKey: 'All_Devices_Report',
-  i18nKeyDescription: 'All_Devices_description',
-  externalId: 'all_devices',
-  fileName: 'AllDevices',
+    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
+  i18nKey: 'DevicesAndSitesOverview',
+  i18nKeyDescription: 'DevicesAndSitesDescription',
+  externalId: 'devices_and_sites_overview',
+  fileName: 'DevicesAndSitesOverview',
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 150,
@@ -517,7 +517,7 @@ const allDevicesReport = {
     {
       sortOrder: 0,
       moduleName: 'device/serviceReports',
-      functionName: 'getAllDevicesReport',
+      functionName: 'getDevicesAndSitesOverviewReport',
     },
   ],
 }
