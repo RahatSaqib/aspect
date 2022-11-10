@@ -130,6 +130,11 @@ async function writeDataToFile(filename, data) {
   })
 }
 
+async function readDataFromFile(filename) {
+  const data = await fs.promises.readFile(filename)
+  return Buffer.from(data)
+}
+
 // ---------------------------------
 // generate Excel file for given template,
 // props = { templateFileName, outputFileName, populateData }
@@ -326,4 +331,5 @@ module.exports = {
   readTextFile,
   readTemplateFile,
   writeDataToFile,
+  readDataFromFile,
 }
