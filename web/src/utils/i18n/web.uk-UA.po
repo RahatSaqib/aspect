@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-11-09T23:08:09.196Z\n"
+"POT-Creation-Date: 2022-11-10T18:23:46.253Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2876,6 +2876,13 @@ msgstr "Device Maker"
 msgid "Device Name"
 msgstr "Ім'я пристрою"
 
+#. [pages.ReportIndex.deviceReport]
+#. defaultMessage is:
+#. Device Report
+#: extracted_strings.json
+msgid "Device Report"
+msgstr "Звіт про пристрій"
+
 #. [forms.formItem.deviceSerial]
 #. defaultMessage is:
 #. Device Serial
@@ -3078,6 +3085,20 @@ msgstr "Захворювання"
 #: extracted_strings.json
 msgid "Display Result"
 msgstr "Відображення результату"
+
+#. [pages.ReportIndex.deviceReport_description]
+#. defaultMessage is:
+#. Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.
+#: extracted_strings.json
+msgid ""
+"Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of "
+"results per result category, alongside the number of modules in use, days of "
+"interruption, and error-rate related fields."
+msgstr ""
+"Відображає всі пристрої MTB Rif/MTB Rif Ultra/MTB XDR та кількість "
+"результатів за кожною категорією результатів, а також кількість "
+"використовуваних модулів, дні перерви в роботі та поля, пов'язані з частотою "
+"помилок."
 
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
