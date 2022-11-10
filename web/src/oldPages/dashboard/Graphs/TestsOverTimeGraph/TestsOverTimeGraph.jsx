@@ -37,7 +37,8 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
-    const defaultFilter = assaysFromState.filter(a => a.assayTypeAbbreviation === 'TB')
+    const tbAssays = assaysFromState.filter(a => a.assayTypeAbbreviation === 'TB')
+    const defaultFilter = tbAssays.length > 0 ? tbAssays : assaysFromState
     setFilter(defaultFilter)
   }, [assaysFromState])
 
