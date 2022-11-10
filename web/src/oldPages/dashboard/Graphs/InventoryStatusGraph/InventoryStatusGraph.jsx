@@ -19,7 +19,7 @@ import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages } from '../../../../messages'
 import styles from '../styles.css'
-import DeviceStatusGraphMain from './InventoryStatusGraph.Main'
+import InventoryStatusGraphMain from './InventoryStatusGraph.Main'
 
 const cssClasses = classnames.bind(styles)
 
@@ -52,7 +52,7 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
                 </Grid>
                 <Grid item xs={12} md={12} lg={9}>
                   <Grid container>
-                    <DeviceStatusGraphMain
+                    <InventoryStatusGraphMain
                       assaysFromState={assaysFromState}
                       showLabel={showLabel}
                       filterSelection={filter}
