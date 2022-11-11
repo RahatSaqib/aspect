@@ -13309,8 +13309,8 @@ msgstr "{count} з {total} днів"
 msgid ""
 "{daysInSameStatus, plural, one {# day} other {# days} } since last update"
 msgstr ""
-"{daysInSameStatus, plural, one {# результат повідомлено} other {# результати "
-"повідомлено}} з моменту останнього оновлення"
+"{daysInSameStatus, plural, one {# день} few {# дні} many {# днів} other {# "
+"днів}} з моменту останнього оновлення"
 
 #. [pages.TableCell.timeClassification]
 #. defaultMessage is:
@@ -13375,7 +13375,7 @@ msgid ""
 "{# day} other {# days} }"
 msgstr ""
 "{maintenanceStatusName} ({totalResults}) для {daysInSameStatus, plural, one "
-"{# результат повідомлено} other {# результати повідомлено}})"
+"{# день} few {# дні} many {# днів} other {# днів}}"
 
 #. [component.Widget.ytd]
 #. defaultMessage is:
