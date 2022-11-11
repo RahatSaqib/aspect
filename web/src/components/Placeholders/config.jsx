@@ -2,6 +2,15 @@ import messages from './messages'
 
 export const groupedOptions = ({ formatMessage }) => [
   {
+    label: formatMessage(messages.placeholderReport),
+    options: [
+      {
+        id: 'report.downloadLink',
+        name: formatMessage(messages.placeholderReportDownloadLink),
+      },
+    ],
+  },
+  {
     label: formatMessage(messages.placeholderSite),
     options: [
       {

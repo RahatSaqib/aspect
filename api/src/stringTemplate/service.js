@@ -3,6 +3,7 @@ const { formatDistanceStrict, parseISO } = require('date-fns')
 const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
+const config = require('../config')
 
 const { knex } = require('../db')
 const { parseDateOrDefault, formatDateOrDefault, getFormattedDateTimeWithTimezone } = require('../shared/date')
@@ -145,7 +146,8 @@ function addDataSourceToQuery(queryBuilder, aliases, resultId) {
         'i.dueOn as issueDueOn',
         'i.data as issueData',
         'it.externalId as issueTypeExternalId',
-        'nt.name as notificationTypeName'
+        'nt.name as notificationTypeName',
+        knex.raw('nt.data ->> "$.reportToken" as reportToken')
       )
   }
 
@@ -439,6 +441,9 @@ async function getBaseDataSource(data) {
     },
     notification: {
       type: d.notificationTypeName,
+    },
+    report: {
+      downloadLink: `${config.url}/api/reports/download?token=${d.reportToken}`,
     },
     displayPreferences,
     timezone: d.timezone,
