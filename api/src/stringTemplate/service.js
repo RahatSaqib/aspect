@@ -147,7 +147,7 @@ function addDataSourceToQuery(queryBuilder, aliases, resultId) {
         'i.data as issueData',
         'it.externalId as issueTypeExternalId',
         'nt.name as notificationTypeName',
-        knex.raw('nt.data ->> "$.reportToken" as reportToken')
+        knex.raw(`${notification.reportToken} as reportToken`)
       )
   }
 

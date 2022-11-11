@@ -3,6 +3,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays } = require('date-fns')
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 const { knex, sortPageParams } = require('../db')
 const { getJobConstraints, addConstraints, getConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
@@ -14,6 +15,8 @@ const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 const logger = require('../shared/logger')
 const NotificationCache = require('./notificationCache')
+const saveReportToFile = require('../report/saveReportToFile')
+const config = require('../config')
 
 async function clearCache() {
   return NotificationCache.getInstance(knex).refreshCache()
@@ -338,6 +341,8 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
 
   if (action.reportId) {
     const generatedReports = new Set([])
+    const { externalId } = await knex('Report').where({ id: action.reportId }).first()
+    let fileName
 
     for (const personId of [...personsToNotify]) {
       // eslint-disable-next-line no-await-in-loop
@@ -348,14 +353,25 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
 
       if (generatedReports.has(reportHash)) {
         generatedReports.add(reportHash)
-
-        /// TODO: Generate report here!
+        // eslint-disable-next-line no-await-in-loop
+        fileName = await saveReportToFile({ personId }, constraints, externalId) // TODO recheck this
       }
+      // Generate JWT
+      const reportToken = jwt.sign(
+        {
+          report_filename: fileName,
+        },
+        config.secret,
+        {
+          expiresIn: '30 day',
+          issuer: 'https://www.aspect.id',
+        }
+      )
 
       // eslint-disable-next-line no-await-in-loop
       await createNotificationIfNotCreatedAlready(
         action,
-        { personId, policy, now, reportHash },
+        { personId, policy, now, reportToken, reportFileName: fileName },
         { messageContext: context, knex: txKnex }
       )
     }
@@ -404,8 +420,8 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
 }
 
 async function createNotificationIfNotCreatedAlready(
-  { issueId = null, resultId = null },
-  { personId = null, policy, now = new Date() },
+  { issueId = null, resultId = null, reportId = null },
+  { personId = null, policy, reportToken = null, reportFileName = null, now = new Date() },
   { messageContext: context, knex },
   nonPersonToSend = {}
 ) {
@@ -422,8 +438,11 @@ async function createNotificationIfNotCreatedAlready(
   const notification = {
     issueId,
     resultId,
+    reportId,
     notificationTypeId: policy.id,
     personId,
+    reportToken,
+    reportFileName,
     data: notifyANonPerson ? JSON.stringify({ to, phone }) : null,
   }
   const existingNotification = await knex('Notification')
@@ -444,6 +463,7 @@ async function createNotificationIfNotCreatedAlready(
       siteId: policy.siteId,
       deviceId: policy.deviceId,
       resultId: policy.resultId,
+      reportId: policy.reportId,
       createdOn: now,
       updatedOn: now,
     }

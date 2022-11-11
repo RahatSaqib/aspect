@@ -18,4 +18,6 @@ module.exports = async function saveReportToFile(auth, query, externalId) {
 
   // TODO: Replace /tmp for an environment variable.
   await writeDataToFile(`/tmp/${fileName}`, dataBuffer)
+
+  return fileName
 }
