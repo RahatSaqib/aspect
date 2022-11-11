@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-11-10T18:23:46.253Z\n"
+"POT-Creation-Date: 2022-11-11T23:44:11.932Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -784,10 +784,10 @@ msgstr "Будь-який"
 msgid "Approval"
 msgstr "Схвалення"
 
-#. [pages.DeviceList.approvalStatus]
+#. [pages.RouterList.approval]
 #. defaultMessage is:
 #. Approval Status
-#. [pages.RouterList.approval]
+#. [pages.DeviceList.approvalStatus]
 #. defaultMessage is:
 #. Approval Status
 #: extracted_strings.json
@@ -1510,6 +1510,13 @@ msgstr "Не можна редагувати"
 msgid "Cancel"
 msgstr "Відміна"
 
+#. [pages.DeviceDetailEdit.capacity]
+#. defaultMessage is:
+#. Capacity
+#: extracted_strings.json
+msgid "Capacity"
+msgstr "Загальна місткість"
+
 #. [filter.ConsumableReasonSelectField.ConsumableReason_Captured]
 #. defaultMessage is:
 #. Captured
@@ -1771,10 +1778,10 @@ msgstr "CommCare ВІЛ"
 msgid "Configuration"
 msgstr "Конфігурація"
 
-#. [pages.DeviceList.buttonConfirmMerge]
+#. [pages.resultTreatmentPanel.confirm]
 #. defaultMessage is:
 #. Confirm
-#. [pages.resultTreatmentPanel.confirm]
+#. [pages.DeviceList.buttonConfirmMerge]
 #. defaultMessage is:
 #. Confirm
 #: extracted_strings.json
@@ -2217,6 +2224,12 @@ msgstr "Створити сайт"
 #. [pages.DeviceApiKeyList.createdOn]
 #. defaultMessage is:
 #. Created On
+#. [pages.DeviceDetailEdit.createdOn]
+#. defaultMessage is:
+#. Created On
+#. [pages.DeviceDetailProfile.createdOn]
+#. defaultMessage is:
+#. Created On
 #: extracted_strings.json
 msgid "Created On"
 msgstr "Створено"
@@ -2411,6 +2424,15 @@ msgstr "DST"
 #: extracted_strings.json
 msgid "Daily"
 msgstr "Щодня"
+
+#. [pages.DeviceDetailProfile.dailyCapacity]
+#. defaultMessage is:
+#. Daily Capacity
+#: extracted_strings.json
+msgid "Daily Capacity"
+msgstr ""
+"Кількість результатів за останні 30 днів, поділена на добову потужність "
+"приладу, помножену на 30 днів"
 
 #. [pages.Status.clinicalIndicatorsCovidName]
 #. defaultMessage is:
@@ -2741,12 +2763,6 @@ msgstr "Виявлено"
 #. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
-#. [pages.DeviceList.device]
-#. defaultMessage is:
-#. Device
-#. [pages.DeviceList.deviceHealth]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceApiKeyList.deviceId]
 #. defaultMessage is:
 #. Device
@@ -2754,6 +2770,12 @@ msgstr "Виявлено"
 #. defaultMessage is:
 #. Device
 #. [pages.ResultList.deviceName]
+#. defaultMessage is:
+#. Device
+#. [pages.DeviceList.device]
+#. defaultMessage is:
+#. Device
+#. [pages.DeviceList.deviceHealth]
 #. defaultMessage is:
 #. Device
 #. [pages.TaskList.taskListOptionsDevice]
@@ -2907,6 +2929,9 @@ msgstr "Не вдалося завантажити стан обслуговув
 #. defaultMessage is:
 #. Device Type
 #. [pages.JobAssignments.deviceType]
+#. defaultMessage is:
+#. Device Type
+#. [pages.DeviceDetailEdit.deviceType]
 #. defaultMessage is:
 #. Device Type
 #: extracted_strings.json
@@ -4945,6 +4970,13 @@ msgstr "Історія"
 msgid "Home"
 msgstr "Головна"
 
+#. [pages.DeviceDetailProfile.hostId]
+#. defaultMessage is:
+#. Host
+#: extracted_strings.json
+msgid "Host"
+msgstr "ID хосту"
+
 #. [pages.DeviceDetailEdit.hostId]
 #. defaultMessage is:
 #. Host ID
@@ -5595,6 +5627,9 @@ msgstr "Останній місяць ({minDate} - {maxDate})"
 #. [pages.workload.lastPingOn]
 #. defaultMessage is:
 #. Last Ping
+#. [pages.DeviceDetailEdit.lastPingOn]
+#. defaultMessage is:
+#. Last Ping
 #: extracted_strings.json
 msgid "Last Ping"
 msgstr "Останній пінг"
@@ -5613,13 +5648,16 @@ msgstr "Останній результат"
 msgid "Last Result Conducted On"
 msgstr "Останній результат проведено"
 
-#. [pages.DeviceList.lastSeen]
-#. defaultMessage is:
-#. Last Seen
 #. [pages.RouterDetail.fieldLastSeen]
 #. defaultMessage is:
 #. Last Seen
 #. [pages.RouterList.lastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.DeviceList.lastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.DeviceDetailEdit.lastSeen]
 #. defaultMessage is:
 #. Last Seen
 #: extracted_strings.json
@@ -6834,6 +6872,9 @@ msgstr "NTP"
 #. [pages.SiteList.siteName]
 #. defaultMessage is:
 #. Name
+#. [pages.DeviceDetailEdit.name]
+#. defaultMessage is:
+#. Name
 #: extracted_strings.json
 msgid "Name"
 msgstr "Ім'я"
@@ -7250,6 +7291,12 @@ msgstr "Примітка"
 #. defaultMessage is:
 #. Notes
 #. [pages.SiteDetail.fieldNotes]
+#. defaultMessage is:
+#. Notes
+#. [pages.DeviceDetailEdit.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.DeviceDetailProfile.notes]
 #. defaultMessage is:
 #. Notes
 #: extracted_strings.json
@@ -8659,10 +8706,10 @@ msgstr "Місцезнаходження репортера"
 msgid "Reporters"
 msgstr "Журналісти"
 
-#. [pages.DeviceList.reportingFor]
+#. [pages.RouterList.reportingFor]
 #. defaultMessage is:
 #. Reporting Since
-#. [pages.RouterList.reportingFor]
+#. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
 #. Reporting Since
 #: extracted_strings.json
@@ -9899,6 +9946,20 @@ msgstr "Надіслано через SMS"
 msgid "Serial"
 msgstr "Серійний номер"
 
+#. [pages.DeviceDetailProfile.serial]
+#. defaultMessage is:
+#. Serial No
+#: extracted_strings.json
+msgid "Serial No"
+msgstr "Серійний номер"
+
+#. [pages.DeviceDetailEdit.serial]
+#. defaultMessage is:
+#. Serial Number
+#: extracted_strings.json
+msgid "Serial Number"
+msgstr "Серійний номер"
+
 #. [pages.DeviceDetailEdit.serialNumber]
 #. defaultMessage is:
 #. Serial number
@@ -9966,6 +10027,12 @@ msgid "Setting Maintenance Status Failed"
 msgstr "Помилка встановлення стану обслуговування"
 
 #. [placeholder.name.short]
+#. defaultMessage is:
+#. Short Name
+#. [pages.DeviceDetailEdit.shortName]
+#. defaultMessage is:
+#. Short Name
+#. [pages.DeviceDetailProfile.shortName]
 #. defaultMessage is:
 #. Short Name
 #: extracted_strings.json
@@ -10229,9 +10296,6 @@ msgstr "Вийти"
 #. [filter.popover.siteName]
 #. defaultMessage is:
 #. Site
-#. [pages.DeviceList.site]
-#. defaultMessage is:
-#. Site
 #. [pages.DeviceApiKeyList.siteId]
 #. defaultMessage is:
 #. Site
@@ -10242,6 +10306,9 @@ msgstr "Вийти"
 #. defaultMessage is:
 #. Site
 #. [pages.RouterDetail.fieldSiteId]
+#. defaultMessage is:
+#. Site
+#. [pages.DeviceList.site]
 #. defaultMessage is:
 #. Site
 #. [pages.TaskList.site]
@@ -12327,10 +12394,10 @@ msgstr "Показати журнал"
 msgid "Voltage"
 msgstr "Напруга"
 
-#. [pages.DeviceList.warranty]
+#. [pages.RouterDetail.detailWarranty]
 #. defaultMessage is:
 #. Warranty
-#. [pages.RouterDetail.detailWarranty]
+#. [pages.DeviceList.warranty]
 #. defaultMessage is:
 #. Warranty
 #. [pages.DeviceDetailProfile.warranty]
@@ -13054,9 +13121,6 @@ msgid "name/email includes \"{contactNameOrEmail}\""
 msgstr "ім’я / електронна адреса містить \"{contactNameOrEmail}\""
 
 #. [pages.InventoryItemsList.inventoryOnNote]
-#. defaultMessage is:
-#. notes
-#. [pages.DeviceDetailProfile.notes]
 #. defaultMessage is:
 #. notes
 #: extracted_strings.json
