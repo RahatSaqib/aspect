@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-11-01T21:02:34.710Z\n"
+"POT-Creation-Date: 2022-11-10T18:23:46.253Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2876,6 +2876,13 @@ msgstr "Device Maker"
 msgid "Device Name"
 msgstr "Ім'я пристрою"
 
+#. [pages.ReportIndex.deviceReport]
+#. defaultMessage is:
+#. Device Report
+#: extracted_strings.json
+msgid "Device Report"
+msgstr "Звіт про пристрій"
+
 #. [forms.formItem.deviceSerial]
 #. defaultMessage is:
 #. Device Serial
@@ -2987,6 +2994,13 @@ msgstr "Активні пристрої"
 msgid "Devices With Service Interruption"
 msgstr "Пристрої, що переживають переривання служби"
 
+#. [pages.ReportIndex.devicesAndSitesOverview]
+#. defaultMessage is:
+#. Devices and Sites Overview
+#: extracted_strings.json
+msgid "Devices and Sites Overview"
+msgstr "Огляд пристроїв та сайтів"
+
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
 #. Devices from LGA
@@ -3071,6 +3085,20 @@ msgstr "Захворювання"
 #: extracted_strings.json
 msgid "Display Result"
 msgstr "Відображення результату"
+
+#. [pages.ReportIndex.deviceReport_description]
+#. defaultMessage is:
+#. Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.
+#: extracted_strings.json
+msgid ""
+"Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of "
+"results per result category, alongside the number of modules in use, days of "
+"interruption, and error-rate related fields."
+msgstr ""
+"Відображає всі пристрої MTB Rif/MTB Rif Ultra/MTB XDR та кількість "
+"результатів за кожною категорією результатів, а також кількість "
+"використовуваних модулів, дні перерви в роботі та поля, пов'язані з частотою "
+"помилок."
 
 #. [pages.common.lga_ZANHLS]
 #. defaultMessage is:
@@ -8667,6 +8695,13 @@ msgstr "Звіти"
 msgid "Reports Available"
 msgstr "Доступні звіти"
 
+#. [pages.Notifications.group.notificationCreateGroupForReport]
+#. defaultMessage is:
+#. Reports Notification
+#: extracted_strings.json
+msgid "Reports Notification"
+msgstr "Звіти Повідомлення"
+
 #. [pages.DeviceList.lastSeenDescription]
 #. defaultMessage is:
 #. Represents the last time when the connector application made a connection with Aspect
@@ -12829,6 +12864,19 @@ msgstr "ЗІП код"
 #: extracted_strings.json
 msgid "Zone"
 msgstr "Зона"
+
+#. [pages.ReportIndex.devicesAndSites_description]
+#. defaultMessage is:
+#. [WORK IN PROGRESS] An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".
+#: extracted_strings.json
+msgid ""
+"[WORK IN PROGRESS] An overview of all devices in the system, information "
+"about inventory in sites, and aggregated test results per device. This is "
+"the old and improved report of GxAlert called \"All Devices\"."
+msgstr ""
+"[Огляд всіх пристроїв в системі, інформація про інвентар на об'єктах та "
+"зведені результати тестів по кожному пристрою. Це старий і вдосконалений "
+"звіт GxAlert під назвою \"Всі пристрої\"."
 
 #. [pages.InventoryAdjustmentDialogForm.and]
 #. defaultMessage is:
