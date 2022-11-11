@@ -480,8 +480,8 @@ const deviceReport = {
   name: 'Device Report',
   description:
     'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
-  i18nKey: 'Device_Report',
-  i18nKeyDescription: 'Device_Report_description',
+  i18nKey: 'deviceReport',
+  i18nKeyDescription: 'deviceReport_description',
   externalId: 'device_report',
   fileName: 'DeviceReport',
   exportCsv: false,
@@ -498,6 +498,26 @@ const deviceReport = {
         sortDir: 'asc',
         avoidStreaming: true,
       },
+    },
+  ],
+}
+
+const devicesAndSitesOverview = {
+  name: 'Devices and Sites Overview',
+  description:
+    '[WORK IN PROGRESS] An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
+  i18nKey: 'devicesAndSitesOverview',
+  i18nKeyDescription: 'devicesAndSites_description',
+  externalId: 'devices_and_sites_overview',
+  fileName: 'DevicesAndSitesOverview',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 150,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDevicesAndSitesOverviewReport',
     },
   ],
 }
@@ -523,4 +543,5 @@ module.exports = {
   tbWorkloadSummary,
   xdrDevicesSummary,
   usageStats,
+  devicesAndSitesOverview,
 }
