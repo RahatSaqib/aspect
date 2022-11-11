@@ -11,7 +11,6 @@ const {
   getAdministrativeDivisionLabelPlaceHolders,
   renderExcelTemplate,
   streamExcelTemplate,
-  respondFile,
   RELABEL_EXCEL,
   renderExcelTemplateToCsv,
 } = require('../shared/excel')
