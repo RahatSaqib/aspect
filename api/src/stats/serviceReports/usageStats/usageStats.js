@@ -4,7 +4,6 @@ const { getBaseQuery } = require('../../../result/query')
 const { getPeopleBase } = require('../../../shared/utilsPerson')
 
 module.exports = async function getUsageStatsData(dataConstraints, query) {
-  console.log('\x1b[1;36m', '🚀 ➜ file: usageStats.js ➜ line 7 ➜ query', query)
   const activeUsersPromise = getActiveUsers(dataConstraints, query)
   const smsSentPromise = getSmsSent(dataConstraints, query)
   const emailsSentPromise = getEmailsSent(dataConstraints, query)
