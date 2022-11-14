@@ -340,7 +340,7 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
   )
 
   if (action.reportId) {
-    const generatedReports = new Set([])
+    const generatedReports = new Set()
     const { externalId } = await knex('Report').where({ id: action.reportId }).first()
     let fileName
 
@@ -351,10 +351,29 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
       // TODO: Improve to avoid collisions, include query params
       const reportHash = crypto.createHash('md5').update(JSON.stringify(constraints)).digest('hex')
 
-      if (generatedReports.has(reportHash)) {
+      if (!generatedReports.has(reportHash)) {
         generatedReports.add(reportHash)
+        /*
+        notificationType.filterCondition -> reportFrecuency
+        { name: 'daily', },
+          { name: 'weekly', },
+          { name: 'monthly', },
+          { name: 'quarterly', },
+        */
+
+        const auth = {
+          credentials: {
+            personId,
+          },
+        }
         // eslint-disable-next-line no-await-in-loop
-        fileName = await saveReportToFile({ personId }, constraints, externalId) // TODO recheck this
+        fileName = await saveReportToFile(
+          auth,
+          {
+            /* minDate: */
+          },
+          externalId
+        ) // TODO recheck this
       }
       // Generate JWT
       const reportToken = jwt.sign(
@@ -463,7 +482,6 @@ async function createNotificationIfNotCreatedAlready(
       siteId: policy.siteId,
       deviceId: policy.deviceId,
       resultId: policy.resultId,
-      reportId: policy.reportId,
       createdOn: now,
       updatedOn: now,
     }
