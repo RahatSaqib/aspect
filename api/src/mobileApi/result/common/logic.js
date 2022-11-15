@@ -41,9 +41,9 @@ const assayAvatarColorsIcon = {
   },
 }
 
-// Calculation of awaiting treatment, trasferred and requires treatment returns show treatment value
-const showTreatment = (testResult, followUp) => {
-  return isAwaitingTreatment(testResult, followUp) && !isTransferred(testResult) && requiresTreatment(testResult)
+// Calculation of awaiting treatment, trasnferred and requires treatment returns show treatment value
+const showTreatment = testResult => {
+  return !isTransferred(testResult) && requiresTreatment(testResult)
 }
 
 // get latest followup based on its type
@@ -73,14 +73,6 @@ const checkFollowupType = (testResult, followUp, type) => {
   return followUpDetail
 }
 
-// Awaiting treatment parameter is based on three properties - On treatment, outcome & possible to do treatment or not
-const isAwaitingTreatment = (testResult, followUp) => {
-  const isOutcome = checkFollowupType(testResult, followUp, 'outcome')
-  const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
-  const isNotPossible = testResult.resultTreatmentStatusExternalId === 'NotPossible'
-  return !isOnTreatment && !isOutcome && !isNotPossible
-}
-
 // Its number of days from the day treatment has started/updated
 const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
   const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
@@ -106,9 +98,9 @@ const isTransferred = testResult => {
   return !!testResult.transferredOn && sample.originSite.externalId !== testResult.reportableSiteId
 }
 
-// If result is returning require treatment and reportable then requiresTreatment parameter will return true, i.e. patient needs treatment
+// If result is returning require treatment true, i.e. patient needs treatment
 const requiresTreatment = testResult => {
-  return !!(testResult.requiresTreatment && testResult.reportable === 1)
+  return !!testResult.requiresTreatment
 }
 
 const getSeverity = (testResult, followUp) => {
@@ -258,7 +250,7 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
         name: d.resultTreatmentStatusName,
         externalId: d.resultTreatmentStatusExternalId,
         i18nKey: d.resultTreatmentStatusi18nKey,
-        visible: showTreatment(d, followUps),
+        visible: showTreatment(d),
         severity: getSeverity(d, followUps),
         daysInCurrentStatus: daysFromTreatmentDateUpdateOn(d, followUps),
       },

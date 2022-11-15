@@ -700,8 +700,8 @@ describe('Mobile API Result download routes v2 with available custom api-version
 
     function treatmentStatusValidation(response) {
       // Calculation of awaiting treatment, trasferred and requires treatment returns show treatment value
-      const showTreatment = (testResult, followUp) => {
-        return isAwaitingTreatment(testResult, followUp) && !isTransferred(testResult) && requiresTreatment(testResult)
+      const showTreatment = testResult => {
+        return testResult.treatmentStatus.externalId === 'OnTreatment'
       }
 
       // get latest followup based on its type
@@ -731,42 +731,13 @@ describe('Mobile API Result download routes v2 with available custom api-version
         return followUpDetail
       }
 
-      // Awaiting treatment parameter is based on three properties - On treatment, outcome & possible to do treatment or not
-      const isAwaitingTreatment = (testResult, followUp) => {
-        const isOutcome = checkFollowupType(testResult, followUp, 'outcome')
-        const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
-        const isNotPossible = testResult.resultTreatmentStatusExternalId === 'NotPossible'
-        return !isOnTreatment && !isOutcome && !isNotPossible
-      }
-
       // Its number of days from the day treatment has started/updated
       const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
         const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
         return isTreatment ? dayjs().diff(dayjs(isTreatment.updatedOn), 'day') : 0
       }
 
-      const isTransferred = testResult => {
-        const sample = {
-          id: testResult.sampleId,
-          originSite: testResult.sampleOriginSiteId
-            ? {
-                externalId: testResult.sampleOriginSiteExternalId,
-                name: testResult.sampleOriginSiteName,
-              }
-            : null,
-        }
-        return !!testResult.transferredOn && sample.originSite.externalId !== testResult.reportableSiteId
-      }
-
-      // If result is returning require treatment and reportable then requiresTreatment parameter will return true, i.e. patient needs treatment
-      const requiresTreatment = testResult => {
-        return !!(testResult.requiresTreatment && testResult.reportable === 1)
-      }
-
-      assert.equal(
-        response.body.data[0].treatmentStatus.visible,
-        showTreatment(response.body.data[0], response.body.data[0].followUp)
-      )
+      assert.equal(response.body.data[0].treatmentStatus.visible, showTreatment(response.body.data[0]))
       assert.equal(
         response.body.data[0].treatmentStatus.daysInCurrentStatus,
         daysFromTreatmentDateUpdateOn(response.body.data[0])
