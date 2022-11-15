@@ -1,6 +1,7 @@
 const { getConstraints } = require('../auth/constraints')
 const { getInventoryBySitesAndConsumable, getInventoryByLot } = require('./common/db')
 const { splitCsvWithTrim } = require('../shared/string')
+const { DAYS_STOCK_LEFT_RANGES } = require('../shared/constants')
 
 module.exports = async function (request) {
   const { auth, query } = request
@@ -36,15 +37,6 @@ async function listInventoryByLot(request, dataConstraints) {
 
 async function listInventoryBySiteAndConsumable(request, dataConstraints) {
   const { query } = request
-  const range = daysStockLeftRanges[query.daysStockLeft] || null
+  const range = DAYS_STOCK_LEFT_RANGES[query.daysStockLeft] || null
   return getInventoryBySitesAndConsumable(request, dataConstraints, range)
-}
-
-const daysStockLeftRanges = {
-  outOfStock: { min: 0, max: 0 },
-  upTo14: { min: 1, max: 14 },
-  upTo30: { min: 15, max: 30 },
-  upTo90: { min: 31, max: 90 },
-  upTo180: { min: 91, max: 180 },
-  moreThan180: { min: 181 },
 }

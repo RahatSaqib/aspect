@@ -1,14 +1,13 @@
 const { knex } = require('../../db')
-const { filterParams } = require('../../db')
+const { filterParams, filterDateRangeParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 const { joinModuleAvailability } = require('../common/db')
 
-async function getModuleStatusReportData(minDate, maxDate, dataConstraints, query) {
+async function getModuleStatusReportData(dataConstraints, query) {
   const moduleReplacedIssuesForPeriod = knex('Issue as issueModuleReplaced')
     .join('IssueType as it', 'issueModuleReplaced.issueTypeId', 'it.id')
     .where('it.name', 'Module Replaced')
-    .where('issueModuleReplaced.createdOn', '>=', minDate)
-    .where('issueModuleReplaced.createdOn', '<', maxDate)
+    .modify(filterDateRangeParams, query, 'issueModuleReplaced.createdOn')
     .select('issueModuleReplaced.deviceId')
     .count('issueModuleReplaced.id as qty')
     .groupBy('issueModuleReplaced.deviceId')

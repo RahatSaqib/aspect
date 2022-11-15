@@ -23,6 +23,7 @@ import {
   lowInventorySection,
   stockExpiringSection,
 } from './issueBasedConfig'
+import notificationTypeSection from './notificationTypeSection'
 import { reportBasedSection } from './reportBasedConfig'
 import { resultBasedSection } from './resultBasedConfig'
 
@@ -44,9 +45,10 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     items: [{ id: 'save', text: formatMessage(messages.save), action: 'save' }],
   },
   sections: [
-    ...notificationTypeSection(formatMessage), // notification header (enabled/type)
-    resultBasedSection(formatMessage), // only for ['resultBased']
+    enabledSection(formatMessage),
+    notificationTypeSection(formatMessage), // notification header (enabled/type)
     issueBasedSection(formatMessage), // only for ['issueBased]
+    resultBasedSection(formatMessage), // only for ['resultBased']
     reportBasedSection(formatMessage),
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
@@ -124,94 +126,26 @@ function sharedAreaItemsConfig(formatMessage, optionsBuilder, key) {
     },
   }
 }
-
-const notificationTypeSection = formatMessage => {
-  return [
-    // notification enabled
+// notification enabled
+const enabledSection = () => ({
+  id: 'section_notificationType_disable',
+  label: 'Enable',
+  labelI18nKey: 'notificationTypeEnable',
+  rows: [
     {
-      id: 'section_notificationType_disable',
-      label: 'Enable',
-      labelI18nKey: 'notificationTypeEnable',
-      rows: [
+      id: 0,
+      items: [
         {
-          id: 0,
-          items: [
-            {
-              id: 'enabled',
-              controlType: { component: 'checkbox' },
-              classNames: checkboxClassNames,
-              initialValue: true,
-              label: '',
-            },
-          ],
+          id: 'enabled',
+          controlType: { component: 'checkbox' },
+          classNames: checkboxClassNames,
+          initialValue: true,
+          label: '',
         },
       ],
     },
-    // notification type/name
-    {
-      id: 'section_notificationType',
-      label: 'Notification Type',
-      labelI18nKey: 'notificationType',
-      rows: [
-        {
-          id: 0,
-          items: [
-            {
-              id: 'name',
-              controlType: { component: 'textField' },
-              fullWidth: true,
-              labelI18nKey: 'notificationTitle',
-            },
-            {
-              id: 'notificationType',
-              controlType: {
-                component: 'select',
-                hideIfNoOptions: false,
-                options: [
-                  {
-                    value: 'resultBased',
-                    label: formatMessage(messages.notificationTypeResultBased),
-                    icon: 'GrTest',
-                  },
-                  {
-                    value: 'issueBased',
-                    label: formatMessage(messages.notificationTypeIssueBased),
-                    icon: 'AiOutlineIssuesClose',
-
-                    options: [
-                      {
-                        value: 'InventoryStockout',
-                        label: formatMessage(messages.notificationTypeLowInventory),
-                        icon: 'AiOutlineDashboard',
-                      },
-                      {
-                        value: 'InventoryStockExpiring',
-                        label: formatMessage(messages.notificationTypeExpiring),
-                        icon: 'AiOutlineDashboard',
-                      },
-                    ],
-                  },
-                  // {
-                  //   value: 'reportBased',
-                  //   label: formatMessage(messages.notificationTypeReportBased),
-                  //   icon: 'AiOutlineSolution',
-                  // },
-                ],
-                placeholder: formatMessage(messages.notificationType),
-              },
-              classNames: {
-                itemContainer: cssClasses('min-width-100pc', 'tags-container'),
-                controlContainer: cssClasses('full-width-100pc'),
-                item: cssClasses('full-width-100pc'),
-              },
-              labelI18nKey: 'notificationType',
-            },
-          ],
-        },
-      ],
-    },
-  ]
-}
+  ],
+})
 
 const geographySection = formatMessage => {
   return {

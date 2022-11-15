@@ -120,7 +120,7 @@ const Status = () => {
           </PermissionsProvider>
 
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
-            <PermissionsProvider permissions={['dashboard']}>
+            <PermissionsProvider permissions={['dashboard', '+reporter']}>
               <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
             </PermissionsProvider>
           ) : null}

@@ -847,7 +847,7 @@ describe('Notification routes', () => {
       sendWeb: false,
       result: baseFilterCondition.result,
       enabled: true,
-      cronRecurrency: null,
+      reportFrecuency: null,
       issueTypeId: null,
     })
   })

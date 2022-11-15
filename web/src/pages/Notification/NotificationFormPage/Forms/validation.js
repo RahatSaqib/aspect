@@ -23,7 +23,6 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
 const validationSchema = formatMessage =>
   Yup.object()
     .shape({
-      notificationType: Yup.string().oneOf(['resultBased', 'issueBased', 'reportBased']).required(),
       issueTypeId: Yup.string().when('notificationType', {
         is: 'issueBased',
         then: Yup.string()

@@ -291,6 +291,7 @@ const deviceDetailsResponseFields = Joi.object()
     errorCount60: Joi.number().allow(null).description('Number of results in the last 60 days'),
     errorRateThisMonth: Joi.number().allow(null).description('Error rate in last 30 days'),
     dailyCapacity: Joi.number().allow(null).description('Number of results delivered in the last 30 days'),
+    dailyCapacityId: Joi.number().allow(null).description('Id of the device capacity'),
     deliveredLastMonth: Joi.number().allow(null).description('Number of results delivered in the 30 days before that'),
     calibrationDate: Joi.date().allow(null).description('Date of the last calibration'),
     calibrationNotes: Joi.string().allow('', null).description('Notes about the last calibration'),

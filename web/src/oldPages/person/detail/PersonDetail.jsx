@@ -8,7 +8,6 @@ import { connect } from 'react-redux'
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
 import ContactDetailsFormFormik from '../../../components/Account/Details'
-import NavTitle from '../../../oldComponents/NavTitle'
 import PermissionsProvider from '../../../providers/PermissionsProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../../store/JobRedux'
@@ -184,7 +183,6 @@ export class PersonDetail extends PureComponent {
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
-        <NavTitle title={formatMessage(messages.title)} />
         <Routes>
           <Route
             path=""

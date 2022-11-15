@@ -46,7 +46,10 @@ const NotificationFormPage = ({ id }) => {
   useNotification(notificationId, {
     enabled: !!intl && !!jobFunctions && !!partner,
     onSuccess: data => {
-      const { notificationType, cronRecurrency, issueTypeId, reportId, name, emailSubject, emailBody } = data
+      if (data.notificationType === 'issueBased') {
+        data.notificationType = data.issueType
+      }
+      const { notificationType, cronRecurrency, issueType, reportId, name, emailSubject, emailBody } = data
       const { smsBody, webUrl, webBody, filterCondition, enabled } = data
 
       const filter = JSON.parse(filterCondition)
@@ -69,7 +72,7 @@ const NotificationFormPage = ({ id }) => {
         areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
         areaItemsLab: buildAreaItems(filter.deviceLevelId, 'lab', filter.areaItems),
         result: filter.result,
-        issueTypeId,
+        issueType,
         reportId,
         hasRecurrency: !!cronRecurrency,
         cronRecurrency,
@@ -109,6 +112,11 @@ const NotificationFormPage = ({ id }) => {
     const { deviceLevelId } = formik.values
 
     values.notificationType = formik.values.notificationType
+    if (!['resultBased', 'reportBased'].includes(formik.values.notificationType)) {
+      values.issueType = formik.values.notificationType
+      values.notificationType = 'issueBased'
+    }
+
     values.jobFunctions.map((jf, index) => {
       jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
       if (jf.tags === '') {
@@ -141,8 +149,11 @@ const NotificationFormPage = ({ id }) => {
       unset(values, 'persons')
     }
 
-    if (!values?.hasRecurrency) {
+    if (values?.notificationType !== 'reportBased') {
       delete values.cronRecurrency
+    } else {
+      values.cronRecurrency = formik.values.cronRecurrency.cronExpression
+      values.reportFrecuency = formik.values.cronRecurrency.frecuency
     }
 
     /**

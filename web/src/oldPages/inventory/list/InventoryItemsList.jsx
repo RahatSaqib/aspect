@@ -16,7 +16,6 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -218,7 +217,6 @@ export const InventoryItemsListWithProps = ({
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.inventoryItemsTitle)} />
       <BrowseFilters
         navigate={navigate}
         location={location}

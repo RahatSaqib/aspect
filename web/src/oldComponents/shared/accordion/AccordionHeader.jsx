@@ -3,14 +3,11 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { IconButton } from '@mui/material'
 import classnames from 'classnames/bind'
-import { compose, setDisplayName } from 'recompose'
 import styles from './Accordion.css'
 
 const cssClasses = classnames.bind(styles)
 
-const enhance = compose(setDisplayName('AccordionHeader'))
-
-export const AccordionHeader = ({
+const AccordionHeader = ({
   label,
   expandedLabel,
   className,
@@ -43,4 +40,4 @@ export const AccordionHeader = ({
   </div>
 )
 
-export default enhance(AccordionHeader)
+export default AccordionHeader

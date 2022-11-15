@@ -105,6 +105,7 @@ const SELECT_SHOW_FIELDS = [
   'dt.configurationDataSchema',
   'dt.deviceOperationSchema',
   'dp.dailyCapacity',
+  'dp.id as dailyCapacityId',
   'frd30.resultCount as resultCountThisMonth',
   'frd60.resultCount as resultCount60',
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
@@ -508,6 +509,10 @@ async function updateDevice(request) {
       siteId: payload.siteId || device.siteId,
       deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
+      deviceCapacityId: payload.deviceCapacityId,
+      name: payload.name,
+      notes: payload.notes,
+      shortName: payload.shortName,
     })
 
   if (updatedCount !== 1) {
