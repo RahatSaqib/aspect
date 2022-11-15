@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const dayjs = require('dayjs')
-const { pipe, find, sortWith, prop, descend, values } = require('ramda')
+const { pipe, find, values } = require('ramda')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/date')
 
 const assayAvatarColorsIcon = {
@@ -46,29 +46,51 @@ const showTreatment = (testResult, followUp) => {
   return isAwaitingTreatment(testResult, followUp) && !isTransferred(testResult) && requiresTreatment(testResult)
 }
 
-const isOnTreatment = testResult => {
-  return testResult.resultTreatmentStatusExternalId === 'OnTreatment'
-}
-
-// Awaiting treatment parameter is based on three properties - On treatment, outcome & possible to do treatment or not
-const isAwaitingTreatment = (testResult, followUp) => {
+// get latest followup based on its type
+const checkFollowupType = (testResult, followUp, type) => {
   const followUps = _.sortBy(
     _.filter(followUp, { resultId: testResult.id }).map(f => _.omit(f, 'resultId')),
     ['date', 'updatedOn']
   )
-  const isOutcome = pipe(
+  const maxDate = new Date(
+    Math.max(
+      ...followUps.map(element => {
+        return element.createdOn
+      })
+    )
+  )
+  const followUpDetail = pipe(
     values,
-    sortWith([descend(prop('createdOn'))]),
-    find(followUpDetail => followUpDetail.followUpTypeExternalId === 'outcome')
+    find(followUpDetail => {
+      if (
+        followUpDetail.followUpTypeExternalId === type &&
+        new Date(followUpDetail.createdOn).toISOString() === new Date(maxDate).toISOString()
+      ) {
+        return followUpDetail
+      }
+    })
   )(followUps)
+  return followUpDetail
+}
+
+// Awaiting treatment parameter is based on three properties - On treatment, outcome & possible to do treatment or not
+const isAwaitingTreatment = (testResult, followUp) => {
+  const isOutcome = checkFollowupType(testResult, followUp, 'outcome')
+  const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
   const isNotPossible = testResult.resultTreatmentStatusExternalId === 'NotPossible'
-  return !isOnTreatment(testResult) && !isOutcome && !isNotPossible
+  return !isOnTreatment && !isOutcome && !isNotPossible
 }
 
 // Its number of days from the day treatment has started/updated
-const daysFromTreatmentDate = testResult => {
-  const updatedOn = dayjs(testResult.updatedOn)
-  return dayjs().diff(updatedOn, 'day')
+const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
+  const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
+  return isTreatment ? dayjs().diff(dayjs(isTreatment.updatedOn), 'day') : 0
+}
+
+// Its number of days from the day treatment has started/updated
+const daysFromTreatmentDateEndOn = (testResult, followUp) => {
+  const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
+  return isTreatment ? dayjs().diff(dayjs(isTreatment.endedOn), 'day') : 0
 }
 
 const isTransferred = testResult => {
@@ -89,21 +111,23 @@ const requiresTreatment = testResult => {
   return !!(testResult.requiresTreatment && testResult.reportable === 1)
 }
 
-const getSeverity = testResult => {
-  const endedOn = dayjs(testResult.endedOn)
-  const daysDiff = dayjs().diff(endedOn, 'day')
+const getSeverity = (testResult, followUp) => {
+  const daysDiff = daysFromTreatmentDateEndOn(testResult, followUp)
   const requireTreatment = requiresTreatment(testResult)
+  const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
   let severity = ''
-  if (requireTreatment && !isOnTreatment(testResult) && daysDiff < 30) {
-    severity = 'info'
-  } else if (requireTreatment && !isOnTreatment(testResult) && daysDiff === 30) {
-    severity = 'warning'
-  } else if (requireTreatment && !isOnTreatment(testResult) && daysDiff > 30) {
-    severity = 'danger'
-  } else if (requireTreatment && isOnTreatment(testResult)) {
-    severity = 'success'
+  if (requireTreatment) {
+    if (!isOnTreatment && daysDiff < 30) {
+      severity = 'info'
+    } else if (!isOnTreatment && daysDiff === 30) {
+      severity = 'warning'
+    } else if (!isOnTreatment && daysDiff > 30) {
+      severity = 'danger'
+    } else if (isOnTreatment) {
+      severity = 'success'
+    }
   } else {
-    severity = ''
+    severity = 'info'
   }
   return severity
 }
@@ -235,8 +259,8 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
         externalId: d.resultTreatmentStatusExternalId,
         i18nKey: d.resultTreatmentStatusi18nKey,
         visible: showTreatment(d, followUps),
-        severity: getSeverity(d),
-        daysInCurrentStatus: daysFromTreatmentDate(d),
+        severity: getSeverity(d, followUps),
+        daysInCurrentStatus: daysFromTreatmentDateUpdateOn(d, followUps),
       },
       followUps: _.sortBy(
         _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),

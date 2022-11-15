@@ -2,7 +2,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const dayjs = require('dayjs')
-const { pipe, find, sortWith, prop, descend, values } = require('ramda')
+const { pipe, find, values } = require('ramda')
 const shared = require('../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
@@ -704,29 +704,45 @@ describe('Mobile API Result download routes v2 with available custom api-version
         return isAwaitingTreatment(testResult, followUp) && !isTransferred(testResult) && requiresTreatment(testResult)
       }
 
-      const isOnTreatment = testResult => {
-        return testResult.resultTreatmentStatusExternalId === 'OnTreatment'
-      }
-
-      // Awaiting treatment parameter is based on three properties - On treatment, outcome & possible to do treatment or not
-      const isAwaitingTreatment = (testResult, followUp) => {
+      // get latest followup based on its type
+      const checkFollowupType = (testResult, followUp, type) => {
         const followUps = _.sortBy(
           _.filter(followUp, { resultId: testResult.id }).map(f => _.omit(f, 'resultId')),
           ['date', 'updatedOn']
         )
-        const isOutcome = pipe(
+        const maxDate = new Date(
+          Math.max(
+            ...followUps.map(element => {
+              return element.createdOn
+            })
+          )
+        )
+        const followUpDetail = pipe(
           values,
-          sortWith([descend(prop('createdOn'))]),
-          find(followUpDetail => followUpDetail.followUpTypeExternalId === 'outcome')
+          find(followUpDetail => {
+            if (
+              followUpDetail.followUpTypeExternalId === type &&
+              new Date(followUpDetail.createdOn).toISOString() === new Date(maxDate).toISOString()
+            ) {
+              return followUpDetail
+            }
+          })
         )(followUps)
+        return followUpDetail
+      }
+
+      // Awaiting treatment parameter is based on three properties - On treatment, outcome & possible to do treatment or not
+      const isAwaitingTreatment = (testResult, followUp) => {
+        const isOutcome = checkFollowupType(testResult, followUp, 'outcome')
+        const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
         const isNotPossible = testResult.resultTreatmentStatusExternalId === 'NotPossible'
-        return !isOnTreatment(testResult) && !isOutcome && !isNotPossible
+        return !isOnTreatment && !isOutcome && !isNotPossible
       }
 
       // Its number of days from the day treatment has started/updated
-      const daysFromTreatmentDate = testResult => {
-        const updatedOn = dayjs(testResult.updatedOn)
-        return dayjs().diff(updatedOn, 'day')
+      const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
+        const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
+        return isTreatment ? dayjs().diff(dayjs(isTreatment.updatedOn), 'day') : 0
       }
 
       const isTransferred = testResult => {
@@ -753,7 +769,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
       )
       assert.equal(
         response.body.data[0].treatmentStatus.daysInCurrentStatus,
-        daysFromTreatmentDate(response.body.data[0])
+        daysFromTreatmentDateUpdateOn(response.body.data[0])
       )
     }
 
