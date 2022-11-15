@@ -7,6 +7,7 @@ const config = require('../config')
 
 const { knex } = require('../db')
 const { parseDateOrDefault, formatDateOrDefault, getFormattedDateTimeWithTimezone } = require('../shared/date')
+const { addConstraints } = require('../auth/constraints')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -50,7 +51,7 @@ function getMustacheTokensInString(inputString) {
   return inputString.match(/{{\s*[\w.[\]\s]+\s*}}/g)
 }
 
-function addDataSourceToQuery(queryBuilder, aliases, resultId) {
+function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, reportId) {
   // TODO generalize to other aliases and make joined tables and field names unique
   // similar to auth/constraints
   const { message, notification } = aliases
@@ -149,6 +150,33 @@ function addDataSourceToQuery(queryBuilder, aliases, resultId) {
         'nt.name as notificationTypeName',
         knex.raw(`${notification}.reportToken as reportToken`)
       )
+  }
+
+  if (!_.isEmpty(dataConstraints)) {
+    let aliases = {
+      assay: 'a',
+      partner: 'pr',
+      deviceType: 'dt',
+      person: 'p',
+      /*
+      result: 'r',
+      ^^^ Leaving this commented out to  highlight the fact that adding these
+          constraints will break the RO notifications configured for Myanmar
+      */
+      sample: 'sample',
+      showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
+    }
+
+    if (!reportId) {
+      aliases = {
+        ...aliases,
+        device: 'd',
+        site: 's',
+      }
+    }
+
+    queryBuilder.modify(addConstraints, dataConstraints, aliases)
   }
 
   return queryBuilder

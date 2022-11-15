@@ -5,7 +5,7 @@ const { subDays, subMonths } = require('date-fns')
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints } = require('../auth/constraints')
 const { generateCsvAttachment } = require('../shared/io')
 const { getDeviceErrorHistoryForAttachment } = require('../result/serviceReport')
 const { startOfDayUtc, startOfMonthUTC, endOfMonthUTC } = require('../shared/date')
@@ -102,38 +102,21 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   const {
     personId,
     resultId,
+    reportId,
     to = null,
     email,
     email2,
   } = (await knex('EmailMessage as m')
     .leftJoin('Person as p', 'm.personId', 'p.id')
+    .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
     .where({ 'm.id': emailMessageId })
-    .first('m.personId', 'm.resultId', 'm.to', 'p.email', 'p.email2')) || {}
+    .first('n.personId', 'n.resultId', 'n.reportId', 'm.to', 'p.email', 'p.email2')) || {}
 
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('EmailMessage as m')
     .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
-    .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
-    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, resultId)
-    .modify(builder => {
-      if (!_.isEmpty(dataConstraints))
-        builder.modify(addConstraints, dataConstraints, {
-          assay: 'a',
-          partner: 'pr',
-          device: 'd',
-          deviceType: 'dt',
-          person: 'p',
-          /*
-          result: 'r',
-          ^^^ Leaving this commented out to  highlight the fact that adding these
-              constraints will break the RO notifications configured for Myanmar
-          */
-          sample: 'sample',
-          site: 's',
-          showUnapprovedDevices: true,
-          showDecommissionedDevices: true,
-        })
-    })
+    .join('Notification as n', 'n.emailMessageId', 'm.id')
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, dataConstraints, resultId, reportId)
     .where({ 'm.id': emailMessageId })
     .first(
       'tmpl.subject as subjectTemplate',

@@ -1,7 +1,7 @@
 const { pushNotificationMessageReadyForSending, pushNotificationMessageSent } = require('./actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints } = require('../auth/constraints')
 
 // -----------------------------
 // onPushNotificationMessageCreated - event handler for action PUSH_NOTIFICATION_MESSAGE_CREATED
@@ -89,30 +89,15 @@ async function doSendPushNotificationMessage(context, knex, pushNotificationMess
 }
 
 async function createPushNotificationMessageFromTemplate(knex, pushNotificationMessageId) {
-  const { personId, resultId } = await knex('PushNotificationMessage')
-    .where('id', pushNotificationMessageId)
-    .first('personId', 'resultId')
+  const { personId, resultId, reportId } = await knex('PushNotificationMessage p')
+    .join('Notification as n', 'n.pushNotificationMessageId', 'p.id')
+    .where('p.id', pushNotificationMessageId)
+    .first('n.personId', 'n.resultId', 'n.reportId')
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('PushNotificationMessage as m')
     .innerJoin('PushNotificationTemplate as tmpl', 'm.pushNotificationTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.pushNotificationMessageId', 'm.id')
-    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, resultId)
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      partner: 'pr',
-      device: 'd',
-      deviceType: 'dt',
-      person: 'p',
-      /*
-      result: 'r',
-      ^^^ Leaving this commented out to  highlight the fact that adding these
-          constraints will break the RO notifications configured for Myanmar
-      */
-      sample: 'sample',
-      site: 's',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
-    })
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, dataConstraints, resultId, reportId)
     .where({ 'm.id': pushNotificationMessageId })
     .first('tmpl.title as titleTemplate', 'tmpl.body as bodyTemplate', 'tmpl.data as dataTemplate')
   return processUsingDataSourceQuery(data, ['titleTemplate', 'bodyTemplate', 'dataTemplate'])

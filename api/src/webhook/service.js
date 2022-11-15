@@ -4,7 +4,7 @@ const { webhookMessagePending, webhookMessageSent, webhookMessageError } = requi
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
@@ -174,41 +174,24 @@ async function finalizeWebhookMessage(webhookMessageId, messageContext) {
 }
 
 async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
-  const { personId, resultId } = await knex('WebhookMessage')
-    .where('id', webhookMessageId)
-    .first('personId', 'resultId')
+  const { personId, resultId, reportId } = await knex('WebhookMessage w')
+    .join('Notification as n', 'n.webhookMessageId', 'w.id')
+    .where('w.id', webhookMessageId)
+    .first('n.personId', 'n.resultId', 'n.reportId')
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('WebhookMessage as m')
     .innerJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.webhookMessageId', 'm.id')
-    .modify(queryBuilder => {
-      queryBuilder.modify(
-        addDataSourceToQuery,
-        {
-          message: 'm',
-          notification: 'n',
-        },
-        resultId
-      )
-      if (dataConstraints) {
-        queryBuilder.modify(addConstraints, dataConstraints, {
-          assay: 'a',
-          partner: 'pr',
-          device: 'd',
-          deviceType: 'dt',
-          person: 'p',
-          /*
-          result: 'r',
-          ^^^ Leaving this commented out to  highlight the fact that adding these
-              constraints will break the RO notifications configured for Myanmar
-          */
-          sample: 'sample',
-          site: 's',
-          showUnapprovedDevices: true,
-          showDecommissionedDevices: true,
-        })
-      }
-    })
+    .modify(
+      addDataSourceToQuery,
+      {
+        message: 'm',
+        notification: 'n',
+      },
+      dataConstraints,
+      resultId,
+      reportId
+    )
     .where({ 'm.id': webhookMessageId })
     .first(
       'tmpl.payload as payloadTemplate',
