@@ -661,6 +661,8 @@ export const FiltersPanel = ({
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterSiteName)}
                   floatingLabelText={formatMessage(messages.site)}
+                  stateId={filters.stateId}
+                  lgaId={filters.lgaId}
                 />
               </div>
             )}

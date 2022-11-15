@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useMemo } from 'react'
 import { Autocomplete, TextField } from '@mui/material'
+import isNumber from 'lodash/isNumber'
+import unionBy from 'lodash/unionBy'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../QueryFetch'
@@ -15,38 +17,65 @@ const SiteAutoCompleteField = ({
   disableClearable,
   errorText,
   width,
+  stateId,
+  lgaId,
 }) => {
-  const [selectedValue, setSelectedValue] = useState(value === '' ? undefined : value)
+  /**
+   * 1. get list of all sites
+   */
   const { isLoading, data: { data: siteData } = false } = useQuery([SITE_ALL.KEY], async () =>
     fetchWrapperForQueries({ endpoint: SITE_ALL.ENDPOINT })
   )
 
-  const onSelect = (_, value, reason) => {
-    if (reason === 'clear') {
-      onChange({ name: undefined })
+  /**
+   * 2. make sure that `allOptions` doesn't contain any dupes for `names`
+   */
+  const allOptions = useMemo(() => unionBy(siteData, 'name'), [siteData])
+
+  /**
+   * 3. filtered by stateId/lgaId list of sites
+   */
+  const options = useMemo(
+    () => allOptions.filter(o => (!stateId || stateId === o.stateId) && (!lgaId || lgaId === o.lgaId)),
+    [allOptions, stateId, lgaId]
+  )
+
+  /**
+   * 4. Based on value of `value` - find actual object to set it as `selectedValue`.
+   * Notice that we work in `controlled` mode, i.e. value is not `undefined` but
+   * is either `null` or some actual object
+   */
+  const selectedValue = useMemo(() => {
+    let v
+    if (isNumber(v)) {
+      v = options?.find(e => e.id === value)
     } else {
-      setSelectedValue(value)
-      onChange(value)
+      v = options?.find(e => e.name === value)
     }
+    return v || null
+  }, [value, options])
+
+  /**
+   * event handler - changed value returns back to this component via prop `value` and then it changes
+   * memoized variable `selectedValue` which then is used in `value={selectedValue}` in return jsx below
+   */
+  const onSelect = (_, value, reason) => {
+    onChange(reason === 'clear' ? { name: undefined } : value)
   }
 
   return siteData ? (
     <Autocomplete
       name={name}
-      isOptionEqualToValue={(o, val) => o.name === (val.name || val) || o.id === (val.id || val)}
+      isOptionEqualToValue={(o, val) => o.name === (val?.name || val) || o.id === (val?.id || val)}
       getOptionLabel={option => option.name ?? option}
       disableClearable={disableClearable}
       filterOptions={(options, state) =>
         options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))
       }
-      value={
-        selectedValue && !Number.isNaN(parseInt(selectedValue, 10))
-          ? siteData.find(e => e.id === selectedValue).name
-          : selectedValue
-      }
+      value={selectedValue}
       loading={isLoading}
       fullWidth
-      options={siteData || []}
+      options={options}
       onChange={onSelect}
       renderInput={params => (
         <TextField
@@ -76,6 +105,8 @@ SiteAutoCompleteField.defaultProps = {
   disableClearable: false,
   errorText: undefined,
   width: 250,
+  stateId: undefined,
+  lgaId: undefined,
 }
 SiteAutoCompleteField.propTypes = {
   name: PropTypes.string,
@@ -86,5 +117,7 @@ SiteAutoCompleteField.propTypes = {
   hintText: PropTypes.string,
   disableClearable: PropTypes.bool,
   errorText: PropTypes.string,
-  width: PropTypes.number || PropTypes.string,
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  stateId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  lgaId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 }
