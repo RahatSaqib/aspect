@@ -43,7 +43,7 @@ const i18nKeys = {
   upTo180: 'upTo180',
 }
 
-const InventoryStatusGraphMain = ({ assaysFromState, showLabel, filterSelection }) => {
+const InventoryStatusGraphMain = ({ assaysFromState, showLabel, filterSelection = null }) => {
   const { formatMessage } = useI18n()
 
   const [rawData, setRawData] = useState(false)
@@ -51,11 +51,12 @@ const InventoryStatusGraphMain = ({ assaysFromState, showLabel, filterSelection 
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
 
-  const params = [filterSelection]
+  const params = filterSelection
 
-  const { isLoading, data } = useQuery(['suppliesExpiryByPeriod', { params }], async ({ queryKey: [, { params }] }) =>
-    fetchWrapperForQueries({ endpoint: '/inventory/days-by-location', params })
-  )
+  const { isLoading, data } = useQuery(['suppliesExpiryByPeriod', { params }], async ({ queryKey: [, { params }] }) => {
+    // Call the query only when a consumable is selected - avoiding unnecesary calls to the API
+    if (filterSelection) return fetchWrapperForQueries({ endpoint: '/inventory/days-by-location', params })
+  })
 
   useEffect(() => {
     if (data) {
@@ -94,7 +95,7 @@ const InventoryStatusGraphMain = ({ assaysFromState, showLabel, filterSelection 
     }
   }, [rawData])
 
-  return isLoading ? (
+  return !params || isLoading ? (
     <Loading />
   ) : (
     <Grid item xs={12} md={12} lg={12}>

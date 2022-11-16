@@ -261,10 +261,9 @@ async function getInventoryByLot(request, requestQuery, dataConstraints) {
   return { total, data }
 }
 
-async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
-  let inventoryQuery = getInventorySitesQuery(dataConstraints, request)
-
-  inventoryQuery = knex
+function getInventoryBySitesAndConsumableQuery(request, dataConstraints, range, columns = '*') {
+  const inventoryQuery = getInventorySitesQuery(dataConstraints, request)
+  return knex
     .from(inventoryQuery.as('t2'))
     .modify(builder => {
       if (range) {
@@ -277,7 +276,12 @@ async function getInventoryBySitesAndConsumable(request, dataConstraints, range)
         )
       }
     })
-    .select(`*`)
+    .select(columns)
+}
+
+async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
+  let inventoryQuery = getInventoryBySitesAndConsumableQuery(request, dataConstraints, range)
+
   const [{ total }] = await inventoryQuery.clone().count('id as total')
 
   // sorting and pagination
@@ -295,4 +299,5 @@ module.exports = {
   getInventoryLots,
   getInventoryByLot,
   getInventoryBySitesAndConsumable,
+  getInventoryBySitesAndConsumableQuery,
 }

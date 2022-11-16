@@ -379,7 +379,9 @@ const getItemsV2 = (resultQuery, query) => {
       'r.reportableSiteId',
       'sirep.name as reportableSiteName',
       'rslog.createdOn as transferredOn',
-      'ptr.name as transferredBy'
+      'ptr.name as transferredBy',
+      'rca.requiresTreatment as requiresTreatment',
+      'rca.reportable as reportable'
     )
 }
 

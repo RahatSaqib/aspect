@@ -189,5 +189,23 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.usageStatistics_description',
     defaultMessage: 'Shows stats about the use of the system.',
   },
+  devicesAndSitesOverview: {
+    id: 'pages.ReportIndex.devicesAndSitesOverview',
+    defaultMessage: 'Devices and Sites Overview (BETA)',
+  },
+  devicesAndSites_description: {
+    id: 'pages.ReportIndex.devicesAndSites_description',
+    defaultMessage:
+      'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices" - This report is in BETA version and still in progress.',
+  },
+  deviceReport: {
+    id: 'pages.ReportIndex.deviceReport',
+    defaultMessage: 'Device Report',
+  },
+  deviceReport_description: {
+    id: 'pages.ReportIndex.deviceReport_description',
+    defaultMessage:
+      'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
+  },
 })
 export default messages
