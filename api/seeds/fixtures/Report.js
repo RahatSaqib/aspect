@@ -503,9 +503,9 @@ const deviceReport = {
 }
 
 const devicesAndSitesOverview = {
-  name: 'Devices and Sites Overview',
+  name: 'Devices and Sites Overview (BETA)',
   description:
-    '[WORK IN PROGRESS] An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
+    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices" - This report is in BETA version and still in progress',
   i18nKey: 'devicesAndSitesOverview',
   i18nKeyDescription: 'devicesAndSites_description',
   externalId: 'devices_and_sites_overview',
