@@ -1,6 +1,8 @@
 const chai = require('chai')
 const _ = require('lodash')
 const Promise = require('bluebird')
+const dayjs = require('dayjs')
+const { pipe, find, values } = require('ramda')
 const shared = require('../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
@@ -665,6 +667,85 @@ describe('Mobile API Result download routes v2 with available custom api-version
       }
     }
 
+    function assertReporterResultDownloadResponseContainingResultsWithTreatmentStatus(response, numberOfResults) {
+      assertReporterResultDownloadResponse(response)
+
+      assert.equal(response.body.total, numberOfResults)
+      assert.equal(response.body.length, numberOfResults)
+      assert.isAtLeast(response.body.awaitingTreatment, 0)
+      if (!_.isNil(response.body.nextPage)) {
+        assert.isAtLeast(response.body.nextPage, 0)
+      }
+      expect(response).to.containSubset({
+        body: {
+          data: [
+            {
+              treatmentStatus: {},
+            },
+          ],
+        },
+      })
+
+      assert.equal(Object.keys(response.body.data[0].treatmentStatus).length, 7)
+      if (response.body.data[0].treatmentStatus) {
+        assert.property(response.body.data[0].treatmentStatus, 'changedOn')
+        assert.property(response.body.data[0].treatmentStatus, 'name')
+        assert.property(response.body.data[0].treatmentStatus, 'externalId')
+        assert.property(response.body.data[0].treatmentStatus, 'i18nKey')
+        assert.property(response.body.data[0].treatmentStatus, 'visible')
+        assert.property(response.body.data[0].treatmentStatus, 'severity')
+        assert.property(response.body.data[0].treatmentStatus, 'daysInCurrentStatus')
+      }
+    }
+
+    function treatmentStatusValidation(response) {
+      const showTreatment = testResult => {
+        return (
+          testResult.treatmentStatus.externalId === 'OnTreatment' ||
+          testResult.treatmentStatus.externalId === 'AwaitingTreatment'
+        )
+      }
+
+      // get latest followup based on its type
+      const checkFollowupType = (testResult, followUp, type) => {
+        const followUps = _.sortBy(
+          _.filter(followUp, { resultId: testResult.id }).map(f => _.omit(f, 'resultId')),
+          ['date', 'updatedOn']
+        )
+        const maxDate = new Date(
+          Math.max(
+            ...followUps.map(element => {
+              return element.createdOn
+            })
+          )
+        )
+        const followUpDetail = pipe(
+          values,
+          find(followUpDetail => {
+            if (
+              followUpDetail.followUpTypeExternalId === type &&
+              new Date(followUpDetail.createdOn).toISOString() === new Date(maxDate).toISOString()
+            ) {
+              return followUpDetail
+            }
+          })
+        )(followUps)
+        return followUpDetail
+      }
+
+      // Its number of days from the day treatment has started/updated
+      const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
+        const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
+        return isTreatment ? dayjs().diff(dayjs(isTreatment.updatedOn), 'day') : 0
+      }
+
+      assert.equal(response.body.data[0].treatmentStatus.visible, showTreatment(response.body.data[0]))
+      assert.equal(
+        response.body.data[0].treatmentStatus.daysInCurrentStatus,
+        daysFromTreatmentDateUpdateOn(response.body.data[0])
+      )
+    }
+
     function assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(response, numberOfResults) {
       assertReporterResultDownloadResponse(response)
 
@@ -733,6 +814,58 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
       assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(res, totalResults)
+
+      // we're not awaiting the insert before returning in service.js, so need a delay here
+      await Promise.delay(1000)
+
+      // check if the download is register in the table.
+      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
+        .join('Result as r', 'rdl.resultId', 'r.id')
+        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
+        .whereIn(
+          'rdl.resultId',
+          _.map(res.body.data, elem => elem.id)
+        )
+        .where('rs.externalId', 'Delivered')
+        .count('rdl.id as count')
+        .first()
+
+      assert.isAtLeast(totalResult, res.body.length)
+    })
+
+    it('should return a paged list of results and update them to delivered with treatment status', async () => {
+      const res = await server
+        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `31`)
+      assertReporterResultDownloadResponseContainingResultsWithTreatmentStatus(res, totalResults)
+
+      // we're not awaiting the insert before returning in service.js, so need a delay here
+      await Promise.delay(1000)
+
+      // check if the download is register in the table.
+      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
+        .join('Result as r', 'rdl.resultId', 'r.id')
+        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
+        .whereIn(
+          'rdl.resultId',
+          _.map(res.body.data, elem => elem.id)
+        )
+        .where('rs.externalId', 'Delivered')
+        .count('rdl.id as count')
+        .first()
+
+      assert.isAtLeast(totalResult, res.body.length)
+    })
+
+    it('should return a paged list of results and update them to delivered with treatment status validation', async () => {
+      const res = await server
+        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `31`)
+      treatmentStatusValidation(res)
 
       // we're not awaiting the insert before returning in service.js, so need a delay here
       await Promise.delay(1000)
