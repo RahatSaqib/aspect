@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Autocomplete, TextField } from '@mui/material'
 import isNumber from 'lodash/isNumber'
-import unionBy from 'lodash/unionBy'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../QueryFetch'
@@ -9,7 +8,7 @@ import { SITE_ALL } from '../QueryFetch/Site/index'
 
 const SiteAutoCompleteField = ({
   name,
-  value,
+  value, // <-- this is either a string (siteName) or number (siteId)
   onChange,
   floatingLabelFixed,
   floatingLabelText,
@@ -30,7 +29,18 @@ const SiteAutoCompleteField = ({
   /**
    * 2. make sure that `allOptions` doesn't contain any dupes for `names`
    */
-  const allOptions = useMemo(() => unionBy(siteData, 'name'), [siteData])
+  const allOptions = useMemo(() => {
+    const countByName = {}
+    return (siteData || []).map(item => {
+      const { name } = item
+      countByName[name] = (countByName[name] || 0) + 1
+      const trail = countByName[name] === 1 ? '' : ` (${countByName[name]})`
+      return {
+        ...item,
+        label: `${item.name}${trail}`,
+      }
+    })
+  }, [siteData])
 
   /**
    * 3. filtered by stateId/lgaId list of sites
@@ -59,15 +69,19 @@ const SiteAutoCompleteField = ({
    * event handler - changed value returns back to this component via prop `value` and then it changes
    * memoized variable `selectedValue` which then is used in `value={selectedValue}` in return jsx below
    */
-  const onSelect = (_, value, reason) => {
-    onChange(reason === 'clear' ? { name: undefined } : value)
-  }
+  const onSelect = useCallback(
+    (_, value, reason) => {
+      const item = options.find(o => o.label === (value?.name || value) || o.id === (value?.id || value))
+      onChange(reason === 'clear' ? { name: undefined } : item)
+    },
+    [options, onChange]
+  )
 
   return siteData ? (
     <Autocomplete
       name={name}
       isOptionEqualToValue={(o, val) => o.name === (val?.name || val) || o.id === (val?.id || val)}
-      getOptionLabel={option => option.name ?? option}
+      getOptionLabel={option => option.label ?? option}
       disableClearable={disableClearable}
       filterOptions={(options, state) =>
         options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))
