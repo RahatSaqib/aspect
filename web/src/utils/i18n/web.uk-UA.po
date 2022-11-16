@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-11-11T23:44:11.932Z\n"
+"POT-Creation-Date: 2022-11-16T16:26:08.734Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -766,6 +766,21 @@ msgstr "Вам надіслано електронне повідомлення"
 #: extracted_strings.json
 msgid "An error occurred when trying to update the result."
 msgstr "Під час спроби оновити результат сталася помилка."
+
+#. [pages.ReportIndex.devicesAndSites_description]
+#. defaultMessage is:
+#. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices" - This report is in BETA version and still in progress.
+#: extracted_strings.json
+msgid ""
+"An overview of all devices in the system, information about inventory in "
+"sites, and aggregated test results per device. This is the old and improved "
+"report of GxAlert called \"All Devices\" - This report is in BETA version "
+"and still in progress."
+msgstr ""
+"Огляд всіх пристроїв в системі, інформація про інвентар на об'єктах та "
+"зведені результати тестування по кожному пристрою. Це старий і вдосконалений "
+"звіт GxAlert під назвою \"Всі пристрої\" - цей звіт знаходиться в BETA "
+"версії і все ще перебуває в процесі розробки."
 
 #. [pages.dateRangeSelector.any]
 #. defaultMessage is:
@@ -3021,10 +3036,10 @@ msgstr "Пристрої, що переживають переривання с�
 
 #. [pages.ReportIndex.devicesAndSitesOverview]
 #. defaultMessage is:
-#. Devices and Sites Overview
+#. Devices and Sites Overview (BETA)
 #: extracted_strings.json
-msgid "Devices and Sites Overview"
-msgstr "Огляд пристроїв та сайтів"
+msgid "Devices and Sites Overview (BETA)"
+msgstr "Огляд пристроїв та сайтів (BETA)"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
@@ -12931,19 +12946,6 @@ msgstr "ЗІП код"
 #: extracted_strings.json
 msgid "Zone"
 msgstr "Зона"
-
-#. [pages.ReportIndex.devicesAndSites_description]
-#. defaultMessage is:
-#. [WORK IN PROGRESS] An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".
-#: extracted_strings.json
-msgid ""
-"[WORK IN PROGRESS] An overview of all devices in the system, information "
-"about inventory in sites, and aggregated test results per device. This is "
-"the old and improved report of GxAlert called \"All Devices\"."
-msgstr ""
-"[Огляд всіх пристроїв в системі, інформація про інвентар на об'єктах та "
-"зведені результати тестів по кожному пристрою. Це старий і вдосконалений "
-"звіт GxAlert під назвою \"Всі пристрої\"."
 
 #. [pages.InventoryAdjustmentDialogForm.and]
 #. defaultMessage is:
