@@ -19,7 +19,7 @@ const {
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { resultUpdated, resultLoggedProcessed } = require('./actions')
 const { addConstraints, canViewResults, getConstraints, addPartnerQueryConstraints } = require('../auth/constraints')
-const { getUser, getUserByUserId } = require('../auth/service')
+const { getUser, getUserByUserId, getPersonByPersonId } = require('../auth/service')
 const {
   allAssayToId,
   allResultCategoryToId,
@@ -2896,7 +2896,7 @@ async function listSampleTypes() {
 
 async function getCustomFieldsCompletion(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { partnerId } = await getUser(auth.credentials.name)
+  const { partnerId } = await getPersonByPersonId(auth.credentials.personId)
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
   const { dateTo } = dates

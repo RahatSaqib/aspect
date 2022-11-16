@@ -12,7 +12,7 @@ const {
   getDateTimeProjectionInUserTimeZone,
 } = require('../../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
-const { getUser, getPersonByPersonId } = require('../../auth/service')
+const { getPersonByPersonId } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
 const { getDeviceReportData } = require('./deviceReport')
@@ -268,7 +268,7 @@ async function exportDeviceOperationLogReport(request, reply) {
 
 async function getDeviceCapacityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture } = await getPersonByPersonId(auth.credentials.personId)
   let { minDate } = query
   const { maxDate } = query
 
