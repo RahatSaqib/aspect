@@ -28,16 +28,16 @@ const notificationTypeSection = formatMessage => ({
                   },
                 ],
               },
-              {
-                label: formatMessage(messages.notificationCreateGroupForReport),
-                options: [
-                  {
-                    value: 'reportBased',
-                    label: formatMessage(messages.notificationTypeReportBased),
-                    icon: 'AiOutlineContainer',
-                  },
-                ],
-              },
+              // {
+              //   label: formatMessage(messages.notificationCreateGroupForReport),
+              //   options: [
+              //     {
+              //       value: 'reportBased',
+              //       label: formatMessage(messages.notificationTypeReportBased),
+              //       icon: 'AiOutlineContainer',
+              //     },
+              //   ],
+              // },
               {
                 label: formatMessage(messages.notificationCreateGroupForSite),
                 options: [
