@@ -699,9 +699,11 @@ describe('Mobile API Result download routes v2 with available custom api-version
     }
 
     function treatmentStatusValidation(response) {
-      // Calculation of awaiting treatment, trasferred and requires treatment returns show treatment value
       const showTreatment = testResult => {
-        return testResult.treatmentStatus.externalId === 'OnTreatment'
+        return (
+          testResult.treatmentStatus.externalId === 'OnTreatment' ||
+          testResult.treatmentStatus.externalId === 'AwaitingTreatment'
+        )
       }
 
       // get latest followup based on its type
