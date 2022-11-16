@@ -165,7 +165,9 @@ const routes = [
           configurationData: Joi.object().description(
             'Device configuration data.  The valid keys are dependent on Device Type.'
           ),
-          name: Joi.string().required().description('The name of the device'),
+          name: Joi.string()
+            .description('The name of the device')
+            .when('approvalToken', { is: Joi.any().valid(null, ''), then: Joi.required() }),
           notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number(),
