@@ -41,7 +41,6 @@ const assayAvatarColorsIcon = {
   },
 }
 
-// Calculation of awaiting treatment, trasnferred and requires treatment returns show treatment value
 const showTreatment = testResult => {
   return !isTransferred(testResult) && requiresTreatment(testResult)
 }
