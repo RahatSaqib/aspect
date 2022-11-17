@@ -492,7 +492,6 @@ async function createNotificationIfNotCreatedAlready(
           ...sharedMessageProperties,
         })
         notification.alertMessageId = alertMessageId
-        context.alertMessageCreated(alertMessageId)
       }
 
       if (policy.emailTemplateId != null) {
@@ -502,7 +501,6 @@ async function createNotificationIfNotCreatedAlready(
           to,
         })
         notification.emailMessageId = emailMessageId
-        context.emailMessageCreated(emailMessageId)
       }
       if (policy.smsTemplateId != null) {
         const [smsMessageId] = await knex('SmsMessage').insert({
@@ -511,7 +509,6 @@ async function createNotificationIfNotCreatedAlready(
           phoneNumber: phone,
         })
         notification.smsMessageId = smsMessageId
-        context.smsMessageCreated(smsMessageId)
       }
 
       if (policy.webhookTemplateId != null) {
@@ -520,11 +517,26 @@ async function createNotificationIfNotCreatedAlready(
           ...sharedMessageProperties,
         })
         notification.webhookMessageId = webhookMessageId
-        context.webhookMessageCreated(webhookMessageId)
       }
 
       const [notificationId] = await knex('Notification').insert(notification)
       context.notificationCreated(notificationId)
+
+      if (notification.alertMessageId) {
+        context.alertMessageCreated(notification.alertMessageId)
+      }
+
+      if (notification.emailMessageId) {
+        context.emailMessageCreated(notification.emailMessageId)
+      }
+
+      if (notification.smsMessageId) {
+        context.smsMessageCreated(notification.smsMessageId)
+      }
+
+      if (notification.webhookMessageId) {
+        context.webhookMessageCreated(notification.webhookMessageId)
+      }
     }
   }
 }
