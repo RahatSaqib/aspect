@@ -27,31 +27,15 @@ const SiteAutoCompleteField = ({
   )
 
   /**
-   * 2. make sure that `allOptions` doesn't contain any dupes for `names`
-   */
-  const allOptions = useMemo(() => {
-    const countByName = {}
-    return (siteData || []).map(item => {
-      const { name } = item
-      countByName[name] = (countByName[name] || 0) + 1
-      const trail = countByName[name] === 1 ? '' : ` (${countByName[name]})`
-      return {
-        ...item,
-        label: `${item.name}${trail}`,
-      }
-    })
-  }, [siteData])
-
-  /**
-   * 3. filtered by stateId/lgaId list of sites
+   * 2. filtered by stateId/lgaId list of sites
    */
   const options = useMemo(
-    () => allOptions.filter(o => (!stateId || stateId === o.stateId) && (!lgaId || lgaId === o.lgaId)),
-    [allOptions, stateId, lgaId]
+    () => siteData?.filter(o => (!stateId || stateId === o.stateId) && (!lgaId || lgaId === o.lgaId)),
+    [siteData, stateId, lgaId]
   )
 
   /**
-   * 4. Based on value of `value` - find actual object to set it as `selectedValue`.
+   * 3. Based on value of `value` - find actual object to set it as `selectedValue`.
    * Notice that we work in `controlled` mode, i.e. value is not `undefined` but
    * is either `null` or some actual object
    */
@@ -71,7 +55,7 @@ const SiteAutoCompleteField = ({
    */
   const onSelect = useCallback(
     (_, value, reason) => {
-      const item = options.find(o => o.label === (value?.name || value) || o.id === (value?.id || value))
+      const item = options.find(o => o.name === (value?.name || value) || o.id === (value?.id || value))
       onChange(reason === 'clear' ? { name: undefined } : item)
     },
     [options, onChange]
@@ -81,7 +65,7 @@ const SiteAutoCompleteField = ({
     <Autocomplete
       name={name}
       isOptionEqualToValue={(o, val) => o.name === (val?.name || val) || o.id === (val?.id || val)}
-      getOptionLabel={option => option.label ?? option}
+      getOptionLabel={option => option.name ?? option}
       disableClearable={disableClearable}
       filterOptions={(options, state) =>
         options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))
@@ -91,6 +75,11 @@ const SiteAutoCompleteField = ({
       fullWidth
       options={options}
       onChange={onSelect}
+      renderOption={(props, option) => (
+        <li {...props} key={option.id}>
+          {option.name}
+        </li>
+      )}
       renderInput={params => (
         <TextField
           {...params}
