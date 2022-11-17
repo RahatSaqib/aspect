@@ -492,7 +492,6 @@ const updateResultFollowupPayloadValiation = () => {
           'The externalId of the result follow up. Will be used in combination with the result ID to find the result follow up if id is empty'
         ),
       date: Joi.date().iso().optional().allow(null).description('This is the date when the follow up happened'),
-      followUpId: Joi.number().integer().positive().allow(null).description('The ID of the follow up'),
       followUpExternalId: Joi.string()
         .allow('', null)
         .description('The externalId of the follow up. Will be used if followUpId is null/empty.'),

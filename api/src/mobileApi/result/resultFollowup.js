@@ -29,7 +29,7 @@ async function updateResultFollowUp(request) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
-  const resultQuery = generateResultQueryForResultFollowUp(resultId, dataConstraints, SELECT_FIELDS_UTC)
+  const resultQuery = await generateResultQueryForResultFollowUp(resultId, dataConstraints, SELECT_FIELDS_UTC)
   // get the result so we can check access and if status changed
 
   const result = await getResultByResultId(

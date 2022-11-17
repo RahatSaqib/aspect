@@ -501,7 +501,7 @@ const getAffectedRowsbyResultFollowUp = (date, resultId, externalId, currentUser
     })
 }
 
-const generateResultQueryForResultFollowUp = (resultId, dataConstraints, fields) => {
+function getBaseQueryForResults() {
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -530,6 +530,12 @@ const generateResultQueryForResultFollowUp = (resultId, dataConstraints, fields)
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
+
+  return resultQuery
+}
+
+const generateResultQueryForResultFollowUp = async (resultId, dataConstraints, fields) => {
+  const resultQuery = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
       this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
     })

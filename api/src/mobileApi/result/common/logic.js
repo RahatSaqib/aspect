@@ -354,12 +354,11 @@ const getTransformedDataOfResultById = (data, setDelivered, followUps, comments)
 })
 
 async function showFileReferencesById(resultId, dataConstraints, addConstraints, getFileReferencesForResultFolloup) {
-  const fileReferences = await getFileReferencesForResultFolloup(addConstraints, dataConstraints, resultId).then(
-    items =>
-      items.map(ref => {
-        ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
-        return ref
-      })
+  const fileReferences = await getFileReferencesForResultFolloup(resultId, dataConstraints).then(items =>
+    items.map(ref => {
+      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+      return ref
+    })
   )
   return { data: fileReferences }
 }
@@ -412,6 +411,7 @@ async function getCustomFieldsForResult(data) {
 }
 
 async function getResultByResultId(
+  auth,
   resultId,
   dataConstraints,
   userName,
