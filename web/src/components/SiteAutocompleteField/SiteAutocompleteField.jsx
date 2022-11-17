@@ -55,10 +55,9 @@ const SiteAutoCompleteField = ({
    */
   const onSelect = useCallback(
     (_, value, reason) => {
-      const item = options.find(o => o.name === (value?.name || value) || o.id === (value?.id || value))
-      onChange(reason === 'clear' ? { name: undefined } : item)
+      onChange(reason === 'clear' ? { name: undefined } : value)
     },
-    [options, onChange]
+    [onChange]
   )
 
   return siteData ? (
