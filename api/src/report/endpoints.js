@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateDateRangeParams } = require('../routes')
 const { getReports, proxyGxReport } = require('./service')
-const downloadReport = require('./donwloadReport')
+const downloadReport = require('./downloadReport')
 const downloadScheduledReport = require('./downloadScheduledReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
