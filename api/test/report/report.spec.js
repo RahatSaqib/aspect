@@ -11,7 +11,7 @@ const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
 
-describe.only('Global reports', () => {
+describe('Global reports', () => {
   const path = '/api/reports'
   before(() => {
     shared.checkToken(server, path)
