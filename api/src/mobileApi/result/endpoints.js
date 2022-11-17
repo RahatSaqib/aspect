@@ -2,11 +2,15 @@ const { downloadResultsList } = require('./download')
 const { downloadResultsListV2 } = require('./downloadV2')
 const { downloadResultById } = require('./downloadById')
 const { downloadResultByIdV2 } = require('./downloadByIdV2')
+const { updateResultFollowUp } = require('./resultFollowup')
 const {
   downloadResultValidation,
   downloadResultResponseValidation,
   downloadResultValidationV2,
   downloadResultResponseValidationV2,
+  undateResultFollowupParamValidation,
+  updateResultFollowupPayloadValiation,
+  undateResultFollowupResponseValidation,
 } = require('./common/validations')
 
 // -----------------------------------------------------
@@ -90,6 +94,26 @@ const routes = [
           allowUnknown: false,
         },
         schema: downloadResultResponseValidationV2,
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/v1/result/follow-up/{resultId}',
+    handler: updateResultFollowUp,
+    config: {
+      description: 'Set the date of a follow up',
+      notes: 'Updates the date of a follow up for a result',
+      auth: { scope: ['treatmentStatus:edit'] },
+      validate: {
+        params: undateResultFollowupParamValidation(),
+        payload: updateResultFollowupPayloadValiation(),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: undateResultFollowupResponseValidation(),
       },
     },
   },
