@@ -332,7 +332,7 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
   const personsToNotify = new Set()
   await Promise.all(
     people.map(async person => {
-      const shouldNotifyToPerson = true //  await shouldNotify(txKnex, action, person.id, person.jobFunctionId)
+      const shouldNotifyToPerson = await shouldNotify(txKnex, action, person.id, person.jobFunctionId)
       if (shouldNotifyToPerson != null) {
         personsToNotify.add(person.id)
       }
