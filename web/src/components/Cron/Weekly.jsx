@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Checkbox, FormControlLabel, FormGroup, Stack } from '@mui/material'
 import classNames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
@@ -8,41 +8,43 @@ import styles from './styles.css'
 
 const classes = classNames.bind(styles)
 const Weekly = ({ cronExpression, onChange }) => {
+  const weekDays = {
+    SUN: 0,
+    MON: 1,
+    TUE: 2,
+    WED: 3,
+    THU: 4,
+    FRI: 5,
+    SAT: 6,
+  }
   const { formatMessage } = useI18n()
-
+  const [daysOfTheWeek, setDaysOfTheWeek] = useState(['', '', '', '', '', '', ''])
   const changeHours = e => {
     const val = [...cronExpression]
-    val[0] = '0'
-    val[2] = `${e.target.value}`
+    val[1] = `${e.target.value}`
     onChange(val)
   }
   const changeMinutes = e => {
     const val = [...cronExpression]
-    val[0] = '0'
-    val[1] = `${e.target.value}`
+
+    val[0] = `${e.target.value}`
     onChange(val)
   }
   const onCheck = e => {
     const val = [...cronExpression]
-    val[0] = '0'
+    const daysOfTheWeekClone = [...daysOfTheWeek]
+
     if (e.target.checked) {
-      val[2] = `${val[2]}`.split('/').length > 1 ? '0' : val[2].toString()
-      val[3] = '?'
-      val[4] = '*'
-      if (val[5] === '*' || val[5] === '?' || val[5] === 'MON-FRI') {
-        val[5] = e.target.value
-      } else {
-        val[5] = `${val[5]}!${e.target.value}`
-      }
+      daysOfTheWeekClone[weekDays[e.target.value]] = e.target.value
     } else {
-      val[5] = val[5].split('!')
-      if (val[5].length > 1) {
-        val[5].splice(val[5].indexOf(e.target.value), 1)
-        val[5] = val[5].toString().replace(/,/g, '!')
-      } else {
-        val[5] = '*'
-      }
+      daysOfTheWeekClone[weekDays[e.target.value]] = ''
     }
+    setDaysOfTheWeek(daysOfTheWeekClone)
+
+    val[4] =
+      daysOfTheWeekClone.filter(value => value === '')?.length === 7
+        ? '*'
+        : daysOfTheWeekClone.filter(value => value !== '')?.join(',')
 
     onChange(val)
   }
@@ -59,7 +61,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="MON"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('MON') !== -1}
+                  checked={cronExpression[4].search('MON') !== -1}
                 />
               }
               label={formatMessage(messages.monday)}
@@ -71,7 +73,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="TUE"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('TUE') !== -1}
+                  checked={cronExpression[4].search('TUE') !== -1}
                 />
               }
               label={formatMessage(messages.tuesday)}
@@ -83,7 +85,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="WED"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('WED') !== -1}
+                  checked={cronExpression[4].search('WED') !== -1}
                 />
               }
               label={formatMessage(messages.wednesday)}
@@ -95,7 +97,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="THU"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('THU') !== -1}
+                  checked={cronExpression[4].search('THU') !== -1}
                 />
               }
               label={formatMessage(messages.thursday)}
@@ -107,7 +109,7 @@ const Weekly = ({ cronExpression, onChange }) => {
                   type="checkbox"
                   value="FRI"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('FRI') !== -1}
+                  checked={cronExpression[4].search('FRI') !== -1}
                 />
               }
               label={formatMessage(messages.friday)}
@@ -117,32 +119,32 @@ const Weekly = ({ cronExpression, onChange }) => {
                 <Checkbox
                   color="primary"
                   type="checkbox"
-                  value="SUN"
+                  value="SAT"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('SUN') !== -1}
+                  checked={cronExpression[4].search('SAT') !== -1}
                 />
               }
-              label={formatMessage(messages.sunday)}
+              label={formatMessage(messages.saturday)}
             />
             <FormControlLabel
               control={
                 <Checkbox
                   color="primary"
                   type="checkbox"
-                  value="SAT"
+                  value="SUN"
                   onChange={onCheck}
-                  checked={cronExpression[5].search('SAT') !== -1}
+                  checked={cronExpression[4].search('SUN') !== -1}
                 />
               }
-              label={formatMessage(messages.saturday)}
+              label={formatMessage(messages.sunday)}
             />
           </FormGroup>
         </div>
       </Stack>
       <Stack direction="row" spacing={1} alignItems="center">
         <ChooseTime
-          hour={cronExpression[2]}
-          minute={cronExpression[1]}
+          hour={cronExpression[1]}
+          minute={cronExpression[0]}
           changeMinutes={changeMinutes}
           changeHours={changeHours}
         />

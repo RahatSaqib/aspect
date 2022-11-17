@@ -7,12 +7,11 @@ import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { fetchRouters, exportRouters } from '../../../store/RouterRedux'
@@ -114,7 +113,7 @@ const enhance = compose(
     onExcelClick:
       ({ location, exportRouters, sortCol, sortDir, pageAt, table }) =>
       formatType => {
-        const format = formatType.id
+        const format = formatType
         const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           exportRouters(
@@ -188,14 +187,12 @@ export const RouterList = ({
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.routersTitle)} />
-    <NavTitle title={intl.formatMessage(messages.routersTitle)} />
     <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
-      <ExportListButton
+      <AspectExportListButton
         data-testid="RouterListExportButton"
-        onExcelClick={onExcelClick}
-        onCsvClick={onExcelClick}
+        onExport={onExcelClick}
         visible={!items.currentIdList.isEmpty()}
         reportName="Routers"
       />

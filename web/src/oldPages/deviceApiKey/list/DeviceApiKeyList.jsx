@@ -11,12 +11,11 @@ import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withState, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import ExportListButton from '../../../oldComponents/ExportListButton'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -160,7 +159,7 @@ const enhance = compose(
     onExportClick:
       ({ location, exportDeviceApiKeys, sortCol, sortDir, table, pageAt }) =>
       formatType => {
-        const format = formatType.id
+        const format = formatType
         const { sanitized, value: filtersParams } = filtersFromLocation(location)
         if (!sanitized) {
           exportDeviceApiKeys(
@@ -362,7 +361,6 @@ export const DeviceApiKeyList = ({
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.title)} />
-    <NavTitle title={intl.formatMessage(messages.title)} />
     <BrowseFilters
       navigate={navigate}
       location={location}
@@ -405,9 +403,8 @@ export const DeviceApiKeyList = ({
     </div>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
-      <ExportListButton
-        onExcelClick={onExportClick}
-        onCsvClick={onExportClick}
+      <AspectExportListButton
+        onExport={onExportClick}
         visible={!items.currentIdList.isEmpty()}
         reportName="DeviceApiKey"
       />

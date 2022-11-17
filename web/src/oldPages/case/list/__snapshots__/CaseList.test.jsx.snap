@@ -9,9 +9,6 @@ exports[`Person List module CaseList component should shallow render correctly 1
     encodeSpecialCharacters={true}
     title="Cases"
   />
-  <Connect(lifecycle(Component))
-    title="Cases"
-  />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     askConfirmationForExport={false}
     intl={

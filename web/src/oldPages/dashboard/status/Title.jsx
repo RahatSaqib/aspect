@@ -1,11 +1,8 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import identity from 'lodash/identity'
 import styles from './index.css'
 
 const cssClasses = classnames.bind(styles)
-
-const enhance = identity
 
 export const Title = ({ className, icon, title }) => (
   <div className={cssClasses('Title', className)}>
@@ -14,4 +11,4 @@ export const Title = ({ className, icon, title }) => (
   </div>
 )
 
-export default enhance(Title)
+export default Title

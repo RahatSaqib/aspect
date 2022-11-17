@@ -17,7 +17,6 @@ import {
   reduceFiltersConfig,
   setFiltersForLast30Days,
 } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
@@ -130,7 +129,6 @@ export const InventoryLogWithProps = ({
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
-      <NavTitle title={intl.formatMessage(messages.inventoryLogTitle)} />
       <BrowseFilters
         navigate={navigate}
         location={location}
@@ -181,9 +179,7 @@ export const InventoryLogWithProps = ({
 const InventoryLog = ({ navigate, location }) => {
   // >>>>>> Defining hooks <<<<<<
   const intl = useI18n()
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
+  const { userPermissions } = useAuthState()
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
   const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState({})

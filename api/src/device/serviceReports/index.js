@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = require('date-fns')
 const locales = require('date-fns/locale')
-const { getDeviceBaseQuery, listDevices } = require('../service')
+const { getDeviceBaseExtendedQuery, listDevices } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
 const { issueCategoryIntlToShortname, issueTypeToId } = require('../../shared/dictionary')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../../db')
@@ -15,6 +15,8 @@ const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getUser } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
+const { getDeviceReportData } = require('./deviceReport')
+const { getInventoryData } = require('./devicesAndSitesOverviewReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -71,7 +73,10 @@ function getMonthsDatefields(minDate, maxDate, culture) {
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getUser(auth.credentials.name)
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints).whereNotIn('dt.externalId', ['Aspect', 'GxAlert'])
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints).whereNotIn('dt.externalId', [
+    'Aspect',
+    'GxAlert',
+  ])
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
@@ -149,7 +154,7 @@ async function getModuleSwapsReport(auth, query) {
 
   const issueTypeId = await issueTypeToId('ModuleReplaced')
   // get rows
-  const devices = await getDeviceBaseQuery(query, dataConstraints)
+  const devices = await getDeviceBaseExtendedQuery(query, dataConstraints)
     .clone()
     .innerJoin('Issue as i', 'i.deviceId', 'd.id')
     .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
@@ -272,7 +277,7 @@ async function getDeviceCapacityReport(auth, query) {
 
   minDate = minDate || addMonths(new Date(), -12).toISOString()
 
-  const deviceQuery = getDeviceBaseQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
   const monthlyCapacity = deviceQuery
     .clone()
     .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
@@ -413,13 +418,31 @@ async function getModuleActivityReport(auth, query) {
 
 async function getModuleStatusReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate, maxDate } = query
-  const rows = await getModuleStatusReportData(minDate, maxDate, dataConstraints, query)
+  const rows = await getModuleStatusReportData(dataConstraints, query)
 
   return {
     ok: true,
     data: rows,
     total: rows.length,
+  }
+}
+
+async function getDeviceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const rows = await getDeviceReportData(dataConstraints, query)
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
+async function getDevicesAndSitesOverviewReport(auth, query) {
+  const data = await getInventoryData(auth, query)
+  return {
+    ok: true,
+    data,
   }
 }
 
@@ -433,4 +456,6 @@ module.exports = {
   getDeviceCapacityReport,
   getModuleActivityReport,
   getModuleStatusReport,
+  getDeviceReport,
+  getDevicesAndSitesOverviewReport,
 }

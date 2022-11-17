@@ -3,7 +3,6 @@ import { Paper } from '@mui/material'
 import head from 'lodash/head'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { navigations } from './oldComponents/BrowseFilters'
-import DetailLayout from './oldComponents/DetailLayout'
 import { reduceNavLinks } from './oldComponents/filter/utils'
 import LoggedInLayout from './oldComponents/LoggedInLayout'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
@@ -16,7 +15,6 @@ import CaseDetails from './oldPages/case/details/CaseDetails'
 import CaseList from './oldPages/case/list/CaseList'
 import OperationalData from './oldPages/dashboard/operational/OperationalData'
 import LoadableStatus from './oldPages/dashboard/status/LoadableStatus'
-import DeviceList from './oldPages/device/list/DeviceList'
 import DeviceApiKeyList from './oldPages/deviceApiKey/list/DeviceApiKeyList'
 import InventoryContainer from './oldPages/inventory/InventoryContainer'
 import ClinicalHistory from './oldPages/patient/ClinicalHistory'
@@ -31,6 +29,7 @@ import TaskAggre from './oldPages/task/aggre/TaskAggre'
 import TaskDetail from './oldPages/task/detail/TaskDetail'
 import TaskList from './oldPages/task/list/TaskList'
 import DeviceDetail from './pages/Devices/Detail/DeviceDetail'
+import DeviceContainer from './pages/Devices/DeviceContainer'
 import NotFound from './pages/NotFound/NotFound'
 import NotificationDetail from './pages/Notification/NotificationFormPage'
 import NotificationDetailHistory from './pages/Notification/NotificationHistoryPage'
@@ -39,6 +38,7 @@ import ResultDetail from './pages/Results/Detail'
 import SiteDetail, { EditSite } from './pages/Site/Detail'
 import SiteList from './pages/Site/List'
 import Welcome from './pages/Welcome'
+import { useAuthState } from './providers/AuthProvider'
 import { RoutesPermissionProvider } from './providers/RoutePermissions'
 
 function useHashAndScroll() {
@@ -57,19 +57,16 @@ function useHashAndScroll() {
 const getElement = (props, permissions, render) => {
   return <RenderTo render={render} props={props} permissions={permissions} />
 }
-
 const renderRedirectToLoginOr = ({ isLoggedOut, loggedOutReason, location }) => {
   return isLoggedOut || loggedOutReason === 'idle' ? (
     <Navigate replace to="/login" state={{ referrer: location, reason: loggedOutReason }} />
   ) : null
 }
-
 const renderRedirectToLicenseOr = ({ location, hasToAcceptLicenseId }) => {
   return hasToAcceptLicenseId ? (
     <Navigate replace to="/license" state={{ referrer: location, licenseId: hasToAcceptLicenseId }} />
   ) : null
 }
-
 const renderRedirectToDashboard = ({ location, permissions }) => {
   let pathname = ''
   if (isPermittedUser(permissions, { required: ['dashboard:summary'] })) {
@@ -81,7 +78,6 @@ const renderRedirectToDashboard = ({ location, permissions }) => {
   }
   return <Navigate replace to={pathname} state={{ referrer: location }} />
 }
-
 const renderRedirectToBrowse = ({ permissions }) => {
   const reducedNav = reduceNavLinks(navigations, permissions)
   return <Navigate to={head(reducedNav).value || '/browse/device'} />
@@ -103,31 +99,12 @@ const renderManage = () => (
   </LoggedInLayout>
 )
 
-const renderTaskAggre = props => (
-  <DetailLayout>
-    <TaskAggre {...props} />
-  </DetailLayout>
-)
-const renderTaskDetail = props => (
-  <DetailLayout>
-    <TaskDetail {...props} />
-  </DetailLayout>
-)
-const renderAccountDetails = props => (
-  <DetailLayout>
-    <AccountDetails {...props} />
-  </DetailLayout>
-)
-const renderPersonDetail = props => (
-  <DetailLayout>
-    <PersonDetail {...props} />
-  </DetailLayout>
-)
-const renderClinicalHistory = props => (
-  <DetailLayout>
-    <ClinicalHistory {...props} />
-  </DetailLayout>
-)
+const renderTaskAggre = props => <TaskAggre {...props} />
+const renderTaskDetail = props => <TaskDetail {...props} />
+const renderAccountDetails = props => <AccountDetails {...props} />
+const renderPersonDetail = props => <PersonDetail {...props} />
+const renderClinicalHistory = props => <ClinicalHistory {...props} />
+
 const renderLoadableLogin = props => (
   <SignedOutLayout>
     <LoadableLogin {...props} />
@@ -170,7 +147,7 @@ const renderReports = props => (
 )
 const renderDeviceList = props => (
   <LoggedInLayout>
-    <DeviceList {...props} />
+    <DeviceContainer {...props} />
   </LoggedInLayout>
 )
 const renderDeviceDetail = props => (
@@ -279,32 +256,28 @@ const RenderTo = ({ props, permissions, render }) => {
   if (RedirectToLogin) {
     return RedirectToLogin
   }
-
   const RedirectToLicense = renderRedirectToLicenseOr(props)
   if (RedirectToLicense) {
     return RedirectToLicense
   }
-
   if (permissions) {
     if (!isPermittedUser(props.permissions, { required: permissions })) return getElement(props, [], renderNotFound)
   }
-
   return render(props)
 }
-
-const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedOut, loggedOutReason, permissions }) => {
+const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedOut, loggedOutReason }) => {
   const location = useLocation()
   const navigate = useNavigate()
+  const { userPermissions } = useAuthState()
 
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
-
   const props = {
     countryId,
     countryAbbreviation,
     hasToAcceptLicenseId,
     isLoggedOut,
     loggedOutReason,
-    permissions,
+    permissions: userPermissions,
     location,
     navigate,
   }

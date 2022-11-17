@@ -9,9 +9,6 @@ exports[`PersonDetail module Person Detail component should render correctly 1`]
     encodeSpecialCharacters={true}
     title="Person Detail"
   />
-  <Connect(lifecycle(Component))
-    title="Person Detail"
-  />
   <Routes>
     <Route
       element={

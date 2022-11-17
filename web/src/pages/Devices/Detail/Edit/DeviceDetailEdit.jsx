@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Button, Card } from '@mui/material'
+import { Button, Card, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
+import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
+import DeviceCapacitySelect from '../../../../components/DeviceCapacitySelect'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import useI18n from '../../../../hooks/useI18n'
@@ -13,7 +15,7 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
-import styles from '../DeviceDetail.css'
+import styles from '../styles.css'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
@@ -27,15 +29,11 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const [editDevice, setEditDevice] = useState({ ...device })
   const [editDeviceTags, setEditDeviceTags] = useState([...deviceTags])
   const isPristine = isEqual(device, editDevice) && isEqual(deviceTags, editDeviceTags)
-  const isError = false
+  const [isError, setError] = useState(false)
 
   const onDiscardClick = () => {
     setEditDevice({ ...device })
     setEditDeviceTags([...deviceTags])
-  }
-
-  const onSiteIdChange = siteId => {
-    setEditDevice({ ...editDevice, siteId })
   }
 
   const onAddTag = tagName => {
@@ -62,17 +60,59 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
       <Helmet title={device.name} />
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
-          <form onSubmit={handleSubmit}>
+          <form>
+            <TextField
+              fullWidth
+              id="name"
+              error={isEmpty(editDevice.name)}
+              required
+              label={intl.formatMessage(messages.name)}
+              value={editDevice.name}
+              onChange={e => {
+                setEditDevice({ ...editDevice, name: e.target.value })
+                setError(isEmpty(e.target.value))
+              }}
+            />
+            <TextField
+              fullWidth
+              id="shortName"
+              error={isEmpty(editDevice.shortName)}
+              required
+              label={intl.formatMessage(messages.shortName)}
+              value={editDevice.shortName}
+              onChange={e => {
+                setEditDevice({ ...editDevice, shortName: e.target.value })
+                setError(isEmpty(e.target.value))
+              }}
+            />
             <SiteSelectField
               name="siteId"
               floatingLabelText={intl.formatMessage(messages.location)}
               disabled={!editable}
               value={editDevice.siteId}
-              onSiteChange={onSiteIdChange}
+              onSiteChange={siteId => setEditDevice({ ...editDevice, siteId })}
               fullWidth
               tabIndex="0"
               aria-haspopup
             />
+            <DeviceCapacitySelect
+              name="capacity"
+              deviceTypeId={editDevice.deviceType.externalId}
+              label={intl.formatMessage(messages.capacity)}
+              value={editDevice.dailyCapacityId}
+              onChange={dailyCapacityId => setEditDevice({ ...editDevice, dailyCapacityId })}
+            />
+            <TextField
+              fullWidth
+              id="notes"
+              label={intl.formatMessage(messages.notes)}
+              value={editDevice.notes}
+              onChange={e => setEditDevice({ ...editDevice, notes: e.target.value })}
+              multiline
+              maxRows={6}
+              minRows={3}
+            />
+
             <FormGroup label={intl.formatMessage(messages.tags)}>
               <TagInput
                 allowCreate
@@ -85,6 +125,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 disabled={!editable}
               />
             </FormGroup>
+
             <div className={cssClasses('Form__Actions')}>
               <ButtonGroup isolated>
                 <AspectButton

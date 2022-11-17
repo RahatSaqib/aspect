@@ -624,7 +624,7 @@ describe('Result Notifications triggers', () => {
         .distinct('resultId', 'notificationTypeId', 'personId', 'emailMessageId', 'smsMessageId')
       assert.equal(notificationsBefore.length, 0)
       await dispatchAndWaitForAction(resultLogged(resultId, 1, 1))
-      await waitForIdle(3000)
+      await waitForIdle(5000)
       const notifications = await knex('Notification').where({ resultId, notificationTypeId: ntId }).select()
       assert.equal(notifications.length, 1)
       const [notification] = notifications
@@ -847,6 +847,8 @@ describe('Notification routes', () => {
       sendWeb: false,
       result: baseFilterCondition.result,
       enabled: true,
+      reportFrecuency: null,
+      issueTypeId: null,
     })
   })
 })

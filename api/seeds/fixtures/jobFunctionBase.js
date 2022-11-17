@@ -11,6 +11,7 @@ const admin = {
     'device_activity',
     'device_activity_per_assay',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'device_utilization',
     'all_results',
@@ -22,6 +23,7 @@ const admin = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -154,6 +156,7 @@ const manager = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -162,6 +165,7 @@ const manager = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -250,6 +254,7 @@ const regionalOfficer = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -258,6 +263,7 @@ const regionalOfficer = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -346,6 +352,7 @@ const labUser = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -440,6 +447,7 @@ const clinician = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -584,6 +592,7 @@ const ntp = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -775,6 +784,7 @@ const resultViewerYes = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -898,6 +908,7 @@ const labManager = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -905,6 +916,7 @@ const labManager = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'usage_statistics_report',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -977,6 +989,7 @@ const labSupervisor = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -985,6 +998,7 @@ const labSupervisor = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {
@@ -1134,6 +1148,7 @@ const dataViewer = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -1213,6 +1228,7 @@ const labAdmin = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
+    'device_report',
     'module_swaps',
     'all_results',
     'device_utilization_per_day',
@@ -1221,6 +1237,7 @@ const labAdmin = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
+    'devices_and_sites_overview',
   ],
   permissions: [
     {

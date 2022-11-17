@@ -1,5 +1,4 @@
 // This is the entry point for our app
-import 'whatwg-fetch'
 import 'url-search-params-polyfill'
 import React from 'react'
 import * as Sentry from '@sentry/react'
@@ -27,15 +26,6 @@ if (config.sentry && process.env.NODE_ENV === 'production') {
     tracesSampleRate: config.sentry.tracesSampleRate,
   })
   Sentry.setTag('Country', config.countryName || config.aspectApi)
-}
-// }
-
-// polyfill intl if necessary
-// http://formatjs.io/guides/runtime-environments/
-if (!window.Intl) {
-  require('intl')
-  // TODO: base on user's locale
-  require('intl/locale-data/jsonp/en.js')
 }
 
 const renderApp = () => render(<App store={store} />, document.getElementById('app'))

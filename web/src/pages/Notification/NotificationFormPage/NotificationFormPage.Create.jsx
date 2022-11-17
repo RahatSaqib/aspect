@@ -39,12 +39,12 @@ const NotificationFormPage = () => {
     const formConfig = getFormConfig(intl.formatMessage, jobFunctions, partner, false)
     const values = sanitizeFormValues(formik.values, { formConfig })
     const { deviceLevelId } = formik.values
-    if (formik.values.notificationType === 'resultBased') {
-      values.notificationType = formik.values.notificationType
-    } else {
-      values.notificationType = 'issueBased'
+    values.notificationType = formik.values.notificationType
+    if (!['resultBased', 'reportBased'].includes(formik.values.notificationType)) {
       values.issueType = formik.values.notificationType
+      values.notificationType = 'issueBased'
     }
+
     values.jobFunctions.map((jf, index) => {
       jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
       if (jf.tags === '') {
@@ -95,6 +95,14 @@ const NotificationFormPage = () => {
       values.areaItems = values.areaItemsLab
       delete values.areaItemsLab
     }
+
+    if (values?.notificationType !== 'reportBased') {
+      unset(values, 'cronRecurrency')
+    } else {
+      values.cronRecurrency = formik.values.cronRecurrency.cronExpression
+      values.reportFrecuency = formik.values.cronRecurrency.frecuency
+    }
+
     submitNotification(
       { values, id: undefined },
       {

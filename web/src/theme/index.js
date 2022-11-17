@@ -1,15 +1,42 @@
 import { createTheme, lighten, alpha } from '@mui/material'
 import { cyan, grey, lightGreen, orange } from '@mui/material/colors'
+import { deDE, enUS, frFR, ptPT, ruRU, ukUA, esES, viVN } from '@mui/material/locale'
+import { deDE as xdeDE, enUS as xenUS, frFR as xfrFR, esES as xesES, ptBR } from '@mui/x-date-pickers'
+import isEmpty from 'lodash/isEmpty'
 import { customPropertiesVariables } from './colors'
+import xruRU from './ruRUlocale'
+import xukUA from './ukUAlocale'
+import xviVN from './viVNlocale'
 
+const locale = {
+  'de-DE': deDE,
+  'en-US': enUS,
+  'fr-FR': frFR,
+  'pt-PT': ptPT,
+  'ru-RU': ruRU,
+  'uk-UA': ukUA,
+  'es-ES': esES,
+  'tg-TJ': ruRU,
+  'vi-VN': viVN,
+}
+const xlocale = {
+  'de-DE': xdeDE,
+  'en-US': xenUS,
+  'fr-FR': xfrFR,
+  'pt-PT': ptBR,
+  'ru-RU': xruRU,
+  'uk-UA': xukUA,
+  'es-ES': xesES,
+  'tg-TJ': xruRU,
+  'vi-VN': xviVN,
+}
 const themedColors = {
   text: customPropertiesVariables['--aspect-color-white'],
   primary: customPropertiesVariables['--ming'], // '--aspect-color-chill-blue-primary'
   secondary: customPropertiesVariables['--aspect-button-accent-color'],
   buttonBorderRadius: customPropertiesVariables['--aspect-button-border-radius'],
 }
-
-const theme = createTheme({
+const themeDefinition = {
   typography: {
     useNextVariants: true,
     fontWeightBold: 700,
@@ -20,9 +47,6 @@ const theme = createTheme({
       hoverOpacity: 0.2,
     },
     primary: {
-      // light: lightGreen[500],
-      // main: lightGreen[600],
-      // dark: lightGreen[700],
       light: cyan[700],
       main: customPropertiesVariables['--ming'],
       dark: cyan[900],
@@ -33,6 +57,9 @@ const theme = createTheme({
       main: orange[700],
       dark: orange[700],
       contrastText: customPropertiesVariables['--aspect-color-white'],
+    },
+    white: {
+      main: '#FFF',
     },
   },
   shape: {
@@ -357,6 +384,13 @@ const theme = createTheme({
       },
     },
   },
-})
+}
+const theme = createTheme(themeDefinition)
 
-export default theme
+const getTheme = culture => {
+  if (!isEmpty(culture)) {
+    return createTheme(themeDefinition, xlocale[culture], locale[culture])
+  }
+  return theme
+}
+export default getTheme

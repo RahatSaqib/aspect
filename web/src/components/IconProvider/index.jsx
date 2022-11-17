@@ -18,6 +18,8 @@ async function loadIconModule(icon) {
 
     case iconFamily === 'bs':
       return import('react-icons/bs')
+    case iconFamily === 'gr':
+      return import('react-icons/gr')
 
     default:
       return import('react-icons/md')

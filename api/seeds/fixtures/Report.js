@@ -476,6 +476,52 @@ const usageStats = {
   ],
 }
 
+const deviceReport = {
+  name: 'Device Report',
+  description:
+    'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
+  i18nKey: 'deviceReport',
+  i18nKeyDescription: 'deviceReport_description',
+  externalId: 'device_report',
+  fileName: 'DeviceReport',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 150,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDeviceReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
+const devicesAndSitesOverview = {
+  name: 'Devices and Sites Overview (BETA)',
+  description:
+    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices" - This report is in BETA version and still in progress',
+  i18nKey: 'devicesAndSitesOverview',
+  i18nKeyDescription: 'devicesAndSites_description',
+  externalId: 'devices_and_sites_overview',
+  fileName: 'DevicesAndSitesOverview',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 150,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDevicesAndSitesOverviewReport',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -487,6 +533,7 @@ module.exports = {
   geneXpertIssues,
   deviceUtilizationReport,
   deviceCalibrationReport,
+  deviceReport,
   allResults,
   utilizationPerInstrumentDayReport,
   moduleActivityReport,
@@ -496,4 +543,5 @@ module.exports = {
   tbWorkloadSummary,
   xdrDevicesSummary,
   usageStats,
+  devicesAndSitesOverview,
 }

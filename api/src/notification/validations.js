@@ -23,13 +23,47 @@ function listNotificationsBaseConfig() {
     },
   }
 }
+const NotificationSchema = Joi.object().keys({
+  ok: Joi.bool().required().description('False on any non-fatal error'),
+  data: Joi.object()
+    .allow(null)
+    .keys({
+      notificationTypeName: Joi.string().required().description('Notification Type Category name'),
+      notificationType: Joi.string().required().description('Notification Type external Id'),
+      name: Joi.string().required().description('Name of the notification'),
+      filterCondition: Joi.string().allow(null).description('The condition Filters'),
+      issueType: Joi.string().allow('', null).description('The external Id of the issueType'),
+      reportId: Joi.string().allow('', null).description('The external Id of the report'),
+      cronRecurrency: Joi.string().optional().allow('', null),
+      emailSubject: Joi.string().allow(null).description('email subject'),
+      emailBody: Joi.string().allow(null).description('email body'),
+      smsBody: Joi.string().allow(null).description('sms body'),
+      webUrl: Joi.string().allow(null).description('Web url'),
+      webBody: Joi.string().allow(null).description('Web body'),
+      enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
+    }),
+})
 
 const optionsForSendXXX = {
   is: true,
   then: Joi.required(),
   otherwise: Joi.optional().allow('', null),
 }
-
+const listNotificationItem = {
+  id: Joi.number(),
+  name: Joi.string(),
+  totalTriggers: Joi.number(),
+  alertCount: Joi.number().allow(null),
+  jobFunctionsCount: Joi.number(),
+  jobFunctions: Joi.string().allow(null),
+  persons: Joi.string().allow(null),
+  sendToPatient: Joi.boolean().allow(null),
+  personsCount: Joi.number(),
+  typeCategory: Joi.string(),
+  lastTriggeredOn: Joi.date().iso().allow(null),
+  enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
+  readyForNotification: Joi.number().min(0).max(1).allow(null),
+}
 const resultBasedNotificationPayload = Joi.object({
   notificationType: Joi.string()
     /**
@@ -44,11 +78,40 @@ const resultBasedNotificationPayload = Joi.object({
     .description('externalId of notification type')
     .required(),
   issueType: Joi.string().when('notificationType', {
-    is: 'resultBased',
-    then: Joi.optional().allow('', null),
-    otherwise: Joi.required(),
+    is: 'issueBased',
+    then: Joi.required(),
+    otherwise: Joi.optional().allow('', null),
   }),
+  reportId: Joi.string()
+    .when('notificationType', {
+      is: 'reportBased',
+      then: Joi.required(),
+      otherwise: Joi.forbidden(),
+    })
+    .description('Report ExternalId'),
   name: Joi.string().description('Name of new notification').required(),
+  hasRecurrency: Joi.when('notificationType', {
+    // check first sendSms...
+    is: 'reportBased',
+    then: Joi.boolean().optional().allow('', null),
+    otherwise: Joi.forbidden(),
+  }),
+  cronRecurrency: Joi.string()
+    .when('notificationType', {
+      // check first sendSms...
+      is: 'reportBased',
+      otherwise: Joi.forbidden(),
+      then: Joi.required(),
+    })
+    .description('To schedule the delivery of the email'),
+  reportFrecuency: Joi.string()
+    .when('notificationType', {
+      // check first sendSms...
+      is: 'reportBased',
+      otherwise: Joi.forbidden(),
+      then: Joi.required(),
+    })
+    .description('The frequency of the report'),
   result: Joi.array()
     .items(
       Joi.object().keys({
@@ -89,22 +152,7 @@ const resultBasedNotificationPayload = Joi.object({
       otherwise: Joi.required(),
     })
     .description('Selected items which are subset of selected deviceLevelId'),
-  cronRecurrency: Joi.string()
-    .when('notificationType', {
-      // check first sendSms...
-      is: 'reportBased',
-      then: Joi.required(),
-      otherwise: Joi.optional().allow('', null),
-    })
-    .description('To schedule the delivery of the email'),
-  reportExternalId: Joi.string()
-    .when('notificationType', {
-      // check first sendSms...
-      is: 'reportBased',
-      then: Joi.required(),
-      otherwise: Joi.forbidden(),
-    })
-    .description('Report ExternalId'),
+
   sendEmail: Joi.bool()
     .when('sendSms', {
       // check first sendSms...
@@ -121,6 +169,7 @@ const resultBasedNotificationPayload = Joi.object({
   enabled: Joi.bool().optional().default(true).description('Disable for sending notifications'),
   sendSms: Joi.bool().description('To send over sms'),
   sendWeb: Joi.bool().description('To send over webhook'),
+
   emailSubject: Joi.string()
     .when('sendEmail', optionsForSendXXX)
     .description('Email subject (if sendEmail is checked)'),
@@ -188,4 +237,6 @@ module.exports = {
   resultBasedNotificationPayload,
   changeNotificationStatusPayload,
   saveNotificationResponse,
+  NotificationSchema,
+  listNotificationItem,
 }

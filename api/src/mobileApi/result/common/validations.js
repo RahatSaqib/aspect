@@ -214,6 +214,9 @@ const downloadResultResponseValidationV2 = () => {
               externalId: Joi.string().description('External ID of the treatment status').allow(null),
               i18nKey: Joi.string().description('i18nKey ID of the treatment status').allow(null),
               name: Joi.string().description('Name of the treatment status').allow(null),
+              visible: Joi.boolean().description('External ID of the treatment status').allow(null),
+              severity: Joi.string().description('External ID of the treatment status').allow(null),
+              daysInCurrentStatus: Joi.string().description('External ID of the treatment status').allow(null),
             }),
           patientData: Joi.object().allow(null).description('Data about the patient'),
           resultData: Joi.object().allow(null).description('Data about the result'),
@@ -274,6 +277,15 @@ const downloadResultResponseValidationV2 = () => {
             .positive()
             .description('The id of last entry in ResultStatusLog for current result'),
           reportableSiteId: Joi.number().allow(null).description('Reportable siteId of the patient'),
+          assayAvatar: Joi.object()
+            .description('The assay avatar')
+            .keys({
+              contentI18nKey: Joi.string().allow(null).description('Translation key for the content text'),
+              contentText: Joi.string().allow(null).description('Name of the content text'),
+              backgroundColour: Joi.string().allow(null).description('Background color code'),
+              foregroundColour: Joi.string().allow(null).description('Foreground color code'),
+              contentIcon: Joi.string().allow(null).description('Icon of content'),
+            }),
         })
       ),
   })
