@@ -151,8 +151,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
         )}
         {!breakOutByLot && inventoryItem.get('qtyExpired') !== 0 ? (
           <span className={cssClasses('alert')}>
-            &nbsp; ({parseFloat(inventoryItem.get('quantityOnHand')) <= 0 ? '' : '-'}
-            {inventoryItem.get('qtyExpired')} {formatMessage(messages.expired)})
+            &nbsp; ({inventoryItem.get('qtyExpired')} {formatMessage(messages.expired)})
           </span>
         ) : null}
       </TableCell>
