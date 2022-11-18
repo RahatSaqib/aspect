@@ -17,7 +17,7 @@ describe('Global reports', () => {
     shared.checkToken(server, path)
   })
 
-  describe.only('GET', () => {
+  describe('GET', () => {
     const stremeableReportExternalId = 'mtb_detected_rr_detected'
 
     it('should return list of reports with minimum few global reports', () =>
