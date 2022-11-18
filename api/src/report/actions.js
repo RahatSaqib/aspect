@@ -1,13 +1,13 @@
 // ----------- Action Types ---------------------
 const types = {
-  REPORT_READY_TO_DELIVER: 'REPORT_READY_TO_DELIVER',
+  REPORT_BASED_NOTIFICATION_REQUESTED: 'REPORT_BASED_NOTIFICATION_REQUESTED',
 }
 
 // ----------- Action Creators -------------------
 
 function reportReadyToDelivery(notificationTypeId) {
   return {
-    type: types.REPORT_READY_TO_DELIVER,
+    type: types.REPORT_BASED_NOTIFICATION_REQUESTED,
     notificationTypeId,
   }
 }
