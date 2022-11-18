@@ -22,31 +22,22 @@ const {
   updateResultTreatmentStatusLog,
 } = require('./common/db')
 
+async function resultFollowUpByResultId(request) {
+  const response = await showResult(request)
+
+  if (!response.data.resultTreatmentStatusCreatedOn) {
+    response.data.resultTreatmentStatusCreatedOn = response.data.endedOn || response.data.startedOn || new Date()
+  }
+
+  return response
+}
+
 async function updateResultFollowUp(request) {
   const { auth, params, payload } = request
   const { resultId } = params
   const { date, id, externalId, followUpId, followUpExternalId } = payload
   const { id: currentUserId } = await getUser(auth.credentials.name)
-  const dataConstraints = await getConstraints(auth.credentials)
-  const { userName } = await getUser(auth.credentials.name)
-  const resultQuery = await generateResultQueryForResultFollowUp(resultId, dataConstraints, SELECT_FIELDS_UTC)
-  // get the result so we can check access and if status changed
-
-  const result = await getResultByResultId(
-    auth,
-    resultId,
-    dataConstraints,
-    userName,
-    resultQuery,
-    getAssayForResultFollowup,
-    getFileReferencesForResultFolloup,
-    addConstraints,
-    showResultFolloup,
-    getResultNotesByResultIdForResultFollowup
-  )
-  if (!result.ok) {
-    return Boom.notFound()
-  }
+  const result = await showResult(request)
 
   const followUp = await getFollowUpsForResultFollowup(followUpExternalId, followUpId)
   const affectedRows = await getAffectedRowsbyResultFollowUp(date, resultId, externalId, currentUserId, followUp, id)
@@ -160,10 +151,25 @@ async function showResult(request) {
     params: { resultId },
     auth,
   } = request
-  const result = await getResultByResultId(auth, resultId)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { userName } = await getUser(auth.credentials.name)
+  const resultQuery = await generateResultQueryForResultFollowUp(resultId, dataConstraints, SELECT_FIELDS_UTC)
+  const result = await getResultByResultId(
+    auth,
+    resultId,
+    dataConstraints,
+    userName,
+    resultQuery,
+    getAssayForResultFollowup,
+    getFileReferencesForResultFolloup,
+    addConstraints,
+    showResultFolloup,
+    getResultNotesByResultIdForResultFollowup
+  )
   return result.ok ? result : Boom.notFound()
 }
 
 module.exports = {
   updateResultFollowUp,
+  resultFollowUpByResultId,
 }

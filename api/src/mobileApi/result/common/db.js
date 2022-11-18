@@ -604,7 +604,7 @@ const getFileReferencesForResultFolloup = (resultId, dataConstraints) => {
 }
 
 const showResultFolloup = (resultId, dataConstraints) => {
-  knex('ResultFollowUp as rfu')
+  return knex('ResultFollowUp as rfu')
     .join('Result as r', 'r.id', 'rfu.resultId')
     .join('Sample as sp', 'r.sampleId', 'sp.id')
     .join('Device as d', 'r.deviceId', 'd.id')
