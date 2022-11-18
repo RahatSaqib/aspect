@@ -332,7 +332,8 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
   const personsToNotify = new Set()
   await Promise.all(
     people.map(async person => {
-      const shouldNotifyToPerson = await shouldNotify(txKnex, action, person.id, person.jobFunctionId)
+      const shouldNotifyToPerson =
+        action.reportId || (await shouldNotify(txKnex, action, person.id, person.jobFunctionId))
       if (shouldNotifyToPerson != null) {
         personsToNotify.add(person.id)
       }
@@ -343,23 +344,20 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
     const generatedReports = new Set()
     const { externalId } = await knex('Report').where({ id: action.reportId }).first()
     let fileName
+    const filters = {
+      minDate: subDays(new Date(), 12), // TODO change this
+      maxDate: new Date(),
+    }
 
     for (const personId of [...personsToNotify]) {
       // eslint-disable-next-line no-await-in-loop
       const constraints = await getConstraints({ personId })
       delete constraints.person
-      // TODO: Improve to avoid collisions, include query params
-      const reportHash = crypto.createHash('md5').update(JSON.stringify(constraints)).digest('hex')
+
+      const reportHash = crypto.createHash('md5').update(JSON.stringify({ constraints, filters })).digest('hex')
 
       if (!generatedReports.has(reportHash)) {
         generatedReports.add(reportHash)
-        /*
-        notificationType.filterCondition -> reportFrecuency
-        { name: 'daily', },
-          { name: 'weekly', },
-          { name: 'monthly', },
-          { name: 'quarterly', },
-        */
 
         const auth = {
           credentials: {
@@ -367,13 +365,7 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
           },
         }
         // eslint-disable-next-line no-await-in-loop
-        fileName = await saveReportToFile(
-          auth,
-          {
-            /* minDate: */
-          },
-          externalId
-        ) // TODO recheck this
+        fileName = await saveReportToFile(auth, filters, externalId)
       }
       // Generate JWT
       const reportToken = jwt.sign(
