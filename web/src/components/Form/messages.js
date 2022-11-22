@@ -177,6 +177,32 @@ const headerMessagesBase = {
       id: 'forms.formSectionHeader.technicalDetails',
       defaultMessage: 'Technical Details',
     },
+
+    frequencyDailyPreviousCalendarDay: {
+      id: 'forms.formItem.dateRange.frequencyDailyPreviousCalendarDay',
+      defaultMessage: 'Previous Calendar Day',
+    },
+    frequencyDailyPreviousWorkingDay: {
+      id: 'forms.formItem.dateRange.frequencyDailyPreviousBusinessDay',
+      defaultMessage: 'Previous Working Day',
+    },
+
+    frequencyWeeklyPreviousWeek: {
+      id: 'forms.formItem.dateRange.frequencyWeeklyPreviousWeek',
+      defaultMessage: 'Previous Week',
+    },
+    frequencyMonthlyPreviousMonth: {
+      id: 'forms.formItem.dateRange.frequencyMonthlyPreviousMonth',
+      defaultMessage: 'Previous Month',
+    },
+    frequencyQuarterlyPreviousQuarter: {
+      id: 'forms.formItem.dateRange.frequencyQuarterlyPreviousQuarter',
+      defaultMessage: 'Previous Quarter',
+    },
+    frequencyYearlyPreviousYear: {
+      id: 'forms.formItem.dateRange.frequencyYearlyPreviousYear',
+      defaultMessage: 'Previous Year',
+    },
   }),
 }
 

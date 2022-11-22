@@ -100,7 +100,7 @@ const NotificationFormPage = () => {
       unset(values, 'cronRecurrency')
     } else {
       values.cronRecurrency = formik.values.cronRecurrency.cronExpression
-      values.reportFrecuency = formik.values.cronRecurrency.frecuency
+      values.reportFrequency = formik.values.cronRecurrency.frequency
     }
 
     submitNotification(

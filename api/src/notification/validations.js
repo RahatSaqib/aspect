@@ -98,20 +98,25 @@ const resultBasedNotificationPayload = Joi.object({
   }),
   cronRecurrency: Joi.string()
     .when('notificationType', {
-      // check first sendSms...
       is: 'reportBased',
-      otherwise: Joi.forbidden(),
       then: Joi.required(),
+      otherwise: Joi.forbidden(),
     })
     .description('To schedule the delivery of the email'),
-  reportFrecuency: Joi.string()
+  reportFrequency: Joi.string()
     .when('notificationType', {
-      // check first sendSms...
       is: 'reportBased',
-      otherwise: Joi.forbidden(),
       then: Joi.required(),
+      otherwise: Joi.forbidden(),
     })
     .description('The frequency of the report'),
+  reportDateRange: Joi.string()
+    .when('notificationType', {
+      is: 'reportBased',
+      then: Joi.required(),
+      otherwise: Joi.forbidden(),
+    })
+    .description('The date range token of the report'),
   result: Joi.array()
     .items(
       Joi.object().keys({

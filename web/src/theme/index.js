@@ -303,6 +303,15 @@ const themeDefinition = {
         },
       },
     },
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          '& .MuiSvgIcon-root': {
+            fontSize: 20,
+          },
+        },
+      },
+    },
     MuiSelect: {
       styleOverrides: {
         root: {

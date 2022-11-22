@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import { useFormikContext } from 'formik'
@@ -12,6 +12,8 @@ import AspectInput from './Inputs'
 import AspectTextField from './Inputs/TextField'
 
 const cssClasses = classnames.bind(styles)
+
+const INPUT_LABEL_PROPS = { shrink: true }
 
 const FormItem = ({
   classNames,
@@ -48,6 +50,17 @@ const FormItem = ({
 
   const i18nTools = { messages, formatMessage, formik }
   const { component } = controlType || {}
+  const controlTypeActual = useMemo(() => ({ ...controlType, subRowIndex }), [controlType, subRowIndex])
+  const inputProps = useMemo(
+    () => ({
+      readOnly: !toggleEdit,
+      // is used for TextField, TextArea, Select
+      disabled:
+        !toggleEdit || type === 'readOnly' || (disabledIf && disabledIf(formik.values, toggleEdit, subRowIndex)),
+      disableUnderline: !toggleEdit || type === 'readOnly',
+    }),
+    [disabledIf, formik.values, subRowIndex, toggleEdit, type]
+  )
 
   if (component === 'hidden') {
     return <input type="hidden" name={id} id={id} />
@@ -67,7 +80,7 @@ const FormItem = ({
         {...getFieldProps(id)}
         id={id}
         input={type}
-        controlType={{ ...controlType, subRowIndex }}
+        controlType={controlTypeActual}
         label={`${getLabel({ ...i18nTools, labelI18nKey, label })}${isRequired ? '*' : ''}`}
         link={link}
         placeholder={getFormattedString(placeholder, i18nTools, ' - ')}
@@ -78,14 +91,8 @@ const FormItem = ({
         })}
         classNames={classNames}
         fullWidth
-        InputProps={{
-          readOnly: !toggleEdit,
-          // is used for TextField, TextArea, Select
-          disabled:
-            !toggleEdit || type === 'readOnly' || (disabledIf && disabledIf(formik.values, toggleEdit, subRowIndex)),
-          disableUnderline: !toggleEdit || type === 'readOnly',
-        }}
-        InputLabelProps={{ shrink: true }}
+        InputProps={inputProps}
+        InputLabelProps={INPUT_LABEL_PROPS}
         formik={formik}
         validate={validate}
       />

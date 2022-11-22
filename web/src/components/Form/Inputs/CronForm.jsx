@@ -25,8 +25,8 @@ const CronForm = props => {
     isNil(initialCronRecurrency) || isEmpty(initialCronRecurrency) ? null : initialCronRecurrency.split(' ')
   )
   const [showCron, setShowCron] = useState(false)
-  const handleOnChange = (value, humanReadable, frecuency) => {
-    updateField(id, { cronExpression: value.join(' '), humanReadable, frecuency }, { formik, toggleEdit })
+  const handleOnChange = (value, humanReadable, frequency) => {
+    updateField(id, { cronExpression: value.join(' '), humanReadable, frequency }, { formik, toggleEdit })
   }
   const { locale, formatMessage } = useI18n()
   return (
