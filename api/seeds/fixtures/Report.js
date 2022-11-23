@@ -522,6 +522,32 @@ const devicesAndSitesOverview = {
   ],
 }
 
+const allDeviceReport = {
+  name: 'All Device Report',
+  description:
+    'Displays all the GeneXpert devices and the number of results per result category and all the information related with the connection status.',
+  i18nKey: 'allDeviceReport',
+  i18nKeyDescription: 'allDeviceReport_description',
+  externalId: 'all_device_report',
+  fileName: 'AllDeviceReport',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 160,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getAllDeviceReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -544,4 +570,5 @@ module.exports = {
   xdrDevicesSummary,
   usageStats,
   devicesAndSitesOverview,
+  allDeviceReport,
 }

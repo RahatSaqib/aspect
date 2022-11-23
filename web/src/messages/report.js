@@ -207,5 +207,14 @@ const messages = defineMessages({
     defaultMessage:
       'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
   },
+  allDeviceReport: {
+    id: 'pages.ReportIndex.allDeviceReport',
+    defaultMessage: 'All Device Report',
+  },
+  allDeviceReport_description: {
+    id: 'pages.ReportIndex.allDeviceReport_description',
+    defaultMessage:
+      'Displays all the GeneXpert devices and the number of results per result category and all the information related with the connection status.',
+  },
 })
 export default messages

@@ -17,6 +17,7 @@ const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
 const { getDeviceReportData } = require('./deviceReport')
 const { getInventoryData } = require('./devicesAndSitesOverviewReport')
+const { getAllDeviceReportData } = require('./allDeviceReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -446,6 +447,17 @@ async function getDevicesAndSitesOverviewReport(auth, query) {
   }
 }
 
+async function getAllDeviceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const rows = await getAllDeviceReportData(dataConstraints, query)
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -458,4 +470,5 @@ module.exports = {
   getModuleStatusReport,
   getDeviceReport,
   getDevicesAndSitesOverviewReport,
+  getAllDeviceReport,
 }
