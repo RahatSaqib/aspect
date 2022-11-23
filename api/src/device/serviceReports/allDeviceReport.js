@@ -4,23 +4,8 @@ const {
   modifiers,
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
 } = require('../../result/query')
-const { XDR_RESISTANCES } = require('../../shared/constants')
 const { getDateTimeProjectionInUserTimeZone, getOffsetFromIsoDateString } = require('../../shared/date')
 const { getBasicsForDevicesReport } = require('../common/db')
-
-const xdrExtraColumns = Object.fromEntries(
-  XDR_RESISTANCES.map(resistance => [
-    resistance,
-    knex.raw(`SUM(
-    CASE WHEN
-      JSON_SEARCH(
-        r.resultData ->> '$.detectedResistance[*]',
-        'one',
-        '${resistance}'
-      ) IS NOT NULL
-    THEN 1 ELSE 0 END)`),
-  ])
-)
 
 async function getAllDeviceReportData(dataConstraints, query) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
@@ -43,7 +28,6 @@ async function getAllDeviceReportData(dataConstraints, query) {
     .modify(modifiers.join.resultCategory1)
     .modify(modifiers.join.resultCategory2)
     .select({
-      ...xdrExtraColumns,
       deviceId: 'deviceId',
       mtbNotDetected,
       mtbDetectedRifNotDetected,
@@ -55,7 +39,6 @@ async function getAllDeviceReportData(dataConstraints, query) {
       mtbDetected,
       mtbTraceDetected,
       totalXpertTests: knex.raw('count(*)'),
-      totalXpertModulesInUse: knex.raw('count(DISTINCT moduleName)'),
       lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset),
     })
     .groupBy('r.deviceId')
@@ -89,16 +72,18 @@ async function getAllDeviceReportData(dataConstraints, query) {
       'lg.name AS districtName',
       'd.serial AS serial',
       'd.lastInstrumentSerial AS instrumentSerial',
-      knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS gxConnectVersion'),
+      getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', offset, 'lastPingOn'),
+      'd.lastPingFromIp AS lastPingFrom',
+      knex.raw('d.ConfigurationData ->> "$.connectSettingsSentOn" AS informationDate'),
       knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS operativeSystem'),
+      'd.timezone AS timeZone',
+      'd.culture AS language',
+      knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS gxConnectVersion'),
+      knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
+      knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
+      'd.putInService AS instalationDate',
       'resultsCount.lastUploadOn AS lastUploadOn',
-      knex.raw('IFNULL(resultsCount.totalXpertModulesInUse, 0) AS totalXpertModulesInUse'),
-      knex.raw('IFNULL(resultsCount.INH, 0) AS INH'),
-      knex.raw('IFNULL(resultsCount.FLQ, 0) AS FLQ'),
-      knex.raw('IFNULL(resultsCount.AMK, 0) AS AMK'),
-      knex.raw('IFNULL(resultsCount.KAN, 0) AS KAN'),
-      knex.raw('IFNULL(resultsCount.CAP, 0) AS CAP'),
-      knex.raw('IFNULL(resultsCount.ETH, 0) AS ETH'),
+
       knex.raw('IFNULL(deviceInactiveDays.totalInactiveDays, 0) AS totalInterruptedDays'),
       knex.raw('IFNULL(resultsCount.mtbNotDetected, 0) AS totalMtbNegative'),
       knex.raw('IFNULL(resultsCount.mtbDetected, 0) AS totalMtbDetected'),
