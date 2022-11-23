@@ -15,7 +15,7 @@ async function seed(knex) {
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').first('id')
 
-  const { jobFunctionId } = knex('JobFunctionPermission')
+  const { jobFunctionId } = await knex('JobFunctionPermission')
     .where('jobFunctionId', jobFunctionIdAdmin)
     .where('permissionId', permissionSiteAdminId)
     .first('jobFunctionId')
