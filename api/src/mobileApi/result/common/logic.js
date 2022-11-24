@@ -367,63 +367,7 @@ const getTransformedDataOfResultById = (data, setDelivered, followUps, comments)
   diseaseName: data.diseaseName,
 })
 
-async function showFileReferencesById(resultId, dataConstraints, addConstraints, getFileReferencesForResultFolloup) {
-  const fileReferences = await getFileReferencesForResultFolloup(resultId, dataConstraints).then(items =>
-    items.map(ref => {
-      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
-      return ref
-    })
-  )
-  return { data: fileReferences }
-}
-
-async function showResultFollowUps(resultId, dataConstraints, showResultFolloup) {
-  const followUps = await showResultFolloup(resultId, dataConstraints)
-  return { data: followUps }
-}
-
-function getResultTreatmentStatus(response) {
-  if (response.requiresTreatment) {
-    const today = new Date()
-    const lastSixteenDays = subDays(today, 16)
-    const lastThirtyTwoDays = subDays(today, 32)
-    const isPastThirtyTwoDays = response.endedOn <= lastThirtyTwoDays
-    const isPastSixteenDays = response.endedOn <= lastSixteenDays && response.endedOn > lastThirtyTwoDays
-    if (response.resultTreatmentStatus === 'OnTreatment') {
-      response.treatmentStatusInfo = 'ok'
-    } else if (response.resultTreatmentStatus === 'NotPossible') {
-      response.treatmentStatusInfo = 'na'
-    } else if (isPastThirtyTwoDays) {
-      response.treatmentStatusInfo = 'alert'
-    } else if (isPastSixteenDays) {
-      response.treatmentStatusInfo = 'warning'
-    } else {
-      response.treatmentStatusInfo = 'na'
-    }
-  } else {
-    response.treatmentStatusInfo = null
-  }
-}
-
-async function getResultNotesByResultId(resultId, getResultNotesByResultIdForResultFollowup) {
-  const resultNotes = await getResultNotesByResultIdForResultFollowup(resultId)
-  return resultNotes
-}
-
-async function getCustomFieldsForResult(data) {
-  const { deviceId, partnerId, partnerPluginName, deviceTypePluginName } = data
-  const pluginNames = [partnerPluginName, deviceTypePluginName]
-  const { getCustomFields } = require('../../../deviceApi/service')
-  const customFieldsRaw = await getCustomFields({ knex, device: { id: deviceId, partnerId }, pluginNames })
-  let customFields = customFieldsRaw?.CustomFields?.Fields || []
-  customFields = _.sortBy(customFields, ['DisplayOrder', 'Name'])
-  const customFieldsValues = customFields.map(it => ({
-    caption: it.Label,
-    externalId: `patientData.${_.camelCase(it.ExternalId)}`,
-  }))
-  return customFieldsValues
-}
-
+// clinical response : get result details by result ID
 async function getResultByResultId(
   auth,
   resultId,
@@ -505,6 +449,68 @@ async function getResultByResultId(
   }
 
   return { ok: results.length === 1, data }
+}
+
+// Supporting function : getResultByResultId
+async function getCustomFieldsForResult(data) {
+  const { deviceId, partnerId, partnerPluginName, deviceTypePluginName } = data
+  const pluginNames = [partnerPluginName, deviceTypePluginName]
+  const { getCustomFields } = require('../../../deviceApi/service')
+  const customFieldsRaw = await getCustomFields({ knex, device: { id: deviceId, partnerId }, pluginNames })
+  let customFields = customFieldsRaw?.CustomFields?.Fields || []
+  customFields = _.sortBy(customFields, ['DisplayOrder', 'Name'])
+  const customFieldsValues = customFields.map(it => ({
+    caption: it.Label,
+    externalId: `patientData.${_.camelCase(it.ExternalId)}`,
+  }))
+  return customFieldsValues
+}
+
+// Supporting function : getResultByResultId
+async function showFileReferencesById(resultId, dataConstraints, addConstraints, getFileReferencesForResultFolloup) {
+  const fileReferences = await getFileReferencesForResultFolloup(resultId, dataConstraints).then(items =>
+    items.map(ref => {
+      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+      return ref
+    })
+  )
+  return { data: fileReferences }
+}
+
+// Supporting function : getResultByResultId
+async function showResultFollowUps(resultId, dataConstraints, showResultFolloup) {
+  const followUps = await showResultFolloup(resultId, dataConstraints)
+  return { data: followUps }
+}
+
+// Supporting function : getResultByResultId
+function getResultTreatmentStatus(response) {
+  if (response.requiresTreatment) {
+    const today = new Date()
+    const lastSixteenDays = subDays(today, 16)
+    const lastThirtyTwoDays = subDays(today, 32)
+    const isPastThirtyTwoDays = response.endedOn <= lastThirtyTwoDays
+    const isPastSixteenDays = response.endedOn <= lastSixteenDays && response.endedOn > lastThirtyTwoDays
+    if (response.resultTreatmentStatus === 'OnTreatment') {
+      response.treatmentStatusInfo = 'ok'
+    } else if (response.resultTreatmentStatus === 'NotPossible') {
+      response.treatmentStatusInfo = 'na'
+    } else if (isPastThirtyTwoDays) {
+      response.treatmentStatusInfo = 'alert'
+    } else if (isPastSixteenDays) {
+      response.treatmentStatusInfo = 'warning'
+    } else {
+      response.treatmentStatusInfo = 'na'
+    }
+  } else {
+    response.treatmentStatusInfo = null
+  }
+}
+
+// Supporting function : getResultByResultId
+async function getResultNotesByResultId(resultId, getResultNotesByResultIdForResultFollowup) {
+  const resultNotes = await getResultNotesByResultIdForResultFollowup(resultId)
+  return resultNotes
 }
 
 module.exports = {

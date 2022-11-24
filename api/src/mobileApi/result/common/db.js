@@ -577,6 +577,7 @@ function getBaseQueryForResults() {
   return resultQuery
 }
 
+// feature: clinical response
 const generateResultQueryForResultFollowUp = async (resultId, dataConstraints, fields) => {
   const resultQuery = await getBaseQueryForResults()
     .leftJoin('ResultCategoryAssay as rca', function () {
@@ -614,6 +615,7 @@ const generateResultQueryForResultFollowUp = async (resultId, dataConstraints, f
   return resultQuery
 }
 
+// feature: clinical response
 const getAssayForResultFollowup = data => {
   return knex('Assay as a')
     .join('DeviceType as dt', 'dt.id', 'a.deviceTypeId')
@@ -621,6 +623,7 @@ const getAssayForResultFollowup = data => {
     .first('a.*', 'dt.externalId as deviceTypeExternalId')
 }
 
+// feature: clinical response
 const getFileReferencesForResultFolloup = (resultId, dataConstraints) => {
   return knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
@@ -646,6 +649,7 @@ const getFileReferencesForResultFolloup = (resultId, dataConstraints) => {
     )
 }
 
+// feature: clinical response
 const showResultFolloup = (resultId, dataConstraints) => {
   return knex('ResultFollowUp as rfu')
     .join('Result as r', 'r.id', 'rfu.resultId')
@@ -675,6 +679,7 @@ const showResultFolloup = (resultId, dataConstraints) => {
     )
 }
 
+// feature: clinical response
 const getResultNotesByResultIdForResultFollowup = resultId => {
   return knex('ResultNote as rn')
     .leftJoin('User as u', 'rn.createdBy', 'u.id')
@@ -684,6 +689,7 @@ const getResultNotesByResultIdForResultFollowup = resultId => {
     .select('u.name as createdBy', 'rn.text', 'rn.id', 'rn.changedOn', 'rn.createdOn', 'rt.name as noteType')
 }
 
+// feature: clinical response
 const COMMON_LIST_FIELDS_UTC = {
   id: 'r.id',
   externalId: 'r.externalId',
@@ -759,6 +765,7 @@ const COMMON_LIST_FIELDS_UTC = {
   firstViewedOn: 'r.firstViewedOn',
 }
 
+// feature: clinical response
 const getLastTreatmentStatusByResult = resultId => {
   return knex('Result as r')
     .innerJoin('ResultTreatmentStatusLog as rtl', 'r.treatmentStatusLogId', 'rtl.id')
@@ -768,10 +775,12 @@ const getLastTreatmentStatusByResult = resultId => {
     .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
 }
 
+// feature: clinical response
 const getTreatmentStatus = resultTreatmentStatusId => {
   return knex('ResultTreatmentStatus').where('id', resultTreatmentStatusId).first()
 }
 
+// feature: clinical response
 const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, now, changedOn, userId) => {
   return knex('ResultTreatmentStatusLog').insert({
     resultId,
@@ -784,6 +793,7 @@ const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, now, c
   })
 }
 
+// feature: clinical response
 const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, createdOn, updatedBy, updatedOn) => {
   return knex('ResultFollowUp').insert({
     resultId,
@@ -797,6 +807,7 @@ const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, cr
   })
 }
 
+// feature: clinical response
 const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
   return knex('Result').where('id', resultId).update({
     treatmentStatusLogId,
@@ -805,18 +816,22 @@ const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
   })
 }
 
+// feature: clinical response
 const getTreatmentStatusLogId = resultId => {
   return knex('Result').where('id', resultId).select('treatmentStatusLogId')
 }
 
+// feature: clinical response
 const insertResultWorkflowLog = resultWorkflowLogEntry => {
   return knex('ResultWorkflowLog').insert(resultWorkflowLogEntry)
 }
 
+// feature: clinical response
 const getLatestResultWorkflowStatusId = resultId => {
   return knex('ResultWorkflowLog').where('resultId', resultId).select().orderBy('changedOn', 'desc').limit(1)
 }
 
+// feature: clinical response
 const updateResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
   return knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
     resultWorkflowStatusLogId: lastLogId,
@@ -825,6 +840,7 @@ const updateResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
   })
 }
 
+// feature: clinical response
 const updateResultTreatmentStatusLog = (treatmentStatusLogId, data, changedOn) => {
   return knex('ResultTreatmentStatusLog').where('id', treatmentStatusLogId).update({
     data,

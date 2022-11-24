@@ -15,7 +15,7 @@ const {
   addClinicalResponsePayloadValidation,
   addClinicalResponseResultValidation,
 } = require('./common/validations')
-const { addclinicalResponse } = require('./clinicalResponse')
+const { clinicalResponse } = require('./clinicalResponse')
 
 // -----------------------------------------------------
 // routes
@@ -104,7 +104,7 @@ const routes = [
   {
     method: 'POST',
     path: '/v1/result/clinical-responses/{resultId}',
-    handler: addclinicalResponse,
+    handler: clinicalResponse,
     config: {
       description: 'Add a result follow up',
       notes: 'Adds a treatment/outcome follow up for a result',

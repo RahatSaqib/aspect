@@ -29,7 +29,7 @@ const {
   getLatestResultWorkflowStatusId,
 } = require('./common/db')
 
-async function addclinicalResponse(request) {
+async function clinicalResponse(request) {
   const { payload } = request
   const syncData = payload
   await Promise.all(
@@ -59,6 +59,7 @@ async function addclinicalResponse(request) {
   return response
 }
 
+// Add result folloup basaed on followup type and value. Delete followup if any followup type's value is null
 async function addClinicalResponse(request, data) {
   const { auth, params } = request
   const now = new Date()
@@ -103,6 +104,7 @@ async function addClinicalResponse(request, data) {
   )
 }
 
+// Update treatmentStarted and outcomeOccurred based on followup type and value
 async function updateResultFollowUp(request, data) {
   const { auth, params } = request
   const { resultId } = params
@@ -138,6 +140,7 @@ async function updateResultFollowUp(request, data) {
   )
 }
 
+// supporting method for updateResultFollowUp
 async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, result, date, data, method) {
   const followUps = await getResultFollowUps(result)
   let treatmentStatusExternalId = 'AwaitingTreatment'
@@ -150,6 +153,7 @@ async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, res
   return updateTreatmentStatus(request, currentUserId, result, null, treatmentStatusExternalId, data, method)
 }
 
+// supporting method for updateTreatmentStatusBasedOnFollowUps
 async function updateTreatmentStatus(
   request,
   currentUserId,
@@ -183,6 +187,7 @@ async function updateTreatmentStatus(
   return response
 }
 
+// supporting method for updateTreatmentStatus
 async function updateTreatmentStatusByResultId(
   userId,
   resultId,
@@ -236,6 +241,7 @@ async function updateTreatmentStatusByResultId(
   return lastTreatment
 }
 
+// update result workflow
 async function updateWorkflowStatus(request, data) {
   const { auth, params } = request
   const { resultId } = params
@@ -255,7 +261,7 @@ async function updateWorkflowStatus(request, data) {
     resultWorkflowLogEntry,
     data.clientTime,
     result.data.resultWorkflowStatusId,
-    data.value ? data.clientTime : result.data.resultWorkflowChangedOn
+    result.data.resultWorkflowChangedOn
   )
 
   if (errorMessage) {
@@ -266,6 +272,7 @@ async function updateWorkflowStatus(request, data) {
   return response
 }
 
+// supporting function for update workflow status
 async function updateResultWorkflowStatusByResultId(
   resultWorkflowLogEntry,
   clientDate,
@@ -284,6 +291,7 @@ async function updateResultWorkflowStatusByResultId(
   }
 }
 
+// generate result
 async function showResult(request) {
   const {
     params: { resultId },
@@ -312,5 +320,5 @@ async function showResult(request) {
 }
 
 module.exports = {
-  addclinicalResponse,
+  clinicalResponse,
 }
