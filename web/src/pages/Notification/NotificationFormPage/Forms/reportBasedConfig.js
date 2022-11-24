@@ -137,6 +137,7 @@ const reportBasedSection = formatMessage => {
                   options = options.filter(it => (it.isVisible ? it.isVisible(values) : true))
                   return options
                 },
+                autoSelectFirstOption: true,
               },
             },
           ],

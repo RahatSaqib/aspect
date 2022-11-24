@@ -17,6 +17,7 @@ const RadioButtonList = props => {
       getOptions,
       // aligning radio's vertically (='column') or horizontally (='row')
       direction = 'column',
+      autoSelectFirstOption,
     } = {},
     label,
     id,
@@ -41,9 +42,13 @@ const RadioButtonList = props => {
   // ----------------------------------------------
   useEffect(() => {
     if (!isNil(value) && !actualOptions.find(x => x.value === value)) {
-      updateField(id, undefined, { formik, toggleEdit })
+      let newValue
+      if (autoSelectFirstOption) {
+        newValue = actualOptions[0]?.value
+      }
+      updateField(id, newValue, { formik, toggleEdit })
     }
-  }, [actualOptions, formik, id, toggleEdit, updateField, value])
+  }, [actualOptions, autoSelectFirstOption, formik, id, toggleEdit, updateField, value])
 
   // ----------------------------------------------
   const handleChange = event => {
