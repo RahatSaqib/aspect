@@ -17,6 +17,7 @@ async function getInventoryData(auth, query) {
       't2.quantityOnHand',
       't2.daysStockLeft',
       't2.projectedWaste',
+      't2.qtyExpired as quantityExpired',
     ]
   )
     .whereRaw('t2.quantityOnHand IS NOT NULL')
