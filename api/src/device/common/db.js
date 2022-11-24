@@ -453,4 +453,5 @@ module.exports = {
   deleteDevice,
   getNotDecommissionedDevices,
   joinModuleAvailability,
+  getFirstAndLastResults,
 }

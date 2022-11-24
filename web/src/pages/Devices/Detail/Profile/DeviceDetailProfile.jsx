@@ -33,7 +33,7 @@ import { formatRelative } from '../../../../utils/utils/dateFormat'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
-import styles from '../DeviceDetail.css'
+import styles from '../styles.css'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
 
@@ -293,6 +293,7 @@ const DeviceDetailProfile = ({
   )
 
   const formatMaintenanceDate = date => (date ? formatDate(date) : formatMessage(messages.undefinedValue))
+
   return (
     <div>
       <section className={cssClasses('Section', 'Section--first')}>
@@ -312,6 +313,8 @@ const DeviceDetailProfile = ({
                 </Fragment>
               }
             />
+            <Summary title={formatMessage(messages.shortName)} description={device.get('shortName')} />
+
             <Summary
               title={
                 isMaintenanceStatusChangeDisabled ? (
@@ -401,6 +404,10 @@ const DeviceDetailProfile = ({
                 </Button>
               }
             />
+            <Summary title={formatMessage(messages.serial)} description={device.get('serial')} />
+            <Summary title={formatMessage(messages.hostId)} description={device.get('hostId')} />
+            <Summary title={formatMessage(messages.createdOn)} description={formatRelative(device.get('createdOn'))} />
+
             {utilizationRateThisMonth !== null && (
               <Summary
                 title={
@@ -476,6 +483,8 @@ const DeviceDetailProfile = ({
                 </Button>
               }
             />
+            <Summary title={formatMessage(messages.dailyCapacity)} description={device.get('dailyCapacity')} />
+            <Summary title={formatMessage(messages.notes)} description={device.get('notes')} cols="1" />
           </div>
         </Card>
         <CalibrationDialog

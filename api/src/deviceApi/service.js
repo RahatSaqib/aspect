@@ -235,12 +235,8 @@ async function addDeviceDataWithContext(context) {
   })
   await preProcessAddDeviceData(context)
 
-  const { knex, now, payload, device } = context
-  const { configuration, includeDeviceConfiguration, log, name, operation, result, site, getFormsDefinition } = payload
-
-  if (name) {
-    await knex('Device').where({ id: device.id }).update({ name, updatedOn: now })
-  }
+  const { now, payload } = context
+  const { configuration, includeDeviceConfiguration, log, operation, result, site, getFormsDefinition } = payload
 
   if (site) {
     logger.debug('executing updateSiteWithContext', {

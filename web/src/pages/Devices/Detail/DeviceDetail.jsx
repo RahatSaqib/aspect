@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react'
-import { LinearProgress } from '@mui/material'
+import { Box, LinearProgress } from '@mui/material'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
-import { Shell, ShellHeader, ShellContent } from '../../../components/Shell'
+import DetailHeader from '../../../components/DetailHeader'
 import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
@@ -26,22 +26,10 @@ const messages = {
   ...deviceApprovalMessages,
   ...deviceStatusMessages,
   ...defineMessages({
-    profile: {
-      id: 'pages.DeviceDetail.profile',
-      defaultMessage: 'Profile',
-    },
-    operation: {
-      id: 'pages.DeviceDetail.operation',
-      defaultMessage: 'Operation',
-    },
-    alerts: {
-      id: 'pages.DeviceDetail.alerts',
-      defaultMessage: 'Alerts',
-    },
-    edit: {
-      id: 'pages.DeviceDetail.edit',
-      defaultMessage: 'Edit',
-    },
+    profile: { id: 'pages.DeviceDetail.profile', defaultMessage: 'Profile' },
+    operation: { id: 'pages.DeviceDetail.operation', defaultMessage: 'Operation' },
+    alerts: { id: 'pages.DeviceDetail.alerts', defaultMessage: 'Alerts' },
+    edit: { id: 'pages.DeviceDetail.edit', defaultMessage: 'Edit' },
   }),
 }
 
@@ -83,35 +71,16 @@ export const DeviceDetail = props => {
           notes: values.notes,
         })
       ),
-    {
-      onSuccess,
-    }
+    { onSuccess }
   )
   const { mutate: onCalibrationSubmit } = useMutation(
     values =>
-      dispatch(
-        updateDeviceMaintenance({
-          externalId: 'calibration',
-          device: Immutable.fromJS(device),
-          values,
-        })
-      ),
-    {
-      onSuccess,
-    }
+      dispatch(updateDeviceMaintenance({ externalId: 'calibration', device: Immutable.fromJS(device), values })),
+    { onSuccess }
   )
   const { mutate: onWarrantySubmit } = useMutation(
-    values =>
-      dispatch(
-        updateDeviceMaintenance({
-          externalId: 'warranty',
-          device: Immutable.fromJS(device),
-          values,
-        })
-      ),
-    {
-      onSuccess,
-    }
+    values => dispatch(updateDeviceMaintenance({ externalId: 'warranty', device: Immutable.fromJS(device), values })),
+    { onSuccess }
   )
 
   const dateRange = searchParams.get('dateRange') || '30'
@@ -120,18 +89,12 @@ export const DeviceDetail = props => {
     const searchParams = new URLSearchParams(location.search)
     searchParams.set('dateRange', dateRange)
 
-    navigate(
-      {
-        ...location,
-        search: `?${searchParams.toString()}`,
-      },
-      { replace: true }
-    )
+    navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
   }
 
   return (
-    <Shell>
-      <ShellHeader title={device ? device.name : 'Devices'}>
+    <>
+      <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device">
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/${deviceId}` },
           { label: intl.formatMessage(messages.alerts), path: `/browse/device/${deviceId}/alerts` },
@@ -153,8 +116,8 @@ export const DeviceDetail = props => {
             {label}
           </AspectButton>
         ))}
-      </ShellHeader>
-      <ShellContent>
+      </DetailHeader>
+      <Box component="main" sx={{ pt: 8 }}>
         {isLoading ? (
           <LinearProgress />
         ) : (
@@ -200,8 +163,8 @@ export const DeviceDetail = props => {
             />
           </Routes>
         )}
-      </ShellContent>
-    </Shell>
+      </Box>
+    </>
   )
 }
 

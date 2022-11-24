@@ -93,6 +93,7 @@ const enhance = compose(
           countryId,
           stateId: undefined,
           lgaId: undefined,
+          siteName: undefined,
         }),
     onStateIdChange:
       ({ onChangeFilters }) =>
@@ -100,12 +101,14 @@ const enhance = compose(
         onChangeFilters({
           stateId,
           lgaId: undefined,
+          siteName: undefined,
         }),
     onLgaIdChange:
       ({ onChangeFilters }) =>
       lgaId =>
         onChangeFilters({
           lgaId,
+          siteName: undefined,
         }),
     onResultCategoryChange:
       ({ onChangeFilters }) =>
@@ -661,6 +664,8 @@ export const FiltersPanel = ({
                   floatingLabelFixed
                   hintText={formatMessage(messages.enterSiteName)}
                   floatingLabelText={formatMessage(messages.site)}
+                  stateId={filters.stateId}
+                  lgaId={filters.lgaId}
                 />
               </div>
             )}

@@ -14,7 +14,6 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
@@ -236,7 +235,6 @@ export const PersonList = ({
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.contactsTitle)} />
-      <NavTitle title={formatMessage(messages.contactsTitle)} />
       <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
         <AddNewButton type="button" color="primary" variant="contained" browseButton onClick={showNewContactPage}>
           {formatMessage(messages.addContact)}

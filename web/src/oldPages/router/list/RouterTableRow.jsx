@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import useI18n from '../../../hooks/useI18n'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import messages from '../../device/list/messages'
+import messages from '../../../pages/Devices/List/messages'
 
 const cssClasses = classnames.bind(styles)
 

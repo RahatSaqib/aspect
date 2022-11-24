@@ -21,7 +21,7 @@ import {
   composeSanitizer,
 } from '../../../../utils/selectors/searchParams'
 import { formatDate } from '../../../../utils/utils/dateFormat'
-import styles from '../DeviceDetail.css'
+import styles from '../styles.css'
 import {
   DeviceOperationDataTable,
   DeviceOperationDataTableHead,

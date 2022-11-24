@@ -1,4 +1,6 @@
 const _ = require('lodash')
+const dayjs = require('dayjs')
+const { pipe, find, values } = require('ramda')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/date')
 
 const assayAvatarColorsIcon = {
@@ -37,6 +39,88 @@ const assayAvatarColorsIcon = {
     foregroundColour: 'secondary',
     contentIcon: null,
   },
+}
+
+const showTreatment = testResult => {
+  return !isTransferred(testResult) && requiresTreatment(testResult)
+}
+
+// get latest followup based on its type
+const checkFollowupType = (testResult, followUp, type) => {
+  const followUps = _.sortBy(
+    _.filter(followUp, { resultId: testResult.id }).map(f => _.omit(f, 'resultId')),
+    ['date', 'updatedOn']
+  )
+  const maxDate = new Date(
+    Math.max(
+      ...followUps.map(element => {
+        return element.createdOn
+      })
+    )
+  )
+  const followUpDetail = pipe(
+    values,
+    find(followUpDetail => {
+      if (
+        followUpDetail.followUpTypeExternalId === type &&
+        new Date(followUpDetail.createdOn).toISOString() === new Date(maxDate).toISOString()
+      ) {
+        return followUpDetail
+      }
+    })
+  )(followUps)
+  return followUpDetail
+}
+
+// Its number of days from the day treatment has started/updated
+const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
+  const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
+  return isTreatment ? dayjs().diff(dayjs(isTreatment.updatedOn), 'day') : 0
+}
+
+// Its number of days from the day treatment has started/updated
+const daysFromTreatmentDateEndOn = (testResult, followUp) => {
+  const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
+  return isTreatment ? dayjs().diff(dayjs(isTreatment.endedOn), 'day') : 0
+}
+
+const isTransferred = testResult => {
+  const sample = {
+    id: testResult.sampleId,
+    originSite: testResult.sampleOriginSiteId
+      ? {
+          externalId: testResult.sampleOriginSiteExternalId,
+          name: testResult.sampleOriginSiteName,
+        }
+      : null,
+  }
+  return !!testResult.transferredOn && sample.originSite.externalId !== testResult.reportableSiteId
+}
+
+// If result is returning require treatment true, i.e. patient needs treatment
+const requiresTreatment = testResult => {
+  return !!testResult.requiresTreatment
+}
+
+const getSeverity = (testResult, followUp) => {
+  const daysDiff = daysFromTreatmentDateEndOn(testResult, followUp)
+  const requireTreatment = requiresTreatment(testResult)
+  const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
+  let severity = ''
+  if (requireTreatment) {
+    if (!isOnTreatment && daysDiff < 30) {
+      severity = 'info'
+    } else if (!isOnTreatment && daysDiff === 30) {
+      severity = 'warning'
+    } else if (!isOnTreatment && daysDiff > 30) {
+      severity = 'danger'
+    } else if (isOnTreatment) {
+      severity = 'success'
+    }
+  } else {
+    severity = 'info'
+  }
+  return severity
 }
 
 // transformed data
@@ -165,6 +249,9 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
         name: d.resultTreatmentStatusName,
         externalId: d.resultTreatmentStatusExternalId,
         i18nKey: d.resultTreatmentStatusi18nKey,
+        visible: showTreatment(d),
+        severity: getSeverity(d, followUps),
+        daysInCurrentStatus: daysFromTreatmentDateUpdateOn(d, followUps),
       },
       followUps: _.sortBy(
         _.filter(followUps, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
