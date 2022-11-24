@@ -6,7 +6,6 @@ module.exports = async function (knex) {
     .innerJoin('NotificationTypeCategory as ntc', 'ntc.id', 'nt.notificationTypeCategoryId')
     .innerJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
     .where('ntc.externalId', 'issueBased')
-    .whereNotNull('nt.jobfunctionId')
     .select(
       'nt.id as notificationTypeId',
       'nt.jobfunctionId as jobfunctionId',
@@ -23,23 +22,28 @@ module.exports = async function (knex) {
       smsTemplateId = null,
       emailTemplateId = null,
       webhookTemplateId = null,
-    }) =>
-      knex('NotificationType')
+    }) => {
+      const filterCondition = {
+        sendSms: !_.isNull(smsTemplateId),
+        sendEmail: !_.isNull(emailTemplateId),
+        sendWeb: !_.isNull(webhookTemplateId),
+      }
+
+      if (jobfunctionId) {
+        filterCondition.jobFunctions = [
+          {
+            tags: [],
+            jobFunctionId: jobfunctionId,
+          },
+        ]
+      }
+
+      await knex('NotificationType')
         .where('id', notificationTypeId)
         .update({
-          filterCondition: JSON.stringify({
-            sendSms: !_.isNull(smsTemplateId),
-            sendEmail: !_.isNull(emailTemplateId),
-            sendWebhook: !_.isNull(webhookTemplateId),
-
-            jobFunctions: [
-              {
-                tags: [],
-                jobFunctionId: jobfunctionId,
-              },
-            ],
-          }),
+          filterCondition: JSON.stringify(filterCondition),
           jobfunctionId: null,
         })
+    }
   )
 }
