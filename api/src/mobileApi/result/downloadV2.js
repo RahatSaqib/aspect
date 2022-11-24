@@ -15,6 +15,7 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
   getResultWorkflowStatusQuery,
+  getLatestResultFollowUps,
 } = require('./common/db')
 const { getTransformedDataV2 } = require('./common/logic')
 
@@ -34,10 +35,19 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
 
   // get follow ups for all results in the response for performance (filter later)
   const followUps = await getFollowUpsV2(data)
+  // get latest followup
+  const latestfollowUps = await Promise.all(
+    data.map(async result => {
+      return {
+        data: await getLatestResultFollowUps(result.id),
+        resultId: result.id,
+      }
+    })
+  )
   // get comments for all results in the response for performance (filter later)
   const comments = await getCommentsV2(data)
 
-  const transformedData = getTransformedDataV2(data, setDelivered, followUps, comments)
+  const transformedData = getTransformedDataV2(data, setDelivered, followUps, comments, latestfollowUps)
 
   // total pages calculation (zero based)
   const totalPages = Math.ceil(total / size) - 1

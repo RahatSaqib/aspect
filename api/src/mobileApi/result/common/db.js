@@ -409,6 +409,7 @@ const getFollowUpsV2 = data => {
       'fut.i18nKey as followUpTypei18nKey'
     )
 }
+
 // get comments for all results in the response for performance (filter later) v2
 const getCommentsV2 = data => {
   return knex('ResultNote as rn')
@@ -487,9 +488,51 @@ const getResultFollowUps = result => {
     .select('f.externalId', 't.externalId as followUpTypeExternalId')
 }
 
-const getAffectedRowsbyResultFollowUp = (date, resultId, externalId, currentUserId, followUp, id) => {
+const getLatestResultFollowUps = id => {
+  return knex('ResultFollowUp as r')
+    .join('FollowUp as f', 'r.followUpId', 'f.id')
+    .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
+    .join(
+      knex('ResultFollowUp as sr')
+        .join('FollowUp as sf', 'sr.followUpId', 'sf.id')
+        .join('FollowUpType as st', 'sf.followUpTypeId', 'st.id')
+        .select('st.externalId')
+        .where('resultId', id)
+        .max('sr.createdOn as max_date')
+        .as('a')
+        .groupBy('st.externalId')
+    )
+    .where('resultId', id)
+    .select(
+      'f.externalId',
+      't.externalId as followUpTypeExternalId',
+      'f.id',
+      'r.updatedOn',
+      'r.createdOn',
+      'r.date',
+      'r.resultId'
+    )
+    .groupBy('t.externalId')
+}
+
+const deleteResultFollowUp = (result, type, date) => {
+  return knex('ResultFollowUp')
+    .join('FollowUp as f', 'ResultFollowUp.followUpId', 'f.id')
+    .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
+    .where('resultId', result.data.id)
+    .andWhere('t.externalId', type)
+    .andWhere('ResultFollowUp.updatedOn', '<', date)
+    .del()
+}
+
+const getResultFollowUpsbyResultIdExternalId = (resultId, externalId) => {
+  return knex('ResultFollowUp').where('resultId', resultId).where('externalId', externalId).first('id')
+}
+
+const getAffectedRowsbyResultFollowUp = (date, resultId, externalId, currentUserId, followUp, id, clientDate) => {
   return knex('ResultFollowUp')
     .where('id', id || '-1')
+    .andWhere('updatedOn', '<', clientDate)
     .orWhere(function () {
       this.where('resultId', resultId).where('externalId', externalId || '-1')
     })
@@ -741,6 +784,19 @@ const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, now, c
   })
 }
 
+const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, createdOn, updatedBy, updatedOn) => {
+  return knex('ResultFollowUp').insert({
+    resultId,
+    externalId,
+    followUpId,
+    date,
+    createdBy,
+    createdOn,
+    updatedBy,
+    updatedOn,
+  })
+}
+
 const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
   return knex('Result').where('id', resultId).update({
     treatmentStatusLogId,
@@ -751,6 +807,22 @@ const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
 
 const getTreatmentStatusLogId = resultId => {
   return knex('Result').where('id', resultId).select('treatmentStatusLogId')
+}
+
+const insertResultWorkflowLog = resultWorkflowLogEntry => {
+  return knex('ResultWorkflowLog').insert(resultWorkflowLogEntry)
+}
+
+const getLatestResultWorkflowStatusId = resultId => {
+  return knex('ResultWorkflowLog').where('resultId', resultId).select().orderBy('changedOn', 'desc').limit(1)
+}
+
+const updateResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
+  return knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
+    resultWorkflowStatusLogId: lastLogId,
+    updatedBy: resultWorkflowLogEntry.createdBy,
+    updatedOn: now,
+  })
 }
 
 const updateResultTreatmentStatusLog = (treatmentStatusLogId, data, changedOn) => {
@@ -803,6 +875,7 @@ module.exports = {
   getAssayForResultFollowup,
   getFileReferencesForResultFolloup,
   showResultFolloup,
+  getResultFollowUpsbyResultIdExternalId,
   getResultNotesByResultIdForResultFollowup,
   getResultFollowUps,
   getLastTreatmentStatusByResult,
@@ -811,4 +884,10 @@ module.exports = {
   updateResult,
   getTreatmentStatusLogId,
   updateResultTreatmentStatusLog,
+  addResultFollowUp,
+  getLatestResultFollowUps,
+  deleteResultFollowUp,
+  insertResultWorkflowLog,
+  updateResultWorkflowLog,
+  getLatestResultWorkflowStatusId,
 }

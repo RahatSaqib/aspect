@@ -255,6 +255,17 @@ const downloadResultResponseValidationV2 = () => {
                 followUpTypei18nKey: Joi.string().required().description('Translation key for the follow up type'),
               })
             ),
+          // clinical response
+          clinicalResponse: {
+            recorded: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
+            confirmedOn: Joi.date()
+              .allow(null)
+              .description('Date & time that checkbox was checked, if not checked, return null'),
+            treatment: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
+            treatmentStarted: Joi.date().allow(null).description('When result was transferred to another clinic'),
+            outcome: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
+            outcomeOccurred: Joi.date().allow(null).description('When result was transferred to another clinic'),
+          },
           comments: Joi.array()
             .allow(null)
             .description('Result comments')
@@ -471,7 +482,50 @@ const validateResultDetailResponse = () => {
     resultSourceExternalId: Joi.string()
       .required() // resultSourceId is NOT NULL in Result table
       .description('External ID of the result source'),
+    clinicalResponse: {
+      recorded: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
+      confirmedOn: Joi.date()
+        .allow(null)
+        .description('Date & time that checkbox was checked, if not checked, return null'),
+      treatment: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
+      treatmentStarted: Joi.date().allow(null).description('When result was transferred to another clinic'),
+      outcome: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
+      outcomeOccurred: Joi.date().allow(null).description('When result was transferred to another clinic'),
+    },
   }
+}
+
+// add clinicalResponse params - v1
+const addClinicalResponseParamValidation = () => {
+  return {
+    resultId: Joi.number().required().integer().positive().description('Result ID'),
+  }
+}
+
+// add clinicalResponse payload - v1
+const addClinicalResponsePayloadValidation = () => {
+  return Joi.array().items(
+    Joi.object().keys({
+      fieldName: Joi.string()
+        .allow('', null)
+        .description(
+          'Optional externalId of the result follow up. This is mostly for app-use so apps can uniquely identify a follow up record that they created.'
+        ),
+      value: [
+        Joi.string().allow('', null).description('The ID of the follow up'),
+        Joi.bool().allow('', null).description('The ID of the follow up'),
+      ],
+      clientTime: Joi.date().iso().optional().allow(null).description('This is the date when the follow up happened'),
+    })
+  )
+}
+
+// add clinicalResponse response - v1
+const addClinicalResponseResultValidation = () => {
+  return Joi.object().keys({
+    ok: Joi.bool().required().description('False if there was some sort of error'),
+    data: Joi.object().required().description('The results').keys(validateResultDetailResponse()),
+  })
 }
 
 // update clinicalresponse Params - v1
@@ -512,6 +566,9 @@ module.exports = {
   downloadResultResponseValidation,
   downloadResultValidationV2,
   downloadResultResponseValidationV2,
+  addClinicalResponseParamValidation,
+  addClinicalResponsePayloadValidation,
+  addClinicalResponseResultValidation,
   undateResultFollowupParamValidation,
   updateResultFollowupPayloadValiation,
   undateResultFollowupResponseValidation,

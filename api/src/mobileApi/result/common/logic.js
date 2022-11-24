@@ -195,11 +195,17 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
   }))
 
 // Trasnformed data v2
-const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
+const getTransformedDataV2 = (data, setDelivered, followUps, comments, latestFollowUpsList) =>
   _.map(data, d => {
     const assayAvatar = assayAvatarColorsIcon[d.diseaseExternalId]
       ? assayAvatarColorsIcon[d.diseaseExternalId]
       : assayAvatarColorsIcon.default
+    const latestFollowUps = _.sortBy(
+      _.filter(latestFollowUpsList, { resultId: d.id }).map(f => _.omit(f, 'resultId')),
+      ['date', 'updatedOn']
+    )
+    const treatment = latestFollowUps && _.find(latestFollowUps[0].data, f => f.followUpTypeExternalId === 'treatment')
+    const outcome = latestFollowUps && _.find(latestFollowUps[0].data, f => f.followUpTypeExternalId === 'outcome')
     return {
       id: d.id,
       externalId: d.externalId,
@@ -278,6 +284,14 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
         backgroundColour: assayAvatar.backgroundColour,
         foregroundColour: assayAvatar.foregroundColour,
         contentIcon: assayAvatar.contentIcon,
+      },
+      clinicalResponse: {
+        recorded: true,
+        confirmedOn: '2022-07-16T10:04:21.213Z',
+        treatment: treatment?.externalId || null,
+        treatmentStarted: treatment?.date || null,
+        outcome: outcome?.externalId || null,
+        outcomeOccurred: outcome?.date || null,
       },
     }
   })
@@ -416,6 +430,8 @@ async function getResultByResultId(
   dataConstraints,
   userName,
   results,
+  latestFollowUps,
+  resultWorkflowlog,
   getAssayForResultFollowup,
   getFileReferencesForResultFolloup,
   addConstraints,
@@ -462,6 +478,19 @@ async function getResultByResultId(
 
     const { data: followUps } = await showResultFollowUps(resultId, dataConstraints, showResultFolloup)
     data.followUps = followUps
+  }
+
+  if (latestFollowUps) {
+    const treatment = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'treatment')
+    const outcome = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'outcome')
+    data.clinicalResponse = {
+      recorded: resultWorkflowlog[0].resultWorkflowStatusId === 9,
+      confirmedOn: resultWorkflowlog[0].changedOn,
+      treatment: treatment?.externalId,
+      treatmentStarted: treatment?.date,
+      outcome: outcome?.externalId,
+      outcomeOccurred: outcome?.date,
+    }
   }
 
   if (data) {

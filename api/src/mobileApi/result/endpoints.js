@@ -11,7 +11,11 @@ const {
   undateResultFollowupParamValidation,
   updateResultFollowupPayloadValiation,
   undateResultFollowupResponseValidation,
+  addClinicalResponseParamValidation,
+  addClinicalResponsePayloadValidation,
+  addClinicalResponseResultValidation,
 } = require('./common/validations')
+const { addclinicalResponse } = require('./clinicalResponse')
 
 // -----------------------------------------------------
 // routes
@@ -94,6 +98,26 @@ const routes = [
           allowUnknown: false,
         },
         schema: downloadResultResponseValidationV2,
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/v1/result/clinical-responses/{resultId}',
+    handler: addclinicalResponse,
+    config: {
+      description: 'Add a result follow up',
+      notes: 'Adds a treatment/outcome follow up for a result',
+      auth: { scope: ['treatmentStatus:edit'] },
+      validate: {
+        params: addClinicalResponseParamValidation(),
+        payload: addClinicalResponsePayloadValidation(),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: addClinicalResponseResultValidation(),
       },
     },
   },
