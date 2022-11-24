@@ -134,6 +134,17 @@ const validationSchema = formatMessage =>
       webUrl: Yup.string()
         .when('sendWeb', optionsForSendXXX(formatMessage(messages.webUrlRequired)))
         .matches(/^(ftp|http|https):\/\/[^ "]+$/, formatMessage(messages.webUrlInvalidFormat)),
+
+      reportDateRange: Yup.string().when('notificationType', {
+        is: 'reportBased',
+        then: Yup.string().required(),
+        otherwise: Yup.string().notRequired(),
+      }),
+      reportStartingWeekDay: Yup.string().when('reportDateRange', {
+        is: 'PREVIOUS_WEEK',
+        then: Yup.string().required(),
+        otherwise: Yup.string().notRequired(),
+      }),
     })
     .test('oneOfRequired', item => {
       if (item.sendEmail || item.sendSms || item.sendWeb) {

@@ -32,7 +32,7 @@ const Monthly = ({ cronExpression, onChange }) => {
         cronExpression[1] === '*' ? '0' : cronExpression[1],
         cronExpression[2],
         '1/1',
-        '?',
+        '*',
       ]
       if (e.target.value === '') {
         val[2] = ''

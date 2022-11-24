@@ -125,7 +125,7 @@ FormItem.propTypes = {
   fullWidth: PropTypes.bool,
   hideIfNull: PropTypes.bool,
   id: PropTypes.string.isRequired,
-  initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.array]),
+  initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.array, PropTypes.object]),
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   labelI18nKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   link: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),

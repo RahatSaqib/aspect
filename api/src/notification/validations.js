@@ -102,7 +102,7 @@ const resultBasedNotificationPayload = Joi.object({
       then: Joi.required(),
       otherwise: Joi.forbidden(),
     })
-    .description('To schedule the delivery of the email'),
+    .description('Cron Expression to schedule the delivery of the email'),
   reportFrequency: Joi.string()
     .when('notificationType', {
       is: 'reportBased',
@@ -117,6 +117,13 @@ const resultBasedNotificationPayload = Joi.object({
       otherwise: Joi.forbidden(),
     })
     .description('The date range token of the report'),
+  reportStartingWeekDay: Joi.string()
+    .when('reportDateRange', {
+      is: 'PREVIOUS_WEEK',
+      then: Joi.required(),
+      otherwise: Joi.forbidden(),
+    })
+    .description('The starting week day for "weekly" frequency'),
   result: Joi.array()
     .items(
       Joi.object().keys({

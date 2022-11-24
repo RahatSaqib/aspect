@@ -591,6 +591,10 @@ export default defineMessages({
     id: 'pages.Notifications.dataDateRangeTitle',
     defaultMessage: 'Define date range for report',
   },
+  startingDayOfTheWeekTitle: {
+    id: 'pages.Notifications.startingDayOfTheWeekTitle',
+    defaultMessage: 'Starting Day of the Week',
+  },
 
   ...assay,
   ...resultCategory,

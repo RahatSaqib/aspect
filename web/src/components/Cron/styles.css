@@ -6,6 +6,29 @@
   margin-left: 12px;
 }
 
+.Radio-Group {
+  margin-left: 12px;
+}
+
+.Radio-Group > label:not(:last-of-type) {
+  margin-right: 30px;
+}
+
+
+.Check-Group {
+  margin-left: 24px;
+  margin-top: 3px;
+  margin-bottom: 8px;
+}
+
+.Check-Group > label {
+  margin-top: 5px;
+}
+
+.Check-Group > label:not(:last-of-type) {
+  margin-right: 40px;
+}
+
 .Input_Wrapper {
   margin-bottom: 8px;
 }

@@ -5,6 +5,7 @@ import FormGroup from '@mui/material/FormGroup'
 import FormHelperText from '@mui/material/FormHelperText'
 import Radio from '@mui/material/Radio'
 import { useFormikContext } from 'formik'
+import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isNil from 'lodash/isNil'
@@ -19,14 +20,16 @@ const CronForm = props => {
   const { className, formik, id } = props
   const { cronRecurrency: initialCronRecurrency = null } = formik.initialValues
 
+  const value = get(formik.values, id)
+
   const { updateField, toggleEdit } = useFormikContext()
   const { error, helperText } = getFieldErrorProps(formik, id)
   const [initialRecurrency] = useState(
-    isNil(initialCronRecurrency) || isEmpty(initialCronRecurrency) ? null : initialCronRecurrency.split(' ')
+    isNil(initialCronRecurrency) || isEmpty(initialCronRecurrency) ? null : initialCronRecurrency
   )
   const [showCron, setShowCron] = useState(false)
-  const handleOnChange = (value, humanReadable, frequency) => {
-    updateField(id, { cronExpression: value.join(' '), humanReadable, frequency }, { formik, toggleEdit })
+  const handleOnChange = (cronExpression, frequency) => {
+    updateField(id, { cronExpression, frequency }, { formik, toggleEdit })
   }
   const { locale, formatMessage } = useI18n()
   return (
@@ -52,11 +55,11 @@ const CronForm = props => {
               control={<Radio color="primary" value="2" onChange={() => setShowCron(true)} checked={showCron} />}
               label={formatMessage(messages.newRecurrency)}
             />
-            {showCron ? <Cron onChange={handleOnChange} value={null} className={className} /> : true}
+            {showCron ? <Cron onChange={handleOnChange} value={value} className={className} /> : true}
           </FormGroup>
         </>
       ) : (
-        <Cron onChange={handleOnChange} className={className} />
+        <Cron onChange={handleOnChange} value={value} className={className} />
       )}
       {error && helperText ? <FormHelperText error>{helperText}</FormHelperText> : null}
     </FormControl>
