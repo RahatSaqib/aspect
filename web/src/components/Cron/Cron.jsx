@@ -81,7 +81,7 @@ Cron.propTypes = {
   showResultText: PropTypes.bool,
   showResultCron: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.objectOf(PropTypes.shape),
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 }
 
 Cron.defaultProps = {
