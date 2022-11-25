@@ -191,12 +191,12 @@ const messages = defineMessages({
   },
   devicesAndSitesOverview: {
     id: 'pages.ReportIndex.devicesAndSitesOverview',
-    defaultMessage: 'Devices and Sites Overview',
+    defaultMessage: 'Devices and Sites Overview (BETA)',
   },
   devicesAndSites_description: {
     id: 'pages.ReportIndex.devicesAndSites_description',
     defaultMessage:
-      '[WORK IN PROGRESS] An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".',
+      'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices" - This report is in BETA version and still in progress.',
   },
   deviceReport: {
     id: 'pages.ReportIndex.deviceReport',
