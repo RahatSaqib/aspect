@@ -129,7 +129,7 @@ const NotificationFormPage = ({ id }) => {
       formik.values.persons,
       (acc, curr) => {
         ;(acc || ((acc = []) && curr?.length)).push({
-          personId: curr,
+          personId: curr.value,
           checked: true,
         })
         return acc
