@@ -154,31 +154,31 @@ const reportBasedSection = formatMessage => {
                 component: 'select',
                 options: [
                   {
-                    value: '0',
+                    value: '1',
                     label: formatMessage(cronMessages.monday),
                   },
                   {
-                    value: '1',
+                    value: '2',
                     label: formatMessage(cronMessages.tuesday),
                   },
                   {
-                    value: '2',
+                    value: '3',
                     label: formatMessage(cronMessages.wednesday),
                   },
                   {
-                    value: '3',
+                    value: '4',
                     label: formatMessage(cronMessages.thursday),
                   },
                   {
-                    value: '4',
+                    value: '5',
                     label: formatMessage(cronMessages.friday),
                   },
                   {
-                    value: '5',
+                    value: '6',
                     label: formatMessage(cronMessages.saturday),
                   },
                   {
-                    value: '6',
+                    value: '0',
                     label: formatMessage(cronMessages.sunday),
                   },
                 ],

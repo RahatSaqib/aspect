@@ -2,7 +2,7 @@ const Joi = require('@hapi/joi')
 const { getNotificationTriggerSubscriptions } = require('./subscriptions')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const listNotifications = require('./listNotifications')
-const { getNotifications, deleteNotification, clearCache } = require('./service')
+const { getNotifications, clearCache } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
 const {
@@ -16,6 +16,7 @@ const {
 const saveNotification = require('./saveNotification')
 const saveStatusNotification = require('./saveStatusNotification')
 const getNotification = require('./getNotification')
+const deleteNotification = require('./deleteNotification')
 
 const routes = [
   {

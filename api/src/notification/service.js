@@ -1,31 +1,20 @@
-const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  subDays,
-  startOfDay,
-  endOfDay,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-} = require('date-fns')
+const { subDays } = require('date-fns')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const { knex, sortPageParams } = require('../db')
 const { getJobConstraints, addConstraints, getConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
-const { notificationTypeCreated } = require('../notificationType/actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
-const logger = require('../shared/logger')
 const NotificationCache = require('./notificationCache')
 const saveReportToFile = require('../report/saveReportToFile')
 const config = require('../config')
+const { getDateRangeFilters } = require('./common/logic')
 
 async function clearCache() {
   return NotificationCache.getInstance(knex).refreshCache()
@@ -335,52 +324,6 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
   return people
 }
 
-function getDateRangeFilters(reportDateRange, reportStartingWeekDay) {
-  const today = new Date()
-  switch (reportDateRange) {
-    case 'PREVIOUS_CALENDAR_DAY':
-      return {
-        minDate: startOfDay(subDays(today, 1)),
-        maxDate: endOfDay(subDays(today, 1)),
-      }
-    case 'PREVIOUS_WEEK_DAY': {
-      const daysToSubstract = today.getDay() === 1 ? 3 : 1 // Substract 3 days on Monday
-      return {
-        minDate: startOfDay(subDays(today, daysToSubstract)),
-        maxDate: endOfDay(subDays(today, daysToSubstract)),
-      }
-    }
-    case 'PREVIOUS_WEEK':
-      return {
-        minDate: startOfWeek(subDays(today, 7 + reportStartingWeekDay), { weekStartsOn: 1 }),
-        maxDate: endOfWeek(subDays(today, 7 + reportStartingWeekDay), { weekStartsOn: 1 }),
-      }
-    case 'PREVIOUS_7_DAYS':
-      return {
-        minDate: startOfDay(subDays(today, 7)),
-        maxDate: endOfDay(subDays(today, 1)),
-      }
-    case 'PREVIOUS_MONTH':
-      return {
-        minDate: startOfMonth(subMonths(today, 1)),
-        maxDate: endOfMonth(subMonths(today, 1)),
-      }
-    case 'PREVIOUS_QUARTER': {
-      const quarter = Math.floor(today.getMonth() / 3)
-
-      const startFullQuarter = new Date(today.getFullYear(), quarter * 3 - 3, 1)
-      const endFullQuarter = new Date(startFullQuarter.getFullYear(), startFullQuarter.getMonth() + 3, 0)
-
-      return {
-        minDate: startOfDay(startFullQuarter),
-        maxDate: endOfDay(endFullQuarter),
-      }
-    }
-    default:
-      throw new Boom.badData(`Invalid reportDateRange type: ${reportDateRange}`)
-  }
-}
-
 async function sendNotificationsToPeople(txKnex, context, people, policy, action) {
   const now = new Date()
 
@@ -401,7 +344,7 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
     const { externalId } = await knex('Report').where({ id: action.reportId }).first()
     let fileName
     const { reportDateRange, reportStartingWeekDay } = JSON.parse(policy.filterCondition)
-    const filters = getDateRangeFilters(reportDateRange, reportStartingWeekDay)
+    const filters = getDateRangeFilters(new Date(), reportDateRange, reportStartingWeekDay)
 
     for (const personId of [...personsToNotify]) {
       // eslint-disable-next-line no-await-in-loop
@@ -745,37 +688,11 @@ async function getNotifications(request) {
   return { ok: true, total, data: items }
 }
 
-/**
- * Does a deeper validation of the filterCondition object.
- * @param {object} filterCondition The filterCondition object
- * @returns true if filterCondition is correct, or a Boom object if a problem was detected
- */
-
-async function deleteNotification(request) {
-  const {
-    params,
-    plugins: { messageContext },
-  } = request
-  const { notificationId: id } = params
-
-  try {
-    await knex('NotificationType').where({ id }).delete()
-    if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
-    messageContext.notificationTypeCreated(id)
-  } catch (e) {
-    logger.info({ info: `NotificationType ${id} cannot be deleted`, e }, { reLabel: 'aspect:api:notification:delete' })
-    return Boom.badData(`Can not delete this notification type because it already triggered notifications`)
-  }
-
-  return { ok: true }
-}
-
 module.exports = {
   getNotifications,
   createNotifications,
   shouldNotify,
   resultConditionsMet,
   getPeopleToNotify,
-  deleteNotification,
   clearCache,
 }

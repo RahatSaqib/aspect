@@ -430,9 +430,17 @@ async function getReporBasedNotifications() {
   return rbnQuery
 }
 
+async function getNotificationStatusInfo(id) {
+  return knex('NotificationType as nt')
+    .join('NotificationTypeCategory as ntc', 'ntc.id', 'nt.notificationTypeCategoryId')
+    .where('nt.id', id)
+    .first(['ntc.externalId as notificationType', 'nt.name', 'nt.enabled', 'nt.cronRecurrency'])
+}
+
 module.exports = {
   getListNotifications,
   saveNotificationType,
   getNotification,
   getReporBasedNotifications,
+  getNotificationStatusInfo,
 }
