@@ -1,7 +1,16 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { subDays } = require('date-fns')
+const {
+  subDays,
+  startOfDay,
+  endOfDay,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+} = require('date-fns')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const { knex, sortPageParams } = require('../db')
@@ -217,6 +226,7 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
     knex.raw(
       'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendWeb") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
     ),
+    'nt.filterCondition',
   ]
   let extraFields = []
   const aliases = { geography: 'g' }
@@ -325,6 +335,53 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
   return people
 }
 
+function getDateRangeFilters(reportDateRange, reportStartingWeekDay) {
+  const today = new Date()
+  switch (reportDateRange) {
+    case 'PREVIOUS_CALENDAR_DAY':
+      return {
+        minDate: startOfDay(subDays(today, 1)),
+        maxDate: endOfDay(subDays(today, 1)),
+      }
+    case 'PREVIOUS_WEEK_DAY':
+      return {
+        minDate: startOfDay(subDays(today, 1)), // TODO change this
+        maxDate: endOfDay(subDays(today, 1)),
+      }
+    case 'PREVIOUS_WEEK':
+      return {
+        minDate: startOfWeek(subDays(today, 7 + reportStartingWeekDay), { weekStartsOn: 1 }),
+        maxDate: endOfWeek(subDays(today, 7 + reportStartingWeekDay), { weekStartsOn: 1 }),
+      }
+    case 'PREVIOUS_7_DAYS':
+      return {
+        minDate: startOfDay(subDays(today, 7)),
+        maxDate: endOfDay(subDays(today, 1)),
+      }
+    case 'PREVIOUS_MONTH':
+      return {
+        minDate: startOfMonth(subMonths(today, 1)),
+        maxDate: endOfMonth(subMonths(today, 1)),
+      }
+    case 'PREVIOUS_QUARTER': {
+      const quarter = Math.floor(today.getMonth() / 3)
+
+      const startFullQuarter = new Date(today.getFullYear(), quarter * 3 - 3, 1)
+      const endFullQuarter = new Date(startFullQuarter.getFullYear(), startFullQuarter.getMonth() + 3, 0)
+
+      return {
+        minDate: startOfDay(startFullQuarter),
+        maxDate: endOfDay(endFullQuarter),
+      }
+    }
+    default:
+      return {
+        minDate: '',
+        maxDate: '',
+      }
+  }
+}
+
 async function sendNotificationsToPeople(txKnex, context, people, policy, action) {
   const now = new Date()
 
@@ -344,10 +401,8 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
     const generatedReports = new Set()
     const { externalId } = await knex('Report').where({ id: action.reportId }).first()
     let fileName
-    const filters = {
-      minDate: subDays(new Date(), 12), // TODO change this
-      maxDate: new Date(),
-    }
+    const { reportDateRange, reportStartingWeekDay } = JSON.parse(policy.filterCondition)
+    const filters = getDateRangeFilters(reportDateRange, reportStartingWeekDay)
 
     for (const personId of [...personsToNotify]) {
       // eslint-disable-next-line no-await-in-loop
