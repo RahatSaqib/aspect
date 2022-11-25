@@ -26,7 +26,7 @@ class ReportBasedNotificationCache {
       return false
     }
 
-    this.tasks[taskId].stop()
+    this.tasks[taskId].task.stop()
     delete this.tasks[taskId]
     return true
   }
