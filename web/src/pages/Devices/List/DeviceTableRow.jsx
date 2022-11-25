@@ -64,7 +64,7 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
           status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
         />
       </TableCell>
-      <TableCell>{formatRelative(device.get('lastPingOn'))}</TableCell>
+      <TableCell>{formatRelative(device.get('lastSeen'))}</TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
       </TableCell>

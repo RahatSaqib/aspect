@@ -190,7 +190,7 @@ async function getListDevices(query, auth) {
       }
       if (query.connectorStatus) {
         queryBuilder.whereIn(
-          knex.raw('CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END'),
+          knex.raw('CASE WHEN d.lastSeenOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END'),
           query.connectorStatus
         )
       }
@@ -306,7 +306,7 @@ async function getListDevices(query, auth) {
       'dmsl.day as dmslDay',
       'd.lastSeenOn as deviceLastSeenOn',
       knex.raw(
-        'CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END AS connectorStatus'
+        'CASE WHEN d.lastSeenOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END AS connectorStatus'
       ),
       knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS connectorVersion'),
       knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
@@ -488,10 +488,16 @@ async function showDevice(request) {
 }
 
 async function updateDevice(request) {
-  const { params, payload } = request
+  const {
+    params,
+    payload,
+    auth: { credentials },
+  } = request
+
+  const { personId } = await getUser(credentials.name)
 
   // TODO: check permission
-
+  const now = new Date()
   const device = await getDeviceByRequest(request)
 
   const configurationData = _.assign({}, device.configurationData, payload.configurationData)
@@ -501,6 +507,8 @@ async function updateDevice(request) {
   if (_.has(payload, 'approvalToken') && device.approvalToken !== payload.approvalToken) {
     deviceApprovalId = await deviceApprovalToId(payload.approvalToken)
   }
+
+  const prevDeviceApprovalId = await knex('Device').where('id', params.deviceId).first('deviceApprovalId')
 
   // update item
   const updatedCount = await knex('Device')
@@ -513,7 +521,19 @@ async function updateDevice(request) {
       name: payload.name,
       notes: payload.notes,
       shortName: payload.shortName,
+      updatedOn: now,
+      updatedBy: personId,
     })
+
+  if (prevDeviceApprovalId !== deviceApprovalId) {
+    await knex('DeviceApprovalLog').insert({
+      deviceId: params.deviceId,
+      deviceApprovalId,
+      changedOn: now,
+      createdOn: now,
+      createdBy: personId,
+    })
+  }
 
   if (updatedCount !== 1) {
     return Boom.badRequest()
