@@ -7,11 +7,11 @@ class ReportBasedNotificationCache {
     this.tasks = {}
   }
 
-  addTask = (notificationTypeId, name, cronRecurrency, handler) => {
-    const taskRef = cron.schedule(cronRecurrency, () => handler(notificationTypeId))
+  addTask = (notificationTypeId, name, cronExpression, handler) => {
+    const taskRef = cron.schedule(cronExpression, () => handler(notificationTypeId))
     this.tasks[`notificationTypeId:${notificationTypeId}`] = {
       notificationTypeId,
-      cronRecurrency,
+      cronExpression,
       name,
       task: taskRef,
       started: new Date(),
@@ -31,7 +31,7 @@ class ReportBasedNotificationCache {
     return true
   }
 
-  updateTask = (notificationTypeId, name, cronExpression, func) => {
+  createOrUpdateTask = (notificationTypeId, name, cronExpression, func) => {
     this.removeTask(notificationTypeId)
     this.addTask(notificationTypeId, name, cronExpression, func)
   }
