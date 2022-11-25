@@ -343,11 +343,13 @@ function getDateRangeFilters(reportDateRange, reportStartingWeekDay) {
         minDate: startOfDay(subDays(today, 1)),
         maxDate: endOfDay(subDays(today, 1)),
       }
-    case 'PREVIOUS_WEEK_DAY':
+    case 'PREVIOUS_WEEK_DAY': {
+      const daysToSubstract = today.getDay() === 1 ? 3 : 1 // Substract 3 days on Monday
       return {
-        minDate: startOfDay(subDays(today, 1)), // TODO change this
-        maxDate: endOfDay(subDays(today, 1)),
+        minDate: startOfDay(subDays(today, daysToSubstract)),
+        maxDate: endOfDay(subDays(today, daysToSubstract)),
       }
+    }
     case 'PREVIOUS_WEEK':
       return {
         minDate: startOfWeek(subDays(today, 7 + reportStartingWeekDay), { weekStartsOn: 1 }),
@@ -375,10 +377,7 @@ function getDateRangeFilters(reportDateRange, reportStartingWeekDay) {
       }
     }
     default:
-      return {
-        minDate: '',
-        maxDate: '',
-      }
+      throw new Boom.badData(`Invalid reportDateRange type: ${reportDateRange}`)
   }
 }
 
