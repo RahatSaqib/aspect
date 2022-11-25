@@ -1,6 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# bash .husky/check_branch_name
+bash .husky/check_branch_name
 ./node_modules/.bin/lint-staged -c ./web/.lintstagedrc --allow-empty
 ./node_modules/.bin/lint-staged -c ./api/.lintstagedrc --allow-empty
