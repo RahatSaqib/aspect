@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useSelector, useDispatch } from 'react-redux'
@@ -40,7 +40,8 @@ const Status = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const assays = useSelector(({ assay }) => assay.items).toJS()
+  const assaysImmutable = useSelector(({ assay }) => assay.items)
+  const assays = useMemo(() => assaysImmutable.toJS(), [assaysImmutable])
   const tbPermissions = ['GxMtbRif', 'GxMtbRifUltra']
   const xdrPermissions = ['GxMtbXdr']
   const hivPermissions = [
