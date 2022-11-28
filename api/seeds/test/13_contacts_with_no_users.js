@@ -20,7 +20,7 @@ async function seed(knex) {
           'Myanmar Standard Time',
         ])
 
-        const culture = _.sample(['ny-MW', 'ig-NG', 'en-US', 'en'])
+        const culture = _.sample(['ny-MW', 'ig-NG', 'en-US'])
         const now = new Date()
         await knex('Person').insert({
           name,

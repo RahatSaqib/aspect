@@ -1,12 +1,9 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
-import pick from 'lodash/pick'
 import { defineMessages } from 'react-intl'
 import { getFilters } from '../oldComponents/filter/utils'
 import {
   filterFieldsRejectedError,
-  inlineWarning,
-  errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
 } from '../utils/error/CommonErrorNotifications'
@@ -48,21 +45,6 @@ export const types = {
   RECEIVE_DELETE_ASSIGNMENT: 'RECEIVE_DELETE_ASSIGNMENT',
 }
 
-const contactDetailsFields = [
-  'name',
-  'title',
-  'email',
-  'email2',
-  'phone',
-  'cell',
-  'countryId',
-  'stateId',
-  'lgaId',
-  'zip',
-  'notes',
-  'lastPartnerId',
-  'canLogIn',
-]
 /*
  * ---------------- Action Creators -----------------
  */
@@ -86,36 +68,12 @@ function receivePersons(json) {
   }
 }
 
-function transformToUser(canLogIn, personId) {
-  return {
-    type: types.CAN_LOG_IN_PERSON,
-    canLogIn,
-    personId,
-  }
-}
-
 function rejectPersons() {
   return {
     type: types.REJECTED_PERSONS,
   }
 }
-export function personCanLogIn(canLogIn, personId) {
-  return dispatch => {
-    dispatch(transformToUser(canLogIn, personId))
-  }
-}
-export function emailValueBlur(value, personId) {
-  return dispatch => {
-    dispatch(prefillEmailValue(value, personId))
-  }
-}
-function prefillEmailValue(email, personId) {
-  return {
-    type: types.PREFILL_EMAIL,
-    email,
-    personId,
-  }
-}
+
 export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = getFilters(filtersParams)
@@ -243,229 +201,6 @@ export function fetchAvailablePersons() {
   }
 }
 
-function requestSiteContacts(siteId) {
-  return {
-    type: types.REQUEST_SITE_CONTACTS,
-    siteId,
-  }
-}
-
-// receive possible contacts
-function receiveSiteContacts(siteId, items) {
-  return {
-    type: types.RECEIVE_SITE_CONTACTS,
-    items,
-    siteId,
-  }
-}
-
-export function fetchSiteContacts(siteId) {
-  return dispatch => {
-    dispatch(requestSiteContacts(siteId))
-    return aspectFetch(`/person?siteId=${siteId}`, {
-      errorNotifications: {
-        400: filterFieldsRejectedError(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchASiteContacts.GET.400.title',
-              defaultMessage: 'Invalid Site ID',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveSiteContacts(siteId, json.data)))
-  }
-}
-// loading a single person with given personId
-function requestSinglePerson(personId) {
-  return {
-    type: types.REQUEST_SINGLE_PERSON,
-    personId,
-  }
-}
-
-// received a single person
-function receiveSinglePerson(item) {
-  return {
-    type: types.RECEIVE_SINGLE_PERSON,
-    item,
-  }
-}
-
-// load a single person with given personId
-export function fetchSinglePerson(personId, cb) {
-  return dispatch => {
-    dispatch(requestSinglePerson(personId))
-
-    return aspectFetch(`/person/${personId}`, {
-      errorNotifications: {
-        404: errorNotFound(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSinglePerson.GET.404.title',
-              defaultMessage: "Could Not Find Contact's Details",
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSinglePerson.GET.default.title',
-              defaultMessage: "Error Loading Contact's Details",
-            },
-          })
-        ),
-      },
-    }).then(json => {
-      dispatch(receiveSinglePerson(json.data))
-      if (cb) cb()
-    })
-  }
-}
-
-// creating a single person with given data
-function requestCreatingSinglePerson(data) {
-  return {
-    type: types.REQUEST_CREATING_SINGLE_PERSON,
-    data,
-  }
-}
-
-// received a created single person
-function receiveCreatedSinglePerson(item) {
-  return {
-    type: types.RECEIVE_CREATED_SINGLE_PERSON,
-    item,
-  }
-}
-
-// create a single person with given data
-export function createPerson(data) {
-  return dispatch => {
-    dispatch(requestCreatingSinglePerson(data))
-
-    const personJson = data.toJS ? data.toJS() : data
-    return aspectFetch('/person', {
-      method: 'POST',
-      body: JSON.stringify(pick(personJson, contactDetailsFields)),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.createPerson.POST.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Create the Contact',
-            },
-          })
-        ),
-      },
-    }).then(json => {
-      dispatch(receiveCreatedSinglePerson(json.data))
-      return json.data
-    })
-  }
-}
-
-// updating a single person with given personId and data
-function requestUpdatingSinglePerson(personId, data) {
-  return {
-    type: types.REQUEST_UPDATING_SINGLE_PERSON,
-    personId,
-    data,
-  }
-}
-
-// received a updated single person
-function receiveUpdatedSinglePerson(item) {
-  return {
-    type: types.RECEIVE_UPDATED_SINGLE_PERSON,
-    item,
-  }
-}
-
-function receiveUpdatedSinglePersonLoadinDetails(updatedInformation) {
-  return {
-    type: types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS,
-    ...updatedInformation,
-  }
-}
-
-// update a single person with given personId and data
-function updatePerson(path, personId, data, fields) {
-  return dispatch => {
-    dispatch(requestUpdatingSinglePerson(personId, data))
-
-    const personJson = data.toJS ? data.toJS() : data
-    return aspectFetch(path, {
-      method: 'PUT',
-      body: JSON.stringify(pick(personJson, fields)),
-      errorNotifications: {
-        404: errorNotFound(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updatePerson.PUT.404.title',
-              defaultMessage: "Could Not Find Contact's Details",
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updatePerson.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Contact',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveUpdatedSinglePerson(json.data)))
-  }
-}
-
-export function updateSinglePerson(personId, data) {
-  return updatePerson(`/person/${personId}`, personId, data, contactDetailsFields)
-}
-
-export function updateSinglePersonLoginDetails(personId, data) {
-  return dispatch => {
-    dispatch(requestUpdatingSinglePerson(personId, data))
-
-    const loginDetailsJson = data.toJS ? data.toJS() : data
-    return aspectFetch(`/auth/update-person-login-details/${personId}`, {
-      method: 'PUT',
-      body: JSON.stringify(pick(loginDetailsJson, ['newUsername', 'newPassword', 'userLockedOut'])),
-      errorNotifications: {
-        409: inlineWarning(
-          defineMessages({
-            usernameAlreadyInUse: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.usernameAlreadyInUse',
-              defaultMessage: 'Username already in use',
-            },
-          })
-        ),
-        404: errorNotFound(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title',
-              defaultMessage: "Could Not Find User's Details",
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title',
-              defaultMessage: 'Saving Login Details Failed',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveUpdatedSinglePersonLoadinDetails(json.data)))
-  }
-}
-
-export function updateSinglePersonUserPreferences(personId, data) {
-  return updatePerson(`/person/preferences/${personId}`, personId, data, ['timezone', 'culture'])
-}
-
 function requestUpdateSiteContacts() {
   return {
     type: types.REQUEST_UPDATE_SITE_CONTACTS,
@@ -499,88 +234,6 @@ export function fetchUpdateSiteContacts(siteId, person, operation) {
         ),
       },
     }).then(json => dispatch(receiveUpdateSiteContacts(siteId, json.data)))
-  }
-}
-
-export function fetchPersonAssignments(personId) {
-  return dispatch => {
-    dispatch(requestPersonAssignments(personId))
-    return aspectFetch(`/job-function/person-assignments/${personId}`, {
-      errorNotifications: {
-        403: errorForbidden(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchPersonAssignments.GET.404.title',
-              defaultMessage: 'Not Found',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receivePersonAssignments(personId, json.data)))
-  }
-}
-export function addPersonAssignment(data) {
-  return dispatch => {
-    const { personId } = data
-    dispatch(requestPersonAssignments(personId))
-    return aspectFetch(`/job-function/assign-person-to-job-and-context`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      errorNotifications: {
-        403: errorForbidden(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.addPersonAssignment.POST.404.title',
-              defaultMessage: 'Not Found',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receivePersonAssignments(personId, json.data)))
-  }
-}
-export function deletePersonAssignment(data) {
-  return dispatch => {
-    const { personId, jobContextId } = data
-    dispatch({
-      type: types.REQUEST_DELETE_ASSIGNMENT,
-      personId,
-      jobContextId,
-    })
-    return aspectFetch(`/job-function/person-assignment/${personId}/${jobContextId}`, {
-      method: 'DELETE',
-      errorNotifications: {
-        403: errorForbidden(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
-              defaultMessage: 'Not Found',
-            },
-          })
-        ),
-      },
-    }).then(json =>
-      dispatch({
-        type: types.RECEIVE_DELETE_ASSIGNMENT,
-        personId,
-        jobContextId,
-        items: json.data,
-      })
-    )
-  }
-}
-function requestPersonAssignments(personId) {
-  return {
-    type: types.REQUEST_ASSIGNMENTS,
-    personId,
-  }
-}
-
-function receivePersonAssignments(personId, items) {
-  return {
-    type: types.RECEIVE_ASSIGNMENTS,
-    personId,
-    items,
   }
 }
 

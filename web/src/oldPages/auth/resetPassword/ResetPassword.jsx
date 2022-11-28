@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Button, LinearProgress, Paper, Step, StepContent, StepLabel, Stepper } from '@mui/material'
+import { Button, LinearProgress, Paper, Step, StepLabel, Stepper } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
@@ -238,64 +238,6 @@ export class ResetPassword extends PureComponent {
                       </div>
                     </div>
                   )}
-                </Hidden>
-                <Hidden md lg xl>
-                  {resettingPassword && <LinearProgress />}
-                  <Stepper activeStep={stepIndex} orientation="vertical" style={{ padding: 24 }}>
-                    <Step>
-                      <StepLabel>{formatMessage(messages.enterEmailAddress)}</StepLabel>
-                      <StepContent>
-                        <ResetPasswordEnterEmail
-                          intl={intl}
-                          action={
-                            <Link to="/login">
-                              <Button>{intl.formatMessage(messages.cancel)}</Button>
-                            </Link>
-                          }
-                          onSubmit={this.createResetPasswordToken}
-                          onShowAdminHelpDialog={this.showAdminHelpDialog}
-                        />
-                      </StepContent>
-                    </Step>
-                    <Step>
-                      <StepLabel>{formatMessage(messages.checkEmail)}</StepLabel>
-                      <StepContent>
-                        <div className={styles.Form}>
-                          <FormattedMessage {...messages.checkEmailContent} values={{ emailAddress }} />
-                          <a href="#showAdminHelp" onClick={this.showAdminHelpDialog}>
-                            {formatMessage(messages.iDidntReceiveAnEmail)}
-                          </a>
-                        </div>
-                      </StepContent>
-                    </Step>
-                    <Step>
-                      <StepLabel>{formatMessage(messages.enterNewPassword)}</StepLabel>
-                      <StepContent>
-                        <ResetPasswordEnterPassword
-                          intl={intl}
-                          action={
-                            <Link to="/login">
-                              <Button>{intl.formatMessage(messages.cancel)}</Button>
-                            </Link>
-                          }
-                          onSubmit={this.updatePassword}
-                        />
-                      </StepContent>
-                    </Step>
-                    <Step>
-                      <StepLabel>{formatMessage(messages.finish)}</StepLabel>
-                      <StepContent>
-                        <div className={styles.Form}>
-                          <FormattedMessage {...messages.finishContent} />
-                          <div className={styles.Form__ActionRow}>
-                            <Link to="/login">
-                              <Button color="primary">{formatMessage(messages.loginWithMyNewPassword)}</Button>
-                            </Link>
-                          </div>
-                        </div>
-                      </StepContent>
-                    </Step>
-                  </Stepper>
                 </Hidden>
               </Paper>
             </Unit>

@@ -67,8 +67,6 @@ const PureSelect = props => {
   )
 }
 
-PureSelect.whyDidYouRender = false
-
 export default PureSelect
 
 const LISTBOX_PADDING = 8 // px
