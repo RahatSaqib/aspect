@@ -1452,7 +1452,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
         hidePatientId: person.hidePatientId,
         hideSampleId: person.hideSampleId,
         hideNotes: person.hideNotes,
-        culture: 'en',
+        culture: 'en-US',
         canLogIn,
         ...auditFields,
       })

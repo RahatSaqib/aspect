@@ -5,10 +5,10 @@ import { connect } from 'react-redux'
 import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import useI18n from '../../../hooks/useI18n'
+import messages from '../../../messages/diseaseMessages'
 import { fetchDiseases } from '../../../store/DiseaseRedux'
 import formatI18nMessage from '../../../utils/i18n/formatterWeb'
 import SelectField from '../../shared/SelectField'
-import messages from './i18n/diseaseMessages'
 
 const enhance = compose(
   pure,

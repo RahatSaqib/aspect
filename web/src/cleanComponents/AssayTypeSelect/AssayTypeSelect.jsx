@@ -1,0 +1,34 @@
+import React from 'react'
+import { LinearProgress, MenuItem, TextField } from '@mui/material'
+import useAssayTypeList from '../../hooks/assayType/useAssayTypeList'
+import useI18n from '../../hooks/useI18n'
+import { assay } from '../../messages'
+
+const AssayTypeSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
+  const { isLoading, data: assayTypes } = useAssayTypeList()
+  const { formatMessage } = useI18n()
+
+  return isLoading ? (
+    <LinearProgress />
+  ) : (
+    <TextField
+      id={id}
+      name={name}
+      label={label}
+      error={error}
+      helperText={helperText}
+      select
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+    >
+      {assayTypes.map(c => (
+        <MenuItem key={c.id} value={c.id}>
+          {formatMessage(assay[c.i18nKey])}
+        </MenuItem>
+      ))}
+    </TextField>
+  )
+}
+
+export default AssayTypeSelect

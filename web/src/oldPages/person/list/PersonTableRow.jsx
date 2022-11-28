@@ -1,9 +1,9 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import isString from 'lodash/isString'
-import AccountEnableDisable from '../../../components/Account/AccountEnableDisable'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import AccountEnableDisable from './AccountEnableDisable'
 
 const cssClasses = classnames.bind(styles)
 

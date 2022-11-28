@@ -6,11 +6,11 @@ const AuthContext = createContext()
 
 const AuthProvider = ({ children }) => {
   const userComposed = useSelector(({ user }) => user)
-  const auth = useMemo(() => userComposed.toJS(), [userComposed])
+  const user = useMemo(() => userComposed.toJS(), [userComposed])
   const globals = useSelector(({ globals }) => globals.toJS())
 
   const { lastServerResponseTime } = globals
-  const jwtExp = auth.jwt.exp
+  const jwtExp = user.jwt.exp
 
   let isLoggedOut = false
   if (isNumber(jwtExp) && lastServerResponseTime) {
@@ -21,23 +21,23 @@ const AuthProvider = ({ children }) => {
   } else {
     isLoggedOut = true
   }
-  const user = {
-    ...auth,
-    userPermissions: auth.jwt.permissions,
+  const userData = {
+    ...user,
+    userPermissions: user.jwt.permissions,
     isLoggedOut,
   }
 
-  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
 }
 
 const useAuthState = () => {
-  const context = useContext(AuthContext)
+  const userData = useContext(AuthContext)
 
-  if (context === undefined) {
+  if (userData === undefined) {
     throw new Error('useAuthState must be used within a AuthProvider')
   }
 
-  return context
+  return userData
 }
 
 export { AuthProvider, useAuthState }
