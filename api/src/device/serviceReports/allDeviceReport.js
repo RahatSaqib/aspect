@@ -45,23 +45,13 @@ async function getAllDeviceReportData(dataConstraints, query) {
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'])
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
-  const deviceInactiveDays = knex
-    .from('DeviceMaintenanceStatusLog as dmsl')
-    .select(['deviceId', knex.raw('COUNT(DISTINCT day) as totalInactiveDays')])
-    .join('DeviceMaintenanceStatus as dms', 'dms.id', 'dmsl.deviceMaintenanceStatusId')
-    .modify(filterDateRangeParams, query, 'day')
-    .whereRaw('DAYOFWEEK(day) not in (1,7)')
-    .where('active', 0)
-    .groupBy(['deviceId', 'active'])
-
   return deviceQuery
     .clone()
     .leftJoin(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
-    .leftJoin(deviceInactiveDays.as('deviceInactiveDays'), function () {
-      this.on('deviceInactiveDays.deviceId', 'd.id')
-    })
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .where('dt.externalId', 'CepheidGeneXpert')
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
@@ -83,8 +73,8 @@ async function getAllDeviceReportData(dataConstraints, query) {
       knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
       'd.putInService AS instalationDate',
       'resultsCount.lastUploadOn AS lastUploadOn',
-
-      knex.raw('IFNULL(deviceInactiveDays.totalInactiveDays, 0) AS totalInterruptedDays'),
+      knex.raw('dms.name AS status'),
+      knex.raw('dmsl.data ->> "$.notes" AS statusNote'),
       knex.raw('IFNULL(resultsCount.mtbNotDetected, 0) AS totalMtbNegative'),
       knex.raw('IFNULL(resultsCount.mtbDetected, 0) AS totalMtbDetected'),
       knex.raw('IFNULL(resultsCount.mtbTraceDetected, 0) AS totalMtbTraceDetected'),
