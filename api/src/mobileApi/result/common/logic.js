@@ -318,75 +318,126 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments, testInfor
   })
 
 // Trasnformed data v2 for result by Id
-const getTransformedDataOfResultById = (data, setDelivered, followUps, comments) => ({
-  id: data.id,
-  externalId: data.externalId,
-  endedOn: returnIso8601StringWithoutTimeZoneOffset(data.endedOn),
-  updatedOn: data.updatedOn,
-  assayExternalId: data.assayExternalId,
-  siteName: data.siteName,
-  sampleOriginSiteId: data.sampleOriginSiteId,
-  firstViewedOn: data.firstViewedOn ? data.firstViewedOn : null,
-  deviceName: data.deviceName,
-  resultCategory1ExternalId: data.resultCategory1ExternalId,
-  resultCategory2ExternalId: data.resultCategory2ExternalId,
-  patientData: data.patientData ? JSON.parse(data.patientData) : null,
-  resultData: data.resultData
-    ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
-    : null,
-  sample: {
-    id: data.sampleId,
-    originSite: data.sampleOriginSiteId
-      ? {
-          externalId: data.sampleOriginSiteExternalId,
-          name: data.sampleOriginSiteName,
+const getTransformedDataOfResultById = (data, setDelivered, followUps, comments, testInformation) => {
+  const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
+    ? assayAvatarColorsIcon[data.diseaseExternalId]
+    : assayAvatarColorsIcon.default
+  const testDetails = testInformation.map(f => {
+    _.omit(f, 'resultId')
+    {
+      const testInfoData = []
+      const testInfo1 = {
+        label: f.resultCategory1Label || null,
+        labelI18nKey: f.resultCategory1I18nKey || null,
+        value: f.resultCategory1Name || null,
+        valueI18nKey: f.resultCategory1i18nKey || null,
+        severity: f.resultCategory1Emphasize ? 'danger' : 'info',
+      }
+      if (f.resultCategory2) {
+        const testInfo2 = {
+          label: f.resultCategory2Label || null,
+          labelI18nKey: f.resultCategory2I18nKey || null,
+          value: f.resultCategory2Name || null,
+          valueI18nKey: f.resultCategory2i18nKey || null,
+          severity: f.resultCategory2Emphasize ? 'danger' : 'info',
         }
+        testInfoData.push(testInfo2)
+      }
+      if (f.copies) {
+        const testInfo3 = {
+          label: `${f.copies} Copies/mL` || null,
+          labelI18nKey: null,
+          value: null,
+          valueI18nKey: null,
+          severity: 'info',
+        }
+        testInfoData.push(testInfo3)
+      }
+
+      testInfoData.push(testInfo1)
+      return testInfoData
+    }
+  })
+  return {
+    id: data.id,
+    externalId: data.externalId,
+    endedOn: returnIso8601StringWithoutTimeZoneOffset(data.endedOn),
+    updatedOn: data.updatedOn,
+    assayExternalId: data.assayExternalId,
+    siteName: data.siteName,
+    sampleOriginSiteId: data.sampleOriginSiteId,
+    firstViewedOn: data.firstViewedOn ? data.firstViewedOn : null,
+    deviceName: data.deviceName,
+    resultCategory1ExternalId: data.resultCategory1ExternalId,
+    resultCategory2ExternalId: data.resultCategory2ExternalId,
+    patientData: data.patientData ? JSON.parse(data.patientData) : null,
+    resultData: data.resultData
+      ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
       : null,
-  },
-  workflowStatus: {
-    name:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered' ? 'Delivered' : data.resultWorkflowStatusName,
-    externalId:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-        ? 'Delivered'
-        : data.resultWorkflowStatusExternalId,
-    i18nKey:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-        ? 'ResultWorkflowStatusDelivered'
-        : data.resultWorkflowStatusi18nKey,
-    reason:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-        ? 'Download Results Api'
-        : data.resultWorkflowStatusReason,
-    changedOn:
-      setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
-        ? new Date()
-        : data.resultWorkflowStatusChangedOn,
-    setDelivered: setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered',
-  },
-  treatmentStatus: {
-    changedOn: data.resultTreatmentStatusChangedOn,
-    name: data.resultTreatmentStatusName,
-    externalId: data.resultTreatmentStatusExternalId,
-    i18nKey: data.resultTreatmentStatusi18nKey,
-  },
-  followUps: _.sortBy(
-    _.filter(followUps, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
-    ['date', 'updatedOn']
-  ),
-  comments: _.orderBy(
-    _.filter(comments, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
-    ['createdOn'],
-    ['desc']
-  ),
-  // result transferred
-  reportableSiteName: data.reportableSiteName,
-  transferredOn: data.transferredOn,
-  transferredBy: data.transferredBy,
-  reportableSiteId: data.reportableSiteId,
-  diseaseExternalId: data.diseaseExternalId,
-  diseaseName: data.diseaseName,
-})
+    sample: {
+      id: data.sampleId,
+      originSite: data.sampleOriginSiteId
+        ? {
+            externalId: data.sampleOriginSiteExternalId,
+            name: data.sampleOriginSiteName,
+          }
+        : null,
+    },
+    workflowStatus: {
+      name:
+        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Delivered'
+          : data.resultWorkflowStatusName,
+      externalId:
+        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Delivered'
+          : data.resultWorkflowStatusExternalId,
+      i18nKey:
+        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'ResultWorkflowStatusDelivered'
+          : data.resultWorkflowStatusi18nKey,
+      reason:
+        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
+          ? 'Download Results Api'
+          : data.resultWorkflowStatusReason,
+      changedOn:
+        setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered'
+          ? new Date()
+          : data.resultWorkflowStatusChangedOn,
+      setDelivered: setDelivered && data.resultWorkflowStatusExternalId !== 'Delivered',
+    },
+    treatmentStatus: {
+      changedOn: data.resultTreatmentStatusChangedOn,
+      name: data.resultTreatmentStatusName,
+      externalId: data.resultTreatmentStatusExternalId,
+      i18nKey: data.resultTreatmentStatusi18nKey,
+    },
+    followUps: _.sortBy(
+      _.filter(followUps, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
+      ['date', 'updatedOn']
+    ),
+    comments: _.orderBy(
+      _.filter(comments, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
+      ['createdOn'],
+      ['desc']
+    ),
+    // result transferred
+    reportableSiteName: data.reportableSiteName,
+    transferredOn: data.transferredOn,
+    transferredBy: data.transferredBy,
+    reportableSiteId: data.reportableSiteId,
+    diseaseExternalId: data.diseaseExternalId,
+    diseaseName: data.diseaseName,
+    assayAvatar: {
+      contentI18nKey: data.contentI18nKey,
+      contentText: data.contentText,
+      backgroundColour: assayAvatar.backgroundColour,
+      foregroundColour: assayAvatar.foregroundColour,
+      contentIcon: assayAvatar.contentIcon,
+    },
+    testInformation: testDetails[0],
+  }
+}
 
 module.exports = {
   getTransformedData,

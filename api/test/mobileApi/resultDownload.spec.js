@@ -1164,7 +1164,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 25)
+      assert.equal(Object.keys(response.body.data[0]).length, 26)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1185,6 +1185,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body.data[0], 'comments')
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
+      assert.property(response.body.data[0], 'testInformation')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
         assert.property(response.body.data[0].followUps[0], 'id')
@@ -1226,7 +1227,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 25)
+      assert.equal(Object.keys(response.body.data[0]).length, 26)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1247,6 +1248,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body.data[0], 'comments')
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
+      assert.property(response.body.data[0], 'testInformation')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
         assert.property(response.body.data[0].followUps[0], 'id')
@@ -1475,7 +1477,7 @@ describe('Mobile API Result download by id routes v2', () => {
     function assertReporterResultDownloadRequestValidResultId(response) {
       assertReporterResultDownloadResponse(response)
 
-      assert.equal(Object.keys(response.body.data).length, 24)
+      assert.equal(Object.keys(response.body.data).length, 26)
       assert.property(response.body.data, 'id')
       assert.property(response.body.data, 'externalId')
       assert.property(response.body.data, 'endedOn')
@@ -1495,6 +1497,8 @@ describe('Mobile API Result download by id routes v2', () => {
       assert.property(response.body.data, 'sample')
       assert.property(response.body.data, 'comments')
       assert.property(response.body.data, 'followUps')
+      assert.property(response.body.data, 'assayAvatar')
+      assert.property(response.body.data, 'testInformation')
       if (response.body.data.followUps) {
         assert.typeOf(response.body.data.followUps, 'array')
         assert.property(response.body.data.followUps[0], 'id')
