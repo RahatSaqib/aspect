@@ -193,11 +193,47 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
   }))
 
 // Trasnformed data v2
-const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
+const getTransformedDataV2 = (data, setDelivered, followUps, comments, testInformation) =>
   _.map(data, d => {
     const assayAvatar = assayAvatarColorsIcon[d.diseaseExternalId]
       ? assayAvatarColorsIcon[d.diseaseExternalId]
       : assayAvatarColorsIcon.default
+    const testInfoDetails = _.filter(testInformation, { resultId: d.id }).map(f => {
+      _.omit(f, 'resultId')
+      {
+        const testInfoData = []
+        const testInfo1 = {
+          label: f.resultCategory1Label || null,
+          labelI18nKey: f.resultCategory1I18nKey || null,
+          value: f.resultCategory1Name || null,
+          valueI18nKey: f.resultCategory1i18nKey || null,
+          severity: f.resultCategory1Emphasize ? 'danger' : 'info',
+        }
+        if (f.resultCategory2) {
+          const testInfo2 = {
+            label: f.resultCategory2Label || null,
+            labelI18nKey: f.resultCategory2I18nKey || null,
+            value: f.resultCategory2Name || null,
+            valueI18nKey: f.resultCategory2i18nKey || null,
+            severity: f.resultCategory2Emphasize ? 'danger' : 'info',
+          }
+          testInfoData.push(testInfo2)
+        }
+        if (f.copies) {
+          const testInfo3 = {
+            label: `${f.copies} Copies/mL` || null,
+            labelI18nKey: null,
+            value: null,
+            valueI18nKey: null,
+            severity: 'info',
+          }
+          testInfoData.push(testInfo3)
+        }
+
+        testInfoData.push(testInfo1)
+        return testInfoData
+      }
+    })
     return {
       id: d.id,
       externalId: d.externalId,
@@ -277,6 +313,7 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
         foregroundColour: assayAvatar.foregroundColour,
         contentIcon: assayAvatar.contentIcon,
       },
+      testInformation: testInfoDetails[0],
     }
   })
 
