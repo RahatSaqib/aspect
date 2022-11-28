@@ -2,54 +2,324 @@
 
 exports[`Cron Component snapshot test should shallow render export list correctly 1`] = `
 <DocumentFragment>
-  <pre
-    style="color: red; margin: 10px; padding: 10px; background-color: rgb(204, 204, 204); border: 1px solid black; height: calc(100% - 20px); position: absolute; width: calc(100% - 20px);"
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+    style="max-width: 100%;"
   >
-    TypeError: Cannot read property 'join' of undefined
-    at Cron (/home/ahernandez/repos/aspect/web/src/components/Cron/Cron.jsx:74:61)
-    at renderWithHooks (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:14985:18)
-    at mountIndeterminateComponent (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:17811:13)
-    at beginWork (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:19049:16)
-    at HTMLUnknownElement.callCallback (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:3945:14)
-    at HTMLUnknownElement.callTheUserObjectsOperation (/home/ahernandez/repos/aspect/web/node_modules/jest-environment-jsdom/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
-    at innerInvokeEventListeners (/home/ahernandez/repos/aspect/web/node_modules/jest-environment-jsdom/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:338:25)
-    at invokeEventListeners (/home/ahernandez/repos/aspect/web/node_modules/jest-environment-jsdom/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:274:3)
-    at HTMLUnknownElementImpl._dispatch (/home/ahernandez/repos/aspect/web/node_modules/jest-environment-jsdom/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:221:9)
-    at HTMLUnknownElementImpl.dispatchEvent (/home/ahernandez/repos/aspect/web/node_modules/jest-environment-jsdom/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:94:17)
-    at HTMLUnknownElement.dispatchEvent (/home/ahernandez/repos/aspect/web/node_modules/jest-environment-jsdom/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:231:34)
-    at Object.invokeGuardedCallbackDev (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:3994:16)
-    at invokeGuardedCallback (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:4056:31)
-    at beginWork$1 (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:23964:7)
-    at performUnitOfWork (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:22779:12)
-    at workLoopSync (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:22707:5)
-    at renderRootSync (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:22670:7)
-    at performSyncWorkOnRoot (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:22293:18)
-    at scheduleUpdateOnFiber (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:21881:7)
-    at updateContainer (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:25482:3)
-    at /home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:26021:7
-    at unbatchedUpdates (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:22431:12)
-    at legacyRenderSubtreeIntoContainer (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:26020:5)
-    at Object.render (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:26103:10)
-    at /home/ahernandez/repos/aspect/web/node_modules/@testing-library/react/dist/pure.js:101:25
-    at batchedUpdates$1 (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom.development.js:22380:12)
-    at act (/home/ahernandez/repos/aspect/web/node_modules/react-dom/cjs/react-dom-test-utils.development.js:1042:14)
-    at render (/home/ahernandez/repos/aspect/web/node_modules/@testing-library/react/dist/pure.js:97:26)
-    at Object.&lt;anonymous&gt; (/home/ahernandez/repos/aspect/web/src/components/Cron/Cron.test.jsx:18:30)
-    at Promise.then.completed (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/utils.js:391:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/utils.js:316:10)
-    at _callCircusTest (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/run.js:218:40)
-    at processTicksAndRejections (internal/process/task_queues.js:95:5)
-    at _runTest (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/run.js:155:3)
-    at _runTestsForDescribeBlock (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/run.js:66:9)
-    at _runTestsForDescribeBlock (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/run.js:60:9)
-    at _runTestsForDescribeBlock (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/run.js:60:9)
-    at run (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/run.js:25:3)
-    at runAndTransformResultsToJestFormat (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
-    at jestAdapter (/home/ahernandez/repos/aspect/web/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
-    at runTestInternal (/home/ahernandez/repos/aspect/web/node_modules/jest-runner/build/runTest.js:389:16)
-    at runTest (/home/ahernandez/repos/aspect/web/node_modules/jest-runner/build/runTest.js:475:34)
-    at Object.worker (/home/ahernandez/repos/aspect/web/node_modules/jest-runner/build/testWorker.js:133:12)
-  </pre>
+    <div
+      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+    >
+      <div
+        class="MuiTabs-root Tab_Margin css-1ujnqem-MuiTabs-root"
+      >
+        <div
+          class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
+          style="overflow: hidden; margin-bottom: 0px;"
+        >
+          <div
+            class="MuiTabs-flexContainer css-heg063-MuiTabs-flexContainer"
+            role="tablist"
+          >
+            <button
+              aria-selected="true"
+              class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-1h9z7r5-MuiButtonBase-root-MuiTab-root"
+              role="tab"
+              tabindex="0"
+              type="button"
+            >
+              Daily
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              aria-selected="false"
+              class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1h9z7r5-MuiButtonBase-root-MuiTab-root"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              Weekly
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              aria-selected="false"
+              class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1h9z7r5-MuiButtonBase-root-MuiTab-root"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              Monthly
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              aria-selected="false"
+              class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-1h9z7r5-MuiButtonBase-root-MuiTab-root"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              Quarterly
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+          <span
+            class="MuiTabs-indicator css-1aquho2-MuiTabs-indicator"
+            style="left: 0px; width: 0px;"
+          />
+        </div>
+      </div>
+      <div
+        class="css-hyolpn-MuiStack-root"
+      >
+        <div
+          class="MuiFormGroup-root MuiFormGroup-row Radio-Group css-qfz70r-MuiFormGroup-root"
+          role="radiogroup"
+        >
+          <label
+            class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+          >
+            <span
+              class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary Mui-checked css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+            >
+              <input
+                checked=""
+                class="PrivateSwitchBase-input css-1m9pwf3"
+                name="daily"
+                type="radio"
+                value="0 0 1/1 * *"
+              />
+              <span
+                class="css-hyxlzm"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+                  data-testid="RadioButtonUncheckedIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                  />
+                </svg>
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-11zohuh-MuiSvgIcon-root"
+                  data-testid="RadioButtonCheckedIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </span>
+            <span
+              class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+            >
+              Every Day(s)
+            </span>
+          </label>
+          <label
+            class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+          >
+            <span
+              class="MuiButtonBase-root MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-root MuiRadio-root MuiRadio-colorPrimary css-vqmohf-MuiButtonBase-root-MuiRadio-root"
+            >
+              <input
+                class="PrivateSwitchBase-input css-1m9pwf3"
+                name="daily"
+                type="radio"
+                value="0 0 * * 1-5"
+              />
+              <span
+                class="css-hyxlzm"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hbvpl3-MuiSvgIcon-root"
+                  data-testid="RadioButtonUncheckedIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+                  />
+                </svg>
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1hhw7if-MuiSvgIcon-root"
+                  data-testid="RadioButtonCheckedIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </span>
+            <span
+              class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+            >
+              Every week day
+            </span>
+          </label>
+        </div>
+        <div
+          class="css-1q36rmd-MuiStack-root"
+        >
+          <div
+            class="MuiFormControl-root MuiFormControl-marginNormal MuiTextField-root css-1rv3ei8-MuiFormControl-root-MuiTextField-root"
+          >
+            <label
+              class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled css-1sumxir-MuiFormLabel-root-MuiInputLabel-root"
+              data-shrink="true"
+              for="outlined-number"
+              id="outlined-number-label"
+            >
+              Every Day(s)
+            </label>
+            <div
+              class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"
+            >
+              <input
+                aria-invalid="false"
+                class="MuiInputBase-input MuiOutlinedInput-input css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"
+                id="outlined-number"
+                type="number"
+                value="1"
+              />
+              <fieldset
+                aria-hidden="true"
+                class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+              >
+                <legend
+                  class="css-1in441m"
+                >
+                  <span>
+                    Every Day(s)
+                  </span>
+                </legend>
+              </fieldset>
+            </div>
+          </div>
+          <div
+            class="Input_Wrapper css-ncbf1d-MuiStack-root"
+          >
+            <div
+              class="MuiFormControl-root MuiTextField-root Input_Width css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+            >
+              <label
+                class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-standard MuiFormLabel-colorPrimary MuiFormLabel-filled css-1c2i806-MuiFormLabel-root-MuiInputLabel-root"
+                data-shrink="true"
+                for="mui-1"
+                id="mui-1-label"
+              >
+                Hour
+              </label>
+              <div
+                class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-formControl css-1ptx2yq-MuiInputBase-root-MuiInput-root"
+                variant="standard"
+              >
+                <div
+                  aria-expanded="false"
+                  aria-haspopup="listbox"
+                  aria-labelledby="mui-1-label mui-1"
+                  class="MuiSelect-select MuiSelect-standard MuiInputBase-input MuiInput-input css-1rxz5jq-MuiSelect-select-MuiInputBase-input-MuiInput-input"
+                  id="mui-1"
+                  role="button"
+                  tabindex="0"
+                >
+                  00
+                </div>
+                <input
+                  aria-hidden="true"
+                  class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                  tabindex="-1"
+                  value="0"
+                />
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconStandard css-pqjvzy-MuiSvgIcon-root-MuiSelect-icon"
+                  data-testid="ArrowDropDownIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 10l5 5 5-5z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div
+              class="MuiFormControl-root MuiTextField-root Input_Width css-1u3bzj6-MuiFormControl-root-MuiTextField-root"
+            >
+              <label
+                class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-standard MuiFormLabel-colorPrimary MuiFormLabel-filled css-1c2i806-MuiFormLabel-root-MuiInputLabel-root"
+                data-shrink="true"
+                for="mui-2"
+                id="mui-2-label"
+              >
+                Minutes
+              </label>
+              <div
+                class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-formControl css-1ptx2yq-MuiInputBase-root-MuiInput-root"
+                variant="standard"
+              >
+                <div
+                  aria-expanded="false"
+                  aria-haspopup="listbox"
+                  aria-labelledby="mui-2-label mui-2"
+                  class="MuiSelect-select MuiSelect-standard MuiInputBase-input MuiInput-input css-1rxz5jq-MuiSelect-select-MuiInputBase-input-MuiInput-input"
+                  id="mui-2"
+                  role="button"
+                  tabindex="0"
+                >
+                  00
+                </div>
+                <input
+                  aria-hidden="true"
+                  class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                  tabindex="-1"
+                  value="0"
+                />
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconStandard css-pqjvzy-MuiSvgIcon-root-MuiSelect-icon"
+                  data-testid="ArrowDropDownIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 10l5 5 5-5z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      >
+        (0 0 1/1 * *)
+      </p>
+    </div>
+  </div>
 </DocumentFragment>
 `;
