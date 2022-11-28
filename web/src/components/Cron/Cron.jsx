@@ -57,6 +57,7 @@ const Cron = ({ showResultText, showResultCron, onChange, value }) => {
   /**
    * render JSX if `value` is defined
    */
+
   return (
     <Card style={{ maxWidth: '100%' }}>
       <CardContent>
