@@ -85,6 +85,187 @@ const messagesResult = defineMessages({
     id: 'pages.resultEdit.noCustomFieldsDefined',
     defaultMessage: 'No Custom Fields Defined',
   },
+  Genderi18nCaptionKey: {
+    id: 'pages.resultEdit.Genderi18nCaptionKey',
+    defaultMessage: 'Gender',
+  },
+  AgeFieldi18nKey: {
+    id: 'pages.resultEdit.AgeFieldi18nKey',
+    defaultMessage: 'Age',
+  },
+  RetreatCaseFieldi18nKey: {
+    id: 'pages.resultEdit.RetreatCaseFieldi18nKey',
+    defaultMessage: 'Retreatment Case',
+  },
+  Referringphonei18nKeyCaption: {
+    id: 'pages.resultEdit.Referringphonei18nKeyCaption',
+    defaultMessage: 'Referring Clinician or Facility Phone Number (if known)',
+  },
+  ReferringFacilityI18nkey: {
+    id: 'pages.resultEdit.ReferringFacilityI18nkey',
+    defaultMessage: 'Referring Facility',
+  },
+  RepeatTesti18nKey: {
+    id: 'pages.resultEdit.RepeatTesti18nKey',
+    defaultMessage: 'Repeat Test',
+  },
+  PatientNameI18nCaptionKey: {
+    id: 'pages.resultEdit.PatientNameI18nCaptionKey',
+    defaultMessage: 'Patient Name',
+  },
+  AddressI18nCaptionKey: {
+    id: 'pages.resultEdit.AddressI18nCaptionKey',
+    defaultMessage: 'Address',
+  },
+  MobileNumberI18nkey: {
+    id: 'pages.resultEdit.MobileNumberI18nkey',
+    defaultMessage: 'Mobile Number',
+  },
+  TypeOfPatientI18nKey: {
+    id: 'pages.resultEdit.TypeOfPatientI18nKey',
+    defaultMessage: 'Type of Patient',
+  },
+  PatientHistoryI18nKey: {
+    id: 'pages.resultEdit.PatientHistoryI18nKey',
+    defaultMessage: 'Type History',
+  },
+  PatientRetreatmentI18nKey: {
+    id: 'pages.resultEdit.PatientRetreatmentI18nKey',
+    defaultMessage: 'Patient Retreatment',
+  },
+  HIVStatusI18nKey: {
+    id: 'pages.resultEdit.HIVStatusI18nKey',
+    defaultMessage: 'HIV Status',
+  },
+  SampleTypeI18nKey: {
+    id: 'pages.resultEdit.SampleTypeI18nKey',
+    defaultMessage: 'Sample Type',
+  },
+  TBRegistrationNumberPreviousI18nKey: {
+    id: 'pages.resultEdit.TBRegistrationNumberPreviousI18nKey',
+    defaultMessage: 'TB Registration Number - Previous (if any)',
+  },
+  TBRegistrationNumberCurrentI18nKey: {
+    id: 'pages.resultEdit.TBRegistrationNumberCurrentI18nKey',
+    defaultMessage: 'TB Registration Number - Current',
+  },
+  //
+  male: {
+    id: 'pages.resultEdit.male',
+    defaultMessage: 'Male',
+  },
+  female: {
+    id: 'pages.resultEdit.female',
+    defaultMessage: 'Female',
+  },
+  yes: {
+    id: 'pages.resultEdit.yes',
+    defaultMessage: 'Yes',
+  },
+  no: {
+    id: 'pages.resultEdit.no',
+    defaultMessage: 'No',
+  },
+  firstOrSecond: {
+    id: 'pages.resultEdit.firstOrSecond',
+    defaultMessage: 'First or second',
+  },
+  followUp: {
+    id: 'pages.resultEdit.followUp',
+    defaultMessage: 'Follow-up',
+  },
+  repeatBaseline: {
+    id: 'pages.resultEdit.repeatBaseline',
+    defaultMessage: 'Repeat Baseline',
+  },
+  Failures_of_Category_I: {
+    id: 'pages.resultEdit.Failures_of_Category_I',
+    defaultMessage: 'Failures of Category I',
+  },
+  Non_converters_of_Category_I: {
+    id: 'pages.resultEdit.Non_converters_of_Category_I',
+    defaultMessage: 'Non converters of Category I',
+  },
+  Failures_of_Retreatment: {
+    id: 'pages.resultEdit.Failures_of_Retreatment',
+    defaultMessage: 'Failures of Retreatment',
+  },
+  Non_converters_of_Retreatment: {
+    id: 'pages.resultEdit.Non_converters_of_Retreatment',
+    defaultMessage: 'Non converters of Retreatment',
+  },
+  Relapses: {
+    id: 'pages.resultEdit.Relapses',
+    defaultMessage: 'Relapses',
+  },
+  Treatment_after_loss_to_follow_up: {
+    id: 'pages.resultEdit.Treatment_after_loss_to_follow_up',
+    defaultMessage: 'Treatment after loss to follow up',
+  },
+  Close_contacts_of_DR_TB_patient_with_symptoms: {
+    id: 'pages.resultEdit.Close_contacts_of_DR_TB_patient_with_symptoms',
+    defaultMessage: 'Close contacts of DR TB patient with symptoms',
+  },
+  HIV_infected_person_with_TB_SS: {
+    id: 'pages.resultEdit.HIV_infected_person_with_TB_SS',
+    defaultMessage: 'HIV infected person, with TB S/S',
+  },
+  Others_Pulmonary_clinically_diagnosed: {
+    id: 'pages.resultEdit.Others_Pulmonary_clinically_diagnosed',
+    defaultMessage: 'Others - Pulmonary, clinically diagnosed',
+  },
+  Others_Extra_Pulmonary: {
+    id: 'pages.resultEdit.Others_Extra_Pulmonary',
+    defaultMessage: 'Others - Extra Pulmonary',
+  },
+  Others_Pulmonary_Bacteriologically_Confirmed: {
+    id: 'pages.resultEdit.Others_Pulmonary_Bacteriologically_Confirmed',
+    defaultMessage: 'Others - Pulmonary, Bacteriologically Confirmed',
+  },
+  Presumptive_Pulmonary_Smear_Negative_TB_Cases: {
+    id: 'pages.resultEdit.Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+    defaultMessage: 'Presumptive Pulmonary Smear Negative TB Cases',
+  },
+  Presumptive_TB: {
+    id: 'pages.resultEdit.Presumptive_TB',
+    defaultMessage: 'Presumptive TB',
+  },
+  unknown: {
+    id: 'pages.resultEdit.unknown',
+    defaultMessage: 'Unknown',
+  },
+  new: {
+    id: 'pages.resultEdit.new',
+    defaultMessage: 'New',
+  },
+  treated: {
+    id: 'pages.resultEdit.treated',
+    defaultMessage: 'Previously treated',
+  },
+  'Category-I': {
+    id: 'pages.resultEdit.Category-I',
+    defaultMessage: 'Category I',
+  },
+  Retreatment: {
+    id: 'pages.resultEdit.Retreatment',
+    defaultMessage: 'Retreatment',
+  },
+  positive: {
+    id: 'pages.resultEdit.positive',
+    defaultMessage: 'Positive',
+  },
+  negative: {
+    id: 'pages.resultEdit.positive',
+    defaultMessage: 'Negative',
+  },
+  pulmonary: {
+    id: 'pages.resultEdit.pulmonary',
+    defaultMessage: 'Pulmonary',
+  },
+  extra: {
+    id: 'pages.resultEdit.extra',
+    defaultMessage: 'Extra-pulmonary',
+  },
 })
 
 export default {

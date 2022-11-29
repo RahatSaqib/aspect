@@ -475,7 +475,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
       {
         /**
          * use this `id` to add rows/items for available custom fields.
-         * See func `getFormConfigWithData` in `../utils`
+         * See func `getFormConfigWithData` in `../Detail/utils`
          */
         id: 'CustomFields',
         label: 'Custom Fields',
