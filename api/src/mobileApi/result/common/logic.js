@@ -202,12 +202,15 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments, testInfor
       _.omit(f, 'resultId')
       {
         const testInfoData = []
-        const testInfo1 = {
-          label: f.resultCategory1Label || null,
-          labelI18nKey: f.resultCategory1I18nKey || null,
-          value: f.resultCategory1Name || null,
-          valueI18nKey: f.resultCategory1i18nKey || null,
-          severity: f.resultCategory1Emphasize ? 'danger' : 'info',
+        if (f.resultCategory1) {
+          const testInfo1 = {
+            label: f.resultCategory1Label || null,
+            labelI18nKey: f.resultCategory1I18nKey || null,
+            value: f.resultCategory1Name || null,
+            valueI18nKey: f.resultCategory1i18nKey || null,
+            severity: f.resultCategory1Emphasize ? 'danger' : 'info',
+          }
+          testInfoData.push(testInfo1)
         }
         if (f.resultCategory2) {
           const testInfo2 = {
@@ -221,7 +224,7 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments, testInfor
         }
         if (f.copies) {
           const testInfo3 = {
-            label: `${f.copies} Copies/mL` || null,
+            label: !!f.copies && f.copies !== 'null' ? `${f.copies} Copies/mL` : null,
             labelI18nKey: null,
             value: null,
             valueI18nKey: null,
@@ -229,8 +232,6 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments, testInfor
           }
           testInfoData.push(testInfo3)
         }
-
-        testInfoData.push(testInfo1)
         return testInfoData
       }
     })
@@ -326,12 +327,15 @@ const getTransformedDataOfResultById = (data, setDelivered, followUps, comments,
     _.omit(f, 'resultId')
     {
       const testInfoData = []
-      const testInfo1 = {
-        label: f.resultCategory1Label || null,
-        labelI18nKey: f.resultCategory1I18nKey || null,
-        value: f.resultCategory1Name || null,
-        valueI18nKey: f.resultCategory1i18nKey || null,
-        severity: f.resultCategory1Emphasize ? 'danger' : 'info',
+      if (f.resultCategory1) {
+        const testInfo1 = {
+          label: f.resultCategory1Label || null,
+          labelI18nKey: f.resultCategory1I18nKey || null,
+          value: f.resultCategory1Name || null,
+          valueI18nKey: f.resultCategory1i18nKey || null,
+          severity: f.resultCategory1Emphasize ? 'danger' : 'info',
+        }
+        testInfoData.push(testInfo1)
       }
       if (f.resultCategory2) {
         const testInfo2 = {
@@ -353,8 +357,6 @@ const getTransformedDataOfResultById = (data, setDelivered, followUps, comments,
         }
         testInfoData.push(testInfo3)
       }
-
-      testInfoData.push(testInfo1)
       return testInfoData
     }
   })

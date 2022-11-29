@@ -432,36 +432,34 @@ const getCommentsV2 = data => {
 }
 
 // get test information v2
-const getTestInformationV2 = data => {
-  return knex('Result as r')
-    .join('Assay as a', 'a.id', 'r.assayId')
-    .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftOuterJoin('ResultCategoryAssay as rca1', builder =>
-      builder.on('rca1.resultCategoryId', 'rc1.id').andOn('rca1.assayId', 'r.assayId')
-    )
-    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .leftOuterJoin('ResultCategoryAssay as rca2', builder =>
-      builder.on('rca2.resultCategoryId', 'rc2.id').andOn('rca2.assayId', 'r.assayId')
-    )
-    .whereIn(
-      'r.id',
-      data.map(r => r.id)
-    )
+const getTestInformationV2 = (resultQuery, data, isResultList = true) => {
+  const knexQuery = resultQuery
+    .clone()
     .select(
       'r.id as resultId',
       'a.resultCategory1Label',
       'a.resultCategory1I18nKey',
       'rc1.name as resultCategory1Name',
       'rc1.i18nKey as resultCategory1i18nKey',
-      'rca1.emphasize as resultCategory1Emphasize',
+      'rca.emphasize as resultCategory1Emphasize',
       'a.resultCategory2Label',
       'a.resultCategory2I18nKey',
       'rc2.name as resultCategory2Name',
       'rc2.i18nKey as resultCategory2i18nKey',
       'rca2.emphasize as resultCategory2Emphasize',
+      'r.resultCategory1',
       'r.resultCategory2',
-      knex.raw('??->"$.copies" as copies', ['r.resultData'])
+      knex.raw('r.resultData->>"$.copies" as copies')
     )
+  if (isResultList) {
+    knexQuery.whereIn(
+      'r.id',
+      data.map(r => r.id)
+    )
+  } else {
+    knexQuery.where('r.id', data.id)
+  }
+  return knexQuery
 }
 
 // get follow ups for all results in the response for performance (filter later) v2
@@ -504,36 +502,6 @@ const getCommentsOfResultById = data => {
     )
 }
 
-// get test information v2
-const getTestInformationByIdV2 = data => {
-  return knex('Result as r')
-    .join('Assay as a', 'a.id', 'r.assayId')
-    .leftOuterJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftOuterJoin('ResultCategoryAssay as rca1', builder =>
-      builder.on('rca1.resultCategoryId', 'rc1.id').andOn('rca1.assayId', 'r.assayId')
-    )
-    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .leftOuterJoin('ResultCategoryAssay as rca2', builder =>
-      builder.on('rca2.resultCategoryId', 'rc2.id').andOn('rca2.assayId', 'r.assayId')
-    )
-    .where('r.id', data.id)
-    .select(
-      'r.id as resultId',
-      'a.resultCategory1Label',
-      'a.resultCategory1I18nKey',
-      'rc1.name as resultCategory1Name',
-      'rc1.i18nKey as resultCategory1i18nKey',
-      'rca1.emphasize as resultCategory1Emphasize',
-      'a.resultCategory2Label',
-      'a.resultCategory2I18nKey',
-      'rc2.name as resultCategory2Name',
-      'rc2.i18nKey as resultCategory2i18nKey',
-      'rca2.emphasize as resultCategory2Emphasize',
-      'r.resultCategory2',
-      knex.raw('??->"$.copies" as copies', ['r.resultData'])
-    )
-}
-
 module.exports = {
   generateResultQuery,
   getCount,
@@ -553,5 +521,4 @@ module.exports = {
   getCommentsOfResultById,
   getFollowUpsOfResultById,
   getTestInformationV2,
-  getTestInformationByIdV2,
 }
