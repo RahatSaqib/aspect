@@ -447,14 +447,36 @@ async function getDevicesAndSitesOverviewReport(auth, query) {
   }
 }
 
+const assayColumns = () =>
+  knex
+    .from('Assay AS a')
+    .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Disease AS ds', 'at.diseaseId', 'ds.id')
+    .innerJoin('ResultCategoryGroup AS rcg', 'a.id', 'rcg.assayId')
+    .innerJoin('ResultCategory AS rc1', 'rcg.resultCategory1Id', 'rc1.id')
+    .leftJoin('ResultCategory AS rc2', 'rcg.resultCategory2Id', 'rc2.id')
+    .select([
+      'rcg.resultCategory1Id',
+      'rcg.resultCategory2Id',
+      knex.raw('CONCAT(IFNULL(rc1.id, ""), "_", IFNULL(rc2.id, "")) AS columnKey'),
+      knex.raw(
+        'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
+      ),
+    ])
+
 async function getAllDeviceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getAllDeviceReportData(dataConstraints, query)
+  const assays = await assayColumns()
+  const rows = await getAllDeviceReportData(assays, dataConstraints, query)
 
   return {
     ok: true,
     data: rows,
     total: rows.length,
+    dynamicColumns: assays.map(a => ({
+      key: a.columnKey,
+      header: a.columnName,
+    })),
   }
 }
 

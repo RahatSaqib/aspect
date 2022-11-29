@@ -1,43 +1,35 @@
 const { knex, sortPageParams, filterDateRangeParams } = require('../../db')
-const {
-  getBaseQuery: getResultBaseQuery,
-  modifiers,
-  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
-} = require('../../result/query')
+const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { getDateTimeProjectionInUserTimeZone, getOffsetFromIsoDateString } = require('../../shared/date')
 const { getBasicsForDevicesReport } = require('../common/db')
 
-async function getAllDeviceReportData(dataConstraints, query) {
+async function getAllDeviceReportData(assays, dataConstraints, query) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
   const { maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
-  const {
-    mtbDetectedRifNotDetected,
-    mtbDetectedRifDetected,
-    mtbNotDetected,
-    mtbInvalid,
-    mtbError,
-    mtbNoResult,
-    mtbDetectedRifIndeterminate,
-    mtbDetected,
-    mtbTraceDetected,
-  } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
+  const assaySum = (rc1, rc2) => {
+    let query = `IFNULL(SUM(CASE WHEN r.resultCategory1 = ${rc1} `
+
+    if (rc2) {
+      query += `AND r.resultCategory2 = ${rc2} `
+    }
+
+    query += 'THEN 1 ELSE 0 END), 0)'
+
+    return knex.raw(query)
+  }
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.resultCategory1)
     .modify(modifiers.join.resultCategory2)
     .select({
       deviceId: 'deviceId',
-      mtbNotDetected,
-      mtbDetectedRifNotDetected,
-      mtbDetectedRifDetected,
-      mtbDetectedRifIndeterminate,
-      mtbError,
-      mtbNoResult,
-      mtbInvalid,
-      mtbDetected,
-      mtbTraceDetected,
+      ...Object.fromEntries(
+        assays.map(ac => {
+          return [ac.columnKey, assaySum(ac.resultCategory1Id, ac.resultCategory2Id)]
+        })
+      ),
       totalXpertTests: knex.raw('count(*)'),
       lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset),
     })
@@ -75,15 +67,7 @@ async function getAllDeviceReportData(dataConstraints, query) {
       'resultsCount.lastUploadOn AS lastUploadOn',
       knex.raw('dms.name AS status'),
       knex.raw('dmsl.data ->> "$.notes" AS statusNote'),
-      knex.raw('IFNULL(resultsCount.mtbNotDetected, 0) AS totalMtbNegative'),
-      knex.raw('IFNULL(resultsCount.mtbDetected, 0) AS totalMtbDetected'),
-      knex.raw('IFNULL(resultsCount.mtbTraceDetected, 0) AS totalMtbTraceDetected'),
-      knex.raw('IFNULL(resultsCount.mtbDetectedRifNotDetected, 0) AS totalMtbSens'),
-      knex.raw('IFNULL(resultsCount.mtbDetectedRifDetected, 0) AS totalMtbRes'),
-      knex.raw('IFNULL(resultsCount.mtbDetectedRifIndeterminate, 0) AS totalMtbIndeterminate'),
-      knex.raw('IFNULL(resultsCount.mtbError, 0) AS totalErrors'),
-      knex.raw('IFNULL(resultsCount.mtbNoResult, 0) AS mtbNoResult'),
-      knex.raw('IFNULL(resultsCount.mtbInvalid, 0) AS mtbInvalid'),
+      ...assays.map(a => knex.raw(`IFNULL(resultsCount.${a.columnKey}, 0) AS ${a.columnKey}`)),
       knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertTests'),
     ])
 }
