@@ -14,8 +14,8 @@ import Weekly from './Weekly'
 
 const classes = classNames.bind(styles)
 const options = [
-  { name: 'daily', Component: Daily, value: ['0', '0', '1/1', '*', '*'] },
-  { name: 'weekly', Component: Weekly, value: ['0', '0', '1/1', '*', 'MON'] },
+  { name: 'daily', Component: Daily, value: ['0', '0', '*/1', '*', '*'] },
+  { name: 'weekly', Component: Weekly, value: ['0', '0', '*/1', '*', 'MON'] },
   { name: 'monthly', Component: Monthly, value: ['0', '0', '1', '*', '*'] },
   { name: 'quarterly', Component: Quarterly, value: ['0', '0', '1', '*/3', '*'] },
 ]

@@ -93,7 +93,7 @@ exports[`Cron Component snapshot test should shallow render export list correctl
                 class="PrivateSwitchBase-input css-1m9pwf3"
                 name="daily"
                 type="radio"
-                value="0 0 1/1 * *"
+                value="0 0 */1 * *"
               />
               <span
                 class="css-hyxlzm"
@@ -317,7 +317,7 @@ exports[`Cron Component snapshot test should shallow render export list correctl
       <p
         class="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
       >
-        (0 0 1/1 * *)
+        (0 0 */1 * *)
       </p>
     </div>
   </div>

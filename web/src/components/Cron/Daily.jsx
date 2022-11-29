@@ -52,7 +52,7 @@ const Daily = ({ cronExpression, onChange }) => {
         <FormControlLabel
           control={<Radio onChange={handleChange} checked={cronExpression[4] === '*'} />}
           label={formatMessage(messages.everyDay)}
-          value={['0', '0', '1/1', '*', '*'].join(' ')}
+          value={['0', '0', '*/1', '*', '*'].join(' ')}
         />
 
         <FormControlLabel
