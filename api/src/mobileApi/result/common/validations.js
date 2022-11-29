@@ -257,8 +257,8 @@ const downloadResultResponseValidationV2 = () => {
               Joi.object().keys({
                 label: Joi.string().allow(null, '').description('Test label'),
                 labelI18nKey: Joi.string().required().description('Test label key').allow(null),
-                value: Joi.string().required().description('Test result value').allow(null),
-                valueI18nKey: Joi.string().required().description('Test result value key').allow(null),
+                value: Joi.string().required().description('Test result value').allow(null, ''),
+                valueI18nKey: Joi.string().required().description('Test result value key').allow(null, ''),
                 severity: Joi.string().description('Severity of the test'),
               })
             ),
