@@ -15,7 +15,6 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
   getResultWorkflowStatusQuery,
-  getTestInformationV2,
 } = require('./common/db')
 const { getTransformedDataV2 } = require('./common/logic')
 
@@ -38,9 +37,9 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
   // get comments for all results in the response for performance (filter later)
   const comments = await getCommentsV2(data)
   // get test information for all results in the response
-  const testInformation = await getTestInformationV2(resultQuery, data)
+  // const testInformation = await getTestInformationV2(resultQuery, data)
 
-  const transformedData = getTransformedDataV2(data, setDelivered, followUps, comments, testInformation)
+  const transformedData = getTransformedDataV2(data, setDelivered, followUps, comments)
 
   // total pages calculation (zero based)
   const totalPages = Math.ceil(total / size) - 1

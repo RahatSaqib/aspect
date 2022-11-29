@@ -193,49 +193,12 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
   }))
 
 // Trasnformed data v2
-const getTransformedDataV2 = (data, setDelivered, followUps, comments, testInformation) =>
+const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
   _.map(data, d => {
     const assayAvatar = assayAvatarColorsIcon[d.diseaseExternalId]
       ? assayAvatarColorsIcon[d.diseaseExternalId]
       : assayAvatarColorsIcon.default
-    const testInfoDetails = _.filter(testInformation, { resultId: d.id }).map(f => {
-      _.omit(f, 'resultId')
-      {
-        const testInfoData = []
-        if (f.resultCategory1) {
-          const testInfo1 = {
-            label: f.resultCategory1Label || null,
-            labelI18nKey: f.resultCategory1I18nKey || null,
-            value: f.resultCategory1Name || null,
-            valueI18nKey: f.resultCategory1i18nKey || null,
-            severity: f.resultCategory1Emphasize ? 'danger' : 'info',
-          }
-          testInfoData.push(testInfo1)
-        }
-        if (f.resultCategory2) {
-          const testInfo2 = {
-            label: f.resultCategory2Label || null,
-            labelI18nKey: f.resultCategory2I18nKey || null,
-            value: f.resultCategory2Name || null,
-            valueI18nKey: f.resultCategory2i18nKey || null,
-            severity: f.resultCategory2Emphasize ? 'danger' : 'info',
-          }
-          testInfoData.push(testInfo2)
-        }
-        if (f.copies) {
-          const testInfo3 = {
-            label: !!f.copies && f.copies !== 'null' ? `${f.copies} Copies/mL` : null,
-            labelI18nKey: null,
-            value: null,
-            valueI18nKey: null,
-            severity: 'info',
-          }
-          testInfoData.push(testInfo3)
-        }
-        return testInfoData
-      }
-    })
-    return {
+    const mainData = {
       id: d.id,
       externalId: d.externalId,
       endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
@@ -314,53 +277,47 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments, testInfor
         foregroundColour: assayAvatar.foregroundColour,
         contentIcon: assayAvatar.contentIcon,
       },
-      testInformation: testInfoDetails[0],
+      testInformation: [],
     }
+    if (d.resultCategory1) {
+      const testInfo1 = {
+        label: d.resultCategory1Label || null,
+        labelI18nKey: d.resultCategory1I18nKey || null,
+        value: d.resultCategory1Name || null,
+        valueI18nKey: d.resultCategory1i18nKey || null,
+        severity: d.resultCategory1Emphasize ? 'danger' : 'info',
+      }
+      mainData.testInformation.push(testInfo1)
+    }
+    if (d.resultCategory2) {
+      const testInfo2 = {
+        label: d.resultCategory2Label || null,
+        labelI18nKey: d.resultCategory2I18nKey || null,
+        value: d.resultCategory2Name || null,
+        valueI18nKey: d.resultCategory2i18nKey || null,
+        severity: d.resultCategory2Emphasize ? 'danger' : 'info',
+      }
+      mainData.testInformation.push(testInfo2)
+    }
+    if (d.copies) {
+      const testInfo3 = {
+        label: `${d.copies} Copies/mL` || null,
+        labelI18nKey: null,
+        value: null,
+        valueI18nKey: null,
+        severity: 'info',
+      }
+      mainData.testInformation.push(testInfo3)
+    }
+    return mainData
   })
 
 // Trasnformed data v2 for result by Id
-const getTransformedDataOfResultById = (data, setDelivered, followUps, comments, testInformation) => {
+const getTransformedDataOfResultById = (data, setDelivered, followUps, comments) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
-  const testDetails = testInformation.map(f => {
-    _.omit(f, 'resultId')
-    {
-      const testInfoData = []
-      if (f.resultCategory1) {
-        const testInfo1 = {
-          label: f.resultCategory1Label || null,
-          labelI18nKey: f.resultCategory1I18nKey || null,
-          value: f.resultCategory1Name || null,
-          valueI18nKey: f.resultCategory1i18nKey || null,
-          severity: f.resultCategory1Emphasize ? 'danger' : 'info',
-        }
-        testInfoData.push(testInfo1)
-      }
-      if (f.resultCategory2) {
-        const testInfo2 = {
-          label: f.resultCategory2Label || null,
-          labelI18nKey: f.resultCategory2I18nKey || null,
-          value: f.resultCategory2Name || null,
-          valueI18nKey: f.resultCategory2i18nKey || null,
-          severity: f.resultCategory2Emphasize ? 'danger' : 'info',
-        }
-        testInfoData.push(testInfo2)
-      }
-      if (f.copies) {
-        const testInfo3 = {
-          label: `${f.copies} Copies/mL` || null,
-          labelI18nKey: null,
-          value: null,
-          valueI18nKey: null,
-          severity: 'info',
-        }
-        testInfoData.push(testInfo3)
-      }
-      return testInfoData
-    }
-  })
-  return {
+  const mainData = {
     id: data.id,
     externalId: data.externalId,
     endedOn: returnIso8601StringWithoutTimeZoneOffset(data.endedOn),
@@ -437,8 +394,39 @@ const getTransformedDataOfResultById = (data, setDelivered, followUps, comments,
       foregroundColour: assayAvatar.foregroundColour,
       contentIcon: assayAvatar.contentIcon,
     },
-    testInformation: testDetails[0],
+    testInformation: [],
   }
+  if (data.resultCategory1) {
+    const testInfo1 = {
+      label: data.resultCategory1Label || null,
+      labelI18nKey: data.resultCategory1I18nKey || null,
+      value: data.resultCategory1Name || null,
+      valueI18nKey: data.resultCategory1i18nKey || null,
+      severity: data.resultCategory1Emphasize ? 'danger' : 'info',
+    }
+    mainData.testInformation.push(testInfo1)
+  }
+  if (data.resultCategory2) {
+    const testInfo2 = {
+      label: data.resultCategory2Label || null,
+      labelI18nKey: data.resultCategory2I18nKey || null,
+      value: data.resultCategory2Name || null,
+      valueI18nKey: data.resultCategory2i18nKey || null,
+      severity: data.resultCategory2Emphasize ? 'danger' : 'info',
+    }
+    mainData.testInformation.push(testInfo2)
+  }
+  if (data.copies) {
+    const testInfo3 = {
+      label: `${data.copies} Copies/mL` || null,
+      labelI18nKey: null,
+      value: null,
+      valueI18nKey: null,
+      severity: 'info',
+    }
+    mainData.testInformation.push(testInfo3)
+  }
+  return mainData
 }
 
 module.exports = {
