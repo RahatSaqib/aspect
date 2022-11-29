@@ -9,7 +9,7 @@ const props = {
   showResultText: false,
   showResultCron: true,
   onChange: () => true,
-  value: { cronExpression: ['0', '0', '1/1', '*', '*'] },
+  value: { cronExpression: ['0', '0', '*/1', '*', '*'] },
 }
 
 describe('Cron Component', () => {
