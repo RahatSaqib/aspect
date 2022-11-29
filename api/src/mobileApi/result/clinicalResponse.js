@@ -150,7 +150,7 @@ async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, res
     treatmentStatusExternalId = 'NotPossible'
   }
 
-  return updateTreatmentStatus(request, currentUserId, result, null, treatmentStatusExternalId, data, method)
+  return updateTreatmentStatus(request, currentUserId, result, null, treatmentStatusExternalId, data, method, date)
 }
 
 // supporting method for updateTreatmentStatusBasedOnFollowUps
@@ -216,7 +216,12 @@ async function updateTreatmentStatusByResultId(
     treatmentStatusId = resultTreatmentStatusId
   }
   let lastTreatment = await getLastTreatmentStatusByResult(resultId)
-  if (treatmentStatusId !== currentTreatmentStatusId && treatmentStatusId) {
+  if (
+    treatmentStatusId !== currentTreatmentStatusId &&
+    treatmentStatusId &&
+    lastTreatment &&
+    lastTreatment.changedOn < changedOn
+  ) {
     const [treatmentStatusLogId] = await setTreatmentStatusLog(
       resultId,
       treatmentStatusId,
@@ -227,7 +232,7 @@ async function updateTreatmentStatusByResultId(
       userId
     )
 
-    if (!lastTreatment || (lastTreatment && lastTreatment.changedOn < changedOn)) {
+    if (!lastTreatment) {
       await updateResult(resultId, treatmentStatusLogId, userId, now)
       lastTreatment = await getLastTreatmentStatusByResult(resultId)
     }
@@ -255,7 +260,7 @@ async function updateWorkflowStatus(request, data) {
     resultWorkflowStatusId: data.value ? 9 : 8,
     createdBy: currentUserId,
     reason: null,
-    changedOn: new Date(),
+    changedOn: data.clientTime,
   }
   const errorMessage = await updateResultWorkflowStatusByResultId(
     resultWorkflowLogEntry,
@@ -279,14 +284,12 @@ async function updateResultWorkflowStatusByResultId(
   currentResultWorkflowStatusId,
   resultWorkflowChangedOn
 ) {
-  const now = new Date()
-
   // update the resultWorkflowStatusId.
   if (resultWorkflowLogEntry.resultWorkflowStatusId !== currentResultWorkflowStatusId) {
     const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
 
     if (resultWorkflowChangedOn < clientDate) {
-      await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, now)
+      await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, clientDate)
     }
   }
 }

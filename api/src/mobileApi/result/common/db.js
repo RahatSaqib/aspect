@@ -530,18 +530,18 @@ const getResultFollowUpsbyResultIdExternalId = (resultId, externalId) => {
 }
 
 const getAffectedRowsbyResultFollowUp = (date, resultId, externalId, currentUserId, followUp, id, clientDate) => {
-  return knex('ResultFollowUp')
-    .where('id', id || '-1')
-    .andWhere('updatedOn', '<', clientDate)
-    .orWhere(function () {
-      this.where('resultId', resultId).where('externalId', externalId || '-1')
-    })
+  const query = knex('ResultFollowUp')
+    .where('followUpid', id || '-1')
+    .where('resultId', resultId)
+    .where('externalId', externalId || '-1')
+    .where('updatedOn', '<', clientDate)
     .update({
       date,
       updatedOn: new Date(),
       updatedBy: currentUserId,
       followUpId: knex.raw('ifnull(?, followUpId)', followUp ? followUp.id : null),
     })
+  return query
 }
 
 function getBaseQueryForResults() {
