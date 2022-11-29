@@ -416,7 +416,7 @@ const getTransformedDataOfResultById = (data, setDelivered, followUps, comments)
     }
     mainData.testInformation.push(testInfo2)
   }
-  if (data.copies) {
+  if (data.copies && `${data.copies}`.toLowerCase().replace(/\s/g, '') !== 'null') {
     const testInfo3 = {
       label: `${data.copies} Copies/mL` || null,
       labelI18nKey: null,
