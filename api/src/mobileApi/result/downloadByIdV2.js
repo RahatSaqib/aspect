@@ -32,7 +32,7 @@ async function getDownloadResultById(resultId, auth, setDelivered = false) {
     // get comments for all result in the response for performance (filter later)
     const comments = await getCommentsOfResultById(data)
     // get test information for all results in the response
-    const testInformation = await getTestInformationV2(data, false)
+    const testInformation = await getTestInformationV2(resultQuery, data, false)
 
     transformedData = getTransformedDataOfResultById(data, setDelivered, followUps, comments, testInformation)
   }
