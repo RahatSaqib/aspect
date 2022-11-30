@@ -8,11 +8,13 @@ async function getAllDeviceReportData(assays, dataConstraints, query) {
   const { maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
-  const assaySum = (rc1, rc2) => {
-    let query = `IFNULL(SUM(CASE WHEN r.resultCategory1 = ${rc1} `
+  const assaySum = (assayId, rc1, rc2) => {
+    let query = `IFNULL(SUM(CASE WHEN r.assayId = ${assayId} AND r.resultCategory1 = ${rc1} `
 
     if (rc2) {
       query += `AND r.resultCategory2 = ${rc2} `
+    } else {
+      query += `AND r.resultCategory2 IS NULL `
     }
 
     query += 'THEN 1 ELSE 0 END), 0)'
@@ -27,7 +29,7 @@ async function getAllDeviceReportData(assays, dataConstraints, query) {
       deviceId: 'deviceId',
       ...Object.fromEntries(
         assays.map(ac => {
-          return [ac.columnKey, assaySum(ac.resultCategory1Id, ac.resultCategory2Id)]
+          return [ac.columnKey, assaySum(ac.assayId, ac.resultCategory1Id, ac.resultCategory2Id)]
         })
       ),
       totalXpertTests: knex.raw('count(*)'),
