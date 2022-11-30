@@ -472,11 +472,10 @@ const getCommentsOfResultById = data => {
     )
 }
 
-const getFollowUpsForResultFollowup = (followUpExternalId, followUpId) => {
+const getFollowUpsForResultFollowup = followUpExternalId => {
   return knex('FollowUp as fu')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .where('fu.externalId', followUpExternalId || -1)
-    .orWhere('fu.id', followUpId || -1)
     .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
 }
 

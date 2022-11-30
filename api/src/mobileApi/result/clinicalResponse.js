@@ -30,57 +30,51 @@ const {
 } = require('./common/db')
 
 async function clinicalResponse(request) {
-  const { payload } = request
-  const syncData = payload
+  const { payload, params } = request
+  const { resultId } = params
+  const clinicalResponseData = payload
+  const followUps = await getLatestResultFollowUps(resultId)
+  let response
   await Promise.all(
-    syncData.map(async data => {
-      switch (data.fieldName) {
-        case 'treatment':
-          await addClinicalResponse(request, data)
-          break
-        case 'outcome':
-          await addClinicalResponse(request, data)
-          break
-        case 'treatmentStarted':
-          await updateResultFollowUp(request, data)
-          break
-        case 'outcomeOccurred':
-          await updateResultFollowUp(request, data)
-          break
-        case 'confirmed':
-          await updateWorkflowStatus(request, data)
-          break
-        default:
-          break
+    clinicalResponseData.map(async data => {
+      const latestFollowUp = _.find(followUps, f => f.followUpTypeExternalId === data.fieldName)
+      if (
+        (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
+        (data.fieldName === 'treatment' || data.fieldName === 'outcome')
+      ) {
+        response = await addClinicalResponse(request, data, latestFollowUp)
+      } else if (
+        (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
+        (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred')
+      ) {
+        response = await updateResultFollowUp(request, data, followUps)
+      } else if (data.fieldName === 'confirmed') {
+        response = await updateWorkflowStatus(request, data)
       }
     })
   )
-  const response = await showResult(request)
   return response
 }
 
 // Add result folloup basaed on followup type and value. Delete followup if any followup type's value is null
-async function addClinicalResponse(request, data) {
+async function addClinicalResponse(request, data, latestFollowUp) {
   const { auth, params } = request
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
   const result = await showResult(request)
-  const followUps = await getLatestResultFollowUps(resultId)
-  const latestFollowUp = _.find(followUps, f => f.followUpTypeExternalId === data.fieldName)
-  if (data.value) {
-    const followUp = await getFollowUpsForResultFollowup(data.value, null)
+  if (data.value && data.value.toLowerCase().replace(/\s'/g, '') !== 'null') {
+    const followUp = await getFollowUpsForResultFollowup(data.value)
     if (!followUp) {
       return Boom.badRequest('Invalid follow up ID')
     }
 
-    if (data.value) {
-      const resultFollowUp = await getResultFollowUpsbyResultIdExternalId(resultId, data.value)
-      if (resultFollowUp) {
-        return Boom.badRequest('This result already has a follow up with this external ID.')
-      }
+    const resultFollowUp = await getResultFollowUpsbyResultIdExternalId(resultId, data.value)
+    if (resultFollowUp) {
+      return Boom.badRequest('This result already has a follow up with this external ID.')
     }
-    if (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp)
+
+    if (!latestFollowUp)
       await addResultFollowUp(
         resultId,
         data.value,
@@ -105,13 +99,12 @@ async function addClinicalResponse(request, data) {
 }
 
 // Update treatmentStarted and outcomeOccurred based on followup type and value
-async function updateResultFollowUp(request, data) {
+async function updateResultFollowUp(request, data, followUps) {
   const { auth, params } = request
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
   const result = await showResult(request)
 
-  const followUps = await getLatestResultFollowUps(resultId)
   const type = data.fieldName === 'outcomeOccurred' ? 'outcome' : 'treatment'
   const followUp = _.find(followUps, f => f.followUpTypeExternalId === type)
   if (!followUp) {
@@ -141,7 +134,7 @@ async function updateResultFollowUp(request, data) {
 }
 
 // supporting method for updateResultFollowUp
-async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, result, date, data, method) {
+async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, result, clientDate, data, method) {
   const followUps = await getResultFollowUps(result)
   let treatmentStatusExternalId = 'AwaitingTreatment'
   if (_.find(followUps, f => f.followUpTypeExternalId === 'treatment')) {
@@ -150,7 +143,16 @@ async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, res
     treatmentStatusExternalId = 'NotPossible'
   }
 
-  return updateTreatmentStatus(request, currentUserId, result, null, treatmentStatusExternalId, data, method, date)
+  return updateTreatmentStatus(
+    request,
+    currentUserId,
+    result,
+    null,
+    treatmentStatusExternalId,
+    data,
+    method,
+    clientDate
+  )
 }
 
 // supporting method for updateTreatmentStatusBasedOnFollowUps
@@ -216,12 +218,7 @@ async function updateTreatmentStatusByResultId(
     treatmentStatusId = resultTreatmentStatusId
   }
   let lastTreatment = await getLastTreatmentStatusByResult(resultId)
-  if (
-    treatmentStatusId !== currentTreatmentStatusId &&
-    treatmentStatusId &&
-    lastTreatment &&
-    lastTreatment.changedOn < changedOn
-  ) {
+  if (treatmentStatusId !== currentTreatmentStatusId && treatmentStatusId && lastTreatment) {
     const [treatmentStatusLogId] = await setTreatmentStatusLog(
       resultId,
       treatmentStatusId,
