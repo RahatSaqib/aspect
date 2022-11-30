@@ -366,10 +366,12 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       deviceMaintenanceStatusId: 'dms.id',
     })
     .andWhere('dtc.hasResults', true)
-
   const { total } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as total')).first()
   const data = await q
-    .modify(sortPageParams, query, 'name')
+    .modify(_q => {
+      // For export, we don't provide sort and paging params - we should get all records
+      if (query.size) _q.modify(sortPageParams, query, 'name')
+    })
     .select(
       'd.name',
       'dms.i18nKey as deviceStatus',
