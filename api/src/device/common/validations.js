@@ -3,7 +3,7 @@ const Joi = require('@hapi/joi')
 const { validateDateRangeParams, validateSortPageParams } = require('../../routes')
 const { validateAllGeographyFilterParams } = require('../../geography/requestValidation')
 
-const listWorkloadRequestSchema = {
+const exportWorkloadRequestSchema = {
   query: {
     assayId: Joi.number().description('Filter for assay ID').required(),
     deviceName: Joi.string().allow('').description('Filter for device name'),
@@ -13,6 +13,20 @@ const listWorkloadRequestSchema = {
       .allow(null)
       .description('Filter for device maintenance status external id'),
     format: Joi.string().allow(null, '').description('File format for exporting data'),
+    ...validateAllGeographyFilterParams(),
+    ...validateDateRangeParams(true),
+  },
+}
+
+const listWorkloadRequestSchema = {
+  query: {
+    assayId: Joi.number().description('Filter for assay ID').required(),
+    deviceName: Joi.string().allow('').description('Filter for device name'),
+    deviceMaintenanceStatusId: Joi.array()
+      .items(Joi.string())
+      .single()
+      .allow(null)
+      .description('Filter for device maintenance status external id'),
     ...validateAllGeographyFilterParams(),
     ...validateDateRangeParams(true),
     ...validateSortPageParams(
@@ -305,4 +319,5 @@ module.exports = {
   listDevicesBaseResponse,
   listDevicesBaseRequest,
   deviceDetailsResponseFields,
+  exportWorkloadRequestSchema,
 }
