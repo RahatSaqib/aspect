@@ -2,7 +2,7 @@ const Joi = require('@hapi/joi')
 const { getNotificationTriggerSubscriptions } = require('./subscriptions')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const listNotifications = require('./listNotifications')
-const { getNotifications, clearCache } = require('./service')
+const { clearCache } = require('./service')
 const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
 const {
@@ -14,8 +14,9 @@ const {
   listNotificationItem,
 } = require('./validations')
 const saveNotification = require('./saveNotification')
-const changeStatus = require('./changeNotificationStatus')
+const changeStatus = require('./changeStatus')
 const getNotification = require('./getNotification')
+const history = require('./history')
 const deleteNotification = require('./deleteNotification')
 
 const routes = [
@@ -65,7 +66,7 @@ const routes = [
   {
     method: 'GET',
     path: '/notification/history/{notificationTypeId}',
-    handler: getNotifications,
+    handler: history,
     config: {
       description: 'Get all notification history',
       notes: 'Filtered and sorted list of Notifications',
