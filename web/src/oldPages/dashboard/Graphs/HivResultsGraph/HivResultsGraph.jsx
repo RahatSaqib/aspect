@@ -42,7 +42,7 @@ const HivResultsGraph = ({ assaysFromState }) => {
           <Card>
             <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsVLTitle)} />
             <CardContent>
-              <Grid container spacing={8} className={cssClasses('Graph_Content')}>
+              <Grid container spacing={1} className={cssClasses('Graph_Content')}>
                 <Grid item xs={12} md={12} lg={2}>
                   <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
                     <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>

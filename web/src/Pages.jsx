@@ -7,7 +7,6 @@ import { reduceNavLinks } from './oldComponents/filter/utils'
 import LoggedInLayout from './oldComponents/LoggedInLayout'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import SignedOutLayout from './oldComponents/SignedOutLayout'
-import AccountDetails from './oldPages/account/detail/AccountDetails'
 import License from './oldPages/auth/license/License'
 import LoadableLogin from './oldPages/auth/login/LoadableLogin'
 import ResetPassword from './oldPages/auth/resetPassword/ResetPassword'
@@ -18,7 +17,6 @@ import LoadableStatus from './oldPages/dashboard/status/LoadableStatus'
 import DeviceApiKeyList from './oldPages/deviceApiKey/list/DeviceApiKeyList'
 import InventoryContainer from './oldPages/inventory/InventoryContainer'
 import ClinicalHistory from './oldPages/patient/ClinicalHistory'
-import PersonDetail from './oldPages/person/detail/PersonDetail'
 import PersonList from './oldPages/person/list/PersonList'
 import ReportIndex from './oldPages/report/page/ReportIndex'
 import ReporterList from './oldPages/reporter/list/ReporterList'
@@ -28,6 +26,7 @@ import RouterList from './oldPages/router/list/RouterList'
 import TaskAggre from './oldPages/task/aggre/TaskAggre'
 import TaskDetail from './oldPages/task/detail/TaskDetail'
 import TaskList from './oldPages/task/list/TaskList'
+import ContactPage from './pages/Contact'
 import DeviceDetail from './pages/Devices/Detail/DeviceDetail'
 import DeviceContainer from './pages/Devices/DeviceContainer'
 import NotFound from './pages/NotFound/NotFound'
@@ -101,8 +100,12 @@ const renderManage = () => (
 
 const renderTaskAggre = props => <TaskAggre {...props} />
 const renderTaskDetail = props => <TaskDetail {...props} />
-const renderAccountDetails = props => <AccountDetails {...props} />
-const renderPersonDetail = props => <PersonDetail {...props} />
+
+const renderPersonDetail = () => (
+  <LoggedInLayout>
+    <ContactPage />
+  </LoggedInLayout>
+)
 const renderClinicalHistory = props => <ClinicalHistory {...props} />
 
 const renderLoadableLogin = props => (
@@ -308,7 +311,7 @@ const Pages = ({ countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedO
 
         <Route path="/operational-data/*" element={getElement(props, ['operationalData'], renderOperationalData)} />
 
-        <Route path="/account-details/current/*" element={getElement(props, ['account'], renderAccountDetails)} />
+        <Route path="/account-details/current/*" element={getElement(props, ['account'], renderPersonDetail)} />
 
         <Route
           path="/clinical-indicators"

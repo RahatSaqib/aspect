@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import AspectTitle from '../AspectTitle'
+import AspectTitle from './AspectTitle'
 import styles from './Card.css'
 
 const cssClasses = classnames.bind(styles)
@@ -13,7 +13,7 @@ const CardHeader = ({ props }) => {
 
   return title || actionComponent ? (
     <Grid item xs={12}>
-      <Grid container spacing={24} className={cssClasses('card__headerContainer')}>
+      <Grid container spacing={1} className={cssClasses('card__headerContainer')}>
         {title ? (
           <Grid item xs={6} className={cssClasses('card__title')}>
             <AspectTitle title={title} classNames={classNames} />

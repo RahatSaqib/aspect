@@ -8,6 +8,6 @@ const getContactsBySiteId = async siteId =>
     endpoint: replaceRouteParams(PERSON_KEY_BY_SITE_ID_ENDPOINT, { siteId }),
   }).then(response => response.data)
 
-const useContactBySite = siteId => useQuery([PERSON_KEY, siteId], () => getContactsBySiteId(siteId))
+const useContactBySite = siteId => useQuery([PERSON_KEY, 'site', siteId], () => getContactsBySiteId(siteId))
 
 export default useContactBySite

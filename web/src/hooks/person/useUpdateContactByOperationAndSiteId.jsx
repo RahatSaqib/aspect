@@ -13,7 +13,7 @@ const updateContactByOperationAndSiteId = async ({ id, operation }, siteId) =>
 const useUpdateContactByOperationAndSiteId = siteId => {
   const queryClient = useQueryClient()
   const mutation = useMutation(data => updateContactByOperationAndSiteId(data, siteId), {
-    onSuccess: () => queryClient.invalidateQueries([PERSON_KEY, siteId]),
+    onSuccess: () => queryClient.invalidateQueries([PERSON_KEY, 'site', siteId]),
   })
   return mutation
 }
