@@ -9,7 +9,7 @@ const {
 } = require('../../shared/dictionary')
 const { validateFilterCondition } = require('./validations')
 
-async function update(id, fieldsToUpdate) {
+async function updateNotificationType(id, fieldsToUpdate) {
   await knex('NotificationType').where({ id }).update(fieldsToUpdate)
 }
 
@@ -450,5 +450,5 @@ module.exports = {
   getNotification,
   getReporBasedNotifications,
   getNotificationStatusInfo,
-  update,
+  updateNotificationType,
 }

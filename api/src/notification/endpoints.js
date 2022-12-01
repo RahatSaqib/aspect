@@ -14,7 +14,7 @@ const {
   listNotificationItem,
 } = require('./validations')
 const saveNotification = require('./saveNotification')
-const changeStatus = require('./changeStatus')
+const changeNotificationStatus = require('./changeNotificationStatus')
 const getNotification = require('./getNotification')
 const history = require('./history')
 const deleteNotification = require('./deleteNotification')
@@ -190,7 +190,7 @@ const routes = [
   {
     method: 'PUT',
     path: '/notification/{id}/change-status',
-    handler: changeStatus,
+    handler: changeNotificationStatus,
     config: {
       description: 'Update Notification status',
       notes: 'Returns ok: true when notification was updated successfully',
