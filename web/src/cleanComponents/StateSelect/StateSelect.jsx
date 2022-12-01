@@ -1,5 +1,6 @@
 import React from 'react'
-import { LinearProgress, MenuItem, TextField } from '@mui/material'
+import ClearIcon from '@mui/icons-material/Clear'
+import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 
 const StateSelect = ({ id, name, label, value, onChange, error, helperText, countryId }) => {
@@ -18,6 +19,17 @@ const StateSelect = ({ id, name, label, value, onChange, error, helperText, coun
       value={value}
       onChange={onChange}
       disabled={(states || []).length === 0}
+      SelectProps={{ IconComponent: () => null }}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            sx={{ visibility: value ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: '' } })}
+          >
+            <ClearIcon />
+          </IconButton>
+        ),
+      }}
     >
       {(states || []).map(s => (
         <MenuItem key={s.id} value={s.id}>

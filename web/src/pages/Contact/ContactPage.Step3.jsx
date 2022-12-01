@@ -132,6 +132,7 @@ const ContactPageStepThree = ({ setStep }) => {
                         onChange={handleChange}
                         error={errors.siteId ? errors.siteId : undefined}
                         helperText={errors.siteId}
+                        stateId={values.stateId}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -176,6 +177,7 @@ const ContactPageStepThree = ({ setStep }) => {
                         onChange={handleChange}
                         error={errors.assayId ? errors.assayId : undefined}
                         helperText={errors.assayId}
+                        assayTypeId={values.assayTypeId || ''}
                       />
                     </Grid>
                   </Grid>

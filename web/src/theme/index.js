@@ -98,6 +98,15 @@ const themeDefinition = {
         },
       },
     },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: 'transparent',
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -187,11 +196,9 @@ const themeDefinition = {
             border: `1px solid ${themedColors.primary}`,
           },
         }),
-        /* Styles applied to the root element if `variant="text"` and `color="primary"`. */
         textPrimary: {
           color: themedColors.primary,
         },
-        /* Styles applied to the root element if `variant="text"` and `color="secondary"`. */
         textSecondary: {
           color: themedColors.secondary,
         },
