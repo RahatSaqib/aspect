@@ -18,6 +18,7 @@ const { getModuleStatusReportData } = require('./moduleStatusReport')
 const { getDeviceReportData } = require('./deviceReport')
 const { getInventoryData } = require('./devicesAndSitesOverviewReport')
 const { getAllDeviceReportData } = require('./allDeviceReport')
+const { getResultCategoryGroupColumns } = require('../common/db')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -447,27 +448,9 @@ async function getDevicesAndSitesOverviewReport(auth, query) {
   }
 }
 
-const resultCategoryGroupColumns = () =>
-  knex
-    .from('Assay AS a')
-    .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
-    .innerJoin('Disease AS ds', 'at.diseaseId', 'ds.id')
-    .innerJoin('ResultCategoryGroup AS rcg', 'a.id', 'rcg.assayId')
-    .innerJoin('ResultCategory AS rc1', 'rcg.resultCategory1Id', 'rc1.id')
-    .leftJoin('ResultCategory AS rc2', 'rcg.resultCategory2Id', 'rc2.id')
-    .select([
-      'rcg.assayId',
-      'rcg.resultCategory1Id',
-      'rcg.resultCategory2Id',
-      knex.raw('CONCAT(rcg.assayId, "_",IFNULL(rc1.id, ""), "_", IFNULL(rc2.id, "")) AS columnKey'),
-      knex.raw(
-        'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
-      ),
-    ])
-
 async function getAllDeviceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const resultCategoryGroups = await resultCategoryGroupColumns()
+  const resultCategoryGroups = await getResultCategoryGroupColumns()
   const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
 
   return {
