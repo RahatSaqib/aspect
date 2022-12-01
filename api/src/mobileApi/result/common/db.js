@@ -381,7 +381,21 @@ const getItemsV2 = (resultQuery, query) => {
       'rslog.createdOn as transferredOn',
       'ptr.name as transferredBy',
       'rca.requiresTreatment as requiresTreatment',
-      'rca.reportable as reportable'
+      'rca.reportable as reportable',
+      'r.id as resultId',
+      'a.resultCategory1Label',
+      'a.resultCategory1I18nKey',
+      'rc1.name as resultCategory1Name',
+      'rc1.i18nKey as resultCategory1i18nKey',
+      'rca.emphasize as resultCategory1Emphasize',
+      'a.resultCategory2Label',
+      'a.resultCategory2I18nKey',
+      'rc2.name as resultCategory2Name',
+      'rc2.i18nKey as resultCategory2i18nKey',
+      'rca2.emphasize as resultCategory2Emphasize',
+      'r.resultCategory1',
+      'r.resultCategory2',
+      knex.raw('r.resultData->>"$.copies" as copies')
     )
 }
 

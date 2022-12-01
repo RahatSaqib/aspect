@@ -420,7 +420,7 @@ async function createNotificationIfNotCreatedAlready(
       createdOn: now,
       updatedOn: now,
     }
-    if (personId || !!notifyANonPerson) {
+    if (personId || !!notifyANonPerson || policy.webhookTemplateId) {
       if (policy.alertTemplateId != null) {
         const [alertMessageId] = await knex('AlertMessage').insert({
           alertTemplateId: policy.alertTemplateId,

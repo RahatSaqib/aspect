@@ -94,6 +94,9 @@ const Workload = () => {
       filtersParams.set('singleAssayId', mostResultsAssay?.id)
       searchParams.set('filters', filtersParams)
       setFirstLoad(false)
+      if (searchParams.has('pageAt')) {
+        searchParams.delete('pageAt')
+      }
       navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
 
