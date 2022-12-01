@@ -36,8 +36,6 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
   const followUps = await getFollowUpsV2(data)
   // get comments for all results in the response for performance (filter later)
   const comments = await getCommentsV2(data)
-  // get test information for all results in the response
-  // const testInformation = await getTestInformationV2(resultQuery, data)
 
   const transformedData = getTransformedDataV2(data, setDelivered, followUps, comments)
 
