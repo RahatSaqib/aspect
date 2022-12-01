@@ -1,4 +1,6 @@
 const cron = require('node-cron')
+const { knex } = require('../../db')
+
 /**
  * Holds the scheduled cron tasks from Report Based Notification to allow creation, modification and deletetion.
  */
@@ -7,9 +9,14 @@ class ReportBasedNotificationCache {
     this.tasks = {}
   }
 
-  addTask = (notificationTypeId, name, cronExpression, handler) => {
-    const taskRef = cron.schedule(cronExpression, () => handler(notificationTypeId))
-    this.tasks[`notificationTypeId:${notificationTypeId}`] = {
+  addTask = async (notificationTypeId, name, cronExpression, handler) => {
+    const timezone = await getNotificationTimeZone(notificationTypeId)
+
+    const taskRef = cron.schedule(cronExpression, () => handler(notificationTypeId), {
+      scheduled: true,
+      timezone,
+    })
+    this.tasks[`notificationTyrseId:${notificationTypeId}`] = {
       notificationTypeId,
       cronExpression,
       name,
@@ -31,9 +38,9 @@ class ReportBasedNotificationCache {
     return true
   }
 
-  createOrUpdateTask = (notificationTypeId, name, cronExpression, func) => {
+  createOrUpdateTask = async (notificationTypeId, name, cronExpression, func) => {
     this.removeTask(notificationTypeId)
-    this.addTask(notificationTypeId, name, cronExpression, func)
+    await this.addTask(notificationTypeId, name, cronExpression, func)
   }
 }
 
@@ -44,6 +51,16 @@ class ReportBasedNotificationCacheSingleton {
     }
     return ReportBasedNotificationCacheSingleton.instance
   }
+}
+
+async function getNotificationTimeZone(notificationTypeId) {
+  const { timezone } = await knex('NotificationType as nt')
+    .join('User as u', 'u.id', knex.raw('ifnull(nt.updatedBy, nt.createdBy)'))
+    .join('Person as p', 'p.userId', 'u.id')
+    .join('TimeZone as tz', 'tz.id', 'p.timezone')
+    .where('nt.id', notificationTypeId)
+    .first('tz.timeZone as timezone')
+  return timezone
 }
 
 module.exports = ReportBasedNotificationCacheSingleton

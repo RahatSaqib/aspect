@@ -32,7 +32,7 @@ async function updateCronTask(id, messageContext, payload) {
     const handler = reportDispatchHandler(messageContext, id)
 
     if (payload.enabled) {
-      cache.createOrUpdateTask(id, name, cronRecurrency, handler)
+      await cache.createOrUpdateTask(id, name, cronRecurrency, handler)
     } else {
       cache.removeTask(id)
     }

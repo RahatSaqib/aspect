@@ -34,7 +34,7 @@ module.exports = async function (request) {
     const handler = reportDispatchHandler(messageContext, notificationTypeId)
 
     if (payload.enabled) {
-      cache.createOrUpdateTask(notificationTypeId, payload.name, payload.cronRecurrency, handler)
+      await cache.createOrUpdateTask(notificationTypeId, payload.name, payload.cronRecurrency, handler)
     } else {
       cache.removeTask(notificationTypeId)
     }

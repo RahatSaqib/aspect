@@ -5,7 +5,7 @@ const types = {
 
 // ----------- Action Creators -------------------
 
-function reportReadyToDelivery(notificationTypeId) {
+function reportBasedNotificationRequested(notificationTypeId) {
   return {
     type: types.REPORT_BASED_NOTIFICATION_REQUESTED,
     notificationTypeId,
@@ -14,5 +14,5 @@ function reportReadyToDelivery(notificationTypeId) {
 
 module.exports = {
   types,
-  reportReadyToDelivery,
+  reportBasedNotificationRequested,
 }

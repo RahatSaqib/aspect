@@ -1,19 +1,19 @@
-const { reportReadyToDelivery } = require('../../report/actions')
+const { reportBasedNotificationRequested } = require('../../report/actions')
 const { getReporBasedNotifications } = require('../common/db')
 const ReportBasedNotificationCacheSingleton = require('./reportBasedNotificationCache')
 
 const reportDispatchHandler = (context, notificationTypeId) => {
   return () => {
-    context.dispatch(reportReadyToDelivery(notificationTypeId))
+    context.dispatch(reportBasedNotificationRequested(notificationTypeId))
   }
 }
 
 async function startUp(context) {
   const rbnList = await getReporBasedNotifications()
 
-  rbnList.forEach(({ id, name, cronRecurrency }) => {
+  await rbnList.forEach(async ({ id, name, cronRecurrency }) => {
     const cache = ReportBasedNotificationCacheSingleton.getInstance()
-    cache.createOrUpdateTask(id, name, cronRecurrency, reportDispatchHandler(context, id))
+    await cache.createOrUpdateTask(id, name, cronRecurrency, reportDispatchHandler(context, id))
   })
 }
 
