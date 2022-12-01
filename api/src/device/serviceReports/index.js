@@ -15,8 +15,8 @@ const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getUser } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
-const { getDeviceReportData } = require('./deviceReport')
-const { getInventoryData } = require('./devicesAndSitesOverviewReport')
+const { getDevicesWithCountsForTB } = require('./deviceReport')
+const { getInventoryData, getErrorsByDevices } = require('./devicesAndSitesOverviewReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -427,9 +427,9 @@ async function getModuleStatusReport(auth, query) {
   }
 }
 
-async function getDeviceReport(auth, query) {
+async function getDevicesWithCountsForTBReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getDeviceReportData(dataConstraints, query)
+  const rows = await getDevicesWithCountsForTB(dataConstraints, query)
 
   return {
     ok: true,
@@ -446,6 +446,17 @@ async function getDevicesAndSitesOverviewReport(auth, query) {
   }
 }
 
+async function getErrorsByDevicesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const data = await getErrorsByDevices(dataConstraints, query)
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -456,6 +467,7 @@ module.exports = {
   getDeviceCapacityReport,
   getModuleActivityReport,
   getModuleStatusReport,
-  getDeviceReport,
+  getDevicesWithCountsForTBReport,
+  getErrorsByDevicesReport,
   getDevicesAndSitesOverviewReport,
 }
