@@ -515,10 +515,24 @@ const devicesAndSitesOverview = {
   sortOrder: 150,
   sheets: [
     /**
-     * sheet `Errors by Devices`
+     * sheet `Devices`
      */
     {
       sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getAllDeviceReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    /**
+     * sheet `Errors by Devices`
+     */
+    {
+      sortOrder: 1,
       moduleName: 'device/serviceReports',
       functionName: 'getErrorsByDevicesReport',
       query: {
@@ -532,7 +546,7 @@ const devicesAndSitesOverview = {
      * sheet `Devices TB Reach`
      */
     {
-      sortOrder: 1,
+      sortOrder: 2,
       moduleName: 'device/serviceReports',
       functionName: 'getDevicesWithCountsForTBReport',
       query: {
