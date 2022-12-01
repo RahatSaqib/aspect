@@ -39,6 +39,7 @@ async function up(knex) {
     followUp.datetime('updatedOn').notNullable().defaultTo(knex.fn.now())
     followUp.integer('updatedBy').notNullable().unsigned().index().references('id').inTable('User')
     followUp.unique(['resultId', 'externalId'])
+    followUp.boolean('isDeleted').notNullable().defaultTo(false)
   })
 }
 

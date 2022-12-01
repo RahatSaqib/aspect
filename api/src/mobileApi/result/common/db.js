@@ -521,7 +521,9 @@ const deleteResultFollowUp = (result, type, date) => {
     .where('resultId', result.data.id)
     .andWhere('t.externalId', type)
     .andWhere('ResultFollowUp.updatedOn', '<', date)
-    .del()
+    .update({
+      isDeleted: 1,
+    })
 }
 
 const getResultFollowUpsbyResultIdExternalId = (resultId, externalId) => {
@@ -657,6 +659,7 @@ const showResultFolloup = (resultId, dataConstraints) => {
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .where('rfu.resultId', resultId)
+    .where('rfu.isDeleted', false)
     .orderBy('rfu.date', 'rfu.updatedOn')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
