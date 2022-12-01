@@ -191,7 +191,7 @@ const messages = defineMessages({
   },
   devicesAndSitesOverview: {
     id: 'pages.ReportIndex.devicesAndSitesOverview',
-    defaultMessage: 'Devices and Sites Overview (BETA)',
+    defaultMessage: 'Devices and Sites Overview',
   },
   devicesAndSites_description: {
     id: 'pages.ReportIndex.devicesAndSites_description',
