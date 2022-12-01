@@ -1,8 +1,28 @@
 const { notificationTypeCreated } = require('../notificationType/actions')
 const { updateNotificationType, getNotificationStatusInfo } = require('./common/db')
-const { getUser } = require('../auth/service')
 const ReportBasedNotificationCacheSingleton = require('./reportBased/reportBasedNotificationCache')
 const { reportDispatchHandler } = require('./reportBased/reportBasedCronHandler')
+
+module.exports = async function (request) {
+  const {
+    params,
+    plugins: { messageContext },
+    payload,
+  } = request
+
+  const { id } = params
+
+  await updateNotificationType(id, payload)
+
+  await updateCronTask(id, messageContext, payload)
+
+  if (!messageContext.notificationTypeCreated) {
+    messageContext.bindActionCreators({ notificationTypeCreated })
+  }
+  messageContext.notificationTypeCreated(id)
+
+  return { ok: true, notificationTypeId: id }
+}
 
 async function updateCronTask(id, messageContext, payload) {
   const { notificationType, name, cronRecurrency } = await getNotificationStatusInfo(id)
@@ -17,28 +37,4 @@ async function updateCronTask(id, messageContext, payload) {
       cache.removeTask(id)
     }
   }
-}
-
-module.exports = async function (request) {
-  const {
-    auth,
-    params,
-    plugins: { messageContext },
-    payload,
-  } = request
-
-  const { id } = params
-  const user = await getUser(auth.credentials.name)
-  const { partnerId, id: userId } = user
-
-  await updateNotificationType(id, payload)
-
-  await updateCronTask(id, messageContext, payload)
-
-  if (!messageContext.notificationTypeCreated) {
-    messageContext.bindActionCreators({ notificationTypeCreated })
-  }
-  messageContext.notificationTypeCreated(id)
-
-  return { ok: true, notificationTypeId: id }
 }
