@@ -447,7 +447,7 @@ async function getDevicesAndSitesOverviewReport(auth, query) {
   }
 }
 
-const assayColumns = () =>
+const resultCategoryGroupColumns = () =>
   knex
     .from('Assay AS a')
     .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
@@ -467,14 +467,14 @@ const assayColumns = () =>
 
 async function getAllDeviceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const assays = await assayColumns()
-  const rows = await getAllDeviceReportData(assays, dataConstraints, query)
+  const resultCategoryGroups = await resultCategoryGroupColumns()
+  const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
 
   return {
     ok: true,
     data: rows,
     total: rows.length,
-    dynamicColumns: assays.map(a => ({
+    dynamicColumns: resultCategoryGroups.map(a => ({
       key: a.columnKey,
       header: a.columnName,
     })),
