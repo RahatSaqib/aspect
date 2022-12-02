@@ -127,6 +127,10 @@ const getAdministrativeDivisionLabelPlaceHolders = async ({ partnerId }) => {
       placeholder: '<SitesLabel>',
       value: getLabel('sitesLabel', 'Sites'),
     },
+    {
+      placeholder: '<AssaysLabel>',
+      value: getLabel('assaysLabel', 'Assays'),
+    },
   ]
 }
 
