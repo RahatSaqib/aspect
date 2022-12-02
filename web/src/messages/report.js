@@ -196,7 +196,7 @@ const messages = defineMessages({
   devicesAndSites_description: {
     id: 'pages.ReportIndex.devicesAndSites_description',
     defaultMessage:
-      'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices" - This report is in BETA version and still in progress.',
+      'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
   },
   deviceReport: {
     id: 'pages.ReportIndex.deviceReport',
