@@ -51,7 +51,6 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
       lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset),
     })
     .groupBy('r.deviceId')
-    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'])
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
   return deviceQuery
