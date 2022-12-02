@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
@@ -26,12 +25,7 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (query.assayId || query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-      if (query.assayId) {
-        const { assayId } = query
-        const assayIds = _.isArray(assayId) ? assayId : [assayId]
-        queryBuilder.whereIn('a.id', assayIds)
-      }
+      if (query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
       if (query.assayExternalId) queryBuilder.where('a.externalId', query.assayExternalId)
       if (query.resultCategoryId)
         queryBuilder
@@ -422,7 +416,7 @@ async function joinModuleAvailability(dataConstraints, query) {
   }
 }
 
-function getResultCategoryGroupColumns() {
+function getResultCategoryGroupColumns(query) {
   return knex
     .from('Assay AS a')
     .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
@@ -439,6 +433,9 @@ function getResultCategoryGroupColumns() {
         'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
       ),
     ])
+    .modify(filterParams, query, {
+      assayId: 'a.id',
+    })
 }
 module.exports = {
   getDeviceWorkload,

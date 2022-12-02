@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { knex, sortPageParams, filterDateRangeParams } = require('../../db')
+const { knex, sortPageParams, filterDateRangeParams, filterParams } = require('../../db')
 const { getGeneXpertInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const {
@@ -51,6 +51,9 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
       lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset),
     })
     .groupBy('r.deviceId')
+    .modify(filterParams, query, {
+      assayId: 'a.id',
+    })
     .modify(filterDateRangeParams, query, 'r.endedOn')
 
   return deviceQuery

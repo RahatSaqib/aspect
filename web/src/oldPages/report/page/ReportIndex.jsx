@@ -35,6 +35,7 @@ const FILTERS_CONFIG = [
   { date: true, requiredPermissions: [] },
   { reportName: true, requiredPermissions: [] },
   { consumable: true, requiredPermissions: [] },
+  { assayId: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer()
