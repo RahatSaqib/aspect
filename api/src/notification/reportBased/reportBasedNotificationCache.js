@@ -16,7 +16,7 @@ class ReportBasedNotificationCache {
       scheduled: true,
       timezone,
     })
-    this.tasks[`notificationTyrseId:${notificationTypeId}`] = {
+    this.tasks[this.getTaskIdentifier(notificationTypeId)] = {
       notificationTypeId,
       cronExpression,
       name,
@@ -24,8 +24,6 @@ class ReportBasedNotificationCache {
       started: new Date(),
     }
   }
-
-  getTaskIdentifier = id => `notificationTypeId:${id}`
 
   removeTask = notificationTypeId => {
     const taskId = this.getTaskIdentifier(notificationTypeId)
@@ -42,6 +40,8 @@ class ReportBasedNotificationCache {
     this.removeTask(notificationTypeId)
     await this.addTask(notificationTypeId, name, cronExpression, func)
   }
+
+  getTaskIdentifier = id => `notificationTypeId:${id}`
 }
 
 class ReportBasedNotificationCacheSingleton {

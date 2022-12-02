@@ -160,7 +160,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
       person: 'p',
       /*
       result: 'r',
-      ^^^ Leaving this commented out to  highlight the fact that adding these
+      ^^^ Leaving this commented out to highlight the fact that adding these
           constraints will break the RO notifications configured for Myanmar
       */
       sample: 'sample',

@@ -27,7 +27,10 @@ module.exports = async function (request) {
       cache.removeTask(id)
     }
 
-    if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
+    if (!messageContext.notificationTypeCreated) {
+      messageContext.bindActionCreators({ notificationTypeCreated })
+    }
+
     messageContext.notificationTypeCreated(id)
   } catch (e) {
     logger.info({ info: `NotificationType ${id} cannot be deleted`, e }, { reLabel: 'aspect:api:notification:delete' })
