@@ -261,8 +261,12 @@ async function getInventoryByLot(request, requestQuery, dataConstraints) {
   return { total, data }
 }
 
-function getInventoryBySitesAndConsumableQuery(request, dataConstraints, range, columns = '*') {
+function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, columns = '*') {
   const inventoryQuery = getInventorySitesQuery(dataConstraints, request)
+    .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
+    .innerJoin('Assay as a', 'ca.assayId', 'a.id')
+    .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .where('dt.externalId', 'CepheidGeneXpert')
   return knex
     .from(inventoryQuery.as('t2'))
     .modify(builder => {
@@ -280,7 +284,7 @@ function getInventoryBySitesAndConsumableQuery(request, dataConstraints, range, 
 }
 
 async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
-  let inventoryQuery = getInventoryBySitesAndConsumableQuery(request, dataConstraints, range)
+  let inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range)
 
   const [{ total }] = await inventoryQuery.clone().count('id as total')
 
@@ -299,5 +303,5 @@ module.exports = {
   getInventoryLots,
   getInventoryByLot,
   getInventoryBySitesAndConsumable,
-  getInventoryBySitesAndConsumableQuery,
+  getGeneXpertInventoryBySitesAndConsumableQuery,
 }

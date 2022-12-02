@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { knex, sortPageParams, filterDateRangeParams } = require('../../db')
-const { getInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
+const { getGeneXpertInventoryBySitesAndConsumableQuery } = require('../../inventory/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const {
   getBaseQuery: getResultBaseQuery,
@@ -93,7 +93,7 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
 // --------------------------------------------------------------------------
 async function getInventoryData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const inventory = await getInventoryBySitesAndConsumableQuery(
+  const data = await getGeneXpertInventoryBySitesAndConsumableQuery(
     { query: _.omit(query, ['minDate', 'maxDate']), auth },
     dataConstraints,
     null,
@@ -111,7 +111,21 @@ async function getInventoryData(auth, query) {
     .whereRaw('t2.quantityOnHand IS NOT NULL')
     .orderBy(['t2.siteName', 't2.consumableName'])
 
-  return inventory
+  return {
+    ok: true,
+    data,
+  }
+}
+
+async function getErrorsByDevicesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const data = await getErrorsByDevices(dataConstraints, query)
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -158,4 +172,5 @@ module.exports = {
   getAllDeviceReportData,
   getInventoryData,
   getErrorsByDevices,
+  getErrorsByDevicesReport,
 }

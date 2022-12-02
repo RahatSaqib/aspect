@@ -503,9 +503,9 @@ const deviceReport = {
 }
 
 const devicesAndSitesOverview = {
-  name: 'Devices and Sites Overview',
+  name: 'GeneXpert Devices and Sites Overview',
   description:
-    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device.',
+    'An overview of all GeneXpert devices in the system, information about inventory, and aggregated test results and errors per device.',
   i18nKey: 'devicesAndSitesOverview',
   i18nKeyDescription: 'devicesAndSites_description',
   externalId: 'devices_and_sites_overview',
@@ -528,12 +528,23 @@ const devicesAndSitesOverview = {
         avoidStreaming: true,
       },
     },
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReports/devicesAndSitesOverviewReport',
+      functionName: 'getInventoryData',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
     /**
      * sheet `Errors by Devices`
      */
     {
-      sortOrder: 1,
-      moduleName: 'device/serviceReports',
+      sortOrder: 2,
+      moduleName: 'device/serviceReports/devicesAndSitesOverviewReport',
       functionName: 'getErrorsByDevicesReport',
       query: {
         hasResults: 1,
@@ -546,7 +557,7 @@ const devicesAndSitesOverview = {
      * sheet `Devices TB Reach`
      */
     {
-      sortOrder: 2,
+      sortOrder: 3,
       moduleName: 'device/serviceReports',
       functionName: 'getDevicesWithCountsForTBReport',
       query: {
