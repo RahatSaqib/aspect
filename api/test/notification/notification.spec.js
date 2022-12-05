@@ -913,8 +913,8 @@ describe('Notification - View Logs', () => {
     assert.equal(data.length, 1)
 
     const [item] = data
+
     assert.property(item, 'date')
-    assert.property(item, 'issueId')
     assert.property(item, 'resultId')
     assert.property(item, 'emailSent')
     assert.property(item, 'smsSent')
