@@ -89,11 +89,13 @@ async function doSendPushNotificationMessage(context, knex, pushNotificationMess
 }
 
 async function createPushNotificationMessageFromTemplate(knex, pushNotificationMessageId) {
-  const { personId, resultId, reportId } = await knex('PushNotificationMessage p')
-    .join('Notification as n', 'n.pushNotificationMessageId', 'p.id')
+  const { personId, resultId, reportId } = await knex('PushNotificationMessage as p')
+    .leftJoin('Notification as n', 'n.pushNotificationMessageId', 'p.id')
     .where('p.id', pushNotificationMessageId)
-    .first('n.personId', 'n.resultId', 'n.reportId')
+    .first('p.personId', 'p.resultId', 'n.reportId')
+
   const dataConstraints = await getConstraints({ personId })
+
   const data = await knex('PushNotificationMessage as m')
     .innerJoin('PushNotificationTemplate as tmpl', 'm.pushNotificationTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.pushNotificationMessageId', 'm.id')

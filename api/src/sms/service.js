@@ -99,10 +99,10 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
   const { personId, resultId, reportId } =
-    (await knex('SmsMessage s')
-      .join('Notification as n', 'n.smsMessageId', 's.id')
+    (await knex('SmsMessage as s')
+      .leftJoin('Notification as n', 'n.smsMessageId', 's.id')
       .where('s.id', smsMessageId)
-      .first('n.personId', 'n.resultId', 'n.reportId')) || {}
+      .first('s.personId', 's.resultId', 'n.reportId')) || {}
 
   const dataConstraints = await getConstraints({ personId })
 

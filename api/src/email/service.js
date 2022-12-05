@@ -110,12 +110,12 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
     .leftJoin('Person as p', 'm.personId', 'p.id')
     .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
     .where({ 'm.id': emailMessageId })
-    .first('n.personId', 'n.resultId', 'n.reportId', 'm.to', 'p.email', 'p.email2')) || {}
+    .first('m.personId', 'm.resultId', 'n.reportId', 'm.to', 'p.email', 'p.email2')) || {}
 
   const dataConstraints = await getConstraints({ personId })
   const data = await knex('EmailMessage as m')
     .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
-    .join('Notification as n', 'n.emailMessageId', 'm.id')
+    .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, dataConstraints, resultId, reportId)
     .where({ 'm.id': emailMessageId })
     .first(
