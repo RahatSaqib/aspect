@@ -515,7 +515,7 @@ const devicesAndSitesOverview = {
   sortOrder: 150,
   sheets: [
     /**
-     * sheet `Devices`
+     * sheet `GeneXpert Devices`
      */
     {
       sortOrder: 0,
@@ -528,6 +528,9 @@ const devicesAndSitesOverview = {
         avoidStreaming: true,
       },
     },
+    /**
+     * sheet `GeneXpert Inventory by Site`
+     */
     {
       sortOrder: 1,
       moduleName: 'device/serviceReports/devicesAndSitesOverviewReport',
@@ -540,7 +543,7 @@ const devicesAndSitesOverview = {
       },
     },
     /**
-     * sheet `Errors by Devices`
+     * sheet `GeneXpert Errors by Devices`
      */
     {
       sortOrder: 2,

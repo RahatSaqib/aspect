@@ -95,6 +95,22 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
 // --------------------------------------------------------------------------
 async function getInventoryData(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
+
+  /**
+   * In `api/src/inventory/common/db.js` we construct JSON string for passing it next to
+   * db funcs `GetDaysStockLeft` or `GetProjectedWaste` as 3rd param.
+   * See func `getInventoryItemsRawQuery` in `api/src/inventory/common/db.js` which
+   * returns such JSON string.
+   * And when default limit of 1024 for GROUP_CONCAT result overpasses - then we
+   * pass incorrect (malformed) JSON string to above db funcs, where JSON_TABLE fails
+   * to handle them.
+   *
+   * So, below we set limit of GROUP_CONCAT length to big value instead of default
+   * limit of 1024.
+   *
+   */
+  await knex.raw('SET SESSION group_concat_max_len = 1000000;')
+
   const data = await getGeneXpertInventoryBySitesAndConsumableQuery(
     { query: _.omit(query, ['minDate', 'maxDate']), auth },
     dataConstraints,
@@ -160,6 +176,7 @@ async function getErrorsByDevices(dataConstraints, query) {
     .leftJoin(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
+    .where('dt.externalId', 'CepheidGeneXpert')
     .groupBy('d.id')
     .modify(sortPageParams, query, 'deviceName')
     .select([
