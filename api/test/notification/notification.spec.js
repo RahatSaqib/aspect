@@ -847,7 +847,6 @@ describe('Notification routes', () => {
       sendWeb: false,
       result: baseFilterCondition.result,
       enabled: true,
-      reportFrecuency: null,
       issueTypeId: null,
     })
   })
