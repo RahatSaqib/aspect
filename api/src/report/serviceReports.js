@@ -5,7 +5,6 @@ const _ = require('lodash')
 const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
 const { knex, filterParams } = require('../db')
-const { getUser } = require('../auth/service')
 const { getReportDetails } = require('./service')
 const {
   getMaxLimitPlaceHolders,
@@ -26,8 +25,7 @@ const REPORT_FAILED = 'REPORT_FAILED'
 const REPORT_FINISHED = 'REPORT_FINISHED'
 
 // ----------------------------------------------------------------------------------------------
-async function getSheetData(request, sheet, sharedResults) {
-  const { auth, query: queryParams } = request
+async function getSheetData(auth, queryParams, sheet, sharedResults) {
   const { moduleName, functionName } = sheet
   const { nameOfSharedData, useNamedData } = sheet.query
   const sheetQuery = _.omit(sheet.query, ['nameOfSharedData', 'useNamedData'])
@@ -151,7 +149,7 @@ async function getAssaysNamesString(query) {
   return items.map(x => x.name).join(', ')
 }
 
-async function getAllSheetsData(request, sheets) {
+async function getAllSheetsData(auth, query, sheets) {
   let boomError
   const dataSet = []
   const sharedResults = {}
@@ -167,7 +165,7 @@ async function getAllSheetsData(request, sheets) {
       total = null,
       dataSelector = null,
       sections,
-    } = await getSheetData(request, sheet, sharedResults)
+    } = await getSheetData(auth, query, sheet, sharedResults)
     if (Boom.isBoom(data)) {
       boomError = data
       return
