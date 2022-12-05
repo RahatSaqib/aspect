@@ -9,7 +9,7 @@ const {
 } = require('../../shared/dictionary')
 const { validateFilterCondition } = require('./validations')
 
-async function update(id, fieldsToUpdate) {
+async function updateNotificationType(id, fieldsToUpdate) {
   await knex('NotificationType').where({ id }).update(fieldsToUpdate)
 }
 
@@ -183,8 +183,10 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     webBody,
     webUrl,
     enabled,
-    cronRecurrency = null,
-    reportFrecuency = null,
+    cronRecurrency,
+    reportFrequency,
+    reportDateRange,
+    reportStartingWeekDay,
     issueType: issueTypeExternalId,
     reportId: reportExternalId,
     notificationType: notificationTypeExternalId,
@@ -405,7 +407,9 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           sendToPatient,
           sendWeb,
           enabled,
-          reportFrecuency,
+          reportFrequency,
+          reportDateRange,
+          reportStartingWeekDay,
         }),
       })
       .where({ id: notificationTypeId })
@@ -421,9 +425,30 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     }
   })
 }
+
+async function getReporBasedNotifications() {
+  const rbnQuery = knex('NotificationType as nt')
+    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
+    .where('ntc.externalId', 'reportBased')
+    .where('nt.enabled', 1)
+    .whereNotNull('nt.cronRecurrency')
+    .select('nt.id', 'nt.name', 'nt.cronRecurrency')
+
+  return rbnQuery
+}
+
+async function getNotificationStatusInfo(id) {
+  return knex('NotificationType as nt')
+    .join('NotificationTypeCategory as ntc', 'ntc.id', 'nt.notificationTypeCategoryId')
+    .where('nt.id', id)
+    .first(['ntc.externalId as notificationType', 'nt.name', 'nt.enabled', 'nt.cronRecurrency'])
+}
+
 module.exports = {
   getListNotifications,
   saveNotificationType,
   getNotification,
-  update,
+  getReporBasedNotifications,
+  getNotificationStatusInfo,
+  updateNotificationType,
 }

@@ -49,7 +49,7 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     notificationTypeSection(formatMessage), // notification header (enabled/type)
     issueBasedSection(formatMessage), // only for ['issueBased]
     resultBasedSection(formatMessage), // only for ['resultBased']
-    reportBasedSection(formatMessage),
+    ...reportBasedSection(formatMessage),
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
     deviceOfflineSection(formatMessage, partner), // only for ['DeviceOffline']

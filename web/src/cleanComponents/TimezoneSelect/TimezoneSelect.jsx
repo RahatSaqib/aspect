@@ -1,6 +1,7 @@
 /* eslint prettier/prettier: ["error", { "printWidth": 140 }] */
 import React from 'react'
-import { MenuItem, TextField } from '@mui/material'
+import ClearIcon from '@mui/icons-material/Clear'
+import { MenuItem, TextField, IconButton } from '@mui/material'
 
 const TimezoneSelect = ({ id, name, label, value, onChange, error, helperText }) => {
   return (
@@ -14,6 +15,17 @@ const TimezoneSelect = ({ id, name, label, value, onChange, error, helperText })
       variant="standard"
       value={value}
       onChange={onChange}
+      SelectProps={{ IconComponent: () => null }}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            sx={{ visibility: value ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: '' } })}
+          >
+            <ClearIcon />
+          </IconButton>
+        ),
+      }}
     >
       {timezones.map(c => (
         <MenuItem key={c.id} value={c.id}>

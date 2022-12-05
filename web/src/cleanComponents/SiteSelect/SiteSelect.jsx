@@ -1,9 +1,12 @@
 import React from 'react'
-import { LinearProgress, MenuItem, TextField } from '@mui/material'
+import ClearIcon from '@mui/icons-material/Clear'
+import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import useSiteList from '../../hooks/site/useSiteList'
 
-const SiteSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
+const SiteSelect = ({ id, name, label, value, onChange, error, helperText, disabled, stateId }) => {
   const { isLoading, data: sites } = useSiteList()
+
+  const data = sites && stateId ? sites.filter(s => s.stateId === stateId) : sites
 
   return isLoading ? (
     <LinearProgress />
@@ -18,8 +21,19 @@ const SiteSelect = ({ id, name, label, value, onChange, error, helperText, disab
       value={value}
       onChange={onChange}
       disabled={disabled}
+      SelectProps={{ IconComponent: () => null }}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            sx={{ visibility: value ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: '' } })}
+          >
+            <ClearIcon />
+          </IconButton>
+        ),
+      }}
     >
-      {sites.map(c => (
+      {data.map(c => (
         <MenuItem key={c.id} value={c.id}>
           {c.name}
         </MenuItem>

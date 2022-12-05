@@ -1,5 +1,6 @@
 import React from 'react'
-import { LinearProgress, MenuItem, TextField } from '@mui/material'
+import ClearIcon from '@mui/icons-material/Clear'
+import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import useJobFunctions from '../../hooks/jobFunction/useJobFunctions'
 
 const JobSelect = ({ id, name, label, value, onChange, error, helperText }) => {
@@ -18,6 +19,17 @@ const JobSelect = ({ id, name, label, value, onChange, error, helperText }) => {
       variant="standard"
       value={value}
       onChange={onChange}
+      SelectProps={{ IconComponent: () => null }}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            sx={{ visibility: value ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: '' } })}
+          >
+            <ClearIcon />
+          </IconButton>
+        ),
+      }}
     >
       {data.map(c => (
         <MenuItem key={c.id} value={c.id}>

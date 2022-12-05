@@ -1,5 +1,6 @@
 import React from 'react'
-import { LinearProgress, MenuItem, TextField } from '@mui/material'
+import ClearIcon from '@mui/icons-material/Clear'
+import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import Flags from 'country-flag-icons/react/3x2'
 import useCountries from '../../hooks/geography/useCountries'
 
@@ -21,6 +22,17 @@ const CountrySelect = ({ id, name, label, value, onChange, error, helperText, di
         value={value}
         onChange={onChange}
         disabled={disabled}
+        SelectProps={{ IconComponent: () => null }}
+        InputProps={{
+          endAdornment: (
+            <IconButton
+              sx={{ visibility: value ? 'visible' : 'hidden' }}
+              onClick={() => onChange({ target: { name, value: '' } })}
+            >
+              <ClearIcon />
+            </IconButton>
+          ),
+        }}
       >
         {countries.map(c => {
           const CurrrentFlag = Flags[c.abbreviation]

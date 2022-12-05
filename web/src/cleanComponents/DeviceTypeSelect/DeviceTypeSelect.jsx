@@ -1,6 +1,7 @@
 import React from 'react'
-import { LinearProgress, MenuItem, TextField } from '@mui/material'
-import useDeviceTypeList from '../../hooks/deviceType/useDevicetypeList'
+import ClearIcon from '@mui/icons-material/Clear'
+import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 
 const DeviceTypeSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
   const { isLoading, data: deviceTypes } = useDeviceTypeList()
@@ -18,6 +19,17 @@ const DeviceTypeSelect = ({ id, name, label, value, onChange, error, helperText,
       value={value}
       onChange={onChange}
       disabled={disabled}
+      SelectProps={{ IconComponent: () => null }}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            sx={{ visibility: value ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: '' } })}
+          >
+            <ClearIcon />
+          </IconButton>
+        ),
+      }}
     >
       {deviceTypes.map(c => (
         <MenuItem key={c.id} value={c.id}>

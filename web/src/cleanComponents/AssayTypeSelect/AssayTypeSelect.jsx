@@ -1,6 +1,7 @@
 import React from 'react'
-import { LinearProgress, MenuItem, TextField } from '@mui/material'
-import useAssayTypeList from '../../hooks/assayType/useAssayTypeList'
+import ClearIcon from '@mui/icons-material/Clear'
+import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import useAssayTypeList from '../../hooks/assay/useAssayTypeList'
 import useI18n from '../../hooks/useI18n'
 import { assay } from '../../messages'
 
@@ -21,6 +22,17 @@ const AssayTypeSelect = ({ id, name, label, value, onChange, error, helperText, 
       value={value}
       onChange={onChange}
       disabled={disabled}
+      SelectProps={{ IconComponent: () => null }}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            sx={{ visibility: value ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: '' } })}
+          >
+            <ClearIcon />
+          </IconButton>
+        ),
+      }}
     >
       {assayTypes.map(c => (
         <MenuItem key={c.id} value={c.id}>
