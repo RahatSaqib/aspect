@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
@@ -26,12 +25,7 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (query.assayId || query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-      if (query.assayId) {
-        const { assayId } = query
-        const assayIds = _.isArray(assayId) ? assayId : [assayId]
-        queryBuilder.whereIn('a.id', assayIds)
-      }
+      if (query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
       if (query.assayExternalId) queryBuilder.where('a.externalId', query.assayExternalId)
       if (query.resultCategoryId)
         queryBuilder
@@ -57,6 +51,7 @@ function getDeviceBaseExtendedQuery(
       type: 'dt.name',
       siteExternalId: 's.externalId',
       siteName: 's.name',
+      assayId: 'a.id',
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
@@ -424,6 +419,27 @@ async function joinModuleAvailability(dataConstraints, query) {
   }
 }
 
+function getResultCategoryGroupColumns(query) {
+  return knex
+    .from('Assay AS a')
+    .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Disease AS ds', 'at.diseaseId', 'ds.id')
+    .innerJoin('ResultCategoryGroup AS rcg', 'a.id', 'rcg.assayId')
+    .innerJoin('ResultCategory AS rc1', 'rcg.resultCategory1Id', 'rc1.id')
+    .leftJoin('ResultCategory AS rc2', 'rcg.resultCategory2Id', 'rc2.id')
+    .select([
+      'rcg.assayId',
+      'rcg.resultCategory1Id',
+      'rcg.resultCategory2Id',
+      knex.raw('CONCAT(rcg.assayId, "_",IFNULL(rc1.id, ""), "_", IFNULL(rc2.id, "")) AS columnKey'),
+      knex.raw(
+        'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
+      ),
+    ])
+    .modify(filterParams, query, {
+      assayId: 'a.id',
+    })
+}
 module.exports = {
   getDeviceWorkload,
   getResultCategoriesByAssay,
@@ -456,4 +472,5 @@ module.exports = {
   getNotDecommissionedDevices,
   joinModuleAvailability,
   getFirstAndLastResults,
+  getResultCategoryGroupColumns,
 }

@@ -140,6 +140,24 @@ function load() {
       pool: {
         min: 2,
         max: config.db.connectionLimit,
+        afterCreate: (conn, done) => {
+          /**
+           * In `api/src/inventory/common/db.js` we construct JSON string for passing it next to
+           * db funcs `GetDaysStockLeft` or `GetProjectedWaste` as 3rd param.
+           * See func `getInventoryItemsRawQuery` in `api/src/inventory/common/db.js` which
+           * returns such JSON string.
+           * And when default limit of 1024 for GROUP_CONCAT result overpasses - then we
+           * pass incorrect (malformed) JSON string to above db funcs, where JSON_TABLE fails
+           * to handle them.
+           *
+           * So, below we set limit of GROUP_CONCAT length to big value instead of default
+           * limit of 1024.
+           * TODO: Think on setting `group_concat_max_len` in devops environment.
+           */
+          conn.query('SET SESSION group_concat_max_len = 1000000;', err => {
+            done(err, conn)
+          })
+        },
       },
     })
   }

@@ -4,7 +4,7 @@ const Stream = require('stream')
 const _ = require('lodash')
 const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
-const { knex } = require('../db')
+const { knex, filterParams } = require('../db')
 const { getReportDetails } = require('./service')
 const {
   getMaxLimitPlaceHolders,
@@ -137,6 +137,18 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
   return items.map(x => x.name).join(', ')
 }
 
+async function getAssaysNamesString(query) {
+  if (!query.assayId) {
+    return 'all'
+  }
+  const items = await knex('Assay as a')
+    .modify(filterParams, query, {
+      assayId: 'a.id',
+    })
+    .select('a.name')
+  return items.map(x => x.name).join(', ')
+}
+
 async function getAllSheetsData(auth, query, sheets) {
   let boomError
   const dataSet = []
@@ -210,6 +222,10 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
     {
       placeholder: '<Sites>',
       value: query.siteName ?? 'all',
+    },
+    {
+      placeholder: '<Assays>',
+      value: await getAssaysNamesString(query),
     },
     {
       placeholder: '<UserEmail>',
