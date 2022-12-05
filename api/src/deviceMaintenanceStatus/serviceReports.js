@@ -11,11 +11,11 @@ const {
   parseDateOrDefault,
   getDateTimeProjectionInUserTimeZone,
 } = require('../shared/date')
-const { getUser } = require('../auth/service')
+const { getPersonByPersonId } = require('../auth/service')
 
 async function getDeviceActivityPercentReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
   const { minDate = subMonths(new Date(), 12).toISOString(), maxDate = new Date().toISOString() } = query
   const offset = getOffsetFromIsoDateString(maxDate)

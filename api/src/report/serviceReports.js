@@ -5,15 +5,12 @@ const _ = require('lodash')
 const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
 const { knex } = require('../db')
-const { getUser } = require('../auth/service')
 const { getReportDetails } = require('./service')
 const {
   getMaxLimitPlaceHolders,
   getAdministrativeDivisionLabelPlaceHolders,
   renderExcelTemplate,
   streamExcelTemplate,
-  respondFile,
-  respondStream,
   RELABEL_EXCEL,
   renderExcelTemplateToCsv,
 } = require('../shared/excel')
@@ -28,14 +25,13 @@ const REPORT_FAILED = 'REPORT_FAILED'
 const REPORT_FINISHED = 'REPORT_FINISHED'
 
 // ----------------------------------------------------------------------------------------------
-async function getSheetData(request, sheet, sharedResults) {
-  const { auth } = request
+async function getSheetData(auth, queryParams, sheet, sharedResults) {
   const { moduleName, functionName } = sheet
   const { nameOfSharedData, useNamedData } = sheet.query
   const sheetQuery = _.omit(sheet.query, ['nameOfSharedData', 'useNamedData'])
   const query = {
-    // filters defined on Reports page
-    ...request.query,
+    // filters defined on Reports page or from a scheduled report based notification
+    ...queryParams,
     // make sure to report all results (up to 1 million records)
     page: 0,
     size: 999999,
@@ -141,7 +137,7 @@ async function getLgaNamesString({ countryId, stateId, lgaId }) {
   return items.map(x => x.name).join(', ')
 }
 
-async function getAllSheetsData(request, sheets) {
+async function getAllSheetsData(auth, query, sheets) {
   let boomError
   const dataSet = []
   const sharedResults = {}
@@ -157,7 +153,7 @@ async function getAllSheetsData(request, sheets) {
       total = null,
       dataSelector = null,
       sections,
-    } = await getSheetData(request, sheet, sharedResults)
+    } = await getSheetData(auth, query, sheet, sharedResults)
     if (Boom.isBoom(data)) {
       boomError = data
       return
@@ -170,7 +166,7 @@ async function getAllSheetsData(request, sheets) {
       sections,
       dataSelector,
       total,
-      // TODO: use i18n string, because `createReport()` uses locale file templates with all labels translated
+      // TODO: use i18n string, because `downloadReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
     }
   })
@@ -181,20 +177,15 @@ async function getAllSheetsData(request, sheets) {
   return dataSet
 }
 
-// ----------------------------------------------------------------------------------------------
-async function createReport(request, reply) {
-  const { auth, query, params } = request
-  const { externalId, templateFolderPath } = params
-  const { sheets, fileName, exportExcel } = await getReportDetails(auth, externalId)
-  const user = await getUser(auth.credentials.name)
-  const { countryAbbreviation, culture, partnerId, userName } = user
-  const email = user.email || '-'
-  const cell = user.cell || '-'
+async function generateReport(externalId, query, auth, user, userPlaceHolders) {
+  // query: {...filters}
+  const { countryAbbreviation, culture, partnerId, userName, personId } = user
+  const { sheets, fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId })
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
 
-  const data = await getAllSheetsData(request, sheets)
+  const data = await getAllSheetsData(auth, query, sheets)
   if (Boom.isBoom(data)) {
     throw data
   }
@@ -222,11 +213,11 @@ async function createReport(request, reply) {
     },
     {
       placeholder: '<UserEmail>',
-      value: email,
+      value: userPlaceHolders.email || '-',
     },
     {
       placeholder: '<UserMobilePhone>',
-      value: cell,
+      value: userPlaceHolders.cell || '-',
     },
     {
       placeholder: '<UserFullName>',
@@ -235,126 +226,65 @@ async function createReport(request, reply) {
     ...getMaxLimitPlaceHolders(),
     ...administrativeDivisionLabelPlaceHolders,
   ]
-
+  // ---------------------------------------------------------------------------------------
+  const fileName = getContentDispositionFilename(fileNamePrefix, extension)
+  let dataBuffer
+  let streamResponse = false
   if (extension === 'csv') {
     const [sheet] = sheets
     const { streamCSV } = sheet.query || {}
     if (streamCSV) {
-      return streamToCsv(data, reply, fileName)
+      streamResponse = true
+      dataBuffer = streamToCsv(data)
+    } else {
+      dataBuffer = await renderExcelTemplateToCsv({
+        countryAbbreviation,
+        culture,
+        templateFolderPath: externalId,
+        data,
+        replacements,
+      })
     }
-    const dataBuffer = await renderExcelTemplateToCsv({
-      countryAbbreviation,
-      culture,
-      templateFolderPath: templateFolderPath || externalId,
-      data,
-      replacements,
-    })
-
-    return respondFile({
-      dataBuffer,
-      extension,
-      fileNamePrefix: fileName,
-      reply,
-    })
-  }
-  const renderParams = {
-    countryAbbreviation,
-    culture,
-    templateFolderPath,
-    externalId,
-    data,
-    replacements,
-    extension,
-    fileName,
-    reply,
-  }
-  // Response entire file if template has formats and formulae.
-  if (_.some(sheets, s => s.query.avoidStreaming)) {
-    return renderExcelFile(renderParams)
-  }
-  // Stream the response unless report has formats or formulae.
-  return renderExcelStream(renderParams)
-}
-
-async function renderExcelFile(params) {
-  const {
-    countryAbbreviation,
-    culture,
-    templateFolderPath,
-    externalId,
-    data,
-    replacements,
-    extension,
-    fileName,
-    reply,
-  } = params
-
-  const dataBuffer = await renderExcelTemplate({
-    countryAbbreviation,
-    culture,
-    templateFolderPath: templateFolderPath || externalId,
-    data,
-    extension,
-    replacements,
-  })
-
-  return respondFile({
-    dataBuffer,
-    extension,
-    fileNamePrefix: fileName,
-    reply,
-  })
-}
-
-async function streamToCsv(dataset, reply, fileName) {
-  const worksheetData = dataset[0]
-
-  const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
-  /**
-   * replace base placeholders, i.e. <Dates>, <States>, etc in the header
-   */
-  const csvStream = csv.format({
-    headers: data.length > 0,
-    writeBOM: true,
-  })
-
-  if (data.length > 0) {
-    _.forEach(data, row => {
-      const rowNormalized = transformRow(row, [...fixedColumns, ...dynamicColumns], dataSelector)
-      csvStream.write(rowNormalized)
-    })
   } else {
-    csvStream.write({ data: defaultNoDataMessage })
+    // response is xlsx
+
+    // eslint-disable-next-line no-lonely-if
+    if (_.some(sheets, s => s.query.avoidStreaming)) {
+      // Response entire file if template has formats and formulae.
+      dataBuffer = await renderExcelTemplate({
+        countryAbbreviation,
+        culture,
+        templateFolderPath: externalId,
+        data,
+        extension,
+        replacements,
+      })
+    } else {
+      streamResponse = true
+      // Stream the response unless report has formats or formulae.
+      dataBuffer = renderExcelStream({
+        countryAbbreviation,
+        culture,
+        externalId,
+        data,
+        replacements,
+        extension,
+      })
+    }
   }
-  csvStream.end()
-  return reply
-    .response(csvStream)
-    .encoding('binary')
-    .type('stream/octet-stream')
-    .header('content-disposition', `attachment; filename=${fileName}-${new Date().toISOString()}.csv;`)
+
+  return { dataBuffer, streamResponse, fileName, extension }
 }
 
-function transformRow(row, columns, dataSelector) {
-  const rowNormalized = {}
-  const value = dataSelector ? dataSelector(row) : row
-  columns.forEach(({ key, header }) => (rowNormalized[header] = value[key]))
-
-  return rowNormalized
+function getContentDispositionFilename(fileNamePrefix, extension) {
+  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(/:/g, '-')
 }
+
+// ----------------------------------------------------------------------------------------------
 
 function renderExcelStream(params) {
   const stream = new Stream.PassThrough()
-  const {
-    countryAbbreviation,
-    culture,
-    templateFolderPath,
-    externalId,
-    data,
-    replacements,
-    extension,
-    fileName,
-    reply,
-  } = params
+  const { countryAbbreviation, culture, externalId, data, replacements } = params
   /**
    * process in another thread with `setInterval`
    */
@@ -367,7 +297,7 @@ function renderExcelStream(params) {
         stream,
         culture,
         countryAbbreviation,
-        templateFolderPath: templateFolderPath || externalId,
+        templateFolderPath: externalId,
         data,
         replacements,
       })
@@ -397,15 +327,41 @@ function renderExcelStream(params) {
       clearInterval(intervalId)
     }
   }, 1000)
+  return stream
+}
 
-  return respondStream({
-    stream,
-    extension,
-    fileNamePrefix: fileName,
-    reply,
+function streamToCsv(dataset) {
+  const worksheetData = dataset[0]
+
+  const { data = [], defaultNoDataMessage, dataSelector, fixedColumns = [], dynamicColumns = [] } = worksheetData || {}
+  /**
+   * replace base placeholders, i.e. <Dates>, <States>, etc in the header
+   */
+  const csvStream = csv.format({
+    headers: data.length > 0,
+    writeBOM: true,
   })
+
+  if (data.length > 0) {
+    _.forEach(data, row => {
+      const rowNormalized = transformRow(row, [...fixedColumns, ...dynamicColumns], dataSelector)
+      csvStream.write(rowNormalized)
+    })
+  } else {
+    csvStream.write({ data: defaultNoDataMessage })
+  }
+  csvStream.end()
+  return csvStream
+}
+
+function transformRow(row, columns, dataSelector) {
+  const rowNormalized = {}
+  const value = dataSelector ? dataSelector(row) : row
+  columns.forEach(({ key, header }) => (rowNormalized[header] = value[key]))
+
+  return rowNormalized
 }
 
 module.exports = {
-  createReport,
+  generateReport,
 }

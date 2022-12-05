@@ -1,22 +1,16 @@
 import React, { useState } from 'react'
 import { CircularProgress } from '@mui/material'
 import map from 'lodash/map'
-import reduce from 'lodash/reduce'
-import unset from 'lodash/unset'
 import { FaNotesMedical } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
 import './NotificationFormPage.css'
 import AspectForm from '../../../components/Form'
 import FormActions from '../../../components/Form/formActions'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
-import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import useNotification from '../../../hooks/notification/useNotification'
-import useSaveNotification from '../../../hooks/notification/useSaveNotification'
 import usePartner from '../../../hooks/partner/usePartner'
 import useI18n from '../../../hooks/useI18n'
-import getFormConfig from './Forms/editConfig'
 import validationSchema from './Forms/validation'
 import { getFormConfigWithData } from './utils'
 
@@ -33,15 +27,13 @@ function buildAreaItems(id, target, data) {
   }
 }
 
-const NotificationFormPage = ({ id }) => {
+const NotificationFormPage = ({ id, onSubmit }) => {
   const notificationId = Number(id)
   const intl = useI18n()
-  const navigate = useNavigate()
   const [formConfig, setFormConfig] = useState(false)
 
   const { data: jobFunctions } = useJobFunctions()
   const { data: partner } = usePartner()
-  const { mutate: submitNotification } = useSaveNotification()
 
   useNotification(notificationId, {
     enabled: !!intl && !!jobFunctions && !!partner,
@@ -49,7 +41,7 @@ const NotificationFormPage = ({ id }) => {
       if (data.notificationType === 'issueBased') {
         data.notificationType = data.issueType
       }
-      const { notificationType, cronRecurrency, issueType, reportId, name, emailSubject, emailBody } = data
+      const { notificationType, issueType, reportId, name, emailSubject, emailBody } = data
       const { smsBody, webUrl, webBody, filterCondition, enabled } = data
 
       const filter = JSON.parse(filterCondition)
@@ -74,9 +66,7 @@ const NotificationFormPage = ({ id }) => {
         result: filter.result,
         issueType,
         reportId,
-        hasRecurrency: !!cronRecurrency,
-        cronRecurrency,
-        cronRecurrencyFromDb: cronRecurrency,
+        hasRecurrency: !!data.cronRecurrency,
         /**
          * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
          * to make sure all items in array are located in their positions
@@ -93,6 +83,17 @@ const NotificationFormPage = ({ id }) => {
           }
         }),
       }
+
+      if (notificationType === 'reportBased') {
+        const cronRecurrency = {
+          cronExpression: data.cronRecurrency.split(' '),
+          frequency: filter.reportFrequency,
+        }
+        newValues.cronRecurrency = cronRecurrency
+        newValues.reportDateRange = filter.reportDateRange
+        newValues.reportStartingWeekDay = filter.reportStartingWeekDay
+      }
+
       const form = getFormConfigWithData(
         intl,
         jobFunctions,
@@ -104,79 +105,6 @@ const NotificationFormPage = ({ id }) => {
       setFormConfig(form)
     },
   })
-
-  const onSubmit = formik => {
-    const specificPersonId = 'specificPerson'
-    const formConfig = getFormConfig(intl.formatMessage, jobFunctions, partner, true)
-    const values = sanitizeFormValues(formik.values, { formConfig })
-    const { deviceLevelId } = formik.values
-
-    values.notificationType = formik.values.notificationType
-    if (!['resultBased', 'reportBased'].includes(formik.values.notificationType)) {
-      values.issueType = formik.values.notificationType
-      values.notificationType = 'issueBased'
-    }
-
-    values.jobFunctions.map((jf, index) => {
-      jf.jobFunctionId = formik.values.jobFunctions[index].jobFunctionId
-      if (jf.tags === '') {
-        jf.tags = []
-      }
-      return jf
-    })
-    // sanitise persons for post endpoint
-    const sanitisedPersons = reduce(
-      formik.values.persons,
-      (acc, curr) => {
-        ;(acc || ((acc = []) && curr?.length)).push({
-          personId: curr.value,
-          checked: true,
-        })
-        return acc
-      },
-      []
-    )
-    values.jobFunctions = values.jobFunctions.filter(
-      ({ checked, jobFunctionId }) => checked && jobFunctionId !== specificPersonId
-    )
-    if (sanitisedPersons?.length) {
-      values.persons = sanitisedPersons
-    }
-    if (!values?.jobFunctions?.length) {
-      unset(values, 'jobFunctions')
-    }
-    if (!values?.persons?.length) {
-      unset(values, 'persons')
-    }
-
-    if (values?.notificationType !== 'reportBased') {
-      delete values.cronRecurrency
-    } else {
-      values.cronRecurrency = formik.values.cronRecurrency.cronExpression
-      values.reportFrecuency = formik.values.cronRecurrency.frecuency
-    }
-
-    /**
-     * fun little excercise to sanitise three different
-     * areaItem fields (state|lga|lab) into a single DB field :)
-     */
-    if (deviceLevelId === 'state') {
-      values.areaItems = values.areaItemsState
-      delete values.areaItemsState
-    }
-    if (deviceLevelId === 'lga') {
-      values.areaItems = map(values.areaItemsLGA, ({ label, value }) => ({
-        label,
-        value,
-      }))
-      delete values.areaItemsLGA
-    }
-    if (deviceLevelId === 'lab') {
-      values.areaItems = values.areaItemsLab
-      delete values.areaItemsLab
-    }
-    submitNotification({ values, id: notificationId }, { onSuccess: () => navigate('/browse/notification') })
-  }
 
   return !formConfig ? (
     <CircularProgress />

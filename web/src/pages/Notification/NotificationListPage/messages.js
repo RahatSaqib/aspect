@@ -112,6 +112,10 @@ export const messages = defineMessages({
     id: 'pages.TableCell.resultBasedNotification',
     defaultMessage: 'Result Based',
   },
+  reportBased: {
+    id: 'pages.TableCell.reportBasedNotification',
+    defaultMessage: 'Report Based',
+  },
   ...report,
 })
 
