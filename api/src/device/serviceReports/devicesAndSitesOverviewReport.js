@@ -168,6 +168,9 @@ async function getErrorsByDevices(dataConstraints, query) {
       invalidResults: mtbNoResultInvalidIndeterminate,
       otherErrors: mtbOtherErrorsNotIn(errorCodesCsv),
     })
+    .modify(filterParams, query, {
+      assayId: 'a.id',
+    })
     .groupBy('r.deviceId')
     .modify(filterDateRangeParams, query, 'r.endedOn')
 

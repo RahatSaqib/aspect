@@ -267,6 +267,9 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     .innerJoin('Assay as a', 'ca.assayId', 'a.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     .where('dt.externalId', 'CepheidGeneXpert')
+    .modify(filterParams, request.query, {
+      assayId: 'a.id',
+    })
   return knex
     .from(inventoryQuery.as('t2'))
     .modify(builder => {

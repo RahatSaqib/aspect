@@ -51,6 +51,7 @@ function getDeviceBaseExtendedQuery(
       type: 'dt.name',
       siteExternalId: 's.externalId',
       siteName: 's.name',
+      assayId: 'a.id',
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
