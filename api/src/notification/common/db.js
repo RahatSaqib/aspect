@@ -9,23 +9,30 @@ const {
 } = require('../../shared/dictionary')
 const { validateFilterCondition } = require('./validations')
 
-async function getNotification(id) {
+async function update(id, fieldsToUpdate) {
+  await knex('NotificationType').where({ id }).update(fieldsToUpdate)
+}
+
+async function getNotification(
+  id,
+  selectFields = [
+    'ntc.name as notificationTypeName',
+    'ntc.externalId as notificationType',
+    'it.externalId as issueType',
+    'r.externalId as reportId',
+    'nt.name as name',
+    'nt.filterCondition as filterCondition',
+    'et.subject as emailSubject',
+    'et.body as emailBody',
+    'st.message as smsBody',
+    'wt.url as webUrl',
+    'wt.payload as webBody',
+    'nt.enabled',
+    'nt.cronRecurrency',
+  ]
+) {
   return knex
-    .select(
-      'ntc.name as notificationTypeName',
-      'ntc.externalId as notificationType',
-      'it.externalId as issueType',
-      'r.externalId as reportId',
-      'nt.name as name',
-      'nt.filterCondition as filterCondition',
-      'et.subject as emailSubject',
-      'et.body as emailBody',
-      'st.message as smsBody',
-      'wt.url as webUrl',
-      'wt.payload as webBody',
-      'nt.enabled',
-      'nt.cronRecurrency'
-    )
+    .select(selectFields)
     .from('NotificationType as nt')
     .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
     .leftJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
@@ -418,4 +425,5 @@ module.exports = {
   getListNotifications,
   saveNotificationType,
   getNotification,
+  update,
 }

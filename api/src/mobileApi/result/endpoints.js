@@ -2,18 +2,13 @@ const { downloadResultsList } = require('./download')
 const { downloadResultsListV2 } = require('./downloadV2')
 const { downloadResultById } = require('./downloadById')
 const { downloadResultByIdV2 } = require('./downloadByIdV2')
-const { updateResultFollowUp, resultFollowUpByResultId } = require('./resultFollowup')
 const {
   downloadResultValidation,
   downloadResultResponseValidation,
   downloadResultValidationV2,
   downloadResultResponseValidationV2,
-  undateResultFollowupParamValidation,
-  updateResultFollowupPayloadValiation,
-  undateResultFollowupResponseValidation,
   addClinicalResponseParamValidation,
   addClinicalResponsePayloadValidation,
-  addClinicalResponseResultValidation,
 } = require('./common/validations')
 const { clinicalResponse } = require('./clinicalResponse')
 
@@ -103,7 +98,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/v1/result/clinical-responses/{resultId}',
+    path: '/v1/results/clinical-responses/{resultId}',
     handler: clinicalResponse,
     config: {
       description: 'Add a result follow up',
@@ -117,46 +112,7 @@ const routes = [
         options: {
           allowUnknown: false,
         },
-        schema: addClinicalResponseResultValidation(),
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/v1/result/follow-up/{resultId}',
-    handler: updateResultFollowUp,
-    config: {
-      description: 'Set the date of a follow up',
-      notes: 'Updates the date of a follow up for a result',
-      auth: { scope: ['treatmentStatus:edit'] },
-      validate: {
-        params: undateResultFollowupParamValidation(),
-        payload: updateResultFollowupPayloadValiation(),
-      },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: undateResultFollowupResponseValidation(),
-      },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/v1/result/follow-up/{resultId}',
-    handler: resultFollowUpByResultId,
-    config: {
-      description: 'Set the date of a follow up',
-      notes: 'Updates the date of a follow up for a result',
-      auth: { scope: ['treatmentStatus:edit'] },
-      validate: {
-        params: undateResultFollowupParamValidation(),
-      },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: undateResultFollowupResponseValidation(),
+        schema: downloadResultResponseValidationV2,
       },
     },
   },

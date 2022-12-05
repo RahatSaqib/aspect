@@ -25,6 +25,7 @@ const listDeviceCapacity = require('./listDeviceCapacity')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const { taskTracker } = require('../scheduler/taskTracker')
 const {
+  exportWorkloadRequestSchema,
   listWorkloadRequestSchema,
   listWorkloadResponseSchema,
   listDevicesBaseConfig,
@@ -101,7 +102,7 @@ const routes = [
       description: 'Workload summary',
       notes: 'Export of the workload',
       auth: { scope: ['device:view'] },
-      validate: listWorkloadRequestSchema,
+      validate: exportWorkloadRequestSchema,
     },
   },
   {

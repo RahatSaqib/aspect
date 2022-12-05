@@ -12,8 +12,8 @@ import { FormikProvider } from '../../../components/Form/Formik/Context'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
-import useSaveNotification from '../../../hooks/notification/saveNotifiaction'
 import useNotification from '../../../hooks/notification/useNotification'
+import useSaveNotification from '../../../hooks/notification/useSaveNotification'
 import usePartner from '../../../hooks/partner/usePartner'
 import useI18n from '../../../hooks/useI18n'
 import getFormConfig from './Forms/editConfig'
@@ -129,7 +129,7 @@ const NotificationFormPage = ({ id }) => {
       formik.values.persons,
       (acc, curr) => {
         ;(acc || ((acc = []) && curr?.length)).push({
-          personId: curr,
+          personId: curr.value,
           checked: true,
         })
         return acc

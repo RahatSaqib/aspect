@@ -136,6 +136,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-lodash": "^7.4.0",
+    "eslint-plugin-mocha": "^10.1.0",
     "eslint-plugin-no-only-tests": "^3.0.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-security": "^1.5.0",

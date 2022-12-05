@@ -1,17 +1,11 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { getUser } = require('../../auth/service')
-const { getResultByResultId } = require('./common/logic')
-const { getConstraints, addConstraints } = require('../../auth/constraints')
+const { getResultItemTransformedDataV2 } = require('./common/logic')
+const { getConstraints } = require('../../auth/constraints')
 const { resultTreatmentStatusToId } = require('../../shared/dictionary')
 const {
   getFollowUpsForResultFollowup,
-  generateResultQueryForResultFollowUp,
-  SELECT_FIELDS_UTC,
-  getAssayForResultFollowup,
-  getFileReferencesForResultFolloup,
-  showResultFolloup,
-  getResultNotesByResultIdForResultFollowup,
   getResultFollowUps,
   getLastTreatmentStatusByResult,
   getTreatmentStatus,
@@ -26,7 +20,10 @@ const {
   deleteResultFollowUp,
   insertResultWorkflowLog,
   updateResultWorkflowLog,
-  getLatestResultWorkflowStatusId,
+  getFollowUpsOfResultById,
+  getCommentsOfResultById,
+  getItemsV2,
+  generateResultQueryV2,
 } = require('./common/db')
 
 async function clinicalResponse(request) {
@@ -53,7 +50,10 @@ async function clinicalResponse(request) {
       }
     })
   )
-  return response
+  return {
+    ok: !!response,
+    data: response,
+  }
 }
 
 // Add result folloup basaed on followup type and value. Delete followup if any followup type's value is null
@@ -170,8 +170,8 @@ async function updateTreatmentStatus(
 
   const lastTreatment = await updateTreatmentStatusByResultId(
     currentUserId,
-    result.data.id,
-    result.data.resultTreatmentStatusId,
+    result.id,
+    result.resultTreatmentStatusId,
     resultTreatmentStatusExternalId,
     resultTreatmentStatusId,
     data,
@@ -180,10 +180,10 @@ async function updateTreatmentStatus(
   )
 
   const response = await showResult(request)
-  response.data.treatmentStatus = lastTreatment
+  response.treatmentStatus = lastTreatment
 
-  if (!response.data.resultTreatmentStatusCreatedOn) {
-    response.data.resultTreatmentStatusCreatedOn = result.data.endedOn || result.data.startedOn || now
+  if (!response.resultTreatmentStatusCreatedOn) {
+    response.resultTreatmentStatusCreatedOn = result.endedOn || result.startedOn || now
   }
 
   return response
@@ -262,8 +262,8 @@ async function updateWorkflowStatus(request, data) {
   const errorMessage = await updateResultWorkflowStatusByResultId(
     resultWorkflowLogEntry,
     data.clientTime,
-    result.data.resultWorkflowStatusId,
-    result.data.resultWorkflowChangedOn
+    result.resultWorkflowStatusId,
+    result.resultWorkflowChangedOn
   )
 
   if (errorMessage) {
@@ -285,7 +285,7 @@ async function updateResultWorkflowStatusByResultId(
   if (resultWorkflowLogEntry.resultWorkflowStatusId !== currentResultWorkflowStatusId) {
     const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
 
-    if (resultWorkflowChangedOn < clientDate) {
+    if (resultWorkflowChangedOn < clientDate || !resultWorkflowChangedOn) {
       await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, clientDate)
     }
   }
@@ -298,25 +298,17 @@ async function showResult(request) {
     auth,
   } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const { userName } = await getUser(auth.credentials.name)
-  const resultQuery = await generateResultQueryForResultFollowUp(resultId, dataConstraints, SELECT_FIELDS_UTC)
-  const followUps = await getLatestResultFollowUps(resultId)
-  const resultWorkflowlog = await getLatestResultWorkflowStatusId(resultId)
-  const result = await getResultByResultId(
-    auth,
-    resultId,
-    dataConstraints,
-    userName,
-    resultQuery,
-    followUps,
-    resultWorkflowlog,
-    getAssayForResultFollowup,
-    getFileReferencesForResultFolloup,
-    addConstraints,
-    showResultFolloup,
-    getResultNotesByResultIdForResultFollowup
-  )
-  return result.ok ? result : Boom.notFound()
+  const myResultQuery = generateResultQueryV2(false, dataConstraints, resultId)
+  // return result when both queries are finished
+  const [data] = await getItemsV2(myResultQuery, resultId)
+  // get follow ups for all result in the response for performance (filter later)
+  const followUps1 = await getFollowUpsOfResultById(data)
+  // get comments for all result in the response for performance (filter later)
+  const comments = await getCommentsOfResultById(data)
+  const latestFollowup = await getLatestResultFollowUps(resultId)
+
+  const result = await getResultItemTransformedDataV2(data, true, followUps1, comments, latestFollowup)
+  return result || Boom.notFound()
 }
 
 module.exports = {

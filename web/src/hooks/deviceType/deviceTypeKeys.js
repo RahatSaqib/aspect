@@ -1,0 +1,4 @@
+const DEVICE_TYPE_KEY = 'DEVICE'
+const DEVICE_TYPE_KEY_LIST_ENDPOINT = '/device-type/select-list'
+
+export { DEVICE_TYPE_KEY, DEVICE_TYPE_KEY_LIST_ENDPOINT }

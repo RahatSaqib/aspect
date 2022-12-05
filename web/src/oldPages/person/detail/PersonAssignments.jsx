@@ -23,7 +23,7 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
 
   return (
     <section className={cssClasses('Assignments')}>
-      <h1>{formatMessage(messages.assignments)}</h1>
+      <h4>{formatMessage(messages.assignments)}</h4>
       {!loadedAssignments && <LinearProgress />}
       {assignments.length === 0 && <h4>{formatMessage(messages.notSpecified)}</h4>}
       {assignments.map((assignment, idx) => (

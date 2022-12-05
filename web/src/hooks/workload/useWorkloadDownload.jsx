@@ -11,13 +11,9 @@ import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
 import { WORKLOAD_KEY, WORKLOAD_KEY_EXPORT_ENDPOINT } from './workloadKeys.js'
 
-const getDownload = async (filtersParams, sortCol, sortDir, page, pageSize, fileFormat) => {
+const getDownload = async (filtersParams, fileFormat) => {
   return aspectFetch(
     `${WORKLOAD_KEY_EXPORT_ENDPOINT}?${stringify({
-      sortCol,
-      sortDir,
-      page,
-      size: pageSize,
       format: fileFormat,
       ...filtersParams,
     })}`,
@@ -56,7 +52,7 @@ const getDownload = async (filtersParams, sortCol, sortDir, page, pageSize, file
 }
 
 const useWorkloadDownload = requestParams => {
-  const { sortCol, sortDir, page, pageSize, fileFormat, enabled, ...filtersParams } = requestParams
+  const { fileFormat, enabled, sortDir, sortCol, size, page, ...filtersParams } = requestParams
   const assayId = filtersParams.singleAssayId
 
   filtersParams.assayId = assayId
@@ -64,17 +60,13 @@ const useWorkloadDownload = requestParams => {
   const queryClient = useQueryClient()
   const dispatch = useDispatch()
 
-  return useQuery(
-    [WORKLOAD_KEY, 'download'],
-    () => getDownload(filtersParams, sortCol, sortDir, page, pageSize, fileFormat),
-    {
-      onSuccess: () => {
-        dispatch({ type: 'EXPORT_RESPONSE_FILE_RECEIVED' })
-        queryClient.invalidateQueries([WORKLOAD_KEY, 'download'])
-      },
-      enabled,
-    }
-  )
+  return useQuery([WORKLOAD_KEY, 'download'], () => getDownload(filtersParams, fileFormat), {
+    onSuccess: () => {
+      dispatch({ type: 'EXPORT_RESPONSE_FILE_RECEIVED' })
+      queryClient.invalidateQueries([WORKLOAD_KEY, 'download'])
+    },
+    enabled,
+  })
 }
 
 export default useWorkloadDownload

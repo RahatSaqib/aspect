@@ -274,4 +274,16 @@ export default defineMessages({
     id: 'filter.AssayTypeSelectField.assayTypeZika',
     defaultMessage: 'Zika',
   },
+  assayTypeMtb: {
+    id: 'filter.AssayTypeSelectField.assayTypeMtb',
+    defaultMessage: 'MTB',
+  },
+  assayTypeRif: {
+    id: 'filter.AssayTypeSelectField.assayTypeRib',
+    defaultMessage: 'Rif',
+  },
+  assayTypeMtbXdr: {
+    id: 'filter.AssayTypeSelectField.assayTypeMtbXdr',
+    defaultMessage: 'MTB/XDR',
+  },
 })

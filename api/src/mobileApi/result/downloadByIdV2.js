@@ -12,8 +12,9 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
   getResultWorkflowStatusQuery,
+  getLatestResultFollowUps,
 } = require('./common/db')
-const { getTransformedDataOfResultById } = require('./common/logic')
+const { getResultItemTransformedDataV2 } = require('./common/logic')
 
 async function getDownloadResultById(resultId, auth, setDelivered = false) {
   // get data constraints
@@ -30,8 +31,9 @@ async function getDownloadResultById(resultId, auth, setDelivered = false) {
     const followUps = await getFollowUpsOfResultById(data)
     // get comments for all result in the response for performance (filter later)
     const comments = await getCommentsOfResultById(data)
+    const latestFollowup = await getLatestResultFollowUps(resultId)
 
-    transformedData = getTransformedDataOfResultById(data, setDelivered, followUps, comments)
+    transformedData = getResultItemTransformedDataV2(data, setDelivered, followUps, comments, latestFollowup)
   }
   const result = {
     ok: !!data,

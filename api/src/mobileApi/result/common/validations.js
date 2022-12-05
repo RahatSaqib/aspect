@@ -266,6 +266,18 @@ const downloadResultResponseValidationV2 = () => {
             outcome: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
             outcomeOccurred: Joi.date().allow(null).description('When result was transferred to another clinic'),
           },
+          // test information
+          testInformation: Joi.array()
+            .description('Test information list')
+            .items(
+              Joi.object().keys({
+                label: Joi.string().allow(null, '').description('Test label'),
+                labelI18nKey: Joi.string().required().description('Test label key').allow(null),
+                value: Joi.string().required().description('Test result value').allow(null, ''),
+                valueI18nKey: Joi.string().required().description('Test result value key').allow(null, ''),
+                severity: Joi.string().description('Severity of the test'),
+              })
+            ),
           comments: Joi.array()
             .allow(null)
             .description('Result comments')
@@ -528,39 +540,6 @@ const addClinicalResponseResultValidation = () => {
   })
 }
 
-// update clinicalresponse Params - v1
-const undateResultFollowupParamValidation = () => {
-  return {
-    resultId: Joi.number().required().integer().positive().description('Result ID'),
-  }
-}
-
-// update clinicalresponse Payload - v1
-const updateResultFollowupPayloadValiation = () => {
-  return Joi.object()
-    .keys({
-      id: Joi.number().integer().positive().allow(null).description('The ID of the result follow up.'),
-      externalId: Joi.string()
-        .allow('', null)
-        .description(
-          'The externalId of the result follow up. Will be used in combination with the result ID to find the result follow up if id is empty'
-        ),
-      date: Joi.date().iso().optional().allow(null).description('This is the date when the follow up happened'),
-      followUpExternalId: Joi.string()
-        .allow('', null)
-        .description('The externalId of the follow up. Will be used if followUpId is null/empty.'),
-    })
-    .xor('id', 'externalId')
-}
-
-// update clinicalResponse response - v1
-const undateResultFollowupResponseValidation = () => {
-  return Joi.object().keys({
-    ok: Joi.bool().required().description('False if there was some sort of error'),
-    data: Joi.object().required().description('The results').keys(validateResultDetailResponse()),
-  })
-}
-
 module.exports = {
   downloadResultValidation,
   downloadResultResponseValidation,
@@ -569,7 +548,4 @@ module.exports = {
   addClinicalResponseParamValidation,
   addClinicalResponsePayloadValidation,
   addClinicalResponseResultValidation,
-  undateResultFollowupParamValidation,
-  updateResultFollowupPayloadValiation,
-  undateResultFollowupResponseValidation,
 }

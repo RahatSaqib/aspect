@@ -188,7 +188,7 @@ module.exports = async (knex, partnerData, contacts) => {
         hidePatientId: person.hidePatientId,
         hideSampleId: person.hideSampleId,
         hideNotes: person.hideNotes,
-        culture: 'en',
+        culture: 'en-US',
         ...auditFields,
       })
     }

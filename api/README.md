@@ -6,11 +6,11 @@ Swagger UI is available for testing the UI manually and viewing route documentat
 
 ## Recommended versions
 
-Node v8.13 ([nvm](https://github.com/creationix/nvm) highly recommended)
+Node v14 ([nvm](https://github.com/creationix/nvm) highly recommended)
 
 MySql v8.0
 
-Yarn v1.9.4
+Yarn v1.22.x
 
 ## Quick start
 
@@ -64,8 +64,9 @@ webhook.redcap.authToken= 'jkasd'
 ALTER USER 'username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 flush privileges;
 
-# MySQL set_mode, open my.cnf and add this sql-mode.
+# MySQL set-mode & log_bin_trust_function_creators, open the local MySQL config (MacOS: /etc/my.cnf, WAMP: C:\wamp64\bin\mysql\mysql8.x.x\my.ini) and add these settings.
 sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+log_bin_trust_function_creators=1
 
 # Run migrations
 yarn run knex migrate:latest

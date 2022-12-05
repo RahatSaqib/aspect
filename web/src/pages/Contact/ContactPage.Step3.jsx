@@ -1,0 +1,209 @@
+import React from 'react'
+import { Grid, Box, Button } from '@mui/material'
+import { Formik } from 'formik'
+import { useParams, useNavigate } from 'react-router-dom'
+import {
+  CountrySelect,
+  JobSelect,
+  LgaSelect,
+  StateSelect,
+  SiteSelect,
+  DiseaseSelect,
+  DeviceTypeSelect,
+  AssayTypeSelect,
+  AssaySelect,
+} from '../../cleanComponents'
+import Loading from '../../components/Loading'
+import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
+import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
+import usePersonAssignment from '../../hooks/person/usePersonAssignment'
+import useI18n from '../../hooks/useI18n'
+import { getCustomMessage } from '../../messages/customMessages'
+import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
+import { useAuthState } from '../../providers/AuthProvider'
+import ContactStepper from './components/ContactStepper'
+import messages from './messages'
+
+const ContactPageStepThree = ({ setStep }) => {
+  const navigate = useNavigate()
+  const { countryAbbreviation, countryId } = useAuthState()
+  const { formatMessage } = useI18n()
+  const { personId } = useParams()
+
+  const { isLoading, data: assignment } = usePersonAssignment(personId)
+
+  const initialValues = {
+    jobFunctionId: '',
+    countryId,
+    stateId: '',
+    lgaId: '',
+    siteId: '',
+    diseaseId: '',
+    deviceTypeId: '',
+    assayTypeId: '',
+    assayId: '',
+  }
+
+  const { mutate: deleteAssignment } = useDeletePersonAsignment(personId)
+  const { mutate: createAssignment } = useCreatePersonAsignment(personId)
+
+  return (
+    <>
+      <ContactStepper step={2} full />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Formik
+          initialValues={initialValues}
+          // validationSchema={validationSchema}
+          onSubmit={(values, { resetForm }) => {
+            const data = { ...values, personId }
+            Object.keys(data).map(k => {
+              if (data[k] === '') {
+                data[k] = undefined
+              } else if (k === 'assayId') {
+                data[k] = +data[k]
+              }
+              return k
+            })
+
+            createAssignment(data)
+            resetForm()
+          }}
+        >
+          {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
+            <>
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Grid item xs={12}>
+                      <JobSelect
+                        id="jobFunctionId"
+                        name="jobFunctionId"
+                        label={formatMessage(messages.job)}
+                        value={values.jobFunctionId}
+                        onChange={handleChange}
+                        error={errors.jobFunctionId ? errors.jobFunctionId : undefined}
+                        helperText={errors.jobFunctionId}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <CountrySelect
+                        id="countryId"
+                        name="countryId"
+                        label={formatMessage(messages.country)}
+                        value={countryId}
+                        onChange={handleChange}
+                        error={errors.countryId ? errors.countryId : undefined}
+                        helperText={errors.countryId}
+                        disabled
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <StateSelect
+                        id="stateId"
+                        name="stateId"
+                        label={getCustomMessage(messages, 'state', { countryAbbreviation })}
+                        value={values.stateId || ''}
+                        onChange={handleChange}
+                        error={errors.stateId ? errors.stateId : undefined}
+                        helperText={errors.stateId}
+                        countryId={values.countryId}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <LgaSelect
+                        id="lgaId"
+                        name="lgaId"
+                        label={getCustomMessage(messages, 'lga', { countryAbbreviation })}
+                        value={values.lgaId || ''}
+                        onChange={handleChange}
+                        error={errors.lgaId ? errors.lgaId : undefined}
+                        helperText={errors.lgaId}
+                        stateId={values.stateId}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <SiteSelect
+                        id="siteId"
+                        name="siteId"
+                        label={formatMessage(messages.site)}
+                        value={values.siteId || ''}
+                        onChange={handleChange}
+                        error={errors.siteId ? errors.siteId : undefined}
+                        helperText={errors.siteId}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <DiseaseSelect
+                        id="diseaseId"
+                        name="diseaseId"
+                        label={formatMessage(messages.disease)}
+                        value={values.diseaseId || ''}
+                        onChange={handleChange}
+                        error={errors.diseaseId ? errors.diseaseId : undefined}
+                        helperText={errors.diseaseId}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <DeviceTypeSelect
+                        id="deviceTypeId"
+                        name="deviceTypeId"
+                        label={formatMessage(messages.deviceType)}
+                        value={values.deviceTypeId || ''}
+                        onChange={handleChange}
+                        error={errors.deviceTypeId ? errors.deviceTypeId : undefined}
+                        helperText={errors.deviceTypeId}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <AssayTypeSelect
+                        id="assayTypeId"
+                        name="assayTypeId"
+                        label={formatMessage(messages.assayType)}
+                        value={values.assayTypeId || ''}
+                        onChange={handleChange}
+                        error={errors.assayTypeId ? errors.assayTypeId : undefined}
+                        helperText={errors.assayTypeId}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <AssaySelect
+                        id="assayId"
+                        name="assayId"
+                        label={formatMessage(messages.assay)}
+                        value={values.assayId || ''}
+                        onChange={handleChange}
+                        error={errors.assayId ? errors.assayId : undefined}
+                        helperText={errors.assayId}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <PersonAssignments
+                      assignments={assignment}
+                      loadedAssignments
+                      onDeleteAssignment={deleteAssignment}
+                    />
+                  </Grid>
+                </Grid>
+                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                  <Button onClick={() => setStep(1)}>{formatMessage(messages.back)}</Button>
+                  {dirty ? (
+                    <Button type="submit" disabled={!isValid}>
+                      {formatMessage(messages.addAssignment)}
+                    </Button>
+                  ) : null}
+                  <Box sx={{ flex: '1 1 auto' }} />
+                  <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
+                </Box>
+              </form>
+            </>
+          )}
+        </Formik>
+      )}
+    </>
+  )
+}
+
+export default ContactPageStepThree
