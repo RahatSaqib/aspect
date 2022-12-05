@@ -175,7 +175,7 @@ async function finalizeWebhookMessage(webhookMessageId, messageContext) {
 
 async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
   const { personId, resultId, reportId } = await knex('WebhookMessage as w')
-    .join('Notification as n', 'n.webhookMessageId', 'w.id')
+    .leftJoin('Notification as n', 'n.webhookMessageId', 'w.id')
     .where('w.id', webhookMessageId)
     .first('w.personId', 'w.resultId', 'n.reportId')
 
