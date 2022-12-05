@@ -378,6 +378,7 @@ async function getAccessToken({ id, name, partnerId, personId }, clientType = 'w
   // create a new token
   const token = jwt.sign(
     {
+      personId,
       name,
       permissions,
       hasToAcceptLicenseId:

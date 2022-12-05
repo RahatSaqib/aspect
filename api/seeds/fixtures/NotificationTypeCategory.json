@@ -20,7 +20,7 @@
       "name": "Report-Based",
       "externalId": "reportBased",
       "triggerCondition": {
-        "action": "REPORT_READY_TO_DELIVER",
+        "action": "REPORT_BASED_NOTIFICATION_REQUESTED",
         "method": "reportBased"
       }
     }

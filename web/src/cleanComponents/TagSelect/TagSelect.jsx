@@ -22,7 +22,6 @@ const TagSelect = ({ id, name, label, value, onChange, error, helperText }) => {
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys
-      id="free-solo-with-text-demo"
       options={value}
       renderOption={(props, option) => <li {...props}>{option}</li>}
       freeSolo
@@ -33,9 +32,7 @@ const TagSelect = ({ id, name, label, value, onChange, error, helperText }) => {
           label={label}
           error={error}
           helperText={helperText}
-          InputLabelProps={{
-            shrink: true,
-          }}
+          InputLabelProps={{ shrink: true }}
         />
       )}
     />

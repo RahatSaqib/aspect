@@ -28,7 +28,7 @@ const server = new Hapi.server({
         'WWW-Authenticate',
         'Server-Authorization',
         'Date',
-        'Content-Disposition', // for report files, see 'createReport()' in '/report/serviceReports.js'
+        'Content-Disposition', // for report files, see 'downloadReport()' in '/report/serviceReports.js'
       ],
     },
     validate: {

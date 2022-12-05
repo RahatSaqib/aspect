@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
-import { LinearProgress, MenuItem, TextField } from '@mui/material'
+import ClearIcon from '@mui/icons-material/Clear'
+import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import { useFormikContext } from 'formik'
 import usePartners from '../../hooks/partner/usePartners'
 
@@ -27,6 +28,17 @@ const PartnerSelect = ({ id, name, label, value, onChange, error, helperText }) 
       value={value || ''}
       onChange={onChange}
       disabled={(partnersData || []).length === 1}
+      SelectProps={{ IconComponent: () => null }}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            sx={{ visibility: value ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: '' } })}
+          >
+            <ClearIcon />
+          </IconButton>
+        ),
+      }}
     >
       {(partnersData || []).map(c => (
         <MenuItem key={c.value} value={c.value}>

@@ -119,7 +119,14 @@ const validationSchema = formatMessage =>
       sendSms: Yup.boolean(),
       sendWeb: Yup.boolean(),
       emailSubject: Yup.string().when('sendEmail', optionsForSendXXX(formatMessage(messages.emailSubjectRequired))),
-      emailBody: Yup.string().when('sendEmail', optionsForSendXXX(formatMessage(messages.emailBodyRequired))),
+      emailBody: Yup.string()
+        .when('sendEmail', optionsForSendXXX(formatMessage(messages.emailBodyRequired)))
+        .when('notificationType', {
+          is: 'reportBased',
+          then: Yup.string()
+            .matches(/{{report.downloadLink}}/, formatMessage(messages.emailBodyMustContainDownloadLink))
+            .required(),
+        }),
       smsBody: Yup.string()
         .when('sendSms', optionsForSendXXX(formatMessage(messages.smsBodyRequired)))
         .max(144),
@@ -127,6 +134,17 @@ const validationSchema = formatMessage =>
       webUrl: Yup.string()
         .when('sendWeb', optionsForSendXXX(formatMessage(messages.webUrlRequired)))
         .matches(/^(ftp|http|https):\/\/[^ "]+$/, formatMessage(messages.webUrlInvalidFormat)),
+
+      reportDateRange: Yup.string().when('notificationType', {
+        is: 'reportBased',
+        then: Yup.string().required(),
+        otherwise: Yup.string().notRequired(),
+      }),
+      reportStartingWeekDay: Yup.string().when('reportDateRange', {
+        is: 'PREVIOUS_WEEK',
+        then: Yup.string().required(),
+        otherwise: Yup.string().notRequired(),
+      }),
     })
     .test('oneOfRequired', item => {
       if (item.sendEmail || item.sendSms || item.sendWeb) {

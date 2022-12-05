@@ -263,7 +263,7 @@ describe('Maintenance Reports', () => {
 
       // Device activity percent report
       const deviceActivityPercentData = await getDeviceActivityPercentReport(
-        { credentials: { name: 'admin' } },
+        { credentials: { name: 'admin', personId: 1 } },
         {
           minDate: '2019-01-01T00:00:00.000',
           maxDate: '2019-01-31T00:00:00.000',
