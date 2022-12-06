@@ -1,4 +1,3 @@
-/* eslint prettier/prettier: ["error", { "printWidth": 200 }] */
 import uniqBy from 'lodash/uniqBy'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
 import getFormConfig from '../Forms/editConfig'
