@@ -8,9 +8,9 @@ import messages from './messages'
 export const getFormConfigWithData = (intl, isNew, values) => {
   const formSchema = getFormConfig(intl.formatMessage, isNew, values.assay)
 
-  const section = formSchema.sections.find(({ id }) => id === 'CustomFields')
-  if (section) {
-    section.rows = getRowsForCustomFields(values, intl)
+  const customFields = formSchema.sections.find(({ id }) => id === 'CustomFields')
+  if (customFields) {
+    customFields.rows = getRowsForCustomFields(values, intl)
   }
 
   const validationSchema = getValidationSchema(intl.formatMessage)
@@ -48,15 +48,14 @@ function getRowsForCustomFields(values, { formatMessage }) {
     // just as a mock of the real response
     customField = transformCustomField(customField)
 
-    if (customField.items) {
+    const source = customField.source.split('.')
+    if (customField.type === 'select') {
       row.items = [
         ...row.items,
         {
           id: customField.i18nKeyCaption,
           label: formatMessage(messages[customField.i18nKeyCaption]),
-          initialValue: values.patientData[customField.payloadDestinationPath]
-            ? [values.patientData[customField.payloadDestinationPath].toLowerCase()]
-            : [],
+          initialValue: values[source[0]][source[1]] ? [values[source[0]][source[1]].toLowerCase()] : [],
           controlType: {
             component: 'select',
             options: customField.items
@@ -65,11 +64,11 @@ function getRowsForCustomFields(values, { formatMessage }) {
           },
         },
       ]
-    } else {
+    } else if (customField.type === 'textbox') {
       row.items = [
         ...row.items,
         {
-          id: customField.externalId || `patientData.${customField.payloadDestinationPath}`,
+          id: customField.externalId || `${source[0]}.${source[1]}`,
           controlType: { component: 'textField' },
           labelI18nKey: customField.i18nKeyCaption,
         },
@@ -84,8 +83,9 @@ const transformCustomField = customField => {
   switch (customField.externalId) {
     case 'patientData.gender':
       customField = {
+        type: 'select',
         i18nKeyCaption: 'Genderi18nCaptionKey',
-        payloadDestinationPath: 'gender',
+        source: 'patientData.gender',
         items: [
           { key: 1, value: 'Male', i18nKeyValue: 'male', order: 0 },
           { key: 0, value: 'Female', i18nKeyValue: 'female', order: 10 },
@@ -94,14 +94,16 @@ const transformCustomField = customField => {
       break
     case 'patientData.age':
       customField = {
+        type: 'textbox',
         i18nKeyCaption: 'AgeFieldi18nKey',
-        payloadDestinationPath: 'age',
+        source: 'patientData.age',
       }
       break
     case 'patientData.retreatmentCase':
       customField = {
+        type: 'select',
         i18nKeyCaption: 'RetreatCaseFieldi18nKey',
-        payloadDestinationPath: 'retreatmentCase',
+        source: 'patientData.retreatmentCase',
         items: [
           { key: 1, value: 'Yes', i18nKeyValue: 'yes', order: 0 },
           { key: 0, value: 'No', i18nKeyValue: 'no', order: 10 },
@@ -110,20 +112,23 @@ const transformCustomField = customField => {
       break
     case 'patientData.referringClinicianOrFacilityPhoneNumberIfKnown':
       customField = {
+        type: 'textbox',
         i18nKeyCaption: 'Referringphonei18nKeyCaption',
-        payloadDestinationPath: 'referringClinicianOrFacilityPhoneNumberIfKnown',
+        source: 'patientData.referringClinicianOrFacilityPhoneNumberIfKnown',
       }
       break
     case 'patientData.referringFacility':
       customField = {
+        type: 'textbox',
         i18nKeyCaption: 'ReferringFacilityI18nkey',
-        payloadDestinationPath: 'ReferringFacility',
+        source: 'patientData.ReferringFacility',
       }
       break
     case 'patientData.repeatTest':
       customField = {
+        type: 'select',
         i18nKeyCaption: 'RepeatTesti18nKey',
-        payloadDestinationPath: 'repeatTest',
+        source: 'patientData.repeatTest',
         items: [
           { key: 0, value: 'First or second', i18nKeyValue: 'firstOrSecond', order: 0 },
           { key: 1, value: 'Follow-up', i18nKeyValue: 'followUp', order: 10 },
@@ -133,26 +138,30 @@ const transformCustomField = customField => {
       break
     case 'patientData.patientName':
       customField = {
+        type: 'textbox',
         i18nKeyCaption: 'PatientNameI18nCaptionKey',
-        payloadDestinationPath: 'name',
+        source: 'patientData.name',
       }
       break
     case 'patientData.address':
       customField = {
+        type: 'textbox',
         i18nKeyCaption: 'AddressI18nCaptionKey',
-        payloadDestinationPath: 'address',
+        source: 'patientData.address',
       }
       break
     case 'patientData.mobileNumber':
       customField = {
+        type: 'textbox',
         i18nKeyCaption: 'MobileNumberI18nkey',
-        payloadDestinationPath: 'PatientPhone',
+        source: 'patientData.PatientPhone',
       }
       break
     case 'patientData.typeOfPatient':
       customField = {
+        type: 'select',
         i18nKeyCaption: 'TypeOfPatientI18nKey',
-        payloadDestinationPath: 'TypeOfPatient',
+        source: 'patientData.TypeOfPatient',
         items: [
           {
             key: 'Failures_of_Category_I',
@@ -227,8 +236,9 @@ const transformCustomField = customField => {
       break
     case 'patientData.patientHistory':
       customField = {
+        type: 'select',
         i18nKeyCaption: 'PatientHistoryI18nKey',
-        payloadDestinationPath: 'PatientHistory',
+        source: 'patientData.PatientHistory',
         items: [
           { key: 'unknown', value: 'Unknown history', i18nKeyValue: 'unknown', order: 0 },
           { key: 'new', value: 'New', i18nKeyValue: 'new', order: 10 },
@@ -238,8 +248,9 @@ const transformCustomField = customField => {
       break
     case 'patientData.patientRetreatment':
       customField = {
+        type: 'select',
         i18nKeyCaption: 'PatientRetreatmentI18nKey',
-        payloadDestinationPath: 'PatientRetreatment',
+        source: 'patientData.PatientRetreatment',
         items: [
           { key: 'Category-I', value: 'Category I', i18nKeyValue: 'Category-I', order: 0 },
           { key: 'Retreatment', value: 'Retreatment', i18nKeyValue: 'Retreatment', order: 10 },
@@ -248,8 +259,9 @@ const transformCustomField = customField => {
       break
     case 'patientData.hivStatus':
       customField = {
+        type: 'select',
         i18nKeyCaption: 'HIVStatusI18nKey',
-        payloadDestinationPath: 'HIVStatus',
+        source: 'patientData.HIVStatus',
         items: [
           { key: 'positive', value: 'Positive', i18nKeyValue: 'positive', order: 10 },
           { key: 'negative', value: 'Negative', i18nKeyValue: 'negative', order: 20 },
@@ -259,8 +271,9 @@ const transformCustomField = customField => {
       break
     case 'patientData.sampleType':
       customField = {
+        type: 'select',
         i18nKeyCaption: 'SampleTypeI18nKey',
-        payloadDestinationPath: 'SampleType',
+        source: 'patientData.SampleType',
         items: [
           { key: 'pulmonary', value: 'Pulmonary', i18nKeyValue: 'pulmonary', order: 10 },
           { key: 'extra', value: 'Extra-pulmonary', i18nKeyValue: 'extra', order: 20 },
@@ -269,14 +282,16 @@ const transformCustomField = customField => {
       break
     case 'patientData.tbRegistrationNumberPrevious':
       customField = {
+        type: 'textbox',
         i18nKeyCaption: 'TBRegistrationNumberPreviousI18nKey',
-        payloadDestinationPath: 'tbRegistrationNumberPrevious',
+        source: 'patientData.tbRegistrationNumberPrevious',
       }
       break
     case 'patientData.tbRegistrationNumberCurrent':
       customField = {
+        type: 'textbox',
         i18nKeyCaption: 'TBRegistrationNumberCurrentI18nKey',
-        payloadDestinationPath: 'tbRegistrationNumberCurrent',
+        source: 'patientData.tbRegistrationNumberCurrent',
       }
       break
 
