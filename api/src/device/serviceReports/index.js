@@ -18,6 +18,7 @@ const { getModuleStatusReportData } = require('./moduleStatusReport')
 const { getDevicesWithCountsForTB } = require('./deviceReport')
 const { getAllDeviceReportData } = require('./devicesAndSitesOverviewReport')
 const { getResultCategoryGroupColumns } = require('../common/db')
+const { getErrorsByDevices } = require('./getErrorsByDevices')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -455,6 +456,17 @@ async function getAllDeviceReport(auth, query) {
   }
 }
 
+async function getErrorsByDevicesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const data = await getErrorsByDevices(dataConstraints, query)
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -467,4 +479,5 @@ module.exports = {
   getModuleStatusReport,
   getDevicesWithCountsForTBReport,
   getAllDeviceReport,
+  getErrorsByDevicesReport,
 }
