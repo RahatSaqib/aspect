@@ -854,68 +854,6 @@ async function getDevicesForReport(auth, query) {
   return result
 }
 
-async function getErrorCodesByDeviceReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const { getCount, queryResults, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(
-    dataConstraints,
-    query
-  )
-
-  const getItems = deviceQuery
-    .clone()
-    .groupBy('d.id')
-    .modify(sortPageParams, query, 'name')
-    .distinct([
-      'd.name',
-      'd.id',
-      queryResults.clone().where('r.errorCode', '5011').countDistinct('r.id').as('error_5011'),
-      queryResults.clone().where('r.errorCode', '5007').countDistinct('r.id').as('error_5007'),
-      queryResults.clone().where('r.errorCode', '5006').countDistinct('r.id').as('error_5006'),
-      queryResults.clone().where('r.errorCode', '2008').countDistinct('r.id').as('error_2008'),
-      queryResults.clone().where('r.errorCode', '2005').countDistinct('r.id').as('error_2005'),
-      queryResults.clone().where('r.errorCode', '2037').countDistinct('r.id').as('error_2037'),
-      queryResults.clone().where('r.errorCode', '2025').countDistinct('r.id').as('error_2025'),
-      queryResults.clone().where('r.errorCode', '2022').countDistinct('r.id').as('error_2022'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.Error)
-        .whereRaw(
-          `(
-            r.errorCode IS NULL 
-            OR 
-            r.errorCode NOT IN ('5011', '5007', '5006', '2008', '2005', '2037', '2025', '2022')
-          )`
-        )
-        .countDistinct('r.id')
-        .as('error_other'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.NoResult)
-        .countDistinct('r.id')
-        .as('mtbNoResult'),
-      queryResults.clone().where('r.resultCategory1', resultCategoryIds.Invalid).countDistinct('r.id').as('mtbInvalid'),
-    ])
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const result = {
-    ok: true,
-    total,
-    length: data.length,
-    data,
-    dataSelector: ({ name, ...dataRow }) => {
-      return {
-        name,
-        ...dataRow,
-        total: Object.values(dataRow).reduce((a, b) => a + b),
-      }
-    },
-  }
-
-  return result
-}
-
 async function getDevicesForRifResistanceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
@@ -1737,7 +1675,6 @@ module.exports = {
   updateDeviceMaintenance,
   getDevicePerformance,
   getDevicesForReport,
-  getErrorCodesByDeviceReport,
   getDevicesForRifResistanceReport,
   getDeviceByDeviceId,
   onDeviceMaintenanceStatusLogged,

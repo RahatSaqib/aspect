@@ -92,13 +92,13 @@ const criticalErrorsByDevice = {
     },
     {
       sortOrder: 1,
-      moduleName: 'device/service',
-      functionName: 'getErrorCodesByDeviceReport',
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorsByDevicesReport',
       query: {
-        sortCol: 'name',
-        sortDir: 'asc',
         hasResults: 1,
-        deviceTypeId: 'CepheidGeneXpert',
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        avoidStreaming: true,
       },
     },
   ],
@@ -547,7 +547,7 @@ const devicesAndSitesOverview = {
      */
     {
       sortOrder: 2,
-      moduleName: 'device/serviceReports/devicesAndSitesOverviewReport',
+      moduleName: 'device/serviceReports',
       functionName: 'getErrorsByDevicesReport',
       query: {
         hasResults: 1,
