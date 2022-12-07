@@ -53,7 +53,7 @@ const HorizontalAppBar = ({ userRequestedLogout }) => {
       <Toolbar>
         <IconButton className={cssClasses('AppBar__leftIcon')} aria-label="Logo" onClick={navigateRoot}>
           <img className={cssClasses('ConfluenceIcon')} src={Logo} alt="" />
-          {version.v && <span className={cssClasses('version')}>v{version.v}</span>}
+          {!!version?.v && <span className={cssClasses('version')}>v{version.v}</span>}
         </IconButton>
 
         <LinkNavigation type="horizontal" onClick={() => {}} />
