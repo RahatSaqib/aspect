@@ -5,10 +5,9 @@ const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
 const Sentry = require('@sentry/node')
-
 const config = require('./config')
 const { version } = require('../package.json')
-const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes, asyncHandler } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
@@ -17,6 +16,8 @@ const logger = require('./shared/logger')
 const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
 const { initDictionaryTables } = require('./shared/dictionary')
+const AspectCacheSingleton = require('../aspectCache')
+const cache = AspectCacheSingleton.getInstance()
 
 const { port } = config
 const server = new Hapi.server({
@@ -287,6 +288,30 @@ const start = async () => {
     handler: () => ({
       message: 'Hello! The API is at /api.',
       version,
+    }),
+    config: {
+      auth: false,
+    },
+  })
+
+  // =======================
+  // version endpoint
+  // =======================
+  server.route({
+    method: 'GET',
+    path: '/api/version',
+    handler: asyncHandler(async () => {
+      // version is cached to indicate the new version only when Aspect api restarts,
+      // instead of doing so directly when package.json is updated.
+      const cacheKey = 'version'
+      const cachedVersion = await cache.getValue(cacheKey)
+      if (!cachedVersion) {
+        await cache.setValue(cacheKey, version)
+      }
+
+      return {
+        version: cachedVersion ?? version,
+      }
     }),
     config: {
       auth: false,
