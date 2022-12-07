@@ -133,6 +133,7 @@ const ContactPageStepThree = ({ setStep }) => {
                         error={errors.siteId ? errors.siteId : undefined}
                         helperText={errors.siteId}
                         stateId={values.stateId}
+                        lgaId={values.lgaId}
                       />
                     </Grid>
                     <Grid item xs={12}>
