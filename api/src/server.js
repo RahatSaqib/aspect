@@ -292,6 +292,20 @@ const start = async () => {
       auth: false,
     },
   })
+
+  // =======================
+  // version endpoint
+  // =======================
+  server.route({
+    method: 'GET',
+    path: '/api/version',
+    handler: () => ({
+      version,
+    }),
+    config: {
+      auth: false,
+    },
+  })
   // =======================
   // use plugin to mount all API routes at /api
   // =======================
