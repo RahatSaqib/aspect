@@ -32,7 +32,7 @@ const HorizontalAppBar = ({ userRequestedLogout }) => {
   const navigate = useNavigate()
   const navigateRoot = () => navigate('/')
   const navigateCurrentAccountDetails = () => navigate('/account-details/current')
-  const [version, setVersion] = useState({ fetched: false, v: '0.0.0' })
+  const [version, setVersion] = useState({ fetched: false, v: '' })
 
   useEffect(() => {
     const getVersion = async () => {
@@ -53,7 +53,7 @@ const HorizontalAppBar = ({ userRequestedLogout }) => {
       <Toolbar>
         <IconButton className={cssClasses('AppBar__leftIcon')} aria-label="Logo" onClick={navigateRoot}>
           <img className={cssClasses('ConfluenceIcon')} src={Logo} alt="" />
-          <span className={cssClasses('version')}>v{version.v}</span>
+          {version.v && <span className={cssClasses('version')}>v{version.v}</span>}
         </IconButton>
 
         <LinkNavigation type="horizontal" onClick={() => {}} />
