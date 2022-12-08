@@ -179,7 +179,8 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
     .where('w.id', webhookMessageId)
     .first('w.personId', 'w.resultId', 'n.reportId')
 
-  const dataConstraints = await getConstraints({ personId })
+  const authLikeObject = { credentials: { personId } }
+  const dataConstraints = await getConstraints(authLikeObject.credentials)
 
   const data = await knex('WebhookMessage as m')
     .innerJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
@@ -203,7 +204,11 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'tmpl.params as paramsTemplate'
     )
 
-  const message = await processUsingDataSourceQuery(data, ['payloadTemplate', 'urlTemplate', 'fileNameTemplate'])
+  const message = await processUsingDataSourceQuery(
+    data,
+    ['payloadTemplate', 'urlTemplate', 'fileNameTemplate'],
+    authLikeObject
+  )
   // TODO replace template values of header/params
   message.headers = data.headersTemplate
   message.params = data.paramsTemplate

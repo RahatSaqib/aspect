@@ -10,6 +10,7 @@ async function getPartnerByConstraints(dataConstraints) {
       'maxDaysDeviceNoResults',
       'dueDaysInventoryStockout',
       'dueDaysInventoryStockExpiring',
+      'serverUrl',
     ])
 
   return partner

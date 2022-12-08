@@ -3,11 +3,10 @@ const { formatDistanceStrict, parseISO } = require('date-fns')
 const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
-const config = require('../config')
-
 const { knex } = require('../db')
 const { parseDateOrDefault, formatDateOrDefault, getFormattedDateTimeWithTimezone } = require('../shared/date')
 const { addConstraints } = require('../auth/constraints')
+const getCurrentPartner = require('../partner/getCurrentPartner')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -236,11 +235,12 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
  *   The object must also contain the template strings that will be processed:
  * @param  {Array} templateFields: the keys in the data object that contain the string templates to be processed
  *   EG: [ 'emailSubjectTemplate', 'emailBodyTemplate' ]
+ * @param  {Object} auth: auth object just in case of report based notifications that needs partnerData and therefore constraints
  * @return an object containing the processed string templates as specified in templateFields
  *   EG: { emailSubject: 'The processed subject string', emailBody: 'The processed body string' }
  */
-async function processUsingDataSourceQuery(data, templateFields) {
-  const ds = await getBaseDataSource(data)
+async function processUsingDataSourceQuery(data, templateFields, auth) {
+  const ds = await getBaseDataSource(data, auth)
 
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
@@ -371,12 +371,13 @@ async function processUsingDataSourceQuery(data, templateFields) {
       displayPreferences: { <the displayPreferences in the partner's plugin configuration EG: api\src\plugin\partner\Myanmar\settings.js> }
     }
  */
-async function getBaseDataSource(data) {
+async function getBaseDataSource(data, auth) {
   const d = data || {}
   const { loadPlugin } = require('../plugin/registration')
   const { displayPreferences = {} } = await loadPlugin([d.partnerPlugin], 'settings')
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
+  const { serverUrl } = await getCurrentPartner(auth)
   return {
     country: {
       name: d.countryName,
@@ -471,7 +472,7 @@ async function getBaseDataSource(data) {
       type: d.notificationTypeName,
     },
     report: {
-      downloadLink: `${config.url}/api/reports/download?token=${d.reportToken}`,
+      downloadLink: `${serverUrl}/api/reports/download?token=${d.reportToken}`,
     },
     displayPreferences,
     timezone: d.timezone,
