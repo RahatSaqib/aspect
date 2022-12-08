@@ -22,7 +22,6 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
   const { size } = getPageParams(query)
-  const { page } = query
 
   const resultQuery = generateResultQueryV2(query, dataConstraints, false)
 
@@ -53,7 +52,7 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
     length: transformedData.length,
     pages: totalPages,
     hasNext: !!nextPage,
-    offset: page || 0,
+    offset: query.page || 0,
     data: transformedData,
   }
 
