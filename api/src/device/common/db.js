@@ -439,6 +439,7 @@ function getResultCategoryGroupColumns(query) {
     .modify(filterParams, query, {
       assayId: 'a.id',
     })
+    .orderBy('columnName')
 }
 module.exports = {
   getDeviceWorkload,
