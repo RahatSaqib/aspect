@@ -428,7 +428,7 @@ function getResultCategoryGroupColumns(query) {
     .innerJoin('ResultCategory AS rc1', 'rcg.resultCategory1Id', 'rc1.id')
     .leftJoin('ResultCategory AS rc2', 'rcg.resultCategory2Id', 'rc2.id')
     .select([
-      'rcg.assayId',
+      knex.raw('GROUP_CONCAT(rcg.assayId) AS assayId'),
       'rcg.resultCategory1Id',
       'rcg.resultCategory2Id',
       knex.raw('CONCAT(rcg.assayId, "_",IFNULL(rc1.id, ""), "_", IFNULL(rc2.id, "")) AS columnKey'),
@@ -436,6 +436,11 @@ function getResultCategoryGroupColumns(query) {
         'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
       ),
     ])
+    .groupBy(
+      knex.raw(
+        'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), ""))'
+      )
+    ) // Equal to columnName
     .modify(filterParams, query, {
       assayId: 'a.id',
     })
