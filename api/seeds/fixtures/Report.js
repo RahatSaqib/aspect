@@ -556,20 +556,6 @@ const devicesAndSitesOverview = {
         avoidStreaming: true,
       },
     },
-    /**
-     * sheet `Devices TB Reach`
-     */
-    {
-      sortOrder: 3,
-      moduleName: 'device/serviceReports',
-      functionName: 'getDevicesWithCountsForTBReport',
-      query: {
-        hasResults: 1,
-        sortCol: 'name',
-        sortDir: 'asc',
-        avoidStreaming: true,
-      },
-    },
   ],
 }
 
