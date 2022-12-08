@@ -168,7 +168,7 @@ const downloadResultResponseValidationV2 = () => {
     offset: Joi.number().required().description('Current page number'),
     pages: Joi.number().required().description('Total number of pages'),
     nextPage: Joi.number().allow(false).description('Next page to call for more records'),
-    haseNext: Joi.bool().allow(false).description('If there is next page then it will be true else it will be false'),
+    hasNext: Joi.bool().allow(false).description('If there is next page then it will be true else it will be false'),
     data: Joi.array()
       .required()
       .description('The results')

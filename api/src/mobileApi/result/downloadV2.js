@@ -22,6 +22,7 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
   const { size } = getPageParams(query)
+  const { page } = query
 
   const resultQuery = generateResultQueryV2(query, dataConstraints, false)
 
@@ -39,7 +40,7 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
 
   const transformedData = getTransformedDataV2(data, setDelivered, followUps, comments)
 
-  // total pages calculation (zero based)
+  // total pages calculation
   const totalPages = Math.ceil(total / size)
 
   // Next page available or not calculation
@@ -50,16 +51,15 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
     total,
     awaitingTreatment,
     length: transformedData.length,
-    data: transformedData,
     pages: totalPages,
-    haseNext: false,
-    offset: 0,
+    hasNext: false,
+    offset: page || 0,
+    data: transformedData,
   }
 
   if (nextPage) {
-    result.offset = nextPage - 1
     result.nextPage = nextPage
-    result.haseNext = true
+    result.hasNext = true
   }
 
   return result
