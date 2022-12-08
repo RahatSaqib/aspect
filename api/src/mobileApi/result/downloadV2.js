@@ -52,14 +52,13 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
     awaitingTreatment,
     length: transformedData.length,
     pages: totalPages,
-    hasNext: false,
+    hasNext: !!nextPage,
     offset: page || 0,
     data: transformedData,
   }
 
   if (nextPage) {
     result.nextPage = nextPage
-    result.hasNext = true
   }
 
   return result
