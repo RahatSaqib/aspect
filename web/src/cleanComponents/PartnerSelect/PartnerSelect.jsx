@@ -34,6 +34,7 @@ const PartnerSelect = ({ id, name, label, value, onChange, error, helperText }) 
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
             onClick={() => onChange({ target: { name, value: '' } })}
+            disabled={(partnersData || []).length === 1}
           >
             <ClearIcon />
           </IconButton>

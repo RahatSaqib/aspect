@@ -26,6 +26,7 @@ const LgaSelect = ({ id, name, label, value, onChange, error, helperText, stateI
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
             onClick={() => onChange({ target: { name, value: '' } })}
+            disabled={(lgas || []).length === 0}
           >
             <ClearIcon />
           </IconButton>

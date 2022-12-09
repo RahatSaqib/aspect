@@ -25,6 +25,7 @@ const DeviceTypeSelect = ({ id, name, label, value, onChange, error, helperText,
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
             onClick={() => onChange({ target: { name, value: '' } })}
+            disabled={disabled}
           >
             <ClearIcon />
           </IconButton>

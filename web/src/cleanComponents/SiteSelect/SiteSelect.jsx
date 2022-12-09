@@ -32,6 +32,7 @@ const SiteSelect = ({ id, name, label, value, onChange, error, helperText, disab
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
             onClick={() => onChange({ target: { name, value: '' } })}
+            disabled={disabled}
           >
             <ClearIcon />
           </IconButton>

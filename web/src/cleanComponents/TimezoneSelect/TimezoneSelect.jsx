@@ -1,9 +1,8 @@
-/* eslint prettier/prettier: ["error", { "printWidth": 140 }] */
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { MenuItem, TextField, IconButton } from '@mui/material'
 
-const TimezoneSelect = ({ id, name, label, value, onChange, error, helperText }) => {
+const TimezoneSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
   return (
     <TextField
       id={id}
@@ -15,12 +14,14 @@ const TimezoneSelect = ({ id, name, label, value, onChange, error, helperText })
       variant="standard"
       value={value}
       onChange={onChange}
+      disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
         endAdornment: (
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
             onClick={() => onChange({ target: { name, value: '' } })}
+            disabled={disabled}
           >
             <ClearIcon />
           </IconButton>
