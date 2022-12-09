@@ -13,7 +13,6 @@ const {
   updateResult,
   getTreatmentStatusLogId,
   updateResultTreatmentStatusLog,
-  getResultFollowUpsbyResultIdExternalId,
   addResultFollowUp,
   getAffectedRowsbyResultFollowUp,
   getLatestResultFollowUps,
@@ -24,6 +23,7 @@ const {
   getCommentsOfResultById,
   getItemsV2,
   generateResultQueryV2,
+  getLatestResultWorkflowLog,
 } = require('./common/db')
 
 async function clinicalResponse(request) {
@@ -56,22 +56,16 @@ async function clinicalResponse(request) {
   }
 }
 
-// Add result folloup basaed on followup type and value. Delete followup if any followup type's value is null
+// Add result follow up based on follow up type and value. Delete follow up if any follow up type's value is null
 async function addClinicalResponse(request, data, latestFollowUp) {
   const { auth, params } = request
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
-  const result = await showResult(request)
   if (data.value && data.value.toLowerCase().replace(/\s'/g, '') !== 'null') {
     const followUp = await getFollowUpsForResultFollowup(data.value)
     if (!followUp) {
       return Boom.badRequest('Invalid follow up ID')
-    }
-
-    const resultFollowUp = await getResultFollowUpsbyResultIdExternalId(resultId, data.value)
-    if (resultFollowUp) {
-      return Boom.badRequest('This result already has a follow up with this external ID.')
     }
 
     if (!latestFollowUp)
@@ -86,12 +80,12 @@ async function addClinicalResponse(request, data, latestFollowUp) {
         now
       )
   } else {
-    await deleteResultFollowUp(result, data.fieldName, data.clientTime)
+    await deleteResultFollowUp(resultId, data.fieldName, data.clientTime)
   }
   return updateTreatmentStatusBasedOnFollowUps(
     request,
     currentUserId,
-    result,
+    resultId,
     data.clientTime,
     'FollowUp',
     'Client API'
@@ -103,7 +97,6 @@ async function updateResultFollowUp(request, data, followUps) {
   const { auth, params } = request
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
-  const result = await showResult(request)
 
   const type = data.fieldName === 'outcomeOccurred' ? 'outcome' : 'treatment'
   const followUp = _.find(followUps, f => f.followUpTypeExternalId === type)
@@ -116,26 +109,18 @@ async function updateResultFollowUp(request, data, followUps) {
     followUp.externalId,
     currentUserId,
     followUp,
-    followUp.id,
     data.clientTime
   )
   if (affectedRows === 0) {
     return Boom.notFound('Could not find follow up')
   }
 
-  return updateTreatmentStatusBasedOnFollowUps(
-    request,
-    currentUserId,
-    result,
-    data.clientTime,
-    'FollowUp',
-    'Client API'
-  )
+  return updateTreatmentStatusBasedOnFollowUps(request, currentUserId, data.clientTime, 'FollowUp', 'Client API')
 }
 
 // supporting method for updateResultFollowUp
-async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, result, clientDate, data, method) {
-  const followUps = await getResultFollowUps(result)
+async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, resultId, clientDate, data, method) {
+  const followUps = await getResultFollowUps(resultId)
   let treatmentStatusExternalId = 'AwaitingTreatment'
   if (_.find(followUps, f => f.followUpTypeExternalId === 'treatment')) {
     treatmentStatusExternalId = 'OnTreatment'
@@ -146,7 +131,7 @@ async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, res
   return updateTreatmentStatus(
     request,
     currentUserId,
-    result,
+    resultId,
     null,
     treatmentStatusExternalId,
     data,
@@ -159,7 +144,7 @@ async function updateTreatmentStatusBasedOnFollowUps(request, currentUserId, res
 async function updateTreatmentStatus(
   request,
   currentUserId,
-  result,
+  resultId,
   resultTreatmentStatusId,
   resultTreatmentStatusExternalId,
   data,
@@ -170,8 +155,7 @@ async function updateTreatmentStatus(
 
   const lastTreatment = await updateTreatmentStatusByResultId(
     currentUserId,
-    result.id,
-    result.resultTreatmentStatusId,
+    resultId,
     resultTreatmentStatusExternalId,
     resultTreatmentStatusId,
     data,
@@ -183,7 +167,7 @@ async function updateTreatmentStatus(
   response.treatmentStatus = lastTreatment
 
   if (!response.resultTreatmentStatusCreatedOn) {
-    response.resultTreatmentStatusCreatedOn = result.endedOn || result.startedOn || now
+    response.resultTreatmentStatusCreatedOn = response.endedOn || response.startedOn || now
   }
 
   return response
@@ -193,7 +177,6 @@ async function updateTreatmentStatus(
 async function updateTreatmentStatusByResultId(
   userId,
   resultId,
-  currentTreatmentStatusId,
   resultTreatmentStatusExternalId,
   resultTreatmentStatusId,
   data,
@@ -218,7 +201,7 @@ async function updateTreatmentStatusByResultId(
     treatmentStatusId = resultTreatmentStatusId
   }
   let lastTreatment = await getLastTreatmentStatusByResult(resultId)
-  if (treatmentStatusId !== currentTreatmentStatusId && treatmentStatusId && lastTreatment) {
+  if (treatmentStatusId && lastTreatment) {
     const [treatmentStatusLogId] = await setTreatmentStatusLog(
       resultId,
       treatmentStatusId,
@@ -250,7 +233,7 @@ async function updateWorkflowStatus(request, data) {
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = await showResult(request)
+  const result = await getLatestResultWorkflowLog(resultId)
 
   const resultWorkflowLogEntry = {
     resultId,
@@ -302,12 +285,12 @@ async function showResult(request) {
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
   // get follow ups for all result in the response for performance (filter later)
-  const followUps1 = await getFollowUpsOfResultById(data)
+  const followUps = await getFollowUpsOfResultById(data)
   // get comments for all result in the response for performance (filter later)
   const comments = await getCommentsOfResultById(data)
   const latestFollowup = await getLatestResultFollowUps(resultId)
 
-  const result = await getResultItemTransformedDataV2(data, true, followUps1, comments, latestFollowup)
+  const result = await getResultItemTransformedDataV2(data, true, followUps, comments, latestFollowup)
   return result || Boom.notFound()
 }
 

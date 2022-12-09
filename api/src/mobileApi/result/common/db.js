@@ -495,11 +495,11 @@ const getFollowUpsForResultFollowup = followUpExternalId => {
     .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
 }
 
-const getResultFollowUps = result => {
+const getResultFollowUps = resultId => {
   return knex('ResultFollowUp as r')
     .join('FollowUp as f', 'r.followUpId', 'f.id')
     .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
-    .where('resultId', result.id)
+    .where('resultId', resultId)
     .select('f.externalId', 't.externalId as followUpTypeExternalId')
 }
 
@@ -531,11 +531,11 @@ const getLatestResultFollowUps = id => {
     .groupBy('t.externalId')
 }
 
-const deleteResultFollowUp = (result, type, date) => {
+const deleteResultFollowUp = (resultId, type, date) => {
   return knex('ResultFollowUp')
     .join('FollowUp as f', 'ResultFollowUp.followUpId', 'f.id')
     .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
-    .where('resultId', result.id)
+    .where('resultId', resultId)
     .andWhere('t.externalId', type)
     .andWhere('ResultFollowUp.updatedOn', '<', date)
     .update({
@@ -543,17 +543,9 @@ const deleteResultFollowUp = (result, type, date) => {
     })
 }
 
-const getResultFollowUpsbyResultIdExternalId = (resultId, externalId) => {
-  return knex('ResultFollowUp')
-    .where('resultId', resultId)
-    .where('externalId', externalId)
-    .where('isDeleted', false)
-    .first('id')
-}
-
-const getAffectedRowsbyResultFollowUp = (date, resultId, externalId, currentUserId, followUp, id, clientDate) => {
+const getAffectedRowsbyResultFollowUp = (date, resultId, externalId, currentUserId, followUp, clientDate) => {
   const query = knex('ResultFollowUp')
-    .where('followUpid', id || '-1')
+    .where('followUpId', followUp.id || '-1')
     .where('resultId', resultId)
     .where('externalId', externalId || '-1')
     .where('updatedOn', '<', clientDate)
@@ -644,6 +636,15 @@ const updateResultTreatmentStatusLog = (treatmentStatusLogId, data, changedOn) =
   })
 }
 
+// feature: clinical response
+const getLatestResultWorkflowLog = resultId => {
+  return knex('ResultWorkflowLog')
+    .first()
+    .where('resultId', resultId)
+    .orderBy('createdOn', 'desc')
+    .select('resultWorkflowStatusId', 'changedOn as resultWorkflowChangedOn')
+}
+
 module.exports = {
   generateResultQuery,
   getCount,
@@ -664,7 +665,6 @@ module.exports = {
   getFollowUpsOfResultById,
   getFollowUpsForResultFollowup,
   getAffectedRowsbyResultFollowUp,
-  getResultFollowUpsbyResultIdExternalId,
   getResultFollowUps,
   getLastTreatmentStatusByResult,
   getTreatmentStatus,
@@ -677,4 +677,5 @@ module.exports = {
   deleteResultFollowUp,
   insertResultWorkflowLog,
   updateResultWorkflowLog,
+  getLatestResultWorkflowLog,
 }

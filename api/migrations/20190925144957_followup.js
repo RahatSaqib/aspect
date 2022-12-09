@@ -38,6 +38,7 @@ async function up(knex) {
     followUp.integer('createdBy').notNullable().unsigned().index().references('id').inTable('User')
     followUp.datetime('updatedOn').notNullable().defaultTo(knex.fn.now())
     followUp.integer('updatedBy').notNullable().unsigned().index().references('id').inTable('User')
+    followUp.unique(['resultId', 'externalId'])
   })
 }
 
