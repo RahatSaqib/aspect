@@ -43,7 +43,7 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
   const totalPages = Math.ceil(total / size)
 
   // Next page available or not calculation
-  const nextPage = query.page < totalPages - 1 ? query.page + 1 : false
+  const nextPage = query.offset < totalPages - 1 ? query.offset + 1 : false
 
   const result = {
     ok: true,
@@ -52,7 +52,7 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
     length: transformedData.length,
     pages: totalPages,
     hasNext: !!nextPage,
-    offset: query.page || 0,
+    offset: query.offset || 0,
     data: transformedData,
   }
 
