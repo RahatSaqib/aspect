@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { getUser } = require('../../auth/service')
 const { getResultItemTransformedDataV2 } = require('./common/logic')
 const { getConstraints } = require('../../auth/constraints')
-const { resultTreatmentStatusToId } = require('../../shared/dictionary')
+const { resultTreatmentStatusToId, resultWorkflowStatusToId } = require('../../shared/dictionary')
 const {
   getFollowUpsForResultFollowup,
   getResultFollowUps,
@@ -26,9 +26,17 @@ const {
   getLatestResultWorkflowLog,
 } = require('./common/db')
 
+const DELIVERED = 'Delivered'
+const ACKNOWLEDGED = 'Acknowledged'
+
 async function clinicalResponse(request) {
   const { payload, params } = request
   const { resultId } = params
+  payload.sort(function (a, b) {
+    const anew = new Date(a.clientTime)
+    const bnew = new Date(b.clientTime)
+    return anew - bnew
+  })
   const clinicalResponseData = payload
   const followUps = await getLatestResultFollowUps(resultId)
   let response
@@ -40,16 +48,32 @@ async function clinicalResponse(request) {
         (data.fieldName === 'treatment' || data.fieldName === 'outcome')
       ) {
         response = await addClinicalResponse(request, data, latestFollowUp)
-      } else if (
-        (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
-        (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred')
-      ) {
-        response = await updateResultFollowUp(request, data, followUps)
       } else if (data.fieldName === 'confirmed') {
         response = await updateWorkflowStatus(request, data)
       }
     })
-  )
+  ).then(async () => {
+    const followUpData = await getLatestResultFollowUps(resultId)
+    const followUps = {}
+    followUpData.forEach(data => {
+      if (followUps[data.followUpTypeExternalId] !== undefined) {
+        if (followUps[data.followUpTypeExternalId].date < data.date) {
+          followUps[data.followUpTypeExternalId] = data
+        }
+      } else {
+        followUps[data.followUpTypeExternalId] = data
+      }
+    })
+    clinicalResponseData.map(async data => {
+      const latestFollowUp = _.find(followUps, f => f.followUpTypeExternalId === data.fieldName)
+      if (
+        (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
+        (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred')
+      ) {
+        response = await updateResultFollowUp(request, data, followUps)
+      }
+    })
+  })
   return {
     ok: !!response,
     data: response,
@@ -115,7 +139,14 @@ async function updateResultFollowUp(request, data, followUps) {
     return Boom.notFound('Could not find follow up')
   }
 
-  return updateTreatmentStatusBasedOnFollowUps(request, currentUserId, data.clientTime, 'FollowUp', 'Client API')
+  return updateTreatmentStatusBasedOnFollowUps(
+    request,
+    currentUserId,
+    resultId,
+    data.clientTime,
+    'FollowUp',
+    'Client API'
+  )
 }
 
 // supporting method for updateResultFollowUp
@@ -234,10 +265,11 @@ async function updateWorkflowStatus(request, data) {
 
   // get the result so we can check access and if status changed
   const result = await getLatestResultWorkflowLog(resultId)
-
+  const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
+  const deliveredId = await resultWorkflowStatusToId(DELIVERED)
   const resultWorkflowLogEntry = {
     resultId,
-    resultWorkflowStatusId: data.value ? 9 : 8,
+    resultWorkflowStatusId: data.value ? acknowledgedId : deliveredId,
     createdBy: currentUserId,
     reason: null,
     changedOn: data.clientTime,
@@ -245,8 +277,8 @@ async function updateWorkflowStatus(request, data) {
   const errorMessage = await updateResultWorkflowStatusByResultId(
     resultWorkflowLogEntry,
     data.clientTime,
-    result.resultWorkflowStatusId,
-    result.resultWorkflowChangedOn
+    result?.resultWorkflowStatusId,
+    result?.resultWorkflowChangedOn
   )
 
   if (errorMessage) {

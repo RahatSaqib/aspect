@@ -3,7 +3,10 @@ const dayjs = require('dayjs')
 const { pipe, find, values } = require('ramda')
 const { subDays } = require('date-fns')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/date')
+const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 const { knex } = require('../../../db')
+
+const ACKNOWLEDGED = 'Acknowledged'
 
 const assayAvatarColorsIcon = {
   tb: {
@@ -266,8 +269,9 @@ async function getResultByResultId(
   if (latestFollowUps) {
     const treatment = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'treatment')
     const outcome = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'outcome')
+    const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
     data.clinicalResponse = {
-      recorded: resultWorkflowlog[0].resultWorkflowStatusId === 9,
+      recorded: resultWorkflowlog[0].resultWorkflowStatusId === acknowledgedId,
       confirmedOn: resultWorkflowlog[0].changedOn,
       treatment: treatment?.externalId,
       treatmentStarted: treatment?.date,

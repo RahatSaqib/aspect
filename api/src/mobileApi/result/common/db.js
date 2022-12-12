@@ -503,34 +503,6 @@ const getResultFollowUps = resultId => {
     .select('f.externalId', 't.externalId as followUpTypeExternalId')
 }
 
-const getLatestResultFollowUps = id => {
-  return knex('ResultFollowUp as r')
-    .join('FollowUp as f', 'r.followUpId', 'f.id')
-    .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
-    .join(
-      knex('ResultFollowUp as sr')
-        .join('FollowUp as sf', 'sr.followUpId', 'sf.id')
-        .join('FollowUpType as st', 'sf.followUpTypeId', 'st.id')
-        .select('st.externalId')
-        .where('resultId', id)
-        .max('sr.createdOn as max_date')
-        .as('a')
-        .groupBy('st.externalId')
-    )
-    .where('resultId', id)
-    .where('r.isDeleted', false)
-    .select(
-      'f.externalId',
-      't.externalId as followUpTypeExternalId',
-      'f.id',
-      'r.updatedOn',
-      'r.createdOn',
-      'r.date',
-      'r.resultId'
-    )
-    .groupBy('t.externalId')
-}
-
 const deleteResultFollowUp = (resultId, type, date) => {
   return knex('ResultFollowUp')
     .join('FollowUp as f', 'ResultFollowUp.followUpId', 'f.id')
@@ -643,6 +615,22 @@ const getLatestResultWorkflowLog = resultId => {
     .where('resultId', resultId)
     .orderBy('createdOn', 'desc')
     .select('resultWorkflowStatusId', 'changedOn as resultWorkflowChangedOn')
+}
+
+const getLatestResultFollowUps = async id => {
+  return knex('ResultFollowUp as r')
+    .join('FollowUp as f', 'r.followUpId', 'f.id')
+    .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
+    .where('r.resultId', id)
+    .select(
+      'f.externalId',
+      't.externalId as followUpTypeExternalId',
+      'f.id',
+      'r.updatedOn',
+      'r.createdOn',
+      'r.date',
+      'r.resultId'
+    )
 }
 
 module.exports = {
