@@ -1,34 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import { CircularProgress } from '@mui/material'
-import findIndex from 'lodash/findIndex'
-import { FaNotesMedical } from 'react-icons/fa'
+import { CircularProgress, Box, CardContent, Card } from '@mui/material'
+import { useFormikContext } from 'formik'
 import { useMutation, useQuery } from 'react-query'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { getReturnUrl, useUrlQuery } from '../../../components/AspectTable/Helpers'
+import DetailHeader from '../../../components/DetailHeader'
 import AspectForm from '../../../components/Form'
-import FormActions from '../../../components/Form/formActions'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
-import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
 import useI18n from '../../../hooks/useI18n'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 import getFormConfig from '../Forms/editConfig'
 import { ResultDetailsErrors } from './errors'
+import messages from './messages'
 import ResultTransferModal from './ResultTransferModal'
 import { getFormConfigWithData } from './utils'
 
 const AspectResultDetail = () => {
   const intl = useI18n()
-  const { resultId } = useParams()
   const navigate = useNavigate()
+  const { resultId } = useParams()
   const { search } = useLocation()
   const query = useUrlQuery(search)
   const [patientId, setPatientId] = useState()
   const [values, setValues] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
-  const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
 
   const {
     data: queryResponse,
@@ -62,16 +61,6 @@ const AspectResultDetail = () => {
 
       const config = getFormConfigWithData(intl, false, data)
 
-      const action = config.actions.items.find(x => x.id === 'transfer')
-      action.onClick = () => setTransferResultOpen(true)
-      action.isVisible = (permissions, isEditMode) => {
-        return (
-          !isEditMode &&
-          // eslint-disable-next-line lodash/prefer-some
-          findIndex(permissions, elem => elem === 'result:edit') >= 0
-        )
-      }
-
       setFormConfig(config)
       setValues(data)
     } else {
@@ -80,56 +69,87 @@ const AspectResultDetail = () => {
   }, [isLoading, queryResponse])
 
   const { mutate: submitResult } = useMutation(
-    ({ values, id }) => {
+    ({ values }) => {
       let endpoint = RESULT_DETAIL.ENDPOINT
-      if (id) {
-        endpoint += `/${id}`
+      if (resultId) {
+        endpoint += `/${resultId}`
       }
 
-      return fetchWrapperForQueries({
-        endpoint,
-        method: id ? 'PUT' : 'POST',
-        params: {
-          ...values,
-        },
-      })
+      return fetchWrapperForQueries({ endpoint, method: resultId ? 'PUT' : 'POST', params: { ...values } })
     },
-    {
-      onSuccess: () => {
-        const path = getReturnUrl(query.get('returnUrl'), `/browse/result`)
-        navigate(path)
-      },
-    }
+    { onSuccess: () => navigate(getReturnUrl(query.get('returnUrl'), `/browse/result`)) }
   )
 
-  const onSubmit = formik => {
+  return isLoading || !formConfig ? (
+    <CircularProgress />
+  ) : (
+    <FormikProvider config={formConfig}>
+      <DetailForm submitResult={submitResult} values={values} patientId={patientId} formConfig={formConfig} />
+    </FormikProvider>
+  )
+}
+
+const DetailForm = ({ values, patientId, formConfig, submitResult }) => {
+  const intl = useI18n()
+  const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
+  const { setToggleEdit, formik, toggleEdit } = useFormikContext()
+
+  const onSubmit = () => {
     const formConfig = getFormConfig(intl.formatMessage, false)
     const values = sanitizeFormValues(formik.values, { formConfig })
-
-    submitResult({ values, resultId })
+    submitResult({ values })
   }
 
   return (
-    <Shell>
-      {!isLoading && formConfig ? (
-        <FormikProvider config={formConfig}>
-          <ShellHeader icon={FaNotesMedical} title={`${formConfig.title}${patientId}`}>
-            <FormActions config={formConfig} onSubmit={onSubmit} />
-          </ShellHeader>
-          <ShellContent>
+    <>
+      <DetailHeader name={`${formConfig.title}${patientId}`} back="/browse/result">
+        {[
+          {
+            label: intl.formatMessage(messages.transferResult),
+            onClick: () => setTransferResultOpen(true),
+            disabled: toggleEdit,
+          },
+          {
+            label: intl.formatMessage(messages.button_Edit),
+            onClick: () => setToggleEdit(true),
+            disabled: toggleEdit,
+            visible: !toggleEdit,
+          },
+          {
+            label: intl.formatMessage(messages.button_Cancel),
+            onClick: () => setToggleEdit(false),
+            disabled: !toggleEdit,
+            visible: toggleEdit,
+          },
+          { label: intl.formatMessage(messages.button_Save), onClick: () => onSubmit(), disabled: !toggleEdit },
+        ].map(({ label, onClick, disabled = false, visible = true }) =>
+          visible ? (
+            <AspectButton
+              key={label}
+              onClick={onClick}
+              disabled={disabled}
+              color="primary"
+              variant="contained"
+              style={{ margin: '0 4px' }}
+            >
+              {label}
+            </AspectButton>
+          ) : null
+        )}
+      </DetailHeader>
+      <Box component="main" sx={{ pt: 9, pr: 1, pl: 1, pb: 1 }}>
+        <Card>
+          <CardContent>
             <AspectForm config={formConfig} />
-          </ShellContent>
-          <ShellFooter />
-          <ResultTransferModal
-            data={values}
-            isOpen={isTransferResultOpenOpen}
-            onClose={() => setTransferResultOpen(false)}
-          />
-        </FormikProvider>
-      ) : (
-        <CircularProgress />
-      )}
-    </Shell>
+          </CardContent>
+        </Card>
+        <ResultTransferModal
+          data={values}
+          isOpen={isTransferResultOpenOpen}
+          onClose={() => setTransferResultOpen(false)}
+        />
+      </Box>
+    </>
   )
 }
 

@@ -7,7 +7,10 @@ const messagesResult = defineMessages({
     id: 'pages.resultEdit.site',
     defaultMessage: 'Site',
   },
-
+  button_Save: {
+    id: 'pages.resultEdit.button_Save',
+    defaultMessage: 'Save',
+  },
   resultTitle: {
     id: 'pages.resultEdit.resultTitle',
     defaultMessage: 'Result Details',
