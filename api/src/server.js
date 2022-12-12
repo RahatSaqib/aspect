@@ -17,9 +17,11 @@ const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./devic
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
 const { initDictionaryTables } = require('./shared/dictionary')
 const AspectCacheSingleton = require('../aspectCache')
+
 const cache = AspectCacheSingleton.getInstance()
 
 const { port } = config
+
 const server = new Hapi.server({
   port,
   host: '127.0.0.1',
@@ -303,10 +305,9 @@ const start = async () => {
     handler: asyncHandler(async () => {
       // version is cached to indicate the new version only when Aspect api restarts,
       // instead of doing so directly when package.json is updated.
-      const cacheKey = 'version'
-      const cachedVersion = await cache.getValue(cacheKey)
+      const cachedVersion = await cache.getVersion()
       if (!cachedVersion) {
-        await cache.setValue(cacheKey, version)
+        await cache.setVersion(version)
       }
 
       return {

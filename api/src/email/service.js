@@ -112,7 +112,9 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
     .where({ 'm.id': emailMessageId })
     .first('m.personId', 'm.resultId', 'n.reportId', 'm.to', 'p.email', 'p.email2')) || {}
 
-  const dataConstraints = await getConstraints({ personId })
+  const authLikeObject = { credentials: { personId } }
+  const dataConstraints = await getConstraints(authLikeObject.credentials)
+
   const data = await knex('EmailMessage as m')
     .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
@@ -135,12 +137,11 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       .where({ 'jf.externalId': 'labUser' })
       .select('p.name', 'p.title', 'p.phone', 'p.cell', 'p.email')
   }
-  const processedTemplateFields = await processUsingDataSourceQuery(data, [
-    'subjectTemplate',
-    'bodyTemplate',
-    'htmlBodyTemplate',
-    'toTemplate',
-  ])
+  const processedTemplateFields = await processUsingDataSourceQuery(
+    data,
+    ['subjectTemplate', 'bodyTemplate', 'htmlBodyTemplate', 'toTemplate'],
+    authLikeObject
+  )
   if (!processedTemplateFields.to) {
     processedTemplateFields.to = _.uniq(
       _.compact([to, email, email2].map(address => address?.toLowerCase().trim()))
