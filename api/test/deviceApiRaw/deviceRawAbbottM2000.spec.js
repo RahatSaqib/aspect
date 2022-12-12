@@ -277,7 +277,7 @@ aa.`
         expect(result.consumableSerial).to.equal('11176551')
       }
       expect(result.senderVersion).to.equal('1')
-      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
+      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 15000)
       const resultData = JSON.parse(result.resultData)
       expect(resultData).to.containSubset({
         typeOfMessage: 'Production',
@@ -398,7 +398,7 @@ aa.`
         expect(result.consumableSerial).to.equal('11763671')
       }
       expect(result.senderVersion).to.equal('1')
-      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
+      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 15000)
       const resultData = JSON.parse(result.resultData)
       expect(resultData).to.containSubset({
         typeOfMessage: 'Production',
@@ -523,7 +523,7 @@ aa.`
         expect(result.consumableSerial).to.equal('11832001')
       }
       expect(result.senderVersion).to.equal('1')
-      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 10000)
+      expect(result.updatedOn.getTime()).to.be.closeTo(new Date().getTime(), 15000)
       const resultData = JSON.parse(result.resultData)
       expect(resultData).to.containSubset({
         typeOfMessage: 'Production',
