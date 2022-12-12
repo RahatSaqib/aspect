@@ -1,6 +1,5 @@
 const chai = require('chai')
 const _ = require('lodash')
-const Promise = require('bluebird')
 const shared = require('../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
@@ -127,7 +126,7 @@ describe('Mobile API Clinical Response', () => {
       }
     }
 
-    it('It should add clinical response', async () => {
+    it('it should add clinical response', async () => {
       const res = await server
         .post(`${path}/${results[0].id}`)
         .send([
@@ -154,10 +153,9 @@ describe('Mobile API Clinical Response', () => {
         ])
         .set('Authorization', `Bearer ${shared.token}`)
       assertResponseContainingClinicalResponse(res)
-      await Promise.delay(1000)
     })
 
-    it('It should remove all followups for outcome in case of latest outcome value is null', async () => {
+    it('it should remove all followups for outcome in case of latest outcome value is null', async () => {
       const res = await server
         .post(`${path}/${results[0].id}`)
         .send([
@@ -184,7 +182,6 @@ describe('Mobile API Clinical Response', () => {
         ])
         .set('Authorization', `Bearer ${shared.token}`)
       responseContainingNulllOutcomeClinicalResponse(res)
-      await Promise.delay(1000)
     })
   })
 })

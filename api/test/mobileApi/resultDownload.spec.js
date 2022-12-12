@@ -1057,24 +1057,22 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingTestInformation(res, totalResults)
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
+      assertReporterResultDownloadResponseContainingTestInformation(res, totalResults, async () => {
+        // check if the download is register in the table.
+        const { count: totalResult } = await knex('ResultDownloadLog as rdl')
+          .join('Result as r', 'rdl.resultId', 'r.id')
+          .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+          .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
+          .whereIn(
+            'rdl.resultId',
+            _.map(res.body.data, elem => elem.id)
+          )
+          .where('rs.externalId', 'Delivered')
+          .count('rdl.id as count')
+          .first()
 
-      // check if the download is register in the table.
-      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
-        .join('Result as r', 'rdl.resultId', 'r.id')
-        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
-        .whereIn(
-          'rdl.resultId',
-          _.map(res.body.data, elem => elem.id)
-        )
-        .where('rs.externalId', 'Delivered')
-        .count('rdl.id as count')
-        .first()
-
-      assert.isAtLeast(totalResult, res.body.length)
+        assert.isAtLeast(totalResult, res.body.length)
+      })
     })
 
     it('should return clinical response for each test items', async () => {
