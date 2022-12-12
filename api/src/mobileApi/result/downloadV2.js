@@ -39,17 +39,20 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
 
   const transformedData = getTransformedDataV2(data, setDelivered, followUps, comments)
 
-  // total pages calculation (zero based)
-  const totalPages = Math.ceil(total / size) - 1
+  // total pages calculation
+  const totalPages = Math.ceil(total / size)
 
   // Next page available or not calculation
-  const nextPage = query.page < totalPages ? query.page + 1 : false
+  const nextPage = query.offset < totalPages - 1 ? query.offset + 1 : false
 
   const result = {
     ok: true,
     total,
     awaitingTreatment,
     length: transformedData.length,
+    pages: totalPages,
+    hasNext: !!nextPage,
+    offset: query.offset || 0,
     data: transformedData,
   }
 
