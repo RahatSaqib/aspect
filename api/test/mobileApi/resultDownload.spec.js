@@ -1128,8 +1128,11 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body, 'length')
       assert.property(response.body, 'data')
       assert.property(response.body, 'awaitingTreatment')
+      assert.property(response.body, 'pages')
+      assert.property(response.body, 'offset')
       if (!_.isNil(response.body.nextPage)) {
         assert.property(response.body, 'nextPage')
+        assert.isAtLeast(response.body, 'hasNext')
       }
     }
 

@@ -72,7 +72,7 @@ class NotificationCache {
   }
 }
 
-// singleton pattern for cache  to avoid multiple instances
+// singleton pattern for cache to avoid multiple instances
 // singleton pattern class
 class NotificationCacheSingleton {
   static getInstance(knex, issueBased = false) {

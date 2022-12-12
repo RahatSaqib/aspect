@@ -21,7 +21,7 @@ const xdrExtraColumns = Object.fromEntries(
   ])
 )
 
-async function getDeviceReportData(dataConstraints, query) {
+async function getDevicesWithCountsForTB(dataConstraints, query) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
   const {
     mtbDetectedRifNotDetected,
@@ -105,5 +105,5 @@ async function getDeviceReportData(dataConstraints, query) {
 }
 
 module.exports = {
-  getDeviceReportData,
+  getDevicesWithCountsForTB,
 }

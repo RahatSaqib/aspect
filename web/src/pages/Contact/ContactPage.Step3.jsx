@@ -2,6 +2,7 @@ import React from 'react'
 import { Grid, Box, Button } from '@mui/material'
 import { Formik } from 'formik'
 import { useParams, useNavigate } from 'react-router-dom'
+import { string, object } from 'yup'
 import {
   CountrySelect,
   JobSelect,
@@ -47,6 +48,10 @@ const ContactPageStepThree = ({ setStep }) => {
   const { mutate: deleteAssignment } = useDeletePersonAsignment(personId)
   const { mutate: createAssignment } = useCreatePersonAsignment(personId)
 
+  const validationSchema = object({
+    jobFunctionId: string().required(formatMessage(messages.jobRequired)),
+  })
+
   return (
     <>
       <ContactStepper step={2} full />
@@ -55,7 +60,7 @@ const ContactPageStepThree = ({ setStep }) => {
       ) : (
         <Formik
           initialValues={initialValues}
-          // validationSchema={validationSchema}
+          validationSchema={validationSchema}
           onSubmit={(values, { resetForm }) => {
             const data = { ...values, personId }
             Object.keys(data).map(k => {
@@ -80,7 +85,7 @@ const ContactPageStepThree = ({ setStep }) => {
                       <JobSelect
                         id="jobFunctionId"
                         name="jobFunctionId"
-                        label={formatMessage(messages.job)}
+                        label={`${formatMessage(messages.job)} *`}
                         value={values.jobFunctionId}
                         onChange={handleChange}
                         error={errors.jobFunctionId ? errors.jobFunctionId : undefined}
@@ -133,6 +138,7 @@ const ContactPageStepThree = ({ setStep }) => {
                         error={errors.siteId ? errors.siteId : undefined}
                         helperText={errors.siteId}
                         stateId={values.stateId}
+                        lgaId={values.lgaId}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -166,6 +172,7 @@ const ContactPageStepThree = ({ setStep }) => {
                         onChange={handleChange}
                         error={errors.assayTypeId ? errors.assayTypeId : undefined}
                         helperText={errors.assayTypeId}
+                        diseaseId={values.diseaseId}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -178,6 +185,7 @@ const ContactPageStepThree = ({ setStep }) => {
                         error={errors.assayId ? errors.assayId : undefined}
                         helperText={errors.assayId}
                         assayTypeId={values.assayTypeId || ''}
+                        deviceTypeId={values.deviceTypeId}
                       />
                     </Grid>
                   </Grid>

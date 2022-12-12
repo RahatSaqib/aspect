@@ -15,6 +15,10 @@ function requestBaseQuery() {
     maxDate: maxDate.default(new Date().toISOString()),
     siteName: Joi.string().allow('').description('Filter for site name'),
     reportName: Joi.string().allow('').description('Filter for report name'),
+    assayId: Joi.alternatives()
+      .try(Joi.array().items(Joi.number()), Joi.number())
+      .allow(null, '')
+      .description('Filter for assay ID(s)'),
     timeZone: Joi.string().allow('').description('IANA Timezone for requester'),
   }
 }

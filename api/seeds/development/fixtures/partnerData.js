@@ -11,5 +11,5 @@ module.exports = {
   maxDaysDeviceNoResults: 14,
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
-  serverUrl: 'https://systemone.id',
+  serverUrl: 'https://dev.aspect.id',
 }

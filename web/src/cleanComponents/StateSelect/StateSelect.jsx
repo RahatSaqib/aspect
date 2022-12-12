@@ -25,6 +25,7 @@ const StateSelect = ({ id, name, label, value, onChange, error, helperText, coun
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
             onClick={() => onChange({ target: { name, value: '' } })}
+            disabled={(states || []).length === 0}
           >
             <ClearIcon />
           </IconButton>

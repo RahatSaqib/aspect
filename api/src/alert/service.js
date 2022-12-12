@@ -63,16 +63,24 @@ async function createAlertMessageFromTemplate(knex, alertMessageId) {
       .leftJoin('Notification as n', 'n.alertMessageId', 'a.id')
       .where('a.id', alertMessageId)
       .first('a.personId', 'a.resultId', 'n.reportId')) || {}
-  const dataConstraints = await getConstraints({ personId })
+
+  const authLikeObject = { credentials: { personId } }
+  const dataConstraints = await getConstraints(authLikeObject.credentials)
+
   const data = await knex('AlertMessage as m')
     .innerJoin('AlertTemplate as tmpl', 'm.alertTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.alertMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, dataConstraints, resultId, reportId)
     .where({ 'm.id': alertMessageId })
     .first('tmpl.message as messageTemplate')
-  const { message } = await processUsingDataSourceQuery(data, ['messageTemplate'], {
-    dynamic: true,
-  })
+  const { message } = await processUsingDataSourceQuery(
+    data,
+    ['messageTemplate'],
+    {
+      dynamic: true,
+    },
+    authLikeObject
+  )
   return message
 }
 

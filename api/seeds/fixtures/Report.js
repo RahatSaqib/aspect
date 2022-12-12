@@ -92,13 +92,13 @@ const criticalErrorsByDevice = {
     },
     {
       sortOrder: 1,
-      moduleName: 'device/service',
-      functionName: 'getErrorCodesByDeviceReport',
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorsByDevicesReport',
       query: {
-        sortCol: 'name',
-        sortDir: 'asc',
         hasResults: 1,
-        deviceTypeId: 'CepheidGeneXpert',
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        avoidStreaming: true,
       },
     },
   ],
@@ -491,7 +491,7 @@ const deviceReport = {
     {
       sortOrder: 0,
       moduleName: 'device/serviceReports',
-      functionName: 'getDeviceReport',
+      functionName: 'getDevicesWithCountsForTBReport',
       query: {
         hasResults: 1,
         sortCol: 'name',
@@ -503,9 +503,9 @@ const deviceReport = {
 }
 
 const devicesAndSitesOverview = {
-  name: 'Devices and Sites Overview (BETA)',
+  name: 'GeneXpert Devices and Sites Overview',
   description:
-    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices" - This report is in BETA version and still in progress',
+    'An overview of all GeneXpert devices in the system, information about inventory, and aggregated test results and errors per device.',
   i18nKey: 'devicesAndSitesOverview',
   i18nKeyDescription: 'devicesAndSites_description',
   externalId: 'devices_and_sites_overview',
@@ -514,10 +514,61 @@ const devicesAndSitesOverview = {
   availableForNotification: 1,
   sortOrder: 150,
   sheets: [
+    /**
+     * sheet `GeneXpert Devices`
+     */
     {
       sortOrder: 0,
       moduleName: 'device/serviceReports',
-      functionName: 'getDevicesAndSitesOverviewReport',
+      functionName: 'getAllDeviceReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    /**
+     * sheet `GeneXpert Inventory by Site`
+     */
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReports/devicesAndSitesOverviewReport',
+      functionName: 'getInventoryData',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    /**
+     * sheet `GeneXpert Errors by Devices`
+     */
+    {
+      sortOrder: 2,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorsByDevicesReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    /**
+     * sheet `Devices TB Reach`
+     */
+    {
+      sortOrder: 3,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDevicesWithCountsForTBReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
     },
   ],
 }

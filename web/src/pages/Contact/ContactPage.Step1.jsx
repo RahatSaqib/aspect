@@ -82,7 +82,12 @@ const ContactPageStepOne = ({ setStep, id }) => {
         <Loading />
       ) : (
         <Formik
-          initialValues={{ ...person, email: person.email || '' }}
+          initialValues={{
+            ...person,
+            email: person.email || '',
+            phone: person.phone?.length > 5 ? person.phone : null,
+            cell: person.cell?.length > 5 ? person.cell : null,
+          }}
           validationSchema={validationSchema}
           onSubmit={values => {
             const noField = [
@@ -200,7 +205,7 @@ const ContactPageStepOne = ({ setStep, id }) => {
                     label={formatMessage(messages.phone)}
                     value={values.phone || '+1'}
                     onChange={e => {
-                      handleChange({ target: { name: 'phone', value: e } })
+                      handleChange({ target: { name: 'phone', value: e !== '+' && e !== '+1' ? e : null } })
                     }}
                     error={errors.phone ? errors.phone : undefined}
                     helperText={errors.phone}
@@ -213,7 +218,7 @@ const ContactPageStepOne = ({ setStep, id }) => {
                     label={formatMessage(messages.mobile)}
                     value={values.cell || '+1'}
                     onChange={e => {
-                      handleChange({ target: { name: 'cell', value: e } })
+                      handleChange({ target: { name: 'cell', value: e !== '+' && e !== '+1' ? e : null } })
                     }}
                     error={errors.cell ? errors.cell : undefined}
                     helperText={errors.cell}

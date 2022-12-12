@@ -15,8 +15,10 @@ const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
-const { getDeviceReportData } = require('./deviceReport')
-const { getInventoryData } = require('./devicesAndSitesOverviewReport')
+const { getDevicesWithCountsForTB } = require('./deviceReport')
+const { getAllDeviceReportData } = require('./devicesAndSitesOverviewReport')
+const { getResultCategoryGroupColumns } = require('../common/db')
+const { getErrorsByDevices } = require('./getErrorsByDevices')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -427,9 +429,9 @@ async function getModuleStatusReport(auth, query) {
   }
 }
 
-async function getDeviceReport(auth, query) {
+async function getDevicesWithCountsForTBReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getDeviceReportData(dataConstraints, query)
+  const rows = await getDevicesWithCountsForTB(dataConstraints, query)
 
   return {
     ok: true,
@@ -438,10 +440,29 @@ async function getDeviceReport(auth, query) {
   }
 }
 
-async function getDevicesAndSitesOverviewReport(auth, query) {
-  const data = await getInventoryData(auth, query)
+async function getAllDeviceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryGroups = await getResultCategoryGroupColumns(query)
+  const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+
   return {
     ok: true,
+    data: rows,
+    total: rows.length,
+    dynamicColumns: resultCategoryGroups.map(a => ({
+      key: a.columnKey,
+      header: a.columnName,
+    })),
+  }
+}
+
+async function getErrorsByDevicesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const data = await getErrorsByDevices(dataConstraints, query)
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
     data,
   }
 }
@@ -456,6 +477,7 @@ module.exports = {
   getDeviceCapacityReport,
   getModuleActivityReport,
   getModuleStatusReport,
-  getDeviceReport,
-  getDevicesAndSitesOverviewReport,
+  getDevicesWithCountsForTBReport,
+  getAllDeviceReport,
+  getErrorsByDevicesReport,
 }

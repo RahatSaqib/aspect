@@ -104,7 +104,8 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
       .where('s.id', smsMessageId)
       .first('s.personId', 's.resultId', 'n.reportId')) || {}
 
-  const dataConstraints = await getConstraints({ personId })
+  const authLikeObject = { credentials: { personId } }
+  const dataConstraints = await getConstraints(authLikeObject.credentials)
 
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
@@ -116,7 +117,11 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
       'tmpl.phoneNumber as phoneNumberTemplate',
       knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
     )
-  return processUsingDataSourceQuery(data, ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'])
+  return processUsingDataSourceQuery(
+    data,
+    ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'],
+    authLikeObject
+  )
 }
 
 module.exports = {
