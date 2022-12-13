@@ -43,13 +43,13 @@ async function getBaseReports() {
           },
         },
         {
-          moduleName: 'device/service',
-          functionName: 'getErrorCodesByDeviceReport',
+          moduleName: 'device/serviceReports',
+          functionName: 'getErrorsByDevicesReport',
           query: {
-            sortCol: 'name',
-            sortDir: 'asc',
             hasResults: 1,
-            assayId: assayIds.GxMtbRif,
+            sortCol: 'deviceName',
+            sortDir: 'asc',
+            avoidStreaming: true,
           },
         },
       ],

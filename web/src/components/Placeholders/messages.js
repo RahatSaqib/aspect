@@ -9,7 +9,14 @@ export const messages = defineMessages({
     id: 'placeholders.insert.placeholder.for',
     defaultMessage: 'Insert Placeholder For',
   },
-
+  placeholderReport: {
+    id: 'placeholder.report',
+    defaultMessage: 'Report',
+  },
+  placeholderReportDownloadLink: {
+    id: 'placeholder.report.downloadlink',
+    defaultMessage: 'Download Link',
+  },
   placeholderSite: {
     id: 'placeholder.site',
     defaultMessage: `Site`,

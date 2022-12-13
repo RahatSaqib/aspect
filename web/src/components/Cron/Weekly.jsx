@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Checkbox, FormControlLabel, FormGroup, Stack } from '@mui/material'
 import classNames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
@@ -6,140 +6,111 @@ import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
 import styles from './styles.css'
 
+const WEEK_DAYS = [
+  {
+    i18nKey: messages.sunday,
+    abbr: 'SUN',
+  },
+  {
+    i18nKey: messages.monday,
+    abbr: 'MON',
+  },
+  {
+    i18nKey: messages.tuesday,
+    abbr: 'TUE',
+  },
+  {
+    i18nKey: messages.wednesday,
+    abbr: 'WED',
+  },
+  {
+    i18nKey: messages.thursday,
+    abbr: 'THU',
+  },
+  {
+    i18nKey: messages.friday,
+    abbr: 'FRI',
+  },
+  {
+    i18nKey: messages.saturday,
+    abbr: 'SAT',
+  },
+]
+const initDaysOfTheWeek = cronExpression => {
+  return WEEK_DAYS.map(it => {
+    if (cronExpression[4] === '*') {
+      return it.abbr
+    }
+    return cronExpression[4].includes(it.abbr) ? it.abbr : ''
+  })
+}
+
 const classes = classNames.bind(styles)
 const Weekly = ({ cronExpression, onChange }) => {
-  const weekDays = {
-    SUN: 0,
-    MON: 1,
-    TUE: 2,
-    WED: 3,
-    THU: 4,
-    FRI: 5,
-    SAT: 6,
-  }
   const { formatMessage } = useI18n()
-  const [daysOfTheWeek, setDaysOfTheWeek] = useState(['', '', '', '', '', '', ''])
-  const changeHours = e => {
-    const val = [...cronExpression]
-    val[1] = `${e.target.value}`
-    onChange(val)
-  }
-  const changeMinutes = e => {
-    const val = [...cronExpression]
+  const [daysOfTheWeek, setDaysOfTheWeek] = useState(initDaysOfTheWeek(cronExpression))
+  // ------------------------------
+  const changeHours = useCallback(
+    event => {
+      const val = [...cronExpression]
+      val[1] = `${event.target.value}`
+      onChange(val)
+    },
+    [cronExpression, onChange]
+  )
+  // ------------------------------
+  const changeMinutes = useCallback(
+    event => {
+      const val = [...cronExpression]
+      val[0] = `${event.target.value}`
+      onChange(val)
+    },
+    [cronExpression, onChange]
+  )
+  // ------------------------------
+  const onCheck = useCallback(
+    event => {
+      const weekDayIndex = +event.target.value
+      const val = [...cronExpression]
+      const daysOfTheWeekClone = [...daysOfTheWeek]
+      const weekDay = WEEK_DAYS[weekDayIndex]
 
-    val[0] = `${e.target.value}`
-    onChange(val)
-  }
-  const onCheck = e => {
-    const val = [...cronExpression]
-    const daysOfTheWeekClone = [...daysOfTheWeek]
+      daysOfTheWeekClone[weekDayIndex] = event.target.checked ? weekDay.abbr : ''
 
-    if (e.target.checked) {
-      daysOfTheWeekClone[weekDays[e.target.value]] = e.target.value
-    } else {
-      daysOfTheWeekClone[weekDays[e.target.value]] = ''
-    }
-    setDaysOfTheWeek(daysOfTheWeekClone)
+      setDaysOfTheWeek(daysOfTheWeekClone)
 
-    val[4] =
-      daysOfTheWeekClone.filter(value => value === '')?.length === 7
-        ? '*'
-        : daysOfTheWeekClone.filter(value => value !== '')?.join(',')
+      val[4] =
+        daysOfTheWeekClone.filter(value => value === '').length === 7
+          ? '*'
+          : daysOfTheWeekClone.filter(value => value !== '').join(',')
 
-    onChange(val)
-  }
+      onChange(val)
+    },
+    [cronExpression, daysOfTheWeek, onChange]
+  )
+  // ------------------------------
+  const isChecked = useCallback(abbr => cronExpression[4].search(abbr) !== -1, [cronExpression])
 
   return (
     <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
       <Stack direction="row" spacing={1} alignItems="center">
-        <div className={classes('Content')}>
-          <FormGroup row>
+        <FormGroup row className={classes('Check-Group')}>
+          {WEEK_DAYS.map((it, index) => (
             <FormControlLabel
               control={
                 <Checkbox
                   color="primary"
                   type="checkbox"
-                  value="MON"
+                  value={index}
                   onChange={onCheck}
-                  checked={cronExpression[4].search('MON') !== -1}
+                  checked={isChecked(it.abbr)}
                 />
               }
-              label={formatMessage(messages.monday)}
+              key={it.abbr}
+              label={formatMessage(it.i18nKey)}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  type="checkbox"
-                  value="TUE"
-                  onChange={onCheck}
-                  checked={cronExpression[4].search('TUE') !== -1}
-                />
-              }
-              label={formatMessage(messages.tuesday)}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  type="checkbox"
-                  value="WED"
-                  onChange={onCheck}
-                  checked={cronExpression[4].search('WED') !== -1}
-                />
-              }
-              label={formatMessage(messages.wednesday)}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  type="checkbox"
-                  value="THU"
-                  onChange={onCheck}
-                  checked={cronExpression[4].search('THU') !== -1}
-                />
-              }
-              label={formatMessage(messages.thursday)}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  type="checkbox"
-                  value="FRI"
-                  onChange={onCheck}
-                  checked={cronExpression[4].search('FRI') !== -1}
-                />
-              }
-              label={formatMessage(messages.friday)}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  type="checkbox"
-                  value="SAT"
-                  onChange={onCheck}
-                  checked={cronExpression[4].search('SAT') !== -1}
-                />
-              }
-              label={formatMessage(messages.saturday)}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  type="checkbox"
-                  value="SUN"
-                  onChange={onCheck}
-                  checked={cronExpression[4].search('SUN') !== -1}
-                />
-              }
-              label={formatMessage(messages.sunday)}
-            />
-          </FormGroup>
-        </div>
+          ))}
+        </FormGroup>
       </Stack>
       <Stack direction="row" spacing={1} alignItems="center">
         <ChooseTime

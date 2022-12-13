@@ -127,6 +127,10 @@ const getAdministrativeDivisionLabelPlaceHolders = async ({ partnerId }) => {
       placeholder: '<SitesLabel>',
       value: getLabel('sitesLabel', 'Sites'),
     },
+    {
+      placeholder: '<AssaysLabel>',
+      value: getLabel('assaysLabel', 'Assays'),
+    },
   ]
 }
 
@@ -156,28 +160,13 @@ function getHeaderRows(sheet, cellTableToken) {
 }
 
 // ----------------------------------------------------------------------------------------------
-function getContentDispositionFilename(fileNamePrefix, extension) {
-  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(/:/g, '-')
-}
 
-// ----------------------------------------------------------------------------------------------
-async function respondFile({ reply, dataBuffer, extension = 'xlsx', fileNamePrefix = 'report' }) {
-  const reportFileName = getContentDispositionFilename(fileNamePrefix, extension)
+async function respondFile({ reply, dataBuffer, extension = 'xlsx', fileName, streamResponse = false }) {
   return reply
     .response(dataBuffer)
     .encoding('binary')
-    .type(getContentType(extension))
-    .header('content-disposition', `attachment; filename=${reportFileName};`)
-}
-
-// ----------------------------------------------------------------------------------------------
-async function respondStream({ reply, stream, extension = 'xlsx', fileNamePrefix = 'report' }) {
-  const reportFileName = getContentDispositionFilename(fileNamePrefix, extension)
-  return reply
-    .response(stream)
-    .encoding('binary')
-    .type(getContentType(extension))
-    .header('content-disposition', `attachment; filename=${reportFileName};`)
+    .type(getContentType(extension, streamResponse))
+    .header('content-disposition', `attachment; filename=${fileName};`)
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -1132,7 +1121,5 @@ module.exports = {
   renderExcelTemplateToCsv,
   streamExcelTemplate,
   respondFile,
-  respondStream,
-  getContentDispositionFilename,
   RELABEL_EXCEL,
 }

@@ -8,7 +8,7 @@ const cssClasses = classnames.bind(styles)
 
 const CasesShell = ({ children }) => {
   return (
-    <Grid container spacing={24}>
+    <Grid container spacing={1}>
       <Grid item xs={12}>
         <Card className={cssClasses('shell__container')}>{children}</Card>
       </Grid>

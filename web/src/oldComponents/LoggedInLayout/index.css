@@ -1,5 +1,12 @@
 @import '../../theme/variables.css';
 
+.version {
+  color: var(--ming, #34717c);
+  font-size: x-small;
+  position: relative;
+  bottom: 10px;
+  left: -10px;
+}
 /* Shared */
 .icon {
   display: inline-block;

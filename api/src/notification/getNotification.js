@@ -4,5 +4,7 @@ module.exports = async request => {
   const { params } = request
   const { id } = params
 
-  return { ok: true, data: await getNotification(id) }
+  const data = await getNotification(id)
+
+  return { ok: true, data }
 }

@@ -52,9 +52,7 @@ async function getReports(request) {
   return { ok: true, total, data }
 }
 
-async function getReportDetails(auth, externalId) {
-  const dataConstraints = await getConstraints(auth.credentials)
-
+async function getReportDetails(externalId, dataConstraints) {
   if ((await knex('Report').where({ externalId }).first()) === null)
     throw Boom.badRequest('The requested report does not exist')
 
@@ -67,7 +65,7 @@ async function getReportDetails(auth, externalId) {
     .select(
       'r.description',
       'r.externalId',
-      knex.raw('IFNULL(jfr.fileName, r.fileName) as fileName'),
+      knex.raw('IFNULL(jfr.fileName, r.fileName) as fileNamePrefix'),
       'r.id',
       'r.i18nKey',
       'r.name',

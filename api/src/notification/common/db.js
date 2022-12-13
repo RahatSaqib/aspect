@@ -9,23 +9,30 @@ const {
 } = require('../../shared/dictionary')
 const { validateFilterCondition } = require('./validations')
 
-async function getNotification(id) {
+async function updateNotificationType(id, fieldsToUpdate) {
+  await knex('NotificationType').where({ id }).update(fieldsToUpdate)
+}
+
+async function getNotification(
+  id,
+  selectFields = [
+    'ntc.name as notificationTypeName',
+    'ntc.externalId as notificationType',
+    'it.externalId as issueType',
+    'r.externalId as reportId',
+    'nt.name as name',
+    'nt.filterCondition as filterCondition',
+    'et.subject as emailSubject',
+    'et.body as emailBody',
+    'st.message as smsBody',
+    'wt.url as webUrl',
+    'wt.payload as webBody',
+    'nt.enabled',
+    'nt.cronRecurrency',
+  ]
+) {
   return knex
-    .select(
-      'ntc.name as notificationTypeName',
-      'ntc.externalId as notificationType',
-      'it.externalId as issueType',
-      'r.externalId as reportId',
-      'nt.name as name',
-      'nt.filterCondition as filterCondition',
-      'et.subject as emailSubject',
-      'et.body as emailBody',
-      'st.message as smsBody',
-      'wt.url as webUrl',
-      'wt.payload as webBody',
-      'nt.enabled',
-      'nt.cronRecurrency'
-    )
+    .select(selectFields)
     .from('NotificationType as nt')
     .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
     .leftJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
@@ -176,8 +183,10 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     webBody,
     webUrl,
     enabled,
-    cronRecurrency = null,
-    reportFrecuency = null,
+    cronRecurrency,
+    reportFrequency,
+    reportDateRange,
+    reportStartingWeekDay,
     issueType: issueTypeExternalId,
     reportId: reportExternalId,
     notificationType: notificationTypeExternalId,
@@ -398,7 +407,9 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           sendToPatient,
           sendWeb,
           enabled,
-          reportFrecuency,
+          reportFrequency,
+          reportDateRange,
+          reportStartingWeekDay,
         }),
       })
       .where({ id: notificationTypeId })
@@ -414,8 +425,30 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     }
   })
 }
+
+async function getReporBasedNotifications() {
+  const rbnQuery = knex('NotificationType as nt')
+    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
+    .where('ntc.externalId', 'reportBased')
+    .where('nt.enabled', 1)
+    .whereNotNull('nt.cronRecurrency')
+    .select('nt.id', 'nt.name', 'nt.cronRecurrency')
+
+  return rbnQuery
+}
+
+async function getNotificationStatusInfo(id) {
+  return knex('NotificationType as nt')
+    .join('NotificationTypeCategory as ntc', 'ntc.id', 'nt.notificationTypeCategoryId')
+    .where('nt.id', id)
+    .first(['ntc.externalId as notificationType', 'nt.name', 'nt.enabled', 'nt.cronRecurrency'])
+}
+
 module.exports = {
   getListNotifications,
   saveNotificationType,
   getNotification,
+  getReporBasedNotifications,
+  getNotificationStatusInfo,
+  updateNotificationType,
 }
