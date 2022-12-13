@@ -8,7 +8,7 @@ const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = requ
 
 // --------------------------------------------------------------------------
 const resultCategoryGroupSum = (assayId, rc1, rc2) => {
-  let query = `IFNULL(SUM(CASE WHEN r.assayId = ${assayId} AND r.resultCategory1 = ${rc1} `
+  let query = `IFNULL(SUM(CASE WHEN r.assayId IN (${assayId}) AND r.resultCategory1 = ${rc1} `
 
   if (rc2) {
     query += `AND r.resultCategory2 = ${rc2} `
