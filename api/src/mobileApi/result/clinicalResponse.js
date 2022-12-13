@@ -14,7 +14,7 @@ const {
   getTreatmentStatusLogId,
   updateResultTreatmentStatusLog,
   addResultFollowUp,
-  getAffectedRowsbyResultFollowUp,
+  updateFollowUpDate,
   getLatestResultFollowUps,
   deleteResultFollowUp,
   insertResultWorkflowLog,
@@ -29,6 +29,11 @@ const {
 const DELIVERED = 'Delivered'
 const ACKNOWLEDGED = 'Acknowledged'
 
+const fieldNameToFollowUpTypeIdMappings = {
+  treatment: 'treatment',
+  outcome: 'outcome',
+}
+
 async function clinicalResponse(request) {
   const { payload, params } = request
   const { resultId } = params
@@ -42,7 +47,10 @@ async function clinicalResponse(request) {
   let response
   await Promise.all(
     clinicalResponseData.map(async data => {
-      const latestFollowUp = _.find(followUps, f => f.followUpTypeExternalId === data.fieldName)
+      const latestFollowUp = _.find(
+        followUps,
+        f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings[data.fieldName]
+      )
       if (
         (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
         (data.fieldName === 'treatment' || data.fieldName === 'outcome')
@@ -53,23 +61,9 @@ async function clinicalResponse(request) {
       }
     })
   ).then(async () => {
-    const followUpData = await getLatestResultFollowUps(resultId)
-    const followUps = {}
-    followUpData.forEach(data => {
-      if (followUps[data.followUpTypeExternalId] !== undefined) {
-        if (followUps[data.followUpTypeExternalId].date < data.date) {
-          followUps[data.followUpTypeExternalId] = data
-        }
-      } else {
-        followUps[data.followUpTypeExternalId] = data
-      }
-    })
+    const followUps = await getLatestResultFollowUps(resultId)
     clinicalResponseData.map(async data => {
-      const latestFollowUp = _.find(followUps, f => f.followUpTypeExternalId === data.fieldName)
-      if (
-        (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
-        (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred')
-      ) {
+      if (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred') {
         response = await updateResultFollowUp(request, data, followUps)
       }
     })
@@ -81,9 +75,8 @@ async function clinicalResponse(request) {
 }
 
 // Add result follow up based on follow up type and value. Delete follow up if any follow up type's value is null
-async function addClinicalResponse(request, data, latestFollowUp) {
+async function addClinicalResponse(request, data) {
   const { auth, params } = request
-  const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
   if (data.value && data.value.toLowerCase().replace(/\s'/g, '') !== 'null') {
@@ -91,18 +84,7 @@ async function addClinicalResponse(request, data, latestFollowUp) {
     if (!followUp) {
       return Boom.badRequest('Invalid follow up ID')
     }
-
-    if (!latestFollowUp)
-      await addResultFollowUp(
-        resultId,
-        data.value,
-        followUp.id,
-        data.clientTime,
-        currentUserId,
-        now,
-        currentUserId,
-        now
-      )
+    await addResultFollowUp(resultId, data.value, followUp.id, data.clientTime, currentUserId, currentUserId)
   } else {
     await deleteResultFollowUp(resultId, data.fieldName, data.clientTime)
   }
@@ -127,7 +109,7 @@ async function updateResultFollowUp(request, data, followUps) {
   if (!followUp) {
     return Boom.badRequest('Invalid follow up ID')
   }
-  const affectedRows = await getAffectedRowsbyResultFollowUp(
+  const affectedRows = await updateFollowUpDate(
     data.value,
     resultId,
     followUp.externalId,
@@ -214,8 +196,6 @@ async function updateTreatmentStatusByResultId(
   method,
   changedOn = new Date()
 ) {
-  const now = new Date()
-
   let treatmentStatusId = null
   // check if a externalId is provided
   if (resultTreatmentStatusExternalId) {
@@ -238,13 +218,12 @@ async function updateTreatmentStatusByResultId(
       treatmentStatusId,
       method,
       data,
-      now,
       changedOn,
       userId
     )
 
     if (!lastTreatment) {
-      await updateResult(resultId, treatmentStatusLogId, userId, now)
+      await updateResult(resultId, treatmentStatusLogId, userId)
       lastTreatment = await getLastTreatmentStatusByResult(resultId)
     }
   }
@@ -301,7 +280,7 @@ async function updateResultWorkflowStatusByResultId(
     const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
 
     if (resultWorkflowChangedOn < clientDate || !resultWorkflowChangedOn) {
-      await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, clientDate)
+      await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
     }
   }
 }

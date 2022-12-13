@@ -8,6 +8,11 @@ const { knex } = require('../../../db')
 
 const ACKNOWLEDGED = 'Acknowledged'
 
+const fieldNameToFollowUpTypeIdMappings = {
+  treatment: 'treatment',
+  outcome: 'outcome',
+}
+
 const assayAvatarColorsIcon = {
   tb: {
     backgroundColour: 'purple',
@@ -133,10 +138,19 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
   _.map(data, d => getResultItemTransformedData(d, setDelivered, followUps, comments))
 
 // Trasnformed data v2
-const getTransformedDataV2 = (data, setDelivered, followUps, comments, latestFollowUpsList) =>
+const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
   _.map(data, d => {
-    const latestFollowUps = _.filter(latestFollowUpsList, { resultId: d.id }).map(f => _.omit(f, 'resultId'))
-    return getResultItemTransformedDataV2(d, setDelivered, followUps, comments, latestFollowUps[0].data)
+    const treatment = followUps?.filter(
+      f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment && f.resultId === d.id
+    )
+    const outcome = followUps?.filter(
+      f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome && f.resultId === d.id
+    )
+    const latestTreatment = !_.isEmpty(treatment)
+      ? treatment?.reduce((a, b) => (a.updatedOn > b.updatedOn ? a : b))
+      : {}
+    const latestOutcome = !_.isEmpty(outcome) ? outcome?.reduce((a, b) => (a.updatedOn > b.updatedOn ? a : b)) : {}
+    return getResultItemTransformedDataV2(d, setDelivered, followUps, comments, [latestTreatment, latestOutcome])
   })
 
 const getResultItemTransformedData = (data, setDelivered, followUps, comments) => ({
@@ -361,6 +375,10 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments,
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
+  const followUpList = _.sortBy(
+    _.filter(followUps, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
+    ['date', 'updatedOn']
+  )
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -418,10 +436,7 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments,
       severity: getSeverity(data, followUps),
       daysInCurrentStatus: daysFromTreatmentDateUpdateOn(data, followUps),
     },
-    followUps: _.sortBy(
-      _.filter(followUps, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
-      ['date', 'updatedOn']
-    ),
+    followUps: followUpList,
     comments: _.orderBy(
       _.filter(comments, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
       ['createdOn'],

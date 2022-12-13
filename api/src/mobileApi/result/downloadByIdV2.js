@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const { getConstraints } = require('../../auth/constraints')
@@ -12,9 +13,13 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
   getResultWorkflowStatusQuery,
-  getLatestResultFollowUps,
 } = require('./common/db')
 const { getResultItemTransformedDataV2 } = require('./common/logic')
+
+const fieldNameToFollowUpTypeIdMappings = {
+  treatment: 'treatment',
+  outcome: 'outcome',
+}
 
 async function getDownloadResultById(resultId, auth, setDelivered = false) {
   // get data constraints
@@ -31,9 +36,17 @@ async function getDownloadResultById(resultId, auth, setDelivered = false) {
     const followUps = await getFollowUpsOfResultById(data)
     // get comments for all result in the response for performance (filter later)
     const comments = await getCommentsOfResultById(data)
-    const latestFollowup = await getLatestResultFollowUps(resultId)
+    const treatment = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment)
+    const outcome = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome)
+    const latestTreatment = !_.isEmpty(treatment)
+      ? treatment?.reduce((a, b) => (a.updatedOn > b.updatedOn ? a : b))
+      : {}
+    const latestOutcome = !_.isEmpty(outcome) ? outcome?.reduce((a, b) => (a.updatedOn > b.updatedOn ? a : b)) : {}
 
-    transformedData = getResultItemTransformedDataV2(data, setDelivered, followUps, comments, latestFollowup)
+    transformedData = getResultItemTransformedDataV2(data, setDelivered, followUps, comments, [
+      latestTreatment,
+      latestOutcome,
+    ])
   }
   const result = {
     ok: !!data,

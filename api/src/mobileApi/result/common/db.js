@@ -409,6 +409,7 @@ const getFollowUpsV2 = data => {
       'rfu.resultId',
       data.map(r => r.id)
     )
+    .where('rfu.isDeleted', false)
     .select(
       'rfu.resultId',
       'rfu.id',
@@ -515,7 +516,7 @@ const deleteResultFollowUp = (resultId, type, date) => {
     })
 }
 
-const getAffectedRowsbyResultFollowUp = (date, resultId, externalId, currentUserId, followUp, clientDate) => {
+const updateFollowUpDate = (date, resultId, externalId, currentUserId, followUp, clientDate) => {
   const query = knex('ResultFollowUp')
     .where('followUpId', followUp.id || '-1')
     .where('resultId', resultId)
@@ -546,38 +547,38 @@ const getTreatmentStatus = resultTreatmentStatusId => {
 }
 
 // feature: clinical response
-const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, now, changedOn, userId) => {
+const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, changedOn, userId) => {
   return knex('ResultTreatmentStatusLog').insert({
     resultId,
     resultTreatmentStatusId: treatmentStatusId,
     method,
     data,
-    createdOn: now,
+    createdOn: new Date(),
     changedOn,
     createdBy: userId,
   })
 }
 
 // feature: clinical response
-const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, createdOn, updatedBy, updatedOn) => {
+const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, updatedBy) => {
   return knex('ResultFollowUp').insert({
     resultId,
     externalId,
     followUpId,
     date,
     createdBy,
-    createdOn,
+    createdOn: new Date(),
     updatedBy,
-    updatedOn,
+    updatedOn: new Date(),
   })
 }
 
 // feature: clinical response
-const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
+const updateResult = (resultId, treatmentStatusLogId, userId) => {
   return knex('Result').where('id', resultId).update({
     treatmentStatusLogId,
     updatedBy: userId,
-    updatedOn: now,
+    updatedOn: new Date(),
   })
 }
 
@@ -617,11 +618,22 @@ const getLatestResultWorkflowLog = resultId => {
     .select('resultWorkflowStatusId', 'changedOn as resultWorkflowChangedOn')
 }
 
-const getLatestResultFollowUps = async id => {
+const getLatestResultFollowUps = id => {
   return knex('ResultFollowUp as r')
     .join('FollowUp as f', 'r.followUpId', 'f.id')
     .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
-    .where('r.resultId', id)
+    .join(
+      knex('ResultFollowUp as sr')
+        .join('FollowUp as sf', 'sr.followUpId', 'sf.id')
+        .join('FollowUpType as st', 'sf.followUpTypeId', 'st.id')
+        .select('st.externalId')
+        .where('resultId', id)
+        .max('sr.createdOn as max_date')
+        .as('a')
+        .groupBy('st.externalId')
+    )
+    .where('resultId', id)
+    .where('r.isDeleted', false)
     .select(
       'f.externalId',
       't.externalId as followUpTypeExternalId',
@@ -631,6 +643,7 @@ const getLatestResultFollowUps = async id => {
       'r.date',
       'r.resultId'
     )
+    .groupBy('t.externalId')
 }
 
 module.exports = {
@@ -652,7 +665,7 @@ module.exports = {
   getCommentsOfResultById,
   getFollowUpsOfResultById,
   getFollowUpsForResultFollowup,
-  getAffectedRowsbyResultFollowUp,
+  updateFollowUpDate,
   getResultFollowUps,
   getLastTreatmentStatusByResult,
   getTreatmentStatus,
