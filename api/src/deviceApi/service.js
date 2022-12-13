@@ -628,7 +628,10 @@ async function mergeResultWithContext(context) {
   context.addDeviceLogUpdate('resultId', result.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
   const postProcessResult = await postProcess(pluginContext, result, previousResult)
-  return postProcessResult
+  return {
+    ...postProcessResult,
+    aspectResultId: result.id,
+  }
 }
 
 async function createDeviceApiContext(handler, originalRequest, defaultHandlerOptions) {
