@@ -23,7 +23,7 @@ export const getFormConfigWithData = (intl, isNew, values) => {
 }
 
 function getRowsForCustomFields(values) {
-  const totalCustomFields = values.customFieldsValues?.length || 0
+  const totalCustomFields = values.customFields?.length || 0
   const id = 9000
   let rows = []
   if (totalCustomFields === 0) {
@@ -45,7 +45,7 @@ function getRowsForCustomFields(values) {
   // show 3 cells per row
   const cellsPerRow = 3
   let row = {}
-  uniqBy(values.customFieldsValues, elem => elem.source).forEach((customField, index) => {
+  uniqBy(values.customFields, elem => elem.source).forEach((customField, index) => {
     if (index % cellsPerRow === 0) {
       // Start new row
       if (index > 0) {

@@ -810,7 +810,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
     if (data.resultData && data.resultData.detectedResistance && data.resultData.detectedResistance.length > 0)
       data.detectedResistance = data.resultData.detectedResistance.join(', ')
 
-    data.customFieldsValues = await getCustomFieldsForResult(data)
+    data.customFields = await getCustomFieldsForResult(data)
   }
 
   return { ok: results.length === 1, data }
@@ -821,7 +821,7 @@ async function getCustomFieldsForResult(data) {
   const { getCustomFields } = require('../forms/service')
   let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
   customFields = _.sortBy(customFields, ['order', 'name'])
-  const customFieldsValues = customFields.map(
+  customFields = customFields.map(
     ({ title, source, fieldType, order, controlType, validation, items, condition, filters }) => ({
       title,
       source,
@@ -834,7 +834,7 @@ async function getCustomFieldsForResult(data) {
       filters,
     })
   )
-  return customFieldsValues
+  return customFields
 }
 
 async function getResultForStringTemplateProcessing(resultId, fields = RESULT_STRING_TEMPLATE_FIELDS, knex = knex) {
