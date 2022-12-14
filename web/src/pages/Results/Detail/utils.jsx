@@ -72,6 +72,19 @@ function getRowsForCustomFields(values, { formatMessage }) {
           labelI18nKey: customField.i18nKeyCaption,
         },
       ]
+    } else if (customField.type === 'numberbox') {
+      row.items = [
+        ...row.items,
+        {
+          id: customField.externalId || `${source[0]}.${source[1]}`,
+          controlType: {
+            component: 'numberField',
+            min: customField.validation[0].min,
+            max: customField.validation[0].max,
+          },
+          labelI18nKey: customField.i18nKeyCaption,
+        },
+      ]
     }
   })
 
@@ -93,9 +106,10 @@ const transformCustomField = customField => {
       break
     case 'patientData.age':
       customField = {
-        type: 'textbox',
+        type: 'numberbox',
         i18nKeyCaption: 'AgeFieldi18nKey',
         source: 'patientData.age',
+        validation: [{ min: 0, max: 150 }],
       }
       break
     case 'patientData.retreatmentCase':
