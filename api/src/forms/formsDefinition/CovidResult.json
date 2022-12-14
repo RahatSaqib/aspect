@@ -13,7 +13,7 @@
       "resultDbColumn": "ResultCategory1",
       "typeOfOptionSource": "aspectUrl",
       "optionSource": "/assay",
-      "customUrlMappingFields": {
+      "optionSourceConfig": {
         "key": "data.resultCategories.id",
         "value": "data.resultCategories.name"
       }
@@ -115,7 +115,7 @@
       "resultDbColumn": "caseId",
       "typeOfOptionSource": "aspectUrl",
       "optionSource": "/case/auto",
-      "customUrlMappingFields": {
+      "optionSourceConfig": {
         "key": "data.id",
         "value": "data.externalId"
       }

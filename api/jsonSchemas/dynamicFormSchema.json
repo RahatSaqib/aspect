@@ -556,8 +556,8 @@
               }
             }
           },
-          "customUrlMappingFields": {
-            "$id": "#/properties/fields/items/properties/customUrlMappingFields",
+          "optionSourceConfig": {
+            "$id": "#/properties/fields/items/properties/optionSourceConfig",
             "type": "object",
             "title": "Mapping fields for option list",
             "description": "Only for third party API option, This property is going to define which properties in the response object collection is going to be the key and the value for filling the different lists",
@@ -575,7 +575,7 @@
             "required": ["key", "value"],
             "properties": {
               "key": {
-                "$id": "#/properties/fields/items/properties/customUrlMappingFields/properties/key",
+                "$id": "#/properties/fields/items/properties/optionSourceConfig/properties/key",
                 "type": "string",
                 "title": "The Key option to be mapped",
                 "description": "This will be the name for looking for in the response for mapping into our option list structure",
@@ -583,7 +583,7 @@
                 "examples": ["name property for the key field"]
               },
               "value": {
-                "$id": "#/properties/fields/items/properties/customUrlMappingFields/properties/value",
+                "$id": "#/properties/fields/items/properties/optionSourceConfig/properties/value",
                 "type": "string",
                 "title": "The Value option to be mapped",
                 "description": "This will be the key for looking for in the response for mapping into our option list structure"

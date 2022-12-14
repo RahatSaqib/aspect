@@ -817,16 +817,23 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
 }
 
 async function getCustomFieldsForResult(data) {
-  const { deviceId, partnerId, partnerPluginName, deviceTypePluginName } = data
-  const pluginNames = [partnerPluginName, deviceTypePluginName]
-  const { getCustomFields } = require('../deviceApi/service')
-  const customFieldsRaw = await getCustomFields({ knex, device: { id: deviceId, partnerId }, pluginNames })
-  let customFields = customFieldsRaw?.CustomFields?.Fields || []
-  customFields = _.sortBy(customFields, ['DisplayOrder', 'Name'])
-  const customFieldsValues = customFields.map(it => ({
-    caption: it.Label,
-    externalId: `patientData.${_.camelCase(it.ExternalId)}`,
-  }))
+  const { deviceId, partnerId, countryId, assayId, diseaseId } = data
+  const { getCustomFields } = require('../forms/service')
+  let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
+  customFields = _.sortBy(customFields, ['order', 'name'])
+  const customFieldsValues = customFields.map(
+    ({ title, source, fieldType, order, controlType, validation, items, condition, filters }) => ({
+      title,
+      source,
+      fieldType,
+      order,
+      controlType,
+      validation,
+      items,
+      condition,
+      filters,
+    })
+  )
   return customFieldsValues
 }
 

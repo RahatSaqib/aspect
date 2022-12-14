@@ -82,7 +82,7 @@ describe.skip('Forms routes', () => {
             'encrypted',
             'resultDbColumn',
             'typeOfOptionSource',
-            'customUrlMappingFields',
+            'optionSourceConfig',
           ])
         )
       })
