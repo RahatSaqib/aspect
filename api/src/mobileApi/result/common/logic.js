@@ -147,9 +147,11 @@ const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
       f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome && f.resultId === d.id
     )
     const latestTreatment = !_.isEmpty(treatment)
-      ? treatment?.reduce((a, b) => (a.updatedOn > b.updatedOn ? a : b))
+      ? treatment?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
       : {}
-    const latestOutcome = !_.isEmpty(outcome) ? outcome?.reduce((a, b) => (a.updatedOn > b.updatedOn ? a : b)) : {}
+    const latestOutcome = !_.isEmpty(outcome)
+      ? outcome?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
+      : {}
     return getResultItemTransformedDataV2(d, setDelivered, followUps, comments, [latestTreatment, latestOutcome])
   })
 
@@ -512,4 +514,5 @@ module.exports = {
   getResultByResultId,
   getResultItemTransformedData,
   getResultItemTransformedDataV2,
+  fieldNameToFollowUpTypeIdMappings,
 }

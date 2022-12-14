@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { getUser } = require('../../auth/service')
-const { getResultItemTransformedDataV2 } = require('./common/logic')
+const { getResultItemTransformedDataV2, fieldNameToFollowUpTypeIdMappings } = require('./common/logic')
 const { getConstraints } = require('../../auth/constraints')
 const { resultTreatmentStatusToId, resultWorkflowStatusToId } = require('../../shared/dictionary')
 const {
@@ -28,11 +28,6 @@ const {
 
 const DELIVERED = 'Delivered'
 const ACKNOWLEDGED = 'Acknowledged'
-
-const fieldNameToFollowUpTypeIdMappings = {
-  treatment: 'treatment',
-  outcome: 'outcome',
-}
 
 async function clinicalResponse(request) {
   const { payload, params } = request

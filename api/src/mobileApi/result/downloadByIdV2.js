@@ -14,12 +14,7 @@ const {
   updateResultWorkflowLogQuery,
   getResultWorkflowStatusQuery,
 } = require('./common/db')
-const { getResultItemTransformedDataV2 } = require('./common/logic')
-
-const fieldNameToFollowUpTypeIdMappings = {
-  treatment: 'treatment',
-  outcome: 'outcome',
-}
+const { getResultItemTransformedDataV2, fieldNameToFollowUpTypeIdMappings } = require('./common/logic')
 
 async function getDownloadResultById(resultId, auth, setDelivered = false) {
   // get data constraints
@@ -39,7 +34,7 @@ async function getDownloadResultById(resultId, auth, setDelivered = false) {
     const treatment = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment)
     const outcome = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome)
     const latestTreatment = !_.isEmpty(treatment)
-      ? treatment?.reduce((a, b) => (a.updatedOn > b.updatedOn ? a : b))
+      ? treatment?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
       : {}
     const latestOutcome = !_.isEmpty(outcome) ? outcome?.reduce((a, b) => (a.updatedOn > b.updatedOn ? a : b)) : {}
 
