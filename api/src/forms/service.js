@@ -32,10 +32,10 @@ async function getForms(request) {
 
 const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
   await Promise.each(
-    _.filter(customFields, elem => elem.optionSource),
+    _.filter(customFields, elem => elem.itemsSource),
     async field => {
-      const { optionSource, optionSourceConfig } = field
-      if (optionSource === 'lga' || optionSource === 'state') {
+      const { itemsSource, itemsSourceConfig } = field
+      if (itemsSource === 'lga' || itemsSource === 'state') {
         const { data: statesOrLgas } = await stateSelectList({
           params: {
             countryId,
@@ -45,7 +45,7 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
           key: geography.id,
           value: geography.name,
         }))
-      } else if (optionSource === 'all-sites') {
+      } else if (itemsSource === 'all-sites') {
         const dataConstraints = {
           partner: {
             id: partnerId,
@@ -59,12 +59,12 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
           field.InputControlData = {}
         }
         field.items = _.map(items, item => ({
-          key: item[optionSourceConfig?.key || 'externalId'],
-          value: item[optionSourceConfig?.value || 'name'],
+          key: item[itemsSourceConfig?.key || 'externalId'],
+          value: item[itemsSourceConfig?.value || 'name'],
         }))
       }
 
-      delete field.optionSource
+      delete field.itemsSource
     }
   )
 }
@@ -127,4 +127,5 @@ module.exports = {
   getForms,
   getCustomFields,
   createFormObject,
+  replaceOptionSourceProp,
 }

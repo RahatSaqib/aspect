@@ -12,8 +12,8 @@
       "encrypted": false,
       "resultDbColumn": "ResultCategory1",
       "typeOfOptionSource": "aspectUrl",
-      "optionSource": "/assay",
-      "optionSourceConfig": {
+      "itemsSource": "/assay",
+      "itemsSourceConfig": {
         "key": "data.resultCategories.id",
         "value": "data.resultCategories.name"
       }
@@ -114,8 +114,8 @@
       "required": false,
       "resultDbColumn": "caseId",
       "typeOfOptionSource": "aspectUrl",
-      "optionSource": "/case/auto",
-      "optionSourceConfig": {
+      "itemsSource": "/case/auto",
+      "itemsSourceConfig": {
         "key": "data.id",
         "value": "data.externalId"
       }

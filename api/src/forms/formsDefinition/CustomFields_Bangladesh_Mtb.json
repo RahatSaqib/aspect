@@ -112,8 +112,8 @@
       "payloadOriginPath": "data.customFieldData.1106.value",
       "payloadDestinationPath": "patient.ReferringFacility",
       "source": "patientData.ReferringFacility",
-      "optionSource": "all-sites",
-      "optionSourceConfig": {
+      "itemsSource": "all-sites",
+      "itemsSourceConfig": {
         "key": "externalId",
         "value": "name"
       }

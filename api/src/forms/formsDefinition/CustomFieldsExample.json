@@ -87,7 +87,7 @@
       "fieldType": "text",
       "order": 0,
       "controlType": "comboBox",
-      "optionSource": "state",
+      "itemsSource": "state",
       "required": true
     },
     {
