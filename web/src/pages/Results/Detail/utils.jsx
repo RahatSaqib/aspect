@@ -1,4 +1,5 @@
 import uniqBy from 'lodash/uniqBy'
+import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
 import getFormConfig from '../Forms/editConfig'
 import getValidationSchema from '../Forms/validation'
@@ -12,7 +13,11 @@ export const getFormConfigWithData = (intl, isNew, values) => {
     customFields.rows = getRowsForCustomFields(values, intl)
   }
 
-  const validationSchema = getValidationSchema(intl.formatMessage)
+  let validationSchema = getValidationSchema(intl.formatMessage)
+  if (customFields) {
+    validationSchema = validationSchema.shape(getValidationsForCustomFields(values, intl))
+  }
+
   const initialValues = getInitialValuesFromFormConfig(formSchema, values)
 
   return {
@@ -20,6 +25,46 @@ export const getFormConfigWithData = (intl, isNew, values) => {
     validationSchema,
     values: initialValues,
   }
+}
+
+function getValidationsForCustomFields(values, { formatMessage }) {
+  const rows = {}
+
+  const totalCustomFields = values.customFieldsValues?.length || 0
+
+  if (totalCustomFields === 0) {
+    return rows
+  }
+
+  uniqBy(values.customFieldsValues, elem => elem.externalId).forEach(customField => {
+    // just as a mock of the real response
+    customField = transformCustomField(customField)
+
+    const source = customField.source.split('.')
+    const dataOrigin = source[0]
+    const dataField = source[1]
+
+    if (!Object.keys(rows).includes(dataOrigin)) {
+      rows[dataOrigin] = Yup.object({})
+    }
+
+    if (customField.type === 'select') {
+      // add validation for select
+    } else if (customField.type === 'textbox') {
+      // add validation for text
+    } else if (customField.type === 'numberbox') {
+      rows[dataOrigin] = rows[dataOrigin].shape({
+        [dataField]: Yup.number()
+          .required(formatMessage(messages[customField.validation[0].i18nKey]))
+          .positive()
+          .integer()
+          .min(customField.validation[0].min)
+          .max(customField.validation[0].max),
+      })
+    }
+  })
+
+  return rows
 }
 
 function getRowsForCustomFields(values, { formatMessage }) {
@@ -109,7 +154,7 @@ const transformCustomField = customField => {
         type: 'numberbox',
         i18nKeyCaption: 'AgeFieldi18nKey',
         source: 'patientData.age',
-        validation: [{ min: 0, max: 150 }],
+        validation: [{ min: 0, max: 150, i18nKey: 'AgeValidationFieldi18nKey' }],
       }
       break
     case 'patientData.retreatmentCase':

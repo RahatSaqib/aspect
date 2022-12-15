@@ -83,7 +83,7 @@ const AspectResultDetail = () => {
   return isLoading || !formConfig ? (
     <CircularProgress />
   ) : (
-    <FormikProvider config={formConfig}>
+    <FormikProvider config={formConfig} debug>
       <DetailForm submitResult={submitResult} values={values} patientId={patientId} formConfig={formConfig} />
     </FormikProvider>
   )
