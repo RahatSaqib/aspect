@@ -69,7 +69,7 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
   )
 }
 
-const getCustomFields = async (partnerId, deviceId, countryId, assayId, diseaseId) => {
+const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, diseaseId = null) => {
   const formQuery = await getFormsBaseQuery(partnerId, {
     formType: 'gxConnectForm',
     assayId,
