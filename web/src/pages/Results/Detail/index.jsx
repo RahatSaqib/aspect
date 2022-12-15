@@ -13,7 +13,6 @@ import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
 import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import getFormConfig from '../Forms/editConfig'
 import { ResultDetailsErrors } from './errors'
 import messages from './messages'
 import ResultTransferModal from './ResultTransferModal'
@@ -95,7 +94,6 @@ const DetailForm = ({ values, patientId, formConfig, submitResult }) => {
   const { setToggleEdit, formik, toggleEdit } = useFormikContext()
 
   const onSubmit = () => {
-    const formConfig = getFormConfig(intl.formatMessage, false)
     const values = sanitizeFormValues(formik.values, { formConfig })
     submitResult({ values })
   }

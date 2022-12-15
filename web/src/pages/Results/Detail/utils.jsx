@@ -298,9 +298,49 @@ const transformCustomField = customField => {
         i18nKeyCaption: 'PatientHistoryI18nKey',
         source: 'patientData.PatientHistory',
         items: [
-          { key: 'unknown', value: 'Unknown history', i18nKeyValue: 'unknown', order: 0 },
-          { key: 'new', value: 'New', i18nKeyValue: 'new', order: 10 },
-          { key: 'treated', value: 'Previously treated', i18nKeyValue: 'treated', order: 20 },
+          {
+            key: 'unknown',
+            value: 'Unknown history',
+            i18nKeyValue: 'unknown',
+            order: 0,
+            scope: [
+              'Close_contacts_of_DR_TB_patient_with_symptoms',
+              'HIV_infected_person_with_TB_SS',
+              'Others_Pulmonary_clinically_diagnosed',
+              'Others_Extra_Pulmonary',
+              'Others_Pulmonary_Bacteriologically_Confirmed',
+              'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+              'Presumptive_TB',
+            ],
+          },
+          {
+            key: 'new',
+            value: 'New',
+            i18nKeyValue: 'new',
+            order: 10,
+            scope: [
+              'Close_contacts_of_DR_TB_patient_with_symptoms',
+              'HIV_infected_person_with_TB_SS',
+              'Others_Pulmonary_clinically_diagnosed',
+              'Others_Extra_Pulmonary',
+              'Others_Pulmonary_Bacteriologically_Confirmed',
+              'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+              'Presumptive_TB',
+            ],
+          },
+          {
+            key: 'treated',
+            value: 'Previously treated',
+            i18nKeyValue: 'treated',
+            order: 20,
+            scope: [
+              'Close_contacts_of_DR_TB_patient_with_symptoms',
+              'HIV_infected_person_with_TB_SS',
+              'Others_Pulmonary_clinically_diagnosed',
+              'Others_Extra_Pulmonary',
+              'Presumptive_Pulmonary_Smear_Negative_TB_Cases',
+            ],
+          },
         ],
       }
       break
