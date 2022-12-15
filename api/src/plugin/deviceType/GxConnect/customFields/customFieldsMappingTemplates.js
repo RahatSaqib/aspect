@@ -1,8 +1,5 @@
 const objectMapper = require('object-mapper')
 const _ = require('lodash')
-const Promise = require('bluebird')
-const { stateSelectList } = require('../../../../geography/service')
-const { getListSitesForSelectList } = require('../../../../site/service')
 
 // all values should match returned values in func `GetTestTypeIdByAssayName`
 // in GxConnect file `Utilities/Helpers.cs`
@@ -113,7 +110,7 @@ const baseMapper = aspectFields => {
       key: 'CustomFields.Fields[].InputControlData.options[]',
       transform: transformItemsToOptions,
     },
-    'fields[].optionSource': 'CustomFields.Fields[].optionSource',
+    'fields[].itemsSource': 'CustomFields.Fields[].itemsSource',
 
     'fields[].calculated': {
       key: 'CustomFields.Fields[].InputControlData',
@@ -203,51 +200,6 @@ const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
   return mapped
 }
 
-const mapGxConnectCustomFieldsWithDataSources = async (
-  aspectFields,
-  { partnerId, countryId, stateId, mapper = null }
-) => {
-  const fields = mapGxConnectCustomFields(aspectFields, mapper)
-  await Promise.each(
-    _.filter(fields.CustomFields.Fields, elem => elem.optionSource),
-    async field => {
-      const { optionSource, customUrlMappingFields } = field
-      if (optionSource === 'lga' || optionSource === 'state') {
-        const { data: statesOrLgas } = await stateSelectList({
-          params: {
-            countryId,
-            stateId: field.optionSource === 'lga' && stateId ? stateId : null,
-          },
-        })
-        field.InputControlData.options = _.map(statesOrLgas, geography => ({
-          value: geography.id,
-          text: geography.name,
-        }))
-      } else if (optionSource === 'all-sites') {
-        const dataConstraints = {
-          partner: {
-            id: partnerId,
-          },
-          country: {
-            id: countryId,
-          },
-        }
-        const { data: items } = await getListSitesForSelectList(dataConstraints)
-        if (!field.InputControlData) {
-          field.InputControlData = {}
-        }
-        field.InputControlData.options = _.map(items, item => ({
-          value: item[customUrlMappingFields?.key || 'externalId'],
-          text: item[customUrlMappingFields?.value || 'name'],
-        }))
-      }
-
-      delete field.optionSource
-    }
-  )
-  return fields
-}
 module.exports = {
-  mapGxConnectCustomFieldsWithDataSources,
   mapGxConnectCustomFields,
 }

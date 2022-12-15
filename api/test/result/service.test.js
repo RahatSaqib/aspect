@@ -116,6 +116,7 @@ describe('result/service', () => {
         patientData: '{}',
         assayId: 1,
         partnerId: 1,
+        deviceId: 1,
       },
       extraDetails
     )
