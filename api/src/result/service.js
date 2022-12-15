@@ -1971,15 +1971,9 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   const displayResult = query.displayResult || 'all'
 
   const resultQuery = getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rca', function () {
-      this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
-    })
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
     .leftJoin('Geography as gdpn', 'sdpn.geographyId', 'gdpn.id')
     .leftJoin('State as stdpn', 'stdpn.id', 'gdpn.stateId')
-    .leftJoin('ResultCategoryAssay as rca2', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
     .modify(queryBuilder => {
       // this join is very expensive (doubles query time) and we're only using it for filtering, so only join on demand
       if (resultCategoryGroupId) {
