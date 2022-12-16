@@ -43,7 +43,8 @@ const baseMapper = aspectFields => {
     },
     'fields[].title': 'CustomFields.Fields[].Label',
     'fields[].caption': 'CustomFields.Fields[].Help',
-    'fields[].required': {
+    'fields[].mandatory': 'CustomFields.Fields[].InputControlData.mandatory',
+    'fields[].needsConfirmationIfIsEmpty': {
       key: 'CustomFields.Fields[].InputControlData.optional?',
       transform: value => (value ? !value : true),
     },

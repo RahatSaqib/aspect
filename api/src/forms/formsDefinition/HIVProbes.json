@@ -9,7 +9,7 @@
       "caption": "GP CT value",
       "i18nKeyCaption": "GPCTi18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -29,7 +29,7 @@
       "caption": "NP CT value",
       "i18nKeyCaption": "NPCTi18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -49,7 +49,7 @@
       "caption": "CIC CT value",
       "i18nKeyCaption": "CICCTi18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -69,7 +69,7 @@
       "caption": "QC1 CT value",
       "i18nKeyCaption": "i18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -89,7 +89,7 @@
       "caption": "QC2 CT value",
       "i18nKeyCaption": "i18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -109,7 +109,7 @@
       "caption": "SAC CT value",
       "i18nKeyCaption": "SACCTi18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -129,7 +129,7 @@
       "caption": "GP endpt value",
       "i18nKeyCaption": "GPEndpti18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -149,7 +149,7 @@
       "caption": "NP Endpt value",
       "i18nKeyCaption": "NPEndpti18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -169,7 +169,7 @@
       "caption": "CIC Endpt value",
       "i18nKeyCaption": "CICendpti18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -189,7 +189,7 @@
       "caption": "QC1 endpt value",
       "i18nKeyCaption": "QC1Endpti18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -209,7 +209,7 @@
       "caption": "QC2Endpt value",
       "i18nKeyCaption": "QC2Endpti18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -229,7 +229,7 @@
       "caption": "SAC Endpt value",
       "i18nKeyCaption": "SACendpti18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
