@@ -29,7 +29,7 @@ const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClos
       open={showDialog || false}
     >
       <Grid>
-        <Grid item style={{ padding: 10 }}>
+        <Grid item>
           <Grid
             container
             spacing={16}
