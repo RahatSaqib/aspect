@@ -64,6 +64,17 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
         }))
       }
 
+      if (itemsSourceConfig?.extraItems) {
+        const extraItems = itemsSourceConfig.extraItems
+          .sort((ei1, ei2) => ei1.order - ei2.order)
+          .map(extraItem => ({
+            key: extraItem.key,
+            value: extraItem.value,
+          }))
+
+        field.items = [...field.items, ...extraItems]
+      }
+
       delete field.itemsSource
     }
   )
