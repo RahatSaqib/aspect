@@ -81,8 +81,8 @@ const ConsumableSelector = ({ onChange }) => {
         `${a.consumableName}`.localeCompare(b.consumableName)
       )
       setOptions(opt)
-      setInnerValue(opt[0].consumableExternalId)
-      onChange({ consumableExternalId: opt[0].consumableExternalId })
+      setInnerValue(opt[0]?.consumableExternalId)
+      onChange({ consumableExternalId: opt[0]?.consumableExternalId })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
