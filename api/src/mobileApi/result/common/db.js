@@ -618,34 +618,6 @@ const getLatestResultWorkflowLog = resultId => {
     .select('resultWorkflowStatusId', 'changedOn as resultWorkflowChangedOn')
 }
 
-const getLatestResultFollowUps = id => {
-  return knex('ResultFollowUp as r')
-    .join('FollowUp as f', 'r.followUpId', 'f.id')
-    .join('FollowUpType as t', 'f.followUpTypeId', 't.id')
-    .join(
-      knex('ResultFollowUp as sr')
-        .join('FollowUp as sf', 'sr.followUpId', 'sf.id')
-        .join('FollowUpType as st', 'sf.followUpTypeId', 'st.id')
-        .select('st.externalId')
-        .where('resultId', id)
-        .max('sr.createdOn as max_date')
-        .as('a')
-        .groupBy('st.externalId')
-    )
-    .where('resultId', id)
-    .where('r.isDeleted', false)
-    .select(
-      'f.externalId',
-      't.externalId as followUpTypeExternalId',
-      'f.id',
-      'r.updatedOn',
-      'r.createdOn',
-      'r.date',
-      'r.resultId'
-    )
-    .groupBy('t.externalId')
-}
-
 module.exports = {
   generateResultQuery,
   getCount,
@@ -674,7 +646,6 @@ module.exports = {
   getTreatmentStatusLogId,
   updateResultTreatmentStatusLog,
   addResultFollowUp,
-  getLatestResultFollowUps,
   deleteResultFollowUp,
   insertResultWorkflowLog,
   updateResultWorkflowLog,

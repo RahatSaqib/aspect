@@ -140,19 +140,7 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
 // Trasnformed data v2
 const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
   _.map(data, d => {
-    const treatment = followUps?.filter(
-      f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment && f.resultId === d.id
-    )
-    const outcome = followUps?.filter(
-      f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome && f.resultId === d.id
-    )
-    const latestTreatment = !_.isEmpty(treatment)
-      ? treatment?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
-      : {}
-    const latestOutcome = !_.isEmpty(outcome)
-      ? outcome?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
-      : {}
-    return getResultItemTransformedDataV2(d, setDelivered, followUps, comments, [latestTreatment, latestOutcome])
+    return getResultItemTransformedDataV2(d, setDelivered, followUps, comments)
   })
 
 const getResultItemTransformedData = (data, setDelivered, followUps, comments) => ({
@@ -373,7 +361,7 @@ async function getResultNotesByResultId(resultId, getResultNotesByResultIdForRes
 }
 
 // Trasnformed data v2 for result by Id
-const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments, latestFollowUps) => {
+const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
@@ -381,6 +369,7 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments,
     _.filter(followUps, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
     ['date', 'updatedOn']
   )
+  const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -460,9 +449,14 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments,
     },
     clinicalResponse: {
       recorded: data.resultWorkflowStatusId === 9,
-      confirmedOn: data.resultWorkflowStatusChangedOn,
     },
     testInformation: [],
+  }
+  if (data.resultWorkflowStatusId === 9) {
+    mainData.clinicalResponse = {
+      ...mainData.clinicalResponse,
+      confirmedOn: data.resultWorkflowStatusChangedOn,
+    }
   }
   if (latestFollowUps.length > 0) {
     const treatment = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'treatment')
@@ -508,6 +502,18 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments,
   return mainData
 }
 
+const getLatestFollowUpsFromFolloups = followUps => {
+  const treatment = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment)
+  const outcome = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome)
+  const latestTreatment = !_.isEmpty(treatment)
+    ? treatment?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
+    : {}
+  const latestOutcome = !_.isEmpty(outcome)
+    ? outcome?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
+    : {}
+  return [latestTreatment, latestOutcome]
+}
+
 module.exports = {
   getTransformedData,
   getTransformedDataV2,
@@ -515,4 +521,5 @@ module.exports = {
   getResultItemTransformedData,
   getResultItemTransformedDataV2,
   fieldNameToFollowUpTypeIdMappings,
+  getLatestFollowUpsFromFolloups,
 }

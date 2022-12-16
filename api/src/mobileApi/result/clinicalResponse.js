@@ -1,7 +1,11 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const { getUser } = require('../../auth/service')
-const { getResultItemTransformedDataV2, fieldNameToFollowUpTypeIdMappings } = require('./common/logic')
+const {
+  getResultItemTransformedDataV2,
+  fieldNameToFollowUpTypeIdMappings,
+  getLatestFollowUpsFromFolloups,
+} = require('./common/logic')
 const { getConstraints } = require('../../auth/constraints')
 const { resultTreatmentStatusToId, resultWorkflowStatusToId } = require('../../shared/dictionary')
 const {
@@ -15,7 +19,6 @@ const {
   updateResultTreatmentStatusLog,
   addResultFollowUp,
   updateFollowUpDate,
-  getLatestResultFollowUps,
   deleteResultFollowUp,
   insertResultWorkflowLog,
   updateResultWorkflowLog,
@@ -32,34 +35,33 @@ const ACKNOWLEDGED = 'Acknowledged'
 async function clinicalResponse(request) {
   const { payload, params } = request
   const { resultId } = params
-  payload.sort(function (a, b) {
-    const anew = new Date(a.clientTime)
-    const bnew = new Date(b.clientTime)
-    return anew - bnew
-  })
   const clinicalResponseData = payload
-  const followUps = await getLatestResultFollowUps(resultId)
+  // get follow ups for a single result
+  const followUps = await getFollowUpsOfResultById({ id: resultId })
+  const latestFollowUps = getLatestFollowUpsFromFolloups(followUps)
   let response
   await Promise.all(
     clinicalResponseData.map(async data => {
       const latestFollowUp = _.find(
-        followUps,
+        latestFollowUps,
         f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings[data.fieldName]
       )
       if (
         (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
         (data.fieldName === 'treatment' || data.fieldName === 'outcome')
       ) {
-        response = await addClinicalResponse(request, data, latestFollowUp)
+        response = await addClinicalResponse(request, data)
       } else if (data.fieldName === 'confirmed') {
         response = await updateWorkflowStatus(request, data)
       }
     })
   ).then(async () => {
-    const followUps = await getLatestResultFollowUps(resultId)
+    // get follow ups for a single result
+    const followUps = await getFollowUpsOfResultById({ id: resultId })
+    const latestFollowUps = getLatestFollowUpsFromFolloups(followUps)
     clinicalResponseData.map(async data => {
       if (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred') {
-        response = await updateResultFollowUp(request, data, followUps)
+        response = await updateResultFollowUp(request, data, latestFollowUps)
       }
     })
   })
@@ -272,9 +274,8 @@ async function updateResultWorkflowStatusByResultId(
 ) {
   // update the resultWorkflowStatusId.
   if (resultWorkflowLogEntry.resultWorkflowStatusId !== currentResultWorkflowStatusId) {
-    const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
-
     if (resultWorkflowChangedOn < clientDate || !resultWorkflowChangedOn) {
+      const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
       await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
     }
   }
@@ -294,9 +295,8 @@ async function showResult(request) {
   const followUps = await getFollowUpsOfResultById(data)
   // get comments for all result in the response for performance (filter later)
   const comments = await getCommentsOfResultById(data)
-  const latestFollowup = await getLatestResultFollowUps(resultId)
 
-  const result = await getResultItemTransformedDataV2(data, true, followUps, comments, latestFollowup)
+  const result = await getResultItemTransformedDataV2(data, true, followUps, comments)
   return result || Boom.notFound()
 }
 
