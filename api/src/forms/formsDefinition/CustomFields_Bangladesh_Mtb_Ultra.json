@@ -13,6 +13,7 @@
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.1202.value",
       "payloadDestinationPath": "patient.RepeatTest",
+      "source": "patientData.RepeatTest",
       "items": [
         {
           "key": 0,

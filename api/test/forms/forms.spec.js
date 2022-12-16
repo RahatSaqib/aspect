@@ -77,12 +77,12 @@ describe.skip('Forms routes', () => {
         checkResponseCommonForms(
           CovidResult,
           _.concat(COMMON_FIELDS, [
-            'optionSource',
+            'itemsSource',
             'required',
             'encrypted',
             'resultDbColumn',
             'typeOfOptionSource',
-            'customUrlMappingFields',
+            'itemsSourceConfig',
           ])
         )
       })

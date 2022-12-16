@@ -17,14 +17,14 @@ const DeviceTypeSelect = ({ id, name, label, value, onChange, error, helperText,
       helperText={helperText}
       select
       value={value}
-      onChange={onChange}
+      onChange={e => onChange(e.target.value)}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
         endAdornment: (
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
-            onClick={() => onChange({ target: { name, value: '' } })}
+            onClick={() => onChange('')}
             disabled={disabled}
           >
             <ClearIcon />

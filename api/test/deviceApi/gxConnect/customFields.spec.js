@@ -1,8 +1,9 @@
 const { assert } = require('chai')
 const validate = require('../../../jsonSchemas/validate')
 const {
-  mapGxConnectCustomFieldsWithDataSources,
+  mapGxConnectCustomFields,
 } = require('../../../src/plugin/deviceType/GxConnect/customFields/customFieldsMappingTemplates')
+const { replaceOptionSourceProp } = require('../../../src/forms/service')
 const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
 
 describe('Custom field mapper', () => {
@@ -18,31 +19,23 @@ describe('Custom field mapper', () => {
           caption: 'datasource value',
           i18nKeyCaption: 'datasource value',
           controlType: 'textBox',
-          optionSource: 'lga',
+          itemsSource: 'lga',
         },
       ],
     }
 
     assert.isTrue(validate(schema, datasourceExample))
+    await replaceOptionSourceProp(datasourceExample.fields, 1, 1)
+    const gxFields = await mapGxConnectCustomFields(datasourceExample)
 
-    const mappingOutput = await mapGxConnectCustomFieldsWithDataSources(datasourceExample, {
-      countryId: 1,
-      stateId: 1,
+    assert.containSubset(gxFields.CustomFields.Fields[0], {
+      Id: 2,
+      Name: 'datasource field',
+      Help: 'datasource value',
+      Control: 'TextBox',
+      Type: 'string',
+      DisplayOrder: 1,
     })
-
-    assert.notDeepEqual(mappingOutput.CustomFields.Fields, [
-      {
-        Id: 2,
-        Name: 'datasource field',
-        Help: 'datasource value',
-        InputControlData: {
-          optional: true,
-          options: [],
-        },
-        Control: 'TextBox',
-        Type: 'string',
-        DisplayOrder: 1,
-      },
-    ])
+    assert.isAtLeast(gxFields.CustomFields.Fields[0].InputControlData.options.length, 1)
   })
 })

@@ -100,9 +100,9 @@ const messagesResult = defineMessages({
     id: 'pages.resultEdit.RetreatCaseFieldi18nKey',
     defaultMessage: 'Retreatment Case',
   },
-  Referringphonei18nKeyCaption: {
-    id: 'pages.resultEdit.Referringphonei18nKeyCaption',
-    defaultMessage: 'Referring Clinician or Facility Phone Number (if known)',
+  OtherReferringFacilityi18nKeyCaption: {
+    id: 'pages.resultEdit.OtherReferringFacilityi18nKeyCaption',
+    defaultMessage: 'Other Referring Facility',
   },
   ReferringFacilityI18nkey: {
     id: 'pages.resultEdit.ReferringFacilityI18nkey',
