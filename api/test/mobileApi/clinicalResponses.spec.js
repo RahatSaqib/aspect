@@ -98,14 +98,18 @@ describe('Mobile API Clinical Response', () => {
           },
         },
       })
-      assert.equal(Object.keys(response.body.data.clinicalResponse).length, 6)
+
       if (response.body.data.clinicalResponse) {
         assert.property(response.body.data.clinicalResponse, 'recorded')
-        assert.property(response.body.data.clinicalResponse, 'confirmedOn')
+        if (response.body.data.clinicalResponse.recorded) {
+          assert.property(response.body.data.clinicalResponse, 'confirmedOn')
+          assert.equal(Object.keys(response.body.data.clinicalResponse).length, 6)
+        }
         assert.property(response.body.data.clinicalResponse, 'treatment')
         assert.property(response.body.data.clinicalResponse, 'treatmentStarted')
         assert.property(response.body.data.clinicalResponse, 'outcome')
         assert.property(response.body.data.clinicalResponse, 'outcomeOccurred')
+        assert.equal(Object.keys(response.body.data.clinicalResponse).length, 5)
       }
     }
 
@@ -119,7 +123,6 @@ describe('Mobile API Clinical Response', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data.clinicalResponse).length, 6)
       if (response.body.data.clinicalResponse) {
         assert.equal(response.body.data.clinicalResponse.outcome, null)
         assert.equal(response.body.data.clinicalResponse.outcomeOccurred, null)
