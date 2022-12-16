@@ -12,6 +12,7 @@
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
       "payloadDestinationPath": "patient.PatientGender",
+      "source": "patientData.gender",
       "items": [
         {
           "key": 1,
@@ -37,6 +38,7 @@
       "i18nKeyCaption": "Agei18nCaptionKey",
       "controlType": "textBox",
       "payloadDestinationPath": "patient.PatientAge",
+      "source": "patientData.age",
       "validation": [
         {
           "validationType": "integer",
@@ -60,6 +62,7 @@
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.203.value",
       "payloadDestinationPath": "patient.PreviouslyTreated",
+      "source": "patientData.PreviouslyTreated",
       "items": [
         {
           "key": 1,
@@ -86,6 +89,7 @@
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.204.value",
       "payloadDestinationPath": "patient.ReferringFacility",
+      "source": "patientData.ReferringFacility",
       "calculated": {
         "fieldId1": 5,
         "fixedValue": "now",
@@ -105,7 +109,8 @@
       "i18nKeyCaption": "Referringphonei18nKeyCaption",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.205.value",
-      "payloadDestinationPath": "patient.PatientPhone"
+      "payloadDestinationPath": "patient.PatientPhone",
+      "source": "patientData.phone"
     },
     {
       "id": 206,
@@ -120,6 +125,7 @@
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.206.value",
       "payloadDestinationPath": "patient.RepeatTest",
+      "source": "patientData.RepeatTest",
       "items": [
         {
           "key": 0,

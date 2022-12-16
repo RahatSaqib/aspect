@@ -379,6 +379,15 @@ async function getBaseDataSource(data, auth) {
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   const { apiUrl } = auth?.credentials ? await getCurrentPartner(auth) : ''
 
+  const authWithCredentials = auth || { credentials: {} }
+  if (!authWithCredentials.credentials) {
+    authWithCredentials.credentials = {}
+  }
+  let partnerDetails = { serverUrl: '' }
+  if (!_.isEmpty(authWithCredentials.credentials)) {
+    partnerDetails = await getCurrentPartner(authWithCredentials)
+  }
+  const { serverUrl = '' } = partnerDetails || { serverUrl: '' }
   return {
     country: {
       name: d.countryName,
