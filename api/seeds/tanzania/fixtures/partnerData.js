@@ -5,6 +5,7 @@ module.exports = {
   partnerAbbreviation: 'TZ',
   adminUserName: 'admin',
   adminPassword: 'qlrQ9508*7',
+  deviceApiToken: '5vqkca0d3w4p8n4k6480',
   fixtures: {
     jobFunctions,
   },
@@ -16,5 +17,5 @@ module.exports = {
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://tanzania.aspect.id',
-  deviceApiToken: '5vqkca0d3w4p8n4k6480',
+  apiUrl: 'https://tanzania.aspect.id/api',
 }

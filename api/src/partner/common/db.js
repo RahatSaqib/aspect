@@ -11,6 +11,7 @@ async function getPartnerByConstraints(dataConstraints) {
       'dueDaysInventoryStockout',
       'dueDaysInventoryStockExpiring',
       'serverUrl',
+      'apiUrl',
     ])
 
   return partner
