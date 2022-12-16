@@ -99,7 +99,7 @@
     },
     {
       "id": 1106,
-      "name": "Referring Facility",
+      "name": "ReferringFacility",
       "i18nKey": "ReferringFacilityI18nkey",
       "fieldType": "text",
       "completionWeight": 10,
@@ -115,8 +115,39 @@
       "itemsSource": "all-sites",
       "itemsSourceConfig": {
         "key": "externalId",
-        "value": "name"
+        "value": "name",
+        "extraItems": [
+          {
+            "key": "other",
+            "value": "Other",
+            "description": "Other",
+            "order": 100
+          }
+        ]
       }
+    },
+    {
+      "id": 1107,
+      "name": "OtherReferringFacility",
+      "title": "Other Referring Facility",
+      "i18nKey": "OtherReferringFacilityI18nKey",
+      "fieldType": "text",
+      "completionWeight": 5,
+      "order": 170,
+      "gxAlertDbColumn": "OtherReferringFacility",
+      "caption": "Other Referring Facility",
+      "i18nKeyCaption": "OtherReferringFacilityI18nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.1107.value",
+      "payloadDestinationPath": "patient.OtherReferringFacility",
+      "source": "patientData.OtherReferringFacility",
+      "condition": [
+        {
+          "propToCompare": "ReferringFacility",
+          "valueToCompare": "other",
+          "operator": "="
+        }
+      ]
     },
     {
       "id": 12011,
