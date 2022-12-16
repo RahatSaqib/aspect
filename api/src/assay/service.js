@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { usedAssay } = require('./common/db')
 
 const SELECT_LIST_FIELDS = [
   'a.id',
@@ -104,25 +105,14 @@ async function listAssaysResultSchema(request) {
 async function listAssays(request) {
   const { query, auth } = request
 
-  // get all assays that have results that user has access to
   const dataConstraints = await getConstraints(auth.credentials)
-  const usedAssay = knex('FactResultsDeviceByAssay as f')
-    .innerJoin('Device as d', 'f.deviceId', 'd.id')
-    .innerJoin('Assay as a', 'f.assayId', 'a.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', assay: 'a' })
-    .where('f.resultCount', '>', 0)
-    .groupBy('f.assayId')
-    .select({
-      assayId: 'f.assayId',
-      resultCount: knex.raw('SUM(f.resultCount)'),
-    })
 
   // no get the assays with a field for hasResults
   const assayQuery = knex('Assay as a')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .leftJoin('Disease as d', 'at.diseaseId', 'd.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-    .leftJoin(usedAssay.as('f'), 'a.id', 'f.assayId')
+    .leftJoin(usedAssay(dataConstraints).as('f'), 'a.id', 'f.assayId')
     .modify(addConstraints, dataConstraints, {
       assayType: 'at',
       assay: 'a',

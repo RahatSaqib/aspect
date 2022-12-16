@@ -25,6 +25,7 @@ module.exports = async (knex, partnerData) => {
     dueDaysInventoryStockout: finalValues.dueDaysInventoryStockout,
     dueDaysInventoryStockExpiring: finalValues.dueDaysInventoryStockExpiring,
     serverUrl: finalValues.serverUrl,
+    apiUrl: finalValues.apiUrl,
     partnerTypeId: finalValues.partnerTypeId,
   }
 

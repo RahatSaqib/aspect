@@ -5,6 +5,7 @@ module.exports = {
   partnerAbbreviation: 'GH',
   adminUserName: 'admin',
   adminPassword: '3law734i4g',
+  deviceApiToken: '0ziykx2taf8kdmvqk304',
   fixtures: {
     jobFunctions,
   },
@@ -14,5 +15,5 @@ module.exports = {
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://ghana.aspect.id',
-  deviceApiToken: '0ziykx2taf8kdmvqk304',
+  apiUrl: 'https://ghana.aspect.id/api',
 }
