@@ -30,72 +30,17 @@ const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClos
     >
       <Grid>
         <Grid item>
-          <Grid
-            container
-            spacing={16}
-            sx={{
-              width: 'auto',
-              margin: 0,
-            }}
-          >
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              lg={3}
-              container
-              direction="row"
-              justifyContent="space-evenly"
-              alignItems="center"
-            >
-              <Avatar
-                style={{
-                  color: '#fff',
-                  backgroundColor: colors.Sent,
-                }}
-              >
-                {sent}
-              </Avatar>
+          <Grid container sx={{ width: 'auto', margin: 0 }}>
+            <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
+              <Avatar style={{ color: '#fff', backgroundColor: colors.Sent }}>{sent}</Avatar>
               <span>{formatMessage(messages.sentSuccessfully)}</span>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              lg={3}
-              container
-              direction="row"
-              justifyContent="space-evenly"
-              alignItems="center"
-            >
-              <Avatar
-                style={{
-                  color: '#fff',
-                  backgroundColor: colors.Error,
-                }}
-              >
-                {withErrors}
-              </Avatar>
+            <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
+              <Avatar style={{ color: '#fff', backgroundColor: colors.Error }}>{withErrors}</Avatar>
               <span>{formatMessage(messages.sentWithErrors)}</span>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              lg={3}
-              container
-              direction="row"
-              justifyContent="space-evenly"
-              alignItems="center"
-            >
-              <Avatar
-                style={{
-                  color: '#fff',
-                  backgroundColor: colors.Pending,
-                }}
-              >
-                {pending}
-              </Avatar>
+            <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
+              <Avatar style={{ color: '#fff', backgroundColor: colors.Pending }}>{pending}</Avatar>
               <span>
                 <span>{formatMessage(messages.sentPending)}</span>
               </span>
