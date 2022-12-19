@@ -249,7 +249,7 @@ describe('Custom field mapper', () => {
           fieldType: 'text',
           order: 40,
           controlType: 'autoComplete',
-          needsconfirmationifisempty: true,
+          needsConfirmationIfIsEmpty: true,
           typeOfOptionSource: 'fixedList',
           items: [
             {
@@ -634,7 +634,7 @@ describe('Custom field mapper', () => {
           fieldType: 'text',
           order: 45,
           controlType: 'autoComplete',
-          needsconfirmationifisempty: false,
+          needsConfirmationIfIsEmpty: false,
           typeOfOptionSource: 'fixedList',
           filters: [
             {
