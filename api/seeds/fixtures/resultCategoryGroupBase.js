@@ -1457,14 +1457,6 @@ const GxMtbRifUltraMTBTraceDetectedRifNoResult = {
   assayExternalId: 'GxMtbRifUltra',
 }
 
-const GxMtbRifMTBNotDetectedRifNotDetected = {
-  externalId: 'GxMtbRifMTBNotDetectedRifNotDetected',
-  i18nKey: 'GxMtbRifMTBNotDetectedRifNotDetected',
-  name: 'MTB Not Detected Rif Not Detected',
-  resultCategory1ExternalId: 'NotDetected',
-  resultCategory2ExternalId: 'NotDetected',
-  assayExternalId: 'GxMtbRif',
-}
 const GxMtbXdrMTBNotDetectedDrugResistanceNotDetected = {
   externalId: 'GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
   i18nKey: 'GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
@@ -1674,6 +1666,5 @@ module.exports = [
   GxMtbRifUltraMTBTraceDetectedRifIndeterminate,
   GxMtbRifMTBErrorRifError,
   GxMtbRifUltraMTBTraceDetectedRifNoResult,
-  GxMtbRifMTBNotDetectedRifNotDetected,
   GxMtbXdrMTBNotDetectedDrugResistanceNotDetected,
 ]
