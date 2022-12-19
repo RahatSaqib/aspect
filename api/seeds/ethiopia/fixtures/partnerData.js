@@ -18,4 +18,5 @@ module.exports = {
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://ethiopia.aspect.id:8093',
+  partnerUrl: 'https://ethiopia.aspect.id:8093/api',
 }
