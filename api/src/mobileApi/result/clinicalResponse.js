@@ -48,10 +48,11 @@ async function clinicalResponse(request) {
       )
       if (
         (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
-        (data.fieldName === 'treatment' || data.fieldName === 'outcome')
+        (fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'treatment' ||
+          fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'outcome')
       ) {
         response = await addClinicalResponse(request, data)
-      } else if (data.fieldName === 'confirmed') {
+      } else if (fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'confirmed') {
         response = await updateWorkflowStatus(request, data)
       }
     })
@@ -60,7 +61,10 @@ async function clinicalResponse(request) {
     const followUps = await getFollowUpsOfResultById({ id: resultId })
     const latestFollowUps = getLatestFollowUpsFromFolloups(followUps)
     clinicalResponseData.map(async data => {
-      if (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred') {
+      if (
+        fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'treatmentStarted' ||
+        fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'outcomeOccurred'
+      ) {
         response = await updateResultFollowUp(request, data, latestFollowUps)
       }
     })
@@ -83,7 +87,7 @@ async function addClinicalResponse(request, data) {
     }
     await addResultFollowUp(resultId, data.value, followUp.id, data.clientTime, currentUserId, currentUserId)
   } else {
-    await deleteResultFollowUp(resultId, data.fieldName, data.clientTime)
+    await deleteResultFollowUp(resultId, fieldNameToFollowUpTypeIdMappings[data.fieldName], data.clientTime)
   }
   return updateTreatmentStatusBasedOnFollowUps(
     request,
@@ -101,7 +105,7 @@ async function updateResultFollowUp(request, data, followUps) {
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
-  const type = data.fieldName === 'outcomeOccurred' ? 'outcome' : 'treatment'
+  const type = fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'outcomeOccurred' ? 'outcome' : 'treatment'
   const followUp = _.find(followUps, f => f.followUpTypeExternalId === type)
   if (!followUp) {
     return Boom.badRequest('Invalid follow up ID')

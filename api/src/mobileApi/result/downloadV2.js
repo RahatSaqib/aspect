@@ -38,7 +38,7 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
   // get comments for all results in the response for performance (filter later)
   const comments = await getCommentsV2(data)
 
-  const transformedData = getTransformedDataV2(data, setDelivered, followUps, comments)
+  const transformedData = await getTransformedDataV2(data, setDelivered, followUps, comments)
 
   // total pages calculation (zero based)
   const totalPages = Math.ceil(total / size) - 1

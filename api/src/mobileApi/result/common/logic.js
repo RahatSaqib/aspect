@@ -11,6 +11,9 @@ const ACKNOWLEDGED = 'Acknowledged'
 const fieldNameToFollowUpTypeIdMappings = {
   treatment: 'treatment',
   outcome: 'outcome',
+  confirmed: 'confirmed',
+  treatmentStarted: 'treatmentStarted',
+  outcomeOccurred: 'outcomeOccurred',
 }
 
 const assayAvatarColorsIcon = {
@@ -138,11 +141,15 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
   _.map(data, d => getResultItemTransformedData(d, setDelivered, followUps, comments))
 
 // Trasnformed data v2
-const getTransformedDataV2 = (data, setDelivered, followUps, comments) =>
-  _.map(data, d => {
-    return getResultItemTransformedDataV2(d, setDelivered, followUps, comments)
-  })
-
+const getTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
+  const transformedData = await Promise.all(
+    _.map(data, async d => {
+      const resultItem = await getResultItemTransformedDataV2(d, setDelivered, followUps, comments)
+      return resultItem
+    })
+  )
+  return transformedData
+}
 const getResultItemTransformedData = (data, setDelivered, followUps, comments) => ({
   id: data.id,
   externalId: data.externalId,
@@ -361,7 +368,7 @@ async function getResultNotesByResultId(resultId, getResultNotesByResultIdForRes
 }
 
 // Trasnformed data v2 for result by Id
-const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments) => {
+const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
@@ -370,6 +377,7 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments)
     ['date', 'updatedOn']
   )
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
+  const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -448,11 +456,11 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments)
       contentIcon: assayAvatar.contentIcon,
     },
     clinicalResponse: {
-      recorded: data.resultWorkflowStatusId === 9,
+      recorded: data.resultWorkflowStatusId === acknowledgedId,
     },
     testInformation: [],
   }
-  if (data.resultWorkflowStatusId === 9) {
+  if (data.resultWorkflowStatusId === acknowledgedId) {
     mainData.clinicalResponse = {
       ...mainData.clinicalResponse,
       confirmedOn: data.resultWorkflowStatusChangedOn,

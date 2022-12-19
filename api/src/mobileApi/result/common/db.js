@@ -612,10 +612,9 @@ const updateResultTreatmentStatusLog = (treatmentStatusLogId, data, changedOn) =
 // feature: clinical response
 const getLatestResultWorkflowLog = resultId => {
   return knex('ResultWorkflowLog')
-    .first()
     .where('resultId', resultId)
     .orderBy('createdOn', 'desc')
-    .select('resultWorkflowStatusId', 'changedOn as resultWorkflowChangedOn')
+    .first('resultWorkflowStatusId', 'changedOn as resultWorkflowChangedOn')
 }
 
 module.exports = {

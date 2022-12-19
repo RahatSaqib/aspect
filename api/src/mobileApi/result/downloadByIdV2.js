@@ -31,7 +31,7 @@ async function getDownloadResultById(resultId, auth, setDelivered = false) {
     // get comments for for a single result
     const comments = await getCommentsOfResultById(data)
 
-    transformedData = getResultItemTransformedDataV2(data, setDelivered, followUps, comments)
+    transformedData = await getResultItemTransformedDataV2(data, setDelivered, followUps, comments)
   }
   const result = {
     ok: !!data,
