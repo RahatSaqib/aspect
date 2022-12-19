@@ -222,7 +222,7 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments)
     resultCategory1ExternalId: data.resultCategory1ExternalId,
     resultCategory2ExternalId: data.resultCategory2ExternalId,
     patientData,
-    testId: patientData?.id,
+    testId: patientData ? patientData.id : data.sampleId,
     resultData: data.resultData
       ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
       : null,
