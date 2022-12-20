@@ -52,7 +52,7 @@ async function clinicalResponse(request) {
           fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'outcome')
       ) {
         response = await addClinicalResponse(request, data)
-      } else if (fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'confirmed') {
+      } else if (data.fieldName === 'confirmed') {
         response = await updateWorkflowStatus(request, data)
       }
     })
@@ -61,10 +61,7 @@ async function clinicalResponse(request) {
     const followUps = await getFollowUpsOfResultById({ id: resultId })
     const latestFollowUps = getLatestFollowUpsFromFolloups(followUps)
     clinicalResponseData.map(async data => {
-      if (
-        fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'treatmentStarted' ||
-        fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'outcomeOccurred'
-      ) {
+      if (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred') {
         response = await updateResultFollowUp(request, data, latestFollowUps)
       }
     })
@@ -105,7 +102,7 @@ async function updateResultFollowUp(request, data, followUps) {
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
-  const type = fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'outcomeOccurred' ? 'outcome' : 'treatment'
+  const type = data.fieldName === 'outcomeOccurred' ? 'outcome' : 'treatment'
   const followUp = _.find(followUps, f => f.followUpTypeExternalId === type)
   if (!followUp) {
     return Boom.badRequest('Invalid follow up ID')

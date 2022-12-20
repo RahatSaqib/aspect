@@ -11,9 +11,6 @@ const ACKNOWLEDGED = 'Acknowledged'
 const fieldNameToFollowUpTypeIdMappings = {
   treatment: 'treatment',
   outcome: 'outcome',
-  confirmed: 'confirmed',
-  treatmentStarted: 'treatmentStarted',
-  outcomeOccurred: 'outcomeOccurred',
 }
 
 const assayAvatarColorsIcon = {
@@ -378,6 +375,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   )
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
   const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
+  const patientData = data.patientData ? JSON.parse(data.patientData) : null
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -390,7 +388,8 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     deviceName: data.deviceName,
     resultCategory1ExternalId: data.resultCategory1ExternalId,
     resultCategory2ExternalId: data.resultCategory2ExternalId,
-    patientData: data.patientData ? JSON.parse(data.patientData) : null,
+    patientData,
+    testId: patientData ? patientData.id : data.sampleId,
     resultData: data.resultData
       ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
       : null,

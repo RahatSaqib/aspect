@@ -226,6 +226,7 @@ const downloadResultResponseValidationV2 = () => {
               daysInCurrentStatus: Joi.string().description('External ID of the treatment status').allow(null),
             }),
           patientData: Joi.object().allow(null).description('Data about the patient'),
+          testId: Joi.string().allow(null).description('Patient ID/Sample ID'),
           resultData: Joi.object().allow(null).description('Data about the result'),
           sampleOriginSiteId: Joi.number().allow(null).description('Sample Origin Site Id for the patient'),
           firstViewedOn: Joi.date().allow(null).description('date when result first viewed'),
