@@ -208,6 +208,7 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments)
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
+  const patientData = data.patientData ? JSON.parse(data.patientData) : null
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -220,7 +221,8 @@ const getResultItemTransformedDataV2 = (data, setDelivered, followUps, comments)
     deviceName: data.deviceName,
     resultCategory1ExternalId: data.resultCategory1ExternalId,
     resultCategory2ExternalId: data.resultCategory2ExternalId,
-    patientData: data.patientData ? JSON.parse(data.patientData) : null,
+    patientData,
+    testId: patientData ? patientData.id : data.sampleId,
     resultData: data.resultData
       ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
       : null,

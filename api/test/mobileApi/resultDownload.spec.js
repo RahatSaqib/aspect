@@ -630,7 +630,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 26)
+      assert.equal(Object.keys(response.body.data[0]).length, 27)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -646,6 +646,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
       assert.property(response.body.data[0], 'workflowStatus')
       assert.property(response.body.data[0], 'treatmentStatus')
       assert.property(response.body.data[0], 'patientData')
+      assert.property(response.body.data[0], 'testId')
       assert.property(response.body.data[0], 'resultData')
       assert.property(response.body.data[0], 'sample')
       assert.property(response.body.data[0], 'comments')
@@ -801,7 +802,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 26)
+      assert.equal(Object.keys(response.body.data[0]).length, 27)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -817,6 +818,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
       assert.property(response.body.data[0], 'workflowStatus')
       assert.property(response.body.data[0], 'treatmentStatus')
       assert.property(response.body.data[0], 'patientData')
+      assert.property(response.body.data[0], 'testId')
       assert.property(response.body.data[0], 'resultData')
       assert.property(response.body.data[0], 'sample')
       assert.property(response.body.data[0], 'comments')
@@ -1167,7 +1169,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 26)
+      assert.equal(Object.keys(response.body.data[0]).length, 27)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1183,6 +1185,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body.data[0], 'workflowStatus')
       assert.property(response.body.data[0], 'treatmentStatus')
       assert.property(response.body.data[0], 'patientData')
+      assert.property(response.body.data[0], 'testId')
       assert.property(response.body.data[0], 'resultData')
       assert.property(response.body.data[0], 'sample')
       assert.property(response.body.data[0], 'comments')
@@ -1230,7 +1233,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 26)
+      assert.equal(Object.keys(response.body.data[0]).length, 27)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1246,6 +1249,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body.data[0], 'workflowStatus')
       assert.property(response.body.data[0], 'treatmentStatus')
       assert.property(response.body.data[0], 'patientData')
+      assert.property(response.body.data[0], 'testId')
       assert.property(response.body.data[0], 'resultData')
       assert.property(response.body.data[0], 'sample')
       assert.property(response.body.data[0], 'comments')
@@ -1480,7 +1484,7 @@ describe('Mobile API Result download by id routes v2', () => {
     function assertReporterResultDownloadRequestValidResultId(response) {
       assertReporterResultDownloadResponse(response)
 
-      assert.equal(Object.keys(response.body.data).length, 26)
+      assert.equal(Object.keys(response.body.data).length, 27)
       assert.property(response.body.data, 'id')
       assert.property(response.body.data, 'externalId')
       assert.property(response.body.data, 'endedOn')
@@ -1496,6 +1500,7 @@ describe('Mobile API Result download by id routes v2', () => {
       assert.property(response.body.data, 'workflowStatus')
       assert.property(response.body.data, 'treatmentStatus')
       assert.property(response.body.data, 'patientData')
+      assert.property(response.body.data, 'testId')
       assert.property(response.body.data, 'resultData')
       assert.property(response.body.data, 'sample')
       assert.property(response.body.data, 'comments')
