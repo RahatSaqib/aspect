@@ -13,7 +13,8 @@
       "i18nKeyCaption": "PatientNameI18nCaptionKey",
       "controlType": "textBox",
       "payloadDestinationPath": "patient.PatientName",
-      "source": "patientData.name"
+      "source": "patientData.name",
+      "mandatory": true
     },
     {
       "id": 1102,
@@ -37,7 +38,8 @@
           "errorMessage": "The age should be a number between 1-150",
           "errorMessageI18nKey": "AgeValidationFieldi18nKey"
         }
-      ]
+      ],
+      "mandatory": true
     },
     {
       "id": 1103,
@@ -64,7 +66,8 @@
           "value": "Female",
           "order": 10
         }
-      ]
+      ],
+      "mandatory": true
     },
     {
       "id": 1104,
@@ -79,7 +82,8 @@
       "i18nKeyCaption": "AddressI18nCaptionKey",
       "payloadDestinationPath": "patient.PatientStreet",
       "source": "patientData.address",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "mandatory": true
     },
     {
       "id": 1105,
@@ -95,7 +99,8 @@
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.1105.value",
       "payloadDestinationPath": "patient.PatientPhone",
-      "source": "patientData.PatientPhone"
+      "source": "patientData.PatientPhone",
+      "mandatory": true
     },
     {
       "id": 1106,
@@ -234,7 +239,8 @@
           "value": "Presumptive TB",
           "order": 95
         }
-      ]
+      ],
+      "mandatory": true
     },
     {
       "id": 12012,
@@ -343,7 +349,8 @@
             "Presumptive_Pulmonary_Smear_Negative_TB_Cases"
           ]
         }
-      ]
+      ],
+      "mandatory": true
     },
     {
       "id": 12013,
@@ -385,7 +392,8 @@
           "text": "Retreatment",
           "order": 10
         }
-      ]
+      ],
+      "mandatory": true
     },
     {
       "id": 1210,
@@ -446,7 +454,8 @@
           "value": "Extra-pulmonary",
           "order": 20
         }
-      ]
+      ],
+      "mandatory": true
     },
     {
       "id": 1301,
