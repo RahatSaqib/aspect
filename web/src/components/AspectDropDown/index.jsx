@@ -136,7 +136,13 @@ SelectComponent.propTypes = {
   classNames: PropTypes.oneOfType([PropTypes.object]),
   components: PropTypes.oneOfType([PropTypes.object]),
   data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
-  defaultSelectedOption: defaultSelectedOptionPropType,
+  defaultSelectedOption: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.number,
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   identifier: PropTypes.string.isRequired,
   isClearable: PropTypes.bool,
   isDisabled: PropTypes.bool,
@@ -369,7 +375,13 @@ AspectDropDown.propTypes = {
     classNames: PropTypes.oneOfType([PropTypes.object]),
     components: PropTypes.oneOfType([PropTypes.object]),
     data: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.bool]),
-    defaultSelectedOption: defaultSelectedOptionPropType,
+    defaultSelectedOption: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.number,
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.array,
+    ]),
     dependencies: PropTypes.arrayOf(PropTypes.string),
     endpoint: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
     formik: PropTypes.oneOfType([PropTypes.shape, PropTypes.object]),
@@ -403,14 +415,6 @@ const messagesBase = defineMessages({
 })
 
 const cssClasses = classnames.bind(styles)
-
-const defaultSelectedOptionPropType = PropTypes.oneOfType([
-  PropTypes.bool,
-  PropTypes.number,
-  PropTypes.string,
-  PropTypes.object,
-  PropTypes.array,
-])
 
 const {
   '--ming': aspectPrimary,

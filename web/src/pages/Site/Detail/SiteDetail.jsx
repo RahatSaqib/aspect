@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { LinearProgress, Paper } from '@mui/material'
+import { LinearProgress, Paper, Box } from '@mui/material'
 import classnames from 'classnames/bind'
 import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'
@@ -7,8 +7,8 @@ import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
+import DetailHeader from '../../../components/DetailHeader'
 import ErrorBoundary from '../../../components/ErrorBoundary'
-import { Shell, ShellHeader, ShellContent } from '../../../components/Shell'
 import useSite from '../../../hooks/site/useSite'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useI18n from '../../../hooks/useI18n'
@@ -51,75 +51,74 @@ export const SiteDetail = ({ navigate, location }) => {
   return (
     <ErrorBoundary>
       <Helmet title={intl.formatMessage(messages.title)} />
-      <Shell>
-        <ShellHeader title={(site && site.name) || 'Site'}>
-          {[
-            { label: intl.formatMessage(titleMessages.profile), path: `/browse/site/${siteId}` },
-            { label: intl.formatMessage(titleMessages.alerts), path: `/browse/site/${siteId}/alerts` },
-            { label: intl.formatMessage(titleMessages.edit), path: `/browse/site/${siteId}/edit`, disabled: false },
-          ].map(({ label, path, disabled = false }) => (
-            <AspectButton
-              key={path}
-              onClick={onButtonClick}
-              disabled={disabled}
-              data-path={path}
-              color="primary"
-              variant="contained"
-              inverse={path !== location?.pathname}
-            >
-              {label}
-            </AspectButton>
-          ))}
-        </ShellHeader>
-        <ShellContent>
-          {isLoading ? <LinearProgress /> : null}
-          {!isLoading ? (
-            <Routes>
-              <Route
-                path=""
-                element={
-                  <SiteDetailProfile
-                    formatMessage={intl.formatMessage}
-                    disabled={!editable}
-                    site={site}
-                    siteTags={siteTags}
-                    user={user}
-                  />
-                }
-              />
-              <Route
-                path="alerts"
-                element={
-                  <section className={cssClasses('Section', 'Section--first')}>
-                    <TaskList intl={intl} navigate={navigate} location={location} filterOptions={{ siteId }} />
-                  </section>
-                }
-              />
-              <Route
-                path="edit"
-                element={
-                  editable ? (
-                    <SiteForm site={site} siteTags={siteTags} onLatLongChange={setLatLong} />
-                  ) : (
-                    <Navigate replace to={location} />
-                  )
-                }
-              />
-            </Routes>
-          ) : null}
-          <section className={cssClasses('Section', 'Section--first')}>
-            {hasSiteWithLocation() ? (
-              <Paper>
-                <SiteLocationFormMap latLong={latLong} />
-              </Paper>
-            ) : (
-              <div style={{ textAlign: 'center' }}>
-                <span>{intl.formatMessage(messages.siteWithoutLocation)}</span>
-              </div>
-            )}
-          </section>
-        </ShellContent>
-      </Shell>
+      <DetailHeader name={(site && site.name) || 'Site'} back="/browse/site">
+        {[
+          { label: intl.formatMessage(titleMessages.profile), path: `/browse/site/${siteId}` },
+          { label: intl.formatMessage(titleMessages.alerts), path: `/browse/site/${siteId}/alerts` },
+          { label: intl.formatMessage(titleMessages.edit), path: `/browse/site/${siteId}/edit`, disabled: false },
+        ].map(({ label, path, disabled = false }) => (
+          <AspectButton
+            key={path}
+            onClick={onButtonClick}
+            disabled={disabled}
+            data-path={path}
+            color="primary"
+            variant="contained"
+            inverse={path !== location?.pathname}
+          >
+            {label}
+          </AspectButton>
+        ))}
+      </DetailHeader>
+      <Box component="main" sx={{ pt: 8 }}>
+        {isLoading ? (
+          <LinearProgress />
+        ) : (
+          <Routes>
+            <Route
+              path=""
+              element={
+                <SiteDetailProfile
+                  formatMessage={intl.formatMessage}
+                  disabled={!editable}
+                  site={site}
+                  siteTags={siteTags}
+                  user={user}
+                />
+              }
+            />
+            <Route
+              path="alerts"
+              element={
+                <section className={cssClasses('Section', 'Section--first')}>
+                  <TaskList intl={intl} navigate={navigate} location={location} filterOptions={{ siteId }} />
+                </section>
+              }
+            />
+            <Route
+              path="edit"
+              element={
+                editable ? (
+                  <SiteForm site={site} siteTags={siteTags} onLatLongChange={setLatLong} />
+                ) : (
+                  <Navigate replace to={location} />
+                )
+              }
+            />
+          </Routes>
+        )}
+        <section className={cssClasses('Section', 'Section--first')}>
+          {hasSiteWithLocation() ? (
+            <Paper>
+              <SiteLocationFormMap latLong={latLong} />
+            </Paper>
+          ) : (
+            <div style={{ textAlign: 'center' }}>
+              <span>{intl.formatMessage(messages.siteWithoutLocation)}</span>
+            </div>
+          )}
+        </section>
+      </Box>
     </ErrorBoundary>
   )
 }

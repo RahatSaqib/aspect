@@ -1,7 +1,6 @@
 const _ = require('lodash')
 
 const { partnerName, adminUserName } = require('./fixtures/partnerData')
-const { issueTypeToId } = require('../../src/shared/dictionary')
 const { upsertNotificationTypes, getDefaultMessageTypes } = require('../utils')
 
 module.exports = require('../utils').seed(async knex => {
@@ -11,7 +10,7 @@ module.exports = require('../utils').seed(async knex => {
     .where({ 'p.name': partnerName, 'u.name': adminUserName })
     .first('p.id as partnerId', 'per.userId as adminId')
 
-  const issueTypeId = await issueTypeToId('HardwareTemperatureErrors')
+  const { id: issueTypeId } = await knex('IssueType').where('externalId', 'HardwareTemperatureErrors').first('id')
 
   const issuesToRemoveTrigger = await knex('IssueType')
     .whereIn('externalId', [

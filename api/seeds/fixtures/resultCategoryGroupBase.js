@@ -1430,6 +1430,42 @@ const assaySmearPositive3 = {
   assayExternalId: 'assaySmear',
 }
 
+const GxMtbRifUltraMTBTraceDetectedRifIndeterminate = {
+  externalId: 'GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
+  i18nKey: 'GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
+  name: 'MTB Trace Detected Rif Indeterminate',
+  resultCategory1ExternalId: 'Trace Detected',
+  resultCategory2ExternalId: 'Indeterminate',
+  assayExternalId: 'GxMtbRifUltra',
+}
+
+const GxMtbRifMTBErrorRifError = {
+  externalId: 'GxMtbRifMTBErrorRifError',
+  i18nKey: 'GxMtbRifMTBErrorRifError',
+  name: 'MTB Error Rif Error',
+  resultCategory1ExternalId: 'Error',
+  resultCategory2ExternalId: 'Error',
+  assayExternalId: 'GxMtbRif',
+}
+
+const GxMtbRifUltraMTBTraceDetectedRifNoResult = {
+  externalId: 'GxMtbRifUltraMTBTraceDetectedRifNoResult',
+  i18nKey: 'GxMtbRifUltraMTBTraceDetectedRifNoResult',
+  name: 'MTB Trace Detected Rif No Result',
+  resultCategory1ExternalId: 'Trace Detected',
+  resultCategory2ExternalId: 'NoResult',
+  assayExternalId: 'GxMtbRifUltra',
+}
+
+const GxMtbXdrMTBNotDetectedDrugResistanceNotDetected = {
+  externalId: 'GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
+  i18nKey: 'GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
+  name: 'MTB Not Detected Drug Resistance Not Detected',
+  resultCategory1ExternalId: 'NotDetected',
+  resultCategory2ExternalId: 'NotDetected',
+  assayExternalId: 'GxMtbXdr',
+}
+
 module.exports = [
   GxEbolaGPDetectedNPDetected,
   GxEbolaGPDetected,
@@ -1627,4 +1663,8 @@ module.exports = [
   assaySmearPositive1,
   assaySmearPositive2,
   assaySmearPositive3,
+  GxMtbRifUltraMTBTraceDetectedRifIndeterminate,
+  GxMtbRifMTBErrorRifError,
+  GxMtbRifUltraMTBTraceDetectedRifNoResult,
+  GxMtbXdrMTBNotDetectedDrugResistanceNotDetected,
 ]

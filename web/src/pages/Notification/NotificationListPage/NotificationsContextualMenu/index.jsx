@@ -104,7 +104,7 @@ NotificationsContextualMenu.propTypes = {
     readyForNotification: PropTypes.number,
     name: PropTypes.string,
     enabled: PropTypes.number,
-    typeCategory: PropTypes.number,
+    typeCategory: PropTypes.string,
     totalTriggers: PropTypes.number,
   }).isRequired,
 }

@@ -19,7 +19,7 @@
             "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
           }
         ],
-        "customUrlMappingFields": {
+        "itemsSourceConfig": {
           "key": "ABCDEFGHIJKLMNOPQRSTUVW",
           "value": "ABCDEF"
         },

@@ -82,7 +82,12 @@ const ContactPageStepOne = ({ setStep, id }) => {
         <Loading />
       ) : (
         <Formik
-          initialValues={{ ...person, email: person.email || '' }}
+          initialValues={{
+            ...person,
+            email: person.email || '',
+            phone: person.phone?.length > 5 ? person.phone : null,
+            cell: person.cell?.length > 5 ? person.cell : null,
+          }}
           validationSchema={validationSchema}
           onSubmit={values => {
             const noField = [
@@ -110,12 +115,14 @@ const ContactPageStepOne = ({ setStep, id }) => {
               })
             } else if (id === ACTION.SELF) {
               delete values.canLogIn
-              updateSelf(values)
-              setStep(1)
+              updateSelf(values, { onSuccess: () => setStep(1) })
             } else {
-              updatePerson(values)
-              if (values.canLogIn === 1) setStep(1)
-              else navigate('/browse/person')
+              updatePerson(values, {
+                onSuccess: () => {
+                  if (values.canLogIn === 1) setStep(1)
+                  else navigate('/browse/person')
+                },
+              })
             }
           }}
         >
@@ -197,7 +204,9 @@ const ContactPageStepOne = ({ setStep, id }) => {
                     name="phone"
                     label={formatMessage(messages.phone)}
                     value={values.phone || '+1'}
-                    onChange={handleChange}
+                    onChange={e => {
+                      handleChange({ target: { name: 'phone', value: e !== '+' && e !== '+1' ? e : null } })
+                    }}
                     error={errors.phone ? errors.phone : undefined}
                     helperText={errors.phone}
                   />
@@ -208,7 +217,9 @@ const ContactPageStepOne = ({ setStep, id }) => {
                     name="cell"
                     label={formatMessage(messages.mobile)}
                     value={values.cell || '+1'}
-                    onChange={handleChange}
+                    onChange={e => {
+                      handleChange({ target: { name: 'cell', value: e !== '+' && e !== '+1' ? e : null } })
+                    }}
                     error={errors.cell ? errors.cell : undefined}
                     helperText={errors.cell}
                   />
@@ -303,7 +314,7 @@ const ContactPageStepOne = ({ setStep, id }) => {
                     id="tags"
                     name="tags"
                     label={formatMessage(messages.chooseTags)}
-                    value={values.tags || []}
+                    value={isString(values.tags) ? values.tags.split(',') : values.tags || []}
                     onChange={handleChange}
                     error={errors.tags ? errors.tags : undefined}
                     helperText={errors.tags}
@@ -315,8 +326,11 @@ const ContactPageStepOne = ({ setStep, id }) => {
                     <TextField
                       id="notes"
                       name="notes"
+                      value={values.notes}
                       label={formatMessage(messages.notes)}
-                      onChange={handleChange}
+                      onChange={e => {
+                        handleChange({ target: { name: 'notes', value: e.target.value } })
+                      }}
                       error={errors.notes ? errors.notes : undefined}
                       helperText={errors.notes}
                       multiline
@@ -326,7 +340,7 @@ const ContactPageStepOne = ({ setStep, id }) => {
                 ) : null}
               </Grid>
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
+                <Button onClick={() => navigate(-1)}>{formatMessage(messages.backToTable)}</Button>
                 <Box sx={{ flex: '1 1 auto' }} />
                 {dirty ? (
                   id === ACTION.SELF || values.canLogIn === 1 ? (
