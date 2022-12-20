@@ -17,6 +17,7 @@ const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./devic
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
 const { initDictionaryTables } = require('./shared/dictionary')
 const AspectCacheSingleton = require('../aspectCache')
+
 const cache = AspectCacheSingleton.getInstance()
 
 const { port } = config
