@@ -630,7 +630,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 27)
+      assert.equal(Object.keys(response.body.data[0]).length, 28)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -836,7 +836,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 27)
+      assert.equal(Object.keys(response.body.data[0]).length, 28)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1226,7 +1226,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 27)
+      assert.equal(Object.keys(response.body.data[0]).length, 28)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1291,7 +1291,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 27)
+      assert.equal(Object.keys(response.body.data[0]).length, 28)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1543,7 +1543,7 @@ describe('Mobile API Result download by id routes v2', () => {
     function assertReporterResultDownloadRequestValidResultId(response) {
       assertReporterResultDownloadResponse(response)
 
-      assert.equal(Object.keys(response.body.data).length, 27)
+      assert.equal(Object.keys(response.body.data).length, 28)
       assert.property(response.body.data, 'id')
       assert.property(response.body.data, 'externalId')
       assert.property(response.body.data, 'endedOn')
