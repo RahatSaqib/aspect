@@ -9,7 +9,7 @@
       "caption": "Treatment Type received",
       "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "controlType": "checkBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -32,7 +32,7 @@
       "fieldType": "text",
       "order": 1,
       "controlType": "checkBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -61,7 +61,7 @@
       "order": 2,
       "title": "Medicine Given",
       "controlType": "autoComplete",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -93,7 +93,7 @@
       "fieldType": "text",
       "order": 4,
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "condition": [
         {
           "conjunction": "AND",
@@ -111,7 +111,7 @@
       "fieldType": "text",
       "order": 3,
       "controlType": "autoComplete",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
