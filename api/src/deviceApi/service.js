@@ -1,6 +1,11 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
+const path = require('path')
+const fs = require('fs')
+const AdmZip = require('adm-zip')
+const { createFetch, base, accept, header, method, body } = require('http-client')
+
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
@@ -26,6 +31,8 @@ const { loadPlugin } = require('../plugin/registration')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')
+
+const config = require('../config')
 
 const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 
@@ -1062,6 +1069,156 @@ async function getHealthState(context) {
   return result
 }
 
+// ------------------------------------------------------------------------
+async function importZipFilesFromFolder(folderAbsolutePath) {
+  const reLabel = 'gxAlertImport:importZipFilesFromFolder'
+  logger.info(`Start processing folder '${folderAbsolutePath}' with GxAlert zip files`, {
+    reLabel,
+  })
+  /**
+   * loop through zip files and save each in table
+   */
+  let totalZipFiles = 0
+  let totalJsonFiles = 0
+  const dirItems = fs.readdirSync(folderAbsolutePath)
+  await Promise.all(
+    dirItems.map(async (fileName, index) => {
+      const absolutePath = path.join(folderAbsolutePath, fileName)
+      if (absolutePath.endsWith('.zip')) {
+        logger.info(`Unzipping file ${index + 1}/${dirItems.length} - ${fileName}`, { reLabel })
+
+        totalZipFiles += 1
+
+        const dirAbsolutePath = absolutePath.substring(0, absolutePath.length - 4)
+        if (!fs.existsSync(dirAbsolutePath)) {
+          fs.mkdirSync(dirAbsolutePath)
+        }
+
+        const zip = new AdmZip(absolutePath)
+        const zipEntries = zip.getEntries()
+        logger.info(`Zip file contains ${zipEntries.length} files, extracting all.`, { reLabel })
+        zipEntries.forEach(async zipEntry => {
+          if (!zipEntry.isDirectory && zipEntry.entryName.endsWith('.json')) {
+            const now = new Date().toISOString()
+            const fileAbsolutePath = path.join(dirAbsolutePath, zipEntry.entryName)
+            const content = zipEntry.getData().toString('utf8')
+            try {
+              fs.writeFileSync(fileAbsolutePath, content)
+
+              // JSON file name is a GxAlert test id
+              const gxAlertTestId = +path.basename(fileAbsolutePath, '.json')
+              if (_.isNumber(gxAlertTestId) && gxAlertTestId > 0) {
+                /**
+                 * store file reference in GxAlertImport
+                 */
+                const id = await knex('GxAlertImport').where({ gxAlertTestId }).first('id')
+                const payload = {
+                  fileFullPath: fileAbsolutePath,
+                  gxAlertTestId,
+                  status: null,
+                  error: null,
+                  updatedOn: now,
+                  createdOn: now,
+                }
+                if (id) {
+                  await knex('GxAlertImport').update(payload).where({ gxAlertTestId })
+                } else {
+                  await knex('GxAlertImport').insert(payload)
+                }
+              }
+              totalJsonFiles += 1
+            } catch (err) {
+              console.error(err)
+              logger.error(err, { reLabel })
+            }
+          }
+        })
+        logger.info(`So far total processed ${totalZipFiles} zip files and extracted ${totalJsonFiles} files.`, {
+          reLabel,
+        })
+      }
+    })
+  )
+  return { totalJsonFiles, totalZipFiles }
+}
+
+// ------------------------------------------------------------------------
+async function importZipFilesFromGxAlertHandler() {
+  const folderAbsolutePath = config.file.import.gxAlert.directoryName
+  if (!fs.existsSync(folderAbsolutePath)) {
+    const error = `Can not find folder path "${folderAbsolutePath}". Check if prop import.gxalert.directory is defined in .env file.`
+    logger.error(error, { reLabel: 'gxAlertImport:importZipFilesFromFolder' })
+    return { error }
+  }
+
+  const totalFilesSaved = await importZipFilesFromFolder(folderAbsolutePath)
+
+  return {
+    totalFilesSaved,
+  }
+}
+
+// ------------------------------------------------------------------------
+async function processZipFilesFromGxAlertHandler(request) {
+  const items = await knex('GxAlertImport').where({ status: null }).select('*')
+  await Promise.each(items, async item => {
+    const { fileFullPath, gxAlertTestId } = item
+    if (!fs.existsSync(fileFullPath)) {
+      logger.error(`Can not find imported JSON file "${fileFullPath}".`, {
+        reLabel: 'gxAlertImport:importZipFilesFromFolder',
+      })
+      return
+    }
+    /**
+     *
+     */
+    // eslint-disable-next-line import/no-dynamic-require
+    const jsonObj = require(fileFullPath)
+    /**
+     *
+     */
+    const deviceApiFetch = createFetch(
+      method('POST'),
+      base(request.server.info.uri), // use same protocol://address:port
+      accept('application/json'),
+      header('Content-Type', 'application/json'),
+      header('Authorization', `Bearer ${jsonObj.DeviceApiKey}`),
+      body(JSON.stringify(jsonObj.Content), 'application/json')
+    )
+    /**
+     * post payload to the same endpoint as GxAlert is doing when forwarding
+     * data via job JobSendReceivedDataToAspectDeviceApi
+     */
+    const resp = await deviceApiFetch('/device')
+    const respJson = await resp.json()
+    /**
+     *
+     */
+    const { aspectResultId } = respJson
+    let payload
+    if (aspectResultId) {
+      payload = {
+        status: 'done',
+        error: null,
+        aspectResultId,
+        updatedOn: new Date().toISOString(),
+      }
+    } else {
+      payload = {
+        status: 'error',
+        error: 'Can not insert test in Result table',
+        aspectResultId: null,
+        updatedOn: new Date().toISOString(),
+      }
+      // Boom.create(500, JSON.stringify(respJson))
+    }
+    await knex('GxAlertImport').where({ gxAlertTestId }).update(payload)
+
+    return respJson
+  })
+  return null
+}
+
 module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -1077,4 +1234,6 @@ module.exports = {
   getHealthStatsHandler,
   getCustomFields,
   getResultPakistanHandler,
+  importZipFilesFromGxAlertHandler,
+  processZipFilesFromGxAlertHandler,
 }

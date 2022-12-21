@@ -75,6 +75,7 @@
     "@hapi/vision": "^7.0.0",
     "@sentry/node": "^7.15.0",
     "@sentry/tracing": "^7.15.0",
+    "adm-zip": "^0.5.10",
     "ajv": "^8.11.0",
     "ajv-cli": "^5.0.0",
     "ajv-keywords": "^5.1.0",
