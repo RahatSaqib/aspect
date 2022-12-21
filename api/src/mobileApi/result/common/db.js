@@ -569,7 +569,7 @@ const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, up
     createdBy,
     createdOn: new Date(),
     updatedBy,
-    updatedOn: new Date(),
+    updatedOn: date,
   })
 }
 
