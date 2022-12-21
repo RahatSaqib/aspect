@@ -16,7 +16,7 @@ import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { ResultDetailsErrors } from './errors'
 import messages from './messages'
 import ResultTransferModal from './ResultTransferModal'
-import { getFormConfigWithData } from './utils'
+import { getFormConfigWithData, updateValidationsAndFilters } from './utils'
 
 const AspectResultDetail = () => {
   const intl = useI18n()
@@ -27,6 +27,7 @@ const AspectResultDetail = () => {
   const [patientId, setPatientId] = useState()
   const [values, setValues] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
+  const [data, setData] = useState()
 
   const {
     data: queryResponse,
@@ -60,6 +61,8 @@ const AspectResultDetail = () => {
 
       const config = getFormConfigWithData(intl, false, data)
 
+      setData(data.customFields)
+
       setFormConfig(config)
       setValues(data)
     } else {
@@ -82,13 +85,19 @@ const AspectResultDetail = () => {
   return isLoading || !formConfig ? (
     <CircularProgress />
   ) : (
-    <FormikProvider config={formConfig} debug>
-      <DetailForm submitResult={submitResult} values={values} patientId={patientId} formConfig={formConfig} />
+    <FormikProvider config={formConfig}>
+      <DetailForm
+        submitResult={submitResult}
+        values={values}
+        patientId={patientId}
+        formConfig={formConfig}
+        data={data}
+      />
     </FormikProvider>
   )
 }
 
-const DetailForm = ({ values, patientId, formConfig, submitResult }) => {
+const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
   const intl = useI18n()
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
   const { setToggleEdit, formik, toggleEdit } = useFormikContext()
@@ -97,6 +106,8 @@ const DetailForm = ({ values, patientId, formConfig, submitResult }) => {
     const values = sanitizeFormValues(formik.values, { formConfig })
     submitResult({ values })
   }
+
+  formConfig.sections = updateValidationsAndFilters(formConfig.sections, data, formik)
 
   return (
     <>

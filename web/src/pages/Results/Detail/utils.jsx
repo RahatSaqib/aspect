@@ -55,29 +55,26 @@ function getRowsForCustomFields(values) {
           initialValue: values[source[0]][source[1]] ? [values[source[0]][source[1]]] : [],
           controlType: {
             component: 'select',
-            options: customField.items.sort((a, b) => a.order - b.order).map(i => ({ value: i.value, label: i.value })),
+            options: customField.items
+              .sort((a, b) => a.order - b.order)
+              .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined })),
           },
         },
       ]
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
       row.items = [
         ...row.items,
-        {
-          id: customField.source,
-          controlType: { component: 'textField' },
-          label: customField.title,
-        },
+        { id: customField.source, controlType: { component: 'textField' }, label: customField.title },
       ]
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
+      // assuming only one validation
+      const validation = customField.validation[0]
       row.items = [
         ...row.items,
+        // 1. validation: validates the value type of textboxes (integer and strings), and validates min and max values
         {
           id: customField.source,
-          controlType: {
-            component: 'numberField',
-            min: customField.validation[0].min,
-            max: customField.validation[0].max,
-          },
+          controlType: { component: 'numberField', min: validation.min, max: validation.max },
           label: customField.title,
         },
       ]
@@ -123,6 +120,98 @@ function getValidationsForCustomFields(values) {
   })
 
   return rows
+}
+
+const sanitizeValue = value => value.replaceAll('-', '').replaceAll(',', '').replaceAll('  ', ' ').split(' ').join('_')
+
+// start enable/disable logic
+const evaluateCondition = (condition, sourcePath, formik) => {
+  const cleanValue = sanitizeValue(formik.values[sourcePath[0]][condition.propToCompare]).toLowerCase()
+  switch (condition.operator) {
+    case '=':
+      return cleanValue === condition.valueToCompare.toLowerCase()
+    default:
+      return false
+  }
+}
+
+const evaluateEnabledState = (itemBase, formik) => {
+  const sourcePath = itemBase.source.split('.')
+  const individualResponses = itemBase.condition.map(c => evaluateCondition(c, sourcePath, formik))
+  const operator = itemBase.condition[0].conjunction || 'AND' // only options are AND & OR
+
+  const resp = individualResponses.reduce((acc, curr) => {
+    // the first conjuntion is used for all cases, ie. if AND we evaluate all indivudual responses with
+    // AND connector (opt1 && opt2 && ...) else with OR (opt1 || opt2 || ...)
+    return operator === 'AND' ? acc && curr : acc || curr
+  }, operator === 'AND')
+  return resp
+}
+// end enable/disable logic
+
+// start filter logic
+const applyFilterToOption = (filter, option, formik, sourcePath) => {
+  const cleanList = option[filter.fieldToCompare].map(o => o.toLowerCase())
+  const cleanValue = sanitizeValue(formik.values[sourcePath[0]][filter.propToCompare]).toLowerCase()
+  switch (filter.operator) {
+    case 'in':
+      return cleanList.includes(cleanValue)
+    default:
+  }
+}
+
+const calculateFilteredOptions = (itemBase, item, formik) => {
+  const allFilters = itemBase.filters
+  const sourcePath = itemBase.source.split('.')
+
+  return item.controlType.options.filter(option => {
+    const resp = []
+    allFilters.forEach(filter => (applyFilterToOption(filter, option, formik, sourcePath) ? resp.push(option) : null))
+    return resp.length
+  })
+}
+// end filter logic
+
+const enableItemAndFilter = (item, data, formik) => {
+  const idToUpdate = item.id
+  const itemBase = data.find(itemBase => itemBase.source === idToUpdate)
+
+  // 2. condition: based on comparatives with other custom fields, enables and disables the custom field
+  if (itemBase.condition) {
+    item.disabledIf = () => !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
+  }
+
+  // 3. filters: based on comparative with other custom fields, shows or hides options in combobox and autocomplete.
+  if (itemBase.filters) {
+    const filteredOptions = calculateFilteredOptions(itemBase, item, formik)
+
+    // first update the available options
+    item.controlType.options = filteredOptions
+
+    // second, clear any invalid option from already selected values
+    const field = itemBase.source.split('.')
+    const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
+    const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
+    if (!currentValidValues.includes(currentSelectdValue)) {
+      // formik.setFieldValue(field, '', false)
+      formik.values[field[0]][field[1]] = ''
+    }
+  }
+
+  return item
+}
+
+export const updateValidationsAndFilters = (sections, data, formik) => {
+  return sections.map((section, index) => {
+    // last section is custom fields
+    if (index === sections.length - 1) {
+      section = {
+        ...section,
+        rows: section.rows.map(r => ({ ...r, items: r.items.map(item => enableItemAndFilter(item, data, formik)) })),
+      }
+    }
+    return section
+  })
 }
 
 export default getFormConfigWithData
