@@ -1,4 +1,7 @@
-const { mtbDetectedRRDetected: mtbDetectedRRDetectedBase } = require('../../fixtures/Report')
+const {
+  mtbDetectedRRDetected: mtbDetectedRRDetectedBase,
+  resultsHivNotSuppressed: resultsHivNotSuppressedBase,
+} = require('../../fixtures/Report')
 
 const mtbDetectedRRDetected = {
   ...mtbDetectedRRDetectedBase,
@@ -11,6 +14,19 @@ const mtbDetectedRRDetected = {
   ],
 }
 
+// ---------------------------------------------------------------
+const resultsHivNotSuppressed = {
+  ...resultsHivNotSuppressedBase,
+  sheets: [
+    {
+      ...resultsHivNotSuppressedBase.sheets[0],
+      moduleName: 'result/serviceReportMalawi',
+      functionName: 'getResultsForReport',
+    },
+  ],
+}
+
 module.exports = {
   mtbDetectedRRDetected,
+  resultsHivNotSuppressed,
 }
