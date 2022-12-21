@@ -8,7 +8,7 @@ import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import styles from './Form.css'
 import { getFormattedString, getLabel } from './Formik/Helpers'
-import AspectInput from './Inputs'
+import AspectInput from './Inputs/AspectInput'
 import AspectTextField from './Inputs/TextField'
 
 const cssClasses = classnames.bind(styles)
