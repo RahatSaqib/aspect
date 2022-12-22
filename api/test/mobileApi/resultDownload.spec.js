@@ -630,7 +630,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 27)
+      assert.equal(Object.keys(response.body.data[0]).length, 28)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -653,6 +653,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
       assert.property(response.body.data[0], 'testInformation')
+      assert.property(response.body.data[0], 'clinicalResponse')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
         assert.property(response.body.data[0].followUps[0], 'id')
@@ -729,6 +730,39 @@ describe('Mobile API Result download routes v2 with available custom api-version
       }
     }
 
+    function assertReporterResultDownloadResponseContainingClinicalResponse(response, numberOfResults) {
+      assertReporterResultDownloadResponse(response)
+
+      assert.equal(response.body.total, numberOfResults)
+      assert.equal(response.body.length, numberOfResults)
+      assert.isAtLeast(response.body.awaitingTreatment, 0)
+      if (!_.isNil(response.body.nextPage)) {
+        assert.isAtLeast(response.body.nextPage, 0)
+      }
+      expect(response).to.containSubset({
+        body: {
+          data: [
+            {
+              clinicalResponse: {},
+            },
+          ],
+        },
+      })
+
+      if (response.body.data[0].clinicalResponse) {
+        assert.property(response.body.data[0].clinicalResponse, 'recorded')
+        if (response.body.data[0].clinicalResponse.recorded) {
+          assert.property(response.body.data[0].clinicalResponse, 'confirmedOn')
+          assert.equal(Object.keys(response.body.data[0].clinicalResponse).length, 6)
+        }
+        assert.property(response.body.data[0].clinicalResponse, 'treatment')
+        assert.property(response.body.data[0].clinicalResponse, 'treatmentStarted')
+        assert.property(response.body.data[0].clinicalResponse, 'outcome')
+        assert.property(response.body.data[0].clinicalResponse, 'outcomeOccurred')
+        assert.equal(Object.keys(response.body.data[0].clinicalResponse).length, 5)
+      }
+    }
+
     function treatmentStatusValidation(response) {
       const showTreatment = testResult => {
         return (
@@ -802,7 +836,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 27)
+      assert.equal(Object.keys(response.body.data[0]).length, 28)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -825,6 +859,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
       assert.property(response.body.data[0], 'testInformation')
+      assert.property(response.body.data[0], 'clinicalResponse')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
         assert.property(response.body.data[0].followUps[0], 'id')
@@ -1027,8 +1062,30 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingTestInformation(res, totalResults)
+      assertReporterResultDownloadResponseContainingTestInformation(res, totalResults, async () => {
+        // check if the download is register in the table.
+        const { count: totalResult } = await knex('ResultDownloadLog as rdl')
+          .join('Result as r', 'rdl.resultId', 'r.id')
+          .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
+          .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
+          .whereIn(
+            'rdl.resultId',
+            _.map(res.body.data, elem => elem.id)
+          )
+          .where('rs.externalId', 'Delivered')
+          .count('rdl.id as count')
+          .first()
 
+        assert.isAtLeast(totalResult, res.body.length)
+      })
+    })
+
+    it('should return clinical response for each test items', async () => {
+      const res = await server
+        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `31`)
+      assertReporterResultDownloadResponseContainingClinicalResponse(res, totalResults)
       // we're not awaiting the insert before returning in service.js, so need a delay here
       await Promise.delay(1000)
 
@@ -1169,7 +1226,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 27)
+      assert.equal(Object.keys(response.body.data[0]).length, 28)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1192,6 +1249,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
       assert.property(response.body.data[0], 'testInformation')
+      assert.property(response.body.data[0], 'clinicalResponse')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
         assert.property(response.body.data[0].followUps[0], 'id')
@@ -1233,7 +1291,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 27)
+      assert.equal(Object.keys(response.body.data[0]).length, 28)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1256,6 +1314,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
       assert.property(response.body.data[0], 'testInformation')
+      assert.property(response.body.data[0], 'clinicalResponse')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
         assert.property(response.body.data[0].followUps[0], 'id')
@@ -1484,7 +1543,7 @@ describe('Mobile API Result download by id routes v2', () => {
     function assertReporterResultDownloadRequestValidResultId(response) {
       assertReporterResultDownloadResponse(response)
 
-      assert.equal(Object.keys(response.body.data).length, 27)
+      assert.equal(Object.keys(response.body.data).length, 28)
       assert.property(response.body.data, 'id')
       assert.property(response.body.data, 'externalId')
       assert.property(response.body.data, 'endedOn')
@@ -1507,6 +1566,7 @@ describe('Mobile API Result download by id routes v2', () => {
       assert.property(response.body.data, 'followUps')
       assert.property(response.body.data, 'assayAvatar')
       assert.property(response.body.data, 'testInformation')
+      assert.property(response.body.data, 'clinicalResponse')
       if (response.body.data.followUps) {
         assert.typeOf(response.body.data.followUps, 'array')
         assert.property(response.body.data.followUps[0], 'id')
