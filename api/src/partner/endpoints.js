@@ -38,7 +38,7 @@ const routes = [
   {
     method: 'GET',
     path: '/partner/current-partner',
-    handler: getCurrentPartner,
+    handler: request => getCurrentPartner(request.auth),
     config: {
       auth: { scope: ['browse'] },
       description: 'Current Partner',

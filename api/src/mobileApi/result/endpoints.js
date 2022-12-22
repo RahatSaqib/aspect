@@ -7,7 +7,10 @@ const {
   downloadResultResponseValidation,
   downloadResultValidationV2,
   downloadResultResponseValidationV2,
+  addClinicalResponseParamValidation,
+  addClinicalResponsePayloadValidation,
 } = require('./common/validations')
+const { clinicalResponse } = require('./clinicalResponse')
 
 // -----------------------------------------------------
 // routes
@@ -84,6 +87,26 @@ const routes = [
       auth: { scope: ['result:view'] },
       validate: {
         query: downloadResultValidationV2(),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: downloadResultResponseValidationV2,
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/v1/results/clinical-responses/{resultId}',
+    handler: clinicalResponse,
+    config: {
+      description: 'Add a result follow up',
+      notes: 'Adds a treatment/outcome follow up for a result',
+      auth: { scope: ['treatmentStatus:edit'] },
+      validate: {
+        params: addClinicalResponseParamValidation(),
+        payload: addClinicalResponsePayloadValidation(),
       },
       response: {
         options: {

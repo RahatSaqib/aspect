@@ -195,7 +195,7 @@ function getPageParams(params) {
     }
   }
 
-  result.page = parseInt(params.page, 10) || 0
+  result.page = parseInt(params.page, 10) || parseInt(params.offset, 10) || 0
   result.size = parseInt(params.size, 10) || 50
   result.skip = result.page * result.size
 
@@ -212,6 +212,7 @@ function validateSortPageParams(...sortColumns) {
         : Joi.string().description('Sort on named column'),
     sortDir: Joi.string().valid('asc', 'desc').description('Sort order ascending or descending'),
     page: Joi.number().integer().min(0).description('Page index with 0 as first page'),
+    offset: Joi.number().integer().min(0).description('Page index with 0 as first page'),
     size: Joi.alternatives().try(Joi.number().integer().positive(), Joi.string().allow('all')).description('Page size'),
   }
 }

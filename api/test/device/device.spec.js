@@ -353,65 +353,6 @@ describe('Device routes', () => {
       })
     })
 
-    describe('Resolve discrepancy between Device.lastSeenOn and DeviceMaintenanceStatusLog status and day', () => {
-      const now = new Date()
-      let deviceId
-      let oldDevice
-      let deviceMaintenanceStatuses
-      let deviceMaintenanceStatusLogId
-      const endpointPath = `${path}?sortCol=name&sortDir=asc&page=0&size=10&siteId=1&hasResults=1`
-      const assertResponse = res => {
-        assert.equal(res.status, 200)
-        assert.typeOf(res.body, 'Object')
-        assert.property(res.body, 'data')
-        assert.typeOf(res.body.data[0], 'Object')
-      }
-
-      before(async () => {
-        deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
-        const res = await server.get(endpointPath).set('Authorization', `Bearer ${shared.token}`)
-        assertResponse(res)
-        ;[{ id: deviceId }] = res.body.data
-        oldDevice = await knex('Device').where('id', deviceId).first('deviceMaintenanceStatusLogId', 'lastSeenOn')
-      })
-
-      after(async () => {
-        await knex('Device').where('id', deviceId).update(oldDevice)
-        await knex('DeviceMaintenanceStatusLog').where('id', deviceMaintenanceStatusLogId).del()
-      })
-
-      it('should sync lastSeenOn and DeviceMaintenanceStatusLog entry for Active status', async () => {
-        /**
-         * insert new DeviceMaintenanceStatusLog with Active status for today
-         * and set old date for device lastSeenOn
-         */
-        ;[deviceMaintenanceStatusLogId] = await knex('DeviceMaintenanceStatusLog').insert({
-          deviceId,
-          deviceMaintenanceStatusId: deviceMaintenanceStatuses.active,
-          data: '{}',
-          day: now,
-          createdOn: now,
-        })
-        const oldDate = subDays(now, 6)
-        await knex('Device').where('id', deviceId).update({
-          lastSeenOn: oldDate,
-          deviceMaintenanceStatusLogId,
-        })
-
-        /**
-         * make a new request and see that lastSeenOn has changed and is equal
-         * DeviceMaintenanceStatusLog.day which was just inserted
-         */
-        const res = await server.get(endpointPath).set('Authorization', `Bearer ${shared.token}`)
-        assertResponse(res)
-        const [device2] = res.body.data
-        const newLastSeenOn = new Date(device2.lastSeen)
-
-        assert.notEqual(newLastSeenOn.toDateString(), oldDate.toDateString())
-        assert.equal(newLastSeenOn.toDateString(), now.toDateString())
-      })
-    })
-
     describe('/maintenance-status', () => {
       const maintenanceStatusPath = `${path}/maintenance-status`
       it('should return a list of devices with a snapshot of each device maintenance status during the month', async () => {

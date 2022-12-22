@@ -267,7 +267,6 @@ async function addDeviceDataWithContext(context) {
       ...(await getConnectionSettings(context)),
     }
   }
-
   if (getFormsDefinition) {
     response = {
       ...response,

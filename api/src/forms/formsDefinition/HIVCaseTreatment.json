@@ -9,7 +9,7 @@
       "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "order": 0,
       "controlType": "checkBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -44,7 +44,7 @@
       "fieldType": "text",
       "order": 1,
       "controlType": "checkBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -73,7 +73,7 @@
       "fieldType": "text",
       "order": 3,
       "controlType": "autoComplete",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
       "items": [
         {

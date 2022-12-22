@@ -442,7 +442,7 @@ async function getDevicesWithCountsForTBReport(auth, query) {
 
 async function getAllDeviceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const resultCategoryGroups = await getResultCategoryGroupColumns(query)
+  const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
   const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
 
   return {

@@ -140,7 +140,7 @@ const baseResultResponse = {
   partnerId: Joi.number().allow(null).description('The Partner Id'),
   partnerPluginName: Joi.string().allow(null, '').description('Plugin name for Partner'),
   deviceTypePluginName: Joi.string().allow(null, '').description('Plugin name for Device'),
-  customFieldsValues: Joi.array().allow(null).description('Custom Fields Values'),
+  customFields: Joi.array().allow(null).description('The custom fields form'),
 }
 
 function validateResultListResponse() {
