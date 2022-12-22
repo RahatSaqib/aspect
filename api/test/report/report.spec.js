@@ -18,7 +18,7 @@ describe('Global reports', () => {
   })
 
   describe('GET', () => {
-    let reportExternalId
+    const stremeableReportExternalId = 'mtb_detected_rr_detected'
 
     it('should return list of reports with minimum few global reports', () =>
       runTestWithKnex(async () => {
@@ -43,14 +43,33 @@ describe('Global reports', () => {
             assert.property(res.body.data[0], 'description')
             assert.property(res.body.data[0], 'externalId')
             assert.property(res.body.data[0], 'sortOrder')
-
-            reportExternalId = res.body.data[0].externalId
+            assert.isTrue(res.body.data.some(r => r.externalId === 'mtb_detected_rr_detected'))
           })
       }))
 
     it('should return binary stream with Excel file for report requested with `externalId`', async () => {
       await server
-        .get(`${path}/${reportExternalId}`)
+        .get(`${path}/${stremeableReportExternalId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          // special header Content-Disposition for generated Excel file is used to specify file name
+          assert.typeOf(res.headers['content-disposition'], 'string')
+          assert.equal(res.headers['content-disposition'].includes('attachment'), true)
+          assert.equal(res.headers['content-disposition'].includes('filename='), true)
+
+          // Content-Type should match Excel file with extension .xlsx
+          assert.typeOf(res.headers['content-type'], 'string')
+          assert.equal(res.headers['content-type'], 'stream/octet-stream')
+        })
+    })
+
+    it('should return an Excel file for report requested with `externalId` if the report is not an stremeable one', async () => {
+      const nonStremeableReportExternalId = 'report_custom_fields_completion'
+      await server
+        .get(`${path}/${nonStremeableReportExternalId}`)
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
           assert.equal(res.status, 200)

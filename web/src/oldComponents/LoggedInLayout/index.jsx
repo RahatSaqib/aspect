@@ -1,7 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
-import Footer from '../../components/Footer'
 import useI18n from '../../hooks/useI18n'
 import AppNotificationDialog from '../appNotification/AppNotificationDialog'
 import AppNotificationSnackBar from '../appNotification/AppNotificationSnackBar'
@@ -22,7 +21,6 @@ export const LoggedInLayout = ({ children }) => {
         <IdleDialog intl={intl} />
         <AppNotificationDialog intl={intl} />
         <AppNotificationSnackBar intl={intl} />
-        <Footer />
       </div>
     </div>
   )

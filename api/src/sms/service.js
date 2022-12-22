@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
 const { normalizePhoneNumber } = require('../shared/phoneNormalization')
 
@@ -98,42 +98,30 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
 }
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
-  const { personId, resultId } =
-    (await knex('SmsMessage').where('id', smsMessageId).first('personId', 'resultId')) || {}
+  const { personId, resultId, reportId } =
+    (await knex('SmsMessage as s')
+      .leftJoin('Notification as n', 'n.smsMessageId', 's.id')
+      .where('s.id', smsMessageId)
+      .first('s.personId', 's.resultId', 'n.reportId')) || {}
 
-  const dataConstraints = await getConstraints({ personId })
+  const authLikeObject = { credentials: { personId } }
+  const dataConstraints = await getConstraints(authLikeObject.credentials)
 
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
-    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, resultId)
-    .modify(queryBuilder => {
-      if (!_.isEmpty(dataConstraints)) {
-        queryBuilder.modify(addConstraints, dataConstraints, {
-          assay: 'a',
-          partner: 'pr',
-          device: 'd',
-          deviceType: 'dt',
-          person: 'p',
-          /*
-          result: 'r',
-          ^^^ Leaving this commented out to  highlight the fact that adding these
-              constraints will break the RO notifications configured for Myanmar
-          */
-          sample: 'sample',
-          site: 's',
-          showUnapprovedDevices: true,
-          showDecommissionedDevices: true,
-        })
-      }
-    })
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, dataConstraints, resultId, reportId)
     .where({ 'm.id': smsMessageId })
     .first(
       'tmpl.message as messageTemplate',
       'tmpl.phoneNumber as phoneNumberTemplate',
       knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
     )
-  return processUsingDataSourceQuery(data, ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'])
+  return processUsingDataSourceQuery(
+    data,
+    ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'],
+    authLikeObject
+  )
 }
 
 module.exports = {

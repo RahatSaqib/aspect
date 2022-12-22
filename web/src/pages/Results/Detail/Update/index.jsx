@@ -1,17 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import { CircularProgress } from '@mui/material'
-import findIndex from 'lodash/findIndex'
+import { LinearProgress, Box, Card, CardContent } from '@mui/material'
 import PropTypes from 'prop-types'
-import { FaNotesMedical } from 'react-icons/fa'
 import { useQuery } from 'react-query'
+import DetailHeader from '../../../../components/DetailHeader'
 import AspectForm from '../../../../components/Form'
-import FormActions from '../../../../components/Form/formActions'
 import { FormikProvider } from '../../../../components/Form/Formik/Context'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import { RESULT_DETAIL } from '../../../../components/QueryFetch/Result'
-import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../../components/Shell'
 import useI18n from '../../../../hooks/useI18n'
+import AspectButton from '../../../../oldComponents/shared/AspectButton'
+import messages from '../messages'
 import { getFormConfigWithData } from '../utils'
 import { ResultDetailsErrors } from './errors'
 import ResultTransferModal from './ResultTransferModal'
@@ -55,15 +54,18 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
 
       const config = getFormConfigWithData(intl, false, data)
 
-      const action = config.actions.items.find(x => x.id === 'transfer')
-      action.onClick = () => setTransferResultOpen(true)
-      action.isVisible = (permissions, isEditMode) => {
-        return (
-          !isEditMode &&
-          // eslint-disable-next-line lodash/prefer-some
-          findIndex(permissions, elem => elem === 'result:edit') >= 0
-        )
+      if (onSubmit) {
+        // do something with submit when edition is enabled
       }
+
+      // const action = config.actions.items.find(x => x.id === 'transfer')
+      // action.isVisible = (permissions, isEditMode) => {
+      //   return (
+      //     !isEditMode &&
+      //     // eslint-disable-next-line lodash/prefer-some
+      //     findIndex(permissions, elem => elem === 'result:edit') >= 0
+      //   )
+      // }
 
       // TODO: Remove this line when result edit functionality is ready (hides the "Edit" button)
       config.actions.items.splice(2)
@@ -76,26 +78,40 @@ const AspectResultDetail = ({ resultId, onSubmit }) => {
   }, [isLoading, queryResponse])
 
   return (
-    <Shell>
-      {!isLoading && formConfig ? (
-        <FormikProvider config={formConfig}>
-          <ShellHeader icon={FaNotesMedical} title={`${formConfig.title}${patientId}`}>
-            <FormActions config={formConfig} onSubmit={onSubmit} />
-          </ShellHeader>
-          <ShellContent>
-            <AspectForm config={formConfig} />
-          </ShellContent>
-          <ShellFooter />
-          <ResultTransferModal
-            data={values}
-            isOpen={isTransferResultOpenOpen}
-            onClose={() => setTransferResultOpen(false)}
-          />
-        </FormikProvider>
-      ) : (
-        <CircularProgress />
-      )}
-    </Shell>
+    <>
+      <DetailHeader name={`${formConfig.title}${patientId}`} back="/browse/result">
+        {[{ label: intl.formatMessage(messages.transferResult) }].map(({ label }) => (
+          // find other buttons in config and handle them properly
+          <AspectButton
+            key={label}
+            onClick={() => setTransferResultOpen(true)}
+            disabled={isTransferResultOpenOpen}
+            color="primary"
+            variant="contained"
+          >
+            {label}
+          </AspectButton>
+        ))}
+      </DetailHeader>
+      <Box component="main" sx={{ pt: 9, pr: 1, pl: 1, pb: 1 }}>
+        <Card>
+          <CardContent>
+            {isLoading || !formConfig ? (
+              <LinearProgress />
+            ) : (
+              <FormikProvider config={formConfig}>
+                <AspectForm config={formConfig} />
+                <ResultTransferModal
+                  data={values}
+                  isOpen={isTransferResultOpenOpen}
+                  onClose={() => setTransferResultOpen(false)}
+                />
+              </FormikProvider>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
+    </>
   )
 }
 

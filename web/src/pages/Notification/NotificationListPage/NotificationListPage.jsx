@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react'
+import React from 'react'
+import { Card, CardContent, Box } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AspectTable from '../../../components/AspectTable'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
-import { Shell, ShellContent } from '../../../components/Shell'
 import useI18n from '../../../hooks/useI18n'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import { reduceFiltersConfig } from '../../../oldComponents/filter/utils'
@@ -28,7 +28,7 @@ const NotificationList = () => {
   const { userPermissions } = useAuthState()
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   return (
-    <Fragment>
+    <>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
       <div className={cssClasses('filters__container')}>
         <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
@@ -46,20 +46,14 @@ const NotificationList = () => {
           </AspectButton>
         </BrowseFilters>
       </div>
-      <div
-        /**
-         * TODO:temp fix before all tables are placed with
-         * the <Shell component />
-         */
-        style={{ marginTop: '-10px' }}
-      >
-        <Shell>
-          <ShellContent>
+      <Box component="main" sx={{ pr: 1, pl: 1, pb: 1 }}>
+        <Card>
+          <CardContent>
             <AspectTable baseConfig={tableConfig} consts={NOTIFICATION_LIST} FILTERS_CONFIG={FILTERS_CONFIG} />
-          </ShellContent>
-        </Shell>
-      </div>
-    </Fragment>
+          </CardContent>
+        </Card>
+      </Box>
+    </>
   )
 }
 

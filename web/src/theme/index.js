@@ -70,13 +70,6 @@ const themeDefinition = {
     MuiAppBar: {
       styleOverrides: {
         root: {
-          /**
-           * may reset to `position: 'static'` as was before
-           * (and remove `margin-top: var(--aspect-app-bar-height);` from `.Page-Content` in
-           * file web/src/globals/factories/loggedInFactory/index.css),
-           * but need 1st to change @media
-           * for showing either VerticalAppBar or HorizontalAppBar which now are both displayed.
-           */
           position: 'fixed !important',
         },
       },
@@ -101,6 +94,15 @@ const themeDefinition = {
           margin: '12px 0',
           '&$expanded': {
             margin: '12px 0',
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: 'transparent',
           },
         },
       },
@@ -194,11 +196,9 @@ const themeDefinition = {
             border: `1px solid ${themedColors.primary}`,
           },
         }),
-        /* Styles applied to the root element if `variant="text"` and `color="primary"`. */
         textPrimary: {
           color: themedColors.primary,
         },
-        /* Styles applied to the root element if `variant="text"` and `color="secondary"`. */
         textSecondary: {
           color: themedColors.secondary,
         },
@@ -246,6 +246,13 @@ const themeDefinition = {
         },
       },
     },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          marginLeft: 0,
+        },
+      },
+    },
     MuiFormHelperText: {
       marginDense: {
         marginTop: 4,
@@ -257,12 +264,6 @@ const themeDefinition = {
         root: {
           margin: 0,
           width: '100%',
-        },
-        item: {
-          '&.MuiGrid-item': {
-            paddingLeft: '0 !important',
-            paddingTop: '0 !important',
-          },
         },
       },
     },
@@ -300,6 +301,15 @@ const themeDefinition = {
       styleOverrides: {
         root: {
           minWidth: 256,
+        },
+      },
+    },
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          '& .MuiSvgIcon-root': {
+            fontSize: 20,
+          },
         },
       },
     },
@@ -381,6 +391,9 @@ const themeDefinition = {
     MuiTextField: {
       defaultProps: {
         variant: 'standard',
+        // margin: 'dense',
+        fullWidth: true,
+        InputLabelProps: { shrink: true },
       },
     },
   },

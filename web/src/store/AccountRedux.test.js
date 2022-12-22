@@ -143,7 +143,7 @@ describe('AccountRedux module', () => {
             lgaId: 1,
             zip: '123 ZIP',
             timezone: 'Eastern Standard Time',
-            culture: 'en-GB',
+            culture: 'en-US',
             notes: null,
             canLogIn: false,
           }
@@ -229,7 +229,7 @@ describe('AccountRedux module', () => {
             lgaId: 1,
             zip: '123 ZIP',
             timezone: 'Eastern Standard Time',
-            culture: 'en-GB',
+            culture: 'en-US',
           }
           const state = AccountRedux.default(initialState, {
             type: AccountRedux.types.RECEIVE_ACCOUNT_DETAILS,

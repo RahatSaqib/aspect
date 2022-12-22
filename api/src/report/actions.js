@@ -1,26 +1,18 @@
 // ----------- Action Types ---------------------
 const types = {
-  REPORT_READY_TO_DELIVER: 'REPORT_READY_TO_DELIVER',
+  REPORT_BASED_NOTIFICATION_REQUESTED: 'REPORT_BASED_NOTIFICATION_REQUESTED',
 }
 
 // ----------- Action Creators -------------------
 
-/**
- * Is called when inventory if going out-of-stock in [daysDue]
- */
-function reportReadyToDelivery(reportId, notificationFilter) {
-  if (!reportId || !notificationFilter) {
-    throw new Error('Must specify reportID, notificationFilter')
-  }
-
+function reportBasedNotificationRequested(notificationTypeId) {
   return {
-    type: types.REPORT_READY_TO_DELIVER,
-    reportId,
-    notificationFilter,
+    type: types.REPORT_BASED_NOTIFICATION_REQUESTED,
+    notificationTypeId,
   }
 }
 
 module.exports = {
   types,
-  reportReadyToDelivery,
+  reportBasedNotificationRequested,
 }

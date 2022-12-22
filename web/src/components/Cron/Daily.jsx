@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FormControlLabel, FormGroup, Radio, Stack, TextField } from '@mui/material'
+import { FormControlLabel, RadioGroup, Radio, Stack, TextField } from '@mui/material'
 import classNames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages/index'
@@ -41,39 +41,27 @@ const Daily = ({ cronExpression, onChange }) => {
     val[0] = `${e.target.value}`
     onChange(val)
   }
+  // ----------------------------------------------
+  const handleChange = event => {
+    onChange(event.target.value.split(' '))
+  }
 
   return (
     <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
-      <div className={classes('Content')}>
-        <FormGroup row>
-          <FormControlLabel
-            control={
-              <Radio
-                color="primary"
-                value="1"
-                onChange={() => {
-                  onChange(['0', '0', '1/1', '*', '*'])
-                }}
-                checked={cronExpression[4] === '*'}
-              />
-            }
-            label={formatMessage(messages.everyDay)}
-          />
-          <FormControlLabel
-            control={
-              <Radio
-                color="primary"
-                value="4"
-                onChange={() => {
-                  onChange([cronExpression[0], cronExpression[1], '*', '*', '1-5'])
-                }}
-                checked={cronExpression[4] === '1-5'}
-              />
-            }
-            label={formatMessage(messages.everyWeekDay)}
-          />
-        </FormGroup>
-      </div>
+      <RadioGroup row name="daily" className={classes('Radio-Group')}>
+        <FormControlLabel
+          control={<Radio onChange={handleChange} checked={cronExpression[4] === '*'} />}
+          label={formatMessage(messages.everyDay)}
+          value={['0', '0', '*/1', '*', '*'].join(' ')}
+        />
+
+        <FormControlLabel
+          control={<Radio onChange={handleChange} checked={cronExpression[4] === '1-5'} />}
+          label={formatMessage(messages.everyWeekDay)}
+          value={[cronExpression[0], cronExpression[1], '*', '*', '1-5'].join(' ')}
+        />
+      </RadioGroup>
+
       <Stack direction="row" spacing={1} alignItems="center">
         {cronExpression[4] === '*' ? (
           <TextField

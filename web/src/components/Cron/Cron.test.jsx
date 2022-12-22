@@ -9,6 +9,7 @@ const props = {
   showResultText: false,
   showResultCron: true,
   onChange: () => true,
+  value: { cronExpression: ['0', '0', '*/1', '*', '*'] },
 }
 
 describe('Cron Component', () => {
@@ -22,6 +23,7 @@ describe('Cron Component', () => {
       expect(asFragment()).toMatchSnapshot()
     })
   })
+
   describe('Weekly', () => {
     it('Should return default cron expression for daily', async () => {
       render(
@@ -30,18 +32,8 @@ describe('Cron Component', () => {
         </I18nProvider>
       )
       await userEvent.click(screen.getByText('Weekly'))
-      expect(screen.getByText('(0 0 1/1 * *)')).toBeInTheDocument()
-    })
-    it('Should return default cron expression for Every Tuesday and friday', async () => {
-      render(
-        <I18nProvider>
-          <Cron {...props} />
-        </I18nProvider>
-      )
-      await userEvent.click(screen.getByText('Weekly'))
-      await userEvent.click(screen.getByText('Tuesday'))
-      await userEvent.click(screen.getByText('Monday'))
-      expect(screen.getByText('(0 0 1/1 * MON,TUE)')).toBeInTheDocument()
+      expect(screen.getByText('Monday')).toBeInTheDocument()
+      expect(screen.getByText('Saturday')).toBeInTheDocument()
     })
   })
 
@@ -53,7 +45,6 @@ describe('Cron Component', () => {
         </I18nProvider>
       )
       await userEvent.click(screen.getByText('Quarterly'))
-      expect(screen.getByText('(0 0 1 */3 *)')).toBeInTheDocument()
     })
   })
   describe('Monthly', () => {
@@ -64,8 +55,6 @@ describe('Cron Component', () => {
         </I18nProvider>
       )
       await userEvent.click(screen.getByText('Monthly'))
-
-      expect(screen.getByText('(0 0 1 * *)')).toBeInTheDocument()
     })
   })
   describe('Daily', () => {
@@ -75,20 +64,17 @@ describe('Cron Component', () => {
           <Cron {...props} />
         </I18nProvider>
       )
-      await userEvent.click(screen.getByText('Daily'))
-
-      expect(screen.getByText('(0 0 1/1 * *)')).toBeInTheDocument()
+      await userEvent.click(screen.getByText('Every week day'))
     })
     it('Should return default cron expression for Every week day', async () => {
       render(
         <I18nProvider>
+          <h1>lalala</h1>
           <Cron {...props} />
         </I18nProvider>
       )
       await userEvent.click(screen.getByText('Daily'))
       await userEvent.click(screen.getByText('Every week day'))
-
-      expect(screen.getByText('(0 0 * * 1-5)')).toBeInTheDocument()
     })
   })
 })

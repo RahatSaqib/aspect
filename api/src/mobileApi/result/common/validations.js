@@ -165,7 +165,10 @@ const downloadResultResponseValidationV2 = () => {
     total: Joi.number().required().description('The total number of results that match the given filters'),
     awaitingTreatment: Joi.number().required().description('The total number of awaiting treatments'),
     length: Joi.number().required().description('The number of results included in this response'),
+    offset: Joi.number().required().description('Current page number'),
+    pages: Joi.number().required().description('Total number of pages'),
     nextPage: Joi.number().allow(false).description('Next page to call for more records'),
+    hasNext: Joi.bool().allow(false).description('If there is next page then it will be true else it will be false'),
     data: Joi.array()
       .required()
       .description('The results')
@@ -249,6 +252,17 @@ const downloadResultResponseValidationV2 = () => {
                 followUpTypeName: Joi.string().required().description('Name of the follow up type'),
                 followUpTypeExternalId: Joi.string().required().description('External ID of the follow up type'),
                 followUpTypei18nKey: Joi.string().required().description('Translation key for the follow up type'),
+              })
+            ),
+          testInformation: Joi.array()
+            .description('Test information list')
+            .items(
+              Joi.object().keys({
+                label: Joi.string().allow(null, '').description('Test label'),
+                labelI18nKey: Joi.string().required().description('Test label key').allow(null),
+                value: Joi.string().required().description('Test result value').allow(null, ''),
+                valueI18nKey: Joi.string().required().description('Test result value key').allow(null, ''),
+                severity: Joi.string().description('Severity of the test'),
               })
             ),
           comments: Joi.array()

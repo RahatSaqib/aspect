@@ -4,6 +4,7 @@ import CronForm from './CronForm'
 import { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone } from './DatePicker'
 import PlaceholderTextArea from './PlaceholderTextArea'
 import PlaceholderTextField from './PlaceholderTextField'
+import RadioButtonList from './RadioButtonList'
 import AspectSelect from './Select'
 import AspectTextArea from './TextArea'
 import AspectTextField from './TextField'
@@ -19,6 +20,7 @@ const Inputs = {
   select: AspectSelect,
   checkbox: Checkbox,
   cron: CronForm,
+  radioButtonList: RadioButtonList,
 }
 
 const AspectInput = props => {

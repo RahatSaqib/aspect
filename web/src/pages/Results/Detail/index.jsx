@@ -1,5 +1,4 @@
-import React, { Fragment } from 'react'
-import isNaN from 'lodash/isNaN'
+import React from 'react'
 import { useMutation } from 'react-query'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { getReturnUrl, useUrlQuery } from '../../../components/AspectTable/Helpers'
@@ -8,7 +7,6 @@ import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
 import useI18n from '../../../hooks/useI18n'
 import getFormConfig from '../Forms/editConfig'
-import Create from './Create'
 import Update from './Update'
 
 const AspectResultDetail = () => {
@@ -41,17 +39,14 @@ const AspectResultDetail = () => {
     }
   )
 
-  const id = isNaN(resultId) ? undefined : Number(resultId)
-  const isNew = resultId === 'add' || !id
-
   const onSubmit = formik => {
-    const formConfig = getFormConfig(intl.formatMessage, isNew)
+    const formConfig = getFormConfig(intl.formatMessage, false)
     const values = sanitizeFormValues(formik.values, { formConfig })
 
-    submitResult({ values, id })
+    submitResult({ values, id: resultId })
   }
 
-  return <Fragment>{isNew ? <Create onSubmit={onSubmit} /> : <Update resultId={id} onSubmit={onSubmit} />}</Fragment>
+  return <Update resultId={resultId} onSubmit={onSubmit} />
 }
 
 export default AspectResultDetail

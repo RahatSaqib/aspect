@@ -6,7 +6,7 @@ const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { clientTypes, revokeUsersToken, lockedOutUser } = require('../auth/service')
 const { getPeopleBase } = require('../shared/utilsPerson')
-const { updateTagsById, tagsAreEqual } = require('../tag/service')
+const { updateTagsById } = require('../tag/service')
 
 async function listPeople(request) {
   const { auth, query } = request
@@ -303,8 +303,10 @@ async function savePerson(request, updatablePersonFields) {
   const { params, payload, auth } = request
 
   _.mapKeys(payload, (value, key) => {
-    if (value === '') {
-      _.set(payload, `${key}`, null)
+    if (key !== 'tags') {
+      if (value === '') {
+        _.set(payload, `${key}`, null)
+      }
     }
   })
 
@@ -333,22 +335,27 @@ async function savePerson(request, updatablePersonFields) {
     },
     {}
   )
-  const changedPersonFields = await transformGeographyFromUpdates(changedFields, dataConstraints.country.id)
 
-  const changedTags = !tagsAreEqual(payload.tags, personDetails.tags.map(t => t.title).join(','))
+  let changedPersonFields = changedFields
 
-  if (changedTags) {
-    await updateTagsById(params.personId, 'person', payload.tags, auth)
-    changedPersonFields.updatedOn = new Date()
+  const thereAreModifiedGeographyFields = ['countryId', 'stateId', 'lgaId'].some(f =>
+    Object.keys(changedFields).includes(f)
+  )
+
+  if (thereAreModifiedGeographyFields) {
+    changedPersonFields = await transformGeographyFromUpdates(changedFields, dataConstraints.country.id)
   }
+
+  await updateTagsById(params.personId, 'person', payload.tags, auth)
 
   if (!_.isEmpty(changedPersonFields)) {
     if (changedFields.countryId && personDetails.lastCountryId !== changedFields.countryId) {
       changedPersonFields.lastCountryId = changedFields.countryId
     }
 
-    changedFields.updatedOn = new Date()
-    changedFields.updatedBy = currentlyLoggedInUser.id
+    changedPersonFields.updatedOn = new Date()
+    changedPersonFields.updatedBy = currentlyLoggedInUser.id
+
     await query('Save person details')
       .from('Person as p')
       .where({ 'p.id': personDetails.id })

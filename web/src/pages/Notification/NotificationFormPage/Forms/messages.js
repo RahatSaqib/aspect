@@ -22,6 +22,10 @@ export default defineMessages({
     id: 'pages.Notifications.emailBodyRequired',
     defaultMessage: 'Email body is required',
   },
+  emailBodyMustContainDownloadLink: {
+    id: 'pages.Notifications.emailBodyMustContainDownloadLink',
+    defaultMessage: 'Email should contain download link for Report-based Notification',
+  },
   emailSubjectRequired: {
     id: 'pages.Notifications.emailSubjectRequired',
     defaultMessage: 'Email subject is required',
