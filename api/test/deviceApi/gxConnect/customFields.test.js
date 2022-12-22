@@ -249,7 +249,7 @@ describe('Custom field mapper', () => {
           fieldType: 'text',
           order: 40,
           controlType: 'autoComplete',
-          required: true,
+          needsConfirmationIfIsEmpty: true,
           typeOfOptionSource: 'fixedList',
           items: [
             {
@@ -302,7 +302,7 @@ describe('Custom field mapper', () => {
           fieldType: 'text',
           order: 45,
           controlType: 'autoComplete',
-          required: false,
+          needsConfirmationIfIsEmpty: false,
           typeOfOptionSource: 'fixedList',
           filters: [
             {
@@ -581,7 +581,7 @@ describe('Custom field mapper', () => {
           fieldType: 'text',
           order: 40,
           controlType: 'autoComplete',
-          required: true,
+          needsConfirmationIfIsEmpty: true,
           typeOfOptionSource: 'fixedList',
           items: [
             {
@@ -634,7 +634,7 @@ describe('Custom field mapper', () => {
           fieldType: 'text',
           order: 45,
           controlType: 'autoComplete',
-          required: false,
+          needsConfirmationIfIsEmpty: false,
           typeOfOptionSource: 'fixedList',
           filters: [
             {
