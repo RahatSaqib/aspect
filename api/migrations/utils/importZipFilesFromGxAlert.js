@@ -76,6 +76,7 @@ async function decompressAllZipFiles(folderAbsolutePath) {
                 const payload = {
                   fileFullPath: fileAbsolutePath,
                   gxAlertTestId,
+                  aspectResultId: null,
                   status: null,
                   error: null,
                   updatedOn: now,
