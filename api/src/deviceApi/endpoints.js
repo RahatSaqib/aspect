@@ -18,10 +18,7 @@ const {
   onResultLogged,
   getHealthStatsHandler,
   getResultPakistanHandler,
-  importZipFilesFromGxAlertHandler,
-  processZipFilesFromGxAlertHandler,
 } = require('./service')
-const { asyncHandler } = require('../routes')
 
 const errorPayload = Joi.object()
   .allow(null)
@@ -326,28 +323,6 @@ const routes = [
           error: errorPayload,
         },
       },
-    },
-  },
-  {
-    // GET /device/import-zip-files-from-gxAlert
-    method: 'GET',
-    path: '/import-zip-files-from-gxAlert',
-    handler: asyncHandler(importZipFilesFromGxAlertHandler),
-    config: {
-      auth: false,
-      description: 'Import zip files with JSON data from GxAlert',
-      notes: 'Save zip files in table',
-    },
-  },
-  {
-    // GET /device/process-zip-files-from-gxAlert
-    method: 'GET',
-    path: '/process-zip-files-from-gxAlert',
-    handler: asyncHandler(processZipFilesFromGxAlertHandler),
-    config: {
-      auth: false,
-      description: 'Process zip files with JSON data from GxAlert',
-      notes: 'Process zip files the similar way as when forwarding data from GxAlert',
     },
   },
   {
