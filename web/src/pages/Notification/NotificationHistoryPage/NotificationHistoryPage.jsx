@@ -1,19 +1,15 @@
 import React, { Fragment } from 'react'
-import { Button } from '@mui/material'
-import classnames from 'classnames/bind'
+import { Box, Card, CardContent } from '@mui/material'
 import get from 'lodash/get'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AspectTable from '../../../components/AspectTable'
+import DetailHeader from '../../../components/DetailHeader'
 import { NOTIFICATION_HISTORY } from '../../../components/QueryFetch/Notification'
-import { Shell, ShellHeader, ShellContent } from '../../../components/Shell'
 import useI18n from '../../../hooks/useI18n'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import messages from './messages'
-import styles from './NotificationHistoryPage.css'
 import baseConfig from './NotificationHistoryPageTableConfig'
-
-const cssClasses = classnames.bind(styles)
 
 const NotificationHistoryPage = () => {
   const { formatMessage } = useI18n()
@@ -28,16 +24,14 @@ const NotificationHistoryPage = () => {
   return (
     <Fragment>
       <Helmet title={formatMessage(messages.notificationsTitle)} />
-      <Shell>
-        <ShellHeader title={formatMessage(messages.notificationsTitle)} className={cssClasses('logs-header')}>
-          <Button variant="contained" color="primary" onClick={() => navigate('/browse/notification')}>
-            {formatMessage(messages.backButton)}
-          </Button>
-        </ShellHeader>
-        <ShellContent>
-          <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_HISTORY} onClickRow={onClickRow} />
-        </ShellContent>
-      </Shell>
+      <DetailHeader name={formatMessage(messages.notificationsTitle)} back="/browse/notification" />
+      <Box component="main" sx={{ pt: 9, pr: 1, pl: 1, pb: 1 }}>
+        <Card>
+          <CardContent>
+            <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_HISTORY} onClickRow={onClickRow} />
+          </CardContent>
+        </Card>
+      </Box>
     </Fragment>
   )
 }

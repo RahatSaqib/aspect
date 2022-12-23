@@ -94,7 +94,8 @@ async function createPushNotificationMessageFromTemplate(knex, pushNotificationM
     .where('p.id', pushNotificationMessageId)
     .first('p.personId', 'p.resultId', 'n.reportId')
 
-  const dataConstraints = await getConstraints({ personId })
+  const authLikeObject = { credentials: { personId } }
+  const dataConstraints = await getConstraints(authLikeObject.credentials)
 
   const data = await knex('PushNotificationMessage as m')
     .innerJoin('PushNotificationTemplate as tmpl', 'm.pushNotificationTemplateId', 'tmpl.id')
@@ -102,7 +103,7 @@ async function createPushNotificationMessageFromTemplate(knex, pushNotificationM
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' }, dataConstraints, resultId, reportId)
     .where({ 'm.id': pushNotificationMessageId })
     .first('tmpl.title as titleTemplate', 'tmpl.body as bodyTemplate', 'tmpl.data as dataTemplate')
-  return processUsingDataSourceQuery(data, ['titleTemplate', 'bodyTemplate', 'dataTemplate'])
+  return processUsingDataSourceQuery(data, ['titleTemplate', 'bodyTemplate', 'dataTemplate'], authLikeObject)
 }
 
 module.exports = {

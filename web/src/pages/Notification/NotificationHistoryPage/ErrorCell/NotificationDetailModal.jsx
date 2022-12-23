@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Avatar, Button, Grid, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material'
+import { Avatar, Button, Grid, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
@@ -24,104 +24,40 @@ const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClos
         </Button>,
       ]}
       modal
-      title={formatMessage(messages.sentDetails)}
+      // title={formatMessage(messages.sentDetails)}
       onClose={onCancelConfirmation}
       open={showDialog || false}
     >
       <Grid>
-        <Grid item style={{ padding: 10 }}>
-          <Grid
-            container
-            spacing={16}
-            sx={{
-              width: 'auto',
-              margin: 0,
-            }}
-          >
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              lg={3}
-              container
-              direction="row"
-              justifyContent="space-evenly"
-              alignItems="center"
-            >
-              <Avatar
-                style={{
-                  color: '#fff',
-                  backgroundColor: colors.Sent,
-                }}
-              >
-                {sent}
-              </Avatar>
+        <Grid item style={{ margin: 10 }}>
+          <Typography variant="h6">{formatMessage(messages.sentDetails)}</Typography>
+          <Grid container sx={{ width: 'auto', margin: 0 }}>
+            <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
+              <Avatar style={{ color: '#fff', backgroundColor: colors.Sent }}>{sent}</Avatar>
               <span>{formatMessage(messages.sentSuccessfully)}</span>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              lg={3}
-              container
-              direction="row"
-              justifyContent="space-evenly"
-              alignItems="center"
-            >
-              <Avatar
-                style={{
-                  color: '#fff',
-                  backgroundColor: colors.Error,
-                }}
-              >
-                {withErrors}
-              </Avatar>
+            <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
+              <Avatar style={{ color: '#fff', backgroundColor: colors.Error }}>{withErrors}</Avatar>
               <span>{formatMessage(messages.sentWithErrors)}</span>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              lg={3}
-              container
-              direction="row"
-              justifyContent="space-evenly"
-              alignItems="center"
-            >
-              <Avatar
-                style={{
-                  color: '#fff',
-                  backgroundColor: colors.Pending,
-                }}
-              >
-                {pending}
-              </Avatar>
-              <span>
-                <span>{formatMessage(messages.sentPending)}</span>
-              </span>
+            <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
+              <Avatar style={{ color: '#fff', backgroundColor: colors.Pending }}>{pending}</Avatar>
+              <span>{formatMessage(messages.sentPending)}</span>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={6} style={{ margin: 10 }}>
-          <Typography variant="h7">{formatMessage(messages.contactDetails)}</Typography>
-          <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+        <Grid item style={{ margin: 10 }}>
+          <Typography variant="h6">{formatMessage(messages.contactDetails)}</Typography>
+          <Grid container sx={{ width: 'auto', margin: 0 }}>
             {notificationData &&
               notificationData.length &&
-              notificationData.map((recipient, index) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <ListItem key={`${recipient.split('-')[0]}${index}`}>
-                  <ListItemAvatar>
-                    <Avatar
-                      style={{
-                        color: '#fff',
-                        backgroundColor: colors[recipient.split('-')[1]],
-                      }}
-                    />
-                  </ListItemAvatar>
-                  <ListItemText primary={recipient.split('-')[0]} />
-                </ListItem>
+              notificationData.map(recipient => (
+                <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
+                  <Avatar style={{ color: '#fff', backgroundColor: colors[recipient.split('-')[1]] }} />
+                  <span>{recipient.split('-')[0]}</span>
+                </Grid>
               ))}
-          </List>
+          </Grid>
         </Grid>
       </Grid>
     </AspectDialog>

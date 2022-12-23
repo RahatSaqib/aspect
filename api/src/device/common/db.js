@@ -2,6 +2,7 @@ const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('.
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
+const { usedAssay } = require('../../assay/common/db')
 
 function getDeviceBaseExtendedQuery(
   query,
@@ -419,7 +420,7 @@ async function joinModuleAvailability(dataConstraints, query) {
   }
 }
 
-function getResultCategoryGroupColumns(query) {
+function getResultCategoryGroupColumns(dataConstraints, query) {
   return knex
     .from('Assay AS a')
     .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
@@ -427,8 +428,9 @@ function getResultCategoryGroupColumns(query) {
     .innerJoin('ResultCategoryGroup AS rcg', 'a.id', 'rcg.assayId')
     .innerJoin('ResultCategory AS rc1', 'rcg.resultCategory1Id', 'rc1.id')
     .leftJoin('ResultCategory AS rc2', 'rcg.resultCategory2Id', 'rc2.id')
+    .join(usedAssay(dataConstraints).as('f'), 'a.id', 'f.assayId')
     .select([
-      'rcg.assayId',
+      knex.raw('GROUP_CONCAT(rcg.assayId) AS assayId'),
       'rcg.resultCategory1Id',
       'rcg.resultCategory2Id',
       knex.raw('CONCAT(rcg.assayId, "_",IFNULL(rc1.id, ""), "_", IFNULL(rc2.id, "")) AS columnKey'),
@@ -436,9 +438,15 @@ function getResultCategoryGroupColumns(query) {
         'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
       ),
     ])
+    .groupBy(
+      knex.raw(
+        'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), ""))'
+      )
+    ) // Equal to columnName
     .modify(filterParams, query, {
       assayId: 'a.id',
     })
+    .orderBy('columnName')
 }
 module.exports = {
   getDeviceWorkload,

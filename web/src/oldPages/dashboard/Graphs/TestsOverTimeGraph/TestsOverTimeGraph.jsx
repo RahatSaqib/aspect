@@ -134,6 +134,12 @@ const AssayAutocomplete = ({ assaysFromState, value, onChange }) => {
         }
       }}
       options={[optionAll, ...options]}
+      /**
+       * because `optionAll` doesn't contain all props as items in `options` and
+       * `innerValue` - Autocomplete shows large yellow warning in console,
+       * suggesting using below func for equality of `option` and `value` items
+       */
+      isOptionEqualToValue={(option, value) => option.i18nKey === value.i18nKey}
       groupBy={option => option.assayTypeAbbreviation}
       getOptionLabel={option => formatMessage(assay[option.i18nKey])}
       sx={{ minWidth: '120px' }}
