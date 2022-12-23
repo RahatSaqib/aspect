@@ -4,7 +4,7 @@ const { upsertDashboardWidgets } = require('../common')
 
 const { partnerName } = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
 const relativeReportPath = `../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/dashboardWidget.js`
-const absolutePath = `${__dirname}${relativeReportPath.substring(2)}`.replace('/zz_shared', '')
+const absolutePath = `${__dirname}${relativeReportPath.substring(2)}`.replace(/(\/|\\)zz_shared/, '')
 function exists(path) {
   return fs.existsSync(path)
 }
