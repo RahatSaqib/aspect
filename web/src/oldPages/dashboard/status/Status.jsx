@@ -71,7 +71,7 @@ const Status = () => {
       {assays ? (
         <>
           <PermissionsProvider permissions={['dashboard']}>
-            <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
+            <TestsOverTimeGraph assaysFromState={assays} /> {/* 1 */}
           </PermissionsProvider>
 
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
