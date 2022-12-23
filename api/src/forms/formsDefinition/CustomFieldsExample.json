@@ -87,8 +87,8 @@
       "fieldType": "text",
       "order": 0,
       "controlType": "comboBox",
-      "optionSource": "state",
-      "required": true
+      "itemsSource": "state",
+      "needsConfirmationIfIsEmpty": true
     },
     {
       "id": 307,
@@ -100,7 +100,7 @@
       "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "order": 0,
       "controlType": "checkBox",
-      "required": true
+      "needsConfirmationIfIsEmpty": true
     },
     {
       "id": 308,
@@ -110,7 +110,7 @@
       "fieldType": "text",
       "order": 3,
       "controlType": "autoComplete",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -143,7 +143,7 @@
       "fieldType": "text",
       "order": 40,
       "controlType": "autoComplete",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -196,7 +196,7 @@
       "fieldType": "text",
       "order": 45,
       "controlType": "autoComplete",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
       "filters": [
         {

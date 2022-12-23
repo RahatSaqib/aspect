@@ -377,7 +377,7 @@ async function getBaseDataSource(data, auth) {
   const { displayPreferences = {} } = await loadPlugin([d.partnerPlugin], 'settings')
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
-  const { apiUrl } = auth?.credentials ? await getCurrentPartner(auth) : ''
+  const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}
 
   return {
     country: {

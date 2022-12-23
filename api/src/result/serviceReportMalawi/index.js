@@ -18,6 +18,10 @@ async function getResultsForReport(auth, query) {
     dateOfReceiptInTheLab: knex.raw(`IFNULL(r.resultData->>'$.customFieldData."40".value', '')`),
     // "Received by" - <receivedBy>
     receivedBy: knex.raw(`IFNULL(r.resultData->>'$.customFieldData."41".value', '')`),
+    // "ART Number" - <artNumber>
+    artNumber: knex.raw(`IFNULL(r.resultData->>'$.customFieldData."42".value', '')`),
+    // "District" - <district>
+    district: knex.raw(`IFNULL(r.resultData->>'$.customFieldData."20".value', '')`),
   }
 
   // call same func as base report `MTB Detected RR Detected`

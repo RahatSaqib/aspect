@@ -147,7 +147,14 @@ const ContactPageStepThree = ({ setStep }) => {
                         name="diseaseId"
                         label={formatMessage(messages.disease)}
                         value={values.diseaseId || ''}
-                        onChange={handleChange}
+                        onChange={value => {
+                          handleChange({ target: { name: 'diseaseId', value } })
+                          if (value === '') {
+                            handleChange({ target: { name: 'deviceTypeId', value } })
+                            handleChange({ target: { name: 'assayTypeId', value } })
+                            handleChange({ target: { name: 'assayId', value } })
+                          }
+                        }}
                         error={errors.diseaseId ? errors.diseaseId : undefined}
                         helperText={errors.diseaseId}
                       />
@@ -158,9 +165,16 @@ const ContactPageStepThree = ({ setStep }) => {
                         name="deviceTypeId"
                         label={formatMessage(messages.deviceType)}
                         value={values.deviceTypeId || ''}
-                        onChange={handleChange}
+                        onChange={value => {
+                          handleChange({ target: { name: 'deviceTypeId', value } })
+                          if (value === '') {
+                            handleChange({ target: { name: 'assayTypeId', value } })
+                            handleChange({ target: { name: 'assayId', value } })
+                          }
+                        }}
                         error={errors.deviceTypeId ? errors.deviceTypeId : undefined}
                         helperText={errors.deviceTypeId}
+                        disabled={values.diseaseId === ''}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -169,10 +183,16 @@ const ContactPageStepThree = ({ setStep }) => {
                         name="assayTypeId"
                         label={formatMessage(messages.assayType)}
                         value={values.assayTypeId || ''}
-                        onChange={handleChange}
+                        onChange={value => {
+                          handleChange({ target: { name: 'assayTypeId', value } })
+                          if (value === '') {
+                            handleChange({ target: { name: 'assayId', value } })
+                          }
+                        }}
                         error={errors.assayTypeId ? errors.assayTypeId : undefined}
                         helperText={errors.assayTypeId}
                         diseaseId={values.diseaseId}
+                        disabled={values.deviceTypeId === ''}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -186,6 +206,7 @@ const ContactPageStepThree = ({ setStep }) => {
                         helperText={errors.assayId}
                         assayTypeId={values.assayTypeId || ''}
                         deviceTypeId={values.deviceTypeId}
+                        disabled={values.assayTypeId === ''}
                       />
                     </Grid>
                   </Grid>

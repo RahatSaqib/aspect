@@ -29,8 +29,7 @@ const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClos
       open={showDialog || false}
     >
       <Grid>
-        <Grid item style={{ margin: 10 }}>
-          <Typography variant="h6">{formatMessage(messages.sentDetails)}</Typography>
+        <Grid item>
           <Grid container sx={{ width: 'auto', margin: 0 }}>
             <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
               <Avatar style={{ color: '#fff', backgroundColor: colors.Sent }}>{sent}</Avatar>
@@ -42,7 +41,9 @@ const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClos
             </Grid>
             <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
               <Avatar style={{ color: '#fff', backgroundColor: colors.Pending }}>{pending}</Avatar>
-              <span>{formatMessage(messages.sentPending)}</span>
+              <span>
+                <span>{formatMessage(messages.sentPending)}</span>
+              </span>
             </Grid>
           </Grid>
         </Grid>
