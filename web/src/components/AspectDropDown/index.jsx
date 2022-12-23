@@ -288,7 +288,8 @@ const AspectDropDown = ({
         !isEqual(passedData, responseFromQuery) // loaded data should differ from initial data
       const options = isLoadedFromApi
         ? normalizeLoadedData(responseFromQuery, formik, subRowIndex) || []
-        : getActualData({ data: responseFromQuery, reduxStateId, sortByKeys })
+        : getActualData({ data: passedData, reduxStateId, sortByKeys })
+
       if (options && !isEqual(options, selectOptions)) {
         setSelectOptions(options)
       }

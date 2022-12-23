@@ -71,7 +71,7 @@ function getRowsForCustomFields(values) {
       const validation = customField.validation[0]
       row.items = [
         ...row.items,
-        // 1. validation: validates the value type of textboxes (integer and strings), and validates min and max values
+        // ASP-5626: 1. validation: validates the value type of textboxes (integer and strings), and validates min and max values
         {
           id: customField.source,
           controlType: { component: 'numberField', min: validation.min, max: validation.max },
@@ -176,20 +176,21 @@ const enableItemAndFilter = (item, data, formik) => {
   const idToUpdate = item.id
   const itemBase = data.find(itemBase => itemBase.source === idToUpdate)
 
-  // 2. condition: based on comparatives with other custom fields, enables and disables the custom field
+  // ASP-5626: 2. condition: based on comparatives with other custom fields, enables and disables the custom field
   if (itemBase.condition) {
     item.disabledIf = () => !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
   }
 
-  // 3. filters: based on comparative with other custom fields, shows or hides options in combobox and autocomplete.
+  // ASP-5626: 3. filters: based on comparative with other custom fields, shows or hides options in combobox and autocomplete.
   if (itemBase.filters) {
+    const field = itemBase.source.split('.')
     const filteredOptions = calculateFilteredOptions(itemBase, item, formik)
 
     // first update the available options
     item.controlType.options = filteredOptions
+    item.controlType.dependencies = [itemBase.source]
 
     // second, clear any invalid option from already selected values
-    const field = itemBase.source.split('.')
     const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
     const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
     if (!currentValidValues.includes(currentSelectdValue)) {

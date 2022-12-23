@@ -50,7 +50,11 @@ const FormItem = ({
 
   const i18nTools = { messages, formatMessage, formik }
   const { component } = controlType || {}
-  const controlTypeActual = useMemo(() => ({ ...controlType, subRowIndex }), [controlType, subRowIndex])
+  const controlTypeActual = useMemo(
+    () => ({ ...controlType, subRowIndex }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [controlType, subRowIndex, controlType.options]
+  )
   const inputProps = useMemo(
     () => ({
       readOnly: !toggleEdit,
