@@ -1,19 +1,18 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense, lazy } from 'react'
 import { Paper } from '@mui/material'
 import head from 'lodash/head'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import Loading from './components/Loading'
 import { navigations } from './oldComponents/BrowseFilters'
 import { reduceNavLinks } from './oldComponents/filter/utils'
 import LoggedInLayout from './oldComponents/LoggedInLayout'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import SignedOutLayout from './oldComponents/SignedOutLayout'
 import License from './oldPages/auth/license/License'
-import LoadableLogin from './oldPages/auth/login/LoadableLogin'
 import ResetPassword from './oldPages/auth/resetPassword/ResetPassword'
 import CaseDetails from './oldPages/case/details/CaseDetails'
 import CaseList from './oldPages/case/list/CaseList'
 import OperationalData from './oldPages/dashboard/operational/OperationalData'
-import LoadableStatus from './oldPages/dashboard/status/LoadableStatus'
 import DeviceApiKeyList from './oldPages/deviceApiKey/list/DeviceApiKeyList'
 import InventoryContainer from './oldPages/inventory/InventoryContainer'
 import ClinicalHistory from './oldPages/patient/ClinicalHistory'
@@ -39,6 +38,9 @@ import SiteList from './pages/Site/List'
 import Welcome from './pages/Welcome'
 import { useAuthState } from './providers/AuthProvider'
 import { RoutesPermissionProvider } from './providers/RoutePermissions'
+
+const LoadableLogin = lazy(() => import('./oldPages/auth/login/Login'))
+const LoadableStatus = lazy(() => import('./oldPages/dashboard/status/Status'))
 
 function useHashAndScroll() {
   const location = useLocation()
@@ -110,7 +112,9 @@ const renderClinicalHistory = props => <ClinicalHistory {...props} />
 
 const renderLoadableLogin = props => (
   <SignedOutLayout>
-    <LoadableLogin {...props} />
+    <Suspense fallback={<Loading />}>
+      <LoadableLogin {...props} />
+    </Suspense>
   </SignedOutLayout>
 )
 const renderResetPassword = props => (
@@ -130,7 +134,9 @@ const renderLicense = props => (
 )
 const renderLoadableStatus = () => (
   <LoggedInLayout>
-    <LoadableStatus />
+    <Suspense fallback={<Loading />}>
+      <LoadableStatus />
+    </Suspense>
   </LoggedInLayout>
 )
 const renderTaskList = props => (
