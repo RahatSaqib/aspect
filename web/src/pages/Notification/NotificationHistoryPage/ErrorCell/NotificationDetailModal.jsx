@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Avatar, Button, Grid, Typography } from '@mui/material'
+import { Avatar, Button, Grid, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
@@ -24,7 +24,7 @@ const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClos
         </Button>,
       ]}
       modal
-      // title={formatMessage(messages.sentDetails)}
+      title={formatMessage(messages.sentDetails)}
       onClose={onCancelConfirmation}
       open={showDialog || false}
     >
@@ -47,18 +47,26 @@ const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClos
             </Grid>
           </Grid>
         </Grid>
-        <Grid item style={{ margin: 10 }}>
-          <Typography variant="h6">{formatMessage(messages.contactDetails)}</Typography>
-          <Grid container sx={{ width: 'auto', margin: 0 }}>
+        <Grid item xs={12} md={6} style={{ margin: 10 }}>
+          <Typography variant="h7">{formatMessage(messages.contactDetails)}</Typography>
+          <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
             {notificationData &&
               notificationData.length &&
-              notificationData.map(recipient => (
-                <Grid item xs={12} sm={4} container direction="row" justifyContent="space-evenly" alignItems="center">
-                  <Avatar style={{ color: '#fff', backgroundColor: colors[recipient.split('-')[1]] }} />
-                  <span>{recipient.split('-')[0]}</span>
-                </Grid>
+              notificationData.map((recipient, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <ListItem key={`${recipient.split('-')[0]}${index}`}>
+                  <ListItemAvatar>
+                    <Avatar
+                      style={{
+                        color: '#fff',
+                        backgroundColor: colors[recipient.split('-')[1]],
+                      }}
+                    />
+                  </ListItemAvatar>
+                  <ListItemText primary={recipient.split('-')[0]} />
+                </ListItem>
               ))}
-          </Grid>
+          </List>
         </Grid>
       </Grid>
     </AspectDialog>
