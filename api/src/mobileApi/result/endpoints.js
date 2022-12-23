@@ -9,9 +9,11 @@ const {
   downloadResultResponseValidationV2,
   addClinicalResponseParamValidation,
   addClinicalResponsePayloadValidation,
+  workflowStatusParamsValiation,
+  workFlowStatusPayloadValidation,
 } = require('./common/validations')
 const { clinicalResponse } = require('./clinicalResponse')
-
+const { updateWorkflowStatusToFlagged } = require('./updateWorkflowStatus')
 // -----------------------------------------------------
 // routes
 // -----------------------------------------------------
@@ -113,6 +115,27 @@ const routes = [
           allowUnknown: false,
         },
         schema: downloadResultResponseValidationV2,
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/v1/results/flag-workflow-status/{resultId}',
+    handler: updateWorkflowStatusToFlagged,
+    config: {
+      description: 'Result Sync',
+      notes:
+        'Pageable and sortable list of complete results (including all result details). Used for syncing the reporter app',
+      auth: { scope: ['result:edit'] },
+      validate: {
+        params: workflowStatusParamsValiation(),
+        payload: workFlowStatusPayloadValidation(),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: downloadResultResponseValidation,
       },
     },
   },

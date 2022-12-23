@@ -1,0 +1,51 @@
+const Boom = require('@hapi/boom')
+const { getUser } = require('../../auth/service')
+const { resultWorkflowStatusToId } = require('../../shared/dictionary')
+const { insertResultWorkflowLog, updateResultWorkflowLog, getLatestResultWorkflowLog } = require('./common/db')
+
+const FLAGGED = 'Flagged'
+
+// update result workflow
+async function updateWorkflowStatusToFlagged(request) {
+  const { auth, params, payload } = request
+  const { resultId } = params
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  // get the result so we can check access and if status changed
+  const result = await getLatestResultWorkflowLog(resultId)
+  const flaggedId = await resultWorkflowStatusToId(FLAGGED)
+  const resultWorkflowLogEntry = {
+    resultId,
+    resultWorkflowStatusId: flaggedId,
+    createdBy: currentUserId,
+    reason: payload.reason,
+    changedOn: payload.changedOn,
+  }
+  const errorMessage = await updateResultWorkflowStatusByResultId(
+    resultWorkflowLogEntry,
+    payload.changedOn,
+    result?.resultWorkflowChangedOn
+  )
+
+  if (errorMessage) {
+    return Boom.badRequest(errorMessage)
+  }
+
+  return {
+    ok: true,
+    data: `Result ${resultId} has been flagged successfully`,
+  }
+}
+
+// supporting function for update workflow status
+async function updateResultWorkflowStatusByResultId(resultWorkflowLogEntry, clientDate, resultWorkflowChangedOn) {
+  // update the resultWorkflowStatusId.
+  if (resultWorkflowChangedOn < clientDate || !resultWorkflowChangedOn) {
+    const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
+    await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
+  }
+}
+
+module.exports = {
+  updateWorkflowStatusToFlagged,
+}

@@ -544,6 +544,19 @@ const addClinicalResponseResultValidation = () => {
   })
 }
 
+const workflowStatusParamsValiation = () => {
+  return Joi.object().keys({
+    resultId: Joi.number().integer().positive().description('Result Id'),
+  })
+}
+
+const workFlowStatusPayloadValidation = () => {
+  return Joi.object().keys({
+    reason: Joi.string().description('Reason for the latest workflow status change').allow(null, '').max(255),
+    changedOn: Joi.date().description('Date when the status was updated.').iso().allow(null),
+  })
+}
+
 module.exports = {
   downloadResultValidation,
   downloadResultResponseValidation,
@@ -552,4 +565,6 @@ module.exports = {
   addClinicalResponseParamValidation,
   addClinicalResponsePayloadValidation,
   addClinicalResponseResultValidation,
+  workflowStatusParamsValiation,
+  workFlowStatusPayloadValidation,
 }
