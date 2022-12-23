@@ -52,7 +52,7 @@ function getRowsForCustomFields(values) {
         {
           id: customField.source,
           label: customField.title,
-          initialValue: values[source[0]][source[1]] ? [values[source[0]][source[1]]] : [],
+          initialValue: values[source[0]][source[1]] ? [values[source[0]][source[1]]] : '',
           controlType: {
             component: 'select',
             options: customField.items
