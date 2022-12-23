@@ -24,14 +24,14 @@
           "key": "unknown"
         }
       ],
-      "required": false
+      "needsConfirmationIfIsEmpty": false
     },
     {
       "name": "dateOfOnsetOfSymptoms",
       "i18nKey": "ifYesDateOfOnsetOfSymptoms",
       "controlType": "datePicker",
       "fieldType": "text",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "order": 1,
       "condition": [
         {
@@ -65,14 +65,14 @@
           "key": "unknown"
         }
       ],
-      "required": true
+      "needsConfirmationIfIsEmpty": true
     },
     {
       "name": "ifOthersUnderlayingConditions",
       "i18nKey": "ifOthersUnderlayingConditionsi18nkey",
       "controlType": "checkBox",
       "fieldType": "text",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "order": 3,
       "condition": [
         {
@@ -144,7 +144,7 @@
       "i18nKey": "ifOthersUnderlayingConditionsExplaini18nkey",
       "controlType": "textArea",
       "fieldType": "text",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "order": 4,
       "condition": [
         {
