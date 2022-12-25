@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { LinearProgress, Paper, Box } from '@mui/material'
 import classnames from 'classnames/bind'
-import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
@@ -45,7 +44,6 @@ export const SiteDetail = ({ navigate, location }) => {
     setLatLong({ lat: site?.latitude, lng: site?.longitude })
   }, [site])
 
-  const hasSiteWithLocation = () => site && !isNil(site.longitude) && !isNil(site.latitude)
   const onButtonClick = event => navigate(event.currentTarget.dataset.path)
 
   return (
@@ -108,7 +106,7 @@ export const SiteDetail = ({ navigate, location }) => {
           </Routes>
         )}
         <section className={cssClasses('Section', 'Section--first')}>
-          {hasSiteWithLocation() ? (
+          {latLong.lat && latLong.lng ? (
             <Paper>
               <SiteLocationFormMap latLong={latLong} />
             </Paper>

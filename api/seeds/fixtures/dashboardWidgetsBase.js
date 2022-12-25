@@ -75,8 +75,15 @@ const personTitle = {
   titleI18nKey: 'personTitle',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: `select count(p.id) as cnt from Person as p inner join Partner on p.partnerId is NULL or p.partnerId = Partner.id left outer join Geography as g on p.geographyId = g.id where p.disabled = 0`,
-  // sqlForIndicator: `SELECT COUNT(p.id) AS cnt FROM Person as p INNER JOIN Partner ON p.partnerId IS NULL OR p.partnerId = Partner.id LEFT OUTER JOIN Geography AS g ON p.geographyId = g.id WHERE p.disabled = 0`,
+  sqlForIndicator: `select count(distinct p.id) as cnt 
+  from Person as p 
+    inner join Partner on p.partnerId is NULL or p.partnerId = Partner.id 
+    left outer join Geography as g on p.geographyId = g.id 
+    left Join Job as j on p.id = j.personId
+    left Join JobContext as jc on jc.jobId = j.id
+    left Join Site as s on jc.siteId = s.id
+  where p.disabled = 0
+    and (s.id is null or s.disabled = 0)`,
   link: '/browse/person',
   linkParams: {
     contactStatus: WIDGET_FILTER_KEYS.PERSON_DISABLED,
