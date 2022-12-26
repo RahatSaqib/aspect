@@ -2,8 +2,8 @@ import React from 'react'
 import { LinearProgress, MenuItem, TextField } from '@mui/material'
 import useSiteList from '../../hooks/site/useSiteList'
 
-const SiteListSelect = ({ name, label, value, onChange, width, disabled }) => {
-  const { isLoading: isSiteListLoading, data: siteList } = useSiteList()
+const SiteListSelect = ({ name, label, value, onChange, width, disabled, queryParams }) => {
+  const { isLoading: isSiteListLoading, data: siteList } = useSiteList(queryParams)
 
   return (
     <span style={{ width }}>
