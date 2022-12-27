@@ -7,14 +7,23 @@ const logger = require('../../src/shared/logger')
 const config = require('../../src/config')
 
 async function handleAllUnprocessedJsonFiles() {
+  const reLabel = 'gx:processZip'
   const items = await knex('GxAlertImport').where({ status: null }).select('*')
 
   await Promise.each(items, async item => {
-    const { fileFullPath, gxAlertTestId } = item
+    const { fileFullPath, gxAlertTestId, id } = item
+    const now = new Date()
     if (!fs.existsSync(fileFullPath)) {
       logger.error(`Can not find imported JSON file "${fileFullPath}".`, {
         reLabel: 'gxAlertImport:importZipFilesFromFolder',
       })
+      payload = {
+        status: 'error',
+        error: 'Can not find JSON file',
+        aspectResultId: null,
+        updatedOn: now,
+      }
+      await knex('GxAlertImport').where({ id }).update(payload)
       return
     }
     /**
@@ -52,17 +61,19 @@ async function handleAllUnprocessedJsonFiles() {
         status: 'done',
         error: null,
         aspectResultId,
-        updatedOn: new Date().toISOString(),
+        updatedOn: now,
       }
     } else {
       payload = {
         status: 'error',
         error: message,
         aspectResultId: null,
-        updatedOn: new Date().toISOString(),
+        updatedOn: now,
       }
     }
     await knex('GxAlertImport').where({ gxAlertTestId }).update(payload)
+    // show progress in console
+    logger.info(`Processed file ${fileFullPath}.`, { reLabel })
   })
 }
 
