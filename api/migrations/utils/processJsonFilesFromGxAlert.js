@@ -10,11 +10,18 @@ async function handleAllUnprocessedJsonFiles() {
   const items = await knex('GxAlertImport').where({ status: null }).select('*')
 
   await Promise.each(items, async item => {
-    const { fileFullPath, gxAlertTestId } = item
+    const { fileFullPath, gxAlertTestId, id } = item
     if (!fs.existsSync(fileFullPath)) {
       logger.error(`Can not find imported JSON file "${fileFullPath}".`, {
         reLabel: 'gxAlertImport:importZipFilesFromFolder',
       })
+      payload = {
+        status: 'error',
+        error: 'Can not find JSON file',
+        aspectResultId: null,
+        updatedOn: new Date().toISOString(),
+      }
+      await knex('GxAlertImport').where({ id }).update(payload)
       return
     }
     /**
