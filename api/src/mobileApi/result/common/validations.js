@@ -552,8 +552,15 @@ const workflowStatusParamsValiation = () => {
 
 const workFlowStatusPayloadValidation = () => {
   return Joi.object().keys({
-    reason: Joi.string().description('Reason for the latest workflow status change').allow(null, '').max(255),
-    changedOn: Joi.date().description('Date when the status was updated.').iso().allow(null),
+    reason: Joi.string().description('Reason for the latest workflow status change').max(255),
+    changedOn: Joi.date().description('Date when the status was updated.').iso(),
+  })
+}
+
+const workFlowStatusResponseValidation = () => {
+  return Joi.object().keys({
+    ok: Joi.bool().required().description('False if there was some sort of error'),
+    data: Joi.string().description('Success of workflow status update'),
   })
 }
 
@@ -567,4 +574,5 @@ module.exports = {
   addClinicalResponseResultValidation,
   workflowStatusParamsValiation,
   workFlowStatusPayloadValidation,
+  workFlowStatusResponseValidation,
 }

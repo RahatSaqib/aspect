@@ -3,7 +3,7 @@ const { getUser } = require('../../auth/service')
 const { resultWorkflowStatusToId } = require('../../shared/dictionary')
 const { insertResultWorkflowLog, updateResultWorkflowLog, getLatestResultWorkflowLog } = require('./common/db')
 
-const FLAGGED = 'Flagged'
+const FLAGGED_EXTERNALID = 'Flagged'
 
 // update result workflow
 async function updateWorkflowStatusToFlagged(request) {
@@ -13,7 +13,7 @@ async function updateWorkflowStatusToFlagged(request) {
 
   // get the result so we can check access and if status changed
   const result = await getLatestResultWorkflowLog(resultId)
-  const flaggedId = await resultWorkflowStatusToId(FLAGGED)
+  const flaggedId = await resultWorkflowStatusToId(FLAGGED_EXTERNALID)
   const resultWorkflowLogEntry = {
     resultId,
     resultWorkflowStatusId: flaggedId,

@@ -11,6 +11,7 @@ const {
   addClinicalResponsePayloadValidation,
   workflowStatusParamsValiation,
   workFlowStatusPayloadValidation,
+  workFlowStatusResponseValidation,
 } = require('./common/validations')
 const { clinicalResponse } = require('./clinicalResponse')
 const { updateWorkflowStatusToFlagged } = require('./updateWorkflowStatus')
@@ -123,9 +124,8 @@ const routes = [
     path: '/v1/results/flag-workflow-status/{resultId}',
     handler: updateWorkflowStatusToFlagged,
     config: {
-      description: 'Result Sync',
-      notes:
-        'Pageable and sortable list of complete results (including all result details). Used for syncing the reporter app',
+      description: 'Update workflow status to flagged',
+      notes: 'Update the status of a result',
       auth: { scope: ['result:edit'] },
       validate: {
         params: workflowStatusParamsValiation(),
@@ -135,7 +135,7 @@ const routes = [
         options: {
           allowUnknown: false,
         },
-        schema: downloadResultResponseValidation,
+        schema: workFlowStatusResponseValidation,
       },
     },
   },
