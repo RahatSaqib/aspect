@@ -57,7 +57,7 @@ async function decompressAllZipFiles(folderAbsolutePath) {
       await Promise.all(
         zipEntries.map(async (zipEntry, jsonFileIndex) => {
           if (!zipEntry.isDirectory && zipEntry.entryName.endsWith('.json')) {
-            const now = new Date().toISOString()
+            const now = new Date()
             const fileAbsolutePath = path.join(dirAbsolutePath, zipEntry.entryName)
             const content = zipEntry.getData().toString('utf8')
             try {
