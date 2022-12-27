@@ -83,7 +83,7 @@ describe('Mobile API update workflow status to Flagged', () => {
       const res = await server
         .put(`${path}/${results[0].id}`)
         .send({
-          changedOn: '2022-12-21T23:01:46.000Z',
+          changedOn: new Date().toISOString(),
           reason: 'Dummy reason',
         })
         .set('Authorization', `Bearer ${shared.token}`)
