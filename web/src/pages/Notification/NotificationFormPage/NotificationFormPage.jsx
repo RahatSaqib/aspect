@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react'
+import isPlainObject from 'lodash/isPlainObject'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import unset from 'lodash/unset'
@@ -45,10 +46,11 @@ const NotificationFormPage = () => {
       const sanitizedPersons = reduce(
         formik.values.persons,
         (acc, person) => {
+          const personId = isPlainObject(person) ? person.value : person
           acc = [
             ...acc,
             {
-              personId: person.value,
+              personId,
               checked: true,
             },
           ]
