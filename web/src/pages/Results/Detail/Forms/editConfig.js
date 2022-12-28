@@ -1,6 +1,6 @@
-import SAMPLE_TYPES from '../../../components/QueryFetch/SampleType'
-import { SITE_ALL } from '../../../components/QueryFetch/Site'
-import messages from '../Detail/messages'
+import SAMPLE_TYPES from '../../../../components/QueryFetch/SampleType'
+import { SITE_ALL } from '../../../../components/QueryFetch/Site'
+import messages from '../messages'
 import {
   getBaseOptions,
   siteProps,

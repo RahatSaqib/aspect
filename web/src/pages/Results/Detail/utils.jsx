@@ -1,8 +1,8 @@
 import uniqBy from 'lodash/uniqBy'
 import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
-import getFormConfig from '../Forms/editConfig'
-import getValidationSchema from '../Forms/validation'
+import getFormConfig from './Forms/editConfig'
+import getValidationSchema from './Forms/validation'
 import messages from './messages'
 
 export const getFormConfigWithData = (intl, isNew, values) => {
