@@ -17,20 +17,21 @@ async function listDiseases(request) {
       assay: 'a',
     })
     .distinct('dis.id as diseaseId')
-    .pluck('diseaseId')
+
   const diseases = await knex('Disease as d')
     .modify(addConstraints, dataConstraints, {
       disease: 'd',
     })
     .select()
   const usedDiseaseIds = await usedDiseaseIdsQuery
+
   const result = {
     ok: true,
     total: diseases.length,
     length: diseases.length,
     data: _.map(diseases, elem => ({
       ...elem,
-      hasResults: usedDiseaseIds.includes(elem.id),
+      hasResults: usedDiseaseIds.some(d => d.diseaseId === elem.id),
     })),
   }
   return result

@@ -23,7 +23,7 @@ export const getFormConfigWithData = (intl, isNew, values) => {
 }
 
 function getRowsForCustomFields(values) {
-  const totalCustomFields = values.customFieldsValues?.length || 0
+  const totalCustomFields = values.customFields?.length || 0
   const id = 9000
   let rows = []
   if (totalCustomFields === 0) {
@@ -45,30 +45,37 @@ function getRowsForCustomFields(values) {
   // show 3 cells per row
   const cellsPerRow = 3
   let row = {}
-
-  uniqBy(values.customFieldsValues, elem => elem.externalId).forEach((customField, index) => {
-    // start new row
+  uniqBy(values.customFields, elem => elem.source).forEach((customField, index) => {
     if (index % cellsPerRow === 0) {
+      // Start new row
       if (index > 0) {
+        // Add a new row
         rows = [...rows, row]
       }
+
+      // Init new row
       row = {
         id: id + index,
         items: [],
       }
     }
+
     row.items = [
       ...row.items,
       {
-        id: customField.externalId,
+        // Aspect uses the ID to get the value of the field - custom fields defines the path in the 'source' prop
+        id: customField.source,
         controlType: {
           component: 'textField',
         },
         type: 'readOnly',
-        label: customField.caption,
+        label: customField.title,
       },
     ]
   })
+
+  // Add the last row
+  rows = [...rows, row]
 
   return rows
 }

@@ -423,6 +423,7 @@ async function joinModuleAvailability(dataConstraints, query) {
 function getResultCategoryGroupColumns(dataConstraints, query) {
   return knex
     .from('Assay AS a')
+    .innerJoin('DeviceType AS dt', 'a.deviceTypeId', 'dt.id')
     .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
     .innerJoin('Disease AS ds', 'at.diseaseId', 'ds.id')
     .innerJoin('ResultCategoryGroup AS rcg', 'a.id', 'rcg.assayId')
@@ -443,6 +444,7 @@ function getResultCategoryGroupColumns(dataConstraints, query) {
         'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), ""))'
       )
     ) // Equal to columnName
+    .where('dt.externalId', 'CepheidGeneXpert')
     .modify(filterParams, query, {
       assayId: 'a.id',
     })
