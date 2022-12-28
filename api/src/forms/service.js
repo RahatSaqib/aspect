@@ -54,7 +54,7 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
             id: countryId,
           },
         }
-        const { data: items } = await getListSitesForSelectList(dataConstraints)
+        const { data: items } = await getListSitesForSelectList(dataConstraints, {})
         if (!field.InputControlData) {
           field.InputControlData = {}
         }

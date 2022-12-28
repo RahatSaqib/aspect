@@ -164,7 +164,7 @@ const calculateFilteredOptions = (itemBase, item, formik) => {
   const allFilters = itemBase.filters
   const sourcePath = itemBase.source.split('.')
 
-  return item.controlType.options.filter(option => {
+  return itemBase.items.filter(option => {
     const resp = []
     allFilters.forEach(filter => (applyFilterToOption(filter, option, formik, sourcePath) ? resp.push(option) : null))
     return resp.length
@@ -179,6 +179,7 @@ const enableItemAndFilter = (item, data, formik) => {
   // ASP-5626: 2. condition: based on comparatives with other custom fields, enables and disables the custom field
   if (itemBase.condition) {
     item.disabledIf = () => !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
+    item.controlType.hideIfNoOptions = false
   }
 
   // ASP-5626: 3. filters: based on comparative with other custom fields, shows or hides options in combobox and autocomplete.
@@ -188,13 +189,14 @@ const enableItemAndFilter = (item, data, formik) => {
 
     // first update the available options
     item.controlType.options = filteredOptions
+      .sort((a, b) => a.order - b.order)
+      .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined }))
     item.controlType.dependencies = [itemBase.source]
 
     // second, clear any invalid option from already selected values
     const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
     const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
     if (!currentValidValues.includes(currentSelectdValue)) {
-      // formik.setFieldValue(field, '', false)
       formik.values[field[0]][field[1]] = ''
     }
   }

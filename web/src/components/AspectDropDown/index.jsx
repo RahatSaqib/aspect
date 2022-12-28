@@ -281,15 +281,13 @@ const AspectDropDown = ({
   })
   const queryDependencies = getQueryDependencies(formik, [responseFromQuery, selectOptions], dependencies, subRowIndex)
   useEffect(() => {
-    if (responseFromQuery) {
-      const isLoadedFromApi =
-        endpoint && // if 'endpoint' is defined - we fetch data from api
-        normalizeLoadedData &&
-        !isEqual(passedData, responseFromQuery) // loaded data should differ from initial data
-      const options = isLoadedFromApi
-        ? normalizeLoadedData(responseFromQuery, formik, subRowIndex) || []
-        : getActualData({ data: passedData, reduxStateId, sortByKeys })
+    const isLoadedFromApi =
+      endpoint && // if 'endpoint' is defined - we fetch data from api
+      normalizeLoadedData &&
+      !isEqual(passedData, responseFromQuery) // loaded data should differ from initial data
 
+    if (responseFromQuery && isLoadedFromApi) {
+      const options = normalizeLoadedData(responseFromQuery, formik, subRowIndex) || []
       if (options && !isEqual(options, selectOptions)) {
         setSelectOptions(options)
       }
@@ -306,6 +304,13 @@ const AspectDropDown = ({
       }
     }
   }, queryDependencies)
+
+  useEffect(() => {
+    const options = getActualData({ data: passedData, reduxStateId, sortByKeys })
+    if (options && !isEqual(options, selectOptions)) {
+      setSelectOptions(options)
+    }
+  }, [passedData])
 
   if (isError) {
     throw new Error(queryErrorMessage)
