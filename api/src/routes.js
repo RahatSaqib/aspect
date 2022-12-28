@@ -38,6 +38,7 @@ function addClientRoutes(server) {
 
 function addMobileRoutes(server) {
   server.route(require('./mobileApi/result/endpoints').routes.map(decorateMobileAPI('result')))
+  server.route(require('./mobileApi/person/endpoints').routes.map(decorateMobileAPI('person')))
 }
 
 function addDeviceRoutes(server) {
