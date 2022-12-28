@@ -195,6 +195,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Detected Resistance',
                 hideIfNull: true,
                 visibleIf: (values, isEditMode) => !isNew && !isEditMode,
@@ -204,6 +205,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textArea',
                 },
+                type: 'readOnly',
                 label: 'Result Text',
                 labelI18nKey: 'resultText',
                 visibleIf: (values, isEditMode) => !isEditMode,
@@ -218,6 +220,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Error Code',
                 labelI18nKey: 'errorCode',
               },
@@ -228,6 +231,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                   rowsMax: 5,
                   rows: 3,
                 },
+                type: 'readOnly',
                 label: 'Notes',
                 labelI18nKey: 'notes',
               },
@@ -251,7 +255,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                   timeIntervals: 1,
                   isClearable: true,
                 },
-                type: 'string',
+                type: 'readOnly',
                 label: 'Start Date',
                 labelI18nKey: 'startDate',
               },
@@ -263,7 +267,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                   timeIntervals: 1,
                   isClearable: true,
                 },
-                type: 'string',
+                type: 'readOnly',
                 label: 'End Date',
                 labelI18nKey: 'endDate',
                 disabledIf: values =>
@@ -286,6 +290,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Sample ID',
                 labelI18nKey: 'sampleId',
               },
@@ -303,6 +308,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                     }),
                   isClearable: true,
                 },
+                type: 'readOnly',
                 label: 'Sample Type',
                 labelI18nKey: 'sampleType',
               },
@@ -312,6 +318,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                   component: 'datePicker',
                   format: 'dd MMM yyyy hh:mm',
                 },
+                type: 'readOnly',
                 label: 'Collected On',
                 labelI18nKey: 'collectedOn',
               },
@@ -338,6 +345,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Collected By',
                 labelI18nKey: 'collectedBy',
               },
@@ -355,6 +363,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'hidden',
                 },
+                type: 'readOnly',
               },
             ],
           },
@@ -373,6 +382,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Patient ID',
                 labelI18nKey: 'patientId',
               },
@@ -381,6 +391,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Case ID',
                 labelI18nKey: 'caseId',
               },
@@ -402,6 +413,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Instrument Serial',
                 labelI18nKey: 'instrumentSerial',
               },
@@ -410,6 +422,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Module Name',
                 labelI18nKey: 'moduleName',
               },
@@ -418,6 +431,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Module Serial',
                 labelI18nKey: 'moduleSerial',
               },
@@ -431,6 +445,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'datePickerNoTimezone',
                 },
+                type: 'readOnly',
                 label: 'Consumable Expiration Date',
                 labelI18nKey: 'consumableExpirationDate',
               },
@@ -439,6 +454,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Consumable Lot',
                 labelI18nKey: 'consumableLot',
               },
@@ -447,6 +463,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Consumable Serial',
                 labelI18nKey: 'consumableSerial',
               },
@@ -465,6 +482,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: {
                   component: 'textField',
                 },
+                type: 'readOnly',
                 label: 'Sender Operator',
                 labelI18nKey: 'senderOperator',
               },

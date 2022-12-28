@@ -71,14 +71,12 @@ const AspectResultDetail = () => {
   }, [isLoading, queryResponse])
 
   const { mutate: submitResult } = useMutation(
-    ({ values }) => {
-      let endpoint = RESULT_DETAIL.ENDPOINT
-      if (resultId) {
-        endpoint += `/${resultId}`
-      }
-
-      return fetchWrapperForQueries({ endpoint, method: resultId ? 'PUT' : 'POST', params: { ...values } })
-    },
+    ({ values }) =>
+      fetchWrapperForQueries({
+        endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
+        method: 'PUT',
+        params: { ...values },
+      }),
     { onSuccess: () => navigate(getReturnUrl(query.get('returnUrl'), `/browse/result`)) }
   )
 
