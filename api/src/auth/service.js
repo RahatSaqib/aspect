@@ -6,6 +6,7 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 require('isomorphic-fetch')
+const { findIana } = require('windows-iana')
 const emailUtil = require('../email/emailUtil')
 const templateProcessor = require('../email/templateProcessor')
 const logger = require('../shared/logger')
@@ -222,14 +223,13 @@ async function authenticate(request, response) {
 
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
-
   return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
     clientType,
     culture: user.culture || 'en-US',
-    timezone: user.timezone || 'Eastern Standard Time',
+    timezone: findIana(user.timezone)[0] || 'America/New_York',
     displayPreferences,
     countryId: user.countryId,
     countryAbbreviation: user.countryAbbreviation,

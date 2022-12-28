@@ -124,6 +124,7 @@
     "timezone-support": "^3.1.0",
     "twilio": "^3.83.4",
     "vision": "^5.4.4",
+    "windows-iana": "^5.1.0",
     "winston": "^3.8.2",
     "winston-mail": "^2.0.0",
     "winston-sentry-log": "^1.0.26"
