@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CircularProgress } from '@mui/material'
 import map from 'lodash/map'
 import { FaNotesMedical } from 'react-icons/fa'
@@ -35,76 +35,93 @@ const NotificationFormPage = ({ id, onSubmit }) => {
   const { data: jobFunctions } = useJobFunctions()
   const { data: partner } = usePartner()
 
-  useNotification(notificationId, {
+  /**
+   * get raw data from useNotification hook, which is based on useQuery cached response
+   * Notice that any further calls of this hook (useNotification) will return same
+   * reference of `data` (=initialValues), which we then use in below `useEffect`. And because reference
+   * of the `data` is the same - useEffect will run only once and we do `setFormConfig(form)` in it only
+   * the first time we open Notification edit page with this notificationId
+   */
+  const { data: initialValues } = useNotification(notificationId, {
     enabled: !!intl && !!jobFunctions && !!partner,
-    onSuccess: data => {
-      if (data.notificationType === 'issueBased') {
-        data.notificationType = data.issueType
-      }
-      const { notificationType, issueType, reportId, name, emailSubject, emailBody } = data
-      const { smsBody, webUrl, webBody, filterCondition, enabled } = data
-
-      const filter = JSON.parse(filterCondition)
-      const newValues = {
-        notificationType,
-        name,
-        emailSubject,
-        emailBody,
-        sendEmail: filter.sendEmail,
-        sendSms: filter.sendSms,
-        sendWeb: filter.sendWeb,
-        smsBody,
-        webUrl,
-        webBody,
-        sendToPatient: filter.sendToPatient,
-        enabled: !!enabled,
-        persons: map(filter?.persons, p => `${p.personId}`),
-        deviceLevelId: filter.deviceLevelId,
-        areaItemsState: buildAreaItems(filter.deviceLevelId, 'state', filter.areaItems),
-        areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
-        areaItemsLab: buildAreaItems(filter.deviceLevelId, 'lab', filter.areaItems),
-        result: filter.result,
-        issueType,
-        reportId,
-        hasRecurrency: !!data.cronRecurrency,
-        /**
-         * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
-         * to make sure all items in array are located in their positions
-         * (filter.jobFunctions is array with only checked items) and are marked as
-         * checked or not. This values in final jobFunctions will be next used in generic func
-         * getInitialValuesFromFormConfig for setting initial values of the form
-         */
-        jobFunctions: jobFunctions.map(jf => {
-          const jfSaved = filter?.jobFunctions?.find(({ jobFunctionId }) => jobFunctionId === jf.id)
-          return {
-            jobFunctionId: jf.id,
-            checked: !!jfSaved,
-            tags: jfSaved ? jfSaved.tags.map(tag => ({ ...tag, value: `${tag.value}` })) : [],
-          }
-        }),
-      }
-
-      if (notificationType === 'reportBased') {
-        const cronRecurrency = {
-          cronExpression: data.cronRecurrency.split(' '),
-          frequency: filter.reportFrequency,
-        }
-        newValues.cronRecurrency = cronRecurrency
-        newValues.reportDateRange = filter.reportDateRange
-        newValues.reportStartingWeekDay = filter.reportStartingWeekDay
-      }
-
-      const form = getFormConfigWithData(
-        intl,
-        jobFunctions,
-        partner,
-        validationSchema(intl.formatMessage),
-        true,
-        newValues
-      )
-      setFormConfig(form)
-    },
   })
+
+  useEffect(() => {
+    /**
+     * first rendering cycle `initialValues` is undefined until useNotification
+     * via useQuery return response with this notification data
+     */
+    if (!initialValues) return
+
+    /**
+     * initialValues is defined and below we process it and set initial form's data
+     */
+    if (initialValues.notificationType === 'issueBased') {
+      initialValues.notificationType = initialValues.issueType
+    }
+    const { notificationType, issueType, reportId, name, emailSubject, emailBody } = initialValues
+    const { smsBody, webUrl, webBody, filterCondition, enabled } = initialValues
+
+    const filter = JSON.parse(filterCondition)
+    const newValues = {
+      notificationType,
+      name,
+      emailSubject,
+      emailBody,
+      sendEmail: filter.sendEmail,
+      sendSms: filter.sendSms,
+      sendWeb: filter.sendWeb,
+      smsBody,
+      webUrl,
+      webBody,
+      sendToPatient: filter.sendToPatient,
+      enabled: !!enabled,
+      persons: map(filter?.persons, p => `${p.personId}`),
+      deviceLevelId: filter.deviceLevelId,
+      areaItemsState: buildAreaItems(filter.deviceLevelId, 'state', filter.areaItems),
+      areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
+      areaItemsLab: buildAreaItems(filter.deviceLevelId, 'lab', filter.areaItems),
+      result: filter.result,
+      issueType,
+      reportId,
+      hasRecurrency: !!initialValues.cronRecurrency,
+      /**
+       * use loaded values from `filter.jobFunctions` for restoring array with Job Functions
+       * to make sure all items in array are located in their positions
+       * (filter.jobFunctions is array with only checked items) and are marked as
+       * checked or not. This values in final jobFunctions will be next used in generic func
+       * getInitialValuesFromFormConfig for setting initial values of the form
+       */
+      jobFunctions: jobFunctions.map(jf => {
+        const jfSaved = filter?.jobFunctions?.find(({ jobFunctionId }) => jobFunctionId === jf.id)
+        return {
+          jobFunctionId: jf.id,
+          checked: !!jfSaved,
+          tags: jfSaved ? jfSaved.tags.map(tag => ({ ...tag, value: `${tag.value}` })) : [],
+        }
+      }),
+    }
+
+    if (notificationType === 'reportBased') {
+      const cronRecurrency = {
+        cronExpression: initialValues.cronRecurrency.split(' '),
+        frequency: filter.reportFrequency,
+      }
+      newValues.cronRecurrency = cronRecurrency
+      newValues.reportDateRange = filter.reportDateRange
+      newValues.reportStartingWeekDay = filter.reportStartingWeekDay
+    }
+
+    const form = getFormConfigWithData(
+      intl,
+      jobFunctions,
+      partner,
+      validationSchema(intl.formatMessage),
+      true,
+      newValues
+    )
+    setFormConfig(form)
+  }, [initialValues, intl, jobFunctions, partner])
 
   return !formConfig ? (
     <CircularProgress />
