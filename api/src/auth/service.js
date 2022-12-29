@@ -223,13 +223,15 @@ async function authenticate(request, response) {
 
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
+
   return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
     clientType,
     culture: user.culture || 'en-US',
-    timezone: findIana(user.timezone)[0] || 'America/New_York',
+    timezone: user.timezone || 'Eastern Standard Time',
+    timezoneIANA: findIana(user.timezone)[0] || 'America/New_York',
     displayPreferences,
     countryId: user.countryId,
     countryAbbreviation: user.countryAbbreviation,
