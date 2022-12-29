@@ -1,8 +1,4 @@
-const {
-  preferenceParamsValidation,
-  preferencePayloadValidation,
-  preferenceUpdateResponseValidation,
-} = require('./common/validations')
+const { preferencePayloadValidation, preferenceUpdateResponseValidation } = require('./common/validations')
 const { updatePersonUserPreferences } = require('./preference')
 
 // -----------------------------------------------------
@@ -11,14 +7,13 @@ const { updatePersonUserPreferences } = require('./preference')
 const routes = [
   {
     method: 'PUT',
-    path: '/v1/person/preferences/{personId}',
+    path: '/v1/person/preferences',
     handler: updatePersonUserPreferences,
     config: {
       description: 'Update user preferences',
       notes: 'Update language and timezone',
       auth: { scope: ['person:edit'] },
       validate: {
-        params: preferenceParamsValidation(),
         payload: preferencePayloadValidation(),
       },
       response: {

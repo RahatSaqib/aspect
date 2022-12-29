@@ -1,11 +1,5 @@
 const Joi = require('@hapi/joi')
 
-const preferenceParamsValidation = () => {
-  return Joi.object().keys({
-    personId: Joi.string().description('Person ID').required(),
-  })
-}
-
 const preferencePayloadValidation = () => {
   return Joi.object().keys({
     timezone: Joi.string().max(255).allow('', null).description('User timezone'),
@@ -21,7 +15,6 @@ const preferenceUpdateResponseValidation = () => {
 }
 
 module.exports = {
-  preferenceParamsValidation,
   preferencePayloadValidation,
   preferenceUpdateResponseValidation,
 }
