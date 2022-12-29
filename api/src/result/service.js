@@ -2254,46 +2254,6 @@ async function createResult(request) {
   return updateOrCreateResult(request)
 }
 
-async function updateResult(request) {
-  const {
-    params: { resultId },
-    auth,
-    payload,
-  } = request
-
-  const result = await getResultByResultId(auth, resultId, {
-    id: 'r.id',
-    siteId: 'r.siteId',
-    assayId: 'r.assayId',
-    deviceId: 'r.deviceId',
-    sampleId: 'r.sampleId',
-    partnerId: 'r.partnerId',
-    resultCategory1: 'r.resultCategory1',
-    resultCategory2: 'r.resultCategory2',
-    endedOn: 'r.endedOn',
-    resultSourceExternalId: 'rso.externalId',
-  })
-  if (!result.ok) {
-    return Boom.notFound('This result does not exist or you do not have access.')
-  }
-
-  if (result.data.resultSourceExternalId !== 'EnteredByHand') {
-    // The end-datetime can't be changed if the assay was not entered by hand and should be disabled in the UI anyway.
-    // To avoid timezone/clock issues when updating a result, override the date to the one we have in the database.
-    payload.endedOn = result.data.endedOn
-    if (
-      payload.resultCategory1 !== result.data.resultCategory1 ||
-      (payload.resultCategory2 || null) !== (result.data.resultCategory2 || null)
-    )
-      return Boom.badRequest('You cannot change the result of an assay that was reported by a device.')
-  }
-
-  return updateOrCreateResult(
-    request,
-    _.pick(result.data, ['id', 'siteId', 'assayId', 'deviceId', 'sampleId', 'partnerId'])
-  )
-}
-
 async function updateOrCreateResult(request, result = {}) {
   const {
     auth,
@@ -2779,7 +2739,6 @@ module.exports = {
   queryResultFollowUpLastItems,
   getListResults,
   createResult,
-  updateResult,
   addPartnerQueryConstraints,
   addResultDownloadLog,
   listSampleTypes,

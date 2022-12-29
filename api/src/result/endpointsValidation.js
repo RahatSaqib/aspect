@@ -127,9 +127,9 @@ const baseResultResponse = {
   errorCode: Joi.string().allow(null, '').description('If an error occurred, contains the error code from the device'),
   resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
   caseExternalId: Joi.string().optional().allow(null, '').description('The id of the case'),
-  diseaseId: Joi.number().positive().allow(null).required().description('the Id of the disease'),
-  diseaseName: Joi.string().required().allow(null).description('the name of the disease'),
-  diseaseExternalId: Joi.string().required().allow(null).description('the external id of the disease'),
+  diseaseId: Joi.number().positive().allow(null).optional().description('the Id of the disease'),
+  diseaseName: Joi.string().optional().allow(null).description('the name of the disease'),
+  diseaseExternalId: Joi.string().optional().allow(null).description('the external id of the disease'),
 
   detectedResistance: Joi.alternatives()
     .try(Joi.string(), Joi.array())
@@ -177,14 +177,6 @@ function validateResultDetailResponse() {
   return {
     ...baseResultResponse,
 
-    createdOn: Joi.date()
-      .required()
-      .description('When the result was added to the Aspect database. This can be converted to the user time zone.'),
-    updatedOn: Joi.date()
-      .required()
-      .description(
-        'When the result was last updated in the Aspect database. This can be converted to the user time zone.'
-      ),
     deviceId: Joi.number().integer().positive().required().description('Device id in aspect'),
     deviceTypeId: Joi.number().integer().positive().allow(null).description('The id of the deviceType'),
     deviceSerial: Joi.string().allow(null, '').description('The device serial number'),
@@ -227,7 +219,7 @@ function validateResultDetailResponse() {
     errorNotes: Joi.string().allow(null, '').description('Contains any details about the error'),
     assayId: Joi.number().integer().description('The id of the assay'),
     sampleOriginSiteId: Joi.number().allow(null).integer().description('the id of the original site'),
-    sampleId: Joi.string().allow(null, '').description('Sample id'),
+    sampleId: Joi.number().integer().positive().allow(null).description('Sample id'),
     sampleGroup: Joi.string().allow(null, '').description('Sample group'),
     sampleCollectedOn: Joi.date().allow(null).description('The date when the sample has been collected'),
     sampleOriginSiteName: Joi.string().allow(null, '').description('Sample original site name'),
@@ -440,6 +432,5 @@ module.exports = {
   validateResultListResponse,
   validateResultDetailResponse,
   resultCreatePayload,
-  resultUpdatePayload,
   treatmentTrackingValidationQuery,
 }

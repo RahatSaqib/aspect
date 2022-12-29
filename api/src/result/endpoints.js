@@ -10,7 +10,6 @@ const {
   validateResultListResponse,
   validateResultDetailResponse,
   resultCreatePayload,
-  resultUpdatePayload,
   treatmentTrackingValidationQuery,
 } = require('./endpointsValidation')
 const {
@@ -41,7 +40,6 @@ const {
   clinicalIndicatorAggregations,
   followUpAggregations,
   createResult,
-  updateResult,
   listSampleTypes,
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
@@ -49,6 +47,7 @@ const {
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
+const { updateResult } = require('./updateResult')
 
 const configs = {
   trendInQuarters: {
@@ -1000,7 +999,6 @@ const routes = [
         params: {
           resultId: Joi.number().description('Result ID').required(),
         },
-        payload: resultUpdatePayload,
       },
       response: {
         options: {
