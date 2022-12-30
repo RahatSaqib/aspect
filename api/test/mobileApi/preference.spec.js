@@ -5,7 +5,6 @@ const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 
-const DEFAULT_EASTERN_STANDARD_TIME = 'America/New_York'
 const MYANMAR_TIMEZONE_WINDOWS_FORMAT = 'Myanmar Standard Time'
 const EN_US = 'en-US'
 const EUROPE_MOSCOW = 'Europe/Moscow'
@@ -24,7 +23,7 @@ describe('Mobile API Person Preference Update', () => {
       })
       assert.property(response.body, 'data')
       if (assert.property(response.body, 'data')) {
-        assert.property(response.body.data.timezone, EUROPE_MOSCOW || DEFAULT_EASTERN_STANDARD_TIME)
+        assert.property(response.body.data.timezone, EUROPE_MOSCOW || response.body.data.defaultTimezone)
         assert.property(response.body.data.culture, EN_US)
       }
     }
@@ -44,7 +43,7 @@ describe('Mobile API Person Preference Update', () => {
       assertResponseContainingPresonResponse(res)
     })
 
-    it('it should update timezone to default if timezone is null', async () => {
+    it('it should update timezone to default(person geographic timezone) if timezone is null', async () => {
       const res = await server
         .put(`${path}`)
         .send({
