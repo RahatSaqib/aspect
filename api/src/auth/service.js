@@ -52,6 +52,7 @@ const userProps = [
   'u.legacyPassword',
   'u.id',
   'u.name',
+  'c.timezone as defaultTimezone',
   ...personProps,
 ]
 
@@ -230,8 +231,8 @@ async function authenticate(request, response) {
     clientId,
     clientType,
     culture: user.culture || 'en-US',
-    timezone: user.timezone || 'Eastern Standard Time',
-    timezoneIANA: findIana(user.timezone)[0] || 'America/New_York',
+    timezone: user.timezone || user.defaultTimezone,
+    timezoneIANA: findIana(user.timezone)[0] || findIana(user.defaultTimezone)[0],
     displayPreferences,
     countryId: user.countryId,
     countryAbbreviation: user.countryAbbreviation,
