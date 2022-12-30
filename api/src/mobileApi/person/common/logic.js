@@ -15,32 +15,37 @@ async function getPersonDetails(request) {
   return personDetails
 }
 
-const getChangedFields = (payload, updatablePersonFields, personDetails) => {
-  return _.reduce(
-    payload,
-    (result, value, key) => {
-      if (
-        _.includes(
-          updatablePersonFields.filter(f => f !== 'tags'),
-          key
-        ) &&
-        key in personDetails &&
-        personDetails[key] !== (value || personDetails.defaultTimezone)
-      ) {
-        if (key === 'timezone') {
-          if (!value) {
-            value = personDetails.defaultTimezone
-          }
-          const [ianaWindowsTimezone] = findWindows(value)
-          result[key] = ianaWindowsTimezone ? findWindows(value) : value
-        } else {
-          result[key] = value
-        }
-      }
-      return result
-    },
-    {}
-  )
+// only return changed fields of person details
+const getChangedFields = (payload, personDetails) => {
+  const value = getTimezoneInIanaWindows(payload, personDetails)
+  const data = { ...payload, ...{ timezone: value } }
+  const changedFields = {}
+  _.map(data, (value, key) => {
+    if (key in personDetails && personDetails[key] !== (value || personDetails.defaultTimezone)) {
+      changedFields[key] = value
+    }
+  })
+  return changedFields
+}
+
+// return timezone in IanaWindows format standard time
+const getTimezoneInIanaWindows = (payload, personDetails) => {
+  const [value] = findWindows(payload?.timezone)
+  let timezoneValue = payload.timezone
+  switch (payload.timezone) {
+    case null:
+      timezoneValue = personDetails.defaultTimezone
+      break
+
+    case '':
+      timezoneValue = personDetails.defaultTimezone
+      break
+
+    default:
+      timezoneValue = value
+      break
+  }
+  return timezoneValue
 }
 
 module.exports = { getPersonDetails, getChangedFields }

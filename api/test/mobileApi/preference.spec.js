@@ -5,7 +5,6 @@ const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
 
-const MYANMAR_TIMEZONE_WINDOWS_FORMAT = 'Myanmar Standard Time'
 const EN_US = 'en-US'
 const EUROPE_MOSCOW = 'Europe/Moscow'
 
@@ -48,17 +47,6 @@ describe('Mobile API Person Preference Update', () => {
         .put(`${path}`)
         .send({
           timezone: null,
-          culture: EN_US,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-      assertResponseContainingPresonResponse(res)
-    })
-
-    it('it should update timezone to windows timezone if timezone is passed as iana windows format', async () => {
-      const res = await server
-        .put(`${path}`)
-        .send({
-          timezone: MYANMAR_TIMEZONE_WINDOWS_FORMAT,
           culture: EN_US,
         })
         .set('Authorization', `Bearer ${shared.token}`)
