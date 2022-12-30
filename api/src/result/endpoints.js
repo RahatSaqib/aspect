@@ -20,7 +20,6 @@ const {
   updateWorkflowStatus,
   updateTreatmentStatusPost,
   listTreatmentStatusTypes,
-  updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   showDeviceLogs,
@@ -225,22 +224,6 @@ const routes = [
           ok: Joi.bool().required().description('False if there was some sort of error'),
           data: Joi.object().required().description('The results').keys(validateResultDetailResponse()),
         }),
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/result/form-data/{resultId}',
-    handler: asyncHandler(updateFormData),
-    config: {
-      description: 'Update form data for the result',
-      notes: 'Update form data for the result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: {
-          resultId: Joi.number().integer().positive().description('Result Id'),
-        },
-        payload: Joi.object(),
       },
     },
   },

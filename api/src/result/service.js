@@ -1074,45 +1074,6 @@ async function getTreatmentStatusByResultId(resultId) {
     )
 }
 
-async function updateFormData(request) {
-  const {
-    auth,
-    params,
-    payload,
-    plugins: { messageContext },
-  } = request
-  const { resultId } = params
-
-  const result = await getResultByResultId(auth, resultId, {
-    assayId: 'r.assayId',
-    partnerId: 'r.partnerId',
-    formData: 'r.formData',
-  })
-
-  if (!result.ok) {
-    return Boom.notFound()
-  }
-
-  const errorMessage = await updateFormDataByResultId(
-    resultId,
-    result.data.partnerId,
-    result.data.assayId,
-    _.get(result.data, 'formData', {}),
-    payload,
-    auth,
-    messageContext,
-    getRemoteAddress(request),
-    params
-  )
-
-  if (errorMessage) {
-    return Boom.badRequest(errorMessage)
-  }
-
-  const response = await showResult(request)
-  return response
-}
-
 async function updateFormDataByResultId(
   resultId,
   partnerId,
@@ -2716,7 +2677,6 @@ module.exports = {
   updateWorkflowStatus,
   updateTreatmentStatusPost,
   listTreatmentStatusTypes,
-  updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   showDeviceLogs,
