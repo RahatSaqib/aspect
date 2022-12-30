@@ -4,6 +4,7 @@ const chai = require('chai')
 const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
 const bcrypt = require('bcrypt')
+const { findIana } = require('windows-iana')
 
 const config = require('../../src/config')
 const shared = require('../utils/sharedToken')
@@ -118,6 +119,24 @@ describe('Authentication routes', () => {
         await knex('User').where('name', unlicensedUser).delete()
       })
     )
+
+    describe('POST', () => {
+      it('check timezone IANA is correct or not', async () => {
+        runTestWithKnex(async knex => {
+          await knex('LoginHistory').where('userId', '>', 0).del()
+        })
+        await server
+          .post(authPath)
+          .send({
+            name: adminUsername,
+            password: adminPassword,
+            clientName: webClientName,
+          })
+          .then(res => {
+            assert.equal(findIana(res.body.timezone)[0], res.body.timezoneIANA)
+          })
+      })
+    })
 
     describe('POST', () => {
       it('should return a JSON message that contains a valid jwt, access token, and client ID if username/password are correct', async () => {
