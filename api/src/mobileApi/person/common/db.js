@@ -35,6 +35,7 @@ const getPersonDetailsById = (personId, dataConstraints) => {
       'p.hideSampleId',
       'p.hideNotes',
       'c.name as country',
+      'c.timezone as defaultTimezone',
       's.name as stateName',
       'l.name as lgaName',
       'u.lockedOut as userLockedOut',

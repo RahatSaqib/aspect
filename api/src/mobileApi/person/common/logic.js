@@ -25,11 +25,11 @@ const getChangedFields = (payload, updatablePersonFields, personDetails) => {
           key
         ) &&
         key in personDetails &&
-        personDetails[key] !== value
+        personDetails[key] !== (value || personDetails.defaultTimezone)
       ) {
         if (key === 'timezone') {
           if (!value) {
-            value = 'America/New_York'
+            value = personDetails.defaultTimezone
           }
           const [ianaWindowsTimezone] = findWindows(value)
           result[key] = ianaWindowsTimezone ? findWindows(value) : value
