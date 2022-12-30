@@ -989,7 +989,7 @@ const routes = [
         },
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False if there was some sort of error'),
-          data: Joi.object().required().description('The result that was updated').keys(validateResultDetailResponse()),
+          data: Joi.object().required().description('The result that was updated'),
         }),
       },
     },

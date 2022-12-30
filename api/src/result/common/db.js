@@ -389,4 +389,5 @@ module.exports = {
   getQueryForResultsListAndExport,
   showFileReferencesById,
   getResultNotesByResultId,
+  getBaseQueryForResults,
 }

@@ -7,7 +7,7 @@ const shared = require('../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
 const patients = require('../../seeds/test/fixtures/patients.json')
-const { getBaseQueryForResults } = require('../../src/result/service')
+const { getBaseQueryForResults } = require('../../src/result/common/db')
 
 const { knex } = require('../../src/db')
 

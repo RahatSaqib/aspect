@@ -70,7 +70,7 @@ async function updateResult(request) {
   messageContext.bindActionCreators({ resultUpdated })
   messageContext.resultUpdated(result.data.id)
 
-  return { ok: true, data: result.data }
+  return { ok: true, data: { id: result.data.id } }
 }
 
 module.exports = {

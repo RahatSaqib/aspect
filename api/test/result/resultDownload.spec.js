@@ -5,13 +5,13 @@ const shared = require('../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
 const patients = require('../../seeds/test/fixtures/patients.json')
-const { getBaseQueryForResults } = require('../../src/result/service')
 
 const { knex } = require('../../src/db')
 
 const { resultCategoryToId, resultWorkflowStatusToId } = require('../../src/shared/dictionary')
 
 const server = require('../utils/testUtils')
+const { getBaseQueryForResults } = require('../../src/result/common/db')
 
 const { assert, expect } = chai
 const getClinicianAccessToken = async () => {
