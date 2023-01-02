@@ -250,6 +250,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               value={editSite.parentWarehouseId || ''}
               onChange={parentWarehouseId => setEditSite({ ...editSite, parentWarehouseId })}
               queryParams={queryParamsForWarehouse}
+              isClearable
             />
           </div>
           <div className={cssClasses('container', 'coordinate')}>
