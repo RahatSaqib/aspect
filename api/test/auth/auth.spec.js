@@ -13,7 +13,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = require('../utils/testUtils')
-const { convertTimezonetoIANA } = require('../../src/shared/date')
+const { convertTimezonetoIANA, convertTimezonetoWindowsIANA, arrayofIANATimezone } = require('../../src/shared/date')
 
 const gxAlertServer = supertest.agent(process.env.gxAlertApi)
 const { assert } = chai
@@ -135,6 +135,21 @@ describe('Authentication routes', () => {
           .then(res => {
             assert.equal(convertTimezonetoIANA(res.body.timezone), res.body.timezoneIANA)
           })
+      })
+    })
+
+    describe('Timezone Aliases', () => {
+      it('check timezone IANA aliases are for the same windows IANA timezone or not', async () => {
+        const ianaTimezoneAliasesOne = 'Asia/Kolkata'
+        const ianaTimezoneAliasesTwo = 'Asia/Calcutta'
+        const windowsTimezone = 'India Standard Time'
+
+        assert.equal(
+          convertTimezonetoWindowsIANA(ianaTimezoneAliasesOne),
+          convertTimezonetoWindowsIANA(ianaTimezoneAliasesTwo)
+        )
+        assert.equal(arrayofIANATimezone(windowsTimezone).includes(ianaTimezoneAliasesOne), true)
+        assert.equal(arrayofIANATimezone(windowsTimezone).includes(ianaTimezoneAliasesTwo), true)
       })
     })
 
