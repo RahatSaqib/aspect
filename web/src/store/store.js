@@ -1,11 +1,10 @@
 import { createStore, compose, applyMiddleware } from 'redux'
 import { createLogger } from 'redux-logger'
 import thunk from 'redux-thunk'
-import { middleware as idleMiddleware } from './IdleRedux'
 import rootReducer from './rootReducer'
 
 const showLogger = false
-const middleware = [thunk, idleMiddleware]
+const middleware = [thunk]
 
 if (process.env.ASPECT_TARGET === 'local' && showLogger) {
   middleware.push(createLogger({ collapsed: true }))
