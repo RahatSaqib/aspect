@@ -4,7 +4,6 @@ const chai = require('chai')
 const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
 const bcrypt = require('bcrypt')
-const { findIana } = require('windows-iana')
 
 const config = require('../../src/config')
 const shared = require('../utils/sharedToken')
@@ -14,6 +13,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = require('../utils/testUtils')
+const { convertTimezonetoIANA } = require('../../src/shared/date')
 
 const gxAlertServer = supertest.agent(process.env.gxAlertApi)
 const { assert } = chai
@@ -133,7 +133,7 @@ describe('Authentication routes', () => {
             clientName: webClientName,
           })
           .then(res => {
-            assert.equal(findIana(res.body.timezone)[0], res.body.timezoneIANA)
+            assert.equal(convertTimezonetoIANA(res.body.timezone), res.body.timezoneIANA)
           })
       })
     })

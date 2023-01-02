@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { findIana } = require('windows-iana')
 const {
   addDays,
   addMinutes,
@@ -296,6 +297,16 @@ function getOffsetFromIsoDateString(isoDateTime) {
     : '+00:00'
 }
 
+/**
+ * Returns the timezone in IANA
+ * @param {string} Timezone - i.e. Eastern Standard Time
+ * @returns String containing the IANA timezone - i.e. America/New_York
+ */
+function convertTimezonetoIANA(timezone) {
+  const [convertedTimezone] = findIana(timezone)
+  return convertedTimezone
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -326,4 +337,5 @@ module.exports = {
   getTimeZoneFromUser,
   getOffsetFromUser,
   getTimezoneOffsetFromNumber,
+  convertTimezonetoIANA,
 }

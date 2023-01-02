@@ -6,7 +6,6 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 require('isomorphic-fetch')
-const { findIana } = require('windows-iana')
 const emailUtil = require('../email/emailUtil')
 const templateProcessor = require('../email/templateProcessor')
 const logger = require('../shared/logger')
@@ -19,6 +18,7 @@ const { query, knex } = require('../db')
 const { gxAlertAuthenticate } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
+const { convertTimezonetoIANA } = require('../shared/date')
 
 const clientTypes = {
   app: 'reporter_app',
@@ -232,7 +232,7 @@ async function authenticate(request, response) {
     clientType,
     culture: user.culture || 'en-US',
     timezone: user.timezone || user.defaultTimezone,
-    timezoneIANA: findIana(user.timezone)[0] || findIana(user.defaultTimezone)[0],
+    timezoneIANA: convertTimezonetoIANA(user.timezone || user.defaultTimezone),
     displayPreferences,
     countryId: user.countryId,
     countryAbbreviation: user.countryAbbreviation,
