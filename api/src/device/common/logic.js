@@ -3,6 +3,7 @@ const {
   deleteIssues,
   deleteResultDownloadLog,
   deleteDeviceLog,
+  deleteInventoryLog,
   deleteMessages,
   deleteResults,
   deleteDeviceFromDeviceOperation,
@@ -23,6 +24,16 @@ async function deleteDevice(deviceId, trknex) {
   await deleteIssues(deviceId, trknex)
   await deleteDeviceLog(deviceId, trknex)
   await deleteResultDownloadLog(deviceId, trknex)
+  /**
+   * --------------------------------
+   * Before deleting in Result table:
+   * --------------------------------
+   * Delete all InventoryLog's for resultId's which uses old (source) deviceId's.
+   * This may happen when we didn't redirect to new (target) deviceId some results
+   * which are considered as `repeated` results.
+   * ---> Same happens for all tables with `resultId` foreign key (ResultDownloadLog, ...)
+   */
+  await deleteInventoryLog(deviceId, trknex)
   await deleteMessages(deviceId, trknex)
   await deleteResults(deviceId, trknex)
   await deleteDeviceFromDeviceOperation(deviceId, trknex)
