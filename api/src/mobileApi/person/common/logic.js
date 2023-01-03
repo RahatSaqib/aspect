@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { findWindows } = require('windows-iana')
 const { getConstraints } = require('../../../auth/constraints')
 const { getPersonDetailsById } = require('./db')
+const { convertTimezonetoWindowsIANA } = require('../../../shared/date')
 
 async function getPersonDetails(request) {
   const { auth } = request
@@ -30,7 +30,7 @@ const getChangedFields = (payload, personDetails) => {
 
 // return timezone in IanaWindows format standard time
 const getTimezoneInIanaWindows = (payload, personDetails) => {
-  const [value] = findWindows(payload?.timezone)
+  const value = convertTimezonetoWindowsIANA(payload?.timezone)
   let timezoneValue = payload.timezone
   switch (payload.timezone) {
     case null:
