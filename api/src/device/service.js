@@ -293,9 +293,7 @@ async function getListDevices(query, auth) {
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
-      ...getSelectListFields(userTimeOffset, {
-        lastSeenField: `CASE WHEN dms.active = 1 THEN GREATEST(dmsl.day, d.lastSeenOn) ELSE d.lastSeenOn END`,
-      }),
+      ...getSelectListFields(userTimeOffset),
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
@@ -304,7 +302,6 @@ async function getListDevices(query, auth) {
       'issues.categories as issueCategories',
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
-      'd.lastSeenOn as deviceLastSeenOn',
       knex.raw(
         'CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END AS connectorStatus'
       ),

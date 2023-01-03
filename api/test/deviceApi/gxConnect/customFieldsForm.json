@@ -93,7 +93,7 @@
           "key": "unknown"
         }
       ],
-      "required": true
+      "needsConfirmationIfIsEmpty": true
     },
     {
       "id": 15,

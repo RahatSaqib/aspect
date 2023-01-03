@@ -728,25 +728,11 @@ async function downloadFileAsync({ auth, params }) {
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
-
   const results = await getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rca', function () {
-      this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
-    })
-    .leftJoin('ResultCategoryAssay as rca2', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
-    .leftJoin('ResultForm as rf', function () {
-      this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
-    })
-    .leftJoin('Partner as p', 'r.partnerId', 'p.id')
     .where('r.id', resultId)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       result: 'r',
-    })
-    .modify(function (qb) {
-      qb.select(fields)
     })
     .select({
       resultText: knex.raw(
@@ -761,7 +747,10 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       partnerId: 'p.id',
       partnerPluginName: 'p.plugin',
       deviceTypePluginName: 'dt.plugin',
+      deviceId: 'r.deviceId',
+      ...fields,
     })
+
   let data = null
   // translate result data back to an object and get assay details
   // if selecting the result was successful
@@ -810,24 +799,31 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
     if (data.resultData && data.resultData.detectedResistance && data.resultData.detectedResistance.length > 0)
       data.detectedResistance = data.resultData.detectedResistance.join(', ')
 
-    data.customFieldsValues = await getCustomFieldsForResult(data)
+    data.customFields = await getCustomFieldsForResult(data)
   }
 
   return { ok: results.length === 1, data }
 }
 
 async function getCustomFieldsForResult(data) {
-  const { deviceId, partnerId, partnerPluginName, deviceTypePluginName } = data
-  const pluginNames = [partnerPluginName, deviceTypePluginName]
-  const { getCustomFields } = require('../deviceApi/service')
-  const customFieldsRaw = await getCustomFields({ knex, device: { id: deviceId, partnerId }, pluginNames })
-  let customFields = customFieldsRaw?.CustomFields?.Fields || []
-  customFields = _.sortBy(customFields, ['DisplayOrder', 'Name'])
-  const customFieldsValues = customFields.map(it => ({
-    caption: it.Label,
-    externalId: `patientData.${_.camelCase(it.ExternalId)}`,
-  }))
-  return customFieldsValues
+  const { deviceId, partnerId, countryId, assayId, diseaseId } = data
+  const { getCustomFields } = require('../forms/service')
+  let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
+  customFields = _.sortBy(customFields, ['order', 'name'])
+  customFields = customFields.map(
+    ({ title, source, fieldType, order, controlType, validation, items, condition, filters }) => ({
+      title,
+      source,
+      fieldType,
+      order,
+      controlType,
+      validation,
+      items,
+      condition,
+      filters,
+    })
+  )
+  return customFields
 }
 
 async function getResultForStringTemplateProcessing(resultId, fields = RESULT_STRING_TEMPLATE_FIELDS, knex = knex) {
@@ -1250,7 +1246,11 @@ async function updateFormData(request) {
   } = request
   const { resultId } = params
 
-  const result = await getResultByResultId(auth, resultId, ['r.assayId', 'r.partnerId', 'r.formData'])
+  const result = await getResultByResultId(auth, resultId, {
+    assayId: 'r.assayId',
+    partnerId: 'r.partnerId',
+    formData: 'r.formData',
+  })
 
   if (!result.ok) {
     return Boom.notFound()
@@ -1926,17 +1926,27 @@ async function updateTransferNotification(request) {
   return data
 }
 
-function getBaseQueryForResults() {
-  const resultQuery = knex('Result as r')
+const getBaseQueryForResults = () =>
+  knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('ResultSource as rso', 'r.resultSourceId', 'rso.id')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
-    .leftJoin('PartnerAssay as pa', function () {
-      this.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
+    .leftJoin('PartnerAssay as pa', q => {
+      q.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
+    .leftJoin('ResultCategoryAssay as rca', q => {
+      q.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
+    })
+    .leftJoin('ResultCategoryAssay as rca2', q => {
+      q.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
+    })
+    .leftJoin('ResultForm as rf', q => {
+      q.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
+    })
+    .leftJoin('Partner as p', 'r.partnerId', 'p.id')
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -1956,23 +1966,14 @@ function getBaseQueryForResults() {
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
-  return resultQuery
-}
-
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
   const displayResult = query.displayResult || 'all'
 
   const resultQuery = getBaseQueryForResults()
-    .leftJoin('ResultCategoryAssay as rca', function () {
-      this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
-    })
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
     .leftJoin('Geography as gdpn', 'sdpn.geographyId', 'gdpn.id')
     .leftJoin('State as stdpn', 'stdpn.id', 'gdpn.stateId')
-    .leftJoin('ResultCategoryAssay as rca2', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
     .modify(queryBuilder => {
       // this join is very expensive (doubles query time) and we're only using it for filtering, so only join on demand
       if (resultCategoryGroupId) {
@@ -2634,18 +2635,18 @@ async function updateResult(request) {
     payload,
   } = request
 
-  const result = await getResultByResultId(auth, resultId, [
-    'r.id',
-    'r.siteId',
-    'r.assayId',
-    'r.deviceId',
-    'r.sampleId',
-    'r.partnerId',
-    'r.resultCategory1',
-    'r.resultCategory2',
-    'r.endedOn',
-    'rso.externalId as resultSourceExternalId',
-  ])
+  const result = await getResultByResultId(auth, resultId, {
+    id: 'r.id',
+    siteId: 'r.siteId',
+    assayId: 'r.assayId',
+    deviceId: 'r.deviceId',
+    sampleId: 'r.sampleId',
+    partnerId: 'r.partnerId',
+    resultCategory1: 'r.resultCategory1',
+    resultCategory2: 'r.resultCategory2',
+    endedOn: 'r.endedOn',
+    resultSourceExternalId: 'rso.externalId',
+  })
   if (!result.ok) {
     return Boom.notFound('This result does not exist or you do not have access.')
   }

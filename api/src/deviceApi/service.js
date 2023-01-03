@@ -1,6 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
+
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
@@ -266,7 +267,6 @@ async function addDeviceDataWithContext(context) {
       ...(await getConnectionSettings(context)),
     }
   }
-
   if (getFormsDefinition) {
     response = {
       ...response,
@@ -628,7 +628,10 @@ async function mergeResultWithContext(context) {
   context.addDeviceLogUpdate('resultId', result.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
   const postProcessResult = await postProcess(pluginContext, result, previousResult)
-  return postProcessResult
+  return {
+    ...postProcessResult,
+    aspectResultId: result.id,
+  }
 }
 
 async function createDeviceApiContext(handler, originalRequest, defaultHandlerOptions) {

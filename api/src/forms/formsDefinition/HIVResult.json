@@ -8,7 +8,7 @@
       "caption": "log value",
       "i18nKeyCaption": "logi18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -28,7 +28,7 @@
       "caption": "log value",
       "i18nKeyCaption": "copiesi18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "validation": [
         {
@@ -48,7 +48,7 @@
       "caption": "Result Text value",
       "i18nKeyCaption": "ResultTexti18nCaptionKey",
       "controlType": "textBox",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false
     },
     {
@@ -60,7 +60,7 @@
       "caption": "Images linked to this result",
       "i18nKeyCaption": "filePickeri18nCaptionKey",
       "controlType": "filePicker",
-      "required": false
+      "needsConfirmationIfIsEmpty": false
     },
     {
       "name": "hospitalNumber",
@@ -71,7 +71,7 @@
       "caption": "Hospital result number value",
       "i18nKeyCaption": "hospitalNumberi18nCaptionKey",
       "controlType": "textBox",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "validation": [
         {
           "validationType": "string",
@@ -89,7 +89,7 @@
       "caption": "ward number value",
       "i18nKeyCaption": "wardi18nCaptionKey",
       "controlType": "textBox",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "validation": [
         {
           "validationType": "string",
@@ -108,7 +108,7 @@
       "caption": "time Sample Taken value",
       "i18nKeyCaption": "timeSampleTakeni18nCaptionKey",
       "controlType": "datePicker",
-      "required": false
+      "needsConfirmationIfIsEmpty": false
     },
     {
       "name": "sampleType",
@@ -119,7 +119,7 @@
       "caption": "ward number value",
       "i18nKeyCaption": "wardi18nCaptionKey",
       "controlType": "autoComplete",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "typeOfOptionSource": "fixedList",
       "items": [
         {

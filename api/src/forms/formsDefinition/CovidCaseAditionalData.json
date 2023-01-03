@@ -24,7 +24,7 @@
           "key": "unknown"
         }
       ],
-      "required": false
+      "needsConfirmationIfIsEmpty": false
     },
     {
       "name": "caseTravelled",
@@ -71,7 +71,7 @@
           "key": "unknown"
         }
       ],
-      "required": false
+      "needsConfirmationIfIsEmpty": false
     },
     {
       "name": "visitedConfirmedCase",
@@ -95,14 +95,14 @@
           "key": "unknown"
         }
       ],
-      "required": false
+      "needsConfirmationIfIsEmpty": false
     },
     {
       "name": "ifYesContactWithConfirmedCase",
       "i18nKey": "ifYesContactWithConfirmedCasei18nkey",
       "controlType": "textArea",
       "fieldType": "text",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "order": 4,
       "condition": [
         {
