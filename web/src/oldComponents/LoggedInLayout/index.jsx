@@ -4,7 +4,6 @@ import { Helmet } from 'react-helmet'
 import useI18n from '../../hooks/useI18n'
 import AppNotificationDialog from '../appNotification/AppNotificationDialog'
 import AppNotificationSnackBar from '../appNotification/AppNotificationSnackBar'
-import IdleDialog from '../IdleDialog'
 import HorizontalAppBar from './HorizontalAppBar'
 import styles from './index.css'
 
@@ -18,7 +17,6 @@ export const LoggedInLayout = ({ children }) => {
         <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
         <HorizontalAppBar />
         <div className={cssClasses('Page-Content')}>{children}</div>
-        <IdleDialog intl={intl} />
         <AppNotificationDialog intl={intl} />
         <AppNotificationSnackBar intl={intl} />
       </div>
