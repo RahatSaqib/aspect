@@ -1,3 +1,4 @@
+import get from 'lodash/get'
 import uniqBy from 'lodash/uniqBy'
 import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
@@ -44,15 +45,14 @@ function getRowsForCustomFields(values) {
       row = { id: id + index, items: [] }
     }
 
-    const source = customField.source.split('.')
-
     if (customField.controlType === 'comboBox' || customField.controlType === 'autoComplete') {
+      const initialValue = get(values, customField.source)
       row.items = [
         ...row.items,
         {
           id: customField.source,
           label: customField.title,
-          initialValue: values[source[0]][source[1]] ? [values[source[0]][source[1]]] : '',
+          initialValue: initialValue ? [initialValue] : '',
           controlType: {
             component: 'select',
             options: customField.items
