@@ -339,6 +339,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 },
                 label: 'Sample Collection Site',
                 labelI18nKey: 'sampleCollectionSite',
+                type: 'readOnly',
               },
               {
                 id: 'senderOperator',
