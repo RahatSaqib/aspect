@@ -544,7 +544,7 @@ const addClinicalResponseResultValidation = () => {
   })
 }
 
-const workflowStatusParamsValiation = () => {
+const workflowStatusParamsValidation = () => {
   return Joi.object().keys({
     resultId: Joi.number().integer().positive().description('Result Id'),
   })
@@ -572,7 +572,7 @@ module.exports = {
   addClinicalResponseParamValidation,
   addClinicalResponsePayloadValidation,
   addClinicalResponseResultValidation,
-  workflowStatusParamsValiation,
+  workflowStatusParamsValidation,
   workFlowStatusPayloadValidation,
   workFlowStatusResponseValidation,
 }

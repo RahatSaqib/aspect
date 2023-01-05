@@ -1,7 +1,11 @@
 const Boom = require('@hapi/boom')
 const { getUser } = require('../../auth/service')
 const { resultWorkflowStatusToId } = require('../../shared/dictionary')
-const { insertResultWorkflowLog, updateResultWorkflowLog, getLatestResultWorkflowLog } = require('./common/db')
+const {
+  insertResultWorkflowLog,
+  updateResultWithResultWorkflowLog,
+  getLatestResultWorkflowLog,
+} = require('./common/db')
 
 const FLAGGED_EXTERNALID = 'Flagged'
 
@@ -42,7 +46,7 @@ async function updateResultWorkflowStatusByResultId(resultWorkflowLogEntry, clie
   // update the resultWorkflowStatusId.
   if (resultWorkflowChangedOn < clientDate || !resultWorkflowChangedOn) {
     const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
-    await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
+    await updateResultWithResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
   }
 }
 

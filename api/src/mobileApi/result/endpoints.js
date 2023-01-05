@@ -9,7 +9,7 @@ const {
   downloadResultResponseValidationV2,
   addClinicalResponseParamValidation,
   addClinicalResponsePayloadValidation,
-  workflowStatusParamsValiation,
+  workflowStatusParamsValidation,
   workFlowStatusPayloadValidation,
   workFlowStatusResponseValidation,
 } = require('./common/validations')
@@ -128,7 +128,7 @@ const routes = [
       notes: 'Update the status of a result',
       auth: { scope: ['result:edit'] },
       validate: {
-        params: workflowStatusParamsValiation(),
+        params: workflowStatusParamsValidation(),
         payload: workFlowStatusPayloadValidation(),
       },
       response: {
