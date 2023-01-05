@@ -231,8 +231,8 @@ async function deleteInventoryLog(deviceId, trknex) {
      */
     inventoryItemIds = inventoryItemIds.filter(it => !it)
     /**
-     * count number of records in InventoryLog for each inventoryItemId.
-     * This is needed to correctly increase quantityOnHand in InventoryItem
+     * Count # of records in InventoryLog for each entry in array `inventoryItemIds`.
+     * This is needed to correctly increase quantityOnHand in table InventoryItem.
      */
     const cntById = _.reduce(
       inventoryItemIds,
