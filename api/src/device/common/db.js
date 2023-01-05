@@ -1,3 +1,5 @@
+const _ = require('lodash')
+const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
@@ -181,7 +183,7 @@ async function mergeMessages(devicesToMerge, trknex) {
       .where({ deviceId: sourceDeviceId })
       .where(qb =>
         qb
-          .whereIn('m.resultId', knex('Result as r').where('r.deviceId', targetDeviceId).select('id'))
+          .whereIn('m.resultId', knex('Result as r').where('r.deviceId', targetDeviceId).pluck('id'))
           .orWhereNull('m.resultId')
       )
 
@@ -206,8 +208,8 @@ async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) 
 
 // Delete device
 async function deleteNotifications(deviceId, trknex) {
-  await trknex('Notification').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
-  await trknex('Notification').whereIn('issueId', trknex('Issue').where('deviceId', deviceId).select('id')).del()
+  await trknex('Notification').whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id')).del()
+  await trknex('Notification').whereIn('issueId', trknex('Issue').where('deviceId', deviceId).pluck('id')).del()
 }
 
 async function deleteIssues(deviceId, trknex) {
@@ -215,15 +217,53 @@ async function deleteIssues(deviceId, trknex) {
 }
 
 async function deleteResultDownloadLog(deviceId, trknex) {
-  await trknex('ResultDownloadLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  await trknex('ResultDownloadLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id')).del()
 }
 
 async function deleteInventoryLog(deviceId, trknex) {
-  await trknex('InventoryLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  let inventoryItemIds = await trknex('InventoryLog')
+    .whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id'))
+    .pluck('inventoryItemId')
+  if (inventoryItemIds.length > 0) {
+    /**
+     * just in case (because InventoryLog.inventoryItemId is nullable field) -
+     * filter out `null` values
+     */
+    inventoryItemIds = inventoryItemIds.filter(it => !it)
+    /**
+     * count number of records in InventoryLog for each inventoryItemId.
+     * This is needed to correctly increase quantityOnHand in InventoryItem
+     */
+    const cntById = _.reduce(
+      inventoryItemIds,
+      (acc, id) => {
+        acc[id] = acc[id] || { cnt: 0 }
+        acc[id].cnt += 1
+        return acc
+      },
+      {}
+    )
+    const distinctInventoryItemIds = _.keys(cntById)
+    const inventoryItems = await trknex('InventoryItem')
+      .whereIn('id', distinctInventoryItemIds)
+      .select('id', 'quantityOnHand')
+    await Promise.each(inventoryItems, async ({ id, quantityOnHand }) => {
+      const { cnt } = cntById[id]
+      if (cnt) {
+        await trknex('InventoryItem')
+          .where('id', id)
+          .update({ quantityOnHand: quantityOnHand + cnt })
+      }
+    })
+    /**
+     * and finally remove from InventoryLog, if any records to delete exists
+     */
+    await trknex('InventoryLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id')).del()
+  }
 }
 
 async function deleteDeviceLog(deviceId, trknex) {
-  await trknex('DeviceLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  await trknex('DeviceLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id')).del()
 }
 
 async function deleteMessages(deviceId, trknex) {
@@ -251,7 +291,7 @@ async function deleteDeviceFromDeviceApprovalLog(deviceId, trknex) {
 
 async function deleteDeviceFromDeviceApiRaw(deviceId, trknex) {
   await trknex('DeviceApiRaw as dar')
-    .whereIn('dar.deviceApiKeyId', trknex('DeviceApiKey as dak').where('dak.deviceId', deviceId).select('id'))
+    .whereIn('dar.deviceApiKeyId', trknex('DeviceApiKey as dak').where('dak.deviceId', deviceId).pluck('id'))
     .del()
 }
 
