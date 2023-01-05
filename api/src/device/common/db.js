@@ -183,7 +183,7 @@ async function mergeMessages(devicesToMerge, trknex) {
       .where({ deviceId: sourceDeviceId })
       .where(qb =>
         qb
-          .whereIn('m.resultId', knex('Result as r').where('r.deviceId', targetDeviceId).pluck('id'))
+          .whereIn('m.resultId', knex('Result as r').where('r.deviceId', targetDeviceId).select('id'))
           .orWhereNull('m.resultId')
       )
 
@@ -208,8 +208,8 @@ async function getDevicesIdsCheckingConstraints(allDevicesIds, dataConstraints) 
 
 // Delete device
 async function deleteNotifications(deviceId, trknex) {
-  await trknex('Notification').whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id')).del()
-  await trknex('Notification').whereIn('issueId', trknex('Issue').where('deviceId', deviceId).pluck('id')).del()
+  await trknex('Notification').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  await trknex('Notification').whereIn('issueId', trknex('Issue').where('deviceId', deviceId).select('id')).del()
 }
 
 async function deleteIssues(deviceId, trknex) {
@@ -217,12 +217,12 @@ async function deleteIssues(deviceId, trknex) {
 }
 
 async function deleteResultDownloadLog(deviceId, trknex) {
-  await trknex('ResultDownloadLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id')).del()
+  await trknex('ResultDownloadLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
 }
 
 async function deleteInventoryLog(deviceId, trknex) {
   let inventoryItemIds = await trknex('InventoryLog')
-    .whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id'))
+    .whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id'))
     .pluck('inventoryItemId')
   if (inventoryItemIds.length > 0) {
     /**
@@ -258,12 +258,12 @@ async function deleteInventoryLog(deviceId, trknex) {
     /**
      * and finally remove from InventoryLog, if any records to delete exists
      */
-    await trknex('InventoryLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id')).del()
+    await trknex('InventoryLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
   }
 }
 
 async function deleteDeviceLog(deviceId, trknex) {
-  await trknex('DeviceLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).pluck('id')).del()
+  await trknex('DeviceLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
 }
 
 async function deleteMessages(deviceId, trknex) {
@@ -291,7 +291,7 @@ async function deleteDeviceFromDeviceApprovalLog(deviceId, trknex) {
 
 async function deleteDeviceFromDeviceApiRaw(deviceId, trknex) {
   await trknex('DeviceApiRaw as dar')
-    .whereIn('dar.deviceApiKeyId', trknex('DeviceApiKey as dak').where('dak.deviceId', deviceId).pluck('id'))
+    .whereIn('dar.deviceApiKeyId', trknex('DeviceApiKey as dak').where('dak.deviceId', deviceId).select('id'))
     .del()
 }
 
