@@ -164,7 +164,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * for each device
          */
         knex.raw(`
-          ROUND(IFNULL(dc.dailyCapacity, 12) / 3, 0) as cntModules
+          ROUND(IFNULL(dc.dailyCapacity, 12) / 2, 0) as cntModules
         `)
       )
       .groupBy('yearAndMonth', 'r.deviceId')
@@ -205,6 +205,21 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}`
         ),
+        cnt_Total_Cases_Invalid: counter(
+          'r.id',
+          `
+          r.resultCategory1 = ${resultCategoryIds.Invalid}`
+        ),
+        cnt_Total_Cases_NoResult: counter(
+          'r.id',
+          `
+          r.resultCategory1 = ${resultCategoryIds.NoResult}`
+        ),
+        cnt_Total_Cases_Error: counter(
+          'r.id',
+          `
+          r.resultCategory1 = ${resultCategoryIds.Error}`
+        ),
 
         cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
           presumptiveTbCases,
@@ -221,6 +236,36 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         and
         r.resultCategory2 = ${resultCategoryIds.Indeterminate}
       `
+        ),
+        cnt_Total_MtbDetectedRifNotDetected: counter(
+          'r.id',
+          `
+          r.resultCategory1 IN (${positiveResultCategories})
+          and
+          r.resultCategory2 = ${resultCategoryIds.NotDetected}
+        `
+        ),
+        cnt_Total_MtbDetectedRifDetected: counter(
+          'r.id',
+          `
+          r.resultCategory1 IN (${positiveResultCategories})
+          and
+          r.resultCategory2 IN (${positiveResultCategories})
+        `
+        ),
+        cnt_Total_MtbDetectedRifIndeterminate: counter(
+          'r.id',
+          `
+          r.resultCategory1 IN (${positiveResultCategories})
+          and
+          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+        `
+        ),
+        cnt_Total_MtbNotDetected: counter(
+          'r.id',
+          `
+          r.resultCategory1 = ${resultCategoryIds.NotDetected}
+        `
         ),
         /**
          * ****************************************
@@ -639,8 +684,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * for several days in the given time frame (>5)
          */
         cntModulesActive: knex.raw(`DISTINCT
-      CONCAT(r.deviceId, '-',  r.moduleName)
-    `),
+          CONCAT(r.deviceId, '-',  r.moduleName)
+        `),
       }),
   }
 }

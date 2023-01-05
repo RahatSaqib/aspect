@@ -342,6 +342,9 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
 
   const rawData = _.has(payload, 'rawData') ? String(payload.rawData) : _.get(existingResult, 'rawData')
 
+  const gxAlertTestId = _.get(payload, 'gxAlertTestId')
+  const gxAlertSyncedOn = gxAlertTestId ? now : null
+
   const result = {
     latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', site.latitude)),
     longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', site.longitude)),
@@ -379,6 +382,9 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     updatedOn: now,
     createdOn: _.get(existingResult, 'createdOn', now),
     reportableSiteId,
+
+    gxAlertTestId,
+    gxAlertSyncedOn,
   }
 
   // Processed result contains result with additional fields

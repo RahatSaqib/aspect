@@ -56,6 +56,10 @@ export const messages = {
       id: 'pages.DeviceList.mergeDevices',
       defaultMessage: 'Merge Devices',
     },
+    mergingDevices: {
+      id: 'pages.DeviceList.mergingDevices',
+      defaultMessage: 'Merging Devices...',
+    },
     device: {
       id: 'pages.DeviceList.device',
       defaultMessage: 'Device',

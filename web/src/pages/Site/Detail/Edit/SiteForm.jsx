@@ -40,6 +40,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
   const { mutate: createSite } = useCreateSite()
 
   const [editSite, setEditSite] = useState({ ...site })
+  const [queryParamsForWarehouse] = useState({ siteTypeExternalIds: ['warehouse'], excludeSiteIds: [site.id] })
 
   const isPristine = isEqual(site, editSite)
   const isNew = site.id === 0
@@ -248,6 +249,8 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               label={formatMessage(messages.fieldBelongTo)}
               value={editSite.parentWarehouseId || ''}
               onChange={parentWarehouseId => setEditSite({ ...editSite, parentWarehouseId })}
+              queryParams={queryParamsForWarehouse}
+              isClearable
             />
           </div>
           <div className={cssClasses('container', 'coordinate')}>

@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "The API for aspect clients",
   "main": "server.js",
   "engines": {
@@ -43,7 +43,9 @@
     "test:contract:quiet": "TZ=UTC npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
     "test:unit": "TZ=UTC npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage",
     "test:unit:ci": "TZ=UTC npm-run-all mocha:unit:clear:coverage mocha:unit:coverage:ci",
-    "test:reseed": "npm-run-all db:reseed test"
+    "test:reseed": "npm-run-all db:reseed test",
+    "gx:importZip": "node ./migrations/utils/importZipFilesFromGxAlert",
+    "gx:processZip": "node ./migrations/utils/processJsonFilesFromGxAlert"
   },
   "nyc": {
     "check-coverage": true,
@@ -75,6 +77,7 @@
     "@hapi/vision": "^7.0.0",
     "@sentry/node": "^7.25.0",
     "@sentry/tracing": "^7.25.0",
+    "adm-zip": "^0.5.10",
     "ajv": "^8.11.2",
     "ajv-cli": "^5.0.0",
     "ajv-keywords": "^5.1.0",
@@ -110,6 +113,7 @@
     "node-base64-image": "^2.0.4",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
+    "node-fetch": "^2.6.7",
     "node-uuid": "^1.4.8",
     "nodemailer": "^6.8.0",
     "object-mapper": "^6.2.0",
@@ -120,6 +124,7 @@
     "timezone-support": "^3.1.0",
     "twilio": "^3.83.4",
     "vision": "^5.4.4",
+    "windows-iana": "^5.1.0",
     "winston": "^3.8.2",
     "winston-mail": "^2.0.0",
     "winston-sentry-log": "^1.0.26"

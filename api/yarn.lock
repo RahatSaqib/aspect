@@ -1611,6 +1611,11 @@ addressparser@^0.3.2:
   resolved "https://registry.yarnpkg.com/addressparser/-/addressparser-0.3.2.tgz#59873f35e8fcf6c7361c10239261d76e15348bb2"
   integrity sha512-fDlslCJpojuY1cnb7tY7COAriA7cdSzDiWyrWNdFn7Cjd+jrEgZavqkOgD/wg+eH765YPnQjqlS88OL/Q0Qtkg==
 
+adm-zip@^0.5.10:
+  version "0.5.10"
+  resolved "https://registry.yarnpkg.com/adm-zip/-/adm-zip-0.5.10.tgz#4a51d5ab544b1f5ce51e1b9043139b639afff45b"
+  integrity sha512-x0HvcHqVJNTPk/Bw8JbLWlWoo6Wwnsug0fnYYro1HBrjxZ3G7/AZk7Ahv8JwDe1uIcz8eBqvu86FuF1POiG7vQ==
+
 agent-base@6, agent-base@^6.0.0, agent-base@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-6.0.2.tgz#49fff58577cfee3f37176feab4c22e00f86d7f77"
@@ -7761,9 +7766,9 @@ railroad-diagrams@^1.0.0:
   integrity sha512-cz93DjNeLY0idrCNOH6PviZGRN9GJhsdm9hpn1YCS879fj4W+x5IFJhhkRZcwVgMmFF7R82UA/7Oh+R8lLZg6A==
 
 rambda@^7.1.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/rambda/-/rambda-7.3.0.tgz#90e440ead53030a216093865d8d97997a80868ca"
-  integrity sha512-RFVofZYaG2TaVcxjnM0ejdVWf/59rFq1f57OGnjP3GT/bthzFw0GVr5rkP9PKbVlEuF/Y7bOVPLfiiYfxq/EWQ==
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/rambda/-/rambda-7.4.0.tgz#61ec9de31d3dd6affe804de3bae04a5b818781e5"
+  integrity sha512-A9hihu7dUTLOUCM+I8E61V4kRXnN4DwYeK0DwCBydC1MqNI1PidyAtbtpsJlBBzK4icSctEcCQ1bGcLpBuETUQ==
 
 ramda@^0.26.1:
   version "0.26.1"
@@ -9417,6 +9422,11 @@ window-size@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.2.0.tgz#b4315bb4214a3d7058ebeee892e13fa24d98b075"
   integrity sha512-UD7d8HFA2+PZsbKyaOCEy8gMh1oDtHgJh1LfgjQ4zVXmYjAT/kvz3PueITKuqDiIXQe7yzpPnxX3lNc+AhQMyw==
+
+windows-iana@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/windows-iana/-/windows-iana-5.1.0.tgz#8adc77b5e420eae75c3b6d3ed83c2c00b70f0452"
+  integrity sha512-WS7dbeBltaq8JcazH7hVCi17lqZBdQdKppMLk8rUQwz+My6dSRW8dFoQqzSi+UjPrsh7TV5AEnboRKneWy8b/A==
 
 winston-mail@^2.0.0:
   version "2.0.0"

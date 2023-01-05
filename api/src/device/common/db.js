@@ -218,6 +218,10 @@ async function deleteResultDownloadLog(deviceId, trknex) {
   await trknex('ResultDownloadLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
 }
 
+async function deleteInventoryLog(deviceId, trknex) {
+  await trknex('InventoryLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+}
+
 async function deleteDeviceLog(deviceId, trknex) {
   await trknex('DeviceLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
 }
@@ -466,6 +470,7 @@ module.exports = {
   mergeMessages,
   getDevicesIdsCheckingConstraints,
   deleteResultDownloadLog,
+  deleteInventoryLog,
   deleteMessages,
   deleteResults,
   deleteDeviceLog,
