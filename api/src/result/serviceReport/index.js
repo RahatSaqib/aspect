@@ -115,6 +115,9 @@ async function getAllResultsForExport(auth, query) {
         patientData: JSON.parse(dataRow.patientData),
         resultData: JSON.parse(dataRow.resultData),
         formData: JSON.parse(dataRow.formData),
+        errorCode: _.replace(dataRow.errorCode || '', /(\r\n|\n|\r)/gm, ''),
+        errorNotes: _.replace(dataRow.errorNotes || '', /(\r\n|\n|\r)/gm, ''),
+        notes: _.replace(dataRow.notes || '', /(\r\n|\n|\r)/gm, ''),
       }),
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
