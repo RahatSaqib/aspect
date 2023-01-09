@@ -87,13 +87,17 @@ const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, d
     assayId,
     diseaseId,
   })
-    .join('Disease as di', 'di.id', 'fd.diseaseId')
-    .join('AssayType as assayType', 'di.id', 'assayType.diseaseId')
-    .join('Assay as a', 'assayType.id', 'a.assayTypeId')
-    .join('DeviceType as dt', 'a.devicetypeid', 'dt.id')
-    .join('Device as d', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('Disease as di', 'di.id', 'fd.diseaseId')
+    .leftJoin('AssayType as assayType', 'di.id', 'assayType.diseaseId')
+    .leftJoin('Assay as a', 'assayType.id', 'a.assayTypeId')
+    .leftJoin('DeviceType as dt', 'a.devicetypeid', 'dt.id')
+    .leftJoin('Device as d', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
-    .where('d.id', deviceId)
+    .where(qb => {
+      qb.where('d.id', deviceId)
+      qb.orWhereNull('fd.diseaseId')
+    })
+    .whereNotNull('fd.externalId')
     .select(knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId'))
     .groupBy('fd.id')
 
