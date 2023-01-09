@@ -1,4 +1,5 @@
 import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 import uniqBy from 'lodash/uniqBy'
 import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
@@ -68,7 +69,10 @@ function getRowsForCustomFields(values) {
       ]
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
       // assuming only one validation
-      const validation = customField.validation[0]
+      const validation =
+        customField.validation && customField.validation.length
+          ? customField.validation[0]
+          : { min: 1, max: 100, errorMessage: '' }
       row.items = [
         ...row.items,
         // ASP-5626: 1. validation: validates the value type of textboxes (integer and strings), and validates min and max values
@@ -108,13 +112,17 @@ function getValidationsForCustomFields(values) {
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
       // add validation for text
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
+      const validation =
+        customField.validation && customField.validation.length
+          ? customField.validation[0]
+          : { min: 1, max: 100, errorMessage: '' }
       rows[dataOrigin] = rows[dataOrigin].shape({
         [dataField]: Yup.number()
-          .required(customField.validation[0].errorMessage)
+          .required(validation.errorMessage)
           .positive()
           .integer()
-          .min(customField.validation[0].min || 1, customField.validation[0].errorMessage)
-          .max(customField.validation[0].max, customField.validation[0].errorMessage),
+          .min(validation.min || 1, validation.errorMessage)
+          .max(validation.max, validation.errorMessage),
       })
     }
   })
@@ -151,7 +159,9 @@ const evaluateEnabledState = (itemBase, formik) => {
 
 // start filter logic
 const applyFilterToOption = (filter, option, formik, sourcePath) => {
-  const cleanList = option[filter.fieldToCompare].map(o => o.toLowerCase())
+  const cleanList = isArray(option[filter.fieldToCompare])
+    ? option[filter.fieldToCompare].map(o => o.toLowerCase())
+    : option[filter.fieldToCompare].toLowerCase()
   const cleanValue = sanitizeValue(formik.values[sourcePath[0]][filter.propToCompare]).toLowerCase()
   switch (filter.operator) {
     case 'in':
