@@ -1,0 +1,12 @@
+{
+  "CustomFields_Bangladesh_Mtb": {
+    "fileName": "CustomFields_Malawi.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "Malawi fields",
+      "i18nKeyTitle": "CustomFieldsMWi18nkey",
+      "externalId": "CustomFields_Malawi",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  }
+}
