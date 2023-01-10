@@ -9423,6 +9423,11 @@ window-size@^0.2.0:
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.2.0.tgz#b4315bb4214a3d7058ebeee892e13fa24d98b075"
   integrity sha512-UD7d8HFA2+PZsbKyaOCEy8gMh1oDtHgJh1LfgjQ4zVXmYjAT/kvz3PueITKuqDiIXQe7yzpPnxX3lNc+AhQMyw==
 
+windows-iana@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/windows-iana/-/windows-iana-5.1.0.tgz#8adc77b5e420eae75c3b6d3ed83c2c00b70f0452"
+  integrity sha512-WS7dbeBltaq8JcazH7hVCi17lqZBdQdKppMLk8rUQwz+My6dSRW8dFoQqzSi+UjPrsh7TV5AEnboRKneWy8b/A==
+
 winston-mail@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/winston-mail/-/winston-mail-2.0.0.tgz#19f307b57b6d1a9e6fe355d153996d456dbbf995"

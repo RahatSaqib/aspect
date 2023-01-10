@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   Autocomplete,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -169,6 +170,7 @@ const DeviceList = () => {
   const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
   const [isConfirmationVisible, setConfirmationVisible] = useState(false)
   const [siteToMergeDevices, setSiteToMergeDevices] = useState()
+  const [isProcessingMergeDevices, setProcessingMergeDevices] = useState(false)
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
@@ -250,8 +252,20 @@ const DeviceList = () => {
             color="primary"
             variant="contained"
             browseButton
+            disabled={isProcessingMergeDevices}
           >
-            {formatMessage(messages.mergeDevices)}
+            {formatMessage(isProcessingMergeDevices ? messages.mergingDevices : messages.mergeDevices)}
+            {isProcessingMergeDevices ? (
+              <CircularProgress
+                size="16px"
+                thickness={5}
+                disableShrink
+                sx={{
+                  color: '#fff',
+                  marginLeft: '15px',
+                }}
+              />
+            ) : null}
           </AspectButton>
         </PermissionsProvider>
       </BrowseFilters>
@@ -418,10 +432,22 @@ const DeviceList = () => {
                 onClick={() => {
                   mergeDevices(
                     { sourceDevicesIds, targetDeviceId },
-                    { onSuccess: () => queryClient.invalidateQueries([DEVICE_LIST.KEY, { params }]) }
+                    {
+                      onSuccess: () => {
+                        queryClient.invalidateQueries([DEVICE_LIST.KEY, { params }])
+                        /**
+                         * with setting state var `isProcessingMergeDevices` back to false
+                         * we explicitly re-render page to let `useQuery` to update `data`
+                         * which in turn updates other params on a page, including the list
+                         * of source/target devices when user clicks MergeDevices again
+                         */
+                        setProcessingMergeDevices(false)
+                      },
+                    }
                   )
                   clearMergeDialog()
                   setMergeDeviceModalOpen(false)
+                  setProcessingMergeDevices(true)
                 }}
               >
                 {formatMessage(messages.buttonConfirmMerge)}
