@@ -229,7 +229,7 @@ async function deleteInventoryLog(deviceId, trknex) {
      * just in case (because InventoryLog.inventoryItemId is nullable field) -
      * filter out `null` values
      */
-    inventoryItemIds = inventoryItemIds.filter(it => !it)
+    inventoryItemIds = inventoryItemIds.filter(it => !!it)
     /**
      * Count # of records in InventoryLog for each entry in array `inventoryItemIds`.
      * This is needed to correctly increase quantityOnHand in table InventoryItem.
