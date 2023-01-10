@@ -144,7 +144,7 @@ const getColumns = formatMessage => [
 ]
 
 const DeviceList = () => {
-  const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true })
+  const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true, showUnapprovedDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
