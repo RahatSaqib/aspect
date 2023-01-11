@@ -26,10 +26,11 @@ export const getFormConfigWithData = (intl, isNew, values) => {
         if (fieldWithValidation.includes('.')) {
           const source = fieldWithValidation.split('.')
           if (validationSchema.fields[source[0]].fields[source[1]].exclusiveTests.required) {
-            customFields.rows
+            const item = customFields.rows
               .map(r => r.items)
               .flat()
-              .filter(item => item.id === fieldWithValidation)[0].label += ' *'
+              .filter(item => item.id === fieldWithValidation)[0]
+            item.label += item.label.endsWith('*') ? ' *' : ''
           }
         }
       })

@@ -118,13 +118,31 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
           },
           {
             label: intl.formatMessage(messages.button_Edit),
-            onClick: () => setToggleEdit(true),
+            onClick: () => {
+              setToggleEdit(true)
+              setTimeout(
+                () =>
+                  document
+                    .getElementById('customFields')
+                    .scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' }),
+                0
+              )
+            },
             disabled: toggleEdit,
             visible: !toggleEdit,
           },
           {
             label: intl.formatMessage(messages.button_Cancel),
-            onClick: () => setToggleEdit(false),
+            onClick: () => {
+              setToggleEdit(false)
+              setTimeout(
+                () =>
+                  document
+                    .getElementById('site')
+                    .scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' }),
+                0
+              )
+            },
             disabled: !toggleEdit,
             visible: toggleEdit,
           },
