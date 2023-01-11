@@ -19,7 +19,7 @@ const Monthly = ({ cronExpression, onChange }) => {
         cronExpression[1] === '*' ? '0' : cronExpression[1],
         cronExpression[2],
         '*/1',
-        '?',
+        '*',
       ]
       val[2] = `${e.target.value}`
       onChange(val)
