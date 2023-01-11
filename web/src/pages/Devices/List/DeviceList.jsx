@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import {
   Autocomplete,
   CircularProgress,
@@ -143,6 +143,17 @@ const getColumns = formatMessage => [
   },
 ]
 
+const getAvailableTargetDevices = (deviceList, sourceDevicesIds, siteToMergeDevices, deviceTypeToMerge) => {
+  return (
+    deviceList?.filter(
+      o =>
+        !sourceDevicesIds.includes(+o.key) &&
+        (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
+        (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
+    ) || []
+  )
+}
+
 const DeviceList = () => {
   const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true, showUnapprovedDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
@@ -155,7 +166,7 @@ const DeviceList = () => {
   const location = useLocation()
   const clearMergeDialog = () => {
     setSourceDevicesIds([])
-    setTargetDeviceId(null)
+    setTargetDevice(null)
     setSiteToMergeDevices(null)
     setDeviceTypeToMerge(null)
     setConfirmationVisible(false)
@@ -165,7 +176,8 @@ const DeviceList = () => {
   const [table, setTable] = useState(new Table())
   const [total, setTotal] = useState()
   const [sourceDevicesIds, setSourceDevicesIds] = useState([])
-  const [targetDeviceId, setTargetDeviceId] = useState()
+  const [targetDevice, setTargetDevice] = useState(null)
+  const targetDeviceId = useMemo(() => +targetDevice?.key || null, [targetDevice])
 
   const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
   const [isConfirmationVisible, setConfirmationVisible] = useState(false)
@@ -330,6 +342,29 @@ const DeviceList = () => {
                   const newSourceValues = values.map(v => +v.key)
                   const newSourceSiteId = deviceList.find(o => o.key === values[0]?.key)?.siteId || null
                   const newDeviceTypeToMergeId = deviceList.find(o => o.key === values[0]?.key)?.deviceTypeId || null
+
+                  /**
+                   * get new list of available target devices after changing selected source devices
+                   */
+                  const targetDevices = getAvailableTargetDevices(
+                    deviceList,
+                    newSourceValues,
+                    newSourceSiteId,
+                    newDeviceTypeToMergeId
+                  )
+                  if (
+                    /**
+                     * target device selected but is not a member of new targetDevices list
+                     */
+                    (targetDeviceId && !targetDevices.find(o => +o.key === targetDeviceId)) ||
+                    /**
+                     * removed all from Source devices
+                     */
+                    isEmpty(newSourceValues)
+                  ) {
+                    setTargetDevice(null)
+                  }
+
                   setSourceDevicesIds(newSourceValues)
                   setSiteToMergeDevices(newSourceSiteId)
                   setDeviceTypeToMerge(newDeviceTypeToMergeId)
@@ -360,16 +395,10 @@ const DeviceList = () => {
 
               <Autocomplete
                 onChange={(_, value) => {
-                  setTargetDeviceId(+value?.key || null)
+                  setTargetDevice(value || null)
                 }}
-                options={
-                  deviceList?.filter(
-                    o =>
-                      !sourceDevicesIds.includes(+o.key) &&
-                      (!siteToMergeDevices || o.siteId === siteToMergeDevices) &&
-                      (!deviceTypeToMerge || o.deviceTypeId === deviceTypeToMerge)
-                  ) || []
-                }
+                options={getAvailableTargetDevices(deviceList, sourceDevicesIds, siteToMergeDevices, deviceTypeToMerge)}
+                disabled={isEmpty(sourceDevicesIds)}
                 getOptionLabel={option => option.value}
                 renderOption={(props, option) => (
                   <li {...props} key={option.key}>
@@ -384,6 +413,7 @@ const DeviceList = () => {
                     placeholder={formatMessage(messages.targetDevice)}
                   />
                 )}
+                value={targetDevice}
               />
             </DialogContent>
             <DialogActions>
