@@ -1,3 +1,5 @@
+const _ = require('lodash')
+const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
@@ -219,7 +221,45 @@ async function deleteResultDownloadLog(deviceId, trknex) {
 }
 
 async function deleteInventoryLog(deviceId, trknex) {
-  await trknex('InventoryLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  let inventoryItemIds = await trknex('InventoryLog')
+    .whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id'))
+    .pluck('inventoryItemId')
+  if (inventoryItemIds.length > 0) {
+    /**
+     * just in case (because InventoryLog.inventoryItemId is nullable field) -
+     * filter out `null` values
+     */
+    inventoryItemIds = inventoryItemIds.filter(it => !!it)
+    /**
+     * Count # of records in InventoryLog for each entry in array `inventoryItemIds`.
+     * This is needed to correctly increase quantityOnHand in table InventoryItem.
+     */
+    const cntById = _.reduce(
+      inventoryItemIds,
+      (acc, id) => {
+        acc[id] = acc[id] || { cnt: 0 }
+        acc[id].cnt += 1
+        return acc
+      },
+      {}
+    )
+    const distinctInventoryItemIds = _.keys(cntById)
+    const inventoryItems = await trknex('InventoryItem')
+      .whereIn('id', distinctInventoryItemIds)
+      .select('id', 'quantityOnHand')
+    await Promise.each(inventoryItems, async ({ id, quantityOnHand }) => {
+      const { cnt } = cntById[id]
+      if (cnt) {
+        await trknex('InventoryItem')
+          .where('id', id)
+          .update({ quantityOnHand: quantityOnHand + cnt })
+      }
+    })
+    /**
+     * and finally remove from InventoryLog, if any records to delete exists
+     */
+    await trknex('InventoryLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  }
 }
 
 async function deleteDeviceLog(deviceId, trknex) {
