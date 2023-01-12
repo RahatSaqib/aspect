@@ -134,6 +134,7 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
           {
             label: intl.formatMessage(messages.button_Cancel),
             onClick: () => {
+              formik.handleReset()
               setToggleEdit(false)
               setTimeout(
                 () =>
