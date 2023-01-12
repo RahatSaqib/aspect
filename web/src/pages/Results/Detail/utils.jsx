@@ -30,7 +30,7 @@ export const getFormConfigWithData = (intl, isNew, values) => {
               .map(r => r.items)
               .flat()
               .filter(item => item.id === fieldWithValidation)[0]
-            item.label += item.label.endsWith('*') ? ' *' : ''
+            item.label += item.label.endsWith('*') ? '' : ' *'
           }
         }
       })
