@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
@@ -231,6 +231,18 @@ export const PersonList = ({
   const isEditAllow = isPermittedUser(userPermissions, {
     required: ['person:edit'],
   })
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams()
+    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    if (!filtersParams.has('contactStatus')) {
+      filtersParams.set('contactStatus', 0)
+      searchParams.set('filters', filtersParams)
+      navigate({ ...location, search: `?${searchParams.toString()}` })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className={cssClasses('Container')}>

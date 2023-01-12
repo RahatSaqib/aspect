@@ -1,22 +1,13 @@
 @import '../../../theme/variables.css';
 
-:root {
-  --margin: 5px;
-}
-
 .FiltersBtnGroup {
-  margin: -var(--margin);
-  align-items: flex-start !important;
-}
-
-.FiltersBtnGroup__Child {
-  margin: var(--margin) !important;
+  align-items: flex-end !important;
 }
 
 .Button {
-  composes: FiltersBtnGroup__Child;
   font-weight: var(--lato-font-weight-bold) !important;
   text-transform: none !important;
+  margin: 0 8px !important;
 }
 
 .Button::first-letter {

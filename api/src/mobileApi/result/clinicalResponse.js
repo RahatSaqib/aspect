@@ -21,7 +21,7 @@ const {
   updateFollowUpDate,
   deleteResultFollowUp,
   insertResultWorkflowLog,
-  updateResultWorkflowLog,
+  updateResultWithResultWorkflowLog,
   getFollowUpsOfResultById,
   getCommentsOfResultById,
   getItemsV2,
@@ -277,7 +277,7 @@ async function updateResultWorkflowStatusByResultId(
   if (resultWorkflowLogEntry.resultWorkflowStatusId !== currentResultWorkflowStatusId) {
     if (resultWorkflowChangedOn < clientDate || !resultWorkflowChangedOn) {
       const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
-      await updateResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
+      await updateResultWithResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
     }
   }
 }

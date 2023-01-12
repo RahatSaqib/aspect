@@ -593,7 +593,7 @@ const insertResultWorkflowLog = resultWorkflowLogEntry => {
 }
 
 // feature: clinical response
-const updateResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
+const updateResultWithResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
   return knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
     resultWorkflowStatusLogId: lastLogId,
     updatedBy: resultWorkflowLogEntry.createdBy,
@@ -647,6 +647,6 @@ module.exports = {
   addResultFollowUp,
   deleteResultFollowUp,
   insertResultWorkflowLog,
-  updateResultWorkflowLog,
+  updateResultWithResultWorkflowLog,
   getLatestResultWorkflowLog,
 }

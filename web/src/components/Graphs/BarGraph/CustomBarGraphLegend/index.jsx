@@ -85,29 +85,31 @@ const CustomBarGraphLegend = ({
   const { formatMessage } = useI18n()
   return (
     <div className={cssClasses(['customLegend__container', `customLegend__container--${type}`])}>
-      {keys.map(k => {
-        const { tooltip } = find(legendsToPopover, { externalId: k, tooltip: { show: true } }) || false
+      {keys
+        .filter(k => !legendsNotToRender.includes(k))
+        .map(k => {
+          const { tooltip } = find(legendsToPopover, { externalId: k, tooltip: { show: true } }) || false
 
-        let currentSymbolShape = symbolShape
-        const colorExternalId = getColorIdByFieldName(fields, k)
-        if (fields) {
-          const [field] = fields.filter(it => it.name === k)
-          if (field.target === 'line') currentSymbolShape = 'hollow-circle'
-        }
+          let currentSymbolShape = symbolShape
+          const colorExternalId = getColorIdByFieldName(fields, k)
+          if (fields) {
+            const [field] = fields.filter(it => it.name === k)
+            if (field.target === 'line') currentSymbolShape = 'hollow-circle'
+          }
 
-        const { label = '?', color = '#999999' } = generateLegendIntl(
-          formatMessage,
-          messages,
-          i18nKeys,
-          k,
-          assaysFromState,
-          graphId,
-          legendsNotToRender,
-          { colorExternalId }
-        )
+          const { label = '?', color = '#999999' } = generateLegendIntl(
+            formatMessage,
+            messages,
+            i18nKeys,
+            k,
+            assaysFromState,
+            graphId,
+            legendsNotToRender,
+            { colorExternalId }
+          )
 
-        return <LegendKey symbolShape={currentSymbolShape} color={color} label={label} tooltip={tooltip} key={k} />
-      })}
+          return <LegendKey symbolShape={currentSymbolShape} color={color} label={label} tooltip={tooltip} key={k} />
+        })}
     </div>
   )
 }

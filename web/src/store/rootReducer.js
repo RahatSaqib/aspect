@@ -18,7 +18,6 @@ import disease from './DiseaseRedux'
 import filter from './FilterRedux'
 import geography from './GeographyRedux'
 import globals from './GlobalsRedux'
-import idle from './IdleRedux'
 import inventory from './InventoryRedux'
 import jobs from './JobRedux'
 import patient from './PatientRedux'
@@ -52,7 +51,6 @@ const appReducer = combineReducers({
   form: formReducer,
   geography,
   globals,
-  idle,
   inventory,
   jobs,
   patient,
@@ -85,7 +83,6 @@ const App = Immutable.Record({
   form: undefined,
   geography: undefined,
   globals: undefined,
-  idle: undefined,
   inventory: undefined,
   jobs: undefined,
   patient: undefined,

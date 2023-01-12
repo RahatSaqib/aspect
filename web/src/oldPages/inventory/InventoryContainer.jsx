@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Tab, Tabs } from '@mui/material'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
@@ -43,15 +43,22 @@ export const InventoryContainer = () => {
       const searchParams = new URLSearchParams()
       searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
-      navigate(
-        {
-          ...location,
-          search: `?${searchParams.toString()}`,
-        },
-        { replace: true }
-      )
+      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
   }
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams()
+    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    if (!filtersParams.has('hasStock')) {
+      filtersParams.set('hasStock', true)
+      searchParams.set('filters', filtersParams)
+      navigate({ ...location, search: `?${searchParams.toString()}` })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div className={cssClasses('Container')}>
       <Tabs value={activeTab} onChange={handleChange}>
