@@ -1,0 +1,309 @@
+{
+  "fields": [
+    {
+      "id": 1,
+      "name": "MWRepeatTest",
+      "items": [
+        {
+          "key": 0,
+          "order": 10,
+          "value": "First or second"
+        },
+        {
+          "key": 1,
+          "order": 20,
+          "value": "Follow-up"
+        },
+        {
+          "key": 2,
+          "order": 30,
+          "value": "Repeat Baseline"
+        },
+        {
+          "key": 2,
+          "order": 30,
+          "value": "Second test Unsuccessful"
+        }
+      ],
+      "order": 100,
+      "title": "Repeat Test",
+      "source": "patientData.RepeatTest",
+      "caption": "Repeat Test",
+      "i18nKey": "MWRepeatTestI18nKey",
+      "fieldType": "number",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWRepeatTestI8nCaptionKey",
+      "gxAlertDbColumn": "RepeatTest",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.1.value",
+      "payloadDestinationPath": "patient.RepeatTest"
+    },
+    {
+      "id": 2,
+      "name": "MWPatientGender",
+      "items": [
+        {
+          "key": 1,
+          "order": 0,
+          "value": "Male"
+        },
+        {
+          "key": 0,
+          "order": 10,
+          "value": "Female"
+        },
+        {
+          "key": 2,
+          "order": 20,
+          "value": "Other"
+        }
+      ],
+      "order": 10,
+      "title": "Gender",
+      "source": "patientData.PatientGender",
+      "caption": "Gender",
+      "i18nKey": "MWPatientGenderI18nKey",
+      "fieldType": "number",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWPatientGenderI8nCaptionKey",
+      "gxAlertDbColumn": "PatientGender",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.2.value",
+      "payloadDestinationPath": "patient.PatientGender"
+    },
+    {
+      "id": 3,
+      "name": "MWPatientAge",
+      "order": 20,
+      "title": "Age",
+      "source": "patientData.PatientAge",
+      "caption": "Age",
+      "i18nKey": "MWPatientAgeI18nKey",
+      "fieldType": "number",
+      "mandatory": false,
+      "validation": [
+        {
+          "max": "110",
+          "min": "0",
+          "errorMessage": "The age should be a number between 0-110",
+          "validationType": "integer",
+          "errorMessageI18nKey": "MWPatientAgeValidationFieldi18nKey"
+        }
+      ],
+      "controlType": "textBox",
+      "i18nKeyCaption": "MWPatientAgeI8nCaptionKey",
+      "gxAlertDbColumn": "PatientAge",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.3.value",
+      "payloadDestinationPath": "patient.PatientAge"
+    },
+    {
+      "id": 4,
+      "name": "MWHivStatus",
+      "items": [
+        {
+          "key": 1,
+          "order": 0,
+          "value": "HIV Positive"
+        },
+        {
+          "key": 0,
+          "order": 10,
+          "value": "HIV Negative"
+        },
+        {
+          "key": 2,
+          "order": 20,
+          "value": "HIV Unknown"
+        }
+      ],
+      "order": 40,
+      "title": "HIV Status",
+      "source": "patientData.HivStatus",
+      "caption": "HIV Status",
+      "i18nKey": "MWHivStatusI18nKey",
+      "fieldType": "number",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWHivStatusI8nCaptionKey",
+      "gxAlertDbColumn": "HivStatus",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.4.value",
+      "payloadDestinationPath": "patient.HivStatus"
+    },
+    {
+      "id": 5,
+      "name": "MWRequestorName",
+      "order": 50,
+      "title": "Name of Person Requesting Test",
+      "source": "patientData.RequestorName",
+      "caption": "Name of Person Requesting Test",
+      "i18nKey": "MWRequestorNameI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "textBox",
+      "i18nKeyCaption": "MWRequestorNameI8nCaptionKey",
+      "gxAlertDbColumn": "RequestorName",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.5.value",
+      "payloadDestinationPath": "patient.RequestorName"
+    },
+    {
+      "id": 6,
+      "name": "MWRequestorPhone",
+      "order": 60,
+      "title": "Referring Clinician or Facility Phone Number (if known)",
+      "source": "patientData.RequestorPhone",
+      "caption": "Referring Clinician or Facility Phone Number (if known)",
+      "i18nKey": "MWRequestorPhoneI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "textBox",
+      "i18nKeyCaption": "MWRequestorPhoneI8nCaptionKey",
+      "gxAlertDbColumn": "RequestorPhone",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.6.value",
+      "payloadDestinationPath": "patient.RequestorPhone"
+    },
+    {
+      "id": 7,
+      "name": "MWSpecimenType",
+      "items": [
+        {
+          "key": "Sputum",
+          "order": 10,
+          "value": "Sputum"
+        },
+        {
+          "key": "CSF",
+          "order": 20,
+          "value": "CSF"
+        },
+        {
+          "key": "Lymph node aspirate",
+          "order": 30,
+          "value": "Lymph node aspirate"
+        },
+        {
+          "key": "Ascitic fluid",
+          "order": 40,
+          "value": "Ascitic fluid"
+        },
+        {
+          "key": "Broncheal alveoral lavage",
+          "order": 50,
+          "value": "Broncheal alveoral lavage"
+        },
+        {
+          "key": "Gastric aspirates",
+          "order": 60,
+          "value": "Gastric aspirates"
+        },
+        {
+          "key": "Tissue",
+          "order": 70,
+          "value": "Tissue"
+        },
+        {
+          "key": "Stool",
+          "order": 80,
+          "value": "Stool"
+        },
+        {
+          "key": "Nasogastric Aspirate",
+          "order": 90,
+          "value": "Nasogastric Aspirate"
+        },
+        {
+          "key": "EQA",
+          "order": 100,
+          "value": "EQA"
+        }
+      ],
+      "order": 70,
+      "title": "Specimen Type",
+      "source": "patientData.MWSpecimenType",
+      "caption": "Specimen Type",
+      "i18nKey": "MWSpecimenTypeI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWSpecimenTypeI8nCaptionKey",
+      "gxAlertDbColumn": "MWSpecimenType",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.7.value",
+      "payloadDestinationPath": "patient.MWSpecimenType"
+    },
+    {
+      "id": 8,
+      "name": "MWTreatmentHistory",
+      "items": [
+        {
+          "key": "New",
+          "order": 10,
+          "value": "New"
+        },
+        {
+          "key": "Previously treated",
+          "order": 20,
+          "value": "Previously treated"
+        }
+      ],
+      "order": 80,
+      "title": "Treatment history",
+      "source": "patientData.MWTreatmentHistory",
+      "caption": "Treatment history",
+      "i18nKey": "MWTreatmentHistoryI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWTreatmentHistoryI8nCaptionKey",
+      "gxAlertDbColumn": "MWTreatmentHistory",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.8.value",
+      "payloadDestinationPath": "patient.MWTreatmentHistory"
+    },
+    {
+      "id": 9,
+      "name": "MWReasonForGeneXpert",
+      "items": [
+        {
+          "key": "PLHIV",
+          "order": 10,
+          "value": "PLHIV"
+        },
+        {
+          "key": "Presumptive DR",
+          "order": 20,
+          "value": "Presumptive DR"
+        },
+        {
+          "key": "Hospitalized",
+          "order": 30,
+          "value": "Hospitalized"
+        },
+        {
+          "key": "Other",
+          "order": 40,
+          "value": "Other"
+        }
+      ],
+      "order": 90,
+      "title": "Indication/reason for Genexpert",
+      "source": "patientData.MWReasonForGeneXpert",
+      "caption": "Indication/reason for Genexpert",
+      "i18nKey": "MWReasonForGeneXpertI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWReasonForGeneXpertI8nCaptionKey",
+      "gxAlertDbColumn": "MWReasonForGeneXpert",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.9.value",
+      "payloadDestinationPath": "patient.MWReasonForGeneXpert"
+    }
+  ],
+  "refForms": []
+}
