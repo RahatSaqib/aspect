@@ -25,7 +25,6 @@ async function activityOverTimeDashboard(request) {
     inactiveNoTestsPerformed: 0,
     inactiveOutOfInventory: 0,
     inactiveDownForRepair: 0,
-    inactiveDecommissioned: 0,
     inactiveNoStaff: 0,
     inactiveNoSamples: 0,
     inactiveNoPower: 0,
