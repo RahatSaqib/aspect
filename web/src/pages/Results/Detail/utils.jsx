@@ -18,22 +18,6 @@ export const getFormConfigWithData = (intl, isNew, values) => {
     customFields.rows = getRowsForCustomFields(values)
     // generate validations
     validationSchema = validationSchema.shape(getValidationsForCustomFields(values))
-    // if a validation makes a field required, fix the label
-    values.customFields
-      .filter(cf => !!cf.validation)
-      .map(cf => cf.source)
-      .forEach(fieldWithValidation => {
-        if (fieldWithValidation.includes('.')) {
-          const source = fieldWithValidation.split('.')
-          if (validationSchema.fields[source[0]].fields[source[1]].exclusiveTests.required) {
-            const item = customFields.rows
-              .map(r => r.items)
-              .flat()
-              .filter(item => item.id === fieldWithValidation)[0]
-            item.label += item.label.endsWith('*') ? '' : ' *'
-          }
-        }
-      })
   }
 
   const initialValues = getInitialValuesFromFormConfig(formSchema, values)

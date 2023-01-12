@@ -15,6 +15,32 @@ const cssClasses = classnames.bind(styles)
 
 const INPUT_LABEL_PROPS = { shrink: true }
 
+/**
+ * helpers
+ */
+// -----------------------------
+const getValidation = (fields, path, index) => {
+  const name = path[index]
+  const field = fields[name]
+  if (!field) {
+    return null
+  }
+  if (isEmpty(field.fields)) {
+    return field
+  }
+  return getValidation(field.fields, path, index + 1)
+}
+// -----------------------------
+const isFieldRequired = (validationSchema, id) => {
+  const path = id.split('.')
+
+  const validation = getValidation(validationSchema.fields, path, 0)
+  return !!validation?.exclusiveTests.required
+}
+
+/**
+ * component
+ */
 const FormItem = ({
   classNames,
   controlType,
@@ -33,7 +59,7 @@ const FormItem = ({
   subRowIndex,
 }) => {
   const { formatMessage } = useI18n()
-  const { formik, toggleEdit } = useFormikContext()
+  const { formik, toggleEdit, validationSchema } = useFormikContext()
   const { getFieldProps, values } = formik
   const value = values[id]
   let isVisible = !(hideIfNull && isEmpty(value) && !toggleEdit)
@@ -42,11 +68,18 @@ const FormItem = ({
   }
 
   /**
-   * TODO: change below isRequired and get actual `required` prop from
-   * validationSchema - notice that some fields in validationSchema are
-   * defined with conditions and/or in deep structure via Yup.array()
+   * getting actual `required` prop from validationSchema
+   * FYI: Notice that some fields in validationSchema are
+   * defined with conditions and we use `exclusiveTests` in isFieldRequired() for that
    */
-  const isRequired = !!get(formik.errors, id) && !get(formik.touched, id)
+  let isRequired = isFieldRequired(validationSchema, id)
+  /**
+   * in a very rare use case when we directly add error in formik.errors without having
+   * 'require' flag in validationSchema - set such field required too and show asterisk
+   */
+  if (!isRequired && get(formik.errors, id)) {
+    isRequired = true
+  }
 
   const i18nTools = { messages, formatMessage, formik }
   const { component } = controlType || {}
