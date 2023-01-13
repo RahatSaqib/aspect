@@ -3,9 +3,12 @@ import isPlainObject from 'lodash/isPlainObject'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import unset from 'lodash/unset'
+import { useQueryClient } from 'react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
+import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
+import { NOTIFICATION_KEY } from '../../../hooks/notification/notificationKeys'
 import useSaveNotification from '../../../hooks/notification/useSaveNotification'
 import usePartner from '../../../hooks/partner/usePartner'
 import useI18n from '../../../hooks/useI18n'
@@ -14,6 +17,7 @@ import Create from './NotificationFormPage.Create'
 import Update from './NotificationFormPage.Update'
 
 const NotificationFormPage = () => {
+  const queryClient = useQueryClient()
   const { notificationId } = useParams()
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
@@ -104,11 +108,27 @@ const NotificationFormPage = () => {
       submitNotification(
         { values, id: isNew ? undefined : notificationId },
         {
-          onSuccess: () => navigate('/browse/notification'),
+          onSuccess: () => {
+            /**
+             * invalidate query cache for entire notification list - this is needed when
+             * updated notification should show something in the list column
+             */
+            queryClient.invalidateQueries(NOTIFICATION_LIST.KEY)
+            /**
+             * for Update mode (isNew = false) invalidate query cache for the _SAME_
+             * array keys as in `useNotification` hook.
+             * _SAME_ means also including data types for keys array elements.
+             * See `NotificationFormPage.Update` - we also use `Number(id)` for notificationId
+             */
+            if (!isNew) {
+              queryClient.invalidateQueries([NOTIFICATION_KEY, Number(notificationId)])
+            }
+            navigate('/browse/notification')
+          },
         }
       )
     },
-    [formatMessage, jobFunctions, navigate, notificationId, partner, submitNotification]
+    [formatMessage, jobFunctions, navigate, notificationId, partner, queryClient, submitNotification]
   )
 
   return notificationId === 'create' ? (

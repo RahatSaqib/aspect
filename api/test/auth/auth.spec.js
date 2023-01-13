@@ -13,6 +13,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = require('../utils/testUtils')
+const { convertTimezonetoIANA, convertTimezonetoWindowsIANA, arrayofIANATimezone } = require('../../src/shared/date')
 
 const gxAlertServer = supertest.agent(process.env.gxAlertApi)
 const { assert } = chai
@@ -120,6 +121,39 @@ describe('Authentication routes', () => {
     )
 
     describe('POST', () => {
+      it('check timezone IANA is correct or not', async () => {
+        runTestWithKnex(async knex => {
+          await knex('LoginHistory').where('userId', '>', 0).del()
+        })
+        await server
+          .post(authPath)
+          .send({
+            name: adminUsername,
+            password: adminPassword,
+            clientName: webClientName,
+          })
+          .then(res => {
+            assert.equal(convertTimezonetoIANA(res.body.timezone), res.body.timezoneIANA)
+          })
+      })
+    })
+
+    describe('Timezone Aliases', () => {
+      it('check timezone IANA aliases are for the same windows IANA timezone or not', async () => {
+        const ianaTimezoneAliasesOne = 'Asia/Kolkata'
+        const ianaTimezoneAliasesTwo = 'Asia/Calcutta'
+        const windowsTimezone = 'India Standard Time'
+
+        assert.equal(
+          convertTimezonetoWindowsIANA(ianaTimezoneAliasesOne),
+          convertTimezonetoWindowsIANA(ianaTimezoneAliasesTwo)
+        )
+        assert.equal(arrayofIANATimezone(windowsTimezone).includes(ianaTimezoneAliasesOne), true)
+        assert.equal(arrayofIANATimezone(windowsTimezone).includes(ianaTimezoneAliasesTwo), true)
+      })
+    })
+
+    describe('POST', () => {
       it('should return a JSON message that contains a valid jwt, access token, and client ID if username/password are correct', async () => {
         runTestWithKnex(async knex => {
           await knex('LoginHistory').where('userId', '>', 0).del()
@@ -201,6 +235,7 @@ describe('Authentication routes', () => {
               assert.property(res.body, 'culture')
               assert.property(res.body, 'displayPreferences')
               assert.property(res.body, 'timezone')
+              assert.property(res.body, 'timezoneIANA')
               assert.property(res.body, 'countryAbbreviation')
               const jwtdecoded = jwtDecode(res.body.access)
               assert.property(jwtdecoded, 'hasToAcceptLicenseId')
