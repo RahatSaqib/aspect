@@ -4,7 +4,7 @@ const shared = require('../utils/sharedToken')
 
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
 const patients = require('../../seeds/test/fixtures/patients.json')
-const { getBaseQueryForResults } = require('../../src/result/service')
+const { getBaseQueryForResults } = require('../../src/result/common/db')
 
 const { knex } = require('../../src/db')
 
@@ -20,11 +20,13 @@ describe('Mobile API update workflow status to Flagged', () => {
 
   let results = []
 
-  before(async () => {
+  before(() => {
     shared.checkToken(server, path)
   })
 
-  beforeEach(async () => {
+  beforeEach(async function () {
+    this.timeout(120000)
+
     const { partnerId, userId } = await knex('Person as p')
       .innerJoin('User as u')
       .where('u.name', 'admin')
