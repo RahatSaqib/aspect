@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { CircularProgress } from '@mui/material'
+import { CircularProgress, Box, Card, CardContent } from '@mui/material'
+import { useFormikContext } from 'formik'
 import map from 'lodash/map'
-import { FaNotesMedical } from 'react-icons/fa'
 import './NotificationFormPage.css'
+import DetailHeader from '../../../components/DetailHeader'
 import AspectForm from '../../../components/Form'
-import FormActions from '../../../components/Form/formActions'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
-import { Shell, ShellHeader, ShellContent, ShellFooter } from '../../../components/Shell'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import useNotification from '../../../hooks/notification/useNotification'
 import usePartner from '../../../hooks/partner/usePartner'
 import useI18n from '../../../hooks/useI18n'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 import validationSchema from './Forms/validation'
+import messages from './messages'
 import { getFormConfigWithData } from './utils'
 
 function buildAreaItems(id, target, data) {
@@ -126,18 +127,42 @@ const NotificationFormPage = ({ id, onSubmit }) => {
   return !formConfig ? (
     <CircularProgress />
   ) : (
-    <Shell>
-      <FormikProvider config={formConfig}>
-        <ShellHeader icon={FaNotesMedical} title={formConfig.title}>
-          <FormActions config={formConfig} onSubmit={onSubmit} />
-        </ShellHeader>
-        <ShellContent>
-          <AspectForm config={formConfig} />
-        </ShellContent>
-        <ShellFooter />
-      </FormikProvider>
-    </Shell>
+    <FormikProvider config={formConfig}>
+      <NotificationForm formConfig={formConfig} onSubmit={onSubmit} />
+    </FormikProvider>
   )
 }
 
+const NotificationForm = ({ formConfig, onSubmit }) => {
+  const intl = useI18n()
+  const { formik, meta } = useFormikContext()
+
+  return (
+    <>
+      <DetailHeader name={formConfig.title} back="/browse/notification">
+        {[{ label: intl.formatMessage(messages.save), onClick: () => onSubmit(formik, meta) }].map(
+          ({ label, onClick, disabled = false }) => (
+            <AspectButton
+              key={label}
+              onClick={onClick}
+              disabled={disabled}
+              color="primary"
+              variant="contained"
+              style={{ margin: '0 4px' }}
+            >
+              {label}
+            </AspectButton>
+          )
+        )}
+      </DetailHeader>
+      <Box component="main" sx={{ pt: 9, pr: 1, pl: 1, pb: 1 }}>
+        <Card>
+          <CardContent>
+            <AspectForm config={formConfig} />
+          </CardContent>
+        </Card>
+      </Box>
+    </>
+  )
+}
 export default NotificationFormPage

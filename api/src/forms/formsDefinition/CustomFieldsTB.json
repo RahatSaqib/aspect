@@ -24,7 +24,8 @@
           "value": "Female",
           "order": 10
         }
-      ]
+      ],
+      "source": "patientData.gender"
     },
     {
       "id": 102,
@@ -47,7 +48,8 @@
           "errorMessage": "The age should be a number between 1-150",
           "errorMessageI18nKey": "AgeValidationFieldi18nKey"
         }
-      ]
+      ],
+      "source": "patientData.age"
     },
     {
       "id": 103,
@@ -72,7 +74,8 @@
           "value": "No",
           "order": 10
         }
-      ]
+      ],
+      "source": "patientData.PreviouslyTreated"
     },
     {
       "id": 104,
@@ -92,7 +95,8 @@
         "fixedValue": "now",
         "function": "datediff",
         "format": "week"
-      }
+      },
+      "source": "patientData.ReferringFacility"
     },
     {
       "id": 105,
@@ -105,7 +109,8 @@
       "caption": "Referring Clinician or Facility Phone Number (if known)",
       "i18nKeyCaption": "Referringphonei18nKeyCaption",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.RequestorPhone"
+      "payloadDestinationPath": "patient.RequestorPhone",
+      "source": "patientData.phone"
     },
     {
       "id": 106,
@@ -119,6 +124,7 @@
       "i18nKeyCaption": "RepeatTesti18nCaptionKey",
       "controlType": "comboBox",
       "payloadDestinationPath": "patient.RepeatTest",
+      "source": "patientData.RepeatTest",
       "items": [
         {
           "key": 0,

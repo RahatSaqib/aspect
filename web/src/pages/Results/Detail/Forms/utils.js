@@ -1,8 +1,8 @@
-import ASSAY_LIST from '../../../components/QueryFetch/Assay'
-import { DEVICE_SELECT_LIST, DEVICE_TYPES } from '../../../components/QueryFetch/Device'
-import { GEOGRAPHY_STATES } from '../../../components/QueryFetch/Geography'
-import { SITE_ALL } from '../../../components/QueryFetch/Site'
-import messages from '../Detail/messages'
+import ASSAY_LIST from '../../../../components/QueryFetch/Assay'
+import { DEVICE_SELECT_LIST, DEVICE_TYPES } from '../../../../components/QueryFetch/Device'
+import { GEOGRAPHY_STATES } from '../../../../components/QueryFetch/Geography'
+import { SITE_ALL } from '../../../../components/QueryFetch/Site'
+import messages from '../messages'
 
 export const getBaseOptions = (
   response,

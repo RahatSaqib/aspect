@@ -194,9 +194,9 @@ const renderResultList = props => (
     <ResultList {...props} />
   </LoggedInLayout>
 )
-const renderResultDetail = props => (
+const renderResultDetail = () => (
   <LoggedInLayout>
-    <ResultDetail {...props} />
+    <ResultDetail />
   </LoggedInLayout>
 )
 const renderSiteList = props => (
