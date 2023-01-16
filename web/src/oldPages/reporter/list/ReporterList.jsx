@@ -14,12 +14,7 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-  setFiltersForLast30Days,
-} from '../../../oldComponents/filter/utils'
+import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
@@ -266,16 +261,6 @@ const ReporterList = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams()
-    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
-
-    setFiltersForLast30Days(searchParams)
-
-    navigate({ ...location, search: `?${searchParams.toString()}` })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)

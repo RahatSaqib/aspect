@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames/bind'
 import replace from 'lodash/replace'
 import { connect } from 'react-redux'
-import { compose, withProps, withHandlers, pure } from 'recompose'
+import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import {
   exportFormatTypes,
   askExportConfirmation,
@@ -11,9 +11,10 @@ import {
 } from '../store/FilterRedux'
 import { getAspectDisplayPreferences } from '../utils/LocalStorage'
 import styles from './BrowseFilters.css'
+import BrowseNavDropdown from './BrowseNavDropdown'
 import FiltersBtnGroup from './filter/btnGroup/FiltersBtnGroup'
 import FiltersPanel from './filter/popover/FiltersPanel'
-import { getFilters, mergeToFiltersParams } from './filter/utils'
+import { getFilters, mergeToFiltersParams, reduceNavLinks } from './filter/utils'
 
 const cssClasses = classnames.bind(styles)
 
@@ -110,17 +111,37 @@ const enhance = compose(
       closeExportConfirmation,
       beginListExportProcessing,
     }
-  )
+  ),
+  lifecycle({
+    UNSAFE_componentWillMount() {
+      const reducedNav = reduceNavLinks(navigations, this.props.userPermissions)
+      this.setState({
+        reducedSource: reducedNav,
+      })
+    },
+  })
 )
 
-export const BrowseFilters = ({ children, navigate, location, onRemoveFilterItem, dateFormat, ...restProps }) => (
+export const BrowseFilters = ({
+  children,
+  navigate,
+  location,
+  onRemoveFilterItem,
+  reducedSource,
+  dateFormat,
+  showBrowseDropdown = true,
+  ...restProps
+}) => (
   <div className={cssClasses('Container')}>
-    {children}
     <FiltersBtnGroup
       filters={restProps.filters}
       onRemoveFilterItem={onRemoveFilterItem}
       className={cssClasses('FiltersBtnGroup')}
-    />
+    >
+      {showBrowseDropdown && <BrowseNavDropdown navigate={navigate} location={location} source={reducedSource} />}
+    </FiltersBtnGroup>
+    {children}
+
     <FiltersPanel className={cssClasses('FiltersPanel')} dateFormat={dateFormat} {...restProps} />
   </div>
 )
