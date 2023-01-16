@@ -9,7 +9,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     encodeSpecialCharacters={true}
     title="Device API Keys"
   />
-  <pure(withProps(withHandlers(Connect(BrowseFilters))))
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     intl={
       Object {
         "formatDate": [Function],
@@ -49,7 +49,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     >
       Assign
     </AspectButton>
-  </pure(withProps(withHandlers(Connect(BrowseFilters))))>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <div>
     <injectIntl(pure(Connect(lifecycle(recomposeForm(DeviceApiKeyGeneratorDialogForm)))))
       intl={
@@ -133,7 +133,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     encodeSpecialCharacters={true}
     title="Device API Keys"
   />
-  <pure(withProps(withHandlers(Connect(BrowseFilters))))
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     intl={
       Object {
         "formatDate": [Function],
@@ -173,7 +173,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     >
       Assign
     </AspectButton>
-  </pure(withProps(withHandlers(Connect(BrowseFilters))))>
+  </pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))>
   <div>
     <injectIntl(pure(Connect(lifecycle(recomposeForm(DeviceApiKeyGeneratorDialogForm)))))
       intl={
