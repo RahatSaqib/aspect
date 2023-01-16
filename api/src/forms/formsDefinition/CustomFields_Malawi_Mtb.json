@@ -35,7 +35,7 @@
       "controlType": "comboBox",
       "i18nKeyCaption": "MWRepeatTestI8nCaptionKey",
       "gxAlertDbColumn": "RepeatTest",
-      "completionWeight": 10,
+      "completionWeight": 5,
       "payloadOriginPath": "data.customFieldData.1.value",
       "payloadDestinationPath": "patient.RepeatTest"
     },
@@ -129,7 +129,7 @@
       "controlType": "comboBox",
       "i18nKeyCaption": "MWHivStatusI8nCaptionKey",
       "gxAlertDbColumn": "HivStatus",
-      "completionWeight": 10,
+      "completionWeight": 5,
       "payloadOriginPath": "data.customFieldData.4.value",
       "payloadDestinationPath": "patient.HivStatus"
     },
@@ -146,7 +146,7 @@
       "controlType": "textBox",
       "i18nKeyCaption": "MWRequestorNameI8nCaptionKey",
       "gxAlertDbColumn": "RequestorName",
-      "completionWeight": 10,
+      "completionWeight": 4,
       "payloadOriginPath": "data.customFieldData.5.value",
       "payloadDestinationPath": "patient.RequestorName"
     },
@@ -163,7 +163,7 @@
       "controlType": "textBox",
       "i18nKeyCaption": "MWRequestorPhoneI8nCaptionKey",
       "gxAlertDbColumn": "RequestorPhone",
-      "completionWeight": 10,
+      "completionWeight": 5,
       "payloadOriginPath": "data.customFieldData.6.value",
       "payloadDestinationPath": "patient.RequestorPhone"
     },
@@ -261,7 +261,7 @@
       "controlType": "comboBox",
       "i18nKeyCaption": "MWTreatmentHistoryI8nCaptionKey",
       "gxAlertDbColumn": "MWTreatmentHistory",
-      "completionWeight": 10,
+      "completionWeight": 5,
       "payloadOriginPath": "data.customFieldData.8.value",
       "payloadDestinationPath": "patient.MWTreatmentHistory"
     },
