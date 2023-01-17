@@ -1,14 +1,13 @@
 .Container {
   display: flex;
   flex-flow: column;
-  padding-bottom: 10px;
 }
 
 /* pure-hidden-sm */
 @media screen and (min-width: 35.5em) {
   .Container {
     flex-flow: row wrap;
-    align-items: baseline;
+    align-items: center;
   }
 
   .FiltersBtnGroup {
@@ -17,7 +16,7 @@
     order: inherit;
     display: flex;
     flex-flow: row-reverse wrap;
-    align-items: baseline;
+    align-items: center;
   }
 
   .FiltersPanel {

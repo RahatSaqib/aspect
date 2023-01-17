@@ -1,11 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react'
-import { Tab, Tabs } from '@mui/material'
+import React, { useState } from 'react'
 import classnames from 'classnames/bind'
-import find from 'lodash/find'
 import { Helmet } from 'react-helmet'
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import DetailHeader from '../../../components/DetailHeader'
 import useI18n from '../../../hooks/useI18n'
+import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import messages from './messages'
 import OperationalDailyStatus from './OperationalDailyStatus'
 import OperationalDashBoard from './OperationalDashBoard'
@@ -15,34 +14,39 @@ const cssClasses = classnames.bind(styles)
 
 export const OperationalData = () => {
   const { formatMessage } = useI18n()
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
-
-  const tabsConfig = {
-    dashboard: {
-      path: '/operational-data',
-      label: formatMessage(messages.operationalDashboardTitle),
-    },
-    dailyStatus: {
-      path: '/operational-data/daily-status',
-      label: formatMessage(messages.dailyStatusTitle),
-    },
-  }
-
-  const { path: currentTab } = find(tabsConfig, { path: pathname }) || tabsConfig.dashboard
+  const [activeTab, setActiveTab] = useState('dashboard')
 
   return (
-    <div className={cssClasses('Container')}>
+    <>
       <Helmet title={formatMessage(messages.title)} />
-      <Tabs value={currentTab} onChange={(e, v) => navigate(v)}>
-        <Tab label={tabsConfig.dashboard.label} value={tabsConfig.dashboard.path} />
-        <Tab label={tabsConfig.dailyStatus.label} value={tabsConfig.dailyStatus.path} />
-      </Tabs>
-      <Routes>
-        <Route path="" element={<OperationalDashBoard />} />
-        <Route path="daily-status" element={<OperationalDailyStatus />} />
-      </Routes>
-    </div>
+      {activeTab === 'dashboard' ? (
+        <>
+          <DetailHeader name={formatMessage(messages.dashboard)} disableBack>
+            <ColoredButton
+              mountain
+              onClick={() => setActiveTab('dailyStatus')}
+              label={formatMessage(messages.dailyStatusNav)}
+            />
+          </DetailHeader>
+          <div className={cssClasses('Container')}>
+            <OperationalDashBoard />
+          </div>
+        </>
+      ) : (
+        <>
+          <DetailHeader name={formatMessage(messages.dailyStatus)} disableBack>
+            <ColoredButton
+              mountain
+              onClick={() => setActiveTab('dashboard')}
+              label={formatMessage(messages.dashboardNav)}
+            />
+          </DetailHeader>
+          <div className={cssClasses('Container')}>
+            <OperationalDailyStatus />
+          </div>
+        </>
+      )}
+    </>
   )
 }
 

@@ -13,6 +13,7 @@ import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AspectExportListButton from '../../../components/AspectExportListButton'
+import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { RESULT_LIST } from '../../../components/QueryFetch/Result'
 import useI18n from '../../../hooks/useI18n'
@@ -241,66 +242,69 @@ export const ResultListWithProps = ({
   pageAt,
   pageSize,
 }) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.resultsTitle)} />
-    <BrowseFilters
-      navigate={navigate}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-      askConfirmationForExport={table.total > 1000}
-    />
-    <DataTableCard key={`DataTableCard--table-Result-list---${location.key}`}>
-      <DataTableProgressBar disabled={!isLoading} />
-
-      <AspectExportListButton
-        onExport={onExportClick}
-        visible={!items.currentIdList.isEmpty()}
-        reportName="Results"
-        disableExcel
+  <>
+    <DetailHeader name={intl.formatMessage(messages.resultsTitle)} disableBack>
+      <BrowseFilters
+        navigate={navigate}
+        location={location}
+        intl={intl}
+        config={reducedFilters}
+        askConfirmationForExport={table.total > 1000}
       />
-      {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-      {!items.currentIdList.isEmpty() && (
-        <ResultDataTable className={cssClasses('ResultDataTable')}>
-          <ResultDataTableHead
+    </DetailHeader>
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.resultsTitle)} />
+      <DataTableCard key={`DataTableCard--table-Result-list---${location.key}`}>
+        <DataTableProgressBar disabled={!isLoading} />
+        <AspectExportListButton
+          onExport={onExportClick}
+          visible={!items.currentIdList.isEmpty()}
+          reportName="Results"
+          disableExcel
+        />
+        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
+        {!items.currentIdList.isEmpty() && (
+          <ResultDataTable className={cssClasses('ResultDataTable')}>
+            <ResultDataTableHead
+              navigate={navigate}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={columns}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(result => (
+                  <ResultDataTableRow
+                    key={result.get('id')}
+                    intl={intl}
+                    extraColumns={table.extraColumns}
+                    result={result}
+                    onClick={onRowClick(navigate, location)}
+                    data-result-id={result.get('id')}
+                    messages={messages}
+                  />
+                ))}
+            </TableBody>
+          </ResultDataTable>
+        )}
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
             navigate={navigate}
             location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={columns}
+            intl={intl}
+            timedMessageUsed={sortCol === 'endedOn'}
+            paginatorStatus={messages.paginatorStatus}
+            total={total}
+            pageAt={pageAt}
+            pageSize={pageSize}
+            pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
           />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(result => (
-                <ResultDataTableRow
-                  key={result.get('id')}
-                  intl={intl}
-                  extraColumns={table.extraColumns}
-                  result={result}
-                  onClick={onRowClick(navigate, location)}
-                  data-result-id={result.get('id')}
-                  messages={messages}
-                />
-              ))}
-          </TableBody>
-        </ResultDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          navigate={navigate}
-          location={location}
-          intl={intl}
-          timedMessageUsed={sortCol === 'endedOn'}
-          paginatorStatus={messages.paginatorStatus}
-          total={total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-          pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
-        />
-      )}
-    </DataTableCard>
-  </div>
+        )}
+      </DataTableCard>
+    </div>
+  </>
 )
 
 const ResultList = () => {

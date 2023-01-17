@@ -7,19 +7,21 @@ import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-const DetailHeader = ({ name, children, back }) => {
+const DetailHeader = ({ name, children, back, disableBack = false }) => {
   const navigate = useNavigate()
 
   return (
     <AppBar position="relative" color="white" elevation={0} className={cssClasses('AppBar')} component="nav">
-      <Toolbar>
-        <Button onClick={() => navigate(back || -1)} color="primary">
-          <MdKeyboardArrowLeft size={48} />
-        </Button>
+      <Toolbar style={{ padding: '0 16px' }}>
+        {!disableBack ? (
+          <Button onClick={() => navigate(back || -1)} color="primary">
+            <MdKeyboardArrowLeft size={48} />
+          </Button>
+        ) : null}
         <Typography variant="h5" color="primary" component="div" className={cssClasses('Name')}>
           {name}
         </Typography>
-        <Box sx={{ display: 'block' }}>{children}</Box>
+        <Box className={disableBack ? cssClasses('Content-Detail') : cssClasses('Content')}>{children}</Box>
       </Toolbar>
     </AppBar>
   )

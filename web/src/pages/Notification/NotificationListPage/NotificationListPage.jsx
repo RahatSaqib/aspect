@@ -4,6 +4,7 @@ import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AspectTable from '../../../components/AspectTable'
+import DetailHeader from '../../../components/DetailHeader'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
 import useI18n from '../../../hooks/useI18n'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
@@ -29,8 +30,7 @@ const NotificationList = () => {
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   return (
     <>
-      <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
-      <div className={cssClasses('filters__container')}>
+      <DetailHeader name={intl.formatMessage(messages.notificationsTitle)} disableBack>
         <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
           <AspectButton
             type="button"
@@ -45,14 +45,17 @@ const NotificationList = () => {
             {intl.formatMessage(messages.createNotification)}
           </AspectButton>
         </BrowseFilters>
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
+        <Box component="main" sx={{ pr: 1, pl: 1, pb: 1 }}>
+          <Card>
+            <CardContent>
+              <AspectTable baseConfig={tableConfig} consts={NOTIFICATION_LIST} FILTERS_CONFIG={FILTERS_CONFIG} />
+            </CardContent>
+          </Card>
+        </Box>
       </div>
-      <Box component="main" sx={{ pr: 1, pl: 1, pb: 1 }}>
-        <Card>
-          <CardContent>
-            <AspectTable baseConfig={tableConfig} consts={NOTIFICATION_LIST} FILTERS_CONFIG={FILTERS_CONFIG} />
-          </CardContent>
-        </Card>
-      </Box>
     </>
   )
 }

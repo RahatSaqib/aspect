@@ -67,13 +67,6 @@ const themeDefinition = {
   },
   customPropertiesVariables,
   components: {
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          position: 'fixed !important',
-        },
-      },
-    },
     MuiAccordionDetails: {
       styleOverrides: {
         root: {
@@ -113,7 +106,7 @@ const themeDefinition = {
           borderRadius: themedColors.buttonBorderRadius,
           textTransform: 'inherit',
           '&.browseButton': {
-            marginRight: '1.5em',
+            marginRight: '8px',
             fontWeight: 700,
             paddingRight: '2.5em',
             paddingLeft: '2.5em',

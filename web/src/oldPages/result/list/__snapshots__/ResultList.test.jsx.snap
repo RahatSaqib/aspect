@@ -1,76 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Result List component should shallow render correctly when filter for assay type 1`] = `
-<div
-  className="Container"
->
-  <HelmetWrapper
-    defer={true}
-    encodeSpecialCharacters={true}
-    title="Results"
-  />
-  <pure(withProps(withHandlers(Connect(BrowseFilters))))
-    askConfirmationForExport={false}
-    config={[MockFunction]}
-    intl={
-      Object {
-        "$t": [Function],
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "defaultRichTextElements": undefined,
-        "fallbackOnEmptyString": true,
-        "formatDate": [Function],
-        "formatDateTimeRange": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatListToParts": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "onWarn": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
-    }
-    location={
-      Object {
-        "search": "",
-      }
-    }
-    navigate={[MockFunction]}
-  />
-  <DataTableCard
-    key="DataTableCard--table-Result-list---undefined"
+<Fragment>
+  <DetailHeader
+    disableBack={true}
+    name="Results"
   >
-    <DataTableProgressBar
-      disabled={true}
-    />
-    <AspectExportListButton
-      disableCSV={false}
-      disableExcel={true}
-      onExport={[MockFunction]}
-      reportName="Results"
-      visible={false}
-    />
-    <pure(withHandlers(EmptyList))
+    <pure(withProps(withHandlers(Connect(BrowseFilters))))
+      askConfirmationForExport={false}
+      config={[MockFunction]}
+      intl={
+        Object {
+          "$t": [Function],
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "defaultRichTextElements": undefined,
+          "fallbackOnEmptyString": true,
+          "formatDate": [Function],
+          "formatDateTimeRange": [Function],
+          "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
+          "formatList": [Function],
+          "formatListToParts": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatNumberToParts": [Function],
+          "formatPlural": [Function],
+          "formatRelativeTime": [Function],
+          "formatTime": [Function],
+          "formatTimeToParts": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
+            "getListFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "onError": [Function],
+          "onWarn": [Function],
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
+        }
+      }
       location={
         Object {
           "search": "",
@@ -78,6 +54,37 @@ exports[`Result List component should shallow render correctly when filter for a
       }
       navigate={[MockFunction]}
     />
-  </DataTableCard>
-</div>
+  </DetailHeader>
+  <div
+    className="Container"
+  >
+    <HelmetWrapper
+      defer={true}
+      encodeSpecialCharacters={true}
+      title="Results"
+    />
+    <DataTableCard
+      key="DataTableCard--table-Result-list---undefined"
+    >
+      <DataTableProgressBar
+        disabled={true}
+      />
+      <AspectExportListButton
+        disableCSV={false}
+        disableExcel={true}
+        onExport={[MockFunction]}
+        reportName="Results"
+        visible={false}
+      />
+      <pure(withHandlers(EmptyList))
+        location={
+          Object {
+            "search": "",
+          }
+        }
+        navigate={[MockFunction]}
+      />
+    </DataTableCard>
+  </div>
+</Fragment>
 `;

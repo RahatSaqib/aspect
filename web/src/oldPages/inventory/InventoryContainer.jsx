@@ -1,44 +1,30 @@
 import React, { useState, useEffect } from 'react'
-import { Tab, Tabs } from '@mui/material'
-import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
-import styles from './InventoryContainer.css'
+import ColoredButton from '../../oldComponents/themedReactToolbox/ColoredButton'
 import InventoryItemsList from './list/InventoryItemsList'
 import InventoryLog from './log/InventoryLog'
 
-const cssClasses = classnames.bind(styles)
-
 const messages = defineMessages({
-  suppliesTabTitle: {
-    id: 'pages.InventoryDashboard.SuppliesTabTitle',
-    defaultMessage: 'Supplies',
+  suppliesNav: {
+    id: 'pages.InventoryDashboard.suppliesNav',
+    defaultMessage: 'Go To Supplies',
   },
-  inventoryLogTitle: {
-    id: 'pages.InventoryDashboard.inventoryLogTitle',
-    defaultMessage: 'Inventory Log',
+  inventoryLogNav: {
+    id: 'pages.InventoryDashboard.inventoryLogNav',
+    defaultMessage: 'Go To Inventory Log',
   },
 })
 
 export const InventoryContainer = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState('supplies')
   const { formatMessage } = useI18n()
-  const tabsConfig = {
-    supplies: {
-      path: 'supplies',
-      label: formatMessage(messages.suppliesTabTitle),
-    },
-    inventoryLog: {
-      path: 'log',
-      label: formatMessage(messages.inventoryLogTitle),
-    },
-  }
+  const [activeTab, setActiveTab] = useState('supplies')
 
-  const handleChange = (e, v) => {
-    setActiveTab(v)
+  const handleChange = () => {
+    setActiveTab(activeTab === 'supplies' ? 'log' : 'supplies')
     if (activeTab === 'supplies') {
       const searchParams = new URLSearchParams()
       searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
@@ -59,18 +45,18 @@ export const InventoryContainer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return (
-    <div className={cssClasses('Container')}>
-      <Tabs value={activeTab} onChange={handleChange}>
-        <Tab label={tabsConfig.supplies.label} value={tabsConfig.supplies.path} />
-        <Tab label={tabsConfig.inventoryLog.label} value={tabsConfig.inventoryLog.path} />
-      </Tabs>
-      {activeTab === 'supplies' ? (
-        <InventoryItemsList navigate={navigate} location={location} />
-      ) : (
-        <InventoryLog navigate={navigate} location={location} />
-      )}
-    </div>
+  return activeTab === 'supplies' ? (
+    <InventoryItemsList
+      navigate={navigate}
+      location={location}
+      navButton={<ColoredButton mountain onClick={handleChange} label={formatMessage(messages.inventoryLogNav)} />}
+    />
+  ) : (
+    <InventoryLog
+      navigate={navigate}
+      location={location}
+      navButton={<ColoredButton mountain onClick={handleChange} label={formatMessage(messages.suppliesNav)} />}
+    />
   )
 }
 

@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AspectExportListButton from '../../../components/AspectExportListButton'
+import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -137,49 +138,53 @@ export const ReporterListWithProps = ({
 }) => {
   const { formatMessage } = useI18n()
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={formatMessage(messages.reportersTitle)} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!isLoading} />
+    <>
+      <DetailHeader name={formatMessage(messages.reportersTitle)} disableBack>
+        <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={formatMessage(messages.reportersTitle)} />
+        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+          <DataTableProgressBar disabled={!isLoading} />
 
-        <AspectExportListButton
-          onExport={onExportClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName="Reporters"
-        />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-        {!items.currentIdList.isEmpty() && (
-          <ReporterDataTable className={cssClasses('ReporterDataTable')}>
-            <ReporterDataTableHead
+          <AspectExportListButton
+            onExport={onExportClick}
+            visible={!items.currentIdList.isEmpty()}
+            reportName="Reporters"
+          />
+          {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
+          {!items.currentIdList.isEmpty() && (
+            <ReporterDataTable className={cssClasses('ReporterDataTable')}>
+              <ReporterDataTableHead
+                navigate={navigate}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={columns}
+              />
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(reporter => (
+                    <ReporterDataTableRow key={reporter.get('siteId')} reporter={reporter} />
+                  ))}
+              </TableBody>
+            </ReporterDataTable>
+          )}
+          {!items.currentIdList.isEmpty() && (
+            <BrowseTablePaginator
               navigate={navigate}
               location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={columns}
+              className={cssClasses('BrowseTablePaginator')}
+              paginatorStatus={messages.paginatorStatus}
+              total={table.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
             />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(reporter => (
-                  <ReporterDataTableRow key={reporter.get('siteId')} reporter={reporter} />
-                ))}
-            </TableBody>
-          </ReporterDataTable>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            className={cssClasses('BrowseTablePaginator')}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
-        )}
-      </DataTableCard>
-    </div>
+          )}
+        </DataTableCard>
+      </div>
+    </>
   )
 }
 

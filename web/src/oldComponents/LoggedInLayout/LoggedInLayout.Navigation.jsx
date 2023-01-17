@@ -47,7 +47,7 @@ export const NavigationMenu = () => {
   ]
 
   const submenuSelected = href => location.pathname.startsWith(href)
-  const itemSelected = href => new RegExp(`^${href}`).test(location.pathname)
+  const itemSelected = href => location.pathname === href
 
   const ArrowIcon = className =>
     open ? <MdKeyboardArrowUp className={className} /> : <MdKeyboardArrowDown className={className} />

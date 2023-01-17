@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
+import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
 import useI18n from '../../../hooks/useI18n'
@@ -139,33 +140,37 @@ const ReportIndex = () => {
   }, [data])
 
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.reportsTitle)} />
-      <DataTableProgressBar disabled={!showProgressBar} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} showBrowseDropdown={false} />
-      <Grid
-        container
-        spacing={16}
-        sx={{
-          width: 'auto',
-          margin: 0,
-        }}
-      >
-        {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (
-          <ReportCard
-            title={name}
-            description={description}
-            i18nKey={i18nKey}
-            i18nKeyDescription={i18nKeyDescription}
-            exportExcel={exportExcel}
-            exportCsv={exportCsv}
-            key={externalId}
-            onClick={(fileExtension, reportName) => onClickDownload(externalId, fileExtension, reportName)}
-            navigate={navigate}
-          />
-        ))}
-      </Grid>
-    </div>
+    <>
+      <DetailHeader name={intl.formatMessage(messages.reportsTitle)} disableBack>
+        <BrowseFilters navigate={navigate} location={location} config={reducedFilters} showBrowseDropdown={false} />
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={intl.formatMessage(messages.reportsTitle)} />
+        <DataTableProgressBar disabled={!showProgressBar} />
+        <Grid
+          container
+          spacing={16}
+          sx={{
+            width: 'auto',
+            margin: 0,
+          }}
+        >
+          {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (
+            <ReportCard
+              title={name}
+              description={description}
+              i18nKey={i18nKey}
+              i18nKeyDescription={i18nKeyDescription}
+              exportExcel={exportExcel}
+              exportCsv={exportCsv}
+              key={externalId}
+              onClick={(fileExtension, reportName) => onClickDownload(externalId, fileExtension, reportName)}
+              navigate={navigate}
+            />
+          ))}
+        </Grid>
+      </div>
+    </>
   )
 }
 export default ReportIndex

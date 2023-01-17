@@ -9,6 +9,7 @@ import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
+import DetailHeader from '../../../components/DetailHeader'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
@@ -208,57 +209,61 @@ export const CaseList = ({
   ]
 
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.resultsTitle)} />
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        intl={intl}
-        config={reducedFilters}
-        askConfirmationForExport={table.total > 1000}
-      />
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-        {!items.currentIdList.isEmpty() && (
-          <Table className={cssClasses('CaseDataTable')}>
-            <DataTableHead
+    <>
+      <DetailHeader name={intl.formatMessage(messages.resultsTitle)} disableBack>
+        <BrowseFilters
+          navigate={navigate}
+          location={location}
+          intl={intl}
+          config={reducedFilters}
+          askConfirmationForExport={table.total > 1000}
+        />
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={intl.formatMessage(messages.resultsTitle)} />
+        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+          <DataTableProgressBar disabled={!table.loading} />
+          {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
+          {!items.currentIdList.isEmpty() && (
+            <Table className={cssClasses('CaseDataTable')}>
+              <DataTableHead
+                navigate={navigate}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={Immutable.List(columns)}
+              />
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(_case => (
+                    <CaseTableRow
+                      key={_case.get('id')}
+                      intl={intl}
+                      _case={_case}
+                      onClick={onRowClick}
+                      data-case-id={_case.get('id')}
+                    />
+                  ))}
+              </TableBody>
+            </Table>
+          )}
+          {!items.currentIdList.isEmpty() && (
+            <BrowseTablePaginator
               navigate={navigate}
               location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={Immutable.List(columns)}
+              intl={intl}
+              timedMessageUsed={sortCol === 'endedOn'}
+              paginatorStatus={messages.paginatorStatus}
+              total={table.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
+              pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
             />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(_case => (
-                  <CaseTableRow
-                    key={_case.get('id')}
-                    intl={intl}
-                    _case={_case}
-                    onClick={onRowClick}
-                    data-case-id={_case.get('id')}
-                  />
-                ))}
-            </TableBody>
-          </Table>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            intl={intl}
-            timedMessageUsed={sortCol === 'endedOn'}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-            pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
-          />
-        )}
-      </DataTableCard>
-    </div>
+          )}
+        </DataTableCard>
+      </div>
+    </>
   )
 }
 

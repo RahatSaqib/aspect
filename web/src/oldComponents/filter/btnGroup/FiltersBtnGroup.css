@@ -5,13 +5,12 @@
 }
 
 .Button {
-  font-weight: var(--lato-font-weight-bold) !important;
-  text-transform: none !important;
-  margin: 0 8px !important;
-}
-
-.Button::first-letter {
-  text-transform: uppercase;
+  font-weight: 100 !important;
+  margin: 2px 2px !important;
+  padding: 5px !important;
+  font-size: 0.65em !important;
+  text-transform: uppercase !important;
+  border-radius: 16px !important;
 }
 
 .Button > .Button__icon {

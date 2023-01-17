@@ -68,7 +68,7 @@ export const SiteDetail = ({ navigate, location }) => {
           </AspectButton>
         ))}
       </DetailHeader>
-      <Box component="main" sx={{ pt: 8 }}>
+      <Box component="main">
         {isLoading ? (
           <LinearProgress />
         ) : (

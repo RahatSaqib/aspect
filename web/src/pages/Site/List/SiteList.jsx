@@ -4,6 +4,7 @@ import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import { Helmet } from 'react-helmet'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import DetailHeader from '../../../components/DetailHeader'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useI18n from '../../../hooks/useI18n'
@@ -110,57 +111,61 @@ export const SiteList = ({ navigate, location }) => {
   return isLoading || !reducedFilters ? (
     <LinearProgress />
   ) : (
-    <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-      <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
-        <AspectButton
-          type="button"
-          color="primary"
-          variant="contained"
-          browseButton
-          onClick={() => navigate('/browse/site/create')}
-        >
-          {intl.formatMessage(messages.createSite)}
-        </AspectButton>
-      </BrowseFilters>
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        {data.siteList.length === 0 ? (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        ) : (
-          <>
-            <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
-            <SiteDataTable className={cssClasses('SiteDataTable')}>
-              <SiteDataTableHead
+    <>
+      <DetailHeader name={intl.formatMessage(messages.sitesTitle)} disableBack>
+        <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
+          <AspectButton
+            type="button"
+            color="primary"
+            variant="contained"
+            browseButton
+            onClick={() => navigate('/browse/site/create')}
+          >
+            {intl.formatMessage(messages.createSite)}
+          </AspectButton>
+        </BrowseFilters>
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={intl.formatMessage(messages.sitesTitle)} />
+        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+          {data.siteList.length === 0 ? (
+            <BrowseEmptyList navigate={navigate} location={location} />
+          ) : (
+            <>
+              <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
+              <SiteDataTable className={cssClasses('SiteDataTable')}>
+                <SiteDataTableHead
+                  navigate={navigate}
+                  location={location}
+                  sortColumnKey={sortCol}
+                  sortColumnDir={sortDir}
+                  columns={tableColumns}
+                />
+                <TableBody>
+                  {data.siteList.map(site => (
+                    <SiteDataTableRow
+                      key={site.id}
+                      site={site}
+                      onClick={onRowClick}
+                      onAlertClick={onAlertClick}
+                      data-site-id={site.id}
+                    />
+                  ))}
+                </TableBody>
+              </SiteDataTable>
+              <BrowseTablePaginator
                 navigate={navigate}
                 location={location}
-                sortColumnKey={sortCol}
-                sortColumnDir={sortDir}
-                columns={tableColumns}
+                paginatorStatus={messages.paginatorStatus}
+                total={data.total}
+                pageAt={pageAt}
+                pageSize={pageSize}
               />
-              <TableBody>
-                {data.siteList.map(site => (
-                  <SiteDataTableRow
-                    key={site.id}
-                    site={site}
-                    onClick={onRowClick}
-                    onAlertClick={onAlertClick}
-                    data-site-id={site.id}
-                  />
-                ))}
-              </TableBody>
-            </SiteDataTable>
-            <BrowseTablePaginator
-              navigate={navigate}
-              location={location}
-              paginatorStatus={messages.paginatorStatus}
-              total={data.total}
-              pageAt={pageAt}
-              pageSize={pageSize}
-            />
-          </>
-        )}
-      </DataTableCard>
-    </div>
+            </>
+          )}
+        </DataTableCard>
+      </div>
+    </>
   )
 }
 

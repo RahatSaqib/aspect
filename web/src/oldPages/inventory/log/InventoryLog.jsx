@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
-import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
+import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
 import useI18n from '../../../hooks/useI18n'
@@ -81,6 +81,7 @@ export const InventoryLogWithProps = ({
   sortDir,
   pageAt,
   pageSize,
+  navButton,
 }) => {
   const columns = [
     {
@@ -127,56 +128,62 @@ export const InventoryLogWithProps = ({
   const { data: items, total } = data || { data: null }
   const hasItems = items && items.length > 0
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        intl={intl}
-        config={reducedFilters}
-        dateFilterLabel={intl.formatMessage(messages.date)}
-      />
-      <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
-        <DataTableProgressBar disabled={!isLoading} />
-        {!hasItems && <BrowseEmptyList navigate={navigate} location={location} />}
-        {hasItems && (
-          <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>
-            <InventoryLogDataTableHead
+    <>
+      <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack>
+        <BrowseFilters
+          navigate={navigate}
+          location={location}
+          intl={intl}
+          config={reducedFilters}
+          dateFilterLabel={intl.formatMessage(messages.date)}
+        >
+          {navButton}
+        </BrowseFilters>
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
+        <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+          <DataTableProgressBar disabled={!isLoading} />
+          {!hasItems && <BrowseEmptyList navigate={navigate} location={location} />}
+          {hasItems && (
+            <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>
+              <InventoryLogDataTableHead
+                navigate={navigate}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={columns}
+              />
+              <TableBody>
+                {items.map((inventoryLogItem, index) => (
+                  <InventoryLogTableRow
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`InventoryLog---${location.key}--${index}`}
+                    inventoryLogItem={inventoryLogItem}
+                  />
+                ))}
+              </TableBody>
+            </InventoryLogDataTable>
+          )}
+          {hasItems && (
+            <BrowseTablePaginator
               navigate={navigate}
               location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={columns}
+              intl={intl}
+              pageSizeButtonKeys={[10, 25, 50, 100]}
+              paginatorStatus={messages.paginatorStatus}
+              total={total}
+              pageAt={pageAt}
+              pageSize={pageSize}
             />
-            <TableBody>
-              {items.map((inventoryLogItem, index) => (
-                <InventoryLogTableRow
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`InventoryLog---${location.key}--${index}`}
-                  inventoryLogItem={inventoryLogItem}
-                />
-              ))}
-            </TableBody>
-          </InventoryLogDataTable>
-        )}
-        {hasItems && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            intl={intl}
-            pageSizeButtonKeys={[10, 25, 50, 100]}
-            paginatorStatus={messages.paginatorStatus}
-            total={total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
-        )}
-      </DataTableCard>{' '}
-    </div>
+          )}
+        </DataTableCard>{' '}
+      </div>
+    </>
   )
 }
 
-const InventoryLog = ({ navigate, location }) => {
+const InventoryLog = ({ navigate, location, navButton }) => {
   // >>>>>> Defining hooks <<<<<<
   const intl = useI18n()
   const { userPermissions } = useAuthState()
@@ -246,13 +253,9 @@ const InventoryLog = ({ navigate, location }) => {
     isLoading,
     data,
     ...{ sortCol, sortDir, pageAt, pageSize, ...requestParams },
+    navButton,
   }
   return <InventoryLogWithProps {...props} />
-}
-
-InventoryLog.propTypes = {
-  navigate: PropTypes.oneOfType([PropTypes.func]).isRequired,
-  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default InventoryLog

@@ -8,6 +8,7 @@ import { Helmet } from 'react-helmet'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import DetailHeader from '../../../components/DetailHeader'
 import useI18n from '../../../hooks/useI18n'
 import useWorkload from '../../../hooks/workload/useWorkload'
 import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
@@ -54,7 +55,7 @@ const availableSortCol = [
 const searchSanitizer = makeSearchParamsSanitizer({ availableSortCol })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 
-const Workload = () => {
+const Workload = ({ navButton }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const { formatMessage } = useI18n()
@@ -129,37 +130,47 @@ const Workload = () => {
   const extraColumnsProps = extraColumns.map(ec => ec.fieldId)
 
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={formatMessage(messages.workloadTitle)} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
-      <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
-        <DataTableProgressBar disabled={!isLoading} />
-        {workloadList.length ? (
-          <>
-            <AspectExportListButton onExport={onExcelClick} visible={workloadList.length} reportName="DeviceWorkload" />
-            <Table className={cssClasses('InventoryDataTable')}>
-              <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
-              <TableBody>
-                {workloadList.map((item, index) => (
-                  <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
-                ))}
-              </TableBody>
-            </Table>
-            <BrowseTablePaginator
-              navigate={navigate}
-              location={location}
-              pageSizeButtonKeys={[10, 25, 50, 100]}
-              paginatorStatus={messages.paginatorStatus}
-              total={total}
-              pageAt={pageAt}
-              pageSize={pageSize}
-            />
-          </>
-        ) : (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
-      </DataTableCard>
-    </div>
+    <>
+      <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack>
+        <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+          {navButton}
+        </BrowseFilters>
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={formatMessage(messages.workloadTitle)} />
+        <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+          <DataTableProgressBar disabled={!isLoading} />
+          {workloadList.length ? (
+            <>
+              <AspectExportListButton
+                onExport={onExcelClick}
+                visible={workloadList.length}
+                reportName="DeviceWorkload"
+              />
+              <Table className={cssClasses('InventoryDataTable')}>
+                <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
+                <TableBody>
+                  {workloadList.map((item, index) => (
+                    <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
+                  ))}
+                </TableBody>
+              </Table>
+              <BrowseTablePaginator
+                navigate={navigate}
+                location={location}
+                pageSizeButtonKeys={[10, 25, 50, 100]}
+                paginatorStatus={messages.paginatorStatus}
+                total={total}
+                pageAt={pageAt}
+                pageSize={pageSize}
+              />
+            </>
+          ) : (
+            <BrowseEmptyList navigate={navigate} location={location} />
+          )}
+        </DataTableCard>
+      </div>
+    </>
   )
 }
 
