@@ -87,7 +87,12 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
     setShowConfirmation(true)
   }
 
-  const isError = !isPristine && (isEmpty(editSite.name) || isEmpty(editSite.shortName) || isEmpty(editSite.countryId))
+  const isError =
+    !isPristine &&
+    (isEmpty(editSite.name) ||
+      isEmpty(editSite.shortName) ||
+      isEmpty(editSite.countryId) ||
+      isEmpty(editSite.externalId))
 
   return (
     <div>
@@ -119,7 +124,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               onChange={e => setEditSite({ ...editSite, shortName: e.target.value })}
               error={!isPristine && isEmpty(editSite.shortName)}
               helperText={
-                !isPristine && isEmpty(editSite.name) && `${formatMessage(messages.fieldShortName)} is required`
+                !isPristine && isEmpty(editSite.shortName) && `${formatMessage(messages.fieldShortName)} is required`
               }
             />
             <TextField
@@ -130,6 +135,10 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               fullWidth
               value={editSite.externalId || ''}
               onChange={e => setEditSite({ ...editSite, externalId: e.target.value })}
+              error={!isPristine && isEmpty(editSite.externalId)}
+              helperText={
+                !isPristine && isEmpty(editSite.externalId) && `${formatMessage(messages.fieldExternalId)} is required`
+              }
             />
           </div>
           <div className={cssClasses('container')}>
