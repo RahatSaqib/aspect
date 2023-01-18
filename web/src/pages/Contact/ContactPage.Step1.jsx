@@ -202,6 +202,7 @@ const ContactPageStepOne = ({ setStep, id }) => {
                   <MuiPhoneNumber
                     id="phone"
                     name="phone"
+                    defaultCountry="us"
                     label={formatMessage(messages.phone)}
                     value={values.phone || '+1'}
                     onChange={e => {
@@ -215,6 +216,7 @@ const ContactPageStepOne = ({ setStep, id }) => {
                   <MuiPhoneNumber
                     id="cell"
                     name="cell"
+                    defaultCountry="us"
                     label={formatMessage(messages.mobile)}
                     value={values.cell || '+1'}
                     onChange={e => {
