@@ -1,7 +1,7 @@
 const chai = require('chai')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const dayjs = require('dayjs')
+const { differenceInDays } = require('date-fns')
 const { pipe, find, values } = require('ramda')
 const shared = require('../utils/sharedToken')
 
@@ -801,7 +801,8 @@ describe('Mobile API Result download routes v2 with available custom api-version
       // Its number of days from the day treatment has started/updated
       const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
         const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
-        return isTreatment ? dayjs().diff(dayjs(isTreatment.updatedOn), 'day') : 0
+        const today = new Date()
+        return isTreatment ? differenceInDays(today, new Date(isTreatment?.updatedOn || today)) : 0
       }
 
       assert.equal(response.body.data[0].treatmentStatus.visible, showTreatment(response.body.data[0]))
