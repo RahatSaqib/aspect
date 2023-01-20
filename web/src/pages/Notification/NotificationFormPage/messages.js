@@ -136,6 +136,15 @@ export default defineMessages({
     id: 'pages.Notification.type.LowInventory',
     defaultMessage: 'Low Inventory',
   },
+  notificationTypeLowFieldCompletionRate: {
+    id: 'pages.Notification.type.LowFieldCompletionRate',
+    defaultMessage: 'Low Field Completion Rate',
+  },
+  notificationTypeLowFieldCompletionRateMessage: {
+    id: 'pages.Notification.type.LowFieldCompletionRateMessage',
+    defaultMessage:
+      'This Notification Type is useful only if you have the custom field completion weight configured properly. Please check with your admin before using it.',
+  },
   notificationTypeExpiring: {
     id: 'pages.Notification.type.InventoryExpiring',
     defaultMessage: 'Inventory Expiring',
