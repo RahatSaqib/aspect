@@ -6,35 +6,44 @@ import { Integrations } from '@sentry/tracing'
 import { render } from 'react-dom'
 import App from './App'
 import config from './config'
-import { hydrateFromLocalStorage, refreshStart } from './store/AuthRedux'
-import store from './store/store'
+import AllProviders from './providers/AllProviders'
+import { refreshStart } from './store/AuthRedux'
 import './index.css'
-import { getAspectHydrateData } from './utils/LocalStorage'
+import store from './store/store'
 
-// Sentry initiaization at the top level of application. I activated it only for production ENV
-if (config.sentry && process.env.NODE_ENV === 'production') {
-  Sentry.init({
-    dsn: config.sentry.dsn,
-    integrations: [
-      new Integrations.BrowserTracing({
-        tracingOrigins: config.sentry.tracingOrigins || ['localhost:8000', '*.aspect.id'],
-      }),
-    ],
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
-    tracesSampleRate: config.sentry.tracesSampleRate,
-  })
-  Sentry.setTag('Country', config.countryName || config.aspectApi)
+const prepareApp = async () => {
+  // Sentry initiaization at the top level of application. I activated it only for production ENV
+  if (config.sentry && process.env.NODE_ENV === 'production') {
+    Sentry.init({
+      dsn: config.sentry.dsn,
+      integrations: [
+        new Integrations.BrowserTracing({
+          tracingOrigins: config.sentry.tracingOrigins || ['localhost:8000', '*.aspect.id'],
+        }),
+      ],
+      // Set tracesSampleRate to 1.0 to capture 100%
+      // of transactions for performance monitoring.
+      // We recommend adjusting this value in production
+      tracesSampleRate: config.sentry.tracesSampleRate,
+    })
+    Sentry.setTag('Country', config.countryName || config.aspectApi)
+  }
+
+  // get new access token
+  await store.dispatch(refreshStart())
+
+  return Promise.resolve()
 }
 
-const renderApp = () => render(<App store={store} />, document.getElementById('app'))
+const renderApp = () => render(<AppWrapper />, document.getElementById('app'))
 
-// let's see if we can get culture from local storage
-store.dispatch(hydrateFromLocalStorage(getAspectHydrateData()))
+const AppWrapper = () => (
+  <AllProviders>
+    <App />
+  </AllProviders>
+)
 
-// get new access token
-store.dispatch(refreshStart()).then(renderApp, renderApp)
+prepareApp().then(renderApp)
 
 if (module.hot) {
   module.hot.accept('./App', renderApp)

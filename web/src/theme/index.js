@@ -391,12 +391,8 @@ const themeDefinition = {
     },
   },
 }
-const theme = createTheme(themeDefinition)
 
-const getTheme = culture => {
-  if (!isEmpty(culture)) {
-    return createTheme(themeDefinition, xlocale[culture], locale[culture])
-  }
-  return theme
-}
+const getTheme = culture =>
+  !isEmpty(culture) ? createTheme(themeDefinition, xlocale[culture], locale[culture]) : createTheme(themeDefinition)
+
 export default getTheme

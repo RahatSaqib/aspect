@@ -44,10 +44,7 @@ const enhance = compose(
       loginStart(data).then(() => {
         const referrer = flowRight(
           x => omit(x, 'search'),
-          x =>
-            get(x, 'state.referrer', {
-              pathname: '/',
-            })
+          x => get(x, 'state.referrer', { pathname: '/' })
         )(location)
         if (loggedOutReason === reasonTypes.userRequested) {
           navigate('/', { replace: true })
@@ -65,14 +62,8 @@ const enhance = compose(
   },
   recomposeForm({
     fields: [
-      {
-        fieldName: 'user',
-        valueFromChangeEvent: it => it.target.value,
-      },
-      {
-        fieldName: 'password',
-        valueFromChangeEvent: it => it.target.value,
-      },
+      { fieldName: 'user', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'password', valueFromChangeEvent: it => it.target.value },
     ],
     validate(values) {
       const errors = {}

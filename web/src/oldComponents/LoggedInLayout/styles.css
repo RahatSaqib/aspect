@@ -40,7 +40,6 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin-top: var(--aspect-app-bar-height);
 }
 
 .VerticalAppBar {
