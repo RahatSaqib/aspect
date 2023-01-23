@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
+import LaunchIcon from '@mui/icons-material/Launch'
 import { defineMessages } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
-import ColoredButton from '../../oldComponents/themedReactToolbox/ColoredButton'
+import AspectButton from '../../oldComponents/shared/AspectButton'
 import InventoryItemsList from './list/InventoryItemsList'
 import InventoryLog from './log/InventoryLog'
 
@@ -49,13 +50,21 @@ export const InventoryContainer = () => {
     <InventoryItemsList
       navigate={navigate}
       location={location}
-      navButton={<ColoredButton mountain onClick={handleChange} label={formatMessage(messages.inventoryLogNav)} />}
+      navButton={
+        <AspectButton color="primary" variant="outlined" inverse endIcon={<LaunchIcon />} onClick={handleChange}>
+          {formatMessage(messages.inventoryLogNav)}
+        </AspectButton>
+      }
     />
   ) : (
     <InventoryLog
       navigate={navigate}
       location={location}
-      navButton={<ColoredButton mountain onClick={handleChange} label={formatMessage(messages.suppliesNav)} />}
+      navButton={
+        <AspectButton color="primary" variant="outlined" inverse endIcon={<LaunchIcon />} onClick={handleChange}>
+          {formatMessage(messages.suppliesNav)}
+        </AspectButton>
+      }
     />
   )
 }

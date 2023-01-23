@@ -5,56 +5,7 @@ exports[`Result List component should shallow render correctly when filter for a
   <DetailHeader
     disableBack={true}
     name="Results"
-  >
-    <pure(withProps(withHandlers(Connect(BrowseFilters))))
-      askConfirmationForExport={false}
-      config={[MockFunction]}
-      intl={
-        Object {
-          "$t": [Function],
-          "defaultFormats": Object {},
-          "defaultLocale": "en",
-          "defaultRichTextElements": undefined,
-          "fallbackOnEmptyString": true,
-          "formatDate": [Function],
-          "formatDateTimeRange": [Function],
-          "formatDateToParts": [Function],
-          "formatDisplayName": [Function],
-          "formatList": [Function],
-          "formatListToParts": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatNumberToParts": [Function],
-          "formatPlural": [Function],
-          "formatRelativeTime": [Function],
-          "formatTime": [Function],
-          "formatTimeToParts": [Function],
-          "formats": Object {},
-          "formatters": Object {
-            "getDateTimeFormat": [Function],
-            "getDisplayNames": [Function],
-            "getListFormat": [Function],
-            "getMessageFormat": [Function],
-            "getNumberFormat": [Function],
-            "getPluralRules": [Function],
-            "getRelativeTimeFormat": [Function],
-          },
-          "locale": "en",
-          "messages": Object {},
-          "onError": [Function],
-          "onWarn": [Function],
-          "textComponent": Symbol(react.fragment),
-          "timeZone": undefined,
-        }
-      }
-      location={
-        Object {
-          "search": "",
-        }
-      }
-      navigate={[MockFunction]}
-    />
-  </DetailHeader>
+  />
   <div
     className="Container"
   >
@@ -66,23 +17,158 @@ exports[`Result List component should shallow render correctly when filter for a
     <DataTableCard
       key="DataTableCard--table-Result-list---undefined"
     >
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "flexDirection": "row",
+            "flexWrap": "nowrap",
+            "justifyContent": "flex-end",
+          }
+        }
+      >
+        <BrowseFilters
+          askConfirmationForExport={false}
+          config={[MockFunction]}
+          intl={
+            Object {
+              "$t": [Function],
+              "defaultFormats": Object {},
+              "defaultLocale": "en",
+              "defaultRichTextElements": undefined,
+              "fallbackOnEmptyString": true,
+              "formatDate": [Function],
+              "formatDateTimeRange": [Function],
+              "formatDateToParts": [Function],
+              "formatDisplayName": [Function],
+              "formatList": [Function],
+              "formatListToParts": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatNumberToParts": [Function],
+              "formatPlural": [Function],
+              "formatRelativeTime": [Function],
+              "formatTime": [Function],
+              "formatTimeToParts": [Function],
+              "formats": Object {},
+              "formatters": Object {
+                "getDateTimeFormat": [Function],
+                "getDisplayNames": [Function],
+                "getListFormat": [Function],
+                "getMessageFormat": [Function],
+                "getNumberFormat": [Function],
+                "getPluralRules": [Function],
+                "getRelativeTimeFormat": [Function],
+              },
+              "locale": "en",
+              "messages": Object {},
+              "onError": [Function],
+              "onWarn": [Function],
+              "textComponent": Symbol(react.fragment),
+              "timeZone": undefined,
+            }
+          }
+          location={
+            Object {
+              "search": "",
+            }
+          }
+          navigate={[MockFunction]}
+        />
+        <AspectExportListButton
+          disableCSV={false}
+          disableExcel={true}
+          onExport={[MockFunction]}
+          reportName="Results"
+          visible={false}
+        />
+         
+      </div>
       <DataTableProgressBar
         disabled={true}
       />
-      <AspectExportListButton
-        disableCSV={false}
-        disableExcel={true}
-        onExport={[MockFunction]}
-        reportName="Results"
-        visible={false}
-      />
-      <pure(withHandlers(EmptyList))
+      <ForwardRef(Table)
+        className="ResultDataTable"
+      >
+        <BrowseDataTableHead
+          columns={Immutable.List []}
+          location={
+            Object {
+              "search": "",
+            }
+          }
+          navigate={[MockFunction]}
+          sortColumnDir="desc"
+          sortColumnKey="id"
+        />
+        <ForwardRef(TableBody) />
+      </ForwardRef(Table)>
+      <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
+        intl={
+          Object {
+            "$t": [Function],
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "defaultRichTextElements": undefined,
+            "fallbackOnEmptyString": true,
+            "formatDate": [Function],
+            "formatDateTimeRange": [Function],
+            "formatDateToParts": [Function],
+            "formatDisplayName": [Function],
+            "formatList": [Function],
+            "formatListToParts": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatNumberToParts": [Function],
+            "formatPlural": [Function],
+            "formatRelativeTime": [Function],
+            "formatTime": [Function],
+            "formatTimeToParts": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getDisplayNames": [Function],
+              "getListFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralRules": [Function],
+              "getRelativeTimeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "onError": [Function],
+            "onWarn": [Function],
+            "textComponent": Symbol(react.fragment),
+            "timeZone": undefined,
+          }
+        }
         location={
           Object {
             "search": "",
           }
         }
         navigate={[MockFunction]}
+        pageAt={0}
+        pageSize={10}
+        pageSizeButtonKeys={
+          Array [
+            10,
+            25,
+            50,
+            100,
+          ]
+        }
+        paginatorStatus={
+          Object {
+            "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+        one {# result}
+        other {# results}
+      }",
+            "id": "pages.ResultList.paginatorStatus",
+          }
+        }
+        timedMessageUsed={false}
+        total={0}
       />
     </DataTableCard>
   </div>

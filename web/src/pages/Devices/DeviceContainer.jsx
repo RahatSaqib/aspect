@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
+import LaunchIcon from '@mui/icons-material/Launch'
 import { defineMessages } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
-import ColoredButton from '../../oldComponents/themedReactToolbox/ColoredButton'
-import DeviceList from './List/DeviceList'
+import AspectButton from '../../oldComponents/shared/AspectButton'
+import DeviceList from './Status/DeviceList'
 import Workload from './Workload'
 
 const messages = defineMessages({
@@ -35,11 +36,19 @@ export const DeviceContainer = () => {
 
   return activeTab === 'statuses' ? (
     <DeviceList
-      navButton={<ColoredButton mountain onClick={handleChange} label={formatMessage(messages.workloadNav)} />}
+      navButton={
+        <AspectButton color="primary" variant="outlined" inverse endIcon={<LaunchIcon />} onClick={handleChange}>
+          {formatMessage(messages.workloadNav)}
+        </AspectButton>
+      }
     />
   ) : (
     <Workload
-      navButton={<ColoredButton mountain onClick={handleChange} label={formatMessage(messages.statusesNav)} />}
+      navButton={
+        <AspectButton color="primary" variant="outlined" inverse endIcon={<LaunchIcon />} onClick={handleChange}>
+          {formatMessage(messages.statusesNav)}
+        </AspectButton>
+      }
     />
   )
 }

@@ -6,11 +6,6 @@
   padding-right: 8px;
 }
 
-.Content-Detail {
-  flex-grow: 1;
-  display: block;
-}
-
 .Content {
   flex-grow: 1;
   display: flex;

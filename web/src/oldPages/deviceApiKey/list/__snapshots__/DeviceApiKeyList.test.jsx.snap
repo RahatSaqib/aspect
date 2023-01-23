@@ -6,47 +6,25 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     disableBack={true}
     name="Device API Keys"
   >
-    <pure(withProps(withHandlers(Connect(BrowseFilters))))
-      intl={
-        Object {
-          "formatDate": [Function],
-          "formatHTMLMessage": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatPlural": [Function],
-          "formatRelative": [Function],
-          "formatTime": [Function],
-          "now": [Function],
-        }
-      }
-      location={
-        Object {
-          "search": "",
-        }
-      }
-      navigate={[Function]}
-      onClickExport={[Function]}
+    <AspectButton
+      browseButton={true}
+      color="primary"
+      onClick={[Function]}
+      type="button"
+      variant="contained"
     >
-      <AspectButton
-        browseButton={true}
-        color="primary"
-        onClick={[Function]}
-        type="button"
-        variant="contained"
-      >
-        Generate
-      </AspectButton>
-      <AspectButton
-        browseButton={true}
-        color="primary"
-        disabled={true}
-        onClick={[Function]}
-        type="button"
-        variant="contained"
-      >
-        Assign
-      </AspectButton>
-    </pure(withProps(withHandlers(Connect(BrowseFilters))))>
+      Generate
+    </AspectButton>
+    <AspectButton
+      browseButton={true}
+      color="primary"
+      disabled={true}
+      onClick={[Function]}
+      type="button"
+      variant="contained"
+    >
+      Assign
+    </AspectButton>
   </DetailHeader>
   <div
     className="Container"
@@ -108,23 +86,142 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     <DataTableCard
       key="DataTableCard--table-undefined"
     >
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "flexDirection": "row",
+            "flexWrap": "nowrap",
+            "justifyContent": "flex-end",
+          }
+        }
+      >
+        <BrowseFilters
+          intl={
+            Object {
+              "formatDate": [Function],
+              "formatHTMLMessage": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatPlural": [Function],
+              "formatRelative": [Function],
+              "formatTime": [Function],
+              "now": [Function],
+            }
+          }
+          location={
+            Object {
+              "search": "",
+            }
+          }
+          navigate={[Function]}
+          onClickExport={[Function]}
+        />
+        <AspectExportListButton
+          disableCSV={false}
+          disableExcel={false}
+          onExport={[Function]}
+          reportName="DeviceApiKey"
+          visible={false}
+        />
+      </div>
       <DataTableProgressBar
         disabled={true}
       />
-      <AspectExportListButton
-        disableCSV={false}
-        disableExcel={false}
-        onExport={[Function]}
-        reportName="DeviceApiKey"
-        visible={false}
-      />
-      <pure(withHandlers(EmptyList))
+      <ForwardRef(Table)
+        className="DeviceApiKeyDataTable"
+      >
+        <BrowseDataTableHead
+          columns={
+            Array [
+              Object {
+                "key": "id",
+                "label": <AspectCheckbox
+                  checked={true}
+                  disabled={true}
+                  name="selectAll"
+                  onChange={[Function]}
+                />,
+              },
+              Object {
+                "key": "createdOn",
+                "label": "Created On",
+                "sortable": true,
+              },
+              Object {
+                "key": "token",
+                "label": "Key",
+                "sortable": true,
+              },
+              Object {
+                "key": "partner",
+                "label": "Partner",
+                "sortable": true,
+              },
+              Object {
+                "key": "country",
+                "label": "Country",
+                "sortable": true,
+              },
+              Object {
+                "key": "site",
+                "label": "Site",
+                "sortable": true,
+              },
+              Object {
+                "key": "device",
+                "label": "Device",
+                "sortable": true,
+              },
+              Object {
+                "key": "revoked",
+                "label": "Revoked",
+                "sortable": true,
+              },
+            ]
+          }
+          location={
+            Object {
+              "search": "",
+            }
+          }
+          navigate={[Function]}
+          sortColumnDir="asc"
+          sortColumnKey="createdOn"
+        />
+        <ForwardRef(TableBody) />
+      </ForwardRef(Table)>
+      <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
+        intl={
+          Object {
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "now": [Function],
+          }
+        }
         location={
           Object {
             "search": "",
           }
         }
         navigate={[Function]}
+        pageAt={0}
+        pageSize={10}
+        paginatorStatus={
+          Object {
+            "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# device API key}
+      other {# device API keys}
+    }",
+            "id": "pages.DeviceApiKeyList.paginatorStatus",
+          }
+        }
+        total={0}
       />
     </DataTableCard>
   </div>
@@ -137,47 +234,25 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     disableBack={true}
     name="Device API Keys"
   >
-    <pure(withProps(withHandlers(Connect(BrowseFilters))))
-      intl={
-        Object {
-          "formatDate": [Function],
-          "formatHTMLMessage": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatPlural": [Function],
-          "formatRelative": [Function],
-          "formatTime": [Function],
-          "now": [Function],
-        }
-      }
-      location={
-        Object {
-          "search": "",
-        }
-      }
-      navigate={[Function]}
-      onClickExport={[Function]}
+    <AspectButton
+      browseButton={true}
+      color="primary"
+      onClick={[Function]}
+      type="button"
+      variant="contained"
     >
-      <AspectButton
-        browseButton={true}
-        color="primary"
-        onClick={[Function]}
-        type="button"
-        variant="contained"
-      >
-        Generate
-      </AspectButton>
-      <AspectButton
-        browseButton={true}
-        color="primary"
-        disabled={true}
-        onClick={[Function]}
-        type="button"
-        variant="contained"
-      >
-        Assign
-      </AspectButton>
-    </pure(withProps(withHandlers(Connect(BrowseFilters))))>
+      Generate
+    </AspectButton>
+    <AspectButton
+      browseButton={true}
+      color="primary"
+      disabled={true}
+      onClick={[Function]}
+      type="button"
+      variant="contained"
+    >
+      Assign
+    </AspectButton>
   </DetailHeader>
   <div
     className="Container"
@@ -239,15 +314,47 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     <DataTableCard
       key="DataTableCard--table-undefined"
     >
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "flexDirection": "row",
+            "flexWrap": "nowrap",
+            "justifyContent": "flex-end",
+          }
+        }
+      >
+        <BrowseFilters
+          intl={
+            Object {
+              "formatDate": [Function],
+              "formatHTMLMessage": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatPlural": [Function],
+              "formatRelative": [Function],
+              "formatTime": [Function],
+              "now": [Function],
+            }
+          }
+          location={
+            Object {
+              "search": "",
+            }
+          }
+          navigate={[Function]}
+          onClickExport={[Function]}
+        />
+        <AspectExportListButton
+          disableCSV={false}
+          disableExcel={false}
+          onExport={[Function]}
+          reportName="DeviceApiKey"
+          visible={true}
+        />
+      </div>
       <DataTableProgressBar
         disabled={true}
-      />
-      <AspectExportListButton
-        disableCSV={false}
-        disableExcel={false}
-        onExport={[Function]}
-        reportName="DeviceApiKey"
-        visible={true}
       />
       <ForwardRef(Table)
         className="DeviceApiKeyDataTable"

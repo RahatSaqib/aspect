@@ -9,8 +9,8 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import {
   getFilters,
   sanitizeFiltersStringBy,
@@ -130,54 +130,57 @@ export const InventoryLogWithProps = ({
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack>
-        <BrowseFilters
-          navigate={navigate}
-          location={location}
-          intl={intl}
-          config={reducedFilters}
-          dateFilterLabel={intl.formatMessage(messages.date)}
-        >
-          {navButton}
-        </BrowseFilters>
+        {navButton}
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
-          <DataTableProgressBar disabled={!isLoading} />
-          {!hasItems && <BrowseEmptyList navigate={navigate} location={location} />}
-          {hasItems && (
-            <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>
-              <InventoryLogDataTableHead
-                navigate={navigate}
-                location={location}
-                sortColumnKey={sortCol}
-                sortColumnDir={sortDir}
-                columns={columns}
-              />
-              <TableBody>
-                {items.map((inventoryLogItem, index) => (
-                  <InventoryLogTableRow
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`InventoryLog---${location.key}--${index}`}
-                    inventoryLogItem={inventoryLogItem}
-                  />
-                ))}
-              </TableBody>
-            </InventoryLogDataTable>
-          )}
-          {hasItems && (
-            <BrowseTablePaginator
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <BrowseFilters
               navigate={navigate}
               location={location}
               intl={intl}
-              pageSizeButtonKeys={[10, 25, 50, 100]}
-              paginatorStatus={messages.paginatorStatus}
-              total={total}
-              pageAt={pageAt}
-              pageSize={pageSize}
+              config={reducedFilters}
+              dateFilterLabel={intl.formatMessage(messages.date)}
             />
+          </div>
+
+          <DataTableProgressBar disabled={!isLoading} />
+          {!hasItems ? (
+            <BrowseEmptyList navigate={navigate} location={location} />
+          ) : (
+            <>
+              <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>
+                <InventoryLogDataTableHead
+                  navigate={navigate}
+                  location={location}
+                  sortColumnKey={sortCol}
+                  sortColumnDir={sortDir}
+                  columns={columns}
+                />
+                <TableBody>
+                  {items.map((inventoryLogItem, index) => (
+                    <InventoryLogTableRow
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={`InventoryLog---${location.key}--${index}`}
+                      inventoryLogItem={inventoryLogItem}
+                    />
+                  ))}
+                </TableBody>
+              </InventoryLogDataTable>
+              <BrowseTablePaginator
+                navigate={navigate}
+                location={location}
+                intl={intl}
+                pageSizeButtonKeys={[10, 25, 50, 100]}
+                paginatorStatus={messages.paginatorStatus}
+                total={total}
+                pageAt={pageAt}
+                pageSize={pageSize}
+              />
+            </>
           )}
-        </DataTableCard>{' '}
+        </DataTableCard>
       </div>
     </>
   )

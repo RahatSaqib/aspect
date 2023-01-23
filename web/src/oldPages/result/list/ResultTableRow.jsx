@@ -5,10 +5,10 @@ import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import isNumber from 'lodash/isNumber'
 import partial from 'lodash/partial'
+import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import formatters from '../formatters'
 
@@ -75,12 +75,12 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         ))
       )}
       <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
-      <PermissionsProvider permissions={['+reporter']}>
+      <PermissionChecker permissions={['+reporter']}>
         <TableCell hiddenOn="md">
           {formatMessage(messages[result.get('resultWorkflowStatusI18nkey')], null, result.get('resultWorkflowStatus'))}
         </TableCell>
-      </PermissionsProvider>
-      <PermissionsProvider permissions={['+reporter']}>
+      </PermissionChecker>
+      <PermissionChecker permissions={['+reporter']}>
         <TableCell hiddenOn="md">
           {result.get('treatmentStatusInfo') && (
             <Tooltip
@@ -95,7 +95,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
             </Tooltip>
           )}
         </TableCell>
-      </PermissionsProvider>
+      </PermissionChecker>
       <TableCell hiddenOn="xs">{patientId}</TableCell>
     </TableRow>
   )

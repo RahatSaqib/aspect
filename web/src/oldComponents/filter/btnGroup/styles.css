@@ -1,0 +1,16 @@
+@import '../../../theme/variables.css';
+
+.FiltersBtnGroup {
+  align-items: flex-end !important;
+}
+
+.Button {
+  font-weight: var(--lato-font-weight-bold) !important;
+  text-transform: none !important;
+  margin-right: 8px !important;
+}
+
+.Button > .Button__icon {
+  margin-left: 5px;
+  margin-right: 0;
+}

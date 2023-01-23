@@ -14,8 +14,8 @@ import useWorkload from '../../../hooks/workload/useWorkload'
 import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { reduceFiltersConfig, getFilters, sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
@@ -132,21 +132,21 @@ const Workload = ({ navButton }) => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack>
-        <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
-          {navButton}
-        </BrowseFilters>
+        {navButton}
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.workloadTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+            <AspectExportListButton onExport={onExcelClick} visible={workloadList.length} reportName="DeviceWorkload" />
+          </div>
+
           <DataTableProgressBar disabled={!isLoading} />
-          {workloadList.length ? (
+          {workloadList.length === 0 ? (
+            <BrowseEmptyList navigate={navigate} location={location} />
+          ) : (
             <>
-              <AspectExportListButton
-                onExport={onExcelClick}
-                visible={workloadList.length}
-                reportName="DeviceWorkload"
-              />
               <Table className={cssClasses('InventoryDataTable')}>
                 <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
                 <TableBody>
@@ -165,8 +165,6 @@ const Workload = ({ navButton }) => {
                 pageSize={pageSize}
               />
             </>
-          ) : (
-            <BrowseEmptyList navigate={navigate} location={location} />
           )}
         </DataTableCard>
       </div>

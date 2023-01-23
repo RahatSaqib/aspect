@@ -56,7 +56,7 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
           )
         )}
       </DetailHeader>
-      <Box component="main" sx={{ pt: 9, pr: 1, pl: 1, pb: 1 }}>
+      <Box component="main" sx={{ p: 1 }}>
         <Card>
           <CardContent>
             <AspectForm config={formConfig} />

@@ -56,14 +56,6 @@
   color: var(--aspect-color-grey-3);
 }
 
-.AppBar__appBar--xs {
-  composes: pure-visible-xs from '../pureGrids/pure-grids-responsive-min.css';
-}
-
-.AppBar__appBar--sm {
-  composes: pure-hidden-xs from '..//pureGrids/pure-grids-responsive-min.css';
-}
-
 .ConfluenceIcon {
   composes: icon;
 }

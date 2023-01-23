@@ -8,6 +8,7 @@ import times from 'lodash/times'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import LocationSelector from '../../../../components/LocationSelector'
+import PermissionChecker from '../../../../components/PermissionChecker'
 import SiteListSelect from '../../../../components/SiteListSelect'
 import SiteTagInput from '../../../../components/SiteTagInput'
 import TimezoneSelect from '../../../../components/TimezoneSelect'
@@ -20,7 +21,6 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { ReadOnlyField } from '../../../../oldComponents/shared/ReadOnlyFields'
 import { useAuthState } from '../../../../providers/AuthProvider'
-import PermissionsProvider from '../../../../providers/PermissionsProvider'
 import messages from '../messages'
 import styles from '../SiteDetail.css'
 import { getLatLongFromAddress, convertToFloat } from './address'
@@ -367,7 +367,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
             {isNew ? formatMessage(messages.buttonCreate) : formatMessage(messages.buttonUpdate)}
           </Button>
           {isNew ? null : (
-            <PermissionsProvider permissions={['site:admin']}>
+            <PermissionChecker permissions={['site:admin']}>
               <Button
                 disabled={!isPristine}
                 style={{
@@ -382,7 +382,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
               >
                 {formatMessage(messages.buttonDelete)}
               </Button>
-            </PermissionsProvider>
+            </PermissionChecker>
           )}
 
           <Button

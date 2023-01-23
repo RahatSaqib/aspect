@@ -11,8 +11,8 @@ import useI18n from '../../../hooks/useI18n'
 import { commonDefinitions } from '../../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { isCountryFilterHidden } from '../utils'
-import styles from './FiltersBtnGroup.css'
 import messages from './messages'
+import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 

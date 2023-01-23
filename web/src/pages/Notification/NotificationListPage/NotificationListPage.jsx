@@ -7,7 +7,7 @@ import AspectTable from '../../../components/AspectTable'
 import DetailHeader from '../../../components/DetailHeader'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
 import useI18n from '../../../hooks/useI18n'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { useAuthState } from '../../../providers/AuthProvider'
@@ -31,26 +31,27 @@ const NotificationList = () => {
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.notificationsTitle)} disableBack>
-        <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
-          <AspectButton
-            type="button"
-            color="primary"
-            variant="contained"
-            browseButton
-            onClick={event => {
-              event.stopPropagation()
-              navigate('/browse/notification/create')
-            }}
-          >
-            {intl.formatMessage(messages.createNotification)}
-          </AspectButton>
-        </BrowseFilters>
+        <AspectButton
+          type="button"
+          color="primary"
+          variant="contained"
+          browseButton
+          onClick={event => {
+            event.stopPropagation()
+            navigate('/browse/notification/create')
+          }}
+        >
+          {intl.formatMessage(messages.createNotification)}
+        </AspectButton>
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
         <Box component="main" sx={{ pr: 1, pl: 1, pb: 1 }}>
           <Card>
             <CardContent>
+              <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+                <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
+              </div>
               <AspectTable baseConfig={tableConfig} consts={NOTIFICATION_LIST} FILTERS_CONFIG={FILTERS_CONFIG} />
             </CardContent>
           </Card>

@@ -64,11 +64,11 @@ export class DateRangeSelector extends PureComponent {
     enableWeekFilter: true,
   }
 
-  state = {
-    rangeMode: 'any',
-  }
+  state = { rangeMode: 'any' }
 
-  getDaysSelectList = formatDayMonthFunc => {
+  dayMonthFormat = getAspectDisplayPreferences().toJS().dayMonthFormat
+
+  getDaysSelectList = () => {
     const {
       intl: { formatMessage, formatDate },
     } = this.props
@@ -80,11 +80,11 @@ export class DateRangeSelector extends PureComponent {
     }
     return [
       {
-        label: `${formatMessage(messages.today)} (${formatDayMonthFunc(dateFrom)})`,
+        label: `${formatMessage(messages.today)} (${this.formatDayMonthFunc(dateFrom)})`,
         ...this.getDateRange(startOfDay(dateFrom), endOfDay(dateFrom)),
       },
       {
-        label: `${formatMessage(messages.yesterday)} (${formatDayMonthFunc(yesterday)})`,
+        label: `${formatMessage(messages.yesterday)} (${this.formatDayMonthFunc(yesterday)})`,
         ...this.getDateRange(startOfDay(yesterday), endOfDay(yesterday)),
       },
       ...map(daysBeforeYesterday, day => {
@@ -101,7 +101,7 @@ export class DateRangeSelector extends PureComponent {
     ]
   }
 
-  getWeeksSelectList = formatDayMonthFunc => {
+  getWeeksSelectList = () => {
     const {
       intl: { formatMessage },
     } = this.props
@@ -122,29 +122,29 @@ export class DateRangeSelector extends PureComponent {
         ...this.getDateRange(startOfDay(last7DaysStart), endOfDay(dateFrom)),
       },
       {
-        label: `${formatMessage(messages.thisWeek)} (${formatDayMonthFunc(thisWeekStart)} - ${formatDayMonthFunc(
-          thisWeekEnd
-        )})`,
+        label: `${formatMessage(messages.thisWeek)} (${this.formatDayMonthFunc(
+          thisWeekStart
+        )} - ${this.formatDayMonthFunc(thisWeekEnd)})`,
         ...this.getDateRange(thisWeekStart, thisWeekEnd),
       },
       {
-        label: `${formatMessage(messages.lastWeek)} (${formatDayMonthFunc(lastWeekStart)} - ${formatDayMonthFunc(
-          lastWeekEnd
-        )})`,
+        label: `${formatMessage(messages.lastWeek)} (${this.formatDayMonthFunc(
+          lastWeekStart
+        )} - ${this.formatDayMonthFunc(lastWeekEnd)})`,
         ...this.getDateRange(lastWeekStart, lastWeekEnd),
       },
       ...map(weeksBeforeLast, dayInWeek => {
         const weekStart = startOfWeek(dayInWeek)
         const weekEnd = endOfWeek(dayInWeek)
         return {
-          label: `${formatDayMonthFunc(weekStart)} - ${formatDayMonthFunc(weekEnd)}`,
+          label: `${this.formatDayMonthFunc(weekStart)} - ${this.formatDayMonthFunc(weekEnd)}`,
           ...this.getDateRange(startOfDay(weekStart), endOfDay(weekEnd)),
         }
       }),
     ]
   }
 
-  getMonthsSelectList = formatDayMonthFunc => {
+  getMonthsSelectList = () => {
     const {
       intl: { formatMessage, formatDate },
     } = this.props
@@ -165,15 +165,15 @@ export class DateRangeSelector extends PureComponent {
         ...this.getDateRange(startOfDay(last30DaysStart), endOfDay(dateFrom)),
       },
       {
-        label: `${formatMessage(messages.thisMonth)} (${formatDayMonthFunc(thisMonthStart)} - ${formatDayMonthFunc(
-          thisMonthEnd
-        )})`,
+        label: `${formatMessage(messages.thisMonth)} (${this.formatDayMonthFunc(
+          thisMonthStart
+        )} - ${this.formatDayMonthFunc(thisMonthEnd)})`,
         ...this.getDateRange(thisMonthStart, thisMonthEnd),
       },
       {
-        label: `${formatMessage(messages.lastMonth)} (${formatDayMonthFunc(lastMonthStart)} - ${formatDayMonthFunc(
-          lastMonthEnd
-        )})`,
+        label: `${formatMessage(messages.lastMonth)} (${this.formatDayMonthFunc(
+          lastMonthStart
+        )} - ${this.formatDayMonthFunc(lastMonthEnd)})`,
         ...this.getDateRange(lastMonthStart, lastMonthEnd),
       },
       ...map(monthsBeforeLast, dayInMonth => {
@@ -257,33 +257,24 @@ export class DateRangeSelector extends PureComponent {
     ]
   }
 
-  getMinDateFilterName() {
-    const { minFilterName } = this.props
-    return minFilterName
-  }
-
-  getMaxDateFilterName() {
-    const { maxFilterName } = this.props
-    return maxFilterName
-  }
-
   getMinDate() {
-    const minDate = this.props[this.getMinDateFilterName()]
+    const minDate = this.props[this.props.minFilterName]
     return minDate && new Date(minDate)
   }
 
   getMaxDate() {
-    const maxDate = this.props[this.getMaxDateFilterName()]
-
+    const maxDate = this.props[this.props.maxFilterName]
     return maxDate && new Date(maxDate)
   }
 
   getDateRange(minDate, maxDate) {
     const values = {}
-    if (minDate) values[this.getMinDateFilterName()] = minDate
-    if (maxDate) values[this.getMaxDateFilterName()] = maxDate
+    if (minDate) values[this.props.minFilterName] = minDate
+    if (maxDate) values[this.props.maxFilterName] = maxDate
     return values
   }
+
+  formatDayMonthFunc = date => format(date, this.dayMonthFormat)
 
   handleMaxDateChange = date => {
     this.props.onChangeDate(this.getDateRange(null, endOfDay(date).toJSON()))
@@ -296,16 +287,37 @@ export class DateRangeSelector extends PureComponent {
   handleDateRangeChange = ({ target: { value } }) => {
     this.props.onChangeDate(
       value
-        ? this.getDateRange(value[this.getMinDateFilterName()].toJSON(), value[this.getMaxDateFilterName()].toJSON())
+        ? this.getDateRange(value[this.props.minFilterName].toJSON(), value[this.props.maxFilterName].toJSON())
         : this.getDateRange()
     )
   }
 
   handleRangeModeChange = ({ target: { value } }) => {
-    this.setState({
-      rangeMode: value,
+    let defVal
+    this.setState({ rangeMode: value })
+    switch (value) {
+      case 'day':
+        ;[defVal] = this.getDaysSelectList()
+        break
+      case 'week':
+        ;[defVal] = this.getWeeksSelectList()
+        break
+      case 'month':
+        ;[defVal] = this.getMonthsSelectList()
+        break
+      case 'quarter':
+        ;[defVal] = this.getQuartersSelectList()
+        break
+      case 'year':
+        ;[defVal] = this.getYearsSelectList()
+        break
+      default: // any and custom
+        defVal = this.getDateRange()
+    }
+    this.props.onChangeDate({
+      [this.props.minFilterName]: defVal[this.props.minFilterName],
+      [this.props.maxFilterName]: defVal[this.props.maxFilterName],
     })
-    this.props.onChangeDate(this.getDateRange())
   }
 
   render() {
@@ -320,17 +332,17 @@ export class DateRangeSelector extends PureComponent {
       enableQuarterFilter,
       enableYearFilter,
     } = this.props
-    const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
+    // const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
     const { formatMessage } = intl
-    const formatDayMonthFunc = date => format(date, dayMonthFormat)
+    // const formatDayMonthFunc = date => format(date, this.dayMonthFormat)
 
     const dropDownSelectItems = {
       any: [],
-      day: this.getDaysSelectList(formatDayMonthFunc),
-      week: this.getWeeksSelectList(formatDayMonthFunc),
-      month: this.getMonthsSelectList(formatDayMonthFunc),
-      quarter: this.getQuartersSelectList(formatDayMonthFunc),
-      year: this.getYearsSelectList(formatDayMonthFunc),
+      day: this.getDaysSelectList(),
+      week: this.getWeeksSelectList(),
+      month: this.getMonthsSelectList(),
+      quarter: this.getQuartersSelectList(),
+      year: this.getYearsSelectList(),
       custom: [],
     }[this.state.rangeMode]
 
@@ -416,8 +428,8 @@ export class DateRangeSelector extends PureComponent {
                   >
                     {dropDownSelectItems.map(dropDownSelectItem => (
                       <MenuItem
-                        key={`${dropDownSelectItem[this.getMinDateFilterName()].getTime()}-${dropDownSelectItem[
-                          this.getMaxDateFilterName()
+                        key={`${dropDownSelectItem[this.props.minFilterName].getTime()}-${dropDownSelectItem[
+                          this.props.maxFilterName
                         ].getTime()}`}
                         value={dropDownSelectItem}
                       >

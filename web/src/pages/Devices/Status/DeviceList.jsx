@@ -22,20 +22,20 @@ import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ExportListButton from '../../../components/AspectExportListButton'
 import DetailHeader from '../../../components/DetailHeader'
+import PermissionChecker from '../../../components/PermissionChecker/index'
 import { DEVICE_LIST } from '../../../components/QueryFetch/Device/index'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
-import PermissionsProvider from '../../../providers/PermissionsProvider/index'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
@@ -254,78 +254,80 @@ const DeviceList = ({ navButton }) => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.devicesTitle)} disableBack>
-        <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
-          {navButton}
-          <PermissionsProvider permissions={['device:admin']}>
-            <AspectButton
-              onClick={() => {
-                setConfirmationVisible(false)
-                setMergeDeviceModalOpen(true)
-              }}
-              type="button"
-              color="primary"
-              variant="contained"
-              browseButton
-              disabled={isProcessingMergeDevices}
-            >
-              {formatMessage(isProcessingMergeDevices ? messages.mergingDevices : messages.mergeDevices)}
-              {isProcessingMergeDevices ? (
-                <CircularProgress
-                  size="16px"
-                  thickness={5}
-                  disableShrink
-                  sx={{
-                    color: '#fff',
-                    marginLeft: '15px',
-                  }}
-                />
-              ) : null}
-            </AspectButton>
-          </PermissionsProvider>
-        </BrowseFilters>
+        <PermissionChecker permissions={['device:admin']}>
+          <AspectButton
+            onClick={() => {
+              setConfirmationVisible(false)
+              setMergeDeviceModalOpen(true)
+            }}
+            type="button"
+            color="primary"
+            variant="contained"
+            browseButton
+            disabled={isProcessingMergeDevices}
+          >
+            {formatMessage(isProcessingMergeDevices ? messages.mergingDevices : messages.mergeDevices)}
+            {isProcessingMergeDevices ? (
+              <CircularProgress
+                size="16px"
+                thickness={5}
+                disableShrink
+                sx={{
+                  color: '#fff',
+                  marginLeft: '15px',
+                }}
+              />
+            ) : null}
+          </AspectButton>
+        </PermissionChecker>
+        {navButton}
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.devicesTitle)} />
-
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+            <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
+          </div>
+
           <DataTableProgressBar disabled={!isLoading} />
-          <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
-          {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-          {!items.currentIdList.isEmpty() && (
-            <DeviceDataTable className={cssClasses('DeviceDataTable')}>
-              <DeviceDataTableHead
+          {items.currentIdList.length === 0 ? (
+            <BrowseEmptyList navigate={navigate} location={location} />
+          ) : (
+            <>
+              <DeviceDataTable className={cssClasses('DeviceDataTable')}>
+                <DeviceDataTableHead
+                  navigate={navigate}
+                  location={location}
+                  sortColumnKey={sortCol}
+                  sortColumnDir={sortDir}
+                  columns={getColumns(formatMessage)}
+                />
+                <TableBody>
+                  {!items.currentIdList.isEmpty() &&
+                    items.currentIdList
+                      .map(id => items.byId.get(id))
+                      .map(device => (
+                        <DeviceDataTableRow
+                          key={device.get('id')}
+                          device={device}
+                          onClick={onRowClick}
+                          onAlertClick={onAlertClick}
+                          displayPreferences={displayPreferences}
+                          data-device-id={device.get('id')}
+                        />
+                      ))}
+                </TableBody>
+              </DeviceDataTable>
+              <BrowseTablePaginator
                 navigate={navigate}
                 location={location}
-                sortColumnKey={sortCol}
-                sortColumnDir={sortDir}
-                columns={getColumns(formatMessage)}
+                paginatorStatus={messages.paginatorStatus}
+                total={total}
+                pageAt={page}
+                pageSize={size}
               />
-              <TableBody>
-                {!items.currentIdList.isEmpty() &&
-                  items.currentIdList
-                    .map(id => items.byId.get(id))
-                    .map(device => (
-                      <DeviceDataTableRow
-                        key={device.get('id')}
-                        device={device}
-                        onClick={onRowClick}
-                        onAlertClick={onAlertClick}
-                        displayPreferences={displayPreferences}
-                        data-device-id={device.get('id')}
-                      />
-                    ))}
-              </TableBody>
-            </DeviceDataTable>
-          )}
-          {!items.currentIdList.isEmpty() && (
-            <BrowseTablePaginator
-              navigate={navigate}
-              location={location}
-              paginatorStatus={messages.paginatorStatus}
-              total={total}
-              pageAt={page}
-              pageSize={size}
-            />
+            </>
           )}
         </DataTableCard>
         <Dialog open={isMergeDeviceModalOpen} onClose={() => setMergeDeviceModalOpen(false)}>

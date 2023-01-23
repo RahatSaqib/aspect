@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react'
+import LaunchIcon from '@mui/icons-material/Launch'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import DetailHeader from '../../../components/DetailHeader'
 import useI18n from '../../../hooks/useI18n'
-import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 import messages from './messages'
 import OperationalDailyStatus from './OperationalDailyStatus'
 import OperationalDashBoard from './OperationalDashBoard'
@@ -22,11 +23,15 @@ export const OperationalData = () => {
       {activeTab === 'dashboard' ? (
         <>
           <DetailHeader name={formatMessage(messages.dashboard)} disableBack>
-            <ColoredButton
-              mountain
+            <AspectButton
+              color="primary"
+              variant="outlined"
+              inverse
+              endIcon={<LaunchIcon />}
               onClick={() => setActiveTab('dailyStatus')}
-              label={formatMessage(messages.dailyStatusNav)}
-            />
+            >
+              {formatMessage(messages.dailyStatusNav)}
+            </AspectButton>
           </DetailHeader>
           <div className={cssClasses('Container')}>
             <OperationalDashBoard />
@@ -35,11 +40,15 @@ export const OperationalData = () => {
       ) : (
         <>
           <DetailHeader name={formatMessage(messages.dailyStatus)} disableBack>
-            <ColoredButton
-              mountain
+            <AspectButton
+              color="primary"
+              variant="outlined"
+              inverse
+              endIcon={<LaunchIcon />}
               onClick={() => setActiveTab('dashboard')}
-              label={formatMessage(messages.dashboardNav)}
-            />
+            >
+              {formatMessage(messages.dashboardNav)}
+            </AspectButton>
           </DetailHeader>
           <div className={cssClasses('Container')}>
             <OperationalDailyStatus />

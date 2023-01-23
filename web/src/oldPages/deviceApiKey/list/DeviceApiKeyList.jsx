@@ -14,8 +14,8 @@ import { bindActionCreators } from 'redux'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
@@ -362,27 +362,19 @@ export const DeviceApiKeyList = ({
 }) => (
   <>
     <DetailHeader name={intl.formatMessage(messages.title)} disableBack>
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        intl={intl}
-        config={reducedFilters}
-        onClickExport={onExportClick}
+      <AspectButton onClick={onOpenGeneratorDialog} type="button" color="primary" variant="contained" browseButton>
+        {intl.formatMessage(messages.generate)}
+      </AspectButton>
+      <AspectButton
+        type="button"
+        color="primary"
+        variant="contained"
+        onClick={onOpenAssignerDialog}
+        disabled={isEmpty(assignerValues.deviceApiKeyIds)}
+        browseButton
       >
-        <AspectButton onClick={onOpenGeneratorDialog} type="button" color="primary" variant="contained" browseButton>
-          {intl.formatMessage(messages.generate)}
-        </AspectButton>
-        <AspectButton
-          type="button"
-          color="primary"
-          variant="contained"
-          onClick={onOpenAssignerDialog}
-          disabled={isEmpty(assignerValues.deviceApiKeyIds)}
-          browseButton
-        >
-          {intl.formatMessage(messages.assign)}
-        </AspectButton>
-      </BrowseFilters>
+        {intl.formatMessage(messages.assign)}
+      </AspectButton>
     </DetailHeader>
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.title)} />
@@ -406,96 +398,107 @@ export const DeviceApiKeyList = ({
         />
       </div>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
-        <AspectExportListButton
-          onExport={onExportClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName="DeviceApiKey"
-        />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-        {!items.currentIdList.isEmpty() && (
-          <DeviceApiKeyDataTable className={cssClasses('DeviceApiKeyDataTable')}>
-            <DeviceApiKeyDataTableHead
-              navigate={navigate}
-              location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={[
-                {
-                  key: 'id',
-                  label: (
-                    <AspectCheckbox
-                      name="selectAll"
-                      disabled={selectableIds.isEmpty()}
-                      checked={selectableIds.equals(Immutable.List(assignerValues.deviceApiKeyIds).sort())}
-                      onChange={onSelectAllChange}
-                    />
-                  ),
-                },
-                {
-                  key: 'createdOn',
-                  label: intl.formatMessage(messages.createdOn),
-                  sortable: true,
-                },
-                {
-                  key: 'token',
-                  label: intl.formatMessage(messages.token),
-                  sortable: true,
-                },
-                {
-                  key: 'partner',
-                  label: intl.formatMessage(messages.partner),
-                  sortable: true,
-                },
-                {
-                  key: 'country',
-                  label: intl.formatMessage(messages.country),
-                  sortable: true,
-                },
-                {
-                  key: 'site',
-                  label: intl.formatMessage(messages.site),
-                  sortable: true,
-                },
-                {
-                  key: 'device',
-                  label: intl.formatMessage(messages.device),
-                  sortable: true,
-                },
-                {
-                  key: 'revoked',
-                  label: intl.formatMessage(messages.revoked),
-                  sortable: true,
-                },
-              ]}
-            />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(deviceApiKey => (
-                  <DeviceApiKeyDataTableRow
-                    key={deviceApiKey.get('id')}
-                    intl={intl}
-                    deviceApiKey={deviceApiKey}
-                    disabled={!selectableIds.includes(deviceApiKey.get('id'))}
-                    checked={assignerValues.deviceApiKeyIds.indexOf(deviceApiKey.get('id')) !== -1}
-                    onSelectedChange={onSelectedChange}
-                    onRevokedChange={onRevokedChange}
-                  />
-                ))}
-            </TableBody>
-          </DeviceApiKeyDataTable>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
+        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+          <BrowseFilters
             navigate={navigate}
             location={location}
             intl={intl}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
+            config={reducedFilters}
+            onClickExport={onExportClick}
           />
+          <AspectExportListButton
+            onExport={onExportClick}
+            visible={!items.currentIdList.isEmpty()}
+            reportName="DeviceApiKey"
+          />
+        </div>
+        <DataTableProgressBar disabled={!table.loading} />
+
+        {items.currentIdList.length === 0 ? (
+          <BrowseEmptyList navigate={navigate} location={location} />
+        ) : (
+          <>
+            <DeviceApiKeyDataTable className={cssClasses('DeviceApiKeyDataTable')}>
+              <DeviceApiKeyDataTableHead
+                navigate={navigate}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={[
+                  {
+                    key: 'id',
+                    label: (
+                      <AspectCheckbox
+                        name="selectAll"
+                        disabled={selectableIds.isEmpty()}
+                        checked={selectableIds.equals(Immutable.List(assignerValues.deviceApiKeyIds).sort())}
+                        onChange={onSelectAllChange}
+                      />
+                    ),
+                  },
+                  {
+                    key: 'createdOn',
+                    label: intl.formatMessage(messages.createdOn),
+                    sortable: true,
+                  },
+                  {
+                    key: 'token',
+                    label: intl.formatMessage(messages.token),
+                    sortable: true,
+                  },
+                  {
+                    key: 'partner',
+                    label: intl.formatMessage(messages.partner),
+                    sortable: true,
+                  },
+                  {
+                    key: 'country',
+                    label: intl.formatMessage(messages.country),
+                    sortable: true,
+                  },
+                  {
+                    key: 'site',
+                    label: intl.formatMessage(messages.site),
+                    sortable: true,
+                  },
+                  {
+                    key: 'device',
+                    label: intl.formatMessage(messages.device),
+                    sortable: true,
+                  },
+                  {
+                    key: 'revoked',
+                    label: intl.formatMessage(messages.revoked),
+                    sortable: true,
+                  },
+                ]}
+              />
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(deviceApiKey => (
+                    <DeviceApiKeyDataTableRow
+                      key={deviceApiKey.get('id')}
+                      intl={intl}
+                      deviceApiKey={deviceApiKey}
+                      disabled={!selectableIds.includes(deviceApiKey.get('id'))}
+                      checked={assignerValues.deviceApiKeyIds.indexOf(deviceApiKey.get('id')) !== -1}
+                      onSelectedChange={onSelectedChange}
+                      onRevokedChange={onRevokedChange}
+                    />
+                  ))}
+              </TableBody>
+            </DeviceApiKeyDataTable>
+            <BrowseTablePaginator
+              navigate={navigate}
+              location={location}
+              intl={intl}
+              paginatorStatus={messages.paginatorStatus}
+              total={table.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
+            />
+          </>
         )}
       </DataTableCard>
     </div>

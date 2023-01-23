@@ -5,10 +5,6 @@
   @custom-media --md-viewport (min-width: 920px);
 }
 
-.Container {
-  position: relative;
-}
-
 .Button {
   font-weight: var(--lato-font-weight-bold);
 }
@@ -17,22 +13,7 @@
   position: relative;
 }
 
-.Button__label__close,
-.Button__label__more {
-  opacity: 0;
-}
-
-.Button__label__close {
-  position: absolute;
-  left: 0;
-  right: 0;
-}
-
-.Button__label--shown {
-  opacity: 1;
-}
-
-.Button > .Button__icon {
+.Button__icon {
   margin-left: 5px;
   margin-right: 0;
   transition-duration: 0.28s;
@@ -44,25 +25,6 @@
   transform: rotate(180deg);
 }
 
-.Modal {
-  z-index: var(--z-index-overlay) !important;
-}
-
-.Popover {
-  will-change: transform;
-  position: absolute;
-  z-index: var(--z-index-popover);
-  top: 100%;
-  right: 0;
-  visibility: hidden;
-  opacity: 0;
-}
-
-.Popover--shown {
-  visibility: inherit;
-  opacity: 1;
-}
-
 .FallbackUntilDone {
   padding: 20px;
   overflow: hidden;
@@ -71,18 +33,25 @@
 }
 
 .FallbackUntilDone--xs {
-  width: 300px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .FallbackUntilDone--sm {
-  width: 300px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .FallbackUntilDone--md {
-  width: 300px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
   overflow-y: scroll;
 }
 
+.FallbackUntilDone--xs .Control,
 .FallbackUntilDone--sm .Control,
 .FallbackUntilDone--md .Control {
   padding: 0 10px;
@@ -119,22 +88,4 @@
 
 .checkbox-wrapper {
   margin-right: 4px;
-}
-
-@media screen and (--sm-viewport) {
-  .FallbackUntilDone--sm {
-    width: 600px;
-  }
-
-  .FallbackUntilDone--md {
-    width: 600px;
-    overflow-y: scroll;
-  }
-}
-
-@media screen and (--md-viewport) {
-  .FallbackUntilDone--md {
-    width: 900px;
-    overflow-y: scroll;
-  }
 }

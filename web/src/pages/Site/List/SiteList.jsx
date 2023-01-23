@@ -10,8 +10,8 @@ import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -113,26 +113,27 @@ export const SiteList = ({ navigate, location }) => {
   ) : (
     <>
       <DetailHeader name={intl.formatMessage(messages.sitesTitle)} disableBack>
-        <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
-          <AspectButton
-            type="button"
-            color="primary"
-            variant="contained"
-            browseButton
-            onClick={() => navigate('/browse/site/create')}
-          >
-            {intl.formatMessage(messages.createSite)}
-          </AspectButton>
-        </BrowseFilters>
+        <AspectButton
+          type="button"
+          color="primary"
+          variant="contained"
+          browseButton
+          onClick={() => navigate('/browse/site/create')}
+        >
+          {intl.formatMessage(messages.createSite)}
+        </AspectButton>
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
+            <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
+          </div>
           {data.siteList.length === 0 ? (
             <BrowseEmptyList navigate={navigate} location={location} />
           ) : (
             <>
-              <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
               <SiteDataTable className={cssClasses('SiteDataTable')}>
                 <SiteDataTableHead
                   navigate={navigate}

@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
-import PermissionsProvider from '../../providers/PermissionsProvider'
+import PermissionChecker from '../PermissionChecker'
 import messages from './messages'
 import styles from './styles.css'
 
@@ -55,7 +55,7 @@ export const NavigationMenu = () => {
   return (
     <nav className={cssClasses('Navigation', 'Navigation--horizontal')}>
       {rawLinks.map(link => (
-        <PermissionsProvider permissions={link.perm}>
+        <PermissionChecker permissions={link.perm}>
           {link.submenu ? (
             <>
               <Link
@@ -71,7 +71,7 @@ export const NavigationMenu = () => {
               </Link>
               <Menu id="submenu" anchorEl={anchorEl} open={open} onClose={handleClose}>
                 {link.submenu.map(link => (
-                  <PermissionsProvider permissions={link.perm}>
+                  <PermissionChecker permissions={link.perm}>
                     <RouterLink
                       className={cssClasses('Link', 'SubLink', { Link__active: itemSelected(link.href) })}
                       to={link.href}
@@ -79,7 +79,7 @@ export const NavigationMenu = () => {
                     >
                       <abbr>{link.label}</abbr>
                     </RouterLink>
-                  </PermissionsProvider>
+                  </PermissionChecker>
                 ))}
               </Menu>
             </>
@@ -88,7 +88,7 @@ export const NavigationMenu = () => {
               <abbr>{link.label}</abbr>
             </RouterLink>
           )}
-        </PermissionsProvider>
+        </PermissionChecker>
       ))}
     </nav>
   )

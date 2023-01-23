@@ -21,7 +21,7 @@ const DetailHeader = ({ name, children, back, disableBack = false }) => {
         <Typography variant="h5" color="primary" component="div" className={cssClasses('Name')}>
           {name}
         </Typography>
-        <Box className={disableBack ? cssClasses('Content-Detail') : cssClasses('Content')}>{children}</Box>
+        <Box className={cssClasses('Content')}>{children}</Box>
       </Toolbar>
     </AppBar>
   )

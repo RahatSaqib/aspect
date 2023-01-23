@@ -4,16 +4,16 @@ import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { FaUser } from 'react-icons/fa'
 import { defineMessages } from 'react-intl'
-import { connect } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../../assets/logo_confluence.png'
 import useI18n from '../../hooks/useI18n'
-import PermissionsProvider from '../../providers/PermissionsProvider'
+import AppNotificationDialog from '../../oldComponents/appNotification/AppNotificationDialog'
+import AppNotificationSnackBar from '../../oldComponents/appNotification/AppNotificationSnackBar'
+import IconMenu from '../../oldComponents/shared/IconMenu'
 import { userRequestedLogout } from '../../store/AuthRedux'
 import { aspectFetch } from '../../utils/utils/fetch'
-import AppNotificationDialog from '../appNotification/AppNotificationDialog'
-import AppNotificationSnackBar from '../appNotification/AppNotificationSnackBar'
-import IconMenu from '../shared/IconMenu'
+import PermissionChecker from '../PermissionChecker'
 import LayoutNavigation from './LoggedInLayout.Navigation'
 import styles from './styles.css'
 
@@ -30,7 +30,8 @@ const messages = defineMessages({
   },
 })
 
-export const LoggedInLayout = ({ children, userRequestedLogout }) => {
+export const LoggedInLayout = ({ children }) => {
+  const dispatch = useDispatch()
   const intl = useI18n()
   const navigate = useNavigate()
   const [version, setVersion] = useState({ fetched: false, v: '' })
@@ -49,7 +50,7 @@ export const LoggedInLayout = ({ children, userRequestedLogout }) => {
     <div classnames={cssClasses('Layout')}>
       <div className={cssClasses('Panel')}>
         <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-        <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--sm')} color="inherit">
+        <AppBar className={cssClasses('AppBar__appBar')} color="inherit">
           <Toolbar>
             <IconButton className={cssClasses('AppBar__leftIcon')} aria-label="Logo" onClick={() => navigate('/')}>
               <img className={cssClasses('ConfluenceIcon')} src={Logo} alt="" />
@@ -59,12 +60,12 @@ export const LoggedInLayout = ({ children, userRequestedLogout }) => {
             <LayoutNavigation />
 
             <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
-              <PermissionsProvider permissions={['account:edit']}>
+              <PermissionChecker permissions={['account:edit']}>
                 <MenuItem onClick={() => navigate('/account-details/current')}>
                   {intl.formatMessage(messages.accountDetails)}
                 </MenuItem>
-              </PermissionsProvider>
-              <MenuItem onClick={userRequestedLogout}>{intl.formatMessage(messages.signOut)}</MenuItem>
+              </PermissionChecker>
+              <MenuItem onClick={() => dispatch(userRequestedLogout)}>{intl.formatMessage(messages.signOut)}</MenuItem>
             </IconMenu>
           </Toolbar>
         </AppBar>
@@ -76,4 +77,4 @@ export const LoggedInLayout = ({ children, userRequestedLogout }) => {
   )
 }
 
-export default connect(null, { userRequestedLogout })(LoggedInLayout)
+export default LoggedInLayout

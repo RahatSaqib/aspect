@@ -11,7 +11,7 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
 import useI18n from '../../../hooks/useI18n'
 import messages from '../../../messages/report'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
@@ -141,11 +141,12 @@ const ReportIndex = () => {
 
   return (
     <>
-      <DetailHeader name={intl.formatMessage(messages.reportsTitle)} disableBack>
-        <BrowseFilters navigate={navigate} location={location} config={reducedFilters} showBrowseDropdown={false} />
-      </DetailHeader>
+      <DetailHeader name={intl.formatMessage(messages.reportsTitle)} disableBack />
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
+        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+          <BrowseFilters navigate={navigate} location={location} config={reducedFilters} showBrowseDropdown={false} />
+        </div>
         <DataTableProgressBar disabled={!showProgressBar} />
         <Grid
           container

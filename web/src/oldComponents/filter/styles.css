@@ -11,16 +11,10 @@
   }
 
   .FiltersBtnGroup {
-    width: 0;
     flex-grow: 1;
     order: inherit;
     display: flex;
     flex-flow: row-reverse wrap;
     align-items: center;
-  }
-
-  .FiltersPanel {
-    flex-grow: 0;
-    margin: 5px 0;
   }
 }

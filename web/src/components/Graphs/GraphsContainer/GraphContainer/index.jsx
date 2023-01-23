@@ -4,9 +4,9 @@ import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages as messages } from '../../../../messages'
-import PermissionsProvider from '../../../../providers/PermissionsProvider'
 import GRAPH_CONSTS from '../../../../utils/consts/Graphs/CONSTS'
 import AspectCard from '../../../AspectCard'
+import PermissionChecker from '../../../PermissionChecker'
 import CardSelectors from '../../CardSelectors'
 import GraphRender from '../../GraphRender'
 import { extractOptionValue } from '../../Helpers/Formatters'
@@ -33,7 +33,7 @@ const GraphContainer = ({ assaysFromState, classNames, config, size, whiteListed
   }
 
   return (
-    <PermissionsProvider permissions={permissions}>
+    <PermissionChecker permissions={permissions}>
       <Grid item xs={12} lg={outerSize}>
         <Grid container>
           <Grid item xs={12}>
@@ -95,7 +95,7 @@ const GraphContainer = ({ assaysFromState, classNames, config, size, whiteListed
           </Grid>
         </Grid>
       </Grid>
-    </PermissionsProvider>
+    </PermissionChecker>
   )
 }
 
