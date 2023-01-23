@@ -109,7 +109,7 @@ const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, d
       diseaseId: form.diseaseId,
     }))
     await replaceOptionSourceProp(fields, partnerId, countryId)
-    formFields.push(fields)
+    formFields.push(...fields)
   })
 
   const forms = { fields: _.sortBy(formFields, ['order', 'name']) }
