@@ -13,8 +13,15 @@ export const getFormConfigWithData = (intl, isNew, values) => {
   const customFields = formSchema.sections.find(({ id }) => id === 'CustomFields')
   let validationSchema = getValidationSchema(intl.formatMessage)
 
-  if (customFields) {
-    // generte custom rows
+  const totalCustomFields = values.customFields?.length || 0
+
+  // if no custom fields just a placeholder just in case it changes in the future
+  if (totalCustomFields === 0) {
+    customFields.rows = [
+      { id: 9000, items: [{ controlType: { component: 'textField' }, labelI18nKey: 'noCustomFieldsDefined' }] },
+    ]
+  } else {
+    // generate custom rows
     customFields.rows = getRowsForCustomFields(values)
     // generate validations
     validationSchema = validationSchema.shape(getValidationsForCustomFields(values))
@@ -30,11 +37,7 @@ export const getFormConfigWithData = (intl, isNew, values) => {
 }
 
 function getRowsForCustomFields(values) {
-  const totalCustomFields = values.customFields?.length || 0
   const id = 9000
-  if (totalCustomFields === 0) {
-    return [{ id, items: [{ controlType: { component: 'textField' }, labelI18nKey: 'noCustomFieldsDefined' }] }]
-  }
   let rows = []
   // show 3 cells per row
   const cellsPerRow = 3
@@ -93,12 +96,7 @@ function getRowsForCustomFields(values) {
 }
 
 function getValidationsForCustomFields(values) {
-  const totalCustomFields = values.customFields?.length || 0
   const rows = {}
-
-  if (totalCustomFields === 0) {
-    return rows
-  }
 
   uniqBy(values.customFields, elem => elem.source).forEach(customField => {
     const source = customField.source.split('.')
@@ -188,28 +186,31 @@ const enableItemAndFilter = (item, data, formik) => {
   const idToUpdate = item.id
   const itemBase = data.find(itemBase => itemBase.source === idToUpdate)
 
-  // ASP-5626: 2. condition: based on comparatives with other custom fields, enables and disables the custom field
-  if (itemBase.condition) {
-    item.disabledIf = () => !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
-    item.controlType.hideIfNoOptions = false
-  }
+  // if no item base to work with, we skip the whole section
+  if (itemBase) {
+    // ASP-5626: 2. condition: based on comparatives with other custom fields, enables and disables the custom field
+    if (itemBase.condition) {
+      item.disabledIf = () => !evaluateEnabledState(itemBase, formik) // NOT enabled state === disabled
+      item.controlType.hideIfNoOptions = false
+    }
 
-  // ASP-5626: 3. filters: based on comparative with other custom fields, shows or hides options in combobox and autocomplete.
-  if (itemBase.filters) {
-    const field = itemBase.source.split('.')
-    const filteredOptions = calculateFilteredOptions(itemBase, item, formik)
+    // ASP-5626: 3. filters: based on comparative with other custom fields, shows or hides options in combobox and autocomplete.
+    if (itemBase.filters) {
+      const field = itemBase.source.split('.')
+      const filteredOptions = calculateFilteredOptions(itemBase, item, formik)
 
-    // first update the available options
-    item.controlType.options = filteredOptions
-      .sort((a, b) => a.order - b.order)
-      .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined }))
-    item.controlType.dependencies = [itemBase.source]
+      // first update the available options
+      item.controlType.options = filteredOptions
+        .sort((a, b) => a.order - b.order)
+        .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined }))
+      item.controlType.dependencies = [itemBase.source]
 
-    // second, clear any invalid option from already selected values
-    const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
-    const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
-    if (!currentValidValues.includes(currentSelectdValue)) {
-      formik.values[field[0]][field[1]] = ''
+      // second, clear any invalid option from already selected values
+      const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
+      const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
+      if (!currentValidValues.includes(currentSelectdValue)) {
+        formik.values[field[0]][field[1]] = ''
+      }
     }
   }
 
