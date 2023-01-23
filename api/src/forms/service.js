@@ -101,7 +101,7 @@ const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, d
     .select(knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId'))
     .groupBy('fd.id')
 
-  let forms = { fields: [] }
+  const formFields = []
   await Promise.each(formQuery, async form => {
     const fields = _.map(formDictionary[form.jsonSchemaFileName].fields, field => ({
       ...field,
@@ -109,8 +109,10 @@ const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, d
       diseaseId: form.diseaseId,
     }))
     await replaceOptionSourceProp(fields, partnerId, countryId)
-    forms = { fields: _.concat(forms.fields, fields) }
+    formFields.push(fields)
   })
+
+  const forms = { fields: _.sortBy(formFields, ['order', 'name']) }
 
   return forms
 }
