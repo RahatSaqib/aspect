@@ -4,7 +4,6 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack')
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const { merge } = require('webpack-merge')
 const base = require('./base')
 
@@ -54,11 +53,6 @@ const config = () => {
         threshold: 10240,
       }),
       new CaseSensitivePathsPlugin(),
-      new BundleAnalyzerPlugin({
-        analyzerMode: 'disabled',
-        generateStatsFile: true,
-        openAnalyzer: false,
-      }),
     ],
     optimization: {
       /**
