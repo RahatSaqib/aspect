@@ -8,31 +8,32 @@ import LoggedInLayout from './components/LoggedInLayout'
 import config from './config'
 import useHashAndScroll from './hooks/useHashAndScroll'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
-import CaseList from './oldPages/case/list/CaseList'
-import OperationalData from './oldPages/dashboard/operational/OperationalData'
-import DeviceApiKeyList from './oldPages/deviceApiKey/list/DeviceApiKeyList'
-import InventoryContainer from './oldPages/inventory/InventoryContainer'
-import PersonList from './oldPages/person/list/PersonList'
-import ReportIndex from './oldPages/report/page/ReportIndex'
-import ReporterList from './oldPages/reporter/list/ReporterList'
-import ResultList from './oldPages/result/list/ResultList'
-import RouterDetail from './oldPages/router/detail/RouterDetail'
-import RouterList from './oldPages/router/list/RouterList'
-import ContactPage from './pages/Contact'
-import DeviceDetail from './pages/Devices/Detail/DeviceDetail'
-import DeviceContainer from './pages/Devices/DeviceContainer'
-import NotFound from './pages/NotFound/NotFound'
-import NotificationDetail from './pages/Notification/NotificationFormPage'
-import NotificationDetailHistory from './pages/Notification/NotificationHistoryPage'
-import NotificationList from './pages/Notification/NotificationListPage'
-import ResultDetail from './pages/Results/Detail'
-import SiteDetail, { EditSite } from './pages/Site/Detail'
-import SiteList from './pages/Site/List'
-import Welcome from './pages/Welcome'
 import { useAuthState } from './providers/AuthProvider'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 
-const LoadableStatus = lazy(() => import('./oldPages/dashboard/status/Status'))
+const CaseList = lazy(() => import('./oldPages/case/list/CaseList'))
+const ContactPage = lazy(() => import('./pages/Contact'))
+const DeviceApiKeyList = lazy(() => import('./oldPages/deviceApiKey/list/DeviceApiKeyList'))
+const DeviceContainer = lazy(() => import('./pages/Devices/DeviceContainer'))
+const DeviceDetail = lazy(() => import('./pages/Devices/Detail/DeviceDetail'))
+const EditSite = lazy(() => import('./pages/Site/Detail/Edit'))
+const InventoryContainer = lazy(() => import('./oldPages/inventory/InventoryContainer'))
+const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
+const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
+const NotificationDetailHistory = lazy(() => import('./pages/Notification/NotificationHistoryPage'))
+const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
+const OperationalData = lazy(() => import('./oldPages/dashboard/operational/OperationalData'))
+const PersonList = lazy(() => import('./oldPages/person/list/PersonList'))
+const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
+const ReportIndex = lazy(() => import('./oldPages/report/page/ReportIndex'))
+const ResultDetail = lazy(() => import('./pages/Results/Detail'))
+const ResultList = lazy(() => import('./oldPages/result/list/ResultList'))
+const RouterDetail = lazy(() => import('./oldPages/router/detail/RouterDetail'))
+const RouterList = lazy(() => import('./oldPages/router/list/RouterList'))
+const SiteDetail = lazy(() => import('./pages/Site/Detail'))
+const SiteList = lazy(() => import('./pages/Site/List'))
+const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
+const Welcome = lazy(() => import('./pages/Welcome'))
 
 const LogInApp = () => {
   const dispatch = useDispatch()
@@ -91,7 +92,7 @@ const LogInApp = () => {
           {a(['dashboard:summary']) ? (
             <>
               <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
-              <Route path="/dashboard" element={<LoadableStatus />} />
+              <Route path="/dashboard" element={<Status />} />
             </>
           ) : null}
           {a(['operationalData']) ? (

@@ -32,10 +32,13 @@ const getValidation = (fields, path, index) => {
 }
 // -----------------------------
 const isFieldRequired = (validationSchema, id) => {
-  const path = id.split('.')
+  if (validationSchema) {
+    const path = id.split('.')
 
-  const validation = getValidation(validationSchema.fields, path, 0)
-  return !!validation?.exclusiveTests.required
+    const validation = getValidation(validationSchema.fields, path, 0)
+    return !!validation?.exclusiveTests.required
+  }
+  return false
 }
 
 /**
