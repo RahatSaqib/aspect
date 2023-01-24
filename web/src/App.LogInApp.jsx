@@ -24,6 +24,7 @@ const NotificationDetailHistory = lazy(() => import('./pages/Notification/Notifi
 const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
 const OperationalData = lazy(() => import('./oldPages/dashboard/operational/OperationalData'))
 const PersonList = lazy(() => import('./oldPages/person/list/PersonList'))
+const PkDashboard = lazy(() => import('./pages/PkDashboard'))
 const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
 const ReportIndex = lazy(() => import('./oldPages/report/page/ReportIndex'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
@@ -34,6 +35,9 @@ const SiteDetail = lazy(() => import('./pages/Site/Detail'))
 const SiteList = lazy(() => import('./pages/Site/List'))
 const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
 const Welcome = lazy(() => import('./pages/Welcome'))
+//
+const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/CovidGraph'))
+const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/HivGraph'))
 
 const LogInApp = () => {
   const dispatch = useDispatch()
@@ -85,6 +89,8 @@ const LogInApp = () => {
 
   const a = r => isPermittedUser(userPermissions, { required: r })
 
+  const isPakistan = countryAbbreviation === 'US'
+
   return (
     <LoggedInLayout>
       <Suspense fallback={<Loading />}>
@@ -92,7 +98,13 @@ const LogInApp = () => {
           {a(['dashboard:summary']) ? (
             <>
               <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
-              <Route path="/dashboard" element={<Status />} />
+              <Route path="/dashboard" element={isPakistan ? <PkDashboard /> : <Status />} />
+              {isPakistan ? (
+                <>
+                  <Route path="/dashboard/covid" element={<CovidGraphPage />} />
+                  <Route path="/dashboard/hiv" element={<HivGraphPage />} />
+                </>
+              ) : null}
             </>
           ) : null}
           {a(['operationalData']) ? (
