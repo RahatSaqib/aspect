@@ -1,6 +1,7 @@
 import React from 'react'
 import { Container, Grid } from '@mui/material'
 import { Helmet } from 'react-helmet'
+import { useParams } from 'react-router'
 import useI18n from '../../hooks/useI18n'
 import SummaryCard from './components/SummaryCard'
 import messages from './messages'
@@ -49,9 +50,8 @@ const mock = {
   other: { covid: '123', hiv: '456' },
 }
 
-const threeCols = 0
-
 const PkDashboard = () => {
+  const { cols } = useParams()
   const { formatMessage } = useI18n()
   const data = mock // replace with useQuery()
   return (
@@ -65,7 +65,7 @@ const PkDashboard = () => {
                 <SummaryCard key={s.key} item={s} />
               </Grid>
             ))}
-            {threeCols ? (
+            {cols ? (
               <>
                 <MtbRifColumn2 data={data.mtbRif} />
                 <MtbXdrColumn2 data={data.mtbXdr} />

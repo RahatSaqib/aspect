@@ -98,7 +98,7 @@ const LogInApp = () => {
           {a(['dashboard:summary']) ? (
             <>
               <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
-              <Route path="/dashboard" element={isPakistan ? <PkDashboard /> : <Status />} />
+              <Route path="/dashboard/:cols?" element={isPakistan ? <PkDashboard /> : <Status />} />
               {isPakistan ? (
                 <>
                   <Route path="/dashboard/covid" element={<CovidGraphPage />} />
