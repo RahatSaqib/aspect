@@ -10,6 +10,7 @@ import useHashAndScroll from './hooks/useHashAndScroll'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import { useAuthState } from './providers/AuthProvider'
 import { idleLogout, refreshStart } from './store/AuthRedux'
+import { fetchCountries } from './store/GeographyRedux'
 
 const CaseList = lazy(() => import('./oldPages/case/list/CaseList'))
 const ContactPage = lazy(() => import('./pages/Contact'))
@@ -48,9 +49,13 @@ const LogInApp = () => {
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
 
   useEffect(() => {
+    // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
+    dispatch(fetchCountries())
+
     // Refresh the access token every 30 minutes.
     const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)
     return () => clearInterval(refreshToken)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -151,6 +156,7 @@ const LogInApp = () => {
 
           <Route path="/" element={<Navigate replace to="/welcome" state={{ referrer: location }} />} />
           <Route path="/login" element={<Navigate replace to={{ pathname: '/' }} />} />
+          <Route path="/license" element={<Navigate replace to={{ pathname: '/' }} />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

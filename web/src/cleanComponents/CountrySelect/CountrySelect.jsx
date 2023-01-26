@@ -41,7 +41,7 @@ const CountrySelect = ({ id, name, label, value, onChange, error, helperText, di
           return (
             <MenuItem key={c.id} value={c.id}>
               <CurrrentFlag style={{ height: 20, marginRight: 10, float: 'left' }} />{' '}
-              <p style={{ float: 'left' }}>{c.name}</p>
+              <p style={{ float: 'left', margin: 0 }}>{c.name}</p>
             </MenuItem>
           )
         })}
