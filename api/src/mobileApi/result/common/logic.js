@@ -6,6 +6,22 @@ const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/da
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 const { knex } = require('../../../db')
 
+const TRANSFERRED = {
+  AWAY: 'away',
+  HERE: 'here',
+}
+
+const TESTTYPE = {
+  RESULT: {
+    i18nKey: 'testResult',
+    text: 'Test Result',
+  },
+  SAMPLE: {
+    i18nKey: 'testSample',
+    text: 'Test Sample',
+  },
+}
+
 const ACKNOWLEDGED = 'Acknowledged'
 
 const fieldNameToFollowUpTypeIdMappings = {
@@ -15,38 +31,38 @@ const fieldNameToFollowUpTypeIdMappings = {
 
 const assayAvatarColorsIcon = {
   tb: {
-    backgroundColour: 'purple',
-    foregroundColour: 'secondary',
+    backgroundColor: 'purple',
+    foregroundColor: 'secondary',
     contentIcon: null,
   },
   hcv: {
-    backgroundColour: 'secondary',
-    foregroundColour: 'primary',
+    backgroundColor: 'secondary',
+    foregroundColor: 'primary',
     contentIcon: null,
   },
   hiv: {
-    backgroundColour: 'orange',
-    foregroundColour: 'secondary',
+    backgroundColor: 'orange',
+    foregroundColor: 'secondary',
     contentIcon: null,
   },
   ebola: {
-    backgroundColour: 'secondary',
-    foregroundColour: 'primary',
+    backgroundColor: 'secondary',
+    foregroundColor: 'primary',
     contentIcon: null,
   },
   covid: {
-    backgroundColour: 'purple',
-    foregroundColour: 'secondary',
+    backgroundColor: 'purple',
+    foregroundColor: 'secondary',
     contentIcon: null,
   },
   hbv: {
-    backgroundColour: 'secondary',
-    foregroundColour: 'primary',
+    backgroundColor: 'secondary',
+    foregroundColor: 'primary',
     contentIcon: null,
   },
   default: {
-    backgroundColour: 'orange',
-    foregroundColour: 'secondary',
+    backgroundColor: 'orange',
+    foregroundColor: 'secondary',
     contentIcon: null,
   },
 }
@@ -437,6 +453,8 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     ),
     // result transferred
     reportableSiteName: data.reportableSiteName,
+    testType: TESTTYPE.RESULT,
+    transferred: isTransferred ? TRANSFERRED.AWAY : TRANSFERRED.HERE,
     transferredOn: data.transferredOn,
     transferredBy: data.transferredBy,
     reportableSiteId: data.reportableSiteId,
@@ -445,8 +463,8 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     assayAvatar: {
       contentI18nKey: data.contentI18nKey,
       contentText: data.contentText,
-      backgroundColour: assayAvatar.backgroundColour,
-      foregroundColour: assayAvatar.foregroundColour,
+      backgroundColor: assayAvatar.backgroundColor,
+      foregroundColor: assayAvatar.foregroundColor,
       contentIcon: assayAvatar.contentIcon,
     },
     clinicalResponse: {

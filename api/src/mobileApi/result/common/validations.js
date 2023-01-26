@@ -300,6 +300,13 @@ const downloadResultResponseValidationV2 = () => {
           reportableSiteName: Joi.string()
             .allow('', null)
             .description('The name of reportable site, differ from siteName when transferred'),
+          testType: Joi.object()
+            .required()
+            .keys({
+              i18nKey: Joi.string().description('Test type key'),
+              text: Joi.string().description('Test type text'),
+            }),
+          transferred: Joi.string().allow(null).description('trasferred place'),
           transferredOn: Joi.date().allow(null).description('When result was transferred to another clinic'),
           transferredBy: Joi.string().allow(null).description('Who transferred result to another clinic'),
           resultStatusLogId: Joi.number()
@@ -313,8 +320,8 @@ const downloadResultResponseValidationV2 = () => {
             .keys({
               contentI18nKey: Joi.string().allow(null).description('Translation key for the content text'),
               contentText: Joi.string().allow(null).description('Name of the content text'),
-              backgroundColour: Joi.string().allow(null).description('Background color code'),
-              foregroundColour: Joi.string().allow(null).description('Foreground color code'),
+              backgroundColor: Joi.string().allow(null).description('Background color code'),
+              foregroundColor: Joi.string().allow(null).description('Foreground color code'),
               contentIcon: Joi.string().allow(null).description('Icon of content'),
             }),
         })
