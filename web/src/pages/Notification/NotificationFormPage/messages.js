@@ -143,7 +143,7 @@ export default defineMessages({
   notificationTypeLowFieldCompletionRateMessage: {
     id: 'pages.Notification.type.LowFieldCompletionRateMessage',
     defaultMessage:
-      'This notification type is going to be sent only if you have the custom fields completion weight configured in your country. Please, check with your admin before using it.',
+      'This notification will trigger any time a site changes its completion rate to less than 0.8. Also, it will be sent only if you have custom fields completion weight set in your country. Please check with your administrator before using it.',
   },
   notificationTypeExpiring: {
     id: 'pages.Notification.type.InventoryExpiring',
