@@ -1575,8 +1575,8 @@ describe('Mobile API Result download by id routes v2', () => {
       assert.property(response.body.data, 'followUps')
       assert.property(response.body.data, 'assayAvatar')
       assert.property(response.body.data, 'testInformation')
-      assert.property(response.body.data[0], 'transferred')
-      assert.property(response.body.data[0], 'testType')
+      assert.property(response.body.data, 'transferred')
+      assert.property(response.body.data, 'testType')
       assert.property(response.body.data, 'clinicalResponse')
       if (response.body.data.followUps) {
         assert.typeOf(response.body.data.followUps, 'array')
