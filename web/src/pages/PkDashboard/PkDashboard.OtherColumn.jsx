@@ -12,8 +12,8 @@ const OtherColumn = ({ data }) => {
     <Grid lg={12 / 5} style={{ padding: '8px 8px 0' }}>
       <ColumnName title={formatMessage(messages.titleother)} />
       <DashboardCard>
-        <DashboardLink to="/dashboard/covid" label={formatMessage(messages.covid)} value={data.covid} />
-        <DashboardLink to="/dashboard/hiv" label={formatMessage(messages.hiv)} value={data.hiv} />
+        <DashboardLink to="/dashboard/other/covid" label={formatMessage(messages.covid)} value={data.covid} />
+        <DashboardLink to="/dashboard/other/hiv" label={formatMessage(messages.hiv)} value={data.hiv} />
       </DashboardCard>
     </Grid>
   )

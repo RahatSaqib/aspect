@@ -20,12 +20,16 @@ const MixedColum = ({ coverage, inventory, other }) => {
       </DashboardCard>
       <ColumnName title={formatMessage(messages.titleinventory)} />
       <DashboardCard>
-        <DashboardLink to="" label={formatMessage(messages.overview)} value={inventory.overview} />
+        <DashboardLink
+          to="/dashboard/inventory/overview"
+          label={formatMessage(messages.overview)}
+          value={inventory.overview}
+        />
       </DashboardCard>
       <ColumnName title={formatMessage(messages.titleother)} />
       <DashboardCard>
-        <DashboardLink to="/dashboard/covid" label={formatMessage(messages.covid)} value={other.covid} />
-        <DashboardLink to="/dashboard/covid" label={formatMessage(messages.hiv)} value={other.hiv} />
+        <DashboardLink to="/dashboard/other/covid" label={formatMessage(messages.covid)} value={other.covid} />
+        <DashboardLink to="/dashboard/other/hiv" label={formatMessage(messages.hiv)} value={other.hiv} />
       </DashboardCard>
     </Grid>
   )

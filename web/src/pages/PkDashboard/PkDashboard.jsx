@@ -55,7 +55,7 @@ const PkDashboard = () => {
   const { formatMessage } = useI18n()
   const data = mock // replace with useQuery()
   return (
-    <Container maxWidth>
+    <Container maxWidth sx={{ pb: 3, maxHeight: 'calc(100vh - 64px)', overflow: 'scroll' }}>
       <Helmet title={formatMessage(messages.aspectDashboard)} />
       <Grid container spacing={2} sx={{ flexGrow: 1 }}>
         {data ? (
