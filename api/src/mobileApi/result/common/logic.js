@@ -17,8 +17,8 @@ const TESTTYPE = {
     text: 'Test Result',
   },
   SAMPLE: {
-    i18nKey: 'testSample',
-    text: 'Test Sample',
+    i18nKey: 'sample',
+    text: 'Sample',
   },
 }
 
