@@ -26,6 +26,10 @@ export default defineMessages({
     id: 'pages.Notifications.emailBodyMustContainDownloadLink',
     defaultMessage: 'Email should contain download link for Report-based Notification',
   },
+  bodyMustContainCompletionRatePercentage: {
+    id: 'pages.Notifications.bodyMustContainCompletionRatePercentage',
+    defaultMessage: 'Body should contain completion rate percentage for Site with low completion rate Notification',
+  },
   emailSubjectRequired: {
     id: 'pages.Notifications.emailSubjectRequired',
     defaultMessage: 'Email subject is required',
