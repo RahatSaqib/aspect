@@ -1115,6 +1115,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
   const gxAlertAssayDataMappings = {
     GxMtbRif: 'GeneXpert TB/RIF Result',
     GxMtbRifUltra: 'GeneXpert MTB-RIF Ultra',
+    GxMtbXdr: 'GeneXpert MTB/XDR',
     GxHiv1Vl: 'GeneXpert HIV-1 Viral Load Result',
     GxHiv1Qual: 'GeneXpert HIV-1 QUAL Result',
     GxEbola: 'GeneXpert Ebola Result',
