@@ -830,8 +830,8 @@ describe('Mobile API Result download routes v2 with available custom api-version
               assayAvatar: {
                 contentI18nKey: 'assayTypeMtbRif',
                 contentText: 'TB',
-                backgroundColour: 'purple',
-                foregroundColour: 'secondary',
+                backgroundColor: 'purple',
+                foregroundColor: 'secondary',
                 contentIcon: null,
               },
             },
@@ -1289,8 +1289,8 @@ describe('Mobile API Result download routes v2 with higher version', () => {
               assayAvatar: {
                 contentI18nKey: 'assayTypeMtbRif',
                 contentText: 'TB',
-                backgroundColour: 'purple',
-                foregroundColour: 'secondary',
+                backgroundColor: 'purple',
+                foregroundColor: 'secondary',
                 contentIcon: null,
               },
             },
