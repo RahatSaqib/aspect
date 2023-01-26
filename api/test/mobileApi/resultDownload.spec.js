@@ -630,7 +630,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 28)
+      assert.equal(Object.keys(response.body.data[0]).length, 30)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -653,6 +653,8 @@ describe('Mobile API Result download routes v2 with available custom api-version
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
       assert.property(response.body.data[0], 'testInformation')
+      assert.property(response.body.data[0], 'transferred')
+      assert.property(response.body.data[0], 'testType')
       assert.property(response.body.data[0], 'clinicalResponse')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
@@ -837,7 +839,7 @@ describe('Mobile API Result download routes v2 with available custom api-version
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 28)
+      assert.equal(Object.keys(response.body.data[0]).length, 30)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -860,6 +862,8 @@ describe('Mobile API Result download routes v2 with available custom api-version
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
       assert.property(response.body.data[0], 'testInformation')
+      assert.property(response.body.data[0], 'transferred')
+      assert.property(response.body.data[0], 'testType')
       assert.property(response.body.data[0], 'clinicalResponse')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
@@ -1227,7 +1231,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 28)
+      assert.equal(Object.keys(response.body.data[0]).length, 30)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1250,6 +1254,8 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
       assert.property(response.body.data[0], 'testInformation')
+      assert.property(response.body.data[0], 'transferred')
+      assert.property(response.body.data[0], 'testType')
       assert.property(response.body.data[0], 'clinicalResponse')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
@@ -1292,7 +1298,7 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         },
       })
 
-      assert.equal(Object.keys(response.body.data[0]).length, 28)
+      assert.equal(Object.keys(response.body.data[0]).length, 30)
       assert.property(response.body.data[0], 'id')
       assert.property(response.body.data[0], 'externalId')
       assert.property(response.body.data[0], 'endedOn')
@@ -1315,6 +1321,8 @@ describe('Mobile API Result download routes v2 with higher version', () => {
       assert.property(response.body.data[0], 'followUps')
       assert.property(response.body.data[0], 'assayAvatar')
       assert.property(response.body.data[0], 'testInformation')
+      assert.property(response.body.data[0], 'transferred')
+      assert.property(response.body.data[0], 'testType')
       assert.property(response.body.data[0], 'clinicalResponse')
       if (response.body.data[0].followUps) {
         assert.typeOf(response.body.data[0].followUps, 'array')
@@ -1544,7 +1552,7 @@ describe('Mobile API Result download by id routes v2', () => {
     function assertReporterResultDownloadRequestValidResultId(response) {
       assertReporterResultDownloadResponse(response)
 
-      assert.equal(Object.keys(response.body.data).length, 28)
+      assert.equal(Object.keys(response.body.data).length, 30)
       assert.property(response.body.data, 'id')
       assert.property(response.body.data, 'externalId')
       assert.property(response.body.data, 'endedOn')
@@ -1567,6 +1575,8 @@ describe('Mobile API Result download by id routes v2', () => {
       assert.property(response.body.data, 'followUps')
       assert.property(response.body.data, 'assayAvatar')
       assert.property(response.body.data, 'testInformation')
+      assert.property(response.body.data[0], 'transferred')
+      assert.property(response.body.data[0], 'testType')
       assert.property(response.body.data, 'clinicalResponse')
       if (response.body.data.followUps) {
         assert.typeOf(response.body.data.followUps, 'array')
