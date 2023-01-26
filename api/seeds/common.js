@@ -1251,8 +1251,9 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
           const { id: deviceTypeId } = await knex('DeviceType')
             .where('externalId', device.deviceType || 'CepheidGeneXpert')
             .first('id')
+          let deviceId
           if (!existingDevice) {
-            await knex('Device').insert({
+            ;[deviceId] = await knex('Device').insert({
               partnerId,
               geographyId: siteGeographyId,
               siteId,
@@ -1269,6 +1270,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
               ...auditFields,
             })
           } else {
+            deviceId = existingDevice.id
             const deviceConfigurationData = JSON.parse(
               existingDevice.configurationData ? existingDevice.configurationData : '{}'
             )
@@ -1303,6 +1305,27 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
                   updatedOn: now,
                   updatedBy: adminId,
                 })
+            }
+          }
+          if (device.apiKey) {
+            const existingDeviceApiKey = await knex('DeviceApiKey').where('token', device.apiKey).first()
+            if (!existingDeviceApiKey) {
+              await knex('DeviceApiKey').insert({
+                token: device.apiKey,
+                deviceId,
+                revoked: false,
+                createdOn: now,
+                createdBy: adminId,
+                updatedOn: now,
+                updatedBy: adminId,
+                partnerId,
+              })
+            } else if (!existingDeviceApiKey.deviceId) {
+              await knex('DeviceApiKey').where('id', existingDeviceApiKey.id).update({
+                deviceId,
+                updatedOn: now,
+                updatedBy: adminId,
+              })
             }
           }
         })
