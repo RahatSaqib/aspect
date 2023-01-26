@@ -55,7 +55,7 @@ export const NavigationMenu = () => {
   return (
     <nav className={cssClasses('Navigation', 'Navigation--horizontal')}>
       {rawLinks.map(link => (
-        <PermissionChecker permissions={link.perm}>
+        <PermissionChecker permissions={link.perm} key={link.href}>
           {link.submenu ? (
             <>
               <Link
@@ -71,7 +71,7 @@ export const NavigationMenu = () => {
               </Link>
               <Menu id="submenu" anchorEl={anchorEl} open={open} onClose={handleClose}>
                 {link.submenu.map(link => (
-                  <PermissionChecker permissions={link.perm}>
+                  <PermissionChecker permissions={link.perm} key={link.href}>
                     <RouterLink
                       className={cssClasses('Link', 'SubLink', { Link__active: itemSelected(link.href) })}
                       to={link.href}
@@ -84,7 +84,11 @@ export const NavigationMenu = () => {
               </Menu>
             </>
           ) : (
-            <RouterLink className={cssClasses('Link', { Link__active: itemSelected(link.href) })} to={link.href}>
+            <RouterLink
+              className={cssClasses('Link', { Link__active: itemSelected(link.href) })}
+              to={link.href}
+              key={link.href}
+            >
               <abbr>{link.label}</abbr>
             </RouterLink>
           )}
