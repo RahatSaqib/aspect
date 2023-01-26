@@ -1457,6 +1457,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
             updatedOn: now,
             updatedBy: adminId,
             canLogIn,
+            userId: userId || existingPerson.userId,
           })
       }
       personId = existingPerson.id
