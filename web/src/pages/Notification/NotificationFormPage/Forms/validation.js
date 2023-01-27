@@ -13,7 +13,7 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
     parent: { persons, jobFunctions, sendToPatient },
   } = yupThis
 
-  if (sendToPatient || jobFunctions.length > 0 || persons?.length > 0) {
+  if (sendToPatient || jobFunctions?.length > 0 || persons?.length > 0) {
     return true
   }
 

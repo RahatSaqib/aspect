@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { TextField } from '@mui/material'
 import get from 'lodash/get'
 import intersectionWith from 'lodash/intersectionWith'
@@ -48,16 +48,36 @@ const getQueryDependencies = (formik, initialQueryDependencies, dependenciesWith
   }
   return queryDependencies
 }
-
+/**
+ * Un-group options making sure that all grouped options { label, options }
+ * from any level deep go to the top of the array and return plain array of
+ * { label, value } items only
+ */
+const getFlattenOptions = opts => {
+  let arr = []
+  opts.forEach(option => {
+    if (option.options) {
+      arr = [...arr, ...getFlattenOptions(option.options)]
+    } else {
+      arr = [...arr, option]
+    }
+  })
+  return arr
+}
+/**
+ * Return value if it can be found in the `options` array on any
+ * level (in case if there are grouped options)
+ */
 const getActualValue = (options, currentValue, defaultValue) => {
   if (!isArray(options)) {
     return defaultValue
   }
+  const flatOptions = getFlattenOptions(options)
   if (isArray(currentValue)) {
-    const actualValue = intersectionWith(options, currentValue, isEqual)
+    const actualValue = intersectionWith(flatOptions, currentValue, isEqual)
     return actualValue.length === 0 ? defaultValue : actualValue
   }
-  return options.find(({ value }) => value === currentValue) ? currentValue : defaultValue
+  return flatOptions.find(({ value }) => value === currentValue) ? currentValue : defaultValue
 }
 
 const groupStyles = {
@@ -106,7 +126,7 @@ const hasIcon = options => {
 const AspectDropDown = ({
   props: {
     classNames,
-    components = {}, // customization of layout, see 'components/Notifications/List/config.jsx'
+    components: componentsRaw = {}, // customization of layout
     data: passedData,
     defaultSelectedOption,
     dependencies,
@@ -134,7 +154,7 @@ const AspectDropDown = ({
   action,
   theme,
 }) => {
-  const [selectOptions, setSelectOptions] = useState(false)
+  const [selectOptions, setSelectOptions] = useState([])
   const {
     isError,
     data: responseFromQuery = false,
@@ -150,41 +170,69 @@ const AspectDropDown = ({
       normalizeLoadedData &&
       !isEqual(passedData, responseFromQuery) // loaded data should differ from initial data
 
-    if (responseFromQuery && isLoadedFromApi) {
-      const options = normalizeLoadedData(responseFromQuery, formik, subRowIndex) || []
-      if (options && !isEqual(options, selectOptions)) {
-        setSelectOptions(options)
-      }
-      /**
-       * when `options` doesn't contain current value - update field
-       * with `actualValue` which is either `initialValue` or intersection
-       * between `currentValue` and `options` for multi-select control
-       */
-      const initialValue = get(formik?.initialValues, identifier)
-      const currentValue = get(formik?.values, identifier)
-      const actualValue = getActualValue(options, currentValue, initialValue)
-      if (formik && currentValue !== initialValue && isArray(options) && !isEqual(currentValue, actualValue)) {
-        updateField(identifier, actualValue, { formik })
+    if (responseFromQuery) {
+      if (isLoadedFromApi) {
+        const options = normalizeLoadedData(responseFromQuery, formik, subRowIndex) || []
+        if (options && !isEqual(options, selectOptions)) {
+          setSelectOptions(options)
+        }
+        /**
+         * when `options` doesn't contain current value - update field
+         * with `actualValue` which is either `initialValue` or intersection
+         * between `currentValue` and `options` for multi-select control
+         */
+        const initialValue = get(formik?.initialValues, identifier)
+        const currentValue = get(formik?.values, identifier)
+        const actualValue = getActualValue(options, currentValue, initialValue)
+        if (formik && currentValue !== initialValue && isArray(options) && !isEqual(currentValue, actualValue)) {
+          updateField(identifier, actualValue, { formik })
+        }
+      } else {
+        const options = getActualData({ data: passedData, reduxStateId, sortByKeys })
+        if (options && !isEqual(options, selectOptions)) {
+          setSelectOptions(options)
+        }
       }
     }
-  }, queryDependencies)
-
-  useEffect(() => {
-    const options = getActualData({ data: passedData, reduxStateId, sortByKeys })
-    if (options && !isEqual(options, selectOptions)) {
-      setSelectOptions(options)
-    }
-  }, [passedData])
+  }, [...queryDependencies, passedData])
 
   if (isError) {
     throw new Error(queryErrorMessage)
   }
 
-  const onChanged = eventData => {
-    const actionData = pick(eventData, ['identifier', 'selectedOption', 'action'])
-    const { ok, data: dataSource } = responseFromQuery
-    action(actionData, ok ? dataSource : null)
-  }
+  const onChanged = useCallback(
+    eventData => {
+      const actionData = pick(eventData, ['identifier', 'selectedOption', 'action'])
+      const { ok, data: dataSource } = responseFromQuery
+      action(actionData, ok ? dataSource : null)
+    },
+    [action, responseFromQuery]
+  )
+
+  const components = useMemo(() => {
+    const finalOption = hasIcon(selectOptions)
+      ? {
+          Option: props => {
+            const { data, ...rest } = props
+            return (
+              <originalComponents.Option {...rest}>
+                <span>
+                  <IconProvider icon={data.icon} />
+                </span>
+                <span>{data[keyMapping.nameKey]}</span>
+              </originalComponents.Option>
+            )
+          },
+        }
+      : { Option: componentsRaw.Option || originalComponents.Option }
+
+    return {
+      ...originalComponents,
+      GroupHeading,
+      ...componentsRaw,
+      ...finalOption,
+    }
+  }, [selectOptions, componentsRaw])
 
   const showUi = selectOptions && (!hideIfNoOptions || selectOptions.length > 0)
 
@@ -194,32 +242,11 @@ const AspectDropDown = ({
     )
   }
 
-  const finalOption = hasIcon(selectOptions)
-    ? {
-        Option: props => {
-          const { data, ...rest } = props
-          return (
-            <originalComponents.Option {...rest}>
-              <span>
-                <IconProvider icon={data.icon} />
-              </span>
-              <span>{data[keyMapping.nameKey]}</span>
-            </originalComponents.Option>
-          )
-        },
-      }
-    : { Option: components.Option || originalComponents.Option }
-
   return showUi ? (
     <SelectComponent
       action={onChanged}
       classNames={classNames}
-      components={{
-        ...originalComponents,
-        GroupHeading,
-        ...components,
-        ...finalOption,
-      }}
+      components={components}
       data={selectOptions}
       defaultSelectedOption={defaultSelectedOption}
       identifier={identifier}
