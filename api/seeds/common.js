@@ -1313,6 +1313,8 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
               await knex('DeviceApiKey').insert({
                 token: device.apiKey,
                 deviceId,
+                geographyId: siteGeographyId,
+                siteId,
                 revoked: false,
                 createdOn: now,
                 createdBy: adminId,
