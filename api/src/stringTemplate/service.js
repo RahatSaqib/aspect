@@ -404,6 +404,7 @@ async function getBaseDataSource(data, auth) {
               email: d.siteContacts[0].email,
             }
           : {},
+      completionRatePercentage: issueData.completionRatePercentage,
     },
     device: {
       name: d.deviceName,

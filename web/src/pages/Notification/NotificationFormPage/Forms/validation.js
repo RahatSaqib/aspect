@@ -36,6 +36,7 @@ const validationSchema = formatMessage =>
             'ModuleDisabled',
             'UnusedModules',
             'InstrumentReplaced',
+            'SiteWithLowFieldCompletionRate',
           ])
           .required(),
       }),
@@ -126,11 +127,39 @@ const validationSchema = formatMessage =>
           then: Yup.string()
             .matches(/{{report.downloadLink}}/, formatMessage(messages.emailBodyMustContainDownloadLink))
             .required(),
+        })
+        .when('notificationType', {
+          is: 'SiteWithLowFieldCompletionRate',
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
         }),
       smsBody: Yup.string()
         .when('sendSms', optionsForSendXXX(formatMessage(messages.smsBodyRequired)))
-        .max(144),
-      webBody: Yup.string().when('sendWeb', optionsForSendXXX(formatMessage(messages.webBodyRequired))),
+        .max(144)
+        .when('notificationType', {
+          is: 'SiteWithLowFieldCompletionRate',
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
+        }),
+      webBody: Yup.string()
+        .when('sendWeb', optionsForSendXXX(formatMessage(messages.webBodyRequired)))
+        .when('notificationType', {
+          is: 'SiteWithLowFieldCompletionRate',
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
+        }),
       webUrl: Yup.string()
         .when('sendWeb', optionsForSendXXX(formatMessage(messages.webUrlRequired)))
         .matches(/^(ftp|http|https):\/\/[^ "]+$/, formatMessage(messages.webUrlInvalidFormat)),

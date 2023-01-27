@@ -919,7 +919,7 @@ async function onFactCompletionRatePerSite(action, { messageContext }) {
         'si.geographyId as geographyId'
       )
       .groupBy('fcr.siteId', 'partnerId', 'geographyId')
-      .having(knex.raw('completionRatePerSite <= ?', [MIN_PERCENTAGE_FIELDS_COMPLETION_RATE]))
+      .having(knex.raw('completionRatePerSite < ?', [MIN_PERCENTAGE_FIELDS_COMPLETION_RATE]))
 
     // loop all and trigger issue
     return Promise.each(sitesWithLowCompletionRate, async site => context.siteWithLowCompletionRateIssue(site))
