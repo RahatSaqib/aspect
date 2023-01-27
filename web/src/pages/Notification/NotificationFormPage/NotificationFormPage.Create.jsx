@@ -41,20 +41,24 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
   return (
     <>
       <DetailHeader name={formConfig.title} back="/browse/notification">
-        {[{ label: intl.formatMessage(messages.save), onClick: () => onSubmit(formik, meta) }].map(
-          ({ label, onClick, disabled = false }) => (
-            <AspectButton
-              key={label}
-              onClick={onClick}
-              disabled={disabled}
-              color="primary"
-              variant="contained"
-              style={{ margin: '0 4px' }}
-            >
-              {label}
-            </AspectButton>
-          )
-        )}
+        {[
+          {
+            disabled: !formik.dirty || !formik.isValid,
+            label: intl.formatMessage(messages.save),
+            onClick: () => onSubmit(formik, meta),
+          },
+        ].map(({ label, onClick, disabled }) => (
+          <AspectButton
+            key={label}
+            onClick={onClick}
+            disabled={disabled}
+            color="primary"
+            variant="contained"
+            style={{ margin: '0 4px' }}
+          >
+            {label}
+          </AspectButton>
+        ))}
       </DetailHeader>
       <Box component="main" sx={{ p: 1 }}>
         <Card>

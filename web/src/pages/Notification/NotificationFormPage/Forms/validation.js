@@ -13,7 +13,7 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
     parent: { persons, jobFunctions, sendToPatient },
   } = yupThis
 
-  if (sendToPatient || jobFunctions.length > 0 || persons?.length > 0) {
+  if (sendToPatient || jobFunctions?.length > 0 || persons?.length > 0) {
     return true
   }
 
@@ -23,6 +23,7 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
 const validationSchema = formatMessage =>
   Yup.object()
     .shape({
+      notificationType: Yup.string().required(formatMessage(messages.notificationTypeRequired)),
       issueTypeId: Yup.string().when('notificationType', {
         is: 'issueBased',
         then: Yup.string()
