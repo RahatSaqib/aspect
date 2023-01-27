@@ -208,6 +208,7 @@ const AspectDropDown = ({
     },
     [action, responseFromQuery]
   )
+  const onTouched = useCallback(() => action({ action: 'touched', identifier }), [action, identifier])
 
   const components = useMemo(() => {
     const finalOption = hasIcon(selectOptions)
@@ -255,6 +256,7 @@ const AspectDropDown = ({
       isMulti={isMulti}
       keyMapping={keyMapping}
       messages={messages}
+      onTouched={onTouched}
       placeholder={placeholder}
       selectedValue={selectedValue}
       theme={theme}

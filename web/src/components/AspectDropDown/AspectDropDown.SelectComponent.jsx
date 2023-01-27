@@ -20,6 +20,7 @@ const cssClasses = classnames.bind(styles)
 
 const SelectComponent = ({
   action: dispatchFromRedux,
+  onTouched,
   classNames,
   components,
   data,
@@ -82,6 +83,7 @@ const SelectComponent = ({
         placeholder={defaultOption || placeholder}
         styles={buildCustomStyles(theme)}
         onChange={onChange}
+        onBlur={onTouched}
         noOptionsMessage={() => formatMessage(messagesBase.noOptionsMessage)}
         /**
          * we work in `controlled` mode, meaning that `value` must be either
@@ -109,6 +111,7 @@ SelectComponent.defaultProps = {
 
 SelectComponent.propTypes = {
   action: PropTypes.func.isRequired,
+  onTouched: PropTypes.func.isRequired,
   classNames: PropTypes.oneOfType([PropTypes.object]),
   components: PropTypes.oneOfType([PropTypes.object]),
   data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,

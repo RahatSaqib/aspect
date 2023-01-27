@@ -93,6 +93,12 @@ const AspectSelect = props => {
           showLabelWhenDisabled: true,
         }}
         action={({ identifier, selectedOption, action }, dataSource) => {
+          if (action === 'touched') {
+            if (!get(formik.touched, identifier)) {
+              formik.setFieldTouched(identifier)
+            }
+            return
+          }
           const value = action === 'clear' ? null : getValue(selectedOption, formik, id)
 
           updateField(identifier, value, { formik, toggleEdit })
