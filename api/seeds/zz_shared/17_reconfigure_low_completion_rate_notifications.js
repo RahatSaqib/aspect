@@ -13,9 +13,9 @@ module.exports = seed(async knex => {
 
   const notificationTypes = await knex('NotificationType as nt')
     .where('issueTypeId', issueTypes.SiteWithLowFieldCompletionRate.id)
-    .select('nt.id as notificationTypeId', 'nt.messageTypeId as oldMessageTypeId')
+    .select('nt.id as notificationTypeId')
 
-  await Promise.each(notificationTypes, async ({ notificationTypeId, oldMessageTypeId }) => {
+  await Promise.each(notificationTypes, async ({ notificationTypeId }) => {
     const [emailTemplateId] = await knex('EmailTemplate').insert({
       subject: '{{site.name}} has a low completion rate issue',
       body: 'A low completion rate has been detected at {{site.name}} with {{site.completionRatePercentage}}% of custom fields completed.',
@@ -37,7 +37,5 @@ module.exports = seed(async knex => {
         'nt.filterCondition': knex.raw("JSON_SET(nt.filterCondition, '$.sendEmail', true)"),
         'nt.messageTypeId': messageTypeId,
       })
-
-    await knex('MessageType').where({ id: oldMessageTypeId }).del()
   })
 }, __filename)
