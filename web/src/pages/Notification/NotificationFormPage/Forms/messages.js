@@ -34,6 +34,10 @@ export default defineMessages({
     id: 'pages.Notifications.notificationNameRequired',
     defaultMessage: 'The notification name is required',
   },
+  notificationTypeRequired: {
+    id: 'pages.Notifications.notificationTypeRequired',
+    defaultMessage: 'The notification type is required',
+  },
   resultCategoryRequired: {
     id: 'pages.Notifications.resultCategoryRequired',
     defaultMessage: 'You should select at least one Result Category for this assay',
