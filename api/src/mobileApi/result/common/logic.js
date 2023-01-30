@@ -387,6 +387,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
   const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
+  const isRecorded = data.resultWorkflowStatusId === acknowledgedId
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -468,15 +469,10 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
       contentIcon: assayAvatar.contentIcon,
     },
     clinicalResponse: {
-      recorded: data.resultWorkflowStatusId === acknowledgedId,
+      recorded: isRecorded,
+      confirmedOn: isRecorded ? data.resultWorkflowStatusChangedOn : null,
     },
     testInformation: [],
-  }
-  if (data.resultWorkflowStatusId === acknowledgedId) {
-    mainData.clinicalResponse = {
-      ...mainData.clinicalResponse,
-      confirmedOn: data.resultWorkflowStatusChangedOn,
-    }
   }
   if (latestFollowUps.length > 0) {
     const treatment = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'treatment')

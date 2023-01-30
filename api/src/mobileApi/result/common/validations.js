@@ -306,7 +306,9 @@ const downloadResultResponseValidationV2 = () => {
               i18nKey: Joi.string().description('Test type key'),
               text: Joi.string().description('Test type text'),
             }),
-          transferred: Joi.string().allow(null).description('trasferred place'),
+          transferred: Joi.string()
+            .allow(null)
+            .description('The result has transferred to another clinic, probable value : Here or Away'),
           transferredOn: Joi.date().allow(null).description('When result was transferred to another clinic'),
           transferredBy: Joi.string().allow(null).description('Who transferred result to another clinic'),
           resultStatusLogId: Joi.number()
