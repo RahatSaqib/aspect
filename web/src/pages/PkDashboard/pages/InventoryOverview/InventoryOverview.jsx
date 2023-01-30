@@ -1,8 +1,16 @@
-import React from 'react'
-import { Container, Grid, Card, CardContent } from '@mui/material'
+import React, { useState } from 'react'
+import { Container, Grid, Card, CardContent, Stack } from '@mui/material'
+import ConsumableSelector from '../../../../oldPages/dashboard/Graphs/ConsumableSelector'
+import PeriodSelector from '../../../../oldPages/dashboard/Graphs/PeriodSelector'
+import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import InventoryTable from './InventoryTable'
 
+const { DATE_RANGE_OPTIONS } = DATE_CONSTS
+
 const InventoryOverviewPage = () => {
+  const [, setFilter] = useState()
+  const [, setConsumable] = useState()
+
   const data = new Array(111).fill({}).map((i, idx) => createData(idx, `City ${idx}`, 159, 6, 24, 9, 5))
 
   const columns = [
@@ -13,12 +21,17 @@ const InventoryOverviewPage = () => {
     { name: 'Consumption Rate', prop: 'rate' },
     { name: 'Days Left', prop: 'left' },
   ]
+
   return (
     <Container maxWidth sx={{ pb: 3, maxHeight: 'calc(100vh - 64px)', overflow: 'scroll' }}>
       <Grid container spacing={2}>
         <Grid item xs={12} style={{ padding: '16px 8px 0' }}>
           <Card>
             <CardContent>
+              <Stack direction="row" spacing={2}>
+                <ConsumableSelector onChange={setConsumable} />
+                <PeriodSelector onChange={setFilter} initialValue={DATE_RANGE_OPTIONS.LAST_MONTH} />
+              </Stack>
               <InventoryTable columns={columns} rows={data} hasDetail />
             </CardContent>
           </Card>
@@ -41,7 +54,7 @@ function createData(id, name, quantity, lastSixMonths, used, rate, left) {
     left,
     detail: [
       { id: `${id}${id}`, name, quantity, lastSixMonths, used, rate, left },
-      { name, quantity, lastSixMonths, used, rate, left },
+      { id: `${id}${id}2`, name, quantity, lastSixMonths, used, rate, left },
     ],
   }
 }
