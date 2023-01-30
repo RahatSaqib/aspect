@@ -162,7 +162,7 @@ export class RouterDetail extends PureComponent {
     const dataSchema = router.getIn(['deviceType', 'configurationDataSchema'])
 
     return (
-      <div>
+      <div className="ari">
         <Tooltip title={formatMessage(messages.editTooltip)} placement="bottom" disableInteractive>
           <IconButton aria-label={formatMessage(messages.editTooltip)} onClick={this.handleToggleEditDialog}>
             <ModeEdit fontSize="large" />

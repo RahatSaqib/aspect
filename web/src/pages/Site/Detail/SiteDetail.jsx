@@ -68,7 +68,7 @@ export const SiteDetail = ({ navigate, location }) => {
           </AspectButton>
         ))}
       </DetailHeader>
-      <Box component="main">
+      <Box component="main" sx={{ width: '100%' }}>
         {isLoading ? (
           <LinearProgress />
         ) : (

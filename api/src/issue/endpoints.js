@@ -1,8 +1,9 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
-const { getIssueEventTriggerSubscriptions, triggerIssue, updateIssueStatus } = require('./service')
+const { triggerIssue, updateIssueStatus } = require('./service')
 const { onEscalateIssues, onIssueTriggered } = require('./escalations')
 const { onResolveIssues } = require('./resolutions')
+const { getIssueEventTriggerSubscriptions } = require('./subscriptions')
 
 const routes = [
   {

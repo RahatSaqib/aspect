@@ -13,7 +13,7 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
     parent: { persons, jobFunctions, sendToPatient },
   } = yupThis
 
-  if (sendToPatient || jobFunctions.length > 0 || persons?.length > 0) {
+  if (sendToPatient || jobFunctions?.length > 0 || persons?.length > 0) {
     return true
   }
 
@@ -23,6 +23,7 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
 const validationSchema = formatMessage =>
   Yup.object()
     .shape({
+      notificationType: Yup.string().required(formatMessage(messages.notificationTypeRequired)),
       issueTypeId: Yup.string().when('notificationType', {
         is: 'issueBased',
         then: Yup.string()
@@ -36,6 +37,7 @@ const validationSchema = formatMessage =>
             'ModuleDisabled',
             'UnusedModules',
             'InstrumentReplaced',
+            'SiteWithLowFieldCompletionRate',
           ])
           .required(),
       }),
@@ -126,11 +128,39 @@ const validationSchema = formatMessage =>
           then: Yup.string()
             .matches(/{{report.downloadLink}}/, formatMessage(messages.emailBodyMustContainDownloadLink))
             .required(),
+        })
+        .when('notificationType', {
+          is: 'SiteWithLowFieldCompletionRate',
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
         }),
       smsBody: Yup.string()
         .when('sendSms', optionsForSendXXX(formatMessage(messages.smsBodyRequired)))
-        .max(144),
-      webBody: Yup.string().when('sendWeb', optionsForSendXXX(formatMessage(messages.webBodyRequired))),
+        .max(144)
+        .when('notificationType', {
+          is: 'SiteWithLowFieldCompletionRate',
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
+        }),
+      webBody: Yup.string()
+        .when('sendWeb', optionsForSendXXX(formatMessage(messages.webBodyRequired)))
+        .when('notificationType', {
+          is: 'SiteWithLowFieldCompletionRate',
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
+        }),
       webUrl: Yup.string()
         .when('sendWeb', optionsForSendXXX(formatMessage(messages.webUrlRequired)))
         .matches(/^(ftp|http|https):\/\/[^ "]+$/, formatMessage(messages.webUrlInvalidFormat)),

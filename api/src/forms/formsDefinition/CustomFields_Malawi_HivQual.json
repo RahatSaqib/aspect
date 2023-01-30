@@ -1,0 +1,95 @@
+{
+  "fields": [
+    {
+      "id": 28,
+      "name": "MWReasonForTest",
+      "items": [
+        {
+          "key": "EID initial",
+          "order": 10,
+          "value": "EID initial"
+        },
+        {
+          "key": "Confirmatory after initial DNA-PCR diagnosis",
+          "order": 20,
+          "value": "Confirmatory after initial DNA-PCR diagnosis"
+        },
+        {
+          "key": "Confirmatory after initial positive rapid test",
+          "order": 30,
+          "value": "Confirmatory after initial positive rapid test"
+        },
+        {
+          "key": "Tie-breaker (inconclusive rapid tests)",
+          "order": 40,
+          "value": "Tie-breaker (inconclusive rapid tests)"
+        }
+      ],
+      "order": 90,
+      "title": "Reason for Test (Mandatory)",
+      "source": "patientData.MWReasonForTest",
+      "caption": "Reason for Test (Mandatory)",
+      "i18nKey": "MWReasonForTestI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWReasonForTestI8nCaptionKey",
+      "gxAlertDbColumn": "MWReasonForTest",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.28.value",
+      "payloadDestinationPath": "patient.MWReasonForTest"
+    },
+    {
+      "id": 30,
+      "name": "MWMotherCaregiverSurname",
+      "order": 110,
+      "title": "Mother/Caregiver Surname",
+      "source": "patientData.MWMotherCaregiverSurname",
+      "caption": "Mother/Caregiver Surname",
+      "i18nKey": "MWMotherCaregiverSurnameI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "textBox",
+      "i18nKeyCaption": "MWMotherCaregiverSurnameI8nCaptionKey",
+      "gxAlertDbColumn": "MWMotherCaregiverSurname",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.30.value",
+      "payloadDestinationPath": "patient.MWMotherCaregiverSurname"
+    },
+    {
+      "id": 31,
+      "name": "MWMotherCaregiverFirstName",
+      "order": 120,
+      "title": "Mother/Caregiver First Name",
+      "source": "patientData.MWMotherCaregiverFirstName",
+      "caption": "Mother/Caregiver First Name",
+      "i18nKey": "MWMotherCaregiverFirstNameI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "textBox",
+      "i18nKeyCaption": "MWMotherCaregiverFirstNameI8nCaptionKey",
+      "gxAlertDbColumn": "MWMotherCaregiverFirstName",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.31.value",
+      "payloadDestinationPath": "patient.MWMotherCaregiverFirstName"
+    },
+    {
+      "id": 32,
+      "name": "MWChildUniqueId",
+      "order": 130,
+      "title": "Unique Child ID",
+      "source": "patientData.MWChildUniqueId",
+      "caption": "Unique Child ID",
+      "i18nKey": "MWChildUniqueIdI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "textBox",
+      "i18nKeyCaption": "MWChildUniqueIdI8nCaptionKey",
+      "gxAlertDbColumn": "MWChildUniqueId",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.32.value",
+      "payloadDestinationPath": "patient.MWChildUniqueId"
+    }
+  ],
+  "refForms": []
+}

@@ -6,10 +6,10 @@ const LogoutApp = lazy(() => import('./App.LogoutApp'))
 const LogInApp = lazy(() => import('./App.LogInApp'))
 
 const MainApp = () => {
-  const { hasToAcceptLicenseId, isLoggedOut } = useAuthState()
+  const { jwt, isLoggedOut } = useAuthState()
 
   return (
-    <Suspense fallback={<Loading />}>{isLoggedOut || hasToAcceptLicenseId ? <LogoutApp /> : <LogInApp />}</Suspense>
+    <Suspense fallback={<Loading />}>{jwt.hasToAcceptLicenseId || isLoggedOut ? <LogoutApp /> : <LogInApp />}</Suspense>
   )
 }
 

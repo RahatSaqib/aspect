@@ -1,5 +1,10 @@
 @import '../../theme/variables.css';
 
+.Container {
+  background-color: var(--aspect-color-grey-7);
+  min-height: 100vh;
+}
+
 .version {
   color: var(--ming, #34717c);
   font-size: x-small;
@@ -7,57 +12,14 @@
   bottom: 10px;
   left: -10px;
 }
-/* Shared */
-.icon {
-  display: inline-block;
-  width: 36px;
-}
-
-.Layout {
-  align-items: stretch;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 100vh;
-  min-width: 100%;
-  position: relative;
-}
-
-/* Specific */
-.Panel {
-  background-color: var(--aspect-color-grey-7);
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.Page-Content {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.VerticalAppBar {
-  align-items: center;
-  justify-content: space-between;
-}
-
-.AppBar__appBar {
-  background-color: var(--aspect-color-white);
-  position: static;
-}
 
 .AppBar__leftIcon:not([disabled]).AppBar__leftIcon:not([disabled]) {
   color: var(--aspect-color-grey-3);
 }
 
 .ConfluenceIcon {
-  composes: icon;
+  display: inline-block;
+  width: 36px;
 }
 
 .Navigation {
