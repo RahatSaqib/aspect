@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, Stack, CardContent, Typography, Divider } from '@mui/material'
 import useI18n from '../../../hooks/useI18n'
-import messages from '../messages'
+import messages from '../PkDashboard.Messages'
 
 const SummaryCard = ({ item }) => {
   const { formatMessage } = useI18n()

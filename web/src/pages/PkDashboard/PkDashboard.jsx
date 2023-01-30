@@ -2,11 +2,12 @@ import React from 'react'
 import { Container, Grid } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router'
+import DetailHeader from '../../components/DetailHeader'
 import useI18n from '../../hooks/useI18n'
 import SummaryCard from './components/SummaryCard'
-import messages from './messages'
 import CoverageColumn from './PkDashboard.CoverageColumn'
 import InventoryColumn from './PkDashboard.InventoryColumn'
+import messages from './PkDashboard.Messages'
 import MixedColum from './PkDashboard.MixedColum'
 import MtbRifColumn from './PkDashboard.MtbRifColumn'
 import MtbRifColumn2 from './PkDashboard.MtbRifColumn2'
@@ -55,35 +56,38 @@ const PkDashboard = () => {
   const { formatMessage } = useI18n()
   const data = mock // replace with useQuery()
   return (
-    <Container maxWidth sx={{ pb: 3, maxHeight: 'calc(100vh - 64px)', overflow: 'scroll' }}>
-      <Helmet title={formatMessage(messages.aspectDashboard)} />
-      <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-        {data ? (
-          <>
-            {data.summary.map(s => (
-              <Grid item xs={12 / data.summary.length} style={{ padding: '16px 8px 0' }}>
-                <SummaryCard key={s.key} item={s} />
-              </Grid>
-            ))}
-            {cols ? (
-              <>
-                <MtbRifColumn2 data={data.mtbRif} />
-                <MtbXdrColumn2 data={data.mtbXdr} />
-                <MixedColum coverage={data.coverage} inventory={data.inventory} other={data.other} />{' '}
-              </>
-            ) : (
-              <>
-                <MtbRifColumn data={data.mtbRif} />
-                <MtbXdrColumn data={data.mtbXdr} />
-                <CoverageColumn data={data.coverage} />
-                <InventoryColumn data={data.inventory} />
-                <OtherColumn data={data.other} />
-              </>
-            )}
-          </>
-        ) : null}
-      </Grid>
-    </Container>
+    <>
+      <DetailHeader name={formatMessage(messages.aspectDashboard)} disableBack />
+      <Container maxWidth sx={{ pb: 3, maxHeight: 'calc(100vh - 64px)', overflow: 'scroll' }}>
+        <Helmet title={formatMessage(messages.aspectDashboard)} />
+        <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+          {data ? (
+            <>
+              {data.summary.map(s => (
+                <Grid item xs={12 / data.summary.length} style={{ padding: '16px 8px 0' }}>
+                  <SummaryCard key={s.key} item={s} />
+                </Grid>
+              ))}
+              {cols ? (
+                <>
+                  <MtbRifColumn2 data={data.mtbRif} />
+                  <MtbXdrColumn2 data={data.mtbXdr} />
+                  <MixedColum coverage={data.coverage} inventory={data.inventory} other={data.other} />{' '}
+                </>
+              ) : (
+                <>
+                  <MtbRifColumn data={data.mtbRif} />
+                  <MtbXdrColumn data={data.mtbXdr} />
+                  <CoverageColumn data={data.coverage} />
+                  <InventoryColumn data={data.inventory} />
+                  <OtherColumn data={data.other} />
+                </>
+              )}
+            </>
+          ) : null}
+        </Grid>
+      </Container>
+    </>
   )
 }
 

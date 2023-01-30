@@ -4,7 +4,7 @@ import useI18n from '../../hooks/useI18n'
 import ColumnName from './components/ColumnName'
 import DashboardCard from './components/DashboardCard'
 import DashboardLink from './components/DashboardLink'
-import messages from './messages'
+import messages from './PkDashboard.Messages'
 
 const CoverageColumn = ({ data }) => {
   const { formatMessage } = useI18n()
