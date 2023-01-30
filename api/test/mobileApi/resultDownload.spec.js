@@ -752,15 +752,12 @@ describe('Mobile API Result download routes v2 with available custom api-version
 
       if (response.body.data[0].clinicalResponse) {
         assert.property(response.body.data[0].clinicalResponse, 'recorded')
-        if (response.body.data[0].clinicalResponse.recorded) {
-          assert.property(response.body.data[0].clinicalResponse, 'confirmedOn')
-          assert.equal(Object.keys(response.body.data[0].clinicalResponse).length, 6)
-        }
+        assert.property(response.body.data[0].clinicalResponse, 'confirmedOn')
         assert.property(response.body.data[0].clinicalResponse, 'treatment')
         assert.property(response.body.data[0].clinicalResponse, 'treatmentStarted')
         assert.property(response.body.data[0].clinicalResponse, 'outcome')
         assert.property(response.body.data[0].clinicalResponse, 'outcomeOccurred')
-        assert.equal(Object.keys(response.body.data[0].clinicalResponse).length, 5)
+        assert.equal(Object.keys(response.body.data[0].clinicalResponse).length, 6)
       }
     }
 
