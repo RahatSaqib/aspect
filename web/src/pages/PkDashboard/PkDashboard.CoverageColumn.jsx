@@ -15,8 +15,16 @@ const CoverageColumn = ({ data }) => {
         <DashboardLink to="" label={formatMessage(messages.genExpert)} value={data.genExpert} />
       </DashboardCard>
       <DashboardCard title={formatMessage(messages.coverageperformance)}>
-        <DashboardLink to="" label={formatMessage(messages.utilization)} value={data.utilization} />
-        <DashboardLink to="" label={formatMessage(messages.errorRate)} value={data.errorRate} />
+        <DashboardLink
+          to="/dashboard/coverage/utilization"
+          label={formatMessage(messages.utilization)}
+          value={data.utilization}
+        />
+        <DashboardLink
+          to="/dashboard/coverage/error-rate"
+          label={formatMessage(messages.errorRate)}
+          value={data.errorRate}
+        />
       </DashboardCard>
     </Grid>
   )

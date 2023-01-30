@@ -1,7 +1,13 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  // page titles
   aspectDashboard: { id: 'p.PkDashboard.aspectDashboard', defaultMessage: 'Aspect Dashboard' },
+  errorRateTitle: { id: 'p.PkDashboard.errorRate', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
+  utilizationTitle: {
+    id: 'p.PkDashboard.utilizationTitle',
+    defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Utilization',
+  },
   // summary
   molecularAssay: { id: 'p.PkDashboard.molecularAssay', defaultMessage: 'People tested using rapid Molecular assay' },
   molecularAssay24: { id: 'p.PkDashboard.molecularAssay24', defaultMessage: 'Last 24 hours' },

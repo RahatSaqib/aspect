@@ -15,8 +15,16 @@ const MixedColum = ({ coverage, inventory, other }) => {
         <DashboardLink to="" label={formatMessage(messages.genExpert)} value={coverage.genExpert} />
       </DashboardCard>
       <DashboardCard title={formatMessage(messages.coverageperformance)}>
-        <DashboardLink to="" label={formatMessage(messages.utilization)} value={coverage.utilization} />
-        <DashboardLink to="" label={formatMessage(messages.errorRate)} value={coverage.errorRate} />
+        <DashboardLink
+          to="/dashboard/coverage/utilization"
+          label={formatMessage(messages.utilization)}
+          value={coverage.utilization}
+        />
+        <DashboardLink
+          to="/dashboard/coverage/error-rate"
+          label={formatMessage(messages.errorRate)}
+          value={coverage.errorRate}
+        />
       </DashboardCard>
       <ColumnName title={formatMessage(messages.titleinventory)} />
       <DashboardCard>

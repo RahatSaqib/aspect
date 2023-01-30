@@ -11,7 +11,7 @@ import {
   TablePagination,
 } from '@mui/material'
 
-const InventoryTable = ({ columns, rows, hasDetail, isDetail }) => {
+const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [open, setOpen] = useState(-1)
@@ -58,7 +58,7 @@ const InventoryTable = ({ columns, rows, hasDetail, isDetail }) => {
                 <TableCell sx={{ p: 0 }} colSpan={7}>
                   <Collapse in={open === row.id} timeout="auto" unmountOnExit>
                     <Box sx={{ ml: 0.5, mr: 0.5, backgroundColor: colors[i % 2] }}>
-                      <InventoryTable columns={columns} rows={row.detail} isDetail />
+                      <NestedTable columns={columns} rows={row.detail} isDetail />
                     </Box>
                   </Collapse>
                 </TableCell>
@@ -92,4 +92,4 @@ const InventoryTable = ({ columns, rows, hasDetail, isDetail }) => {
   )
 }
 
-export default InventoryTable
+export default NestedTable
