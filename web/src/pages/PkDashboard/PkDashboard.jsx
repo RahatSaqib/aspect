@@ -1,18 +1,14 @@
 import React from 'react'
 import { Container, Grid } from '@mui/material'
 import { Helmet } from 'react-helmet'
-import { useParams } from 'react-router'
 import DetailHeader from '../../components/DetailHeader'
 import useI18n from '../../hooks/useI18n'
 import SummaryCard from './components/SummaryCard'
 import CoverageColumn from './PkDashboard.CoverageColumn'
 import InventoryColumn from './PkDashboard.InventoryColumn'
 import messages from './PkDashboard.Messages'
-import MixedColum from './PkDashboard.MixedColum'
 import MtbRifColumn from './PkDashboard.MtbRifColumn'
-import MtbRifColumn2 from './PkDashboard.MtbRifColumn2'
 import MtbXdrColumn from './PkDashboard.MtbXdrColumn'
-import MtbXdrColumn2 from './PkDashboard.MtbXdrColumn2'
 import OtherColumn from './PkDashboard.OtherColumn'
 
 const mock = {
@@ -52,7 +48,6 @@ const mock = {
 }
 
 const PkDashboard = () => {
-  const { cols } = useParams()
   const { formatMessage } = useI18n()
   const data = mock // replace with useQuery()
   return (
@@ -68,21 +63,11 @@ const PkDashboard = () => {
                   <SummaryCard key={s.key} item={s} />
                 </Grid>
               ))}
-              {cols ? (
-                <>
-                  <MtbRifColumn2 data={data.mtbRif} />
-                  <MtbXdrColumn2 data={data.mtbXdr} />
-                  <MixedColum coverage={data.coverage} inventory={data.inventory} other={data.other} />{' '}
-                </>
-              ) : (
-                <>
-                  <MtbRifColumn data={data.mtbRif} />
-                  <MtbXdrColumn data={data.mtbXdr} />
-                  <CoverageColumn data={data.coverage} />
-                  <InventoryColumn data={data.inventory} />
-                  <OtherColumn data={data.other} />
-                </>
-              )}
+              <MtbRifColumn data={data.mtbRif} />
+              <MtbXdrColumn data={data.mtbXdr} />
+              <CoverageColumn data={data.coverage} />
+              <InventoryColumn data={data.inventory} />
+              <OtherColumn data={data.other} />
             </>
           ) : null}
         </Grid>
