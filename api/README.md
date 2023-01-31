@@ -144,6 +144,22 @@ sentry.dsn='https://sentrydsn ....'
 
 ```
 
+### Tuning MySql
+
+To let MySql execute complex queries which bring large amount of records it should be tuned by increasing buffer pool size. Open `mysql.ini` file (or `/etc/mysql/mysql.conf.d/mysqld.cnf`) and in `[mysqld]` section add this 3 lines:
+
+```env
+innodb_buffer_pool_chunk_size = 1073741824
+innodb_buffer_pool_instances = 4
+innodb_buffer_pool_size = 4294967296
+```
+
+See details about this params:
+
+`innodb_buffer_pool_size` - https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_buffer_pool_size
+
+`innodb_buffer_pool_instances` - https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_buffer_pool_instances
+
 ### NVM Management
 
 - we have a `.nvmrc` file in the root that will allow us to initiate our developer environment to the correct node version on load.
