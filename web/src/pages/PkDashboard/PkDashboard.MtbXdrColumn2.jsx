@@ -9,7 +9,7 @@ import messages from './PkDashboard.Messages'
 const MtbXdrColumn2 = ({ data }) => {
   const { formatMessage } = useI18n()
   return (
-    <Grid lg={12 / 3} style={{ padding: '8px 8px 0' }}>
+    <Grid lg={4} style={{ padding: '8px 8px 0' }}>
       <ColumnName title={formatMessage(messages.titlemtbXdr)} />
       <DashboardCard title={formatMessage(messages.mtbXdrTesting)}>
         <DashboardLink to="" label={formatMessage(messages.TCurrent)} value={data.TCurrent} />

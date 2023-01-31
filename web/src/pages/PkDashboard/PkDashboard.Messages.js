@@ -8,6 +8,8 @@ export const messages = defineMessages({
     id: 'p.PkDashboard.utilizationTitle',
     defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Utilization',
   },
+  coverageTitle: { id: 'p.PkDashboard.coverageTitle', defaultMessage: 'Xpert MTB/RIF Coverage' },
+
   // summary
   molecularAssay: { id: 'p.PkDashboard.molecularAssay', defaultMessage: 'People tested using rapid Molecular assay' },
   molecularAssay24: { id: 'p.PkDashboard.molecularAssay24', defaultMessage: 'Last 24 hours' },

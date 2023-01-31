@@ -9,10 +9,14 @@ import messages from './PkDashboard.Messages'
 const MixedColum = ({ coverage, inventory, other }) => {
   const { formatMessage } = useI18n()
   return (
-    <Grid lg={12 / 3} style={{ padding: '8px 8px 0' }}>
+    <Grid lg={4} style={{ padding: '8px 8px 0' }}>
       <ColumnName title={formatMessage(messages.titlecoverage)} />
       <DashboardCard>
-        <DashboardLink to="" label={formatMessage(messages.genExpert)} value={coverage.genExpert} />
+        <DashboardLink
+          to="/dashboard/coverage/device"
+          label={formatMessage(messages.genExpert)}
+          value={coverage.genExpert}
+        />
       </DashboardCard>
       <DashboardCard title={formatMessage(messages.coverageperformance)}>
         <DashboardLink

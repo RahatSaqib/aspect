@@ -12,7 +12,11 @@ const CoverageColumn = ({ data }) => {
     <Grid lg={12 / 5} style={{ padding: '8px 8px 0' }}>
       <ColumnName title={formatMessage(messages.titlecoverage)} />
       <DashboardCard>
-        <DashboardLink to="" label={formatMessage(messages.genExpert)} value={data.genExpert} />
+        <DashboardLink
+          to="/dashboard/coverage/device"
+          label={formatMessage(messages.genExpert)}
+          value={data.genExpert}
+        />
       </DashboardCard>
       <DashboardCard title={formatMessage(messages.coverageperformance)}>
         <DashboardLink
