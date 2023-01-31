@@ -37,12 +37,12 @@ const SiteList = lazy(() => import('./pages/Site/List'))
 const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
 const Welcome = lazy(() => import('./pages/Welcome'))
 //
-const DeviceCoverage = lazy(() => import('./pages/PkDashboard/pages/DeviceCoverage'))
-const Utilization = lazy(() => import('./pages/PkDashboard/pages/Utilization'))
-const ErrorRate = lazy(() => import('./pages/PkDashboard/pages/ErrorRate'))
-const InventoryOverview = lazy(() => import('./pages/PkDashboard/pages/InventoryOverview'))
-const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/CovidGraph'))
-const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/HivGraph'))
+const DeviceCoverage = lazy(() => import('./pages/PkDashboard/pages/DeviceCoveragePage'))
+const Utilization = lazy(() => import('./pages/PkDashboard/pages/UtilizationPage'))
+const ErrorRate = lazy(() => import('./pages/PkDashboard/pages/ErrorRatePage'))
+const InventoryOverview = lazy(() => import('./pages/PkDashboard/pages/InventoryOverviewPage'))
+const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/CovidPage'))
+const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/HivPage'))
 
 const LogInApp = () => {
   const dispatch = useDispatch()

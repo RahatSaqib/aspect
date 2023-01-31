@@ -1,8 +1,7 @@
 import React from 'react'
-import { Container, Grid, Card, CardContent } from '@mui/material'
-import DetailHeader from '../../../../components/DetailHeader'
 import useI18n from '../../../../hooks/useI18n'
 import NestedTable from '../../components/NestedTable'
+import PkPage from '../../components/PkPage'
 import messages from '../../PkDashboard.Messages'
 
 const DeviceCoveragePage = () => {
@@ -20,20 +19,9 @@ const DeviceCoveragePage = () => {
   ]
 
   return (
-    <>
-      <DetailHeader name={formatMessage(messages.coverageTitle)} disableBack />
-      <Container maxWidth sx={{ pb: 3, maxHeight: 'calc(100vh - 64px)', overflow: 'scroll' }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} style={{ padding: '16px 8px 0' }}>
-            <Card>
-              <CardContent>
-                <NestedTable columns={columns} rows={data} hasDetail />
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
-    </>
+    <PkPage title={formatMessage(messages.coverageTitle)}>
+      <NestedTable columns={columns} rows={data} hasDetail />
+    </PkPage>
   )
 }
 
