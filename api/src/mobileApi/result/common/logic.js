@@ -388,6 +388,9 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
   const isRecorded = data.resultWorkflowStatusId === acknowledgedId
+  const resultData = data.resultData
+    ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
+    : null
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -402,9 +405,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     resultCategory2ExternalId: data.resultCategory2ExternalId,
     patientData,
     testId: patientData ? patientData.id : data.sampleId,
-    resultData: data.resultData
-      ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
-      : null,
+    resultData,
     sample: {
       id: data.sampleId,
       originSite: data.sampleOriginSiteId
@@ -454,7 +455,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     ),
     // result transferred
     reportableSiteName: data.reportableSiteName,
-    testType: TESTTYPE.RESULT,
+    testType: resultData ? TESTTYPE.RESULT : TESTTYPE.SAMPLE,
     transferred: isTransferred ? TRANSFERRED.AWAY : TRANSFERRED.HERE,
     transferredOn: data.transferredOn,
     transferredBy: data.transferredBy,
