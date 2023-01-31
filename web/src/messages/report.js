@@ -26,6 +26,14 @@ const messages = defineMessages({
     defaultMessage:
       'All test results in the system (up to 50.000 records). One row per result with all the fields needed.',
   },
+  data_extract: {
+    id: 'pages.ReportIndex.data_extract',
+    defaultMessage: 'Data Extract',
+  },
+  data_extract_description: {
+    id: 'pages.ReportIndex.data_extract_description',
+    defaultMessage: 'Extract all data in the system for either selected date range or maximum for one year.',
+  },
   MTB_Detected_RR_Detected: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected',
     defaultMessage: 'MTB Detected RR Detected',

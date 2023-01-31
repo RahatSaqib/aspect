@@ -163,7 +163,8 @@ SELECT
   JSON_VALUE(r.patientData, '$.requestorPhone' RETURNING CHAR) as RequestorPhone,
   r.errorCode,
   -- ec.`Category` AS `ErrorCategory`, -- ------------------------------- error category -> Not found in Aspect
-  REPLACE(r.errorNotes,'\n',' - ')  as ErrorDescription,
+  REGEXP_REPLACE(r.errorCode,'(\r\n|\n|\r)',' ') as ErrorCode,
+  REGEXP_REPLACE(r.errorNotes,'(\r\n|\n|\r)',' ') as ErrorDescription,
   a.name as AssayName,
   r.assayVersion as AssayHostTestCode,
   r.createdOn as InsertedOn,
@@ -201,9 +202,9 @@ SELECT
   JSON_VALUE(r.resultData, '$.probes.probeDEndpt' RETURNING CHAR) AS ProbeDEndpt,
   JSON_VALUE(r.resultData, '$.probes.probeEEndpt' RETURNING CHAR) AS ProbeEEndpt,
   JSON_VALUE(r.resultData, '$.probes.probeSpcEndpt' RETURNING CHAR) AS ProbeSpcEndpt,
-  JSON_VALUE(r.resultData, '$.probes.qc1Endpt' RETURNING CHAR) AS ProbeSpcEndpt,
+  JSON_VALUE(r.resultData, '$.probes.qc1Endpt' RETURNING CHAR) AS Qc1Endpt,
   JSON_VALUE(r.resultData, '$.probes.qc2Endpt' RETURNING CHAR) AS Qc2Endpt,
-  REPLACE(r.notes,'\n',' - ')  as Notes
+  REGEXP_REPLACE(r.notes,'(\r\n|\n|\r)',' ') as Notes
   , c.name as Country
   , st.name as State
   , lg.name as Lga
