@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { getFieldErrorProps } from '../Formik/Helpers'
 
 const AspectNumberField = ({
+  controlType,
   formik,
   label,
   /**
@@ -30,8 +31,8 @@ const AspectNumberField = ({
         ...rest.InputProps,
         inputProps: {
           ...rest.InputProps.inputProps,
-          min: rest.controlType.min,
-          max: rest.controlType.max,
+          min: controlType.min,
+          max: controlType.max,
           inputMode: 'numeric',
           pattern: '[1-9]d*',
         },
@@ -48,6 +49,7 @@ AspectNumberField.defaultProps = {
 AspectNumberField.propTypes = {
   formik: PropTypes.oneOfType([PropTypes.object]).isRequired,
   label: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
+  controlType: PropTypes.oneOfType([PropTypes.object]).isRequired,
   /**
    * below props are not used - need them to free `rest`
    */

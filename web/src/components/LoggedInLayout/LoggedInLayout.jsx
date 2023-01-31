@@ -30,7 +30,7 @@ export const LoggedInLayout = ({ children }) => {
     <>
       <CssBaseline />
       <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-      <Container maxWidth disableGutters className={cssClasses('Container')}>
+      <Container maxWidth="100%" disableGutters className={cssClasses('Container')}>
         <Header />
         <Grid container spacing={2}>
           {children}
