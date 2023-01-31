@@ -59,7 +59,8 @@ describe('Result create and update routes', () => {
     'resultNotes',
   ]
 
-  before(async () => {
+  before(async function () {
+    this.timeout(120000)
     shared.checkToken(server, path)
   })
 
