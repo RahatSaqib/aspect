@@ -28,7 +28,7 @@ const messages = defineMessages({
   },
   data_extract: {
     id: 'pages.ReportIndex.data_extract',
-    defaultMessage: 'Data Extract',
+    defaultMessage: 'Data Extract for Tableau',
   },
   data_extract_description: {
     id: 'pages.ReportIndex.data_extract_description',
