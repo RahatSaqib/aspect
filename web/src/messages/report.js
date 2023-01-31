@@ -32,7 +32,7 @@ const messages = defineMessages({
   },
   data_extract_description: {
     id: 'pages.ReportIndex.data_extract_description',
-    defaultMessage: 'Extract all data in the system for either selected date range or maximum for one year.',
+    defaultMessage: 'Extract data for selected date range for further importing into Tableau.',
   },
   MTB_Detected_RR_Detected: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected',
