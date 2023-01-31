@@ -104,7 +104,7 @@ SELECT
   r.assayVersion AS AssayVersion,
   rc1.name AS Result1,
   rc2.name AS Result2,
-  r.notes AS resultText,
+  IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) AS resultText,
   COALESCE(
 	JSON_VALUE(r.patientData, "$.age" RETURNING CHAR),
     JSON_VALUE(r.patientData, "$.PatientAge" RETURNING CHAR)
