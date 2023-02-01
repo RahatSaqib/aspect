@@ -67,6 +67,38 @@ const assayAvatarColorsIcon = {
   },
 }
 
+const SAMPLE_STATUS_DAMAGED = {
+  status: 'damaged',
+  color: 'danger',
+  title: 'Sample Damaged',
+}
+
+const SAMPLE_STATUS_LOST = {
+  status: 'lost',
+  color: 'danger',
+  title: 'Sample Damaged',
+}
+
+const SAMPLE_STATUS_NOT_TESTED = {
+  status: 'notTested',
+  color: 'danger',
+  title: 'Sample Not Damaged',
+}
+
+const SAMPLE_STATUS_REGISTER = {
+  status: 'registered',
+  color: 'success',
+  title: 'Sample Registered',
+}
+// TODO: Get details from database. Currently Randomly generated sample status for sample damaged and sample lost case
+const getSampleStatus = val => {
+  let sampleStatus = [SAMPLE_STATUS_DAMAGED, SAMPLE_STATUS_LOST][_.random(0, 2)]
+  if (!_.isNil(val)) {
+    sampleStatus = val === 'danger' ? SAMPLE_STATUS_NOT_TESTED : SAMPLE_STATUS_REGISTER
+  }
+  return sampleStatus
+}
+
 const showTreatment = testResult => {
   return !isTransferred(testResult) && requiresTreatment(testResult)
 }
@@ -391,6 +423,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   const resultData = data.resultData
     ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
     : null
+  const severity = getSeverity(data, followUps)
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -410,10 +443,13 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
       id: data.sampleId,
       originSite: data.sampleOriginSiteId
         ? {
+            id: data.sampleOriginSiteId,
             externalId: data.sampleOriginSiteExternalId,
             name: data.sampleOriginSiteName,
           }
         : null,
+      sampleCollectionDate: data.sampleCollectionOn,
+      ...getSampleStatus(severity),
     },
     workflowStatus: {
       name:
@@ -444,7 +480,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
       externalId: data.resultTreatmentStatusExternalId,
       i18nKey: data.resultTreatmentStatusi18nKey,
       visible: showTreatment(data),
-      severity: getSeverity(data, followUps),
+      severity,
       daysInCurrentStatus: daysFromTreatmentDateUpdateOn(data, followUps),
     },
     followUps: followUpList,
