@@ -94,16 +94,7 @@ const clickExport = (
   }
 }
 
-export const FiltersPanel = ({
-  disabled,
-  contentClassName,
-  filters,
-  config,
-  dateFilterLabel,
-  user,
-  assays,
-  countries,
-}) => {
+const FiltersPanel = ({ disabled, contentClassName, filters, config, dateFilterLabel, user, assays, countries }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const [isShown, setIsShown] = useState(false)
@@ -146,42 +137,8 @@ export const FiltersPanel = ({
     searchParams.delete('pageAt')
     searchParams.delete('page')
     navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
+    setIsShown(false)
   }
-
-  const onSingleAssayChange = id => sV({ ...v, singleAssayId: id, resultCategoryId: null, resultCategoryGroupId: null })
-  const onAssayChange = id => sV({ ...v, assayId: id, resultCategoryId: null, resultCategoryGroupId: null })
-  const onDiseaseChange = diseaseId => sV({ ...v, diseaseId })
-  const onDateChange = dateValues => sV({ ...v, ...dateValues })
-  const onExpirationDateChange = dateValues => sV({ ...v, ...dateValues })
-  const onCountryIdChange = id => sV({ ...v, countryId: id, stateId: undefined, lgaId: undefined, siteName: undefined })
-  const onStateIdChange = stateId => sV({ ...v, stateId, lgaId: undefined, siteName: undefined })
-  const onLgaIdChange = lgaId => sV({ ...v, lgaId, siteName: undefined })
-  const onResultCategoryChange = resultCategoryId => sV({ ...v, resultCategoryId })
-  const onResultCategoryGroupChange = resultCategoryGroupId => sV({ ...v, resultCategoryGroupId })
-  const onTextFieldCommitValue = ({ target: { name, value } }) => sV({ ...v, [name]: value })
-  const onConsumableIdChange = consumableId => sV({ ...v, consumableId })
-  const onPartnerIdChange = partnerId => sV({ ...v, partnerId })
-  const onSampleOriginSiteChange = site => sV({ ...v, sampleOriginSite: site.name })
-  const onSiteNameChange = site => sV({ ...v, siteName: site.name })
-  const onReportableSiteChange = ({ id, name }) => sV({ ...v, reportableSiteName: name, reportableSiteId: id })
-  const onSiteIdChange = site => sV({ ...v, siteId: site.name })
-  const onWorkflowStatusIdChange = workflowStatusId => sV({ ...v, workflowStatusId })
-  const onTreatmentStatusChange = treatmentStatus => sV({ ...v, treatmentStatus })
-  const onDeviceApprovalIdChange = deviceApprovalId => sV({ ...v, deviceApprovalId })
-  const onConnectorStatusChange = connectorStatus => sV({ ...v, connectorStatus })
-  const onDeviceTypeChange = deviceType => sV({ ...v, deviceType })
-  const onDeviceMaintenanceStatusIdChange = deviceMaintenanceStatusId => sV({ ...v, deviceMaintenanceStatusId })
-  const onDisplayResultChange = displayResult => sV({ ...v, displayResult })
-  const onRevokedChange = revoked => sV({ ...v, revoked })
-  const onOnlyReportableResultsBoolChange = onlyReportableResults => sV({ ...v, onlyReportableResults })
-  const onOnlyDownloadedByReporterBoolChange = onlyDownloadedByReporter => sV({ ...v, onlyDownloadedByReporter })
-  const onOnlyEverTransferredBoolChange = onlyEverTransferred => sV({ ...v, onlyEverTransferred })
-  const onOnlyTreatmentRequiredBoolChange = onlyTreatmentRequired => sV({ ...v, onlyTreatmentRequired })
-  const onStockLeftChange = daysStockLeft => sV({ ...v, daysStockLeft })
-  const onHasStockChange = hasStock => sV({ ...v, hasStock })
-  const onOnlyTransfersChange = onlyTransfers => sV({ ...v, onlyTransfers })
-  const onReportNameChange = report => sV({ ...v, reportName: report.name })
-  const onToggleEnabledDisabled = contactStatus => sV({ ...v, contactStatus })
 
   return (
     <>
@@ -199,7 +156,7 @@ export const FiltersPanel = ({
         <MdKeyboardArrowDown className={cssClasses('Button__icon', { 'Button__icon--shown': isShown })} />
       </AspectButton>
       {isShown ? (
-        <Dialog open fullWidth maxWidth={false}>
+        <Dialog open>
           <FallbackUntilDone
             component={DialogContent}
             className={cssClasses(contentClassName, 'FallbackUntilDone')}
@@ -222,7 +179,9 @@ export const FiltersPanel = ({
                 <div className={cssClasses('Control')}>
                   <CountrySelectField
                     allItemText={formatMessage(messages.all)}
-                    onCountryIdChange={onCountryIdChange}
+                    onCountryIdChange={id =>
+                      sV({ ...v, countryId: id, stateId: undefined, lgaId: undefined, siteName: undefined })
+                    }
                     countryId={v.countryId}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectCountry)}
@@ -235,7 +194,7 @@ export const FiltersPanel = ({
                 <div className={cssClasses('Control')}>
                   <StateSelectField
                     allItemText={formatMessage(messages.all)}
-                    onStateIdChange={onStateIdChange}
+                    onStateIdChange={stateId => sV({ ...v, stateId, lgaId: undefined, siteName: undefined })}
                     countryId={v.countryId}
                     stateId={v.stateId}
                     floatingLabelFixed
@@ -249,7 +208,7 @@ export const FiltersPanel = ({
                 <div className={cssClasses('Control')}>
                   <LgaSelectField
                     allItemText={formatMessage(messages.all)}
-                    onLgaIdChange={onLgaIdChange}
+                    onLgaIdChange={lgaId => sV({ ...v, lgaId, siteName: undefined })}
                     countryId={v.countryId}
                     stateId={v.stateId}
                     lgaId={v.lgaId}
@@ -265,7 +224,7 @@ export const FiltersPanel = ({
                   <DiseaseSelectField
                     allItemText={formatMessage(messages.all)}
                     value={v.diseaseId}
-                    onDiseaseIdChange={onDiseaseChange}
+                    onDiseaseIdChange={diseaseId => sV({ ...v, diseaseId })}
                     onlyWithResults
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectDisease)}
@@ -279,7 +238,9 @@ export const FiltersPanel = ({
                 <div className={cssClasses('Control')}>
                   <AssaySelectField
                     value={v.singleAssayId}
-                    onAssayChange={onSingleAssayChange}
+                    onAssayChange={id =>
+                      sV({ ...v, singleAssayId: id, resultCategoryId: null, resultCategoryGroupId: null })
+                    }
                     diseaseId={v.diseaseId}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectAssay)}
@@ -295,7 +256,7 @@ export const FiltersPanel = ({
                   <AssaySelectField
                     allItemText={formatMessage(messages.all)}
                     value={v.assayId}
-                    onAssayChange={onAssayChange}
+                    onAssayChange={id => sV({ ...v, assayId: id, resultCategoryId: null, resultCategoryGroupId: null })}
                     diseaseId={v.diseaseId}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectAssay)}
@@ -312,7 +273,7 @@ export const FiltersPanel = ({
                     disabled={!v.assayId}
                     assayId={v.assayId}
                     value={v.resultCategoryId}
-                    onResultCategoryChange={onResultCategoryChange}
+                    onResultCategoryChange={resultCategoryId => sV({ ...v, resultCategoryId })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectResult)}
                     floatingLabelText={formatMessage(messages.result)}
@@ -328,7 +289,7 @@ export const FiltersPanel = ({
                     disabled={!v.assayId}
                     assayId={v.assayId}
                     value={v.resultCategoryGroupId}
-                    onResultCategoryGroupChange={onResultCategoryGroupChange}
+                    onResultCategoryGroupChange={resultCategoryGroupId => sV({ ...v, resultCategoryGroupId })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectResult)}
                     floatingLabelText={formatMessage(messages.result)}
@@ -342,7 +303,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="errorCode"
                     value={v.errorCode || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -357,7 +318,7 @@ export const FiltersPanel = ({
                   <ConsumableSelectField
                     allItemText={formatMessage(messages.all)}
                     value={v.consumableId}
-                    onConsumableChange={onConsumableIdChange}
+                    onConsumableChange={consumableId => sV({ ...v, consumableId })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectConsumable)}
                     floatingLabelText={formatMessage(messages.consumable)}
@@ -372,7 +333,7 @@ export const FiltersPanel = ({
                     emptyId="-1"
                     emptyText={formatMessage(messages.none)}
                     partnerId={v.partnerId}
-                    onChangePartner={onPartnerIdChange}
+                    onChangePartner={partnerId => sV({ ...v, partnerId })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectPartner)}
                     floatingLabelText={formatMessage(messages.partner)}
@@ -386,7 +347,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="patientOrResearchId"
                     value={v.patientOrResearchId || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -401,7 +362,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="patientOrCaseId"
                     value={v.patientOrCaseId || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -416,7 +377,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="sampleId"
                     value={v.sampleId || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -431,7 +392,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="deviceName"
                     value={v.deviceName || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -446,7 +407,7 @@ export const FiltersPanel = ({
                   <SiteAutoCompleteField
                     name="siteName"
                     value={v.siteName || ''}
-                    onChange={onSiteNameChange}
+                    onChange={site => sV({ ...v, siteName: site.name })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.enterSiteName)}
                     floatingLabelText={formatMessage(messages.site)}
@@ -460,7 +421,7 @@ export const FiltersPanel = ({
                   <SiteAutoCompleteField
                     name="reportableSiteName"
                     value={v.reportableSiteName || ''}
-                    onChange={onReportableSiteChange}
+                    onChange={({ id, name }) => sV({ ...v, reportableSiteName: name, reportableSiteId: id })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.enterReportableSiteName)}
                     floatingLabelText={formatMessage(messages.reportableSite)}
@@ -472,7 +433,7 @@ export const FiltersPanel = ({
                   <SiteAutoCompleteField
                     name="sampleOriginSite"
                     value={v.sampleOriginSite || ''}
-                    onChange={onSampleOriginSiteChange}
+                    onChange={site => sV({ ...v, sampleOriginSite: site.name })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.enterSampleOriginSite)}
                     floatingLabelText={formatMessage(messages.sampleOriginSite)}
@@ -484,7 +445,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="contactNameOrEmail"
                     value={v.contactNameOrEmail || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{ shrink: true }}
                     placeholder={formatMessage(messages.setContactNameEmail)}
                     label={formatMessage(messages.contactNameEmail)}
@@ -497,7 +458,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="externalId"
                     value={v.externalId || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{ shrink: true }}
                     placeholder={formatMessage(messages.enterExternalId)}
                     label={formatMessage(messages.externalId)}
@@ -510,7 +471,7 @@ export const FiltersPanel = ({
                   <ResultWorkflowStatusSelectField
                     allItemText={formatMessage(messages.all)}
                     value={v.workflowStatusId}
-                    onWorkflowStatusChange={onWorkflowStatusIdChange}
+                    onWorkflowStatusChange={workflowStatusId => sV({ ...v, workflowStatusId })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectWorkflowStatus)}
                     floatingLabelText={formatMessage(messages.workflowStatus)}
@@ -524,7 +485,7 @@ export const FiltersPanel = ({
                   <DeviceApprovalSelectField
                     allItemText={formatMessage(messages.all)}
                     value={v.deviceApprovalId}
-                    onDeviceApprovalChange={onDeviceApprovalIdChange}
+                    onDeviceApprovalChange={deviceApprovalId => sV({ ...v, deviceApprovalId })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectDeviceApproval)}
                     floatingLabelText={formatMessage(messages.deviceApproval)}
@@ -537,7 +498,7 @@ export const FiltersPanel = ({
                 <div className={cssClasses('Control')}>
                   <ConnectorStatusSelectField
                     value={v.connectorStatus}
-                    onConnectorStatusChange={onConnectorStatusChange}
+                    onConnectorStatusChange={connectorStatus => sV({ ...v, connectorStatus })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectConnectorStatus)}
                     floatingLabelText={formatMessage(messages.connectorStatus)}
@@ -549,7 +510,9 @@ export const FiltersPanel = ({
                 <div className={cssClasses('Control')}>
                   <DeviceStatusSelectField
                     value={v.deviceMaintenanceStatusId}
-                    onDeviceMaintenanceStatusChange={onDeviceMaintenanceStatusIdChange}
+                    onDeviceMaintenanceStatusChange={deviceMaintenanceStatusId =>
+                      sV({ ...v, deviceMaintenanceStatusId })
+                    }
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectDeviceStatus)}
                     floatingLabelText={formatMessage(messages.deviceStatus)}
@@ -562,7 +525,7 @@ export const FiltersPanel = ({
                   <DeviceTypeSelectField
                     allItemText={formatMessage(messages.all)}
                     value={v.deviceType}
-                    onDeviceTypeChange={onDeviceTypeChange}
+                    onDeviceTypeChange={deviceType => sV({ ...v, deviceType })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectDeviceType)}
                     floatingLabelText={formatMessage(messages.deviceType)}
@@ -577,7 +540,9 @@ export const FiltersPanel = ({
                     multiple
                     allItemText={formatMessage(messages.all)}
                     value={v.deviceMaintenanceStatusId}
-                    onDeviceMaintenanceStatusChange={onDeviceMaintenanceStatusIdChange}
+                    onDeviceMaintenanceStatusChange={deviceMaintenanceStatusId =>
+                      sV({ ...v, deviceMaintenanceStatusId })
+                    }
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectDeviceMaintenanceStatus)}
                     floatingLabelText={formatMessage(messages.deviceMaintenanceStatus)}
@@ -591,7 +556,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="notificationName"
                     value={v.notificationName || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -604,7 +569,7 @@ export const FiltersPanel = ({
               {config.date && (
                 <DateRangeSelector
                   floatingLabelText={dateFilterLabel || formatMessage(messages.date)}
-                  onChangeDate={onDateChange}
+                  onChangeDate={dateValues => sV({ ...v, ...dateValues })}
                   controlClassName={cssClasses('Control')}
                   minDate={v.minDate}
                   maxDate={v.maxDate}
@@ -615,7 +580,7 @@ export const FiltersPanel = ({
               {config.expirationDate && (
                 <DateRangeSelector
                   floatingLabelText={formatMessage(messages.expirationDate)}
-                  onChangeDate={onExpirationDateChange}
+                  onChangeDate={dateValues => sV({ ...v, ...dateValues })}
                   controlClassName={cssClasses('Control')}
                   minExpirationDate={v.minExpirationDate}
                   maxExpirationDate={v.maxExpirationDate}
@@ -635,7 +600,7 @@ export const FiltersPanel = ({
                   <FocusBlurTextField
                     name="lotNumber"
                     value={v.lotNumber || ''}
-                    onCommitValue={onTextFieldCommitValue}
+                    onCommitValue={({ target: { name, value } }) => sV({ ...v, [name]: value })}
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -649,7 +614,7 @@ export const FiltersPanel = ({
                 <div className={cssClasses('Control')}>
                   <RevokedSelectField
                     floatingLabelText={formatMessage(messages.revoked)}
-                    onRevokedChange={onRevokedChange}
+                    onRevokedChange={revoked => sV({ ...v, revoked })}
                     allItemText={formatMessage(messages.all)}
                     value={v.revoked}
                     floatingLabelFixed
@@ -663,7 +628,7 @@ export const FiltersPanel = ({
                   <ResultTreatmentStatusSelectField
                     allItemText={formatMessage(messages.all)}
                     value={v.treatmentStatus}
-                    onTreatmentStatusChange={onTreatmentStatusChange}
+                    onTreatmentStatusChange={treatmentStatus => sV({ ...v, treatmentStatus })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectTreatmentStatus)}
                     floatingLabelText={formatMessage(messages.treatmentStatus)}
@@ -677,7 +642,7 @@ export const FiltersPanel = ({
                   <DisplayResultSelectField
                     allItemText={formatMessage(messages.all)}
                     value={v.displayResult}
-                    onDisplayResultChange={onDisplayResultChange}
+                    onDisplayResultChange={displayResult => sV({ ...v, displayResult })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectDisplayResult)}
                     floatingLabelText={formatMessage(messages.displayResult)}
@@ -691,7 +656,7 @@ export const FiltersPanel = ({
                   <SiteAutoCompleteField
                     name="siteId"
                     value={v.siteId || ''}
-                    onChange={onSiteIdChange}
+                    onChange={site => sV({ ...v, siteId: site.name })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.enterSiteId)}
                     floatingLabelText={formatMessage(messages.siteId)}
@@ -702,7 +667,7 @@ export const FiltersPanel = ({
                 <div className={cssClasses('Control')}>
                   <DaysStockLeftSelectField
                     allItemText={formatMessage(messages.all)}
-                    onChange={onStockLeftChange}
+                    onChange={daysStockLeft => sV({ ...v, daysStockLeft })}
                     value={v.daysStockLeft}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectStockLeft)}
@@ -713,14 +678,18 @@ export const FiltersPanel = ({
               )}
               {config.reportName && (
                 <div className={cssClasses('Control')}>
-                  <ReportAutoCompleteField name="reportName" value={v.reportName || ''} onChange={onReportNameChange} />
+                  <ReportAutoCompleteField
+                    name="reportName"
+                    value={v.reportName || ''}
+                    onChange={report => sV({ ...v, reportName: report.name })}
+                  />
                 </div>
               )}
               {config.contactStatus && (
                 <div className={cssClasses('Control')}>
                   <EnabledDisabledPersonsSelectField
                     allItemText={formatMessage(messages.all)}
-                    onChange={onToggleEnabledDisabled}
+                    onChange={contactStatus => sV({ ...v, contactStatus })}
                     name="contactStatus"
                     value={v.contactStatus || ''}
                     floatingLabelFixed
@@ -737,7 +706,7 @@ export const FiltersPanel = ({
                       controlContainer: cssClasses('checkbox-wrapper'),
                     }}
                     checked={[true, 'true'].includes(v.hasStock)}
-                    onChange={event => onHasStockChange(event.target.checked || null)}
+                    onChange={event => sV({ ...v, hasStock: event.target.checked || null })}
                     label={formatMessage(messages.hasStock)}
                     name="onlyHasStock"
                     autoWidth
@@ -751,7 +720,7 @@ export const FiltersPanel = ({
                       controlContainer: cssClasses('checkbox-wrapper'),
                     }}
                     checked={[true, 'true'].includes(v.onlyTransfers)}
-                    onChange={event => onOnlyTransfersChange(event.target.checked || null)}
+                    onChange={event => sV({ ...v, onlyTransfers: event.target.checked || null })}
                     label={formatMessage(messages.onlyTransfers)}
                     name="onlyTransfers"
                     autoWidth
@@ -765,7 +734,7 @@ export const FiltersPanel = ({
                       controlContainer: cssClasses('checkbox-wrapper'),
                     }}
                     checked={[true, 'true'].includes(v.onlyReportableResults)}
-                    onChange={event => onOnlyReportableResultsBoolChange(event.target.checked || null)}
+                    onChange={event => sV({ ...v, onlyReportableResults: event.target.checked || null })}
                     label={formatMessage(messages.onlyReportableResults)}
                     name="onlyReportableResults"
                     autoWidth
@@ -779,7 +748,7 @@ export const FiltersPanel = ({
                       controlContainer: cssClasses('checkbox-wrapper'),
                     }}
                     checked={[true, 'true'].includes(v.onlyDownloadedByReporter)}
-                    onChange={event => onOnlyDownloadedByReporterBoolChange(event.target.checked || null)}
+                    onChange={event => sV({ ...v, onlyDownloadedByReporter: event.target.checked || null })}
                     label={formatMessage(messages.onlyDownloadedByReporter)}
                     name="onlyDownloadedByReporter"
                     autoWidth
@@ -793,7 +762,7 @@ export const FiltersPanel = ({
                       controlContainer: cssClasses('checkbox-wrapper'),
                     }}
                     checked={[true, 'true'].includes(v.onlyEverTransferred)}
-                    onChange={event => onOnlyEverTransferredBoolChange(event.target.checked || null)}
+                    onChange={event => sV({ ...v, onlyEverTransferred: event.target.checked || null })}
                     label={formatMessage(messages.onlyEverTransferred)}
                     name="onlyEverTransferred"
                     autoWidth
@@ -807,7 +776,7 @@ export const FiltersPanel = ({
                       controlContainer: cssClasses('checkbox-wrapper'),
                     }}
                     checked={[true, 'true'].includes(v.onlyTreatmentRequired)}
-                    onChange={event => onOnlyTreatmentRequiredBoolChange(event.target.checked || null)}
+                    onChange={event => sV({ ...v, onlyTreatmentRequired: event.target.checked || null })}
                     label={formatMessage(messages.onlyTreatmentRequired)}
                     name="onlyTreatmentRequired"
                     autoWidth
@@ -818,7 +787,7 @@ export const FiltersPanel = ({
               <div className={cssClasses('Control')}>
                 <DiseaseSelectField
                   allItemText={formatMessage(messages.all)}
-                  onChange={onToggleEnabledDisabled}
+                  onDiseaseIdChange={diseaseId => sV({ ...v, diseaseId })}
                   name="diseaseId"
                   value={v.diseaseId || ''}
                   floatingLabelFixed

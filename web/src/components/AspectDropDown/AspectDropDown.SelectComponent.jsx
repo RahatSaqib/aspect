@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import classnames from 'classnames/bind'
 import find from 'lodash/find'
 import isArray from 'lodash/isArray'
@@ -20,10 +20,11 @@ const cssClasses = classnames.bind(styles)
 
 const SelectComponent = ({
   action: dispatchFromRedux,
+  onTouched,
   classNames,
   components,
   data,
-  defaultSelectedOption,
+  defaultSelectedOption = null, // do not allow `undefined` to be in `controlled` mode
   identifier,
   isClearable,
   isDisabled,
@@ -37,16 +38,9 @@ const SelectComponent = ({
 }) => {
   messages = messages || {}
   const { formatMessage } = useI18n()
-  const [busy, setBusy] = useState(true)
-  const [defaultOptionValue, setDefaultOptionValue] = useState(false)
-  const [currentSelectedOption, setCurrentSelectedOption] = useState(defaultSelectedOption)
+  const [currentSelectedOption, setCurrentSelectedOption] = useState(null)
   const [defaultOption] = useState(selectedValue)
-  const [, setInputValue] = useState(false)
-
-  const [options, setOptions] = useState(false)
-
-  // if defaultSelectedOption is true, then the default selection is set to the first element
-  defaultSelectedOption = defaultSelectedOption === true && data?.length > 0 ? data[0][idKey] : defaultSelectedOption
+  const [options, setOptions] = useState([])
 
   useEffect(() => {
     if (
@@ -54,68 +48,58 @@ const SelectComponent = ({
       !isEqual(options, data) ||
       /**
        * when we change value in formik programmatically (i.e. formik.setFieldValue)
-       * then this component gets new value for defaultSelectedOption and we need to
-       * enforce component to re-render in this `if` block
+       * then this component gets new value via defaultSelectedOption
+       * and we need to change currentSelectedOption to re-render component
        */
       defaultSelectedOption !== currentSelectedOption
     ) {
-      setDefaultOptionValue(
-        !identifier.includes('areaItems')
-          ? getSelectedOptions(data, defaultSelectedOption, idKey)
-          : defaultSelectedOption
-      )
-      setCurrentSelectedOption(defaultSelectedOption)
+      setCurrentSelectedOption(getSelectedOptions(data, defaultSelectedOption, idKey))
       setOptions(data)
-      /**
-       * Because we do not explicitly set `value` for Select component - then
-       * to set new value on-the-fly (after changing `options`) we use prop
-       * `defaultValue` when Select is first rendered.
-       * So to make sure that prop `defaultValue={...}` takes effect when `options`
-       * changed we need to force it to re-render by
-       * 1) hiding it (busy=true) and then
-       * 2) rendering it back (busy=false)
-       */
-      setBusy(true)
-      setTimeout(() => setBusy(false))
-    } else {
-      setBusy(false)
     }
   }, [data, defaultSelectedOption])
 
-  const onChange = (selectedOption, { action }) => {
-    setInputValue({ selectedOption, action })
-    dispatchFromRedux({ identifier, selectedOption, action })
-  }
+  const onChange = useCallback(
+    (selectedOption, { action }) => {
+      dispatchFromRedux({ identifier, selectedOption, action })
+    },
+    [identifier, dispatchFromRedux]
+  )
 
-  return !busy ? (
+  return (
     <div className={cssClasses('select__container', { [classNames.controlContainer]: !!classNames.controlContainer })}>
       <Select
         components={components}
         name={identifier}
         id={identifier}
-        getOptionLabel={val => formatMessage(messages[val[nameKey]], {}, val[nameKey])}
+        getOptionLabel={val => (val[nameKey] ? formatMessage(messages[val[nameKey]], {}, val[nameKey]) : '')}
         getOptionValue={val => val[idKey]}
         isClearable={isClearable}
         isDisabled={isDisabled}
         isLoading={isLoading}
         isMulti={isMulti}
-        defaultValue={defaultOptionValue}
-        options={data}
+        options={options}
         menuPlacement="auto"
         isOptionDisabled={option => option.disabled}
         placeholder={defaultOption || placeholder}
         styles={buildCustomStyles(theme)}
         onChange={onChange}
+        onBlur={onTouched}
         noOptionsMessage={() => formatMessage(messagesBase.noOptionsMessage)}
+        /**
+         * we work in `controlled` mode, meaning that `value` must be either
+         * some actual value (string or object or array) or `null`.
+         * See how we set up a `currentSelectedOption`
+         */
+        value={currentSelectedOption}
       />
     </div>
-  ) : null
+  )
 }
 
 SelectComponent.defaultProps = {
   classNames: {},
   components: undefined,
-  defaultSelectedOption: undefined,
+  defaultSelectedOption: null, // do not allow `undefined` to be in `controlled` mode
   isClearable: true,
   isDisabled: false,
   isLoading: false,
@@ -127,6 +111,7 @@ SelectComponent.defaultProps = {
 
 SelectComponent.propTypes = {
   action: PropTypes.func.isRequired,
+  onTouched: PropTypes.func.isRequired,
   classNames: PropTypes.oneOfType([PropTypes.object]),
   components: PropTypes.oneOfType([PropTypes.object]),
   data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
@@ -191,7 +176,7 @@ export function getSelectedOptions(data, someValue, idKey) {
   }
   // continue and format as normal
   if (!data || data.length === 0 || isNil(someValue)) {
-    return false
+    return null
   }
   if (isArray(someValue)) {
     const options = someValue.map(value => getOptionByValue(data, value, idKey))
@@ -199,7 +184,7 @@ export function getSelectedOptions(data, someValue, idKey) {
   }
 
   const option = getOptionByValue(data, someValue, idKey)
-  return option || false
+  return option || null
 }
 
 const buildCustomStyles = theme => {
@@ -212,4 +197,4 @@ const buildCustomStyles = theme => {
   }
 }
 
-export default SelectComponent
+export default React.memo(SelectComponent)

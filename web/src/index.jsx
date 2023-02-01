@@ -8,8 +8,8 @@ import App from './App'
 import config from './config'
 import AllProviders from './providers/AllProviders'
 import { refreshStart } from './store/AuthRedux'
-import './index.css'
 import store from './store/store'
+import './index.css'
 
 const prepareApp = async () => {
   // Sentry initiaization at the top level of application. I activated it only for production ENV

@@ -1,0 +1,5281 @@
+[{
+  "personName": "Karen Johnson",
+  "personTitle": "Laboratory Advisor",
+  "jobFunctions": ["Admin"],
+  "personEmailAddress": "karen.johnson@hhisp.org",
+  "personPhone": "+61 412974393",
+  "personCell": "+67571882507",
+  "username": "karen.johnson@hhisp.org",
+  "timezone": "West Pacific Standard Time",
+  "hidePatientId": false,
+  "hideSampleId": false,
+  "hideNotes": false,
+  "getPasswordFromGxAlert": true,
+  "geographies": [{}]
+},
+  {
+    "personName": "Dr. Evelyn Lavu",
+    "personTitle": "Director CPHL",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "lavuek@gmail.com",
+    "personPhone": "+675 70521012",
+    "personCell": "+675 70521012",
+    "username": "lavuek@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Dr. Stenard Hiasihri",
+    "personTitle": "Burnet Program Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "stenard.hiasihri@burnet.edu.au",
+    "personPhone": "+675 74319257",
+    "personCell": "+675 74319257",
+    "username": "stenard.hiasihri@hhisp.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Butuwin TB Lab"
+    }, {
+      "shortName": "NONGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Niko Wuatai",
+    "personTitle": "Dr. Niko Wuatai",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "nwuatai@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "CPHL TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Rendi Moke",
+    "personTitle": "Dr. Rendi Moke",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "dr.rendi.moke@gmail.com",
+    "personCell": "+675 71908356",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }, {
+      "shortName": "CPHL TB LAB"
+    }, {
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Device Level Account",
+    "jobFunctions": ["Lab User", "Technician"],
+    "username": "device",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Endy Muka",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "nazarenelabdirector@gmail.com",
+    "personPhone": "+675 70363368",
+    "personCell": "+67570363368",
+    "username": "nazarenelabdirector@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUDJIP TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Mark Crouch",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "crouch@gmail.com",
+    "personPhone": "+675 70817856",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUDJIP TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Kombati Zure",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "zure.kombati@whhs.gov.pg",
+    "personPhone": "+675 72856527",
+    "personCell": "+675 76302735",
+    "username": "zure.kombati@whhs.gov.pg",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Mt Hagen Lab"
+    }, {
+      "shortName": "TINSLEY TB LAB"
+    }, {
+      "shortName": "WHPHA TB Lab"
+    }]
+  },
+  {
+    "personName": "Jennifer Banamu",
+    "personTitle": "Scientific Officer TB",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "banamuj@gmail.com",
+    "personPhone": "+675 72794533",
+    "personCell": "+67567572794533",
+    "username": "kopaniajb@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Margaret Eko",
+    "personTitle": "NCD Provincial PMDT Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "Margaret_Eko@wvi.org",
+    "personPhone": "+675 72013345",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }, {
+      "shortName": "CPHL TB LAB"
+    }]
+  },
+  {
+    "personName": "Jeffery Langi",
+    "personTitle": "Provincial TB Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 72052940",
+    "personCell": "+675 72052940",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUDJIP TB LAB"
+    }]
+  },
+  {
+    "personName": "Mark Dupi",
+    "personTitle": "Western Highlands Province PDCO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "markdupi1@gmail.com",
+    "personPhone": "+675 72291269",
+    "personCell": "+675 72291269",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Mt Hagen Lab"
+    }, {
+      "shortName": "TINSLEY TB LAB"
+    }, {
+      "shortName": "WHPHA TB Lab"
+    }]
+  },
+  {
+    "personName": "Dr. Beth Lewis",
+    "personTitle": "Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bepinkth@gmail.com",
+    "personPhone": "+675 72964511",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Hela Hevalahu",
+    "personTitle": "Rural Lab Assistant",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "hellenhevalahu@gmail.com",
+    "personPhone": "+675 70095116",
+    "username": "hellenhevalahu@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "OSF-Kopi",
+    "personTitle": "Public Health Office",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pngph084@oilsearch.com",
+    "personPhone": "+675 71036161",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Jonah and Wendy",
+    "personTitle": "Oil Search Foundation",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pngph084@oilsearch.com",
+    "personPhone": "+675 71036161",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Ruth Magaye",
+    "personTitle": "TB Laboratory Scientist",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "magaye.rr@gmail.com",
+    "personPhone": "75364290",
+    "username": "magaye.rr@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Damien Salphie",
+    "personTitle": "MLS",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "dsalphie@gmail.com",
+    "personPhone": "+675 72307624",
+    "personCell": "+675 72307624",
+    "username": "dsalphie@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "RAIHU TB LAB"
+    }, {
+      "shortName": "WSPHA"
+    }]
+  },
+  {
+    "personName": "Milika Baloiloi Sorii",
+    "personTitle": "Oro Province TB Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mayorannietaudevin@gmail.com",
+    "personCell": "+675 70289826",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Touai Giara",
+    "personTitle": "Director Medical Services/TB MO Oro Province",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "touaigiara@gmail.com",
+    "personCell": "+675 73883241",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Gunzee Gawin",
+    "personTitle": "Chief Executive Officer Popondetta General Hospital",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "gawin_gunzee@gmail.com",
+    "personCell": "+675 73262156",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Frederick Kauri",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "frederickkauri@gmail.com",
+    "personPhone": "+675 76883778",
+    "username": "frederickkauri@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Alfred Malagisa",
+    "personTitle": "Director Medical Services-WNBPHA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "alfredrvmalagisa@yahoo.com",
+    "personPhone": "+675 79296868",
+    "personCell": "+675 79296868",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Dr Tarcisius Uluk",
+    "personTitle": "Paediatrician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "uluktarcisio@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Theresa Lei",
+    "personTitle": "Rural Health Specialist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tlei@y7mail.com",
+    "personPhone": "+675 73446123",
+    "personCell": "+675 73446123",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Gibson Kongkene",
+    "personTitle": "Oro Provincial Disease Control Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "gkongkene@gmail.com",
+    "personCell": "+675 71730427",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Mildred Akuila",
+    "personTitle": "Medical Laboratory Assistant",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mildredtanis7@gmail.com",
+    "personCell": "+675 73434637",
+    "username": "mildredtanis7@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Buka Lab"
+    }]
+  },
+  {
+    "personName": "Jacinta Mangona",
+    "personTitle": "OIC Buka Hospital Pathology Laboratory",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jacintam671@gmail.com",
+    "personCell": "+67573479553",
+    "username": "jacintam671@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Arawa Lab"
+    }, {
+      "shortName": "Buka Lab"
+    }]
+  },
+  {
+    "personName": "Dr. Morris Tunamo",
+    "personTitle": "TB Medical Officer, Buka Hospital",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mtunamo@gmail.com",
+    "personCell": "+675 72451990",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Buka Lab"
+    }]
+  },
+  {
+    "personName": "Sr. Melva Disin",
+    "personTitle": "Sister In-Charge TB Section Buka Hospital",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personCell": "+675 79467985",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Buka Lab"
+    }]
+  },
+  {
+    "personName": "MSF NCD Laboratory Scientist",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-png-ncd-labtech@paris.msf.org",
+    "personPhone": "+675 72252646",
+    "personCell": "+675 72252646",
+    "username": "msff-ncd-lab@paris.msf.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GEREHU TB LAB"
+    }]
+  },
+  {
+    "personName": "MSF National Medical Officer",
+    "personTitle": "Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-png-medco@paris.msf.org",
+    "personPhone": "+675 70869083",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GEREHU TB LAB"
+    }]
+  },
+  {
+    "personName": "MSF NCD Medical Officer",
+    "personTitle": "NCD Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-ncd-medref@paris.msf.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GEREHU TB LAB"
+    }]
+  },
+  {
+    "personName": "MSF National Assistant Medical Officer",
+    "personTitle": "National Assistant Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-png-assmedco@paris.msf.org",
+    "personPhone": "+675 72335339",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GEREHU TB LAB"
+    }]
+  },
+  {
+    "personName": "Mr. Patrick Vahin",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pvahin4153@gmail.com",
+    "personPhone": "+675 71217477",
+    "personCell": "+675 71217477",
+    "username": "pvahin4153@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Milne Bay TB Lab"
+    }, {
+      "shortName": "Watuluma H/C TB "
+    }]
+  },
+  {
+    "personName": "Dr. John Kamakom",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "johnkamakom@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr. Seva Ruape",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ruape.seva@gmail.com",
+    "personCell": "+675 71622620",
+    "username": "ruape.seva@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "EHPH TB LAB"
+    }]
+  },
+  {
+    "personName": "watson toroi",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "toroi.watson@gmail.com",
+    "personPhone": "+675 72630309",
+    "personCell": "+67572630309",
+    "username": "wattytoroi@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "EHPH TB LAB"
+    }, {
+      "shortName": "KAINANTU TB LAB"
+    }, {
+      "shortName": "KUNDIAWA Lab"
+    }, {
+      "shortName": "KUNDIAWA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Christopher Ope",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ope.chris@yahoo.com",
+    "personPhone": "+675 71840841",
+    "personCell": "+675 71840841",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "EHPH TB LAB"
+    }, {
+      "shortName": "KAINANTU TB LAB"
+    }]
+  },
+  {
+    "personName": "Ms. Mary Dini",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "marydini15@gmail.com",
+    "username": "marydini15@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Miriam Lolo",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "lolomiriam14@gmail.com",
+    "personCell": "+67579261081",
+    "username": "lolomiriam14@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NONGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Alex Maha",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "almaha8@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NONGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Mr. Kutato Lee",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tokange75@gmail.com",
+    "personPhone": "+675 72178279",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Alice Lafana",
+    "personTitle": "TB Laboratory Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "alafana@gmail.com",
+    "personPhone": "+675 79034940",
+    "personCell": "+675 79034940",
+    "username": "alafana@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "RAIHU TB LAB"
+    }, {
+      "shortName": "WSPHA"
+    }]
+  },
+  {
+    "personName": "Kues Tarabi",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kues.tarabi@gmail.com",
+    "username": "kues.tarabi@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "RAIHU TB LAB"
+    }, {
+      "shortName": "WSPHA"
+    }]
+  },
+  {
+    "personName": "Dr. Bolo Watoka",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bolowatoka@gmail.com",
+    "personCell": "+675 74778866",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "RAIHU TB LAB"
+    }, {
+      "shortName": "WSPHA"
+    }]
+  },
+  {
+    "personName": "Dr. Trevor Kelebi",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "trevor.kelebi@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "WSPHA"
+    }]
+  },
+  {
+    "personName": "Dr. Bita Stanley",
+    "personTitle": "A/Deputy Director Curative Health",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bitastanley@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "WSPHA"
+    }]
+  },
+  {
+    "personName": "Caspar Armin",
+    "personTitle": "PDCO West Sepik Province",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "caspara55@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Stanley Hanap",
+    "personTitle": "TB Paediatrician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "shanap2012@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Josephine Aipe",
+    "personTitle": "MoH HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 71508107",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GEREHU TB LAB"
+    }]
+  },
+  {
+    "personName": "MSF Outreach Manager",
+    "personTitle": "MSF Outreach Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-ncd-medoutreach@paris.msf.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Magdalene Taune",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "magitaune@gmail.com",
+    "personPhone": "+675 73248575",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "DGH TB LAB"
+    }, {
+      "shortName": "MABADUAN TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Paul Aia",
+    "personTitle": "NTP Manager",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "koltas44@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Dr. Robin Yasi",
+    "personTitle": "NTP Medical Officer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "yasirob@gmail.com",
+    "personCell": "+675 71148871",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Geraldine Towaira",
+    "personTitle": "TB/Leprosy Program Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "gtowaira@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "CPHL TB LAB"
+    }]
+  },
+  {
+    "personName": "Rosemary Bates",
+    "personTitle": "Field Epidemiologist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rosemarybates77@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "CPHL TB LAB"
+    }]
+  },
+  {
+    "personName": "Hubert Gebaneni",
+    "personTitle": "District MDR-TB  Coordinator MNE",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "castelocobra@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }, {
+      "shortName": "CPHL TB LAB"
+    }]
+  },
+  {
+    "personName": "Edward Makao",
+    "personTitle": "District MDR-TB Coordinator MNW",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "edward.makao@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }, {
+      "shortName": "CPHL TB LAB"
+    }]
+  },
+  {
+    "personName": "Marcel Burro",
+    "personTitle": "District MDR-TB Coordinator MS",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "marcelburro86@gmail.com",
+    "personCell": "+675 71638194",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Bereina Lab"
+    }, {
+      "shortName": "CPHL TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Ipai Morimai",
+    "personTitle": "Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "drmipai7@gmail.com",
+    "personCell": "+675 71493273",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }, {
+      "shortName": "9 mile TB Lab"
+    }, {
+      "shortName": "Badili TB Lab"
+    }, {
+      "shortName": "CPHL TB LAB"
+    }, {
+      "shortName": "GEREHU TB LAB"
+    }, {
+      "shortName": "Lawes Road Lab"
+    }, {
+      "shortName": "Tokarara lab"
+    }]
+  },
+  {
+    "personName": "Dr. Weston Yambut",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "wyambut18@gmail.com",
+    "personCell": "+675 70226048",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Enga PHA Lab"
+    }, {
+      "shortName": "KOMPIAM TB LAB"
+    }, {
+      "shortName": "Porgera Lab"
+    }]
+  },
+  {
+    "personName": "Jennifer Dume",
+    "personTitle": "TB Scientific Officer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "jenndume@gmail.com",
+    "personCell": "+675 70519518",
+    "username": "jenndume@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Dr Kipas Binga",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kwbinga@gmail.com",
+    "personPhone": "+675 73883318",
+    "personCell": "+67573883318",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "ANGAU TB LAB"
+    }, {
+      "shortName": "BRAUN TB LAB"
+    }, {
+      "shortName": "BULOLO TB LAB"
+    }, {
+      "shortName": "HAIKOST TB LAB"
+    }]
+  },
+  {
+    "personName": "LINGAYAM BUMBU",
+    "personTitle": "HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "lasebumbu@gmail.com",
+    "personPhone": "+675 71763948",
+    "personCell": "+67571763948",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "ANGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Karen Yamani",
+    "personTitle": "Provincial TB Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "yamanikaren@gmail.com",
+    "personPhone": "+675 72677183",
+    "personCell": "+67573677183",
+    "username": "yamanikaren@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "ANGAU TB LAB"
+    }, {
+      "shortName": "BRAUN TB LAB"
+    }, {
+      "shortName": "BULOLO TB LAB"
+    }, {
+      "shortName": "HAIKOST TB LAB"
+    }, {
+      "shortName": "MUTZING TB LAB"
+    }]
+  },
+  {
+    "personName": "Mr. Joseph So'on",
+    "personTitle": "Pathology Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "soonjoseph@yahoo.com",
+    "personPhone": "+675 76024114",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ms. Heu Toporo",
+    "personTitle": "PMDT Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "heutoporo@gmail.com",
+    "personPhone": "+675 73985722",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Henry Welch",
+    "personTitle": "Paediatrician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "henrydwelch@gmail.com",
+    "personPhone": "+675 71889605",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "CPHL TB LAB"
+    }, {
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "MSF Kerema Laboratory Referent",
+    "personTitle": "MSF Kerema Laboratory Referent",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-kerema-lab@paris.msf.org",
+    "personPhone": "+675 70869084",
+    "username": "msff-kerema-lab@paris.msf.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KEREMA TB LAB"
+    }]
+  },
+  {
+    "personName": "MSF Kerema Medical Referent",
+    "personTitle": "MSF Kerema Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-kerema-medref@paris.msf.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KEREMA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Michael Lalam",
+    "personTitle": "Director of Medical Services Kerema General Hospital",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "medicalkgh@gmail.com",
+    "personPhone": "+675 72038680",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Jacob Morewaya",
+    "personTitle": "Chief Pathologist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jacob.morewaya@milnebay.gov.au",
+    "personPhone": "+675 73253782",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Gilchrist Oswyn",
+    "personTitle": "SSMO Public Health Physician and Paediatrician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kgoswyn@gmail.com",
+    "personCell": "+675 73919781",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Milne Bay TB Lab"
+    }, {
+      "shortName": "Watuluma H/C TB "
+    }]
+  },
+  {
+    "personName": "Dr. Stephen Topaleku",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "stopaleku961.dd@gmail.com",
+    "personPhone": "+675 70123653",
+    "personCell": "+675 70123653",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Milne Bay TB Lab"
+    }, {
+      "shortName": "Watuluma H/C TB "
+    }]
+  },
+  {
+    "personName": "Ashley Tabogani",
+    "personTitle": "PDCO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ashleytabogani@gmail.com",
+    "personPhone": "+675 73471566",
+    "personCell": "+675 73471566",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Milne Bay TB Lab"
+    }, {
+      "shortName": "Watuluma H/C TB "
+    }]
+  },
+  {
+    "personName": "Lynne Tonar",
+    "personTitle": "Scientist Officer TB Laboratory",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ltonar75@gmail.com",
+    "personCell": "+67573651874",
+    "username": "ltonar75@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUNDIAWA TB LAB"
+    }, {
+      "shortName": "MINGENDE TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Casius Maingu",
+    "personTitle": "Provincial Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "casmaingu@gmail.com",
+    "personPhone": "+675 73599275",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Stanley Aiwara",
+    "personTitle": "Medical Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "aiwara.stanley40@gmail.com",
+    "personPhone": "+675 72230189",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUNDIAWA TB LAB"
+    }, {
+      "shortName": "MINGENDE TB LAB"
+    }]
+  },
+  {
+    "personName": "Mr. Steven Isin",
+    "personTitle": "TB Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "steve.amai5@gmail.com",
+    "personPhone": "+675 70705959",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Harry Poka",
+    "personTitle": "CEO Kundiawa Hospital",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "harrywerakep@gmail.com",
+    "personPhone": "+675 72746994",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUNDIAWA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Marvis Lisi",
+    "personTitle": "Medical Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "m82lisi@gmail.com",
+    "personPhone": "+675 79553270",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUNDIAWA TB LAB"
+    }]
+  },
+  {
+    "personName": "Rose Talpa",
+    "personTitle": "A/Coordinator TB/HIV",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rtalpa105@gmail.com",
+    "personPhone": "+675 71829747",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUNDIAWA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Izzard Agua",
+    "personTitle": "Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "izzard.agua@gmail.com",
+    "personPhone": "+675 72162214",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUNDIAWA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Grace Baiwan",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "gbaining.gb@gmail.com",
+    "personPhone": "+675 71608030",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "CPHL TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Petronella Walando",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "drpatwalando@gmail.com",
+    "personPhone": "+675 72748160",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Teddy Ben",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "daureben@gmail.com",
+    "personPhone": "+675 75656593",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Kelly Kep",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kellykep.kk@gmail.com",
+    "personPhone": "+675 79562482",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Solomon Mara",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "solomonjmara@gmail.com",
+    "personPhone": "+675 76036934",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Mateus Pinheiro",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pinheiro_mateus@gmail.com",
+    "personPhone": "+675 76260641",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Esther Gabut",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "egabut@yahoo.com",
+    "personPhone": "+675 71563482",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Samantha Komoru",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "skomoru@y7mail.com",
+    "personPhone": "+675 72429206",
+    "personCell": "+675 72429206",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Hela Lab"
+    }]
+  },
+  {
+    "personName": "Dr. Brian Galungim",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "briangalungim@hotmail.com",
+    "personPhone": "+675 72332493",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Kari Seki",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kari_seki@yahoo.com",
+    "personPhone": "+675 76629928",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Paddington Ona",
+    "personTitle": "T/Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ona.paddington@gmail.com",
+    "personPhone": "+675 71135665",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Helen Didiero",
+    "personTitle": "MLS",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mufeedee@gmail.com",
+    "personCell": "+675 72608835",
+    "username": "mufeedee@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "IAILIBU TB LAB "
+    }, {
+      "shortName": "MENDI TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Aina Anota",
+    "personTitle": "Medical Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "as22446@gmail.com",
+    "personPhone": "+675 72276764",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "IAILIBU TB LAB "
+    }, {
+      "shortName": "MENDI TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Benson Meles",
+    "personTitle": "Medical Registrar",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "benmeles98@gmail.com",
+    "personPhone": "+675 71347619",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "IAILIBU TB LAB "
+    }, {
+      "shortName": "MENDI TB LAB"
+    }]
+  },
+  {
+    "personName": "Ms. Norin Soepal",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ms. Rachael Rowe",
+    "personTitle": "MLS",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rachleonr@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr. Likas Lakain",
+    "personTitle": "PDCO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "likaslakain@gmail.com",
+    "personPhone": "+675 72114043",
+    "personCell": "+675 72114043",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Enga PHA Lab"
+    }, {
+      "shortName": "KOMPIAM TB LAB"
+    }, {
+      "shortName": "Porgera Lab"
+    }]
+  },
+  {
+    "personName": "Mr. Petrus Ekip",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ekippetrus33@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Enga PHA Lab"
+    }]
+  },
+  {
+    "personName": "Dr Bradley Aumora",
+    "personTitle": "Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bradleyaumora@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Arawa Lab"
+    }, {
+      "shortName": "Buka Lab"
+    }]
+  },
+  {
+    "personName": "Regine Morikawa",
+    "personTitle": "PMGH TBC Officer in Charge",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "marlinga751@gmail.com",
+    "personCell": "+675 71521081",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{
+      "stateName": "No Division"
+    }]
+  },
+  {
+    "personName": "Dr. Margaret Kal",
+    "personTitle": "NTP Medical Officer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "margaretkal1978@gmail.com",
+    "personCell": "+675 73600723",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Clement Totavun",
+    "personTitle": "Health Secretary",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "clement.totavun@gmail.com",
+    "personPhone": "+675 72749126",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Tommy Wotsia",
+    "personTitle": "Director Medical Services",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tbwotsia@gmail.com",
+    "personCell": "+675 73234574",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Arawa Lab"
+    }, {
+      "shortName": "Buka Lab"
+    }]
+  },
+  {
+    "personName": "Dr Asael Kaptigau",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "akaptiga@gmail.com",
+    "personPhone": "+675 70357632",
+    "personCell": "+675 70691188",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KIUNGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Jenny Kungwano",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jkay843.jk@gmail.com",
+    "personPhone": "+675 73972566",
+    "personCell": "+67567572450583",
+    "username": "Jenny Kungwano",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. David Mills",
+    "personTitle": "Kompiam Hospital CEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kompiamhospital@gmail.com",
+    "personPhone": "+675 73980448",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KOMPIAM TB LAB"
+    }]
+  },
+  {
+    "personName": "Ms. Tania Yamo",
+    "personTitle": "Kompiam Hospital HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tania.yamo@gmail.com",
+    "personPhone": "+675 70168273",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Sinau Vari",
+    "personTitle": "Pysician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "sinaukei@gmail.com",
+    "personCell": "+675 79207177",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Mt Hagen Lab"
+    }, {
+      "shortName": "WHPHA TB Lab"
+    }]
+  },
+  {
+    "personName": "Andrew Pala",
+    "personTitle": "Laboratory Technician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "andrew.pala@whhs.gov.pg",
+    "personCell": "+675 73545737",
+    "username": "andrew.pala@whhs.gov.pg",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Mt Hagen Lab"
+    }, {
+      "shortName": "WHPHA TB Lab"
+    }]
+  },
+  {
+    "personName": "Iraingo Moses",
+    "personTitle": "Provincial TB ERT coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "iraingomoses@gmail.com",
+    "personCell": "+675 70810442",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mathew David",
+    "personTitle": "ERT Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mathewdavid.ert.kikori@gmail.com",
+    "personCell": "+675 72174667",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Eddie Mani",
+    "personTitle": "Medical doctor-FHI",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "eedimani@gmail.com",
+    "personCell": "+675 72809460",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Graham Low",
+    "personTitle": "Oil Search Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pngph105@oilsearch.com",
+    "personPhone": "+675 73785522",
+    "personCell": "+675 73030992",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Hela Lab"
+    }]
+  },
+  {
+    "personName": "Dr. Vincent Pyakalyia/Dr. Graham Low",
+    "personTitle": "Oil Search Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pngph105@oilsearch.com",
+    "personPhone": "+675 71426306",
+    "personCell": "+675 73030992",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Hela Lab"
+    }]
+  },
+  {
+    "personName": "Frank Kasahya",
+    "personTitle": "Laboratory Technician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "fkasahya067@gmail.com",
+    "personCell": "+67574440060",
+    "username": "fkasahya067@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Hela Lab"
+    }]
+  },
+  {
+    "personName": "Dr. Martin Daimen",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "drmdaimen@gmail.com",
+    "personCell": "+675 71331045",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GAUBIN TB LAB"
+    }, {
+      "shortName": "MADANG TB LAB"
+    }, {
+      "shortName": "MALALA TB LAB"
+    }]
+  },
+  {
+    "personName": "Ms. Veronica Lape",
+    "personTitle": "TB HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "veronica.lape@gmail.com",
+    "personCell": "+675 71810629",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GAUBIN TB LAB"
+    }, {
+      "shortName": "MADANG TB LAB"
+    }, {
+      "shortName": "MALALA TB LAB"
+    }]
+  },
+  {
+    "personName": "DGH TB LAB",
+    "personTitle": "DGH TB LAB",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "dgh.tblab@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Satia Sanangkeo",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "54714sanangkeo@gmail.com",
+    "personCell": "+675 71894851",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Tracey Jeff",
+    "personTitle": "Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tracyjeff91@gmail.com",
+    "personCell": "+675 71678581",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Eileen Mai",
+    "personTitle": "HEO TB",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "eileenwariluko.mai@gmail.com",
+    "personCell": "+675 71603754",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Bilimo Hedawi",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personCell": "+675 79979030",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Alyssa Uloulo",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "aeuloulo12@gmail.com",
+    "personCell": "+675 70050594",
+    "username": "aeuloulo12@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Angau HIV "
+    }, {
+      "shortName": "ANGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Vivien Toaniso",
+    "personTitle": "M&E Officer NTP",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "vtoaniso@gmail.com",
+    "personCell": "+675 73159713",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Dr Anthony Amof",
+    "personTitle": "Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "antoxamof@gmail.com",
+    "personCell": "+675 71782864",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Tokarara lab"
+    }]
+  },
+  {
+    "personName": "Benoni BUKO",
+    "personTitle": "SSI Laboratory Support",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "benonibuko@gmail.com",
+    "personCell": "+675675 71770184",
+    "username": "benonibuko@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "DGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Mr Gibson Winston",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "winstongibsonleon@gmail.com",
+    "personCell": "+675 72523849",
+    "username": "winstongibsonleon@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Miriam Boga",
+    "personTitle": "Medical Doctor",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "miriam.boga@oktedi.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Robert Robert",
+    "personTitle": "TB HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "robert.robert@oktedi.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr Siloru Tamilong",
+    "personTitle": "DMS",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "siloru.tamilong@oktedi.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Vana Tom",
+    "personTitle": "Lab Technician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "vana.tom@oktedi.com",
+    "personCell": "+675 79317958",
+    "username": "vana.tom@oktedi.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Malum Tangabi",
+    "personTitle": "Lab Technician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "malum.tangabi@oktedi.com",
+    "personCell": "+675 72282070",
+    "username": "malum.tangabi@oktedi.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Vagi Ua",
+    "personTitle": "Lab Technologist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "vagi.ua@oktedi.com",
+    "personPhone": "+675 71691307",
+    "personCell": "+675 71691307",
+    "username": "Vagi.Ua@oktedi.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Edmond Marzan",
+    "personTitle": "Medical Doctor",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "edmond.marzan@oktedi.com",
+    "personCell": "+675 72519892",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Charlie Turharus",
+    "personTitle": "Medical Doctor",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "charlie.turharus@oktedi.com",
+    "personCell": "+675 71901904",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Charles Paleu",
+    "personTitle": "Clinical HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "charles.paleu@oktedi.com",
+    "personCell": "+675 71981783",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Miriam Yambie",
+    "personTitle": "NO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "miriam.yambie@oktedi.com",
+    "personCell": "+675 72127425",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Imirop Bap",
+    "personTitle": "Pathology Manaer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "imirop.bap@oktedi.com",
+    "personCell": "+675 71719026",
+    "username": "imirop.bap@oktedi.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Bieneng Hanhupa",
+    "personTitle": "Lab Technologist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bieneng.hanhupa@oktedi.com",
+    "personCell": "+675 71428954",
+    "username": "bieneng.hanhupa@oktedi.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "TABUBIL TB LAB"
+    }]
+  },
+  {
+    "personName": "Sandra Mathew",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "sandymatt@gmail.com",
+    "personPhone": "+675 73591745",
+    "username": "sandymatt@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUDJIP TB LAB"
+    }]
+  },
+  {
+    "personName": "Ladong Belari",
+    "personTitle": "PMDT M&E Officer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "ljmbelari@gmail.com",
+    "personPhone": "+675 71162277",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Bartholomew Kapakeu",
+    "personTitle": "Provincial TB/HIV Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bartkapakeu24@gmail.com",
+    "personPhone": "+675 718177t0",
+    "personCell": "+675 71817750",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Bob Kevin",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bobkevin2085@gmail.com",
+    "personCell": "+675 71649259",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Kassi Ken",
+    "personTitle": "Provincial Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "drkassiken@gmail.com",
+    "personPhone": "+675 72189443",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUNDIAWA TB LAB"
+    }, {
+      "shortName": "MINGENDE TB LAB"
+    }]
+  },
+  {
+    "personName": "David Tiwekuri",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "devane1787@gmail.com",
+    "personCell": "+67574275895",
+    "username": "devane1787@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Ruben Kamus",
+    "personTitle": "TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rubenkamus77@gmail.com",
+    "personPhone": "+675 70146775",
+    "personCell": "+675 70146775",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BORAM TB LAB"
+    }, {
+      "shortName": "MAPRIK TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr Jacklyn Joseph",
+    "personTitle": "Pathologist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jmaajoseph@gmail.com",
+    "personPhone": "+675 72619854",
+    "personCell": "+675 72619854",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Tabitha Colwell",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tabithac@ywamships.org",
+    "personCell": "+61747641307",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "YWAM SHIP"
+    }]
+  },
+  {
+    "personName": "Benny Otoa",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "toablab@gmail.com",
+    "personPhone": "+675 71185648",
+    "personCell": "+67571185648",
+    "username": "toablab@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAVIENG TB LAB"
+    }, {
+      "shortName": "Namatanai TB Lab"
+    }]
+  },
+  {
+    "personName": "Dr. Kenneth Sodeng",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "sodengkenneth@gmail.com",
+    "personPhone": "+675 73873395",
+    "personCell": "+675 73873395",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAVIENG TB LAB"
+    }]
+  },
+  {
+    "personName": "Deborah Ulaias",
+    "personTitle": "Clinical HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "1234567uw@gmail.com",
+    "personCell": "+675 72825722",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NONGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr Vela Solomon",
+    "personTitle": "Paediatric Doctor",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "veladurimao@gmail.com",
+    "personCell": "+675 71422698",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Eliap Kalos",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "eliapkalos65@gmail.com",
+    "personPhone": "+67571211257",
+    "personCell": "+675 71211257",
+    "username": "kaloseliap65@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "LORENGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Leah Molok",
+    "personTitle": "HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "leah.molok@gmail.com",
+    "personCell": "+675 70551555",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "LORENGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Josila Kawas",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kawasjosila@gmail.com",
+    "personPhone": "+67718598155",
+    "personCell": "+675 71859815",
+    "username": "kawasjosila@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MAPRIK TB LAB"
+    }]
+  },
+  {
+    "personName": "Tevu Tenasi",
+    "personTitle": "Nursing Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ttenasi.tt@gmail.com",
+    "personPhone": "+675 71165997",
+    "personCell": "+67572206090",
+    "username": "ttenasi.tt@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Arawa Lab"
+    }]
+  },
+  {
+    "personName": "Daniel Wahawe",
+    "personTitle": "Laboratory Coordinator",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "danielwahawe@gmail.com",
+    "personPhone": "+675 70112551",
+    "personCell": "+67567570112551",
+    "username": "danielwahawe@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Steven Tiwara",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tiwarasteven@gmail.com",
+    "personPhone": "+675 70729853",
+    "personCell": "+675 70729853",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BORAM TB LAB"
+    }]
+  },
+  {
+    "personName": "Joe Hao",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "joehao628@gmail.com",
+    "personCell": "+67572764585",
+    "username": "joehao628@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Valerie Archer",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "valerievaleriee@hotmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAPUNA TB LAB"
+    }]
+  },
+  {
+    "personName": "Sandra Yamuwe",
+    "personTitle": "ERTB Coordinator Kerema District",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "sandrayamuwe7@gmail.com",
+    "personPhone": "+675 79767677",
+    "personCell": "+675 79767677",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAPUNA TB LAB"
+    }, {
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Manu Laiko",
+    "personTitle": "TB Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "manulaiko1482@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAPUNA TB LAB"
+    }]
+  },
+  {
+    "personName": "Kunal-Aiwa, Wendy/Golang, Anna",
+    "personTitle": "Oil Search Foundation",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pngph084@oilsearch.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAPUNA TB LAB"
+    }, {
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Levi, Damien/Kumaru, Clement",
+    "personTitle": "Oil Search Foundation",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pngph150@oilsearch.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAPUNA TB LAB"
+    }, {
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Vincent Pyakalyia",
+    "personTitle": "OSF TB Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "vpyakalyia@gmail.com",
+    "personCell": "+675 73030992",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAPUNA TB LAB"
+    }, {
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Damien Tingiaero",
+    "personTitle": "MLA Nonga Base Hospital",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tingiaero@gmail.com",
+    "username": "tingiaero@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "NONGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Juliana Makop",
+    "personTitle": "Provincial TB Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rlukara84@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Butuwin TB Lab"
+    }, {
+      "shortName": "NONGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. S Jojoga",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "sjojoga@gmail.com",
+    "personPhone": "+675 73250909",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Butuwin TB Lab"
+    }]
+  },
+  {
+    "personName": "CeciliaThomas",
+    "personTitle": "HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ceciliathomas@gmail.com",
+    "personPhone": "+675 73744254",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Elizabeth Vengiau",
+    "personTitle": "Sister In-Charge",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 72050862",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Sharon Turavai",
+    "personTitle": "Officer In-Charge",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "sharon.turavai979@gmail.com",
+    "personPhone": "+675 71301961",
+    "personCell": "+675 71301961",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Noreen Tamtilik",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ntamtilik07@gmail.com",
+    "personPhone": "+675 72657173",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Butuwin TB Lab"
+    }]
+  },
+  {
+    "personName": "Daniel Benjamin",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 72540062",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Christopher Mokavelaga",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mokavelagachristopher@gmail.com",
+    "personPhone": "+67571345230",
+    "personCell": "+67571345230",
+    "username": "mokavelagachristopher@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr. Herolyn Nindil",
+    "personTitle": "NTP Medical Officer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "2hnindil@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Samantha Lomutopa",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "samanthalomutopa@gmail.com",
+    "personCell": "+675675 74304573",
+    "username": "samanthalomutopa@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Lawes Road Lab"
+    }]
+  },
+  {
+    "personName": "Ruth Kukhang",
+    "personTitle": "District Health Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ruthwasinau2@gmail.com",
+    "personCell": "+675 72293761",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Rojina Shrestha",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "getonroj@gmail.com",
+    "personCell": "+675 71646674",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAINANTU TB LAB"
+    }]
+  },
+  {
+    "personName": "Kainantu Hospital",
+    "personTitle": "Kainantu Hospital Laboratory",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kainantuhospitaltblaboratory@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Enename Susuke",
+    "personTitle": "Kainantu Hospital Management",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "enexsuske@gmail.com",
+    "personPhone": "+675 73397947",
+    "personCell": "+675 73397947",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAINANTU TB LAB"
+    }]
+  },
+  {
+    "personName": "MSF TB Doctor Kerema",
+    "personTitle": "MSF TB Doctor Kerema",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-kerema-med@paris.msf.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kerema District TB Coordinator",
+    "personTitle": "Kerema District TB Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "alvpng@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Louie Maimou Wandahwan",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "louie.maimou@gmail.com",
+    "personPhone": "+675 71893885",
+    "personCell": "+67571893885",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Philip Javur",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "madangtbresults@gmail.com",
+    "personPhone": "+675 79665725",
+    "personCell": "+675 79665725",
+    "username": "tbresults@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MADANG TB LAB"
+    }]
+  },
+  {
+    "personName": "Derek Ase",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "dereckase@gmail.com",
+    "personCell": "+675 72161244",
+    "username": "dereckase@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mary Haro",
+    "personTitle": "RLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mharo@gmail.com",
+    "personCell": "+675 73720399",
+    "username": "mharo@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAPUNA TB LAB"
+    }]
+  },
+  {
+    "personName": "Wessy Girinde",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "wessygirinde@gmail.com",
+    "personCell": "+67579906550",
+    "username": "wessygirinde@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "ANGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Petronella Bandi",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bandipetronella@gmail.com",
+    "personPhone": "+675 70850391",
+    "personCell": "+675  70850391",
+    "username": "bandipetronella@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BORAM TB LAB"
+    }]
+  },
+  {
+    "personName": "Martha Semmie",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kaviengtbresults@gmail.com",
+    "personCell": "+675 74231746",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAVIENG TB LAB"
+    }]
+  },
+  {
+    "personName": "Martha Semmie",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kaviengtbresults@gmail.com",
+    "personCell": "+675 74231746",
+    "username": "semmiemartha082@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAVIENG TB LAB"
+    }]
+  },
+  {
+    "personName": "Gwen Pamu",
+    "personTitle": "Medical Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pphlmaspha2021@gmail.com",
+    "personCell": "+675 74696238",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "LORENGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Dekari Kurai",
+    "personTitle": "RLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kuraidekari75@gmail.com",
+    "personCell": "+675 73247572",
+    "username": "kuraidekari75@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAINANTU TB LAB"
+    }]
+  },
+  {
+    "personName": "Bonny Kagl",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kundiawatbresults@gmail.com",
+    "personPhone": "+675 74252320",
+    "personCell": "+67574252320",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KUNDIAWA Lab"
+    }, {
+      "shortName": "KUNDIAWA TB LAB"
+    }]
+  },
+  {
+    "personName": "Sharon. Tirone",
+    "personTitle": "SCIENTIST",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "shadomex@gmail.com",
+    "personPhone": "+675 78027675",
+    "personCell": "+67572293730",
+    "username": "shadomex@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "ANGAU TB LAB"
+    }, {
+      "shortName": "BRAUN TB LAB"
+    }, {
+      "shortName": "BULOLO TB LAB"
+    }, {
+      "shortName": "HAIKOST TB LAB"
+    }, {
+      "shortName": "MUTZING TB LAB"
+    }]
+  },
+  {
+    "personName": "Rachael Ase Oui",
+    "personTitle": "MLS",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rassieaoui@gmail.com",
+    "personCell": "+675 71842553",
+    "username": "rassieaoui@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Mathias Toroi",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mlodokitroy64@gmail.com",
+    "personCell": "+675 72121764",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Billy Saeke",
+    "personTitle": "TB Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "billysaeke86@gmail.com",
+    "personPhone": "+675 73136048",
+    "personCell": "+675 73136048",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BIALLA TB LAB"
+    }]
+  },
+  {
+    "personName": "James Managen",
+    "personTitle": "HEO Bialla Health Centre",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 73636903",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BIALLA TB LAB"
+    }]
+  },
+  {
+    "personName": "Moresby South BMUs",
+    "personTitle": "BMU",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "moresbysouthbmus@gmail.com",
+    "personCell": "+675 70914479",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Moresby South BMUs",
+    "personTitle": "BMU",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "moresbysouthbmus@gmail.com",
+    "personPhone": "+675 70914479",
+    "personCell": "+675 70914479",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Lawes Road Lab"
+    }]
+  },
+  {
+    "personName": "Laki Murray",
+    "personTitle": "Dr",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "brian.zamurr71@gmail.com",
+    "personCell": "+675 75621666",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Bosco Pokris",
+    "personTitle": "Medical Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pphlmaspha2021@gmail.com",
+    "personPhone": "+6759460250",
+    "personCell": "+675 70639662",
+    "username": "pphlmaspha2021",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "LORENGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Peter Kelly",
+    "personTitle": "Health Promotions and Disease Control",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 74345397",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Gabriel Yohang",
+    "personTitle": "Director of Medical Services",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "gabrielsyohang@gmail.com",
+    "personPhone": "+675 74256627",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Sr. Elizabeth Koai",
+    "personTitle": "Hospital Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 72184559",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Gersom Guambelek",
+    "personTitle": "OIC Bulolo",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "taerellgershom@gmail.com",
+    "personPhone": "+675 79164007",
+    "personCell": "+675 79164007",
+    "username": "taerellgershom@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BULOLO TB LAB"
+    }]
+  },
+  {
+    "personName": "Mr. Willie Porau",
+    "personTitle": "A/CPHL Director",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "porauw@gmail.com",
+    "personCell": "+675 73675177",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Ms. Janlyn Kumbu",
+    "personTitle": "A/Laboratory Manager",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "kumbuj@gmail.com",
+    "personPhone": "+675 73041467",
+    "personCell": "+675 73041467",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Mr. Ernest Velemu",
+    "personTitle": "EQA Manager",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "evelemu@gmail.com",
+    "personCell": "+675 74447771",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Dr. Jacob Kisomb",
+    "personTitle": "NTP Medical Officer",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "jacob.kisomb101@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Miss. Davina Vele",
+    "personTitle": "Scientist TB Unit CPHL",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "veledavina@gmail.com",
+    "username": "veledavina@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Mr. Kevin Isom",
+    "personTitle": "Scientist TB Unit CPHL",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "kevinisomguna@gmail.com",
+    "username": "kevinisomguna@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Mr. Shane Watakapura",
+    "personTitle": "Scientist TB Unit CPHL",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "watslepan@gmail.com",
+    "personPhone": "+675 73287576",
+    "username": "watslepan@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Ms. Imelda Yawenuli",
+    "personTitle": "Scientist TB Unit CPHL",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "iyawenuli04@gmail.com",
+    "personPhone": "+675 72742156",
+    "personCell": "+675 72742156",
+    "username": "iyawenuli04@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Mr. Onesi WYCLIFFE",
+    "personTitle": "MLT-GeneXpert Network & Maintenance",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "onesiji.wycliffe@gmail.com",
+    "personPhone": "+675 73916422",
+    "personCell": "+675 73916422",
+    "username": "onesiji.wycliffe@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Veronica Waffi",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "veronicawaffi3@gmail.com",
+    "personPhone": "+67570145038",
+    "personCell": "+675 70145038",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MUTZING TB LAB"
+    }]
+  },
+  {
+    "personName": "THOMAS YAGOGL",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tyagogl@gmail.com",
+    "personPhone": "+675 70988618",
+    "personCell": "+675 70988618",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MUTZING TB LAB"
+    }]
+  },
+  {
+    "personName": "Dalogen Bunag",
+    "personTitle": "Medical Laboratory Assistant",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "dalogenbunag@gmail.com",
+    "personPhone": "+675 73832897",
+    "personCell": "+67573832897",
+    "username": "dalogenbunag@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GAUBIN TB LAB"
+    }]
+  },
+  {
+    "personName": "Sandra Ilaisa",
+    "personTitle": "Lab Technician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "sandra.ilaisa@gmail.com",
+    "personPhone": "+675 72763897",
+    "personCell": "+675 72763897",
+    "username": "sandra.ilaisa@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Milne Bay TB Lab"
+    }, {
+      "shortName": "Watuluma H/C TB "
+    }]
+  },
+  {
+    "personName": "Ian Kaileledi",
+    "personTitle": "HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ikkemoa@gmail.com",
+    "personPhone": "+675 72757378",
+    "personCell": "+675 72757378",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Sr. D Fred",
+    "personTitle": "Sister in Charge",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "desfayterona@gmail.com",
+    "personPhone": "+675 72992614",
+    "personCell": "+675 72992614",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Lizzie Wapip",
+    "personTitle": "HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "lissie.wapip@gmail.com",
+    "personPhone": "+675 70692481",
+    "personCell": "+675 70692481",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MADANG TB LAB"
+    }, {
+      "shortName": "MALALA TB LAB"
+    }]
+  },
+  {
+    "personName": "Gibson Winston",
+    "personTitle": "OIC Pathology",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "winstongibson@gmail.com",
+    "personPhone": "+675 72523849",
+    "personCell": "+675 72523849",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Alois Yanau",
+    "personTitle": "Lab contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 73910187",
+    "personCell": "+675 73910187",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Mr Gabriel Keleu",
+    "personTitle": "Lab contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 73156065",
+    "personCell": "+675 73156065",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ms Florie Tukunoi",
+    "personTitle": "Lab contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 73644340",
+    "personCell": "+675 73644340",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Ms Dancy Buka",
+    "personTitle": "Lab contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 72360007",
+    "personCell": "+675 7236007",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Fendick Arembo",
+    "personTitle": "TB Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 79326546",
+    "personCell": "+675 79326546",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Stanislaw S. Tao",
+    "personTitle": "CEO-West New Britain Provincial Health Authority",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "stanistao.tao@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Dr Joseph Nale",
+    "personTitle": "DPH-West New Britain Provincial Health Authority",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jnalejr@gmail.com",
+    "personPhone": "+675 71295303",
+    "personCell": "+675 71295303",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Dr Victor Golpak",
+    "personTitle": "DCH-West New Britain Provincial Health Authority",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "golpakv@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Mr Wimban Lemuel",
+    "personTitle": "Outreach HEO-WNBPHA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "wimbanlemuel@gmail.com",
+    "personPhone": "+675 73769814",
+    "personCell": "+675 73769814",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Mr Akisa Kawe",
+    "personTitle": "HEO TB Clinic-WNBPHA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personPhone": "+675 74381347",
+    "personCell": "+675 74381347",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Dr George Pariwa",
+    "personTitle": "Physician-WNBPHA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "georgepariwa@gmail.com",
+    "personPhone": "+675 79718688",
+    "personCell": "+675 79718688",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BIALLA TB LAB"
+    }, {
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Jonathan Itaki",
+    "personTitle": "Medical Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "quinnemeck@gmail.com",
+    "personCell": "+675 79828627",
+    "username": "quinnemeck@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "DGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Nicole Kauri",
+    "personTitle": "Medical scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "nkauri1969@gmail.com",
+    "personPhone": "+675 72104389",
+    "personCell": "+675 72104389",
+    "username": "nkauri1969@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BIALLA TB LAB"
+    }, {
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Mckenzie Kupo",
+    "personTitle": "District Health Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mckenziekupo330@gmail.com",
+    "personPhone": "+675 75267343",
+    "personCell": "+675 71219456",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Bereina Lab"
+    }]
+  },
+  {
+    "personName": "Bernard Pukari",
+    "personTitle": "RLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bernardpukari926@gmail.com",
+    "personCell": "+675 70353403",
+    "username": "bernardpukari926@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Bereina Lab"
+    }]
+  },
+  {
+    "personName": "Pana Rim",
+    "personTitle": "PDCO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "panarim86@gmail.com",
+    "personCell": "+675 72161748",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kabtronics Esayamo",
+    "personTitle": "Laboratory Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kabtronicsesayamo@gmail.com",
+    "personPhone": "+675 72838853",
+    "personCell": "+675 72838853",
+    "username": "kabtronicsesayamo@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KAPUNA TB LAB"
+    }, {
+      "shortName": "KEREMA TB LAB"
+    }, {
+      "shortName": "KIKORI TB LAB"
+    }]
+  },
+  {
+    "personName": "Roger Moko",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rmoko53@gmail.com",
+    "personPhone": "+675 78373520",
+    "personCell": "+675 73581244",
+    "username": "rmoko53@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KEREMA TB LAB"
+    }]
+  },
+  {
+    "personName": "MSF Lab Manager",
+    "personTitle": "MSF Lab Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-ncd-labman@paris.msf.org",
+    "personPhone": "+675 70364782",
+    "personCell": "+675 70364782",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KEREMA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr Albert Anthony",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "letemu@yahoo.com",
+    "personCell": "+675 71004163",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Demitri Kep",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "dimikep@gmail.com",
+    "personCell": "+675 72311019",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Olive Oa",
+    "personTitle": "HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "olive.oa@gmail.com",
+    "personPhone": "+67573333589",
+    "personCell": "+675 73333589",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Bereina Lab"
+    }]
+  },
+  {
+    "personName": "Dr Jeffery Ilai",
+    "personTitle": "TB MO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jefferyilai@gmail.com",
+    "personPhone": "+675 73005195",
+    "personCell": "+675 73005195",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "DGH TB LAB"
+    }, {
+      "shortName": "MABADUAN TB LAB"
+    }]
+  },
+  {
+    "personName": "Rolland Jonathan",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rollandjonathan446@gmail.com",
+    "personPhone": "+675 70850968",
+    "personCell": "+67570850968",
+    "username": "rollandjonathan446@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "DGH TB LAB"
+    }, {
+      "shortName": "Hela Lab"
+    }]
+  },
+  {
+    "personName": "Dr Paul Gimots",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "gimotspaul@gmail.com",
+    "personCell": "+675 71141411",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Frances Akuani",
+    "personTitle": "TB Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "frances.akuani@gmail.com",
+    "personPhone": "+675 79033453",
+    "personCell": "+67790334535",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Rose Morre",
+    "personTitle": "Provincial Paediatrician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rosemorre41@gmail.com",
+    "personCell": "+675 75769408",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }, {
+      "shortName": "Badili TB Lab"
+    }, {
+      "shortName": "Lawes Road Lab"
+    }, {
+      "shortName": "Tokarara lab"
+    }]
+  },
+  {
+    "personName": "Dr Esther Gabut",
+    "personTitle": "Provincial Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "egabut@yahoo.com",
+    "personPhone": "+675 71563482",
+    "personCell": "+675 71563482",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }, {
+      "shortName": "Badili TB Lab"
+    }, {
+      "shortName": "Lawes Road Lab"
+    }, {
+      "shortName": "Tokarara lab"
+    }]
+  },
+  {
+    "personName": "Israel Naraman",
+    "personTitle": "TB Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "israelnaraman675@gmail.com",
+    "personPhone": "+675 75240835",
+    "personCell": "+675 75240835",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }, {
+      "shortName": "9 mile TB Lab"
+    }, {
+      "shortName": "Badili TB Lab"
+    }, {
+      "shortName": "GEREHU TB LAB"
+    }, {
+      "shortName": "Lawes Road Lab"
+    }, {
+      "shortName": "Tokarara lab"
+    }]
+  },
+  {
+    "personName": "Ms Suzanne Gurra",
+    "personTitle": "HEO TB",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "sugu.gurra@gmail.com",
+    "personCell": "+675 72168862",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Maling Absalom",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "absalommaling@gmail.com",
+    "personPhone": "+67220266375",
+    "personCell": "+67572202663",
+    "username": "absolommaling@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "HAIKOST TB LAB"
+    }]
+  },
+  {
+    "personName": "Siling Awasa",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "awasahsiling@gmail.com",
+    "personPhone": "+675 72787574",
+    "personCell": "+67572787574",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "HAIKOST TB LAB"
+    }]
+  },
+  {
+    "personName": "Peter Sava",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "petersavabog@gmail.com",
+    "personCell": "+67573571347",
+    "username": "petersavabog@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MALALA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr Jerry Hoga",
+    "personTitle": "a/Medical Superintendent",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jerryhoga84@gmail.com",
+    "personPhone": "+675 72818533",
+    "personCell": "+675 72818533",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Anna Lucci",
+    "personTitle": "PJV Medical Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "alucci@porgerajv.com",
+    "personCell": "+675 71417903",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Johnson Makaen",
+    "personTitle": "a/Lab Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jmakaen@gmail.com",
+    "personCell": "+675 73843603",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GAUBIN TB LAB"
+    }, {
+      "shortName": "MADANG TB LAB"
+    }, {
+      "shortName": "MALALA TB LAB"
+    }]
+  },
+  {
+    "personName": "Angela Pukari",
+    "personTitle": "Health Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "Angela.Pukari@newcrest.com.au",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "LIHIR TB LAB"
+    }]
+  },
+  {
+    "personName": "Margaret Morisause",
+    "personTitle": "Clinical HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "magiemorisause@gmail.com",
+    "personCell": "+675 72254863",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MAPRIK TB LAB"
+    }]
+  },
+  {
+    "personName": "Augustine Brain",
+    "personTitle": "TB Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "augustinebrain@rocketmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "IAILIBU TB LAB "
+    }, {
+      "shortName": "MENDI TB LAB"
+    }]
+  },
+  {
+    "personName": "Verlyn Apis",
+    "personTitle": "HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "veeapis@gmail.com",
+    "personPhone": "+675 71592954",
+    "personCell": "+675 71592954",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Derrick Tiram",
+    "personTitle": "Provincial TB/HIV Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "derricktiram7@gmail.com",
+    "personPhone": "+675 79098684",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "RAIHU TB LAB"
+    }, {
+      "shortName": "WSPHA"
+    }]
+  },
+  {
+    "personName": "Dr Kanandru Pondros",
+    "personTitle": "Deputy Director Medical Services",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "kpondros60@gmail.com",
+    "personCell": "+675 72242506",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Enga PHA Lab"
+    }, {
+      "shortName": "KOMPIAM TB LAB"
+    }, {
+      "shortName": "Porgera Lab"
+    }]
+  },
+  {
+    "personName": "Mr Chris Aquame",
+    "personTitle": "Molecular Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "caquame@gmail.com",
+    "personCell": "+675 75758053",
+    "username": "caquame@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "CPHL Viral Load"
+    }]
+  },
+  {
+    "personName": "James Lipu",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jameslipu7@gmail.com",
+    "personPhone": "+675 73596490",
+    "personCell": "+675  73596490",
+    "username": "jameslipu7@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Porgera Lab"
+    }]
+  },
+  {
+    "personName": "Nichola Kotale",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "nkotale@gmail.com",
+    "personPhone": "+675 74554433",
+    "personCell": "+67745544335",
+    "username": "nkotale@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GEREHU TB LAB"
+    }]
+  },
+  {
+    "personName": "Lindy M Dapal",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "lindymdapal@gmail.com",
+    "personPhone": "+675 79967247",
+    "personCell": "+675 79967247",
+    "username": "lindymdapal@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KOMPIAM TB LAB"
+    }]
+  },
+  {
+    "personName": "Ken Tuntigi",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "tuntziifah@gmail.com",
+    "personPhone": "+675 79352218",
+    "personCell": "+675  79352218",
+    "username": "tuntziifah@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Terence Tembeno Elisa",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "terencetembeno@gmail.com",
+    "personPhone": "+675 79775987",
+    "personCell": "+675 79775987",
+    "username": "terencetembeno@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Tokarara lab"
+    }]
+  },
+  {
+    "personName": "Rachael Pyande",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rachpyande@gmail.com",
+    "personPhone": "+675 72664267",
+    "personCell": "+675 72664267",
+    "username": "rachpyande@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }]
+  },
+  {
+    "personName": "Diana Leteisim",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "dianapkl0419@gmail.com",
+    "personPhone": "+675 72985707",
+    "personCell": "+675 72985707",
+    "username": "dianapkl0419@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Yesmin Kaka",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "yesmmynkaka@gmail.com",
+    "personPhone": "+675 76510424",
+    "personCell": "+675 76510424",
+    "username": "yesmmynkaka@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "PMGH TB LAB"
+    }]
+  },
+  {
+    "personName": "Hemo Joppa",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "joppahemo20@gmail.com",
+    "personPhone": "+675 72333056",
+    "personCell": "+675  72333056",
+    "username": "joppahemo20@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Tokarara lab"
+    }]
+  },
+  {
+    "personName": "David Pyaki",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "dpyakis@gmail.com",
+    "personPhone": "+675 71549203",
+    "personCell": "+675 71549203",
+    "username": "dpyakis@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Enga PHA Lab"
+    }]
+  },
+  {
+    "personName": "Ray Pyao",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "raypyaonagi@gmail.com",
+    "personPhone": "+675 71375462",
+    "personCell": "+67571375462",
+    "username": "raypyaonagi@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "WHPHA TB Lab"
+    }]
+  },
+  {
+    "personName": "Peter Ogensa",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "peterogensa34@gmail.com",
+    "personPhone": "+675 70427303",
+    "personCell": "+675  70427303",
+    "username": "peterogensa34@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BULOLO TB LAB"
+    }]
+  },
+  {
+    "personName": "Eddie Narahaua",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "eddiehonu@gmail.com",
+    "personPhone": "+675 70256769",
+    "personCell": "+675 70256769",
+    "username": "eddiehonu@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "6 mile TB Lab"
+    }]
+  },
+  {
+    "personName": "George Kelly",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jdaiwa4@gmail.com",
+    "personPhone": "+675 79063262",
+    "personCell": "+675 79063262",
+    "username": "jdaiwa4@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MINGENDE TB LAB"
+    }]
+  },
+  {
+    "personName": "Peter Rovou",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "peterrovou@gmail.com",
+    "personPhone": "+675 73228565",
+    "personCell": "+675 73228565",
+    "username": "peterrovou@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BIALLA TB LAB"
+    }]
+  },
+  {
+    "personName": "Thomas Mebo",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "thomasmebo73@gmail.com",
+    "personPhone": "+675 71219729",
+    "personCell": "+675  71219729",
+    "username": "thomasmebo73@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KIUNGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Miriam Suma",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "miriamsuma30@gmail.com",
+    "personPhone": "+675 73176288",
+    "personCell": "+67573176288",
+    "username": "miriamsuma30@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MUTZING TB LAB"
+    }]
+  },
+  {
+    "personName": "Jeffery Yako",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "yakojeffery20@gmail.com",
+    "personPhone": "+675 79307950",
+    "personCell": "+675 79307950",
+    "username": "yakojeffery20@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Morea Aihi",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "bereinatbresults@gmail.com",
+    "personPhone": "+675  72053222",
+    "personCell": "+675 72053222",
+    "username": "bereinatbresults@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mark Menz",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mark.menz@oilsearch.com",
+    "personCell": "+6752782266",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MORO TB LAB"
+    }]
+  },
+  {
+    "personName": "Ms Ilesso Waram",
+    "personTitle": "Medical Lab. Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "whipokymainiken@gmail.com",
+    "personPhone": "+675 72009311",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MABADUAN TB LAB"
+    }]
+  },
+  {
+    "personName": "Jeremy Syme",
+    "personTitle": "Provincial Health Advisor",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jeremy.syme@pathprogram.org",
+    "personPhone": "+675 70307164",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MABADUAN TB LAB"
+    }]
+  },
+  {
+    "personName": "Mr Esongke Waurang",
+    "personTitle": "Senior Nursing Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ewaurangw12@gmail.com",
+    "personPhone": "+675 74618644",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MABADUAN TB LAB"
+    }]
+  },
+  {
+    "personName": "Bryan Test Krimbu",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "brichardssa@gmail.com",
+    "username": "brichardssa_TEST",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BRAUN TB LAB"
+    }]
+  },
+  {
+    "personName": "James Krimbu",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "krimbu.j@gmail.com",
+    "personPhone": "+675 72640327",
+    "personCell": "+67572640327",
+    "username": "krimbu.j@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BRAUN TB LAB"
+    }]
+  },
+  {
+    "personName": "Naomi Lelori",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-ncd-labtech@paris-msf.org",
+    "personCell": "+675 72252646",
+    "username": "msff-ncd-labtech@paris-msf.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "GEREHU TB LAB"
+    }]
+  },
+  {
+    "personName": "Julius Lakamo",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jlakamo@gmail.com",
+    "personPhone": "+675 70514141",
+    "personCell": "+675 70514141",
+    "username": "jlakamo@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BIALLA TB LAB"
+    }, {
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Alois Yanau",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "alisyanau15@gmail.com",
+    "personCell": "+675 73910187",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Ms Roslyn Mano",
+    "personTitle": "MLT",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "roslynmano1@gmail.com",
+    "personPhone": "+675 72007477",
+    "personCell": "+675 72007477",
+    "username": "roslynmano1@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MADANG TB LAB"
+    }]
+  },
+  {
+    "personName": "Daniel Pelowa",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "danielpelowa057@gmail.com",
+    "personPhone": "+675 73135524",
+    "personCell": "+675 73135524",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Robert Mea Gamai",
+    "personTitle": "RLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "mrobertgamai@gmail.com",
+    "personPhone": "+675 73005896",
+    "personCell": "+675 73005896",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Hector Morris",
+    "personTitle": "ECPNG Health Secretary",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "hrolandmorris@gmail.com",
+    "personPhone": "+675 71979183",
+    "personCell": "+675 71979183",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Ronny Urafime",
+    "personTitle": "HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ronnyurafime@gmail.com",
+    "personPhone": "+675 70697403",
+    "personCell": "+675 70697403",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Suli Ilumi",
+    "personTitle": "Director Nursing",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ilumisuli906@gmail.com",
+    "personPhone": "+675 71476068",
+    "personCell": "+675 71476068",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Simon Akena",
+    "personTitle": "MO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "spakena@gmail.com",
+    "personPhone": "+675 74433441",
+    "personCell": "+675  74433441",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Teleck Ayove",
+    "personTitle": "SCIENTIST",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "teleckayove@gmail.com",
+    "personPhone": "+675 70693566",
+    "personCell": "+675 70693566",
+    "username": "teleckayove@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KEREMA TB LAB"
+    }]
+  },
+  {
+    "personName": "Mr Yari Wilson",
+    "personTitle": "PDCO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "yariwilsons@gmail.com",
+    "personPhone": "+675 73979024",
+    "personCell": "+675 73979024",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Kimsy Waiwa",
+    "personTitle": "MDF District Health Manager",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "k.d.waiwa@gmail.com",
+    "personPhone": "+675 71014264",
+    "personCell": "+675 72909829",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Posa Kiri",
+    "personTitle": "RLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "posaboydkirry@gmail.com",
+    "personPhone": "+675 74518142",
+    "personCell": "+675 74518142",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Taiye Pendene",
+    "personTitle": "DR",
+    "jobFunctions": ["Regional Officer"],
+    "personEmailAddress": "taiye.pendene@gmail.com",
+    "personCell": "+675 71230655",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{
+      "stateName": "No Division",
+      "lgaName": "No District"
+    }]
+  },
+  {
+    "personName": "Naomi",
+    "personTitle": "Lab scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "msff-ncd-labtech@paris.msf.org",
+    "personPhone": "+675 72252646",
+    "personCell": "+675 72252646",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Rebecca Williams",
+    "personTitle": "Medical Doctor",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rmwilliams89@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Joachim Kais",
+    "personTitle": "PDCO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jkais60@gmail.com",
+    "personPhone": "+675 73949395",
+    "personCell": "+675 73949395",
+    "username": "jkais60@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Butuwin TB Lab"
+    }, {
+      "shortName": "Kerevat "
+    }, {
+      "shortName": "NONGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Dr Trevor Ikiso",
+    "personTitle": "MO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "trevor.ikiso@gmail.com",
+    "personPhone": "+675 73195567",
+    "personCell": "+67573195567",
+    "username": "trevor.ikiso@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Butuwin TB Lab"
+    }, {
+      "shortName": "Kerevat "
+    }, {
+      "shortName": "NONGA TB LAB"
+    }]
+  },
+  {
+    "personName": "Sr Raphaeline Ruga",
+    "personTitle": "TB Nurse",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "rugaraphaeline@gmail.com",
+    "personPhone": "+675 71836899",
+    "personCell": "+675 71836899",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Lois Booker",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "loisbooker41@gmail.com",
+    "personPhone": "+675 73869310",
+    "personCell": "+675 73869310",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "PETRONILA BANDI",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personCell": "+675675 70850391",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BORAM TB LAB"
+    }]
+  },
+  {
+    "personName": "CHRISTINE GWAISEUK",
+    "personTitle": "Nurse in charge TB",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "gwaiseukchristine@gmail.com",
+    "personPhone": "+675 79851120",
+    "personCell": "+67579851120",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "ANGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Julian Gumbat",
+    "personTitle": "PDCO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "jgumbat30@gmail.com",
+    "personPhone": "+675 72696020",
+    "personCell": "+675 72696020",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "BORAM TB LAB"
+    }]
+  },
+  {
+    "personName": "Peter Pahu",
+    "personTitle": "HIV Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "ppahu07@gmail.com",
+    "personPhone": "+675 72348193",
+    "personCell": "+675 72348193",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Albert Adila",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "alieadila777@gmail.com",
+    "personPhone": "+675 74264992",
+    "personCell": "+675 74264992",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Vere Ware",
+    "personTitle": "MLA",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "vereware@gmail.com",
+    "personPhone": "+675 71793802",
+    "personCell": "+675 71793802",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Freda Sele",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "selefreda@gmail.com",
+    "personCell": "+67571728309",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KOMPIAM TB LAB"
+    }]
+  },
+  {
+    "personName": "Josila Kawas",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personCell": "+67571859815",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "MAPRIK TB LAB"
+    }]
+  },
+  {
+    "personName": "Gibson Agobe",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "wanei.kambue@oilsearch.com",
+    "personCell": "+675278 2600",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Hela Lab"
+    }]
+  },
+  {
+    "personName": "Dr Charles",
+    "personTitle": "Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "fred.maputiane@gmail.com",
+    "personPhone": "+675 73120316",
+    "personCell": "+675 73120316",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Joel Ronapo",
+    "personTitle": "Clinical HEO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "joelronapo@gmail.com",
+    "personPhone": "+675 73286626",
+    "personCell": "+675 73286626",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Florie Tukunoi",
+    "personTitle": "SCIENTIST",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "flotukunoi43@gmail.com",
+    "personPhone": "+675 73644340",
+    "personCell": "+675 73644340",
+    "username": "flotukunoi43@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kimbe Laboratory"
+    }]
+  },
+  {
+    "personName": "Mr Joshua L",
+    "personTitle": "ENGA Provincial Lab EQA Cordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "wialujoshua18@gmail.com",
+    "personPhone": "+675 71449719",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ms Florence Pintol",
+    "personTitle": "Medical Laboratory Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pintolflo97@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ms Florence Pintal",
+    "personTitle": "Medical Laboratory Scientist",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pintolflo97@gmail.com",
+    "personPhone": "+675 72245962",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Peter Kale",
+    "personTitle": "MO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "peterikepkale@gmail.com",
+    "personPhone": "+675 72596493",
+    "personCell": "+675 72596493",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Laki Murray",
+    "personTitle": "MO",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "brain.zamurr71@gmail.com",
+    "personPhone": "+675 72131342",
+    "personCell": "+675 72131342",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Casparia Mond",
+    "personTitle": "Paediatrician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "casparia2013@gmail.com",
+    "personPhone": "+675 72190451",
+    "personCell": "+675 72190451",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Andree Zamunu",
+    "personTitle": "Pediatrician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "andreeowenozamunu@gmail.com",
+    "personPhone": "+675 74496232",
+    "personCell": "+675 74496232",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kerema Hospital Laboratory",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "keremapathlab@gmail.com",
+    "personCell": "+675675 70693566",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "KEREMA TB LAB"
+    }]
+  },
+  {
+    "personName": "DR Grace Baiwan",
+    "personTitle": "TB/HIV Physician",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "gbaining.gb@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Kerevat "
+    }]
+  },
+  {
+    "personName": "Marisah Kuhau",
+    "personTitle": "Provincial Laboratory QA Cordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "marisahkuhau8@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Samantha Sangavi",
+    "personTitle": "Provincial TB Cordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "samanthasangavi@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Joshua Wialu",
+    "personTitle": "Provincial Laboratory QA Coordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "joshua_wialu@wvi.org",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kiki Hakai",
+    "personTitle": "Mr",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "pphlmaspha2021@gmail.com",
+    "personCell": "+675 71403242",
+    "username": "khakai2022",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "LORENGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Mehdi Hemani",
+    "personTitle": "Mr",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "mhemani@systemone.id",
+    "username": "mhemani",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Mrs Vanesa Noruka",
+    "personTitle": "TB/HIV Cordinator",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "vanessa.noruka@gmail.com",
+    "personPhone": "+675 71775179",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Thomas Matani",
+    "personTitle": "Lab Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "thomasmatani@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mr Thomas Matani",
+    "personTitle": "Lab Officer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "thomasmatani@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Elizabeth Namba",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "sabethnamba16@gmail.com",
+    "personPhone": "+675 79409019",
+    "personCell": "+675 79409019",
+    "username": "sabethnamba16@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Niawali Wariambu",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "twainniawali27@gmail.com",
+    "personPhone": "+675 73961319",
+    "personCell": "+675 73961319",
+    "username": "twainniawali27@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Peter Menue",
+    "personTitle": "Scientist",
+    "jobFunctions": ["Admin"],
+    "personEmailAddress": "petermenue3@gmail.com",
+    "personPhone": "+675 79411602",
+    "personCell": "+67579411602",
+    "username": "petermenue3@gmail.com",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [{}]
+  },
+  {
+    "personName": "Jennifer Banamu",
+    "personTitle": "Installer",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "banamuj@gmail.com",
+    "personCell": "+67567572794533",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "LORENGAU TB LAB"
+    }]
+  },
+  {
+    "personName": "Bryan Richards",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personEmailAddress": "brichards@systemone.id",
+    "personCell": "+27833243682",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Test"
+    }]
+  },
+  {
+    "personName": "Daniel Benjamin",
+    "personTitle": "Lab Contact",
+    "jobFunctions": ["Lab User", "Technician"],
+    "personCell": "+67572540062",
+    "timezone": "West Pacific Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [{
+      "shortName": "Butuwin TB Lab"
+    }]
+  }
+]

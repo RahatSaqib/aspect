@@ -36,15 +36,17 @@ async function updateResult(request) {
   const simpleFieldsToUpdate = {}
   const jsonFieldsToUpdate = {}
   for (const customField of customFields) {
-    const isSimpleField = !customField.source.includes('.')
+    if (customField.source) {
+      const isSimpleField = !customField.source.includes('.')
 
-    if (isSimpleField) {
-      const key = customField.source
-      simpleFieldsToUpdate[key] = payload[key] || ''
-    } else {
-      const [parent, key] = customField.source.split('.')
-      jsonFieldsToUpdate[parent] = jsonFieldsToUpdate[parent] || {}
-      jsonFieldsToUpdate[parent][key] = payload[parent][key] || ''
+      if (isSimpleField) {
+        const key = customField.source
+        simpleFieldsToUpdate[key] = payload[key] || ''
+      } else {
+        const [parent, key] = customField.source.split('.')
+        jsonFieldsToUpdate[parent] = jsonFieldsToUpdate[parent] || {}
+        jsonFieldsToUpdate[parent][key] = payload[parent][key] || ''
+      }
     }
   }
 

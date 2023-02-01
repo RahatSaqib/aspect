@@ -1,0 +1,224 @@
+{
+  "fields": [
+    {
+      "id": 29,
+      "name": "MWReasonForTestEid",
+      "items": [
+        {
+          "key": "Routine",
+          "order": 10,
+          "value": "Routine"
+        },
+        {
+          "key": "Targeted",
+          "order": 20,
+          "value": "Targeted"
+        },
+        {
+          "key": "Follow-up after high VL",
+          "order": 30,
+          "value": "Follow-up after high VL"
+        },
+        {
+          "key": "Repeat (reject / lost / missing)",
+          "order": 40,
+          "value": "Repeat (reject / lost / missing)"
+        }
+      ],
+      "order": 100,
+      "title": "Reason for Test (Mandatory) EID",
+      "source": "patientData.MWReasonForTestEid",
+      "caption": "Reason for Test (Mandatory) EID",
+      "i18nKey": "MWReasonForTestEidI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWReasonForTestEidI8nCaptionKey",
+      "gxAlertDbColumn": "MWReasonForTestEid",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.29.value",
+      "payloadDestinationPath": "patient.MWReasonForTestEid"
+    },
+    {
+      "id": 33,
+      "name": "MWARTInitiationDate",
+      "order": 140,
+      "title": "ART Initiation Date",
+      "source": "patientData.MWARTInitiationDate",
+      "caption": "ART Initiation Date",
+      "i18nKey": "MWARTInitiationDateI18nKey",
+      "fieldType": "datetime",
+      "mandatory": false,
+      "controlType": "datePicker",
+      "i18nKeyCaption": "MWARTInitiationDateI8nCaptionKey",
+      "gxAlertDbColumn": "MWARTInitiationDate",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.33.value",
+      "payloadDestinationPath": "patient.MWARTInitiationDate"
+    },
+    {
+      "id": 34,
+      "name": "MWSampleType",
+      "items": [
+        {
+          "key": "DBS (using capillary tube)",
+          "order": 10,
+          "value": "DBS (using capillary tube)"
+        },
+        {
+          "key": "Plasma",
+          "order": 20,
+          "value": "Plasma"
+        },
+        {
+          "key": "EQA",
+          "order": 30,
+          "value": "EQA"
+        },
+        {
+          "key": "stool",
+          "order": 40,
+          "value": "Stool"
+        },
+        {
+          "key": "Nasogastric Aspirate",
+          "order": 50,
+          "value": "Nasogastric Aspirate"
+        }
+      ],
+      "order": 150,
+      "title": "Sample Type",
+      "source": "patientData.MWSampleType",
+      "caption": "Sample Type",
+      "i18nKey": "MWSampleTypeI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWSampleTypeI8nCaptionKey",
+      "gxAlertDbColumn": "MWSampleType",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.34.value",
+      "payloadDestinationPath": "patient.MWSampleType"
+    },
+    {
+      "id": 35,
+      "name": "MWCurrentARTRegimen",
+      "items": [
+        {
+          "key": "0P",
+          "order": 10,
+          "value": "0P"
+        },
+        {
+          "key": "2P",
+          "order": 20,
+          "value": "2P"
+        },
+        {
+          "key": "4P",
+          "order": 30,
+          "value": "4P"
+        },
+        {
+          "key": "9P",
+          "order": 40,
+          "value": "9P"
+        },
+        {
+          "key": "11P",
+          "order": 50,
+          "value": "11P"
+        },
+        {
+          "key": "0A",
+          "order": 60,
+          "value": "0A"
+        },
+        {
+          "key": "2A",
+          "order": 70,
+          "value": "2A"
+        },
+        {
+          "key": "4A",
+          "order": 80,
+          "value": "4A"
+        },
+        {
+          "key": "5A",
+          "order": 90,
+          "value": "5A"
+        },
+        {
+          "key": "6A",
+          "order": 100,
+          "value": "6A"
+        },
+        {
+          "key": "7A",
+          "order": 110,
+          "value": "7A"
+        },
+        {
+          "key": "8A",
+          "order": 120,
+          "value": "8A"
+        },
+        {
+          "key": "9A",
+          "order": 130,
+          "value": "9A"
+        },
+        {
+          "key": "10A",
+          "order": 140,
+          "value": "10A"
+        },
+        {
+          "key": "11A",
+          "order": 150,
+          "value": "11A"
+        },
+        {
+          "key": "12A",
+          "order": 160,
+          "value": "12A"
+        },
+        {
+          "key": "13A",
+          "order": 170,
+          "value": "13A"
+        },
+        {
+          "key": "14A",
+          "order": 180,
+          "value": "14A"
+        },
+        {
+          "key": "15A",
+          "order": 190,
+          "value": "15A"
+        },
+        {
+          "key": "NS",
+          "order": 200,
+          "value": "NS"
+        }
+      ],
+      "order": 160,
+      "title": "Current ART Regimen",
+      "source": "patientData.MWCurrentARTRegimen",
+      "caption": "Current ART Regimen",
+      "i18nKey": "MWCurrentARTRegimenI18nKey",
+      "fieldType": "text",
+      "mandatory": false,
+      "controlType": "comboBox",
+      "i18nKeyCaption": "MWCurrentARTRegimenI8nCaptionKey",
+      "gxAlertDbColumn": "MWCurrentARTRegimen",
+      "completionWeight": 10,
+      "payloadOriginPath": "data.customFieldData.35.value",
+      "payloadDestinationPath": "patient.MWCurrentARTRegimen"
+    }
+  ],
+  "refForms": []
+}

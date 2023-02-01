@@ -142,7 +142,7 @@ const AssayAutocomplete = ({ assaysFromState, value, onChange }) => {
       isOptionEqualToValue={(option, value) => option.i18nKey === value.i18nKey}
       groupBy={option => option.assayTypeAbbreviation}
       getOptionLabel={option => formatMessage(assay[option.i18nKey])}
-      sx={{ minWidth: '120px' }}
+      sx={{ minWidth: '120px', maxWidth: '100%' }}
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
           <Chip color="primary" label={formatMessage(assay[option.i18nKey])} size="small" {...getTagProps({ index })} />

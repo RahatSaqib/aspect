@@ -29,6 +29,10 @@ export const messages = defineMessages({
     id: 'placeholder.name.short',
     defaultMessage: `Short Name`,
   },
+  placeholderCompletionRatePercentage: {
+    id: 'placeholder.site.completionRatePercentage',
+    defaultMessage: `Completion Rate Percentage`,
+  },
   placeholderId: {
     id: 'placeholder.id',
     defaultMessage: `ID`,

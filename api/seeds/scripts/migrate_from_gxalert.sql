@@ -53,7 +53,7 @@ COALESCE(CONCAT('"shortName": "', deployment.ShortName, '",'), ''),
 COALESCE(
   CONCAT(
     ', "devices": [', GROUP_CONCAT(
-      DISTINCT CONCAT('{ "name": "', deployment.Description, '", "shortName": "', deployment.ShortName, '", "macAddress": "', device.ComputerId, '", "hostId": "', device.HostId, '", "serial": "', device.Serial, '", "gxAlertDeviceId": ', CAST(device.DeviceId AS CHAR), ' },')
+      DISTINCT CONCAT('{ "name": "', deployment.Description, '", "shortName": "', deployment.ShortName, '", "macAddress": "', device.ComputerId, '", "hostId": "', device.HostId, '", "serial": "', device.Serial, '", "gxAlertDeviceId": ', CAST(device.DeviceId AS CHAR), ', "apiKey": "', IFNULL(deviceapikey.Token, 'null') , '" },')
     ), ']'
   ), ''),
 '},') AS JSONObject
@@ -62,6 +62,7 @@ JOIN location ON location.id = deployment.LocationId
 LEFT JOIN state ON state.stateId = deployment.StateId
 LEFT JOIN lga ON lga.LgaId = deployment.LgaId
 LEFT JOIN device ON device.CurrentDeploymentId = deployment.DeploymentId
+LEFT JOIN deviceapikey ON deviceapikey.DeviceId = device.DeviceId
 WHERE deployment.Approved = 1 AND deployment.HideOnDashboard = 0
 GROUP BY deployment.DeploymentId;
 

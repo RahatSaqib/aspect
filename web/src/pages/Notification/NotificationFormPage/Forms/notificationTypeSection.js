@@ -47,6 +47,11 @@ const notificationTypeSection = formatMessage => ({
                     icon: 'AiOutlineDashboard',
                   },
                   {
+                    value: 'SiteWithLowFieldCompletionRate',
+                    label: formatMessage(messages.notificationTypeLowFieldCompletionRate),
+                    icon: 'FaWpforms',
+                  },
+                  {
                     value: 'InventoryStockExpiring',
                     label: formatMessage(messages.notificationTypeExpiring),
                     icon: 'BsArrowDownRight',
@@ -102,6 +107,17 @@ const notificationTypeSection = formatMessage => ({
             item: cssClasses('full-width-100pc'),
           },
           labelI18nKey: 'notificationType',
+        },
+        {
+          id: 'siteWithLowFieldCompletionRateDescription',
+          visibleIf: values => values.notificationType === 'SiteWithLowFieldCompletionRate',
+          fullWidth: true,
+          controlType: {
+            component: 'messageField',
+            icon: 'MdHelp',
+            text: formatMessage(messages.notificationTypeLowFieldCompletionRateMessage),
+            color: 'cadetblue',
+          },
         },
         {
           id: 'name',
