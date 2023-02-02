@@ -42,6 +42,4 @@ async function getDataExtractReport(auth, query) {
   return dataset
 }
 
-module.exports = {
-  getDataExtractReport,
-}
+module.exports = getDataExtractReport
