@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import useI18n from '../../../../hooks/useI18n'
-import ConsumableSelector from '../../../../oldPages/dashboard/Graphs/ConsumableSelector'
-import PeriodSelector from '../../../../oldPages/dashboard/Graphs/PeriodSelector'
-import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
-import NestedTable from '../../components/NestedTable'
-import PkPage from '../../components/PkPage'
-import messages from '../../PkDashboard.Messages'
+import useI18n from '../../../../../hooks/useI18n'
+import ConsumableSelector from '../../../../../oldPages/dashboard/Graphs/ConsumableSelector'
+import PeriodSelector from '../../../../../oldPages/dashboard/Graphs/PeriodSelector'
+import DATE_CONSTS from '../../../../../utils/consts/DateTime/CONSTS'
+import NestedTable from '../../../components/NestedTable'
+import PkPage from '../../../components/PkPage'
+import messages from '../../../PkDashboard.Messages'
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 

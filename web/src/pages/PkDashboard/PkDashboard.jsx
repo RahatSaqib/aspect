@@ -11,7 +11,7 @@ import messages from './PkDashboard.Messages'
 
 const mock = {
   summary: [
-    { main: { key: 'molecularAssay', value: '536,412' }, secondary: { key: 'molecularAssay24', value: '1,932' } },
+    { main: { key: 'molecularAssay', value: '32,536,412' }, secondary: { key: 'molecularAssay24', value: '1,932' } },
     { main: { key: 'TB', value: '61,137' }, secondary: { key: 'TB24', value: '423' } },
     { main: { key: 'RTTB', value: '2,274' }, secondary: { key: 'RTTB24', value: '13' } },
   ],
