@@ -3,13 +3,11 @@ import { Container, Grid } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import DetailHeader from '../../components/DetailHeader'
 import useI18n from '../../hooks/useI18n'
+import ColumnName from './components/ColumnName'
+import DashboardCard from './components/DashboardCard'
+import DashboardLink from './components/DashboardLink'
 import SummaryCard from './components/SummaryCard'
-import CoverageColumn from './PkDashboard.CoverageColumn'
-import InventoryColumn from './PkDashboard.InventoryColumn'
 import messages from './PkDashboard.Messages'
-import MtbRifColumn from './PkDashboard.MtbRifColumn'
-import MtbXdrColumn from './PkDashboard.MtbXdrColumn'
-import OtherColumn from './PkDashboard.OtherColumn'
 
 const mock = {
   summary: [
@@ -17,34 +15,6 @@ const mock = {
     { main: { key: 'TB', value: '61,137' }, secondary: { key: 'TB24', value: '423' } },
     { main: { key: 'RTTB', value: '2,274' }, secondary: { key: 'RTTB24', value: '13' } },
   ],
-  mtbRif: {
-    TbCurrent: '123',
-    TbNationalTrend: '456',
-    TbProvincialComparison: '789',
-    TbDCurrent: '123',
-    TbDNationalTrend: '456',
-    TbDProvincialComparison: '789',
-    TbDTestingDiagnosis: '1.2K',
-    RRCurrent: '123',
-    RRNationalTrend: '456',
-    RRProvincialComparison: '789',
-    RRTestingDiagnosis: '1.2K',
-  },
-  mtbXdr: {
-    TCurrent: '123',
-    TNationalTrend: '456',
-    TProvincialComparison: '789',
-    DCurrent: '123',
-    DNationalTrend: '456',
-    DProvincialComparison: '789',
-    DTestingDiagnosis: '1.2K',
-    FQCurrent: '123',
-    FQNationalTrend: '456',
-    FQProvincialComparison: '789',
-  },
-  coverage: { genExpert: '123', utilization: '456', errorRate: '789' },
-  inventory: { overview: '123' },
-  other: { covid: '123', hiv: '456' },
 }
 
 const PkDashboard = () => {
@@ -63,11 +33,65 @@ const PkDashboard = () => {
                   <SummaryCard key={s.key} item={s} />
                 </Grid>
               ))}
-              <MtbRifColumn data={data.mtbRif} />
-              <MtbXdrColumn data={data.mtbXdr} />
-              <CoverageColumn data={data.coverage} />
-              <InventoryColumn data={data.inventory} />
-              <OtherColumn data={data.other} />
+              <Grid lg={4} style={{ padding: '8px 8px 0' }}>
+                <ColumnName title={formatMessage(messages.titlemtbRif)} />
+                <DashboardCard title={formatMessage(messages.mtbRifTbTesting)}>
+                  <DashboardLink to="/dashboard/rif/current" label={formatMessage(messages.TbCurrent)} />
+                  <DashboardLink to="" label={formatMessage(messages.TbNationalTrend)} />
+                  <DashboardLink to="" label={formatMessage(messages.TbProvincialComparison)} />
+                  <DashboardLink to="" label={formatMessage(messages.TbSubprovincialTrend)} />
+                </DashboardCard>
+                <DashboardCard title={formatMessage(messages.mtbRifTbDiagnosis)}>
+                  <DashboardLink to="" label={formatMessage(messages.TbDCurrent)} />
+                  <DashboardLink to="" label={formatMessage(messages.TbDNationalTrend)} />
+                  <DashboardLink to="" label={formatMessage(messages.TbDProvincialComparison)} />
+                  <DashboardLink to="" label={formatMessage(messages.TbDTestingDiagnosis)} />
+                </DashboardCard>
+                <DashboardCard title={formatMessage(messages.mtbRifRrtbDiagnosis)}>
+                  <DashboardLink to="" label={formatMessage(messages.RRCurrent)} />
+                  <DashboardLink to="" label={formatMessage(messages.RRNationalTrend)} />
+                  <DashboardLink to="" label={formatMessage(messages.RRProvincialComparison)} />
+                  <DashboardLink to="" label={formatMessage(messages.RRTestingDiagnosis)} />
+                </DashboardCard>
+              </Grid>{' '}
+              <Grid lg={4} style={{ padding: '8px 8px 0' }}>
+                <ColumnName title={formatMessage(messages.titlemtbXdr)} />
+                <DashboardCard title={formatMessage(messages.mtbXdrTesting)}>
+                  <DashboardLink to="" label={formatMessage(messages.TCurrent)} />
+                  <DashboardLink to="" label={formatMessage(messages.TNationalTrend)} />
+                  <DashboardLink to="" label={formatMessage(messages.TProvincialComparison)} />
+                </DashboardCard>
+                <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
+                  <DashboardLink to="" label={formatMessage(messages.DCurrent)} />
+                  <DashboardLink to="" label={formatMessage(messages.DNationalTrend)} />
+                  <DashboardLink to="" label={formatMessage(messages.DProvincialComparison)} />
+                  <DashboardLink to="" label={formatMessage(messages.DTestingDiagnosis)} />
+                </DashboardCard>
+                <DashboardCard title={formatMessage(messages.mtbXdrFQResistance)}>
+                  <DashboardLink to="" label={formatMessage(messages.FQCurrent)} />
+                  <DashboardLink to="" label={formatMessage(messages.FQNationalTrend)} />
+                  <DashboardLink to="" label={formatMessage(messages.FQProvincialComparison)} />
+                </DashboardCard>
+              </Grid>
+              <Grid lg={4} style={{ padding: '8px 8px 0' }}>
+                <ColumnName title={formatMessage(messages.titlecoverage)} />
+                <DashboardCard>
+                  <DashboardLink to="/dashboard/coverage/device" label={formatMessage(messages.genExpert)} />
+                </DashboardCard>
+                <DashboardCard title={formatMessage(messages.coverageperformance)}>
+                  <DashboardLink to="/dashboard/coverage/utilization" label={formatMessage(messages.utilization)} />
+                  <DashboardLink to="/dashboard/coverage/error-rate" label={formatMessage(messages.errorRate)} />
+                </DashboardCard>
+                <ColumnName title={formatMessage(messages.titleinventory)} />
+                <DashboardCard>
+                  <DashboardLink to="/dashboard/inventory/overview" label={formatMessage(messages.overview)} />
+                </DashboardCard>
+                <ColumnName title={formatMessage(messages.titleother)} />
+                <DashboardCard>
+                  <DashboardLink to="/dashboard/other/covid" label={formatMessage(messages.covid)} />
+                  <DashboardLink to="/dashboard/other/hiv" label={formatMessage(messages.hiv)} />
+                </DashboardCard>
+              </Grid>
             </>
           ) : null}
         </Grid>

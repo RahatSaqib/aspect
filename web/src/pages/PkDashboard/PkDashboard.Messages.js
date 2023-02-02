@@ -17,22 +17,29 @@ const messages = {
     testPerMonth: { id: 'p.PkDashboard.testPerMonth', defaultMessage: 'Average tests performed per month' },
     testPerDay: { id: 'p.PkDashboard.testPerDay', defaultMessage: 'Tests performed in last 24 hours' },
     // summary
-    molecularAssay: { id: 'p.PkDashboard.molecularAssay', defaultMessage: 'People tested using rapid Molecular assay' },
+    molecularAssay: {
+      id: 'p.PkDashboard.molecularAssay',
+      defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
+    },
     molecularAssay24: { id: 'p.PkDashboard.molecularAssay24', defaultMessage: 'Last 24 hours' },
-    TB: { id: 'p.PkDashboard.TB', defaultMessage: 'TB Cases Diagnosed' },
+    TB: { id: 'p.PkDashboard.TB', defaultMessage: 'TB Cases Diagnosed in current year' },
     TB24: { id: 'p.PkDashboard.TB24', defaultMessage: 'Last 24 hours' },
-    RTTB: { id: 'p.PkDashboard.RTTB', defaultMessage: 'RRTB Cases Diagnosed' },
+    RTTB: { id: 'p.PkDashboard.RTTB', defaultMessage: 'RRTB Cases Diagnosed in current year' },
     RTTB24: { id: 'p.PkDashboard.RTTB24', defaultMessage: 'Last 24 hours' },
     // 1st column
     titlemtbRif: { id: 'p.PkDashboard.titlemtbRif', defaultMessage: 'MTB/RIF' },
     mtbRifTbTesting: { id: 'p.PkDashboard.mtbRifTbTesting', defaultMessage: 'TB Testing' },
     mtbRifTbDiagnosis: { id: 'p.PkDashboard.mtbRifTbDiagnosis', defaultMessage: 'TB Diagnosis' },
     mtbRifRrtbDiagnosis: { id: 'p.PkDashboard.mtbRifRrtbDiagnosis', defaultMessage: 'RRTB Diagnosis' },
-    TbCurrent: { id: 'p.PkDashboard.TbCurrent', defaultMessage: 'Current TB Testing' },
+    TbCurrent: { id: 'p.PkDashboard.TbCurrent', defaultMessage: 'Current TB Testing Trends' },
     TbNationalTrend: { id: 'p.PkDashboard.TbNationalTrend', defaultMessage: 'National TB Testing Trends' },
     TbProvincialComparison: {
       id: 'p.PkDashboard.TbProvincialComparison',
       defaultMessage: 'Provincial TB Testing Trend comparison',
+    },
+    TbSubprovincialTrend: {
+      id: 'p.PkDashboard.TbSubprovincialTrend',
+      defaultMessage: 'Sub-Provincial TB Testing Trends',
     },
     TbDCurrent: { id: 'p.PkDashboard.TbDCurrent', defaultMessage: 'Current TB Diagnosis' },
     TbDNationalTrend: { id: 'p.PkDashboard.TbDNationalTrend', defaultMessage: 'National TB Diagnosis Trends' },
