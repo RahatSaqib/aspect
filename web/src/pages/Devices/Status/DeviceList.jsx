@@ -289,36 +289,37 @@ const DeviceList = ({ navButton }) => {
             <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
             <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
           </div>
-
-          <DataTableProgressBar disabled={!isLoading} />
+          {isLoading ? <DataTableProgressBar /> : null}
           {items.currentIdList.length === 0 ? (
             <BrowseEmptyList navigate={navigate} location={location} />
           ) : (
             <>
-              <DeviceDataTable className={cssClasses('DeviceDataTable')}>
-                <DeviceDataTableHead
-                  navigate={navigate}
-                  location={location}
-                  sortColumnKey={sortCol}
-                  sortColumnDir={sortDir}
-                  columns={getColumns(formatMessage)}
-                />
-                <TableBody>
-                  {!items.currentIdList.isEmpty() &&
-                    items.currentIdList
-                      .map(id => items.byId.get(id))
-                      .map(device => (
-                        <DeviceDataTableRow
-                          key={device.get('id')}
-                          device={device}
-                          onClick={onRowClick}
-                          onAlertClick={onAlertClick}
-                          displayPreferences={displayPreferences}
-                          data-device-id={device.get('id')}
-                        />
-                      ))}
-                </TableBody>
-              </DeviceDataTable>
+              <div style={{ overflow: 'scroll' }}>
+                <DeviceDataTable className={cssClasses('DeviceDataTable')}>
+                  <DeviceDataTableHead
+                    navigate={navigate}
+                    location={location}
+                    sortColumnKey={sortCol}
+                    sortColumnDir={sortDir}
+                    columns={getColumns(formatMessage)}
+                  />
+                  <TableBody>
+                    {!items.currentIdList.isEmpty() &&
+                      items.currentIdList
+                        .map(id => items.byId.get(id))
+                        .map(device => (
+                          <DeviceDataTableRow
+                            key={device.get('id')}
+                            device={device}
+                            onClick={onRowClick}
+                            onAlertClick={onAlertClick}
+                            displayPreferences={displayPreferences}
+                            data-device-id={device.get('id')}
+                          />
+                        ))}
+                  </TableBody>
+                </DeviceDataTable>
+              </div>
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}

@@ -7,10 +7,22 @@
 .Button {
   font-weight: var(--lato-font-weight-bold) !important;
   text-transform: none !important;
-  margin-right: 8px !important;
+  margin: 1px 2px !important;
 }
 
 .Button > .Button__icon {
   margin-left: 5px;
   margin-right: 0;
+}
+
+/* pure-hidden-sm */
+@media screen and (min-width: 35.5em) {
+  .FiltersBtnGroup {
+    flex-grow: 1;
+    order: inherit;
+    display: flex;
+    flex-flow: row-reverse wrap;
+    align-items: center;
+    max-width: calc(100% - 176px);
+  }
 }
