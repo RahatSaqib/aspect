@@ -8,16 +8,10 @@ import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const AspectExportListButtonWithProps = ({
-  onExport,
-  visible = false,
-  downloadStarted,
-  setDownloadStarted,
-  anchorEl,
-  setAnchorEl,
-  disableCSV,
-  disableExcel,
-}) => {
+const AspectExportListButton = ({ onExport, visible, disableCSV, disableExcel }) => {
+  const [downloadStarted, setDownloadStarted] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null)
+
   const onExportTo = format => event => {
     event.preventDefault()
     setAnchorEl(null)
@@ -75,24 +69,6 @@ export const AspectExportListButtonWithProps = ({
       </Menu>
     </div>
   )
-}
-
-const AspectExportListButton = ({ onExport, visible, disableCSV, disableExcel }) => {
-  const [downloadStarted, setDownloadStarted] = useState(false)
-  const [anchorEl, setAnchorEl] = useState(null)
-
-  const props = {
-    onExport,
-    visible,
-    downloadStarted,
-    setDownloadStarted,
-    anchorEl,
-    setAnchorEl,
-    disableCSV,
-    disableExcel,
-  }
-
-  return <AspectExportListButtonWithProps {...props} />
 }
 
 AspectExportListButton.defaultProps = {

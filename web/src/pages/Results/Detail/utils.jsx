@@ -47,50 +47,43 @@ function getRowsForCustomFields(values) {
       if (index > 0) {
         rows = [...rows, row]
       }
-
       row = { id: id + index, items: [] }
+    }
+    const baseItem = {
+      id: customField.source,
+      label: customField.title,
+      disabledIf: () => !customField.source,
     }
 
     if (customField.controlType === 'comboBox' || customField.controlType === 'autoComplete') {
       const initialValue = get(values, customField.source)
-      row.items = [
-        ...row.items,
-        {
-          id: customField.source,
-          label: customField.title,
-          initialValue: initialValue ? [initialValue] : '',
-          controlType: {
-            component: 'select',
-            options: customField.items
-              .sort((a, b) => a.order - b.order)
-              .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined })),
-          },
+      row.items.push({
+        ...baseItem,
+        initialValue: initialValue ? [initialValue] : '',
+        controlType: {
+          component: 'select',
+          options: customField.items
+            .sort((a, b) => a.order - b.order)
+            .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined })),
         },
-      ]
+      })
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
-      row.items = [
-        ...row.items,
-        { id: customField.source, controlType: { component: 'textField' }, label: customField.title },
-      ]
+      row.items.push({ ...baseItem, controlType: { component: 'textField' } })
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
       // assuming only one validation
       const validation =
         customField.validation && customField.validation.length
           ? customField.validation[0]
           : { min: 1, max: 100, errorMessage: '' }
-      row.items = [
-        ...row.items,
-        // ASP-5626: 1. validation: validates the value type of textboxes (integer and strings), and validates min and max values
-        {
-          id: customField.source,
-          controlType: { component: 'numberField', min: validation.min, max: validation.max },
-          label: customField.title,
-        },
-      ]
+      // ASP-5626: 1. validation: validates the value type of textboxes (integer and strings), and validates min and max values
+      row.items.push({
+        ...baseItem,
+        controlType: { component: 'numberField', min: validation.min, max: validation.max },
+      })
     }
   })
 
-  rows = [...rows, row]
+  rows.push(row)
 
   return rows
 }
@@ -99,31 +92,33 @@ function getValidationsForCustomFields(values) {
   const rows = {}
 
   uniqBy(values.customFields, elem => elem.source).forEach(customField => {
-    const source = customField.source.split('.')
-    const dataOrigin = source[0]
-    const dataField = source[1]
+    if (customField.source) {
+      const source = customField.source?.split('.')
+      const dataOrigin = source[0]
+      const dataField = source[1]
 
-    if (!Object.keys(rows).includes(dataOrigin)) {
-      rows[dataOrigin] = Yup.object({})
-    }
+      if (!Object.keys(rows).includes(dataOrigin)) {
+        rows[dataOrigin] = Yup.object({})
+      }
 
-    if (customField.controlType === 'comboBox' || customField.controlType === 'autoComplete') {
-      // add validation for select
-    } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
-      // add validation for text
-    } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
-      const validation =
-        customField.validation && customField.validation.length
-          ? customField.validation[0]
-          : { min: 1, max: 100, errorMessage: '' }
-      rows[dataOrigin] = rows[dataOrigin].shape({
-        [dataField]: Yup.number()
-          .required(validation.errorMessage)
-          .positive()
-          .integer()
-          .min(validation.min || 1, validation.errorMessage)
-          .max(validation.max, validation.errorMessage),
-      })
+      if (customField.controlType === 'comboBox' || customField.controlType === 'autoComplete') {
+        // add validation for select
+      } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
+        // add validation for text
+      } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
+        const validation =
+          customField.validation && customField.validation.length
+            ? customField.validation[0]
+            : { min: 1, max: 100, errorMessage: '' }
+        rows[dataOrigin] = rows[dataOrigin].shape({
+          [dataField]: Yup.number()
+            .required(validation.errorMessage)
+            .positive()
+            .integer()
+            .min(validation.min || 1, validation.errorMessage)
+            .max(validation.max, validation.errorMessage),
+        })
+      }
     }
   })
 

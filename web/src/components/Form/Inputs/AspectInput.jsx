@@ -1,4 +1,5 @@
 import React from 'react'
+import AspectMessageField from './AspectMessageField'
 import Checkbox from './Checkbox'
 import CronForm from './CronForm'
 import { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone } from './DatePicker'
@@ -14,6 +15,7 @@ const Inputs = {
   textArea: AspectTextArea,
   textField: AspectTextField,
   numberField: AspectNumberField,
+  messageField: AspectMessageField,
   placeholderTextArea: PlaceholderTextArea,
   placeholderTextField: PlaceholderTextField,
   datePicker: AspectDatePicker,

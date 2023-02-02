@@ -71,11 +71,7 @@ export const BrowseFilters = ({ children, navigate, location, ...restProps }) =>
   return (
     <div className={cssClasses('Container')}>
       {children}
-      <FiltersBtnGroup
-        filters={filters}
-        onRemoveFilterItem={onRemoveFilterItem}
-        className={cssClasses('FiltersBtnGroup')}
-      />
+      <FiltersBtnGroup filters={filters} onRemoveFilterItem={onRemoveFilterItem} />
       <FiltersPanel filters={filters} {...restProps} />
     </div>
   )

@@ -25,7 +25,7 @@ const NotificationHistoryPage = () => {
     <Fragment>
       <Helmet title={formatMessage(messages.notificationsTitle)} />
       <DetailHeader name={formatMessage(messages.notificationsTitle)} back="/browse/notification" />
-      <Box component="main" sx={{ p: 1 }}>
+      <Box component="main" sx={{ p: 1, width: '100%' }}>
         <Card>
           <CardContent>
             <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_HISTORY} onClickRow={onClickRow} />

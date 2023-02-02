@@ -1,0 +1,58 @@
+{
+  "CustomFields_Malawi": {
+    "fileName": "CustomFields_Malawi.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Malawi",
+      "i18nKeyTitle": "CustomFields_Malawi_i18nkey",
+      "externalId": "CustomFields_Malawi",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  },
+  "CustomFields_Malawi_Mtb": {
+    "fileName": "CustomFields_Malawi_Mtb.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Malawi_Mtb",
+      "i18nKeyTitle": "CustomFields_Malawi_Mtb_i18nkey",
+      "externalId": "CustomFields_Malawi_Mtb",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "tb"
+    }
+  },
+  "CustomFields_Malawi_Hiv": {
+    "fileName": "CustomFields_Malawi_Hiv.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Malawi_Hiv",
+      "i18nKeyTitle": "CustomFields_Malawi_Hiv_i18nkey",
+      "externalId": "CustomFields_Malawi_Hiv",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "hiv"
+    }
+  },
+  "CustomFields_Malawi_HivQual": {
+    "fileName": "CustomFields_Malawi_HivQual.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Malawi_HivQual",
+      "i18nKeyTitle": "CustomFields_Malawi_HivQual_i18nkey",
+      "externalId": "CustomFields_Malawi_HivQual",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "hiv",
+      "assayExternalId": "GxHiv1Qual"
+    }
+  },
+  "CustomFields_Malawi_HivVL": {
+    "fileName": "CustomFields_Malawi_HivVL.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Malawi_HivVL",
+      "i18nKeyTitle": "CustomFields_Malawi_HivVL_i18nkey",
+      "externalId": "CustomFields_Malawi_HivVL",
+      "formTypeExternalId": "gxConnectForm",
+      "diseaseExternalId": "hiv",
+      "assayExternalId": "GxHiv1Vl"
+    }
+  }
+}
