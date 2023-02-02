@@ -399,7 +399,7 @@ function getQueryForDataExtract(query, dataConstraints) {
       knex('Result as minr')
         .select('minr.deviceId')
         .min('minr.endedOn as minDate')
-        .groupBy('minr.siteId')
+        .groupBy('minr.deviceId')
         .as('firstResult'),
       'firstResult.deviceId',
       'd.id'

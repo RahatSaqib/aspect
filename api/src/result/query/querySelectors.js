@@ -309,12 +309,12 @@ const countXdr = xdrResistanceValue =>
     `
   )
 
-const getSelectFieldsForDataExtractReport = userTimeOffset => ({
+const SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT = {
   id: 'r.id',
-  TestDate: getDateTimeProjectionInUserTimeZone(knex, 'COALESCE(r.endedOn, r.startedOn)', userTimeOffset),
+  TestDate: knex.raw('COALESCE(r.endedOn, r.startedOn)'),
   SampleId: 'r.sampleId',
-  StartedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.startedOn', userTimeOffset),
-  EndedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', userTimeOffset),
+  StartedOn: 'r.startedOn',
+  EndedOn: 'r.endedOn',
   Assay: 'a.name',
   AssayVersion: 'r.assayVersion',
   Result1: 'rc1.name',
@@ -405,8 +405,8 @@ const getSelectFieldsForDataExtractReport = userTimeOffset => ({
   ErrorDescription: knex.raw('REGEXP_REPLACE(r.errorNotes,"(\\r\\n|\\n|\\r)"," ")'),
   AssayName: 'a.name',
   AssayHostTestCode: 'r.assayVersion',
-  InsertedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.createdOn', userTimeOffset),
-  updatedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.updatedOn', userTimeOffset),
+  InsertedOn: 'r.createdOn',
+  updatedOn: 'r.updatedOn',
   consumableLot: 'r.consumableLot',
   instrumentSerial: 'r.instrumentSerial',
   moduleSerial: 'r.moduleSerial',
@@ -453,7 +453,7 @@ const getSelectFieldsForDataExtractReport = userTimeOffset => ({
   User: 'r.senderOperator',
   latitude: 'si.latitude',
   longitude: 'si.longitude',
-})
+}
 
 module.exports = {
   getSelectCommonListFieldsTZ,
@@ -463,8 +463,8 @@ module.exports = {
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
+  SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT,
 
   caseCondition,
   countXdr,
-  getSelectFieldsForDataExtractReport,
 }
