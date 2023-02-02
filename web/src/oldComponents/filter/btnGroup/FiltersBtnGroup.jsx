@@ -136,7 +136,7 @@ const getResultCategoryNameFromDisease = (assayItems, filterDiseaseId, resultCat
   return matchingCategory.i18nKey
 }
 
-const FiltersBtnGroup = ({ className, children, ...restProps }) => {
+const FiltersBtnGroup = ({ children, ...restProps }) => {
   const { formatMessage, format } = useI18n()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
 
@@ -461,7 +461,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
   }
 
   return (
-    <div className={cssClasses(className, 'FiltersBtnGroup')}>
+    <div className={cssClasses('FiltersBtnGroup')}>
       {children}
       {Immutable.Map(restProps.filters)
         .keySeq()

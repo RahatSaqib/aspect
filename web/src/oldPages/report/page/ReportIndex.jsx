@@ -148,14 +148,7 @@ const ReportIndex = () => {
           <BrowseFilters navigate={navigate} location={location} config={reducedFilters} showBrowseDropdown={false} />
         </div>
         <DataTableProgressBar disabled={!showProgressBar} />
-        <Grid
-          container
-          spacing={16}
-          sx={{
-            width: 'auto',
-            margin: 0,
-          }}
-        >
+        <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
           {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (
             <ReportCard
               title={name}

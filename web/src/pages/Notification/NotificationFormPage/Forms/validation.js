@@ -141,8 +141,10 @@ const validationSchema = formatMessage =>
       smsBody: Yup.string()
         .when('sendSms', optionsForSendXXX(formatMessage(messages.smsBodyRequired)))
         .max(144)
-        .when('notificationType', {
-          is: 'SiteWithLowFieldCompletionRate',
+        .when(['sendSms', 'notificationType'], {
+          is: (sendSms, notificationType) => {
+            return sendSms && notificationType === 'SiteWithLowFieldCompletionRate'
+          },
           then: Yup.string()
             .matches(
               /{{site.completionRatePercentage}}/,
@@ -152,8 +154,10 @@ const validationSchema = formatMessage =>
         }),
       webBody: Yup.string()
         .when('sendWeb', optionsForSendXXX(formatMessage(messages.webBodyRequired)))
-        .when('notificationType', {
-          is: 'SiteWithLowFieldCompletionRate',
+        .when(['sendWeb', 'notificationType'], {
+          is: (sendWeb, notificationType) => {
+            return sendWeb && notificationType === 'SiteWithLowFieldCompletionRate'
+          },
           then: Yup.string()
             .matches(
               /{{site.completionRatePercentage}}/,
