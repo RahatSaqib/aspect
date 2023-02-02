@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useQuery } from 'react-query'
-import { useSelector } from 'react-redux'
 import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
 import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
+import useAssayList from '../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages } from '../../../../messages'
 import HivResultsGraphMain from '../../../../oldPages/dashboard/Graphs/HivResultsGraph/HivResultsGraph.Main'
@@ -24,9 +24,7 @@ const endPointParams = [
 const HivGraphPage = () => {
   const { formatMessage } = useI18n()
   const [showLabel, setShowLabel] = useState(false)
-
-  const assaysImmutable = useSelector(({ assay }) => assay.items)
-  const assays = useMemo(() => assaysImmutable.toJS(), [assaysImmutable])
+  const { data: assays } = useAssayList()
 
   const { data, isLoading } = useQuery(
     ['hivByCategory1Monthly', { endPointParams }],
@@ -39,6 +37,7 @@ const HivGraphPage = () => {
       title={`${formatMessage(messages.hiv)} / ${formatMessage(graphMessages.clinicalIndicatorsVLTitle)}`}
       filters={
         <FormControlLabel
+          sx={{ minWidth: '145px' }}
           label={formatMessage(graphMessages.showValuesLabel)}
           control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
         />
@@ -47,7 +46,7 @@ const HivGraphPage = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <Grid container>
+        <Grid container sx={{ mt: 2 }}>
           <HivResultsGraphMain
             data={data.data}
             endPointParams={endPointParams}

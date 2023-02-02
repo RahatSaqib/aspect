@@ -12,7 +12,7 @@ const MtbRifColumn = ({ data }) => {
     <Grid lg={12 / 5} style={{ padding: '8px 8px 0' }}>
       <ColumnName title={formatMessage(messages.titlemtbRif)} />
       <DashboardCard title={formatMessage(messages.mtbRifTbTesting)}>
-        <DashboardLink to="" label={formatMessage(messages.TbCurrent)} value={data.TbCurrent} />
+        <DashboardLink to="/dashboard/rif/current" label={formatMessage(messages.TbCurrent)} value={data.TbCurrent} />
         <DashboardLink to="" label={formatMessage(messages.TbNationalTrend)} value={data.TbNationalTrend} />
         <DashboardLink
           to=""

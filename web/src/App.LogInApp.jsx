@@ -37,6 +37,7 @@ const SiteList = lazy(() => import('./pages/Site/List'))
 const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
 const Welcome = lazy(() => import('./pages/Welcome'))
 //
+const RifCurrent = lazy(() => import('./pages/PkDashboard/pages/RifCurrentPage'))
 const DeviceCoverage = lazy(() => import('./pages/PkDashboard/pages/DeviceCoveragePage'))
 const Utilization = lazy(() => import('./pages/PkDashboard/pages/UtilizationPage'))
 const ErrorRate = lazy(() => import('./pages/PkDashboard/pages/ErrorRatePage'))
@@ -110,6 +111,7 @@ const LogInApp = () => {
               <Route path="/dashboard" element={isPakistan ? <PkDashboard /> : <Status />} />
               {isPakistan ? (
                 <>
+                  <Route path="/dashboard/rif/current" element={<RifCurrent />} />
                   <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
                   <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
                   <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />

@@ -30,7 +30,6 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
   }
 
   return (
-    // <Table size={isDetail ? 'small' : undefined}>
     <Table>
       <TableHead>
         <TableRow>
@@ -42,10 +41,7 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
       <TableBody>
         {(rowsPerPage > 0 ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : rows).map((row, i) => (
           <>
-            <TableRow
-              sx={{ '& > *': { borderBottom: 'unset' }, backgroundColor: colors[i % 2] }}
-              onClick={() => setOpen(open === row.id ? -1 : row.id)}
-            >
+            <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
               <TableCell scope="row">{row.name}</TableCell>
               <TableCell align="right">{row.quantity}</TableCell>
               <TableCell align="right">{row.lastSixMonths}</TableCell>
@@ -54,7 +50,7 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
               <TableCell align="right">{row.left}</TableCell>
             </TableRow>
             {hasDetail ? (
-              <TableRow>
+              <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell sx={{ p: 0 }} colSpan={7}>
                   <Collapse in={open === row.id} timeout="auto" unmountOnExit>
                     <Box sx={{ ml: 0.5, mr: 0.5, backgroundColor: colors[i % 2] }}>
@@ -73,21 +69,22 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
           </TableRow>
         )}
       </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TablePagination
-            rowsPerPageOptions={[10, 20, { label: 'All', value: -1 }]}
-            colSpan={6}
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            SelectProps={{ native: true }}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            // ActionsComponent={TablePaginationActions}
-          />
-        </TableRow>
-      </TableFooter>
+      {!isDetail ? (
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[10, 20, { label: 'All', value: -1 }]}
+              colSpan={6}
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              SelectProps={{ native: true }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </TableRow>
+        </TableFooter>
+      ) : null}
     </Table>
   )
 }
