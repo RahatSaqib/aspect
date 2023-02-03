@@ -1,0 +1,15 @@
+const { subDays } = require('date-fns')
+const partnerData = require('./fixtures/partnerData')
+const upsertIssueEventTrigger = require('../common/upsert_issue_event_triggers')
+const upsertIssueModuleDisabled = require('../common/20200902_add_issue_module_disabled')
+
+module.exports = require('../utils').seed(async knex => {
+  const now = new Date()
+  const maxLastDateOffline = subDays(now, 7)
+  await knex('FactDeviceFlag AS fdf')
+    .update({ 'fdf.offline': 0, 'fdf.noResults': 0 })
+    .join('Device AS d', 'fdf.deviceId', '=', 'd.id')
+    .where('d.lastPingOn', '<=', maxLastDateOffline)
+  await upsertIssueModuleDisabled(knex, partnerData)
+  await upsertIssueEventTrigger(knex, partnerData.partnerName)
+}, __filename)

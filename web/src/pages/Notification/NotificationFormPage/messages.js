@@ -145,6 +145,11 @@ export default defineMessages({
     defaultMessage:
       'This notification will be triggered any time a site changes its custom fields completion rate to less than 0.8. Also, it will be sent only if you have the custom field completion weight set in your country. Please check with your administrator before using it.',
   },
+  notificationTypeDeviceOffline: {
+    id: 'pages.Notification.type.notificationTypeDeviceOffline',
+    defaultMessage:
+      'This notification will trigger once a device connector, for example GxConnect, remains offline for 7 days.',
+  },
   notificationTypeExpiring: {
     id: 'pages.Notification.type.InventoryExpiring',
     defaultMessage: 'Inventory Expiring',
