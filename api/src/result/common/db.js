@@ -129,7 +129,7 @@ async function getCustomFieldsForResult(data) {
   return customFields
 }
 
-const getBaseQueryForResults = () =>
+const getBaseResults = () =>
   knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -140,6 +140,19 @@ const getBaseQueryForResults = () =>
     .leftJoin('PartnerAssay as pa', q => {
       q.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin('Site as si', 'd.siteId', 'si.id')
+
+const getBaseQueryForResults = () =>
+  getBaseResults()
     .leftJoin('ResultCategoryAssay as rca', q => {
       q.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
     })
@@ -150,20 +163,10 @@ const getBaseQueryForResults = () =>
       q.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
-    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
-    .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
-    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
-    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
     .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
-    .leftJoin('Site as si', 'd.siteId', 'si.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
@@ -384,10 +387,64 @@ async function getResultNotesByResultId(resultId) {
   return resultNotes
 }
 
+function getQueryForDataExtract(query, dataConstraints) {
+  const { showUnapprovedDevices = false } = query
+  const displayResult = query.displayResult || 'all'
+
+  const resultQuery = getBaseResults()
+    .leftJoin('Geography as go', 'so.geographyId', 'go.id')
+    .leftJoin('State as stateo', 'go.stateId', 'stateo.id')
+    .leftJoin('Lga as lgao', 'go.lgaId', 'lgao.id')
+    .leftJoin(
+      knex('Result as minr')
+        .select('minr.deviceId')
+        .min('minr.endedOn as minDate')
+        .groupBy('minr.deviceId')
+        .as('firstResult'),
+      'firstResult.deviceId',
+      'd.id'
+    )
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(filterParams, query, {
+      deviceId: 'd.id',
+      resultCategoryId: 'r.resultCategory1',
+      resultCategory2Id: 'r.resultCategory2',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      deviceName: 'd.name',
+      deviceType: 'dt.externalId',
+      siteName: 'si.name',
+      sampleId: 'sp.externalId',
+      sampleOriginSite: 'so.name',
+      errorCode: 'r.errorCode',
+      diseaseId: 'dis.id',
+      assayId: 'a.id',
+    })
+    .modify(addPartnerQueryConstraints, dataConstraints)
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
+      device: 'd',
+      deviceType: 'dt',
+      sample: 'sp',
+      site: 'si',
+      geography: 'g',
+      result: 'r',
+      country: 'c',
+      disease: 'dis',
+      showUnapprovedDevices,
+      displayResult,
+    })
+
+  return resultQuery
+}
+
 module.exports = {
   getResultByResultId,
   getQueryForResultsListAndExport,
   showFileReferencesById,
   getResultNotesByResultId,
   getBaseQueryForResults,
+  getQueryForDataExtract,
 }
