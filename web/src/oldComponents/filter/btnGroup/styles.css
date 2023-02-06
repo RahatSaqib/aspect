@@ -2,6 +2,9 @@
 
 .FiltersBtnGroup {
   align-items: flex-end !important;
+  flex-wrap: nowrap !important;
+  flex-direction: row !important;
+  display: flex !important;
 }
 
 .Button {
@@ -13,16 +16,4 @@
 .Button > .Button__icon {
   margin-left: 5px;
   margin-right: 0;
-}
-
-/* pure-hidden-sm */
-@media screen and (min-width: 35.5em) {
-  .FiltersBtnGroup {
-    flex-grow: 1;
-    order: inherit;
-    display: flex;
-    flex-flow: row-reverse wrap;
-    align-items: center;
-    max-width: calc(100% - 176px);
-  }
 }
