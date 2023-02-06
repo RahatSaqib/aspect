@@ -46,6 +46,11 @@ const validationSchema = formatMessage =>
         then: Yup.string().required(),
         otherwise: Yup.string().notRequired(),
       }),
+      resultBasedScope: Yup.string().when('notificationType', {
+        is: 'resultBased',
+        then: Yup.string().required(formatMessage(messages.required)),
+        otherwise: Yup.string().notRequired(),
+      }),
       name: Yup.string().required(formatMessage(messages.notificationNameRequired)),
       result: Yup.array().when('notificationType', {
         is: 'resultBased',

@@ -199,6 +199,7 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     issueType: issueTypeExternalId,
     reportId: reportExternalId,
     notificationType: notificationTypeExternalId,
+    resultBasedScope,
   } = payload
 
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeExternalId)
@@ -419,6 +420,7 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           reportFrequency,
           reportDateRange,
           reportStartingWeekDay,
+          resultBasedScope,
         }),
       })
       .where({ id: notificationTypeId })
