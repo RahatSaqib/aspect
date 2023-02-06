@@ -13,6 +13,7 @@ import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
+import TestsOverTimeGraphHalf from './CurrentDiagnosisGraph.Half'
 
 const endPointParams = [
   { groupBy: 'month' },
@@ -21,10 +22,10 @@ const endPointParams = [
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
 ]
 
-const RifCurrentGraphPage = () => {
+const CurrentDiagnosisGraphPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
-  const [showLabel, setShowLabel] = useState(false)
+  const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState([])
   const [state, setState] = useState()
   const [, setLga] = useState()
@@ -46,7 +47,7 @@ const RifCurrentGraphPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.rifCurrentTitle)} ${new Date().getFullYear()}`}
+      title={`${formatMessage(messages.rifCurrentDiagnosisTitle)} ${new Date().getFullYear()}`}
       filters={
         <>
           <FormControlLabel
@@ -85,10 +86,24 @@ const RifCurrentGraphPage = () => {
               { label: formatMessage(messages.testPerDay), value: 799 },
             ]}
           />
+          <TestsOverTimeGraphHalf
+            data={data.data}
+            endPointParams={endPointParams}
+            assaysFromState={assays}
+            showLabel={showLabel}
+            filterSelection={filter}
+          />
+          <TestsOverTimeGraphHalf
+            data={data.data}
+            endPointParams={endPointParams}
+            assaysFromState={assays}
+            showLabel={showLabel}
+            filterSelection={filter}
+          />
         </Grid>
       )}
     </PkPage>
   )
 }
 
-export default RifCurrentGraphPage
+export default CurrentDiagnosisGraphPage

@@ -4,8 +4,13 @@ import DataRow from './DataRow'
 
 const TripleCardSide = ({ data }) => {
   return (
-    <Grid item xs={12} md={4} lg={4} sx={{ backgroundColor: '#f0f0f0', p: 2, borderRadius: 5 }}>
-      <Stack direction="column" justifyContent="space-evenly" alignItems="strech" sx={{ height: '100%' }}>
+    <Grid item xs={12} md={4} lg={4} sx={{ p: 1 }}>
+      <Stack
+        direction="column"
+        justifyContent="space-evenly"
+        alignItems="strech"
+        sx={{ backgroundColor: '#f0f0f0', height: '100%', borderRadius: 5, p: 2 }}
+      >
         {data.map(item => (
           <DataRow label={item.label} value={item.value} />
         ))}

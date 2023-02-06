@@ -37,11 +37,13 @@ const SiteList = lazy(() => import('./pages/Site/List'))
 const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
 const Welcome = lazy(() => import('./pages/Welcome'))
 //
-const RifCurrent = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/RifCurrentPage'))
+
 const DeviceCoverage = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/DeviceCoveragePage'))
-const Utilization = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/UtilizationPage'))
 const ErrorRate = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/ErrorRatePage'))
+const Utilization = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/UtilizationPage'))
 const InventoryOverview = lazy(() => import('./pages/PkDashboard/pages/InventorySection/InventoryOverviewPage'))
+const CurrentDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentDiagnosisPage'))
+const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentTestingPage'))
 const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/CovidPage'))
 const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/HivPage'))
 
@@ -111,11 +113,12 @@ const LogInApp = () => {
               <Route path="/dashboard" element={isPakistan ? <PkDashboard /> : <Status />} />
               {isPakistan ? (
                 <>
-                  <Route path="/dashboard/rif/current" element={<RifCurrent />} />
                   <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
-                  <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
                   <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />
+                  <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
                   <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
+                  <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
+                  <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
                   <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
                   <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
                 </>

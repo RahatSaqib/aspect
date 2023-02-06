@@ -23,7 +23,7 @@ const endPointParams = [
 
 const HivGraphPage = () => {
   const { formatMessage } = useI18n()
-  const [showLabel, setShowLabel] = useState(false)
+  const [showLabel, setShowLabel] = useState(true)
   const { data: assays } = useAssayList()
 
   const { data, isLoading } = useQuery(

@@ -36,13 +36,13 @@ const PkDashboard = () => {
               <Grid lg={4} style={{ padding: '8px 8px 0' }}>
                 <ColumnName title={formatMessage(messages.titlemtbRif)} />
                 <DashboardCard title={formatMessage(messages.mtbRifTbTesting)}>
-                  <DashboardLink to="/dashboard/rif/current" label={formatMessage(messages.TbCurrent)} />
+                  <DashboardLink to="/dashboard/rif/current-testing" label={formatMessage(messages.TbCurrent)} />
                   <DashboardLink to="" label={formatMessage(messages.TbNationalTrend)} />
                   <DashboardLink to="" label={formatMessage(messages.TbProvincialComparison)} />
                   <DashboardLink to="" label={formatMessage(messages.TbSubprovincialTrend)} />
                 </DashboardCard>
                 <DashboardCard title={formatMessage(messages.mtbRifTbDiagnosis)}>
-                  <DashboardLink to="" label={formatMessage(messages.TbDCurrent)} />
+                  <DashboardLink to="/dashboard/rif/current-diagnosis" label={formatMessage(messages.TbDCurrent)} />
                   <DashboardLink to="" label={formatMessage(messages.TbDNationalTrend)} />
                   <DashboardLink to="" label={formatMessage(messages.TbDProvincialComparison)} />
                   <DashboardLink to="" label={formatMessage(messages.TbDTestingDiagnosis)} />

@@ -7,7 +7,7 @@ const DataRow = ({ label, value }) => {
       <Typography sx={{ fontSize: 16, fontWeight: 500 }}>{label}</Typography>
       {value ? (
         <>
-          <Divider orientation="vertical" />
+          <Divider />
           <Typography sx={{ fontSize: 32, color: '#009688' }}>{value}</Typography>
         </>
       ) : null}
