@@ -149,7 +149,7 @@ const getBaseResults = () =>
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Site as si', 'd.siteId', 'si.id')
 
 const getBaseQueryForResults = () =>
   getBaseResults()
