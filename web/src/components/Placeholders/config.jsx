@@ -25,6 +25,10 @@ export const groupedOptions = ({ formatMessage }) => [
         id: 'site.shortName',
         name: formatMessage(messages.placeholderNameShort),
       },
+      {
+        id: 'site.completionRatePercentage',
+        name: formatMessage(messages.placeholderCompletionRatePercentage),
+      },
     ],
   },
   {

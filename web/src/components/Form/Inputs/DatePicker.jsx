@@ -119,6 +119,7 @@ const AspectDatePickerBase = props => {
             'link',
             'timeIntervals',
             'isClearable',
+            'transformTimezone',
           ])}
           className={cssClasses('datepicker__TextField')}
         />

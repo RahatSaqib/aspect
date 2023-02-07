@@ -1,0 +1,92 @@
+@import '../../../theme/variables.css';
+
+:root {
+  @custom-media --sm-viewport (min-width: 620px and max-width: 919px);
+  @custom-media --md-viewport (min-width: 920px);
+}
+
+.Button {
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.Button__label {
+  position: relative;
+}
+
+.Button__icon {
+  margin-left: 5px;
+  margin-right: 0;
+  transition-duration: 0.28s;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.Button__icon--shown {
+  transform: rotate(180deg);
+}
+
+.FallbackUntilDone {
+  padding: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-flow: row wrap;
+  overflow: auto;
+}
+
+.FallbackUntilDone--xs {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.FallbackUntilDone--sm {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.FallbackUntilDone--md {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  overflow-y: scroll;
+}
+
+.FallbackUntilDone--xs .Control,
+.FallbackUntilDone--sm .Control,
+.FallbackUntilDone--md .Control {
+  padding: 0 10px;
+}
+
+.Control--wide {
+  max-width: 33%;
+}
+
+.Control--wide div {
+  width: calc(100% - 3px);
+}
+
+.Control--wide div:focus {
+  padding-right: 8px;
+}
+
+/* .Control > label[class*='CheckboxField-root'],  */
+.Control > div[class*='MuiFormControl-root'] {
+  width: 256px;
+}
+
+.Control-checkbox {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+}
+
+.Control .Control__inner {
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.checkbox-wrapper {
+  margin-right: 4px;
+}

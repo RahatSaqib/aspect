@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
@@ -8,11 +8,12 @@ import { connect, useSelector } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import DetailHeader from '../../../components/DetailHeader'
 import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage, commonDefinitions } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -232,62 +233,79 @@ export const PersonList = ({
     required: ['person:edit'],
   })
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams()
+    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    if (!filtersParams.has('contactStatus')) {
+      filtersParams.set('contactStatus', 0)
+      searchParams.set('filters', filtersParams)
+      navigate({ ...location, search: `?${searchParams.toString()}` })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={formatMessage(messages.contactsTitle)} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+    <>
+      <DetailHeader name={formatMessage(messages.contactsTitle)} disableBack>
         <AddNewButton type="button" color="primary" variant="contained" browseButton onClick={showNewContactPage}>
           {formatMessage(messages.addContact)}
         </AddNewButton>
-      </BrowseFilters>
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-        <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={formatMessage(messages.contactsTitle)} />
+        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+            <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+          </div>
+          <DataTableProgressBar disabled={!table.loading} />
+          {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
 
-        {!items.currentIdList.isEmpty() && (
-          <PersonDataTable className={cssClasses('PersonDataTable')}>
-            <PersonDataTableHead
+          {!items.currentIdList.isEmpty() && (
+            <PersonDataTable className={cssClasses('PersonDataTable')}>
+              <PersonDataTableHead
+                navigate={navigate}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={[
+                  { key: 'name', label: formatMessage(messages.personName), sortable: true },
+                  { key: 'level', label: formatMessage(messages.level), sortable: true },
+                  { key: 'state', label: getCustomMessage(messages, 'state', user), sortable: true },
+                  { key: 'lga', label: getCustomMessage(messages, 'lga', user), sortable: true },
+                  { key: 'tags', label: formatMessage(messages.tags), sortable: true },
+                  isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
+                ]}
+              />
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(person => (
+                    <PersonDataTableRow
+                      key={person.get('id')}
+                      person={person}
+                      onClick={onRowClick}
+                      data-person-id={person.get('id')}
+                      personEditPermission={isEditAllow && editor?.userId !== person.get('id')}
+                    />
+                  ))}
+              </TableBody>
+            </PersonDataTable>
+          )}
+          {!items.currentIdList.isEmpty() && (
+            <BrowseTablePaginator
               navigate={navigate}
               location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={[
-                { key: 'name', label: formatMessage(messages.personName), sortable: true },
-                { key: 'level', label: formatMessage(messages.level), sortable: true },
-                { key: 'state', label: getCustomMessage(messages, 'state', user), sortable: true },
-                { key: 'lga', label: getCustomMessage(messages, 'lga', user), sortable: true },
-                { key: 'tags', label: formatMessage(messages.tags), sortable: true },
-                isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
-              ]}
+              paginatorStatus={messages.paginatorStatus}
+              total={table.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
             />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(person => (
-                  <PersonDataTableRow
-                    key={person.get('id')}
-                    person={person}
-                    onClick={onRowClick}
-                    data-person-id={person.get('id')}
-                    personEditPermission={isEditAllow && editor?.userId !== person.get('id')}
-                  />
-                ))}
-            </TableBody>
-          </PersonDataTable>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
-        )}
-      </DataTableCard>
-    </div>
+          )}
+        </DataTableCard>
+      </div>
+    </>
   )
 }
 

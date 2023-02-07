@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const dayjs = require('dayjs')
+const { differenceInDays } = require('date-fns')
 const { pipe, find, values } = require('ramda')
 const { subDays } = require('date-fns')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/date')
@@ -85,13 +85,8 @@ const checkFollowupType = (testResult, followUp, type) => {
 // Its number of days from the day treatment has started/updated
 const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
   const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
-  return isTreatment ? dayjs().diff(dayjs(isTreatment.updatedOn), 'day') : 0
-}
-
-// Its number of days from the day treatment has started/updated
-const daysFromTreatmentDateEndOn = (testResult, followUp) => {
-  const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
-  return isTreatment ? dayjs().diff(dayjs(isTreatment.endedOn), 'day') : 0
+  const today = new Date()
+  return isTreatment ? differenceInDays(today, new Date(isTreatment?.updatedOn || today)) : 0
 }
 
 const isTransferred = testResult => {
@@ -113,7 +108,7 @@ const requiresTreatment = testResult => {
 }
 
 const getSeverity = (testResult, followUp) => {
-  const daysDiff = daysFromTreatmentDateEndOn(testResult, followUp)
+  const daysDiff = daysFromTreatmentDateUpdateOn(testResult, followUp)
   const requireTreatment = requiresTreatment(testResult)
   const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
   let severity = ''

@@ -1,6 +1,4 @@
 /* eslint-disable max-classes-per-file */
-/* eslint-disable no-loop-func */
-/* eslint-env es6 */
 import { createFetch, base, header, accept } from 'http-client'
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
@@ -12,7 +10,6 @@ import { defineMessages } from 'react-intl'
 import config from '../../config'
 import { showError } from '../../store/AppNotificationRedux'
 import { setLastServerResponseTime } from '../../store/GlobalsRedux'
-import { getAspectAccess } from '../LocalStorage'
 
 export const aspectFetchFile = createFetch(
   base(config.aspectApi),
@@ -32,7 +29,7 @@ export const aspectFetch = createFetch(
 export default aspectFetch
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
-  const token = getAspectAccess()
+  const token = localStorage.getItem('asAccess')
   if (token) {
     set(options, 'headers.Authorization', `Bearer ${token}`)
   }

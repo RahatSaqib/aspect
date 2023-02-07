@@ -11,7 +11,6 @@ import { compose, pure, withProps } from 'recompose'
 import config from '../../../config'
 import Icon from '../../../oldComponents/shared/icon/Icon'
 import { requirePermissions } from '../../../oldComponents/shared/requirePermissions'
-import { getAspectAccess } from '../../../utils/LocalStorage'
 import styles from './index.css'
 import Title from './Title'
 
@@ -34,7 +33,7 @@ const enhance = compose(
     const endOfLastYear = formatDate(endOfYear(subtractYears(now, 1)), 'yyyy-MM-dd')
     return {
       showHigherLevel: isEmpty(filtersParams.get('siteId')),
-      token: getAspectAccess(),
+      token: localStorage.getItem('asAccess'),
       siteId: filtersParams.get('siteId'),
       last7Days,
       last30Days,

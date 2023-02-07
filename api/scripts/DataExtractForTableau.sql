@@ -104,7 +104,7 @@ SELECT
   r.assayVersion AS AssayVersion,
   rc1.name AS Result1,
   rc2.name AS Result2,
-  r.notes AS resultText,
+  IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) AS resultText,
   COALESCE(
 	JSON_VALUE(r.patientData, "$.age" RETURNING CHAR),
     JSON_VALUE(r.patientData, "$.PatientAge" RETURNING CHAR)
@@ -163,7 +163,8 @@ SELECT
   JSON_VALUE(r.patientData, '$.requestorPhone' RETURNING CHAR) as RequestorPhone,
   r.errorCode,
   -- ec.`Category` AS `ErrorCategory`, -- ------------------------------- error category -> Not found in Aspect
-  REPLACE(r.errorNotes,'\n',' - ')  as ErrorDescription,
+  REGEXP_REPLACE(r.errorCode,'(\r\n|\n|\r)',' ') as ErrorCode,
+  REGEXP_REPLACE(r.errorNotes,'(\r\n|\n|\r)',' ') as ErrorDescription,
   a.name as AssayName,
   r.assayVersion as AssayHostTestCode,
   r.createdOn as InsertedOn,
@@ -201,9 +202,9 @@ SELECT
   JSON_VALUE(r.resultData, '$.probes.probeDEndpt' RETURNING CHAR) AS ProbeDEndpt,
   JSON_VALUE(r.resultData, '$.probes.probeEEndpt' RETURNING CHAR) AS ProbeEEndpt,
   JSON_VALUE(r.resultData, '$.probes.probeSpcEndpt' RETURNING CHAR) AS ProbeSpcEndpt,
-  JSON_VALUE(r.resultData, '$.probes.qc1Endpt' RETURNING CHAR) AS ProbeSpcEndpt,
+  JSON_VALUE(r.resultData, '$.probes.qc1Endpt' RETURNING CHAR) AS Qc1Endpt,
   JSON_VALUE(r.resultData, '$.probes.qc2Endpt' RETURNING CHAR) AS Qc2Endpt,
-  REPLACE(r.notes,'\n',' - ')  as Notes
+  REGEXP_REPLACE(r.notes,'(\r\n|\n|\r)',' ') as Notes
   , c.name as Country
   , st.name as State
   , lg.name as Lga
@@ -239,7 +240,7 @@ FROM
   LEFT JOIN Geography AS go on go.id = so.geographyId
   LEFT JOIN Lga as lgao ON lgao.id = go.lgaId
   LEFT JOIN State as stateo ON go.stateId = stateo.id
-  LEFT JOIN (SELECT minr.deviceId, min(minr.endedOn) as minDate from Result as minr group by minr.siteId) as firstResult on firstResult.deviceId = d.id
+  LEFT JOIN (SELECT minr.deviceId, min(minr.endedOn) as minDate from Result as minr group by minr.deviceId) as firstResult on firstResult.deviceId = d.id
   WHERE r.endedOn >= @currentMonth AND r.endedOn < date_add(@currentMonth, INTERVAL @interval MONTH);
     -- ------------------------------------------------------------------------------------------------------
 SET @currentMonth = date_add(@currentMonth, INTERVAL @interval MONTH);

@@ -79,6 +79,14 @@ function lgaSelectOptions(data) {
     data,
     (acc, item) => {
       const { stateId, stateName, lgaId, lgaName } = item
+      /**
+       * when by some reason API returns data with falsy value for
+       * some needed props
+       * then do not add such item to `acc` and return `acc` right away
+       */
+      if (!stateId || !stateName || !lgaId || !lgaName) {
+        return acc
+      }
       const state = { label: stateName, value: stateId, lgaById: {}, lgas: [] }
       const lga = { label: lgaName, value: lgaId, grouped: true }
       acc[stateId] = acc[stateId] || state

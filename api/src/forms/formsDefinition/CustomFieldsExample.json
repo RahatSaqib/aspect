@@ -9,7 +9,8 @@
       "order": 1,
       "caption": "PlainField value",
       "i18nKeyCaption": "PlainFieldi18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "source": "resultData.PlainField"
     },
     {
       "id": 302,
@@ -21,6 +22,7 @@
       "caption": "ConditionalField value",
       "i18nKeyCaption": "ConditionalFieldi18nCaptionKey",
       "controlType": "textBox",
+      "source": "resultData.ConditionalField",
       "condition": [
         {
           "conjunction": "AND",
@@ -41,6 +43,7 @@
       "caption": "ValidationField value",
       "i18nKeyCaption": "i18nCaptionKey",
       "controlType": "textBox",
+      "source": "resultData.ValidationField",
       "validation": [
         {
           "validationType": "integer",
@@ -60,7 +63,8 @@
       "title": "datetime field",
       "caption": "datetime field value",
       "i18nKeyCaption": "i18nCaptionKey",
-      "controlType": "datePicker"
+      "controlType": "datePicker",
+      "source": "resultData.DateTimeField"
     },
     {
       "id": 305,
@@ -72,6 +76,7 @@
       "caption": "calculatedLabel value",
       "i18nKeyCaption": "calculatedLabel",
       "controlType": "textBox",
+      "source": "resultData.calculatedLabel",
       "calculated": {
         "fieldId1": 5,
         "fixedValue": "now",
@@ -88,7 +93,8 @@
       "order": 0,
       "controlType": "comboBox",
       "itemsSource": "state",
-      "needsConfirmationIfIsEmpty": true
+      "needsConfirmationIfIsEmpty": true,
+      "source": "resultData.DataSourceField"
     },
     {
       "id": 307,
@@ -100,7 +106,8 @@
       "i18nKeyCaption": "treatmentTypeCaptioni18nKey",
       "order": 0,
       "controlType": "checkBox",
-      "needsConfirmationIfIsEmpty": true
+      "needsConfirmationIfIsEmpty": true,
+      "source": "resultData.CheckboxedField"
     },
     {
       "id": 308,
@@ -112,6 +119,7 @@
       "controlType": "autoComplete",
       "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
+      "source": "resultData.AutoCompleteField",
       "items": [
         {
           "value": "Cured",
@@ -145,6 +153,7 @@
       "controlType": "autoComplete",
       "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
+      "source": "resultData.ReferringHealthFacilityProvince",
       "items": [
         {
           "key": "Punjab",
@@ -198,6 +207,7 @@
       "controlType": "autoComplete",
       "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
+      "source": "resultData.ReferringHealthFacilityDistrict",
       "filters": [
         {
           "conjunction": "or",
