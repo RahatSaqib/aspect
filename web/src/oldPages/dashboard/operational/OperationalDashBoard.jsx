@@ -34,10 +34,10 @@ const OperationalDashBoard = () => {
       <PermissionChecker permissions={['operationalData']}>
         <ResultTransmittedGraph />
         {assays ? (
-          <>
+          <div className={cssClasses('wrapper')}>
             <DeviceStatusGraph assaysFromState={assays} />
             <InventoryStatusGraph assaysFromState={assays} />
-          </>
+          </div>
         ) : null}
       </PermissionChecker>
     </Fragment>
