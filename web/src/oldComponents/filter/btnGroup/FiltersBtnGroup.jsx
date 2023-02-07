@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+import React from 'react'
 import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
@@ -462,12 +462,7 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
 
   return (
     <div className={cssClasses(className, 'FiltersBtnGroup')}>
-      {children &&
-        Children.map(children, child =>
-          React.cloneElement(child, {
-            className: cssClasses('FiltersBtnGroup__Child'),
-          })
-        )}
+      {children}
       {Immutable.Map(restProps.filters)
         .keySeq()
         .sortBy(filterKey => filtersOrdering[filterKey])

@@ -9,7 +9,7 @@ exports[`Result List component should shallow render correctly when filter for a
     encodeSpecialCharacters={true}
     title="Results"
   />
-  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+  <pure(withProps(withHandlers(Connect(BrowseFilters))))
     askConfirmationForExport={false}
     config={[MockFunction]}
     intl={

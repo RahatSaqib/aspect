@@ -16,7 +16,7 @@
     flex-grow: 1;
     order: inherit;
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row-reverse wrap;
     align-items: baseline;
   }
 
