@@ -85,6 +85,20 @@ export const messages = {
       defaultMessage:
         "Based on the last 30 days, represents the percentage of days when the device was reported as 'active' compared to the total number of working days",
     },
+    deviceStatusDescription: {
+      id: 'pages.DeviceList.deviceStatusDescription',
+      defaultMessage: `Represents the status of the testing device by evaluating its activity since the start of yesterday:
+        - Up/Green: there are tests assigned to the device, or the user manually set that the device performed tests (set as Reported Active)
+        - Down/Red: the user manually set that the device is down
+        - Unknown/Yellow: there aren't tests registered for the device and the user didn't set any status
+        - Not Recorded/Grey: something is going wrong with Aspect, because it didn't set any status - needs attention`,
+    },
+    connectorStatusDescription: {
+      id: 'pages.DeviceList.connectorStatusDescription',
+      defaultMessage: `Represents the status of the testing device connector, like GeneXpert, by evaluating the connectivity since the start of yesterday:
+        - Online/Green: the connector made at least one connection with Aspect
+        - Offline/Red: the connector didn't make any connections with Aspect - needs attention`,
+    },
     errorRate: {
       id: 'pages.DeviceList.errorRate',
       defaultMessage: 'Test failures',
