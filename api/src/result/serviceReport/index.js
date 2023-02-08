@@ -14,6 +14,7 @@ const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('..
 const { getAllAssaySchemas } = require('../../assay/service')
 
 const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
+const getDataExtractReport = require('./dataExtractForTableau')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { getGroupBy, getClinicalIndicatorQueryForResultsTable, processGroupedQuery } = require('../service')
 
@@ -606,4 +607,5 @@ module.exports = {
   getReportWorkloadSummaryByQuarter,
   getReportWorkloadSummaryByYear,
   getReportXdrDevicesSummary,
+  getDataExtractReport,
 }

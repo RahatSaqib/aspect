@@ -69,7 +69,7 @@ const Status = () => {
       </ErrorBoundary>
 
       {assays ? (
-        <>
+        <div className={cssClasses('wrapper')}>
           <PermissionChecker permissions={['dashboard']}>
             <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
           </PermissionChecker>
@@ -125,7 +125,7 @@ const Status = () => {
               <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
             </PermissionChecker>
           ) : null}
-        </>
+        </div>
       ) : null}
 
       <Reports className={cssClasses('Section--withStatus')} title={formatMessage(messages.reportsTitle)} />

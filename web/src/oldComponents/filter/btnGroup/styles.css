@@ -2,12 +2,15 @@
 
 .FiltersBtnGroup {
   align-items: flex-end !important;
+  flex-wrap: nowrap !important;
+  flex-direction: row !important;
+  display: flex !important;
 }
 
 .Button {
   font-weight: var(--lato-font-weight-bold) !important;
   text-transform: none !important;
-  margin-right: 8px !important;
+  margin: 1px 2px !important;
 }
 
 .Button > .Button__icon {
