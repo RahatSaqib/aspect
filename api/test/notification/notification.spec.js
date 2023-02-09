@@ -851,6 +851,7 @@ describe('Notification routes', () => {
       result: baseFilterCondition.result,
       enabled: true,
       issueTypeId: null,
+      resultBasedScope: 'any',
     })
   })
 })
