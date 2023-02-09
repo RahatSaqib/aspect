@@ -899,15 +899,15 @@ async function onResultUpdated({ resultId, deviceLogId, userId }, { messageConte
   if (!resultId) {
     throw new Error('Must specify resultId in Action')
   }
-  logger.debug(`onResultUpdated inserting in DeviceLog table for resultId:${resultId}`, {
-    reLabel: 'deviceApi:onResultUpdated',
-  })
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    return context.resultLogged(resultId, deviceLogId, userId)
+    return context.resultLogged(resultId, deviceLogId, userId, { isResultUpdated: true })
   }
   return context.transact(async knex => {
+    logger.debug(`onResultUpdated inserting in DeviceLog table for resultId:${resultId}`, {
+      reLabel: 'deviceApi:onResultUpdated',
+    })
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
     // Everything else, we should add a device log entry so that
@@ -926,7 +926,7 @@ async function onResultUpdated({ resultId, deviceLogId, userId }, { messageConte
           rawMessage: '',
         })
       )
-    context.resultLogged(resultId, deviceLogId, userId)
+    context.resultLogged(resultId, deviceLogId, userId, { isResultUpdated: true })
   })
 }
 

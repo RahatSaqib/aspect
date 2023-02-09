@@ -1,8 +1,8 @@
 const NodeCache = require('node-cache')
+const { CATEGORY } = require('./constants')
 // stdTTL is the default time-to-live for each cache entry
 const stdTTL = 60 * 60 * 6 // 6 hours
-const notificationResultCacheKey = 'allResultBasedNotifications'
-const notificationIssueCacheKey = 'allIssueBasedNotifications'
+
 class NotificationCache {
   constructor(knex, issueBased, ttl = stdTTL) {
     this.marker = Math.random()
@@ -18,7 +18,8 @@ class NotificationCache {
         'nt.filterCondition',
         'nt.id as notificationTypeId',
         'ntc.externalId as notificationTypeCategoryId',
-        'nt.issueTypeId'
+        'nt.issueTypeId',
+        'nt.reportId'
       )
   }
 
@@ -36,10 +37,12 @@ class NotificationCache {
   // refresh the cache
   async refreshCache() {
     this.notificationCache.flushAll()
-    this.notificationCache.del(notificationResultCacheKey)
-    this.notificationCache.del(notificationIssueCacheKey)
-    this.getCacheValueIssueNotification()
-    return this.getCacheValueResultNotification()
+    this.notificationCache.del(CATEGORY.RESULT_BASED)
+    this.notificationCache.del(CATEGORY.ISSUE_BASED)
+    this.notificationCache.del(CATEGORY.REPORT_BASED)
+    await this.getCacheValueIssueNotification()
+    await this.getCacheValueResultNotification()
+    await this.getCacheValueReportNotification()
   }
 
   // set the cache key and value
@@ -49,35 +52,47 @@ class NotificationCache {
 
   // return the cache value
   async getCacheValueResultNotification() {
-    return this.getCacheValue(notificationResultCacheKey)
+    return this.getCacheValue(CATEGORY.RESULT_BASED)
   }
 
-  async getCacheValue(notificationkey) {
-    let notificationsType = this.notificationCache.get(notificationkey)
+  getExternalId(notificationKey) {
+    if (notificationKey === CATEGORY.ISSUE_BASED) {
+      return 'issueBased'
+    }
+    if (notificationKey === CATEGORY.REPORT_BASED) {
+      return 'reportBased'
+    }
+    return 'resultBased'
+  }
+
+  async getCacheValue(notificationKey) {
+    let notificationsType = this.notificationCache.get(notificationKey)
 
     if (!notificationsType) {
-      notificationsType =
-        notificationkey === notificationIssueCacheKey
-          ? await this.getConditionsToEvaluate('issueBased')
-          : await this.getConditionsToEvaluate('resultBased')
+      const externalId = this.getExternalId(notificationKey)
+      notificationsType = await this.getConditionsToEvaluate(externalId)
 
-      this.setCacheValue(notificationkey, notificationsType)
+      this.setCacheValue(notificationKey, notificationsType)
     }
 
     return notificationsType
   }
 
   async getCacheValueIssueNotification() {
-    return this.getCacheValue(notificationIssueCacheKey)
+    return this.getCacheValue(CATEGORY.ISSUE_BASED)
+  }
+
+  async getCacheValueReportNotification() {
+    return this.getCacheValue(CATEGORY.REPORT_BASED)
   }
 }
 
 // singleton pattern for cache to avoid multiple instances
 // singleton pattern class
 class NotificationCacheSingleton {
-  static getInstance(knex, issueBased = false) {
+  static getInstance(knex) {
     if (!NotificationCacheSingleton.instance) {
-      NotificationCacheSingleton.instance = new NotificationCache(knex, issueBased)
+      NotificationCacheSingleton.instance = new NotificationCache(knex)
     }
     return NotificationCacheSingleton.instance
   }
