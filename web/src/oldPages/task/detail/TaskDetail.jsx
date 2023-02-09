@@ -87,7 +87,10 @@ export const TaskDetail = ({
                 <Unit lg="1-5">
                   <span className={cssClasses('Summary__Item')}>
                     {task.get('device')}
-                    <Link to={`/browse/device/${task.get('deviceId')}`} className={cssClasses('Summary__Item__Link')}>
+                    <Link
+                      to={`/browse/device/list/${task.get('deviceId')}`}
+                      className={cssClasses('Summary__Item__Link')}
+                    >
                       <FaArrowUp className={cssClasses('Summary__Item__Link__FaArrowUp')} />
                     </Link>
                   </span>

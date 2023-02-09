@@ -155,7 +155,7 @@ const getAvailableTargetDevices = (deviceList, sourceDevicesIds, siteToMergeDevi
   )
 }
 
-const DeviceList = ({ navButton }) => {
+const DeviceList = () => {
   const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true, showUnapprovedDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
   const { formatMessage } = useI18n()
@@ -197,7 +197,7 @@ const DeviceList = ({ navButton }) => {
     currentTarget: {
       dataset: { deviceId },
     },
-  }) => navigate(`/browse/device/${deviceId}`)
+  }) => navigate(`/browse/device/list/${deviceId}`)
 
   const onAlertClick = event => {
     event.stopPropagation()
@@ -206,7 +206,7 @@ const DeviceList = ({ navButton }) => {
         dataset: { deviceId },
       },
     } = event
-    navigate(`/browse/device/${deviceId}/alerts`)
+    navigate(`/browse/device/list/${deviceId}/alerts`)
   }
 
   const { data, isError, error, isLoading } = useQuery(
@@ -280,7 +280,6 @@ const DeviceList = ({ navButton }) => {
             ) : null}
           </AspectButton>
         </PermissionChecker>
-        {navButton}
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.devicesTitle)} />

@@ -9,7 +9,9 @@ const MainApp = () => {
   const { jwt, isLoggedOut } = useAuthState()
 
   return (
-    <Suspense fallback={<Loading />}>{jwt.hasToAcceptLicenseId || isLoggedOut ? <LogoutApp /> : <LogInApp />}</Suspense>
+    <Suspense fallback={<Loading centered />}>
+      {jwt.hasToAcceptLicenseId || isLoggedOut ? <LogoutApp /> : <LogInApp />}
+    </Suspense>
   )
 }
 
