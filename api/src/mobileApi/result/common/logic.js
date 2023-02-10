@@ -1,10 +1,26 @@
 const _ = require('lodash')
-const dayjs = require('dayjs')
+const { differenceInDays } = require('date-fns')
 const { pipe, find, values } = require('ramda')
 const { subDays } = require('date-fns')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../../../shared/date')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 const { knex } = require('../../../db')
+
+const TRANSFERRED = {
+  AWAY: 'away',
+  HERE: 'here',
+}
+
+const TESTTYPE = {
+  RESULT: {
+    i18nKey: 'testResult',
+    text: 'Test Result',
+  },
+  SAMPLE: {
+    i18nKey: 'sample',
+    text: 'Sample',
+  },
+}
 
 const ACKNOWLEDGED = 'Acknowledged'
 
@@ -15,40 +31,72 @@ const fieldNameToFollowUpTypeIdMappings = {
 
 const assayAvatarColorsIcon = {
   tb: {
-    backgroundColour: 'purple',
-    foregroundColour: 'secondary',
+    backgroundColor: 'purple',
+    foregroundColor: 'secondary',
     contentIcon: null,
   },
   hcv: {
-    backgroundColour: 'secondary',
-    foregroundColour: 'primary',
+    backgroundColor: 'secondary',
+    foregroundColor: 'primary',
     contentIcon: null,
   },
   hiv: {
-    backgroundColour: 'orange',
-    foregroundColour: 'secondary',
+    backgroundColor: 'orange',
+    foregroundColor: 'secondary',
     contentIcon: null,
   },
   ebola: {
-    backgroundColour: 'secondary',
-    foregroundColour: 'primary',
+    backgroundColor: 'secondary',
+    foregroundColor: 'primary',
     contentIcon: null,
   },
   covid: {
-    backgroundColour: 'purple',
-    foregroundColour: 'secondary',
+    backgroundColor: 'purple',
+    foregroundColor: 'secondary',
     contentIcon: null,
   },
   hbv: {
-    backgroundColour: 'secondary',
-    foregroundColour: 'primary',
+    backgroundColor: 'secondary',
+    foregroundColor: 'primary',
     contentIcon: null,
   },
   default: {
-    backgroundColour: 'orange',
-    foregroundColour: 'secondary',
+    backgroundColor: 'orange',
+    foregroundColor: 'secondary',
     contentIcon: null,
   },
+}
+
+const SAMPLE_STATUS_DAMAGED = {
+  status: 'damaged',
+  color: 'danger',
+  title: 'Sample Damaged',
+}
+
+const SAMPLE_STATUS_LOST = {
+  status: 'lost',
+  color: 'danger',
+  title: 'Sample Damaged',
+}
+
+const SAMPLE_STATUS_NOT_TESTED = {
+  status: 'notTested',
+  color: 'danger',
+  title: 'Sample Not Damaged',
+}
+
+const SAMPLE_STATUS_REGISTER = {
+  status: 'registered',
+  color: 'success',
+  title: 'Sample Registered',
+}
+// TODO: Get details from database. Currently Randomly generated sample status for sample damaged and sample lost case
+const getSampleStatus = val => {
+  let sampleStatus = [SAMPLE_STATUS_DAMAGED, SAMPLE_STATUS_LOST][_.random(0, 2)]
+  if (!_.isNil(val)) {
+    sampleStatus = val === 'danger' ? SAMPLE_STATUS_NOT_TESTED : SAMPLE_STATUS_REGISTER
+  }
+  return sampleStatus
 }
 
 const showTreatment = testResult => {
@@ -85,13 +133,8 @@ const checkFollowupType = (testResult, followUp, type) => {
 // Its number of days from the day treatment has started/updated
 const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
   const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
-  return isTreatment ? dayjs().diff(dayjs(isTreatment.updatedOn), 'day') : 0
-}
-
-// Its number of days from the day treatment has started/updated
-const daysFromTreatmentDateEndOn = (testResult, followUp) => {
-  const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
-  return isTreatment ? dayjs().diff(dayjs(isTreatment.endedOn), 'day') : 0
+  const today = new Date()
+  return isTreatment ? differenceInDays(today, new Date(isTreatment?.updatedOn || today)) : 0
 }
 
 const isTransferred = testResult => {
@@ -113,7 +156,7 @@ const requiresTreatment = testResult => {
 }
 
 const getSeverity = (testResult, followUp) => {
-  const daysDiff = daysFromTreatmentDateEndOn(testResult, followUp)
+  const daysDiff = daysFromTreatmentDateUpdateOn(testResult, followUp)
   const requireTreatment = requiresTreatment(testResult)
   const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
   let severity = ''
@@ -376,6 +419,11 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
   const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
+  const isRecorded = data.resultWorkflowStatusId === acknowledgedId
+  const resultData = data.resultData
+    ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
+    : null
+  const severity = getSeverity(data, followUps)
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -390,17 +438,18 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     resultCategory2ExternalId: data.resultCategory2ExternalId,
     patientData,
     testId: patientData ? patientData.id : data.sampleId,
-    resultData: data.resultData
-      ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
-      : null,
+    resultData,
     sample: {
       id: data.sampleId,
       originSite: data.sampleOriginSiteId
         ? {
+            id: data.sampleOriginSiteId,
             externalId: data.sampleOriginSiteExternalId,
             name: data.sampleOriginSiteName,
           }
         : null,
+      sampleCollectionDate: data.sampleCollectionOn,
+      ...getSampleStatus(severity),
     },
     workflowStatus: {
       name:
@@ -431,7 +480,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
       externalId: data.resultTreatmentStatusExternalId,
       i18nKey: data.resultTreatmentStatusi18nKey,
       visible: showTreatment(data),
-      severity: getSeverity(data, followUps),
+      severity,
       daysInCurrentStatus: daysFromTreatmentDateUpdateOn(data, followUps),
     },
     followUps: followUpList,
@@ -442,6 +491,8 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     ),
     // result transferred
     reportableSiteName: data.reportableSiteName,
+    testType: resultData ? TESTTYPE.RESULT : TESTTYPE.SAMPLE,
+    transferred: isTransferred ? TRANSFERRED.AWAY : TRANSFERRED.HERE,
     transferredOn: data.transferredOn,
     transferredBy: data.transferredBy,
     reportableSiteId: data.reportableSiteId,
@@ -450,20 +501,15 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     assayAvatar: {
       contentI18nKey: data.contentI18nKey,
       contentText: data.contentText,
-      backgroundColour: assayAvatar.backgroundColour,
-      foregroundColour: assayAvatar.foregroundColour,
+      backgroundColor: assayAvatar.backgroundColor,
+      foregroundColor: assayAvatar.foregroundColor,
       contentIcon: assayAvatar.contentIcon,
     },
     clinicalResponse: {
-      recorded: data.resultWorkflowStatusId === acknowledgedId,
+      recorded: isRecorded,
+      confirmedOn: isRecorded ? data.resultWorkflowStatusChangedOn : null,
     },
     testInformation: [],
-  }
-  if (data.resultWorkflowStatusId === acknowledgedId) {
-    mainData.clinicalResponse = {
-      ...mainData.clinicalResponse,
-      confirmedOn: data.resultWorkflowStatusChangedOn,
-    }
   }
   if (latestFollowUps.length > 0) {
     const treatment = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'treatment')

@@ -227,7 +227,8 @@ async function listSitesForSelectList(request) {
   return response
 }
 
-async function getListSitesForSelectList(dataConstraints, { excludeSiteIds, mode, siteTypeExternalIds, tags }) {
+async function getListSitesForSelectList(dataConstraints, opt = {}) {
+  const { excludeSiteIds, mode, siteTypeExternalIds, tags } = opt
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')

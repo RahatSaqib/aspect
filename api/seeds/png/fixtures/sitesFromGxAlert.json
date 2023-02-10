@@ -1,0 +1,1107 @@
+[{
+  "externalId": "Central Public Health Laboratory",
+  "latitude": -9.467070,
+  "longitude": 147.196030,
+  "stateName": "National Capital District",
+  "lgaName": "National Capital District",
+  "name": "Central Public Health Laboratory",
+  "shortName": "CPHL TB LAB",
+  "timeZoneId": "West Pacific Standard Time",
+  "devices": [{
+    "name": "Central Public Health Laboratory",
+    "shortName": "CPHL TB LAB",
+    "macAddress": "MACF0D5BF0E1D84",
+    "hostId": "Central Public Health Laboratory",
+    "serial": "Cepheid-64261BT",
+    "gxAlertDeviceId": 421,
+    "apiKey": "ahgnc3aqlsy3oh6xwhia"
+  }]
+},
+  {
+    "externalId": "Kudjip Hospital Laboratory",
+    "latitude": -5.856169,
+    "longitude": 144.232803,
+    "stateName": "Jiwaka",
+    "lgaName": "Anglimp-South Waghi",
+    "name": "Kudjip Hospital Laboratory",
+    "shortName": "KUDJIP TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kudjip Hospital Laboratory",
+      "shortName": "KUDJIP TB LAB",
+      "macAddress": "MACDC8B2840ABAF",
+      "hostId": "Kudjip TB Laboratory",
+      "serial": "Cepheid-3381P3H",
+      "gxAlertDeviceId": 1085,
+      "apiKey": "g3yle2cbkvcyx7dadibq"
+    }]
+  },
+  {
+    "externalId": "Popondetta General Hospital Laboratory",
+    "latitude": -8.766743,
+    "longitude": 148.237503,
+    "stateName": "Oro (Northern)",
+    "lgaName": "Ijivitari",
+    "name": "Popondetta Hospital Laboratory",
+    "shortName": "PGH TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Popondetta Hospital Laboratory",
+      "shortName": "PGH TB LAB",
+      "macAddress": "MACB00CD1C449B0",
+      "hostId": "Popondetta Hospital",
+      "serial": "Cepheid-9042XVY",
+      "gxAlertDeviceId": 1104,
+      "apiKey": "7q4nyslnjt6gfsrkxnba"
+    }]
+  },
+  {
+    "externalId": "Gerehu Hospital Laboratory NCD",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "Gerehu Hospital Laboratory ",
+    "shortName": "GEREHU TB LAB",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Nonga General Hospital Laboratory",
+    "latitude": -4.198459,
+    "longitude": 152.172806,
+    "stateName": "East New Britain",
+    "lgaName": "Rabaul",
+    "name": "Nonga General Hospital Laboratory",
+    "shortName": "NONGA TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Nonga General Hospital Laboratory",
+      "shortName": "NONGA TB LAB",
+      "macAddress": "MACACE2D39A6BEE",
+      "hostId": "NONGA TB LAB",
+      "serial": "Cepheid-7453HBH",
+      "gxAlertDeviceId": 1123,
+      "apiKey": "wmg23e7eplsgetx4r4uq"
+    }]
+  },
+  {
+    "externalId": "Modilon Hospital Laboratory",
+    "latitude": -5.212038,
+    "longitude": 145.805420,
+    "stateName": "Madang",
+    "lgaName": "Madang",
+    "name": "Modilon Hospital Laboratory",
+    "shortName": "MADANG TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Modilon Hospital Laboratory",
+      "shortName": "MADANG TB LAB",
+      "macAddress": "MAC98E7F468D12C",
+      "hostId": "Modilon TB Lab",
+      "serial": "Cepheid-64261C6",
+      "gxAlertDeviceId": 1137,
+      "apiKey": "a525bwncpi2jjilpeg4a"
+    }]
+  },
+  {
+    "externalId": "ANGAU Hospital Laboratory",
+    "latitude": -6.730197,
+    "longitude": 147.000809,
+    "stateName": "Morobe",
+    "lgaName": "Lae",
+    "name": "ANGAU Hospital Laboratory",
+    "shortName": "ANGAU TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "ANGAU Hospital Laboratory",
+      "shortName": "ANGAU TB LAB",
+      "macAddress": "MACACE2D39ACAB9",
+      "hostId": "ANGAU",
+      "serial": "Cepheid-7453GSF",
+      "gxAlertDeviceId": 1205,
+      "apiKey": "hwpm3bos7qxnagkjlbja"
+    }]
+  },
+  {
+    "externalId": "Youth With A Mission Ships",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "Youth With A Mission Ship",
+    "shortName": "YWAM SHIP",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Youth With A Mission Ship",
+      "shortName": "YWAM SHIP",
+      "macAddress": "MACF0D5BF16ECA7",
+      "hostId": "YWAM SHIP",
+      "serial": "Cepheid-64262X5",
+      "gxAlertDeviceId": 1624,
+      "apiKey": "bljgv7hd2ncagf5y2cha"
+    }]
+  },
+  {
+    "externalId": "Mendi Hospital Laboratory",
+    "latitude": -6.139358,
+    "longitude": 143.657852,
+    "stateName": "Southern Highlands",
+    "lgaName": "Mendi-Munihu",
+    "name": "Mendi Hospital Laboratory",
+    "shortName": "MENDI TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Mendi Hospital Laboratory",
+      "shortName": "MENDI TB LAB",
+      "macAddress": "MACE4E749989FEE",
+      "hostId": "MENDI TB LAB",
+      "serial": "Cepheid-330BSR9",
+      "gxAlertDeviceId": 1702,
+      "apiKey": "xklhwnovi7sed2kyua3a"
+    }]
+  },
+  {
+    "externalId": "Port Moresby General Hospital Laboratory",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "Port Moresby General Hospital Laboratory",
+    "shortName": "PMGH TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Port Moresby General Hospital Laboratory",
+      "shortName": "PMGH TB LAB",
+      "macAddress": "MAC",
+      "hostId": "PMGH TB LABORATORY",
+      "serial": "Cepheid-9042XYP",
+      "gxAlertDeviceId": 1922,
+      "apiKey": "akhcjwpzrd4eklizg3gq"
+    }]
+  },
+  {
+    "externalId": "Lihr Medical Centre",
+    "latitude": -2.573474,
+    "longitude": 150.795227,
+    "stateName": "New Ireland",
+    "lgaName": "Namatanai",
+    "name": "Lihir Medical Centre Laboratory",
+    "shortName": "LIHIR TB LAB",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Tabubil Hospital Laboratory",
+    "latitude": -6.115989,
+    "longitude": 141.298203,
+    "stateName": "Western (Fly)",
+    "lgaName": "North Fly",
+    "name": "Tabubil Hospital Laboratory",
+    "shortName": "TABUBIL TB LAB",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Kavieng Hospital Laboraory",
+    "latitude": -2.573474,
+    "longitude": 150.795227,
+    "stateName": "New Ireland",
+    "lgaName": "Kavieng",
+    "name": "Kavieng Hospital Laboraory",
+    "shortName": "KAVIENG TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kavieng Hospital Laboraory",
+      "shortName": "KAVIENG TB LAB",
+      "macAddress": "MACACE2D39ADA80",
+      "hostId": "Kavieng TB Lab",
+      "serial": "Cepheid-7453GQW",
+      "gxAlertDeviceId": 2664,
+      "apiKey": "5jwgenkmazpwh5n5omka"
+    }]
+  },
+  {
+    "externalId": "Lorengau Hospital Laboratory",
+    "latitude": -2.051330,
+    "longitude": 146.985153,
+    "stateName": "Manus",
+    "lgaName": "Manus",
+    "name": "Lorengau Hospital Laboratory",
+    "shortName": "LORENGAU TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Lorengau Hospital Laboratory",
+      "shortName": "LORENGAU TB LAB",
+      "macAddress": "MACACE2D39A3B9A",
+      "hostId": "Manus Provincial Lab",
+      "serial": "Cepheid-7453GJ0",
+      "gxAlertDeviceId": 2723,
+      "apiKey": "khg3rgyowq2lpryflazq"
+    }]
+  },
+  {
+    "externalId": "Maprik District Hospital Laboratory",
+    "latitude": -3.554220,
+    "longitude": 143.627090,
+    "stateName": "East Sepik",
+    "lgaName": "Maprik",
+    "name": "Maprik District Hospital Laboratory",
+    "shortName": "MAPRIK TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Maprik District Hospital Laboratory",
+      "shortName": "MAPRIK TB LAB",
+      "macAddress": "MAC",
+      "hostId": "MAPRIK TB LAB",
+      "serial": "Cepheid-7453GTL",
+      "gxAlertDeviceId": 2736,
+      "apiKey": "72dfapkvarmgikyivpva"
+    }]
+  },
+  {
+    "externalId": "Kapuna Rural Hospital Laboratory",
+    "latitude": -7.362002,
+    "longitude": 144.816208,
+    "stateName": "Gulf",
+    "lgaName": "Kikori",
+    "name": "Kapuna Rural Hospital Laboratory",
+    "shortName": "KAPUNA TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kapuna Rural Hospital Laboratory",
+      "shortName": "KAPUNA TB LAB",
+      "macAddress": "MACACE2D39AF92B",
+      "hostId": "Kapuna Rural Hospital Laboratory",
+      "serial": "Cepheid-7453HFR",
+      "gxAlertDeviceId": 2856,
+      "apiKey": "sj6crw7gevtnl7fr53tq"
+    }]
+  },
+  {
+    "externalId": "Kainantu District Hospital Laboratory",
+    "latitude": -6.073003,
+    "longitude": 145.393295,
+    "stateName": "Eastern Highlands",
+    "lgaName": "Kainantu",
+    "name": "Kainantu District Hospital Laboratory",
+    "shortName": "KAINANTU TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kainantu District Hospital Laboratory",
+      "shortName": "KAINANTU TB LAB",
+      "macAddress": "MACACE2D39ABB53",
+      "hostId": "Kainantu Rural Hospi",
+      "serial": "Cepheid-7453HZL",
+      "gxAlertDeviceId": 2945,
+      "apiKey": "37eviix3gfpk3w3p37ta"
+    }]
+  },
+  {
+    "externalId": "Bulolo Health Centre Laboratory",
+    "latitude": -6.727027,
+    "longitude": 146.985565,
+    "stateName": "Morobe",
+    "lgaName": "Bulolo",
+    "name": "Bulolo Health Centre Laboratory",
+    "shortName": "BULOLO TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Bulolo Health Centre Laboratory",
+      "shortName": "BULOLO TB LAB",
+      "macAddress": "MACB00CD1C4E73C",
+      "hostId": "Bulolo Health Centre",
+      "serial": "Cepheid-9042KH8",
+      "gxAlertDeviceId": 3107,
+      "apiKey": "zi5v4alw6tcze4p266zq"
+    }]
+  },
+  {
+    "externalId": "Malala Health Centre Laboratory",
+    "latitude": -5.212038,
+    "longitude": 145.805420,
+    "stateName": "Madang",
+    "lgaName": "Sumkar",
+    "name": "Malala Health Centre Laboratory",
+    "shortName": "MALALA TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Malala Health Centre Laboratory",
+      "shortName": "MALALA TB LAB",
+      "macAddress": "MACB00CD1C44BED",
+      "hostId": "Malala Health Centre",
+      "serial": "Cepheid-9042X8Y",
+      "gxAlertDeviceId": 3115,
+      "apiKey": "gmtpuf77gijvufqf7xrq"
+    }]
+  },
+  {
+    "externalId": "Gaubin Health Centre Laboratory",
+    "latitude": -5.212038,
+    "longitude": 145.805420,
+    "stateName": "Madang",
+    "lgaName": "Sumkar",
+    "name": "Gaubin Health Centre Laboratory",
+    "shortName": "GAUBIN TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Gaubin Health Centre Laboratory",
+      "shortName": "GAUBIN TB LAB",
+      "macAddress": "MAC",
+      "hostId": "Gaubin Health Centre",
+      "serial": "Cepheid-8492212",
+      "gxAlertDeviceId": 3116,
+      "apiKey": "r75qnx6r5sdvdkflxzxa"
+    }]
+  },
+  {
+    "externalId": "Bialla Health Centre Laboratory",
+    "latitude": -5.556292,
+    "longitude": 150.152954,
+    "stateName": "West New Britain",
+    "lgaName": "Talasea",
+    "name": "Bialla Health Centre Laboratory",
+    "shortName": "BIALLA TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Bialla Health Centre Laboratory",
+      "shortName": "BIALLA TB LAB",
+      "macAddress": "MACB00CD1C4BA94",
+      "hostId": "BIALLA TB LAB",
+      "serial": "Cepheid-9042XGC",
+      "gxAlertDeviceId": 3162,
+      "apiKey": "6fclvakp7qfp42z5rdfq"
+    }]
+  },
+  {
+    "externalId": "Ialibu Health Centre Laboratory",
+    "latitude": -6.139358,
+    "longitude": 143.657852,
+    "stateName": "Southern Highlands",
+    "lgaName": "Ialibu-Pangia",
+    "name": "Ialibu Health Centre Laboratory",
+    "shortName": "IAILIBU TB LAB ",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Ialibu Health Centre Laboratory",
+      "shortName": "IAILIBU TB LAB ",
+      "macAddress": "MACE4E749984F48",
+      "hostId": "Ialibu Health Centre",
+      "serial": "Cepheid-84922TR",
+      "gxAlertDeviceId": 3231,
+      "apiKey": "va5h5lunzvls4cz3zlcq"
+    }]
+  },
+  {
+    "externalId": "Mingende Rural Hospital Laboratory",
+    "latitude": -6.019025,
+    "longitude": 144.972260,
+    "stateName": "Chimbu (Simbu)",
+    "lgaName": "Kerowagi",
+    "name": "Mingende Rural Hospital Laboratory",
+    "shortName": "MINGENDE TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Mingende Rural Hospital Laboratory",
+      "shortName": "MINGENDE TB LAB",
+      "macAddress": "MACB00CD1C4575E",
+      "hostId": "Migende Health Centr",
+      "serial": "Cepheid-9042LK0",
+      "gxAlertDeviceId": 3267,
+      "apiKey": "6rxqf4bn4kql75mznvwq"
+    }]
+  },
+  {
+    "externalId": "Kiunga Hospital Laboratory",
+    "latitude": -15.854350,
+    "longitude": 23.801680,
+    "stateName": "Western (Fly)",
+    "lgaName": "North Fly",
+    "name": "Kiunga Hospital Laboratory",
+    "shortName": "KIUNGA TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kiunga Hospital Laboratory",
+      "shortName": "KIUNGA TB LAB",
+      "macAddress": "MAC",
+      "hostId": "Kiunga Laboratory",
+      "serial": "Cepheid-7295YPN",
+      "gxAlertDeviceId": 3301,
+      "apiKey": "hqr4phlu5mizkxx7mewq"
+    }]
+  },
+  {
+    "externalId": "Daru General Hospital Laboratory ",
+    "latitude": 32.273861,
+    "longitude": -111.059113,
+    "stateName": "Western (Fly)",
+    "lgaName": "South Fly",
+    "name": "Daru General Hospital Laboratory ",
+    "shortName": "DGH TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Daru General Hospital Laboratory ",
+      "shortName": "DGH TB LAB",
+      "macAddress": "MAC480FCF5776A5",
+      "hostId": "Daru General Hospita",
+      "serial": "Cepheid-6211LPK",
+      "gxAlertDeviceId": 3304,
+      "apiKey": "kyxi7cv34pk22z7wgarq"
+    }]
+  },
+  {
+    "externalId": "Tinsley District Hospital Laboratory",
+    "latitude": -5.858784,
+    "longitude": 144.231644,
+    "stateName": "Western Highlands",
+    "lgaName": "Mul-Baiyer",
+    "name": "Tinsley District Hospital Laboratory",
+    "shortName": "TINSLEY TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Tinsley District Hospital Laboratory",
+      "shortName": "TINSLEY TB LAB",
+      "macAddress": "MACB00CD1C4CC9B",
+      "hostId": "TINSLEY TB LAB",
+      "serial": "Cepheid-9042WMP",
+      "gxAlertDeviceId": 3311,
+      "apiKey": "2qtkzid5v4bk5xtbspxa"
+    }]
+  },
+  {
+    "externalId": "Moro Hospital Laboratory ",
+    "latitude": -6.139358,
+    "longitude": 143.657852,
+    "stateName": "Southern Highlands",
+    "lgaName": "Nipa-Kutubu",
+    "name": "Moro Hospital Laboratory ",
+    "shortName": "MORO TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Moro Hospital Laboratory ",
+      "shortName": "MORO TB LAB",
+      "macAddress": "MAC",
+      "hostId": "MORO HOSPITAL LABORA",
+      "serial": "CPHD-9F03145",
+      "gxAlertDeviceId": 3324,
+      "apiKey": "zlpapkt6avvssrt7fs4a"
+    }]
+  },
+  {
+    "externalId": "Kikori District Hospital Laboratory",
+    "latitude": -7.959623,
+    "longitude": 145.772400,
+    "stateName": "Gulf",
+    "lgaName": "Kikori",
+    "name": "Kikori District Hospital Laboratory",
+    "shortName": "KIKORI TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kikori District Hospital Laboratory",
+      "shortName": "KIKORI TB LAB",
+      "macAddress": "MACB00CD1C4606B",
+      "hostId": "Kikori Hospital Labo",
+      "serial": "Cepheid-9042L9W",
+      "gxAlertDeviceId": 3335,
+      "apiKey": "qrgnpktn6h67w4simchq"
+    }]
+  },
+  {
+    "externalId": "Eastern Highlands Provincial Hospital Laboratory",
+    "latitude": -6.073003,
+    "longitude": 145.393295,
+    "stateName": "Eastern Highlands",
+    "lgaName": "Goroka",
+    "name": "Eastern Highlands Provincial Hospital Laboratory",
+    "shortName": "EHPH TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Eastern Highlands Provincial Hospital Laboratory",
+      "shortName": "EHPH TB LAB",
+      "macAddress": "MACACE2D39AEADD",
+      "hostId": "Goroka TB Lab",
+      "serial": "Cepheid-7453GLS",
+      "gxAlertDeviceId": 3362,
+      "apiKey": "xhzjhpvif56x7bulanwq"
+    }]
+  },
+  {
+    "externalId": "Mutzing Health Centre Laboratory",
+    "latitude": -6.730197,
+    "longitude": 147.000809,
+    "stateName": "Morobe",
+    "lgaName": "Markham",
+    "name": "Mutzing Health Centre Laboratory",
+    "shortName": "MUTZING TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Mutzing Health Centre Laboratory",
+      "shortName": "MUTZING TB LAB",
+      "macAddress": "MACDC8B28468809",
+      "hostId": "Mutzing  Health Cent",
+      "serial": "Cepheid-9042KH8",
+      "gxAlertDeviceId": 3363,
+      "apiKey": "6slewlhkbsf5v4xirzza"
+    }]
+  },
+  {
+    "externalId": "Mabudawan Health Centre Laboratory ",
+    "latitude": -9.069901,
+    "longitude": 143.210022,
+    "stateName": "Western (Fly)",
+    "lgaName": "Middle Fly",
+    "name": "Mabudawan Health Centre Laboratory ",
+    "shortName": "MABADUAN TB LAB",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Raihu District Hospital TB Laboratory",
+    "latitude": -2.684765,
+    "longitude": 141.300919,
+    "stateName": "Sandaun (West Sepik)",
+    "lgaName": "Aitape-Lumi",
+    "name": "Raihu District Hospital TB Laboratory",
+    "shortName": "RAIHU TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Raihu District Hospital TB Laboratory",
+      "shortName": "RAIHU TB LAB",
+      "macAddress": "MACDC8B2846738C",
+      "hostId": "Raihu District Hospital TB Laboratory",
+      "serial": "Cepheid-9042WPJ",
+      "gxAlertDeviceId": 3370,
+      "apiKey": "u6gcar6x3fm26vyciyvq"
+    }]
+  },
+  {
+    "externalId": "Kompiam District Hospital Laboratory",
+    "latitude": -5.491944,
+    "longitude": 143.721664,
+    "stateName": "Enga",
+    "lgaName": "Kompiam Ambum",
+    "name": "Kompiam District Hospital Laboratory",
+    "shortName": "KOMPIAM TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kompiam District Hospital Laboratory",
+      "shortName": "KOMPIAM TB LAB",
+      "macAddress": "MACB00CD1C4EB8B",
+      "hostId": "Kompiam District Hos",
+      "serial": "Cepheid-9042YZF",
+      "gxAlertDeviceId": 3393,
+      "apiKey": "6nlnbqrq37gqfblq3n5q"
+    }]
+  },
+  {
+    "externalId": "Watuluma Health Center TB Laboratory ",
+    "latitude": -10.306093,
+    "longitude": 150.446396,
+    "stateName": "Milne Bay",
+    "lgaName": "Kiriwini-Goodenough",
+    "name": "Watuluma Health Center TB Laboratory ",
+    "shortName": "Watuluma H/C TB ",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Watuluma Health Center TB Laboratory ",
+      "shortName": "Watuluma H/C TB ",
+      "macAddress": "MACDC8B28468B6A",
+      "hostId": "Gx SN 832037",
+      "serial": "Cepheid-9042WXV",
+      "gxAlertDeviceId": 3432,
+      "apiKey": "7vtyxrst2ylf6gyhnc3a"
+    }]
+  },
+  {
+    "externalId": "Kundiawa Hospital Laboratory",
+    "latitude": -6.019025,
+    "longitude": 144.972260,
+    "stateName": "Chimbu (Simbu)",
+    "lgaName": "Kundiawa-Gembogl",
+    "name": "Kundiawa Hospital Laboratory",
+    "shortName": "KUNDIAWA TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kundiawa Hospital Laboratory",
+      "shortName": "KUNDIAWA TB LAB",
+      "macAddress": "MACACE2D39AFA55",
+      "hostId": "KUNDIAWA TB LAB",
+      "serial": "Cepheid-7453GDC",
+      "gxAlertDeviceId": 3443,
+      "apiKey": "yd667pjwin52tqru6njq"
+    }]
+  },
+  {
+    "externalId": "Haikost Health Centre Laboratory ",
+    "latitude": -6.730197,
+    "longitude": 147.000809,
+    "stateName": "Morobe",
+    "lgaName": "Lae",
+    "name": "Haikost Health Centre Laboratory ",
+    "shortName": "HAIKOST TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Haikost Health Centre Laboratory ",
+      "shortName": "HAIKOST TB LAB",
+      "macAddress": "MACE4E749989F55",
+      "hostId": "Haikost Health Centr",
+      "serial": "Cepheid-84922MQ",
+      "gxAlertDeviceId": 3468,
+      "apiKey": "dfqv2yh7vq3c3vkxp6pa"
+    }]
+  },
+  {
+    "externalId": "Kerema Hospital Laboratory",
+    "latitude": -7.959623,
+    "longitude": 145.772430,
+    "stateName": "Gulf",
+    "lgaName": "Kerema",
+    "name": "Kerema Hospital Laboratory",
+    "shortName": "KEREMA TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kerema Hospital Laboratory",
+      "shortName": "KEREMA TB LAB",
+      "macAddress": "MAC6805CA20B62B",
+      "hostId": "Kerema Lab",
+      "serial": "Cepheid-3520W2P",
+      "gxAlertDeviceId": 3511,
+      "apiKey": "gmtf2n5qfkykvxq43rma"
+    }]
+  },
+  {
+    "externalId": "Braun District Hospital Laboratory",
+    "latitude": -6.730197,
+    "longitude": 147.000809,
+    "stateName": "Morobe",
+    "lgaName": "Finschhafen",
+    "name": "Braun District Hospital Laboratory",
+    "shortName": "BRAUN TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Braun District Hospital Laboratory",
+      "shortName": "BRAUN TB LAB",
+      "macAddress": "MACB00CD1C4BA77",
+      "hostId": "Braun District Hospi",
+      "serial": "Cepheid-9042XP5",
+      "gxAlertDeviceId": 3599,
+      "apiKey": "5yrtlv4s6jnjgweolx3a"
+    }]
+  },
+  {
+    "externalId": "Buka Provincial Lab",
+    "latitude": -5.432418,
+    "longitude": 154.670181,
+    "stateName": "Bougainville",
+    "lgaName": "North Bougainville",
+    "name": "Buka Provincial Lab",
+    "shortName": "Buka Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Buka Provincial Lab",
+      "shortName": "Buka Lab",
+      "macAddress": "MAC6805CA1C59DC",
+      "hostId": "Buka Hospital Lab",
+      "serial": "CPHD-F1PW7ZP",
+      "gxAlertDeviceId": 3666
+    }]
+  },
+  {
+    "externalId": "Badili TB Lab",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "Badili TB Lab",
+    "shortName": "Badili TB Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Mt Hagen Pathology",
+    "latitude": -5.858784,
+    "longitude": 144.231644,
+    "stateName": "Western Highlands",
+    "lgaName": "Mount Hagen",
+    "name": "Mt Hagen Pathology",
+    "shortName": "Mt Hagen Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Mt Hagen Pathology",
+      "shortName": "Mt Hagen Lab",
+      "macAddress": "MAC9CB70D3FFF2B",
+      "hostId": "Mt Hagen Pathology",
+      "serial": "CPHD-F1LM7WZ",
+      "gxAlertDeviceId": 3743
+    }]
+  },
+  {
+    "externalId": "Milne Bay TB Laboratory",
+    "latitude": -10.306093,
+    "longitude": 150.446396,
+    "stateName": "Milne Bay",
+    "lgaName": "Alotau",
+    "name": "Milne Bay TB Laboratory",
+    "shortName": "Milne Bay TB Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Milne Bay TB Laboratory",
+      "shortName": "Milne Bay TB Lab",
+      "macAddress": "MACB00CD1C4CA9A",
+      "hostId": "Milne Bay TB Laborat",
+      "serial": "Cepheid-9042YZ5",
+      "gxAlertDeviceId": 3781,
+      "apiKey": "jtpznlszspbn5ehaas3a"
+    }]
+  },
+  {
+    "externalId": "Spare",
+    "latitude": -3.500000,
+    "longitude": 142.000000,
+    "stateName": "Sandaun (West Sepik)",
+    "lgaName": "Vanimo-Green River",
+    "name": "West Sepik PHA",
+    "shortName": "WSPHA",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "CPHL HIV Viral Load",
+    "latitude": 14.710500,
+    "longitude": 121.079269,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "CPHL HIV Viral Load",
+    "shortName": "CPHL Viral Load",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Porgera District Hospital Lab",
+    "latitude": -5.491944,
+    "longitude": 143.721664,
+    "stateName": "Enga",
+    "lgaName": "Lagaip-Porgera",
+    "name": "Porgera District Hospital Lab",
+    "shortName": "Porgera Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Enga Provincial Hospital Laboratory",
+    "latitude": -5.672594,
+    "longitude": 143.643692,
+    "stateName": "Enga",
+    "lgaName": "Wabag",
+    "name": "Enga Provincial Hospital Laboratory",
+    "shortName": "Enga PHA Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Tokarara TB Lab",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "Tokarara TB Lab",
+    "shortName": "Tokarara lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Namatanai TB Lab",
+    "latitude": -2.573474,
+    "longitude": 150.795197,
+    "stateName": "New Ireland",
+    "lgaName": "Namatanai",
+    "name": "Namatanai TB Lab",
+    "shortName": "Namatanai TB Lab",
+    "timeZoneId": "Eastern Standard Time"
+  },
+  {
+    "externalId": "Margarima TB Lab",
+    "latitude": -5.845240,
+    "longitude": 142.946625,
+    "stateName": "Hela",
+    "lgaName": "Komo-Magarima",
+    "name": "Margarima TB Lab",
+    "shortName": "Margarima Tb Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Kimbe Laboratory",
+    "latitude": -5.556292,
+    "longitude": 150.152954,
+    "stateName": "West New Britain",
+    "lgaName": "Talasea",
+    "name": "Kimbe Laboratory",
+    "shortName": "Kimbe Laboratory",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kimbe Laboratory",
+      "shortName": "Kimbe Laboratory",
+      "macAddress": "MAC6805CA1C607E",
+      "hostId": "Kimbe Laboratory",
+      "serial": "Cepheid-3381P4D",
+      "gxAlertDeviceId": 4101,
+      "apiKey": "vw3jtjmpy2cpdobbxdcq"
+    }]
+  },
+  {
+    "externalId": "Arawa District HospitalTB Laboratory",
+    "latitude": -6.226256,
+    "longitude": 155.565109,
+    "stateName": "Bougainville",
+    "lgaName": "Central Bougainville",
+    "name": "Arawa District HospitalTB Laboratory",
+    "shortName": "Arawa Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Arawa District HospitalTB Laboratory",
+      "shortName": "Arawa Lab",
+      "macAddress": "MACACE2D39ABA59",
+      "hostId": "Arawa District Hospi",
+      "serial": "Cepheid-7453GLM",
+      "gxAlertDeviceId": 4162,
+      "apiKey": "nsisaso5zfnzodh6vhda"
+    }]
+  },
+  {
+    "externalId": "Balimo Lab",
+    "latitude": -15.854349,
+    "longitude": 23.801680,
+    "stateName": "Western (Fly)",
+    "lgaName": "Middle Fly",
+    "name": "Balimo Lab",
+    "shortName": "Balimo Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Buimo Laboratory",
+    "latitude": -6.727027,
+    "longitude": 146.985565,
+    "stateName": "Morobe",
+    "lgaName": "Lae",
+    "name": "Buimo Laboratory",
+    "shortName": "Buimo Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Etep Laboratory",
+    "latitude": -6.730197,
+    "longitude": 147.000809,
+    "stateName": "Morobe",
+    "lgaName": "Tawae-Siassi",
+    "name": "Etep Laboratory",
+    "shortName": "Etep Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "WHPHA Public Health TB Laboratory",
+    "latitude": -5.858784,
+    "longitude": 144.231644,
+    "stateName": "Western Highlands",
+    "lgaName": "Mount Hagen",
+    "name": "WHPHA Public Health TB Laboratory",
+    "shortName": "WHPHA TB Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "WHPHA Public Health TB Laboratory",
+      "shortName": "WHPHA TB Lab",
+      "macAddress": "MACB00CD1C4748F",
+      "hostId": "Public Health Lab",
+      "serial": "CPHDPNG003409E",
+      "gxAlertDeviceId": 4214
+    }]
+  },
+  {
+    "externalId": "9 mile Urban Clinic TB Laboratory",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "9 mile Urban Clinic TB Laboratory",
+    "shortName": "9 mile TB Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "BORAM HOSPITAL TB LAB",
+    "latitude": -3.554220,
+    "longitude": 143.627090,
+    "stateName": "East Sepik",
+    "lgaName": "Wewak",
+    "name": "BORAM HOSPITAL TB LAB",
+    "shortName": "BORAM TB LAB",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "BORAM HOSPITAL TB LAB",
+      "shortName": "BORAM TB LAB",
+      "macAddress": "MACF875A4A94D50",
+      "hostId": "BORAM HOSPITAL TB LA",
+      "serial": "Cepheid-0F07211",
+      "gxAlertDeviceId": 4252,
+      "apiKey": "crnb3do254o5zlbcflnq"
+    }]
+  },
+  {
+    "externalId": "PMGH Lab",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "PMGH Lab",
+    "shortName": "PMGH Lab",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Kwikila Hospital",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "Central",
+    "lgaName": "Rigo",
+    "name": "Kwikila Hospital",
+    "shortName": "Kwikila Hospital",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Rita Fynn",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "Rita Fynn",
+    "shortName": "Rita Fynn",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Heduru HIV Clinic",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "National Capital District",
+    "lgaName": "National Capital District",
+    "name": "Heduru HIV Clinic",
+    "shortName": "Heduru Clinic",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Bereina Health Centre",
+    "latitude": -9.474330,
+    "longitude": 147.159958,
+    "stateName": "Central",
+    "lgaName": "Kairuku-Hiri",
+    "name": "Bereina Health Centre",
+    "shortName": "Bereina Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Bereina Health Centre",
+      "shortName": "Bereina Lab",
+      "macAddress": "MACB00CD1C489A2",
+      "hostId": "Bereina HC",
+      "serial": "CPHD-F1H5W65",
+      "gxAlertDeviceId": 4557
+    }]
+  },
+  {
+    "externalId": "Madang PHA",
+    "latitude": -5.212038,
+    "longitude": 145.805420,
+    "stateName": "Madang",
+    "lgaName": "Madang",
+    "name": "Madang PHA",
+    "shortName": "Madang PHA ",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Butuwin TB Lab",
+    "latitude": -4.343217,
+    "longitude": 152.268677,
+    "stateName": "East New Britain",
+    "lgaName": "Kokopo",
+    "name": "Butuwin TB Lab",
+    "shortName": "Butuwin TB Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Butuwin TB Lab",
+      "shortName": "Butuwin TB Lab",
+      "macAddress": "MACE86A6463400C",
+      "hostId": "Butuwin Lab",
+      "serial": "CPHD-F1H5PRJ",
+      "gxAlertDeviceId": 4661,
+      "apiKey": "i66k3dpcs76lsgkfggea"
+    }]
+  },
+  {
+    "externalId": "Angau Hospital",
+    "latitude": -6.730197,
+    "longitude": 147.000809,
+    "stateName": "Morobe",
+    "lgaName": "Lae",
+    "name": "Angau Hospital",
+    "shortName": "Angau HIV ",
+    "timeZoneId": "West Pacific Standard Time"
+  },
+  {
+    "externalId": "Kerevat District Hospital",
+    "latitude": -4.343217,
+    "longitude": 152.268707,
+    "stateName": "East New Britain",
+    "lgaName": "Gazelle",
+    "name": "Kerevat District Hospital",
+    "shortName": "Kerevat ",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Kerevat District Hospital",
+      "shortName": "Kerevat ",
+      "macAddress": "MAC803253A49AFC",
+      "hostId": "Kerevat District Hospital",
+      "serial": "Cepheid-0F06814",
+      "gxAlertDeviceId": 4682,
+      "apiKey": "43z4y63xzate5bus4aba"
+    }]
+  },
+  {
+    "externalId": "Hela Lab",
+    "latitude": -5.772978,
+    "longitude": 142.779251,
+    "stateName": "Hela",
+    "lgaName": "Tari-Pori",
+    "name": "Hela Lab",
+    "shortName": "Hela Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Hela Lab",
+      "shortName": "Hela Lab",
+      "macAddress": "MAC48BA4E8A748C",
+      "hostId": "Gx SN 838493",
+      "serial": "Cepheid-0F05804",
+      "gxAlertDeviceId": 4700
+    }]
+  },
+  {
+    "externalId": "KUNDIAWA GENERAL HOSPITAL",
+    "latitude": -6.019025,
+    "longitude": 144.972305,
+    "stateName": "Chimbu (Simbu)",
+    "lgaName": "Kundiawa-Gembogl",
+    "name": "KUNDIAWA GENERAL HOSPITAL",
+    "shortName": "KUNDIAWA Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "KUNDIAWA GENERAL HOSPITAL",
+      "shortName": "KUNDIAWA Lab",
+      "macAddress": "MAC001E101F0000",
+      "hostId": "KUNDIAWA GENERAL HOS",
+      "serial": "Cepheid-412C126",
+      "gxAlertDeviceId": 4715,
+      "apiKey": "exafjgf5k75i5je3euka"
+    }]
+  },
+  {
+    "externalId": "Butuwin TB Lab",
+    "stateName": "East New Britain",
+    "lgaName": "Kokopo",
+    "name": "Butuwin TB Lab",
+    "shortName": "Butuwin TB Lab",
+    "timeZoneId": "West Pacific Standard Time",
+    "devices": [{
+      "name": "Butuwin TB Lab",
+      "shortName": "Butuwin TB Lab",
+      "macAddress": "MACE86A6463400C",
+      "hostId": "Butuwin TB Lab",
+      "serial": "CPHD-F1H5PRJ",
+      "gxAlertDeviceId": 4780,
+      "apiKey": "vgqhz575ctfpn22cyesq"
+    }]
+  }
+]

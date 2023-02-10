@@ -96,9 +96,9 @@ export const DeviceDetail = props => {
     <>
       <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device">
         {[
-          { label: intl.formatMessage(messages.profile), path: `/browse/device/${deviceId}` },
-          { label: intl.formatMessage(messages.alerts), path: `/browse/device/${deviceId}/alerts` },
-          { label: intl.formatMessage(messages.edit), path: `/browse/device/${deviceId}/edit` },
+          { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
+          { label: intl.formatMessage(messages.alerts), path: `/browse/device/list/${deviceId}/alerts` },
+          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}
@@ -117,7 +117,7 @@ export const DeviceDetail = props => {
           </AspectButton>
         ))}
       </DetailHeader>
-      <Box component="main" sx={{ pt: 8 }}>
+      <Box component="main">
         {isLoading ? (
           <LinearProgress />
         ) : (

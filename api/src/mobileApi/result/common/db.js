@@ -364,6 +364,7 @@ const getItemsV2 = (resultQuery, query) => {
       'dis.externalid as diseaseExternalId',
       'dis.name as diseaseName',
       'sp.externalId as sampleId',
+      'sp.collectedOn as sampleCollectionOn',
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
@@ -593,7 +594,7 @@ const insertResultWorkflowLog = resultWorkflowLogEntry => {
 }
 
 // feature: clinical response
-const updateResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
+const updateResultWithResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
   return knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
     resultWorkflowStatusLogId: lastLogId,
     updatedBy: resultWorkflowLogEntry.createdBy,
@@ -647,6 +648,6 @@ module.exports = {
   addResultFollowUp,
   deleteResultFollowUp,
   insertResultWorkflowLog,
-  updateResultWorkflowLog,
+  updateResultWithResultWorkflowLog,
   getLatestResultWorkflowLog,
 }

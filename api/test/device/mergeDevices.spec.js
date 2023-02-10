@@ -1,5 +1,5 @@
 const { expect, assert } = require('chai')
-const { subDays } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const { deviceMaintenanceTypeToId, resultCategoryToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
@@ -94,6 +94,7 @@ describe('Merge Devices', () => {
       .whereIn('siteId', [targetSiteId, sourceSiteId])
       .orWhereIn('deviceId', [sourceDeviceId, targetDevice.id])
       .del()
+    await knex('InventoryItem').whereIn('siteId', [targetSiteId, sourceSiteId]).del()
     await knex('Result').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
     await knex('Sample').whereIn('originSiteId', [sourceSiteId, targetSiteId]).del()
     await knex('DeviceLog').whereIn('deviceId', [sourceDeviceId, targetDevice.id]).del()
@@ -126,6 +127,15 @@ describe('Merge Devices', () => {
     await setSourceDeviceInactiveForLast24Hs()
     await setSourceFirstResultAsDuplicateInTarget(targetDevice.id, repeatedSourceResultId)
     await setSamplesToTargetSite()
+    /**
+     * create InventoryItem and keep quantityOnHand value before device merge
+     */
+    const { quantityOnHand: quantityOnHandBefore, inventoryItemId } = await setInventoryItemAndInventoryLog(
+      repeatedSourceResultId
+    )
+    /**
+     * do device merge
+     */
     await server
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
@@ -155,6 +165,11 @@ describe('Merge Devices', () => {
     )
 
     await assertFactTables(sourceDeviceId)
+    /**
+     * new value of InventoryItem.quantityOnHand should increase on 1
+     */
+    const { quantityOnHand: quantityOnHandAfter } = await knex('InventoryItem').where('id', inventoryItemId).first()
+    assert.equal(quantityOnHandAfter - 1, quantityOnHandBefore, 'quantityOnHand should be increased on 1')
   })
 })
 
@@ -239,6 +254,67 @@ async function seedNotification(issueId, resultId) {
     createdOn: new Date(),
   })
   return notificationId
+}
+
+async function getOrCreateInventoryItemFor(siteId, consumableId) {
+  const now = new Date()
+  let inventoryItem = await knex('InventoryItem')
+    .where({
+      consumableId,
+      siteId,
+    })
+    .first()
+  if (!inventoryItem) {
+    const [id] = await knex('InventoryItem').insert({
+      consumableId,
+      siteId,
+      lotNumber: 12345,
+      expiresOn: addDays(now, 30),
+      quantityOnHand: 100,
+      createdOn: now,
+      updatedOn: now,
+    })
+    inventoryItem = await knex('InventoryItem').where({ id }).first()
+  }
+  return inventoryItem
+}
+
+async function setInventoryItemAndInventoryLog(repeatedSourceResultId) {
+  const sourceResult = await knex('Result as r')
+    .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+    .where('r.id', repeatedSourceResultId)
+    .first('ca.consumableId', 'ca.quantity', 'r.siteId')
+  const { consumableId, quantity, siteId } = sourceResult
+  const inventoryItem = await getOrCreateInventoryItemFor(siteId, consumableId)
+  const { id: inventoryItemId, quantityOnHand, lotNumber, expiresOn } = inventoryItem
+
+  let { id: inventoryLogId } =
+    (await knex('InventoryLog')
+      .where({
+        inventoryItemId,
+        consumableId,
+        siteId,
+        resultId: repeatedSourceResultId,
+      })
+      .first()) || {}
+  if (!inventoryLogId) {
+    ;[inventoryLogId] = await knex('InventoryLog').insert({
+      inventoryItemId,
+      consumableId,
+      siteId,
+      consumableReasonId: 2, // 'Test Conducted'
+      resultId: repeatedSourceResultId,
+      operation: 'result',
+      lotNumber,
+      expiresOn,
+      quantity,
+    })
+  }
+
+  return {
+    quantityOnHand,
+    inventoryItemId,
+  }
 }
 
 async function setSourceDeviceInactiveForLast24Hs() {

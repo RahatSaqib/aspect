@@ -8,7 +8,7 @@ import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
 import { withProps } from 'recompose'
 import { i18nWrapper } from '../../providers/I18nProvider'
-import { getAspectDisplayPreferences, getTimezoneId } from '../LocalStorage'
+import { getAspectDisplayPreferences } from '../LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
 
@@ -29,7 +29,7 @@ export function getDateObject(date, defaultValue) {
 
 function formatBase(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
-  const userSetTimeZone = getTimezoneId()
+  const userSetTimeZone = localStorage.getItem('asTimezoneId')
   const { code: localeCode } = getLocale()
   const timeZone = getTimezoneById(userSetTimeZone)
   const dateFormatPreference = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')

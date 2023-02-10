@@ -8,13 +8,15 @@ import { Helmet } from 'react-helmet'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useSelector, useDispatch } from 'react-redux'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import DetailHeader from '../../../components/DetailHeader'
 import ErrorBoundary from '../../../components/ErrorBoundary/index'
+import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
@@ -22,7 +24,6 @@ import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import requirePermissions from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
 import {
   types,
@@ -139,6 +140,7 @@ export const InventoryItemsListWithProps = ({
   onTransferInventorySubmit,
   onAddInventorySubmit,
   refetch,
+  navButton,
 }) => {
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
   const breakOutByLotToggle = useCallback(() => {
@@ -215,16 +217,9 @@ export const InventoryItemsListWithProps = ({
   ]
 
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-      <BrowseFilters
-        navigate={navigate}
-        location={location}
-        intl={intl}
-        config={reducedFilters}
-        dateFilterLabel={intl.formatMessage(messages.expiresOn)}
-      >
-        <PermissionsProvider permissions={['inventory:edit']}>
+    <>
+      <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
+        <PermissionChecker permissions={['inventory:edit']}>
           <AddNewButton
             type="button"
             color="primary"
@@ -234,121 +229,137 @@ export const InventoryItemsListWithProps = ({
           >
             {intl.formatMessage(messages.addInventory)}
           </AddNewButton>
-        </PermissionsProvider>
-      </BrowseFilters>
+        </PermissionChecker>
+        {navButton}
+      </DetailHeader>
+      <div className={cssClasses('Container')}>
+        <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
 
-      <DataTableCard className={cssClasses('DataTableCard--action')}>
-        <FormGroup row>
-          <FormControlLabel
-            sx={{ m: 2 }}
-            control={
-              <CheckboxField
-                className={cssClasses('Checkbox')}
-                name="breakOutByLot"
-                checked={breakOutByLot}
-                label=""
-                onChange={breakOutByLotToggle}
-              />
-            }
-            label={intl.formatMessage(messages.breakOutByLot)}
-          />
-          {breakOutByLot ? (
+        <DataTableCard className={cssClasses('DataTableCard--action')}>
+          <FormGroup row>
             <FormControlLabel
-              sx={{ p: 2 }}
+              sx={{ m: 2 }}
               control={
-                <ErrorBoundary>
-                  <PermissionsProvider permissions={['inventory:edit']}>
-                    <Switch onChange={event => setEnableInventoryOnHandField(breakOutByLot && event.target.checked)} />
-                  </PermissionsProvider>
-                </ErrorBoundary>
+                <CheckboxField
+                  className={cssClasses('Checkbox')}
+                  name="breakOutByLot"
+                  checked={breakOutByLot}
+                  label=""
+                  onChange={breakOutByLotToggle}
+                />
               }
-              label={intl.formatMessage(messages.inventoryOnHand)}
+              label={intl.formatMessage(messages.breakOutByLot)}
             />
-          ) : null}
-        </FormGroup>
-      </DataTableCard>
-      <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
-        <DataTableProgressBar disabled={!isLoading} />
-        <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-        {!items.currentIdList.isEmpty() && (
-          <InventoryDataTable className={cssClasses('InventoryDataTable')}>
-            <InventoryDataTableHead
+            {breakOutByLot ? (
+              <FormControlLabel
+                sx={{ p: 2 }}
+                control={
+                  <ErrorBoundary>
+                    <PermissionChecker permissions={['inventory:edit']}>
+                      <Switch
+                        onChange={event => setEnableInventoryOnHandField(breakOutByLot && event.target.checked)}
+                      />
+                    </PermissionChecker>
+                  </ErrorBoundary>
+                }
+                label={intl.formatMessage(messages.inventoryOnHand)}
+              />
+            ) : null}
+          </FormGroup>
+        </DataTableCard>
+        <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <BrowseFilters
               navigate={navigate}
               location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={columns}
+              intl={intl}
+              config={reducedFilters}
+              dateFilterLabel={intl.formatMessage(messages.expiresOn)}
             />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(inventoryItem => (
-                  <InventoryDataTableRow
-                    key={inventoryItem.get('id')}
-                    inventoryItem={inventoryItem}
-                    breakOutByLot={breakOutByLot}
-                    inventoryOnHand={enableInventoryOnHandField}
-                    refetch={refetch}
-                    navigate={navigate}
-                    location={location}
-                  />
-                ))}
-            </TableBody>
-          </InventoryDataTable>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            intl={intl}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
-        )}
-      </DataTableCard>
-      <NewInventoryDialogForm
-        intl={intl}
-        isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_NEW_INVENTORY_DIALOG}
-        onCancel={() => dispatch(hideAdjustInventoryDialog())}
-        onSubmit={onAddInventorySubmit}
-      />
-      <AddInventoryDialogForm
-        intl={intl}
-        inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-        isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_ADD_INVENTORY_DIALOG}
-        onCancel={() => dispatch(hideAdjustInventoryDialog())}
-        onSubmit={onAddInventorySubmit}
-      />
-      <RemoveInventoryDialogForm
-        intl={intl}
-        inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-        isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_REMOVE_INVENTORY_DIALOG}
-        onCancel={() => dispatch(hideAdjustInventoryDialog())}
-        onSubmit={onRemoveInventorySubmit}
-      />
-      <TransferInventoryDialogForm
-        intl={intl}
-        inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-        isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_TRANSFER_INVENTORY_DIALOG}
-        onCancel={() => dispatch(hideAdjustInventoryDialog())}
-        onSubmit={onTransferInventorySubmit}
-      />
-      <ReceiveInventoryDialogForm
-        intl={intl}
-        items={items}
-        inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-        isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_RECEIVE_INVENTORY_DIALOG}
-        onCancel={() => dispatch(hideAdjustInventoryDialog())}
-        onSubmit={onReceiveInventorySubmit}
-      />
-    </div>
+            <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+          </div>
+          <DataTableProgressBar disabled={!isLoading} />
+          {items.currentIdList.length === 0 ? (
+            <BrowseEmptyList navigate={navigate} location={location} />
+          ) : (
+            <>
+              <InventoryDataTable className={cssClasses('InventoryDataTable')}>
+                <InventoryDataTableHead
+                  navigate={navigate}
+                  location={location}
+                  sortColumnKey={sortCol}
+                  sortColumnDir={sortDir}
+                  columns={columns}
+                />
+                <TableBody>
+                  {items.currentIdList
+                    .map(id => items.byId.get(id))
+                    .map(inventoryItem => (
+                      <InventoryDataTableRow
+                        key={inventoryItem.get('id')}
+                        inventoryItem={inventoryItem}
+                        breakOutByLot={breakOutByLot}
+                        inventoryOnHand={enableInventoryOnHandField}
+                        refetch={refetch}
+                        navigate={navigate}
+                        location={location}
+                      />
+                    ))}
+                </TableBody>
+              </InventoryDataTable>
+              <BrowseTablePaginator
+                navigate={navigate}
+                location={location}
+                intl={intl}
+                paginatorStatus={messages.paginatorStatus}
+                total={table.total}
+                pageAt={pageAt}
+                pageSize={pageSize}
+              />
+            </>
+          )}
+        </DataTableCard>
+        <NewInventoryDialogForm
+          intl={intl}
+          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_NEW_INVENTORY_DIALOG}
+          onCancel={() => dispatch(hideAdjustInventoryDialog())}
+          onSubmit={onAddInventorySubmit}
+        />
+        <AddInventoryDialogForm
+          intl={intl}
+          inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
+          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_ADD_INVENTORY_DIALOG}
+          onCancel={() => dispatch(hideAdjustInventoryDialog())}
+          onSubmit={onAddInventorySubmit}
+        />
+        <RemoveInventoryDialogForm
+          intl={intl}
+          inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
+          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_REMOVE_INVENTORY_DIALOG}
+          onCancel={() => dispatch(hideAdjustInventoryDialog())}
+          onSubmit={onRemoveInventorySubmit}
+        />
+        <TransferInventoryDialogForm
+          intl={intl}
+          inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
+          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_TRANSFER_INVENTORY_DIALOG}
+          onCancel={() => dispatch(hideAdjustInventoryDialog())}
+          onSubmit={onTransferInventorySubmit}
+        />
+        <ReceiveInventoryDialogForm
+          intl={intl}
+          items={items}
+          inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
+          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_RECEIVE_INVENTORY_DIALOG}
+          onCancel={() => dispatch(hideAdjustInventoryDialog())}
+          onSubmit={onReceiveInventorySubmit}
+        />
+      </div>
+    </>
   )
 }
 
-export const InventoryItemsList = ({ navigate, location }) => {
+export const InventoryItemsList = ({ navigate, location, navButton }) => {
   const queryClient = useQueryClient()
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
@@ -514,6 +525,7 @@ export const InventoryItemsList = ({ navigate, location }) => {
     onTransferInventorySubmit,
     onAddInventorySubmit,
     refetch: onSuccess,
+    navButton,
   }
 
   return <InventoryItemsListWithProps {...props} />

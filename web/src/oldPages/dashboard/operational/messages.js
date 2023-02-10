@@ -5,12 +5,21 @@ export const messages = defineMessages({
     id: 'pages.OperationalData.title',
     defaultMessage: 'Operational Data',
   },
-  operationalDashboardTitle: {
-    id: 'pages.OperationalDashboard.operationalDashboardTitle',
+  dashboardNav: {
+    id: 'pages.OperationalDashboard.dashboardNav',
+    defaultMessage: 'Go To Dashboard',
+  },
+  dashboard: {
+    id: 'pages.OperationalDashboard.dashboard',
     defaultMessage: 'Dashboard',
   },
-  dailyStatusTitle: {
-    id: 'pages.OperationalDashboard.dailyStatusTitle',
+
+  dailyStatusNav: {
+    id: 'pages.OperationalDashboard.dailyStatusNav',
+    defaultMessage: 'Go To Daily Status',
+  },
+  dailyStatus: {
+    id: 'pages.OperationalDashboard.dailyStatus',
     defaultMessage: 'Daily Status',
   },
 })

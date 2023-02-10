@@ -1,6 +1,7 @@
 {
   "fields": [
     {
+      "id": 1,
       "name": "Name",
       "title": "Name",
       "i18nKey": "NameFieldi18nKey",
@@ -12,6 +13,7 @@
       "controlType": "textBox"
     },
     {
+      "id": 2,
       "name": "Surename",
       "title": "Surename",
       "i18nKey": "SurenameFieldi18nKey",
@@ -22,6 +24,7 @@
       "controlType": "textBox"
     },
     {
+      "id": 3,
       "name": "Gender",
       "title": "Gender",
       "i18nKey": "Genderi18nKey",
@@ -45,6 +48,7 @@
       ]
     },
     {
+      "id": 4,
       "name": "Age",
       "title": "Age",
       "i18nKey": "AgeFieldi18nKey",
@@ -65,6 +69,7 @@
       ]
     },
     {
+      "id": 5,
       "name": "PatientPhoneNumber",
       "title": "Cellphone number",
       "i18nKey": "PatientPhoneNumberi18nkey",

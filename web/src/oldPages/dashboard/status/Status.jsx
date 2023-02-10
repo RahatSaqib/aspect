@@ -4,9 +4,9 @@ import { Helmet } from 'react-helmet'
 import { useSelector, useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import ErrorBoundary from '../../../components/ErrorBoundary'
+import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
 import BrowseSiteDropdown from '../../../oldComponents/BrowseSiteDropdown'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
 import CovidResultGraph from '../Graphs/CovidResultGraph/CovidResultGraph'
 import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
@@ -57,75 +57,75 @@ const Status = () => {
   const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
   return (
-    <div className={cssClasses('Container')} style={{ marginBottom: 0 }}>
+    <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.statusTitle)} />
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown location={location} />
       </div>
       <ErrorBoundary>
-        <PermissionsProvider permissions={['dashboard']}>
+        <PermissionChecker permissions={['dashboard']}>
           <SummaryStatus className={cssClasses('Section--summary')} dashboard="home" />
-        </PermissionsProvider>
+        </PermissionChecker>
       </ErrorBoundary>
 
       {assays ? (
-        <>
-          <PermissionsProvider permissions={['dashboard']}>
+        <div className={cssClasses('wrapper')}>
+          <PermissionChecker permissions={['dashboard']}>
             <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
-          </PermissionsProvider>
+          </PermissionChecker>
 
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
-            <PermissionsProvider permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
               <TbDetectedGraph assaysFromState={assays} /> {/* 2 */}
               <TbResultsGraph assaysFromState={assays} /> {/* 3 */}
-            </PermissionsProvider>
+            </PermissionChecker>
           ) : null}
 
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
-            <PermissionsProvider permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
               <XDRResultsGraph assaysFromState={assays} /> {/* 4 */}
-            </PermissionsProvider>
+            </PermissionChecker>
           ) : null}
 
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
-            <PermissionsProvider permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
               <TrendInYearsAllTestsGraph assaysFromState={assays} /> {/* 5 */}
               <TrendInYearsMtbDetectedGraph assaysFromState={assays} /> {/* 6 */}
               <TrendInYearsRifDetectedGraph assaysFromState={assays} /> {/* 7 */}
               <QuartersMtbDetectedGraph assaysFromState={assays} /> {/* 8 */}
               <QuartersRifDetectedGraph assaysFromState={assays} /> {/* 9 */}
-            </PermissionsProvider>
+            </PermissionChecker>
           ) : null}
 
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
-            <PermissionsProvider permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
               <XDRFLQResistanceGraph assaysFromState={assays} /> {/* 10 */}
-            </PermissionsProvider>
+            </PermissionChecker>
           ) : null}
 
           {assays.some(a => covidPermissions.includes(a.externalId)) ? (
-            <PermissionsProvider permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
               <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
-            </PermissionsProvider>
+            </PermissionChecker>
           ) : null}
 
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
-            <PermissionsProvider permissions={['dashboard']}>
+            <PermissionChecker permissions={['dashboard']}>
               <HivResultsGraph assaysFromState={assays} /> {/* 12 */}
-            </PermissionsProvider>
+            </PermissionChecker>
           ) : null}
 
-          <PermissionsProvider permissions={['dashboard', 'operationalData']}>
+          <PermissionChecker permissions={['dashboard', 'operationalData']}>
             <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
             <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
-          </PermissionsProvider>
+          </PermissionChecker>
 
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
-            <PermissionsProvider permissions={['dashboard', '+reporter']}>
+            <PermissionChecker permissions={['dashboard', '+reporter']}>
               <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
-            </PermissionsProvider>
+            </PermissionChecker>
           ) : null}
-        </>
+        </div>
       ) : null}
 
       <Reports className={cssClasses('Section--withStatus')} title={formatMessage(messages.reportsTitle)} />

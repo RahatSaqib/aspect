@@ -23,7 +23,6 @@
     "test:watch": "npm run test -- --watch",
     "test:no-coverage": "TZ='Europe/Paris' ASPECT_TARGET=test jest test --watch",
     "test:single": "TZ='Europe/Paris' ASPECT_TARGET=test jest ",
-    "posttest": "npm run lint",
     "preupdatemessages:start": "formatjs extract \"src/**/*.{js,jsx}\" --out-file \"./extracted_strings.json\" --format \"./src/utils/i18n/formatter.js\"",
     "updatemessages:start": "rip json2pot \"./extracted_strings.json\" -o \"./diff.pot\"",
     "updatemessages:end": "rip po2json \"./src/utils/i18n/web.*.po\" -m \"./extracted_strings.json\" -o \"./src/utils/i18n/translation.json\"",
@@ -33,8 +32,7 @@
     "lint": "eslint . --ext .js --ext .jsx",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
-    "release:patch": "npm version patch && npm publish && git push --follow-tags",
-    "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json"
+    "release:patch": "npm version patch && npm publish && git push --follow-tags"
   },
   "dependencies": {
     "@babel/runtime": "^7.18.9",
@@ -78,6 +76,7 @@
     "react-google-maps": "^9.4.5",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.4.0",
+    "react-idle-timer": "^5.4.2",
     "react-intl": "^6.0.5",
     "react-jss": "^10.9.2",
     "react-query": "^3.39.2",
@@ -90,7 +89,6 @@
     "recompose": "^0.30.0",
     "redux": "^4.2.0",
     "redux-form": "^8.3.8",
-    "redux-idle-monitor": "^0.10.2",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.4.1",
     "url-search-params-polyfill": "^8.1.1",
@@ -192,7 +190,6 @@
     "url-loader": "^4.1.1",
     "util.promisify": "^1.1.1",
     "webpack": "^5.74.0",
-    "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^3.11.2",
     "webpack-manifest-plugin": "^5.0.0",

@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+import React from 'react'
 import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
@@ -11,8 +11,8 @@ import useI18n from '../../../hooks/useI18n'
 import { commonDefinitions } from '../../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { isCountryFilterHidden } from '../utils'
-import styles from './FiltersBtnGroup.css'
 import messages from './messages'
+import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -136,7 +136,7 @@ const getResultCategoryNameFromDisease = (assayItems, filterDiseaseId, resultCat
   return matchingCategory.i18nKey
 }
 
-const FiltersBtnGroup = ({ className, children, ...restProps }) => {
+const FiltersBtnGroup = ({ children, ...restProps }) => {
   const { formatMessage, format } = useI18n()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
 
@@ -461,13 +461,8 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
   }
 
   return (
-    <div className={cssClasses(className, 'FiltersBtnGroup')}>
-      {children &&
-        Children.map(children, child =>
-          React.cloneElement(child, {
-            className: cssClasses('FiltersBtnGroup__Child'),
-          })
-        )}
+    <div className={cssClasses('FiltersBtnGroup')}>
+      {children}
       {Immutable.Map(restProps.filters)
         .keySeq()
         .sortBy(filterKey => filtersOrdering[filterKey])

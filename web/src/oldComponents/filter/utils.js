@@ -4,14 +4,12 @@ import subtractDays from 'date-fns/subDays'
 import filter from 'lodash/filter'
 import find from 'lodash/find'
 import flowRight from 'lodash/flowRight'
-import intersection from 'lodash/intersection'
 import isArray from 'lodash/isArray'
 import isNil from 'lodash/isNil'
 import isNull from 'lodash/isNull'
 import isUndefined from 'lodash/isUndefined'
 import mapKeys from 'lodash/mapKeys'
 import reduce from 'lodash/reduce'
-import { navigations } from '../BrowseFilters'
 import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../shared/requirePermissions'
 
 export function nonEmptyFilterValue(x) {
@@ -184,22 +182,6 @@ export const sanitizeFiltersStringBy = config => (filtersString, dependencies) =
     }
   )
 
-const sanitizeBrowseLink = userPermissions => {
-  const permissions = []
-
-  userPermissions.toJS().forEach(permission => {
-    permissions.push(permission)
-    if (permission.includes(':')) {
-      const splittedPermission = permission.split(':')
-      const permissionModule = splittedPermission[0]
-      permissions.push(permissionModule)
-    }
-  })
-
-  const source = filter(navigations, link => intersection(link.requiredPermissions, permissions).length >= 1)
-  return source.length >= 1 ? source[0] : false
-}
-
 export const reduceNavLinks = (linkArray, userPermissions) => {
   const reducedNav = reduce(
     linkArray,
@@ -209,27 +191,9 @@ export const reduceNavLinks = (linkArray, userPermissions) => {
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
 
       if (isPermitted && source.value)
-        result.push({
-          value: source.value,
-          label: source.label,
-          i18nKey: source.i18nKey,
-        })
+        result.push({ value: source.value, label: source.label, i18nKey: source.i18nKey })
       else if (isPermitted && source.href) {
-        if (source.href === '/browse') {
-          const filteredSource = sanitizeBrowseLink(userPermissions)
-          if (filteredSource) {
-            result.push({
-              href: filteredSource.value,
-              label: source.label,
-              i18nKey: source.i18nKey,
-            })
-          }
-        } else
-          result.push({
-            href: source.href,
-            label: source.label,
-            i18nKey: source.i18nKey,
-          })
+        result.push({ href: source.href, label: source.label, i18nKey: source.i18nKey })
       }
       return result
     },

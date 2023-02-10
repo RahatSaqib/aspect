@@ -9,12 +9,18 @@ import { Helmet } from 'react-helmet'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AspectExportListButton from '../../../components/AspectExportListButton'
+import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
+import {
+  getFilters,
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+  setFiltersForLast30Days,
+} from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
@@ -132,49 +138,55 @@ export const ReporterListWithProps = ({
 }) => {
   const { formatMessage } = useI18n()
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={formatMessage(messages.reportersTitle)} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!isLoading} />
-
-        <AspectExportListButton
-          onExport={onExportClick}
-          visible={!items.currentIdList.isEmpty()}
-          reportName="Reporters"
-        />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-        {!items.currentIdList.isEmpty() && (
-          <ReporterDataTable className={cssClasses('ReporterDataTable')}>
-            <ReporterDataTableHead
-              navigate={navigate}
-              location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={columns}
+    <>
+      <DetailHeader name={formatMessage(messages.reportersTitle)} disableBack />
+      <div className={cssClasses('Container')}>
+        <Helmet title={formatMessage(messages.reportersTitle)} />
+        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
+            <AspectExportListButton
+              onExport={onExportClick}
+              visible={!items.currentIdList.isEmpty()}
+              reportName="Reporters"
             />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(reporter => (
-                  <ReporterDataTableRow key={reporter.get('siteId')} reporter={reporter} />
-                ))}
-            </TableBody>
-          </ReporterDataTable>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
-            navigate={navigate}
-            location={location}
-            className={cssClasses('BrowseTablePaginator')}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
-        )}
-      </DataTableCard>
-    </div>
+          </div>
+          <DataTableProgressBar disabled={!isLoading} />
+
+          {items.currentIdList.length === 0 ? (
+            <BrowseEmptyList navigate={navigate} location={location} />
+          ) : (
+            <>
+              <ReporterDataTable className={cssClasses('ReporterDataTable')}>
+                <ReporterDataTableHead
+                  navigate={navigate}
+                  location={location}
+                  sortColumnKey={sortCol}
+                  sortColumnDir={sortDir}
+                  columns={columns}
+                />
+                <TableBody>
+                  {items.currentIdList
+                    .map(id => items.byId.get(id))
+                    .map(reporter => (
+                      <ReporterDataTableRow key={reporter.get('siteId')} reporter={reporter} />
+                    ))}
+                </TableBody>
+              </ReporterDataTable>
+              <BrowseTablePaginator
+                navigate={navigate}
+                location={location}
+                className={cssClasses('BrowseTablePaginator')}
+                paginatorStatus={messages.paginatorStatus}
+                total={table.total}
+                pageAt={pageAt}
+                pageSize={pageSize}
+              />
+            </>
+          )}
+        </DataTableCard>
+      </div>
+    </>
   )
 }
 
@@ -261,6 +273,16 @@ const ReporterList = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams()
+    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+
+    setFiltersForLast30Days(searchParams)
+
+    navigate({ ...location, search: `?${searchParams.toString()}` })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onExportClick = formatType => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
