@@ -48,6 +48,11 @@ module.exports = {
     reference: {
       directory: process.env['file.reference.directory'],
     },
+    import: {
+      gxAlert: {
+        directoryName: process.env['import.gxalert.directory'],
+      },
+    },
   },
   amqp: {
     url: process.env['amqp.url'],

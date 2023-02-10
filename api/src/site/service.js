@@ -1,4 +1,5 @@
 const Boom = require('@hapi/boom')
+const _ = require('lodash')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -216,22 +217,40 @@ async function listSitesForSelectList(request) {
       },
     }
   }
-  const response = await getListSitesForSelectList(dataConstraints, query?.tags, mode)
+  const { tags, siteTypeExternalIds, excludeSiteIds } = query || {}
+  const response = await getListSitesForSelectList(dataConstraints, {
+    excludeSiteIds,
+    mode,
+    siteTypeExternalIds,
+    tags,
+  })
   return response
 }
 
-async function getListSitesForSelectList(dataConstraints, tags, mode) {
+async function getListSitesForSelectList(dataConstraints, opt = {}) {
+  const { excludeSiteIds, mode, siteTypeExternalIds, tags } = opt
   let sitesQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
 
-  if (tags && tags.length > 0)
+  if (tags && tags.length > 0) {
     sitesQuery = sitesQuery
       .leftOuterJoin('SiteTag as stg', 's.id', 'stg.siteId')
       .leftOuterJoin('Tag as t', 'stg.tagId', 't.id')
       .whereIn('t.title', tags)
+  }
+  if (siteTypeExternalIds && siteTypeExternalIds.length > 0) {
+    const siteTypes = _.isArray(siteTypeExternalIds) ? siteTypeExternalIds : [siteTypeExternalIds]
+    sitesQuery = sitesQuery
+      .leftOuterJoin('SiteType as sType', 's.siteTypeId', 'sType.id')
+      .whereIn('sType.externalId', siteTypes)
+  }
+  if (excludeSiteIds) {
+    const siteIds = _.isArray(excludeSiteIds) ? excludeSiteIds : [excludeSiteIds]
+    sitesQuery = sitesQuery.whereNotIn('s.id', siteIds)
+  }
 
   let columnsToSelect = ['s.id', 's.name', 'g.stateId', 'st.name as stateName']
 

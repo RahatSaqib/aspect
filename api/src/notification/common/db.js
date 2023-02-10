@@ -9,6 +9,42 @@ const {
 } = require('../../shared/dictionary')
 const { validateFilterCondition } = require('./validations')
 
+async function updateNotificationType(id, fieldsToUpdate) {
+  await knex('NotificationType').where({ id }).update(fieldsToUpdate)
+}
+
+async function getNotification(
+  id,
+  selectFields = [
+    'ntc.name as notificationTypeName',
+    'ntc.externalId as notificationType',
+    'it.externalId as issueType',
+    'r.externalId as reportId',
+    'nt.name as name',
+    'nt.filterCondition as filterCondition',
+    'et.subject as emailSubject',
+    'et.body as emailBody',
+    'st.message as smsBody',
+    'wt.url as webUrl',
+    'wt.payload as webBody',
+    'nt.enabled',
+    'nt.cronRecurrency',
+  ]
+) {
+  return knex
+    .select(selectFields)
+    .from('NotificationType as nt')
+    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
+    .leftJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
+    .leftJoin('IssueType as it', 'it.id', 'nt.issueTypeId')
+    .leftJoin('Report as r', 'r.id', 'nt.reportId')
+    .leftJoin('EmailTemplate as et', 'et.id', 'mt.emailTemplateId')
+    .leftJoin('SmsTemplate as st', 'st.id', 'mt.smsTemplateId')
+    .leftJoin('WebhookTemplate as wt', 'wt.id', 'mt.webhookTemplateId')
+    .where('nt.id', id)
+    .first()
+}
+
 async function getListNotifications(query, credentials) {
   const subquery = knex('NotificationType as nti')
     .leftOuterJoin('JobFunction AS jf', leftBuilder =>
@@ -40,7 +76,10 @@ async function getListNotifications(query, credentials) {
 
   const notificationQuery = knex('NotificationType as nt')
     .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
-    .leftOuterJoin('Notification as n', 'nt.id', 'n.notificationTypeId')
+    .leftOuterJoin(knex.raw('Notification as n FORCE INDEX(notification_createdOn_notificationType_index)'), builder =>
+      builder.on('nt.id', 'n.notificationTypeId').andOn(knex.raw('n.alertMessageId is null'))
+    )
+    .leftOuterJoin('IssueType as it', 'nt.issueTypeId', 'it.id')
     .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
     .modify(filterParams, query, {
@@ -68,7 +107,8 @@ async function getListNotifications(query, credentials) {
       knex.raw(`GROUP_CONCAT(DISTINCT filters.personName SEPARATOR ', ') as persons`),
       columnCount('alert'),
       knex.raw(`nt.filterCondition->>'$.sendToPatient' as sendToPatient`),
-      'ntc.externalId as typeCategory'
+      'ntc.externalId as typeCategory',
+      'it.readyForNotification'
     )
 
   function columnCount(column) {
@@ -82,40 +122,48 @@ async function getListNotifications(query, credentials) {
   const getCount = knex.count('* as count').from(notificationQuery.clone().as('mainQuery')).first()
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
   return { ok: true, total, data, length: data.length }
 }
 
 function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
   queryBuilder.andWhere(qb => {
-    const stateConstraints = dataConstraints.$or?.filter(c => c.geography?.stateId).map(c => c.geography.stateId) || []
-    if (stateConstraints.length > 0) {
-      stateConstraints.map(stateId =>
-        qb.orWhere(b => {
-          b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'state')
-          b.whereRaw(`'${stateId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
-        })
-      )
-    }
+    const countryConstraints = dataConstraints.$or?.filter(c => c.geography?.countryId) || []
 
-    const lgaConstraints = dataConstraints.$or?.filter(c => c.geography?.lgaId).map(c => c.geography.lgaId) || []
-    if (lgaConstraints.length > 0) {
-      lgaConstraints.map(lgaId =>
-        qb.orWhere(b => {
-          b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'lga')
-          b.whereRaw(`'${lgaId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
-        })
-      )
-    }
+    // If the user has not country-level rights...
+    if (!countryConstraints || countryConstraints.length === 0) {
+      // ...then apply state, lga, and site level filters.
+      // In the contrary, allow seeing all notifications.
+      // For this specific query, having a country-level job invalidates all the other jobs.
+      const stateConstraints =
+        dataConstraints.$or?.filter(c => c.geography?.stateId).map(c => c.geography.stateId) || []
+      if (stateConstraints.length > 0) {
+        stateConstraints.map(stateId =>
+          qb.orWhere(b => {
+            b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'state')
+            b.whereRaw(`'${stateId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+          })
+        )
+      }
 
-    const siteConstraints = dataConstraints.$or?.filter(c => c.site).map(c => c.site.id) || []
-    if (siteConstraints.length > 0) {
-      siteConstraints.map(siteId =>
-        qb.orWhere(b => {
-          b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'lab')
-          b.whereRaw(`'${siteId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
-        })
-      )
+      const lgaConstraints = dataConstraints.$or?.filter(c => c.geography?.lgaId).map(c => c.geography.lgaId) || []
+      if (lgaConstraints.length > 0) {
+        lgaConstraints.map(lgaId =>
+          qb.orWhere(b => {
+            b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'lga')
+            b.whereRaw(`'${lgaId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+          })
+        )
+      }
+
+      const siteConstraints = dataConstraints.$or?.filter(c => c.site).map(c => c.site.id) || []
+      if (siteConstraints.length > 0) {
+        siteConstraints.map(siteId =>
+          qb.orWhere(b => {
+            b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'lab')
+            b.whereRaw(`'${siteId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+          })
+        )
+      }
     }
   })
 }
@@ -145,15 +193,23 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     webUrl,
     enabled,
     cronRecurrency,
-    reportExternalId = null,
+    reportFrequency,
+    reportDateRange,
+    reportStartingWeekDay,
     issueType: issueTypeExternalId,
+    reportId: reportExternalId,
     notificationType: notificationTypeExternalId,
   } = payload
 
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeExternalId)
 
-  const issueTypeId = await issueTypeToId(issueTypeExternalId)
-  const { id: reportId } = (await knex('Report').where({ externalId: reportExternalId }).first()) || {}
+  const issueTypeId = notificationTypeExternalId !== 'issueBased' ? null : await issueTypeToId(issueTypeExternalId)
+  const { id: reportId } =
+    notificationTypeExternalId !== 'reportBased'
+      ? {}
+      : reportExternalId
+      ? await knex('Report').where({ externalId: reportExternalId }).first()
+      : {}
   const now = new Date()
 
   const auditFields = {
@@ -250,6 +306,10 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           updatedOn: now,
           updatedBy: userId,
           enabled,
+          reportId,
+          issueTypeId,
+          notificationTypeCategoryId,
+          cronRecurrency,
         })
         .where({ id: notificationTypeId })
       ;({ messageTypeId } = await knex
@@ -337,22 +397,28 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     /**
      * update remaining fields in NotificationType
      */
+
     await knex('NotificationType')
       .update({
         messageTypeId,
+        issueTypeId,
+        cronRecurrency,
+        reportId,
         filterCondition: JSON.stringify({
           areaItems,
           deviceLevelId,
           jobFunctions,
           persons,
+          issueTypeId,
           result,
           sendEmail,
           sendSms,
           sendToPatient,
           sendWeb,
           enabled,
-          cronRecurrency,
-          reportId,
+          reportFrequency,
+          reportDateRange,
+          reportStartingWeekDay,
         }),
       })
       .where({ id: notificationTypeId })
@@ -368,7 +434,30 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     }
   })
 }
+
+async function getReporBasedNotifications() {
+  const rbnQuery = knex('NotificationType as nt')
+    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
+    .where('ntc.externalId', 'reportBased')
+    .where('nt.enabled', 1)
+    .whereNotNull('nt.cronRecurrency')
+    .select('nt.id', 'nt.name', 'nt.cronRecurrency')
+
+  return rbnQuery
+}
+
+async function getNotificationStatusInfo(id) {
+  return knex('NotificationType as nt')
+    .join('NotificationTypeCategory as ntc', 'ntc.id', 'nt.notificationTypeCategoryId')
+    .where('nt.id', id)
+    .first(['ntc.externalId as notificationType', 'nt.name', 'nt.enabled', 'nt.cronRecurrency'])
+}
+
 module.exports = {
   getListNotifications,
   saveNotificationType,
+  getNotification,
+  getReporBasedNotifications,
+  getNotificationStatusInfo,
+  updateNotificationType,
 }

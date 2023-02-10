@@ -5,10 +5,9 @@ const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
 const Sentry = require('@sentry/node')
-
 const config = require('./config')
 const { version } = require('../package.json')
-const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes, asyncHandler } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
@@ -16,9 +15,13 @@ const { addLoggers } = require('./logger/service')
 const logger = require('./shared/logger')
 const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
-const { getDictionary, getDictionarySync } = require('./shared/dictionary')
+const { initDictionaryTables } = require('./shared/dictionary')
+const AspectCacheSingleton = require('../aspectCache')
+
+const cache = AspectCacheSingleton.getInstance()
 
 const { port } = config
+
 const server = new Hapi.server({
   port,
   host: '127.0.0.1',
@@ -28,7 +31,7 @@ const server = new Hapi.server({
         'WWW-Authenticate',
         'Server-Authorization',
         'Date',
-        'Content-Disposition', // for report files, see 'createReport()' in '/report/serviceReports.js'
+        'Content-Disposition', // for report files, see 'downloadReport()' in '/report/serviceReports.js'
       ],
     },
     validate: {
@@ -208,15 +211,7 @@ const start = async () => {
    * in `api/src/auth/constraints.js`
    */
   server.ext('onRequest', async function (request, h) {
-    const dictionaryTables = [{ table: 'Assay', column: 'id' }]
-    await Promise.all(
-      dictionaryTables.map(async ({ table, column }) => {
-        if (!getDictionarySync(table, column)) {
-          // calling of async func `getDictionary` reads and caches specified table/column
-          return getDictionary(table, column)
-        }
-      })
-    )
+    await initDictionaryTables()
     return h.continue
   })
 
@@ -295,6 +290,29 @@ const start = async () => {
     handler: () => ({
       message: 'Hello! The API is at /api.',
       version,
+    }),
+    config: {
+      auth: false,
+    },
+  })
+
+  // =======================
+  // version endpoint
+  // =======================
+  server.route({
+    method: 'GET',
+    path: '/api/version',
+    handler: asyncHandler(async () => {
+      // version is cached to indicate the new version only when Aspect api restarts,
+      // instead of doing so directly when package.json is updated.
+      const cachedVersion = await cache.getVersion()
+      if (!cachedVersion) {
+        await cache.setVersion(version)
+      }
+
+      return {
+        version: cachedVersion ?? version,
+      }
     }),
     config: {
       auth: false,

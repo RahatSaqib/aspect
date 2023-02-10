@@ -12,10 +12,13 @@ const {
   getDateTimeProjectionInUserTimeZone,
 } = require('../../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
-const { getUser } = require('../../auth/service')
+const { getPersonByPersonId } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
-const { getDeviceReportData } = require('./deviceReport')
+const { getDevicesWithCountsForTB } = require('./deviceReport')
+const { getAllDeviceReportData } = require('./devicesAndSitesOverviewReport')
+const { getResultCategoryGroupColumns } = require('../common/db')
+const { getErrorsByDevices } = require('./getErrorsByDevices')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -71,7 +74,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
 
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints).whereNotIn('dt.externalId', [
     'Aspect',
     'GxAlert',
@@ -268,7 +271,7 @@ async function exportDeviceOperationLogReport(request, reply) {
 
 async function getDeviceCapacityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture } = await getPersonByPersonId(auth.credentials.personId)
   let { minDate } = query
   const { maxDate } = query
 
@@ -417,8 +420,7 @@ async function getModuleActivityReport(auth, query) {
 
 async function getModuleStatusReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate, maxDate } = query
-  const rows = await getModuleStatusReportData(minDate, maxDate, dataConstraints, query)
+  const rows = await getModuleStatusReportData(dataConstraints, query)
 
   return {
     ok: true,
@@ -427,14 +429,41 @@ async function getModuleStatusReport(auth, query) {
   }
 }
 
-async function getDeviceReport(auth, query) {
+async function getDevicesWithCountsForTBReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getDeviceReportData(dataConstraints, query)
+  const rows = await getDevicesWithCountsForTB(dataConstraints, query)
 
   return {
     ok: true,
     data: rows,
     total: rows.length,
+  }
+}
+
+async function getAllDeviceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
+  const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+    dynamicColumns: resultCategoryGroups.map(a => ({
+      key: a.columnKey,
+      header: a.columnName,
+    })),
+  }
+}
+
+async function getErrorsByDevicesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const data = await getErrorsByDevices(dataConstraints, query)
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
   }
 }
 
@@ -448,5 +477,7 @@ module.exports = {
   getDeviceCapacityReport,
   getModuleActivityReport,
   getModuleStatusReport,
-  getDeviceReport,
+  getDevicesWithCountsForTBReport,
+  getAllDeviceReport,
+  getErrorsByDevicesReport,
 }

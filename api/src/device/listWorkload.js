@@ -41,7 +41,6 @@ const xdrExtraColumns = ['INH', 'FLQ', 'AMK', 'KAN', 'CAP', 'ETH'].map(resistanc
 
 const listWorkload = async request => {
   const { query, auth } = request
-
   const dataConstraints = await getConstraints(auth.credentials)
 
   const { assayId } = query
@@ -83,7 +82,6 @@ const listWorkload = async request => {
       ),
     ]
   }
-
   const { total, length, data } = await getDeviceWorkload(extraColumns, dataConstraints, query)
   extraColumns = extraColumns.map(ec => omit(ec, 'selector'))
   return { ok: true, total, length, data, extraColumns }

@@ -18,6 +18,7 @@ const { query, knex } = require('../db')
 const { gxAlertAuthenticate } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
+const { convertTimezonetoIANA } = require('../shared/date')
 
 const clientTypes = {
   app: 'reporter_app',
@@ -51,6 +52,7 @@ const userProps = [
   'u.legacyPassword',
   'u.id',
   'u.name',
+  'c.timezone as defaultTimezone',
   ...personProps,
 ]
 
@@ -229,7 +231,8 @@ async function authenticate(request, response) {
     clientId,
     clientType,
     culture: user.culture || 'en-US',
-    timezone: user.timezone || 'Eastern Standard Time',
+    timezone: user.timezone || user.defaultTimezone,
+    timezoneIANA: convertTimezonetoIANA(user.timezone || user.defaultTimezone),
     displayPreferences,
     countryId: user.countryId,
     countryAbbreviation: user.countryAbbreviation,
@@ -378,6 +381,7 @@ async function getAccessToken({ id, name, partnerId, personId }, clientType = 'w
   // create a new token
   const token = jwt.sign(
     {
+      personId,
       name,
       permissions,
       hasToAcceptLicenseId:

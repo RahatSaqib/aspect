@@ -1,7 +1,27 @@
 import { defineMessages } from 'react-intl'
-import { resultCategory, assay } from '../../../messages'
+import { resultCategory, assay, report } from '../../../messages'
 
 export default defineMessages({
+  reportBaseType: {
+    id: 'pages.NotificationDetail.New.reportBaseType',
+    defaultMessage: 'Reports',
+  },
+  hasRecurrency: {
+    id: 'pages.NotificationDetail.New.hasRecurrency',
+    defaultMessage: 'Has Recurrency',
+  },
+  ReportsAvailable: {
+    id: 'pages.NotificationDetail.New.ReportsAvailable',
+    defaultMessage: 'Reports Available',
+  },
+  issueType: {
+    id: 'pages.NotificationDetail.New.issueType',
+    defaultMessage: 'Issues types',
+  },
+  issues: {
+    id: 'pages.NotificationDetail.New.issues',
+    defaultMessage: 'Issues available',
+  },
   titleNew: {
     id: 'pages.NotificationDetail.New.title',
     defaultMessage: 'New Notification',
@@ -91,9 +111,21 @@ export default defineMessages({
     id: 'pages.Notifications.group.forResults',
     defaultMessage: 'Notification for Results',
   },
+  notificationCreateGroupForReport: {
+    id: 'pages.Notifications.group.notificationCreateGroupForReport',
+    defaultMessage: 'Reports Notification',
+  },
   notificationTypeResultBased: {
     id: 'pages.NotificationDetail.type.ResultBased',
     defaultMessage: 'Result Based',
+  },
+  notificationTypeReportBased: {
+    id: 'pages.NotificationDetail.type.notificationTypeReportBased',
+    defaultMessage: 'Report Based',
+  },
+  notificationTypeIssueBased: {
+    id: 'pages.NotificationDetail.type.notificationTypeIssueBased',
+    defaultMessage: 'Issue Based',
   },
   // Notification for Site
   notificationCreateGroupForSite: {
@@ -103,6 +135,20 @@ export default defineMessages({
   notificationTypeLowInventory: {
     id: 'pages.Notification.type.LowInventory',
     defaultMessage: 'Low Inventory',
+  },
+  notificationTypeLowFieldCompletionRate: {
+    id: 'pages.Notification.type.LowFieldCompletionRate',
+    defaultMessage: 'Low Field Completion Rate',
+  },
+  notificationTypeLowFieldCompletionRateMessage: {
+    id: 'pages.Notification.type.LowFieldCompletionRateMessage',
+    defaultMessage:
+      'This notification will be triggered any time a site changes its custom fields completion rate to less than 0.8. Also, it will be sent only if you have the custom field completion weight set in your country. Please check with your administrator before using it.',
+  },
+  notificationTypeDeviceOffline: {
+    id: 'pages.Notification.type.notificationTypeDeviceOffline',
+    defaultMessage:
+      'This notification will trigger once a device connector, for example GxConnect, remains offline for 7 days.',
   },
   notificationTypeExpiring: {
     id: 'pages.Notification.type.InventoryExpiring',
@@ -551,6 +597,20 @@ export default defineMessages({
     defaultMessage: 'Change',
   },
 
+  dataDateRange: {
+    id: 'pages.Notifications.dataDateRange',
+    defaultMessage: 'Date Range',
+  },
+  dataDateRangeTitle: {
+    id: 'pages.Notifications.dataDateRangeTitle',
+    defaultMessage: 'Define date range for report',
+  },
+  startingDayOfTheWeekTitle: {
+    id: 'pages.Notifications.startingDayOfTheWeekTitle',
+    defaultMessage: 'Starting Day of the Week',
+  },
+
   ...assay,
   ...resultCategory,
+  ...report,
 })

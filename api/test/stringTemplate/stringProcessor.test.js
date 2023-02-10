@@ -174,8 +174,7 @@ L|1`,
       templateFields.forEach(field => {
         data[field] = payloadTemplate
       })
-      const options = { dynamic: true }
-      return processUsingDataSourceQuery(data, templateFields, options)
+      return processUsingDataSourceQuery(data, templateFields)
     }
 
     describe('formatDate helper', () => {

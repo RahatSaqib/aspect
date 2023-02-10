@@ -9,7 +9,14 @@ export const messages = defineMessages({
     id: 'placeholders.insert.placeholder.for',
     defaultMessage: 'Insert Placeholder For',
   },
-
+  placeholderReport: {
+    id: 'placeholder.report',
+    defaultMessage: 'Report',
+  },
+  placeholderReportDownloadLink: {
+    id: 'placeholder.report.downloadlink',
+    defaultMessage: 'Download Link',
+  },
   placeholderSite: {
     id: 'placeholder.site',
     defaultMessage: `Site`,
@@ -21,6 +28,10 @@ export const messages = defineMessages({
   placeholderNameShort: {
     id: 'placeholder.name.short',
     defaultMessage: `Short Name`,
+  },
+  placeholderCompletionRatePercentage: {
+    id: 'placeholder.site.completionRatePercentage',
+    defaultMessage: `Completion Rate Percentage`,
   },
   placeholderId: {
     id: 'placeholder.id',

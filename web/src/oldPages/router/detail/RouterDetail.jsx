@@ -19,7 +19,6 @@ import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
-import NavTitle from '../../../oldComponents/NavTitle'
 import { Unit } from '../../../oldComponents/pureGrids'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import JSONSchemaCard from '../../../oldComponents/shared/JSONSchemaCard'
@@ -143,10 +142,6 @@ export class RouterDetail extends PureComponent {
       .then(this.handleToggleEditDialog)
   }
 
-  renderProgress() {
-    return <LinearProgress />
-  }
-
   renderEditButtonWithDialog() {
     const { router, editable, intl } = this.props
     if (!editable || !router || !router.has('deviceType')) {
@@ -167,7 +162,7 @@ export class RouterDetail extends PureComponent {
     const dataSchema = router.getIn(['deviceType', 'configurationDataSchema'])
 
     return (
-      <div>
+      <div className="ari">
         <Tooltip title={formatMessage(messages.editTooltip)} placement="bottom" disableInteractive>
           <IconButton aria-label={formatMessage(messages.editTooltip)} onClick={this.handleToggleEditDialog}>
             <ModeEdit fontSize="large" />
@@ -364,14 +359,6 @@ export class RouterDetail extends PureComponent {
     )
   }
 
-  renderPaper() {
-    return (
-      <div>
-        {this.props.router && this.props.router.has('deviceType') ? this.renderContent() : this.renderProgress()}
-      </div>
-    )
-  }
-
   render() {
     const { intl } = this.props
     const { formatMessage } = intl
@@ -379,8 +366,9 @@ export class RouterDetail extends PureComponent {
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
-        <NavTitle title={formatMessage(messages.title)} />
-        {this.renderPaper()}
+        <div>
+          {this.props.router && this.props.router.has('deviceType') ? this.renderContent() : <LinearProgress />}
+        </div>
       </div>
     )
   }

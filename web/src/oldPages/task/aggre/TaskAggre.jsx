@@ -151,7 +151,7 @@ export const TaskAggre = ({
             devices.toArray().map(element => (
               <span className={cssClasses('Summary__Item')}>
                 {element.device}
-                <Link to={`/browse/device/${element.deviceId}`} className={cssClasses('Summary__Item__Link')}>
+                <Link to={`/browse/device/list/${element.deviceId}`} className={cssClasses('Summary__Item__Link')}>
                   <FaArrowUp className={cssClasses('Summary__Item__Link__FaArrowUp')} />
                 </Link>
               </span>

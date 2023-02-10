@@ -7,7 +7,7 @@ const { partnerName, fixtures } = require(`../${process.env['seeds.directory'].r
   ''
 )}/fixtures/partnerData`)
 const relativeReportPath = `../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/reports.js`
-const absolutePath = `${__dirname}${relativeReportPath.substring(2)}`.replace('/zz_shared', '')
+const absolutePath = `${__dirname}${relativeReportPath.substring(2)}`.replace(/(\/|\\)zz_shared/, '')
 function exists(path) {
   return fs.existsSync(path)
 }

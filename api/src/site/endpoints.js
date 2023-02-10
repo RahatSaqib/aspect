@@ -171,6 +171,16 @@ const routes = [
       validate: {
         query: {
           tags: [Joi.array().items(Joi.string()).description('Tag names of sites requested').optional()],
+          siteTypeExternalIds: Joi.alternatives()
+            .try(Joi.array().items(Joi.string()), Joi.string())
+            .allow(null, '')
+            .description('ExternalIds of site types to return')
+            .optional(),
+          excludeSiteIds: Joi.alternatives()
+            .try(Joi.array().items(Joi.number()), Joi.number())
+            .allow(null)
+            .description('Site ids to exclude, i.e. current site id being edited')
+            .optional(),
         },
       },
       response: {

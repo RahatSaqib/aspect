@@ -1,18 +1,20 @@
-const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays } = require('date-fns')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 const { knex, sortPageParams } = require('../db')
 const { getJobConstraints, addConstraints, getConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
-const { notificationTypeCreated } = require('../notificationType/actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
-const logger = require('../shared/logger')
 const NotificationCache = require('./notificationCache')
+const saveReportToFile = require('../report/saveReportToFile')
+const config = require('../config')
+const { getDateRangeFilters } = require('./common/logic')
 
 async function clearCache() {
   return NotificationCache.getInstance(knex).refreshCache()
@@ -158,6 +160,7 @@ async function createNotifications(knex, action, context) {
         )
       })
     }
+
     await Promise.each(policies, async policy => {
       if (_.isEmpty(jobFunctions) && _.isEmpty(persons)) {
         await createNotificationIfNotCreatedAlready(action, { policy, now }, { messageContext: context, knex })
@@ -196,9 +199,9 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
     'nt.jobFunctionId',
     'nt.level',
     'nt.sendToContactsWithMatchingTags',
-    'g.countryId',
-    'g.stateId',
-    'g.lgaId',
+    // 'g.countryId',
+    // 'g.stateId',
+    // 'g.lgaId',
     'mt.alertTemplateId',
     'mt.emailTemplateId',
     'mt.smsTemplateId',
@@ -212,6 +215,7 @@ async function getNotificationPolicy(txKnex, action, extraConditionsFunction = (
     knex.raw(
       'CASE JSON_CONTAINS(nt.filterCondition, "true", "$.sendWeb") WHEN 1 THEN mt.webhookTemplateId ELSE NULL END as webhookTemplateId'
     ),
+    'nt.filterCondition',
   ]
   let extraFields = []
   const aliases = { geography: 'g' }
@@ -327,23 +331,70 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, action
   const personsToNotify = new Set()
   await Promise.all(
     people.map(async person => {
-      const shouldNotifyToPerson = await shouldNotify(txKnex, action, person.id, person.jobFunctionId)
+      const shouldNotifyToPerson =
+        action.reportId || (await shouldNotify(txKnex, action, person.id, person.jobFunctionId))
       if (shouldNotifyToPerson != null) {
         personsToNotify.add(person.id)
       }
     })
   )
 
-  // Process the persons and send notifications
-  await Promise.all(
-    [...personsToNotify].map(async personId => {
+  if (action.reportId) {
+    const generatedReports = new Set()
+    const { externalId } = await knex('Report').where({ id: action.reportId }).first()
+    let fileName
+    const { reportDateRange, reportStartingWeekDay } = JSON.parse(policy.filterCondition)
+    const filters = getDateRangeFilters(new Date(), reportDateRange, reportStartingWeekDay)
+
+    for (const personId of [...personsToNotify]) {
+      // eslint-disable-next-line no-await-in-loop
+      const constraints = await getConstraints({ personId })
+      delete constraints.person
+
+      const reportHash = crypto.createHash('md5').update(JSON.stringify({ constraints, filters })).digest('hex')
+
+      if (!generatedReports.has(reportHash)) {
+        generatedReports.add(reportHash)
+
+        const auth = {
+          credentials: {
+            personId,
+          },
+        }
+        // eslint-disable-next-line no-await-in-loop
+        fileName = await saveReportToFile(auth, filters, externalId)
+      }
+      // Generate JWT
+      const reportToken = jwt.sign(
+        {
+          report_filename: fileName,
+        },
+        config.secret,
+        {
+          expiresIn: '30 day',
+          issuer: 'https://www.aspect.id',
+        }
+      )
+
+      // eslint-disable-next-line no-await-in-loop
       await createNotificationIfNotCreatedAlready(
         action,
-        { personId, policy, now },
+        { personId, policy, now, reportToken, reportFileName: fileName },
         { messageContext: context, knex: txKnex }
       )
-    })
-  )
+    }
+  } else {
+    // Process the persons and send notifications for issue and result based notifications
+    await Promise.all(
+      [...personsToNotify].map(async personId => {
+        await createNotificationIfNotCreatedAlready(
+          action,
+          { personId, policy, now },
+          { messageContext: context, knex: txKnex }
+        )
+      })
+    )
+  }
 }
 
 async function shouldNotify(txKnex, { issueId = null, resultId = null }, personId, jobFunctionId) {
@@ -377,8 +428,8 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
 }
 
 async function createNotificationIfNotCreatedAlready(
-  { issueId = null, resultId = null },
-  { personId = null, policy, now = new Date() },
+  { issueId = null, resultId = null, reportId = null },
+  { personId = null, policy, reportToken = null, reportFileName = null, now = new Date() },
   { messageContext: context, knex },
   nonPersonToSend = {}
 ) {
@@ -395,8 +446,11 @@ async function createNotificationIfNotCreatedAlready(
   const notification = {
     issueId,
     resultId,
+    reportId,
     notificationTypeId: policy.id,
     personId,
+    reportToken,
+    reportFileName,
     data: notifyANonPerson ? JSON.stringify({ to, phone }) : null,
   }
   const existingNotification = await knex('Notification')
@@ -420,14 +474,13 @@ async function createNotificationIfNotCreatedAlready(
       createdOn: now,
       updatedOn: now,
     }
-    if (personId || !!notifyANonPerson) {
+    if (personId || !!notifyANonPerson || policy.webhookTemplateId) {
       if (policy.alertTemplateId != null) {
         const [alertMessageId] = await knex('AlertMessage').insert({
           alertTemplateId: policy.alertTemplateId,
           ...sharedMessageProperties,
         })
         notification.alertMessageId = alertMessageId
-        context.alertMessageCreated(alertMessageId)
       }
 
       if (policy.emailTemplateId != null) {
@@ -437,7 +490,6 @@ async function createNotificationIfNotCreatedAlready(
           to,
         })
         notification.emailMessageId = emailMessageId
-        context.emailMessageCreated(emailMessageId)
       }
       if (policy.smsTemplateId != null) {
         const [smsMessageId] = await knex('SmsMessage').insert({
@@ -446,7 +498,6 @@ async function createNotificationIfNotCreatedAlready(
           phoneNumber: phone,
         })
         notification.smsMessageId = smsMessageId
-        context.smsMessageCreated(smsMessageId)
       }
 
       if (policy.webhookTemplateId != null) {
@@ -455,42 +506,28 @@ async function createNotificationIfNotCreatedAlready(
           ...sharedMessageProperties,
         })
         notification.webhookMessageId = webhookMessageId
-        context.webhookMessageCreated(webhookMessageId)
       }
 
       const [notificationId] = await knex('Notification').insert(notification)
       context.notificationCreated(notificationId)
+
+      if (notification.alertMessageId) {
+        context.alertMessageCreated(notification.alertMessageId)
+      }
+
+      if (notification.emailMessageId) {
+        context.emailMessageCreated(notification.emailMessageId)
+      }
+
+      if (notification.smsMessageId) {
+        context.smsMessageCreated(notification.smsMessageId)
+      }
+
+      if (notification.webhookMessageId) {
+        context.webhookMessageCreated(notification.webhookMessageId)
+      }
     }
   }
-}
-
-async function getNotification(request) {
-  const { params } = request
-  const { id } = params
-
-  const notification = await knex
-    .select(
-      'ntc.name as notificationTypeName',
-      'ntc.externalId as notificationType',
-      'nt.name as name',
-      'nt.filterCondition as filterCondition',
-      'et.subject as emailSubject',
-      'et.body as emailBody',
-      'st.message as smsBody',
-      'wt.url as webUrl',
-      'wt.payload as webBody',
-      'nt.enabled'
-    )
-    .from('NotificationType as nt')
-    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
-    .leftJoin('MessageType as mt', 'mt.id', 'nt.messageTypeId')
-    .leftJoin('EmailTemplate as et', 'et.id', 'mt.emailTemplateId')
-    .leftJoin('SmsTemplate as st', 'st.id', 'mt.smsTemplateId')
-    .leftJoin('WebhookTemplate as wt', 'wt.id', 'mt.webhookTemplateId')
-    .where('nt.id', id)
-    .andWhere('ntc.externalId', 'resultBased')
-    .first()
-  return { ok: true, data: notification }
 }
 
 async function getNotifications(request) {
@@ -651,40 +688,11 @@ async function getNotifications(request) {
   return { ok: true, total, data: items }
 }
 
-/**
- * Does a deeper validation of the filterCondition object.
- * @param {object} filterCondition The filterCondition object
- * @returns true if filterCondition is correct, or a Boom object if a problem was detected
- */
-
-async function deleteNotification(request) {
-  const {
-    params,
-    plugins: { messageContext },
-  } = request
-  const { notificationId: id } = params
-
-  try {
-    await knex('NotificationType').where({ id }).delete()
-    if (!messageContext.notificationTypeCreated) messageContext.bindActionCreators({ notificationTypeCreated })
-    messageContext.notificationTypeCreated(id)
-  } catch (e) {
-    logger.info({ info: `NotificationType ${id} cannot be deleted`, e }, { reLabel: 'aspect:api:notification:delete' })
-    return Boom.badData(`Can not delete this notification type because it already triggered notifications`)
-  }
-
-  return { ok: true }
-}
-
 module.exports = {
   getNotifications,
-  getNotification,
   createNotifications,
   shouldNotify,
   resultConditionsMet,
   getPeopleToNotify,
-
-  deleteNotification,
-
   clearCache,
 }

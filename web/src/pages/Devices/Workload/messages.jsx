@@ -31,14 +31,14 @@ const messages = {
       defaultMessage: 'Last Result',
     },
     totalTests: {
-      id: 'pages.InventoryLog.totalTests',
+      id: 'pages.workload.totalTests',
       defaultMessage: 'Total Tests',
     },
     paginatorStatus: {
-      id: 'pages.InventoryLog.paginatorStatus',
+      id: 'pages.workload.paginatorStatus',
       defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-        one {# supply}
-        other {# supplies}
+        one {# device}
+        other {# devices}
       }`,
     },
   }),

@@ -7,13 +7,14 @@ const { endOfMonth, endOfYear, startOfMonth, subMonths, addMonths } = require('d
 
 const { getResultsForExport } = require('../service')
 const { knex } = require('../../db')
-const { getUser } = require('../../auth/service')
+const { getPersonByPersonId } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
 const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../../shared/excel')
 
 const { getAllAssaySchemas } = require('../../assay/service')
 
 const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
+const getDataExtractReport = require('./dataExtractForTableau')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { getGroupBy, getClinicalIndicatorQueryForResultsTable, processGroupedQuery } = require('../service')
 
@@ -40,7 +41,8 @@ const columnsDeviceErrorHistoryForAttachment = [
   { header: 'Error Message', key: 'errorMessage' },
 ]
 async function getAllResultsForExport(auth, query) {
-  const user = await getUser(auth.credentials.name)
+  const user = await getPersonByPersonId(auth.credentials.personId)
+
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
   // ---------------
   // change query page/size values to get whole dataset (not only currently paged items)
@@ -114,6 +116,9 @@ async function getAllResultsForExport(auth, query) {
         patientData: JSON.parse(dataRow.patientData),
         resultData: JSON.parse(dataRow.resultData),
         formData: JSON.parse(dataRow.formData),
+        errorCode: _.replace(dataRow.errorCode || '', /(\r\n|\n|\r)/gm, ''),
+        errorNotes: _.replace(dataRow.errorNotes || '', /(\r\n|\n|\r)/gm, ''),
+        notes: _.replace(dataRow.notes || '', /(\r\n|\n|\r)/gm, ''),
       }),
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
@@ -399,7 +404,7 @@ function getDynamicColumnsForDateRange(dateFrom, dateTo, { locale }) {
 // ------------------------------------------------------
 async function getReportWorkloadSummary(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const locale = culture.split('-')[0].toLowerCase()
   const now = new Date()
   const { minDate = now, maxDate = now } = query
@@ -602,4 +607,5 @@ module.exports = {
   getReportWorkloadSummaryByQuarter,
   getReportWorkloadSummaryByYear,
   getReportXdrDevicesSummary,
+  getDataExtractReport,
 }

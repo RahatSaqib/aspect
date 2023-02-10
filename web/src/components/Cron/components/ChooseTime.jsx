@@ -1,12 +1,18 @@
 import React from 'react'
 import { MenuItem, TextField, Stack } from '@mui/material'
 import classNames from 'classnames/bind'
+import padStart from 'lodash/padStart'
 import { range } from 'ramda'
 import useI18n from '../../../hooks/useI18n'
 import { cronMessages as messages } from '../../../messages/index'
 import styles from '../styles.css'
 
 const classes = classNames.bind(styles)
+
+const MINUTES = range(0, 4).map(m => ({
+  key: m,
+  value: m * 15,
+}))
 
 const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
   const { formatMessage } = useI18n()
@@ -24,7 +30,7 @@ const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
       >
         {range(0, 24).map(m => (
           <MenuItem key={m} id={m} value={m}>
-            {m.toString().length < 2 ? `0${m}` : m}
+            {padStart(m.toString(), 2, '0')}
           </MenuItem>
         ))}
       </TextField>
@@ -37,9 +43,9 @@ const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
         className={classes('Input_Width')}
         label={formatMessage(messages.minutes)}
       >
-        {range(0, 60).map(m => (
-          <MenuItem key={m} id={m} value={m}>
-            {m.toString().length < 2 ? `0${m}` : m}
+        {MINUTES.map(({ key, value }) => (
+          <MenuItem key={key} id={key} value={value}>
+            {padStart(value.toString(), 2, '0')}
           </MenuItem>
         ))}
       </TextField>

@@ -105,6 +105,7 @@ const SELECT_SHOW_FIELDS = [
   'dt.configurationDataSchema',
   'dt.deviceOperationSchema',
   'dp.dailyCapacity',
+  'dp.id as dailyCapacityId',
   'frd30.resultCount as resultCountThisMonth',
   'frd60.resultCount as resultCount60',
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
@@ -292,9 +293,7 @@ async function getListDevices(query, auth) {
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
-      ...getSelectListFields(userTimeOffset, {
-        lastSeenField: `CASE WHEN dms.active = 1 THEN GREATEST(dmsl.day, d.lastSeenOn) ELSE d.lastSeenOn END`,
-      }),
+      ...getSelectListFields(userTimeOffset),
       'frd30.resultCount as resultCountThisMonth',
       knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
@@ -303,7 +302,6 @@ async function getListDevices(query, auth) {
       'issues.categories as issueCategories',
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
-      'd.lastSeenOn as deviceLastSeenOn',
       knex.raw(
         'CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END AS connectorStatus'
       ),
@@ -487,10 +485,16 @@ async function showDevice(request) {
 }
 
 async function updateDevice(request) {
-  const { params, payload } = request
+  const {
+    params,
+    payload,
+    auth: { credentials },
+  } = request
+
+  const { personId } = await getUser(credentials.name)
 
   // TODO: check permission
-
+  const now = new Date()
   const device = await getDeviceByRequest(request)
 
   const configurationData = _.assign({}, device.configurationData, payload.configurationData)
@@ -501,6 +505,8 @@ async function updateDevice(request) {
     deviceApprovalId = await deviceApprovalToId(payload.approvalToken)
   }
 
+  const prevDeviceApprovalId = await knex('Device').where('id', params.deviceId).first('deviceApprovalId')
+
   // update item
   const updatedCount = await knex('Device')
     .where('id', params.deviceId)
@@ -508,7 +514,23 @@ async function updateDevice(request) {
       siteId: payload.siteId || device.siteId,
       deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
+      deviceCapacityId: payload.deviceCapacityId,
+      name: payload.name,
+      notes: payload.notes,
+      shortName: payload.shortName,
+      updatedOn: now,
+      updatedBy: personId,
     })
+
+  if (prevDeviceApprovalId !== deviceApprovalId) {
+    await knex('DeviceApprovalLog').insert({
+      deviceId: params.deviceId,
+      deviceApprovalId,
+      changedOn: now,
+      createdOn: now,
+      createdBy: personId,
+    })
+  }
 
   if (updatedCount !== 1) {
     return Boom.badRequest()
@@ -825,68 +847,6 @@ async function getDevicesForReport(auth, query) {
   })
 
   const result = { ok: true, total, length: data.length, data }
-
-  return result
-}
-
-async function getErrorCodesByDeviceReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const { getCount, queryResults, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(
-    dataConstraints,
-    query
-  )
-
-  const getItems = deviceQuery
-    .clone()
-    .groupBy('d.id')
-    .modify(sortPageParams, query, 'name')
-    .distinct([
-      'd.name',
-      'd.id',
-      queryResults.clone().where('r.errorCode', '5011').countDistinct('r.id').as('error_5011'),
-      queryResults.clone().where('r.errorCode', '5007').countDistinct('r.id').as('error_5007'),
-      queryResults.clone().where('r.errorCode', '5006').countDistinct('r.id').as('error_5006'),
-      queryResults.clone().where('r.errorCode', '2008').countDistinct('r.id').as('error_2008'),
-      queryResults.clone().where('r.errorCode', '2005').countDistinct('r.id').as('error_2005'),
-      queryResults.clone().where('r.errorCode', '2037').countDistinct('r.id').as('error_2037'),
-      queryResults.clone().where('r.errorCode', '2025').countDistinct('r.id').as('error_2025'),
-      queryResults.clone().where('r.errorCode', '2022').countDistinct('r.id').as('error_2022'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.Error)
-        .whereRaw(
-          `(
-            r.errorCode IS NULL 
-            OR 
-            r.errorCode NOT IN ('5011', '5007', '5006', '2008', '2005', '2037', '2025', '2022')
-          )`
-        )
-        .countDistinct('r.id')
-        .as('error_other'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.NoResult)
-        .countDistinct('r.id')
-        .as('mtbNoResult'),
-      queryResults.clone().where('r.resultCategory1', resultCategoryIds.Invalid).countDistinct('r.id').as('mtbInvalid'),
-    ])
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const result = {
-    ok: true,
-    total,
-    length: data.length,
-    data,
-    dataSelector: ({ name, ...dataRow }) => {
-      return {
-        name,
-        ...dataRow,
-        total: Object.values(dataRow).reduce((a, b) => a + b),
-      }
-    },
-  }
 
   return result
 }
@@ -1712,7 +1672,6 @@ module.exports = {
   updateDeviceMaintenance,
   getDevicePerformance,
   getDevicesForReport,
-  getErrorCodesByDeviceReport,
   getDevicesForRifResistanceReport,
   getDeviceByDeviceId,
   onDeviceMaintenanceStatusLogged,

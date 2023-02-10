@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Card, CardContent, Tab, Tabs } from '@mui/material'
 import classNames from 'classnames/bind'
-import cronstrue from 'cronstrue'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages'
@@ -10,67 +9,69 @@ import Daily from './Daily'
 import Monthly from './Monthly'
 import Quarterly from './Quarterly'
 import styles from './styles.css'
+import { getCronHumanValue } from './utils'
 import Weekly from './Weekly'
 
 const classes = classNames.bind(styles)
-
 const options = [
-  { name: 'daily', Component: Daily, value: ['0', '0', '00', '1/1', '*', '?', '*'] },
-  { name: 'weekly', Component: Weekly, value: ['0', '0', '00', '?', '*', '*', '*'] },
-  { name: 'monthly', Component: Monthly, value: ['0', '0', '00', '1', '1/1', '?', '*'] },
-  { name: 'quarterly', Component: Quarterly, value: ['0', '0', '00', '1', '*/3', '?', '*'] },
+  { name: 'daily', Component: Daily, value: ['0', '0', '*/1', '*', '*'] },
+  { name: 'weekly', Component: Weekly, value: ['0', '0', '*/1', '*', 'MON'] },
+  { name: 'monthly', Component: Monthly, value: ['0', '0', '1', '*', '*'] },
+  { name: 'quarterly', Component: Quarterly, value: ['0', '0', '1', '*/3', '*'] },
 ]
-
-const getHumanValue = (cronExpression, locale) => {
-  const val = cronstrue.toString(cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ','), { locale })
-  if (val.search('undefined') === -1) {
-    return val
-  }
-  return '-'
+const getInitialTabIndex = value => {
+  if (!value) return 0
+  const index = options.findIndex(it => it.name === value.frequency)
+  return index < 0 ? 0 : index
 }
 
-const Cron = ({ showResultText, showResultCron, onChange }) => {
+const Cron = ({ showResultText, showResultCron, onChange, value }) => {
   const { locale, formatMessage } = useI18n()
+  const [selectedTabIndex, setSelectedTabIndex] = useState(getInitialTabIndex(value))
 
-  const [cronExpression, setCronExpression] = useState(options[0].value)
-  const [selectedTab, setSelectedTab] = useState(0)
-
-  const onTabChange = idx => {
-    setSelectedTab(idx)
-    setCronExpression(options[idx].value)
-    let newVal = ''
-    newVal = options[idx].value.toString().replace(/,/g, ' ')
-    newVal = newVal.replace(/!/g, ',')
-    onChange(newVal, getHumanValue(newVal, locale))
-  }
-
-  const onValueChange = val => {
-    if (val && val.length) {
-      setCronExpression(val)
-    } else {
-      setCronExpression(['0', '0', '00', '1/1', '*', '?', '*'])
-      val = ['0', '0', '00', '1/1', '*', '?', '*']
+  useEffect(() => {
+    if (!value) {
+      onChange(options[0].value, options[0].name)
+      setSelectedTabIndex(0)
     }
+  }, [locale, onChange, value])
 
-    let newVal = ''
-    newVal = val.toString().replace(/,/g, ' ')
-    newVal = newVal.replace(/!/g, ',')
-    onChange(newVal, getHumanValue(newVal, locale))
+  const onTabChange = useCallback(
+    (event, tabIndex) => {
+      setSelectedTabIndex(tabIndex)
+      onChange(options[tabIndex].value, options[tabIndex].name)
+    },
+    [onChange]
+  )
+
+  const onValueChange = cronExpression => {
+    onChange(cronExpression, options[selectedTabIndex].name)
   }
-  const Selector = options[selectedTab].Component
+
+  const CronExpressionWizard = options[selectedTabIndex].Component
+
+  /**
+   * don't render JSX if no `value` set up
+   */
+  if (!value) return null
+  /**
+   * render JSX if `value` is defined
+   */
 
   return (
-    <Card>
+    <Card style={{ maxWidth: '100%' }}>
       <CardContent>
-        <Tabs value={selectedTab} className={classes('Tab_Margin')}>
-          {options.map((option, idx) => (
-            <Tab key={idx} label={formatMessage(messages[option.name])} onClick={() => onTabChange(idx)} />
+        <Tabs value={selectedTabIndex} onChange={onTabChange} className={classes('Tab_Margin')}>
+          {options.map(option => (
+            <Tab fullWidth key={option.name} label={formatMessage(messages[option.name])} />
           ))}
         </Tabs>
-        <Selector key={options[selectedTab].name} cronExpression={cronExpression} onChange={onValueChange} />
+
+        <CronExpressionWizard cronExpression={value.cronExpression} onChange={onValueChange} />
+
         <DisplayCard
-          textResult={showResultText && getHumanValue(cronExpression, locale)}
-          cronResult={showResultCron && cronExpression.toString().replace(/,/g, ' ').replace(/!/g, ',')}
+          textResult={showResultText ? getCronHumanValue(value?.cronExpression, locale) : null}
+          cronResult={showResultCron ? value.cronExpression.join(' ') : null}
         />
       </CardContent>
     </Card>
@@ -81,10 +82,13 @@ Cron.propTypes = {
   showResultText: PropTypes.bool,
   showResultCron: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 }
 
 Cron.defaultProps = {
-  showResultText: false,
-  showResultCron: true,
+  showResultText: true,
+  showResultCron: false,
+  value: undefined,
 }
+
 export default Cron

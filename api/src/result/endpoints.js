@@ -10,7 +10,6 @@ const {
   validateResultListResponse,
   validateResultDetailResponse,
   resultCreatePayload,
-  resultUpdatePayload,
   treatmentTrackingValidationQuery,
 } = require('./endpointsValidation')
 const {
@@ -21,7 +20,6 @@ const {
   updateWorkflowStatus,
   updateTreatmentStatusPost,
   listTreatmentStatusTypes,
-  updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   showDeviceLogs,
@@ -41,7 +39,6 @@ const {
   clinicalIndicatorAggregations,
   followUpAggregations,
   createResult,
-  updateResult,
   listSampleTypes,
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
@@ -49,6 +46,7 @@ const {
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
+const { updateResult } = require('./updateResult')
 
 const configs = {
   trendInQuarters: {
@@ -226,22 +224,6 @@ const routes = [
           ok: Joi.bool().required().description('False if there was some sort of error'),
           data: Joi.object().required().description('The results').keys(validateResultDetailResponse()),
         }),
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/result/form-data/{resultId}',
-    handler: asyncHandler(updateFormData),
-    config: {
-      description: 'Update form data for the result',
-      notes: 'Update form data for the result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: {
-          resultId: Joi.number().integer().positive().description('Result Id'),
-        },
-        payload: Joi.object(),
       },
     },
   },
@@ -1000,7 +982,6 @@ const routes = [
         params: {
           resultId: Joi.number().description('Result ID').required(),
         },
-        payload: resultUpdatePayload,
       },
       response: {
         options: {
@@ -1008,7 +989,7 @@ const routes = [
         },
         schema: Joi.object().keys({
           ok: Joi.bool().required().description('False if there was some sort of error'),
-          data: Joi.object().required().description('The result that was updated').keys(validateResultDetailResponse()),
+          data: Joi.object().required().description('The result that was updated'),
         }),
       },
     },

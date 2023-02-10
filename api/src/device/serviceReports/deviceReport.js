@@ -5,7 +5,7 @@ const {
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
 } = require('../../result/query')
 const { XDR_RESISTANCES } = require('../../shared/constants')
-const { getBasicsForDevicesReport, joinModuleAvailability } = require('../common/db')
+const { getBasicsForDevicesReport } = require('../common/db')
 
 const xdrExtraColumns = Object.fromEntries(
   XDR_RESISTANCES.map(resistance => [
@@ -21,7 +21,7 @@ const xdrExtraColumns = Object.fromEntries(
   ])
 )
 
-async function getDeviceReportData(dataConstraints, query) {
+async function getDevicesWithCountsForTB(dataConstraints, query) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
   const {
     mtbDetectedRifNotDetected,
@@ -51,6 +51,7 @@ async function getDeviceReportData(dataConstraints, query) {
       mtbDetected,
       mtbTraceDetected,
       totalXpertTests: knex.raw('count(*)'),
+      totalXpertModulesInUse: knex.raw('count(DISTINCT moduleName)'),
     })
     .groupBy('r.deviceId')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'])
@@ -70,7 +71,6 @@ async function getDeviceReportData(dataConstraints, query) {
     .leftJoin(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
-    .modify(await joinModuleAvailability(dataConstraints, query))
     .leftJoin(deviceInactiveDays.as('deviceInactiveDays'), function () {
       this.on('deviceInactiveDays.deviceId', 'd.id')
     })
@@ -83,7 +83,7 @@ async function getDeviceReportData(dataConstraints, query) {
       'st.name AS stateName',
       'lg.name AS districtName',
       'd.serial AS serial',
-      knex.raw('IFNULL(moduleAvailability.enabled, 0) AS totalXpertModulesInUse'),
+      knex.raw('IFNULL(resultsCount.totalXpertModulesInUse, 0) AS totalXpertModulesInUse'),
       knex.raw('IFNULL(resultsCount.INH, 0) AS INH'),
       knex.raw('IFNULL(resultsCount.FLQ, 0) AS FLQ'),
       knex.raw('IFNULL(resultsCount.AMK, 0) AS AMK'),
@@ -105,5 +105,5 @@ async function getDeviceReportData(dataConstraints, query) {
 }
 
 module.exports = {
-  getDeviceReportData,
+  getDevicesWithCountsForTB,
 }

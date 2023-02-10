@@ -37,7 +37,8 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
-    const defaultFilter = assaysFromState.filter(a => a.assayTypeAbbreviation === 'TB')
+    const tbAssays = assaysFromState.filter(a => a.assayTypeAbbreviation === 'TB')
+    const defaultFilter = tbAssays.length > 0 ? tbAssays : assaysFromState
     setFilter(defaultFilter)
   }, [assaysFromState])
 
@@ -56,7 +57,7 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
           <Card>
             <CardHeader title={formatMessage(graphMessages.testsOverTimeTitle)} />
             <CardContent>
-              <Grid container spacing={8} className={cssClasses('Graph_Content')}>
+              <Grid container spacing={1} className={cssClasses('Graph_Content')}>
                 <Grid item xs={12} md={12} lg={2}>
                   <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
                     <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
@@ -133,9 +134,15 @@ const AssayAutocomplete = ({ assaysFromState, value, onChange }) => {
         }
       }}
       options={[optionAll, ...options]}
+      /**
+       * because `optionAll` doesn't contain all props as items in `options` and
+       * `innerValue` - Autocomplete shows large yellow warning in console,
+       * suggesting using below func for equality of `option` and `value` items
+       */
+      isOptionEqualToValue={(option, value) => option.i18nKey === value.i18nKey}
       groupBy={option => option.assayTypeAbbreviation}
       getOptionLabel={option => formatMessage(assay[option.i18nKey])}
-      sx={{ minWidth: '120px' }}
+      sx={{ minWidth: '120px', maxWidth: '100%' }}
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
           <Chip color="primary" label={formatMessage(assay[option.i18nKey])} size="small" {...getTagProps({ index })} />

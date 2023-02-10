@@ -31,7 +31,6 @@ const i18nKey = {
   inactiveNoTestsPerformed: 'inactiveNoTestsPerformed',
   inactiveOutOfInventory: 'inactiveOutOfInventory',
   inactiveDownForRepair: 'inactiveDownForRepair',
-  inactiveConnectivity: 'inactiveConnectivity',
   inactiveDecommissioned: 'inactiveDecommissioned',
   weekendOrHoliday: 'weekendOrHoliday',
   inactiveNoStaff: 'inactiveNoStaff',

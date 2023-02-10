@@ -8,12 +8,12 @@
       "caption": "log value",
       "i18nKeyCaption": "Test Result",
       "controlType": "autoComplete",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "encrypted": false,
       "resultDbColumn": "ResultCategory1",
       "typeOfOptionSource": "aspectUrl",
-      "optionSource": "/assay",
-      "customUrlMappingFields": {
+      "itemsSource": "/assay",
+      "itemsSourceConfig": {
         "key": "data.resultCategories.id",
         "value": "data.resultCategories.name"
       }
@@ -26,7 +26,7 @@
       "order": 1,
       "i18nKeyCaption": "testTypei18nCaptionKey",
       "controlType": "autoComplete",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -58,7 +58,7 @@
       "fieldType": "text",
       "order": 3,
       "controlType": "autoComplete",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "typeOfOptionSource": "fixedList",
       "items": [
         {
@@ -94,7 +94,7 @@
       "fieldType": "text",
       "order": 4,
       "controlType": "textArea",
-      "required": true,
+      "needsConfirmationIfIsEmpty": true,
       "condition": [
         {
           "conjunction": "AND",
@@ -111,11 +111,11 @@
       "fieldType": "text",
       "order": 5,
       "controlType": "autoComplete",
-      "required": false,
+      "needsConfirmationIfIsEmpty": false,
       "resultDbColumn": "caseId",
       "typeOfOptionSource": "aspectUrl",
-      "optionSource": "/case/auto",
-      "customUrlMappingFields": {
+      "itemsSource": "/case/auto",
+      "itemsSourceConfig": {
         "key": "data.id",
         "value": "data.externalId"
       }

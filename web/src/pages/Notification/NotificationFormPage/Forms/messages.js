@@ -22,6 +22,14 @@ export default defineMessages({
     id: 'pages.Notifications.emailBodyRequired',
     defaultMessage: 'Email body is required',
   },
+  emailBodyMustContainDownloadLink: {
+    id: 'pages.Notifications.emailBodyMustContainDownloadLink',
+    defaultMessage: 'Email should contain download link for Report-based Notification',
+  },
+  bodyMustContainCompletionRatePercentage: {
+    id: 'pages.Notifications.bodyMustContainCompletionRatePercentage',
+    defaultMessage: 'Body should contain completion rate percentage for Site with low completion rate Notification',
+  },
   emailSubjectRequired: {
     id: 'pages.Notifications.emailSubjectRequired',
     defaultMessage: 'Email subject is required',
@@ -29,6 +37,10 @@ export default defineMessages({
   notificationNameRequired: {
     id: 'pages.Notifications.notificationNameRequired',
     defaultMessage: 'The notification name is required',
+  },
+  notificationTypeRequired: {
+    id: 'pages.Notifications.notificationTypeRequired',
+    defaultMessage: 'The notification type is required',
   },
   resultCategoryRequired: {
     id: 'pages.Notifications.resultCategoryRequired',

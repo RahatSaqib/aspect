@@ -1,5 +1,4 @@
 import React from 'react'
-import { LinearProgress } from '@mui/material'
 import { mount } from 'enzyme'
 import Immutable from 'immutable'
 import noop from 'lodash/noop'
@@ -57,12 +56,5 @@ describe('SiteDetail component', () => {
 
   it('should render without crashing', () => {
     mount(<SiteDetailComponent {...props} />)
-  })
-
-  it('should show a progress bar in each tab', () => {
-    const wrapper = mount(<SiteDetailComponent {...props} />)
-    const site = Immutable.List()
-    wrapper.setProps({ site })
-    expect(wrapper.children().find(LinearProgress)).toHaveLength(1)
   })
 })

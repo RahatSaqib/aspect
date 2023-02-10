@@ -1,0 +1,283 @@
+{
+  "countries": [{
+    "abbreviation": "PG",
+    "name": "Papua New Guinea",
+    "a3": "PNG",
+    "culture": "en",
+    "countryCode": "675",
+    "timezone": "West Pacific Standard Time",
+    "portNumber": 3022,
+    "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA|ProbeB|ProbeC|ProbeD|ProbeE|ProbeSpc|Qc1|Qc2|ProbeACt|ProbeBCt|ProbeCCt|ProbeDCt|ProbeECt|ProbeSpcCt|Qc1Ct|Qc2Ct|ProbeAEndpt|ProbeBEndpt|ProbeCEndpt|ProbeDEndpt|ProbeEEndpt|ProbeSpcEndpt|Qc1Endpt|Qc2Endpt",
+    "inventoryDaysThreshold": 21,
+    "monthStartsOnDay": 1,
+    "states": [{
+      "name": "No Division",
+      "lgas": [{
+        "name": "No District"
+      }]
+    },
+      {
+        "name": "Central",
+        "lgas": [{
+          "name": "Abau"
+        }, {
+          "name": "Goilala"
+        }, {
+          "name": "Kairuku-Hiri"
+        }, {
+          "name": "Rigo"
+        }]
+      },
+      {
+        "name": "Chimbu (Simbu)",
+        "lgas": [{
+          "name": "Chuave"
+        }, {
+          "name": "Gumine"
+        }, {
+          "name": "Karimui-Nomane"
+        }, {
+          "name": "Kerowagi"
+        }, {
+          "name": "Kundiawa-Gembogl"
+        }, {
+          "name": "Sina Sina-Yonggomugl"
+        }]
+      },
+      {
+        "name": "Eastern Highlands",
+        "lgas": [{
+          "name": "Daulo"
+        }, {
+          "name": "Goroka"
+        }, {
+          "name": "Henganofi"
+        }, {
+          "name": "Kainantu"
+        }, {
+          "name": "Lufa"
+        }, {
+          "name": "Obura-Wonenara"
+        }, {
+          "name": "Okapa"
+        }, {
+          "name": "Unggai-Benna"
+        }]
+      },
+      {
+        "name": "East New Britain",
+        "lgas": [{
+          "name": "Gazelle"
+        }, {
+          "name": "Kokopo"
+        }, {
+          "name": "Pomio"
+        }, {
+          "name": "Rabaul"
+        }]
+      },
+      {
+        "name": "East Sepik",
+        "lgas": [{
+          "name": "Ambunti-Dreikikier"
+        }, {
+          "name": "Angoram"
+        }, {
+          "name": "Maprik"
+        }, {
+          "name": "Wewak"
+        }, {
+          "name": "Wosera-Gawi"
+        }, {
+          "name": "Yangoru-Saussia"
+        }]
+      },
+      {
+        "name": "Enga",
+        "lgas": [{
+          "name": "Kandep"
+        }, {
+          "name": "Kompiam Ambum"
+        }, {
+          "name": "Lagaip-Porgera"
+        }, {
+          "name": "Wapenamanda"
+        }, {
+          "name": "Wabag"
+        }]
+      },
+      {
+        "name": "Gulf",
+        "lgas": [{
+          "name": "Kerema"
+        }, {
+          "name": "Kikori"
+        }]
+      },
+      {
+        "name": "Madang",
+        "lgas": [{
+          "name": "Bogia"
+        }, {
+          "name": "Madang"
+        }, {
+          "name": "Middle Ramu"
+        }, {
+          "name": "Rai Coast"
+        }, {
+          "name": "Sumkar"
+        }, {
+          "name": "Usino Bundi"
+        }]
+      },
+      {
+        "name": "Manus",
+        "lgas": [{
+          "name": "Manus"
+        }]
+      },
+      {
+        "name": "Milne Bay",
+        "lgas": [{
+          "name": "Alotau"
+        }, {
+          "name": "Esa'ala"
+        }, {
+          "name": "Kiriwini-Goodenough"
+        }, {
+          "name": "Samarai-Murua"
+        }]
+      },
+      {
+        "name": "Morobe",
+        "lgas": [{
+          "name": "Finschhafen"
+        }, {
+          "name": "Huon"
+        }, {
+          "name": "Kabwum"
+        }, {
+          "name": "Lae"
+        }, {
+          "name": "Markham"
+        }, {
+          "name": "Menyamya"
+        }, {
+          "name": "Nawae"
+        }, {
+          "name": "Tawae-Siassi"
+        }, {
+          "name": "Bulolo"
+        }]
+      },
+      {
+        "name": "New Ireland",
+        "lgas": [{
+          "name": "Kavieng"
+        }, {
+          "name": "Namatanai"
+        }]
+      },
+      {
+        "name": "Oro (Northern)",
+        "lgas": [{
+          "name": "Ijivitari"
+        }, {
+          "name": "Sohe"
+        }]
+      },
+      {
+        "name": "Bougainville",
+        "lgas": [{
+          "name": "Central Bougainville"
+        }, {
+          "name": "North Bougainville"
+        }, {
+          "name": "South Bougainville"
+        }]
+      },
+      {
+        "name": "Southern Highlands",
+        "lgas": [{
+          "name": "Ialibu-Pangia"
+        }, {
+          "name": "Imbonggu"
+        }, {
+          "name": "Kagua-Erave"
+        }, {
+          "name": "Mendi-Munihu"
+        }, {
+          "name": "Nipa-Kutubu"
+        }]
+      },
+      {
+        "name": "Western (Fly)",
+        "lgas": [{
+          "name": "North Fly"
+        }, {
+          "name": "Middle Fly"
+        }, {
+          "name": "South Fly"
+        }]
+      },
+      {
+        "name": "Western Highlands",
+        "lgas": [{
+          "name": "Dei"
+        }, {
+          "name": "Mount Hagen"
+        }, {
+          "name": "Mul-Baiyer"
+        }, {
+          "name": "Tambul-Nebilyer"
+        }]
+      },
+      {
+        "name": "West New Britain",
+        "lgas": [{
+          "name": "Kandrian-Gloucester"
+        }, {
+          "name": "Talasea"
+        }]
+      },
+      {
+        "name": "Sandaun (West Sepik)",
+        "lgas": [{
+          "name": "Aitape-Lumi"
+        }, {
+          "name": "Nuku"
+        }, {
+          "name": "Telefomin"
+        }, {
+          "name": "Vanimo-Green River"
+        }]
+      },
+      {
+        "name": "National Capital District",
+        "lgas": [{
+          "name": "National Capital District"
+        }]
+      },
+      {
+        "name": "Hela",
+        "lgas": [{
+          "name": "Komo-Magarima"
+        }, {
+          "name": "Koroba-Kopiago"
+        }, {
+          "name": "Tari-Pori"
+        }]
+      },
+      {
+        "name": "Jiwaka",
+        "lgas": [{
+          "name": "Anglimp-South Waghi"
+        }, {
+          "name": "Jimi"
+        }, {
+          "name": "North Waghi"
+        }]
+      }
+    ]
+  }]
+}

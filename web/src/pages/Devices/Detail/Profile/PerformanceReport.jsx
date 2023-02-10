@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import { oneOfType, object, string, number } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
 import variables from '../../../../theme/colors'
-import styles from '../DeviceDetail.css'
+import styles from '../styles.css'
 import messages from './messages'
 import PerformanceBarChart from './PerformanceBarChart'
 

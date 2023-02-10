@@ -1,7 +1,7 @@
 const reduce = require('lodash/reduce')
 const includes = require('lodash/includes')
 const { format, endOfMonth, startOfMonth } = require('date-fns')
-const { getUser } = require('../../auth/service')
+const { getPersonByPersonId } = require('../../auth/service')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { knex, filterDateRangeParams, filterParams } = require('../../db')
 const [m4b1Mapping] = require('../../../templates/xpert_m4b1_patients/mapping')
@@ -240,7 +240,7 @@ const joinCurrentPeriodInventoryLog = (joinQuery, dateFrom) => {
 async function getGlobalFundInventoryReport(auth, query) {
   const { globalFundInventoryReportDictionary } = require('./dictionary.json')
   const dataConstraints = await getConstraints(auth.credentials)
-  const { culture } = await getUser(auth.credentials.name)
+  const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const { maxDate } = query
   const rows = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 's.id', 'ii.siteId')

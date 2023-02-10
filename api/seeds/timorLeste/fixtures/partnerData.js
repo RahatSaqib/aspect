@@ -19,4 +19,5 @@ module.exports = {
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://timor.aspect.id',
+  apiUrl: 'https://timor.aspect.id/api',
 }

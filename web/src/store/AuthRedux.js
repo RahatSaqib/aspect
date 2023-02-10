@@ -16,8 +16,6 @@ import { aspectFetch } from '../utils/utils/fetch'
 import { types as accountTypes } from './AccountRedux'
 
 export const types = {
-  HYDRATE_FROM_LOCAL_STORAGE: 'HYDRATE_FROM_LOCAL_STORAGE',
-
   LOGIN_REQUEST: 'LOGIN_REQUEST',
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
   LOGIN_FAILURE: 'LOGIN_FAILURE',
@@ -26,9 +24,6 @@ export const types = {
   REFRESH_FAILURE: 'REFRESH_FAILURE',
 
   LOGOUT: 'LOGOUT',
-
-  TOGGLE_DRAWER: 'TOGGLE_DRAWER',
-  CLOSE_DRAWER: 'CLOSE_DRAWER',
 
   RESET_PASSWORD_ENTER_PASSWORD_SUCCESS: 'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
 
@@ -43,24 +38,6 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-export function hydrateFromLocalStorage(data) {
-  return {
-    type: types.HYDRATE_FROM_LOCAL_STORAGE,
-    data,
-  }
-}
-
-export function toggleDrawer() {
-  return {
-    type: types.TOGGLE_DRAWER,
-  }
-}
-
-export function closeDrawer() {
-  return {
-    type: types.CLOSE_DRAWER,
-  }
-}
 
 function loginRequest(requestedAt) {
   return {
@@ -267,23 +244,17 @@ function refreshFailure() {
 }
 
 export function refreshStart() {
-  return function (dispatch, getState) {
-    const state = getState()
-    const { clientId, refresh } = state.user
-
-    if (!refresh) {
+  return function (dispatch) {
+    // const state = getState()
+    // const { clientId, refresh } = state.user
+    const token = localStorage.getItem('asRefresh')
+    if (!token) {
       return Promise.resolve()
     }
 
+    const clientId = localStorage.getItem('asClientId')
     // try to get a new access token:
-    return aspectFetch('/auth/refresh', {
-      method: 'POST',
-      body: JSON.stringify({
-        token: refresh,
-        clientId,
-        clientType,
-      }),
-    })
+    return aspectFetch('/auth/refresh', { method: 'POST', body: JSON.stringify({ token, clientId, clientType }) })
       .then(json =>
         dispatch(
           refreshSuccess({
@@ -481,7 +452,6 @@ const User = Immutable.Record({
   timezoneId: 'Eastern Standard Time',
   displayPreferences: Immutable.Map(),
   countryAbbreviation: null,
-  drawerOpen: false,
   loggedOutReason: '',
   licenseContent: undefined,
   countryId: undefined,
@@ -495,12 +465,6 @@ export default function authReducer(state = initialState, action) {
     case types.LOGIN_REQUEST:
     case types.ACCEPT_LICENSE_REQUEST:
       return state.set('requestedAt', action.requestedAt)
-
-    case types.HYDRATE_FROM_LOCAL_STORAGE:
-      if (action.data === false) {
-        return state
-      }
-    // fallthrough
     case types.LOGIN_SUCCESS:
     case types.REFRESH_SUCCESS:
     case accountTypes.RECEIVE_UPDATED_LOGIN_DETAILS:
@@ -527,11 +491,6 @@ export default function authReducer(state = initialState, action) {
     case types.REFRESH_FAILURE:
     case types.LOGOUT:
       return state.clear().set('loggedOutReason', action.data.reason)
-
-    case types.TOGGLE_DRAWER:
-      return state.set('drawerOpen', !state.drawerOpen)
-    case types.CLOSE_DRAWER:
-      return state.set('drawerOpen', false)
 
     case accountTypes.RECEIVE_UPDATED_USER_PREFERENCES:
       return state.merge({

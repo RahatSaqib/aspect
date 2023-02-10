@@ -8,11 +8,11 @@ import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import DetailHeader from '../../../components/DetailHeader'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
-import NavTitle from '../../../oldComponents/NavTitle'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { fetchRouters, exportRouters } from '../../../store/RouterRedux'
@@ -186,79 +186,84 @@ export const RouterList = ({
   onRowClick,
   reducedFilters,
 }) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.routersTitle)} />
-    <NavTitle title={intl.formatMessage(messages.routersTitle)} />
-    <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
-    <DataTableCard key={`DataTableCard--table-${location.key}`}>
-      <DataTableProgressBar disabled={!table.loading} />
-      <AspectExportListButton
-        data-testid="RouterListExportButton"
-        onExport={onExcelClick}
-        visible={!items.currentIdList.isEmpty()}
-        reportName="Routers"
-      />
-
-      {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}
-      {!items.currentIdList.isEmpty() && (
-        <RouterDataTable className={cssClasses('RouterDataTable')}>
-          <RouterDataTableHead
-            navigate={navigate}
-            location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={[
-              {
-                key: 'name',
-                label: intl.formatMessage(messages.router),
-                sortable: true,
-              },
-              {
-                key: 'approval',
-                label: intl.formatMessage(messages.approval),
-                sortable: true,
-              },
-              {
-                key: 'createdOn',
-                label: intl.formatMessage(messages.reportingFor),
-                sortable: true,
-              },
-              {
-                key: 'lastSeen',
-                label: intl.formatMessage(messages.lastSeen),
-                sortable: true,
-              },
-            ]}
+  <>
+    <DetailHeader name={intl.formatMessage(messages.routersTitle)} disableBack />
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.routersTitle)} />
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+          <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
+          <AspectExportListButton
+            data-testid="RouterListExportButton"
+            onExport={onExcelClick}
+            visible={!items.currentIdList.isEmpty()}
+            reportName="Routers"
           />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(router => (
-                <RouterDataTableRow
-                  key={router.get('id')}
-                  intl={intl}
-                  router={router}
-                  onClick={onRowClick}
-                  data-router-id={router.get('id')}
-                />
-              ))}
-          </TableBody>
-        </RouterDataTable>
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          navigate={navigate}
-          location={location}
-          intl={intl}
-          className={cssClasses('BrowseTablePaginator')}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-        />
-      )}
-    </DataTableCard>
-  </div>
+        </div>
+        <DataTableProgressBar disabled={!table.loading} />
+
+        {items.currentIdList.length === 0 ? (
+          <BrowseEmptyList navigate={navigate} location={location} />
+        ) : (
+          <>
+            <RouterDataTable className={cssClasses('RouterDataTable')}>
+              <RouterDataTableHead
+                navigate={navigate}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={[
+                  {
+                    key: 'name',
+                    label: intl.formatMessage(messages.router),
+                    sortable: true,
+                  },
+                  {
+                    key: 'approval',
+                    label: intl.formatMessage(messages.approval),
+                    sortable: true,
+                  },
+                  {
+                    key: 'createdOn',
+                    label: intl.formatMessage(messages.reportingFor),
+                    sortable: true,
+                  },
+                  {
+                    key: 'lastSeen',
+                    label: intl.formatMessage(messages.lastSeen),
+                    sortable: true,
+                  },
+                ]}
+              />
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(router => (
+                    <RouterDataTableRow
+                      key={router.get('id')}
+                      intl={intl}
+                      router={router}
+                      onClick={onRowClick}
+                      data-router-id={router.get('id')}
+                    />
+                  ))}
+              </TableBody>
+            </RouterDataTable>
+            <BrowseTablePaginator
+              navigate={navigate}
+              location={location}
+              intl={intl}
+              className={cssClasses('BrowseTablePaginator')}
+              paginatorStatus={messages.paginatorStatus}
+              total={table.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
+            />
+          </>
+        )}
+      </DataTableCard>
+    </div>
+  </>
 )
 
 export default enhance(RouterList)

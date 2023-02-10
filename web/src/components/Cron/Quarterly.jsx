@@ -13,47 +13,37 @@ const Quarterly = ({ cronExpression, onChange }) => {
 
   const onDayChange = e => {
     if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
-      const val = [
-        '0',
-        cronExpression[1] === '*' ? '0' : cronExpression[1],
-        cronExpression[2] === '*' ? '0' : cronExpression[2],
-        cronExpression[3],
-        '*/3',
-        '?',
-        '*',
-      ]
-      val[3] = `${e.target.value}`
+      const val = [cronExpression[0], cronExpression[1], cronExpression[2], '*/3', '*']
+      val[2] = `${e.target.value}`
       onChange(val)
     }
   }
-  const onLastDayChange = e => {
-    if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
-      const val = [
-        '0',
-        cronExpression[1] === '*' ? '0' : cronExpression[1],
-        cronExpression[2] === '*' ? '0' : cronExpression[2],
-        cronExpression[3],
-        '*/3',
-        '?',
-        '*',
-      ]
-      if (e.target.value === '') {
-        val[3] = ''
-      } else {
-        val[3] = `L-${e.target.value}`
-      }
+  // const onLastDayChange = e => {
+  //   if ((parseInt(e.target.value, 10) > 0 && parseInt(e.target.value, 10) <= 31) || e.target.value === '') {
+  //     const val = [
+  //       cronExpression[0] === '*' ? '0' : cronExpression[0],
+  //       cronExpression[1] === '*' ? '0' : cronExpression[1],
+  //       cronExpression[2],
+  //       '*/3',
+  //       '*',
+  //     ]
+  //     if (e.target.value === '') {
+  //       val[2] = ''
+  //     } else {
+  //       val[2] = `L-${e.target.value}`
+  //     }
 
-      onChange(val)
-    }
-  }
+  //     onChange(val)
+  //   }
+  // }
   const onAtHourChange = e => {
     const val = [...cronExpression]
-    val[2] = `${e.target.value}`
+    val[1] = `${e.target.value}`
     onChange(val)
   }
   const onAtMinuteChange = e => {
     const val = [...cronExpression]
-    val[1] = `${e.target.value}`
+    val[0] = `${e.target.value}`
     onChange(val)
   }
 
@@ -67,67 +57,21 @@ const Quarterly = ({ cronExpression, onChange }) => {
                 control={
                   <Radio
                     color="primary"
-                    value="1"
+                    value={cronExpression[2]}
                     onChange={() => {
                       setEvery('1')
                       onChange([
-                        '0',
+                        cronExpression[0] === '*' ? '0' : cronExpression[0],
                         cronExpression[1] === '*' ? '0' : cronExpression[1],
-                        cronExpression[2] === '*' ? '0' : cronExpression[2],
                         '1',
                         '*/3',
-                        '?',
                         '*',
                       ])
                     }}
-                    checked={every === '1'}
+                    checked
                   />
                 }
                 label={formatMessage(messages.dayOfEveryQuarter)}
-              />
-              <FormControlLabel
-                control={
-                  <Radio
-                    color="primary"
-                    value="2"
-                    onChange={() => {
-                      setEvery('2')
-                      onChange([
-                        '0',
-                        cronExpression[1] === '*' ? '0' : cronExpression[1],
-                        cronExpression[2] === '*' ? '0' : cronExpression[2],
-                        'L',
-                        '*/3',
-                        '?',
-                        '*',
-                      ])
-                    }}
-                    checked={every === '2'}
-                  />
-                }
-                label={formatMessage(messages.lastDayofQuarter)}
-              />
-              <FormControlLabel
-                control={
-                  <Radio
-                    color="primary"
-                    value="4"
-                    onChange={() => {
-                      setEvery('4')
-                      onChange([
-                        '0',
-                        cronExpression[1] === '*' ? '0' : cronExpression[1],
-                        cronExpression[2] === '*' ? '0' : cronExpression[2],
-                        `L-${1}`,
-                        '*/3',
-                        '?',
-                        '*',
-                      ])
-                    }}
-                    checked={every === '4'}
-                  />
-                }
-                label={formatMessage(messages.daysBeforeEndQuarter)}
               />
             </FormGroup>
           </Stack>
@@ -135,42 +79,28 @@ const Quarterly = ({ cronExpression, onChange }) => {
       </Stack>
       <Stack direction="row" spacing={1} alignItems="center">
         {every === '1' ? (
-          <TextField
-            id="outlined-number"
-            label={formatMessage(messages.dayOfEveryQuarter)}
-            value={cronExpression[3]}
-            onChange={onDayChange}
-            type="number"
-            InputLabelProps={{
-              readOnly: every !== '1',
-              shrink: true,
-            }}
-            margin="normal"
-            disabled={every !== '1'}
-          />
-        ) : null}
-
-        {every === '4' ? (
-          <Stack direction="row" spacing={1} alignItems="flex-start">
+          <>
             <TextField
               id="outlined-number"
-              label={formatMessage(messages.daysBeforeEndQuarter)}
-              value={cronExpression[3].split('-')[1]}
-              onChange={onLastDayChange}
+              label={formatMessage(messages.dayOfEveryQuarter)}
+              value={cronExpression[2]}
+              onChange={onDayChange}
               type="number"
-              className={classes('Input_Width')}
-              InputLabelProps={{ readOnly: every !== '4', shrink: true }}
+              InputLabelProps={{
+                readOnly: every !== '1',
+                shrink: true,
+              }}
               margin="normal"
-              disabled={every !== '4'}
+              disabled={every !== '1'}
             />
-            <ChooseTime
-              hour={cronExpression[2]}
-              minute={cronExpression[1]}
-              changeHours={onAtHourChange}
-              changeMinutes={onAtMinuteChange}
-            />
-          </Stack>
+          </>
         ) : null}
+        <ChooseTime
+          hour={cronExpression[1]}
+          minute={cronExpression[0]}
+          changeHours={onAtHourChange}
+          changeMinutes={onAtMinuteChange}
+        />
       </Stack>
     </Stack>
   )

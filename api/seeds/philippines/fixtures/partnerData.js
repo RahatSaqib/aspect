@@ -6,7 +6,7 @@ module.exports = {
   adminPassword: 'e5wQ40TLzd',
   deviceApiToken: 'jdk5ctyu8jhwimkvfc99',
   partnerAbbreviation: 'PH',
-  plugin: '',
+  plugin: 'philippines',
   fixtures: {
     jobFunctions,
   },
@@ -18,4 +18,5 @@ module.exports = {
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://philippines.aspect.id:8443',
+  apiUrl: 'https://philippines.aspect.id:8443/api',
 }

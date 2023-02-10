@@ -1,22 +1,44 @@
 import React, { createContext, useContext, useMemo } from 'react'
+import isNumber from 'lodash/isNumber'
 import { useSelector } from 'react-redux'
 
 const AuthContext = createContext()
 
 const AuthProvider = ({ children }) => {
   const userComposed = useSelector(({ user }) => user)
-  const auth = useMemo(() => userComposed.toJS(), [userComposed])
+  const globalsComposed = useSelector(({ globals }) => globals)
+  const user = useMemo(() => userComposed.toJS(), [userComposed])
+  const globals = useMemo(() => globalsComposed.toJS(), [globalsComposed])
 
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
+  const { lastServerResponseTime } = globals
+  const jwtExp = user.jwt.exp
+
+  let isLoggedOut = false
+  if (isNumber(jwtExp) && lastServerResponseTime) {
+    const isExpired = jwtExp < lastServerResponseTime.getTime() / 1000
+    if (isExpired) {
+      isLoggedOut = true
+    }
+  } else {
+    isLoggedOut = true
+  }
+  const userData = Object.freeze({
+    ...user,
+    userPermissions: user.jwt.permissions,
+    isLoggedOut,
+  })
+
+  return <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
 }
 
 const useAuthState = () => {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
+  const userData = useContext(AuthContext)
+
+  if (userData === undefined) {
     throw new Error('useAuthState must be used within a AuthProvider')
   }
 
-  return { ...context, userPermissions: context.jwt.permissions }
+  return userData
 }
 
 export { AuthProvider, useAuthState }

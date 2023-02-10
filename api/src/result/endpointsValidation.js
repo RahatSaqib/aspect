@@ -127,9 +127,9 @@ const baseResultResponse = {
   errorCode: Joi.string().allow(null, '').description('If an error occurred, contains the error code from the device'),
   resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
   caseExternalId: Joi.string().optional().allow(null, '').description('The id of the case'),
-  diseaseId: Joi.number().positive().allow(null).required().description('the Id of the disease'),
-  diseaseName: Joi.string().required().allow(null).description('the name of the disease'),
-  diseaseExternalId: Joi.string().required().allow(null).description('the external id of the disease'),
+  diseaseId: Joi.number().positive().allow(null).optional().description('the Id of the disease'),
+  diseaseName: Joi.string().optional().allow(null).description('the name of the disease'),
+  diseaseExternalId: Joi.string().optional().allow(null).description('the external id of the disease'),
 
   detectedResistance: Joi.alternatives()
     .try(Joi.string(), Joi.array())
@@ -140,7 +140,7 @@ const baseResultResponse = {
   partnerId: Joi.number().allow(null).description('The Partner Id'),
   partnerPluginName: Joi.string().allow(null, '').description('Plugin name for Partner'),
   deviceTypePluginName: Joi.string().allow(null, '').description('Plugin name for Device'),
-  customFieldsValues: Joi.array().allow(null).description('Custom Fields Values'),
+  customFields: Joi.array().allow(null).description('The custom fields form'),
 }
 
 function validateResultListResponse() {
@@ -176,7 +176,6 @@ function validateResultListResponse() {
 function validateResultDetailResponse() {
   return {
     ...baseResultResponse,
-
     createdOn: Joi.date()
       .required()
       .description('When the result was added to the Aspect database. This can be converted to the user time zone.'),
@@ -440,6 +439,5 @@ module.exports = {
   validateResultListResponse,
   validateResultDetailResponse,
   resultCreatePayload,
-  resultUpdatePayload,
   treatmentTrackingValidationQuery,
 }

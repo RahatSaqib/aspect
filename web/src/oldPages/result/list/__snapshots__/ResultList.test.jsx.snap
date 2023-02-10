@@ -1,86 +1,98 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Result List component should shallow render correctly when filter for assay type 1`] = `
-<div
-  className="Container"
->
-  <HelmetWrapper
-    defer={true}
-    encodeSpecialCharacters={true}
-    title="Results"
+<Fragment>
+  <DetailHeader
+    disableBack={true}
+    name="Results"
   />
-  <Connect(lifecycle(Component))
-    title="Results"
-  />
-  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    askConfirmationForExport={false}
-    config={[MockFunction]}
-    intl={
-      Object {
-        "$t": [Function],
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "defaultRichTextElements": undefined,
-        "fallbackOnEmptyString": true,
-        "formatDate": [Function],
-        "formatDateTimeRange": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatListToParts": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "onWarn": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-      }
-    }
-    location={
-      Object {
-        "search": "",
-      }
-    }
-    navigate={[MockFunction]}
-  />
-  <DataTableCard
-    key="DataTableCard--table-Result-list---undefined"
+  <div
+    className="Container"
   >
-    <DataTableProgressBar
-      disabled={true}
+    <HelmetWrapper
+      defer={true}
+      encodeSpecialCharacters={true}
+      title="Results"
     />
-    <AspectExportListButton
-      disableCSV={false}
-      disableExcel={true}
-      onExport={[MockFunction]}
-      reportName="Results"
-      visible={false}
-    />
-    <pure(withHandlers(EmptyList))
-      location={
-        Object {
-          "search": "",
+    <DataTableCard
+      key="DataTableCard--table-Result-list---undefined"
+    >
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "flexDirection": "row",
+            "flexWrap": "nowrap",
+            "justifyContent": "flex-end",
+          }
         }
-      }
-      navigate={[MockFunction]}
-    />
-  </DataTableCard>
-</div>
+      >
+        <BrowseFilters
+          askConfirmationForExport={false}
+          config={[MockFunction]}
+          intl={
+            Object {
+              "$t": [Function],
+              "defaultFormats": Object {},
+              "defaultLocale": "en",
+              "defaultRichTextElements": undefined,
+              "fallbackOnEmptyString": true,
+              "formatDate": [Function],
+              "formatDateTimeRange": [Function],
+              "formatDateToParts": [Function],
+              "formatDisplayName": [Function],
+              "formatList": [Function],
+              "formatListToParts": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatNumberToParts": [Function],
+              "formatPlural": [Function],
+              "formatRelativeTime": [Function],
+              "formatTime": [Function],
+              "formatTimeToParts": [Function],
+              "formats": Object {},
+              "formatters": Object {
+                "getDateTimeFormat": [Function],
+                "getDisplayNames": [Function],
+                "getListFormat": [Function],
+                "getMessageFormat": [Function],
+                "getNumberFormat": [Function],
+                "getPluralRules": [Function],
+                "getRelativeTimeFormat": [Function],
+              },
+              "locale": "en",
+              "messages": Object {},
+              "onError": [Function],
+              "onWarn": [Function],
+              "textComponent": Symbol(react.fragment),
+              "timeZone": undefined,
+            }
+          }
+          location={
+            Object {
+              "search": "",
+            }
+          }
+          navigate={[MockFunction]}
+        />
+        <AspectExportListButton
+          disableCSV={false}
+          disableExcel={true}
+          onExport={[MockFunction]}
+          reportName="Results"
+          visible={false}
+        />
+         
+      </div>
+      <pure(withHandlers(EmptyList))
+        location={
+          Object {
+            "search": "",
+          }
+        }
+        navigate={[MockFunction]}
+      />
+    </DataTableCard>
+  </div>
+</Fragment>
 `;

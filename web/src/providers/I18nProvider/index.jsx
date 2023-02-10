@@ -13,7 +13,6 @@ import { DateTime } from 'luxon'
 import { createIntl, useIntl } from 'react-intl' // eslint-disable-line no-restricted-imports
 import ErrorBoundary from '../../components/ErrorBoundary'
 import translation from '../../utils/i18n/translation'
-import { getCurrentCulture } from '../../utils/LocalStorage'
 import tgLocale from './date-fns-locales/tg-TJ'
 
 const I18nContext = createContext()
@@ -51,7 +50,7 @@ function timeZoneFallBack(timezone) {
 }
 
 function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
-  const localStorageCulture = getCurrentCulture()
+  const localStorageCulture = localStorage.getItem('asCulture')
 
   const userLocale = passedCulture || localStorageCulture || 'en'
 

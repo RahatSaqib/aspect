@@ -8,13 +8,14 @@ import { Helmet } from 'react-helmet'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import DetailHeader from '../../../components/DetailHeader'
 import useI18n from '../../../hooks/useI18n'
 import useWorkload from '../../../hooks/workload/useWorkload'
 import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseFilters from '../../../oldComponents/BrowseFilters'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { reduceFiltersConfig, getFilters, sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
@@ -61,17 +62,11 @@ const Workload = () => {
   const user = useAuthState()
   const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState()
-
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.userPermissions, {})
-
-  const { isError, isLoading, data = false, error } = useWorkload(requestParams)
-
+  const { isError, isLoading, data = false, error } = useWorkload(requestParams, firstLoad)
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
-
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
-
   const mostResultsAssay = useSelector(
     ({ assay }) =>
       assay.items
@@ -79,18 +74,16 @@ const Workload = () => {
         .filter(a => a.hasResults)
         .sort((a, b) => b.resultCount - a.resultCount)[0]
   )
-  useWorkloadDownload({
-    ...requestParams,
-    ...download,
-  })
-  const onExcelClick = formatType => {
-    setDownload({ fileFormat: formatType, enabled: true })
-  }
+  useWorkloadDownload({ ...requestParams, ...download })
+
+  const onExcelClick = formatType => setDownload({ fileFormat: formatType, enabled: true })
+
   useEffect(() => {
     if (download.enabled) {
       setDownload({ fileFormat: '', enabled: false })
     }
   }, [download])
+
   useEffect(() => {
     const { value: searchParams } = searchSanitizer(location, {})
     const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
@@ -99,9 +92,12 @@ const Workload = () => {
       const now = new Date()
       filtersParams.set('minDate', startOfDay(subtractDays(now, now.getDate() - 1)).toJSON())
       filtersParams.set('maxDate', endOfDay(now).toJSON())
-      filtersParams.set('singleAssayId', mostResultsAssay.id)
+      filtersParams.set('singleAssayId', mostResultsAssay?.id)
       searchParams.set('filters', filtersParams)
       setFirstLoad(false)
+      if (searchParams.has('pageAt')) {
+        searchParams.delete('pageAt')
+      }
       navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
 
@@ -116,12 +112,12 @@ const Workload = () => {
 
   const columns = [
     { key: 'name', label: formatMessage(messages.name), sortable: true },
-    { key: 'deviceStatus', label: formatMessage(messages.deviceStatus), sortable: true },
-    { key: 'stateName', label: getCustomMessage(messages, 'state', user), sortable: true },
-    { key: 'lgaName', label: getCustomMessage(messages, 'lga', user), sortable: true },
-    { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true },
-    { key: 'firstResultEndedOn', label: formatMessage(messages.firstResultEndedOn), sortable: true },
-    { key: 'lastResultEndedOn', label: formatMessage(messages.lastResultEndedOn), sortable: true },
+    { key: 'deviceStatus', label: formatMessage(messages.deviceStatus), sortable: true, hiddenOn: 'xl' },
+    { key: 'stateName', label: getCustomMessage(messages, 'state', user), sortable: true, hiddenOn: 'xl' },
+    { key: 'lgaName', label: getCustomMessage(messages, 'lga', user), sortable: true, hiddenOn: 'xl' },
+    { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true, hiddenOn: 'xl' },
+    { key: 'firstResultEndedOn', label: formatMessage(messages.firstResultEndedOn), sortable: true, hiddenOn: 'xl' },
+    { key: 'lastResultEndedOn', label: formatMessage(messages.lastResultEndedOn), sortable: true, hiddenOn: 'xl' },
     { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
@@ -134,37 +130,43 @@ const Workload = () => {
   const extraColumnsProps = extraColumns.map(ec => ec.fieldId)
 
   return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={formatMessage(messages.workloadTitle)} />
-      <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
-      <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
-        <DataTableProgressBar disabled={!isLoading} />
-        {workloadList.length ? (
-          <>
+    <>
+      <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack />
+      <div className={cssClasses('Container')}>
+        <Helmet title={formatMessage(messages.workloadTitle)} />
+        <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
             <AspectExportListButton onExport={onExcelClick} visible={workloadList.length} reportName="DeviceWorkload" />
-            <Table className={cssClasses('InventoryDataTable')}>
-              <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
-              <TableBody>
-                {workloadList.map((item, index) => (
-                  <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
-                ))}
-              </TableBody>
-            </Table>
-            <BrowseTablePaginator
-              navigate={navigate}
-              location={location}
-              pageSizeButtonKeys={[10, 25, 50, 100]}
-              paginatorStatus={messages.paginatorStatus}
-              total={total}
-              pageAt={pageAt}
-              pageSize={pageSize}
-            />
-          </>
-        ) : (
-          <BrowseEmptyList navigate={navigate} location={location} />
-        )}
-      </DataTableCard>
-    </div>
+          </div>
+
+          <DataTableProgressBar disabled={!isLoading} />
+          {workloadList.length === 0 ? (
+            <BrowseEmptyList navigate={navigate} location={location} />
+          ) : (
+            <>
+              <Table className={cssClasses('InventoryDataTable')}>
+                <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
+                <TableBody>
+                  {workloadList.map((item, index) => (
+                    <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
+                  ))}
+                </TableBody>
+              </Table>
+              <BrowseTablePaginator
+                navigate={navigate}
+                location={location}
+                pageSizeButtonKeys={[10, 25, 50, 100]}
+                paginatorStatus={messages.paginatorStatus}
+                total={total}
+                pageAt={pageAt}
+                pageSize={pageSize}
+              />
+            </>
+          )}
+        </DataTableCard>
+      </div>
+    </>
   )
 }
 

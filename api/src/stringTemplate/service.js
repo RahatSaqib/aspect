@@ -3,9 +3,10 @@ const { formatDistanceStrict, parseISO } = require('date-fns')
 const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
-
 const { knex } = require('../db')
 const { parseDateOrDefault, formatDateOrDefault, getFormattedDateTimeWithTimezone } = require('../shared/date')
+const { addConstraints } = require('../auth/constraints')
+const getCurrentPartner = require('../partner/getCurrentPartner')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -49,7 +50,7 @@ function getMustacheTokensInString(inputString) {
   return inputString.match(/{{\s*[\w.[\]\s]+\s*}}/g)
 }
 
-function addDataSourceToQuery(queryBuilder, aliases, resultId) {
+function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, reportId) {
   // TODO generalize to other aliases and make joined tables and field names unique
   // similar to auth/constraints
   const { message, notification } = aliases
@@ -145,8 +146,36 @@ function addDataSourceToQuery(queryBuilder, aliases, resultId) {
         'i.dueOn as issueDueOn',
         'i.data as issueData',
         'it.externalId as issueTypeExternalId',
-        'nt.name as notificationTypeName'
+        'nt.name as notificationTypeName',
+        knex.raw(`${notification}.reportToken as reportToken`)
       )
+  }
+
+  if (!_.isEmpty(dataConstraints)) {
+    let aliases = {
+      assay: 'a',
+      partner: 'pr',
+      deviceType: 'dt',
+      person: 'p',
+      /*
+      result: 'r',
+      ^^^ Leaving this commented out to highlight the fact that adding these
+          constraints will break the RO notifications configured for Myanmar
+      */
+      sample: 'sample',
+      showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
+    }
+
+    if (!reportId) {
+      aliases = {
+        ...aliases,
+        device: 'd',
+        site: 's',
+      }
+    }
+
+    queryBuilder.modify(addConstraints, dataConstraints, aliases)
   }
 
   return queryBuilder
@@ -206,11 +235,12 @@ function addDataSourceToQuery(queryBuilder, aliases, resultId) {
  *   The object must also contain the template strings that will be processed:
  * @param  {Array} templateFields: the keys in the data object that contain the string templates to be processed
  *   EG: [ 'emailSubjectTemplate', 'emailBodyTemplate' ]
+ * @param  {Object} auth: auth object just in case of report based notifications that needs partnerData and therefore constraints
  * @return an object containing the processed string templates as specified in templateFields
  *   EG: { emailSubject: 'The processed subject string', emailBody: 'The processed body string' }
  */
-async function processUsingDataSourceQuery(data, templateFields) {
-  const ds = await getBaseDataSource(data)
+async function processUsingDataSourceQuery(data, templateFields, auth) {
+  const ds = await getBaseDataSource(data, auth)
 
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
@@ -341,12 +371,14 @@ async function processUsingDataSourceQuery(data, templateFields) {
       displayPreferences: { <the displayPreferences in the partner's plugin configuration EG: api\src\plugin\partner\Myanmar\settings.js> }
     }
  */
-async function getBaseDataSource(data) {
+async function getBaseDataSource(data, auth) {
   const d = data || {}
   const { loadPlugin } = require('../plugin/registration')
   const { displayPreferences = {} } = await loadPlugin([d.partnerPlugin], 'settings')
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
+  const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}
+
   return {
     country: {
       name: d.countryName,
@@ -372,6 +404,7 @@ async function getBaseDataSource(data) {
               email: d.siteContacts[0].email,
             }
           : {},
+      completionRatePercentage: issueData.completionRatePercentage,
     },
     device: {
       name: d.deviceName,
@@ -439,6 +472,9 @@ async function getBaseDataSource(data) {
     },
     notification: {
       type: d.notificationTypeName,
+    },
+    report: {
+      downloadLink: `${apiUrl}/api/reports/download?token=${d.reportToken}`,
     },
     displayPreferences,
     timezone: d.timezone,

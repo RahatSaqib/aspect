@@ -3420,7 +3420,7 @@ async function seed(knex) {
       const routerId = routerIds[i]
       const device = {
         ...auditFields,
-        name: `${siteData.name} GeneXpert`,
+        name: `${siteData.name} ${i < 10 ? '&' : ''} GeneXpert`,
         shortName: `${siteData.city} GeneXpert`,
         deviceTypeId: deviceTypeGeneXpertId,
         deviceApprovalId: deviceApprovalApproved,
@@ -3487,6 +3487,9 @@ async function seed(knex) {
         lastSeenOn: new Date(+now - (i * millisInHour) / 3),
         hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
         serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
+        lastInstrumentSerial: _.times(14, () =>
+          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
+        ).join(''),
       }
 
       ;[device.id] = await knex('Device').insert(device)

@@ -32,17 +32,6 @@
       "formTypeExternalId": "gxConnectForm"
     }
   },
-  "CustomFieldsExample": {
-    "fileName": "CustomFieldsExample.json",
-    "formDefinition": {
-      "order": 1,
-      "title": "CustomFieldsExample",
-      "i18nKeyTitle": "CustomFieldsExamplei18nkey",
-      "externalId": "CustomFieldsExample",
-      "formTypeExternalId": "gxConnectForm",
-      "diseaseExternalId": "tb"
-    }
-  },
   "TBResult": {
     "fileName": "TBResult.json",
     "formDefinition": {

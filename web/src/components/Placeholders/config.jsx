@@ -2,6 +2,15 @@ import messages from './messages'
 
 export const groupedOptions = ({ formatMessage }) => [
   {
+    label: formatMessage(messages.placeholderReport),
+    options: [
+      {
+        id: 'report.downloadLink',
+        name: formatMessage(messages.placeholderReportDownloadLink),
+      },
+    ],
+  },
+  {
     label: formatMessage(messages.placeholderSite),
     options: [
       {
@@ -15,6 +24,10 @@ export const groupedOptions = ({ formatMessage }) => [
       {
         id: 'site.shortName',
         name: formatMessage(messages.placeholderNameShort),
+      },
+      {
+        id: 'site.completionRatePercentage',
+        name: formatMessage(messages.placeholderCompletionRatePercentage),
       },
     ],
   },

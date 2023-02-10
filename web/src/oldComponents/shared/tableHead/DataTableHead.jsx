@@ -5,7 +5,7 @@ import { withStyles } from '@mui/styles'
 import classNames from 'classnames'
 import isFunction from 'lodash/isFunction'
 import noop from 'lodash/noop'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
+import PermissionChecker from '../../../components/PermissionChecker'
 import AspectTooltip from '../AspectTooltip'
 
 const styles = theme => {
@@ -61,7 +61,7 @@ const DataTableHead = ({ classes, compact, sortColumnKey, sortColumnDir, columns
           index
         ) =>
           !isHidden ? (
-            <PermissionsProvider key={`PermissionProvider--${key}`} permissions={auth || []}>
+            <PermissionChecker key={`PermissionProvider--${key}`} permissions={auth || []}>
               <TableCell
                 data-column={key}
                 colSpan={colSpan}
@@ -92,7 +92,7 @@ const DataTableHead = ({ classes, compact, sortColumnKey, sortColumnDir, columns
                 )}
                 {tooltip && <AspectTooltip title={tooltip} showHelpIcon toolTipContainerClass={classes.tooltipIcon} />}
               </TableCell>
-            </PermissionsProvider>
+            </PermissionChecker>
           ) : null
       )}
     </TableRow>

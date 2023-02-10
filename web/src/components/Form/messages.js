@@ -137,6 +137,10 @@ const messagesBase = defineMessages({
     id: 'forms.formItem.removeRow',
     defaultMessage: 'Remove Row',
   },
+  newRecurrency: {
+    id: 'forms.formItem.newRecurrency',
+    defaultMessage: 'New recurrency',
+  },
 })
 
 const headerMessagesBase = {
@@ -172,6 +176,36 @@ const headerMessagesBase = {
     technicalDetails: {
       id: 'forms.formSectionHeader.technicalDetails',
       defaultMessage: 'Technical Details',
+    },
+
+    frequencyDailyPreviousCalendarDay: {
+      id: 'forms.formItem.dateRange.frequencyDailyPreviousCalendarDay',
+      defaultMessage: 'Previous Calendar Day',
+    },
+    frequencyDailyPreviousWeekDay: {
+      id: 'forms.formItem.dateRange.frequencyDailyPreviousWeekDay',
+      defaultMessage: 'Previous Week Day',
+    },
+
+    frequencyWeeklyPreviousWeek: {
+      id: 'forms.formItem.dateRange.frequencyWeeklyPreviousWeek',
+      defaultMessage: 'Previous Week',
+    },
+    frequencyWeeklyPrevious7Days: {
+      id: 'forms.formItem.dateRange.frequencyWeeklyPrevious7Days',
+      defaultMessage: 'Previous 7 Days',
+    },
+    frequencyMonthlyPreviousMonth: {
+      id: 'forms.formItem.dateRange.frequencyMonthlyPreviousMonth',
+      defaultMessage: 'Previous Month',
+    },
+    frequencyQuarterlyPreviousQuarter: {
+      id: 'forms.formItem.dateRange.frequencyQuarterlyPreviousQuarter',
+      defaultMessage: 'Previous Quarter',
+    },
+    frequencyYearlyPreviousYear: {
+      id: 'forms.formItem.dateRange.frequencyYearlyPreviousYear',
+      defaultMessage: 'Previous Year',
     },
   }),
 }

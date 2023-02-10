@@ -166,6 +166,12 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerName, adminUser
       .andWhere('l.name', truenatDevice.lgaName)
       .first('g.id')
 
+    if (truenatDevice.siteShortName && truenatDevice.siteShortName.length > 45) {
+      truenatDevice.siteShortName = truenatDevice.siteShortName.substring(0, 45)
+    }
+    if (truenatDevice.deviceShortName && truenatDevice.deviceShortName.length > 45) {
+      truenatDevice.deviceShortName = truenatDevice.deviceShortName.substring(0, 45)
+    }
     let truenatLab = await knex('Site')
       .where('externalId', truenatDevice.siteExternalId)
       .andWhere('partnerId', partnerId)

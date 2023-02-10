@@ -19,7 +19,7 @@ import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages, consumableMessages } from '../../../../messages'
 import styles from '../styles.css'
-import DeviceStatusGraphMain from './InventoryStatusGraph.Main'
+import InventoryStatusGraphMain from './InventoryStatusGraph.Main'
 
 const cssClasses = classnames.bind(styles)
 
@@ -36,7 +36,7 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
           <Card>
             <CardHeader title={formatMessage(graphMessages.inventoryGraphStatus)} />
             <CardContent>
-              <Grid container spacing={8} className={cssClasses('Graph_Content')}>
+              <Grid container spacing={1} className={cssClasses('Graph_Content')}>
                 <Grid item xs={12} md={12} lg={2}>
                   <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
                     <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
@@ -52,7 +52,7 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
                 </Grid>
                 <Grid item xs={12} md={12} lg={10}>
                   <Grid container>
-                    <DeviceStatusGraphMain
+                    <InventoryStatusGraphMain
                       assaysFromState={assaysFromState}
                       showLabel={showLabel}
                       filterSelection={filter}
@@ -81,8 +81,8 @@ const ConsumableSelector = ({ onChange }) => {
         `${a.consumableName}`.localeCompare(b.consumableName)
       )
       setOptions(opt)
-      setInnerValue(opt[0].consumableExternalId)
-      onChange({ consumableExternalId: opt[0].consumableExternalId })
+      setInnerValue(opt[0]?.consumableExternalId)
+      onChange({ consumableExternalId: opt[0]?.consumableExternalId })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])

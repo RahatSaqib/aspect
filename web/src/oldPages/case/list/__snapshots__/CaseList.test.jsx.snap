@@ -1,51 +1,149 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Person List module CaseList component should shallow render correctly 1`] = `
-<div
-  className="Container"
->
-  <HelmetWrapper
-    defer={true}
-    encodeSpecialCharacters={true}
-    title="Cases"
+<Fragment>
+  <DetailHeader
+    disableBack={true}
+    name="Cases"
   />
-  <Connect(lifecycle(Component))
-    title="Cases"
-  />
-  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    askConfirmationForExport={false}
-    intl={
-      Object {
-        "formatDate": [Function],
-        "formatHTMLMessage": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatPlural": [Function],
-        "formatRelative": [Function],
-        "formatTime": [Function],
-      }
-    }
-    location={
-      Object {
-        "search": "",
-      }
-    }
-    navigate={[Function]}
-  />
-  <DataTableCard
-    key="DataTableCard--table-undefined"
+  <div
+    className="Container"
   >
-    <DataTableProgressBar
-      disabled={true}
+    <HelmetWrapper
+      defer={true}
+      encodeSpecialCharacters={true}
+      title="Cases"
     />
-    <pure(withHandlers(EmptyList))
-      location={
-        Object {
-          "search": "",
+    <DataTableCard
+      key="DataTableCard--table-undefined"
+    >
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "flexDirection": "row",
+            "flexWrap": "nowrap",
+            "justifyContent": "flex-end",
+          }
         }
-      }
-      navigate={[Function]}
-    />
-  </DataTableCard>
-</div>
+      >
+        <BrowseFilters
+          askConfirmationForExport={false}
+          intl={
+            Object {
+              "formatDate": [Function],
+              "formatHTMLMessage": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatPlural": [Function],
+              "formatRelative": [Function],
+              "formatTime": [Function],
+            }
+          }
+          location={
+            Object {
+              "search": "",
+            }
+          }
+          navigate={[Function]}
+        />
+      </div>
+      <DataTableProgressBar
+        disabled={true}
+      />
+      <ForwardRef(Table)
+        className="CaseDataTable"
+      >
+        <BrowseDataTableHead
+          columns={
+            Immutable.List [
+              Object {
+                "key": "createdOn",
+                "label": "Date",
+                "sortable": true,
+              },
+              Object {
+                "key": "externalId",
+                "label": "Case ID",
+                "sortable": true,
+              },
+              Object {
+                "hiddenOn": "sm",
+                "key": "sampleOriginSite",
+                "label": "Sample Collection Site",
+                "sortable": true,
+              },
+              Object {
+                "hiddenOn": "sm",
+                "key": "patientId",
+                "label": "Patient ID",
+                "sortable": true,
+              },
+              Object {
+                "hiddenOn": "sm",
+                "key": "diseaseName",
+                "label": "Disease",
+                "sortable": true,
+              },
+              Object {
+                "key": "status",
+                "label": "Status",
+                "sortable": true,
+              },
+            ]
+          }
+          location={
+            Object {
+              "search": "",
+            }
+          }
+          navigate={[Function]}
+          sortColumnDir="desc"
+          sortColumnKey="id"
+        />
+        <ForwardRef(TableBody) />
+      </ForwardRef(Table)>
+      <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
+        intl={
+          Object {
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+          }
+        }
+        location={
+          Object {
+            "search": "",
+          }
+        }
+        navigate={[Function]}
+        pageAt={0}
+        pageSize={10}
+        pageSizeButtonKeys={
+          Array [
+            10,
+            25,
+            50,
+            100,
+          ]
+        }
+        paginatorStatus={
+          Object {
+            "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# case}
+      other {# cases}
+    }",
+            "id": "pages.CaseList.paginatorStatus",
+          }
+        }
+        timedMessageUsed={false}
+        total={0}
+      />
+    </DataTableCard>
+  </div>
+</Fragment>
 `;

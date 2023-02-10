@@ -1,8 +1,10 @@
 const _ = require('lodash')
+const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
+const { usedAssay } = require('../../assay/common/db')
 
 function getDeviceBaseExtendedQuery(
   query,
@@ -26,12 +28,7 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (query.assayId || query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-      if (query.assayId) {
-        const { assayId } = query
-        const assayIds = _.isArray(assayId) ? assayId : [assayId]
-        queryBuilder.whereIn('a.id', assayIds)
-      }
+      if (query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
       if (query.assayExternalId) queryBuilder.where('a.externalId', query.assayExternalId)
       if (query.resultCategoryId)
         queryBuilder
@@ -57,6 +54,7 @@ function getDeviceBaseExtendedQuery(
       type: 'dt.name',
       siteExternalId: 's.externalId',
       siteName: 's.name',
+      assayId: 'a.id',
     })
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
@@ -222,6 +220,48 @@ async function deleteResultDownloadLog(deviceId, trknex) {
   await trknex('ResultDownloadLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
 }
 
+async function deleteInventoryLog(deviceId, trknex) {
+  let inventoryItemIds = await trknex('InventoryLog')
+    .whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id'))
+    .pluck('inventoryItemId')
+  if (inventoryItemIds.length > 0) {
+    /**
+     * just in case (because InventoryLog.inventoryItemId is nullable field) -
+     * filter out `null` values
+     */
+    inventoryItemIds = inventoryItemIds.filter(it => !!it)
+    /**
+     * Count # of records in InventoryLog for each entry in array `inventoryItemIds`.
+     * This is needed to correctly increase quantityOnHand in table InventoryItem.
+     */
+    const cntById = _.reduce(
+      inventoryItemIds,
+      (acc, id) => {
+        acc[id] = acc[id] || { cnt: 0 }
+        acc[id].cnt += 1
+        return acc
+      },
+      {}
+    )
+    const distinctInventoryItemIds = _.keys(cntById)
+    const inventoryItems = await trknex('InventoryItem')
+      .whereIn('id', distinctInventoryItemIds)
+      .select('id', 'quantityOnHand')
+    await Promise.each(inventoryItems, async ({ id, quantityOnHand }) => {
+      const { cnt } = cntById[id]
+      if (cnt) {
+        await trknex('InventoryItem')
+          .where('id', id)
+          .update({ quantityOnHand: quantityOnHand + cnt })
+      }
+    })
+    /**
+     * and finally remove from InventoryLog, if any records to delete exists
+     */
+    await trknex('InventoryLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
+  }
+}
+
 async function deleteDeviceLog(deviceId, trknex) {
   await trknex('DeviceLog').whereIn('resultId', trknex('Result').where('deviceId', deviceId).select('id')).del()
 }
@@ -308,12 +348,12 @@ function getResultCategoriesByAssay(assayId) {
       resultCategory2Label: 'a.resultCategory2Label',
       resultCategory1LabelI18nKey: 'a.resultCategory1I18nKey',
       resultCategory2LabelI18nKey: 'a.resultCategory2I18nKey',
-      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id)'),
-      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey)'),
-      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id)'),
-      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey)'),
-      resultCategory2ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc2.name)'),
-      resultCategory1ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc1.name)'),
+      resultCategory1ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc1.id ORDER BY rc1.id)'),
+      resultCategory1ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc1.i18nKey ORDER BY rc1.id)'),
+      resultCategory2ResultsId: knex.raw('GROUP_CONCAT(DISTINCT rc2.id ORDER BY rc2.id)'),
+      resultCategory2ResultsI18nKey: knex.raw('GROUP_CONCAT(DISTINCT rc2.i18nKey ORDER BY rc2.id)'),
+      resultCategory2ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc2.name ORDER BY rc2.id)'),
+      resultCategory1ResultsLabel: knex.raw('GROUP_CONCAT(DISTINCT rc1.name ORDER BY rc1.id)'),
     })
     .first()
 }
@@ -366,13 +406,16 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       deviceMaintenanceStatusId: 'dms.id',
     })
     .andWhere('dtc.hasResults', true)
-
   const { total } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as total')).first()
   const data = await q
-    .modify(sortPageParams, query, 'name')
+    .modify(_q => {
+      // For export, we don't provide sort and paging params - we should get all records
+      if (query.size) _q.modify(sortPageParams, query, 'name')
+    })
     .select(
       'd.name',
       'dms.i18nKey as deviceStatus',
+      'dms.name as deviceStatusLabel',
       'd.lastPingOn',
       'firstAndLastResults.firstEndedOn as firstResultEndedOn',
       'firstAndLastResults.lastEndedOn as lastResultEndedOn',
@@ -421,6 +464,36 @@ async function joinModuleAvailability(dataConstraints, query) {
   }
 }
 
+function getResultCategoryGroupColumns(dataConstraints, query) {
+  return knex
+    .from('Assay AS a')
+    .innerJoin('DeviceType AS dt', 'a.deviceTypeId', 'dt.id')
+    .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Disease AS ds', 'at.diseaseId', 'ds.id')
+    .innerJoin('ResultCategoryGroup AS rcg', 'a.id', 'rcg.assayId')
+    .innerJoin('ResultCategory AS rc1', 'rcg.resultCategory1Id', 'rc1.id')
+    .leftJoin('ResultCategory AS rc2', 'rcg.resultCategory2Id', 'rc2.id')
+    .join(usedAssay(dataConstraints).as('f'), 'a.id', 'f.assayId')
+    .select([
+      knex.raw('GROUP_CONCAT(rcg.assayId) AS assayId'),
+      'rcg.resultCategory1Id',
+      'rcg.resultCategory2Id',
+      knex.raw('CONCAT(rcg.assayId, "_",IFNULL(rc1.id, ""), "_", IFNULL(rc2.id, "")) AS columnKey'),
+      knex.raw(
+        'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
+      ),
+    ])
+    .groupBy(
+      knex.raw(
+        'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), ""))'
+      )
+    ) // Equal to columnName
+    .where('dt.externalId', 'CepheidGeneXpert')
+    .modify(filterParams, query, {
+      assayId: 'a.id',
+    })
+    .orderBy('columnName')
+}
 module.exports = {
   getDeviceWorkload,
   getResultCategoriesByAssay,
@@ -437,6 +510,7 @@ module.exports = {
   mergeMessages,
   getDevicesIdsCheckingConstraints,
   deleteResultDownloadLog,
+  deleteInventoryLog,
   deleteMessages,
   deleteResults,
   deleteDeviceLog,
@@ -452,4 +526,6 @@ module.exports = {
   deleteDevice,
   getNotDecommissionedDevices,
   joinModuleAvailability,
+  getFirstAndLastResults,
+  getResultCategoryGroupColumns,
 }

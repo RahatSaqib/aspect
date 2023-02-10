@@ -1,8 +1,12 @@
 import { createTheme, lighten, alpha } from '@mui/material'
 import { cyan, grey, lightGreen, orange } from '@mui/material/colors'
-import { deDE, enUS, frFR, ptPT, ruRU, ukUA, esES, tgTJ, viVN } from '@mui/material/locale'
+import { deDE, enUS, frFR, ptPT, ruRU, ukUA, esES, viVN } from '@mui/material/locale'
+import { deDE as xdeDE, enUS as xenUS, frFR as xfrFR, esES as xesES, ptBR } from '@mui/x-date-pickers'
 import isEmpty from 'lodash/isEmpty'
 import { customPropertiesVariables } from './colors'
+import xruRU from './ruRUlocale'
+import xukUA from './ukUAlocale'
+import xviVN from './viVNlocale'
 
 const locale = {
   'de-DE': deDE,
@@ -12,8 +16,19 @@ const locale = {
   'ru-RU': ruRU,
   'uk-UA': ukUA,
   'es-ES': esES,
-  'tg-TJ': tgTJ,
+  'tg-TJ': ruRU,
   'vi-VN': viVN,
+}
+const xlocale = {
+  'de-DE': xdeDE,
+  'en-US': xenUS,
+  'fr-FR': xfrFR,
+  'pt-PT': ptBR,
+  'ru-RU': xruRU,
+  'uk-UA': xukUA,
+  'es-ES': xesES,
+  'tg-TJ': xruRU,
+  'vi-VN': xviVN,
 }
 const themedColors = {
   text: customPropertiesVariables['--aspect-color-white'],
@@ -32,9 +47,6 @@ const themeDefinition = {
       hoverOpacity: 0.2,
     },
     primary: {
-      // light: lightGreen[500],
-      // main: lightGreen[600],
-      // dark: lightGreen[700],
       light: cyan[700],
       main: customPropertiesVariables['--ming'],
       dark: cyan[900],
@@ -46,26 +58,15 @@ const themeDefinition = {
       dark: orange[700],
       contrastText: customPropertiesVariables['--aspect-color-white'],
     },
+    white: {
+      main: '#FFF',
+    },
   },
   shape: {
     borderRadius: 2,
   },
   customPropertiesVariables,
   components: {
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          /**
-           * may reset to `position: 'static'` as was before
-           * (and remove `margin-top: var(--aspect-app-bar-height);` from `.Page-Content` in
-           * file web/src/globals/factories/loggedInFactory/index.css),
-           * but need 1st to change @media
-           * for showing either VerticalAppBar or HorizontalAppBar which now are both displayed.
-           */
-          position: 'fixed !important',
-        },
-      },
-    },
     MuiAccordionDetails: {
       styleOverrides: {
         root: {
@@ -90,13 +91,22 @@ const themeDefinition = {
         },
       },
     },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: 'transparent',
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
           borderRadius: themedColors.buttonBorderRadius,
           textTransform: 'inherit',
           '&.browseButton': {
-            marginRight: '1.5em',
+            marginRight: '8px',
             fontWeight: 700,
             paddingRight: '2.5em',
             paddingLeft: '2.5em',
@@ -179,11 +189,9 @@ const themeDefinition = {
             border: `1px solid ${themedColors.primary}`,
           },
         }),
-        /* Styles applied to the root element if `variant="text"` and `color="primary"`. */
         textPrimary: {
           color: themedColors.primary,
         },
-        /* Styles applied to the root element if `variant="text"` and `color="secondary"`. */
         textSecondary: {
           color: themedColors.secondary,
         },
@@ -231,6 +239,13 @@ const themeDefinition = {
         },
       },
     },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          marginLeft: 0,
+        },
+      },
+    },
     MuiFormHelperText: {
       marginDense: {
         marginTop: 4,
@@ -242,12 +257,6 @@ const themeDefinition = {
         root: {
           margin: 0,
           width: '100%',
-        },
-        item: {
-          '&.MuiGrid-item': {
-            paddingLeft: '0 !important',
-            paddingTop: '0 !important',
-          },
         },
       },
     },
@@ -285,6 +294,15 @@ const themeDefinition = {
       styleOverrides: {
         root: {
           minWidth: 256,
+        },
+      },
+    },
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          '& .MuiSvgIcon-root': {
+            fontSize: 20,
+          },
         },
       },
     },
@@ -366,16 +384,15 @@ const themeDefinition = {
     MuiTextField: {
       defaultProps: {
         variant: 'standard',
+        // margin: 'dense',
+        fullWidth: true,
+        InputLabelProps: { shrink: true },
       },
     },
   },
 }
-const theme = createTheme(themeDefinition)
 
-const getTheme = culture => {
-  if (!isEmpty(culture)) {
-    return createTheme(themeDefinition, locale[culture])
-  }
-  return theme
-}
+const getTheme = culture =>
+  !isEmpty(culture) ? createTheme(themeDefinition, xlocale[culture], locale[culture]) : createTheme(themeDefinition)
+
 export default getTheme

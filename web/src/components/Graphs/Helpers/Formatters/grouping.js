@@ -305,8 +305,6 @@ const groupForDeviceStatusAPI = (data, keyToConsume, indexBy, formatDate, filter
           : +calcPercentageForGraphs(devicesInactive, devicesTotal)
         : 0,
       inactiveUnknown: weekendOrHolidayInactive(curr.inactiveUnknown, devicesTotal, isWeekendOrHoliday),
-      inactiveConnectivity: weekendOrHolidayInactive(curr.inactiveConnectivity, devicesTotal, isWeekendOrHoliday),
-      inactiveDecommissioned: weekendOrHolidayInactive(curr.inactiveDecommissioned, devicesTotal, isWeekendOrHoliday),
       inactiveDownForRepair: weekendOrHolidayInactive(curr.inactiveDownForRepair, devicesTotal, isWeekendOrHoliday),
       inactiveNoTestsPerformed: weekendOrHolidayInactive(
         curr.inactiveNoTestsPerformed,

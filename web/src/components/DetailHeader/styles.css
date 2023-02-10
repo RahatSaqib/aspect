@@ -1,0 +1,13 @@
+.AppBar {
+  z-index: 1000;
+}
+
+.Name {
+  padding-right: 8px;
+}
+
+.Content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
+}

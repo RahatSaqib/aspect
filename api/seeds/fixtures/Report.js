@@ -62,7 +62,7 @@ const allResults = {
       query: {
         sortCol: 'endedOn',
         sortDir: 'desc',
-        templateFolderPath: 'export/results',
+        // templateFolderPath: 'export/results',
         maxNumberOfRecords: 50000,
         streamCSV: true,
       },
@@ -92,13 +92,13 @@ const criticalErrorsByDevice = {
     },
     {
       sortOrder: 1,
-      moduleName: 'device/service',
-      functionName: 'getErrorCodesByDeviceReport',
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorsByDevicesReport',
       query: {
-        sortCol: 'name',
-        sortDir: 'asc',
         hasResults: 1,
-        deviceTypeId: 'CepheidGeneXpert',
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        avoidStreaming: true,
       },
     },
   ],
@@ -480,8 +480,8 @@ const deviceReport = {
   name: 'Device Report',
   description:
     'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
-  i18nKey: 'Device_Report',
-  i18nKeyDescription: 'Device_Report_description',
+  i18nKey: 'deviceReport',
+  i18nKeyDescription: 'deviceReport_description',
   externalId: 'device_report',
   fileName: 'DeviceReport',
   exportCsv: false,
@@ -491,12 +491,102 @@ const deviceReport = {
     {
       sortOrder: 0,
       moduleName: 'device/serviceReports',
-      functionName: 'getDeviceReport',
+      functionName: 'getDevicesWithCountsForTBReport',
       query: {
         hasResults: 1,
         sortCol: 'name',
         sortDir: 'asc',
         avoidStreaming: true,
+      },
+    },
+  ],
+}
+
+const devicesAndSitesOverview = {
+  name: 'GeneXpert Devices and Sites Overview',
+  description:
+    'An overview of all GeneXpert devices in the system, information about inventory, and aggregated test results and errors per device.',
+  i18nKey: 'devicesAndSitesOverview',
+  i18nKeyDescription: 'devicesAndSites_description',
+  externalId: 'devices_and_sites_overview',
+  fileName: 'DevicesAndSitesOverview',
+  exportCsv: false,
+  availableForNotification: 1,
+  sortOrder: 150,
+  sheets: [
+    /**
+     * sheet `GeneXpert Devices`
+     */
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getAllDeviceReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    /**
+     * sheet `GeneXpert Inventory by Site`
+     */
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReports/devicesAndSitesOverviewReport',
+      functionName: 'getInventoryData',
+      query: {
+        hasResults: 1,
+        sortCol: 'name',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    /**
+     * sheet `GeneXpert Errors by Devices`
+     */
+    {
+      sortOrder: 2,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorsByDevicesReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
+/**
+ * see section `Tuning MySql` in api/README.md
+ */
+const dataExtract = {
+  name: 'Data Extract',
+  description: 'Extract all data in the system for either selected date range or maximum for one year.',
+  i18nKey: 'data_extract',
+  i18nKeyDescription: 'data_extract_description',
+  externalId: 'data_extract',
+  fileName: 'DataExtract',
+  sortOrder: 0,
+  availableForNotification: 1,
+  exportCsv: true,
+  exportExcel: false,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/serviceReport',
+      functionName: 'getDataExtractReport',
+      query: {
+        sortCol: 'updatedOn',
+        sortDir: 'desc',
+        /**
+         * querying 500K of records should work well with
+         * new MySql settings for buffer pool size
+         */
+        maxNumberOfRecords: 500000,
+        streamCSV: true,
       },
     },
   ],
@@ -523,4 +613,6 @@ module.exports = {
   tbWorkloadSummary,
   xdrDevicesSummary,
   usageStats,
+  devicesAndSitesOverview,
+  dataExtract,
 }

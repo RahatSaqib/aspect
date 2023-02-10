@@ -9,8 +9,8 @@ import { oneOfType, object } from 'prop-types'
 import Select, { components } from 'react-select'
 import useI18n from '../../hooks/useI18n'
 import { assay as assayTranslations } from '../../messages'
+import { getAspectTheme } from './AspectDropDown.theme'
 import ClearIndicator from './ClearIndicator'
-import { getAspectTheme } from './index.jsx'
 import messages from './messages'
 
 const Group = props => {
