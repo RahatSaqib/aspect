@@ -97,7 +97,10 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
           lastResultOn = deviceCreatedOn
         }
 
-        if (lastPingOn == null || (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)) {
+        if (
+          (lastPingOn == null || (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)) &&
+          (lastSeenOn == null || (maxLastDateOffline != null && lastSeenOn <= maxLastDateOffline))
+        ) {
           // Number of days of "heartbeat" > X days
           context.deviceOffline(id, { lastSeenOn, lastPingOn })
         } else if (maxLastDateNoResult != null && lastResultOn <= maxLastDateNoResult) {
