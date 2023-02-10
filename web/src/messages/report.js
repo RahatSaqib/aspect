@@ -26,6 +26,14 @@ const messages = defineMessages({
     defaultMessage:
       'All test results in the system (up to 50.000 records). One row per result with all the fields needed.',
   },
+  data_extract: {
+    id: 'pages.ReportIndex.data_extract',
+    defaultMessage: 'Data Extract for Tableau',
+  },
+  data_extract_description: {
+    id: 'pages.ReportIndex.data_extract_description',
+    defaultMessage: 'Extract data for selected date range for further importing into Tableau.',
+  },
   MTB_Detected_RR_Detected: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected',
     defaultMessage: 'MTB Detected RR Detected',

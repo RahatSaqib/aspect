@@ -11,7 +11,7 @@
     "husky": "^8.0.2",
     "lint-staged": "^13.1.0",
     "lodash": "^4.17.21",
-    "make-runnable": "^1.4.0",
+    "make-runnable": "^1.4.1",
     "prettier": "^2.8.1"
   },
   "scripts": {

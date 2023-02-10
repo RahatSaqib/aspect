@@ -57,7 +57,7 @@ const Status = () => {
   const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
   return (
-    <div className={cssClasses('Container')} style={{ marginBottom: 0 }}>
+    <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.statusTitle)} />
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown location={location} />
@@ -69,7 +69,7 @@ const Status = () => {
       </ErrorBoundary>
 
       {assays ? (
-        <>
+        <div className={cssClasses('wrapper')}>
           <PermissionChecker permissions={['dashboard']}>
             <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
           </PermissionChecker>
@@ -125,7 +125,7 @@ const Status = () => {
               <TreatmentStatusGraph assaysFromState={assays} /> {/* 15 */}
             </PermissionChecker>
           ) : null}
-        </>
+        </div>
       ) : null}
 
       <Reports className={cssClasses('Section--withStatus')} title={formatMessage(messages.reportsTitle)} />

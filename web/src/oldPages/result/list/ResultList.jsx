@@ -256,9 +256,9 @@ export const ResultListWithProps = ({
           />{' '}
         </div>
 
-        <DataTableProgressBar disabled={!isLoading} />
+        {isLoading ? <DataTableProgressBar /> : null}
 
-        {items.currentIdList.length === 0 ? (
+        {items.currentIdList.isEmpty() ? (
           <BrowseEmptyList navigate={navigate} location={location} />
         ) : (
           <>

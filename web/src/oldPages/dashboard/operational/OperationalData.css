@@ -6,6 +6,7 @@
 
 .Section--summary {
   margin: 10px 0 0;
+  width: calc(100vw - 20px);
 }
 
 .Section--stock > div:first-child {
@@ -44,4 +45,7 @@
 .tabs__tab--active {
   color: white !important;
   background-color: var('--aspect-device-aspect') !important;
+}
+.wrapper {
+  width: 100%;
 }

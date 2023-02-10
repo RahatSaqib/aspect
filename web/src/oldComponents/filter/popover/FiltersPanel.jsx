@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogActions, Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import addYears from 'date-fns/addYears'
+import isEqual from 'lodash/isEqual'
 import replace from 'lodash/replace'
 import { findDOMNode } from 'react-dom'
 import { MdKeyboardArrowDown } from 'react-icons/md'
@@ -130,6 +131,13 @@ const FiltersPanel = ({ disabled, contentClassName, filters, config, dateFilterL
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countries, v])
 
+  useEffect(() => {
+    if (!isEqual(v, filters)) {
+      sV({ ...v, ...filters })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters])
+
   const onChangeFilters = nextFilters => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = mergeToFiltersParams(nextFilters, new URLSearchParams(searchParams.get('filters') || ''))
@@ -137,6 +145,11 @@ const FiltersPanel = ({ disabled, contentClassName, filters, config, dateFilterL
     searchParams.delete('pageAt')
     searchParams.delete('page')
     navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
+    setIsShown(false)
+  }
+
+  const onCancel = () => {
+    sV({})
     setIsShown(false)
   }
 
@@ -799,7 +812,7 @@ const FiltersPanel = ({ disabled, contentClassName, filters, config, dateFilterL
             </ErrorBoundary>
           </FallbackUntilDone>
           <DialogActions>
-            <Button onClick={() => setIsShown(false)}>{formatMessage(messages.button_Cancel)}</Button>
+            <Button onClick={onCancel}>{formatMessage(messages.button_Cancel)}</Button>
             <Button onClick={() => onChangeFilters(v)}>{formatMessage(messages.applyFilters)}</Button>
           </DialogActions>
         </Dialog>

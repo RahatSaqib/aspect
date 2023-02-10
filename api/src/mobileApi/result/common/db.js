@@ -364,6 +364,7 @@ const getItemsV2 = (resultQuery, query) => {
       'dis.externalid as diseaseExternalId',
       'dis.name as diseaseName',
       'sp.externalId as sampleId',
+      'sp.collectedOn as sampleCollectionOn',
       'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
