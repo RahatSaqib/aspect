@@ -707,10 +707,10 @@ log-update@^4.0.0:
     slice-ansi "^4.0.0"
     wrap-ansi "^6.2.0"
 
-make-runnable@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/make-runnable/-/make-runnable-1.4.0.tgz#da30ed9f677c4311d0fb970ef9867acb3da62952"
-  integrity sha512-0cYuE2PVJUurBxczx40QH2W3X3bnskeIPLXa62qTC2o7v5qWxYEl6zQGUgTSQRANhd28NA2jHmyF0OnWcPsdAQ==
+make-runnable@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/make-runnable/-/make-runnable-1.4.1.tgz#a230f5bc085468362dc73c9f2391948b26e777ba"
+  integrity sha512-18F9NyNAPcoAT5a1y5r2bBOEY17Z4fa86WXBfLcSOzNo8/KSCymyViDDlsPJ66xhatwBVfodiXYyOm5Jvz9YFA==
   dependencies:
     bluebird "^3.5.0"
     yargs "^16.2.0"
