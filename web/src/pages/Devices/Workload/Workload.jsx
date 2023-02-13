@@ -55,7 +55,7 @@ const availableSortCol = [
 const searchSanitizer = makeSearchParamsSanitizer({ availableSortCol })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 
-const Workload = ({ navButton }) => {
+const Workload = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { formatMessage } = useI18n()
@@ -64,7 +64,7 @@ const Workload = ({ navButton }) => {
   const [requestParams, setRequestParams] = useState()
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.userPermissions, {})
-  const { isError, isLoading, data = false, error } = useWorkload(requestParams)
+  const { isError, isLoading, data = false, error } = useWorkload(requestParams, firstLoad)
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
   const mostResultsAssay = useSelector(
@@ -131,9 +131,7 @@ const Workload = ({ navButton }) => {
 
   return (
     <>
-      <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack>
-        {navButton}
-      </DetailHeader>
+      <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack />
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.workloadTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>

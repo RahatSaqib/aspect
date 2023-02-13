@@ -6,7 +6,7 @@ module.exports = {
   adminPassword: 'e5wQ40TLzd',
   deviceApiToken: 'jdk5ctyu8jhwimkvfc99',
   partnerAbbreviation: 'PH',
-  plugin: '',
+  plugin: 'philippines',
   fixtures: {
     jobFunctions,
   },
