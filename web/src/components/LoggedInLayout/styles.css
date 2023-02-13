@@ -1,10 +1,5 @@
 @import '../../theme/variables.css';
 
-.Container {
-  background-color: var(--aspect-color-grey-7);
-  min-height: 100vh;
-}
-
 .version {
   color: var(--ming, #34717c);
   font-size: x-small;
@@ -57,6 +52,9 @@
   letter-spacing: 0.00938em;
   font-weight: 400;
   padding: 6px 16px;
+}
+
+.SizedSubLink {
   min-width: 256px;
 }
 

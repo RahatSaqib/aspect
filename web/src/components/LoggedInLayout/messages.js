@@ -7,6 +7,8 @@ const messages = defineMessages({
   clinicalIndicatorsTitle: { id: 'header.link.clinicalIndicators.title', defaultMessage: 'Clinical Indicators' },
   browseTitle: { id: 'header.link.browse.title', defaultMessage: 'Browse' },
   devices: { id: 'browsePage.browseDropdown.devices', defaultMessage: 'Devices' },
+  devicesList: { id: 'browsePage.browseDropdown.devicesList', defaultMessage: 'Devices List' },
+  devicesWorkload: { id: 'browsePage.browseDropdown.devicesWorkload', defaultMessage: 'Device Workload' },
   results: { id: 'browsePage.browseDropdown.results', defaultMessage: 'Results' },
   contacts: { id: 'browsePage.browseDropdown.contacts', defaultMessage: 'Contacts' },
   sites: { id: 'browsePage.browseDropdown.sites', defaultMessage: 'Sites' },

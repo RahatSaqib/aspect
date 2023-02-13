@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CssBaseline, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 import { Container } from '@mui/system'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
@@ -28,7 +28,6 @@ export const LoggedInLayout = ({ children }) => {
 
   return (
     <>
-      <CssBaseline />
       <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
       <Container maxWidth="100%" disableGutters className={cssClasses('Container')}>
         <Header />
