@@ -103,6 +103,8 @@ const Workload = () => {
 
     const filters = getFilters(filtersParams)
     setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
+
+    return () => setFirstLoad(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize])
 
