@@ -7,6 +7,7 @@ import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
 import { connect } from 'react-redux'
 import { compose, pure } from 'recompose'
+import useDeviceTypeList from '../../../hooks/device/useDeviceTypeList'
 import useI18n from '../../../hooks/useI18n'
 import { commonDefinitions } from '../../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
@@ -139,6 +140,8 @@ const getResultCategoryNameFromDisease = (assayItems, filterDiseaseId, resultCat
 const FiltersBtnGroup = ({ children, ...restProps }) => {
   const { formatMessage, format } = useI18n()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
+
+  const { data: deviceTypes } = useDeviceTypeList()
 
   const buttonBy = {
     singleAssayId: (filterKey, props) => {
@@ -379,16 +382,14 @@ const FiltersBtnGroup = ({ children, ...restProps }) => {
         )(filterKey, props, index)
       )
     },
-    deviceTypeId: makeButton((deviceTypeId, { deviceTypeItems }) =>
+    deviceTypeId: makeButton(deviceTypeId =>
       formatMessage(messages.withDeviceType, {
-        deviceTypeName: deviceTypeItems.find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP).get('name'),
+        deviceTypeName: deviceTypes?.find(it => it.id === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)?.name,
       })
     ),
-    deviceType: makeButton((deviceType, { deviceTypeItems }) =>
+    deviceType: makeButton(deviceType =>
       formatMessage(messages.withDeviceType, {
-        deviceTypeName: deviceTypeItems
-          .find(it => it.get('externalId') === deviceType, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        deviceTypeName: deviceTypes?.find(it => it.externalId === deviceType, EMPTY_CONTEXT, EMPTY_MAP)?.name,
       })
     ),
     displayResult: makeButton(displayResult =>
@@ -459,7 +460,6 @@ const FiltersBtnGroup = ({ children, ...restProps }) => {
       })
     ),
   }
-
   return (
     <div className={cssClasses('FiltersBtnGroup')}>
       {children}

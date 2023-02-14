@@ -94,11 +94,11 @@ export const DeviceDetail = props => {
 
   return (
     <>
-      <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device">
+      <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device/list">
         {[
-          { label: intl.formatMessage(messages.profile), path: `/browse/device/${deviceId}` },
-          { label: intl.formatMessage(messages.alerts), path: `/browse/device/${deviceId}/alerts` },
-          { label: intl.formatMessage(messages.edit), path: `/browse/device/${deviceId}/edit` },
+          { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
+          { label: intl.formatMessage(messages.alerts), path: `/browse/device/list/${deviceId}/alerts` },
+          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}

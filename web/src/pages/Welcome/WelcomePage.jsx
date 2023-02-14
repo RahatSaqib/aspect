@@ -22,7 +22,7 @@ const Welcome = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: 'calc(100vh - 120px)',
+        height: 'calc(100% - 120px)',
       }}
     >
       <Paper elevation={3} sx={{ p: 4, minWidth: 380, width: '60vw' }}>

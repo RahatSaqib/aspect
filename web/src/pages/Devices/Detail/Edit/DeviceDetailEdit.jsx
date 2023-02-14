@@ -50,7 +50,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const handleSubmit = async () => {
     updateDeviceTags(editDeviceTags.map(deviceTag => deviceTag.title).join(','), {
       onSuccess: () => {
-        updateDevice(editDevice, { onSuccess: navigate(`/browse/device/${device.id}`) })
+        updateDevice(editDevice, { onSuccess: navigate(`/browse/device/list/${device.id}`) })
       },
     })
   }

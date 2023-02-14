@@ -53,7 +53,7 @@ const geneXpertDevices = {
       AND d.createdOn <=  DATE_FORMAT(NOW() ,'%Y-%m-01')`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
   },
@@ -107,7 +107,7 @@ const devicesTitle = {
   sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
     "','"
   )}')`,
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -310,7 +310,7 @@ const utilizationRate = {
   ) AS innerQuery`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
@@ -364,7 +364,7 @@ const activeDevicesCnt = {
   WHERE dtc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join("','")}')`,
   statUnit: 'of {unit} online',
   statUnitI18nKey: 'ofOnlineDevices',
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     deviceMaintenanceStatusId: ['active', 'reportedActive'],
   },
@@ -789,7 +789,7 @@ const moduleSwaps = {
         AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') AND LAST_DAY(CURRENT_DATE-INTERVAL 1 MONTH)`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
     issueTypeId: 'ModuleReplaced',
@@ -1122,7 +1122,7 @@ const instrumentsReplaced = {
   ) as innerQuery`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
     issueTypeId: 'InstrumentReplaced',
@@ -1602,7 +1602,7 @@ const numberOfDevicesExperiencingServiceInterruption = {
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
     deviceType: 'CepheidGeneXpert',
@@ -1690,7 +1690,7 @@ const averageDurationServiceInterruption = {
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
     deviceType: 'CepheidGeneXpert',
@@ -1795,7 +1795,7 @@ const percentageOfDaysWithServiceInterruption = {
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
-  link: '/browse/device',
+  link: '/browse/device/list',
   linkParams: {
     deviceName: 'GeneXpert',
     deviceMaintenanceStatusId: 'inactiveDownForRepair',

@@ -57,7 +57,7 @@ const Status = () => {
   const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
   return (
-    <div className={cssClasses('Container')} style={{ marginBottom: 0 }}>
+    <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.statusTitle)} />
       <div className={cssClasses('FiltersGroup')}>
         <BrowseSiteDropdown location={location} />

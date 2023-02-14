@@ -302,7 +302,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
-              to={`/browse/device?filters=deviceTypeId%3D${device.getIn(['deviceType', 'id'])}`}
+              to={`/browse/device/list?filters=deviceTypeId%3D${device.getIn(['deviceType', 'id'])}`}
               action={
                 <Fragment>
                   <Tooltip title={formatMessage(messages.deviceLogsTooltip)} placement="right">
