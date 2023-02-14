@@ -303,7 +303,7 @@ const DeviceList = () => {
             <BrowseEmptyList navigate={navigate} location={location} />
           ) : (
             <>
-              <div style={{ overflow: 'scroll' }}>
+              <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
                 <DeviceDataTable className={cssClasses('DeviceDataTable')}>
                   <DeviceDataTableHead
                     navigate={navigate}

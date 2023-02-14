@@ -24,8 +24,8 @@ import colMessages from '../../../oldPages/result/list/messages'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
 import messages from './messages'
+import styles from './styles.css'
 import TableRow from './TableRow'
-import styles from './Workload.css'
 
 // There are some missing translations for the status, you should check what we are actually doing in device table.
 // BD MGIT columnas
@@ -149,14 +149,16 @@ const Workload = () => {
             <BrowseEmptyList navigate={navigate} location={location} />
           ) : (
             <>
-              <Table className={cssClasses('InventoryDataTable')}>
-                <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
-                <TableBody>
-                  {workloadList.map((item, index) => (
-                    <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
-                  ))}
-                </TableBody>
-              </Table>
+              <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
+                <Table className={cssClasses('InventoryDataTable')}>
+                  <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
+                  <TableBody>
+                    {workloadList.map((item, index) => (
+                      <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}
