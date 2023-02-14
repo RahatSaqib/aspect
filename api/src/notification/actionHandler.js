@@ -2,6 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { createNotifications } = require('./service')
 const NotificationCache = require('./notificationCache')
+const { issueTypeToId } = require('../shared/dictionary')
 
 function issueBased() {
   return async (action, { messageContext: context }) => analyzeNotifications(context, action)
@@ -10,6 +11,13 @@ function issueBased() {
 async function analyzeNotifications(context, action) {
   return context.run(async knex => {
     const { issueId, issueTypeId } = action
+
+    // HACK: Calibration notification must be avoided on issue creation and sent only when ISSUE_NOTIFICATION_TRIGGERED
+    // event is dispatched
+    const calibrationIssueTypeId = await issueTypeToId('CalibrationDueDate')
+    if (action.issueTypeId === calibrationIssueTypeId && action.type !== 'ISSUE_NOTIFICATION_TRIGGERED') {
+      return
+    }
 
     const notificationCache = NotificationCache.getInstance(knex)
     const conditionsToEvaluate = !_.isNil(issueId)

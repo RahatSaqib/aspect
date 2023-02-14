@@ -74,6 +74,26 @@ function resultCategoryFilters(queryBuilder, filterConditions, tblResultAlias) {
   }
 }
 
+function calibrationIssueFilter(queryBuilder, filterConditions, aliases) {
+  if (filterConditions?.daysBeforeCalibrationDueDate) {
+    queryBuilder
+      .join('Device as d', `${aliases.issue}.deviceId`, 'd.id')
+      .join('DeviceMaintenance as dm', `d.id`, 'dm.deviceid')
+      .join('DeviceType as dt', 'dt.id', `d.deviceTypeId`)
+      .whereNotNull(knex.raw("dt.deviceOperationSchema->'$.calibrationValidityInDays'"))
+      .whereIn(
+        'dm.id',
+        knex('DeviceMaintenance as dm2')
+          .join('DeviceMaintenanceType as dmt', 'dmt.id', 'dm2.deviceMaintenanceTypeId')
+          .where('dmt.externalId', 'calibration')
+          .max('dm2.id')
+      )
+      .whereRaw(
+        `DATEDIFF(dm.contextDate,DATE(NOW())) + dt.deviceOperationSchema->'$.calibrationValidityInDays' = ${filterConditions.daysBeforeCalibrationDueDate}`
+      )
+  }
+}
+
 function geographyFilters(queryBuilder, filterConditions, aliases) {
   const { areaItems, deviceLevelId } = filterConditions || {}
   const { device = 'd', geography = 'g' } = aliases
@@ -112,6 +132,7 @@ function resultConditionsMet(queryBuilder, filterCondition, aliases) {
 
 function issueConditionsMet(queryBuilder, filterCondition, aliases) {
   geographyFilters(queryBuilder, filterCondition, aliases)
+  calibrationIssueFilter(queryBuilder, filterCondition, aliases)
 }
 
 async function createNotifications(knex, action, context) {

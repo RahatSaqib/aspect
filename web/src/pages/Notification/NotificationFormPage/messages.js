@@ -169,7 +169,7 @@ export default defineMessages({
   },
   notificationTypeCalibration: {
     id: 'pages.Notification.type.Calibration',
-    defaultMessage: 'Calibration',
+    defaultMessage: 'Calibration Due Date',
   },
   notificationTypeModuleReplaced: {
     id: 'pages.Notification.type.ModuleReplaced',
@@ -608,6 +608,16 @@ export default defineMessages({
   startingDayOfTheWeekTitle: {
     id: 'pages.Notifications.startingDayOfTheWeekTitle',
     defaultMessage: 'Starting Day of the Week',
+  },
+
+  // Calibration section
+  calibrationDays: {
+    id: 'pages.Notifications.calibrationDays',
+    defaultMessage: 'Days...',
+  },
+  daysBeforeCalibrationDueDate: {
+    id: 'pages.Notifications.daysBeforeCalibrationDueDate',
+    defaultMessage: 'Before Calibration Due Date',
   },
 
   ...assay,

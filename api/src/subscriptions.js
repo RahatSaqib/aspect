@@ -4,7 +4,7 @@ const Promise = require('bluebird')
 const subscribers = {
   notificationType: require('./notificationType/subscriptions').subscriptions,
   logger: require('./logger/endpoints').subscriptions,
-  device: require('./device/endpoints').subscriptions,
+  device: require('./device/subscriptions').subscriptions,
   deviceApi: require('./deviceApi/endpoints').subscriptions,
   deviceApiRaw: require('./deviceApiRaw/endpoints').subscriptions,
   fact: require('./fact/endpoints').subscriptions,
