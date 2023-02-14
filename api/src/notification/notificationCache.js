@@ -50,11 +50,6 @@ class NotificationCache {
     this.notificationCache.set(key, value)
   }
 
-  // return the cache value
-  async getCacheValueResultNotification() {
-    return this.getCacheValue(CATEGORY.RESULT_BASED)
-  }
-
   async getCacheValue(notificationCategory) {
     let notificationsType = this.notificationCache.get(notificationCategory)
 
@@ -66,8 +61,15 @@ class NotificationCache {
     return notificationsType
   }
 
+  /**
+   * return cached values for categorized notification types
+   */
   async getCacheValueIssueNotification() {
     return this.getCacheValue(CATEGORY.ISSUE_BASED)
+  }
+
+  async getCacheValueResultNotification() {
+    return this.getCacheValue(CATEGORY.RESULT_BASED)
   }
 
   async getCacheValueReportNotification() {
