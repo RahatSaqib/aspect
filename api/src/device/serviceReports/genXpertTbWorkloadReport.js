@@ -52,6 +52,8 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
       mtbTraceDetected,
       totalXpertTests: knex.raw('count(*)'),
       totalXpertModulesInUse: knex.raw('count(DISTINCT moduleName)'),
+      lastResultUploadedOn: knex.raw(`max(r.createdOn)`),
+      lastResultConductedOn: knex.raw(`max(r.endedOn)`),
     })
     .groupBy('r.deviceId')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'])
@@ -100,7 +102,9 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
       knex.raw('IFNULL(resultsCount.mtbError, 0) AS totalErrors'),
       knex.raw('IFNULL(resultsCount.mtbNoResult, 0) AS mtbNoResult'),
       knex.raw('IFNULL(resultsCount.mtbInvalid, 0) AS mtbInvalid'),
-      knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertTests'),
+      knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertResults'),
+      'resultsCount.lastResultUploadedOn',
+      'resultsCount.lastResultConductedOn',
     ])
 }
 
