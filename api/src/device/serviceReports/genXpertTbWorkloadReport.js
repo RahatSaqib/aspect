@@ -104,6 +104,4 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
     ])
 }
 
-module.exports = {
-  getDevicesWithCountsForTB,
-}
+module.exports = getDevicesWithCountsForTB
