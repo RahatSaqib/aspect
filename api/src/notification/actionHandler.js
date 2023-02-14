@@ -88,10 +88,10 @@ async function analyzeNotifications(context, action) {
             return false
         }
       }),
-      async ({ filterCondition, notificationTypeCategoryId, notificationTypeId, reportId }) => {
+      async ({ filterCondition, notificationTypeCategoryExternalId, notificationTypeId, reportId }) => {
         let props = {
           filterCondition: JSON.parse(filterCondition),
-          notificationTypeCategoryId,
+          notificationTypeCategoryExternalId,
           notificationTypeId,
         }
         if (category === CATEGORY.ISSUE_BASED) {
@@ -114,7 +114,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
       knex,
       {
         issueId,
-        notificationTypeCategoryId: 'issueBased',
+        notificationTypeCategoryExternalId: 'issueBased',
       },
       context
     )

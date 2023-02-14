@@ -15,6 +15,7 @@ const NotificationCache = require('./notificationCache')
 const saveReportToFile = require('../report/saveReportToFile')
 const config = require('../config')
 const { getDateRangeFilters } = require('./common/logic')
+const { CATEGORY } = require('./constants')
 
 async function clearCache() {
   return NotificationCache.getInstance(knex).refreshCache()
@@ -124,11 +125,11 @@ function reportConditionsMet() {
 
 async function createNotifications(knex, notifProps, context) {
   const now = new Date()
-  const { filterCondition = null, notificationTypeCategoryId } = notifProps
+  const { filterCondition = null, notificationTypeCategoryExternalId } = notifProps
   const policies = await getNotificationPolicy(
     knex,
     notifProps,
-    evaluationMethods[notificationTypeCategoryId],
+    evaluationMethods[notificationTypeCategoryExternalId],
     filterCondition
   )
 
@@ -446,7 +447,13 @@ async function createNotificationIfNotCreatedAlready(
   { messageContext: context, knex },
   nonPersonToSend = {}
 ) {
-  const { issueId = null, resultId = null, reportId = null } = notifProps
+  const {
+    issueId = null,
+    resultId = null,
+    reportId = null,
+    notificationTypeCategoryExternalId: category,
+    isResultUpdated,
+  } = notifProps
   const { personId = null, policy, reportToken = null, reportFileName = null, now = new Date() } = policyProps
   const { notify: notifyANonPerson = false, email: to, phone } = nonPersonToSend
 
@@ -477,7 +484,11 @@ async function createNotificationIfNotCreatedAlready(
       }
     })
     .first()
-  if (!existingNotification) {
+  let allowCreate = !existingNotification
+  if (category === CATEGORY.RESULT_BASED && isResultUpdated) {
+    allowCreate = true
+  }
+  if (allowCreate) {
     notification.createdOn = now
     const messageStatusId = await messageStatusToId('Initial')
     const sharedMessageProperties = {

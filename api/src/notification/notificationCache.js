@@ -4,7 +4,7 @@ const { CATEGORY } = require('./constants')
 const stdTTL = 60 * 60 * 6 // 6 hours
 
 class NotificationCache {
-  constructor(knex, issueBased, ttl = stdTTL) {
+  constructor(knex, ttl = stdTTL) {
     this.marker = Math.random()
     this.knex = knex
     this.notificationCache = new NodeCache({ stdTTL: ttl })
@@ -17,7 +17,7 @@ class NotificationCache {
       .distinct(
         'nt.filterCondition',
         'nt.id as notificationTypeId',
-        'ntc.externalId as notificationTypeCategoryId',
+        'ntc.externalId as notificationTypeCategoryExternalId',
         'nt.issueTypeId',
         'nt.reportId'
       )
@@ -55,24 +55,12 @@ class NotificationCache {
     return this.getCacheValue(CATEGORY.RESULT_BASED)
   }
 
-  getExternalId(notificationKey) {
-    if (notificationKey === CATEGORY.ISSUE_BASED) {
-      return 'issueBased'
-    }
-    if (notificationKey === CATEGORY.REPORT_BASED) {
-      return 'reportBased'
-    }
-    return 'resultBased'
-  }
-
-  async getCacheValue(notificationKey) {
-    let notificationsType = this.notificationCache.get(notificationKey)
+  async getCacheValue(notificationCategory) {
+    let notificationsType = this.notificationCache.get(notificationCategory)
 
     if (!notificationsType) {
-      const externalId = this.getExternalId(notificationKey)
-      notificationsType = await this.getConditionsToEvaluate(externalId)
-
-      this.setCacheValue(notificationKey, notificationsType)
+      notificationsType = await this.getConditionsToEvaluate(notificationCategory)
+      this.setCacheValue(notificationCategory, notificationsType)
     }
 
     return notificationsType
