@@ -25,6 +25,14 @@ export const messages = defineMessages({
     id: 'placeholder.name',
     defaultMessage: `Name`,
   },
+  placeHolderCalibrationDueDate: {
+    id: 'placeholder.calibrationDueDate',
+    defaultMessage: `Calibration Due Date`,
+  },
+  placeHolderDaysToCalibrationDueDate: {
+    id: 'placeholder.placeHolderDaysToCalibrationDueDate',
+    defaultMessage: `Days to Calibration Due Date`,
+  },
   placeholderNameShort: {
     id: 'placeholder.name.short',
     defaultMessage: `Short Name`,

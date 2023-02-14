@@ -6,6 +6,7 @@ const { types: issueBasedTypes } = require('../issue/actions')
 const { types: resultBasedTypes } = require('../result/actions')
 const { types: reportBasedTypes } = require('../report/actions')
 const { CATEGORY } = require('./constants')
+const { issueTypeToId } = require('../shared/dictionary')
 
 function getNotificationHandler() {
   return async (action, { messageContext: context }) => analyzeNotifications(context, action)
@@ -55,8 +56,15 @@ async function analyzeNotifications(context, action) {
 
     const category = getNotificationCategory({ type, issueId, resultId })
 
-    const conditionsToEvaluate = await getConditionsToEvaluate(knex, category)
+    // HACK: Calibration notification must be avoided on issue creation and sent only when ISSUE_NOTIFICATION_TRIGGERED
+    // event is dispatched
+    const calibrationIssueTypeId = await issueTypeToId('CalibrationDueDate')
+    if (issueTypeId === calibrationIssueTypeId && type !== 'ISSUE_NOTIFICATION_TRIGGERED') {
+      return
+    }
 
+    const conditionsToEvaluate = await getConditionsToEvaluate(knex, category)
+    
     await Promise.each(
       _.filter(conditionsToEvaluate, condition => {
         switch (category) {

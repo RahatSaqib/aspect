@@ -4,5 +4,6 @@ module.exports = {
   partnerName: 'Partner One',
   jobFunctionsToNotify: ['admin'],
   serverUrl: 'http://localhost:8000',
+  dueDaysCalibrationIssue: 90,
   apiUrl: 'http://localhost:8080',
 }

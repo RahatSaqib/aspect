@@ -388,7 +388,7 @@ async function processLogItem(context, logItem, options) {
   // hardware error and dispatch MQ action if needed
   await shouldTriggerHardwareErrorAnalysis(context.messageContext, device, payload, deviceOperationId)
   // process 'calibration' log item
-  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId)
+  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId, context.messageContext)
 
   return logItem.externalId
 }
@@ -498,11 +498,12 @@ async function updateDeviceConfigurationWithContext(context) {
     device: { id: deviceId },
     now,
     pluginNames: plugins,
+    messageContext,
   } = context
   const preProcess = await loadPlugin(plugins, 'preProcessUpdateDeviceConfiguration')
   await preProcess(context)
 
-  await updateDeviceConfiguration(knex, deviceId, payload, now)
+  await updateDeviceConfiguration(knex, deviceId, payload, now, messageContext)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   const postProcess = await loadPlugin(plugins, 'postProcessUpdateDeviceConfiguration')
   const postProcessResult = await postProcess(context)

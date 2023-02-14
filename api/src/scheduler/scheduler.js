@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const cron = require('node-cron')
 const { startUp: reportBasedCronStartUp } = require('../notification/reportBased/reportBasedCronHandler')
-
+const { calibrationDueDateAnalysis, calibrationIssueNotificationTrigger } = require('../device/actions')
 const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
@@ -21,6 +21,9 @@ const config = require('../config')
 function startScheduler(queue) {
   // run hourly tasks on startup and cron every hour
   const dispatcher = createActionDispatcher(queue, {
+    calibrationDueDateAnalysis,
+    calibrationIssueNotificationTrigger,
+    escalateIssues,
     factGenerateResultCounts,
     factCheckInventoryStock,
     factGenerateDeviceConnectivity,
@@ -28,13 +31,13 @@ function startScheduler(queue) {
     factCalculateInventoryConsumptionRates,
     factNewResultsAvailableCheck,
     factExternalSourceCheck,
-    escalateIssues,
-    resolveIssues,
-    logDeviceMaintenanceStatus,
     factFillCustomFieldsCompletionStatsLast30Days,
     factCheckCompletionRatePerSite,
+    logDeviceMaintenanceStatus,
+    resolveIssues,
     tryToContinueUnprocessedRawData,
   })
+
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
   dispatcher.factDataCategoryLowCheck()
@@ -42,6 +45,9 @@ function startScheduler(queue) {
   dispatcher.factCheckCompletionRatePerSite()
   dispatcher.factFillCustomFieldsCompletionStatsLast30Days()
   dispatcher.resolveIssues()
+  dispatcher.calibrationDueDateAnalysis()
+  dispatcher.calibrationIssueNotificationTrigger()
+
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
@@ -54,6 +60,8 @@ function startScheduler(queue) {
     '25 */2 * * *', // run every 2 hours at 25th minute past the hour
     dispatcher.factCalculateInventoryConsumptionRates
   )
+  cron.schedule('30 2 * * *', dispatcher.calibrationDueDateAnalysis) // daily at 2:30 am
+  cron.schedule('0 8 * * *', dispatcher.calibrationIssueNotificationTrigger) // daily at 08:00 am
 
   cron.schedule('30 7,22,37,52 * * * *', dispatcher.resolveIssues) // run every 15 minutes starting at 7m and 30s
 

@@ -15,7 +15,9 @@ import { fetchCountries } from './store/GeographyRedux'
 const CaseList = lazy(() => import('./oldPages/case/list/CaseList'))
 const ContactPage = lazy(() => import('./pages/Contact'))
 const DeviceApiKeyList = lazy(() => import('./oldPages/deviceApiKey/list/DeviceApiKeyList'))
-const DeviceContainer = lazy(() => import('./pages/Devices/DeviceContainer'))
+
+const Devices = lazy(() => import('./pages/Devices/Status/DeviceList'))
+const DevicesWorkload = lazy(() => import('./pages/Devices/Workload'))
 const DeviceDetail = lazy(() => import('./pages/Devices/Detail/DeviceDetail'))
 const EditSite = lazy(() => import('./pages/Site/Detail/Edit'))
 const InventoryContainer = lazy(() => import('./oldPages/inventory/InventoryContainer'))
@@ -92,7 +94,7 @@ const LogInApp = () => {
 
   return (
     <LoggedInLayout>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<Loading centered />}>
         <Routes>
           {a(['dashboard:summary']) ? (
             <>
@@ -111,8 +113,9 @@ const LogInApp = () => {
 
           {a(['browse', 'device']) ? (
             <>
-              <Route path="/browse/device" element={<DeviceContainer />} />
-              <Route path="/browse/device/:deviceId/*" element={<DeviceDetail {...props} />} />
+              <Route path="/browse/device/list" element={<Devices />} />
+              <Route path="/browse/device/list/:deviceId/*" element={<DeviceDetail {...props} />} />
+              <Route path="/browse/device/workload" element={<DevicesWorkload />} />
             </>
           ) : null}
 

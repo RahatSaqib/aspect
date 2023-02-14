@@ -94,11 +94,21 @@ const getColumns = formatMessage => [
   { key: 'name', label: formatMessage(messages.device), sortable: true },
   { key: 'siteName', label: formatMessage(messages.site), sortable: true, hiddenOn: 'lg' },
   { key: 'approvalStatusI18nKey', label: formatMessage(messages.approvalStatus), sortable: true },
-  { key: 'deviceStatus', label: formatMessage(messages.deviceStatus), sortable: true },
+  {
+    key: 'deviceStatus',
+    label: formatMessage(messages.deviceStatus),
+    sortable: true,
+    tooltip: formatMessage(messages.deviceStatusDescription),
+  },
   // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
   { key: 'maintenanceStatusI18nKey', label: formatMessage(messages.maintenanceStatus), sortable: true },
   { key: 'lastResultConductedOn', label: formatMessage(messages.lastResultConductedOn), sortable: true },
-  { key: 'connectorStatus', sortable: false, label: formatMessage(messages.connectorStatus) },
+  {
+    key: 'connectorStatus',
+    sortable: false,
+    label: formatMessage(messages.connectorStatus),
+    tooltip: formatMessage(messages.connectorStatusDescription),
+  },
   {
     key: 'lastPingOn',
     sortable: true,
@@ -155,7 +165,7 @@ const getAvailableTargetDevices = (deviceList, sourceDevicesIds, siteToMergeDevi
   )
 }
 
-const DeviceList = ({ navButton }) => {
+const DeviceList = () => {
   const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true, showUnapprovedDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
   const { formatMessage } = useI18n()
@@ -197,7 +207,7 @@ const DeviceList = ({ navButton }) => {
     currentTarget: {
       dataset: { deviceId },
     },
-  }) => navigate(`/browse/device/${deviceId}`)
+  }) => navigate(`/browse/device/list/${deviceId}`)
 
   const onAlertClick = event => {
     event.stopPropagation()
@@ -206,7 +216,7 @@ const DeviceList = ({ navButton }) => {
         dataset: { deviceId },
       },
     } = event
-    navigate(`/browse/device/${deviceId}/alerts`)
+    navigate(`/browse/device/list/${deviceId}/alerts`)
   }
 
   const { data, isError, error, isLoading } = useQuery(
@@ -280,7 +290,6 @@ const DeviceList = ({ navButton }) => {
             ) : null}
           </AspectButton>
         </PermissionChecker>
-        {navButton}
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.devicesTitle)} />

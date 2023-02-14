@@ -2,7 +2,7 @@ const proxyquire = require('proxyquire')
 const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
-const { resultBasedNotificationPayload } = require('../../src/notification/validations')
+const { saveNotificationPayload } = require('../../src/notification/validations')
 
 describe('notification endpoints', () => {
   function setupRoute(method, path, serviceStub) {
@@ -37,7 +37,7 @@ describe('notification endpoints', () => {
   describe('check validations for saving notification', () => {
     let payload
     let validation
-    const schema = resultBasedNotificationPayload
+    const schema = saveNotificationPayload
     const payloadRaw = {
       notificationType: 'resultBased',
       resultBasedScope: 'any',

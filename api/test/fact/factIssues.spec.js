@@ -129,6 +129,7 @@ describe('Fact based issues', () => {
       await knex('Device as d').where('d.id', newDevice.id).update({
         createdOn: deviceNoResultsDate,
         lastPingOn: deviceOfflineDate,
+        lastSeenOn: deviceOfflineDate,
       })
 
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))

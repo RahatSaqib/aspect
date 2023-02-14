@@ -71,11 +71,11 @@ const notificationTypeSection = formatMessage => ({
                     label: formatMessage(messages.notificationTypeOffline),
                     icon: 'AiOutlineApi',
                   },
-                  // { TODO:  Uncomment when the issue is ready.
-                  //   value: 'calibration',
-                  //   label: formatMessage(messages.notificationTypeCalibration),
-                  //   icon: 'AiOutlineTool',
-                  // },
+                  {
+                    value: 'CalibrationDueDate',
+                    label: formatMessage(messages.notificationTypeCalibration),
+                    icon: 'AiOutlineTool',
+                  },
                   {
                     value: 'ModuleReplaced',
                     label: formatMessage(messages.notificationTypeModuleReplaced),

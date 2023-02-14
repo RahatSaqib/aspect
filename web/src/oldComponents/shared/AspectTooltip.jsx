@@ -17,7 +17,12 @@ const AspectTooltip = ({
   iconClass,
   ...rest
 }) => (
-  <Tooltip classes={{ tooltip: cssClasses(toolTipClass) }} title={title} disableInteractive {...rest}>
+  <Tooltip
+    classes={{ tooltip: cssClasses(toolTipClass) }}
+    title={<span style={{ whiteSpace: 'pre-line' }}>{title}</span>}
+    disableInteractive
+    {...rest}
+  >
     <div className={cssClasses(toolTipContainerClass)}>
       <span
         className={cssClasses('ChildrenContainer', {

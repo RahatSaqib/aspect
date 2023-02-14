@@ -27,7 +27,7 @@ const LogoutApp = () => {
 
   return (
     <SignedOutLayout>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<Loading centered />}>
         <Routes>
           <Route
             path="/login"
