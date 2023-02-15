@@ -191,16 +191,19 @@ function resultAnalyzeCategoriesAndErrors(
  * resultId is required
  * deviceLogId is required
  * userId is not required
+ * options is not required, is an object containing additional props
  */
-function resultLogged(resultId, deviceLogId, userId) {
+function resultLogged(resultId, deviceLogId, userId, options) {
   if (!resultId || !deviceLogId) {
     throw new Error('Must specify resultId and deviceLogId for resultLogged')
   }
+  const { isResultUpdated = false } = options || {}
   return {
     type: types.RESULT_LOGGED,
     resultId,
     deviceLogId,
     userId,
+    isResultUpdated,
   }
 }
 

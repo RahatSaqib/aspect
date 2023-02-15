@@ -77,6 +77,11 @@ const saveNotificationPayload = Joi.object({
     .valid('resultBased', 'issueBased', 'reportBased')
     .description('externalId of notification type')
     .required(),
+  resultBasedScope: Joi.string().when('notificationType', {
+    is: 'resultBased',
+    then: Joi.required(),
+    otherwise: Joi.optional().allow('', null),
+  }),
   issueType: Joi.string().when('notificationType', {
     is: 'issueBased',
     then: Joi.required(),

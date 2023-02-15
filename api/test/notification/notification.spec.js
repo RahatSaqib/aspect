@@ -190,7 +190,7 @@ describe('Result Notifications triggers', () => {
       createdOn: new Date(),
       updatedOn: new Date(),
       notificationTypeCategoryId,
-      filterCondition: filterCondition ? JSON.stringify(filterCondition) : null,
+      filterCondition: filterCondition ? JSON.stringify({ ...filterCondition, resultBasedScope: 'any' }) : null,
       messageTypeId: _.sample(messageTypes).id,
     })
     const { notificationsPerType } = await knex('NotificationType')
@@ -397,6 +397,7 @@ describe('Result Notifications triggers', () => {
                 jobFunctionId: '2',
               },
             ],
+            resultBasedScope: 'any',
           }),
         })
         .where({ notificationTypeCategoryId })
@@ -661,11 +662,13 @@ describe('Notification routes', () => {
             tags: [],
           },
         ],
+        resultBasedScope: 'any',
       }),
       messageTypeId: messageType.id,
     })
     basePayload = {
       notificationType: 'resultBased',
+      resultBasedScope: 'any',
       name: '_____',
       emailSubject: '',
       emailBody: '',
@@ -848,6 +851,7 @@ describe('Notification routes', () => {
       result: baseFilterCondition.result,
       enabled: true,
       issueTypeId: null,
+      resultBasedScope: 'any',
     })
   })
 })

@@ -203,6 +203,24 @@ export default defineMessages({
     id: 'pages.Notification.type.OnlineDate',
     defaultMessage: 'Online Date',
   },
+
+  // --------------------------------------------------------------
+  triggerConditionTitle: {
+    id: 'pages.Notifications.triggerConditionTitle',
+    defaultMessage: 'Trigger this notification when...',
+  },
+  triggerWhenForResultCreated: {
+    id: 'pages.Notifications.triggerWhenForResultCreated',
+    defaultMessage: 'Result is Created',
+  },
+  triggerWhenForResultUpdated: {
+    id: 'pages.Notifications.triggerWhenForResultUpdated',
+    defaultMessage: 'Result is Updated',
+  },
+  triggerWhenResultCreatedOrUpdated: {
+    id: 'pages.Notifications.triggerWhenResultCreatedOrUpdated',
+    defaultMessage: 'Result is Created or Updated',
+  },
   // --------------------------------------------------------------
   notificationTitle: {
     id: 'pages.NotificationDetail.notificationTitle',

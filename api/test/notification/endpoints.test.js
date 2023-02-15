@@ -40,6 +40,7 @@ describe('notification endpoints', () => {
     const schema = saveNotificationPayload
     const payloadRaw = {
       notificationType: 'resultBased',
+      resultBasedScope: 'any',
       name: 'test name',
       result: [
         {
