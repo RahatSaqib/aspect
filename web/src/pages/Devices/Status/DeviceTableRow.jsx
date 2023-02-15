@@ -48,7 +48,9 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
               ? 'success'
               : device.get('deviceStatus') === 'down'
               ? 'error'
-              : 'warning'
+              : device.get('deviceStatus') === 'unknown'
+              ? 'warning'
+              : 'notRecorded'
           }
         />
       </TableCell>

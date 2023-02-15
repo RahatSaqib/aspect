@@ -4,14 +4,15 @@ const { deviceApprovalToId, deviceMaintenanceTypeToId } = require('../shared/dic
 const { parseDateOrDefault } = require('../shared/date')
 const { getPeopleBase } = require('../shared/utilsPerson')
 const { setDeviceCalibrationStatus } = require('../plugin/utils')
+const { calibrationDateUpdated } = require('../device/actions')
 
-async function updateDeviceConfiguration(knex, deviceId, payload, now) {
+async function updateDeviceConfiguration(knex, deviceId, payload, now, messageContext) {
   const previousConfig = await getDeviceConfiguration(knex, deviceId)
   const configurationData =
     previousConfig == null ? payload.data : _.merge(previousConfig.data, _.omitBy(payload.data, _.isNull))
 
   // process prop 'lastCalibrated' in 'payload', if any defined
-  await tryUpdateDeviceMaintenance(knex, deviceId, payload)
+  await tryUpdateDeviceMaintenance(knex, deviceId, payload, messageContext)
 
   // process props labContact* and installer* in 'payload', if any defined
   await tryAssignLabTechnicianToSite(knex, deviceId, payload)
@@ -28,7 +29,7 @@ async function updateDeviceConfiguration(knex, deviceId, payload, now) {
 }
 
 // --------------------------------------------------------------------
-async function tryUpdateDeviceMaintenance(knex, deviceId, payload) {
+async function tryUpdateDeviceMaintenance(knex, deviceId, payload, messageContext) {
   const {
     data: { lastCalibrated },
   } = payload
@@ -40,6 +41,12 @@ async function tryUpdateDeviceMaintenance(knex, deviceId, payload) {
       deviceMaintenanceTypeId,
       notes: 'From GxConnect basic settings',
     })
+    if (!messageContext.calibrationDateUpdated) {
+      messageContext.bindActionCreators({
+        calibrationDateUpdated,
+      })
+    }
+    messageContext.calibrationDateUpdated(deviceId)
   }
 }
 

@@ -1,16 +1,6 @@
 module.exports = async (knex, partnerData) => {
   const dbPartner = await knex('Partner').where({ name: partnerData.partnerName }).first()
-
-  const defaultValues = {
-    plugin: '',
-    autoAcknowledgeOlderThanDays: null,
-    numberToLeaveUnacknowledged: null,
-    deviceLogHistoryDays: 365,
-    maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
-    dueDaysInventoryStockout: 30,
-    dueDaysInventoryStockExpiring: 30,
-  }
+  const defaultValues = require('../fixtures/PartnerDataDefaultValues.json')
 
   const finalValues = { ...defaultValues, ...partnerData }
 
@@ -26,6 +16,7 @@ module.exports = async (knex, partnerData) => {
     dueDaysInventoryStockExpiring: finalValues.dueDaysInventoryStockExpiring,
     serverUrl: finalValues.serverUrl,
     apiUrl: finalValues.apiUrl,
+    dueDaysCalibrationIssue: finalValues.dueDaysCalibrationIssue,
     partnerTypeId: finalValues.partnerTypeId,
   }
 

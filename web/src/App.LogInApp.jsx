@@ -9,13 +9,16 @@ import config from './config'
 import useHashAndScroll from './hooks/useHashAndScroll'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import { useAuthState } from './providers/AuthProvider'
+import { fetchAssays } from './store/AssayRedux'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
 const CaseList = lazy(() => import('./oldPages/case/list/CaseList'))
 const ContactPage = lazy(() => import('./pages/Contact'))
 const DeviceApiKeyList = lazy(() => import('./oldPages/deviceApiKey/list/DeviceApiKeyList'))
-const DeviceContainer = lazy(() => import('./pages/Devices/DeviceContainer'))
+
+const Devices = lazy(() => import('./pages/Devices/Status/DeviceList'))
+const DevicesWorkload = lazy(() => import('./pages/Devices/Workload'))
 const DeviceDetail = lazy(() => import('./pages/Devices/Detail/DeviceDetail'))
 const EditSite = lazy(() => import('./pages/Site/Detail/Edit'))
 const InventoryContainer = lazy(() => import('./oldPages/inventory/InventoryContainer'))
@@ -51,6 +54,8 @@ const LogInApp = () => {
   useEffect(() => {
     // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
     dispatch(fetchCountries())
+    // fetch countries on start so we have them ready for filters logic
+    dispatch(fetchAssays())
 
     // Refresh the access token every 30 minutes.
     const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)
@@ -92,7 +97,7 @@ const LogInApp = () => {
 
   return (
     <LoggedInLayout>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<Loading centered />}>
         <Routes>
           {a(['dashboard:summary']) ? (
             <>
@@ -111,8 +116,9 @@ const LogInApp = () => {
 
           {a(['browse', 'device']) ? (
             <>
-              <Route path="/browse/device" element={<DeviceContainer />} />
-              <Route path="/browse/device/:deviceId/*" element={<DeviceDetail {...props} />} />
+              <Route path="/browse/device/list" element={<Devices />} />
+              <Route path="/browse/device/list/:deviceId/*" element={<DeviceDetail {...props} />} />
+              <Route path="/browse/device/workload" element={<DevicesWorkload />} />
             </>
           ) : null}
 

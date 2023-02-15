@@ -106,7 +106,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 labelI18nKey: 'deviceName',
                 link: {
                   key: 'deviceId',
-                  url: '/browse/device/:deviceId',
+                  url: '/browse/device/list/:deviceId',
                 },
               }),
               {

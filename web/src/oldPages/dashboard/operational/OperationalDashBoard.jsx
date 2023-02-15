@@ -25,19 +25,16 @@ const OperationalDashBoard = () => {
   }
   return (
     <Fragment>
-      <ErrorBoundary>
-        <PermissionChecker permissions={['operationalData']}>
-          <SummaryStatus className={cssClasses('Section--summary')} dashboard="operational" />
-        </PermissionChecker>
-      </ErrorBoundary>
-
       <PermissionChecker permissions={['operationalData']}>
+        <ErrorBoundary>
+          <SummaryStatus className={cssClasses('Section--summary')} dashboard="operational" />
+        </ErrorBoundary>
         <ResultTransmittedGraph />
         {assays ? (
-          <>
+          <div className={cssClasses('wrapper')}>
             <DeviceStatusGraph assaysFromState={assays} />
             <InventoryStatusGraph assaysFromState={assays} />
-          </>
+          </div>
         ) : null}
       </PermissionChecker>
     </Fragment>

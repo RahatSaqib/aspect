@@ -8,6 +8,7 @@ const StatusIcon = ({ status, title }) => {
     success: '#99D25D',
     warning: '#F7B500',
     error: '#DB3018',
+    notRecorded: '#B9B9B9',
   }
   const color = statusToColor[status]
 

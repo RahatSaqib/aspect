@@ -1,6 +1,9 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const amqp = require('amqplib')
+const {
+  types: { isPromise },
+} = require('util')
 const EventEmitter = require('events')
 const logger = require('./shared/logger')
 const config = require('./config')
@@ -96,7 +99,12 @@ class MessageQueue {
       const subscribeName = `${this.name}_${name}_subscribe`
       const messageContext = this.createMessageContext(subscribeName)
       await this.subscribe(name, subscriptions({ messageContext }))
-    } else if (_.isFunction(subscriptions.then)) {
+    } else if (isPromise(subscriptions)) {
+      /**
+       * ^^^
+       * use `isPromise` from standard node.js library `util`, instead of
+       * checking `subscriptions.then` with _.isFunction(subscriptions.then)
+       */
       const subs = await subscriptions
       await this.subscribe(name, subs)
     } else if (_.isArray(subscriptions)) {

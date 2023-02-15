@@ -71,11 +71,11 @@ const notificationTypeSection = formatMessage => ({
                     label: formatMessage(messages.notificationTypeOffline),
                     icon: 'AiOutlineApi',
                   },
-                  // { TODO:  Uncomment when the issue is ready.
-                  //   value: 'calibration',
-                  //   label: formatMessage(messages.notificationTypeCalibration),
-                  //   icon: 'AiOutlineTool',
-                  // },
+                  {
+                    value: 'CalibrationDueDate',
+                    label: formatMessage(messages.notificationTypeCalibration),
+                    icon: 'AiOutlineTool',
+                  },
                   {
                     value: 'ModuleReplaced',
                     label: formatMessage(messages.notificationTypeModuleReplaced),
@@ -101,12 +101,29 @@ const notificationTypeSection = formatMessage => ({
             ],
             placeholder: formatMessage(messages.notificationType),
           },
-          classNames: {
-            itemContainer: cssClasses('min-width-100pc', 'tags-container'),
-            controlContainer: cssClasses('full-width-100pc'),
-            item: cssClasses('full-width-100pc'),
-          },
           labelI18nKey: 'notificationType',
+        },
+        {
+          id: 'resultBasedScope',
+          visibleIf: values => values.notificationType === 'resultBased',
+          controlType: {
+            component: 'select',
+            options: [
+              {
+                value: 'created',
+                label: formatMessage(messages.triggerWhenForResultCreated),
+              },
+              {
+                value: 'updated',
+                label: formatMessage(messages.triggerWhenForResultUpdated),
+              },
+              {
+                value: 'any',
+                label: formatMessage(messages.triggerWhenResultCreatedOrUpdated),
+              },
+            ],
+          },
+          labelI18nKey: 'triggerConditionTitle',
         },
         {
           id: 'siteWithLowFieldCompletionRateDescription',
@@ -135,6 +152,9 @@ const notificationTypeSection = formatMessage => ({
           controlType: { component: 'textField' },
           fullWidth: true,
           labelI18nKey: 'notificationTitle',
+          classNames: {
+            itemContainer: cssClasses('min-width-100pc'),
+          },
         },
       ],
     },
