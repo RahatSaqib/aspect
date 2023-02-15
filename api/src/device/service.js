@@ -13,8 +13,7 @@ const {
   differenceInBusinessDays,
 } = require('date-fns')
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
-
-const { deviceMaintenanceStatusLogged } = require('./actions')
+const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
 const { knex, filterParams, filterDateRangeParams, sortPageParams, transact } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
@@ -644,6 +643,7 @@ async function updateDeviceMaintenance(request) {
     auth: { credentials },
     params,
     payload,
+    plugins: { messageContext },
   } = request
   const dataConstraints = await getConstraints(credentials)
 
@@ -695,6 +695,13 @@ async function updateDeviceMaintenance(request) {
       updatedOn: new Date(),
       updatedBy: currentlyLoggedInUser.id,
     })
+
+    if (!messageContext.calibrationDateUpdated) {
+      messageContext.bindActionCreators({
+        calibrationDateUpdated,
+      })
+    }
+    messageContext.calibrationDateUpdated(deviceId)
   }
   // get same 'device' as for Device Details
   device = await getDeviceByDeviceId({

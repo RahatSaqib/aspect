@@ -388,7 +388,7 @@ async function processLogItem(context, logItem, options) {
   // hardware error and dispatch MQ action if needed
   await shouldTriggerHardwareErrorAnalysis(context.messageContext, device, payload, deviceOperationId)
   // process 'calibration' log item
-  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId)
+  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId, context.messageContext)
 
   return logItem.externalId
 }
@@ -498,11 +498,12 @@ async function updateDeviceConfigurationWithContext(context) {
     device: { id: deviceId },
     now,
     pluginNames: plugins,
+    messageContext,
   } = context
   const preProcess = await loadPlugin(plugins, 'preProcessUpdateDeviceConfiguration')
   await preProcess(context)
 
-  await updateDeviceConfiguration(knex, deviceId, payload, now)
+  await updateDeviceConfiguration(knex, deviceId, payload, now, messageContext)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   const postProcess = await loadPlugin(plugins, 'postProcessUpdateDeviceConfiguration')
   const postProcessResult = await postProcess(context)
@@ -899,15 +900,15 @@ async function onResultUpdated({ resultId, deviceLogId, userId }, { messageConte
   if (!resultId) {
     throw new Error('Must specify resultId in Action')
   }
-  logger.debug(`onResultUpdated inserting in DeviceLog table for resultId:${resultId}`, {
-    reLabel: 'deviceApi:onResultUpdated',
-  })
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    return context.resultLogged(resultId, deviceLogId, userId)
+    return context.resultLogged(resultId, deviceLogId, userId, { isResultUpdated: true })
   }
   return context.transact(async knex => {
+    logger.debug(`onResultUpdated inserting in DeviceLog table for resultId:${resultId}`, {
+      reLabel: 'deviceApi:onResultUpdated',
+    })
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
     // Everything else, we should add a device log entry so that
@@ -926,7 +927,7 @@ async function onResultUpdated({ resultId, deviceLogId, userId }, { messageConte
           rawMessage: '',
         })
       )
-    context.resultLogged(resultId, deviceLogId, userId)
+    context.resultLogged(resultId, deviceLogId, userId, { isResultUpdated: true })
   })
 }
 

@@ -2,6 +2,10 @@ const _ = require('lodash')
 
 // ----------- Action Types ---------------------
 const types = {
+  CALIBRATION_DUE_DATE_ANALYSIS: 'CALIBRATION_DUE_DATE_ANALYSIS',
+  CALIBRATION_DUE_DATE_IS_CLOSE: 'CALIBRATION_DUE_DATE_IS_CLOSE',
+  CALIBRATION_DATE_UPDATED: 'CALIBRATION_DATE_UPDATED',
+  CALIBRATION_ISSUE_NOTIFICATION_TRIGGER: 'CALIBRATION_ISSUE_NOTIFICATION_TRIGGER',
   DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
@@ -45,6 +49,47 @@ const hardwareErrorActions = {
 }
 // ----------- Action Creators -------------------
 //
+
+/**
+ * Runs a process to detect devices whom calibration due date is approaching
+ *
+ */
+function calibrationDueDateAnalysis() {
+  return {
+    type: types.CALIBRATION_DUE_DATE_ANALYSIS,
+  }
+}
+
+/**
+ * Runs a process to trigger notifications for a existing calibration issue while the calibration due date gets closer.
+ *
+ */
+function calibrationIssueNotificationTrigger() {
+  return {
+    type: types.CALIBRATION_ISSUE_NOTIFICATION_TRIGGER,
+  }
+}
+
+/**
+ * Creates an action to notify the device has crossed the threshold limit for calibration.
+ * This actions is meanted to be subscribed automatically from issue event trigger definition.
+ * @param {*} deviceId - Device ID
+ * @returns - Action message with params
+ */
+function calibrationDueDateIsClose(deviceId, calibrationDueDate) {
+  return {
+    type: types.CALIBRATION_DUE_DATE_IS_CLOSE,
+    deviceId,
+    options: { data: { calibrationDueDate } },
+  }
+}
+
+function calibrationDateUpdated(deviceId) {
+  return {
+    type: types.CALIBRATION_DATE_UPDATED,
+    deviceId,
+  }
+}
 
 /**
  * Creates an action to notify the device has communicated
@@ -277,6 +322,10 @@ function deviceHardwareError(device, resultErrorCode, options) {
 
 module.exports = {
   types,
+  calibrationDueDateAnalysis,
+  calibrationDueDateIsClose,
+  calibrationDateUpdated,
+  calibrationIssueNotificationTrigger,
   deviceSeen,
   deviceMaintenance,
   deviceMaintenanceResolved,
@@ -285,10 +334,10 @@ module.exports = {
   deviceNoResults,
   deviceHasNewResults,
   deviceMaintenanceStatusLogged,
-  logDeviceMaintenanceStatus,
   deviceModuleDisabled,
   deviceInstrumentReplaced,
   deviceModuleUnused,
   deviceHardwareError,
   hardwareErrorActions,
+  logDeviceMaintenanceStatus,
 }

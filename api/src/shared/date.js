@@ -14,6 +14,9 @@ const {
   startOfMonth,
   endOfMonth,
   eachWeekendOfInterval,
+  differenceInDays,
+  min,
+  max,
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
@@ -226,6 +229,19 @@ function getFormattedDateTimeWithTimezone(dateTime, timezone) {
   return formatInTimeZone(dateTime, timezone, 'E MMM dd yyyy HH:mm:ss O')
 }
 
+// Returns Wed Aug 24 2022
+function getFormattedDate(dateTime, timezone) {
+  timezone = timezone || 'Etc/UTC'
+  return formatInTimeZone(dateTime, timezone, 'E MMM dd yyyy')
+}
+
+/**
+ * Returns a positive integer indicating the number of days between 2 dates
+ */
+function daysBetweenDates(date1, date2) {
+  return differenceInDays(max([date1, date2]), min([date1, date2]))
+}
+
 /**
  * Retrieves the user timezone from the Person table in the database.
  * @param {knex} knex - Knex instance
@@ -349,6 +365,7 @@ module.exports = {
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
   getFormattedDateTimeWithTimezone,
+  getFormattedDate,
   getDatesFromQuery,
   getOffsetFromTimeZone,
   getOffsetFromIsoDateString,
@@ -358,5 +375,6 @@ module.exports = {
   getTimezoneOffsetFromNumber,
   convertTimezonetoIANA,
   convertTimezonetoWindowsIANA,
+  daysBetweenDates,
   arrayofIANATimezone,
 }

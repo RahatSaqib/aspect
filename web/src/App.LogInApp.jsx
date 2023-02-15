@@ -9,6 +9,7 @@ import config from './config'
 import useHashAndScroll from './hooks/useHashAndScroll'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import { useAuthState } from './providers/AuthProvider'
+import { fetchAssays } from './store/AssayRedux'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
@@ -64,6 +65,8 @@ const LogInApp = () => {
   useEffect(() => {
     // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
     dispatch(fetchCountries())
+    // fetch countries on start so we have them ready for filters logic
+    dispatch(fetchAssays())
 
     // Refresh the access token every 30 minutes.
     const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)

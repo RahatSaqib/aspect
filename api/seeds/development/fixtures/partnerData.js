@@ -11,6 +11,7 @@ module.exports = {
   maxDaysDeviceNoResults: 14,
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
+  dueDaysCalibrationIssue: 90,
   serverUrl: 'https://dev.aspect.id',
   apiUrl: 'https://dev.aspect.id/api',
 }
