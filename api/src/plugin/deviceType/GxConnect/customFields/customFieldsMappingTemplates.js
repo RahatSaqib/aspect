@@ -243,34 +243,6 @@ const translateUseValue = (sourceValue, aspectFields) => {
   })
 
   return map
-  /*
-      "useValue": [
-        {
-          "from": "TestingFacility",
-          "when": [
-            {
-              "propToCompare": "PKReferringHealthFacilityLocation",
-              "valueToCompare": "same",
-              "operator": "="
-            }
-          ]
-        }
-      ]
-*/
-  /*
-      "useValue": [ //revisar
-        {
-          "from": "TestingFacility",
-          "when": [
-            {
-              "refId": 24,
-              "value": "same",
-              "operator": "="
-            }
-          ]
-        }
-      ],
-  */
 }
 
 const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
