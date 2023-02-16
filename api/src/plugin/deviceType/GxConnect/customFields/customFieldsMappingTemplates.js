@@ -192,7 +192,7 @@ const translateCondition = (sourceValue, aspectFields) => {
         ),
       }
       if (elem.conjunction) field.conjunction = elem.conjunction
-      if (elem.valueToCompare) field.value = elem.valueToCompare
+      if (elem.valueToCompare !== undefined) field.value = elem.valueToCompare
       if (elem.fieldToCompare) field.propName = elem.fieldToCompare
 
       return field
