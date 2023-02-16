@@ -113,6 +113,10 @@ const baseMapper = aspectFields => {
       key: 'CustomFields.Fields[].InputControlData.filters',
       transform: sourceValue => translateCondition(sourceValue, aspectFields, true),
     },
+    'fields[].useValue': {
+      key: 'CustomFields.Fields[].InputControlData.useValue',
+      transform: sourceValue => translateUseValue(sourceValue, aspectFields),
+    },
     'fields[].items[]': {
       key: 'CustomFields.Fields[].InputControlData.options[]',
       transform: transformItemsToOptions,
@@ -227,6 +231,46 @@ const translateCondition = (sourceValue, aspectFields) => {
     return elem
   })
   return map
+}
+
+const translateUseValue = (sourceValue, aspectFields) => {
+  if (!sourceValue) return null
+  const map = sourceValue.map(elem => {
+    return {
+      from: elem.from,
+      when: translateCondition(elem.when, aspectFields),
+    }
+  })
+
+  return map
+  /*
+      "useValue": [
+        {
+          "from": "TestingFacility",
+          "when": [
+            {
+              "propToCompare": "PKReferringHealthFacilityLocation",
+              "valueToCompare": "same",
+              "operator": "="
+            }
+          ]
+        }
+      ]
+*/
+  /*
+      "useValue": [ //revisar
+        {
+          "from": "TestingFacility",
+          "when": [
+            {
+              "refId": 24,
+              "value": "same",
+              "operator": "="
+            }
+          ]
+        }
+      ],
+  */
 }
 
 const mapGxConnectCustomFields = (aspectFields, mapper = null) => {
