@@ -5009,25 +5009,7 @@ async function seed(knex) {
       geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
     },
   ])
-  // Fill device flags with random data
-  // TODO: Remove when we implemented the jobs that calculate these flags
-  const devices = await knex('Device').select('id')
-  await Promise.each(devices, async device => {
-    await knex('FactDeviceFlag').insert({
-      deviceId: device.id,
-      offline: _.random(10) === 0,
-      service: _.random(10) === 0,
-      calibration: _.random(10) === 0,
-      errorRate: _.random(10) === 0,
-      qcProblem: _.random(10) === 0,
-      lowInventory: _.random(10) === 0,
-      outOfInventory: _.random(10) === 0,
-      expiringInventory: _.random(10) === 0,
-      expiringWarranty: _.random(10) === 0,
-      updatedOn: now,
-    })
-  })
-
+  
   // Create tag
   const [tagOneId] = await knex('Tag').insert({
     title: 'SCO',
