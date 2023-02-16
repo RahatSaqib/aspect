@@ -103,14 +103,5 @@ LEFT JOIN personstate ON personstate.PersonId = person.PersonId
 LEFT JOIN state AS personstate_state ON personstate_state.StateId = personstate.StateId
 GROUP BY person.PersonId;
 
--- Query Custom Fields in GxAlert
--- This is for the customFieldsFromGxAlert.json fixture
-SELECT CONCAT('{"title":"', CustomField.Label,
-'","type":"', CustomField.Type,
-'","order":', CustomField.DisplayOrder,
-',"dbColumn":', IFNULL(CONCAT('"', CustomField.DbColumn, '"'), 'null'),
-',"testType":', IFNULL(CONCAT('"', TestType.Name, '"'), 'null'),
-'},')
-FROM CustomField
-LEFT JOIN CustomFieldLimitToTestType ON CustomFieldLimitToTestType.CustomFieldId = CustomField.CustomFieldId
-LEFT JOIN TestType ON TestType.TestTypeId = CustomFieldLimitToTestType.TestTypeId;
+-- Query Custom Fields in GxAlert (Deprecated)
+-- Read more: https://systemone.youtrack.cloud/articles/ASP-A-260276849/Custom-Fields
