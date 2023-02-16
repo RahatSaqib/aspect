@@ -80,16 +80,18 @@ const baseMapper = aspectFields => {
     'fields[].order': 'CustomFields.Fields[].DisplayOrder',
     'fields[].gxAlertDbColumn': 'CustomFields.Fields[].DbColumn',
     /**
-     * items - base 3 props, mapping from `source` (in form definition JSON)
+     * items - base 4 props, mapping from `source` (in form definition JSON)
      * to `target` (custom field options)
      * `source`  `target`
      *  key    ->  value
      *  value  ->  text
      *  order  ->  displayOrder
+     *  isDefault -> isDefault (optional)
      */
     'fields[].items[].key': 'CustomFields.Fields[].InputControlData.options[].value',
     'fields[].items[].value': 'CustomFields.Fields[].InputControlData.options[].text',
     'fields[].items[].order': 'CustomFields.Fields[].InputControlData.options[].displayOrder',
+    'fields[].items[].isDefault': 'CustomFields.Fields[].InputControlData.options[].isDefault',
 
     'fields[].validation[].min': {
       key: 'CustomFields.Fields[].InputControlData.minValue',
