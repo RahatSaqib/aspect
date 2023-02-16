@@ -101,6 +101,10 @@ const baseMapper = aspectFields => {
       key: 'CustomFields.Fields[].InputControlData.maxValue',
       transform: sourceValue => propertyToNumber(sourceValue),
     },
+    'fields[].validation': {
+      key: 'CustomFields.Fields[].InputControlData.validations',
+      transform: sourceValue => translateValidations(sourceValue),
+    },
     'fields[].condition': {
       key: 'CustomFields.Fields[].InputControlData.displayConditions',
       transform: sourceValue => translateCondition(sourceValue, aspectFields),
@@ -181,6 +185,25 @@ const propertyToNumber = sourceValue => {
   }
 
   return null
+}
+
+const translateValidations = sourceValue => {
+  if (!sourceValue) return null
+  // skip integer validation (already exists in InputControlData)
+  const map = sourceValue
+    .filter(elem => elem.validationType !== 'integer')
+    .map(elem => {
+      if (elem.validationType === 'regex') {
+        return {
+          type: elem.validationType,
+          value: elem.value,
+          message: elem.errorMessage,
+        }
+      }
+      return elem
+    })
+
+  return map
 }
 
 const translateCondition = (sourceValue, aspectFields) => {
