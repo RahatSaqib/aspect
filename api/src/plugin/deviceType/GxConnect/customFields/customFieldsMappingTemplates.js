@@ -114,6 +114,7 @@ const baseMapper = aspectFields => {
       transform: transformItemsToOptions,
     },
     'fields[].itemsSource': 'CustomFields.Fields[].itemsSource',
+    'fields[].emptyIfDisabled': 'CustomFields.Fields[].InputControlData.emptyIfDisabled',
 
     'fields[].calculated': {
       key: 'CustomFields.Fields[].InputControlData',
