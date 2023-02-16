@@ -14,9 +14,18 @@ const messages = {
     coverageTitle: { id: 'p.PkDashboard.coverageTitle', defaultMessage: 'Xpert MTB/RIF Coverage' },
     rifCurrentTitle: { id: 'p.PkDashboard.rifCurrentTitle', defaultMessage: 'Current Testing of MTB/RIF performed in' },
     rifCurrentDiagnosisTitle: { id: 'p.PkDashboard.rifCurrentDiagnosisTitle', defaultMessage: 'TB cases diagnosed in' },
+    rifCurrentRRTBDiagnosisTitle: {
+      id: 'p.PkDashboard.rifCurrentRRTBDiagnosisTitle',
+      defaultMessage: 'Current Rifampicin Resistance Diagnosis Trends',
+    },
     testPerYear: { id: 'p.PkDashboard.testPerYear', defaultMessage: 'Tests performed this year' },
     testPerMonth: { id: 'p.PkDashboard.testPerMonth', defaultMessage: 'Average tests performed per month' },
     testPerDay: { id: 'p.PkDashboard.testPerDay', defaultMessage: 'Tests performed in last 24 hours' },
+
+    RRPerYear: { id: 'p.PkDashboard.RRPerYear', defaultMessage: 'RR cases diagnosed this year' },
+    RRPerMonth: { id: 'p.PkDashboard.RRPerMonth', defaultMessage: 'Average RR cases diagnosed per month' },
+    RRPerDay: { id: 'p.PkDashboard.RRPerDay', defaultMessage: 'RR cases diagnosed in last 24 hours' },
+
     // summary
     molecularAssay: {
       id: 'p.PkDashboard.molecularAssay',

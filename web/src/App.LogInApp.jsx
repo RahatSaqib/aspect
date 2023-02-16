@@ -46,6 +46,8 @@ const ErrorRate = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/E
 const Utilization = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/UtilizationPage'))
 const InventoryOverview = lazy(() => import('./pages/PkDashboard/pages/InventorySection/InventoryOverviewPage'))
 const CurrentDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentDiagnosisPage'))
+const CurrentRRTBDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentRRTBDiagnosisPage'))
+
 const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentTestingPage'))
 const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/CovidPage'))
 const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/HivPage'))
@@ -124,6 +126,7 @@ const LogInApp = () => {
                   <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
                   <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
                   <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
+                  <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
                   <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
                   <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
                 </>

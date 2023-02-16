@@ -3,7 +3,13 @@ import { Container, Grid, Card, CardContent, Stack } from '@mui/material'
 import DetailHeader from '../../../components/DetailHeader'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 
-const containerStyle = { pb: 3, maxHeight: 'calc(100vh - 64px)', overflow: 'scroll' }
+const containerStyle = {
+  pb: 3,
+  paddingLeft: '8px !important',
+  paddingRight: '8px !important',
+  height: 'calc(100vh - 128px)',
+  overflow: 'auto',
+}
 const gridStyle = { padding: '16px 8px 0' }
 const filterStyle = { width: '50%', float: 'right' }
 
