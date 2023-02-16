@@ -95,7 +95,7 @@ const baseMapper = aspectFields => {
       key: 'CustomFields.Fields[].InputControlData.minValue',
       transform: sourceValue => propertyToNumber(sourceValue),
     },
-    'fields[].validation[0].max': {
+    'fields[].validation[].max': {
       key: 'CustomFields.Fields[].InputControlData.maxValue',
       transform: sourceValue => propertyToNumber(sourceValue),
     },
@@ -165,13 +165,21 @@ const transformItemsToOptions = (source, sourceObject, destinationValue) => {
   return null
 }
 
+const isNumeric = n => !Number.isNaN(parseFloat(n)) && Number.isFinite(n)
+
 const propertyToNumber = sourceValue => {
-  return _.isArray(sourceValue) && _.isNumber(sourceValue[0])
-    ? sourceValue[0]
-    : _.isNumber(sourceValue)
-    ? sourceValue
-    : null
+  if (isNumeric(sourceValue)) {
+    return parseInt(sourceValue, 10)
+  }
+
+  if (_.isArray(sourceValue)) {
+    const numberFound = sourceValue.find(value => isNumeric(value))
+    return parseInt(numberFound, 10)
+  }
+
+  return null
 }
+
 const translateCondition = (sourceValue, aspectFields) => {
   if (!sourceValue) return null
   const map = _.map(sourceValue, elem => {
