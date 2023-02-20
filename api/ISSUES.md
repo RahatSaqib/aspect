@@ -214,14 +214,16 @@ The evaluation methods could be:
 - Sql-script: when this option is configured the evaluationParameter should have the relative path of the file where the sql script is placed. Aspect is going to execute and wait for a true or false
 - Plugin-function: Based on the plugin of the device/partner, we are going to look for a function defined in the evaluationParameter property. The plugin is going to select the specific location where the function searched is hosted.
 
-### Filtering
+####  Preventing issue creation when the issue already exists
 
-For filtering and detecting open issues is needed to extend the default behavior for filtering them.
-The default filtering is going to depend on the fields the action has. If the action has one of these parameters, it is going to filter by them (They are mutually exclusive) and the order is the one presented here:
-deviceId
-resultId
-siteId
-partnerId
+The process of trigger a new issue will automatically detect an existing issue and will prevent the creation of a duplicated one.
+
+The default search or existing open issues is going to depend on the fields the action has. If the action has one of these parameters, it is going to filter by them (They are mutually exclusive) and the order is the one presented here:
+
+* `deviceId`
+* `resultId`
+* `siteId`
+* `partnerId`
 
 If these filters are not sufficient, you can extend it with a custom and defined filter function. Right now we are storing extra information in the data field of the issue and with those fields, we are creating extra filtering rules.
 
@@ -236,7 +238,17 @@ This function should be located in the file `filterConditions.js` of the specifi
 
 ## Resolution
 
-Resolution is the process of updating the issue statuses from any other open status, to “resolved”. This will be executed in different ways: automatically when a new message is received, something scheduled or an action triggered from the UI. For configuring the resolution conditions again we need to define a resolution function similar to the one described in “Triggering”
+Resolution is the process of updating the issue status from any other open status, to “resolved”. 
+
+This can be executed in different ways: 
+
+* Automatically when a new message is received.
+* An schedule function.
+* An action triggered from the UI. 
+
+For configuring the resolution conditions, again we need to define a resolution function similar to the one described in [Triggering](###Triggering-issues) but in this case, in the `IssueResolutionTrigger` table.
+
+The field `IssueResolutionTrigger.resolutionsConditions` is an analog of `IssueEventTrigger.triggerConditions`
 
 Example:
 
@@ -247,7 +259,7 @@ Example:
 }
 ```
 
-Where in this case resolveDataCategoryLow is going to be the function which will return true or false based on some conditions to determine whether the issue should be resolved or not.
+Where, in this case `resolveDataCategoryLow` is going to be the function which will return true or false based on some conditions to determine whether the issue would be resolved or not.
 
 For finding the issue it will use the filtering condition described before.
 

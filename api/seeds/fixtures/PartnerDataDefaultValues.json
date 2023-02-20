@@ -1,0 +1,11 @@
+{
+  "plugin": "",
+  "autoAcknowledgeOlderThanDays": null,
+  "numberToLeaveUnacknowledged": null,
+  "deviceLogHistoryDays": 365,
+  "maxDaysDeviceOffline": 7,
+  "maxDaysDeviceNoResults": 14,
+  "dueDaysInventoryStockout": 30,
+  "dueDaysInventoryStockExpiring": 30,
+  "dueDaysCalibrationIssue": 90
+}

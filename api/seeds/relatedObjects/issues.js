@@ -1403,6 +1403,22 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    CalibrationDueDate: {
+      issueType: {
+        name: 'Calibration Due Date',
+        externalId: 'CalibrationDueDate',
+        i18nKey: 'CalibrationDueDate',
+        issueCategoryId: issueCategories.DeviceHealth,
+        readyForNotification: true,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: 'Device Calibration due date is less than {{issue.data.dueDays}} close',
+        ...auditFields,
+      },
+    },
   }
   return IssueDefinition
 }

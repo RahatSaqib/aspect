@@ -13,8 +13,7 @@ const {
   differenceInBusinessDays,
 } = require('date-fns')
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
-
-const { deviceMaintenanceStatusLogged } = require('./actions')
+const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
 const { knex, filterParams, filterDateRangeParams, sortPageParams, transact } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
@@ -62,12 +61,22 @@ const SELECT_LIST_FIELDS = [
     "CASE WHEN da.token = 'approved' AND ISNULL(dms.i18nKey) = 0 THEN dms.i18nKey ELSE da.i18nKey END as statusI18nKey"
   ),
   'da.name as approval',
-  'dms.externalId as maintenanceStatus',
-  'dms.i18nKey as maintenanceStatusI18nKey',
+  knex.raw(
+    'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.externalId ELSE null END maintenanceStatus'
+  ),
+  knex.raw(
+    'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.i18nKey ELSE null END as maintenanceStatusI18nKey'
+  ),
   'da.i18nKey as approvalStatusI18nKey',
-  'dms.name as maintenanceStatusName',
-  'dms.active as maintenanceStatusActive',
-  'dms.manuallySet as maintenanceStatusManuallySet',
+  knex.raw(
+    'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.name ELSE null END as maintenanceStatusName'
+  ),
+  knex.raw(
+    'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.active ELSE null END as maintenanceStatusActive'
+  ),
+  knex.raw(
+    'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.manuallySet ELSE null END as maintenanceStatusManuallySet'
+  ),
   'dc.name as category',
   'dc.hasResults',
   'dc.hasConnectivity',
@@ -302,15 +311,25 @@ async function getListDevices(query, auth) {
       'issues.categories as issueCategories',
       'dms.active as isDeviceActive',
       'dmsl.day as dmslDay',
+      // Connector is considered online if it did a connection since the start of the previous day
       knex.raw(
-        'CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END AS connectorStatus'
+        'CASE WHEN d.lastPingOn > DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN "online" ELSE "offline" END AS connectorStatus'
       ),
       knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS connectorVersion'),
       knex.raw('deviceResult.lastResultConductedOn AS lastResultConductedOn'),
-      knex.raw(`CASE 
-        WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
-        WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
-        ELSE 'down' END AS 'deviceStatus'`),
+      // If the device last maintenance status log was registered since the start of yesterday, then...
+      //  Is considered up if the last maintenance log was active, reported active, or no tests performed
+      //  Is considered unknown if the last maintenance log was unknown
+      //  Is considered down if the last maintenance log is any other (all statuses representing inactivity)
+      // ...else, it's considered notRecorded because we didn't register a status since the day previous yesterday
+      knex.raw(`
+        CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN
+          CASE 
+            WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
+            WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
+            ELSE 'down' END
+          ELSE 'notRecorded'
+        END AS 'deviceStatus'`),
     ])
     .distinct()
 
@@ -624,6 +643,7 @@ async function updateDeviceMaintenance(request) {
     auth: { credentials },
     params,
     payload,
+    plugins: { messageContext },
   } = request
   const dataConstraints = await getConstraints(credentials)
 
@@ -675,6 +695,13 @@ async function updateDeviceMaintenance(request) {
       updatedOn: new Date(),
       updatedBy: currentlyLoggedInUser.id,
     })
+
+    if (!messageContext.calibrationDateUpdated) {
+      messageContext.bindActionCreators({
+        calibrationDateUpdated,
+      })
+    }
+    messageContext.calibrationDateUpdated(deviceId)
   }
   // get same 'device' as for Device Details
   device = await getDeviceByDeviceId({

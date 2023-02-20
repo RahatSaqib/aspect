@@ -145,32 +145,20 @@ const stockExpiringSection = (formatMessage, partner) => {
 
 const calibrationSection = formatMessage => {
   return {
-    id: 'calibration',
-    label: 'calibration',
-    labelI18nKey: 'calibration',
-    visibleIf: values => ['calibration'].includes(values.notificationType),
+    id: 'CalibrationDueDate',
+    label: 'calibrationDays',
+    labelI18nKey: 'calibrationDays',
+    visibleIf: values => ['CalibrationDueDate'].includes(values.notificationType),
     rows: [
       {
         id: 181,
         items: [
           {
-            id: 'calibration',
-            label: formatMessage(messages.stockExpiring),
-            initialValue: ['30/60/90'],
-            type: 'readOnly',
-            controlType: {
-              component: 'select',
-              // endpoint: PERSON_SELECT_LIST.ENDPOINT,
-              hideIfNoOptions: false,
-              // queryKey: PERSON_SELECT_LIST.KEY,
-              options: [{ value: '30/60/90', label: '30/60/90' }],
-            },
-            classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
-            },
-            labelI18nKey: 'daysOfInventoryLeft',
+            id: 'daysBeforeCalibrationDueDate',
+            controlType: { component: 'numberField', min: 1, max: 90 },
+            classNames: { itemContainer: cssClasses('item-in-group-container') },
+            type: 'text',
+            labelI18nKey: 'daysBeforeCalibrationDueDate',
           },
         ],
       },

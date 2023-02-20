@@ -94,11 +94,21 @@ const getColumns = formatMessage => [
   { key: 'name', label: formatMessage(messages.device), sortable: true },
   { key: 'siteName', label: formatMessage(messages.site), sortable: true, hiddenOn: 'lg' },
   { key: 'approvalStatusI18nKey', label: formatMessage(messages.approvalStatus), sortable: true },
-  { key: 'deviceStatus', label: formatMessage(messages.deviceStatus), sortable: true },
+  {
+    key: 'deviceStatus',
+    label: formatMessage(messages.deviceStatus),
+    sortable: true,
+    tooltip: formatMessage(messages.deviceStatusDescription),
+  },
   // TODO: as the sorting occurs on the API, if we have this key in different languages, then probably the sorting won't work correctly
   { key: 'maintenanceStatusI18nKey', label: formatMessage(messages.maintenanceStatus), sortable: true },
   { key: 'lastResultConductedOn', label: formatMessage(messages.lastResultConductedOn), sortable: true },
-  { key: 'connectorStatus', sortable: false, label: formatMessage(messages.connectorStatus) },
+  {
+    key: 'connectorStatus',
+    sortable: false,
+    label: formatMessage(messages.connectorStatus),
+    tooltip: formatMessage(messages.connectorStatusDescription),
+  },
   {
     key: 'lastPingOn',
     sortable: true,
@@ -293,7 +303,7 @@ const DeviceList = () => {
             <BrowseEmptyList navigate={navigate} location={location} />
           ) : (
             <>
-              <div style={{ overflow: 'scroll' }}>
+              <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
                 <DeviceDataTable className={cssClasses('DeviceDataTable')}>
                   <DeviceDataTableHead
                     navigate={navigate}

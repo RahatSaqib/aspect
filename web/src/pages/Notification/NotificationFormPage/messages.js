@@ -169,7 +169,7 @@ export default defineMessages({
   },
   notificationTypeCalibration: {
     id: 'pages.Notification.type.Calibration',
-    defaultMessage: 'Calibration',
+    defaultMessage: 'Calibration Due Date',
   },
   notificationTypeModuleReplaced: {
     id: 'pages.Notification.type.ModuleReplaced',
@@ -202,6 +202,24 @@ export default defineMessages({
   notificationTypeOnlineDate: {
     id: 'pages.Notification.type.OnlineDate',
     defaultMessage: 'Online Date',
+  },
+
+  // --------------------------------------------------------------
+  triggerConditionTitle: {
+    id: 'pages.Notifications.triggerConditionTitle',
+    defaultMessage: 'Trigger this notification when...',
+  },
+  triggerWhenForResultCreated: {
+    id: 'pages.Notifications.triggerWhenForResultCreated',
+    defaultMessage: 'Result is Created',
+  },
+  triggerWhenForResultUpdated: {
+    id: 'pages.Notifications.triggerWhenForResultUpdated',
+    defaultMessage: 'Result is Updated',
+  },
+  triggerWhenResultCreatedOrUpdated: {
+    id: 'pages.Notifications.triggerWhenResultCreatedOrUpdated',
+    defaultMessage: 'Result is Created or Updated',
   },
   // --------------------------------------------------------------
   notificationTitle: {
@@ -608,6 +626,16 @@ export default defineMessages({
   startingDayOfTheWeekTitle: {
     id: 'pages.Notifications.startingDayOfTheWeekTitle',
     defaultMessage: 'Starting Day of the Week',
+  },
+
+  // Calibration section
+  calibrationDays: {
+    id: 'pages.Notifications.calibrationDays',
+    defaultMessage: 'Days...',
+  },
+  daysBeforeCalibrationDueDate: {
+    id: 'pages.Notifications.daysBeforeCalibrationDueDate',
+    defaultMessage: 'Before Calibration Due Date',
   },
 
   ...assay,

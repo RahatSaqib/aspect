@@ -7,7 +7,7 @@ const { exportNotifications } = require('./serviceReports')
 const { onIssueEscalated } = require('./actionHandler')
 const {
   listNotificationsBaseConfig,
-  resultBasedNotificationPayload,
+  saveNotificationPayload,
   saveNotificationResponse,
   changeNotificationStatusPayload,
   NotificationSchema,
@@ -150,7 +150,7 @@ const routes = [
       notes: 'Details of a Notification',
       auth: { scope: ['notification:edit'] },
       validate: {
-        payload: resultBasedNotificationPayload,
+        payload: saveNotificationPayload,
       },
       response: saveNotificationResponse,
     },
@@ -164,7 +164,7 @@ const routes = [
       notes: 'Details of a Notification',
       auth: { scope: ['notification:edit'] },
       validate: {
-        payload: resultBasedNotificationPayload,
+        payload: saveNotificationPayload,
         params: {
           id: Joi.string().description('Item id depending on payload.notificationType').required(),
         },
