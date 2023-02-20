@@ -5009,7 +5009,7 @@ async function seed(knex) {
       geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
     },
   ])
-  
+
   // Create tag
   const [tagOneId] = await knex('Tag').insert({
     title: 'SCO',
