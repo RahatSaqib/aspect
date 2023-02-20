@@ -7,6 +7,7 @@ const {
   deviceModuleDisabled,
   deviceHardwareError,
   hardwareErrorActions,
+  calibrationDateUpdated,
 } = require('../device/actions')
 const { deviceMaintenanceTypeToId, issueTypeToId } = require('../shared/dictionary')
 const logger = require('../shared/logger')
@@ -268,7 +269,7 @@ async function shouldTriggerHardwareErrorAnalysis(messageContext, device, payloa
   }
 }
 
-async function shouldLogDeviceCalibration(knex, deviceId, payload, deviceMaintenanceTypeId) {
+async function shouldLogDeviceCalibration(knex, deviceId, payload, deviceMaintenanceTypeId, messageContext) {
   const {
     startedOn: calibratedOn,
     data: { details = {} },
@@ -288,6 +289,12 @@ async function shouldLogDeviceCalibration(knex, deviceId, payload, deviceMainten
       deviceMaintenanceTypeId,
       notes: 'Create calibration from GeneXpert logs',
     })
+    if (!messageContext.calibrationDateUpdated) {
+      messageContext.bindActionCreators({
+        calibrationDateUpdated,
+      })
+    }
+    messageContext.calibrationDateUpdated(deviceId)
   }
 }
 

@@ -23,6 +23,14 @@
         "action": "REPORT_BASED_NOTIFICATION_REQUESTED",
         "method": "reportBased"
       }
+    },
+    {
+      "name": "Issue-Code-Triggered",
+      "externalId": "issueCodeTriggered",
+      "triggerCondition": {
+        "action": "ISSUE_NOTIFICATION_TRIGGERED",
+        "method": "issueBased"
+      }
     }
   ]
 }

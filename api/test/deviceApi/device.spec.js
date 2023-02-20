@@ -261,7 +261,9 @@ describe('Device API routes', () => {
       // update last ping to a date earlier and greater than 7 days and ensure device marked as offline
       const last8Day = subDays(new Date(), 8)
 
-      await knex('Device as d').where('d.id', factDevice[0].deviceId).update({ lastPingOn: last8Day })
+      await knex('Device as d')
+        .where('d.id', factDevice[0].deviceId)
+        .update({ lastPingOn: last8Day, lastSeenOn: last8Day })
 
       // Generate device offline facts and wait for offline action for new device
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))

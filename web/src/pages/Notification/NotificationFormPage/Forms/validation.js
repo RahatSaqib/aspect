@@ -32,7 +32,7 @@ const validationSchema = formatMessage =>
             'InventoryStockExpiring',
             'DeviceNoResults',
             'DeviceOffline',
-            'calibration',
+            'CalibrationDueDate',
             'ModuleReplaced',
             'ModuleDisabled',
             'UnusedModules',
@@ -41,9 +41,19 @@ const validationSchema = formatMessage =>
           ])
           .required(),
       }),
+      daysBeforeCalibrationDueDate: Yup.number().when('notificationType', {
+        is: 'CalibrationDueDate',
+        then: Yup.number().min(1).max(90).required(),
+        otherwise: Yup.number().notRequired(),
+      }),
       reportId: Yup.string().when('notificationType', {
         is: 'reportBased',
         then: Yup.string().required(),
+        otherwise: Yup.string().notRequired(),
+      }),
+      resultBasedScope: Yup.string().when('notificationType', {
+        is: 'resultBased',
+        then: Yup.string().required(formatMessage(messages.required)),
         otherwise: Yup.string().notRequired(),
       }),
       name: Yup.string().required(formatMessage(messages.notificationNameRequired)),

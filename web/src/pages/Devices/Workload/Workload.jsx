@@ -24,8 +24,8 @@ import colMessages from '../../../oldPages/result/list/messages'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
 import messages from './messages'
+import styles from './styles.css'
 import TableRow from './TableRow'
-import styles from './Workload.css'
 
 // There are some missing translations for the status, you should check what we are actually doing in device table.
 // BD MGIT columnas
@@ -60,11 +60,10 @@ const Workload = () => {
   const location = useLocation()
   const { formatMessage } = useI18n()
   const user = useAuthState()
-  const [firstLoad, setFirstLoad] = useState(true)
   const [requestParams, setRequestParams] = useState()
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.userPermissions, {})
-  const { isError, isLoading, data = false, error } = useWorkload(requestParams, firstLoad)
+  const { isError, isLoading, data = false, error } = useWorkload(requestParams)
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
   const mostResultsAssay = useSelector(
@@ -88,23 +87,28 @@ const Workload = () => {
     const { value: searchParams } = searchSanitizer(location, {})
     const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
 
-    if (firstLoad) {
+    if (!filtersParams.has('singleAssayId') && mostResultsAssay !== undefined) {
       const now = new Date()
       filtersParams.set('minDate', startOfDay(subtractDays(now, now.getDate() - 1)).toJSON())
       filtersParams.set('maxDate', endOfDay(now).toJSON())
       filtersParams.set('singleAssayId', mostResultsAssay?.id)
       searchParams.set('filters', filtersParams)
-      setFirstLoad(false)
       if (searchParams.has('pageAt')) {
         searchParams.delete('pageAt')
       }
       navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
+  }, [location, mostResultsAssay, navigate])
+
+  useEffect(() => {
+    const { value: searchParams } = searchSanitizer(location, {})
+    const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
 
     const filters = getFilters(filtersParams)
-    setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location, navigate, firstLoad, sortCol, sortDir, pageAt, pageSize])
+    if (filters.singleAssayId) {
+      setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
+    }
+  }, [location, pageAt, pageSize, sortCol, sortDir])
 
   if (isError) throw new Error(error)
 
@@ -145,14 +149,16 @@ const Workload = () => {
             <BrowseEmptyList navigate={navigate} location={location} />
           ) : (
             <>
-              <Table className={cssClasses('InventoryDataTable')}>
-                <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
-                <TableBody>
-                  {workloadList.map((item, index) => (
-                    <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
-                  ))}
-                </TableBody>
-              </Table>
+              <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
+                <Table className={cssClasses('InventoryDataTable')}>
+                  <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
+                  <TableBody>
+                    {workloadList.map((item, index) => (
+                      <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}

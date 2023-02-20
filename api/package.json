@@ -117,7 +117,7 @@
     "node-uuid": "^1.4.8",
     "nodemailer": "^6.8.0",
     "object-mapper": "^6.2.0",
-    "phone": "^3.1.31",
+    "phone": "^3.1.33",
     "pug": "^3.0.2",
     "raven": "^2.6.4",
     "shx": "^0.3.4",
@@ -130,7 +130,7 @@
     "winston-sentry-log": "^1.0.26"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.5",
+    "@babel/core": "^7.20.12",
     "babel-eslint": "^10.1.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",

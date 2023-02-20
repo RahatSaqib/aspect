@@ -4,6 +4,7 @@ const { loadPlugin } = require('../../plugin/registration')
 const { parseDateOrDefault } = require('../../shared/date')
 const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../../shared/dictionary')
 
+const nonActiveStatuses = ['Inactive', 'Resolved']
 function getActionData(action) {
   const actionData = {}
   if (action.options != null) {
@@ -46,7 +47,7 @@ async function findOpenIssue(knex, issueType, action, filterIssueCondition = {})
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .where({ 'it.externalId': issueType })
-    .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
+    .whereNotIn('is.externalId', nonActiveStatuses)
     .orderBy('i.updatedOn', 'desc')
 
   if (action.deviceId) {
@@ -67,6 +68,17 @@ async function findOpenIssue(knex, issueType, action, filterIssueCondition = {})
       findOpenIssue.modify(filterFunctions[evaluationFunction], action.options.data)
   }
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
+}
+
+async function findOpenIssues(knex, issueType, modifiers) {
+  const findOpenIssuesQuery = knex('Issue as i')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .where({ 'it.externalId': issueType })
+    .whereNotIn('is.externalId', nonActiveStatuses)
+    .modify(modifiers)
+    .select('i.id', 'i.partnerId', 'i.data')
+  return findOpenIssuesQuery
 }
 
 async function createNewIssue(knex, issueType, action) {
@@ -155,6 +167,7 @@ async function lookupIssueContext({ resultId, deviceId, siteId, consumableId }, 
 
 module.exports = {
   findOpenIssue,
+  findOpenIssues,
   createNewIssue,
   getActionData,
   hasIssueEventTrigger,
