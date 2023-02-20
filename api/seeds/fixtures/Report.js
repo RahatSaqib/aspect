@@ -592,6 +592,34 @@ const dataExtract = {
   ],
 }
 
+/**
+ * No Stock report
+ */
+const inventoryNoStock = {
+  name: '"No Stock" Inventory Report',
+  description: 'Showing all sites/devices and the number of days which they had no stock in the last month.',
+  i18nKey: 'no_stock',
+  i18nKeyDescription: 'no_stock_description',
+  externalId: 'no_stock',
+  fileName: 'NoStock',
+  sortOrder: 0,
+  availableForNotification: 1,
+  exportCsv: false,
+  exportExcel: true,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'noStockInventoryReport',
+      query: {
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        streamCSV: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -615,4 +643,5 @@ module.exports = {
   usageStats,
   devicesAndSitesOverview,
   dataExtract,
+  inventoryNoStock,
 }

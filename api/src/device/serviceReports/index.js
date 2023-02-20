@@ -19,6 +19,7 @@ const { getDevicesWithCountsForTB } = require('./deviceReport')
 const { getAllDeviceReportData } = require('./devicesAndSitesOverviewReport')
 const { getResultCategoryGroupColumns } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
+const { getNoStockInventoryReport } = require('./noStockInventoryReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -467,6 +468,18 @@ async function getErrorsByDevicesReport(auth, query) {
   }
 }
 
+async function noStockInventoryReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { data, dynamicColumns } = await getNoStockInventoryReport(query, dataConstraints)
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+    dynamicColumns,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -480,4 +493,5 @@ module.exports = {
   getDevicesWithCountsForTBReport,
   getAllDeviceReport,
   getErrorsByDevicesReport,
+  noStockInventoryReport,
 }
