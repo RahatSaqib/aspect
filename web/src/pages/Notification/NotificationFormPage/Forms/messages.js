@@ -74,4 +74,8 @@ export default defineMessages({
     id: 'pages.Notifications.notificationChannels',
     defaultMessage: 'At least one of the notification channels should be selected',
   },
+  required: {
+    id: 'forms.required',
+    defaultMessage: 'Required',
+  },
 })

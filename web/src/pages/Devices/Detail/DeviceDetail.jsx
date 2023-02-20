@@ -94,7 +94,7 @@ export const DeviceDetail = props => {
 
   return (
     <>
-      <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device">
+      <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device/list">
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
           { label: intl.formatMessage(messages.alerts), path: `/browse/device/list/${deviceId}/alerts` },

@@ -49,8 +49,38 @@ async function resolveIssueSiteWithLowFieldCompletionRate(knex, issue) {
   return sites.length > 0
 }
 
+async function resolveIssueCalibrationDueDate(knex, issue) {
+  const { deviceId } = issue
+  const { daysToCalibrationDueDateIssue, calibrationDueDate } = await knex(
+    knex('Device as d')
+      .join('Partner as p', 'p.id', 'd.partnerId')
+      .join('DeviceMaintenance as dm', 'd.id', 'dm.deviceId')
+      .join('DeviceMaintenanceType as dmt', 'dmt.id', 'dm.deviceMaintenanceTypeId')
+      .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+      .where('d.id', deviceId)
+      .whereNotNull(knex.raw("dt.deviceOperationSchema->'$.calibrationValidityInDays'"))
+      .where('current', 1)
+      .where('dmt.externalId', 'calibration')
+      .select({
+        deviceId: 'd.id',
+        calibratedOn: 'dm.contextDate',
+        calibrationValidityInDays: knex.raw("dt.deviceOperationSchema->'$.calibrationValidityInDays'"),
+        dueDaysCalibrationIssue: 'p.dueDaysCalibrationIssue',
+      })
+      .as('t')
+  ).first({
+    daysToCalibrationDueDateIssue: knex.raw(
+      `DATEDIFF(calibratedOn, now()) + calibrationValidityInDays - dueDaysCalibrationIssue`
+    ),
+    calibrationDueDate: knex.raw('ADDDATE(calibratedOn, calibrationValidityInDays)'),
+  })
+
+  return daysToCalibrationDueDateIssue > 0 && calibrationDueDate > new Date()
+}
+
 module.exports = {
   resolveIssueModuleDisabled,
   resolveIssueUnusedModules,
   resolveIssueSiteWithLowFieldCompletionRate,
+  resolveIssueCalibrationDueDate,
 }

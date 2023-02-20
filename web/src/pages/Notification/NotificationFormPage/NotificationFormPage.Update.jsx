@@ -66,6 +66,7 @@ const NotificationFormPage = ({ id, onSubmit }) => {
     const filter = JSON.parse(filterCondition)
     const newValues = {
       notificationType,
+      resultBasedScope: filter.resultBasedScope,
       name,
       emailSubject,
       emailBody,

@@ -1,6 +1,7 @@
 // ----------- Action Types ---------------------
 const types = {
   NOTIFICATION_CREATED: 'NOTIFICATION_CREATED',
+  ISSUE_NOTIFICATION_TRIGGERED: 'ISSUE_NOTIFICATION_TRIGGERED',
 }
 
 // ----------- Action Creators -------------------
@@ -21,7 +22,16 @@ function notificationCreated(notificationId) {
   }
 }
 
+function issueNotificationTriggered(issueId, issueTypeId) {
+  return {
+    type: types.ISSUE_NOTIFICATION_TRIGGERED,
+    issueId,
+    issueTypeId,
+  }
+}
+
 module.exports = {
   types,
   notificationCreated,
+  issueNotificationTriggered,
 }

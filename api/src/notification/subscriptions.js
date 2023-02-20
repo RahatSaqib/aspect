@@ -6,7 +6,9 @@ async function getNotificationSubscriptions(knex) {
     .then(rows => {
       return rows.reduce((acc, row) => {
         const { action, method } = JSON.parse(row.triggerCondition || '{}')
-        acc[action] = actionHandlers[method]()
+        if (action && method) {
+          acc[action] = actionHandlers[method]()
+        }
         return acc
       }, {})
     })
