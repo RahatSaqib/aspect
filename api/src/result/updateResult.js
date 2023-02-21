@@ -25,6 +25,8 @@ async function updateResult(request) {
     resultCategory2: 'r.resultCategory2',
     endedOn: 'r.endedOn',
     resultSourceExternalId: 'rso.externalId',
+    patientData: 'r.patientData',
+    resultData: 'r.resultData',
   })
   if (!result.ok) {
     return Boom.notFound('This result does not exist or you do not have access.')
@@ -47,15 +49,36 @@ async function updateResult(request) {
   })
 
   /**
-   * stringify values of fields with value of object or array in which case
-   * we deal with JSON fields (resultData, patientData, formData)
+   * stringify values of fields with value of object in which case
+   * we deal with JSON fields (i.e. resultData, patientData)
    */
   fieldsToUpdate = _.reduce(
     _.keys(fieldsToUpdate),
     (acc, fieldName) => {
       const value = fieldsToUpdate[fieldName]
-      if (_.isPlainObject(value) || _.isArray(value)) {
-        acc[fieldName] = JSON.stringify(value)
+      if (_.isPlainObject(value)) {
+        /**
+         * notice that we are here dealing with custom fields defined as
+         * "source": "patientData.XXXX" or
+         * "source": "resultData.XXXX"
+         * In this case we need to use corresponding actual data from db
+         * (Result.patientData or Result.resultData) JSON fields, and merge them with
+         * current `value` and save back as stringified JSON.
+         * Such merge with original value from db is needed because we may have not all
+         * props from `patientData` or `resultData` used in custom fields, and
+         * because of that we can not overwrite them with incomplete set from
+         * received payload of edited custom fields.
+         */
+        const valueFromDb = result.data[fieldName]
+        /**
+         * ^^^ `valueFromDb` is JSON field, because we do JSON.parse for `patientData` or
+         * `resultData` in getResultByResultId func
+         */
+        const newValue = {
+          ...valueFromDb,
+          ...value,
+        }
+        acc[fieldName] = JSON.stringify(newValue)
       } else {
         acc[fieldName] = value
       }
