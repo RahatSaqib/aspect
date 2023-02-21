@@ -61,7 +61,7 @@ const PkDashboard = () => {
         <Grid lg={4} style={{ padding: '8px 8px 0' }}>
           <ColumnName title={formatMessage(messages.titlemtbXdr)} />
           <DashboardCard title={formatMessage(messages.mtbXdrTesting)}>
-            <DashboardLink to="" label={formatMessage(messages.TCurrent)} />
+            <DashboardLink to="/dashboard/xdr/current-testing" label={formatMessage(messages.TCurrent)} />
             <DashboardLink to="" label={formatMessage(messages.TNationalTrend)} />
             <DashboardLink to="" label={formatMessage(messages.TProvincialComparison)} />
           </DashboardCard>

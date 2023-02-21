@@ -50,6 +50,7 @@ const CurrentRRTBDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRif
 
 const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentTestingPage'))
 const NationalTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalTestingTrendsPage'))
+const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/CovidPage'))
 const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/HivPage'))
 
@@ -129,6 +130,9 @@ const LogInApp = () => {
                   <Route path="/dashboard/rif/national-testing-trends" element={<NationalTestingTrends />} />
                   <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
                   <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
+
+                  <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
+
                   <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
                   <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
                 </>
