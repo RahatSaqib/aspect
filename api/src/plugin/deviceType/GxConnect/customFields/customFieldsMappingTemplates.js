@@ -195,7 +195,7 @@ const translateValidations = sourceValue => {
   if (!sourceValue) return null
   // skip integer validation (already exists in InputControlData)
   const map = sourceValue
-    .filter(elem => elem.validationType !== 'integer')
+    .filter(elem => elem.validationType !== 'integer' && elem.validationType !== 'float')
     .map(elem => {
       if (elem.validationType === 'regex') {
         return {
@@ -207,7 +207,7 @@ const translateValidations = sourceValue => {
       return elem
     })
 
-  return map
+  return map.length > 0 ? map : null
 }
 
 const translateCondition = (sourceValue, aspectFields) => {
