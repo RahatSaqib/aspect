@@ -34,6 +34,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.data_extract_description',
     defaultMessage: 'Extract data for selected date range for further importing into Tableau.',
   },
+  no_stock: {
+    id: 'pages.ReportIndex.no_stock',
+    defaultMessage: '"No Stock" Inventory Report',
+  },
+  no_stock_description: {
+    id: 'pages.ReportIndex.no_stock_description',
+    defaultMessage: 'Showing all sites/devices and the number of days which they had no stock in the last month.',
+  },
   MTB_Detected_RR_Detected: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected',
     defaultMessage: 'MTB Detected RR Detected',

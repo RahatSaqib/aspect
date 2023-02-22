@@ -25,6 +25,7 @@ const admin = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'no_stock',
   ],
   permissions: [
     {
@@ -168,6 +169,7 @@ const manager = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'no_stock',
   ],
   permissions: [
     {
@@ -267,6 +269,7 @@ const regionalOfficer = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'no_stock',
   ],
   permissions: [
     {
@@ -363,6 +366,7 @@ const labUser = {
     'module_activity_report',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'no_stock',
   ],
   permissions: [
     {
@@ -459,6 +463,7 @@ const clinician = {
     'module_activity_report',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'no_stock',
   ],
   permissions: [
     {
@@ -606,6 +611,7 @@ const ntp = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'no_stock',
   ],
   permissions: [
     {
@@ -797,6 +803,7 @@ const resultViewerYes = {
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'no_stock',
   ],
   permissions: [
     {
@@ -840,6 +847,7 @@ const remoteHealthWorker = {
     'device_calibration_report',
     'all_results',
     'data_extract',
+    'no_stock',
   ],
   permissions: [
     {
@@ -926,6 +934,7 @@ const labManager = {
     'tb_workload_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'no_stock',
   ],
   permissions: [
     {
@@ -1009,6 +1018,7 @@ const labSupervisor = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'no_stock',
   ],
   permissions: [
     {
@@ -1087,6 +1097,7 @@ const medTech = {
     'device_utilization_per_day',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'no_stock',
   ],
   permissions: [
     {
@@ -1167,6 +1178,7 @@ const dataViewer = {
     'module_activity_report',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'no_stock',
   ],
   permissions: [
     {
@@ -1251,6 +1263,7 @@ const labAdmin = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'no_stock',
   ],
   permissions: [
     {

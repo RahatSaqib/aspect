@@ -28,8 +28,9 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (query.assayExternalId) queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-      if (query.assayExternalId) queryBuilder.where('a.externalId', query.assayExternalId)
+      if (query.assayExternalId)
+        queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId').where('a.externalId', query.assayExternalId)
+
       if (query.resultCategoryId)
         queryBuilder
           .innerJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
