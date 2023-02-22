@@ -34,6 +34,22 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.data_extract_description',
     defaultMessage: 'Extract data for selected date range for further importing into Tableau.',
   },
+  no_stock: {
+    id: 'pages.ReportIndex.no_stock',
+    defaultMessage: '"No Stock" Inventory Report',
+  },
+  no_stock_description: {
+    id: 'pages.ReportIndex.no_stock_description',
+    defaultMessage: 'Showing all sites/devices and the number of days which they had no stock in the last month.',
+  },
+  result_notification: {
+    id: 'pages.ReportIndex.result_notifications_report',
+    defaultMessage: 'Result Notifications Report',
+  },
+  result_notification_description: {
+    id: 'pages.ReportIndex.result_notifications_report_description',
+    defaultMessage: 'This report lists all mails and sms delivered because a result is created or updated.',
+  },
   MTB_Detected_RR_Detected: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected',
     defaultMessage: 'MTB Detected RR Detected',
@@ -188,6 +204,15 @@ const messages = defineMessages({
   moduleActivityReport_description: {
     id: 'pages.ReportIndex.moduleActivityReport_description',
     defaultMessage: 'Shows devices with one or more inactive modules',
+  },
+  moduleStatusReport: {
+    id: 'pages.ReportIndex.moduleStatusReport',
+    defaultMessage: 'Module Status Report',
+  },
+  moduleStatusReport_description: {
+    id: 'pages.ReportIndex.moduleStatusReport_Description',
+    defaultMessage:
+      'Lists the number of currently active/disabled modules, and also the number of modules replaced in a period of time defined by filters',
   },
   usageStatistics: {
     id: 'pages.ReportIndex.usageStatistics',

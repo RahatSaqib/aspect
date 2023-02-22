@@ -242,7 +242,9 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
     ...getMaxLimitPlaceHolders(),
     ...administrativeDivisionLabelPlaceHolders,
   ]
-  // ---------------------------------------------------------------------------------------
+  /**
+   * generate actual file or stream and get back a data buffer
+   */
   const fileName = getContentDispositionFilename(fileNamePrefix, extension)
   let dataBuffer
   let streamResponse = false
@@ -262,8 +264,9 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
       })
     }
   } else {
-    // response is xlsx
-
+    /**
+     * response is xlsx
+     */
     // eslint-disable-next-line no-lonely-if
     if (_.some(sheets, s => s.query.avoidStreaming)) {
       // Response entire file if template has formats and formulae.
