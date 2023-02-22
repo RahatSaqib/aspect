@@ -38,10 +38,7 @@ const PkDashboard = () => {
           <ColumnName title={formatMessage(messages.titlemtbRif)} />
           <DashboardCard title={formatMessage(messages.mtbRifTbTesting)}>
             <DashboardLink to="/dashboard/rif/current-testing" label={formatMessage(messages.TbCurrent)} />
-            <DashboardLink
-              to="/dashboard/rif/national-testing-trends"
-              label={formatMessage(messages.TbNationalTrend)}
-            />
+            <DashboardLink to="/dashboard/rif/national-testing-trend" label={formatMessage(messages.TbNationalTrend)} />
             <DashboardLink to="" label={formatMessage(messages.TbProvincialComparison)} />
             <DashboardLink to="" label={formatMessage(messages.TbSubprovincialTrend)} />
           </DashboardCard>
@@ -66,7 +63,7 @@ const PkDashboard = () => {
             <DashboardLink to="" label={formatMessage(messages.TProvincialComparison)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
-            <DashboardLink to="" label={formatMessage(messages.DCurrent)} />
+            <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrent)} />
             <DashboardLink to="" label={formatMessage(messages.DNationalTrend)} />
             <DashboardLink to="" label={formatMessage(messages.DProvincialComparison)} />
             <DashboardLink to="" label={formatMessage(messages.DTestingDiagnosis)} />

@@ -52,6 +52,7 @@ const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSectio
 const NationalRtbTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalRtbTrendsPage'))
 const NationalTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalTestingTrendsPage'))
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
+const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/CovidPage'))
 const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/HivPage'))
 
@@ -123,18 +124,19 @@ const LogInApp = () => {
               <Route path="/dashboard" element={isPakistan ? <PkDashboard /> : <Status />} />
               {isPakistan ? (
                 <>
-                  <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
-                  <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />
-                  <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
-                  <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
                   <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
                   <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
-                  <Route path="/dashboard/rif/national-testing-trends" element={<NationalTestingTrends />} />
+                  <Route path="/dashboard/rif/national-testing-trend" element={<NationalTestingTrends />} />
                   <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
                   <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
 
                   <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
+                  <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
 
+                  <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
+                  <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
+                  <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />
+                  <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
                   <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
                   <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
                 </>
