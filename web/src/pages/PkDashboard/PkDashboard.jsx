@@ -34,7 +34,7 @@ const PkDashboard = () => {
         <Grid item lg={4} style={{ padding: '16px 8px 0' }}>
           {loading ? <Loading /> : <SummaryCard key={data.summary[2].key} item={data.summary[2]} />}
         </Grid>
-        <Grid lg={4} style={{ padding: '8px 8px 0' }}>
+        <Grid item lg={4} style={{ padding: '8px 8px 0' }}>
           <ColumnName title={formatMessage(messages.titlemtbRif)} />
           <DashboardCard title={formatMessage(messages.mtbRifTbTesting)}>
             <DashboardLink to="/dashboard/rif/current-testing" label={formatMessage(messages.TbCurrent)} />
@@ -53,12 +53,12 @@ const PkDashboard = () => {
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbRifRrtbDiagnosis)}>
             <DashboardLink to="/dashboard/rif/current-rrtb-diagnosis" label={formatMessage(messages.RRCurrent)} />
-            <DashboardLink to="" label={formatMessage(messages.RRNationalTrend)} />
+            <DashboardLink to="/dashboard/rif/national-rtb-trends" label={formatMessage(messages.RRNationalTrend)} />
             <DashboardLink to="" label={formatMessage(messages.RRProvincialComparison)} />
             <DashboardLink to="" label={formatMessage(messages.RRTestingDiagnosis)} />
           </DashboardCard>
         </Grid>
-        <Grid lg={4} style={{ padding: '8px 8px 0' }}>
+        <Grid item lg={4} style={{ padding: '8px 8px 0' }}>
           <ColumnName title={formatMessage(messages.titlemtbXdr)} />
           <DashboardCard title={formatMessage(messages.mtbXdrTesting)}>
             <DashboardLink to="/dashboard/xdr/current-testing" label={formatMessage(messages.TCurrent)} />
@@ -77,7 +77,7 @@ const PkDashboard = () => {
             <DashboardLink to="" label={formatMessage(messages.FQProvincialComparison)} />
           </DashboardCard>
         </Grid>
-        <Grid lg={4} style={{ padding: '8px 8px 0' }}>
+        <Grid item lg={4} style={{ padding: '8px 8px 0' }}>
           <ColumnName title={formatMessage(messages.titlecoverage)} />
           <DashboardCard>
             <DashboardLink to="/dashboard/coverage/device" label={formatMessage(messages.genExpert)} />

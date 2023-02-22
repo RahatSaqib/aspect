@@ -17,7 +17,7 @@ const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
   const { formatMessage } = useI18n()
 
-  const { id, readyForNotification, typeCategory, name, enabled, totalTriggers } = item
+  const { id, readyForNotification, name, enabled, totalTriggers } = item
 
   const queryClient = useQueryClient()
   const refreshList = () => {

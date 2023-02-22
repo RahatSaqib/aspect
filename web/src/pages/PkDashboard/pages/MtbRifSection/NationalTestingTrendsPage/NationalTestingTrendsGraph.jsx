@@ -4,9 +4,9 @@ import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
-import AnnualGraph from '../../../components/AnnualGraph'
 import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/TrendInYearsAllTestsGraph/TrendInYearsAllTestsGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import AnnualGraph from '../../../components/AnnualGraph'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -14,7 +14,7 @@ const NationalTestingTrendsGraph = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState()
+  const [filter] = useState()
   const [state, setState] = useState()
   const [, setLga] = useState()
   const { data: assays } = useAssayList()
@@ -44,7 +44,7 @@ const NationalTestingTrendsGraph = () => {
     >
       <Grid container sx={{ mt: 2 }}>
         <AnnualGraph showLabel={showLabel} />
-        <Grid container item xs={12} md={8} lg={8}>
+        <Grid item xs={12} md={8} lg={8}>
           <TrendInYearsAllTestsGraph assaysFromState={assays} showLabel={showLabel} filterSelection={filter} />
         </Grid>
       </Grid>
