@@ -49,6 +49,7 @@ const CurrentDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSect
 const CurrentRRTBDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentRRTBDiagnosisPage'))
 
 const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentTestingPage'))
+const NationalDiagnosisRif = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalDiagnosisPage'))
 const NationalRtbTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalRtbTrendsPage'))
 const NationalTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalTestingTrendsPage'))
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
@@ -125,6 +126,7 @@ const LogInApp = () => {
               {isPakistan ? (
                 <>
                   <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
+                  <Route path="/dashboard/rif/national-diagnosis" element={<NationalDiagnosisRif />} />
                   <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
                   <Route path="/dashboard/rif/national-testing-trend" element={<NationalTestingTrends />} />
                   <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />

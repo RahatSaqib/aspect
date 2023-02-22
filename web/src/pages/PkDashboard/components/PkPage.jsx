@@ -14,7 +14,7 @@ const PkPage = ({ title, filters, filter, children, full }) => {
   return (
     <>
       <DetailHeader name={title} disableBack={full} />
-      <Container maxWidth="xl" sx={full ? { ...baseStyle, ...fullHeight } : { ...baseStyle, ...normalHeight }}>
+      <Container maxWidth="xxl" sx={full ? { ...baseStyle, ...fullHeight } : { ...baseStyle, ...normalHeight }}>
         {full ? (
           children
         ) : (
