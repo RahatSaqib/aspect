@@ -620,6 +620,30 @@ const inventoryNoStock = {
   ],
 }
 
+const resultNotificationsReport = {
+  name: 'Result Notifications Report',
+  description: 'This report lists all mails and sms delivered because a result is created or updated.',
+  i18nKey: 'result_notifications_report',
+  i18nKeyDescription: 'result_notifications_report_description',
+  externalId: 'result_notifications', // folder name in /templates with low dash casing
+  fileName: 'ResultNotification',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 160,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'notification/serviceReports/index',
+      functionName: 'getResultSmsNotificationData',
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'notification/serviceReports/index',
+      functionName: 'getResultEmailNotificationData',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -643,5 +667,6 @@ module.exports = {
   usageStats,
   devicesAndSitesOverview,
   dataExtract,
+  resultNotificationsReport,
   inventoryNoStock,
 }
