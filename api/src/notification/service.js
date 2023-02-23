@@ -91,7 +91,7 @@ function calibrationIssueFilter(queryBuilder, filterConditions, aliases) {
           .max('dm2.id')
       )
       .whereRaw(
-        `DATEDIFF(dm.contextDate,DATE(NOW())) + dt.deviceOperationSchema->'$.calibrationValidityInDays' = ${filterConditions.daysBeforeCalibrationDueDate}`
+        `DATEDIFF(dm.contextDate,DATE(NOW())) + dt.deviceOperationSchema->'$.calibrationValidityInDays' <= ${filterConditions.daysBeforeCalibrationDueDate}`
       )
   }
 }
