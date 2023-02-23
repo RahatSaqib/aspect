@@ -14,6 +14,7 @@ const {
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
+const { getDoNotUseModulesReportData } = require('./doNotUseModulesReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
 const getDevicesWithCountsForTB = require('./genXpertTbWorkloadReport')
 const { getAllDeviceReportData } = require('./devicesAndSitesOverviewReport')
@@ -419,6 +420,18 @@ async function getModuleActivityReport(auth, query) {
   }
 }
 
+async function getDoNotUseModulesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { minDate = subMonths(new Date(), 1) } = query
+  const rows = await getDoNotUseModulesReportData(minDate, dataConstraints, query)
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
 async function getModuleStatusReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const rows = await getModuleStatusReportData(dataConstraints, query)
@@ -489,6 +502,7 @@ module.exports = {
   exportDeviceOperationLogReport,
   getDeviceCapacityReport,
   getModuleActivityReport,
+  getDoNotUseModulesReport,
   getModuleStatusReport,
   getDevicesWithCountsForTBReport,
   getAllDeviceReport,
