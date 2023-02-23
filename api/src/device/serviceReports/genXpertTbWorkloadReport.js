@@ -100,10 +100,10 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
       knex.raw('IFNULL(resultsCount.mtbError, 0) AS totalErrors'),
       knex.raw('IFNULL(resultsCount.mtbNoResult, 0) AS mtbNoResult'),
       knex.raw('IFNULL(resultsCount.mtbInvalid, 0) AS mtbInvalid'),
-      knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertTests'),
+      knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertResults'),
+      knex('Result as lru').where('lru.deviceId', knex.raw('d.id')).max('lru.createdOn').as('lastResultUploadedOn'),
+      knex('Result as lrc').where('lrc.deviceId', knex.raw('d.id')).max('lrc.createdOn').as('lastResultConductedOn'),
     ])
 }
 
-module.exports = {
-  getDevicesWithCountsForTB,
-}
+module.exports = getDevicesWithCountsForTB

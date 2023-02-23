@@ -476,14 +476,14 @@ const usageStats = {
   ],
 }
 
-const deviceReport = {
-  name: 'Device Report',
+const geneXpertTBWorkloadReport = {
+  name: 'GeneXpert TB Workload',
   description:
     'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
-  i18nKey: 'deviceReport',
-  i18nKeyDescription: 'deviceReport_description',
-  externalId: 'device_report',
-  fileName: 'DeviceReport',
+  i18nKey: 'geneXpertTbWorkloadReport',
+  i18nKeyDescription: 'geneXpertTbWorkload_description',
+  externalId: 'genxpert_tb_workload_report',
+  fileName: 'GeneXpert_TB_Workload',
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 150,
@@ -655,7 +655,7 @@ module.exports = {
   geneXpertIssues,
   deviceUtilizationReport,
   deviceCalibrationReport,
-  deviceReport,
+  geneXpertTBWorkloadReport,
   allResults,
   utilizationPerInstrumentDayReport,
   moduleActivityReport,

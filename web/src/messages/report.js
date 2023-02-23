@@ -231,12 +231,12 @@ const messages = defineMessages({
     defaultMessage:
       'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
   },
-  deviceReport: {
-    id: 'pages.ReportIndex.deviceReport',
-    defaultMessage: 'Device Report',
+  geneXpertTbWorkloadReport: {
+    id: 'pages.ReportIndex.geneXpertTbWorkloadReport',
+    defaultMessage: 'GeneXpert TB Workload',
   },
-  deviceReport_description: {
-    id: 'pages.ReportIndex.deviceReport_description',
+  geneXpertTbWorkload_description: {
+    id: 'pages.ReportIndex.geneXpertTbWorkload_description',
     defaultMessage:
       'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
   },
