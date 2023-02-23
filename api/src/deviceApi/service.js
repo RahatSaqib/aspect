@@ -369,7 +369,7 @@ async function processLogItem(context, logItem, options) {
     details = JSON.parse(details)
   }
   const { device, knex } = context
-  const value = `${device.id}|${externalId}|${JSON.stringify(details)}`
+  const value = `${device.id}|${externalId}|${logFileName}`
   const hash = crypto.createHash('md5').update(value).digest('hex')
   const payload = {
     id: externalId,
@@ -402,8 +402,15 @@ async function processLogItem(context, logItem, options) {
       context.messageContext
     )
   } catch (err) {
-    // ignore duplicate entry errors
-    if (err.code !== 'ER_DUP_ENTRY') {
+    if (err.code === 'ER_DUP_ENTRY') {
+      // ignore duplicate entry errors since the same log item may come from GxAlert and GxConnect
+      logger.warning(
+        `got duplicated logItem. deviceId=${device.id}, externalId=${externalId}, logFileName=${logFileName}`,
+        {
+          reLabel: 'deviceApi:processLogItem',
+        }
+      )
+    } else {
       throw err
     }
   }

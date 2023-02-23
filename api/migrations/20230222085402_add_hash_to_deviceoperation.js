@@ -1,6 +1,6 @@
 async function up(knex) {
   await knex.schema.alterTable('DeviceOperation', tbl => {
-    tbl.specificType('hash', 'CHAR(32) DEFAULT NULL').unique()
+    tbl.string('hash', 32).unique()
   })
 }
 
