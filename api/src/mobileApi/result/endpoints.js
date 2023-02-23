@@ -124,9 +124,9 @@ const routes = [
     path: '/v3/samples/{resultId}',
     handler: downloadResultByIdV2,
     config: {
-      description: 'Result Sync',
+      description: 'Samples List',
       notes:
-        'Pageable and sortable list of complete results (including all result details). Used for syncing the reporter app',
+        'Pageable and sortable list of samples with results (including all result details). Used for syncing the reporter app',
       auth: { scope: ['result:view'] },
       validate: {
         query: downloadResultValidationV2(),
@@ -161,7 +161,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/v3/samples/clinical-responses/{resultId}',
+    path: '/v3/clinical-responses/{resultId}',
     handler: clinicalResponse,
     config: {
       description: 'Add a result follow up',
