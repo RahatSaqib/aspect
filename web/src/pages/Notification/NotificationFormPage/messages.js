@@ -145,6 +145,11 @@ export default defineMessages({
     defaultMessage:
       'This notification will be triggered any time a site changes its custom fields completion rate to less than 0.8. Also, it will be sent only if you have the custom field completion weight set in your country. Please check with your administrator before using it.',
   },
+  notificationTypeResultBasedMessage: {
+    id: 'pages.Notification.type.notificationTypeResultBasedMessage',
+    defaultMessage:
+      'This notification will be triggered for results ended on within last 30 days period. For older results notification will not trigger.',
+  },
   notificationTypeDeviceOffline: {
     id: 'pages.Notification.type.notificationTypeDeviceOffline',
     defaultMessage:
