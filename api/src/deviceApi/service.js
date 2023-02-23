@@ -329,33 +329,34 @@ async function processGeneXpertLogs(context, data, now) {
     now,
   }
 
-  let processedLogIds = []
+  const processedFileLogIds = []
+  const processedSystemLogIds = []
   await Promise.each(data, async logItem => {
     try {
       const logItemId = await processLogItem(context, logItem, options)
-      /**
-       * Skip touching `processedLogIds` for Cepheid db-based system logs
-       * Notice that processedLogIds are needed in GxConnect to mark record in SQLite
-       * table `Logs` that it has been processed well in Aspect.
-       * We do not mark records in Cepheid db `system_log` but only keep
-       * `settings.LastProcessedSystemLogTimeForAspect` and store it in setting.jsn.
-       */
-      if (logItem.logFileName !== 'GeneXpert DB') {
-        processedLogIds = [...processedLogIds, logItemId]
+
+      if (logItem.logFileName === 'GeneXpert DB') {
+        processedSystemLogIds.push(logItemId)
+      } else {
+        processedFileLogIds.push(logItemId)
       }
-    } catch (e) {
+    } catch (err) {
       /**
        * if error happened then we do not return this logId as processed,
        * meaning that it will be sent again next scheduler run
        */
-      logger.debug(`execution of processLogItem for log entry with externalId=${logItem.externalId} has failed`, {
-        reLabel: 'deviceApi:processLogItem',
-      })
+      logger.error(
+        `execution of processLogItem for log entry with externalId=${logItem.externalId} and deviceId=${context.device.id} has failed`,
+        {
+          reLabel: 'deviceApi:processLogItem',
+        }
+      )
     }
   })
 
   return {
-    logIds: processedLogIds,
+    logIds: processedFileLogIds,
+    systemLogIds: processedSystemLogIds,
   }
 }
 

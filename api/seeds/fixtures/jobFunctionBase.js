@@ -11,7 +11,7 @@ const admin = {
     'device_activity',
     'device_activity_per_assay',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'device_utilization',
     'all_results',
@@ -25,6 +25,8 @@ const admin = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'result_notifications',
+    'no_stock',
   ],
   permissions: [
     {
@@ -157,7 +159,7 @@ const manager = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -168,6 +170,8 @@ const manager = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'no_stock',
+    'result_notifications',
   ],
   permissions: [
     {
@@ -256,7 +260,7 @@ const regionalOfficer = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -267,6 +271,8 @@ const regionalOfficer = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'result_notifications',
+    'no_stock',
   ],
   permissions: [
     {
@@ -355,7 +361,7 @@ const labUser = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -363,6 +369,8 @@ const labUser = {
     'module_activity_report',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'result_notifications',
+    'no_stock',
   ],
   permissions: [
     {
@@ -451,7 +459,7 @@ const clinician = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -459,6 +467,8 @@ const clinician = {
     'module_activity_report',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'result_notifications',
+    'no_stock',
   ],
   permissions: [
     {
@@ -597,7 +607,7 @@ const ntp = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -606,6 +616,8 @@ const ntp = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'result_notifications',
+    'no_stock',
   ],
   permissions: [
     {
@@ -636,6 +648,7 @@ const ntpNoResults = {
     'device_utilization',
     'device_activity_percent',
     'device_utilization_per_day',
+    'result_notifications',
   ],
   permissions: [
     {
@@ -712,6 +725,7 @@ const donor = {
     'device_utilization',
     'device_activity_percent',
     'device_utilization_per_day',
+    'result_notifications',
   ],
   permissions: [
     {
@@ -790,13 +804,14 @@ const resultViewerYes = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
     'device_utilization_per_day',
     'module_activity_report',
     'report_custom_fields_completion',
+    'no_stock',
   ],
   permissions: [
     {
@@ -840,6 +855,7 @@ const remoteHealthWorker = {
     'device_calibration_report',
     'all_results',
     'data_extract',
+    'no_stock',
   ],
   permissions: [
     {
@@ -916,7 +932,7 @@ const labManager = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -926,6 +942,8 @@ const labManager = {
     'tb_workload_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'result_notifications',
+    'no_stock',
   ],
   permissions: [
     {
@@ -998,7 +1016,7 @@ const labSupervisor = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -1009,6 +1027,8 @@ const labSupervisor = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'result_notifications',
+    'no_stock',
   ],
   permissions: [
     {
@@ -1087,6 +1107,7 @@ const medTech = {
     'device_utilization_per_day',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'no_stock',
   ],
   permissions: [
     {
@@ -1159,7 +1180,7 @@ const dataViewer = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -1167,6 +1188,7 @@ const dataViewer = {
     'module_activity_report',
     'tb_workload_summary',
     'xdr_devices_summary',
+    'no_stock',
   ],
   permissions: [
     {
@@ -1240,7 +1262,7 @@ const labAdmin = {
     'device_activity',
     'device_utilization',
     'device_activity_percent',
-    'device_report',
+    'genxpert_tb_workload_report',
     'module_swaps',
     'all_results',
     'data_extract',
@@ -1251,6 +1273,7 @@ const labAdmin = {
     'xdr_devices_summary',
     'usage_statistics_report',
     'devices_and_sites_overview',
+    'no_stock',
   ],
   permissions: [
     {
