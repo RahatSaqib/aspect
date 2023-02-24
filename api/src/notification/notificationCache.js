@@ -15,6 +15,7 @@ class NotificationCache {
       .join('NotificationType as nt', 'nt.notificationTypeCategoryId', 'ntc.id')
       .where('ntc.externalId', notificationCategory)
       .distinct(
+        'nt.enabled',
         'nt.filterCondition',
         'nt.id as notificationTypeId',
         'ntc.externalId as notificationTypeCategoryExternalId',

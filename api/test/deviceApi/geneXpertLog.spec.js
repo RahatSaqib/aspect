@@ -811,6 +811,7 @@ describe('Process Calibration data in GeneXpert Logs', () => {
       ...logDataWithCalibration,
       occurredOn: addDays(logDataWithCalibration.occurredOn, 5),
     }
+    logData.externalId = 170
     res = await postLog(deviceAuth, logSource, logData)
     assert.equal(res.status, 200)
     //
