@@ -36,7 +36,7 @@ CREATE TEMPORARY TABLE
     `HealthFacility` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     `RequestorName` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     `RequestorPhone` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-    `errorCode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `ErrorCode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `ErrorDescription` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     `AssayName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `AssayHostTestCode` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -161,7 +161,6 @@ SELECT
   so.name as HealthFacility, -- HealthFacility custom field seems to be in declared for zw, but no present: JSON_VALUE(r.patientData, '$.healthFacility' RETURNING CHAR) as HealthFacility,
   JSON_VALUE(r.patientData, '$.requestorName' RETURNING CHAR) as RequestorName, -- RequestorName only seems to exists in dev seeding lesotho, ethiopia and mozambique (in customFieldsFromGxAlert)
   JSON_VALUE(r.patientData, '$.requestorPhone' RETURNING CHAR) as RequestorPhone,
-  r.errorCode,
   -- ec.`Category` AS `ErrorCategory`, -- ------------------------------- error category -> Not found in Aspect
   REGEXP_REPLACE(r.errorCode,'(\r\n|\n|\r)',' ') as ErrorCode,
   REGEXP_REPLACE(r.errorNotes,'(\r\n|\n|\r)',' ') as ErrorDescription,
