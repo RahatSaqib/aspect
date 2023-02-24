@@ -215,5 +215,13 @@ const messages = defineMessages({
     defaultMessage:
       'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
   },
+  error_rate: {
+    id: 'pages.ReportIndex.error_rate',
+    defaultMessage: 'Error Rate',
+  },
+  error_rate_description: {
+    id: 'pages.ReportIndex.error_rate_description',
+    defaultMessage: 'Report error rates per quarter, break them down by devices, modules and users',
+  },
 })
 export default messages
