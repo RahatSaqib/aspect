@@ -30,7 +30,7 @@ CREATE TEMPORARY TABLE
     `HivStatus` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     `PreviouslyTreated` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
     `Gender` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-    `MicroscopyResult` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    `MicroscopyResult` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
     `RepeatTest` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
     `TestReason` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     `HealthFacility` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -149,13 +149,13 @@ SELECT
 	JSON_VALUE(r.patientData, '$.gender' RETURNING CHAR),
 	JSON_VALUE(r.patientData, '$.patientGender' RETURNING CHAR)
   ) AS Gender,
-  JSON_VALUE(r.patientData, '$.microscopyResult' RETURNING CHAR) AS MicroscopyResult, -- microscopyResult only seems to exists in dev seeding  
+  JSON_VALUE(r.patientData, '$.microscopyResult' RETURNING CHAR) AS MicroscopyResult, -- microscopyResult only seems to exists in dev seeding
   CASE
      JSON_VALUE(r.patientData, '$.repeatTest' RETURNING CHAR)
 	WHEN '0' THEN 'First or second'
     WHEN '1' THEN 'Follow-up'
     WHEN '2' THEN 'Repeat Baseline'
-    ELSE NULL
+    ELSE ''
   END AS RepeatTest,
   JSON_VALUE(r.resultData, '$.testReasonShortName' RETURNING CHAR) as TestReason, -- testReasonShortName seems to be always null in resultData
   so.name as HealthFacility, -- HealthFacility custom field seems to be in declared for zw, but no present: JSON_VALUE(r.patientData, '$.healthFacility' RETURNING CHAR) as HealthFacility,
