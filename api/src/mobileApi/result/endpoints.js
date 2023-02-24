@@ -164,8 +164,8 @@ const routes = [
     path: '/v3/clinical-responses/{resultId}',
     handler: clinicalResponse,
     config: {
-      description: 'Add a result follow up',
-      notes: 'Adds a treatment/outcome follow up for a result',
+      description: 'Adds result follow ups that have been captured in the app',
+      notes: 'Adds a set of treatment/outcome follow up actions for a result',
       auth: { scope: ['treatmentStatus:edit'] },
       validate: {
         params: addClinicalResponseParamValidation(),
