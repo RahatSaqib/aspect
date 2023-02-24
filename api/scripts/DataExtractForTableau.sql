@@ -208,7 +208,7 @@ SELECT
   , c.name as Country
   , st.name as State
   , lg.name as Lga
-  , firstResult.minDate as DateFirstTest 
+  , MIN(firstResult.minDate) as DateFirstTest
   , d.name as DeviceName
   , r.senderOperator as 'User'
   , si.latitude as latitude
@@ -241,7 +241,8 @@ FROM
   LEFT JOIN Lga as lgao ON lgao.id = go.lgaId
   LEFT JOIN State as stateo ON go.stateId = stateo.id
   LEFT JOIN (SELECT minr.deviceId, min(minr.endedOn) as minDate from Result as minr group by minr.deviceId) as firstResult on firstResult.deviceId = d.id
-  WHERE r.endedOn >= @currentMonth AND r.endedOn < date_add(@currentMonth, INTERVAL @interval MONTH);
+  WHERE r.endedOn >= @currentMonth AND r.endedOn < date_add(@currentMonth, INTERVAL @interval MONTH)
+  GROUP BY r.id;
     -- ------------------------------------------------------------------------------------------------------
 SET @currentMonth = date_add(@currentMonth, INTERVAL @interval MONTH);
 
