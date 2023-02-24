@@ -44,7 +44,7 @@ const NationalTestingTrendsGraph = () => {
     >
       <Grid container sx={{ mt: 2 }}>
         <AnnualGraph showLabel={showLabel} />
-        <Grid item xs={12} md={8} lg={8}>
+        <Grid item xs={12} md={8} lg={8} container>
           <TrendInYearsAllTestsGraph assaysFromState={assays} showLabel={showLabel} filterSelection={filter} />
         </Grid>
       </Grid>

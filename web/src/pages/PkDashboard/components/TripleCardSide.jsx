@@ -11,8 +11,8 @@ const TripleCardSide = ({ data }) => {
         alignItems="strech"
         sx={{ backgroundColor: '#f0f0f0', height: '100%', borderRadius: 5, p: 2 }}
       >
-        {data.map(item => (
-          <DataRow label={item.label} value={item.value} />
+        {data.map((item, i) => (
+          <DataRow key={i} label={item.label} value={item.value} />
         ))}
       </Stack>
     </Grid>

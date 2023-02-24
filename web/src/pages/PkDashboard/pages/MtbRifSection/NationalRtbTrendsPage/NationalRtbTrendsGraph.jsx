@@ -43,7 +43,7 @@ const NationalRtbTrendsGraph = () => {
       }
     >
       <Grid container sx={{ mt: 2 }}>
-        <Grid item xs={12} md={8} lg={8}>
+        <Grid item xs={12} md={8} lg={8} container>
           <TrendInYearsRifDetectedGraph assaysFromState={assays} showLabel={showLabel} filterSelection={filter} />
         </Grid>
         <AnnualGraph showLabel={showLabel} />
