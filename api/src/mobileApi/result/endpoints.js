@@ -124,9 +124,9 @@ const routes = [
     path: '/v3/samples/{resultId}',
     handler: downloadResultByIdV2,
     config: {
-      description: 'Samples List',
+      description: 'Get Sample Details',
       notes:
-        'Pageable and sortable list of samples with results (including all result details). Used for syncing the reporter app',
+        'Responds with the most up to date sample and result details queried from a result ID',
       auth: { scope: ['result:view'] },
       validate: {
         query: downloadResultValidationV2(),
