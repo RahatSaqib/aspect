@@ -1,4 +1,50 @@
+import React, { useEffect, useState } from 'react'
+import { MenuItem } from '@mui/material'
+import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
+import { useQuery } from 'react-query'
+import { useDispatch } from 'react-redux'
+import fetchWrapperForQueries from '../../../components/QueryFetch'
+import RESULT_CATEGORY_GROUP_SELECT_LIST from '../../../components/QueryFetch/ResultCategoryGroup'
+import useI18n from '../../../hooks/useI18n'
+import { types } from '../../../store/ResultCategoryGroupSelectFieldRedux'
+import SelectField from '../../shared/SelectField'
+import styles from '../popover/styles.css'
+
+const cssClasses = classnames.bind(styles)
+
+const ResultCategoryGroupSelectField = ({ onResultCategoryGroupChange, value, assayId, allItemText, ...restProps }) => {
+  const { formatMessage } = useI18n()
+  const dispatch = useDispatch()
+  const [resultCategoryGroups, setResultCategoryGroups] = useState(false)
+
+  const { data, isError } = useQuery([RESULT_CATEGORY_GROUP_SELECT_LIST.KEY, assayId], async () =>
+    fetchWrapperForQueries({
+      endpoint: RESULT_CATEGORY_GROUP_SELECT_LIST.ENDPOINT,
+      params: { assayId },
+    })
+  )
+
+  useEffect(() => {
+    if (data && !isError) {
+      const items = data.data
+      setResultCategoryGroups(items)
+      dispatch({ type: types.RECEIVE_RESULT_CATEGORY_GROUP, items, lastRefreshed: new Date() })
+    }
+  }, [data, dispatch, isError])
+
+  return (
+    <SelectField {...restProps} value={value} onChange={e => onResultCategoryGroupChange(e.target.value)}>
+      {resultCategoryGroups
+        ? resultCategoryGroups.map(({ externalId, name, i18nKey }) => (
+            <MenuItem key={externalId} value={externalId}>
+              <div className={cssClasses('Control__inner')}>{formatMessage(messages[i18nKey], name)}</div>
+            </MenuItem>
+          ))
+        : null}
+    </SelectField>
+  )
+}
 
 const messages = defineMessages({
   gxEbolaGPDetectedNPDetected: {
@@ -69,6 +115,10 @@ const messages = defineMessages({
     id: 'pages.filters.gxMtbRifMtbNoResult',
     defaultMessage: 'MTB No Result',
   },
+  GxMtbRifMTBErrorRifError: {
+    id: 'pages.filters.GxMtbRifMTBErrorRifError',
+    defaultMessage: 'MTB Error Rif Error',
+  },
   gxMtbRifUltraMtbNotDetected: {
     id: 'pages.filters.gxMtbRifUltraMtbNotDetected',
     defaultMessage: 'MTB Not Detected',
@@ -105,6 +155,14 @@ const messages = defineMessages({
     id: 'pages.filters.gxMtbRifUltraMtbNoResult',
     defaultMessage: 'MTB No Result',
   },
+  GxMtbRifUltraMTBTraceDetectedRifIndeterminate: {
+    id: 'pages.filters.GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
+    defaultMessage: 'MTB Trace Detected Rif Indeterminate',
+  },
+  GxMtbRifUltraMTBTraceDetectedRifNoResult: {
+    id: 'pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult',
+    defaultMessage: 'MTB Trace Detected Rif No Result',
+  },
   gxMtbXdrMtbNotDetected: {
     id: 'pages.filters.gxMtbXdrMtbNotDetected',
     defaultMessage: 'MTB Not Detected',
@@ -136,6 +194,10 @@ const messages = defineMessages({
   gxMtbXdrMtbNoResult: {
     id: 'pages.filters.gxMtbXdrMtbNoResult',
     defaultMessage: 'MTB No Result',
+  },
+  GxMtbXdrMTBNotDetectedDrugResistanceNotDetected: {
+    id: 'pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
+    defaultMessage: 'MTB Not Detected Drug Resistance Not Detected',
   },
   assayGenericDstresultCategoryPositiveMTBresultCategorySusceptible: {
     id: 'assayGenericDstresultCategoryPositiveMTBresultCategorySusceptible',
@@ -261,4 +323,4 @@ const messages = defineMessages({
   },
 })
 
-export default messages
+export default ResultCategoryGroupSelectField

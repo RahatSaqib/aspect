@@ -1,8 +1,10 @@
 const { Boom } = require('@hapi/boom')
+const _ = require('lodash')
 const { getUser } = require('../auth/service')
 const { getResultByResultId } = require('./common/db')
 const { resultUpdated } = require('./actions')
 const { knex } = require('../db')
+const { getRemoteAddress } = require('../shared/request')
 
 async function updateResult(request) {
   const {
@@ -23,6 +25,8 @@ async function updateResult(request) {
     resultCategory2: 'r.resultCategory2',
     endedOn: 'r.endedOn',
     resultSourceExternalId: 'rso.externalId',
+    patientData: 'r.patientData',
+    resultData: 'r.resultData',
   })
   if (!result.ok) {
     return Boom.notFound('This result does not exist or you do not have access.')
@@ -31,46 +35,81 @@ async function updateResult(request) {
   const user = await getUser(auth.credentials.name)
   const { id: userId } = user
   const now = new Date()
-  const { customFields } = result.data
+  const { customFields, deviceId } = result.data
 
-  const simpleFieldsToUpdate = {}
-  const jsonFieldsToUpdate = {}
+  let fieldsToUpdate = {}
   for (const customField of customFields) {
     if (customField.source) {
-      const isSimpleField = !customField.source.includes('.')
-
-      if (isSimpleField) {
-        const key = customField.source
-        simpleFieldsToUpdate[key] = payload[key] || ''
-      } else {
-        const [parent, key] = customField.source.split('.')
-        jsonFieldsToUpdate[parent] = jsonFieldsToUpdate[parent] || {}
-        jsonFieldsToUpdate[parent][key] = payload[parent][key] || ''
-      }
+      _.set(fieldsToUpdate, customField.source, _.get(payload, customField.source))
     }
   }
+  const deviceLogRawMessage = JSON.stringify({
+    auth: { credentials: { name: auth.credentials.name } },
+    payload: fieldsToUpdate,
+  })
+
+  /**
+   * stringify values of fields with value of object in which case
+   * we deal with JSON fields (i.e. resultData, patientData)
+   */
+  fieldsToUpdate = _.reduce(
+    _.keys(fieldsToUpdate),
+    (acc, fieldName) => {
+      const value = fieldsToUpdate[fieldName]
+      if (_.isPlainObject(value)) {
+        /**
+         * notice that we are here dealing with custom fields defined as
+         * "source": "patientData.XXXX" or
+         * "source": "resultData.XXXX"
+         * In this case we need to use corresponding actual data from db
+         * (Result.patientData or Result.resultData) JSON fields, and merge them with
+         * current `value` and save back as stringified JSON.
+         * Such merge with original value from db is needed because we may have not all
+         * props from `patientData` or `resultData` used in custom fields, and
+         * because of that we can not overwrite them with incomplete set from
+         * received payload of edited custom fields.
+         */
+        const valueFromDb = result.data[fieldName]
+        /**
+         * ^^^ `valueFromDb` is JSON field, because we do JSON.parse for `patientData` or
+         * `resultData` in getResultByResultId func
+         */
+        const newValue = {
+          ...valueFromDb,
+          ...value,
+        }
+        acc[fieldName] = JSON.stringify(newValue)
+      } else {
+        acc[fieldName] = value
+      }
+      return acc
+    },
+    {}
+  )
 
   await knex('Result')
     .where('id', resultId)
     .update({
-      ...simpleFieldsToUpdate,
-      ...Object.fromEntries(
-        Object.keys(jsonFieldsToUpdate).map(key => {
-          const fields = jsonFieldsToUpdate[key]
-          const stringFields = Object.keys(fields)
-            .map(current => {
-              return `'$.${current}','${fields[current]}'`
-            })
-            .join(',')
-          return [key, knex.raw(`JSON_SET(${key}, ${stringFields})`)]
-        })
-      ),
+      ...fieldsToUpdate,
       updatedBy: userId,
       updatedOn: now,
     })
 
+  let deviceLogId
+  if (deviceId) {
+    const senderIp = getRemoteAddress(request)
+    ;[deviceLogId] = await knex('DeviceLog').insert({
+      deviceId,
+      resultId,
+      source: 'Custom Fields Edited in Aspect',
+      createdOn: now,
+      senderIp,
+      rawMessage: deviceLogRawMessage,
+    })
+  }
+
   messageContext.bindActionCreators({ resultUpdated })
-  messageContext.resultUpdated(result.data.id)
+  messageContext.resultUpdated(resultId, deviceLogId, userId)
 
   return { ok: true, data: { id: result.data.id } }
 }

@@ -278,15 +278,7 @@ const DeviceList = () => {
           >
             {formatMessage(isProcessingMergeDevices ? messages.mergingDevices : messages.mergeDevices)}
             {isProcessingMergeDevices ? (
-              <CircularProgress
-                size="16px"
-                thickness={5}
-                disableShrink
-                sx={{
-                  color: '#fff',
-                  marginLeft: '15px',
-                }}
-              />
+              <CircularProgress size="16px" thickness={5} disableShrink sx={{ color: '#fff', marginLeft: '15px' }} />
             ) : null}
           </AspectButton>
         </PermissionChecker>
