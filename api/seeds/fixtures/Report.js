@@ -560,39 +560,6 @@ const devicesAndSitesOverview = {
 }
 
 /**
- * see section `Tuning MySql` in api/README.md
- */
-const dataExtract = {
-  name: 'Data Extract',
-  description: 'Extract all data in the system for either selected date range or maximum for one year.',
-  i18nKey: 'data_extract',
-  i18nKeyDescription: 'data_extract_description',
-  externalId: 'data_extract',
-  fileName: 'DataExtract',
-  sortOrder: 0,
-  availableForNotification: 1,
-  exportCsv: true,
-  exportExcel: false,
-  sheets: [
-    {
-      sortOrder: 0,
-      moduleName: 'result/serviceReport',
-      functionName: 'getDataExtractReport',
-      query: {
-        sortCol: 'updatedOn',
-        sortDir: 'desc',
-        /**
-         * querying 500K of records should work well with
-         * new MySql settings for buffer pool size
-         */
-        maxNumberOfRecords: 500000,
-        streamCSV: true,
-      },
-    },
-  ],
-}
-
-/**
  * Error rates report
  */
 const errorRatesReport = {
@@ -634,6 +601,39 @@ const errorRatesReport = {
   ],
 }
 
+/**
+ * see section `Tuning MySql` in api/README.md
+ */
+const dataExtract = {
+  name: 'Data Extract',
+  description: 'Extract all data in the system for either selected date range or maximum for one year.',
+  i18nKey: 'data_extract',
+  i18nKeyDescription: 'data_extract_description',
+  externalId: 'data_extract',
+  fileName: 'DataExtract',
+  sortOrder: 0,
+  availableForNotification: 1,
+  exportCsv: true,
+  exportExcel: false,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'result/serviceReport',
+      functionName: 'getDataExtractReport',
+      query: {
+        sortCol: 'updatedOn',
+        sortDir: 'desc',
+        /**
+         * querying 500K of records should work well with
+         * new MySql settings for buffer pool size
+         */
+        maxNumberOfRecords: 500000,
+        streamCSV: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -655,7 +655,7 @@ module.exports = {
   tbWorkloadSummary,
   xdrDevicesSummary,
   usageStats,
+  errorRatesReport,
   devicesAndSitesOverview,
   dataExtract,
-  errorRatesReport,
 }
