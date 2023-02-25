@@ -441,33 +441,6 @@ async function getDevicesWithCountsForTBReport(auth, query) {
   }
 }
 
-async function getAllDeviceReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
-  const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
-
-  return {
-    ok: true,
-    data: rows,
-    total: rows.length,
-    dynamicColumns: resultCategoryGroups.map(a => ({
-      key: a.columnKey,
-      header: a.columnName,
-    })),
-  }
-}
-
-async function getErrorsByDevicesReport(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const data = await getErrorsByDevices(dataConstraints, query)
-  return {
-    ok: true,
-    total: data.length,
-    length: data.length,
-    data,
-  }
-}
-
 async function getErrorRateByDeviceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const data = await getErrorRateByDevice(dataConstraints, query)
@@ -501,6 +474,33 @@ async function getErrorRateByUserReport(auth, query) {
   }
 }
 
+async function getAllDeviceReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
+  const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+    dynamicColumns: resultCategoryGroups.map(a => ({
+      key: a.columnKey,
+      header: a.columnName,
+    })),
+  }
+}
+
+async function getErrorsByDevicesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const data = await getErrorsByDevices(dataConstraints, query)
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -513,8 +513,8 @@ module.exports = {
   getModuleStatusReport,
   getDevicesWithCountsForTBReport,
   getAllDeviceReport,
-  getErrorsByDevicesReport,
   getErrorRateByDeviceReport,
   getErrorRateByModuleReport,
   getErrorRateByUserReport,
+  getErrorsByDevicesReport,
 }
