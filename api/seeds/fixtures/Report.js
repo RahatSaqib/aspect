@@ -476,14 +476,14 @@ const usageStats = {
   ],
 }
 
-const deviceReport = {
-  name: 'Device Report',
+const geneXpertTBWorkloadReport = {
+  name: 'GeneXpert TB Workload',
   description:
     'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
-  i18nKey: 'deviceReport',
-  i18nKeyDescription: 'deviceReport_description',
-  externalId: 'device_report',
-  fileName: 'DeviceReport',
+  i18nKey: 'geneXpertTbWorkloadReport',
+  i18nKeyDescription: 'geneXpertTbWorkload_description',
+  externalId: 'genxpert_tb_workload_report',
+  fileName: 'GeneXpert_TB_Workload',
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 150,
@@ -634,6 +634,58 @@ const dataExtract = {
   ],
 }
 
+/**
+ * No Stock report
+ */
+const inventoryNoStock = {
+  name: '"No Stock" Inventory Report',
+  description: 'Showing all sites/devices and the number of days which they had no stock in the last month.',
+  i18nKey: 'no_stock',
+  i18nKeyDescription: 'no_stock_description',
+  externalId: 'no_stock',
+  fileName: 'NoStock',
+  sortOrder: 0,
+  availableForNotification: 1,
+  exportCsv: false,
+  exportExcel: true,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'noStockInventoryReport',
+      query: {
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        streamCSV: true,
+      },
+    },
+  ],
+}
+
+const resultNotificationsReport = {
+  name: 'Result Notifications Report',
+  description: 'This report lists all mails and sms delivered because a result is created or updated.',
+  i18nKey: 'result_notifications_report',
+  i18nKeyDescription: 'result_notifications_report_description',
+  externalId: 'result_notifications', // folder name in /templates with low dash casing
+  fileName: 'ResultNotification',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 160,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'notification/serviceReports/index',
+      functionName: 'getResultSmsNotificationData',
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'notification/serviceReports/index',
+      functionName: 'getResultEmailNotificationData',
+    },
+  ],
+}
+
 module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
@@ -645,7 +697,7 @@ module.exports = {
   geneXpertIssues,
   deviceUtilizationReport,
   deviceCalibrationReport,
-  deviceReport,
+  geneXpertTBWorkloadReport,
   allResults,
   utilizationPerInstrumentDayReport,
   moduleActivityReport,
@@ -658,4 +710,6 @@ module.exports = {
   errorRatesReport,
   devicesAndSitesOverview,
   dataExtract,
+  resultNotificationsReport,
+  inventoryNoStock,
 }

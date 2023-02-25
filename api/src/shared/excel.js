@@ -410,17 +410,34 @@ async function renderExcelTemplate({
               const normalizer = dataSelector || dataSelectorSheet
               if (normalizer) normalizedValues = normalizer(dataRow)
               else normalizedValues = dataRow
+              /**
+               * helper func
+               */
+              const addValuesAndStyles = (acc, cellValue) => {
+                if (_.isArray(cellValue)) {
+                  cellValue.forEach(cellVal => {
+                    addRowValuesAndCellStyle(acc, cellVal)
+                  })
+                } else {
+                  addRowValuesAndCellStyle(acc, cellValue)
+                }
+              }
 
               const rowData = _.reduce(
                 dynamicColumns,
                 (acc, column) => {
-                  const cellValue = normalizedValues[column.key]
-                  if (_.isArray(cellValue)) {
-                    cellValue.forEach(cellVal => {
-                      addRowValuesAndCellStyle(acc, cellVal)
+                  const { subHeaders } = column
+                  const hasSubHeaders = subHeaders?.length > 0
+                  if (hasSubHeaders && !column.key) {
+                    subHeaders.forEach(subHeader => {
+                      if (subHeader.key) {
+                        const cellValue = normalizedValues[subHeader.key]
+                        addValuesAndStyles(acc, cellValue)
+                      }
                     })
                   } else {
-                    addRowValuesAndCellStyle(acc, cellValue)
+                    const cellValue = normalizedValues[column.key]
+                    addValuesAndStyles(acc, cellValue)
                   }
                   return acc
                 },
@@ -995,11 +1012,28 @@ function getNormalizedData({ data, fieldNames, normalizer, dynamicColumns, defau
 
       let valuesInDynamicColumns = []
       if (dynamicColumns.length > 0) {
-        valuesInDynamicColumns = dynamicColumns.map(column => {
-          let value = normalizedValues[column.key]
-          value = _.isUndefined(value) ? null : value
-          return value
-        })
+        valuesInDynamicColumns = _.reduce(
+          dynamicColumns,
+          (acc, column) => {
+            const { subHeaders } = column
+            const hasSubHeaders = subHeaders?.length > 0
+            if (hasSubHeaders && !column.key) {
+              subHeaders.forEach(subHeader => {
+                if (subHeader.key) {
+                  let value = normalizedValues[subHeader.key]
+                  value = _.isUndefined(value) ? null : value
+                  acc = [...acc, value]
+                }
+              })
+            } else {
+              let value = normalizedValues[column.key]
+              value = _.isUndefined(value) ? null : value
+              acc = [...acc, value]
+            }
+            return acc
+          },
+          []
+        )
       }
       return [...valuesInPredefinedColumns, ...valuesInDynamicColumns]
     })

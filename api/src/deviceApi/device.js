@@ -285,6 +285,7 @@ async function addDeviceOperation(knex, deviceId, payload, now = new Date()) {
     startedOn: payload.startedOn,
     endedOn: payload.endedOn,
     createdOn: now,
+    hash: payload.hash,
   })
   return { id: deviceOperationId }
 }

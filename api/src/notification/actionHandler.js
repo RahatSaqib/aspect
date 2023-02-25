@@ -61,12 +61,26 @@ async function analyzeNotifications(context, action) {
     // HACK: Calibration notification must be avoided on issue creation and sent only when ISSUE_NOTIFICATION_TRIGGERED
     // event is dispatched
     const calibrationIssueTypeId = await issueTypeToId('CalibrationDueDate')
-    if (issueTypeId === calibrationIssueTypeId && type !== notificationActionTypes.ISSUE_NOTIFICATION_TRIGGERED) {
+    /**
+     * if issueBased notification of type `CalibrationDueDate` was not
+     * triggered by notification action - then exit
+     */
+    if (
+      /**
+       * check here that `issueTypeId` is defined, to prevent `undefined === undefined`
+       * in next line when both `issueTypeId` and `calibrationIssueTypeId` are `undefined`
+       */
+      issueTypeId &&
+      issueTypeId === calibrationIssueTypeId &&
+      type !== notificationActionTypes.ISSUE_NOTIFICATION_TRIGGERED
+    ) {
       return
     }
 
     const category = getNotificationCategory({ type, issueId, resultId })
-    const conditionsToEvaluate = await getConditionsToEvaluate(knex, category)
+    let conditionsToEvaluate = await getConditionsToEvaluate(knex, category)
+    // use only enabled notifications
+    conditionsToEvaluate = _.filter(conditionsToEvaluate, it => !!it.enabled)
 
     await Promise.each(
       _.filter(conditionsToEvaluate, condition => {

@@ -137,6 +137,17 @@ const notificationTypeSection = formatMessage => ({
           },
         },
         {
+          id: 'descriptionWhenResultBasedNotificationBeTriggered',
+          visibleIf: values => values.notificationType === 'resultBased',
+          fullWidth: true,
+          controlType: {
+            component: 'messageField',
+            icon: 'MdHelp',
+            text: formatMessage(messages.notificationTypeResultBasedMessage),
+            color: 'cadetblue',
+          },
+        },
+        {
           id: 'deviceOfflineDescription',
           visibleIf: values => values.notificationType === 'DeviceOffline',
           fullWidth: true,

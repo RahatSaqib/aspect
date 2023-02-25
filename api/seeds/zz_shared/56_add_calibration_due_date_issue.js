@@ -12,7 +12,7 @@ module.exports = require('../utils').seed(async knex => {
     .where('externalId', 'CepheidGeneXpert')
     .update({ deviceOperationSchema: JSON.stringify({ calibrationValidityInDays: 365 }) })
 
-  await add_issue(knex, 'CalibrationDueDate', ['admin'], partnerName, adminUserName, {
+  await add_issue(knex, 'CalibrationDueDate', null, partnerName, adminUserName, {
     evaluationMethod: 'plugin-function',
     evaluationParameter: 'resolveIssueCalibrationDueDate', // The name of the function to evaluate if it should be resolved or not.
   })

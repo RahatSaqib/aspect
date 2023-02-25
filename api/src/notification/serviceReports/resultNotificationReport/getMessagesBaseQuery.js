@@ -1,0 +1,16 @@
+const { knex } = require('../../../db')
+const { filterParams } = require('../../../db')
+const { addConstraints } = require('../../../auth/constraints')
+
+module.exports = (dataConstraints, params) =>
+  knex('Notification as n')
+    .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+    .join('Result as r', 'n.resultId', 'r.id')
+    .join('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .join('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .join('Sample as s', 'r.sampleId', 's.id')
+    .join('Device as d', 'd.id', 'r.deviceId')
+    .join('Person as p', 'n.personId', 'p.id')
+    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd', person: 'p' })
+    .modify(filterParams, params, { siteName: 's.name', stateId: 'g.stateId', lgaId: 'g.lgaId' })
+    .andWhere('ms.externalId', 'Sent')

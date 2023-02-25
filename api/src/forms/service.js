@@ -62,6 +62,9 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
         field.items = _.map(items, item => ({
           key: item[itemsSourceConfig?.key || 'externalId'],
           value: item[itemsSourceConfig?.value || 'name'],
+          state: item.stateName,
+          lga: item.lgaName,
+          ...JSON.parse(item.customProperties || '{}'),
         }))
       }
 
