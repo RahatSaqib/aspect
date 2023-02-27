@@ -136,6 +136,10 @@ const messages = {
       id: 'filter.popover.result',
       defaultMessage: 'Result',
     },
+    resultGroup: {
+      id: 'filter.popover.resultGroup',
+      defaultMessage: 'Result Group',
+    },
     selectResult: {
       id: 'filter.popover.selectResult',
       defaultMessage: 'Select result...',
