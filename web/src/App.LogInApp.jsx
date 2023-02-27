@@ -45,19 +45,20 @@ const DeviceCoverage = lazy(() => import('./pages/PkDashboard/pages/CoverageSect
 const ErrorRate = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/ErrorRatePage'))
 const Utilization = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/UtilizationPage'))
 const InventoryOverview = lazy(() => import('./pages/PkDashboard/pages/InventorySection/InventoryOverviewPage'))
+const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/CovidPage'))
+const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/HivPage'))
+
 const CurrentDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentDiagnosisPage'))
 const CurrentRRTBDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentRRTBDiagnosisPage'))
-
+const TestDiagTrend = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/TestDiagTrendPage'))
 const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentTestingPage'))
 const NationalDiagnosisRif = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalDiagnosisPage'))
 const NationalRtbTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalRtbTrendsPage'))
 const NationalTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalTestingTrendsPage'))
+
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
-
-const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/CovidPage'))
-const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/HivPage'))
 
 const LogInApp = () => {
   const dispatch = useDispatch()
@@ -133,6 +134,7 @@ const LogInApp = () => {
                   <Route path="/dashboard/rif/national-testing-trend" element={<NationalTestingTrends />} />
                   <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
                   <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
+                  <Route path="/dashboard/rif/test-diag-trend" element={<TestDiagTrend />} />
 
                   <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                   <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
