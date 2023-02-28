@@ -569,7 +569,7 @@ const errorRatesReport = {
   i18nKeyDescription: 'error_rate_description',
   externalId: 'error_rate',
   fileName: 'ErrorRate',
-  sortOrder: 0,
+  sortOrder: 170,
   availableForNotification: 1,
   exportCsv: false,
   exportExcel: true,
