@@ -60,7 +60,8 @@ const NotificationFormPage = ({ id, onSubmit }) => {
     if (initialValues.notificationType === 'issueBased') {
       initialValues.notificationType = initialValues.issueType
     }
-    const { notificationType, issueType, reportId, name, emailSubject, emailBody } = initialValues
+    const { notificationType, issueType, reportId, name, emailSubject, emailBody, daysBeforeCalibrationDueDate } =
+      initialValues
     const { smsBody, webUrl, webBody, filterCondition, enabled } = initialValues
 
     const filter = JSON.parse(filterCondition)
@@ -68,6 +69,7 @@ const NotificationFormPage = ({ id, onSubmit }) => {
       notificationType,
       resultBasedScope: filter.resultBasedScope,
       name,
+      daysBeforeCalibrationDueDate,
       emailSubject,
       emailBody,
       sendEmail: filter.sendEmail,
