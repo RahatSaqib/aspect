@@ -236,11 +236,21 @@ FROM
   LEFT JOIN SampleType AS stp ON sp.sampleTypeId = stp.id
   LEFT JOIN Site AS so ON sp.originSiteId = so.id
   LEFT JOIN Site AS si ON r.siteId = si.id
-  LEFT JOIN Geography AS go on go.id = so.geographyId
+  LEFT JOIN Geography AS go ON go.id = so.geographyId
   LEFT JOIN Lga as lgao ON lgao.id = go.lgaId
   LEFT JOIN State as stateo ON go.stateId = stateo.id
   LEFT JOIN (SELECT minr.deviceId, min(minr.endedOn) as minDate from Result as minr group by minr.deviceId) as firstResult on firstResult.deviceId = d.id
+  LEFT JOIN DeviceApproval as deviceApproval on d.deviceApprovalId = deviceApproval.id
+         LEFT JOIN DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog
+                         on d.deviceMaintenanceStatusLogId = deviceMaintenanceStatusLog.id
+         LEFT JOIN DeviceMaintenanceStatus as deviceMaintenanceStatus
+                         on deviceMaintenanceStatusLog.deviceMaintenanceStatusId = deviceMaintenanceStatus.id
   WHERE r.endedOn >= @currentMonth AND r.endedOn < date_add(@currentMonth, INTERVAL @interval MONTH)
+     AND (si.id is null OR si.disabled = 0)
+     AND (deviceApproval.token = 'approved' OR isnull(deviceApproval.token))
+     AND (deviceMaintenanceStatus.externalId IS NULL
+        OR NOT deviceMaintenanceStatus.externalId = 'inactiveDecommissioned')
+
   GROUP BY r.id;
     -- ------------------------------------------------------------------------------------------------------
 SET @currentMonth = date_add(@currentMonth, INTERVAL @interval MONTH);
@@ -269,3 +279,5 @@ EXECUTE stc;
 DEALLOCATE PREPARE stc;
 SELECT @filename filename, count(*) register from ResultExport;
 DROP TEMPORARY TABLE ResultExport;
+
+
