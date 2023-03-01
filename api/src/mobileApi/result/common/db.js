@@ -221,7 +221,7 @@ const getResultWorkflowStatusQuery = resultWorkflowStatusExternalId => {
   return knex('ResultWorkflowStatus').where('externalId', resultWorkflowStatusExternalId).first('id')
 }
 
-const addResultDownlodLogQuery = (resultId, now, userId) => {
+const addResultDownloadLogQuery = (resultId, now, userId) => {
   return knex('ResultDownloadLog').insert({
     resultId,
     createdOn: now,
@@ -338,7 +338,7 @@ const getCountV2 = resultQuery => resultQuery.clone().countDistinct('r.id as cou
 
 // get total awaiting treatment count v2
 const getAwaitingTreatment = resultQuery =>
-  resultQuery.clone().countDistinct('r.id as count').whereNot('rc1.externalId', 'NotDetected').first()
+  resultQuery.clone().countDistinct('r.id as count').where('rts.id', 1).first()
 
 // get rows v2
 const getItemsV2 = (resultQuery, query) => {
@@ -633,7 +633,7 @@ module.exports = {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
   getResultWorkflowStatusQuery,
-  addResultDownlodLogQuery,
+  addResultDownloadLogQuery,
   getCommentsOfResultById,
   getFollowUpsOfResultById,
   getFollowUpsForResultFollowup,

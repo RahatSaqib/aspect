@@ -125,8 +125,7 @@ const routes = [
     handler: downloadResultByIdV2,
     config: {
       description: 'Get Sample Details',
-      notes:
-        'Responds with the most up to date sample and result details queried from a result ID',
+      notes: 'Responds with the most up to date sample and result details queried from a result ID',
       auth: { scope: ['result:view'] },
       validate: {
         query: downloadResultValidationV2(),
