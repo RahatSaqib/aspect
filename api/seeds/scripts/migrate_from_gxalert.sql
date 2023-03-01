@@ -109,3 +109,9 @@ GROUP BY person.PersonId;
 
 -- Query Custom Fields in GxAlert (Deprecated)
 -- Read more: https://systemone.youtrack.cloud/articles/ASP-A-260276849/Custom-Fields
+
+
+-- Query deviceConfiguration (attribute inside of partnerData)
+SELECT CONCAT(
+	"deviceConfiguration: [{ deviceType: 'GeneXpert', data: ", cs.SettingsJson, "}]")
+FROM connectsettings CS left join country c on c.CountryId = cs.CountryId  WHERE c.Name like '%tanzania%';
