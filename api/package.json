@@ -89,7 +89,7 @@
     "date-fns-timezone": "^0.1.4",
     "date-fns-tz": "^2.0.0",
     "debug": "^4.3.4",
-    "deep-equal-in-any-order": "^2.0.1",
+    "deep-equal-in-any-order": "^2.0.4",
     "dotenv-safe": "^8.2.0",
     "email-templates": "10.0.1",
     "exceljs": "^4.3.0",
