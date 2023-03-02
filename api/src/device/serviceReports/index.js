@@ -470,7 +470,7 @@ async function getErrorsByDevicesReport(auth, query) {
 
 async function noStockInventoryReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { data, dynamicColumns } = await getNoStockInventoryReport(query, dataConstraints)
+  const { data, dynamicColumns } = await getNoStockInventoryReport(dataConstraints, query)
   return {
     ok: true,
     total: data.length,

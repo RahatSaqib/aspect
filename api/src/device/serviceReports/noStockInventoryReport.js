@@ -8,11 +8,14 @@ const { allDeviceMaintenanceStatusToId } = require('../../shared/dictionary')
 async function getNoStockInventoryReport(dataConstraints, query) {
   const deviceMaintenanceStatusToId = await allDeviceMaintenanceStatusToId()
 
-  const now = new Date()
-  query.maxDate = query.maxDate ? query.maxDate.toISOString() : now.toISOString()
+  if (!query.maxDate) {
+    const now = new Date()
+    query.maxDate = now.toISOString()
+  }
   if (!query.minDate) {
     query.minDate = subDays(new Date(query.maxDate), 90).toISOString()
   }
+
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
   /**
    * sub-query from Result/Assay tables to get actual assays reported for
@@ -38,7 +41,7 @@ async function getNoStockInventoryReport(dataConstraints, query) {
    * this deviceId in specified date range
    */
   const subStatuses = knex('DeviceMaintenanceStatusLog')
-    .modify(filterDateRangeParams, query, 'createdOn')
+    .modify(filterDateRangeParams, query, 'day')
     .groupBy('deviceId')
     .count({
       daysWithNoStock: knex.raw(
@@ -53,14 +56,12 @@ async function getNoStockInventoryReport(dataConstraints, query) {
 
   const devicesRaw = await deviceQuery
     .clone()
+    .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'a.id')
+    .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
     .leftJoin('FactInventoryConsumptionRate as ficr', function () {
-      this.on('ficr.siteId', 's.id').on('ficr.days', 1)
+      this.on('ficr.siteId', 's.id').on('ficr.consumableId', 'c.id').on('ficr.days', 1)
     })
-    .leftJoin('Consumable as c', 'c.id', 'ficr.consumableId')
-    .leftJoin('ConsumableAssay as ca', 'ca.consumableId', 'c.id')
     .leftJoin('Assay as a2', 'a2.id', 'ca.assayId')
-    .leftJoin('PartnerConsumable as pc', 'ca.consumableId', 'pc.consumableId')
-
     .leftJoin('InventoryItem as ii', function () {
       this.on('ii.siteId', 's.id')
         .on('ii.consumableId', 'c.id')
@@ -74,11 +75,6 @@ async function getNoStockInventoryReport(dataConstraints, query) {
     })
     .leftJoin(subStatuses.as('dmsl'), 'dmsl.deviceId', 'd.id')
     .where('dc.hasResults', true)
-    .where(function () {
-      if (dataConstraints.partner?.id) {
-        this.whereNull('pc.partnerId').orWhere({ 'pc.partnerId': dataConstraints.partner.id })
-      }
-    })
     .groupBy('d.id', 'c.id')
     .select({
       deviceId: 'd.id',
