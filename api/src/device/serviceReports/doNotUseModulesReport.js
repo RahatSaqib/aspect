@@ -23,14 +23,12 @@ async function getDoNotUseModulesReportData(minDate, dataConstraints, query) {
     ])
     .groupBy('r.deviceId', 'r.moduleName')
     .orderBy([{ column: 'dateLastIssue', order: 'desc' }, 'r.deviceId', 'r.moduleName'])
-
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
       geography: 'g',
       partner: 'p',
     })
-
     .modify(filterParams, query, {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
