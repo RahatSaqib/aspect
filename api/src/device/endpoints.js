@@ -10,20 +10,13 @@ const {
   updateDeviceMaintenance,
   getDevicePerformance,
   setStatusForDateRange,
-  onDeviceMaintenanceStatusLogged,
-  onResultLogged,
-  onDeviceUpdateMaintenanceStatus,
-  onDeviceUpdateMaintenanceStatusNoResults,
-  onDeviceMaintenanceResolved,
   deviceMaintenanceStatusHistory,
   deviceMaintenanceStatus,
-  onDeviceMaintenanceStatusLogScheduled,
 } = require('./service')
 const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceCapacity = require('./listDeviceCapacity')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
-const { taskTracker } = require('../scheduler/taskTracker')
 const {
   exportWorkloadRequestSchema,
   listWorkloadRequestSchema,
@@ -556,18 +549,4 @@ const routes = [
   },
 ]
 
-const subscriptions = [
-  {
-    actions: {
-      DEVICE_MAINTENANCE_STATUS_LOGGED: onDeviceMaintenanceStatusLogged,
-      RESULT_LOGGED: onResultLogged,
-      DEVICE_MAINTENANCE: onDeviceUpdateMaintenanceStatus,
-      DEVICE_NO_RESULTS: onDeviceUpdateMaintenanceStatusNoResults,
-      DEVICE_MAINTENANCE_RESOLVED: onDeviceMaintenanceResolved,
-      DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED: async (action, context) =>
-        taskTracker(onDeviceMaintenanceStatusLogScheduled, action, context),
-    },
-  },
-]
-
-module.exports = { routes, subscriptions }
+module.exports = { routes }

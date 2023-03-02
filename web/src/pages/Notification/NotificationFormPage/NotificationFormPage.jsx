@@ -33,6 +33,10 @@ const NotificationFormPage = () => {
       const values = sanitizeFormValues(formik.values, { formConfig })
       const { deviceLevelId } = formik.values
 
+      delete values.siteWithLowFieldCompletionRateDescription
+      delete values.deviceOfflineDescription
+      delete values.descriptionWhenResultBasedNotificationBeTriggered
+
       values.notificationType = formik.values.notificationType
       if (!['resultBased', 'reportBased'].includes(formik.values.notificationType)) {
         values.issueType = formik.values.notificationType

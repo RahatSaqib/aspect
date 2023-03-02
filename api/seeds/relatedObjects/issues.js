@@ -1399,7 +1399,23 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message: 'Site with low completion rate {{issue.data.completionRatePercentage}}%',
+        message: 'Site with low completion rate {{site.completionRatePercentage}}%',
+        ...auditFields,
+      },
+    },
+    CalibrationDueDate: {
+      issueType: {
+        name: 'Calibration Due Date',
+        externalId: 'CalibrationDueDate',
+        i18nKey: 'CalibrationDueDate',
+        issueCategoryId: issueCategories.DeviceHealth,
+        readyForNotification: true,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message: 'Device Calibration due date is less than {{issue.data.dueDays}} close',
         ...auditFields,
       },
     },

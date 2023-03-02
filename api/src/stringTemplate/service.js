@@ -4,14 +4,22 @@ const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
 const { knex } = require('../db')
-const { parseDateOrDefault, formatDateOrDefault, getFormattedDateTimeWithTimezone } = require('../shared/date')
+const {
+  parseDateOrDefault,
+  formatDateOrDefault,
+  getFormattedDateTimeWithTimezone,
+  getFormattedDate,
+  daysBetweenDates,
+} = require('../shared/date')
 const { addConstraints } = require('../auth/constraints')
 const getCurrentPartner = require('../partner/getCurrentPartner')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
+handlebars.registerHelper('localizedDateTime', localizedDateTime)
 handlebars.registerHelper('localizedDate', localizedDate)
+handlebars.registerHelper('daysBeforeToday', daysFromToday)
 handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
 handlebars.registerHelper('formatDate', formatDate)
 handlebars.registerHelper('formatPhone', formatPhone)
@@ -404,6 +412,7 @@ async function getBaseDataSource(data, auth) {
               email: d.siteContacts[0].email,
             }
           : {},
+      completionRatePercentage: issueData.completionRatePercentage,
     },
     device: {
       name: d.deviceName,
@@ -412,6 +421,7 @@ async function getBaseDataSource(data, auth) {
       lastPingOn: d.deviceLastPingOn,
       serial: d.deviceSerial,
       lastInstrumentSerial: d.lastInstrumentSerial,
+      calibrationDueDate: issueData.calibrationDueDate,
     },
     result: {
       data: d.resultData ? JSON.parse(d.resultData) : {},
@@ -498,16 +508,27 @@ function processUsingDynamicHelpers(template, ds) {
    * - process template - this replaces {{isoDate ...}} and all other placeholders with actual values
    * - then replace tokens '${openMustaches}' and '${closeMustaches}' with corresponding mustaches
    * - process template - this replaces {{numberOfDays ...}} with actual value
-   * if template contains one of the following mustached string
+   *
+   * If template contains one of the following mustached string
    * - device.lastSeenOn
    * - device.lastPingOn
    * - result.startedOn
    * - result.endedOn
    * - result.createdOn
    * - result.sample.collectedOn
-   * then process it changing the format to localizedDate (Wed Aug 24 2022 02:25:32 GMT-4)
+   * then process it changing the format to localizedDateTime (Wed Aug 24 2022 02:25:32 GMT-4)
+   *
+   * If template contains
+   * - device.calibrationDueDate
+   * then process it changing the format to localizedDate (Wed Aug 24 2022)
+   *
+   * If template contains
+   * - device.daysToCalibrationDueDate
+   * then process calculate the difference between today and the calibration due date in number of days.
+   *
    * otherwise - process template in one step
    */
+
   const dynamicTemplate = template
     .replace(
       /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
@@ -515,8 +536,16 @@ function processUsingDynamicHelpers(template, ds) {
     )
     .replace(
       /{{\s*(device.lastSeenOn|device.lastPingOn|result.startedOn|result.endedOn|result.createdOn|result.sample.collectedOn)\s*}}/g,
-      (str, match) => `\${openMustaches}localizedDate ${match} timezone\${closeMustaches}`
+      (str, match) => `\${openMustaches}localizedDateTime ${match} timezone\${closeMustaches}`
     )
+    // eslint-disable-next-line no-unused-vars
+    .replace(/{{\s*(device.calibrationDueDate)\s*}}/g, (_str, match) => {
+      return `\${openMustaches}localizedDate ${match} timezone\${closeMustaches}`
+    })
+    // eslint-disable-next-line no-unused-vars
+    .replace(/{{\s*(device.daysToCalibrationDueDate)\s*}}/g, (_str, _match) => {
+      return `\${openMustaches}daysBeforeToday device.calibrationDueDate \${closeMustaches}`
+    })
 
   let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
 
@@ -551,8 +580,17 @@ function isoDate(date) {
   return parsed == null ? null : parsed.toISOString()
 }
 
-function localizedDate(date, timezone) {
+function localizedDateTime(date, timezone) {
   return date && getFormattedDateTimeWithTimezone(date, timezone)
+}
+
+function localizedDate(date, timezone) {
+  return date && getFormattedDate(date, timezone)
+}
+
+function daysFromToday(date) {
+  const a = daysBetweenDates(new Date(), new Date(date))
+  return a
 }
 
 function getArgumentFromOptions(options, keyInOptionsHash) {

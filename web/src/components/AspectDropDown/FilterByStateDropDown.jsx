@@ -5,8 +5,8 @@ import Select from 'react-select'
 import useI18n from '../../hooks/useI18n'
 import { useAuthState } from '../../providers/AuthProvider'
 import { fetchCountries, fetchStatesForCountry } from '../../store/GeographyRedux'
+import { getAspectTheme } from './AspectDropDown.theme'
 import ClearIndicator from './ClearIndicator'
-import { getAspectTheme } from './index.jsx'
 import messages from './messages'
 
 const getCountry = (geographyComposed, countryId) =>

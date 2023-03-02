@@ -29,6 +29,7 @@ async function getNotification(
     'wt.payload as webBody',
     'nt.enabled',
     'nt.cronRecurrency',
+    knex.raw(`nt.filterCondition -> '$.daysBeforeCalibrationDueDate'  as daysBeforeCalibrationDueDate`),
   ]
 ) {
   return knex
@@ -195,17 +196,20 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     cronRecurrency,
     reportFrequency,
     reportDateRange,
+    daysBeforeCalibrationDueDate,
     reportStartingWeekDay,
     issueType: issueTypeExternalId,
     reportId: reportExternalId,
-    notificationType: notificationTypeExternalId,
+    notificationType: notificationTypeCategoryExternalId,
+    resultBasedScope,
   } = payload
 
-  const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeExternalId)
+  const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeCategoryExternalId)
 
-  const issueTypeId = notificationTypeExternalId !== 'issueBased' ? null : await issueTypeToId(issueTypeExternalId)
+  const issueTypeId =
+    notificationTypeCategoryExternalId !== 'issueBased' ? null : await issueTypeToId(issueTypeExternalId)
   const { id: reportId } =
-    notificationTypeExternalId !== 'reportBased'
+    notificationTypeCategoryExternalId !== 'reportBased'
       ? {}
       : reportExternalId
       ? await knex('Report').where({ externalId: reportExternalId }).first()
@@ -418,7 +422,9 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           enabled,
           reportFrequency,
           reportDateRange,
+          daysBeforeCalibrationDueDate,
           reportStartingWeekDay,
+          resultBasedScope,
         }),
       })
       .where({ id: notificationTypeId })

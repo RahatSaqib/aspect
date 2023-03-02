@@ -41,6 +41,11 @@ const NotificationSchema = Joi.object().keys({
       webUrl: Joi.string().allow(null).description('Web url'),
       webBody: Joi.string().allow(null).description('Web body'),
       enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
+      daysBeforeCalibrationDueDate: Joi.number()
+        .allow(null)
+        .min(0)
+        .max(90)
+        .description('Amount of days before calibration due date'),
     }),
 })
 
@@ -64,7 +69,7 @@ const listNotificationItem = {
   enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
   readyForNotification: Joi.number().min(0).max(1).allow(null),
 }
-const resultBasedNotificationPayload = Joi.object({
+const saveNotificationPayload = Joi.object({
   notificationType: Joi.string()
     /**
      * see all values in getOptions() in `MigratedComponents/Notifications/List/config.jsx`
@@ -77,6 +82,11 @@ const resultBasedNotificationPayload = Joi.object({
     .valid('resultBased', 'issueBased', 'reportBased')
     .description('externalId of notification type')
     .required(),
+  resultBasedScope: Joi.string().when('notificationType', {
+    is: 'resultBased',
+    then: Joi.required(),
+    otherwise: Joi.optional().allow('', null),
+  }),
   issueType: Joi.string().when('notificationType', {
     is: 'issueBased',
     then: Joi.required(),
@@ -103,6 +113,11 @@ const resultBasedNotificationPayload = Joi.object({
       otherwise: Joi.forbidden(),
     })
     .description('Cron Expression to schedule the delivery of the email'),
+  daysBeforeCalibrationDueDate: Joi.when('issueType', {
+    is: 'CalibrationDueDate',
+    then: Joi.number().required().min(1).max(90).description('Days before calibration due date'),
+    otherwise: Joi.forbidden(),
+  }),
   reportFrequency: Joi.string()
     .when('notificationType', {
       is: 'reportBased',
@@ -246,7 +261,7 @@ const saveNotificationResponse = {
 module.exports = {
   listNotificationsBaseConfig,
   optionsForSendXXX,
-  resultBasedNotificationPayload,
+  saveNotificationPayload,
   changeNotificationStatusPayload,
   saveNotificationResponse,
   NotificationSchema,

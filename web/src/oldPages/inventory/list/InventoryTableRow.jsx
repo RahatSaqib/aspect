@@ -8,10 +8,10 @@ import round from 'lodash/round'
 import { useMutation } from 'react-query'
 import { useDispatch } from 'react-redux'
 import AspectVertMenu from '../../../components/AspectVertMenu'
+import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import PermissionsProvider from '../../../providers/PermissionsProvider'
 import {
   showAddInventoryDialog,
   showRemoveInventoryDialog,
@@ -233,7 +233,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
         </TableCell>
       ) : null}
       {!inventoryOnHand ? (
-        <PermissionsProvider permissions={['inventory:edit']}>
+        <PermissionChecker permissions={['inventory:edit']}>
           <TableCell className={cssClasses('TableCell')}>
             <AspectVertMenu
               params={{
@@ -243,7 +243,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
               actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
             />
           </TableCell>
-        </PermissionsProvider>
+        </PermissionChecker>
       ) : null}
     </TableRow>
   )

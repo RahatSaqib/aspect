@@ -1,17 +1,24 @@
 {
   "data": [
     {
-      "issueType": "DeviceMaintenance",
-      "issueEventStatus": "Triggered",
-      "triggerConditions": {
-        "action": "DEVICE_MAINTENANCE"
-      }
-    },
-    {
       "issueType": "SiteWithLowFieldCompletionRate",
       "issueEventStatus": "Triggered",
       "triggerConditions": {
         "action": "SITE_WITH_LOW_COMPLETION_RATE"
+      }
+    },
+    {
+      "issueType": "CalibrationDueDate",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "CALIBRATION_DUE_DATE_IS_CLOSE"
+      }
+    },
+    {
+      "issueType": "DeviceMaintenance",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_MAINTENANCE"
       }
     },
     {

@@ -26,6 +26,30 @@ const messages = defineMessages({
     defaultMessage:
       'All test results in the system (up to 50.000 records). One row per result with all the fields needed.',
   },
+  data_extract: {
+    id: 'pages.ReportIndex.data_extract',
+    defaultMessage: 'Data Extract for Tableau',
+  },
+  data_extract_description: {
+    id: 'pages.ReportIndex.data_extract_description',
+    defaultMessage: 'Extract data for selected date range for further importing into Tableau.',
+  },
+  no_stock: {
+    id: 'pages.ReportIndex.no_stock',
+    defaultMessage: '"No Stock" Inventory Report',
+  },
+  no_stock_description: {
+    id: 'pages.ReportIndex.no_stock_description',
+    defaultMessage: 'Showing all sites/devices and the number of days which they had no stock in the last month.',
+  },
+  result_notification: {
+    id: 'pages.ReportIndex.result_notifications_report',
+    defaultMessage: 'Result Notifications Report',
+  },
+  result_notification_description: {
+    id: 'pages.ReportIndex.result_notifications_report_description',
+    defaultMessage: 'This report lists all mails and sms delivered because a result is created or updated.',
+  },
   MTB_Detected_RR_Detected: {
     id: 'pages.ReportIndex.MTB_Detected_RR_Detected',
     defaultMessage: 'MTB Detected RR Detected',
@@ -181,6 +205,15 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.moduleActivityReport_description',
     defaultMessage: 'Shows devices with one or more inactive modules',
   },
+  moduleStatusReport: {
+    id: 'pages.ReportIndex.moduleStatusReport',
+    defaultMessage: 'Module Status Report',
+  },
+  moduleStatusReport_description: {
+    id: 'pages.ReportIndex.moduleStatusReport_Description',
+    defaultMessage:
+      'Lists the number of currently active/disabled modules, and also the number of modules replaced in a period of time defined by filters',
+  },
   usageStatistics: {
     id: 'pages.ReportIndex.usageStatistics',
     defaultMessage: 'Usage Statistics Report',
@@ -198,12 +231,12 @@ const messages = defineMessages({
     defaultMessage:
       'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
   },
-  deviceReport: {
-    id: 'pages.ReportIndex.deviceReport',
-    defaultMessage: 'Device Report',
+  geneXpertTbWorkloadReport: {
+    id: 'pages.ReportIndex.geneXpertTbWorkloadReport',
+    defaultMessage: 'GeneXpert TB Workload',
   },
-  deviceReport_description: {
-    id: 'pages.ReportIndex.deviceReport_description',
+  geneXpertTbWorkload_description: {
+    id: 'pages.ReportIndex.geneXpertTbWorkload_description',
     defaultMessage:
       'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
   },

@@ -329,33 +329,34 @@ async function processGeneXpertLogs(context, data, now) {
     now,
   }
 
-  let processedLogIds = []
+  const processedFileLogIds = []
+  const processedSystemLogIds = []
   await Promise.each(data, async logItem => {
     try {
       const logItemId = await processLogItem(context, logItem, options)
-      /**
-       * Skip touching `processedLogIds` for Cepheid db-based system logs
-       * Notice that processedLogIds are needed in GxConnect to mark record in SQLite
-       * table `Logs` that it has been processed well in Aspect.
-       * We do not mark records in Cepheid db `system_log` but only keep
-       * `settings.LastProcessedSystemLogTimeForAspect` and store it in setting.jsn.
-       */
-      if (logItem.logFileName !== 'GeneXpert DB') {
-        processedLogIds = [...processedLogIds, logItemId]
+
+      if (logItem.logFileName === 'GeneXpert DB') {
+        processedSystemLogIds.push(logItemId)
+      } else {
+        processedFileLogIds.push(logItemId)
       }
-    } catch (e) {
+    } catch (err) {
       /**
        * if error happened then we do not return this logId as processed,
        * meaning that it will be sent again next scheduler run
        */
-      logger.debug(`execution of processLogItem for log entry with externalId=${logItem.externalId} has failed`, {
-        reLabel: 'deviceApi:processLogItem',
-      })
+      logger.error(
+        `execution of processLogItem for log entry with externalId=${logItem.externalId} and deviceId=${context.device.id} has failed`,
+        {
+          reLabel: 'deviceApi:processLogItem',
+        }
+      )
     }
   })
 
   return {
-    logIds: processedLogIds,
+    logIds: processedFileLogIds,
+    systemLogIds: processedSystemLogIds,
   }
 }
 
@@ -388,7 +389,7 @@ async function processLogItem(context, logItem, options) {
   // hardware error and dispatch MQ action if needed
   await shouldTriggerHardwareErrorAnalysis(context.messageContext, device, payload, deviceOperationId)
   // process 'calibration' log item
-  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId)
+  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId, context.messageContext)
 
   return logItem.externalId
 }
@@ -498,11 +499,12 @@ async function updateDeviceConfigurationWithContext(context) {
     device: { id: deviceId },
     now,
     pluginNames: plugins,
+    messageContext,
   } = context
   const preProcess = await loadPlugin(plugins, 'preProcessUpdateDeviceConfiguration')
   await preProcess(context)
 
-  await updateDeviceConfiguration(knex, deviceId, payload, now)
+  await updateDeviceConfiguration(knex, deviceId, payload, now, messageContext)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   const postProcess = await loadPlugin(plugins, 'postProcessUpdateDeviceConfiguration')
   const postProcessResult = await postProcess(context)
@@ -899,15 +901,15 @@ async function onResultUpdated({ resultId, deviceLogId, userId }, { messageConte
   if (!resultId) {
     throw new Error('Must specify resultId in Action')
   }
-  logger.debug(`onResultUpdated inserting in DeviceLog table for resultId:${resultId}`, {
-    reLabel: 'deviceApi:onResultUpdated',
-  })
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    return context.resultLogged(resultId, deviceLogId, userId)
+    return context.resultLogged(resultId, deviceLogId, userId, { isResultUpdated: true })
   }
   return context.transact(async knex => {
+    logger.debug(`onResultUpdated inserting in DeviceLog table for resultId:${resultId}`, {
+      reLabel: 'deviceApi:onResultUpdated',
+    })
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
     // Everything else, we should add a device log entry so that
@@ -926,7 +928,7 @@ async function onResultUpdated({ resultId, deviceLogId, userId }, { messageConte
           rawMessage: '',
         })
       )
-    context.resultLogged(resultId, deviceLogId, userId)
+    context.resultLogged(resultId, deviceLogId, userId, { isResultUpdated: true })
   })
 }
 

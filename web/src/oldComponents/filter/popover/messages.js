@@ -4,6 +4,10 @@ import { commonDefinitions } from '../../../messages/customMessages'
 const messages = {
   ...commonDefinitions,
   ...defineMessages({
+    applyFilters: {
+      id: 'filter.popover.applyFilters',
+      defaultMessage: 'Apply Filters',
+    },
     moreFilters: {
       id: 'filter.popover.moreFilters',
       defaultMessage: 'More filters',

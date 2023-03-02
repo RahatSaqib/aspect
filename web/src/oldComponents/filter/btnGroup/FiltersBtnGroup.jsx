@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+import React from 'react'
 import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
@@ -7,12 +7,13 @@ import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
 import { connect } from 'react-redux'
 import { compose, pure } from 'recompose'
+import useDeviceTypeList from '../../../hooks/device/useDeviceTypeList'
 import useI18n from '../../../hooks/useI18n'
 import { commonDefinitions } from '../../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { isCountryFilterHidden } from '../utils'
-import styles from './FiltersBtnGroup.css'
 import messages from './messages'
+import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -136,9 +137,11 @@ const getResultCategoryNameFromDisease = (assayItems, filterDiseaseId, resultCat
   return matchingCategory.i18nKey
 }
 
-const FiltersBtnGroup = ({ className, children, ...restProps }) => {
+const FiltersBtnGroup = ({ children, ...restProps }) => {
   const { formatMessage, format } = useI18n()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
+
+  const { data: deviceTypes } = useDeviceTypeList()
 
   const buttonBy = {
     singleAssayId: (filterKey, props) => {
@@ -379,16 +382,14 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
         )(filterKey, props, index)
       )
     },
-    deviceTypeId: makeButton((deviceTypeId, { deviceTypeItems }) =>
+    deviceTypeId: makeButton(deviceTypeId =>
       formatMessage(messages.withDeviceType, {
-        deviceTypeName: deviceTypeItems.find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP).get('name'),
+        deviceTypeName: deviceTypes?.find(it => it.id === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)?.name,
       })
     ),
-    deviceType: makeButton((deviceType, { deviceTypeItems }) =>
+    deviceType: makeButton(deviceType =>
       formatMessage(messages.withDeviceType, {
-        deviceTypeName: deviceTypeItems
-          .find(it => it.get('externalId') === deviceType, EMPTY_CONTEXT, EMPTY_MAP)
-          .get('name'),
+        deviceTypeName: deviceTypes?.find(it => it.externalId === deviceType, EMPTY_CONTEXT, EMPTY_MAP)?.name,
       })
     ),
     displayResult: makeButton(displayResult =>
@@ -459,15 +460,9 @@ const FiltersBtnGroup = ({ className, children, ...restProps }) => {
       })
     ),
   }
-
   return (
-    <div className={cssClasses(className, 'FiltersBtnGroup')}>
-      {children &&
-        Children.map(children, child =>
-          React.cloneElement(child, {
-            className: cssClasses('FiltersBtnGroup__Child'),
-          })
-        )}
+    <div className={cssClasses('FiltersBtnGroup')}>
+      {children}
       {Immutable.Map(restProps.filters)
         .keySeq()
         .sortBy(filterKey => filtersOrdering[filterKey])

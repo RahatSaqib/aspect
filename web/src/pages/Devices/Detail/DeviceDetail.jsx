@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react'
-import { Box, LinearProgress } from '@mui/material'
+import { Box } from '@mui/material'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
 import DetailHeader from '../../../components/DetailHeader'
+import Loading from '../../../components/Loading'
 import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
@@ -94,19 +95,15 @@ export const DeviceDetail = props => {
 
   return (
     <>
-      <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device">
+      <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device/list">
         {[
-          { label: intl.formatMessage(messages.profile), path: `/browse/device/${deviceId}` },
-          { label: intl.formatMessage(messages.alerts), path: `/browse/device/${deviceId}/alerts` },
-          { label: intl.formatMessage(messages.edit), path: `/browse/device/${deviceId}/edit` },
+          { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
+          { label: intl.formatMessage(messages.alerts), path: `/browse/device/list/${deviceId}/alerts` },
+          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}
-            onClick={({
-              currentTarget: {
-                dataset: { path },
-              },
-            }) => navigate(path)}
+            onClick={e => navigate(e.currentTarget.dataset.path)}
             disabled={disabled}
             data-path={path}
             color="primary"
@@ -117,9 +114,9 @@ export const DeviceDetail = props => {
           </AspectButton>
         ))}
       </DetailHeader>
-      <Box component="main" sx={{ pt: 8 }}>
+      <Box component="main" sx={{ flex: '1 1 auto' }}>
         {isLoading ? (
-          <LinearProgress />
+          <Loading centered level={2} />
         ) : (
           <Routes>
             <Route

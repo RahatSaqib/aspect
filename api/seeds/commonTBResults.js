@@ -2,7 +2,10 @@ const _ = require('lodash')
 
 function getRandomGeneXpertPatientData(patientNumber, patientData) {
   const tbPatientData = _.sample(patientData)
-  tbPatientData.hivStatus = _.sample(['HIV Positive', 'HIV Negative', 'HIV Unknown', null])
+  const randomNumber = Math.floor((Math.random() * 100) / 2)
+  if (randomNumber % 2 === 1) {
+    tbPatientData.hivStatus = _.sample(['HIV Positive', 'HIV Negative', 'HIV Unknown', null])
+  }
   return tbPatientData
 }
 

@@ -13,7 +13,7 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
     parent: { persons, jobFunctions, sendToPatient },
   } = yupThis
 
-  if (sendToPatient || jobFunctions.length > 0 || persons?.length > 0) {
+  if (sendToPatient || jobFunctions?.length > 0 || persons?.length > 0) {
     return true
   }
 
@@ -23,6 +23,7 @@ function ensurePersonOrJobFunction(yupThis, formatMessage) {
 const validationSchema = formatMessage =>
   Yup.object()
     .shape({
+      notificationType: Yup.string().required(formatMessage(messages.notificationTypeRequired)),
       issueTypeId: Yup.string().when('notificationType', {
         is: 'issueBased',
         then: Yup.string()
@@ -31,17 +32,28 @@ const validationSchema = formatMessage =>
             'InventoryStockExpiring',
             'DeviceNoResults',
             'DeviceOffline',
-            'calibration',
+            'CalibrationDueDate',
             'ModuleReplaced',
             'ModuleDisabled',
             'UnusedModules',
             'InstrumentReplaced',
+            'SiteWithLowFieldCompletionRate',
           ])
           .required(),
+      }),
+      daysBeforeCalibrationDueDate: Yup.number().when('notificationType', {
+        is: 'CalibrationDueDate',
+        then: Yup.number().min(1).max(90).required(),
+        otherwise: Yup.number().notRequired(),
       }),
       reportId: Yup.string().when('notificationType', {
         is: 'reportBased',
         then: Yup.string().required(),
+        otherwise: Yup.string().notRequired(),
+      }),
+      resultBasedScope: Yup.string().when('notificationType', {
+        is: 'resultBased',
+        then: Yup.string().required(formatMessage(messages.required)),
         otherwise: Yup.string().notRequired(),
       }),
       name: Yup.string().required(formatMessage(messages.notificationNameRequired)),
@@ -126,11 +138,43 @@ const validationSchema = formatMessage =>
           then: Yup.string()
             .matches(/{{report.downloadLink}}/, formatMessage(messages.emailBodyMustContainDownloadLink))
             .required(),
+        })
+        .when('notificationType', {
+          is: 'SiteWithLowFieldCompletionRate',
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
         }),
       smsBody: Yup.string()
         .when('sendSms', optionsForSendXXX(formatMessage(messages.smsBodyRequired)))
-        .max(144),
-      webBody: Yup.string().when('sendWeb', optionsForSendXXX(formatMessage(messages.webBodyRequired))),
+        .max(144)
+        .when(['sendSms', 'notificationType'], {
+          is: (sendSms, notificationType) => {
+            return sendSms && notificationType === 'SiteWithLowFieldCompletionRate'
+          },
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
+        }),
+      webBody: Yup.string()
+        .when('sendWeb', optionsForSendXXX(formatMessage(messages.webBodyRequired)))
+        .when(['sendWeb', 'notificationType'], {
+          is: (sendWeb, notificationType) => {
+            return sendWeb && notificationType === 'SiteWithLowFieldCompletionRate'
+          },
+          then: Yup.string()
+            .matches(
+              /{{site.completionRatePercentage}}/,
+              formatMessage(messages.bodyMustContainCompletionRatePercentage)
+            )
+            .required(),
+        }),
       webUrl: Yup.string()
         .when('sendWeb', optionsForSendXXX(formatMessage(messages.webUrlRequired)))
         .matches(/^(ftp|http|https):\/\/[^ "]+$/, formatMessage(messages.webUrlInvalidFormat)),

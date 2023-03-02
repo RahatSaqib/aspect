@@ -8,7 +8,7 @@ import RESULT_CATEGORY_GROUP_SELECT_LIST from '../../../../components/QueryFetch
 import useI18n from '../../../../hooks/useI18n'
 import { types } from '../../../../store/ResultCategoryGroupSelectFieldRedux'
 import SelectField from '../../../shared/SelectField'
-import styles from '../../popover/FiltersPanel.css'
+import styles from '../../popover/styles.css'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)

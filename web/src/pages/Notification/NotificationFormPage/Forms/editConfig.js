@@ -50,12 +50,12 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     issueBasedSection(formatMessage), // only for ['issueBased]
     resultBasedSection(formatMessage), // only for ['resultBased']
     ...reportBasedSection(formatMessage),
-    geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'calibration', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
+    geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'CalibrationDueDate', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
     deviceOfflineSection(formatMessage, partner), // only for ['DeviceOffline']
     deviceNoResultsSection(formatMessage, partner), // only for ['deviceNoResultsSection']
     stockExpiringSection(formatMessage, partner), // only for ['InventoryStockExpiring']
-    calibrationSection(formatMessage), // only for ['calibration']
+    calibrationSection(formatMessage), // only for ['CalibrationDueDate']
     ...sendSection(formatMessage, jobFunctions), // notification footer (sending options)
   ],
 })
@@ -79,6 +79,14 @@ function lgaSelectOptions(data) {
     data,
     (acc, item) => {
       const { stateId, stateName, lgaId, lgaName } = item
+      /**
+       * when by some reason API returns data with falsy value for
+       * some needed props
+       * then do not add such item to `acc` and return `acc` right away
+       */
+      if (!stateId || !stateName || !lgaId || !lgaName) {
+        return acc
+      }
       const state = { label: stateName, value: stateId, lgaById: {}, lgas: [] }
       const lga = { label: lgaName, value: lgaId, grouped: true }
       acc[stateId] = acc[stateId] || state

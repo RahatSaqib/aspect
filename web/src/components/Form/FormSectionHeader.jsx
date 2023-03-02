@@ -16,6 +16,7 @@ const FormSectionHeader = ({ classNames, header, headerI18nKey, messages }) => {
       className={cssClasses('form__sectionHeader', {
         [classNames.sectionHeader]: !!classNames.sectionHeader,
       })}
+      id={headerI18nKey}
     >
       {headerI18nKey ? formatMessage(messages[headerI18nKey]) : header}
     </Grid>

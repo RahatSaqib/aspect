@@ -6,8 +6,9 @@ const AuthContext = createContext()
 
 const AuthProvider = ({ children }) => {
   const userComposed = useSelector(({ user }) => user)
+  const globalsComposed = useSelector(({ globals }) => globals)
   const user = useMemo(() => userComposed.toJS(), [userComposed])
-  const globals = useSelector(({ globals }) => globals.toJS())
+  const globals = useMemo(() => globalsComposed.toJS(), [globalsComposed])
 
   const { lastServerResponseTime } = globals
   const jwtExp = user.jwt.exp
@@ -21,11 +22,11 @@ const AuthProvider = ({ children }) => {
   } else {
     isLoggedOut = true
   }
-  const userData = {
+  const userData = Object.freeze({
     ...user,
     userPermissions: user.jwt.permissions,
     isLoggedOut,
-  }
+  })
 
   return <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
 }

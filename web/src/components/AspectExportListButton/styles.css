@@ -1,0 +1,16 @@
+.export-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+.export-icon-button {
+  height: 36px;
+  margin-left: 8px !important;
+  padding: 0 8px !important;
+  min-width: 20px !important;
+  border-color: rgb(52,113,124) !important;
+}
+.export-menu-root {
+  width: 150px;
+}

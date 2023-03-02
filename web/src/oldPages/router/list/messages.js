@@ -186,6 +186,10 @@ export const messages = {
       id: 'pages.DeviceList.unknown',
       defaultMessage: 'Unknown',
     },
+    notRecorded: {
+      id: 'pages.DeviceList.notRecorded',
+      defaultMessage: 'Not Recorded',
+    },
   }),
 }
 

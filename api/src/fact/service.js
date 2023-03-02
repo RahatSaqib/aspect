@@ -97,7 +97,10 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
           lastResultOn = deviceCreatedOn
         }
 
-        if (lastPingOn == null || (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)) {
+        if (
+          (!lastPingOn || (!!maxLastDateOffline && lastPingOn <= maxLastDateOffline)) &&
+          (!lastSeenOn || (!!maxLastDateOffline && lastSeenOn <= maxLastDateOffline))
+        ) {
           // Number of days of "heartbeat" > X days
           context.deviceOffline(id, { lastSeenOn, lastPingOn })
         } else if (maxLastDateNoResult != null && lastResultOn <= maxLastDateNoResult) {
@@ -919,7 +922,7 @@ async function onFactCompletionRatePerSite(action, { messageContext }) {
         'si.geographyId as geographyId'
       )
       .groupBy('fcr.siteId', 'partnerId', 'geographyId')
-      .having(knex.raw('completionRatePerSite <= ?', [MIN_PERCENTAGE_FIELDS_COMPLETION_RATE]))
+      .having(knex.raw('completionRatePerSite < ?', [MIN_PERCENTAGE_FIELDS_COMPLETION_RATE]))
 
     // loop all and trigger issue
     return Promise.each(sitesWithLowCompletionRate, async site => context.siteWithLowCompletionRateIssue(site))

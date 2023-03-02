@@ -136,6 +136,25 @@ export default defineMessages({
     id: 'pages.Notification.type.LowInventory',
     defaultMessage: 'Low Inventory',
   },
+  notificationTypeLowFieldCompletionRate: {
+    id: 'pages.Notification.type.LowFieldCompletionRate',
+    defaultMessage: 'Low Field Completion Rate',
+  },
+  notificationTypeLowFieldCompletionRateMessage: {
+    id: 'pages.Notification.type.LowFieldCompletionRateMessage',
+    defaultMessage:
+      'This notification will be triggered any time a site changes its custom fields completion rate to less than 0.8. Also, it will be sent only if you have the custom field completion weight set in your country. Please check with your administrator before using it.',
+  },
+  notificationTypeResultBasedMessage: {
+    id: 'pages.Notification.type.notificationTypeResultBasedMessage',
+    defaultMessage:
+      'This notification will be triggered for results ended on within last 30 days period. For older results notification will not trigger.',
+  },
+  notificationTypeDeviceOffline: {
+    id: 'pages.Notification.type.notificationTypeDeviceOffline',
+    defaultMessage:
+      'This notification will trigger once a device connector, for example GxConnect, remains offline for 7 days.',
+  },
   notificationTypeExpiring: {
     id: 'pages.Notification.type.InventoryExpiring',
     defaultMessage: 'Inventory Expiring',
@@ -155,7 +174,7 @@ export default defineMessages({
   },
   notificationTypeCalibration: {
     id: 'pages.Notification.type.Calibration',
-    defaultMessage: 'Calibration',
+    defaultMessage: 'Calibration Due Date',
   },
   notificationTypeModuleReplaced: {
     id: 'pages.Notification.type.ModuleReplaced',
@@ -188,6 +207,24 @@ export default defineMessages({
   notificationTypeOnlineDate: {
     id: 'pages.Notification.type.OnlineDate',
     defaultMessage: 'Online Date',
+  },
+
+  // --------------------------------------------------------------
+  triggerConditionTitle: {
+    id: 'pages.Notifications.triggerConditionTitle',
+    defaultMessage: 'Trigger this notification when...',
+  },
+  triggerWhenForResultCreated: {
+    id: 'pages.Notifications.triggerWhenForResultCreated',
+    defaultMessage: 'Result is Created',
+  },
+  triggerWhenForResultUpdated: {
+    id: 'pages.Notifications.triggerWhenForResultUpdated',
+    defaultMessage: 'Result is Updated',
+  },
+  triggerWhenResultCreatedOrUpdated: {
+    id: 'pages.Notifications.triggerWhenResultCreatedOrUpdated',
+    defaultMessage: 'Result is Created or Updated',
   },
   // --------------------------------------------------------------
   notificationTitle: {
@@ -594,6 +631,16 @@ export default defineMessages({
   startingDayOfTheWeekTitle: {
     id: 'pages.Notifications.startingDayOfTheWeekTitle',
     defaultMessage: 'Starting Day of the Week',
+  },
+
+  // Calibration section
+  calibrationDays: {
+    id: 'pages.Notifications.calibrationDays',
+    defaultMessage: 'Days...',
+  },
+  daysBeforeCalibrationDueDate: {
+    id: 'pages.Notifications.daysBeforeCalibrationDueDate',
+    defaultMessage: 'Before Calibration Due Date',
   },
 
   ...assay,

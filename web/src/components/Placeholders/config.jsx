@@ -25,6 +25,10 @@ export const groupedOptions = ({ formatMessage }) => [
         id: 'site.shortName',
         name: formatMessage(messages.placeholderNameShort),
       },
+      {
+        id: 'site.completionRatePercentage',
+        name: formatMessage(messages.placeholderCompletionRatePercentage),
+      },
     ],
   },
   {
@@ -33,6 +37,14 @@ export const groupedOptions = ({ formatMessage }) => [
       {
         id: 'device.name',
         name: formatMessage(messages.placeholderName),
+      },
+      {
+        id: 'device.calibrationDueDate',
+        name: formatMessage(messages.placeHolderCalibrationDueDate),
+      },
+      {
+        id: 'device.daysToCalibrationDueDate',
+        name: formatMessage(messages.placeHolderDaysToCalibrationDueDate),
       },
     ],
   },

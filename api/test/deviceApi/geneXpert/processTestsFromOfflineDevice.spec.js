@@ -98,6 +98,7 @@ describe('Backward update db after getting tests from offline device', () => {
     await knex('Device as d').where('d.id', deviceId).update({
       createdOn: deviceNoResultsDate,
       lastPingOn: deviceOfflineDate,
+      lastSeenOn: deviceOfflineDate,
     })
     const waitForOffline = waitForAction(deviceOffline(deviceId))
     /**
