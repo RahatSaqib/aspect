@@ -338,6 +338,25 @@ const moduleActivityReport = {
   ],
 }
 
+const doNotUseModulesReport = {
+  name: "'Do Not Use' Modules",
+  description: "A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.",
+  i18nKey: 'doNotUseModulesReport',
+  i18nKeyDescription: 'doNotUseModulesReport_Description',
+  externalId: 'do_not_use_modules_report',
+  fileName: 'DoNotUseModulesReport',
+  availableForNotification: 1,
+  exportCsv: true,
+  sortOrder: 125,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDoNotUseModulesReport',
+    },
+  ],
+}
+
 const moduleStatusReport = {
   name: 'Module Status Report',
   description:
@@ -560,6 +579,48 @@ const devicesAndSitesOverview = {
 }
 
 /**
+ * Error rates report
+ */
+const errorRatesReport = {
+  name: 'Error Rate',
+  description: 'Report error rates per quarter, break them down by devices, modules and users',
+  i18nKey: 'error_rate',
+  i18nKeyDescription: 'error_rate_description',
+  externalId: 'error_rate',
+  fileName: 'ErrorRate',
+  sortOrder: 170,
+  availableForNotification: 1,
+  exportCsv: false,
+  exportExcel: true,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorRateByDeviceReport',
+      query: {
+        streamCSV: true,
+      },
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorRateByModuleReport',
+      query: {
+        streamCSV: true,
+      },
+    },
+    {
+      sortOrder: 2,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorRateByUserReport',
+      query: {
+        streamCSV: true,
+      },
+    },
+  ],
+}
+
+/**
  * see section `Tuning MySql` in api/README.md
  */
 const dataExtract = {
@@ -659,12 +720,14 @@ module.exports = {
   allResults,
   utilizationPerInstrumentDayReport,
   moduleActivityReport,
+  doNotUseModulesReport,
   reportCustomFieldsCompletion,
   inventoryLog,
   moduleStatusReport,
   tbWorkloadSummary,
   xdrDevicesSummary,
   usageStats,
+  errorRatesReport,
   devicesAndSitesOverview,
   dataExtract,
   resultNotificationsReport,

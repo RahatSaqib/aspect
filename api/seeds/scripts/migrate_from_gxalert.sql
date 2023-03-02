@@ -43,13 +43,15 @@ SET SQL_SAFE_UPDATES = 1;
 
 SELECT CONCAT('{ ',
 '"externalId": "', location.externalId, '",',
-COALESCE(CONCAT('"latitude": ', CAST(deployment.Latitude AS CHAR), ','), ''),
-COALESCE(CONCAT('"longitude": ', CAST(deployment.Longitude AS CHAR), ','), ''),
-COALESCE(CONCAT('"stateName": "', state.Name, '",'), ''),
-COALESCE(CONCAT('"lgaName": "', lga.Name, '",'), ''),
-'"name": "', deployment.Description, '",',
-COALESCE(CONCAT('"shortName": "', deployment.ShortName, '",'), ''),
-'"timeZoneId": "', deployment.TimeZoneId, '"',
+'"type": "', LOWER(location_type.name), '",',
+IFNULL(CONCAT('"latitude": ', CAST(deployment.Latitude AS CHAR), ','), ''),
+IFNULL(CONCAT('"longitude": ', CAST(deployment.Longitude AS CHAR), ','), ''),
+IFNULL(CONCAT('"stateName": "', state.Name, '",'), ''),
+IFNULL(CONCAT('"lgaName": "', lga.Name, '",'), ''),
+IFNULL(CONCAT('"name": "', IFNULL(deployment.Description, location.externalId), '",'), ''),
+IFNULL(CONCAT('"shortName": "', deployment.ShortName, '",'), ''),
+'"customProperties": "', IFNULL(REPLACE(location.CustomProperties, '"', '\\"'), ''),'",',
+IFNULL(CONCAT('"timeZoneId": "', deployment.TimeZoneId, '"'),''),
 COALESCE(
   CONCAT(
     ', "devices": [', GROUP_CONCAT(
@@ -57,14 +59,16 @@ COALESCE(
     ), ']'
   ), ''),
 '},') AS JSONObject
-FROM deployment
-JOIN location ON location.id = deployment.LocationId
-LEFT JOIN state ON state.stateId = deployment.StateId
-LEFT JOIN lga ON lga.LgaId = deployment.LgaId
+FROM location
+LEFT JOIN location_type ON location.location_type_id = location_type.id
+LEFT JOIN state ON state.stateId = location.state_id 
+LEFT JOIN lga ON lga.LgaId = location.lga_id
+LEFT JOIN deployment ON location.id = deployment.LocationId
 LEFT JOIN device ON device.CurrentDeploymentId = deployment.DeploymentId
 LEFT JOIN deviceapikey ON deviceapikey.DeviceId = device.DeviceId
-WHERE deployment.Approved = 1 AND deployment.HideOnDashboard = 0
-GROUP BY deployment.DeploymentId;
+WHERE ((deployment.Approved = 1 AND deployment.HideOnDashboard = 0) OR deployment.DeploymentId IS NULL) -- Only add for Pakistan: AND location.versions LIKE '%new-2020%'
+GROUP BY location.id;
+
 
 -- Query Contacts in GxAlert
 -- This is for the contactsFromGxAlert.json fixture
@@ -103,14 +107,5 @@ LEFT JOIN personstate ON personstate.PersonId = person.PersonId
 LEFT JOIN state AS personstate_state ON personstate_state.StateId = personstate.StateId
 GROUP BY person.PersonId;
 
--- Query Custom Fields in GxAlert
--- This is for the customFieldsFromGxAlert.json fixture
-SELECT CONCAT('{"title":"', CustomField.Label,
-'","type":"', CustomField.Type,
-'","order":', CustomField.DisplayOrder,
-',"dbColumn":', IFNULL(CONCAT('"', CustomField.DbColumn, '"'), 'null'),
-',"testType":', IFNULL(CONCAT('"', TestType.Name, '"'), 'null'),
-'},')
-FROM CustomField
-LEFT JOIN CustomFieldLimitToTestType ON CustomFieldLimitToTestType.CustomFieldId = CustomField.CustomFieldId
-LEFT JOIN TestType ON TestType.TestTypeId = CustomFieldLimitToTestType.TestTypeId;
+-- Query Custom Fields in GxAlert (Deprecated)
+-- Read more: https://systemone.youtrack.cloud/articles/ASP-A-260276849/Custom-Fields

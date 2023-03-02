@@ -2,6 +2,7 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+const crypto = require('crypto')
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
@@ -368,6 +369,8 @@ async function processLogItem(context, logItem, options) {
     details = JSON.parse(details)
   }
   const { device, knex } = context
+  const value = `${device.id}|${externalId}|${logFileName}`
+  const hash = crypto.createHash('md5').update(value).digest('hex')
   const payload = {
     id: externalId,
     startedOn: occurredOn,
@@ -377,19 +380,40 @@ async function processLogItem(context, logItem, options) {
       logLevel,
       details,
     },
+    hash,
   }
 
   logger.debug('executing processLogItem', {
     reLabel: 'deviceApi:processLogItem',
   })
 
-  const { id: deviceOperationId } = await addDeviceOperation(knex, device.id, payload, now)
+  try {
+    const { id: deviceOperationId } = await addDeviceOperation(knex, device.id, payload, now)
 
-  // check if stored in table 'DeviceOperation' entry is
-  // hardware error and dispatch MQ action if needed
-  await shouldTriggerHardwareErrorAnalysis(context.messageContext, device, payload, deviceOperationId)
-  // process 'calibration' log item
-  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId, context.messageContext)
+    // check if stored in table 'DeviceOperation' entry is
+    // hardware error and dispatch MQ action if needed
+    await shouldTriggerHardwareErrorAnalysis(context.messageContext, device, payload, deviceOperationId)
+    // process 'calibration' log item
+    await shouldLogDeviceCalibration(
+      knex,
+      device.id,
+      payload,
+      calibrationDeviceMaintenanceTypeId,
+      context.messageContext
+    )
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      // ignore duplicate entry errors since the same log item may come from GxAlert and GxConnect
+      logger.warning(
+        `got duplicated logItem. deviceId=${device.id}, externalId=${externalId}, logFileName=${logFileName}`,
+        {
+          reLabel: 'deviceApi:processLogItem',
+        }
+      )
+    } else {
+      throw err
+    }
+  }
 
   return logItem.externalId
 }

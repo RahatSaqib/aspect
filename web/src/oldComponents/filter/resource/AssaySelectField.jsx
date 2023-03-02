@@ -32,7 +32,7 @@ export class AssaySelectField extends PureComponent {
     assayTypeId: '',
     deviceTypeId: '',
     value: '',
-    multiple: true,
+    multiple: false,
   }
 
   static contextType = I18nContext
