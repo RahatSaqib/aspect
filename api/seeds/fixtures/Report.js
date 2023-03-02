@@ -340,7 +340,7 @@ const moduleActivityReport = {
 
 const doNotUseModulesReport = {
   name: "'Do Not Use' Modules",
-  description: "A list of all modules marked as 'do not use'. Includes device name, module serial.",
+  description: "A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.",
   i18nKey: 'doNotUseModulesReport',
   i18nKeyDescription: 'doNotUseModulesReport_Description',
   externalId: 'do_not_use_modules_report',
