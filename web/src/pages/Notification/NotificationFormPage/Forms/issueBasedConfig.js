@@ -143,7 +143,7 @@ const stockExpiringSection = (formatMessage, partner) => {
   }
 }
 
-const calibrationSection = () => {
+const calibrationSection = formatMessage => {
   return {
     id: 'CalibrationDueDate',
     label: formatMessage(messages.calibrationDays),
