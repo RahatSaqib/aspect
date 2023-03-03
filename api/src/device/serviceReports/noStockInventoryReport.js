@@ -53,7 +53,7 @@ async function getNoStockInventoryReport(dataConstraints, query) {
     })
     .select('deviceId')
 
-  const devicesRaw = await getDeviceBaseExtendedQuery(query, dataConstraints)
+  const devicesRaw = await getDeviceBaseExtendedQuery(query, dataConstraints, false, false, true)
     .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'a.id')
     .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
     .leftJoin('FactInventoryConsumptionRate as ficr', function () {
@@ -84,7 +84,6 @@ async function getNoStockInventoryReport(dataConstraints, query) {
       stateName: 'st.name',
       assayId: 'subR.assayId',
       consumableId: 'c.id',
-
       stockLastChangedOn: knex.raw(
         '(select max(ilog.createdOn) from InventoryLog as ilog where ilog.siteId = s.id and ilog.consumableId = c.id)'
       ),
