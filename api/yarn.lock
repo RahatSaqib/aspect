@@ -7057,10 +7057,10 @@ pg-connection-string@2.5.0:
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.5.0.tgz#538cadd0f7e603fc09a12590f3b8a452c2c0cf34"
   integrity sha512-r5o/V/ORTA6TmUnyWZR9nCj1klXCO2CEKNRlVuJptZe85QuhFayC7WeMic7ndayT5IRIR0S0xFxFi2ousartlQ==
 
-phone@^3.1.33:
-  version "3.1.33"
-  resolved "https://registry.yarnpkg.com/phone/-/phone-3.1.33.tgz#78d8b20493cb665c95c566c53545f9138c746f4e"
-  integrity sha512-mTDJ9NsXyRxxsnhEZpdNO6PFoPxSzEW0s5gjaxgTv8rqmIcyfbNBZpKxmdifr6jJVL/0oSwiHHvL2+SNL9BVFw==
+phone@^3.1.35:
+  version "3.1.35"
+  resolved "https://registry.yarnpkg.com/phone/-/phone-3.1.35.tgz#31d35fd6a70aae8f5594371817dfa7c6e3b85973"
+  integrity sha512-OEF2yXxJ2kTzMECk+ymbAmbYuucBNIMeYcqsiZD5Kz2QrRAP2BOEuerqalaC/chkAHLH3MXWKRK3qu07AvlRuQ==
 
 picocolors@^1.0.0:
   version "1.0.0"
