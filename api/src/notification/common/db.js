@@ -29,6 +29,7 @@ async function getNotification(
     'wt.payload as webBody',
     'nt.enabled',
     'nt.cronRecurrency',
+    knex.raw(`nt.filterCondition -> '$.daysBeforeCalibrationDueDate'  as daysBeforeCalibrationDueDate`),
   ]
 ) {
   return knex
