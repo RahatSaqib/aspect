@@ -41,6 +41,11 @@ const NotificationSchema = Joi.object().keys({
       webUrl: Joi.string().allow(null).description('Web url'),
       webBody: Joi.string().allow(null).description('Web body'),
       enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
+      daysBeforeCalibrationDueDate: Joi.number()
+        .allow(null)
+        .min(0)
+        .max(90)
+        .description('Amount of days before calibration due date'),
     }),
 })
 
