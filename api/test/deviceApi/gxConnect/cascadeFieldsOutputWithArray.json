@@ -9,6 +9,7 @@
         "Control": "AutoComplete",
         "Type": "string",
         "DisplayOrder": 40,
+        "LimitToTestTypeIds": [],
         "InputControlData": {
           "optional": true,
           "options": [

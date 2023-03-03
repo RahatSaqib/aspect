@@ -6,6 +6,7 @@
         "Name": "ReferringHealthFacilityProvince",
         "ExternalId": "ReferringHealthFacilityProvince",
         "Label": "Referring Health Facility Province",
+        "LimitToTestTypeIds": [],
         "Control": "AutoComplete",
         "Type": "string",
         "DisplayOrder": 40,
