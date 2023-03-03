@@ -84,7 +84,7 @@ const FiltersPanel = props => {
 
   useEffect(() => {
     if (!isEqual(v, filters)) {
-      sV({ ...v, ...filters })
+      sV({ ...filters, ...v })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters])

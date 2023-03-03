@@ -35,6 +35,7 @@ const NotificationFormPage = () => {
 
       delete values.siteWithLowFieldCompletionRateDescription
       delete values.deviceOfflineDescription
+      delete values.descriptionWhenResultBasedNotificationBeTriggered
 
       values.notificationType = formik.values.notificationType
       if (!['resultBased', 'reportBased'].includes(formik.values.notificationType)) {
