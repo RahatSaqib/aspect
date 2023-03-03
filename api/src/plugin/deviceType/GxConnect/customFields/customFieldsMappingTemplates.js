@@ -11,6 +11,7 @@ const getGxAlertAssayId = {
   abbottM2000DaanNCOVID19: 15,
   GxMtbRif: 4,
   GxMtbRifUltra: 12,
+  GxMtbXdr: 16,
   GxHiv1Vl: 9,
   GxHiv1Qual: 8,
   GxEbola: 7,
