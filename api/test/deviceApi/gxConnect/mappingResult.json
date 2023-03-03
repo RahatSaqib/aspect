@@ -9,7 +9,8 @@
         "Control": "TextBox",
         "Type": "string",
         "DisplayOrder": 1,
-        "InputControlData": {}
+        "InputControlData": {},
+        "LimitToTestTypeIds": []
       },
       {
         "Name": "ConditionalField",
