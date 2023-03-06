@@ -12,7 +12,7 @@ function getDeviceBaseExtendedQuery(
   dataConstraints,
   showUnapprovedDevices = false,
   showDecommissionedDevices = false,
-  excludeInteralDevices = false
+  excludeInternalDevices = false
 ) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -43,7 +43,7 @@ function getDeviceBaseExtendedQuery(
           .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
           .where('rca2.resultCategoryId', query.resultCategory2Id)
 
-      if (excludeInteralDevices) queryBuilder.whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
+      if (excludeInternalDevices) queryBuilder.whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
