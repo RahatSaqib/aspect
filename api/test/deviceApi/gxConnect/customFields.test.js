@@ -5,8 +5,8 @@ const {
 const aspectFields = require('./customFieldsForm.json')
 const mappingResult = require('./mappingResult.json')
 const cascadeFieldsOutput = require('./cascadeFieldsOutput.json')
-const cascadeFieldsOutputWithArray = require('./cascadeFieldsOutputWithArray.json')
 const schema = require('../../../jsonSchemas/dynamicFormSchema.json')
+const cascadeFieldsOutputWithArray = require('./cascadeFieldsOutputWithArray.json')
 const gxConnectSchema = require('../../../jsonSchemas/gxConnectCustomFieldsSchema.json')
 const validate = require('../../../jsonSchemas/validate')
 const { transformPayloadWithFormsDefinition } = require('../../../src/plugin/deviceType/customFields')
@@ -98,6 +98,7 @@ describe('Custom field mapper', () => {
         Type: 'int',
         DisplayOrder: 1,
         InputControlData: { optional: true },
+        LimitToTestTypeIds: [],
       },
     ])
   })
@@ -130,6 +131,7 @@ describe('Custom field mapper', () => {
         Type: 'int',
         DisplayOrder: 1,
         InputControlData: { optional: true },
+        LimitToTestTypeIds: [],
       },
     ])
   })
@@ -161,6 +163,7 @@ describe('Custom field mapper', () => {
         Type: 'datetime',
         DisplayOrder: 1,
         InputControlData: { optional: true },
+        LimitToTestTypeIds: [],
       },
     ])
   })
@@ -210,6 +213,7 @@ describe('Custom field mapper', () => {
             Type: 'string',
             DisplayOrder: 1,
             InputControlData: { optional: true },
+            LimitToTestTypeIds: [],
           },
           {
             Name: 'ConditionalField',
@@ -494,6 +498,7 @@ describe('Custom field mapper', () => {
             InputControlData: {
               optional: true,
             },
+            LimitToTestTypeIds: [],
             Control: 'TextBox',
             Type: 'string',
             DisplayOrder: 1,
