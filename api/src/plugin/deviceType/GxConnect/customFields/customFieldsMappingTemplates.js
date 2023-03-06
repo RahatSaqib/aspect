@@ -11,6 +11,7 @@ const getGxAlertAssayId = {
   abbottM2000DaanNCOVID19: 15,
   GxMtbRif: 4,
   GxMtbRifUltra: 12,
+  GxMtbXdr: 16,
   GxHiv1Vl: 9,
   GxHiv1Qual: 8,
   GxEbola: 7,
@@ -38,8 +39,20 @@ const baseMapper = aspectFields => {
       },
     ],
     'fields[].assayExternalId': {
-      key: 'CustomFields.Fields[].LimitToTestTypeIds[]',
-      transform: value => getGxAlertAssayId[value] || null,
+      key: 'CustomFields.Fields[].LimitToTestTypeIds',
+      transform: (val = null) => {
+        // If assay external ids were specified, then...
+        if (val?.length > 0) {
+          // If the external ids are still strings, means that the mapping wasn't applied yet...
+          if (typeof val[0] === 'string') {
+            // Then we need to map...
+            return val.map(v => getGxAlertAssayId[v])
+          }
+          return val
+        }
+
+        return []
+      },
     },
     'fields[].title': 'CustomFields.Fields[].Label',
     'fields[].caption': 'CustomFields.Fields[].Help',
@@ -133,14 +146,14 @@ const baseMapper = aspectFields => {
   }
 }
 
-const transformItemsToOptions = (source, sourceObject, destinationValue) => {
+const transformItemsToOptions = (value, sourceObject, destinationValue) => {
   /**
    * - get 1st item with defined array `items`
    * - get item with same `items` as `source`
    * - if they differ - exit
    */
   const srcFirst = sourceObject.fields.find(({ items }) => !!items)
-  const srcThis = sourceObject.fields.find(({ items }) => _.isEqual(items, source))
+  const srcThis = sourceObject.fields.find(({ items }) => _.isEqual(items, value))
   if (srcFirst !== srcThis) {
     return null
   }
