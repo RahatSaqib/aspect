@@ -7,6 +7,9 @@
 
 -- Query Country With States & LGAs in GxAlert
 -- This is for the geography.json fixture
+
+-- SET @CountryName='United States'; -- For example United States
+
 SELECT CONCAT(
   '{"abbreviation":"', country.Abbreviation,
   '","name":"', country.Name,
@@ -22,6 +25,7 @@ SELECT CONCAT(
 FROM Country
 WHERE Country.Name IS NOT NULL
 AND Country.A3 IS NOT NULL
+AND Country.Name = @CountryName
 UNION
 SELECT CONCAT(
     '{"name":"', State.Name, '",',
@@ -32,6 +36,7 @@ FROM Country
 JOIN State ON State.CountryId = Country.CountryId
 WHERE Country.Name IS NOT NULL
 AND Country.A3 IS NOT NULL
+AND Country.Name = @CountryName
 UNION
 SELECT ']}' AS countryJSON;
 
@@ -62,11 +67,12 @@ COALESCE(
 FROM location
 LEFT JOIN location_type ON location.location_type_id = location_type.id
 LEFT JOIN state ON state.stateId = location.state_id 
+LEFT JOIN Country ON state.CountryId = Country.CountryId
 LEFT JOIN lga ON lga.LgaId = location.lga_id
 LEFT JOIN deployment ON location.id = deployment.LocationId
 LEFT JOIN device ON device.CurrentDeploymentId = deployment.DeploymentId
 LEFT JOIN deviceapikey ON deviceapikey.DeviceId = device.DeviceId
-WHERE ((deployment.Approved = 1 AND deployment.HideOnDashboard = 0) OR deployment.DeploymentId IS NULL) -- Only add for Pakistan: AND location.versions LIKE '%new-2020%'
+WHERE ((deployment.Approved = 1 AND deployment.HideOnDashboard = 0) OR deployment.DeploymentId IS NULL) AND Country.Name = @CountryName -- Only add for Pakistan: AND location.versions LIKE '%new-2020%'
 GROUP BY location.id;
 
 
@@ -95,6 +101,7 @@ COALESCE(CONCAT(', "sites": [ ', CASE WHEN role.Name = 'Lab Level' THEN GROUP_CO
 FROM person
 LEFT JOIN my_aspnet_users ON my_aspnet_users.id = person.UserId
 LEFT JOIN state ON state.StateId = person.StateId
+LEFT JOIN Country ON person.CountryId = Country.CountryId
 LEFT JOIN lga ON lga.LgaId = person.LgaId
 LEFT JOIN deployment ON deployment.DeploymentId = person.DeploymentId
 LEFT JOIN role ON role.RoleId = person.RoleId
@@ -105,6 +112,7 @@ LEFT JOIN lga AS personlga_lga ON personlga_lga.LgaId = personlga.LgaId
 LEFT JOIN state AS personlgastate_state ON personlgastate_state.StateId = personlga_lga.StateId
 LEFT JOIN personstate ON personstate.PersonId = person.PersonId
 LEFT JOIN state AS personstate_state ON personstate_state.StateId = personstate.StateId
+WHERE Country.Name = @CountryName
 GROUP BY person.PersonId;
 
 -- Query Custom Fields in GxAlert (Deprecated)
@@ -114,4 +122,4 @@ GROUP BY person.PersonId;
 -- Query deviceConfiguration (attribute inside of partnerData)
 SELECT CONCAT(
 	"deviceConfiguration: [{ deviceType: 'GeneXpert', data: ", cs.SettingsJson, "}]")
-FROM connectsettings CS left join country c on c.CountryId = cs.CountryId  WHERE c.Name like '%tanzania%';
+FROM connectsettings CS left join country c on c.CountryId = cs.CountryId  WHERE c.Name = @CountryName;
