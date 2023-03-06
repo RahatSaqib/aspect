@@ -5,12 +5,14 @@ const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { usedAssay } = require('../../assay/common/db')
+const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 
 function getDeviceBaseExtendedQuery(
   query,
   dataConstraints,
   showUnapprovedDevices = false,
-  showDecommissionedDevices = false
+  showDecommissionedDevices = false,
+  excludeInternalDevices = false
 ) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -40,6 +42,8 @@ function getDeviceBaseExtendedQuery(
         queryBuilder
           .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
           .where('rca2.resultCategoryId', query.resultCategory2Id)
+
+      if (excludeInternalDevices) queryBuilder.whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
