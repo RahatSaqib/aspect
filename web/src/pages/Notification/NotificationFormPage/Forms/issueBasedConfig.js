@@ -143,10 +143,10 @@ const stockExpiringSection = (formatMessage, partner) => {
   }
 }
 
-const calibrationSection = () => {
+const calibrationSection = formatMessage => {
   return {
     id: 'CalibrationDueDate',
-    label: 'calibrationDays',
+    label: formatMessage(messages.calibrationDays),
     labelI18nKey: 'calibrationDays',
     visibleIf: values => ['CalibrationDueDate'].includes(values.notificationType),
     rows: [
