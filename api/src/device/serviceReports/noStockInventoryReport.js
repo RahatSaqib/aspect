@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { subDays } = require('date-fns')
 
-const { knex, filterDateRangeParams } = require('../../db')
+const { knex, filterDateRangeParams, filterParams } = require('../../db')
 const { getDeviceBaseExtendedQuery } = require('../common/db')
 const { allDeviceMaintenanceStatusToId } = require('../../shared/dictionary')
 
@@ -16,7 +16,6 @@ async function getNoStockInventoryReport(dataConstraints, query) {
     query.minDate = subDays(new Date(query.maxDate), 90).toISOString()
   }
 
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
   /**
    * sub-query from Result/Assay tables to get actual assays reported for
    * this device and get their names for dynamic headers
@@ -54,8 +53,7 @@ async function getNoStockInventoryReport(dataConstraints, query) {
     })
     .select('deviceId')
 
-  const devicesRaw = await deviceQuery
-    .clone()
+  const devicesRaw = await getDeviceBaseExtendedQuery(query, dataConstraints, false, false, true)
     .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'a.id')
     .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
     .leftJoin('FactInventoryConsumptionRate as ficr', function () {
@@ -75,6 +73,9 @@ async function getNoStockInventoryReport(dataConstraints, query) {
     })
     .leftJoin(subStatuses.as('dmsl'), 'dmsl.deviceId', 'd.id')
     .where('dc.hasResults', true)
+    .modify(filterParams, query, {
+      consumableId: 'c.id',
+    })
     .groupBy('d.id', 'c.id')
     .select({
       deviceId: 'd.id',
@@ -83,7 +84,6 @@ async function getNoStockInventoryReport(dataConstraints, query) {
       stateName: 'st.name',
       assayId: 'subR.assayId',
       consumableId: 'c.id',
-
       stockLastChangedOn: knex.raw(
         '(select max(ilog.createdOn) from InventoryLog as ilog where ilog.siteId = s.id and ilog.consumableId = c.id)'
       ),
