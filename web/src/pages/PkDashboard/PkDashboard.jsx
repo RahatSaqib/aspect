@@ -39,7 +39,7 @@ const PkDashboard = () => {
           <DashboardCard title={formatMessage(messages.mtbRifTbTesting)}>
             <DashboardLink to="/dashboard/rif/current-testing" label={formatMessage(messages.TbCurrent)} />
             <DashboardLink to="/dashboard/rif/national-testing-trend" label={formatMessage(messages.TbNationalTrend)} />
-            <DashboardLink to="" label={formatMessage(messages.TbProvincialComparison)} />
+            <DashboardLink to="/dashboard/rif/provincial-trend-comparison" label={formatMessage(messages.TbProvincialComparison)} />
             <DashboardLink to="" label={formatMessage(messages.TbSubprovincialTrend)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbRifTbDiagnosis)}>

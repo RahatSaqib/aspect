@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import useI18n from '../../../hooks/useI18n'
 import messages from '../PkDashboard.Messages'
 
-const GXTrendTable = props => {
+const ProvinceTrendTable = props => {
   const { rows } = props
   const { formatMessage } = useI18n()
 
@@ -33,4 +33,4 @@ const GXTrendTable = props => {
   )
 }
 
-export default GXTrendTable
+export default ProvinceTrendTable

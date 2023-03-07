@@ -59,6 +59,9 @@ const NationalTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRi
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
+const GXProvincialTrendComparison = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbXdrSection/GXProvincialTrendComparison')
+)
 
 const LogInApp = () => {
   const dispatch = useDispatch()
@@ -139,6 +142,7 @@ const LogInApp = () => {
                   <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                   <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
                   <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
+                  <Route path="/dashboard/rif/provincial-trend-comparison" element={<GXProvincialTrendComparison />} />
 
                   <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
                   <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
