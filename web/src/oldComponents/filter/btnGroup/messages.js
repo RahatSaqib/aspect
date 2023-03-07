@@ -235,6 +235,22 @@ export const messages = {
       id: 'filter.btnGroup.displayExcludedResults',
       defaultMessage: 'Excluded Results',
     },
+    GxMtbRifMTBErrorRifError: {
+      id: 'pages.filters.GxMtbRifMTBErrorRifError',
+      defaultMessage: 'MTB Error Rif Error',
+    },
+    gxMtbRifUltraMtbDetectedRifIndeterminate: {
+      id: 'pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate',
+      defaultMessage: 'MTB Detected - Rif Indeterminate',
+    },
+    GxMtbRifUltraMTBTraceDetectedRifNoResult: {
+      id: 'pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult',
+      defaultMessage: 'MTB Trace Detected Rif No Result',
+    },
+    GxMtbXdrMTBNotDetectedDrugResistanceNotDetected: {
+      id: 'pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
+      defaultMessage: 'MTB Not Detected Drug Resistance Not Detected',
+    },
   }),
 }
 
