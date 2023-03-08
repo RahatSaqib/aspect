@@ -25,7 +25,7 @@ function generate() {
 
 const data = generate()
 
-const GXProvincialTrendComparison = () => {
+const ProvincialTestingTrendPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [states, setState] = useState([])
@@ -38,15 +38,13 @@ const GXProvincialTrendComparison = () => {
     <PkPage
       title={`${formatMessage(messages.TbDProvincialComparison)}`}
       filters={
-        <>
-          <StateAutocomplete
-            fullWidth
-            countryId={user.countryId}
-            value={states}
-            onChange={(_, newValue) => setState(newValue)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
-          />
-        </>
+        <StateAutocomplete
+          fullWidth
+          countryId={user.countryId}
+          value={states}
+          onChange={(_, newValue) => setState(newValue)}
+          label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+        />
       }
     >
       <Grid container sx={{ mt: 2 }}>
@@ -61,4 +59,4 @@ const GXProvincialTrendComparison = () => {
   )
 }
 
-export default GXProvincialTrendComparison
+export default ProvincialTestingTrendPage
