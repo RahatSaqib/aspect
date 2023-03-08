@@ -508,13 +508,23 @@ function addOrConstraints(
   }
 }
 
-function addResultConstraints(queryBuilder, constraints, aliases) {
+function addResultConstraints(queryBuilder, constraints, aliases, options) {
   if (constraints.result?.modify) {
     constraints.result.modify(queryBuilder, constraints, aliases)
   }
+  if (aliases.result) {
+    queryBuilder.where({ [`${aliases.result}.excluded`]: options.excludedResults || false })
+  }
 }
 
-function addConstraints(queryBuilder, constraints, receivedAliases) {
+/** Add constraints to query a knex query.
+ * @param {*} queryBuilder - Knex query builder
+ * @param {*} constraints - Constraints to apply, @see getConstraints
+ * @param {*} receivedAliases - Aliases used for each table in the query (e.g. { assay: 'a', result: 'r' })
+ * @param {(excludedResults)} options - Options to apply.
+ * * options.excludedResults - Include results with excluded = true, or skip them if false.
+ */
+function addConstraints(queryBuilder, constraints, receivedAliases, options = { excludedResults: false }) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
     return
@@ -529,7 +539,7 @@ function addConstraints(queryBuilder, constraints, receivedAliases) {
   addPersonConstraints(queryBuilder, constraints, aliases)
   addGeographyConstraints(queryBuilder, constraints, aliases)
   addOrConstraints(queryBuilder, constraints, aliases)
-  addResultConstraints(queryBuilder, constraints, aliases)
+  addResultConstraints(queryBuilder, constraints, aliases, options)
 }
 
 function isNullInOrEqual(queryBuilder, columnName, value) {
