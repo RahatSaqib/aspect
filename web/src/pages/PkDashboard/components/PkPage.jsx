@@ -7,7 +7,7 @@ const baseStyle = { pb: 3, paddingLeft: '8px !important', paddingRight: '8px !im
 const normalHeight = { height: 'calc(100vh - 128px)' }
 const fullHeight = { height: 'calc(100vh - 64px)' }
 const gridStyle = { padding: '16px 8px 0' }
-const filterStyle = { width: '50%', float: 'right' }
+const filterStyle = { width: '50%', float: 'left' }
 
 const PkPage = ({ title, filters, filter, children, full }) => {
   useDocumentTitle(`${title} - Aspect`) // no need for helmet
