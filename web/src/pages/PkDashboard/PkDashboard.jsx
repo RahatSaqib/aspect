@@ -39,19 +39,28 @@ const PkDashboard = () => {
           <DashboardCard title={formatMessage(messages.mtbRifTbTesting)}>
             <DashboardLink to="/dashboard/rif/current-testing" label={formatMessage(messages.TbCurrent)} />
             <DashboardLink to="/dashboard/rif/national-testing-trend" label={formatMessage(messages.TbNationalTrend)} />
-            <DashboardLink to="/dashboard/rif/provincial-trend-comparison" label={formatMessage(messages.TbProvincialComparison)} />
+            <DashboardLink
+              to="/dashboard/rif/provincial-testing-trend"
+              label={formatMessage(messages.TbProvincialComparison)}
+            />
             <DashboardLink to="" label={formatMessage(messages.TbSubprovincialTrend)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbRifTbDiagnosis)}>
             <DashboardLink to="/dashboard/rif/current-diagnosis" label={formatMessage(messages.TbDCurrent)} />
             <DashboardLink to="/dashboard/rif/national-diagnosis" label={formatMessage(messages.TbDNationalTrend)} />
-            <DashboardLink to="" label={formatMessage(messages.TbDProvincialComparison)} />
+            <DashboardLink
+              to="/dashboard/rif/provincial-diagnosis-trend"
+              label={formatMessage(messages.TbDProvincialComparison)}
+            />
             <DashboardLink to="/dashboard/rif/test-diag-trend" label={formatMessage(messages.TbDTestingDiagnosis)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbRifRrtbDiagnosis)}>
             <DashboardLink to="/dashboard/rif/current-rrtb-diagnosis" label={formatMessage(messages.RRCurrent)} />
             <DashboardLink to="/dashboard/rif/national-rtb-trends" label={formatMessage(messages.RRNationalTrend)} />
-            <DashboardLink to="" label={formatMessage(messages.RRProvincialComparison)} />
+            <DashboardLink
+              to="/dashboard/rif/provincial-rrtb-trend-comparison"
+              label={formatMessage(messages.RRProvincialComparison)}
+            />
             <DashboardLink to="" label={formatMessage(messages.RRTestingDiagnosis)} />
           </DashboardCard>
         </Grid>
@@ -60,12 +69,18 @@ const PkDashboard = () => {
           <DashboardCard title={formatMessage(messages.mtbXdrTesting)}>
             <DashboardLink to="/dashboard/xdr/current-testing" label={formatMessage(messages.TCurrent)} />
             <DashboardLink to="" label={formatMessage(messages.TNationalTrend)} />
-            <DashboardLink to="" label={formatMessage(messages.TProvincialComparison)} />
+            <DashboardLink
+              to="/dashboard/xdr/provincial-testing-trend"
+              label={formatMessage(messages.TProvincialComparison)}
+            />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
             <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrent)} />
             <DashboardLink to="" label={formatMessage(messages.DNationalTrend)} />
-            <DashboardLink to="" label={formatMessage(messages.DProvincialComparison)} />
+            <DashboardLink
+              to="/dashboard/xdr/provincial-diagnosis-trend"
+              label={formatMessage(messages.DProvincialComparison)}
+            />
             <DashboardLink
               to="/dashboard/xdr/gx-testing-and-diagnosis"
               label={formatMessage(messages.DTestingDiagnosis)}

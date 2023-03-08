@@ -55,12 +55,24 @@ const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSectio
 const NationalDiagnosisRif = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalDiagnosisPage'))
 const NationalRtbTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalRtbTrendsPage'))
 const NationalTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalTestingTrendsPage'))
+const ProvincialRIFTestingTrend = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbRifSection/ProvincialTestingTrendPage')
+)
+const ProvincialRIFDiagnosisTrend = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbRifSection/ProvincialDiagnosisTrendPage')
+)
+const ProvincialRIFTestingTrendRRTB = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbRifSection/ProvincialRRTBDiagnosisTrendPage')
+)
 
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
-const GXProvincialTrendComparison = lazy(() =>
-  import('./pages/PkDashboard/pages/MtbXdrSection/GXProvincialTrendComparison')
+const ProvincialXDRTestingTrend = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialTestingTrendPage')
+)
+const ProvincialXDRDiagnosisTrend = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialDiagnosisTrendPage')
 )
 
 const LogInApp = () => {
@@ -119,7 +131,7 @@ const LogInApp = () => {
 
   const a = r => isPermittedUser(userPermissions, { required: r })
 
-  const isPakistan = countryAbbreviation === 'PK'
+  const isPakistan = countryAbbreviation === 'US'
 
   return (
     <LoggedInLayout>
@@ -138,11 +150,18 @@ const LogInApp = () => {
                   <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
                   <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
                   <Route path="/dashboard/rif/test-diag-trend" element={<TestDiagTrend />} />
+                  <Route path="/dashboard/rif/provincial-testing-trend" element={<ProvincialRIFTestingTrend />} />
+                  <Route path="/dashboard/rif/provincial-diagnosis-trend" element={<ProvincialRIFDiagnosisTrend />} />
+                  <Route
+                    path="/dashboard/rif/provincial-rrtb-trend-comparison"
+                    element={<ProvincialRIFTestingTrendRRTB />}
+                  />
 
                   <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                   <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
                   <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
-                  <Route path="/dashboard/rif/provincial-trend-comparison" element={<GXProvincialTrendComparison />} />
+                  <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
+                  <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
 
                   <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
                   <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
