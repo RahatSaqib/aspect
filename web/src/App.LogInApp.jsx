@@ -132,6 +132,7 @@ const LogInApp = () => {
   const a = r => isPermittedUser(userPermissions, { required: r })
 
   const isPakistan = countryAbbreviation === 'PK'
+
   return (
     <LoggedInLayout>
       <Suspense fallback={<Loading centered />}>

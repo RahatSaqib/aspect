@@ -1806,7 +1806,7 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
 
     const { id: siteTypeId } = await knex('SiteType')
       .where({
-        externalId: site.type,
+        externalId: site.type || 'lab',
       })
       .first()
 
