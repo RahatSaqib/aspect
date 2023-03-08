@@ -314,6 +314,7 @@ async function getNotificationPolicy(
     .modify(extraConditionsFunction, extraConditions, aliases)
     .where('nt.enabled', true)
     .distinct(selectColumns)
+
   return records
 }
 

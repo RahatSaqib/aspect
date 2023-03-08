@@ -11,6 +11,7 @@ const {
   resultUpdated,
   resultLogged,
   resultLoggedProcessed,
+  resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
 
@@ -654,6 +655,16 @@ async function mergeResultWithContext(context) {
   context.addDeviceLogUpdate('resultId', result.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
   const postProcessResult = await postProcess(pluginContext, result, previousResult)
+
+  // TODO: send notification with the isResultUpdated action
+  context.messageContext.bindActionCreators({ resultReadyForNotification })
+  if (previousResult) {
+    context.messageContext.resultReadyForNotification(result.id, true)
+  } else {
+    context.messageContext.resultReadyForNotification(result.id, false)
+  }
+  // console.log('onResultlogged - action.isResultUpdated', action.isResultUpdated)
+
   return {
     ...postProcessResult,
     aspectResultId: result.id,

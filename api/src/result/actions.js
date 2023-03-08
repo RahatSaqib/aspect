@@ -3,6 +3,7 @@ const _ = require('lodash')
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
   RESULT_LOGGED: 'RESULT_LOGGED',
+  RESULT_READY_FOR_NOTIFICATION: 'RESULT_READY_FOR_NOTIFICATION',
   RESULT_LOGGED_PROCESSED: 'RESULT_LOGGED_PROCESSED',
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
   RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
@@ -226,6 +227,18 @@ function resultLoggedProcessed(resultId, deviceLogId) {
   }
 }
 
+function resultReadyForNotification(resultId, isResultUpdated = false) {
+  if (!resultId) {
+    throw new Error('Must specify resultId for resultReadyForNotification')
+  }
+
+  return {
+    type: types.RESULT_READY_FOR_NOTIFICATION,
+    resultId,
+    isResultUpdated,
+  }
+}
+
 /**
  * Creates an action to notify the device with given id
  * has a module temperature error issue
@@ -434,4 +447,5 @@ module.exports = {
   resultModuleReplaced,
   resultAnalyzeCategoriesAndErrors,
   resultUnusedModules,
+  resultReadyForNotification,
 }

@@ -32,7 +32,7 @@ function getNotificationCategory({ type, issueId, resultId }) {
   ) {
     return CATEGORY.ISSUE_BASED
   }
-  if (type === resultBasedTypes.RESULT_LOGGED && resultId) {
+  if (type === resultBasedTypes.RESULT_READY_FOR_NOTIFICATION && resultId) {
     return CATEGORY.RESULT_BASED
   }
   if (type === reportBasedTypes.REPORT_BASED_NOTIFICATION_REQUESTED) {
@@ -78,41 +78,42 @@ async function analyzeNotifications(context, action) {
     }
 
     const category = getNotificationCategory({ type, issueId, resultId })
-    let conditionsToEvaluate = await getConditionsToEvaluate(knex, category)
-    // use only enabled notifications
-    conditionsToEvaluate = _.filter(conditionsToEvaluate, it => !!it.enabled)
+    let notificationTypes = await getConditionsToEvaluate(knex, category)
 
-    await Promise.each(
-      _.filter(conditionsToEvaluate, condition => {
-        switch (category) {
-          case CATEGORY.ISSUE_BASED: {
-            /**
-             * proceed only for this issue type
-             */
-            return condition.issueTypeId === issueTypeId
-          }
-          case CATEGORY.RESULT_BASED: {
-            /**
-             * see available values for field `resultBasedScope` in
-             * web/src/pages/Notification/NotificationFormPage/Forms/notificationTypeSection.js
-             */
-            const { resultBasedScope = 'any' } = JSON.parse(condition.filterCondition)
-            if (isResultUpdated) {
-              return ['any', 'updated'].includes(resultBasedScope)
-            }
-            return ['any', 'created'].includes(resultBasedScope)
-          }
-          case CATEGORY.REPORT_BASED: {
-            /**
-             * proceed only if action requested particular this instance of NotificationType entry
-             */
-            return condition.notificationTypeId === action.notificationTypeId
-          }
-          default:
-            // don't allow unknown category
-            return false
+    // use only enabled notifications
+    notificationTypes = _.filter(notificationTypes, it => !!it.enabled)
+    notificationTypes = _.filter(notificationTypes, nt => {
+      switch (category) {
+        case CATEGORY.ISSUE_BASED: {
+          /**
+           * proceed only for this issue type
+           */
+          return nt.issueTypeId === issueTypeId
         }
-      }),
+        case CATEGORY.RESULT_BASED: {
+          /**
+           * see available values for field `resultBasedScope` in
+           * web/src/pages/Notification/NotificationFormPage/Forms/notificationTypeSection.js
+           */
+          const { resultBasedScope = 'any' } = JSON.parse(nt.filterCondition)
+          if (isResultUpdated) {
+            return ['any', 'updated'].includes(resultBasedScope)
+          }
+          return ['any', 'created'].includes(resultBasedScope)
+        }
+        case CATEGORY.REPORT_BASED: {
+          /**
+           * proceed only if action requested particular this instance of NotificationType entry
+           */
+          return nt.notificationTypeId === action.notificationTypeId
+        }
+        default:
+          // don't allow unknown category
+          return false
+      }
+    })
+    await Promise.each(
+      notificationTypes,
       async ({ filterCondition, notificationTypeCategoryExternalId, notificationTypeId, reportId }) => {
         let props = {
           filterCondition: JSON.parse(filterCondition),
