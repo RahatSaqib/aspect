@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CircularProgress, Box, Card, CardContent } from '@mui/material'
+import { CircularProgress, Box, Card, CardContent, Grid } from '@mui/material'
 import { useFormikContext } from 'formik'
 import map from 'lodash/map'
 import './NotificationFormPage.css'
@@ -13,6 +13,7 @@ import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import validationSchema from './Forms/validation'
 import messages from './messages'
+import NotificationFormPreview from './NotificationFormPage.Preview'
 import { getFormConfigWithData } from './utils'
 
 function buildAreaItems(id, target, data) {
@@ -165,7 +166,15 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
       <Box component="main" sx={{ p: 1, width: '100%' }}>
         <Card>
           <CardContent>
-            <AspectForm config={formConfig} />
+            <Grid container spacing={1}>
+              <Grid item xs={7}>
+                <h2>{intl.formatMessage(messages.editNotification)}</h2>
+                <AspectForm config={formConfig} />
+              </Grid>
+              <Grid item xs={5}>
+                <NotificationFormPreview values={formik.values} />
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
       </Box>
