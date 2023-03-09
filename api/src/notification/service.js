@@ -196,6 +196,7 @@ function geographyFilters(queryBuilder, filterConditions, aliases) {
 
 function resultConditionsMet(queryBuilder, filterCondition, aliases) {
   const tblResultAlias = aliases.result ? aliases.result : 'r'
+  queryBuilder.where('r.excluded', false)
   resultCategoryFilters(queryBuilder, filterCondition, tblResultAlias)
   geographyFilters(queryBuilder, filterCondition, aliases)
 }

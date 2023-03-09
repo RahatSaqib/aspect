@@ -225,7 +225,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
     const now = new Date()
 
     // query for selecting data for the device
-    const query = knex('Result as r').where({ deviceId })
+    const query = knex('Result as r').where({ deviceId }).where('r.excluded', false)
     query.modify(queryBuilder => {
       if (assayId) {
         queryBuilder.where({ assayId })
@@ -260,7 +260,10 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
     await Promise.each(daysToCalculate, async days => {
       const endedOn = startOfDayUtc(subDays(now, days))
       // query for selecting data for the device
-      const query = knex('Result as r').where('r.deviceId', deviceId).where('r.endedOn', '>', endedOn)
+      const query = knex('Result as r')
+        .where('r.deviceId', deviceId)
+        .where('r.endedOn', '>', endedOn)
+        .where('r.excluded', false)
       const factResultsDevice = {
         calculatedOn: now,
       }
@@ -877,6 +880,7 @@ async function onFactNewResultsAvailableCheck(action, { messageContext }) {
       .groupBy('si.id')
       .where('r.createdOn', '>', subDays(now, 1))
       .where('r.endedOn', '>', subDays(now, 30))
+      .where('r.excluded', false)
       .select(
         knex.raw('si.id as siteId'),
         knex.raw('coalesce(r.partnerId, si.partnerId) as partnerId'),
