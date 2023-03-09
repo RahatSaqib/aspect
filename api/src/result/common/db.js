@@ -3,6 +3,7 @@ const _ = require('lodash')
 const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
 const { SELECT_FIELDS_UTC } = require('../query')
+const { plainToDeepObjectResult } = require('./logic')
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
@@ -108,13 +109,12 @@ function getResultTreatmentStatus(response) {
   }
 }
 
-async function getCustomFieldsForResult(data) {
-  const { deviceId, partnerId, countryId, assayId, diseaseId } = data
+async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayId, diseaseId } = {}) {
   const { getCustomFields } = require('../../forms/service')
   let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
   customFields = _.sortBy(customFields, ['order', 'name'])
   customFields = customFields.map(
-    ({ title, source, fieldType, order, controlType, validation, items, condition, filters }) => ({
+    ({ title, source, fieldType, order, controlType, validation, items, condition, filters, optional }) => ({
       title,
       source,
       fieldType,
@@ -124,9 +124,34 @@ async function getCustomFieldsForResult(data) {
       items,
       condition,
       filters,
+      optional,
     })
   )
   return customFields
+}
+
+async function getMissingCustomFieldValues({
+  deviceId,
+  partnerId,
+  countryId,
+  assayId,
+  diseaseId,
+  ...restResultProps
+} = {}) {
+  const customFields = await getCustomFieldsForResult({ deviceId, partnerId, countryId, assayId, diseaseId })
+
+  if (customFields === null || customFields.length === 0) return []
+
+  const mandatoryCustomFields = customFields.filter(cf => cf.optional === false)
+
+  // Transforms the patientData and resultData from strings to objects
+  const deepResult = plainToDeepObjectResult(restResultProps)
+  const missingFields = mandatoryCustomFields.filter(cf => {
+    const value = _.get(deepResult, cf.source)
+    return !value
+  })
+
+  return missingFields
 }
 
 const getBaseResults = () =>
@@ -447,4 +472,6 @@ module.exports = {
   getResultNotesByResultId,
   getBaseQueryForResults,
   getQueryForDataExtract,
+  getCustomFieldsForResult,
+  getMissingCustomFieldValues,
 }

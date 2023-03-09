@@ -298,6 +298,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     reportableSiteId = sampleOriginSite.id
   }
 
+  let existingSample
   if (sampleId == null && existingResult == null) {
     ;[sampleId] = await knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
@@ -310,7 +311,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
       ;({ sampleId } = existingResult)
     }
     if (_.has(payload, 'sample')) {
-      const existingSample =
+      existingSample =
         (await knex('Sample')
           .where({ id: sampleId })
           .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId')) || {}
@@ -329,13 +330,13 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}
 
   const resultData = _.has(payload, 'data')
-    ? JSON.stringify(deepMerge(existingResultData, payload.data))
+    ? JSON.stringify(deepMerge({ ...existingResultData }, payload.data))
     : existingResultDataString
 
   const existingResultPatientString = _.get(existingResult, 'patientData', null)
   const existingResultPatient = isJson(existingResultPatientString) ? JSON.parse(existingResultPatientString) : {}
   const patientData = _.has(payload, 'patient')
-    ? JSON.stringify(deepMerge(existingResultPatient, payload.patient))
+    ? JSON.stringify(deepMerge({ ...existingResultPatient }, payload.patient))
     : existingResultPatientString
 
   const oemData = _.has(payload, 'oemData') ? String(payload.oemData) : _.get(existingResult, 'oemData')
@@ -424,7 +425,14 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   processedResult.id = resultId
   processedResult.updatedOn = now
-  return { processedResult, existingResult }
+  return {
+    processedResult,
+    existingResult,
+    changeFlags: {
+      sampleIdHasChanged: _.get(payload, 'sample.id', existingSample.externalId) !== existingSample.externalId,
+      patientIdHasChanged: _.get(payload, 'patient.id', existingResultPatient.id) !== existingResultPatient.id,
+    },
+  }
 }
 
 async function getResult(knex, resultId) {

@@ -14,7 +14,7 @@ const {
   resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
-
+const { plainToDeepObjectResult } = require('../result/common/logic')
 const {
   updateDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
@@ -25,6 +25,7 @@ const {
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
+const { getMissingCustomFieldValues } = require('../result/common/db')
 const { loadPlugin } = require('../plugin/registration')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
@@ -643,27 +644,40 @@ async function mergeResultWithContext(context) {
   }
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
-
   const transformPayload = await loadPlugin(plugins, 'transformMergeResultPayload')
   const transformedPayload = await transformPayload(pluginContext)
-  const { processedResult: result, existingResult: previousResult } = await mergeResult(
-    knex,
-    deviceId,
-    transformedPayload,
-    { now }
-  )
-  context.addDeviceLogUpdate('resultId', result.id)
+  const {
+    processedResult: plainResult,
+    existingResult: plainPreviousResult,
+    changeFlags,
+  } = await mergeResult(knex, deviceId, transformedPayload, { now })
+  context.addDeviceLogUpdate('resultId', plainResult.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
-  const postProcessResult = await postProcess(pluginContext, result, previousResult)
+  const postProcessResult = await postProcess(pluginContext, plainResult, plainPreviousResult)
 
   // TODO: send notification with the isResultUpdated action
+  const result = plainToDeepObjectResult(plainResult)
+  const previousResult = plainToDeepObjectResult(plainPreviousResult)
+
+  const { diseaseId } = await knex('Assay as a')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .where('a.id', result.assayId)
+    .first('at.diseaseId')
+
+  // Trigger notifications
   context.messageContext.bindActionCreators({ resultReadyForNotification })
-  if (previousResult) {
-    context.messageContext.resultReadyForNotification(result.id, true)
-  } else {
-    context.messageContext.resultReadyForNotification(result.id, false)
+  const notificationSubType = {
+    updated: true,
+    created: false,
   }
-  // console.log('onResultlogged - action.isResultUpdated', action.isResultUpdated)
+  if (previousResult && (changeFlags.patientIdHasChanged || changeFlags.sampleIdHasChanged)) {
+    context.messageContext.resultReadyForNotification(result.id, notificationSubType.updated)
+  } else {
+    const missingCustomFields = await getMissingCustomFieldValues({ ...result, diseaseId })
+    if (missingCustomFields.length > 0) {
+      context.messageContext.resultReadyForNotification(result.id, notificationSubType.created)
+    }
+  }
 
   return {
     ...postProcessResult,
