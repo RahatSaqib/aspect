@@ -47,7 +47,7 @@ function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
 
 function getInventoryItemsRawQuery() {
   const fldExpiresOn = `DATE_FORMAT(IFNULL(ii.expiresOn, NOW()), '%Y-%m-%d')`
-  const fldQuantity = `CAST( IFNULL(ii.quantityOnHand, 0) AS CHAR )`
+  const fldQuantity = `CAST(IFNULL(ii.quantityOnHand, 0) AS CHAR(10))`
   const itemRaw = `CONCAT(
     '{ "expiresOn": "', ${fldExpiresOn}, '", "quantityOnHand": "', ${fldQuantity}, '" }'
   )`
