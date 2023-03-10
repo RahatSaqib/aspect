@@ -475,6 +475,7 @@ const usageStats = {
   fileName: 'UsageStatistics',
   exportCsv: false,
   exportExcel: true,
+  availableForNotification: 1,
   sortOrder: 140,
   sheets: [
     {
@@ -631,7 +632,7 @@ const dataExtract = {
   externalId: 'data_extract',
   fileName: 'DataExtract',
   sortOrder: 0,
-  availableForNotification: 1,
+  availableForNotification: 0,
   exportCsv: true,
   exportExcel: false,
   sheets: [
@@ -690,6 +691,7 @@ const resultNotificationsReport = {
   fileName: 'ResultNotification',
   exportCsv: false,
   exportExcel: true,
+  availableForNotification: 1,
   sortOrder: 160,
   sheets: [
     {
