@@ -27,6 +27,7 @@ async function updateResult(request) {
     resultSourceExternalId: 'rso.externalId',
     patientData: 'r.patientData',
     resultData: 'r.resultData',
+    resultTypeId: 'r.resultTypeId',
   })
   if (!result.ok) {
     return Boom.notFound('This result does not exist or you do not have access.')
@@ -86,6 +87,10 @@ async function updateResult(request) {
     },
     {}
   )
+
+  if (payload.resultTypeId && payload.resultTypeId !== result.resultTypeId) {
+    fieldsToUpdate.resultTypeId = payload.resultTypeId
+  }
 
   await knex('Result')
     .where('id', resultId)
