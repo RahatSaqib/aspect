@@ -196,9 +196,24 @@ function geographyFilters(queryBuilder, filterConditions, aliases) {
 
 function resultConditionsMet(queryBuilder, filterCondition, aliases) {
   const tblResultAlias = aliases.result ? aliases.result : 'r'
-  queryBuilder.where('r.excluded', false)
+
+  filterExcludedResults(queryBuilder, aliases)
+
   resultCategoryFilters(queryBuilder, filterCondition, tblResultAlias)
   geographyFilters(queryBuilder, filterCondition, aliases)
+}
+
+function filterExcludedResults(queryBuilder, aliases) {
+  if (!aliases.resultType) {
+    aliases.resultType = '__Notification_Constrainst_ResultType'
+  }
+  queryBuilder.innerJoin(
+    `ResultType as ${aliases.resultType}`,
+    `${aliases.result}.resultTypeId`,
+    `${aliases.resultType}.id`
+  )
+
+  queryBuilder.where({ [`${aliases.resultType}.excluded`]: false })
 }
 
 function issueConditionsMet(queryBuilder, filterCondition, aliases) {

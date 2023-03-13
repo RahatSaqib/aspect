@@ -508,12 +508,26 @@ function addOrConstraints(
   }
 }
 
-function addResultConstraints(queryBuilder, constraints, aliases, options) {
+function addResultConstraints(queryBuilder, constraints, aliases, options = {}) {
   if (constraints.result?.modify) {
     constraints.result.modify(queryBuilder, constraints, aliases)
   }
-  if (aliases.result) {
-    queryBuilder.where({ [`${aliases.result}.excluded`]: options.excludedResults || false })
+
+  filterExcludedResults(queryBuilder, aliases, options)
+}
+
+function filterExcludedResults(queryBuilder, aliases, options) {
+  if (aliases.result && options.displayResult !== 'all') {
+    if (!aliases.resultType) {
+      aliases.resultType = alias('ResultType')
+    }
+    queryBuilder.innerJoin(
+      `ResultType as ${aliases.resultType}`,
+      `${aliases.result}.resultTypeId`,
+      `${aliases.resultType}.id`
+    )
+    const onlyExcluded = options.displayResults === 'excluded'
+    queryBuilder.where({ [`${aliases.resultType}.excluded`]: onlyExcluded })
   }
 }
 
@@ -524,7 +538,7 @@ function addResultConstraints(queryBuilder, constraints, aliases, options) {
  * @param {(excludedResults)} options - Options to apply.
  * * options.excludedResults - Include results with excluded = true, or skip them if false.
  */
-function addConstraints(queryBuilder, constraints, receivedAliases, options = { excludedResults: false }) {
+function addConstraints(queryBuilder, constraints, receivedAliases, options = { displayResult: 'actual' }) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
     return
