@@ -1,7 +1,7 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react'
+import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { useIdleTimer } from 'react-idle-timer'
 import { useDispatch } from 'react-redux'
-import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import IdleDialog from './components/IdleDialog'
 import Loading from './components/Loading'
 import LoggedInLayout from './components/LoggedInLayout'
@@ -65,6 +65,7 @@ const ProvincialRIFTestingTrendRRTB = lazy(() =>
   import('./pages/PkDashboard/pages/MtbRifSection/ProvincialRRTBDiagnosisTrendPage')
 )
 
+const NationalGXTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalTestingTrendsPage'))
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
@@ -157,6 +158,7 @@ const LogInApp = () => {
                     element={<ProvincialRIFTestingTrendRRTB />}
                   />
 
+                  <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
                   <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                   <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
                   <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
