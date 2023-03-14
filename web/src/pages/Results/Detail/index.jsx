@@ -13,7 +13,7 @@ import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
 import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { ResultDetailsErrors } from './errors'
+import { ResultDetailsErrors as customErrorNotifications } from './errors'
 import messages from './messages'
 import ResultTransferModal from './ResultTransferModal'
 import { getFormConfigWithData, updateValidationsAndFilters } from './utils'
@@ -35,10 +35,7 @@ const AspectResultDetail = () => {
     isError,
     error,
   } = useQuery([RESULT_DETAIL.KEY, { resultId }], async ({ queryKey: [, { resultId }] }) =>
-    fetchWrapperForQueries({
-      endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`,
-      customErrorNotifications: ResultDetailsErrors,
-    })
+    fetchWrapperForQueries({ endpoint: `${RESULT_DETAIL.ENDPOINT}/${resultId}`, customErrorNotifications })
   )
 
   if (isError) {

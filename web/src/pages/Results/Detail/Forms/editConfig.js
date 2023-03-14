@@ -73,21 +73,12 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
           {
             id: 10,
             items: [
-              ...stateProps(isNew, {
-                label: 'State',
-                labelI18nKey: 'state',
-              }),
-              ...lgaProps(isNew, {
-                label: 'LGA',
-                labelI18nKey: 'lga',
-              }),
+              ...stateProps(isNew, { label: 'State', labelI18nKey: 'state' }),
+              ...lgaProps(isNew, { label: 'LGA', labelI18nKey: 'lga' }),
               ...siteProps(isNew, {
                 label: 'Site Name',
                 labelI18nKey: 'siteName',
-                link: {
-                  key: 'siteId',
-                  url: '/browse/site/:siteId',
-                },
+                link: { key: 'siteId', url: '/browse/site/:siteId' },
               }),
             ],
           },
@@ -104,25 +95,18 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
               ...deviceProps(isNew, {
                 label: 'Device Name',
                 labelI18nKey: 'deviceName',
-                link: {
-                  key: 'deviceId',
-                  url: '/browse/device/list/:deviceId',
-                },
+                link: { key: 'deviceId', url: '/browse/device/list/:deviceId' },
               }),
               {
                 id: 'deviceType',
-                controlType: {
-                  component: 'textField',
-                },
+                controlType: { component: 'textField' },
                 labelI18nKey: 'deviceType',
                 type: 'readOnly',
                 visibleIf: values => !!values.deviceId,
               },
               {
                 id: 'deviceTypeId',
-                controlType: {
-                  component: 'hidden',
-                },
+                controlType: { component: 'hidden' },
                 type: 'readOnly',
               },
             ],
@@ -133,17 +117,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
         id: 'Assay',
         label: 'Assay',
         labelI18nKey: 'assay',
-        rows: [
-          {
-            id: 30,
-            items: [
-              ...assayProps(isNew, {
-                label: 'Assay',
-                labelI18nKey: 'assay',
-              }),
-            ],
-          },
-        ],
+        rows: [{ id: 30, items: [...assayProps(isNew, { label: 'Assay', labelI18nKey: 'assay' })] }],
       },
       /**
        * editable fields in both Create and Update
@@ -163,16 +137,12 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                  * For reference - see func updateResult in `api/src/result/service.js`
                  */
                 id: 'resultSourceExternalId',
-                controlType: {
-                  component: 'hidden',
-                },
+                controlType: { component: 'hidden' },
                 type: 'readOnly',
               },
               {
                 id: 'resultCategory1',
-                controlType: {
-                  ...resultCategoryControlType(formatMessage),
-                },
+                controlType: { ...resultCategoryControlType(formatMessage) },
                 labelI18nKey: resultCategory1i18nKey || 'resultCategory1',
                 label: 'resultCategory1Label',
                 disabledIf: values =>
@@ -180,10 +150,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
               },
               {
                 id: 'resultCategory2',
-                controlType: {
-                  ...resultCategoryControlType(formatMessage),
-                  isClearable: true,
-                },
+                controlType: { ...resultCategoryControlType(formatMessage), isClearable: true },
                 labelI18nKey: resultCategory2i18nKey || 'resultCategory2',
                 label: 'resultCategory2Label',
                 hideIfNull: true,
@@ -192,9 +159,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
               },
               {
                 id: 'detectedResistance',
-                controlType: {
-                  component: 'textField',
-                },
+                controlType: { component: 'textField' },
                 type: 'readOnly',
                 label: 'Detected Resistance',
                 hideIfNull: true,
@@ -202,9 +167,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
               },
               {
                 id: 'fullResultText',
-                controlType: {
-                  component: 'textArea',
-                },
+                controlType: { component: 'textArea' },
                 type: 'readOnly',
                 label: 'Result Text',
                 labelI18nKey: 'resultText',
@@ -217,20 +180,14 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
             items: [
               {
                 id: 'errorCode',
-                controlType: {
-                  component: 'textField',
-                },
+                controlType: { component: 'textField' },
                 type: 'readOnly',
                 label: 'Error Code',
                 labelI18nKey: 'errorCode',
               },
               {
                 id: 'notes',
-                controlType: {
-                  component: 'textArea',
-                  rowsMax: 5,
-                  rows: 3,
-                },
+                controlType: { component: 'textArea', rowsMax: 5, rows: 3 },
                 type: 'readOnly',
                 label: 'Notes',
                 labelI18nKey: 'notes',
@@ -287,9 +244,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
             items: [
               {
                 id: 'sampleId',
-                controlType: {
-                  component: 'textField',
-                },
+                controlType: { component: 'textField' },
                 type: 'readOnly',
                 label: 'Sample ID',
                 labelI18nKey: 'sampleId',
@@ -301,11 +256,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                   endpoint: SAMPLE_TYPES.ENDPOINT,
                   hideIfNoOptions: false,
                   queryKey: SAMPLE_TYPES.KEY,
-                  normalizeLoadedData: response =>
-                    getBaseOptions(response, {
-                      formatMessage,
-                      propNameForI18n: 'i18nKey',
-                    }),
+                  normalizeLoadedData: r => getBaseOptions(r, { formatMessage, propNameForI18n: 'i18nKey' }),
                   isClearable: true,
                 },
                 type: 'readOnly',
@@ -314,10 +265,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
               },
               {
                 id: 'sampleCollectedOn',
-                controlType: {
-                  component: 'datePicker',
-                  format: 'dd MMM yyyy hh:mm',
-                },
+                controlType: { component: 'datePicker', format: 'dd MMM yyyy hh:mm' },
                 type: 'readOnly',
                 label: 'Collected On',
                 labelI18nKey: 'collectedOn',
@@ -380,18 +328,14 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
             items: [
               {
                 id: 'patientId',
-                controlType: {
-                  component: 'textField',
-                },
+                controlType: { component: 'textField' },
                 type: 'readOnly',
                 label: 'Patient ID',
                 labelI18nKey: 'patientId',
               },
               {
                 id: 'caseExternalId',
-                controlType: {
-                  component: 'textField',
-                },
+                controlType: { component: 'textField' },
                 type: 'readOnly',
                 label: 'Case ID',
                 labelI18nKey: 'caseId',
@@ -486,6 +430,43 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 type: 'readOnly',
                 label: 'Sender Operator',
                 labelI18nKey: 'senderOperator',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'Excluded',
+        label: 'Excluded',
+        labelI18nKey: 'excluded',
+        rows: [
+          {
+            id: 90,
+            items: [
+              {
+                id: 'excluded',
+                controlType: { component: 'checkbox' },
+                type: 'readOnly',
+                label: 'Excluded',
+                labelI18nKey: 'excluded',
+                disabledIf: (values, isEditMode) => !isEditMode,
+              },
+
+              {
+                id: 'excludeReason',
+                controlType: {
+                  component: 'select',
+                  hideIfNoOptions: false,
+                  options: [
+                    { value: 2, label: formatMessage(messages.EQA) },
+                    { value: 3, label: formatMessage(messages.Training) },
+                    { value: 4, label: formatMessage(messages.Calibration) },
+                    { value: 5, label: formatMessage(messages.Study) },
+                  ],
+                },
+                type: 'text',
+                labelI18nKey: 'excludeReason',
+                visibleIf: values => values.excluded === true,
               },
             ],
           },
