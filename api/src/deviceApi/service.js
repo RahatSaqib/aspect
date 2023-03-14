@@ -25,7 +25,6 @@ const {
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
-const { getMissingCustomFieldValues } = require('../result/common/db')
 const { loadPlugin } = require('../plugin/registration')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
@@ -649,7 +648,7 @@ async function mergeResultWithContext(context) {
   const {
     processedResult: plainResult,
     existingResult: plainPreviousResult,
-    changeFlags,
+    // changeFlags,
   } = await mergeResult(knex, deviceId, transformedPayload, { now })
   context.addDeviceLogUpdate('resultId', plainResult.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
@@ -659,24 +658,16 @@ async function mergeResultWithContext(context) {
   const result = plainToDeepObjectResult(plainResult)
   const previousResult = plainToDeepObjectResult(plainPreviousResult)
 
-  const { diseaseId } = await knex('Assay as a')
-    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
-    .where('a.id', result.assayId)
-    .first('at.diseaseId')
-
   // Trigger notifications
   context.messageContext.bindActionCreators({ resultReadyForNotification })
   const notificationSubType = {
     updated: true,
     created: false,
   }
-  if (previousResult && (changeFlags.patientIdHasChanged || changeFlags.sampleIdHasChanged)) {
+  if (previousResult) {
     context.messageContext.resultReadyForNotification(result.id, notificationSubType.updated)
   } else {
-    const missingCustomFields = await getMissingCustomFieldValues({ ...result, diseaseId })
-    if (missingCustomFields.length > 0) {
-      context.messageContext.resultReadyForNotification(result.id, notificationSubType.created)
-    }
+    context.messageContext.resultReadyForNotification(result.id, notificationSubType.created)
   }
 
   return {

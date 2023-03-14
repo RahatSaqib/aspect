@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { getConstraints } = require('../auth/constraints')
+const { getConstraints /* , addConstraints */ } = require('../auth/constraints')
 const { knex, filterParams } = require('../db')
 const formDictionary = require('./formsFileDictionary')
 const { getListSitesForSelectList } = require('../site/service')
@@ -83,6 +83,17 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
     }
   )
 }
+
+// const getUserScopedCustomFields = async dataConstraints => {
+//   await getFormsBaseQuery(partnerId, {
+//     formType: 'gxConnectForm',
+//     assayId,
+//     diseaseId,
+//   })
+//   .modify(addConstraints, dataConstraints, {
+
+//   })
+// }
 
 const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, diseaseId = null) => {
   const formQuery = await getFormsBaseQuery(partnerId, {

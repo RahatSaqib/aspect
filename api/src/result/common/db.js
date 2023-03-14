@@ -114,7 +114,7 @@ async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayI
   let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
   customFields = _.sortBy(customFields, ['order', 'name'])
   customFields = customFields.map(
-    ({ title, source, fieldType, order, controlType, validation, items, condition, filters, optional }) => ({
+    ({ title, source, fieldType, order, controlType, validation, items, condition, filters, optional, id }) => ({
       title,
       source,
       fieldType,
@@ -125,24 +125,23 @@ async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayI
       condition,
       filters,
       optional,
+      id,
     })
   )
   return customFields
 }
 
-async function getMissingCustomFieldValues({
-  deviceId,
-  partnerId,
-  countryId,
-  assayId,
-  diseaseId,
-  ...restResultProps
-} = {}) {
+async function getMissingCustomFieldValues(
+  { deviceId, partnerId, countryId, assayId, diseaseId, ...restResultProps } = {},
+  customFieldExternalIds = []
+) {
   const customFields = await getCustomFieldsForResult({ deviceId, partnerId, countryId, assayId, diseaseId })
 
   if (customFields === null || customFields.length === 0) return []
 
-  const mandatoryCustomFields = customFields.filter(cf => cf.optional === false)
+  let mandatoryCustomFields
+  if (customFieldExternalIds.length === 0) mandatoryCustomFields = customFields.filter(cf => cf.optional === false)
+  else mandatoryCustomFields = customFields.filter(cf => customFieldExternalIds.includes(cf.id))
 
   // Transforms the patientData and resultData from strings to objects
   const deepResult = plainToDeepObjectResult(restResultProps)

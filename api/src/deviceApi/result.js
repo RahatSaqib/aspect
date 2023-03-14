@@ -428,10 +428,10 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   return {
     processedResult,
     existingResult,
-    changeFlags: {
-      sampleIdHasChanged: _.get(payload, 'sample.id', existingSample.externalId) !== existingSample.externalId,
-      patientIdHasChanged: _.get(payload, 'patient.id', existingResultPatient.id) !== existingResultPatient.id,
-    },
+    // changeFlags: {
+    //   sampleIdHasChanged: _.get(payload, 'sample.id', existingSample.externalId) !== existingSample.externalId,
+    //   patientIdHasChanged: _.get(payload, 'patient.id', existingResultPatient.id) !== existingResultPatient.id,
+    // },
   }
 }
 
