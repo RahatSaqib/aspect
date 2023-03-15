@@ -14,13 +14,12 @@ function getDateRangeFilters(executionDate, reportDateRange, reportStartingWeekD
   if (reportStartingWeekDay && reportDateRange !== 'PREVIOUS_WEEK') {
     throw new Boom.badData(`The reportDateRange type: ${reportDateRange} doesn't support reportStartingWeekDay`)
   }
-
+  const dateRange = {}
   switch (reportDateRange) {
     case 'PREVIOUS_CALENDAR_DAY':
-      return {
-        minDate: startOfDay(subDays(executionDate, 1)),
-        maxDate: endOfDay(subDays(executionDate, 1)),
-      }
+      dateRange.minDate = startOfDay(subDays(executionDate, 1))
+      dateRange.maxDate = endOfDay(subDays(executionDate, 1))
+      break
     case 'PREVIOUS_WEEK_DAY': {
       const daysToSubstract = {
         0: 2, // Sunday
@@ -31,41 +30,37 @@ function getDateRangeFilters(executionDate, reportDateRange, reportStartingWeekD
         5: 1,
         6: 1, // Saturday
       }
-
-      return {
-        minDate: startOfDay(subDays(executionDate, daysToSubstract[executionDate.getDay()])),
-        maxDate: endOfDay(subDays(executionDate, daysToSubstract[executionDate.getDay()])),
-      }
+      dateRange.minDate = startOfDay(subDays(executionDate, daysToSubstract[executionDate.getDay()]))
+      dateRange.maxDate = endOfDay(subDays(executionDate, daysToSubstract[executionDate.getDay()]))
+      break
     }
     case 'PREVIOUS_WEEK':
-      return {
-        minDate: startOfWeek(subDays(executionDate, 7), { weekStartsOn: reportStartingWeekDay }),
-        maxDate: endOfWeek(subDays(executionDate, 7), { weekStartsOn: reportStartingWeekDay }),
-      }
+      dateRange.minDate = startOfWeek(subDays(executionDate, 7), { weekStartsOn: reportStartingWeekDay })
+      dateRange.maxDate = endOfWeek(subDays(executionDate, 7), { weekStartsOn: reportStartingWeekDay })
+      break
     case 'PREVIOUS_7_DAYS':
-      return {
-        minDate: startOfDay(subDays(executionDate, 7)),
-        maxDate: endOfDay(subDays(executionDate, 1)),
-      }
+      dateRange.minDate = startOfDay(subDays(executionDate, 7))
+      dateRange.maxDate = endOfDay(subDays(executionDate, 1))
+      break
     case 'PREVIOUS_MONTH':
-      return {
-        minDate: startOfMonth(subMonths(executionDate, 1)),
-        maxDate: endOfMonth(subMonths(executionDate, 1)),
-      }
-    case 'PREVIOUS_QUARTER': {
-      const quarter = Math.floor(executionDate.getMonth() / 3)
+      dateRange.minDate = startOfMonth(subMonths(executionDate, 1))
+      dateRange.maxDate = endOfMonth(subMonths(executionDate, 1))
+      break
+    case 'PREVIOUS_QUARTER':
+      {
+        const quarter = Math.floor(executionDate.getMonth() / 3)
 
-      const startFullQuarter = new Date(executionDate.getFullYear(), quarter * 3 - 3, 1)
-      const endFullQuarter = new Date(startFullQuarter.getFullYear(), startFullQuarter.getMonth() + 3, 0)
+        const startFullQuarter = new Date(executionDate.getFullYear(), quarter * 3 - 3, 1)
+        const endFullQuarter = new Date(startFullQuarter.getFullYear(), startFullQuarter.getMonth() + 3, 0)
 
-      return {
-        minDate: startOfDay(startFullQuarter),
-        maxDate: endOfDay(endFullQuarter),
+        dateRange.minDate = startOfDay(startFullQuarter)
+        dateRange.maxDate = endOfDay(endFullQuarter)
       }
-    }
+      break
     default:
       throw new Boom.badData(`Invalid reportDateRange type: ${reportDateRange}`)
   }
+  return { minDate: dateRange.minDate.toISOString(), maxDate: dateRange.maxDate.toISOString() }
 }
 
 module.exports = {
