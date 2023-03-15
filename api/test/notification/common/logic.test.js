@@ -2,7 +2,7 @@ const { assert } = require('chai')
 const { getDateRangeFilters } = require('../../../src/notification/common/logic')
 
 describe('getDateRangeFilters Should return the correct date range', () => {
-  it.only('PREVIOUS_CALENDAR_DAY', async () => {
+  it('PREVIOUS_CALENDAR_DAY', async () => {
     const case1 = getDateRangeFilters(new Date('2022-11-25T01:50:00.000Z'), 'PREVIOUS_CALENDAR_DAY', null)
     assert.deepEqual(case1, {
       minDate: '2022-11-24T00:00:00.000Z',
