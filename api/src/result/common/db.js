@@ -296,20 +296,24 @@ function getQueryForResultsListAndExport(query, dataConstraints, options) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      assayType: 'at',
-      device: 'd',
-      deviceType: 'dt',
-      sample: 'sp',
-      site: 'si',
-      geography: 'g',
-      result: 'r',
-      country: 'c',
-      disease: 'dis',
-      showUnapprovedDevices,
-      displayResult,
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        assay: 'a',
+        assayType: 'at',
+        device: 'd',
+        deviceType: 'dt',
+        sample: 'sp',
+        site: 'si',
+        geography: 'g',
+        result: 'r',
+        country: 'c',
+        disease: 'dis',
+        showUnapprovedDevices,
+      },
+      { displayResult }
+    )
 
   return resultQuery
 }
