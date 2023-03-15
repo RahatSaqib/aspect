@@ -285,6 +285,7 @@ const ResultList = () => {
   useEffect(() => {
     setIsLoading(tableLoading)
   }, [tableLoading])
+
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location, {})
     const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
@@ -294,24 +295,27 @@ const ResultList = () => {
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-      navigate(
-        {
-          ...location,
-          search: `?${searchParams.toString()}`,
-        },
-        { replace: true }
-      )
+      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
 
-    const sortPage = makeSortPageSelector({
-      sortCol: 'endedOn',
-      sortDir: 'desc',
-    })
+    const sortPage = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     setFilters(getFilters(filtersParams))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams()
+    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    if (!filtersParams.has('displayResult')) {
+      filtersParams.set('displayResult', 'actual')
+      searchParams.set('filters', filtersParams)
+      navigate({ ...location, search: `?${searchParams.toString()}` })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
