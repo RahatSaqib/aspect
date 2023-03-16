@@ -12,6 +12,7 @@ function getResultsCountBase(knex, dataConstraints, query) {
   return getResultBaseQuery(knex, dataConstraints)
     .clone()
     .modify(modifiers.join.resultCategory1)
+    .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusLogId', 'rl.id')
     .count({
       totalErrors: knex.raw(`
         DISTINCT
@@ -24,7 +25,7 @@ function getResultsCountBase(knex, dataConstraints, query) {
       totalResults: knex.raw('DISTINCT r.id'),
     })
     .select({
-      lastUpload: knex.raw('MAX(r.endedOn)'),
+      lastUpload: knex.raw('MAX(rl.changedOn)'),
       senderOperator: 'r.senderOperator',
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')
