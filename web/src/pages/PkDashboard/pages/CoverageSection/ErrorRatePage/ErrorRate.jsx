@@ -4,10 +4,14 @@ import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
+const rnd = max => (Math.random() * max).toFixed(2)
+
 const ErrorRatePage = () => {
   const { formatMessage } = useI18n()
 
-  const data = new Array(43).fill({}).map((i, idx) => createData(idx, `City ${idx}`, 159, 6, 24, 9, 5))
+  const data = new Array(43)
+    .fill({})
+    .map((i, idx) => createData(idx, `City ${idx}`, rnd(159), rnd(6), rnd(24), rnd(9), rnd(5)))
 
   const columns = [
     { name: 'Name', prop: 'name' },

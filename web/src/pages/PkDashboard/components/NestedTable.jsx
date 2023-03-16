@@ -9,20 +9,29 @@ import {
   TableRow,
   TableFooter,
   TablePagination,
+  TableSortLabel,
 } from '@mui/material'
 
+function getComparator(order, orderBy) {
+  const descendingComparator = (a, b, orderBy) => (b[orderBy] < a[orderBy] ? -1 : b[orderBy] > a[orderBy] ? 1 : 0)
+
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy)
+}
+
 const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [order, setOrder] = useState('asc')
+  const [orderBy, setOrderBy] = useState(columns[0].prop)
   const [open, setOpen] = useState(-1)
   const colors = isDetail ? ['#dadbdf', '#e6e6e6'] : ['#eef1f8', '#ffffff']
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
+  const handleChangePage = (event, newPage) => setPage(newPage)
 
   const handleChangeRowsPerPage = event => {
     setRowsPerPage(parseInt(event.target.value, 10))
@@ -34,12 +43,28 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
       <TableHead>
         <TableRow>
           {columns.map((c, idx) => (
-            <TableCell align={idx !== 0 ? 'right' : undefined}>{c.name}</TableCell>
+            <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined}>
+              <TableSortLabel
+                active={orderBy === c.prop}
+                direction={orderBy === c.prop ? order : 'asc'}
+                onClick={() => {
+                  const isAsc = orderBy === c.prop && order === 'asc'
+                  setOrder(isAsc ? 'desc' : 'asc')
+                  setOrderBy(c.prop)
+                  setPage(0)
+                }}
+              >
+                {c.name}
+              </TableSortLabel>
+            </TableCell>
           ))}
         </TableRow>
       </TableHead>
       <TableBody>
-        {(rowsPerPage > 0 ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : rows).map((row, i) => (
+        {(rowsPerPage > 0
+          ? rows.sort(getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          : rows
+        ).map((row, i) => (
           <>
             <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
               <TableCell scope="row">{row.name}</TableCell>
