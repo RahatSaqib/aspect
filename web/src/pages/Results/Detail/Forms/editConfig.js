@@ -446,7 +446,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
               {
                 id: 'excluded',
                 controlType: { component: 'checkbox' },
-                type: 'readOnly',
+                type: 'text',
                 label: 'Excluded',
                 labelI18nKey: 'excluded',
                 disabledIf: (values, isEditMode) => !isEditMode,

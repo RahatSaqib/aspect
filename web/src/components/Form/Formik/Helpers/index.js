@@ -93,7 +93,11 @@ const getInitialValuesFromFormConfig = (config, savedValues) => {
           const savedValue = savedValues ? get(savedValues, fieldName) : null
           let value
           if (component === 'checkbox') {
-            value = isBoolean(savedValue) ? savedValue : initialValue === true
+            value = savedValue
+              ? isBoolean(savedValue)
+                ? savedValue
+                : Boolean(savedValue) === true
+              : Boolean(initialValue) === true
           } else {
             value = savedValue || initialValue || ''
           }
