@@ -9,11 +9,18 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
   const results = await getBaseQueryForResults()
+    .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
+    .select('rt.excluded', 'rt.id as resultTypeId')
     .where('r.id', resultId)
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      result: 'r',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        result: 'r',
+      },
+      { displayResult: 'all' }
+    )
     .select({
       resultText: knex.raw(
         `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
