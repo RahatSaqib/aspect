@@ -394,7 +394,12 @@ async function findDevices(availableDeviceDetails, knex) {
   }
   let matchingDevices = []
   if (partnerId) {
-    const partnerDeviceQuery = deviceQuery.clone().where('d.partnerId', partnerId)
+    const partnerDeviceQuery = deviceQuery.clone().modify(queryBuilder => {
+      queryBuilder.where('d.partnerId', partnerId)
+      if (countryCode) {
+        queryBuilder.andWhere('c.abbreviation', countryCode)
+      }
+    })
     if (deviceIdFromGxAlertSource) {
       matchingDevices = await partnerDeviceQuery
         .clone()
