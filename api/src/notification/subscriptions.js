@@ -1,4 +1,5 @@
 const actionHandlers = require('./actionHandler')
+const onResultAnalyzeTimeout = require('./resultBased/notifyTimedOutResults')
 
 async function getNotificationSubscriptions(knex) {
   const actionParameters = await knex('NotificationTypeCategory as ntc')
@@ -22,4 +23,5 @@ async function getNotificationTriggerSubscriptions({ messageContext }) {
 
 module.exports = {
   getNotificationTriggerSubscriptions,
+  RESULT_ANALYZE_TIMEOUT: onResultAnalyzeTimeout,
 }
