@@ -206,24 +206,29 @@ const NotificationFormPreview = ({ values }) => {
 
 export default NotificationFormPreview
 
-const ParsedString = ({ value }) => {
-  const generateParagraph = line => (
-    <p style={{ margin: 0 }}>
-      {line
-        .split(' ')
-        .map(word =>
-          word.includes('{')
-            ? word
-                .replaceAll('{{', '')
-                .replaceAll('}}', '')
-                .split('.')
-                .map(w => w[0].toUpperCase() + w.substring(1))
-                .join('')
-            : word
-        )
-        .join(' ')}
-    </p>
-  )
+/**
+ * Example
+ * Input: "hello {{5}} {{site.name}} world {{device.name}} {{}}"
+ * Output: "hello 5 SiteName world DeviceName {{}}"
+ * */
+const replacePlaceholdersWithPascalCase = text => {
+  const placeholderRegex = /{{.+?}}/g
 
-  return (value || '').split('\n').map(line => generateParagraph(line))
+  return text.replace(placeholderRegex, match => {
+    return match
+      .replace('{{', '')
+      .replace('}}', '')
+      .split('.')
+      .map(w => w[0].toUpperCase() + w.substring(1))
+      .join('')
+  })
+}
+
+const ParsedString = ({ value }) => {
+  const generateParagraph = line => <p style={{ margin: 0 }}>{line}</p>
+
+  const text = replacePlaceholdersWithPascalCase(value || '')
+  const lines = text.split('\n')
+
+  return lines.map(line => generateParagraph(line))
 }
