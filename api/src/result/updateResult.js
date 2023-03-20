@@ -5,6 +5,7 @@ const { getResultByResultId } = require('./common/db')
 const { resultUpdated } = require('./actions')
 const { knex } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
+const { resultTypeToId } = require('../shared/dictionary')
 
 async function updateResult(request) {
   const {
@@ -39,6 +40,10 @@ async function updateResult(request) {
   const { customFields, deviceId } = result.data
 
   let fieldsToUpdate = {}
+  if (payload?.excluded === false) {
+    const activeResultTypeId = await resultTypeToId('Patient')
+    fieldsToUpdate.resultTypeId = activeResultTypeId
+  }
   for (const customField of customFields) {
     if (customField.source) {
       _.set(fieldsToUpdate, customField.source, _.get(payload, customField.source))
