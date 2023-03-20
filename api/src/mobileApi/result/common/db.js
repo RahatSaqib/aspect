@@ -340,9 +340,14 @@ const getCountV2 = resultQuery => resultQuery.clone().countDistinct('r.id as cou
 const getAwaitingTreatment = resultQuery =>
   resultQuery.clone().countDistinct('r.id as count').where('rts.id', 1).first()
 
+const getPatientDataBySchema = () => {
+  // console.log(wip)
+  return {}
+}
+
 // get rows v2
 const getItemsV2 = (resultQuery, query) => {
-  return resultQuery
+  const outQuery = resultQuery
     .clone()
     .groupBy('r.id')
     .modify(sortPageParams, query, 'r.updatedOn')
@@ -360,6 +365,7 @@ const getItemsV2 = (resultQuery, query) => {
       'rc1.externalId as resultCategory1ExternalId',
       'rc2.externalId as resultCategory2ExternalId',
       'r.patientData',
+      'a.patientDataSchema',
       'r.resultData',
       'dis.externalid as diseaseExternalId',
       'dis.name as diseaseName',
@@ -399,6 +405,7 @@ const getItemsV2 = (resultQuery, query) => {
       'r.resultCategory2',
       knex.raw('r.resultData->>"$.copies" as copies')
     )
+  return outQuery
 }
 
 // get follow ups for all results in the response for performance (filter later) v2
@@ -619,35 +626,36 @@ const getLatestResultWorkflowLog = resultId => {
 }
 
 module.exports = {
-  generateResultQuery,
-  getCount,
-  getItems,
-  getFollowUps,
-  getComments,
-  generateResultQueryV2,
-  getCountV2,
-  getAwaitingTreatment,
-  getItemsV2,
-  getFollowUpsV2,
-  getCommentsV2,
-  insertResultWorkflowLogQuery,
-  updateResultWorkflowLogQuery,
-  getResultWorkflowStatusQuery,
   addResultDownloadLogQuery,
-  getCommentsOfResultById,
-  getFollowUpsOfResultById,
-  getFollowUpsForResultFollowup,
-  updateFollowUpDate,
-  getResultFollowUps,
-  getLastTreatmentStatusByResult,
-  getTreatmentStatus,
-  setTreatmentStatusLog,
-  updateResult,
-  getTreatmentStatusLogId,
-  updateResultTreatmentStatusLog,
   addResultFollowUp,
   deleteResultFollowUp,
-  insertResultWorkflowLog,
-  updateResultWithResultWorkflowLog,
+  generateResultQuery,
+  generateResultQueryV2,
+  getAwaitingTreatment,
+  getComments,
+  getCommentsOfResultById,
+  getCommentsV2,
+  getCount,
+  getCountV2,
+  getFollowUps,
+  getFollowUpsForResultFollowup,
+  getFollowUpsOfResultById,
+  getFollowUpsV2,
+  getItems,
+  getItemsV2,
+  getLastTreatmentStatusByResult,
   getLatestResultWorkflowLog,
+  getPatientDataBySchema,
+  getResultFollowUps,
+  getResultWorkflowStatusQuery,
+  getTreatmentStatus,
+  getTreatmentStatusLogId,
+  insertResultWorkflowLog,
+  insertResultWorkflowLogQuery,
+  setTreatmentStatusLog,
+  updateFollowUpDate,
+  updateResult,
+  updateResultTreatmentStatusLog,
+  updateResultWithResultWorkflowLog,
+  updateResultWorkflowLogQuery,
 }

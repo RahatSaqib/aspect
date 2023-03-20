@@ -40,6 +40,8 @@ async function getDownloadResultsListV2(query, auth, setDelivered = false) {
 
   const transformedData = await getTransformedDataV2(data, setDelivered, followUps, comments)
 
+  // reduce the patient data to only the fields we need as per the patientDataSchema
+
   // total pages calculation
   const totalPages = Math.ceil(total / size)
 

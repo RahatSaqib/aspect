@@ -184,6 +184,7 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
 const getTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
   const transformedData = await Promise.all(
     _.map(data, async d => {
+      // console.log(JSON.stringify(data, null, 2))
       const resultItem = await getResultItemTransformedDataV2(d, setDelivered, followUps, comments)
       return resultItem
     })
@@ -407,6 +408,18 @@ async function getResultNotesByResultId(resultId, getResultNotesByResultIdForRes
   return resultNotes
 }
 
+// refactor transformPatientDataBySchema to use lodash map
+async function transformPatientDataBySchema(patientData, patientDataSchema) {
+  // console.log(JSON.stringify(patientDataSchema, null, 2))
+  const transformedData = {}
+  if (patientData && patientDataSchema) {
+    _.map(patientDataSchema, field => {
+      transformedData[field.label] = patientData[field.externalId]
+    })
+  }
+  return transformedData
+}
+
 // Trasnformed data v2 for result by Id
 const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
@@ -419,6 +432,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
   const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
+  const patientDataSchema = data.patientDataSchema ? JSON.parse(data.patientDataSchema) : null
   const isRecorded = data.resultWorkflowStatusId === acknowledgedId
   const resultData = data.resultData
     ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
@@ -436,7 +450,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     deviceName: data.deviceName,
     resultCategory1ExternalId: data.resultCategory1ExternalId,
     resultCategory2ExternalId: data.resultCategory2ExternalId,
-    patientData,
+    patientData: await transformPatientDataBySchema(patientData, patientDataSchema),
     testId: patientData ? patientData.id : data.sampleId,
     resultData,
     sample: {
