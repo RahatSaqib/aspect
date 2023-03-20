@@ -53,7 +53,7 @@ const allResults = {
   sortOrder: 0,
   availableForNotification: 1,
   exportCsv: true,
-  exportExcel: false,
+  exportExcel: true,
   sheets: [
     {
       sortOrder: 0,
