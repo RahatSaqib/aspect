@@ -275,8 +275,9 @@ export const InventoryItemsListWithProps = ({
               intl={intl}
               config={reducedFilters}
               dateFilterLabel={intl.formatMessage(messages.expiresOn)}
-            />
-            <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+            >
+              <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+            </BrowseFilters>
           </div>
           <DataTableProgressBar disabled={!isLoading} />
           {items.currentIdList.length === 0 ? (

@@ -127,8 +127,9 @@ export const SiteList = ({ navigate, location }) => {
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
-            <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
+            <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
+              <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
+            </BrowseFilters>
           </div>
           {data.siteList.length === 0 ? (
             <BrowseEmptyList navigate={navigate} location={location} />

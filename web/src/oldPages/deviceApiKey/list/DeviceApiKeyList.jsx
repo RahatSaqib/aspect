@@ -405,12 +405,13 @@ export const DeviceApiKeyList = ({
             intl={intl}
             config={reducedFilters}
             onClickExport={onExportClick}
-          />
-          <AspectExportListButton
-            onExport={onExportClick}
-            visible={!items.currentIdList.isEmpty()}
-            reportName="DeviceApiKey"
-          />
+          >
+            <AspectExportListButton
+              onExport={onExportClick}
+              visible={!items.currentIdList.isEmpty()}
+              reportName="DeviceApiKey"
+            />
+          </BrowseFilters>
         </div>
         <DataTableProgressBar disabled={!table.loading} />
 
