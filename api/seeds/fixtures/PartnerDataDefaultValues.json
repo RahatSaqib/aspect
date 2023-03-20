@@ -9,5 +9,6 @@
   "dueDaysInventoryStockExpiring": 30,
   "dueDaysCalibrationIssue": 90,
   "limitDaysToNotifyResult": 30,
-  "hoursNotificationsShouldWaitForCustomFields": 4
+  "hoursNotificationsShouldWaitForCustomFields": 4,
+  "deviceConfiguration": []
 }

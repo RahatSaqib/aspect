@@ -8,8 +8,8 @@
 
   --carnation: #f45b69;
   --cornflower-blue: #4687f4;
-  --eastern-blue: #21A0B0;
-  --eastern-blue-2: #20A1B3;
+  --eastern-blue: #21a0b0;
+  --eastern-blue-2: #20a1b3;
   --french-gray: #b7b7be;
   --froly: #f36283;
   --feijoa: #aed581;
@@ -19,10 +19,10 @@
   --manatee: #91949d;
   --mandy: #e75164;
   --mandy-3: #e85164;
-  --mine-shaft: #333333
+  --mine-shaft: #333333;
   --ming: #34717c;
   --mercury: #e6e6e6;
-  --my-sin: #fcb124
+  --my-sin: #fcb124;
   --paradiso: #3e8f98;
   --picton-blue: #44d0e7;
   --purple-mountains-majesty: #9874b2;
@@ -47,16 +47,16 @@
   --white: #ffffff;
   --wild-sand: #f0f0f0;
 
-  --apple-green: #439B45;
+  --apple-green: #439b45;
   --azure-radiance: #0091ff;
   --chathams-blue: #18527d;
-  --conifer: #99D25D;
+  --conifer: #99d25d;
   --dusty: #979797;
   --foam: #f6fcfe;
   --gallery: #ececec;
-  --geyser: #CCDBE1;
-  --even-red: #FF0000;
-  --golden-dream: #EED22A;
+  --geyser: #ccdbe1;
+  --even-red: #ff0000;
+  --golden-dream: #eed22a;
   --guardsman-red: #d60000;
   --humming-bird: #d4f3f9;
   --iron-2: #e6e7e9;
@@ -64,12 +64,12 @@
   --malibu: #7fc4fa;
   --saffron: #f0bc2c;
   --steel-blue: #5290c1;
-  --thunderbird: #DB2F17;
+  --thunderbird: #db2f17;
   --tundora: #454545;
   --your-pink: #ffc9c4;
   --malachite: #00ca1c;
-  --web-orange: #FEA500;
-  --web-orange-2: #FFD970;
+  --web-orange: #fea500;
+  --web-orange-2: #ffd970;
 
   --abbott-orange-1: #fff155;
   --abbott-orange-2: #ffc928;
@@ -92,7 +92,7 @@
   --genex-blue5: #5f6d71;
   --genex-blue6: #243034;
   --genex-blue7: #e0e0e0;
-  --genex-blue8: #BFD7ED;
+  --genex-blue8: #bfd7ed;
 
   --covid-green1: #0f3328;
   --covid-green2: #d7fff0;
@@ -120,7 +120,7 @@
   --aspect-color-chill-blue-1: var(--ming, #34717c);
   --aspect-color-chill-blue-2: var(--paradiso, #3e8f98);
   --aspect-color-chill-blue-3: var(--tradewind, #67abb4);
-  --aspect-color-conifer: var(--conifer, #99D25D);
+  --aspect-color-conifer: var(--conifer, #99d25d);
   --aspect-color-feijoa: var(--feijoa, #aed581);
   --aspect-color-grey-1: var(--tuna, #363844);
   --aspect-color-grey-2: var(--mako, #444853);
@@ -132,8 +132,8 @@
   --aspect-color-grey-8: var(--white-lilac-2, #f6f7fb);
   --aspect-color-grey-9: var(--mercury, #e6e6e6);
   --aspect-color-mandy: var(--guardsman-red, #d60000);
-  --aspect-color-mandy-2: var(--carnation, #EB6562);
-  --aspect-color-mandy-3: var(--mandy-3,  #e85164);
+  --aspect-color-mandy-2: var(--carnation, #eb6562);
+  --aspect-color-mandy-3: var(--mandy-3, #e85164);
   --aspect-color-mountain: var(--purple-mountains-majesty, #9874b2);
   --aspect-color-pink: var(--your-pink, #ffc9c4);
   --aspect-color-scooter-blue-1: var(--robins-egg-blue, #00c4e0);
@@ -151,28 +151,28 @@
   --aspect-color-sushi: var(--sushi, #7cb342);
   --aspect-color-mint: #d4ffdf;
   --aspect-color-slate: #666666;
-  --aspect-color-crayola: #FFC099;
-  --aspect-color-powder: #BCE9F0;
+  --aspect-color-crayola: #ffc099;
+  --aspect-color-powder: #bce9f0;
 
-  --aspect-device-active: #99D25D;
-  --aspect-device-reportedActive: #99D25D;
-  --aspect-device-inactive: #D8D8D8;
-  --aspect-device-no-samples: #CCDCE1;
-  --aspect-device-stockout: #72ECFF;
-  --aspect-device-error: #FF2000;
-  --aspect-device-transfer-time: #99D7EF;
-  --aspect-device-weekend: #F4F4F4;
-  --aspect-device-aspect: #20A1B3;
-  --aspect-device-titles: #06C4E3;
+  --aspect-device-active: #99d25d;
+  --aspect-device-reportedActive: #99d25d;
+  --aspect-device-inactive: #d8d8d8;
+  --aspect-device-no-samples: #ccdce1;
+  --aspect-device-stockout: #72ecff;
+  --aspect-device-error: #ff2000;
+  --aspect-device-transfer-time: #99d7ef;
+  --aspect-device-weekend: #f4f4f4;
+  --aspect-device-aspect: #20a1b3;
+  --aspect-device-titles: #06c4e3;
 
   --aspect-device-inactiveUnknown: #454545;
-  --aspect-device-inactiveConnectivity: #EB6562;
+  --aspect-device-inactiveConnectivity: #eb6562;
   --aspect-device-inactiveDecommissioned: #7d96bb;
-  --aspect-device-inactiveDownForRepair: #DB3018;
+  --aspect-device-inactiveDownForRepair: #db3018;
   --aspect-device-inactiveNoTestsPerformed: #6d6f7d;
   --aspect-device-inactiveOutOfInventory: #0088aa;
-  --aspect-device-inactiveNoStaff: #F7B500;
-  --aspect-device-inactiveNoSamples: #F7B500;
+  --aspect-device-inactiveNoStaff: #f7b500;
+  --aspect-device-inactiveNoSamples: #f7b500;
   --aspect-device-inactiveNoPower: #ffbe7d;
   --aspect-device-inactiveOther: #bf01c5;
 
@@ -189,7 +189,7 @@
   --aspect-font-size-lg: 24px;
 
   --aspect-button-border-radius: 3px;
-  
+
   --lato-font-weight-regular: 400;
   --lato-font-weight-bold: 700;
   --lato-font-weight-black: 900;

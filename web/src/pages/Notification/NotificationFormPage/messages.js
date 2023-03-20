@@ -1,7 +1,28 @@
 import { defineMessages } from 'react-intl'
+import form from '../../../components/Form/messages'
 import { resultCategory, assay, report } from '../../../messages'
 
 export default defineMessages({
+  yes: {
+    id: 'pages.NotificationDetail.New.yes',
+    defaultMessage: 'Yes',
+  },
+  no: {
+    id: 'pages.NotificationDetail.New.no',
+    defaultMessage: 'No',
+  },
+  buildNotification: {
+    id: 'pages.NotificationDetail.New.buildNotification',
+    defaultMessage: 'Build Notification',
+  },
+  editNotification: {
+    id: 'pages.NotificationDetail.New.editNotification',
+    defaultMessage: 'Edit Notification',
+  },
+  previewNotification: {
+    id: 'pages.NotificationDetail.New.previewNotification',
+    defaultMessage: 'Preview Notification',
+  },
   reportBaseType: {
     id: 'pages.NotificationDetail.New.reportBaseType',
     defaultMessage: 'Reports',
@@ -646,4 +667,5 @@ export default defineMessages({
   ...assay,
   ...resultCategory,
   ...report,
+  ...form,
 })

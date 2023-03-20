@@ -510,7 +510,7 @@ async function updateDevice(request) {
     auth: { credentials },
   } = request
 
-  const { personId } = await getUser(credentials.name)
+  const { id: currentlyLoggedInUserId } = await getUser(credentials.name)
 
   // TODO: check permission
   const now = new Date()
@@ -538,7 +538,7 @@ async function updateDevice(request) {
       notes: payload.notes,
       shortName: payload.shortName,
       updatedOn: now,
-      updatedBy: personId,
+      updatedBy: currentlyLoggedInUserId,
     })
 
   if (prevDeviceApprovalId !== deviceApprovalId) {
@@ -547,7 +547,7 @@ async function updateDevice(request) {
       deviceApprovalId,
       changedOn: now,
       createdOn: now,
-      createdBy: personId,
+      createdBy: currentlyLoggedInUserId,
     })
   }
 
@@ -555,8 +555,7 @@ async function updateDevice(request) {
     return Boom.badRequest()
   }
 
-  const result = await showDevice(request)
-  return result
+  return showDevice(request)
 }
 
 async function listApprovalTypes() {

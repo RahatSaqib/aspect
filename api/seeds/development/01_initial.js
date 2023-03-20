@@ -6,6 +6,7 @@ const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYe
 
 const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
+const countrySpecificReportFixture = require('./fixtures/reports')
 const {
   allAssayTypeToId,
   allAssayToId,
@@ -4875,7 +4876,7 @@ async function seed(knex) {
     } // end of seeding results for specific countries
   }) // end of 'await Promise.each(geography.countries'
 
-  await upsertReports(knex)
+  await upsertReports(knex, countrySpecificReportFixture)
 
   await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerOne, partnerOneId)
   await upsertJobFunctionFixture(knex, jobFunctionsFixturePartnerTwo, partnerTwoId)
