@@ -535,8 +535,11 @@ function filterExcludedResults(queryBuilder, aliases, options) {
  * @param {*} queryBuilder - Knex query builder
  * @param {*} constraints - Constraints to apply, @see getConstraints
  * @param {*} receivedAliases - Aliases used for each table in the query (e.g. { assay: 'a', result: 'r' })
- * @param {(excludedResults)} options - Options to apply.
- * * options.excludedResults - Include results with excluded = true, or skip them if false.
+ * @param {Object} options - Options to apply.
+ * @param {('actual'|'excluded'|'all')=} options.displayResult - Excluded result filter mode.
+ * 'actual': default. only returns non excluded results.
+ * 'excluded' only returns excluded results.
+ * 'all' return all results.
  */
 function addConstraints(queryBuilder, constraints, receivedAliases, options = { displayResult: 'actual' }) {
   if (_.isEmpty(constraints)) {
