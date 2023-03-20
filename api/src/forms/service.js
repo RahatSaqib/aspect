@@ -142,7 +142,7 @@ const getCustomFieldPlaceholdersForNotifications = async partnerId => {
   await Promise.each(formQuery, async form => {
     const formPlaceholders = setFormAssayToCustomFields(form, formDictionary[form.jsonSchemaFileName].fields).map(
       field => ({
-        id: `result.customFields.${field.id}`,
+        id: `result.customFields.${field.source}`,
         nameI18nKey: `${field.i18nKey}`,
         name: `${field.title}`,
         assayWhitelist: field.assayExternalId,

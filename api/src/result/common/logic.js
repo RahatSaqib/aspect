@@ -1,3 +1,5 @@
+const get = require('lodash/get')
+
 const plainToDeepObjectResult = result => {
   if (!result) return null
 
@@ -10,6 +12,16 @@ const plainToDeepObjectResult = result => {
   return r
 }
 
+const getMissingResultValues = (result, sources) => {
+  const deepResult = plainToDeepObjectResult(result)
+  const missingSources = sources.filter(src => {
+    const value = get(deepResult, src)
+    return !value
+  })
+  return missingSources
+}
+
 module.exports = {
   plainToDeepObjectResult,
+  getMissingResultValues,
 }

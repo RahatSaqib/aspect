@@ -62,7 +62,7 @@ const PlaceholderSelector = ({ onSelect, onClose, filter }) => {
                 {(p.labelI18nKey === 'placeholderCustomFields'
                   ? p.options.filter(o => (filter.assay ? o.assayWhitelist.includes(filter.assay) : o))
                   : p.options
-                ).map(({ id, nameI18nKey }) => {
+                ).map(({ id, nameI18nKey, name }) => {
                   const title = `Insert placeholder {{${id}}}`
                   return (
                     <MenuItem
@@ -73,7 +73,7 @@ const PlaceholderSelector = ({ onSelect, onClose, filter }) => {
                       title={title}
                     >
                       <IconProvider icon="BsBraces" title={title} className={cssClasses('menu-item-icon')} />
-                      {formatMessage(messages[nameI18nKey])}
+                      {messages[nameI18nKey] ? formatMessage(messages[nameI18nKey]) : name}
                     </MenuItem>
                   )
                 })}

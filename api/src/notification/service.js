@@ -16,7 +16,7 @@ const saveReportToFile = require('../report/saveReportToFile')
 const config = require('../config')
 const { getDateRangeFilters } = require('./common/logic')
 const { CATEGORY } = require('./constants')
-const { getMissingCustomFieldValues } = require('../result/common/db.js')
+const { getMissingResultValues } = require('../result/common/logic.js')
 
 async function clearCache() {
   return NotificationCache.getInstance(knex).refreshCache()
@@ -28,7 +28,7 @@ const triggerConditionMethods /* evaluationMethods */ = {
   reportBased: { policiesQueryModifier: reportConditionsMet, shouldNotifyResource: async () => true },
 }
 
-async function getCustomFieldsPlaceholdersFromTemplates(notificationTypeId) {
+async function getCustomFieldsSourcesFromTemplates(notificationTypeId) {
   const { concatenatedTemplates } = await knex('NotificationType as nt')
     .innerJoin('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .leftJoin('EmailTemplate as et', 'mt.emailTemplateId', 'et.id')
@@ -41,18 +41,21 @@ async function getCustomFieldsPlaceholdersFromTemplates(notificationTypeId) {
       )
     )
 
-  const regExp = /(?<=\{{)(.*?)(?=\}})/
-  const customFieldsPlaceholders = _.uniq(
-    concatenatedTemplates.match(regExp).filter(placeholder => placeholder.includes('result.customFields'))
-  )
+  const customFieldsSources = []
 
-  return customFieldsPlaceholders
+  const regExp = /{{.*?customFields\.(?<field>.*?)\s?}}/gi
+  let matched = regExp.exec(concatenatedTemplates)
+  while (matched) {
+    // matched
+    if (matched.groups.field) customFieldsSources.push(matched.groups.field)
+
+    matched = regExp.exec(concatenatedTemplates)
+  }
+
+  return customFieldsSources
 }
 
 async function shouldNotifyResult(resultId, notificationTypeId) {
-  const mandatoryCustomFieldExternalIds = (await getCustomFieldsPlaceholdersFromTemplates(notificationTypeId)).map(
-    cfp => cfp.replace('result.customFields.', '')
-  )
   const result = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -61,15 +64,29 @@ async function shouldNotifyResult(resultId, notificationTypeId) {
     .select(['g.countryId', 'at.diseaseId', 'r.*'])
     .first()
 
-  const timeout = new Date(result.endedOn)
-  timeout.setHours(timeout.getHours() + 4)
+  const { daysLimitToNotifyResults, hoursNotificationsShouldWaitForCustomFields } = await knex('Partner')
+    .where('id', result.partnerId)
+    .first()
 
-  // If the result was ended more than 4 hours ago...
-  if (timeout < new Date()) {
+  // Should not notify if the result is older than the partner's days limit
+  const dateLimit = new Date()
+  dateLimit.setDate(dateLimit.getDate() - daysLimitToNotifyResults)
+  if (result.endedOn < dateLimit) {
+    return false
+  }
+
+  const mandatorySources = await getCustomFieldsSourcesFromTemplates(notificationTypeId)
+
+  const timeout = new Date(result.endedOn)
+  timeout.setHours(timeout.getHours() + hoursNotificationsShouldWaitForCustomFields)
+
+  // If the result was ended more than 4 (or what set for the partner) hours ago...
+  if (timeout > new Date()) {
     // Then we should still wait for the custom fields to be filled
-    const missingCustomFields = await getMissingCustomFieldValues(result, mandatoryCustomFieldExternalIds)
+    const missingSources = await getMissingResultValues(result, mandatorySources)
+
     // And send the notifications if all the required custom fields were sent
-    return missingCustomFields.length === 0
+    return missingSources.length === 0
   }
 
   // Else, just send the notification

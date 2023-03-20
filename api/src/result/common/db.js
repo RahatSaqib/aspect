@@ -3,7 +3,6 @@ const _ = require('lodash')
 const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
 const { SELECT_FIELDS_UTC } = require('../query')
-const { plainToDeepObjectResult } = require('./logic')
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
@@ -131,27 +130,27 @@ async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayI
   return customFields
 }
 
-async function getMissingCustomFieldValues(
-  { deviceId, partnerId, countryId, assayId, diseaseId, ...restResultProps } = {},
-  customFieldExternalIds = []
-) {
-  const customFields = await getCustomFieldsForResult({ deviceId, partnerId, countryId, assayId, diseaseId })
+// async function getMissingCustomFieldValues(
+//   { deviceId, partnerId, countryId, assayId, diseaseId, ...restResultProps } = {},
+//   customFieldExternalIds = []
+// ) {
+//   const customFields = await getCustomFieldsForResult({ deviceId, partnerId, countryId, assayId, diseaseId })
 
-  if (customFields === null || customFields.length === 0) return []
+//   if (customFields === null || customFields.length === 0) return []
 
-  let mandatoryCustomFields
-  if (customFieldExternalIds.length === 0) mandatoryCustomFields = customFields.filter(cf => cf.optional === false)
-  else mandatoryCustomFields = customFields.filter(cf => customFieldExternalIds.includes(cf.id))
+//   let mandatoryCustomFields
+//   if (customFieldExternalIds.length === 0) mandatoryCustomFields = customFields.filter(cf => cf.optional === false)
+//   else mandatoryCustomFields = customFields.filter(cf => customFieldExternalIds.includes(cf.id))
 
-  // Transforms the patientData and resultData from strings to objects
-  const deepResult = plainToDeepObjectResult(restResultProps)
-  const missingFields = mandatoryCustomFields.filter(cf => {
-    const value = _.get(deepResult, cf.source)
-    return !value
-  })
+//   // Transforms the patientData and resultData from strings to objects
+//   const deepResult = plainToDeepObjectResult(restResultProps)
+//   const missingFields = mandatoryCustomFields.filter(cf => {
+//     const value = _.get(deepResult, cf.source)
+//     return !value
+//   })
 
-  return missingFields
-}
+//   return missingFields
+// }
 
 const getBaseResults = () =>
   knex('Result as r')
@@ -472,5 +471,5 @@ module.exports = {
   getBaseQueryForResults,
   getQueryForDataExtract,
   getCustomFieldsForResult,
-  getMissingCustomFieldValues,
+  // getMissingCustomFieldValues,
 }
