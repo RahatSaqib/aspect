@@ -180,7 +180,7 @@ const getBaseQueryForResults = () =>
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
-function getQueryForResultsListAndExport(query, dataConstraints, options) {
+function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
   const displayResult = query.displayResult || 'all'
 
