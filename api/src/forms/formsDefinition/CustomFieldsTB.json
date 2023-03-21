@@ -1,7 +1,7 @@
 {
   "fields": [
     {
-      "id": "PHPatientGender",
+      "id": 101,
       "completionWeight": 10,
       "name": "Gender",
       "title": "Gender",
@@ -13,7 +13,7 @@
       "optional": false,
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
-      "payloadOriginPath": "data.customFieldData.5.value",
+      "payloadOriginPath": "data.customFieldData.101.value",
       "payloadDestinationPath": "patient.PatientGender",      
       "items": [
         {

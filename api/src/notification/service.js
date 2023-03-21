@@ -23,7 +23,7 @@ async function clearCache() {
   return true
 }
 
-const triggerConditionMethods /* evaluationMethods */ = {
+const triggerConditionMethods = {
   issueBased: { policiesQueryModifier: issueConditionsMet, shouldNotifyResource: async () => true },
   resultBased: { policiesQueryModifier: resultConditionsMet, shouldNotifyResource: shouldNotifyResult },
   reportBased: { policiesQueryModifier: reportConditionsMet, shouldNotifyResource: async () => true },

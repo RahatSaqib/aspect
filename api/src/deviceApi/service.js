@@ -14,7 +14,6 @@ const {
   resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
-const { plainToDeepObjectResult } = require('../result/common/logic')
 const {
   updateDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
@@ -648,15 +647,15 @@ async function mergeResultWithContext(context) {
   const {
     processedResult: plainResult,
     existingResult: plainPreviousResult,
-    // changeFlags,
+    // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
   } = await mergeResult(knex, deviceId, transformedPayload, { now })
   context.addDeviceLogUpdate('resultId', plainResult.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
   const postProcessResult = await postProcess(pluginContext, plainResult, plainPreviousResult)
 
-  // TODO: send notification with the isResultUpdated action
-  const result = plainToDeepObjectResult(plainResult)
-  const previousResult = plainToDeepObjectResult(plainPreviousResult)
+  // This is going to be used when we implement the Sample ID and Patient ID based notification
+  // const result = plainToDeepObjectResult(plainResult)
+  // const previousResult = plainToDeepObjectResult(plainPreviousResult)
 
   // Trigger notifications
   context.messageContext.bindActionCreators({ resultReadyForNotification })
@@ -665,18 +664,18 @@ async function mergeResultWithContext(context) {
     created: false,
   }
 
-  if (previousResult) {
+  if (plainPreviousResult) {
     // If a previous result exist, then we need to evaluate the notifications triggered on result update
     // Also the results without a creation notification are going to be re-evaluated
-    context.messageContext.resultReadyForNotification(result.id, notificationSubType.updated)
+    context.messageContext.resultReadyForNotification(plainResult.id, notificationSubType.updated)
   } else {
     // Else, only the creation-based notifications should be triggered
-    context.messageContext.resultReadyForNotification(result.id, notificationSubType.created)
+    context.messageContext.resultReadyForNotification(plainResult.id, notificationSubType.created)
   }
 
   return {
     ...postProcessResult,
-    aspectResultId: result.id,
+    aspectResultId: plainResult.id,
   }
 }
 

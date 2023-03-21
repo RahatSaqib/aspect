@@ -130,28 +130,6 @@ async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayI
   return customFields
 }
 
-// async function getMissingCustomFieldValues(
-//   { deviceId, partnerId, countryId, assayId, diseaseId, ...restResultProps } = {},
-//   customFieldExternalIds = []
-// ) {
-//   const customFields = await getCustomFieldsForResult({ deviceId, partnerId, countryId, assayId, diseaseId })
-
-//   if (customFields === null || customFields.length === 0) return []
-
-//   let mandatoryCustomFields
-//   if (customFieldExternalIds.length === 0) mandatoryCustomFields = customFields.filter(cf => cf.optional === false)
-//   else mandatoryCustomFields = customFields.filter(cf => customFieldExternalIds.includes(cf.id))
-
-//   // Transforms the patientData and resultData from strings to objects
-//   const deepResult = plainToDeepObjectResult(restResultProps)
-//   const missingFields = mandatoryCustomFields.filter(cf => {
-//     const value = _.get(deepResult, cf.source)
-//     return !value
-//   })
-
-//   return missingFields
-// }
-
 const getBaseResults = () =>
   knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -471,5 +449,4 @@ module.exports = {
   getBaseQueryForResults,
   getQueryForDataExtract,
   getCustomFieldsForResult,
-  // getMissingCustomFieldValues,
 }
