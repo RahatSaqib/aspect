@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const cron = require('node-cron')
 const { startUp: reportBasedCronStartUp } = require('../notification/reportBased/reportBasedCronHandler')
+const { resultAnalyzeTimeout } = require('../notification/actions')
 const { calibrationDueDateAnalysis, calibrationIssueNotificationTrigger } = require('../device/actions')
 const {
   factGenerateDeviceConnectivity,
@@ -36,6 +37,7 @@ function startScheduler(queue) {
     logDeviceMaintenanceStatus,
     resolveIssues,
     tryToContinueUnprocessedRawData,
+    resultAnalyzeTimeout,
   })
 
   dispatcher.factGenerateResultCounts()
@@ -47,6 +49,7 @@ function startScheduler(queue) {
   dispatcher.resolveIssues()
   dispatcher.calibrationDueDateAnalysis()
   dispatcher.calibrationIssueNotificationTrigger()
+  dispatcher.resultAnalyzeTimeout()
 
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
