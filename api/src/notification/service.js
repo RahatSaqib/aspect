@@ -19,7 +19,8 @@ const { CATEGORY } = require('./constants')
 const { getMissingResultValues } = require('../result/common/logic.js')
 
 async function clearCache() {
-  return NotificationCache.getInstance(knex).refreshCache()
+  await NotificationCache.getInstance(knex).refreshCache()
+  return true
 }
 
 const triggerConditionMethods /* evaluationMethods */ = {
