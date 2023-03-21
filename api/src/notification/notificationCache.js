@@ -43,7 +43,7 @@ class NotificationCache {
     this.notificationCache.del(CATEGORY.REPORT_BASED)
     await this.getCacheValueIssueNotification()
     await this.getCacheValueResultNotification()
-    await this.getCacheValueReportNotification()
+    return this.getCacheValueReportNotification()
   }
 
   // set the cache key and value
