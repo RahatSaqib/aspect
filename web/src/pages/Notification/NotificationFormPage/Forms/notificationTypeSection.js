@@ -114,10 +114,6 @@ const notificationTypeSection = formatMessage => ({
                 label: formatMessage(messages.triggerWhenForResultCreated),
               },
               {
-                value: 'updated',
-                label: formatMessage(messages.triggerWhenForResultUpdated),
-              },
-              {
                 value: 'any',
                 label: formatMessage(messages.triggerWhenResultCreatedOrUpdated),
               },

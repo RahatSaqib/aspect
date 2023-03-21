@@ -97,8 +97,12 @@ async function analyzeNotifications(context, action) {
            */
           const { resultBasedScope = 'any' } = JSON.parse(nt.filterCondition)
           if (isResultUpdated) {
-            return ['any', 'updated'].includes(resultBasedScope)
+            // When a result is updated, all type of result-based notifications should be analyzed
+            // Results on update can include custom fields of used placeholders, and the creation-based notifications should be re-evaluated
+            return true
           }
+
+          // When a result is created, we should evaluate only the notifications based on creation or on creation and update
           return ['any', 'created'].includes(resultBasedScope)
         }
         case CATEGORY.REPORT_BASED: {

@@ -665,12 +665,13 @@ async function mergeResultWithContext(context) {
     created: false,
   }
 
-  // Notifications on creation are filtered internally if the result has already been notified
-  context.messageContext.resultReadyForNotification(result.id, notificationSubType.created)
-
-  // If a previous result exist, then we need to evaluate the notification triggered on result update
   if (previousResult) {
+    // If a previous result exist, then we need to evaluate the notifications triggered on result update
+    // Also the results without a creation notification are going to be re-evaluated
     context.messageContext.resultReadyForNotification(result.id, notificationSubType.updated)
+  } else {
+    // Else, only the creation-based notifications should be triggered
+    context.messageContext.resultReadyForNotification(result.id, notificationSubType.created)
   }
 
   return {

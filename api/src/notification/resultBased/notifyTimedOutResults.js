@@ -23,21 +23,16 @@ const notifyTimedOutResults = async (_, { messageContext }) => {
       areaScope: nt.areaScope ? JSON.parse(nt.areaScope) : null,
       deviceLevel: nt.deviceLevel,
       updatedOn: nt.updatedOn,
-      resultBasedScope: nt.resultBasedScope,
       id: nt.id,
     }
   })
-
-  // const { daysLimitToNotifyResults, hoursNotificationsShouldWaitForCustomFields } = await knex('Partner')
-  //     .where('id', result.partnerId)
-  //     .first()
 
   let resultIds = []
 
   messageContext.bindActionCreators({ resultReadyForNotification })
 
   await Promise.each(notificationTypes, async nt => {
-    const ntResultIds = await knex('Result as r')
+    const ntResultIdsQuery = knex('Result as r')
       .innerJoin('Assay as a', 'r.assayId', 'a.id')
       .leftJoin('Notification as n', join => {
         join.on('r.id', 'n.resultId')
@@ -75,15 +70,20 @@ const notifyTimedOutResults = async (_, { messageContext }) => {
         })
       })
       // Results created after updating the notification for the last time
-      //  .where('r.endedOn', '>=', nt.updatedOn)
+      // We don't want to notify results created when the notification had a different configuration
+      .where('r.endedOn', '>=', nt.updatedOn)
       // Results that timed out
       .andWhere(
         knex.raw('DATE_ADD(r.endedOn, INTERVAL p.hoursNotificationsShouldWaitForCustomFields HOUR)'),
         '<',
         knex.raw('NOW()')
       )
+      // Results that are not older than the limit set to the partner
+      .andWhere(knex.raw('DATE_ADD(r.endedOn, INTERVAL p.daysLimitToNotifyResults DAY)'), '>', knex.raw('NOW()'))
       .whereNull('n.id')
       .pluck('r.id')
+
+    const ntResultIds = await ntResultIdsQuery
 
     resultIds = uniq([...resultIds, ...ntResultIds])
     resultIds.forEach(rId => messageContext.resultReadyForNotification(rId, nt.resultBasedScope === 'updated'))
