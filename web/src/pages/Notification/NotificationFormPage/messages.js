@@ -168,8 +168,10 @@ export default defineMessages({
   },
   notificationTypeResultBasedMessage: {
     id: 'pages.Notification.type.notificationTypeResultBasedMessage',
-    defaultMessage:
-      'This notification will be triggered for results ended on within last 30 days period. For older results notification will not trigger.',
+    defaultMessage: `The result based notification can be sent on test creation or on test creation and update. Also, a test is only going to trigger a notification if it is less than {daysLimitToNotifyResults} days old, it was done before the last update of this notification, and if any of the next conditions are accomplished:\n
+      - All the custom fields referenced in the templates of the notification were filled in the test\n
+      - {hoursNotificationsShouldWaitForCustomFields} hours passed since the test was done
+      `,
   },
   notificationTypeDeviceOffline: {
     id: 'pages.Notification.type.notificationTypeDeviceOffline',
