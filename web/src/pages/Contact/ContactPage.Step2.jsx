@@ -48,9 +48,15 @@ const ContactPageStepTwo = ({ setStep, id }) => {
   })
 
   const { mutate: updateLogin } = useUpdatePersonLogin(id === ACTION.SELF ? loggedInUserId : id)
+
   return (
     <>
-      <ContactStepper step={1} full={id !== ACTION.SELF} />
+      <ContactStepper
+        step={1}
+        full={id !== ACTION.SELF}
+        isUpdate={id !== ACTION.ADD}
+        onChange={(v, step) => setStep(step)}
+      />
       {isLoading ? (
         <Loading />
       ) : (
@@ -66,10 +72,8 @@ const ContactPageStepTwo = ({ setStep, id }) => {
               },
               {
                 onSuccess: () => {
-                  if (id !== ACTION.SELF) {
+                  if (id === ACTION.ADD) {
                     setStep(2)
-                  } else {
-                    navigate('/browse/person')
                   }
                 },
               }
@@ -132,7 +136,10 @@ const ContactPageStepTwo = ({ setStep, id }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button onClick={() => setStep(0)}>{formatMessage(messages.back)}</Button>
+                  {id === ACTION.ADD ? (
+                    <Button onClick={() => setStep(0)}>{formatMessage(messages.back)}</Button>
+                  ) : null}
+
                   <Box sx={{ flex: '1 1 auto' }} />
                   {dirty ? (
                     <Button type="submit" disabled={!isValid}>
