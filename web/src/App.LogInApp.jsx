@@ -133,7 +133,7 @@ const LogInApp = () => {
 
   const a = r => isPermittedUser(userPermissions, { required: r })
 
-  const isPakistan = countryAbbreviation === 'XXX' // to ensure no one access it before completing the feature
+  const isPakistan = countryAbbreviation === 'US' // to ensure no one access it before completing the feature
 
   return (
     <LoggedInLayout>
