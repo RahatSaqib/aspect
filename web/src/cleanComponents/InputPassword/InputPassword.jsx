@@ -1,8 +1,12 @@
 import React from 'react'
 import { Clear } from '@mui/icons-material'
 import { TextField, Stepper, Step, StepLabel } from '@mui/material'
+import classnames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
 import messages from './messages'
+import styles from './styles.css'
+
+const cssClasses = classnames.bind(styles)
 
 const InputPassword = ({ id, name, label, value, onChange, error, helperText }) => {
   const { formatMessage } = useI18n()
@@ -20,10 +24,13 @@ const InputPassword = ({ id, name, label, value, onChange, error, helperText }) 
         name={name}
         label={label}
         value={value}
+        inputProps={{
+          className: cssClasses('password-input'),
+        }}
         onChange={onChange}
         error={error}
         helperText={helperText}
-        type="password"
+        type="text"
       />
       {value.length ? (
         <Stepper activeStep={rules.length - 1} orientation="vertical" connector={<span />}>
