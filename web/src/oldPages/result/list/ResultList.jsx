@@ -247,13 +247,14 @@ export const ResultListWithProps = ({
             intl={intl}
             config={reducedFilters}
             askConfirmationForExport={table.total > 1000}
-          />
-          <AspectExportListButton
-            onExport={onExportClick}
-            visible={!items.currentIdList.isEmpty()}
-            reportName="Results"
-            disableExcel
-          />{' '}
+          >
+            <AspectExportListButton
+              onExport={onExportClick}
+              visible={!items.currentIdList.isEmpty()}
+              reportName="Results"
+              disableExcel
+            />
+          </BrowseFilters>
         </div>
 
         {isLoading ? <DataTableProgressBar /> : null}

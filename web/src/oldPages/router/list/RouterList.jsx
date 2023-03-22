@@ -192,13 +192,14 @@ export const RouterList = ({
       <Helmet title={intl.formatMessage(messages.routersTitle)} />
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-          <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters} />
-          <AspectExportListButton
-            data-testid="RouterListExportButton"
-            onExport={onExcelClick}
-            visible={!items.currentIdList.isEmpty()}
-            reportName="Routers"
-          />
+          <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
+            <AspectExportListButton
+              data-testid="RouterListExportButton"
+              onExport={onExcelClick}
+              visible={!items.currentIdList.isEmpty()}
+              reportName="Routers"
+            />
+          </BrowseFilters>
         </div>
         <DataTableProgressBar disabled={!table.loading} />
 

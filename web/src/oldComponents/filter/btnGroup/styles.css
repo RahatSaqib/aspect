@@ -4,7 +4,6 @@
   flex-wrap: wrap !important;
   flex-direction: row !important;
   display: flex !important;
-  width: calc(100vw - 200px);
 }
 
 .Button {
