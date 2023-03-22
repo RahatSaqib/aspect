@@ -1,18 +1,18 @@
 import React from 'react'
-import { Grid, Box, Button } from '@mui/material'
+import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
-import { useParams, useNavigate } from 'react-router-dom'
-import { string, object } from 'yup'
+import { useNavigate, useParams } from 'react-router-dom'
+import { object, string } from 'yup'
 import {
+  AssaySelect,
+  AssayTypeSelect,
   CountrySelect,
+  DeviceTypeSelect,
+  DiseaseSelect,
   JobSelect,
   LgaSelect,
-  StateSelect,
   SiteSelect,
-  DiseaseSelect,
-  DeviceTypeSelect,
-  AssayTypeSelect,
-  AssaySelect,
+  StateSelect,
 } from '../../cleanComponents'
 import Loading from '../../components/Loading'
 import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
@@ -23,9 +23,10 @@ import { getCustomMessage } from '../../messages/customMessages'
 import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
+import ACTION from './constants'
 import messages from './messages'
 
-const ContactPageStepThree = ({ setStep }) => {
+const ContactPageStepThree = ({ setStep, id }) => {
   const navigate = useNavigate()
   const { countryAbbreviation, countryId } = useAuthState()
   const { formatMessage } = useI18n()
@@ -54,7 +55,7 @@ const ContactPageStepThree = ({ setStep }) => {
 
   return (
     <>
-      <ContactStepper step={2} full />
+      <ContactStepper step={2} onChange={(v, step) => setStep(step)} isUpdate={id !== ACTION.ADD} full />
       {isLoading ? (
         <Loading />
       ) : (
