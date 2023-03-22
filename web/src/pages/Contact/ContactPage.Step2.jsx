@@ -16,7 +16,6 @@ import messages from './messages'
 
 const ContactPageStepTwo = ({ setStep, id }) => {
   const { formatMessage } = useI18n()
-  const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
   const { userId: loggedInUserId } = useAuthState()
 
