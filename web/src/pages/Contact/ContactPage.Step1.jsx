@@ -1,10 +1,10 @@
 import React from 'react'
-import { Checkbox, FormControlLabel, Grid, Box, Button, TextField } from '@mui/material'
+import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isString from 'lodash/isString'
 import MuiPhoneNumber from 'material-ui-phone-number'
 import { useNavigate } from 'react-router-dom'
-import { string, object, array } from 'yup'
+import { array, object, string } from 'yup'
 import {
   CountrySelect,
   LanguageSelect,
@@ -77,7 +77,12 @@ const ContactPageStepOne = ({ setStep, id }) => {
 
   return (
     <>
-      <ContactStepper step={0} full={id !== ACTION.SELF} />
+      <ContactStepper
+        step={0}
+        full={id !== ACTION.SELF}
+        isUpdate={id !== ACTION.ADD}
+        onChange={(v, step) => setStep(step)}
+      />
       {isLoading ? (
         <Loading />
       ) : (
@@ -115,12 +120,11 @@ const ContactPageStepOne = ({ setStep, id }) => {
               })
             } else if (id === ACTION.SELF) {
               delete values.canLogIn
-              updateSelf(values, { onSuccess: () => setStep(1) })
+              updateSelf(values)
             } else {
               updatePerson(values, {
                 onSuccess: () => {
-                  if (values.canLogIn === 1) setStep(1)
-                  else navigate('/browse/person')
+                  if (values.canLogIn !== 1) navigate('/browse/person')
                 },
               })
             }
@@ -345,15 +349,9 @@ const ContactPageStepOne = ({ setStep, id }) => {
                 <Button onClick={() => navigate(-1)}>{formatMessage(messages.backToTable)}</Button>
                 <Box sx={{ flex: '1 1 auto' }} />
                 {dirty ? (
-                  id === ACTION.SELF || values.canLogIn === 1 ? (
-                    <Button type="submit" disabled={!isValid}>
-                      {formatMessage(messages.saveAndNext)}
-                    </Button>
-                  ) : (
-                    <Button type="submit" disabled={!isValid}>
-                      {formatMessage(messages.save)}
-                    </Button>
-                  )
+                  <Button type="submit" disabled={!isValid}>
+                    {formatMessage(messages.save)}
+                  </Button>
                 ) : values.canLogIn === 1 ? (
                   <Button onClick={() => setStep(1)}>{formatMessage(messages.next)}</Button>
                 ) : null}
