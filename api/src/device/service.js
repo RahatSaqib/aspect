@@ -835,11 +835,17 @@ async function getDevicesForReport(auth, query) {
         .where('r.resultCategory1', resultCategoryIds.Invalid)
         .countDistinct('r.id')
         .as('totalInvalid'),
-      queryResults
-        .clone()
-        .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusLogId', 'rl.id')
-        .max('rl.changedOn')
-        .as('lastUploadOn'),
+      /**
+       * old way to get loastUploadOn was via ResultWorkflowLog.changedOn
+       * Leave it here commented out for the case when we still need to use
+       * approach with table ResultWorkflowLog
+       */
+      // queryResults
+      //   .clone()
+      //   .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusLogId', 'rl.id')
+      //   .max('rl.changedOn')
+      //   .as('lastUploadOn'),
+      queryResults.clone().max('r.updatedOn').as('lastUploadOn'),
 
       queryResults
         .clone()
