@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Card, CardContent, Box } from '@mui/material'
+import { Box, Card, CardContent } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
@@ -32,7 +32,7 @@ const ContactPage = () => {
           <CardContent>
             {step === 0 ? <ContactPageStepOne setStep={setStep} id={id} /> : null}
             {step === 1 ? <ContactPageStepTwo setStep={setStep} id={id} /> : null}
-            {step === 2 ? <ContactPageStepThree setStep={setStep} /> : null}
+            {step === 2 ? <ContactPageStepThree setStep={setStep} id={id} /> : null}
           </CardContent>
         </Card>
       </Box>
