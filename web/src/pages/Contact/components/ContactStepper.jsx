@@ -27,6 +27,17 @@ const ContactStepper = ({ step, full, isUpdate, onChange }) => {
       </Box>
     )
 
+  if (isUpdate)
+    return (
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: '10px' }}>
+        <Tabs value={step} variant="fullWidth" onChange={onChange} aria-label="basic tabs example">
+          {options.map(label => (
+            <Tab key={label} label={formatMessage(messages[label])} />
+          ))}
+        </Tabs>
+      </Box>
+    )
+
   return (
     <Stepper activeStep={step}>
       {options.map(label => (
