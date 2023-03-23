@@ -737,42 +737,7 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
     }
     ;({ device } = deviceAndError)
 
-    // Send notification to labContact and labInstaller
-    const { configuration } = originalRequest.payload
-    if (configuration && configuration.data) {
-      const configurationData = configuration.data
-      const { culture, routerNumber, noInventory } = configurationData
-      const labContact = {
-        name: configurationData.labContactName,
-        email: configurationData.labContactEmail,
-        cell: configurationData.labContactCell,
-      }
-
-      const installerContact = {
-        name: configurationData.installerName,
-        email: configurationData.installerEmail,
-        cell: configurationData.installerCell,
-      }
-
-      const { operation } = originalRequest.payload
-      let cartridgeCount = null
-      if (
-        operation &&
-        operation.data &&
-        operation.data.inventoryChanges &&
-        operation.data.inventoryChanges.length > 0
-      ) {
-        cartridgeCount = operation.data.inventoryChanges.reduce(
-          (accumulator, inventoryChange) => accumulator + inventoryChange.quantity,
-          0
-        )
-      }
-
-      await Promise.all([
-        notifyPerson(labContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
-        notifyPerson(installerContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
-      ])
-    }
+    await sendNotificationToContacts(originalRequest.payload, device)
   }
 
   if (device == null) {
@@ -1126,6 +1091,39 @@ async function getHealthState(context) {
     })),
   }
   return result
+}
+
+async function sendNotificationToContacts(payload, device) {
+  const { configuration } = payload
+  if (configuration && configuration.data) {
+    const configurationData = configuration.data
+    const { culture, routerNumber, noInventory } = configurationData
+    const labContact = {
+      name: configurationData.labContactName,
+      email: configurationData.labContactEmail,
+      cell: configurationData.labContactCell,
+    }
+
+    const installerContact = {
+      name: configurationData.installerName,
+      email: configurationData.installerEmail,
+      cell: configurationData.installerCell,
+    }
+
+    const { operation } = payload
+    let cartridgeCount = null
+    if (operation && operation.data && operation.data.inventoryChanges && operation.data.inventoryChanges.length > 0) {
+      cartridgeCount = operation.data.inventoryChanges.reduce(
+        (accumulator, inventoryChange) => accumulator + inventoryChange.quantity,
+        0
+      )
+    }
+
+    await Promise.all([
+      notifyPerson(labContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+      notifyPerson(installerContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+    ])
+  }
 }
 
 async function notifyPerson({ name, email, cell }, deviceName, routerNumber, noInventory, culture, cartridgeCount) {
