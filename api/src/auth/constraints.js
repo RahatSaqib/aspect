@@ -568,14 +568,45 @@ function addConstraintWithJobFunction({
   if (alias && constraint) {
     queryBuilder.andWhere(qb => {
       if (jobFunctionAlias && jobFunctionConstraint && (!jobFunctionConstraint.isAdmin || !allowAdminThrough)) {
-        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`)).andWhere(
-          _.mapKeys(_.omit(jobFunctionConstraint, 'isAdmin'), (v, k) => `${jobFunctionAlias}.${k}`)
-        )
-      } else {
-        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
+        if (!_.isEmpty(constraint)) {
+          qb.where(nullOrEqualQb => {
+            _.keys(constraint)
+              .filter(k => !!constraint[k])
+              .forEach(k => {
+                nullOrEqualQb.whereNotNull(`${alias}.${k}`).andWhere(`${alias}.${k}`, constraint[k])
+              })
+          })
+        }
+        if (!_.isEmpty(jobFunctionConstraint)) {
+          qb.andWhere(nullOrEqualQb => {
+            _.keys(_.omit(jobFunctionConstraint, 'isAdmin'))
+              .filter(k => !!jobFunctionConstraint[k])
+              .forEach(k => {
+                nullOrEqualQb
+                  .whereNotNull(`${jobFunctionAlias}.${k}`)
+                  .andWhere(`${jobFunctionAlias}.${k}`, jobFunctionConstraint[k])
+              })
+          })
+        }
+      } else if (!_.isEmpty(constraint)) {
+        qb.where(nullOrEqualQb => {
+          _.keys(constraint)
+            .filter(k => !!constraint[k])
+            .forEach(k => {
+              nullOrEqualQb.whereNotNull(`${alias}.${k}`).andWhere(`${alias}.${k}`, constraint[k])
+            })
+        })
       }
       if (personAlias && personConstraint) {
-        qb.andWhere(_.mapKeys(personConstraint, (v, k) => `${personAlias}.${k}`))
+        if (_.isEmpty(personConstraint)) {
+          qb.where(nullOrEqualQb => {
+            _.keys(personConstraint)
+              .filter(k => !!personConstraint[k])
+              .forEach(k => {
+                nullOrEqualQb.whereNotNull(`${personAlias}.${k}`).andWhere(`${personAlias}.${k}`, personConstraint[k])
+              })
+          })
+        }
         if (allowAdminThrough) {
           qb.orWhere(`${jobFunctionAlias}.isAdmin`, true)
         }
