@@ -32,26 +32,11 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    date: true,
-    requiredPermissions: [],
-  },
-  {
-    onlyTransfers: true,
-    requiredPermissions: [],
-  },
-  {
-    lotNumber: true,
-    requiredPermissions: [],
-  },
-  {
-    expirationDate: true,
-    requiredPermissions: [],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
+  { date: true, requiredPermissions: [] },
+  { onlyTransfers: true, requiredPermissions: [] },
+  { lotNumber: true, requiredPermissions: [] },
+  { expirationDate: true, requiredPermissions: [] },
 ]
 
 const availableSortCol = [

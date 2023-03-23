@@ -42,7 +42,15 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.no_stock_description',
     defaultMessage: 'Showing all sites/devices and the number of days which they had no stock in the last month.',
   },
+  doNotUseModulesReport: {
+    id: 'pages.ReportIndex.doNotUseModulesReport',
+    defaultMessage: "'Do Not Use' Modules",
+  },
   result_notification: {
+    id: 'pages.ReportIndex.result_notifications_report',
+    defaultMessage: 'Result Notifications Report',
+  },
+  result_notifications_report: {
     id: 'pages.ReportIndex.result_notifications_report',
     defaultMessage: 'Result Notifications Report',
   },

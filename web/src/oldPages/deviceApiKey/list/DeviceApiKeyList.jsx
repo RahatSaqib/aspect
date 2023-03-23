@@ -97,14 +97,8 @@ const FILTERS_CONFIG = [
   { state: false, requiredPermissions: [] },
   { partnerId: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    revoked: true,
-    requiredPermissions: [],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
+  { revoked: true, requiredPermissions: [] },
 ]
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
 const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }

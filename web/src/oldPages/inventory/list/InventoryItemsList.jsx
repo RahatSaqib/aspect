@@ -60,29 +60,11 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    date: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => dependencies.breakOutByLot,
-  },
-  {
-    lotNumber: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => dependencies.breakOutByLot,
-  },
-  {
-    daysStockLeft: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => !dependencies.breakOutByLot,
-  },
-  {
-    hasStock: true,
-    requiredPermissions: [],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
+  { date: true, requiredPermissions: [], isEnabled: dependencies => dependencies.breakOutByLot },
+  { lotNumber: true, requiredPermissions: [], isEnabled: dependencies => dependencies.breakOutByLot },
+  { daysStockLeft: true, requiredPermissions: [], isEnabled: dependencies => !dependencies.breakOutByLot },
+  { hasStock: true, requiredPermissions: [] },
 ]
 
 const availableSortCol = [
