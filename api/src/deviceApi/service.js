@@ -768,8 +768,10 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
         )
       }
 
-      await notifyPerson(labContact, device.name, routerNumber, noInventory, culture, cartridgeCount)
-      await notifyPerson(installerContact, device.name, routerNumber, noInventory, culture, cartridgeCount)
+      await Promise.all([
+        notifyPerson(labContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+        notifyPerson(installerContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+      ])
     }
   }
 
