@@ -329,15 +329,9 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
 
     if (_.get(constraints, 'country.id')) {
       if (country) {
-        queryBuilder.where(qb => {
-          qb.whereNull(`${country}.id`).orWhere(`${country}.id`, constraints.country.id)
-        })
+        applyConstraintObjectOnAlias(queryBuilder, country, { id: constraints.country.id })
       } else if (aliases.geography) {
-        queryBuilder.where(qb => {
-          qb.whereNull(`${aliases.geography}.countryId`).orWhere({
-            [`${aliases.geography}.countryId`]: constraints.country.id,
-          })
-        })
+        applyConstraintObjectOnAlias(queryBuilder, aliases.geography, { countryId: constraints.country.id })
       }
     }
   }
@@ -569,48 +563,34 @@ function addConstraintWithJobFunction({
     queryBuilder.andWhere(qb => {
       if (jobFunctionAlias && jobFunctionConstraint && (!jobFunctionConstraint.isAdmin || !allowAdminThrough)) {
         if (!_.isEmpty(constraint)) {
-          qb.where(nullOrEqualQb => {
-            _.keys(constraint)
-              .filter(k => !!constraint[k])
-              .forEach(k => {
-                nullOrEqualQb.whereNotNull(`${alias}.${k}`).andWhere(`${alias}.${k}`, constraint[k])
-              })
-          })
+          applyConstraintObjectOnAlias(qb, alias, constraint)
         }
         if (!_.isEmpty(jobFunctionConstraint)) {
-          qb.andWhere(nullOrEqualQb => {
-            _.keys(_.omit(jobFunctionConstraint, 'isAdmin'))
-              .filter(k => !!jobFunctionConstraint[k])
-              .forEach(k => {
-                nullOrEqualQb
-                  .whereNotNull(`${jobFunctionAlias}.${k}`)
-                  .andWhere(`${jobFunctionAlias}.${k}`, jobFunctionConstraint[k])
-              })
-          })
+          applyConstraintObjectOnAlias(qb, jobFunctionAlias, _.omit(jobFunctionConstraint, 'isAdmin'))
         }
       } else if (!_.isEmpty(constraint)) {
-        qb.where(nullOrEqualQb => {
-          _.keys(constraint)
-            .filter(k => !!constraint[k])
-            .forEach(k => {
-              nullOrEqualQb.whereNotNull(`${alias}.${k}`).andWhere(`${alias}.${k}`, constraint[k])
-            })
-        })
+        applyConstraintObjectOnAlias(qb, alias, constraint)
       }
       if (personAlias && personConstraint) {
         if (_.isEmpty(personConstraint)) {
-          qb.where(nullOrEqualQb => {
-            _.keys(personConstraint)
-              .filter(k => !!personConstraint[k])
-              .forEach(k => {
-                nullOrEqualQb.whereNotNull(`${personAlias}.${k}`).andWhere(`${personAlias}.${k}`, personConstraint[k])
-              })
-          })
+          applyConstraintObjectOnAlias(qb, personAlias, personConstraint)
         }
         if (allowAdminThrough) {
           qb.orWhere(`${jobFunctionAlias}.isAdmin`, true)
         }
       }
+    })
+  }
+}
+
+function applyConstraintObjectOnAlias(queryBuilder, alias, constraint) {
+  if (alias && constraint) {
+    queryBuilder.where(nullOrEqualQb => {
+      _.keys(constraint)
+        .filter(k => !!constraint[k])
+        .forEach(k => {
+          nullOrEqualQb.where(knex.raw(`IFNULL(${alias}.${k}, 0)`), constraint[k])
+        })
     })
   }
 }
