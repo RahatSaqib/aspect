@@ -4,6 +4,7 @@ import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
+import { useLocation, useNavigate } from 'react-router'
 import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
@@ -66,7 +67,6 @@ export const InventoryLogWithProps = ({
   sortDir,
   pageAt,
   pageSize,
-  navButton,
 }) => {
   const columns = [
     {
@@ -114,9 +114,7 @@ export const InventoryLogWithProps = ({
   const hasItems = items && items.length > 0
   return (
     <>
-      <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack>
-        {navButton}
-      </DetailHeader>
+      <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack />
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
@@ -171,7 +169,9 @@ export const InventoryLogWithProps = ({
   )
 }
 
-const InventoryLog = ({ navigate, location, navButton }) => {
+const InventoryLog = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
   // >>>>>> Defining hooks <<<<<<
   const intl = useI18n()
   const { userPermissions } = useAuthState()
@@ -241,7 +241,6 @@ const InventoryLog = ({ navigate, location, navButton }) => {
     isLoading,
     data,
     ...{ sortCol, sortDir, pageAt, pageSize, ...requestParams },
-    navButton,
   }
   return <InventoryLogWithProps {...props} />
 }

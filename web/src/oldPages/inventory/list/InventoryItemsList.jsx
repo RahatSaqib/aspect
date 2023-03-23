@@ -7,6 +7,7 @@ import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useSelector, useDispatch } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import ErrorBoundary from '../../../components/ErrorBoundary/index'
@@ -122,7 +123,6 @@ export const InventoryItemsListWithProps = ({
   onTransferInventorySubmit,
   onAddInventorySubmit,
   refetch,
-  navButton,
 }) => {
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
   const breakOutByLotToggle = useCallback(() => {
@@ -212,7 +212,6 @@ export const InventoryItemsListWithProps = ({
             {intl.formatMessage(messages.addInventory)}
           </AddNewButton>
         </PermissionChecker>
-        {navButton}
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -342,8 +341,10 @@ export const InventoryItemsListWithProps = ({
   )
 }
 
-export const InventoryItemsList = ({ navigate, location, navButton }) => {
+export const InventoryItemsList = () => {
   const queryClient = useQueryClient()
+  const location = useLocation()
+  const navigate = useNavigate()
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
   const intl = useI18n()
@@ -353,24 +354,13 @@ export const InventoryItemsList = ({ navigate, location, navButton }) => {
   const inventory = useSelector(state => state.inventory)
   const consumableReasons = useSelector(state => state.consumable.consumableReasons)
   const [breakOutByLot, setBreakOutByLot] = useState(false)
-  const dependencies = useMemo(
-    () => ({
-      breakOutByLot,
-    }),
-    [breakOutByLot]
-  )
+  const dependencies = useMemo(() => ({ breakOutByLot }), [breakOutByLot])
 
   // >>>>>> Structuring data <<<<<<
   const { table, items, inventoryAdjustment } = inventory
-  const sortPage = makeSortPageSelector({
-    sortCol: 'siteName',
-  })
+  const sortPage = makeSortPageSelector({ sortCol: 'siteName' })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, dependencies)
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
-    location,
-    availableSortCol,
-    dependencies,
-  })
+  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies })
   const { value: searchParams } = searchSanitizer(location, dependencies)
   const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', dependencies)
   const filters = getFilters(filtersParams)
@@ -473,16 +463,21 @@ export const InventoryItemsList = ({ navigate, location, navButton }) => {
     )
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-
-      navigate(
-        {
-          ...location,
-          search: `?${searchParams.toString()}`,
-        },
-        { replace: true }
-      )
+      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
   }, [location, navigate, breakOutByLot, dependencies, dispatch])
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams()
+    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    if (!filtersParams.has('hasStock')) {
+      filtersParams.set('hasStock', true)
+      searchParams.set('filters', filtersParams)
+      navigate({ ...location, search: `?${searchParams.toString()}` })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (isError) throw new Error(error)
 
@@ -508,7 +503,6 @@ export const InventoryItemsList = ({ navigate, location, navButton }) => {
     onTransferInventorySubmit,
     onAddInventorySubmit,
     refetch: onSuccess,
-    navButton,
   }
 
   return <InventoryItemsListWithProps {...props} />
