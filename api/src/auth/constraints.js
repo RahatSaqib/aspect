@@ -329,10 +329,14 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
 
     if (_.get(constraints, 'country.id')) {
       if (country) {
-        queryBuilder.where(`${country}.id`, constraints.country.id)
+        queryBuilder.where(qb => {
+          qb.whereNull(`${country}.id`).orWhere(`${country}.id`, constraints.country.id)
+        })
       } else if (aliases.geography) {
-        queryBuilder.where({
-          [`${aliases.geography}.countryId`]: constraints.country.id,
+        queryBuilder.where(qb => {
+          qb.whereNull(`${aliases.geography}.countryId`).orWhere({
+            [`${aliases.geography}.countryId`]: constraints.country.id,
+          })
         })
       }
     }
