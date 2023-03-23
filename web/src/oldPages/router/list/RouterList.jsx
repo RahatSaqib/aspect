@@ -60,10 +60,7 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  {
-    deviceName: true,
-    requiredPermissions: [],
-  },
+  { deviceName: true, requiredPermissions: [] },
   { deviceApproval: true, requiredPermissions: [] },
 ]
 

@@ -112,10 +112,7 @@ const getBaseColumns = (extraColumns = [], formatMessage) => {
   )
 }
 const FILTERS_CONFIG = [
-  {
-    assayAndResultCategory: true,
-    requiredPermissions: ['assay:view'],
-  },
+  { assayAndResultCategory: true, requiredPermissions: ['assay:view'] },
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
@@ -123,46 +120,18 @@ const FILTERS_CONFIG = [
   { patientOrResearchId: true, requiredPermissions: [] },
   { sampleId: true, requiredPermissions: [] },
   { errorCode: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    reportableSiteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    reportableSiteId: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    deviceName: true,
-    requiredPermissions: ['device'],
-  },
-  {
-    deviceType: true,
-    requiredPermissions: [],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
+  { reportableSiteName: true, requiredPermissions: ['site:view'] },
+  { reportableSiteId: true, requiredPermissions: ['site:view'] },
+  { deviceName: true, requiredPermissions: ['device'] },
+  { deviceType: true, requiredPermissions: [] },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },
-  {
-    displayResult: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => !!dependencies.showFilterDisplayResult,
-  },
-  {
-    onlyReportableResults: true,
-    requiredPermissions: ['assay:view'],
-  },
-  {
-    onlyDownloadedByReporter: true,
-    requiredPermissions: [],
-  },
-  {
-    onlyEverTransferred: true,
-    requiredPermissions: [],
-  },
+  { displayResult: true, requiredPermissions: [], isEnabled: dependencies => !!dependencies.showFilterDisplayResult },
+  { onlyReportableResults: true, requiredPermissions: ['assay:view'] },
+  { onlyDownloadedByReporter: true, requiredPermissions: [] },
+  { onlyEverTransferred: true, requiredPermissions: [] },
   { onlyTreatmentRequired: true, requiredPermissions: [] },
 ]
 

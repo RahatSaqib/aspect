@@ -13,6 +13,8 @@ const messages = defineMessages({
   contacts: { id: 'browsePage.browseDropdown.contacts', defaultMessage: 'Contacts' },
   sites: { id: 'browsePage.browseDropdown.sites', defaultMessage: 'Sites' },
   supplies: { id: 'browsePage.browseDropdown.supplies', defaultMessage: 'Supplies' },
+  inventoryItems: { id: 'browsePage.browseDropdown.inventoryItems', defaultMessage: 'Inventory on Hand' },
+  inventoryLog: { id: 'browsePage.browseDropdown.inventoryLog', defaultMessage: 'Inventory Log' },
   routers: { id: 'browsePage.browseDropdown.routers', defaultMessage: 'Routers' },
   reporters: { id: 'browsePage.browseDropdown.reporters', defaultMessage: 'Reporters' },
   notifications: { id: 'browsePage.browseDropdown.notifications', defaultMessage: 'Notifications' },

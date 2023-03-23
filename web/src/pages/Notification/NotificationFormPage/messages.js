@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 import form from '../../../components/Form/messages'
 import { resultCategory, assay, report } from '../../../messages'
+import { messages as result } from '../../../oldComponents/filter/resource/ResultCategoryGroupSelectField'
 
 export default defineMessages({
   yes: {
@@ -663,9 +664,42 @@ export default defineMessages({
     id: 'pages.Notifications.daysBeforeCalibrationDueDate',
     defaultMessage: 'Before Calibration Due Date',
   },
+  GxUnknown: {
+    id: 'pages.ResultList.GxUnknown',
+    defaultMessage: 'GeneXpert Unknown',
+  },
+  GxHcv: {
+    id: 'pages.ResultList.GxHcv',
+    defaultMessage: 'GeneXpert HCV',
+  },
+  GxMtbRif: {
+    id: 'pages.ResultList.GxMtbRif',
+    defaultMessage: 'GeneXpert MTB/Rif',
+  },
+  GxMtbRifUltra: {
+    id: 'pages.ResultList.GxMtbRifUltra',
+    defaultMessage: 'GeneXpert MTB/Rif Ultra',
+  },
+  GxHiv1Vl: {
+    id: 'pages.ResultList.GxHiv1Vl',
+    defaultMessage: 'GeneXpert HIV-1 VL',
+  },
+  GxHiv1Qual: {
+    id: 'pages.ResultList.GxHiv1Qual',
+    defaultMessage: 'GeneXpert HIV-1 Qual',
+  },
+  GxEbola: {
+    id: 'pages.ResultList.GxEbola',
+    defaultMessage: 'GeneXpert Ebola',
+  },
+  GxMtbXdr: {
+    id: 'pages.ResultList.GxMtbXdr',
+    defaultMessage: 'GeneXpert MTB/XDR',
+  },
 
   ...assay,
   ...resultCategory,
   ...report,
   ...form,
+  ...result,
 })
