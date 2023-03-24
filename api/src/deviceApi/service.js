@@ -14,7 +14,7 @@ const {
   resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
-
+const templateProcessor = require('../email/templateProcessor')
 const {
   updateDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
