@@ -48,8 +48,8 @@ const notifyTimedOutResults = async (_, { messageContext }) => {
       .innerJoin('Geography as g', 's.geographyId', 'g.id')
       .innerJoin('Partner as p', 'r.partnerId', 'p.id')
       .modify(query => {
-        if (nt.deviceLevel !== 'national') {
-          const areaItemsIds = nt.areaScope.map(as => as.value)
+        const areaItemsIds = nt.areaScope
+        if (nt.deviceLevel !== 'national' && areaItemsIds) {
           if (nt.deviceLevel === 'state') {
             query.whereIn('g.stateId', areaItemsIds)
           } else if (nt.deviceLevel === 'lab') {
@@ -59,15 +59,16 @@ const notifyTimedOutResults = async (_, { messageContext }) => {
           }
         }
 
-        query.andWhere(assayWhere => {
-          nt.resultScope.forEach(({ assayId: assayExternalId, resultCategoryId: resultCategories }) => {
-            assayWhere.orWhere('a.externalId', assayExternalId)
+        if (nt.resultScope)
+          query.andWhere(assayWhere => {
+            nt.resultScope.forEach(({ assayId: assayExternalId, resultCategoryId: resultCategories }) => {
+              assayWhere.orWhere('a.externalId', assayExternalId)
 
-            resultCategories.forEach(rc => {
-              if (rc.scope === 'ResultCategoryGroups') assayWhere.andWhere('rcg.externalId', rc.value)
+              resultCategories.forEach(rc => {
+                if (rc.scope === 'ResultCategoryGroups') assayWhere.andWhere('rcg.externalId', rc.value)
+              })
             })
           })
-        })
       })
       // Results created after updating the notification for the last time
       // We don't want to notify results created when the notification had a different configuration
