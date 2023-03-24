@@ -40,7 +40,7 @@ const notifyTimedOutResults = async (_, { messageContext }) => {
       })
       .leftJoin('ResultCategoryGroup as rcg', join => {
         join.on('r.resultCategory1', 'rcg.resultCategory1Id')
-        join.andOn('r.resultCategory2', 'rcg.resultCategory2Id')
+        join.andOn(knex.raw('r.resultCategory2 <=> rcg.resultCategory2Id'))
         join.andOn('r.assayId', 'rcg.assayId')
       })
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
