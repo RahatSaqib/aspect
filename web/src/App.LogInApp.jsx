@@ -11,6 +11,7 @@ import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import { useAuthState } from './providers/AuthProvider'
 import { fetchAssays } from './store/AssayRedux'
 import { idleLogout, refreshStart } from './store/AuthRedux'
+import { fetchDiseases } from './store/DiseaseRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
 const CaseList = lazy(() => import('./oldPages/case/list/CaseList'))
@@ -92,8 +93,10 @@ const LogInApp = () => {
   useEffect(() => {
     // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
     dispatch(fetchCountries())
-    // fetch countries on start so we have them ready for filters logic
+    // fetch assays on start so we have them ready for filters logic
     dispatch(fetchAssays())
+    // fetch diseases on start so allow HIV graph on dashboard to load properly
+    dispatch(fetchDiseases())
 
     // Refresh the access token every 30 minutes.
     const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)
