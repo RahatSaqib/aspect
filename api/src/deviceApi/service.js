@@ -11,10 +11,10 @@ const {
   resultUpdated,
   resultLogged,
   resultLoggedProcessed,
+  resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
 const templateProcessor = require('../email/templateProcessor')
-
 const {
   updateDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
@@ -645,21 +645,40 @@ async function mergeResultWithContext(context) {
   }
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
-
   const transformPayload = await loadPlugin(plugins, 'transformMergeResultPayload')
   const transformedPayload = await transformPayload(pluginContext)
-  const { processedResult: result, existingResult: previousResult } = await mergeResult(
-    knex,
-    deviceId,
-    transformedPayload,
-    { now }
-  )
-  context.addDeviceLogUpdate('resultId', result.id)
+  const {
+    processedResult: plainResult,
+    existingResult: plainPreviousResult,
+    // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
+  } = await mergeResult(knex, deviceId, transformedPayload, { now })
+  context.addDeviceLogUpdate('resultId', plainResult.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
-  const postProcessResult = await postProcess(pluginContext, result, previousResult)
+  const postProcessResult = await postProcess(pluginContext, plainResult, plainPreviousResult)
+
+  // This is going to be used when we implement the Sample ID and Patient ID based notification
+  // const result = plainToDeepObjectResult(plainResult)
+  // const previousResult = plainToDeepObjectResult(plainPreviousResult)
+
+  // Trigger notifications
+  context.messageContext.bindActionCreators({ resultReadyForNotification })
+  const notificationSubType = {
+    updated: true,
+    created: false,
+  }
+
+  if (plainPreviousResult) {
+    // If a previous result exist, then we need to evaluate the notifications triggered on result update
+    // Also the results without a creation notification are going to be re-evaluated
+    context.messageContext.resultReadyForNotification(plainResult.id, notificationSubType.updated)
+  } else {
+    // Else, only the creation-based notifications should be triggered
+    context.messageContext.resultReadyForNotification(plainResult.id, notificationSubType.created)
+  }
+
   return {
     ...postProcessResult,
-    aspectResultId: result.id,
+    aspectResultId: plainResult.id,
   }
 }
 

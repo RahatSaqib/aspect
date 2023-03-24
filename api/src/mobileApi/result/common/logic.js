@@ -564,4 +564,5 @@ module.exports = {
   getResultItemTransformedDataV2,
   fieldNameToFollowUpTypeIdMappings,
   getLatestFollowUpsFromFolloups,
+  getCustomFieldsForResult,
 }

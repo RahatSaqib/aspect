@@ -36,10 +36,12 @@ const PlaceholderTextField = props => {
     })
   }
 
+  const filter = { type: formik.values.notificationType, assay: formik.values.result[0].assayId }
+
   return (
     <FormControl className={cssClasses('form_FormControl')}>
       <AspectTextField {...props} inputRef={inputRef} />
-      <PlaceholderSelector onClose={onClosePlaceholderSelector} onSelect={onSelectPlaceholder} />
+      <PlaceholderSelector onClose={onClosePlaceholderSelector} onSelect={onSelectPlaceholder} filter={filter} />
     </FormControl>
   )
 }

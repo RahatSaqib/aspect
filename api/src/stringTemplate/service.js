@@ -425,8 +425,10 @@ async function getBaseDataSource(data, auth) {
     },
     result: {
       data: d.resultData ? JSON.parse(d.resultData) : {},
+      resultData: d.resultData ? JSON.parse(d.resultData) : {},
       formData: d.resultFormData ? JSON.parse(d.resultFormData) : {},
       patient: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
+      patientData: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
       rawData: d.resultRawData,
       startedOn: d.resultStartedOn,
       endedOn: d.resultEndedOn,
@@ -546,6 +548,7 @@ function processUsingDynamicHelpers(template, ds) {
     .replace(/{{\s*(device.daysToCalibrationDueDate)\s*}}/g, (_str, _match) => {
       return `\${openMustaches}daysBeforeToday device.calibrationDueDate \${closeMustaches}`
     })
+    .replace(/{{[^}]+customFields\.([^}]*)}}/g, `{{ defaultTo result.$1 'N/A' }}`)
 
   let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
 
