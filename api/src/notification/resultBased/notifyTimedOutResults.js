@@ -62,10 +62,11 @@ const notifyTimedOutResults = async (_, { messageContext }) => {
         if (nt.resultScope)
           query.andWhere(assayWhere => {
             nt.resultScope.forEach(({ assayId: assayExternalId, resultCategoryId: resultCategories }) => {
-              assayWhere.orWhere('a.externalId', assayExternalId)
-
-              resultCategories.forEach(rc => {
-                if (rc.scope === 'ResultCategoryGroups') assayWhere.andWhere('rcg.externalId', rc.value)
+              const rcgExternalIds = resultCategories
+                .filter(rc => rc.scope === 'ResultCategoryGroups')
+                .map(rc => rc.value)
+              assayWhere.orWhere(qb => {
+                qb.where('a.externalId', assayExternalId).whereIn('rcg.externalId', rcgExternalIds)
               })
             })
           })
