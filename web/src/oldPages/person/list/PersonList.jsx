@@ -7,7 +7,6 @@ import { defineMessages } from 'react-intl'
 import { connect, useSelector } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
-import FilterManager from '../../../cleanComponents/FilterManager'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import useI18n from '../../../hooks/useI18n'
@@ -20,7 +19,6 @@ import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import requirePermissions, { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
-import { useFilter } from '../../../providers/FilterProvider'
 import { fetchPersons, exportContacts } from '../../../store/PersonRedux'
 import {
   makeSortPageSelector,
@@ -220,8 +218,6 @@ export const PersonList = ({
   showNewContactPage,
   user,
 }) => {
-  const [filter] = useFilter(location.pathname)
-
   const AddNewButton = requirePermissions({
     permissions: ['person:edit'],
   })(AspectButton)
@@ -253,14 +249,7 @@ export const PersonList = ({
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.contactsTitle)} />
-        <FilterManager />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
-          <pre>
-            this is inside the component, this filter is consumed in the component to be sent to an endpoint and fetch
-            data
-            <br />
-            {JSON.stringify(filter, null, 2)}
-          </pre>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
               <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />

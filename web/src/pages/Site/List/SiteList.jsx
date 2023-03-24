@@ -3,7 +3,6 @@ import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import { Helmet } from 'react-helmet'
-import FilterManager from '../../../cleanComponents/FilterManager'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import useSites from '../../../hooks/site/useSites'
@@ -17,7 +16,6 @@ import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { useAuthState } from '../../../providers/AuthProvider/index'
-import { useFilter } from '../../../providers/FilterProvider'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -54,7 +52,6 @@ export const SiteList = ({ navigate, location }) => {
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.jwt.permissions)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const [filter] = useFilter(location.pathname)
 
   const { data, isLoading } = useSites({ sortCol, sortDir, pageAt, pageSize, filters }, { enabled: !!sortCol })
   useSitesDownload({
@@ -128,14 +125,7 @@ export const SiteList = ({ navigate, location }) => {
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-        <FilterManager />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
-          <pre>
-            this is inside the component, this filter is consumed in the component to be sent to an endpoint and fetch
-            data
-            <br />
-            {JSON.stringify(filter, null, 2)}
-          </pre>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
               <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
