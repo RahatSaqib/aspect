@@ -14,8 +14,6 @@ const {
   updateDeviceConfigurationHandler,
   mergeResultHandler,
   addDeviceLog,
-  onResultUpdated,
-  onResultLogged,
   getHealthStatsHandler,
   getResultPakistanHandler,
 } = require('./service')
@@ -572,13 +570,4 @@ const routes = [
   },
 ]
 
-const subscriptions = [
-  {
-    actions: {
-      RESULT_UPDATED: onResultUpdated,
-      RESULT_LOGGED: onResultLogged,
-    },
-  },
-]
-
-module.exports = { routes, subscriptions }
+module.exports = { routes }

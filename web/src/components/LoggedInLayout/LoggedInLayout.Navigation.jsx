@@ -105,7 +105,15 @@ const getRawLinks = f => [
       { href: '/browse/result', label: f(messages.results), perm: ['result'] },
       { href: '/browse/person', label: f(messages.contacts), perm: ['person'] },
       { href: '/browse/site', label: f(messages.sites), perm: ['site'] },
-      { href: '/browse/inventory', label: f(messages.supplies), perm: ['inventory'] },
+      {
+        href: '/browse/inventory',
+        label: f(messages.supplies),
+        perm: ['inventory'],
+        submenu: [
+          { href: '/browse/inventory/supplies', label: f(messages.inventoryItems), perm: ['inventory'] },
+          { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },
+        ],
+      },
       { href: '/browse/router', label: f(messages.routers), perm: ['router'] },
       { href: '/browse/reporter', label: f(messages.reporters), perm: ['reporter'] },
       { href: '/browse/notification', label: f(messages.notifications), perm: ['notification'] },

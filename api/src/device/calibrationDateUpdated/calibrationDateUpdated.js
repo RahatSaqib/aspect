@@ -8,8 +8,9 @@ async function onCalibrationDateUpdated(action, { messageContext }) {
   })
 
   return context.run(async knex => {
-    const { issueId } = await getActiveCalibrationIssue(knex, deviceId)
-    if (issueId) {
+    const issue = await getActiveCalibrationIssue(knex, deviceId)
+    if (issue) {
+      const { issueId } = issue
       context.resolveIssues(issueId)
     }
   })

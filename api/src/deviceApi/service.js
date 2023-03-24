@@ -14,6 +14,7 @@ const {
   resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
+
 const {
   updateDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
@@ -28,6 +29,8 @@ const { loadPlugin } = require('../plugin/registration')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')
+const { sendSms } = require('../sms/smsUtil')
+const { sendEmail } = require('../email/emailUtil')
 
 const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 
@@ -752,6 +755,8 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
       return deviceAndError
     }
     ;({ device } = deviceAndError)
+
+    await sendNotificationToContacts(originalRequest.payload, device)
   }
 
   if (device == null) {
@@ -1105,6 +1110,69 @@ async function getHealthState(context) {
     })),
   }
   return result
+}
+
+async function sendNotificationToContacts(payload, device) {
+  const { configuration } = payload
+  if (configuration && configuration.data) {
+    const configurationData = configuration.data
+    const { culture, routerNumber, noInventory } = configurationData
+    const labContact = {
+      name: configurationData.labContactName,
+      email: configurationData.labContactEmail,
+      cell: configurationData.labContactCell,
+    }
+
+    const installerContact = {
+      name: configurationData.installerName,
+      email: configurationData.installerEmail,
+      cell: configurationData.installerCell,
+    }
+
+    const { operation } = payload
+    let cartridgeCount = null
+    if (operation && operation.data && operation.data.inventoryChanges && operation.data.inventoryChanges.length > 0) {
+      cartridgeCount = operation.data.inventoryChanges.reduce(
+        (accumulator, inventoryChange) => accumulator + inventoryChange.quantity,
+        0
+      )
+    }
+
+    await Promise.all([
+      notifyPerson(labContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+      notifyPerson(installerContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+    ])
+  }
+}
+
+async function notifyPerson({ name, email, cell }, deviceName, routerNumber, noInventory, culture, cartridgeCount) {
+  const generatedTemplate = await templateProcessor.process(
+    'newDevice',
+    {
+      deviceName,
+      name,
+      routerNumber,
+      noInventory,
+      cartridgeCount,
+    },
+    culture
+  )
+
+  if (email) {
+    const inlineImageAttachments = await templateProcessor.getInlineImageAttachments(generatedTemplate.html)
+
+    await sendEmail(
+      email,
+      generatedTemplate.subject,
+      generatedTemplate.html,
+      generatedTemplate.text,
+      inlineImageAttachments
+    ).catch(err => logger.error(err))
+  }
+
+  if (cell) {
+    await sendSms(cell, generatedTemplate.text).catch(err => logger.error(err))
+  }
 }
 
 module.exports = {
