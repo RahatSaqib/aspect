@@ -520,12 +520,12 @@ function filterExcludedResults(queryBuilder, aliases, options) {
   if (aliases.result && options.displayResult !== 'all') {
     if (!aliases.resultType) {
       aliases.resultType = alias('ResultType')
+      queryBuilder.innerJoin(
+        `ResultType as ${aliases.resultType}`,
+        `${aliases.result}.resultTypeId`,
+        `${aliases.resultType}.id`
+      )
     }
-    queryBuilder.innerJoin(
-      `ResultType as ${aliases.resultType}`,
-      `${aliases.result}.resultTypeId`,
-      `${aliases.resultType}.id`
-    )
     const onlyExcluded = options.displayResults === 'excluded'
     queryBuilder.where({ [`${aliases.resultType}.excluded`]: onlyExcluded })
   }
