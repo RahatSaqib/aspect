@@ -9,16 +9,6 @@ async function seed(knex) {
     .update({ resultTypeId: resultTypeIdEqaId })
     .whereRaw(
       `(
-        r.assayId IN (
-          -- HIV
-          ${assayIds.GxHiv1Vl},
-          ${assayIds.GxHiv1Qual},
-          -- TB
-          ${assayIds.GxMtbRif},
-          ${assayIds.GxMtbRifUltra}
-        )
-        AND
-        (
           (
             -- HIV
             r.assayId IN (${assayIds.GxHiv1Vl}, ${assayIds.GxHiv1Qual})
@@ -32,8 +22,7 @@ async function seed(knex) {
             AND
             IFNULL(r.resultData->>'$.customFieldData."7".value', '') IN ('EQA', 'PT')
           )
-        )
-      )`
+        )`
     )
 }
 
