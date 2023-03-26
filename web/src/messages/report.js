@@ -93,11 +93,11 @@ const messages = defineMessages({
   },
   reportDrTb10a10bCovid: {
     id: 'pages.ReportIndex.reportDrTb10a10bCovid',
-    defaultMessage: 'Device Calibration Report',
+    defaultMessage: 'Report on Xpert MTB/RIF and Covid',
   },
   reportDrTb10a10bCovidDescription: {
     id: 'pages.ReportIndex.reportDrTb10a10bCovidDescription',
-    defaultMessage: 'All devices along with the last calibration date and when next calibration is due',
+    defaultMessage: 'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results',
   },
   geneXpertIssues: {
     id: 'pages.ReportIndex.geneXpertIssues',
