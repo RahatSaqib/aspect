@@ -526,7 +526,7 @@ function filterExcludedResults(queryBuilder, aliases, options) {
         `${aliases.resultType}.id`
       )
     }
-    const onlyExcluded = options.displayResults === 'excluded'
+    const onlyExcluded = options.displayResult === 'excluded'
     queryBuilder.where({ [`${aliases.resultType}.excluded`]: onlyExcluded })
   }
 }
