@@ -21,7 +21,7 @@ const baseConfig = {
   sortByKeys: ['consumableName'],
   clickThrough: {
     allow: true,
-    baseUrl: '/browse/inventory?filters=',
+    baseUrl: '/browse/inventory/supplies?filters=',
     keys: ['daysStockLeft', 'consumableId'],
   },
 }
