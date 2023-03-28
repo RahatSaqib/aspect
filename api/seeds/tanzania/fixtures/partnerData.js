@@ -18,4 +18,16 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://tanzania.aspect.id',
   apiUrl: 'https://tanzania.aspect.id/api',
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        EnableAspectSync: true,
+        SendResultsToAspect: true,
+        AspectUploadExcludePatientId: false,
+        AspectApiEndpoint: 'https://tanzania.aspect.id/api',
+        MigrateAspectApiKey: false,
+      },
+    },
+  ],
 }

@@ -10,6 +10,7 @@ const PERSON_KEY_LOGIN_DETAILS = '/auth/update-person-login-details/:personId'
 const PERSON_KEY_ASSIGNMENTS_BY_PERSON_ID = '/job-function/person-assignments/:personId'
 const PERSON_KEY_ASSIGNMENTS_DELETE = '/job-function/person-assignment/:personId/:jobContextId'
 const PERSON_KEY_ASSIGNMENTS_CREATE = '/job-function/assign-person-to-job-and-context'
+const PERSON_KEY_LIST = '/person/select-list'
 
 export {
   PERSON_KEY,
@@ -24,4 +25,5 @@ export {
   PERSON_KEY_ASSIGNMENTS_BY_PERSON_ID,
   PERSON_KEY_ASSIGNMENTS_DELETE,
   PERSON_KEY_ASSIGNMENTS_CREATE,
+  PERSON_KEY_LIST,
 }

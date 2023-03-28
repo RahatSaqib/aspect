@@ -74,15 +74,15 @@ exports[`Result List component should shallow render correctly when filter for a
             }
           }
           navigate={[MockFunction]}
-        />
-        <AspectExportListButton
-          disableCSV={false}
-          disableExcel={true}
-          onExport={[MockFunction]}
-          reportName="Results"
-          visible={false}
-        />
-         
+        >
+          <AspectExportListButton
+            disableCSV={false}
+            disableExcel={true}
+            onExport={[MockFunction]}
+            reportName="Results"
+            visible={false}
+          />
+        </BrowseFilters>
       </div>
       <pure(withHandlers(EmptyList))
         location={

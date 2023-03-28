@@ -6,6 +6,7 @@ const szMtbStats = {
   externalId: 'sz_mtb_stats',
   i18nKeyDescription: 'szMtbStatsDescription',
   fileName: 'mtbStats',
+  availableForNotification: 1,
   sortOrder: 100,
   sheets: [
     {
@@ -23,6 +24,7 @@ const szSmsStats = {
   externalId: 'sz_sms_stats',
   i18nKeyDescription: 'szSmsStatsDescription',
   fileName: 'smsStats',
+  availableForNotification: 1,
   sortOrder: 110,
   exportCsv: false,
   sheets: [

@@ -294,7 +294,7 @@ const removeStringsFromArray = string => {
 
 const translateLabel = (string, assaysFromState, formatMessage, intlMessages, i18nKeys) => {
   const dictionary = []
-  assaysFromState.map(
+  assaysFromState?.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
       resultCategories.map(

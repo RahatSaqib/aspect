@@ -11,6 +11,7 @@ const getGxAlertAssayId = {
   abbottM2000DaanNCOVID19: 15,
   GxMtbRif: 4,
   GxMtbRifUltra: 12,
+  GxMtbXdr: 16,
   GxHiv1Vl: 9,
   GxHiv1Qual: 8,
   GxEbola: 7,
@@ -38,12 +39,24 @@ const baseMapper = aspectFields => {
       },
     ],
     'fields[].assayExternalId': {
-      key: 'CustomFields.Fields[].LimitToTestTypeIds[]',
-      transform: value => getGxAlertAssayId[value] || null,
+      key: 'CustomFields.Fields[].LimitToTestTypeIds',
+      transform: (val = null) => {
+        // If assay external ids were specified, then...
+        if (val?.length > 0) {
+          // If the external ids are still strings, means that the mapping wasn't applied yet...
+          if (typeof val[0] === 'string') {
+            // Then we need to map...
+            return val.map(v => getGxAlertAssayId[v])
+          }
+          return val
+        }
+
+        return []
+      },
     },
     'fields[].title': 'CustomFields.Fields[].Label',
     'fields[].caption': 'CustomFields.Fields[].Help',
-    'fields[].mandatory': 'CustomFields.Fields[].InputControlData.Mandatory',
+    'fields[].mandatory': 'CustomFields.Fields[].InputControlData.mandatory',
     'fields[].needsConfirmationIfIsEmpty': {
       key: 'CustomFields.Fields[].InputControlData.optional?',
       transform: value => (value ? !value : true),
@@ -80,24 +93,30 @@ const baseMapper = aspectFields => {
     'fields[].order': 'CustomFields.Fields[].DisplayOrder',
     'fields[].gxAlertDbColumn': 'CustomFields.Fields[].DbColumn',
     /**
-     * items - base 3 props, mapping from `source` (in form definition JSON)
+     * items - base 4 props, mapping from `source` (in form definition JSON)
      * to `target` (custom field options)
      * `source`  `target`
      *  key    ->  value
      *  value  ->  text
      *  order  ->  displayOrder
+     *  isDefault -> isDefault (optional)
      */
     'fields[].items[].key': 'CustomFields.Fields[].InputControlData.options[].value',
     'fields[].items[].value': 'CustomFields.Fields[].InputControlData.options[].text',
     'fields[].items[].order': 'CustomFields.Fields[].InputControlData.options[].displayOrder',
+    'fields[].items[].isDefault': 'CustomFields.Fields[].InputControlData.options[].isDefault',
 
     'fields[].validation[].min': {
       key: 'CustomFields.Fields[].InputControlData.minValue',
       transform: sourceValue => propertyToNumber(sourceValue),
     },
-    'fields[].validation[0].max': {
+    'fields[].validation[].max': {
       key: 'CustomFields.Fields[].InputControlData.maxValue',
       transform: sourceValue => propertyToNumber(sourceValue),
+    },
+    'fields[].validation': {
+      key: 'CustomFields.Fields[].InputControlData.validations',
+      transform: sourceValue => translateValidations(sourceValue),
     },
     'fields[].condition': {
       key: 'CustomFields.Fields[].InputControlData.displayConditions',
@@ -107,11 +126,16 @@ const baseMapper = aspectFields => {
       key: 'CustomFields.Fields[].InputControlData.filters',
       transform: sourceValue => translateCondition(sourceValue, aspectFields, true),
     },
+    'fields[].useValue': {
+      key: 'CustomFields.Fields[].InputControlData.useValue',
+      transform: sourceValue => translateUseValue(sourceValue, aspectFields),
+    },
     'fields[].items[]': {
       key: 'CustomFields.Fields[].InputControlData.options[]',
       transform: transformItemsToOptions,
     },
     'fields[].itemsSource': 'CustomFields.Fields[].itemsSource',
+    'fields[].emptyIfDisabled': 'CustomFields.Fields[].InputControlData.emptyIfDisabled',
 
     'fields[].calculated': {
       key: 'CustomFields.Fields[].InputControlData',
@@ -122,14 +146,14 @@ const baseMapper = aspectFields => {
   }
 }
 
-const transformItemsToOptions = (source, sourceObject, destinationValue) => {
+const transformItemsToOptions = (value, sourceObject, destinationValue) => {
   /**
    * - get 1st item with defined array `items`
    * - get item with same `items` as `source`
    * - if they differ - exit
    */
   const srcFirst = sourceObject.fields.find(({ items }) => !!items)
-  const srcThis = sourceObject.fields.find(({ items }) => _.isEqual(items, source))
+  const srcThis = sourceObject.fields.find(({ items }) => _.isEqual(items, value))
   if (srcFirst !== srcThis) {
     return null
   }
@@ -165,13 +189,40 @@ const transformItemsToOptions = (source, sourceObject, destinationValue) => {
   return null
 }
 
+const isNumeric = n => !Number.isNaN(parseFloat(n)) && Number.isFinite(n)
+
 const propertyToNumber = sourceValue => {
-  return _.isArray(sourceValue) && _.isNumber(sourceValue[0])
-    ? sourceValue[0]
-    : _.isNumber(sourceValue)
-    ? sourceValue
-    : null
+  if (isNumeric(sourceValue)) {
+    return parseInt(sourceValue, 10)
+  }
+
+  if (_.isArray(sourceValue)) {
+    const numberFound = sourceValue.find(value => isNumeric(value))
+    return parseInt(numberFound, 10)
+  }
+
+  return null
 }
+
+const translateValidations = sourceValue => {
+  if (!sourceValue) return null
+  // skip integer validation (already exists in InputControlData)
+  const map = sourceValue
+    .filter(elem => elem.validationType !== 'integer' && elem.validationType !== 'float')
+    .map(elem => {
+      if (elem.validationType === 'regex') {
+        return {
+          type: elem.validationType,
+          value: elem.value,
+          message: elem.errorMessage,
+        }
+      }
+      return elem
+    })
+
+  return map.length > 0 ? map : null
+}
+
 const translateCondition = (sourceValue, aspectFields) => {
   if (!sourceValue) return null
   const map = _.map(sourceValue, elem => {
@@ -184,7 +235,7 @@ const translateCondition = (sourceValue, aspectFields) => {
         ),
       }
       if (elem.conjunction) field.conjunction = elem.conjunction
-      if (elem.valueToCompare) field.value = elem.valueToCompare
+      if (elem.valueToCompare !== undefined) field.value = elem.valueToCompare
       if (elem.fieldToCompare) field.propName = elem.fieldToCompare
 
       return field
@@ -192,6 +243,18 @@ const translateCondition = (sourceValue, aspectFields) => {
 
     return elem
   })
+  return map
+}
+
+const translateUseValue = (sourceValue, aspectFields) => {
+  if (!sourceValue) return null
+  const map = sourceValue.map(elem => {
+    return {
+      from: elem.from,
+      when: translateCondition(elem.when, aspectFields),
+    }
+  })
+
   return map
 }
 

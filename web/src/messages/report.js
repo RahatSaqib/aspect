@@ -34,6 +34,23 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.data_extract_description',
     defaultMessage: 'Extract data for selected date range for further importing into Tableau.',
   },
+  reportDrTb10a10bCovidNtpUse: {
+    id: 'pages.ReportIndex.reportDrTb10a10bCovidNtpUse',
+    defaultMessage: 'Xpert MTB/RIF and Covid - NTP Use',
+  },
+  reportDrTb10a10bCovidDescriptionNtpUse: {
+    id: 'pages.ReportIndex.reportDrTb10a10bCovidNtpUse_description',
+    defaultMessage: 'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results- NTP Use.',
+  },
+  doNotUseModulesReport: {
+    id: 'pages.ReportIndex.doNotUseModulesReport',
+    defaultMessage: '"Do Not Use" Modules',
+  },
+  doNotUseModulesReport_Description: {
+    id: 'pages.ReportIndex.doNotUseModulesReport_Description',
+    defaultMessage:
+      "A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.",
+  },
   no_stock: {
     id: 'pages.ReportIndex.no_stock',
     defaultMessage: '"No Stock" Inventory Report',
@@ -42,11 +59,11 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.no_stock_description',
     defaultMessage: 'Showing all sites/devices and the number of days which they had no stock in the last month.',
   },
-  result_notification: {
+  result_notifications_report: {
     id: 'pages.ReportIndex.result_notifications_report',
     defaultMessage: 'Result Notifications Report',
   },
-  result_notification_description: {
+  result_notifications_report_description: {
     id: 'pages.ReportIndex.result_notifications_report_description',
     defaultMessage: 'This report lists all mails and sms delivered because a result is created or updated.',
   },
@@ -69,6 +86,18 @@ const messages = defineMessages({
   Device_Calibration_Report: {
     id: 'pages.ReportIndex.Device_Calibration_Report',
     defaultMessage: 'Device Calibration Report',
+  },
+  Device_Calibration_Report_description: {
+    id: 'pages.ReportIndex.Device_Calibration_Report_description',
+    defaultMessage: 'All devices along with the last calibration date and when next calibration is due',
+  },
+  reportDrTb10a10bCovid: {
+    id: 'pages.ReportIndex.reportDrTb10a10bCovid',
+    defaultMessage: 'Report on Xpert MTB/RIF and Covid',
+  },
+  reportDrTb10a10bCovidDescription: {
+    id: 'pages.ReportIndex.reportDrTb10a10bCovidDescription',
+    defaultMessage: 'DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results',
   },
   geneXpertIssues: {
     id: 'pages.ReportIndex.geneXpertIssues',
@@ -100,14 +129,27 @@ const messages = defineMessages({
     defaultMessage:
       'This report shows the activity percentage, per month, of the devices during the selected period of time. (By default last 12 months)',
   },
+  szMtbStats: {
+    id: 'pages.ReportIndex.szSmsStats',
+    defaultMessage: 'SMS Stats',
+  },
+  szSmsStatsDescription: {
+    id: 'pages.ReportIndex.szSmsStatsDescription',
+    defaultMessage: 'Stats about SMS notifications sent.',
+  },
+  devicePerformance: {
+    id: 'pages.ReportIndex.devicePerformance',
+    defaultMessage: 'Device Performance',
+  },
+  devicePerformance_description: {
+    id: 'pages.ReportIndex.devicePerformance_description',
+    defaultMessage:
+      'This report shows performance rates by device and assay, including: errors, activity, utilization, days offline, and average delay to upload tests. Scoped only to Cepheid GeneXpert devices.',
+  },
   moduleSwapsReport_description: {
     id: 'pages.ReportIndex.moduleSwapsReport_description',
     defaultMessage:
       'This report shows all module swaps in devices. The report will show you by default the last 12 months',
-  },
-  Device_Calibration_Report_description: {
-    id: 'pages.ReportIndex.Device_Calibration_Report_description',
-    defaultMessage: 'All devices along with the last calibration date and when next calibration is due',
   },
   geneXpertIssues_description: {
     id: 'pages.ReportIndex.geneXpertIssues_description',
@@ -239,6 +281,18 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.geneXpertTbWorkload_description',
     defaultMessage:
       'Displays all the MTB Rif/MTB Rif Ultra/MTB XDR devices and the number of results per result category, alongside the number of modules in use, days of interruption, and error-rate related fields.',
+  },
+  error_rate: {
+    id: 'pages.ReportIndex.error_rate',
+    defaultMessage: 'Error Rate',
+  },
+  error_rate_description: {
+    id: 'pages.ReportIndex.error_rate_description',
+    defaultMessage: 'Report error rates per quarter, break them down by devices, modules and users',
+  },
+  deviceSummaryReport: {
+    id: 'pages.ReportIndex.deviceSummaryReport',
+    defaultMessage: 'Device Summary Report',
   },
 })
 export default messages

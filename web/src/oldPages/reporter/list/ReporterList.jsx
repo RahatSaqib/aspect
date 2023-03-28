@@ -144,12 +144,13 @@ export const ReporterListWithProps = ({
         <Helmet title={formatMessage(messages.reportersTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
-            <AspectExportListButton
-              onExport={onExportClick}
-              visible={!items.currentIdList.isEmpty()}
-              reportName="Reporters"
-            />
+            <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+              <AspectExportListButton
+                onExport={onExportClick}
+                visible={!items.currentIdList.isEmpty()}
+                reportName="Reporters"
+              />
+            </BrowseFilters>
           </div>
           <DataTableProgressBar disabled={!isLoading} />
 

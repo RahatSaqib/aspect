@@ -1178,162 +1178,8 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
   // -----------------------------------
   // Seed Sites from GxAlert Deployments
   // -----------------------------------
-  const auditFields = {
-    createdOn: now,
-    createdBy: adminId,
-    updatedOn: now,
-    updatedBy: adminId,
-  }
-  await Promise.each(sitesFromGxAlert, async site => {
-    const state = site.stateName
-      ? statesByName[site.stateName.toLowerCase()] || {
-          id: null,
-          lgas: {},
-        }
-      : {
-          id: null,
-          lgas: {},
-        }
-    const district =
-      state.lgas && site.lgaName
-        ? state.lgas[site.lgaName.toLowerCase()] || {
-            id: null,
-          }
-        : {
-            id: null,
-          }
-    const { id: siteGeographyId } = await knex('Geography')
-      .where({
-        countryId: country.id,
-        stateId: state.id,
-        lgaId: district.id,
-      })
-      .first()
+  upsertSites(knex, adminId, partnerId, country, statesByName, sitesFromGxAlert)
 
-    // sites
-    const siteData = {
-      partnerId,
-      geographyId: siteGeographyId,
-      name: site.name,
-      shortName: site.shortName,
-      externalId: site.externalId,
-      latitude: site.latitude,
-      longitude: site.longitude,
-      timezoneId: country.timezone,
-      ...auditFields,
-    }
-    const existingSite = await knex('Site').where('externalId', site.externalId).orWhere('name', site.name).first('id')
-    let siteId = 0
-    if (existingSite) {
-      siteId = existingSite.id
-    } else {
-      ;[siteId] = await knex('Site').insert(siteData)
-    }
-    siteData.id = siteId
-
-    if (site.devices) {
-      await Promise.all(
-        _.map(site.devices, async device => {
-          const existingDevice = await knex('Device')
-            .where({ partnerId, serial: device.serial })
-            .first(
-              'id',
-              'geographyId',
-              'siteId',
-              'deviceTypeId',
-              'name',
-              'shortName',
-              'macAddress',
-              'hostId',
-              'timezone',
-              'configurationData'
-            )
-          const { id: deviceTypeId } = await knex('DeviceType')
-            .where('externalId', device.deviceType || 'CepheidGeneXpert')
-            .first('id')
-          let deviceId
-          if (!existingDevice) {
-            ;[deviceId] = await knex('Device').insert({
-              partnerId,
-              geographyId: siteGeographyId,
-              siteId,
-              deviceTypeId,
-              deviceApprovalId: await deviceApprovalToId('approved'),
-              name: device.name,
-              shortName: device.shortName,
-              serial: device.serial,
-              macAddress: device.macAddress,
-              hostId: device.hostId,
-              culture: country.culture,
-              timezone: siteData.timezoneId,
-              configurationData: device.gxAlertDeviceId ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}` : '{}',
-              ...auditFields,
-            })
-          } else {
-            deviceId = existingDevice.id
-            const deviceConfigurationData = JSON.parse(
-              existingDevice.configurationData ? existingDevice.configurationData : '{}'
-            )
-            if (deviceConfigurationData.gxAlertDeviceId !== device.gxAlertDeviceId) {
-              deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
-            }
-            if (
-              existingDevice.geographyId !== siteGeographyId ||
-              existingDevice.siteId !== siteId ||
-              existingDevice.deviceTypeId !== deviceTypeId ||
-              existingDevice.name !== device.name ||
-              existingDevice.shortName !== device.shortName ||
-              existingDevice.macAddress !== device.macAddress ||
-              existingDevice.hostId !== device.hostId ||
-              existingDevice.timezone !== siteData.timezoneId ||
-              existingDevice.configurationData !== JSON.stringify(deviceConfigurationData)
-            ) {
-              await knex('Device')
-                .where('id', existingDevice.id)
-                .update({
-                  geographyId: siteGeographyId,
-                  siteId,
-                  deviceTypeId: await deviceTypeToId(device.deviceType),
-                  name: device.name,
-                  shortName: device.shortName,
-                  serial: device.serial,
-                  macAddress: device.macAddress,
-                  hostId: device.hostId,
-                  culture: country.culture,
-                  timezone: siteData.timezoneId,
-                  configurationData: JSON.stringify(deviceConfigurationData),
-                  updatedOn: now,
-                  updatedBy: adminId,
-                })
-            }
-          }
-          if (device.apiKey) {
-            const existingDeviceApiKey = await knex('DeviceApiKey').where('token', device.apiKey).first()
-            if (!existingDeviceApiKey) {
-              await knex('DeviceApiKey').insert({
-                token: device.apiKey,
-                deviceId,
-                geographyId: siteGeographyId,
-                siteId,
-                revoked: false,
-                createdOn: now,
-                createdBy: adminId,
-                updatedOn: now,
-                updatedBy: adminId,
-                partnerId,
-              })
-            } else if (!existingDeviceApiKey.deviceId) {
-              await knex('DeviceApiKey').where('id', existingDeviceApiKey.id).update({
-                deviceId,
-                updatedOn: now,
-                updatedBy: adminId,
-              })
-            }
-          }
-        })
-      )
-    }
-  })
   const siteIds = await knex('Geography as g')
     .join('Site as s', 'g.id', 's.geographyId')
     .where('g.countryId', countryId)
@@ -1464,6 +1310,13 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
       }
       personId = existingPerson.id
     } else {
+      const auditFields = {
+        createdOn: now,
+        createdBy: adminId,
+        updatedOn: now,
+        updatedBy: adminId,
+      }
+
       ;[personId] = await knex('Person').insert({
         name: person.personName,
         partnerId,
@@ -1916,12 +1769,183 @@ async function upsertPermissionFixture(knex) {
   })
 }
 
+async function upsertSites(knex, adminId, partnerId, country, statesByName, sitesFromGxAlert) {
+  const now = new Date()
+
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+  await Promise.each(sitesFromGxAlert, async site => {
+    const state = site.stateName
+      ? statesByName[site.stateName.toLowerCase()] || {
+          id: null,
+          lgas: {},
+        }
+      : {
+          id: null,
+          lgas: {},
+        }
+    const district =
+      state.lgas && site.lgaName
+        ? state.lgas[site.lgaName.toLowerCase()] || {
+            id: null,
+          }
+        : {
+            id: null,
+          }
+    const { id: siteGeographyId } = await knex('Geography')
+      .where({
+        countryId: country.id,
+        stateId: state.id,
+        lgaId: district.id,
+      })
+      .first()
+
+    const { id: siteTypeId } = await knex('SiteType')
+      .where({
+        externalId: site.type || 'lab',
+      })
+      .first()
+
+    // sites
+    const siteData = {
+      partnerId,
+      geographyId: siteGeographyId,
+      siteTypeId,
+      name: site.name,
+      shortName: site.shortName,
+      externalId: site.externalId,
+      latitude: site.latitude,
+      longitude: site.longitude,
+      timezoneId: country.timezone,
+      customProperties: site.customProperties || null,
+      ...auditFields,
+    }
+    const existingSite = await knex('Site').where('externalId', site.externalId).orWhere('name', site.name).first('id')
+    let siteId = 0
+    if (existingSite) {
+      siteId = existingSite.id
+      await knex('Site').where('id', siteId).update(siteData)
+    } else {
+      ;[siteId] = await knex('Site').insert(siteData)
+    }
+    siteData.id = siteId
+
+    if (site.devices) {
+      await Promise.all(
+        _.map(site.devices, async device => {
+          const existingDevice = await knex('Device')
+            .where({ partnerId, serial: device.serial })
+            .first(
+              'id',
+              'geographyId',
+              'siteId',
+              'deviceTypeId',
+              'name',
+              'shortName',
+              'macAddress',
+              'hostId',
+              'timezone',
+              'configurationData'
+            )
+          const { id: deviceTypeId } = await knex('DeviceType')
+            .where('externalId', device.deviceType || 'CepheidGeneXpert')
+            .first('id')
+          let deviceId
+          if (!existingDevice) {
+            ;[deviceId] = await knex('Device').insert({
+              partnerId,
+              geographyId: siteGeographyId,
+              siteId,
+              deviceTypeId,
+              deviceApprovalId: await deviceApprovalToId('approved'),
+              name: device.name,
+              shortName: device.shortName,
+              serial: device.serial,
+              macAddress: device.macAddress,
+              hostId: device.hostId,
+              culture: country.culture,
+              timezone: siteData.timezoneId,
+              configurationData: device.gxAlertDeviceId ? `{"gxAlertDeviceId":${device.gxAlertDeviceId}}` : '{}',
+              ...auditFields,
+            })
+          } else {
+            deviceId = existingDevice.id
+            const deviceConfigurationData = JSON.parse(
+              existingDevice.configurationData ? existingDevice.configurationData : '{}'
+            )
+            if (deviceConfigurationData.gxAlertDeviceId !== device.gxAlertDeviceId) {
+              deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
+            }
+            if (
+              existingDevice.geographyId !== siteGeographyId ||
+              existingDevice.siteId !== siteId ||
+              existingDevice.deviceTypeId !== deviceTypeId ||
+              existingDevice.name !== device.name ||
+              existingDevice.shortName !== device.shortName ||
+              existingDevice.macAddress !== device.macAddress ||
+              existingDevice.hostId !== device.hostId ||
+              existingDevice.timezone !== siteData.timezoneId ||
+              existingDevice.configurationData !== JSON.stringify(deviceConfigurationData)
+            ) {
+              await knex('Device')
+                .where('id', existingDevice.id)
+                .update({
+                  geographyId: siteGeographyId,
+                  siteId,
+                  deviceTypeId: await deviceTypeToId(device.deviceType),
+                  name: device.name,
+                  shortName: device.shortName,
+                  serial: device.serial,
+                  macAddress: device.macAddress,
+                  hostId: device.hostId,
+                  culture: country.culture,
+                  timezone: siteData.timezoneId,
+                  configurationData: JSON.stringify(deviceConfigurationData),
+                  updatedOn: now,
+                  updatedBy: adminId,
+                })
+            }
+          }
+          if (device.apiKey) {
+            const existingDeviceApiKey = await knex('DeviceApiKey').where('token', device.apiKey).first()
+            if (!existingDeviceApiKey) {
+              await knex('DeviceApiKey').insert({
+                token: device.apiKey,
+                deviceId,
+                geographyId: siteGeographyId,
+                siteId,
+                revoked: false,
+                createdOn: now,
+                createdBy: adminId,
+                updatedOn: now,
+                updatedBy: adminId,
+                partnerId,
+              })
+            } else if (!existingDeviceApiKey.deviceId) {
+              await knex('DeviceApiKey').where('id', existingDeviceApiKey.id).update({
+                deviceId,
+                updatedOn: now,
+                updatedBy: adminId,
+              })
+            }
+          }
+        })
+      )
+    }
+  })
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
   ensureAspectDeviceExists,
   upsertJobFunctionPermission,
   upsertGeneXpertDeviceTypeAndAssays,
+  upsertSites,
   upsertStatesAndLgas,
   upsertAssayResultCategories,
   upsertJobFunction,

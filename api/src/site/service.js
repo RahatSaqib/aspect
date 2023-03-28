@@ -255,7 +255,15 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
   let columnsToSelect = ['s.id', 's.name', 'g.stateId', 'st.name as stateName']
 
   if (mode !== 'reporter') {
-    columnsToSelect = [...columnsToSelect, 's.partnerId', 'g.countryId', 'g.lgaId', 'l.name as lgaName', 's.externalId']
+    columnsToSelect = [
+      ...columnsToSelect,
+      's.partnerId',
+      'g.countryId',
+      'g.lgaId',
+      'l.name as lgaName',
+      's.externalId',
+      's.customProperties',
+    ]
   }
 
   sitesQuery = sitesQuery
