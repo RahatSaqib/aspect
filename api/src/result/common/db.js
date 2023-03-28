@@ -18,6 +18,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       {
         device: 'd',
         result: 'r',
+        resultType: 'rt',
       },
       { displayResult: 'all' }
     )
