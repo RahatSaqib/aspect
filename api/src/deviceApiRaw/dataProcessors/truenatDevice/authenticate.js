@@ -10,7 +10,7 @@ const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
 const { postPayloadFromDevice } = require('../../../device/service')
 const { deviceSeen } = require('../../../device/actions')
-const { deviceApprovalToId } = require('../../../shared/dictionary')
+const { deviceApprovalToId, deviceTypeToId } = require('../../../shared/dictionary')
 
 class TruenatLogin extends SynchronousDataProcessor {
   static get AllowUnauthenticatedRequests() {
@@ -63,7 +63,12 @@ class TruenatLogin extends SynchronousDataProcessor {
       if (!site) {
         const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
         if (!defaultPartner) {
-          throw Error('Default partner was not found')
+          throw Boom.unauthorized(
+            JSON.stringify({
+              username: payload.Username,
+              success: false,
+            })
+          )
         }
         site = {
           name: payload.Username,
@@ -83,7 +88,7 @@ class TruenatLogin extends SynchronousDataProcessor {
         .orWhere('hostId', payload.Username)
         .first()
       if (!device) {
-        const [truenatDeviceTypeId] = await knex('DeviceType').where({ externalId: 'molbioTruenat' }).pluck('id')
+        const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
         const deviceApprovalId = await deviceApprovalToId('assigned')
         device = {
           name: payload.Username,

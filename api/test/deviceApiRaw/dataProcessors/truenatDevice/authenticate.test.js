@@ -142,7 +142,7 @@ describe('Truenat Authenticate Data Processor', () => {
       })
     })
 
-    describe('when password do not match device API key credentials', () => {
+    describe('when password does not match device API key credentials', () => {
       it('will respond with 401', async () => {
         const TruenatLogin = mockTruenatLoginDataProcessor({
           authenticated: false,
