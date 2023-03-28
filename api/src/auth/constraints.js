@@ -63,6 +63,7 @@ async function getConstraints(credentials, { displayResult = 'actual' } = {}) {
     },
   }
 
+  // TODO: Remove this when all countries are in version 1.5.0 or higher, using the new addConstraints way of filtering EQA results.
   if (displayResult === 'actual' || displayResult === 'excluded') {
     const { partnerId } = user
     const { getPartnerPluginName } = require('../plugin/utils')
