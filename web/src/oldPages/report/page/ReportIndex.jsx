@@ -20,6 +20,7 @@ import { makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams
 import { safeDownloadFile } from '../../../utils/utils/files'
 import ReportCard from './ReportCard'
 import styles from './ReportIndex.css'
+import ReportsFilter from './ReportsFilter'
 
 const cssClasses = classnames.bind(styles)
 
@@ -141,6 +142,7 @@ const ReportIndex = () => {
       <DetailHeader name={intl.formatMessage(messages.reportsTitle)} disableBack />
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
+        <ReportsFilter />
         <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
           <BrowseFilters navigate={navigate} location={location} config={reducedFilters} showBrowseDropdown={false} />
         </div>

@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { commonDefinitions } from '../../messages/customMessages'
+import { commonDefinitions } from './customMessages'
 
 const messages = {
   ...commonDefinitions,
@@ -317,6 +317,9 @@ const messages = {
       id: 'filter.popover.selectDisplayResult',
       defaultMessage: 'Select result scope...',
     },
+    reportName: { id: 'filter.popover.reportName', defaultMessage: 'Report' },
+    cancel: { id: 'filter.popover.cancel', defaultMessage: 'Cancel' },
+    apply: { id: 'filter.popover.apply', defaultMessage: 'Apply Filters' },
   }),
 }
 

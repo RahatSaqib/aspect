@@ -5,11 +5,23 @@ import useAssayList from '../../hooks/assay/useAssayList'
 import useI18n from '../../hooks/useI18n'
 import { assay } from '../../messages'
 
-const AssaySelect = ({ id, name, label, value, onChange, error, helperText, disabled, assayTypeId, deviceTypeId }) => {
+const AssaySelect = ({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  error,
+  helperText,
+  disabled,
+  assayTypeId,
+  deviceTypeId,
+  onlyResults = false,
+}) => {
   const { isLoading, data: assayList } = useAssayList()
   const { formatMessage } = useI18n()
 
-  const data =
+  let data =
     assayList && assayTypeId && deviceTypeId
       ? assayList.filter(s => s.assayTypeId === assayTypeId && s.deviceTypeId === deviceTypeId)
       : assayList && assayTypeId
@@ -17,6 +29,8 @@ const AssaySelect = ({ id, name, label, value, onChange, error, helperText, disa
       : assayList && deviceTypeId
       ? assayList.filter(s => s.deviceTypeId === deviceTypeId)
       : assayList
+
+  data = assayList && onlyResults ? data.filter(a => a.hasResults) : data
 
   return isLoading ? (
     <LinearProgress />

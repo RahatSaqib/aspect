@@ -1,29 +1,70 @@
-import React, { useState, createContext } from 'react'
+import React, { useState, createContext, useContext } from 'react'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
+import startOfMonth from 'date-fns/startOfMonth'
+import subtractDays from 'date-fns/subDays'
+import { useAuthState } from '../AuthProvider'
 
 const FilterContext = createContext()
 
+const now = new Date()
+const minDate = startOfDay(subtractDays(now, 30)).toJSON()
+const maxDate = endOfDay(now).toJSON()
+
 const defaultFilter = {
-  '/browse/site': { countryId: 4 },
-  '/browse/person': { countryId: 4, contactStatus: 0 },
+  '/browse/device/list': {},
+  '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: '?' },
+  '/browse/deviceApiKey': {},
+  '/browse/inventory/supplies': { hasStock: true },
+  '/browse/inventory/log': { minDate, maxDate },
+  '/browse/notification': {},
+  '/browse/person': { contactStatus: 0 },
+  '/browse/reporter': { minDate, maxDate },
+  '/browse/result': {},
+  '/browse/router': {},
+  '/browse/site': {},
+  '/reports': {},
 }
 
 function FilterProvider({ children }) {
+  const { countryId } = useAuthState()
+
+  Object.keys(defaultFilter).map(k => (defaultFilter[k] = { countryId, ...defaultFilter[k] }))
+
   const filterState = useState(defaultFilter)
-  // NOTE: you *might* need to memoize this value
-  // Learn more in http://kcd.im/optimize-context
+
+  // console.log(filterState[0])
+
   return <FilterContext.Provider value={filterState}>{children}</FilterContext.Provider>
 }
 
-function useFilter(pathname) {
-  const [filter, setFilter] = React.useContext(FilterContext)
+function useFilterValues(pathname) {
+  const [filter] = useContext(FilterContext)
 
   if (filter === undefined) {
     throw new Error('useFilter must be used within a FilterProvider')
   }
 
-  const updateCurrentFilter = newFilter => setFilter({ ...filter, [pathname]: newFilter })
-
-  return [filter[pathname], updateCurrentFilter] // access and update current url/page/section filters
+  return filter[pathname]
 }
 
-export { FilterProvider, useFilter }
+function useFilterUpdate() {
+  const [filter, setFilter] = useContext(FilterContext)
+
+  if (filter === undefined) {
+    throw new Error('useFilter must be used within a FilterProvider')
+  }
+
+  const update = (newFilter, pathname) => setFilter({ ...filter, [pathname]: { ...newFilter } })
+
+  const removeFilter = (key, pathname) => {
+    const filterForLocation = filter[pathname]
+    const { [key]: removed, ...newFilter } = filterForLocation
+
+    update(newFilter, pathname)
+  }
+
+  return [update, removeFilter] // pathname is to allow changinh the filter in other places before navigation
+}
+
+export { FilterProvider, useFilterValues, useFilterUpdate }
