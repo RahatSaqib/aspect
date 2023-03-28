@@ -290,5 +290,9 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.error_rate_description',
     defaultMessage: 'Report error rates per quarter, break them down by devices, modules and users',
   },
+  deviceSummaryReport: {
+    id: 'pages.ReportIndex.deviceSummaryReport',
+    defaultMessage: 'Device Summary Report',
+  },
 })
 export default messages
