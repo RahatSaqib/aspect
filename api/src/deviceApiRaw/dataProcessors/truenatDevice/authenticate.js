@@ -58,36 +58,37 @@ class TruenatLogin extends SynchronousDataProcessor {
         })
       )
     } else {
-      const now = new Date()
-      let site = await knex('Site').where('name', payload.Username).orWhere('shortName', payload.Username).first()
-      if (!site) {
-        const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
-        if (!defaultPartner) {
-          throw Boom.unauthorized(
-            JSON.stringify({
-              username: payload.Username,
-              success: false,
-            })
-          )
-        }
-        site = {
-          name: payload.Username,
-          shortName: payload.Username,
-          partnerId: defaultPartner.id,
-          externalId: payload.Username,
-          notes: 'Created automatically by new Truelab device',
-          createdOn: now,
-          updatedOn: now,
-        }
-        const [siteId] = await knex('Site').insert(site)
-        site.id = siteId
+      const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
+      if (!defaultPartner) {
+        throw Boom.unauthorized(
+          JSON.stringify({
+            username: payload.Username,
+            success: false,
+          })
+        )
       }
+      const now = new Date()
+      let site
       let device = await knex('Device')
         .where('name', payload.Username)
         .orWhere('shortName', payload.Username)
         .orWhere('hostId', payload.Username)
         .first()
       if (!device) {
+        site = await knex('Site').where('name', payload.Username).orWhere('shortName', payload.Username).first()
+        if (!site) {
+          site = {
+            name: payload.Username,
+            shortName: payload.Username,
+            partnerId: defaultPartner.id,
+            externalId: payload.Username,
+            notes: 'Created automatically by new Truelab device',
+            createdOn: now,
+            updatedOn: now,
+          }
+          const [siteId] = await knex('Site').insert(site)
+          site.id = siteId
+        }
         const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
         const deviceApprovalId = await deviceApprovalToId('assigned')
         device = {
@@ -103,6 +104,9 @@ class TruenatLogin extends SynchronousDataProcessor {
         }
         const [deviceId] = await knex('Device').insert(device)
         device.id = deviceId
+      }
+      if (!site) {
+        site = await knex('Site').where('id', device.siteId).first()
       }
       const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
       const apiKey = { token: randomToken() }
