@@ -32,7 +32,7 @@ async function getDeviceActivityPercentReport(auth, query) {
       'd.serial',
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
-      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn')
+      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn')
     )
     .whereNotIn('dt.externalId', ['Aspect', 'GxAlert'])
     .groupBy('d.id', 'd.name', 'd.serial')

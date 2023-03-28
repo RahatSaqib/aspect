@@ -44,7 +44,7 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
       ),
       otherTests: knex.raw('IFNULL(SUM(CASE WHEN rcg.id IS NULL THEN 1 ELSE 0 END), 0)'),
       totalXpertTests: knex.raw('count(*)'),
-      lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset),
+      lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset),
     })
     .groupBy('r.deviceId')
     .modify(filterParams, query, {
