@@ -18,6 +18,7 @@ const changeNotificationStatus = require('./changeNotificationStatus')
 const getNotification = require('./getNotification')
 const history = require('./history')
 const deleteNotification = require('./deleteNotification')
+const listPlaceholders = require('./listPlaceholders')
 
 const routes = [
   {
@@ -202,6 +203,41 @@ const routes = [
         },
       },
       response: saveNotificationResponse,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/notification/placeholders',
+    handler: listPlaceholders,
+    config: {
+      description: 'List Placeholders',
+      notes: 'Grouped list of placeholders available to be used in the notification templates',
+      auth: { scope: ['notification'] },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False on any non-fatal error'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                notificationTypeWhitelist: Joi.array(),
+                labelI18nKey: Joi.string(),
+                label: Joi.string(),
+                options: Joi.array().items(
+                  Joi.object().keys({
+                    id: Joi.string(),
+                    nameI18nKey: Joi.string(),
+                    name: Joi.string(),
+                    assayWhitelist: Joi.array(),
+                  })
+                ),
+              })
+            ),
+        }),
+      },
     },
   },
 ]

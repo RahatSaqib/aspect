@@ -358,7 +358,7 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
 }
 
 async function findDevices(availableDeviceDetails, knex) {
-  const { deviceId, partnerId, hostId, deviceSerialNumber, countryCode, deviceIdFromGxAlertSource } =
+  const { deviceId, partnerId, hostId, deviceSerialNumber, macAddress, countryCode, deviceIdFromGxAlertSource } =
     availableDeviceDetails
   const fields = [
     'd.id',
@@ -367,6 +367,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.geographyId',
     'd.name',
     'd.serial',
+    'd.hostId',
     'd.macAddress',
     'd.configurationData',
     'd.lastSeenOn',
@@ -393,22 +394,65 @@ async function findDevices(availableDeviceDetails, knex) {
   }
   let matchingDevices = []
   if (partnerId) {
+    const partnerDeviceQuery = deviceQuery.clone().modify(queryBuilder => {
+      queryBuilder.where('d.partnerId', partnerId)
+      if (countryCode) {
+        queryBuilder.andWhere('c.abbreviation', countryCode)
+      }
+    })
     if (deviceIdFromGxAlertSource) {
-      matchingDevices = await deviceQuery
+      matchingDevices = await partnerDeviceQuery
         .clone()
-        .whereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`)
-        .andWhere('d.partnerId', partnerId)
+        .andWhereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`)
         .select(fields)
     }
     if (_.isEmpty(matchingDevices) && countryCode) {
+      const partnerCountryDeviceQuery = partnerDeviceQuery.clone().andWhere('c.abbreviation', countryCode)
       if (hostId && deviceSerialNumber) {
-        matchingDevices = await deviceQuery
+        matchingDevices = await partnerCountryDeviceQuery
           .clone()
-          .where('d.partnerId', partnerId)
           .andWhere('d.hostId', hostId)
           .andWhere('d.serial', deviceSerialNumber)
-          .andWhere('c.abbreviation', countryCode)
           .select(fields)
+      }
+      if (hostId) {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.hostId', hostId).select(fields)
+          // There are multiple devices using this Host ID
+          //  therefore the Host ID cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.hostId === hostId)
+        }
+      }
+      if (deviceSerialNumber) {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery
+            .clone()
+            .andWhere('d.serial', deviceSerialNumber)
+            .select(fields)
+          // There are multiple devices using this computer name
+          //  therefore the device serial number cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.serial === deviceSerialNumber)
+        }
+      }
+      if (macAddress && macAddress !== 'MAC') {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.macAddress', macAddress).select(fields)
+          // There are multiple devices using this MAC address
+          //  therefore the MAC address cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.macAddress === macAddress)
+        }
       }
     }
   }

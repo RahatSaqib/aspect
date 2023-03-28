@@ -3461,7 +3461,7 @@ async function seed(knex) {
           labContactCell: '0884131287',
           labContactName: 'ALLAN',
           lastCalibrated: '2021-06-15T18:50:39Z',
-          gxAlertDeviceId: 1933,
+          gxAlertDeviceId: i + 1,
           labContactEmail: 'aaaaa@gmail.com',
           databaseDeviceOk: true,
           gxConnectVersion: '1.11.1.7',

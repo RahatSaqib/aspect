@@ -29,7 +29,7 @@
       "i18nKeyCaption": "Agei18nCaptionKey",
       "controlType": "textBox",
       "payloadDestinationPath": "patient.PatientAge",
-      "source": "patientData.age",
+      "source": "patientData.PatientAge",
       "validation": [
         {
           "validationType": "integer",
@@ -54,7 +54,7 @@
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
       "payloadDestinationPath": "patient.PatientGender",
-      "source": "patientData.gender",
+      "source": "patientData.PatientGender",
       "items": [
         {
           "key": 1,
