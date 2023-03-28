@@ -18,6 +18,7 @@ module.exports = async (knex, partnerData) => {
     apiUrl: finalValues.apiUrl,
     dueDaysCalibrationIssue: finalValues.dueDaysCalibrationIssue,
     partnerTypeId: finalValues.partnerTypeId,
+    isDefault: true,
   }
 
   if (!dbPartner) {
