@@ -984,7 +984,12 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
   const missingVariables = []
   let { id: adminId } = (await knex('User').where('name', admin.name).first('id')) || {}
   if (!admin.password && !gxAlertAdmin.getPasswordFromGxAlert && !adminId) {
-    missingVariables.push('admin.password')
+    const adminPasswordInFixture = (contactsFromGxAlert.find(c => c.username === admin.name) || {}).password
+    if (adminPasswordInFixture) {
+      admin.password = adminPasswordInFixture
+    } else {
+      missingVariables.push('admin.password')
+    }
   }
   if (!partner.name) {
     missingVariables.push('partner.name')
