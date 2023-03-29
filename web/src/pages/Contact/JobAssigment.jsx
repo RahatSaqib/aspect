@@ -19,14 +19,14 @@ import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignmen
 import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
 import usePersonAssignment from '../../hooks/person/usePersonAssignment'
 import useI18n from '../../hooks/useI18n'
-import { getCustomMessage } from '../../messages/customMessages'
+import { getCustomMessage } from '../../messages'
 import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import messages from './messages'
 
-const ContactPageStepThree = ({ setStep, id }) => {
+const JobAssigment = ({ setStep, id }) => {
   const navigate = useNavigate()
   const { countryAbbreviation, countryId } = useAuthState()
   const { formatMessage } = useI18n()
@@ -55,7 +55,7 @@ const ContactPageStepThree = ({ setStep, id }) => {
 
   return (
     <>
-      <ContactStepper step={2} onChange={(v, step) => setStep(step)} isUpdate={id !== ACTION.ADD} full />
+      <ContactStepper step={1} onChange={(v, step) => setStep(step)} isUpdate={id !== ACTION.ADD} full />
       {isLoading ? (
         <Loading />
       ) : (
@@ -220,14 +220,16 @@ const ContactPageStepThree = ({ setStep, id }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button onClick={() => setStep(1)}>{formatMessage(messages.back)}</Button>
+                  <Button onClick={() => setStep(0)}>{formatMessage(messages.back)}</Button>
                   {dirty ? (
                     <Button type="submit" disabled={!isValid}>
                       {formatMessage(messages.addAssignment)}
                     </Button>
                   ) : null}
                   <Box sx={{ flex: '1 1 auto' }} />
-                  <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
+                  {id === ACTION.ADD ? (
+                    <Button onClick={() => setStep(2)}>{formatMessage(messages.next)}</Button>
+                  ) : null}
                 </Box>
               </form>
             </>
@@ -238,4 +240,4 @@ const ContactPageStepThree = ({ setStep, id }) => {
   )
 }
 
-export default ContactPageStepThree
+export default JobAssigment
