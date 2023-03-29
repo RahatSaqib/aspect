@@ -55,8 +55,8 @@ const ReportsFilter = () => {
             ) : null
           )}
         </span>
-        <Button variant="contained" sx={{ m: 0.25, height: '36px' }}>
-          {expanded ? <MdArrowUpward onClick={toggleOpen} /> : <MdArrowDownward onClick={toggleOpen} />}
+        <Button variant="contained" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>
+          {expanded ? <MdArrowUpward /> : <MdArrowDownward />}
         </Button>
       </CardContent>
       <Collapse in={expanded} timeout="auto" unmountOnExit>

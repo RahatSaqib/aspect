@@ -33,8 +33,6 @@ function FilterProvider({ children }) {
 
   const filterState = useState(defaultFilter)
 
-  // console.log(filterState[0])
-
   return <FilterContext.Provider value={filterState}>{children}</FilterContext.Provider>
 }
 
@@ -57,11 +55,11 @@ function useFilterUpdate() {
 
   const update = (newFilter, pathname) => setFilter({ ...filter, [pathname]: { ...newFilter } })
 
-  const removeFilter = (key, pathname) => {
+  const removeFilter = (keys, pathname) => {
     const filterForLocation = filter[pathname]
-    const { [key]: removed, ...newFilter } = filterForLocation
+    keys.forEach(k => delete filterForLocation[k])
 
-    update(newFilter, pathname)
+    update(filterForLocation, pathname)
   }
 
   return [update, removeFilter] // pathname is to allow changinh the filter in other places before navigation

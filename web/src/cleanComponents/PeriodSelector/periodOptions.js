@@ -83,7 +83,7 @@ const monthsOptions = formatDate => {
     monthsBeforeLast.push({
       id: 42 + i,
       label: formatDate(monthStart, { month: 'long', year: 'numeric' }),
-      values: { minDate: startOfDay(monthStart), maxDate: endOfDay(monthEnd) },
+      value: { minDate: startOfDay(monthStart), maxDate: endOfDay(monthEnd) },
     })
   }
   return monthsBeforeLast

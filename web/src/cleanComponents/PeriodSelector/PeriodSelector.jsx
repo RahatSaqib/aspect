@@ -22,7 +22,7 @@ function PeriodSelector({ minDate, maxDate, onChange, label }) {
   const [valueLabel, setValueLabel] = useState(
     minDate && maxDate
       ? [...day, ...week, ...month, ...quarter, ...year].find(
-          option => option.value && option.value.minDate === minDate && option.value.maxDate === maxDate
+          o => o.value.minDate.getTime() === minDate.getTime() && o.value.maxDate.getTime() === maxDate.getTime()
         ).label
       : formatMessage(messages.any)
   )
