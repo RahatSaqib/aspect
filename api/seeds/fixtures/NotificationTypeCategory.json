@@ -12,7 +12,7 @@
       "name": "Result-Based",
       "externalId": "resultBased",
       "triggerCondition": {
-        "action": "RESULT_LOGGED",
+        "action": "RESULT_READY_FOR_NOTIFICATION",
         "method": "resultBased"
       }
     },

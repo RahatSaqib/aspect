@@ -103,7 +103,7 @@ async function getDeviceActivityReport(auth, query) {
       'd.serial',
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
-      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', offset, 'lastUploadOn')
+      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn')
     )
     .countDistinct('r.id as totalResults')
     .groupBy('d.id', 'd.name', 'd.serial')
@@ -457,7 +457,7 @@ async function getDevicesWithCountsForTBReport(auth, query) {
 
 async function getErrorRateByDeviceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const data = await getErrorRateByDevice(dataConstraints, query)
+  const data = await getErrorRateByDevice(dataConstraints, { ...query, hasResults: true })
   return {
     ok: true,
     total: data.length,

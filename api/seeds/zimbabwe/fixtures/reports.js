@@ -7,6 +7,7 @@ module.exports = {
     i18nKeyDescription: 'devicePerformance_description',
     externalId: 'zw_device_performance',
     fileName: 'devicePerformance',
+    availableForNotification: 1,
     sortOrder: 10,
     sheets: [
       {
@@ -28,6 +29,7 @@ module.exports = {
     i18nKeyDescription: 'geneXpertIssues_description',
     externalId: 'genexpert_issues',
     fileName: 'geneXpertIssues',
+    availableForNotification: 1,
     sortOrder: 9,
     sheets: [
       {

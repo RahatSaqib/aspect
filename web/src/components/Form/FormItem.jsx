@@ -111,7 +111,6 @@ const FormItem = ({
       item
       xs={12}
       md={fullWidth ? 12 : 6}
-      lg={fullWidth ? 12 : 4}
       className={cssClasses('form__sectionItemContainer', {
         [classNames.itemContainer]: !!classNames.itemContainer,
       })}

@@ -10,8 +10,10 @@
       "order": 1,
       "caption": "Gender",
       "gxAlertDbColumn": "PatientGender",
+      "optional": false,
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.101.value",
       "payloadDestinationPath": "patient.PatientGender",      
       "items": [
         {
@@ -25,7 +27,7 @@
           "order": 10
         }
       ],
-      "source": "patientData.gender"
+      "source": "patientData.PatientGender"
     },
     {
       "id": 102,

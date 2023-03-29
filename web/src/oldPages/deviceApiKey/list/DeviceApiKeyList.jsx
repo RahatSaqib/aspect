@@ -97,14 +97,8 @@ const FILTERS_CONFIG = [
   { state: false, requiredPermissions: [] },
   { partnerId: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    revoked: true,
-    requiredPermissions: [],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
+  { revoked: true, requiredPermissions: [] },
 ]
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
 const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
@@ -405,12 +399,13 @@ export const DeviceApiKeyList = ({
             intl={intl}
             config={reducedFilters}
             onClickExport={onExportClick}
-          />
-          <AspectExportListButton
-            onExport={onExportClick}
-            visible={!items.currentIdList.isEmpty()}
-            reportName="DeviceApiKey"
-          />
+          >
+            <AspectExportListButton
+              onExport={onExportClick}
+              visible={!items.currentIdList.isEmpty()}
+              reportName="DeviceApiKey"
+            />
+          </BrowseFilters>
         </div>
         <DataTableProgressBar disabled={!table.loading} />
 

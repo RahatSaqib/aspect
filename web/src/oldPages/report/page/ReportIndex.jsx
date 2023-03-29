@@ -27,10 +27,7 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
   { date: true, requiredPermissions: [] },
   { reportName: true, requiredPermissions: [] },
   { consumable: true, requiredPermissions: [] },

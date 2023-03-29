@@ -46,7 +46,7 @@ const ResultCategoryGroupSelectField = ({ onResultCategoryGroupChange, value, as
   )
 }
 
-const messages = defineMessages({
+export const messages = defineMessages({
   gxEbolaGPDetectedNPDetected: {
     id: 'pages.filters.gxEbolaGPDetectedNPDetected',
     defaultMessage: 'GP Detected - NP Detected',

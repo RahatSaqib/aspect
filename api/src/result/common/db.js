@@ -108,13 +108,12 @@ function getResultTreatmentStatus(response) {
   }
 }
 
-async function getCustomFieldsForResult(data) {
-  const { deviceId, partnerId, countryId, assayId, diseaseId } = data
+async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayId, diseaseId } = {}) {
   const { getCustomFields } = require('../../forms/service')
   let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
   customFields = _.sortBy(customFields, ['order', 'name'])
   customFields = customFields.map(
-    ({ title, source, fieldType, order, controlType, validation, items, condition, filters }) => ({
+    ({ title, source, fieldType, order, controlType, validation, items, condition, filters, optional, id }) => ({
       title,
       source,
       fieldType,
@@ -124,6 +123,8 @@ async function getCustomFieldsForResult(data) {
       items,
       condition,
       filters,
+      optional,
+      id,
     })
   )
   return customFields
@@ -447,4 +448,5 @@ module.exports = {
   getResultNotesByResultId,
   getBaseQueryForResults,
   getQueryForDataExtract,
+  getCustomFieldsForResult,
 }
