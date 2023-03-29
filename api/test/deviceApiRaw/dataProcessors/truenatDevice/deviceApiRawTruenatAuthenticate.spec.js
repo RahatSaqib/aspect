@@ -5,6 +5,7 @@ const { assert } = require('chai')
 const { knex } = require('../../../../src/db')
 const { passwordSaltRounds } = require('../../../../src/config')
 const { randomToken } = require('../../../../src/deviceApi/apiKey')
+const { deviceApprovalToId } = require('../../../../src/shared/dictionary')
 const server = require('../../../utils/testUtils')
 
 const saltRounds = parseInt(passwordSaltRounds, 10)
@@ -181,8 +182,8 @@ describe('Device API Raw routes for Truenat Authentication', () => {
     })
   })
 
-  describe('with unexisting username', () => {
-    it('should create new device api key', async () => {
+  describe('with unexisting username and no matching device/site', () => {
+    it('should create new device api key, device and site', async () => {
       const incorrectUsernameResponse = await server
         .post(deviceApiRawPath)
         .set('Content-type', 'application/json')
@@ -195,19 +196,32 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       assert.equal(incorrectUsernameResponse.body.username, newTruenatDevice.username)
       assert.isTrue(incorrectUsernameResponse.body.success)
 
-      const incorrectCredentialsResponse = await server
-        .post(deviceApiRawPath)
-        .set('Content-type', 'application/json')
-        .send({
+      const unapprovedDeviceApprovalId = await deviceApprovalToId('assigned')
+      const device = await knex('Device').where('name', newTruenatDevice.username).first()
+      const site = await knex('Site').where('name', newTruenatDevice.username).first()
+      assert.isDefined(device, 'new device should be created with username as device name')
+      assert.isDefined(site, 'new site should be created with username as site name')
+      assert.equal(device.deviceApprovalId, unapprovedDeviceApprovalId, 'new device should be unapproved')
+
+      it('should be able to login with the same username and password', async () => {
+        const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
+          Username: newTruenatDevice.username,
+          Password: newTruenatDevice.password,
+        })
+        assert.equal(response.statusCode, 200)
+        assert.isDefined(response.body.token)
+        assert.isTrue(response.body.success)
+      })
+
+      it('should get 401 unauthorized response when password is incorrect', async () => {
+        const response = await server.post(deviceApiRawPath).set('Content-type', 'application/json').send({
           Username: newTruenatDevice.username,
           Password: 'wrong_Pa55w()rd',
         })
-      assert.equal(incorrectCredentialsResponse.statusCode, 401)
-      assert.isUndefined(incorrectCredentialsResponse.body.token)
-      assert.equal(
-        incorrectCredentialsResponse.body.message,
-        `{"username":"${newTruenatDevice.username}","success":false}`
-      )
+        assert.equal(response.statusCode, 401)
+        assert.isUndefined(response.body.token)
+        assert.equal(response.body.message, `{"username":"${newTruenatDevice.username}","success":false}`)
+      })
     })
   })
 })
