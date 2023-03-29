@@ -167,11 +167,11 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
         <Card>
           <CardContent>
             <Grid container spacing={1}>
-              <Grid item xs={7}>
+              <Grid item xs={8}>
                 <h2>{intl.formatMessage(messages.editNotification)}</h2>
                 <AspectForm config={formConfig} />
               </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={4}>
                 <NotificationFormPreview values={formik.values} />
               </Grid>
             </Grid>

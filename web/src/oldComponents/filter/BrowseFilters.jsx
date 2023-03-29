@@ -67,7 +67,7 @@ export const BrowseFilters = ({ children, navigate, location, ...restProps }) =>
   return (
     <>
       <FiltersBtnGroup filters={filters} onRemoveFilterItem={onRemoveFilterItem} />
-      <div style={{ width: '178px', display: 'flex' }}>
+      <div style={{ width: '178px', display: 'flex', alignItems: 'flex-start' }}>
         <FiltersPanel filters={filters} {...restProps} />
         {children}
       </div>

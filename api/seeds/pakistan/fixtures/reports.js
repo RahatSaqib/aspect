@@ -22,6 +22,29 @@ const deviceSummaryReport = {
   ],
 }
 
+const xpertSiteDetailedReport = {
+  name: 'Xpert Site Detailed Report',
+  description: 'Xpert Implementation Site (XIS) Performance Report.',
+  i18nKey: 'xpert_site_detailed_report',
+  i18nKeyDescription: 'xpert_site_detailed_report_description',
+  externalId: 'pk_xpert_site_detailed_report', // folder name in /templates with low dash casing
+  fileName: 'xpertSiteDetailedReport',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 0,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReportsPakistan',
+      functionName: 'xpertSiteDetailedReport',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 module.exports = {
   deviceSummaryReport,
+  xpertSiteDetailedReport,
 }
