@@ -11,9 +11,10 @@ const {
   resultUpdated,
   resultLogged,
   resultLoggedProcessed,
+  resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
-
+const templateProcessor = require('../email/templateProcessor')
 const {
   updateDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
@@ -28,6 +29,8 @@ const { loadPlugin } = require('../plugin/registration')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')
+const { sendSms } = require('../sms/smsUtil')
+const { sendEmail } = require('../email/emailUtil')
 
 const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 
@@ -642,21 +645,40 @@ async function mergeResultWithContext(context) {
   }
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
-
   const transformPayload = await loadPlugin(plugins, 'transformMergeResultPayload')
   const transformedPayload = await transformPayload(pluginContext)
-  const { processedResult: result, existingResult: previousResult } = await mergeResult(
-    knex,
-    deviceId,
-    transformedPayload,
-    { now }
-  )
-  context.addDeviceLogUpdate('resultId', result.id)
+  const {
+    processedResult: plainResult,
+    existingResult: plainPreviousResult,
+    // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
+  } = await mergeResult(knex, deviceId, transformedPayload, { now })
+  context.addDeviceLogUpdate('resultId', plainResult.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
-  const postProcessResult = await postProcess(pluginContext, result, previousResult)
+  const postProcessResult = await postProcess(pluginContext, plainResult, plainPreviousResult)
+
+  // This is going to be used when we implement the Sample ID and Patient ID based notification
+  // const result = plainToDeepObjectResult(plainResult)
+  // const previousResult = plainToDeepObjectResult(plainPreviousResult)
+
+  // Trigger notifications
+  context.messageContext.bindActionCreators({ resultReadyForNotification })
+  const notificationSubType = {
+    updated: true,
+    created: false,
+  }
+
+  if (plainPreviousResult) {
+    // If a previous result exist, then we need to evaluate the notifications triggered on result update
+    // Also the results without a creation notification are going to be re-evaluated
+    context.messageContext.resultReadyForNotification(plainResult.id, notificationSubType.updated)
+  } else {
+    // Else, only the creation-based notifications should be triggered
+    context.messageContext.resultReadyForNotification(plainResult.id, notificationSubType.created)
+  }
+
   return {
     ...postProcessResult,
-    aspectResultId: result.id,
+    aspectResultId: plainResult.id,
   }
 }
 
@@ -733,6 +755,8 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
       return deviceAndError
     }
     ;({ device } = deviceAndError)
+
+    await sendNotificationToContacts(originalRequest.payload, device)
   }
 
   if (device == null) {
@@ -1086,6 +1110,69 @@ async function getHealthState(context) {
     })),
   }
   return result
+}
+
+async function sendNotificationToContacts(payload, device) {
+  const { configuration } = payload
+  if (configuration && configuration.data) {
+    const configurationData = configuration.data
+    const { culture, routerNumber, noInventory } = configurationData
+    const labContact = {
+      name: configurationData.labContactName,
+      email: configurationData.labContactEmail,
+      cell: configurationData.labContactCell,
+    }
+
+    const installerContact = {
+      name: configurationData.installerName,
+      email: configurationData.installerEmail,
+      cell: configurationData.installerCell,
+    }
+
+    const { operation } = payload
+    let cartridgeCount = null
+    if (operation && operation.data && operation.data.inventoryChanges && operation.data.inventoryChanges.length > 0) {
+      cartridgeCount = operation.data.inventoryChanges.reduce(
+        (accumulator, inventoryChange) => accumulator + inventoryChange.quantity,
+        0
+      )
+    }
+
+    await Promise.all([
+      notifyPerson(labContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+      notifyPerson(installerContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+    ])
+  }
+}
+
+async function notifyPerson({ name, email, cell }, deviceName, routerNumber, noInventory, culture, cartridgeCount) {
+  const generatedTemplate = await templateProcessor.process(
+    'newDevice',
+    {
+      deviceName,
+      name,
+      routerNumber,
+      noInventory,
+      cartridgeCount,
+    },
+    culture
+  )
+
+  if (email) {
+    const inlineImageAttachments = await templateProcessor.getInlineImageAttachments(generatedTemplate.html)
+
+    await sendEmail(
+      email,
+      generatedTemplate.subject,
+      generatedTemplate.html,
+      generatedTemplate.text,
+      inlineImageAttachments
+    ).catch(err => logger.error(err))
+  }
+
+  if (cell) {
+    await sendSms(cell, generatedTemplate.text).catch(err => logger.error(err))
+  }
 }
 
 module.exports = {

@@ -4,7 +4,7 @@ import styles from '../NotificationFormPage.css'
 
 const cssClasses = classnames.bind(styles)
 
-const notificationTypeSection = formatMessage => ({
+const notificationTypeSection = (formatMessage, partner) => ({
   id: 'section_notificationType',
   label: 'Notification Type',
   labelI18nKey: 'notificationType',
@@ -114,10 +114,6 @@ const notificationTypeSection = formatMessage => ({
                 label: formatMessage(messages.triggerWhenForResultCreated),
               },
               {
-                value: 'updated',
-                label: formatMessage(messages.triggerWhenForResultUpdated),
-              },
-              {
                 value: 'any',
                 label: formatMessage(messages.triggerWhenResultCreatedOrUpdated),
               },
@@ -143,7 +139,7 @@ const notificationTypeSection = formatMessage => ({
           controlType: {
             component: 'messageField',
             icon: 'MdHelp',
-            text: formatMessage(messages.notificationTypeResultBasedMessage),
+            text: formatMessage(messages.notificationTypeResultBasedMessage, partner),
             color: 'cadetblue',
           },
         },

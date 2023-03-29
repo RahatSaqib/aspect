@@ -30,10 +30,9 @@ async function mapPayloadWithCustomFields(payload, countryCode, partnerId, assay
 function transformPayloadWithFormsDefinition(forms, payload, countryCode) {
   _.each(_.keys(forms), formKey => {
     _.each(forms[formKey].fields, prop => {
-      const { payloadOriginPath, payloadDestinationPath, fieldType } = prop
+      const { payloadOriginPath = `data.customFieldData.${prop.id}.value`, payloadDestinationPath, fieldType } = prop
       if (payloadOriginPath) {
         let value = _.get(payload, payloadOriginPath)
-
         if (value) {
           if (_.includes(['patientCellphone', 'clinicianCellphone'], fieldType))
             value = normalizePhoneNumber(value, countryCode)

@@ -1,6 +1,10 @@
 import React from 'react'
+import isString from 'lodash/isString'
 import { getCronHumanValue } from '../../../components/Cron/utils'
+import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
+import usePersonList from '../../../hooks/person/usePersonList'
 import useI18n from '../../../hooks/useI18n'
+import jobFunctionsMessages from '../../../messages/jobFunctionMessages'
 import messages from './messages'
 
 const rowStyle = { display: 'flex', alignItems: 'flex-start' }
@@ -8,6 +12,8 @@ const labelStyle = { margin: '3px 10px 3px 0px' }
 
 const NotificationFormPreview = ({ values }) => {
   const { locale, formatMessage } = useI18n()
+  const { data: jobFunctions, isLoading: isJfLoading } = useJobFunctions()
+  const { data: personList, isLoading: isPersonListLoading } = usePersonList()
 
   return (
     <>
@@ -183,9 +189,18 @@ const NotificationFormPreview = ({ values }) => {
       <span style={rowStyle}>
         <h4 style={labelStyle}>{formatMessage(messages.personsSelectLabel)}:</h4>
         <span>
-          {values.persons.map(p => (
-            <span style={{ ...labelStyle, display: 'block' }}>{p.label}</span>
-          ))}
+          {!isPersonListLoading
+            ? (values.persons || []).map(p => {
+                const person = isString(p)
+                  ? personList.find(pl => pl.id === p)
+                  : personList.find(pl => pl.id === p.value)
+                return (
+                  <span style={{ ...labelStyle, display: 'block' }}>{`${person.name} ${
+                    person.state ? `(${person.state})` : ''
+                  }`}</span>
+                )
+              })
+            : null}
         </span>
       </span>
       <span style={rowStyle}>
@@ -194,11 +209,28 @@ const NotificationFormPreview = ({ values }) => {
       </span>
       <span style={rowStyle}>
         <h4 style={labelStyle}>{formatMessage(messages.toAnyOfTheseJobFunctions)}:</h4>
-        <span>
-          {values.jobFunctions
-            .filter(jf => jf.checked)
-            .map(jf => jf.tags.map(tag => <span style={{ ...labelStyle, display: 'block' }}>{tag.label}</span>))}
-        </span>
+        {!isJfLoading ? (
+          <span>
+            {values.jobFunctions
+              .filter(jf => jf.checked)
+              .map(jf => {
+                return (
+                  <>
+                    <span style={{ ...labelStyle, display: 'block' }}>
+                      {formatMessage(
+                        jobFunctionsMessages[jobFunctions.find(j => j.id === jf.jobFunctionId).externalId]
+                      )}{' '}
+                      {jf.tags.length
+                        ? `(${jf.tags.map(tag => (
+                            <span style={{ ...labelStyle, display: 'block' }}>{tag.label}</span>
+                          ))})`
+                        : null}
+                    </span>
+                  </>
+                )
+              })}
+          </span>
+        ) : null}
       </span>
     </>
   )
@@ -206,24 +238,29 @@ const NotificationFormPreview = ({ values }) => {
 
 export default NotificationFormPreview
 
-const ParsedString = ({ value }) => {
-  const generateParagraph = line => (
-    <p style={{ margin: 0 }}>
-      {line
-        .split(' ')
-        .map(word =>
-          word.includes('{')
-            ? word
-                .replaceAll('{{', '')
-                .replaceAll('}}', '')
-                .split('.')
-                .map(w => w[0].toUpperCase() + w.substring(1))
-                .join('')
-            : word
-        )
-        .join(' ')}
-    </p>
-  )
+/**
+ * Example
+ * Input: "hello {{5}} {{site.name}} world {{device.name}} {{}}"
+ * Output: "hello 5 SiteName world DeviceName {{}}"
+ * */
+const replacePlaceholdersWithPascalCase = text => {
+  const placeholderRegex = /{{.+?}}/g
 
-  return (value || '').split('\n').map(line => generateParagraph(line))
+  return text.replace(placeholderRegex, match => {
+    return match
+      .replace('{{', '')
+      .replace('}}', '')
+      .split('.')
+      .map(w => w[0].toUpperCase() + w.substring(1))
+      .join('')
+  })
+}
+
+const ParsedString = ({ value }) => {
+  const generateParagraph = line => <p style={{ margin: 0 }}>{line}</p>
+
+  const text = replacePlaceholdersWithPascalCase(value || '')
+  const lines = text.split('\n')
+
+  return lines.map(line => generateParagraph(line))
 }

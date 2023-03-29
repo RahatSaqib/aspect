@@ -57,6 +57,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
     partnerId,
     hostId,
     deviceSerialNumber,
+    macAddress,
     countryCode,
     deviceIdFromGxAlertSource,
   }
