@@ -1,11 +1,15 @@
 const _ = require('lodash')
-const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
+const { format, endOfMonth, startOfMonth, subMonths, addMonths } = require('date-fns')
 
 const { addConstraints } = require('../../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams } = require('../../../db')
 const { allAssayToId, allResultCategoryToId } = require('../../../shared/dictionary')
 const { getCellsByValue, setCellStyle } = require('../../../shared/excel')
-const { getMonthYearUserTimeZoneField, getOffsetFromIsoDateString } = require('../../../shared/date')
+const {
+  getMonthYearUserTimeZoneField,
+  getOffsetFromIsoDateString,
+  getLocalDateTimeStringInUtc,
+} = require('../../../shared/date')
 const { styleYellow, styles, styleSumRed } = require('./excelStyles')
 
 // ---------------------------------------------------------------------------------------
@@ -20,6 +24,16 @@ const getFieldsForLine = (resultCategory, pulmonary, smear, historyKeys) => {
   })
   return items
 }
+// ---------------------------------------------------------------------------------------
+function getAllMonthsInRange(minDate, maxDate) {
+  let allRanges = []
+  let currentMonth = getLocalDateTimeStringInUtc(minDate)
+  while (currentMonth <= getLocalDateTimeStringInUtc(maxDate)) {
+    allRanges = [...allRanges, format(currentMonth, 'yyyy-MM')]
+    currentMonth = addMonths(currentMonth, 1)
+  }
+  return allRanges
+}
 
 // ---------------------------------------------------------------------------------------
 async function getXpertSiteDetailedReport(dataConstraints, query) {
@@ -32,6 +46,15 @@ async function getXpertSiteDetailedReport(dataConstraints, query) {
   }
 
   const offset = getOffsetFromIsoDateString(maxDate)
+
+  /**
+   * prepare all inclusive months in the range in format `yyyy-mm`.
+   * This is needed to guarantee that report shows all requested months
+   * in the column sections. When data doesn't have items for some month -
+   * then all 0's will be displayed.
+   */
+  const allYearAndMonth = getAllMonthsInRange(minDate, maxDate)
+  allYearAndMonth.sort()
 
   const assayIds = await allAssayToId()
   // const diseaseId = await diseaseToId('tb')
@@ -247,13 +270,22 @@ async function getXpertSiteDetailedReport(dataConstraints, query) {
   )
 
   /**
-   * loop all raw data and based on record values construct corresponding
+   * prepare JSON object for adding all counts
+   */
+  let data = _.reduce(
+    allYearAndMonth,
+    (acc, yearAndMonth) => {
+      acc[yearAndMonth] = { ...allFieldsZero }
+      return acc
+    },
+    {}
+  )
+  /**
+   * loop through all raw data and based on record values construct corresponding
    * fieldName to increase in the monthly-scoped object
    */
-  let data = {}
   _.forEach(rawData, dataItem => {
     const { yearAndMonth, resultCategory1, resultCategory2, pulmonary, smear, history, repeatTest } = dataItem
-    data[yearAndMonth] = data[yearAndMonth] || { ...allFieldsZero }
 
     const pulmonaryName = value2pulmonary(pulmonary)
     const historyKey = value2historyKey(history, repeatTest)
