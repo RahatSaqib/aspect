@@ -63,9 +63,10 @@ async function getXpertSiteDetailedReport(dataConstraints, query) {
   const customFields = require('../../../forms/formsDefinition/CustomFields_Pakistan.json')?.fields || []
 
   const abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+  // remove space, '&', '-', '/' symbols
   const sanitizeName = text => text.replace(/[\s&-/]/g, '')
-  const getCustomFieldValues = source => {
-    const { items = [] } = customFields.find(x => x.source === source) || {}
+  const getCustomFieldValuesById = id => {
+    const { items = [] } = customFields.find(x => x.id === id) || {}
     return _.map(items, ({ key, value }) => ({
       value,
       key,
@@ -74,15 +75,15 @@ async function getXpertSiteDetailedReport(dataConstraints, query) {
   }
   /*
   // "Previous History of TB Treatment" - Yes, No, Not Available ("id": 15)
-  const historyItems = getCustomFieldValues('patientData.PKPreviousHistoryOfTbTreatment')
+  const historyItems = getCustomFieldValuesById(15)
   */
   // "Disease Site" - PTB, EPTB, PTBAndEPTB ("id": 10)
-  let pulmonaryItems = getCustomFieldValues('patientData.PKDiseaseSite')
+  let pulmonaryItems = getCustomFieldValuesById(10)
   // "AFB Smear Results" - Positive, Scanty, Negative, N/A ("id": 14)
-  let smearItems = getCustomFieldValues('patientData.PKAFBSmearResults')
+  let smearItems = getCustomFieldValuesById(14)
   /*
   // "Repeat Test" - Yes, No ("id": 5)
-  const repeatTestItems = getCustomFieldValues('patientData.PKRepeatTest')
+  const repeatTestItems = getCustomFieldValuesById(5)
   */
 
   // ---------------------------------------------------------------------------------------
