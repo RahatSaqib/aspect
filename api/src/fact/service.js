@@ -227,7 +227,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
     const query = knex('Result as r')
       .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
       .where({ deviceId })
-      .where('rt.excluded', true)
+      .where('rt.excluded', false)
 
     query.modify(queryBuilder => {
       if (assayId) {
