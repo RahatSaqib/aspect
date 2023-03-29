@@ -194,11 +194,6 @@ import messages from './messages'
 //         ),
 //       })
 //     ),
-//     externalId: makeButton(externalId =>
-//       formatMessage(messages.whereExternalIdIncludes, {
-//         externalId,
-//       })
-//     ),
 //     notificationName: makeButton(notificationName =>
 //       formatMessage(messages.whereNotificationNameIncludes, {
 //         notificationName,
@@ -326,16 +321,15 @@ const filtersOrdering = {
 }
 
 // All starts here
-const FilterButtons = ({ filters, remove }) => {
-  return (
-    <span>
-      {Immutable.Map(filters)
-        .keySeq()
-        .sortBy(filterKey => filtersOrdering[filterKey])
-        .map(filterKey => buttonMapping[filterKey]({ ...filters, remove }))}
-    </span>
-  )
-}
+const FilterButtons = ({ filters, remove }) => (
+  <span>
+    {Immutable.Map(filters)
+      .keySeq()
+      .sortBy(filterKey => filtersOrdering[filterKey])
+      .map(filterKey => buttonMapping[filterKey]({ ...filters, remove }))}
+  </span>
+)
+
 export default FilterButtons
 
 const buttonMapping = {
@@ -364,6 +358,7 @@ const buttonMapping = {
   minDate: ({ minDate, remove }) => <MinDate minDate={minDate} remove={remove} />,
   maxDate: ({ maxDate, remove }) => <MaxDate maxDate={maxDate} remove={remove} />,
   reportName: ({ reportName, remove }) => <ReportName reportName={reportName} remove={remove} />,
+  externalId: ({ externalId, remove }) => <ExternalId externalId={externalId} remove={remove} />,
   //
   assayOverride: () => null,
   singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
@@ -372,19 +367,19 @@ const buttonMapping = {
 const StateId = ({ countryId, stateId, remove }) => {
   const { data } = useStatesByCountry(countryId)
 
-  return data ? <Btn lbl={data.find(s => s.id === stateId).name} del={() => remove(stateId)} /> : null
+  return data ? <Btn lbl={data.find(s => s.id === stateId).name} del={() => remove(['stateId'])} /> : null
 }
 
 const LgaId = ({ stateId, lgaId, remove }) => {
   const { data } = useLgaByState(stateId)
 
-  return data ? <Btn lbl={data.find(s => s.id === lgaId).name} del={() => remove(lgaId)} /> : null
+  return data ? <Btn lbl={data.find(s => s.id === lgaId).name} del={() => remove(['lgaId'])} /> : null
 }
 
 const SiteName = ({ siteName, remove }) => {
   const { formatMessage } = useI18n()
 
-  return <Btn lbl={formatMessage(messages.whereSiteNameIncludes, { siteName })} del={() => remove(siteName)} />
+  return <Btn lbl={formatMessage(messages.whereSiteNameIncludes, { siteName })} del={() => remove(['siteName'])} />
 }
 
 const AssayId = ({ assayId, remove }) => {
@@ -392,7 +387,7 @@ const AssayId = ({ assayId, remove }) => {
   const { data } = useAssayList()
 
   return data ? (
-    <Btn lbl={formatMessage(messages[data.find(a => a.id === assayId).i18nKey])} del={() => remove(assayId)} />
+    <Btn lbl={formatMessage(messages[data.find(a => a.id === assayId).i18nKey])} del={() => remove(['assayId'])} />
   ) : null
 }
 
@@ -411,7 +406,7 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
 
     const label = formatMessage(messages.withResultCategory, { resultCategoryName: name })
 
-    return <Btn lbl={label} del={() => remove(resultCategoryId)} />
+    return <Btn lbl={label} del={() => remove(['resultCategoryId'])} />
   }
   return null
 }
@@ -427,7 +422,7 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayOverride, remove })
     return assayOverride && msg ? (
       <Btn
         lbl={formatMessage(messages.withResultCategoryGroup, { resultCategoryGroupName: msg })}
-        del={() => remove(resultCategoryGroupId)}
+        del={() => remove(['resultCategoryGroupId'])}
       />
     ) : null
   }
@@ -441,7 +436,7 @@ const ConsumableId = ({ consumableId, remove }) => {
   return data ? (
     <Btn
       lbl={formatMessage(messages[data.find(a => a.id === consumableId).i18nKey])}
-      del={() => remove(consumableId)}
+      del={() => remove(['consumableId'])}
     />
   ) : null
 }
@@ -451,7 +446,7 @@ const MinDate = ({ minDate, remove }) => {
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(minDate), dateFormat)
 
-  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={() => remove(minDate)} />
+  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={() => remove(['minDate'])} />
 }
 
 const MaxDate = ({ maxDate, remove }) => {
@@ -459,13 +454,23 @@ const MaxDate = ({ maxDate, remove }) => {
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(maxDate), dateFormat)
 
-  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={() => remove(maxDate)} />
+  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={() => remove(['maxDate'])} />
 }
 
 const ReportName = ({ reportName, remove }) => {
   const { formatMessage } = useI18n()
 
-  return <Btn lbl={formatMessage(messages.whereReportNameIncludes, { reportName })} del={() => remove(reportName)} />
+  return (
+    <Btn lbl={formatMessage(messages.whereReportNameIncludes, { reportName })} del={() => remove(['reportName'])} />
+  )
+}
+
+const ExternalId = ({ externalId, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn lbl={formatMessage(messages.whereExternalIdIncludes, { externalId })} del={() => remove(['externalId'])} />
+  )
 }
 
 const SingleAssayId = ({ assayId }) => {
