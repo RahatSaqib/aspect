@@ -297,6 +297,7 @@ const messages = defineMessages({
   xpert_site_detailed_report_description: {
     id: 'pages.ReportIndex.xpert_site_detailed_report_description',
     defaultMessage: 'Xpert Implementation Site (XIS) Performance Report.',
+  },
   deviceSummaryReport: {
     id: 'pages.ReportIndex.deviceSummaryReport',
     defaultMessage: 'Device Summary Report',
