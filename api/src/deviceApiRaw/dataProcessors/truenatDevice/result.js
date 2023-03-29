@@ -99,7 +99,29 @@ class TruenatResult extends SynchronousDataProcessor {
           if (site) {
             await knex('Device').where('id', deviceId).update({ siteId: site.id })
             await knex('DeviceApiKey').where('id', deviceApiKeyId).update({ siteId: site.id })
-            await knex('Site').where('id', siteId).delete()
+            // attempt to delete automatically created site if there are no related records
+            const devicesCount = await knex('Device').where('siteId', siteId).count('id')
+            const resultsCount = await knex('Result').where('siteId', siteId).count('id')
+            const inventoryItemsCount = await knex('InventoryItem').where('siteId', siteId).count('id')
+            const inventoryLogsCount = await knex('InventoryLog').where('siteId', siteId).count('id')
+            const jobContextsCount = await knex('JobContext').where('siteId', siteId).count('id')
+            if (
+              devicesCount === 0 &&
+              resultsCount === 0 &&
+              inventoryItemsCount === 0 &&
+              inventoryLogsCount === 0 &&
+              jobContextsCount === 0
+            ) {
+              await knex('AlertMessage').where('siteId', siteId).update({ siteId: null })
+              await knex('EmailMessage').where('siteId', siteId).update({ siteId: null })
+              await knex('SmsMessage').where('siteId', siteId).update({ siteId: null })
+              await knex('WebhookMessage').where('siteId', siteId).update({ siteId: null })
+              await knex('DeviceApiKey').where('siteId', siteId).update({ siteId: null })
+              await knex('Issue').where('siteId', siteId).update({ siteId: null })
+              await knex('DeviceSiteHistory').where('id', siteId).delete()
+              await knex('FactInventoryConsumptionRate').where('id', siteId).delete()
+              await knex('Site').where('id', siteId).delete()
+            }
             siteId = site.id
           } else {
             await knex('Site').where('id', siteId).update({ name: labName })
