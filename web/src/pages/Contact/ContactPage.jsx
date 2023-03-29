@@ -1,13 +1,14 @@
 import * as React from 'react'
+import { useMemo } from 'react'
 import { Box, Card, CardContent } from '@mui/material'
 import { Helmet } from 'react-helmet'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
 import { useAuthState } from '../../providers/AuthProvider'
 import ACTION from './constants'
-import ContactPageStepOne from './ContactPage.Step1'
-import ContactPageStepTwo from './ContactPage.Step2'
-import ContactPageStepThree from './ContactPage.Step3'
+import ContactDetails from './ContactDetails'
+import JobAssigment from './JobAssigment'
+import Login from './Login'
 import messages from './messages'
 
 const ContactPage = () => {
@@ -15,8 +16,12 @@ const ContactPage = () => {
   const { formatMessage } = useI18n()
   const { personId } = useParams()
   const { userId: loggedInUserId } = useAuthState()
+  const { search } = useLocation()
+  const isAdd = useMemo(() => new URLSearchParams(search).get('add'), [search])
 
-  const id = personId
+  const id = isAdd
+    ? ACTION.ADD
+    : personId
     ? personId === loggedInUserId
       ? ACTION.SELF
       : personId !== ACTION.ADD
@@ -30,9 +35,9 @@ const ContactPage = () => {
       <Box sx={{ p: 2, minWidth: '100%' }}>
         <Card>
           <CardContent>
-            {step === 0 ? <ContactPageStepOne setStep={setStep} id={id} /> : null}
-            {step === 1 ? <ContactPageStepTwo setStep={setStep} id={id} /> : null}
-            {step === 2 ? <ContactPageStepThree setStep={setStep} id={id} /> : null}
+            {step === 0 ? <ContactDetails setStep={setStep} id={id} /> : null}
+            {step === 1 ? <JobAssigment setStep={setStep} id={id} /> : null}
+            {step === 2 ? <Login setStep={setStep} id={id} /> : null}
           </CardContent>
         </Card>
       </Box>
