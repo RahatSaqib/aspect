@@ -16,6 +16,7 @@ import messages from './messages'
 
 const Login = ({ setStep, id }) => {
   const { formatMessage } = useI18n()
+  const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
   const { userId: loggedInUserId } = useAuthState()
 
