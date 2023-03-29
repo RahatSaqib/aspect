@@ -147,11 +147,18 @@ async function getXpertSiteDetailedReport(dataConstraints, query) {
     getResultCategoryField('Na', rc1.NA, '# Invalid/Error/No Result (Final Report NA)'),
   ]
   const value2resultCategory = (resultCategory1, resultCategory2) => {
+    if (rc1.Detected(resultCategory1)) {
+      const names = ['Detected']
+      if (rc1.Rif(resultCategory1, resultCategory2)) {
+        names.push('Rr')
+      }
+      return names
+    }
     const item = resultCategories.find(it => it.condition(resultCategory1, resultCategory2))
     if (item) {
-      return item.fieldName
+      return [item.fieldName]
     }
-    return 'Na'
+    return ['Na']
   }
 
   // ---------------------------------------------------------------------------------------
@@ -291,16 +298,18 @@ async function getXpertSiteDetailedReport(dataConstraints, query) {
     const pulmonaryName = value2pulmonary(pulmonary)
     const historyKey = value2historyKey(history, repeatTest)
     const smearName = value2smear(smear)
-    const resultCategoryName = value2resultCategory(resultCategory1, resultCategory2)
+    const resultCategoryNames = value2resultCategory(resultCategory1, resultCategory2)
+    for (let j = 0; j < resultCategoryNames.length; j++) {
+      const resultCategoryName = resultCategoryNames[j]
+      let fieldName = `${pulmonaryName}${historyKey}${smearName}`
+      if (fields.find(it => it.fieldName === fieldName) && resultCategoryName !== 'Rr') {
+        data[yearAndMonth][fieldName] += 1
+      }
 
-    let fieldName = `${pulmonaryName}${historyKey}${smearName}`
-    if (fields.find(it => it.fieldName === fieldName)) {
-      data[yearAndMonth][fieldName] += 1
-    }
-
-    fieldName = `${pulmonaryName}${historyKey}${smearName}${resultCategoryName}`
-    if (fields.find(it => it.fieldName === fieldName)) {
-      data[yearAndMonth][fieldName] += 1
+      fieldName = `${pulmonaryName}${historyKey}${smearName}${resultCategoryName}`
+      if (fields.find(it => it.fieldName === fieldName)) {
+        data[yearAndMonth][fieldName] += 1
+      }
     }
   })
   /**
