@@ -11,12 +11,9 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
 import useI18n from '../../../hooks/useI18n'
 import messages from '../../../messages/report'
-import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { useAuthState } from '../../../providers/AuthProvider'
+import { useFilterValues } from '../../../providers/FilterProvider'
 import { showError } from '../../../store/AppNotificationRedux'
-import { makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
 import { safeDownloadFile } from '../../../utils/utils/files'
 import ReportCard from './ReportCard'
 import styles from './ReportIndex.css'
@@ -24,46 +21,24 @@ import ReportsFilter from './ReportsFilter'
 
 const cssClasses = classnames.bind(styles)
 
-const FILTERS_CONFIG = [
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { siteName: true, requiredPermissions: ['site:view'] },
-  { date: true, requiredPermissions: [] },
-  { reportName: true, requiredPermissions: [] },
-  { consumable: true, requiredPermissions: [] },
-  { assayId: true, requiredPermissions: [] },
-]
-
-const searchSanitizer = makeSearchParamsSanitizer()
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-
 const ReportIndex = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const intl = useI18n()
-  const { userPermissions } = useAuthState()
   const [items, setItems] = useState()
   const [showProgressBar, setShowProgressBar] = useState(false)
-  const [filters, setFilters] = useState([])
   const dispatch = useDispatch()
+  const filter = useFilterValues(location.pathname)
 
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
-  const params = { ...filters }
-
-  const { data: { data } = false } = useQuery([REPORT_LIST.KEY, { params }], async () => {
-    return fetchWrapperForQueries({
-      endpoint: REPORT_LIST.ENDPOINT,
-      params,
-    })
-  })
+  const { data: { data } = false } = useQuery([REPORT_LIST.KEY, { params: filter }], async () =>
+    fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: filter })
+  )
   const onClickDownload = (externalId, fileExtension = 'xlsx', reportName) => {
     const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
-    if (!params.maxDate) params.maxDate = new Date()
     setShowProgressBar(true)
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/${externalId}`,
-      params: { ...params, format: fileExtension, timeZone },
+      params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
     })
       .then(async resp => {
         setShowProgressBar(false)
@@ -120,18 +95,6 @@ const ReportIndex = () => {
   }
 
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
-    if (sanitized || filtersSanitized) {
-      searchParams.set('filters', filtersParams)
-      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
-    }
-
-    setFilters(getFilters(filtersParams))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location])
-
-  useEffect(() => {
     if (data) {
       setItems(data)
     }
@@ -143,9 +106,6 @@ const ReportIndex = () => {
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
         <ReportsFilter />
-        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-          <BrowseFilters navigate={navigate} location={location} config={reducedFilters} showBrowseDropdown={false} />
-        </div>
         <DataTableProgressBar disabled={!showProgressBar} />
         <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
           {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (

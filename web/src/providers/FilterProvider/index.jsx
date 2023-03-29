@@ -43,7 +43,8 @@ function useFilterValues(pathname) {
     throw new Error('useFilter must be used within a FilterProvider')
   }
 
-  return filter[pathname]
+  // eslint-disable-next-line no-unused-vars
+  return Object.fromEntries(Object.entries(filter[pathname]).filter(([_, v]) => v != null)) // remove nulls
 }
 
 function useFilterUpdate() {
@@ -62,7 +63,7 @@ function useFilterUpdate() {
     update(filterForLocation, pathname)
   }
 
-  return [update, removeFilter] // pathname is to allow changinh the filter in other places before navigation
+  return [update, removeFilter] // pathname is to allow changing the filter in other places before navigation
 }
 
 export { FilterProvider, useFilterValues, useFilterUpdate }

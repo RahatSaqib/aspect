@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Card, CardActions, CardContent, Collapse, Grid } from '@mui/material'
-import { MdClose, MdArrowDownward, MdArrowUpward } from 'react-icons/md'
+import { MdArrowDownward, MdArrowUpward } from 'react-icons/md'
 import { useLocation } from 'react-router'
+import FilterButtons from '../../../cleanComponents/FilterButtons/FilterButtons'
 import {
   StateSelect,
   LgaSelect,
@@ -17,8 +18,6 @@ import messages from '../../../messages/FilterMessages'
 import { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { useFilterValues, useFilterUpdate } from '../../../providers/FilterProvider'
-
-const excluded = ['countryId']
 
 const cardContentStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }
 
@@ -45,16 +44,12 @@ const ReportsFilter = () => {
     toggleOpen()
   }
 
+  const remove = key => removeFilter(key, location.pathname)
+
   return (
     <Card sx={{ mb: 1 }}>
       <CardContent sx={cardContentStyle}>
-        <span>
-          {Object.keys(filter).map(k =>
-            !excluded.includes(k) && filter[k] !== null ? (
-              <Label l={`${k} ${filter[k]}`} onRemove={() => removeFilter(k, location.pathname)} />
-            ) : null
-          )}
-        </span>
+        <FilterButtons filters={filter} remove={remove} />
         <Button variant="contained" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>
           {expanded ? <MdArrowUpward /> : <MdArrowDownward />}
         </Button>
@@ -65,23 +60,23 @@ const ReportsFilter = () => {
             <Grid item xs={3}>
               <StateSelect
                 label={getCustomMessage(messages, 'state', user)}
-                value={filter.stateId}
+                value={state.stateId}
                 onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
-                countryId={filter.countryId}
+                countryId={state.countryId}
               />
             </Grid>
             <Grid item xs={3}>
               <LgaSelect
                 label={getCustomMessage(messages, 'lga', user)}
-                value={filter.lgaId}
+                value={state.lgaId}
                 onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
-                stateId={filter.stateId}
+                stateId={state.stateId}
               />
             </Grid>
             <Grid item xs={3}>
               <AssaySelect
                 label={formatMessage(messages.assay)}
-                value={filter.assayId}
+                value={state.assayId}
                 onChange={e =>
                   setState({ ...state, assayId: e.target.value, resultCategoryId: null, resultCategoryGroupId: null })
                 }
@@ -91,7 +86,7 @@ const ReportsFilter = () => {
             <Grid item xs={3}>
               <ConsumableSelect
                 label={formatMessage(messages.consumable)}
-                value={filter.consumableId}
+                value={state.consumableId}
                 onChange={e => setState({ ...state, consumableId: e.target.value })}
               />
             </Grid>
@@ -99,12 +94,12 @@ const ReportsFilter = () => {
               <Grid item xs={3}>
                 <SiteAutoCompleteField
                   name="siteName"
-                  value={filter.siteName || ''}
+                  value={state.siteName || ''}
                   onChange={site => setState({ ...state, siteName: site.name })}
                   floatingLabelFixed
                   floatingLabelText={formatMessage(messages.site)}
-                  stateId={filter.stateId}
-                  lgaId={filter.lgaId}
+                  stateId={state.stateId}
+                  lgaId={state.lgaId}
                   width="100%"
                 />
               </Grid>
@@ -112,15 +107,15 @@ const ReportsFilter = () => {
             <Grid item xs={3}>
               <PeriodSelector
                 label={formatMessage(messages.date)}
-                minDate={filter.minDate || null}
-                maxDate={filter.maxDate || null}
+                minDate={state.minDate || null}
+                maxDate={state.maxDate || null}
                 onChange={dateValues => setState({ ...state, ...dateValues })}
               />
             </Grid>
             <Grid item xs={3}>
               <ReportSelector
                 label={formatMessage(messages.reportName)}
-                value={filter.reportName}
+                value={state.reportName}
                 onChange={report => setState({ ...state, reportName: report.name })}
               />
             </Grid>
@@ -140,11 +135,3 @@ const ReportsFilter = () => {
 }
 
 export default ReportsFilter
-
-const Label = ({ l, onRemove }) => {
-  return (
-    <Button color="secondary" variant="contained" sx={{ m: 0.25 }} onClick={onRemove}>
-      {l} <MdClose />
-    </Button>
-  )
-}
