@@ -290,6 +290,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.error_rate_description',
     defaultMessage: 'Report error rates per quarter, break them down by devices, modules and users',
   },
+  xpert_site_detailed_report: {
+    id: 'pages.ReportIndex.xpert_site_detailed_report',
+    defaultMessage: 'Xpert Site Detailed Report',
+  },
+  xpert_site_detailed_report_description: {
+    id: 'pages.ReportIndex.xpert_site_detailed_report_description',
+    defaultMessage: 'Xpert Implementation Site (XIS) Performance Report.',
+  },
   deviceSummaryReport: {
     id: 'pages.ReportIndex.deviceSummaryReport',
     defaultMessage: 'Device Summary Report',

@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const cron = require('node-cron')
 const { startUp: reportBasedCronStartUp } = require('../notification/reportBased/reportBasedCronHandler')
+const { resultAnalyzeTimeout } = require('../notification/actions')
 const { calibrationDueDateAnalysis, calibrationIssueNotificationTrigger } = require('../device/actions')
 const {
   factGenerateDeviceConnectivity,
@@ -36,6 +37,7 @@ function startScheduler(queue) {
     logDeviceMaintenanceStatus,
     resolveIssues,
     tryToContinueUnprocessedRawData,
+    resultAnalyzeTimeout,
   })
 
   dispatcher.factGenerateResultCounts()
@@ -47,6 +49,7 @@ function startScheduler(queue) {
   dispatcher.resolveIssues()
   dispatcher.calibrationDueDateAnalysis()
   dispatcher.calibrationIssueNotificationTrigger()
+  dispatcher.resultAnalyzeTimeout()
 
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
@@ -55,6 +58,7 @@ function startScheduler(queue) {
   cron.schedule('10 */6 * * *', dispatcher.factGenerateResultCounts) // run every six hours, 30 minmutes past the hour
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
   cron.schedule('15 * * * *', dispatcher.factDataCategoryLowCheck) // every hour at 15th minute
+  cron.schedule('30 * * * *', dispatcher.resultAnalyzeTimeout) // every hour at 30th minute
   cron.schedule('*/15 * * * *', dispatcher.escalateIssues) // run every 15 minutes
   cron.schedule(
     '25 */2 * * *', // run every 2 hours at 25th minute past the hour

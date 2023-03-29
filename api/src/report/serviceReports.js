@@ -69,6 +69,7 @@ async function getSheetData(auth, queryParams, sheet, sharedResults) {
     fixedColumns = [],
     dataSelector = null,
     sections = [],
+    populator,
   } = result
 
   if (nameOfSharedData) {
@@ -79,7 +80,7 @@ async function getSheetData(auth, queryParams, sheet, sharedResults) {
   logger.debug(`Worksheet data - total=${total}, list size=${listSize}'`, RELABEL_EXCEL)
 
   if (ok) {
-    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections }
+    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections, populator }
   }
 
   return Boom.preconditionFailed(`Error in function ${functionName} of module ${moduleName} - ${errorMessage}`)
@@ -165,6 +166,7 @@ async function getAllSheetsData(auth, query, sheets) {
       total = null,
       dataSelector = null,
       sections,
+      populator,
     } = await getSheetData(auth, query, sheet, sharedResults)
     if (Boom.isBoom(data)) {
       boomError = data
@@ -180,6 +182,7 @@ async function getAllSheetsData(auth, query, sheets) {
       total,
       // TODO: use i18n string, because `downloadReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
+      populator,
     }
   })
 
