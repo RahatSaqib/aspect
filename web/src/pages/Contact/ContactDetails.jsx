@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
+import { Box, Button, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isString from 'lodash/isString'
 import MuiPhoneNumber from 'material-ui-phone-number'
@@ -26,7 +26,7 @@ import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import messages from './messages'
 
-const ContactPageStepOne = ({ setStep, id }) => {
+const ContactDetails = ({ setStep, id }) => {
   const navigate = useNavigate()
 
   const { countryAbbreviation, countryId } = useAuthState()
@@ -35,8 +35,6 @@ const ContactPageStepOne = ({ setStep, id }) => {
   const { isLoading, data: person } = usePerson(id)
 
   const validationSchema = object({
-    // row 0
-    canLogIn: id === ACTION.SELF ? string().nullable() : string().required(formatMessage(messages.required)),
     // row 1
     name: string().required(formatMessage(messages.nameRequired)),
     title: string().nullable(),
@@ -112,21 +110,14 @@ const ContactPageStepOne = ({ setStep, id }) => {
             if (id === ACTION.ADD) {
               addPerson(values, {
                 onSuccess: ({ data }) => {
-                  if (values.canLogIn === 1) {
-                    navigate(`/browse/person/${data.id}`)
-                    setStep(1)
-                  } else navigate('/browse/person')
+                  navigate(`/browse/person/${data.id}?add=true`)
+                  setStep(1)
                 },
               })
             } else if (id === ACTION.SELF) {
-              delete values.canLogIn
               updateSelf(values)
             } else {
-              updatePerson(values, {
-                onSuccess: () => {
-                  if (values.canLogIn !== 1) navigate('/browse/person')
-                },
-              })
+              updatePerson(values)
             }
           }}
         >
@@ -134,25 +125,7 @@ const ContactPageStepOne = ({ setStep, id }) => {
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 {/* row0 */}
-                {id !== ACTION.SELF ? (
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          id="canLogIn"
-                          name="canLogIn"
-                          checked={values.canLogIn === 1}
-                          onChange={e =>
-                            handleChange({ target: { name: 'canLogIn', value: e.target.checked ? 1 : 0 } })
-                          }
-                          error={errors.canLogIn ? errors.canLogIn : undefined}
-                          helperText={errors.canLogIn}
-                        />
-                      }
-                      label={`${formatMessage(messages.userCanAlsoLogIn)} *`}
-                    />
-                  </Grid>
-                ) : null}
+
                 {/* row1 */}
                 <Grid item xs={6}>
                   <TextField
@@ -348,13 +321,9 @@ const ContactPageStepOne = ({ setStep, id }) => {
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                 <Button onClick={() => navigate(-1)}>{formatMessage(messages.backToTable)}</Button>
                 <Box sx={{ flex: '1 1 auto' }} />
-                {dirty ? (
-                  <Button type="submit" disabled={!isValid}>
-                    {formatMessage(messages.save)}
-                  </Button>
-                ) : values.canLogIn === 1 ? (
-                  <Button onClick={() => setStep(1)}>{formatMessage(messages.next)}</Button>
-                ) : null}
+                <Button type="submit" disabled={!isValid}>
+                  {formatMessage(messages[id === ACTION.ADD ? 'saveAndNext' : 'save'])}
+                </Button>
               </Box>
             </form>
           )}
@@ -364,4 +333,4 @@ const ContactPageStepOne = ({ setStep, id }) => {
   )
 }
 
-export default ContactPageStepOne
+export default ContactDetails
