@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
+import ReportsFilter from '../../../cleanComponents/Filter/ReportsFilter'
 import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
@@ -17,7 +18,6 @@ import { showError } from '../../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../../utils/utils/files'
 import ReportCard from './ReportCard'
 import styles from './ReportIndex.css'
-import ReportsFilter from './ReportsFilter'
 
 const cssClasses = classnames.bind(styles)
 
