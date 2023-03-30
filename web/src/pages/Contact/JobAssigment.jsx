@@ -27,7 +27,6 @@ import ACTION from './constants'
 import messages from './messages'
 
 const JobAssigment = ({ setStep, id }) => {
-  const navigate = useNavigate()
   const { countryAbbreviation, countryId } = useAuthState()
   const { formatMessage } = useI18n()
   const { personId } = useParams()

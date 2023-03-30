@@ -121,7 +121,7 @@ const ContactDetails = ({ setStep, id }) => {
             }
           }}
         >
-          {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
+          {({ handleSubmit, handleChange, values, errors, isValid }) => (
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 {/* row0 */}
