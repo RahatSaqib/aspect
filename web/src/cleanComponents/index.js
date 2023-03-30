@@ -1,6 +1,7 @@
 import AssaySelect from './AssaySelect'
 import AssayTypeSelect from './AssayTypeSelect'
 import ConsumableSelect from './ConsumableSelect'
+import ContactStatusSelect from './ContactStatusSelect'
 import CountrySelect from './CountrySelect'
 import DeviceTypeSelect from './DeviceTypeSelect'
 import DiseaseSelect from './DiseaseSelect'
@@ -21,6 +22,7 @@ export {
   AssaySelect,
   AssayTypeSelect,
   ConsumableSelect,
+  ContactStatusSelect,
   CountrySelect,
   DeviceTypeSelect,
   DiseaseSelect,
