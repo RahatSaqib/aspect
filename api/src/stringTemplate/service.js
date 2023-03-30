@@ -171,8 +171,6 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
           constraints will break the RO notifications configured for Myanmar
       */
       sample: 'sample',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
     }
 
     if (!reportId) {
@@ -183,7 +181,10 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
       }
     }
 
-    queryBuilder.modify(addConstraints, dataConstraints, aliases)
+    queryBuilder.modify(addConstraints, dataConstraints, aliases, {
+      showUnapprovedDevices: true,
+      showDecommissionedDevices: true,
+    })
   }
 
   return queryBuilder

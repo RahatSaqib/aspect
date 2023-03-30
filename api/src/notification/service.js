@@ -542,8 +542,6 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
     site: 's',
     geography: 'g',
     partner: 'p',
-    showUnapprovedDevices: true,
-    showDecommissionedDevices: true,
   }
   // does person have job context that can see this issue/result?
   const constraints = await getJobConstraints(personId, jobFunctionId)
@@ -561,7 +559,7 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
       }
     })
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
-    .modify(addConstraints, constraints, aliasMapping)
+    .modify(addConstraints, constraints, aliasMapping, { showUnapprovedDevices: true, showDecommissionedDevices: true })
     .where({ 'i.id': issueId || resultId })
     .first('i.id')
 }

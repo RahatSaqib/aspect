@@ -338,10 +338,10 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
   }
 }
 
-function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
+function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options) {
   let filterAlias = null
-  const { device, assay, result, showUnapprovedDevices = false, showDecommissionedDevices = false } = aliases
-
+  const { device, assay, result } = aliases
+  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = options
   if (!result) {
     if (!aliases.site && device) {
       aliases.site = alias('Site')
@@ -542,7 +542,13 @@ function filterExcludedResults(queryBuilder, aliases, options) {
  * 'excluded' only returns excluded results.
  * 'all' return all results.
  */
-function addConstraints(queryBuilder, constraints, receivedAliases, options = { displayResult: 'actual' }) {
+
+function addConstraints(
+  queryBuilder,
+  constraints,
+  receivedAliases,
+  options = { displayResult: 'actual', showUnapprovedDevices: false, showDecommissionedDevices: false }
+) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
     return
@@ -553,7 +559,7 @@ function addConstraints(queryBuilder, constraints, receivedAliases, options = { 
   // TODO only join queries if needed within constraints or required by unspecified aliases
   addPartnerConstraints(queryBuilder, constraints, aliases)
   addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases)
-  addDevicesAndSitesConstraints(queryBuilder, constraints, aliases)
+  addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options)
   addPersonConstraints(queryBuilder, constraints, aliases)
   addGeographyConstraints(queryBuilder, constraints, aliases)
   addOrConstraints(queryBuilder, constraints, aliases)
