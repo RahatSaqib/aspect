@@ -114,7 +114,6 @@ const getRawLinks = f => [
           { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },
         ],
       },
-      { href: '/browse/router', label: f(messages.routers), perm: ['router'] },
       { href: '/browse/reporter', label: f(messages.reporters), perm: ['reporter'] },
       { href: '/browse/notification', label: f(messages.notifications), perm: ['notification'] },
       { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['deviceApiKey'] },

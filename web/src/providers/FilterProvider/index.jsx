@@ -21,7 +21,6 @@ const defaultFilter = {
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
   '/browse/result': {},
-  '/browse/router': {},
   '/browse/site': {},
   '/reports': {},
 }

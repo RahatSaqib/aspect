@@ -35,8 +35,6 @@ const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
 const ReportIndex = lazy(() => import('./oldPages/report/page/ReportIndex'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
 const ResultList = lazy(() => import('./oldPages/result/list/ResultList'))
-const RouterDetail = lazy(() => import('./oldPages/router/detail/RouterDetail'))
-const RouterList = lazy(() => import('./oldPages/router/list/RouterList'))
 const SiteDetail = lazy(() => import('./pages/Site/Detail'))
 const SiteList = lazy(() => import('./pages/Site/List'))
 const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
@@ -200,13 +198,6 @@ const LogInApp = () => {
 
           {a(['browse', 'deviceApiKey']) ? (
             <Route path="/browse/deviceApiKey" element={<DeviceApiKeyList {...props} />} />
-          ) : null}
-
-          {a(['browse', 'router']) ? (
-            <>
-              <Route path="/browse/router" element={<RouterList {...props} />} />
-              <Route path="/browse/router/:routerId" element={<RouterDetail {...props} />} />
-            </>
           ) : null}
 
           {a(['browse', 'reporter']) ? <Route path="/browse/reporter" element={<ReporterList />} /> : null}
