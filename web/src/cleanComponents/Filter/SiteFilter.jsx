@@ -18,7 +18,7 @@ const SiteFilter = () => {
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
 
   return (
-    <FilterContainer>
+    <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect

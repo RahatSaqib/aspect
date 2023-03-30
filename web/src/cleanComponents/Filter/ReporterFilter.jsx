@@ -20,7 +20,7 @@ const ReporterFilter = () => {
   const a = r => isPermittedUser(user.userPermissions, { required: r })
 
   return (
-    <FilterContainer>
+    <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect

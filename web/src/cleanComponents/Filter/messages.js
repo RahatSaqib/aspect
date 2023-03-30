@@ -18,6 +18,10 @@ export const messages = {
   ...deviceApprovalMessages,
   ...assay,
   ...defineMessages({
+    noFilters: {
+      id: 'filter.btnGroup.noFilters',
+      defaultMessage: 'No Filters Applied',
+    },
     dateFrom: {
       id: 'filter.btnGroup.dateFrom',
       defaultMessage: 'since {date}',

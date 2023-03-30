@@ -18,10 +18,10 @@ const defaultFilter = {
   '/browse/inventory/log': { minDate, maxDate },
   '/browse/notification': {},
   '/browse/person': { contactStatus: 0 },
-  '/browse/reporter': { minDate, maxDate },
+  '/browse/reporter': { minDate, maxDate }, // done
   '/browse/result': {}, // saved for last
-  '/browse/site': {},
-  '/reports': {},
+  '/browse/site': {}, // done
+  '/reports': {}, // done
 }
 
 function FilterProvider({ children }) {

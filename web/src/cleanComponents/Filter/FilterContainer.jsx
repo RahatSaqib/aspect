@@ -4,20 +4,22 @@ import { MdArrowDownward, MdArrowUpward } from 'react-icons/md'
 import { useLocation } from 'react-router'
 import useI18n from '../../hooks/useI18n'
 import messages from '../../messages/FilterMessages'
-import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues, useFilterUpdate } from '../../providers/FilterProvider'
 import FilterButtons from './FilterContainer.Buttons'
 
-const cardContentStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }
+const cardContentStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  p: '16px !important',
+}
 
-const FilterContainer = ({ children }) => {
+const FilterContainer = ({ children, state, setState }) => {
   const { formatMessage } = useI18n()
-  const user = useAuthState()
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
   const filter = useFilterValues(location.pathname)
   const [addFilter, removeFilter] = useFilterUpdate()
-  const [state, setState] = useState({ ...filter, countryId: user.countryId })
 
   const toggleOpen = () => setExpanded(state => !state)
 
@@ -37,7 +39,7 @@ const FilterContainer = ({ children }) => {
     <Card sx={{ mb: 1 }}>
       <CardContent sx={cardContentStyle}>
         <FilterButtons filters={filter} remove={remove} />
-        <Button variant="contained" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>
+        <Button variant="contained" color="secondary" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>
           {expanded ? <MdArrowUpward /> : <MdArrowDownward />}
         </Button>
       </CardContent>

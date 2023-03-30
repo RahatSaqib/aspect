@@ -3,14 +3,13 @@ import { Button } from '@mui/material'
 import Immutable from 'immutable'
 import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
-// import { useSelector } from 'react-redux'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useResultCategoryGroup from '../../hooks/device/useResultCategoryGroup'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 import useConsumable from '../../hooks/inventory/useConsumable'
 import useI18n from '../../hooks/useI18n'
-// import { commonDefinitions } from '../../messages/customMessages'
+import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
 import messages from './messages'
 
@@ -120,11 +119,6 @@ import messages from './messages'
 //         sampleOriginSiteName: sampleOriginSiteId,
 //       })
 //     ),
-//     contactNameOrEmail: makeButton(contactNameOrEmail =>
-//       formatMessage(messages.whoseNameOrEmailIncludes, {
-//         contactNameOrEmail,
-//       })
-//     ),
 //     workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
 //       formatMessage(messages.withWorkflowStatus, {
 //         workflowStatusName: formatMessage(
@@ -227,12 +221,6 @@ import messages from './messages'
 //         lotNumber,
 //       })
 //     ),
-//     contactStatus: makeButton(status =>
-//       formatMessage(messages.contactEnabledStatus, {
-//         contactStatus:
-//           status === '0' ? formatMessage(commonDefinitions.enabled) : formatMessage(commonDefinitions.disabled),
-//       })
-//     ),
 //     connectorStatus: makeButton(connectorStatus =>
 //       formatMessage(messages.withConnectorStatus, {
 //         connectorStatus: formatMessage(messages[connectorStatus]),
@@ -315,15 +303,21 @@ const filtersOrdering = {
   hasStock: 34,
 }
 
-// All starts here
-const FilterButtons = ({ filters, remove }) => (
-  <span>
-    {Immutable.Map(filters)
-      .keySeq()
-      .sortBy(filterKey => filtersOrdering[filterKey])
-      .map(filterKey => buttonMapping[filterKey]({ ...filters, remove }))}
-  </span>
-)
+const FilterButtons = ({ filters, remove }) => {
+  const { formatMessage } = useI18n()
+  return (
+    <span>
+      {Object.keys(filters).length === 0 ? (
+        <Btn lbl={formatMessage(messages.noFilters)} />
+      ) : (
+        Immutable.Map(filters)
+          .keySeq()
+          .sortBy(filterKey => filtersOrdering[filterKey])
+          .map(filterKey => buttonMapping[filterKey]({ ...filters, remove }))
+      )}
+    </span>
+  )
+}
 
 export default FilterButtons
 
@@ -355,6 +349,10 @@ const buttonMapping = {
   reportName: ({ reportName, remove }) => <ReportName reportName={reportName} remove={remove} />,
   externalId: ({ externalId, remove }) => <ExternalId externalId={externalId} remove={remove} />,
   deviceName: ({ deviceName, remove }) => <DeviceName deviceName={deviceName} remove={remove} />,
+  contactStatus: ({ contactStatus, remove }) => <ContactStatus contactStatus={contactStatus} remove={remove} />,
+  contactNameOrEmail: ({ contactNameOrEmail, remove }) => (
+    <ContactNameOrEmail contactNameOrEmail={contactNameOrEmail} remove={remove} />
+  ),
   //
   assayOverride: () => null,
   singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
@@ -477,6 +475,30 @@ const DeviceName = ({ deviceName, remove }) => {
   )
 }
 
+const ContactStatus = ({ contactStatus, remove }) => {
+  const { formatMessage } = useI18n()
+  const status = formatMessage(commonDefinitions[`${contactStatus}` === '0' ? 'enabled' : 'disabled'])
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.contactEnabledStatus, { contactStatus: status })}
+      del={() => remove(['deviceName'])}
+    />
+  )
+}
+
+const ContactNameOrEmail = ({ contactNameOrEmail, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whoseNameOrEmailIncludes, { contactNameOrEmail })}
+      del={() => remove(['deviceName'])}
+    />
+  )
+}
+
+//
 const SingleAssayId = ({ assayId }) => {
   const { formatMessage } = useI18n()
   const { data } = useAssayList()
