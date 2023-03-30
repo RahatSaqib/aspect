@@ -313,7 +313,14 @@ async function renderExcelTemplate({
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
     const dataForSheet = dataSet[sheetIndex] || {}
-    const { data, dynamicColumns = [], defaultNoDataMessage, dataSelector: dataSelectorSheet } = dataForSheet
+    const {
+      data,
+      dynamicColumns = [],
+      defaultNoDataMessage,
+      dataSelector: dataSelectorSheet,
+      // populator is a special function to populate current sheet
+      populator,
+    } = dataForSheet
     // define sections on a sheet
     let { sections } = dataForSheet
     const isListWithSections = !!sections
@@ -331,6 +338,23 @@ async function renderExcelTemplate({
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
+
+    if (populator) {
+      /**
+       * if populator is defined then it handles all rendering/generation/replacements
+       * by it's own, so after it finishes - exit from here
+       */
+      populator({
+        dataForSheet,
+        templateFolderPath,
+        dataSet,
+        replacements,
+        sheetIndex,
+        worksheet,
+      })
+      return
+    }
+
     if (wayToFillInData === 'mapping') {
       // populate worksheet and exit this loop
       fillInSheetWithMap({
@@ -1153,7 +1177,9 @@ module.exports = {
   readExcelFile,
   renderExcelTemplate,
   renderExcelTemplateToCsv,
+  replacePlaceholders,
   streamExcelTemplate,
   respondFile,
   RELABEL_EXCEL,
+  setCellStyle,
 }

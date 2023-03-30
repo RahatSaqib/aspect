@@ -510,7 +510,7 @@ async function updateDevice(request) {
     auth: { credentials },
   } = request
 
-  const { personId } = await getUser(credentials.name)
+  const { id: currentlyLoggedInUserId } = await getUser(credentials.name)
 
   // TODO: check permission
   const now = new Date()
@@ -538,7 +538,7 @@ async function updateDevice(request) {
       notes: payload.notes,
       shortName: payload.shortName,
       updatedOn: now,
-      updatedBy: personId,
+      updatedBy: currentlyLoggedInUserId,
     })
 
   if (prevDeviceApprovalId !== deviceApprovalId) {
@@ -547,7 +547,7 @@ async function updateDevice(request) {
       deviceApprovalId,
       changedOn: now,
       createdOn: now,
-      createdBy: personId,
+      createdBy: currentlyLoggedInUserId,
     })
   }
 
@@ -555,8 +555,7 @@ async function updateDevice(request) {
     return Boom.badRequest()
   }
 
-  const result = await showDevice(request)
-  return result
+  return showDevice(request)
 }
 
 async function listApprovalTypes() {
@@ -836,11 +835,17 @@ async function getDevicesForReport(auth, query) {
         .where('r.resultCategory1', resultCategoryIds.Invalid)
         .countDistinct('r.id')
         .as('totalInvalid'),
-      queryResults
-        .clone()
-        .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusLogId', 'rl.id')
-        .max('rl.changedOn')
-        .as('lastUploadOn'),
+      /**
+       * old way to get loastUploadOn was via ResultWorkflowLog.changedOn
+       * Leave it here commented out for the case when we still need to use
+       * approach with table ResultWorkflowLog
+       */
+      // queryResults
+      //   .clone()
+      //   .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusLogId', 'rl.id')
+      //   .max('rl.changedOn')
+      //   .as('lastUploadOn'),
+      queryResults.clone().max('r.updatedOn').as('lastUploadOn'),
 
       queryResults
         .clone()

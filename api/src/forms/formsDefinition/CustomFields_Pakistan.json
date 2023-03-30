@@ -1,0 +1,1859 @@
+{
+  "fields": [
+    {
+      "id": 1,
+      "name": "PKPatientGender",
+      "title": "Gender",
+      "i18nKey": "PKPatientGenderI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 20,
+      "gxAlertDbColumn": "PatientGender",
+      "caption": "Gender",
+      "i18nKeyCaption": "PKPatientGenderI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.1.value",
+      "payloadDestinationPath": "patient.PatientGender",
+      "source": "patientData.PatientGender",
+      "mandatory": false,
+      "items": [
+        {
+          "key": 1,
+          "value": "Male",
+          "order": 0
+        },
+        {
+          "key": 0,
+          "value": "Female",
+          "order": 10
+        },
+        {
+          "key": 2,
+          "value": "Other",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "PKPatientAge",
+      "title": "Age",
+      "i18nKey": "PKPatientAgeI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 30,
+      "gxAlertDbColumn": "PatientAge",
+      "caption": "Age",
+      "i18nKeyCaption": "PKPatientAgeI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.2.value",
+      "payloadDestinationPath": "patient.PatientAge",
+      "source": "patientData.PatientAge",
+      "mandatory": false,
+      "validation": [
+        {
+          "validationType": "regex",
+          "value": "^[2-9]$|^[1-9][0-9]$|^1[0-4][0-9]$|^150$",
+          "errorMessage": "Patient Age should be a number between 2 and 150. For lower age please use field Age in Months.",
+          "errorMessageI18nKey": "PKPatientAgeValidationFieldi18nKey"
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKPatientAgeMonths",
+          "valueToCompare": "",
+          "operator": "=",
+          "conjunction": "or"
+        },
+        {
+          "propToCompare": "PKPatientAgeMonths",
+          "valueToCompare": null,
+          "operator": "=",
+          "conjunction": "or"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "PKHivStatus",
+      "title": "HIV Status",
+      "i18nKey": "PKHivStatusI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 130,
+      "gxAlertDbColumn": "HivStatus",
+      "caption": "HIV Status",
+      "i18nKeyCaption": "PKHivStatusI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.3.value",
+      "payloadDestinationPath": "patient.HivStatus",
+      "source": "patientData.HivStatus",
+      "mandatory": false,
+      "items": [
+        {
+          "key": 1,
+          "value": "Positive",
+          "order": 20
+        },
+        {
+          "key": 0,
+          "value": "Negative",
+          "order": 10
+        },
+        {
+          "key": 2,
+          "value": "Unknown",
+          "order": 30,
+          "isDefault": true
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "PKPatientAgeMonths",
+      "title": "Age in Months (for children under 2 years)",
+      "i18nKey": "PKPatientAgeMonthsI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 31,
+      "gxAlertDbColumn": "PatientAgeMonths",
+      "caption": "Age in Months (for children under 2 years)",
+      "i18nKeyCaption": "PKPatientAgeMonthsI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.4.value",
+      "payloadDestinationPath": "patient.PatientAgeMonths",
+      "source": "patientData.PatientAgeMonths",
+      "mandatory": false,
+      "validation": [
+        {
+          "validationType": "regex",
+          "value": "^[1-9]$|^[1][0-9]$|^2[0-3]$",
+          "errorMessage": "Patient Age in Months should be a number from 1 to 23. For greater age please use field Age.",
+          "errorMessageI18nKey": "PKPatientAgeMonthsValidationFieldi18nKey"
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKPatientAge",
+          "valueToCompare": "",
+          "operator": "=",
+          "conjunction": "or"
+        },
+        {
+          "propToCompare": "PKPatientAge",
+          "valueToCompare": null,
+          "operator": "=",
+          "conjunction": "or"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "PKRepeatTest",
+      "title": "Is GeneXpert Test Performed Previously?",
+      "i18nKey": "PKRepeatTestI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 100,
+      "gxAlertDbColumn": "PKRepeatTest",
+      "caption": "Is GeneXpert Test Performed Previously?",
+      "i18nKeyCaption": "PKRepeatTestI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.5.value",
+      "payloadDestinationPath": "patient.PKRepeatTest",
+      "source": "patientData.PKRepeatTest",
+      "mandatory": false,
+      "items": [
+        {
+          "key": 1,
+          "value": "Yes",
+          "order": 10
+        },
+        {
+          "key": 0,
+          "value": "No",
+          "order": 20,
+          "isDefault": true
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "PKPatientStreet",
+      "title": "Patient Address",
+      "i18nKey": "PKPatientStreetI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 33,
+      "gxAlertDbColumn": "PatientStreet",
+      "caption": "Patient Address",
+      "i18nKeyCaption": "PKPatientStreetI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.6.value",
+      "payloadDestinationPath": "patient.PatientStreet",
+      "source": "patientData.PatientStreet",
+      "mandatory": false
+    },
+    {
+      "id": 7,
+      "name": "PKPatientName",
+      "title": "Patient Name",
+      "i18nKey": "PKPatientNameI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 10,
+      "gxAlertDbColumn": "PatientName",
+      "caption": "Patient Name",
+      "i18nKeyCaption": "PKPatientNameI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.7.value",
+      "payloadDestinationPath": "patient.PatientName",
+      "source": "patientData.PatientName",
+      "mandatory": false
+    },
+    {
+      "id": 8,
+      "name": "PKHomeDistrict",
+      "title": "Patient Home District",
+      "i18nKey": "PKHomeDistrictI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 32,
+      "gxAlertDbColumn": "PKHomeDistrict",
+      "caption": "Patient Home District",
+      "i18nKeyCaption": "PKHomeDistrictI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.8.value",
+      "payloadDestinationPath": "patient.PKHomeDistrict",
+      "source": "patientData.PKHomeDistrict",
+      "mandatory": false
+    },
+    {
+      "id": 9,
+      "name": "PKReferringHealthFacility",
+      "title": "Referring Health Facility Name",
+      "i18nKey": "PKReferringHealthFacilityI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 43,
+      "gxAlertDbColumn": "PKReferringHealthFacility",
+      "caption": "Referring Health Facility Name",
+      "i18nKeyCaption": "PKReferringHealthFacilityI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.9.value",
+      "payloadDestinationPath": "patient.PKReferringHealthFacility",
+      "source": "patientData.PKReferringHealthFacility",
+      "mandatory": false,
+      "condition": [
+        {
+          "propToCompare": "PKReferringHealthFacilityLocation",
+          "valueToCompare": "other",
+          "operator": "="
+        },
+        {
+          "propToCompare": "PKReferringHealthFacilityProvince",
+          "operator": "!="
+        },
+        {
+          "propToCompare": "PKReferringHealthFacilityDistrict",
+          "operator": "!="
+        },
+        {
+          "propToCompare": "PKReferringHealthFacilityLevel",
+          "operator": "!="
+        }
+      ],
+      "filters": [
+        {
+          "propToCompare": "PKReferringHealthFacilityProvince",
+          "fieldToCompare": "state",
+          "operator": "=",
+          "conjunction": "and"
+        },
+        {
+          "propToCompare": "PKReferringHealthFacilityDistrict",
+          "fieldToCompare": "lga",
+          "operator": "=",
+          "conjunction": "and"
+        },
+        {
+          "propToCompare": "PKReferringHealthFacilityLevel",
+          "fieldToCompare": "level",
+          "operator": "=",
+          "conjunction": "and"
+        }
+      ],
+      "emptyIfDisabled": false,
+      "itemsSource": "all-sites",
+      "itemsSourceConfig": {
+        "key": "externalId",
+        "value": "name",
+        "extraItems": [
+          {
+            "key": "other",
+            "value": "Other",
+            "description": "Other",
+            "order": 100
+          }
+        ]
+      },
+      "useValue": [
+        {
+          "from": "TestingFacility",
+          "when": [
+            {
+              "propToCompare": "PKReferringHealthFacilityLocation",
+              "valueToCompare": "same",
+              "operator": "="
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "PKDiseaseSite",
+      "title": "Disease Site",
+      "i18nKey": "PKDiseaseSiteI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 60,
+      "gxAlertDbColumn": "PKDiseaseSite",
+      "caption": "Disease Site",
+      "i18nKeyCaption": "PKDiseaseSiteI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.10.value",
+      "payloadDestinationPath": "patient.PKDiseaseSite",
+      "source": "patientData.PKDiseaseSite",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Pulmonary",
+          "value": "PTB",
+          "order": 0,
+          "isDefault": true
+        },
+        {
+          "key": "Ex-pulmonary",
+          "value": "EPTB",
+          "order": 10
+        },
+        {
+          "key": "PTBAndEPTB",
+          "value": "PTB & EPTB",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "PKReferringPhysicianName",
+      "title": "Referring Physician Name",
+      "i18nKey": "PKReferringPhysicianNameI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 50,
+      "gxAlertDbColumn": "PKReferringPhysicianName",
+      "caption": "Referring Physician Name",
+      "i18nKeyCaption": "PKReferringPhysicianNameI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.11.value",
+      "payloadDestinationPath": "patient.PKReferringPhysicianName",
+      "source": "patientData.PKReferringPhysicianName",
+      "mandatory": false
+    },
+    {
+      "id": 12,
+      "name": "PKReferringPhysicianContact",
+      "title": "Referring Physician Contact (e.g. 03002625431)",
+      "i18nKey": "PKReferringPhysicianContactI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 51,
+      "gxAlertDbColumn": "PKReferringPhysicianContact",
+      "caption": "Referring Physician Contact (e.g. 03002625431)",
+      "i18nKeyCaption": "PKReferringPhysicianContactI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.12.value",
+      "payloadDestinationPath": "patient.PKReferringPhysicianContact",
+      "source": "patientData.PKReferringPhysicianContact",
+      "mandatory": false,
+      "validation": [
+        {
+          "validationType": "regex",
+          "value": "^0\\d{10}\\b$",
+          "errorMessage": "Phone number should consist of 11 consecutive digits with the first leftmost digit must be 0",
+          "errorMessageI18nKey": "PKReferringPhysicianContactValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "PKSpecimenType",
+      "title": "Specimen Type",
+      "i18nKey": "PKSpecimenTypeI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 90,
+      "gxAlertDbColumn": "PKSpecimenType",
+      "caption": "Specimen Type",
+      "i18nKeyCaption": "PKSpecimenTypeI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.13.value",
+      "payloadDestinationPath": "patient.PKSpecimenType",
+      "source": "patientData.PKSpecimenType",
+      "mandatory": false,
+      "items": [
+        {
+          "key": 0,
+          "value": "P-Sputum",
+          "order": 0,
+          "excludeFrom": "Ex-pulmonary",
+          "isDefault": true
+        },
+        {
+          "key": 1,
+          "value": "P-Bronchoalveolar Lavage",
+          "order": 10,
+          "excludeFrom": "Ex-pulmonary"
+        },
+        {
+          "key": 3,
+          "value": "P-Gastric Lavage",
+          "order": 20,
+          "excludeFrom": "Ex-pulmonary"
+        },
+        {
+          "key": 2,
+          "value": "P-Others",
+          "order": 30,
+          "excludeFrom": "Ex-pulmonary"
+        },
+        {
+          "key": 4,
+          "value": "EP-Tissue",
+          "order": 40,
+          "excludeFrom": "Pulmonary"
+        },
+        {
+          "key": 5,
+          "value": "EP-CSF",
+          "order": 50,
+          "excludeFrom": "Pulmonary"
+        },
+        {
+          "key": 6,
+          "value": "EP-Pleural Fluid",
+          "order": 60,
+          "excludeFrom": "Pulmonary"
+        },
+        {
+          "key": 7,
+          "value": "EP-Other Fluid",
+          "order": 70,
+          "excludeFrom": "Pulmonary"
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKDiseaseSite",
+          "valueToCompare": "Pulmonary",
+          "conjunction": "or"
+        },
+        {
+          "propToCompare": "PKDiseaseSite",
+          "valueToCompare": "Ex-pulmonary",
+          "conjunction": "or"
+        },
+        {
+          "propToCompare": "PKDiseaseSite",
+          "valueToCompare": "PTBAndEPTB",
+          "conjunction": "or"
+        }
+      ],
+      "filters": [
+        {
+          "propToCompare": "PKDiseaseSite",
+          "fieldToCompare": "excludeFrom",
+          "operator": "!="
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "PKAFBSmearResults",
+      "title": "AFB Smear Results",
+      "i18nKey": "PKAFBSmearResultsI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 110,
+      "gxAlertDbColumn": "PKAFBSmearResults",
+      "caption": "AFB Smear Results",
+      "i18nKeyCaption": "PKAFBSmearResultsI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.14.value",
+      "payloadDestinationPath": "patient.PKAFBSmearResults",
+      "source": "patientData.PKAFBSmearResults",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Positive",
+          "value": "Positive",
+          "order": 0
+        },
+        {
+          "key": "Scanty",
+          "value": "Scanty",
+          "order": 5
+        },
+        {
+          "key": "Negative",
+          "value": "Negative",
+          "order": 10
+        },
+        {
+          "key": "N/A",
+          "value": "N/A",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "PKPreviousHistoryOfTbTreatment",
+      "title": "Previous History of TB Treatment",
+      "i18nKey": "PKPreviousHistoryOfTbTreatmentI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 120,
+      "gxAlertDbColumn": "PKPreviousHistoryOfTbTreatment",
+      "caption": "Previous History of TB Treatment",
+      "i18nKeyCaption": "PKPreviousHistoryOfTbTreatmentI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.15.value",
+      "payloadDestinationPath": "patient.PKPreviousHistoryOfTbTreatment",
+      "source": "patientData.PKPreviousHistoryOfTbTreatment",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Yes",
+          "value": "Yes",
+          "order": 0
+        },
+        {
+          "key": "No",
+          "value": "No",
+          "order": 10,
+          "isDefault": true
+        },
+        {
+          "key": "Not Available",
+          "value": "Not Available",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "PKPreviousGeneXpertResult",
+      "title": "Previous GeneXpert Result",
+      "i18nKey": "PKPreviousGeneXpertResultI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 105,
+      "gxAlertDbColumn": "PKPreviousGeneXpertResult",
+      "caption": "Previous GeneXpert Result",
+      "i18nKeyCaption": "PKPreviousGeneXpertResultI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.16.value",
+      "payloadDestinationPath": "patient.PKPreviousGeneXpertResult",
+      "source": "patientData.PKPreviousGeneXpertResult",
+      "mandatory": false,
+      "items": [
+        {
+          "key": 1,
+          "value": "MTB Positive",
+          "order": 10
+        },
+        {
+          "key": 0,
+          "value": "MTB Trace",
+          "order": 20
+        },
+        {
+          "key": 2,
+          "value": "MTB Not Detected",
+          "order": 30
+        },
+        {
+          "key": 3,
+          "value": "Invalid/Error",
+          "order": 40
+        },
+        {
+          "key": 4,
+          "value": "NA",
+          "order": 50
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKRepeatTest",
+          "valueToCompare": 1,
+          "operator": "="
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "PKPatientContactNumber",
+      "title": "Patient Contact Number (e.g. 03002625431)",
+      "i18nKey": "PKPatientContactNumberI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 38,
+      "gxAlertDbColumn": "PatientPhone",
+      "caption": "Patient Contact Number (e.g. 03002625431)",
+      "i18nKeyCaption": "PKPatientContactNumberI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.17.value",
+      "payloadDestinationPath": "patient.PatientPhone",
+      "source": "patientData.PatientPhone",
+      "mandatory": false,
+      "validation": [
+        {
+          "validationType": "regex",
+          "value": "^0\\d{10}\\b$",
+          "errorMessage": "Phone number should consist of 11 consecutive digits with the first leftmost digit must be 0",
+          "errorMessageI18nKey": "PKPatientContactNumberValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "PKReferringHealthFacilityProvince",
+      "title": "Province",
+      "i18nKey": "PKReferringHealthFacilityProvinceI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 40,
+      "gxAlertDbColumn": "PKReferringHealthFacilityProvince",
+      "caption": "Province",
+      "i18nKeyCaption": "PKReferringHealthFacilityProvinceI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.18.value",
+      "payloadDestinationPath": "patient.PKReferringHealthFacilityProvince",
+      "source": "patientData.PKReferringHealthFacilityProvince",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Punjab",
+          "value": "Punjab",
+          "order": 0
+        },
+        {
+          "key": "Sindh",
+          "value": "Sindh",
+          "order": 1
+        },
+        {
+          "key": "Balochistan",
+          "value": "Balochistan",
+          "order": 3
+        },
+        {
+          "key": "Khyber Pakhtunkhwa",
+          "value": "Khyber Pakhtunkhwa",
+          "order": 4
+        },
+        {
+          "key": "FATA",
+          "value": "FATA",
+          "order": 5
+        },
+        {
+          "key": "Azad Jammu & Kashmir",
+          "value": "Azad Jammu & Kashmir",
+          "order": 6
+        },
+        {
+          "key": "Gilgit Baltistan",
+          "value": "Gilgit Baltistan",
+          "order": 7
+        },
+        {
+          "key": "Islamabad & CT",
+          "value": "Islamabad & CT",
+          "order": 8
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKReferringHealthFacilityLocation",
+          "valueToCompare": "other",
+          "operator": "="
+        }
+      ],
+      "emptyIfDisabled": false,
+      "useValue": [
+        {
+          "from": "TestingFacility",
+          "when": [
+            {
+              "propToCompare": "PKReferringHealthFacilityLocation",
+              "valueToCompare": "same",
+              "operator": "="
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "name": "PKReferringHealthFacilityDistrict",
+      "title": "Referring Health Facility District",
+      "i18nKey": "PKReferringHealthFacilityDistrictI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 41,
+      "gxAlertDbColumn": "PKReferringHealthFacilityDistrict",
+      "caption": "Referring Health Facility District",
+      "i18nKeyCaption": "PKReferringHealthFacilityDistrictI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.19.value",
+      "payloadDestinationPath": "patient.PKReferringHealthFacilityDistrict",
+      "source": "patientData.PKReferringHealthFacilityDistrict",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Attock",
+          "value": "Attock",
+          "order": 0,
+          "state": "Punjab"
+        },
+        {
+          "key": "Bahawalnagar",
+          "value": "Bahawalnagar",
+          "order": 1,
+          "state": "Punjab"
+        },
+        {
+          "key": "Bahawalpur",
+          "value": "Bahawalpur",
+          "order": 2,
+          "state": "Punjab"
+        },
+        {
+          "key": "Bhakkar",
+          "value": "Bhakkar",
+          "order": 3,
+          "state": "Punjab"
+        },
+        {
+          "key": "Chakwal",
+          "value": "Chakwal",
+          "order": 4,
+          "state": "Punjab"
+        },
+        {
+          "key": "Chiniot",
+          "value": "Chiniot",
+          "order": 5,
+          "state": "Punjab"
+        },
+        {
+          "key": "Dera Ghazi Khan",
+          "value": "Dera Ghazi Khan",
+          "order": 6,
+          "state": "Punjab"
+        },
+        {
+          "key": "Faisalabad",
+          "value": "Faisalabad",
+          "order": 7,
+          "state": "Punjab"
+        },
+        {
+          "key": "Gujranwala",
+          "value": "Gujranwala",
+          "order": 8,
+          "state": "Punjab"
+        },
+        {
+          "key": "Gujrat",
+          "value": "Gujrat",
+          "order": 9,
+          "state": "Punjab"
+        },
+        {
+          "key": "Hafizabad",
+          "value": "Hafizabad",
+          "order": 10,
+          "state": "Punjab"
+        },
+        {
+          "key": "Jhang",
+          "value": "Jhang",
+          "order": 11,
+          "state": "Punjab"
+        },
+        {
+          "key": "Jhelum",
+          "value": "Jhelum",
+          "order": 12,
+          "state": "Punjab"
+        },
+        {
+          "key": "Kasur",
+          "value": "Kasur",
+          "order": 13,
+          "state": "Punjab"
+        },
+        {
+          "key": "Khanewal",
+          "value": "Khanewal",
+          "order": 14,
+          "state": "Punjab"
+        },
+        {
+          "key": "Khushab",
+          "value": "Khushab",
+          "order": 15,
+          "state": "Punjab"
+        },
+        {
+          "key": "Lahore",
+          "value": "Lahore",
+          "order": 16,
+          "state": "Punjab"
+        },
+        {
+          "key": "Layyah",
+          "value": "Layyah",
+          "order": 17,
+          "state": "Punjab"
+        },
+        {
+          "key": "Lodhran",
+          "value": "Lodhran",
+          "order": 18,
+          "state": "Punjab"
+        },
+        {
+          "key": "Mandi Bahaudin",
+          "value": "Mandi Bahaudin",
+          "order": 19,
+          "state": "Punjab"
+        },
+        {
+          "key": "Mianwali",
+          "value": "Mianwali",
+          "order": 20,
+          "state": "Punjab"
+        },
+        {
+          "key": "Multan",
+          "value": "Multan",
+          "order": 21,
+          "state": "Punjab"
+        },
+        {
+          "key": "Muzaffargarh",
+          "value": "Muzaffargarh",
+          "order": 22,
+          "state": "Punjab"
+        },
+        {
+          "key": "Nankana Sahib",
+          "value": "Nankana Sahib",
+          "order": 23,
+          "state": "Punjab"
+        },
+        {
+          "key": "Narowal",
+          "value": "Narowal",
+          "order": 24,
+          "state": "Punjab"
+        },
+        {
+          "key": "Okara",
+          "value": "Okara",
+          "order": 25,
+          "state": "Punjab"
+        },
+        {
+          "key": "Pak Pattan",
+          "value": "Pak Pattan",
+          "order": 26,
+          "state": "Punjab"
+        },
+        {
+          "key": "Rahim Yar Khan",
+          "value": "Rahim Yar Khan",
+          "order": 27,
+          "state": "Punjab"
+        },
+        {
+          "key": "Rajanpur",
+          "value": "Rajanpur",
+          "order": 28,
+          "state": "Punjab"
+        },
+        {
+          "key": "Rawalpindi",
+          "value": "Rawalpindi",
+          "order": 29,
+          "state": "Punjab"
+        },
+        {
+          "key": "Sahiwal",
+          "value": "Sahiwal",
+          "order": 30,
+          "state": "Punjab"
+        },
+        {
+          "key": "Sargodha",
+          "value": "Sargodha",
+          "order": 31,
+          "state": "Punjab"
+        },
+        {
+          "key": "Sheikhupura",
+          "value": "Sheikhupura",
+          "order": 32,
+          "state": "Punjab"
+        },
+        {
+          "key": "Sialkot",
+          "value": "Sialkot",
+          "order": 33,
+          "state": "Punjab"
+        },
+        {
+          "key": "Toba Tek Singh",
+          "value": "Toba Tek Singh",
+          "order": 34,
+          "state": "Punjab"
+        },
+        {
+          "key": "Vehari",
+          "value": "Vehari",
+          "order": 35,
+          "state": "Punjab"
+        },
+        {
+          "key": "Badin",
+          "value": "Badin ",
+          "order": 0,
+          "state": "Sindh"
+        },
+        {
+          "key": "Dadu",
+          "value": "Dadu",
+          "order": 1,
+          "state": "Sindh"
+        },
+        {
+          "key": "Ghotki",
+          "value": "Ghotki",
+          "order": 2,
+          "state": "Sindh"
+        },
+        {
+          "key": "Hyderabad",
+          "value": "Hyderabad",
+          "order": 3,
+          "state": "Sindh"
+        },
+        {
+          "key": "Jacobabad",
+          "value": "Jacobabad",
+          "order": 4,
+          "state": "Sindh"
+        },
+        {
+          "key": "Jamshoro",
+          "value": "Jamshoro",
+          "order": 5,
+          "state": "Sindh"
+        },
+        {
+          "key": "Karachi",
+          "value": "Karachi",
+          "order": 6,
+          "state": "Sindh"
+        },
+        {
+          "key": "Kashmore",
+          "value": "Kashmore",
+          "order": 7,
+          "state": "Sindh"
+        },
+        {
+          "key": "Khairpur",
+          "value": "Khairpur",
+          "order": 8,
+          "state": "Sindh"
+        },
+        {
+          "key": "Larkana",
+          "value": "Larkana",
+          "order": 9,
+          "state": "Sindh"
+        },
+        {
+          "key": "Matiari",
+          "value": "Matiari",
+          "order": 10,
+          "state": "Sindh"
+        },
+        {
+          "key": "Mirpurkhas",
+          "value": "Mirpurkhas",
+          "order": 11,
+          "state": "Sindh"
+        },
+        {
+          "key": "Naushahro Feroz",
+          "value": "Naushahro Feroz",
+          "order": 12,
+          "state": "Sindh"
+        },
+        {
+          "key": "Qamber Shahdadkot",
+          "value": "Qamber Shahdadkot",
+          "order": 13,
+          "state": "Sindh"
+        },
+        {
+          "key": "Sanghar",
+          "value": "Sanghar",
+          "order": 14,
+          "state": "Sindh"
+        },
+        {
+          "key": "Shaheed Benazirabad",
+          "value": "Shaheed Benazirabad",
+          "order": 15,
+          "state": "Sindh"
+        },
+        {
+          "key": "Shikarpur",
+          "value": "Shikarpur",
+          "order": 16,
+          "state": "Sindh"
+        },
+        {
+          "key": "Sujawal",
+          "value": "Sujawal",
+          "order": 17,
+          "state": "Sindh"
+        },
+        {
+          "key": "Sukkur",
+          "value": "Sukkur",
+          "order": 18,
+          "state": "Sindh"
+        },
+        {
+          "key": "Tando Allahyar",
+          "value": "Tando Allahyar",
+          "order": 19,
+          "state": "Sindh"
+        },
+        {
+          "key": "Tando Muhammad Khan",
+          "value": "Tando Muhammad Khan",
+          "order": 20,
+          "state": "Sindh"
+        },
+        {
+          "key": "Tharparkar",
+          "value": "Tharparkar",
+          "order": 21,
+          "state": "Sindh"
+        },
+        {
+          "key": "Thatha",
+          "value": "Thatha",
+          "order": 22,
+          "state": "Sindh"
+        },
+        {
+          "key": "Umerkot",
+          "value": "Umerkot",
+          "order": 23,
+          "state": "Sindh"
+        },
+        {
+          "key": "Killa Saifullah",
+          "value": "Killa Saifullah",
+          "order": 12,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Kohlu",
+          "value": "Kohlu",
+          "order": 13,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Lasbela",
+          "value": "Lasbela",
+          "order": 14,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Loralai",
+          "value": "Loralai",
+          "order": 15,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Mastung",
+          "value": "Mastung",
+          "order": 16,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Musakhel",
+          "value": "Musakhel",
+          "order": 17,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Nasirabad",
+          "value": "Nasirabad",
+          "order": 18,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Nuskhi",
+          "value": "Nuskhi",
+          "order": 19,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Panjgur",
+          "value": "Panjgur",
+          "order": 20,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Pishin",
+          "value": "Pishin",
+          "order": 21,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Quetta",
+          "value": "Quetta",
+          "order": 22,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Sibi",
+          "value": "Sibi",
+          "order": 23,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Sherani",
+          "value": "Sherani",
+          "order": 24,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Turbat",
+          "value": "Turbat",
+          "order": 25,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Washuk",
+          "value": "Washuk",
+          "order": 26,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Zhob",
+          "value": "Zhob",
+          "order": 27,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Ziarat",
+          "value": "Ziarat",
+          "order": 28,
+          "state": "Balochistan"
+        },
+        {
+          "key": "Abbottabad",
+          "value": "Abbottabad",
+          "order": 0,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Bannu",
+          "value": "Bannu",
+          "order": 1,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Battagram",
+          "value": "Battagram",
+          "order": 2,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Buner",
+          "value": "Buner",
+          "order": 3,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Charsadda",
+          "value": "Charsadda",
+          "order": 4,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Chitral",
+          "value": "Chitral",
+          "order": 5,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Dera Ismail Khan",
+          "value": "Dera Ismail Khan",
+          "order": 6,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Hangu",
+          "value": "Hangu",
+          "order": 7,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Haripur",
+          "value": "Haripur",
+          "order": 8,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Karak",
+          "value": "Karak",
+          "order": 9,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Kohat",
+          "value": "Kohat",
+          "order": 10,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Kohistan",
+          "value": "Kohistan",
+          "order": 11,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Lakki Marwat",
+          "value": "Lakki Marwat",
+          "order": 12,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Lower Dir",
+          "value": "Lower Dir",
+          "order": 13,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Malakand",
+          "value": "Malakand",
+          "order": 14,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Mansehra",
+          "value": "Mansehra",
+          "order": 15,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Mardan",
+          "value": "Mardan",
+          "order": 16,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Nowshera",
+          "value": "Nowshera",
+          "order": 17,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Peshawar",
+          "value": "Peshawar",
+          "order": 18,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Shangla",
+          "value": "Shangla",
+          "order": 19,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Swabi",
+          "value": "Swabi",
+          "order": 20,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Swat",
+          "value": "Swat",
+          "order": 21,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Tank",
+          "value": "Tank",
+          "order": 22,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Upper Dir",
+          "value": "Upper Dir",
+          "order": 23,
+          "state": "Khyber Pakhtunkhwa"
+        },
+        {
+          "key": "Bajour Agency",
+          "value": "Bajour Agency",
+          "order": 0,
+          "state": "FATA"
+        },
+        {
+          "key": "Khyber Agency",
+          "value": "Khyber Agency",
+          "order": 1,
+          "state": "FATA"
+        },
+        {
+          "key": "Kurram Agency",
+          "value": "Kurram Agency",
+          "order": 2,
+          "state": "FATA"
+        },
+        {
+          "key": "Mohmand Agency",
+          "value": "Mohmand Agency",
+          "order": 3,
+          "state": "FATA"
+        },
+        {
+          "key": "North Waziristan",
+          "value": "North Waziristan",
+          "order": 4,
+          "state": "FATA"
+        },
+        {
+          "key": "South Warizistan",
+          "value": "South Warizistan",
+          "order": 5,
+          "state": "FATA"
+        },
+        {
+          "key": "Orakzai Agency",
+          "value": "Orakzai Agency",
+          "order": 6,
+          "state": "FATA"
+        },
+        {
+          "key": "Bagh",
+          "value": "Bagh",
+          "order": 0,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Bhimber",
+          "value": "Bhimber",
+          "order": 1,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Hattian Bala",
+          "value": "Hattian Bala",
+          "order": 2,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Haveli",
+          "value": "Haveli",
+          "order": 3,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Kotli",
+          "value": "Kotli",
+          "order": 4,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Mirpur",
+          "value": "Mirpur",
+          "order": 5,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Muzaffarabad",
+          "value": "Muzaffarabad",
+          "order": 6,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Neelum",
+          "value": "Neelum",
+          "order": 7,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Poonch",
+          "value": "Poonch",
+          "order": 8,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Sudhnoti",
+          "value": "Sudhnoti",
+          "order": 9,
+          "state": "Azad Jammu & Kashmir"
+        },
+        {
+          "key": "Astore",
+          "value": "Astore",
+          "order": 0,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Diamir",
+          "value": "Diamir",
+          "order": 1,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Ghanche",
+          "value": "Ghanche",
+          "order": 2,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Ghizer",
+          "value": "Ghizer",
+          "order": 3,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Gilgit",
+          "value": "Gilgit",
+          "order": 4,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Hunza",
+          "value": "Hunza",
+          "order": 5,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Kharmang",
+          "value": "Kharmang",
+          "order": 6,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Nagar",
+          "value": "Nagar",
+          "order": 7,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Shigar",
+          "value": "Shigar",
+          "order": 8,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Skardu",
+          "value": "Skardu",
+          "order": 9,
+          "state": "Gilgit Baltistan"
+        },
+        {
+          "key": "Islamabad",
+          "value": "Islamabad",
+          "order": 0,
+          "state": "Islamabad & CT"
+        },
+        {
+          "key": "Kharan",
+          "value": "Kharan",
+          "order": 0,
+          "state": "Balochistan"
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKReferringHealthFacilityLocation",
+          "valueToCompare": "other",
+          "operator": "="
+        },
+        {
+          "propToCompare": "PKReferringHealthFacilityProvince",
+          "operator": "!="
+        }
+      ],
+      "filters": [
+        {
+          "propToCompare": "PKReferringHealthFacilityProvince",
+          "fieldToCompare": "state",
+          "operator": "="
+        }
+      ],
+      "emptyIfDisabled": false,
+      "useValue": [
+        {
+          "from": "TestingFacility",
+          "when": [
+            {
+              "propToCompare": "PKReferringHealthFacilityLocation",
+              "valueToCompare": "same",
+              "operator": "="
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "name": "PKReferringHealthFacilityLevel",
+      "title": "Referring Health Facility Level",
+      "i18nKey": "PKReferringHealthFacilityLevelI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 42,
+      "gxAlertDbColumn": "PKReferringHealthFacilityLevel",
+      "caption": "Referring Health Facility Level",
+      "i18nKeyCaption": "PKReferringHealthFacilityLevelI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.20.value",
+      "payloadDestinationPath": "patient.PKReferringHealthFacilityLevel",
+      "source": "patientData.PKReferringHealthFacilityLevel",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Public-DHQ",
+          "value": "Public-DHQ",
+          "order": 0
+        },
+        {
+          "key": "Public-THQ",
+          "value": "Public-THQ",
+          "order": 10
+        },
+        {
+          "key": "Public-TCH",
+          "value": "Public-TCH",
+          "order": 15
+        },
+        {
+          "key": "Public-RHC",
+          "value": "Public-RHC",
+          "order": 20
+        },
+        {
+          "key": "Public-BHU",
+          "value": "Public-BHU",
+          "order": 30
+        },
+        {
+          "key": "Public-Other",
+          "value": "Public-Other",
+          "order": 40
+        },
+        {
+          "key": "Private-Hospital",
+          "value": "Private-Hospital",
+          "order": 50
+        },
+        {
+          "key": "Private-GP",
+          "value": "Private-GP",
+          "order": 70
+        },
+        {
+          "key": "Private-Other",
+          "value": "Private-Other",
+          "order": 80
+        },
+        {
+          "key": "Parastatal",
+          "value": "Parastatal",
+          "order": 90
+        },
+        {
+          "key": "Community",
+          "value": "Community",
+          "order": 100
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKReferringHealthFacilityLocation",
+          "valueToCompare": "other",
+          "operator": "="
+        }
+      ],
+      "emptyIfDisabled": false,
+      "useValue": [
+        {
+          "from": "TestingFacility",
+          "when": [
+            {
+              "propToCompare": "PKReferringHealthFacilityLocation",
+              "valueToCompare": "same",
+              "operator": "="
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "name": "PKIfPreviousGeneXpertResultsIsPositive",
+      "title": "If Previous GeneXpert Results is Positive",
+      "i18nKey": "PKIfPreviousGeneXpertResultsIsPositiveI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 107,
+      "gxAlertDbColumn": "PKIfPreviousGeneXpertResultsIsPositive",
+      "caption": "If Previous GeneXpert Results is Positive",
+      "i18nKeyCaption": "PKIfPreviousGeneXpertResultsIsPositiveI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.21.value",
+      "payloadDestinationPath": "patient.PKIfPreviousGeneXpertResultsIsPositive",
+      "source": "patientData.PKIfPreviousGeneXpertResultsIsPositive",
+      "mandatory": false,
+      "items": [
+        {
+          "key": 0,
+          "value": "Rif Resistance Detected",
+          "order": 10
+        },
+        {
+          "key": 1,
+          "value": "Rif Resistance Not Detected",
+          "order": 20
+        },
+        {
+          "key": 2,
+          "value": "Rif Resistance Indeterminate",
+          "order": 30
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKPreviousGeneXpertResult",
+          "valueToCompare": 1,
+          "operator": "="
+        },
+        {
+          "propToCompare": "PKRepeatTest",
+          "valueToCompare": 1,
+          "operator": "="
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "name": "PKEPTissueType",
+      "title": "EP Tissue Type",
+      "i18nKey": "PKEPTissueTypeI18nKey",
+      "fieldType": "number",
+      "completionWeight": 10,
+      "order": 95,
+      "gxAlertDbColumn": "PKEPTissueType",
+      "caption": "EP Tissue Type",
+      "i18nKeyCaption": "PKEPTissueTypeI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.22.value",
+      "payloadDestinationPath": "patient.PKEPTissueType",
+      "source": "patientData.PKEPTissueType",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "Lymph Node",
+          "value": "Lymph Node",
+          "order": 10
+        },
+        {
+          "key": "Bone",
+          "value": "Bone",
+          "order": 20
+        },
+        {
+          "key": "Pleura",
+          "value": "Pleura",
+          "order": 30
+        },
+        {
+          "key": "Tissue-Others",
+          "value": "Tissue-Others",
+          "order": 40
+        }
+      ],
+      "condition": [
+        {
+          "propToCompare": "PKSpecimenType",
+          "valueToCompare": 4,
+          "operator": "="
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "name": "PKTBDRTBRegNum",
+      "title": "TB/DRTB Reg #",
+      "i18nKey": "PKTBDRTBRegNumI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 38,
+      "gxAlertDbColumn": "PKTBDRTBRegNum",
+      "caption": "TB/DRTB Reg #",
+      "i18nKeyCaption": "PKTBDRTBRegNumI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.23.value",
+      "payloadDestinationPath": "patient.PKTBDRTBRegNum",
+      "source": "patientData.PKTBDRTBRegNum",
+      "mandatory": false
+    },
+    {
+      "id": 24,
+      "name": "PKReferringHealthFacilityLocation",
+      "title": "Referring Health Facility Location",
+      "i18nKey": "PKReferringHealthFacilityLocationI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 39,
+      "gxAlertDbColumn": "PKReferringHealthFacilityLocation",
+      "caption": "Referring Health Facility Location",
+      "i18nKeyCaption": "PKReferringHealthFacilityLocationI8nCaptionKey",
+      "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.24.value",
+      "payloadDestinationPath": "patient.PKReferringHealthFacilityLocation",
+      "source": "patientData.PKReferringHealthFacilityLocation",
+      "mandatory": false,
+      "items": [
+        {
+          "key": "same",
+          "value": "Same as testing facility",
+          "order": 0,
+          "isDefault": true
+        },
+        {
+          "key": "other",
+          "value": "Other than testing facility",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "PKDateSpecimenCollected",
+      "title": "Date Specimen Collected",
+      "i18nKey": "PKDateSpecimenCollectedI18nKey",
+      "fieldType": "datetime",
+      "completionWeight": 10,
+      "order": 52,
+      "gxAlertDbColumn": "PKDateSpecimenCollected",
+      "caption": "Date Specimen Collected",
+      "i18nKeyCaption": "PKDateSpecimenCollectedI8nCaptionKey",
+      "controlType": "dateTimePicker",
+      "payloadOriginPath": "data.customFieldData.25.value",
+      "payloadDestinationPath": "patient.PKDateSpecimenCollected",
+      "source": "patientData.PKDateSpecimenCollected",
+      "mandatory": false
+    },
+    {
+      "id": 26,
+      "name": "PKDateSpecimenReceived",
+      "title": "Date Specimen Received",
+      "i18nKey": "PKDateSpecimenReceivedI18nKey",
+      "fieldType": "datetime",
+      "completionWeight": 10,
+      "order": 53,
+      "gxAlertDbColumn": "PKDateSpecimenReceived",
+      "caption": "Date Specimen Received",
+      "i18nKeyCaption": "PKDateSpecimenReceivedI8nCaptionKey",
+      "controlType": "dateTimePicker",
+      "payloadOriginPath": "data.customFieldData.26.value",
+      "payloadDestinationPath": "patient.PKDateSpecimenReceived",
+      "source": "patientData.PKDateSpecimenReceived",
+      "mandatory": false,
+      "condition": [
+        {
+          "propToCompare": "PKReferringHealthFacilityLocation",
+          "valueToCompare": "other",
+          "operator": "="
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "name": "PKCNIC",
+      "title": "CNIC (13 numbers without dashes)",
+      "i18nKey": "PKCNICI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 11,
+      "gxAlertDbColumn": "PKCNIC",
+      "caption": "CNIC (13 numbers without dashes)",
+      "i18nKeyCaption": "PKCNICI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.27.value",
+      "payloadDestinationPath": "patient.PKCNIC",
+      "source": "patientData.PKCNIC",
+      "mandatory": false,
+      "validation": [
+        {
+          "validationType": "regex",
+          "value": "^\\d{13}$",
+          "errorMessage": "CNIC should have 13 numbers without dashes",
+          "errorMessageI18nKey": "PKCNICValidationFieldi18nKey"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "name": "Remarks",
+      "title": "Remarks",
+      "i18nKey": "RemarksI18nKey",
+      "fieldType": "text",
+      "completionWeight": 10,
+      "order": 99999,
+      "gxAlertDbColumn": "Remarks",
+      "caption": "Remarks",
+      "i18nKeyCaption": "RemarksI8nCaptionKey",
+      "controlType": "textBox",
+      "payloadOriginPath": "data.customFieldData.28.value",
+      "payloadDestinationPath": "patient.Remarks",
+      "source": "patientData.Remarks",
+      "mandatory": false
+    }
+  ],
+  "refForms": []
+}

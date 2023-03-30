@@ -1,11 +1,7 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import FiltersBtnGroup from './btnGroup/FiltersBtnGroup'
 import FiltersPanel from './popover/FiltersPanel'
-import styles from './styles.css'
 import { getFilters } from './utils'
-
-const cssClasses = classnames.bind(styles)
 
 export const BrowseFilters = ({ children, navigate, location, ...restProps }) => {
   const searchParams = new URLSearchParams(location.search)
@@ -69,11 +65,13 @@ export const BrowseFilters = ({ children, navigate, location, ...restProps }) =>
   }
 
   return (
-    <div className={cssClasses('Container')}>
-      {children}
+    <>
       <FiltersBtnGroup filters={filters} onRemoveFilterItem={onRemoveFilterItem} />
-      <FiltersPanel filters={filters} {...restProps} />
-    </div>
+      <div style={{ width: '178px', display: 'flex', alignItems: 'flex-start' }}>
+        <FiltersPanel filters={filters} {...restProps} />
+        {children}
+      </div>
+    </>
   )
 }
 

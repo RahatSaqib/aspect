@@ -27,7 +27,7 @@ const ContactPage = () => {
   return (
     <>
       <Helmet title={formatMessage(messages.title)} />
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, minWidth: '100%' }}>
         <Card>
           <CardContent>
             {step === 0 ? <ContactPageStepOne setStep={setStep} id={id} /> : null}

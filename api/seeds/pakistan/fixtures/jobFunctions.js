@@ -91,7 +91,7 @@ module.exports = [
         activity: 'view',
       },
     ],
-    reports: ['xdr_devices_summary'],
+    reports: ['xdr_devices_summary', 'device_summary_report', 'pk_xpert_site_detailed_report'],
   }),
   mergeJobFunctions(regionalOfficer, {
     permissions: [
@@ -160,7 +160,7 @@ module.exports = [
         activity: 'edit',
       },
     ],
-    reports: ['xdr_devices_summary'],
+    reports: ['xdr_devices_summary', 'device_summary_report', 'pk_xpert_site_detailed_report'],
   }),
   mergeJobFunctions(labUser, {
     permissions: [
@@ -233,7 +233,7 @@ module.exports = [
         activity: 'view',
       },
     ],
-    reports: ['xdr_devices_summary'],
+    reports: ['xdr_devices_summary', 'device_summary_report', 'pk_xpert_site_detailed_report'],
   }),
   mergeJobFunctions(clinician, {
     permissions: [
@@ -306,7 +306,7 @@ module.exports = [
         activity: 'view',
       },
     ],
-    reports: ['xdr_devices_summary'],
+    reports: ['xdr_devices_summary', 'device_summary_report', 'pk_xpert_site_detailed_report'],
   }),
   technician,
 ]

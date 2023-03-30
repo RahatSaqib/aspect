@@ -1,4 +1,8 @@
 .messageField {
-    display: flex;
-    padding-bottom: 20px;
+  display: flex;
+  padding-bottom: 20px;
+}
+
+.text {
+  margin-left: 5px;
 }

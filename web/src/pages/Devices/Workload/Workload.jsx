@@ -140,8 +140,13 @@ const Workload = () => {
         <Helmet title={formatMessage(messages.workloadTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
-            <AspectExportListButton onExport={onExcelClick} visible={workloadList.length} reportName="DeviceWorkload" />
+            <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+              <AspectExportListButton
+                onExport={onExcelClick}
+                visible={workloadList.length}
+                reportName="DeviceWorkload"
+              />
+            </BrowseFilters>
           </div>
 
           <DataTableProgressBar disabled={!isLoading} />

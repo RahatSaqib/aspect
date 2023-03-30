@@ -8,18 +8,11 @@ import { findDOMNode } from 'react-dom'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import { connect } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { compose, withHandlers } from 'recompose'
 import ErrorBoundary from '../../../components/ErrorBoundary'
 import ReportAutoCompleteField from '../../../components/ReportAutocompleteField'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
 import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage } from '../../../messages'
-import {
-  exportFormatTypes,
-  askExportConfirmation,
-  closeExportConfirmation,
-  beginListExportProcessing,
-} from '../../../store/FilterRedux'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import AspectButton from '../../shared/AspectButton'
 import CheckboxField from '../../shared/CheckboxField'
@@ -52,55 +45,13 @@ import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-const enhance = compose(
-  connect(
-    ({ user, assay, geography, filter }) => ({
-      user,
-      assays: assay,
-      countries: geography.countriesForLocationSelector,
-      listExport: filter.listExport,
-    }),
-    {
-      askExportConfirmation,
-      closeExportConfirmation,
-      beginListExportProcessing,
-    }
-  ),
-  withHandlers({
-    onExcelExport: props => () => clickExport(props, exportFormatTypes.EXCEL),
-    onCsvExport: props => () => clickExport(props, exportFormatTypes.CSV),
-    onDisagreedConfirmation:
-      ({ closeExportConfirmation }) =>
-      () =>
-        closeExportConfirmation(),
-    onAgreedConfirmation:
-      ({ listExport, beginListExportProcessing, onClickExport, closeExportConfirmation }) =>
-      () => {
-        beginListExportProcessing(listExport.currentFormatType)
-        onClickExport(listExport.currentFormatType)
-        closeExportConfirmation()
-      },
-  })
-)
-
-const clickExport = (
-  { askConfirmationForExport, askExportConfirmation, beginListExportProcessing, onClickExport },
-  formatType
-) => {
-  if (askConfirmationForExport === true) {
-    askExportConfirmation(formatType)
-  } else {
-    beginListExportProcessing(formatType)
-    onClickExport(formatType)
-  }
-}
-
-const FiltersPanel = ({ disabled, contentClassName, filters, config, dateFilterLabel, user, assays, countries }) => {
+const FiltersPanel = props => {
+  const { disabled, contentClassName, filters, config, dateFilterLabel, user, assays, countries } = props
   const navigate = useNavigate()
   const location = useLocation()
   const [isShown, setIsShown] = useState(false)
   const [v, sV] = useState(filters) // intermediate state to call onChangeFilters only once and prevent rerenders
-  const { assayId, reportableSiteName, reportableSiteId } = filters
+  const { assayId, reportableSiteName, reportableSiteId } = v
   const assayItems = assays.get('items')
   const { formatMessage } = useI18n()
 
@@ -133,7 +84,7 @@ const FiltersPanel = ({ disabled, contentClassName, filters, config, dateFilterL
 
   useEffect(() => {
     if (!isEqual(v, filters)) {
-      sV({ ...v, ...filters })
+      sV({ ...filters, ...v })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters])
@@ -305,7 +256,7 @@ const FiltersPanel = ({ disabled, contentClassName, filters, config, dateFilterL
                     onResultCategoryGroupChange={resultCategoryGroupId => sV({ ...v, resultCategoryGroupId })}
                     floatingLabelFixed
                     hintText={formatMessage(messages.selectResult)}
-                    floatingLabelText={formatMessage(messages.result)}
+                    floatingLabelText={formatMessage(messages.resultGroup)}
                     style={{ verticalAlign: 'bottom' }}
                   />
                 </div>
@@ -821,4 +772,8 @@ const FiltersPanel = ({ disabled, contentClassName, filters, config, dateFilterL
   )
 }
 
-export default enhance(FiltersPanel)
+export default connect(state => ({
+  user: state.user,
+  assays: state.assay,
+  countries: state.geography.countriesForLocationSelector,
+}))(FiltersPanel)

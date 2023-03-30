@@ -12,7 +12,7 @@ function getDeviceBaseExtendedQuery(
   dataConstraints,
   showUnapprovedDevices = false,
   showDecommissionedDevices = false,
-  excludeInternalDevices = false
+  excludeInternalDevices = true
 ) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -499,6 +499,49 @@ function getResultCategoryGroupColumns(dataConstraints, query) {
     })
     .orderBy('columnName')
 }
+
+function moduleDisabledIssues(onlyActiveIssues = false) {
+  const query = knex('Issue as i2')
+    .join('IssueType as it', 'i2.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i2.issueStatusId', 'is.id')
+    .where('it.externalId', 'ModuleDisabled')
+    .whereIn('i2.id', function () {
+      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleName"')
+    })
+    .select(
+      'i2.id',
+      'i2.resultId',
+      'i2.deviceId',
+      knex.raw('i2.data->>"$.moduleName" as moduleName'),
+      'i2.createdOn as dateLastIssue',
+      'it.name as lastIssue'
+    )
+    .as('i')
+
+  if (onlyActiveIssues) {
+    query.where('is.externalId', 'Active')
+  }
+
+  return query
+}
+
+function modulesWithLastResultBeforeMinDate(minDate) {
+  return knex('Result as r')
+    .where('r.endedOn', '<', minDate)
+    .select(
+      'r.siteId',
+      'r.deviceId',
+      'r.moduleName',
+      'r.moduleSerial',
+      knex.raw('max(r.id) as id'),
+      knex.raw('max(r.endedOn) as endedOn'),
+      knex.raw('count(r.id) as totalTestsRun')
+    )
+    .groupBy('r.deviceId', 'r.moduleName', 'r.moduleSerial')
+    .having('endedOn', '<', minDate) // only bays with last result before minDate -> inactive
+    .as('r')
+}
+
 module.exports = {
   getDeviceWorkload,
   getResultCategoriesByAssay,
@@ -533,4 +576,6 @@ module.exports = {
   joinModuleAvailability,
   getFirstAndLastResults,
   getResultCategoryGroupColumns,
+  moduleDisabledIssues,
+  modulesWithLastResultBeforeMinDate,
 }

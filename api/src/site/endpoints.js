@@ -231,6 +231,7 @@ const routes = [
                     then: Joi.required(),
                   })
                   .description('External ID of the site'),
+                customProperties: Joi.string().allow(null, '').description('Custom properties of the site'),
               })
             ),
         }),

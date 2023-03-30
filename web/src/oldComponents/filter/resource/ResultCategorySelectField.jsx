@@ -1,9 +1,7 @@
 import React, { PureComponent } from 'react'
 import { MenuItem } from '@mui/material'
 import Immutable from 'immutable'
-import flowRight from 'lodash/flowRight'
 import isArray from 'lodash/isArray'
-import omit from 'lodash/omit'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -17,7 +15,7 @@ export class ResultCategorySelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchAssays: PropTypes.func.isRequired,
-    assayItems: PropTypes.instanceOf(Immutable.List).isRequired,
+    assays: PropTypes.instanceOf(Immutable.List).isRequired,
     assayId: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
     onResultCategoryChange: PropTypes.func.isRequired,
     value: PropTypes.string,
@@ -40,47 +38,26 @@ export class ResultCategorySelectField extends PureComponent {
   }
 
   render() {
-    const { allItemText, assayItems, assayId, value } = this.props
-    const restProps = omit(this.props, [
-      'allItemText',
-      'fetchAssays',
-      'assayItems',
-      'assayId',
-      'onResultCategoryChange',
-      'value',
-    ])
-    const assayIds = isArray(assayId) ? assayId : [assayId]
-    const possibleAssay = assayItems.find(a => assayIds.includes(a.get('id')))
-    const resultCategories = possibleAssay ? possibleAssay.get('resultCategories') : []
+    const { allItemText, assays, assayId, value, fetchAssays, onResultCategoryChange, ...restProps } = this.props
+    const assayIdArray = isArray(assayId) ? assayId : [assayId]
+    const possibleAssay = assays.toJS().find(a => assayIdArray.includes(a.id))
+    const resultCategories = possibleAssay ? possibleAssay.resultCategories : []
     const { formatMessage } = this.context
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
         {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
-        {resultCategories &&
-          resultCategories.map(a => (
-            <MenuItem key={a.get('id')} value={a.get('id')}>
-              {formatI18nMessage(messages, formatMessage, a.get('i18nKey'), a.get('name'))}
-            </MenuItem>
-          ))}
+        {resultCategories.map(a => (
+          <MenuItem key={a.id} value={a.id}>
+            {formatI18nMessage(messages, formatMessage, a.i18nKey, a.name)}
+          </MenuItem>
+        ))}
       </SelectField>
     )
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    assayItems: state.assay.items,
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      fetchAssays,
-    },
-    dispatch
-  )
-}
-
-export default flowRight(connect(mapStateToProps, mapDispatchToProps))(ResultCategorySelectField)
+export default connect(
+  state => ({ assays: state.assay.items }),
+  dispatch => bindActionCreators({ fetchAssays }, dispatch)
+)(ResultCategorySelectField)

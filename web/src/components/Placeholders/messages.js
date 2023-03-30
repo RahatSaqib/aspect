@@ -111,6 +111,46 @@ export const messages = defineMessages({
     id: 'placeholder.result.2',
     defaultMessage: `Result 2`,
   },
+  placeholderCustomFields: {
+    id: 'placeholder.result.placeholderCustomFields',
+    defaultMessage: `Custom Fields`,
+  },
+  Genderi18nKey: {
+    id: 'pages.resultEdit.Genderi18nKey',
+    defaultMessage: 'Gender',
+  },
+  AgeFieldi18nKey: {
+    id: 'pages.resultEdit.AgeFieldi18nKey',
+    defaultMessage: 'Age',
+  },
+  RetreatCaseFieldi18nKey: {
+    id: 'pages.resultEdit.RetreatCaseFieldi18nKey',
+    defaultMessage: 'Retreatment Case',
+  },
+  ReferringFacilityI18nkey: {
+    id: 'pages.resultEdit.ReferringFacilityI18nkey',
+    defaultMessage: 'Referring Facility',
+  },
+  ReferringClinicianI18nkey: {
+    id: 'pages.resultEdit.ReferringClinicianI18nkey',
+    defaultMessage: 'Referring Clinician or Facility Phone Number (if known)',
+  },
+  RepeatTesti18nKey: {
+    id: 'pages.resultEdit.RepeatTesti18nKey',
+    defaultMessage: 'Repeat Test',
+  },
+  NameFieldi18nKey: {
+    id: 'pages.resultEdit.NameFieldi18nKey',
+    defaultMessage: 'Name',
+  },
+  SurenameFieldi18nKey: {
+    id: 'pages.resultEdit.SurenameFieldi18nKey',
+    defaultMessage: 'Surname',
+  },
+  PatientPhoneNumberi18nkey: {
+    id: 'pages.resultEdit.PatientPhoneNumberi18nkey',
+    defaultMessage: 'Cellphone Number',
+  },
 })
 
 export default messages

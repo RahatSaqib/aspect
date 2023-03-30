@@ -5,7 +5,7 @@ const subscribers = {
   notificationType: require('./notificationType/subscriptions').subscriptions,
   logger: require('./logger/endpoints').subscriptions,
   device: require('./device/subscriptions').subscriptions,
-  deviceApi: require('./deviceApi/endpoints').subscriptions,
+  deviceApi: require('./deviceApi/subscriptions').subscriptions,
   deviceApiRaw: require('./deviceApiRaw/endpoints').subscriptions,
   fact: require('./fact/endpoints').subscriptions,
   issue: require('./issue/endpoints').subscriptions,

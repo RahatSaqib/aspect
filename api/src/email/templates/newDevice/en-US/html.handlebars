@@ -1,0 +1,15 @@
+<html><body>
+<div class="banner"><img src="cid:systemone.jpg" alt="Aspect" /></div>
+<p>Hello {{name}},</p>
+<p>This is to let you know that the device "{{deviceName}}", router number "{{routerNumber}}" successfully connected to Aspect.
+{{#if noInventory}}
+\nNo cartridges on hand
+{{else}}
+    {{#if cartridgeCount}}
+    \nCartridges on hand: {{cartridgeCount}}
+    {{/if}}
+{{/if}}
+</p>
+<p>Thanks,</p>
+<p>The Aspect Team</p>
+</body></html>

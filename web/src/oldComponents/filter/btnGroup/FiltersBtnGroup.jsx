@@ -105,7 +105,8 @@ const makeButton = labelFn => (filterKey, props, index) => {
   if (isArray(filterValue)) {
     filterValue = filterValue[index || 0]
   }
-  return (
+  const lbl = labelFn(filterValue, props)
+  return lbl ? (
     <Button
       key={`${filterKey}-${index || ''}`}
       className={cssClasses('Button')}
@@ -113,10 +114,10 @@ const makeButton = labelFn => (filterKey, props, index) => {
       variant="contained"
       onClick={() => (props.permanent ? null : props.onRemoveFilterItem(filterKey, index))}
     >
-      {labelFn(filterValue, props)}
+      {lbl}
       {props.permanent ? null : <MdClose className={cssClasses('Button__icon')} />}
     </Button>
-  )
+  ) : null
 }
 
 const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
@@ -249,9 +250,7 @@ const FiltersBtnGroup = ({ children, ...restProps }) => {
       formatMessage(
         messages.withResultCategory,
         filters.assayOverride
-          ? {
-              resultCategoryName: `"${startCase(filters.assayOverride)}"`,
-            }
+          ? { resultCategoryName: `"${startCase(filters.assayOverride)}"` }
           : {
               resultCategoryName: formatMessage(
                 // diseaseId here is used to fix filtering from HIV graph
@@ -272,22 +271,20 @@ const FiltersBtnGroup = ({ children, ...restProps }) => {
       })
     ),
     resultCategoryGroupId: makeButton((resultCategoryGroupId, { filters, resultCategoryGroupItems }) => {
-      return formatMessage(
-        messages.withResultCategoryGroup,
-        filters.assayOverride
-          ? {
-              resultCategoryGroupName: `"${startCase(filters.assayOverride)}"`,
-            }
-          : {
-              resultCategoryGroupName: formatMessage(
-                messages[
-                  resultCategoryGroupItems
-                    .find(it => it.get('externalId') === resultCategoryGroupId, EMPTY_CONTEXT, EMPTY_MAP)
-                    .get('i18nKey')
-                ]
-              ),
-            }
-      )
+      const message =
+        messages[
+          resultCategoryGroupItems
+            .find(it => it.get('externalId') === resultCategoryGroupId, EMPTY_CONTEXT, EMPTY_MAP)
+            .get('i18nKey')
+        ]
+
+      return filters.assayOverride
+        ? formatMessage(messages.withResultCategoryGroup, {
+            resultCategoryGroupName: `"${startCase(filters.assayOverride)}"`,
+          })
+        : message
+        ? formatMessage(messages.withResultCategoryGroup, { resultCategoryGroupName: formatMessage(message) })
+        : null
     }),
     errorCode: makeButton(errorCode => formatMessage(messages.errorCode, { errorCode })),
     siteName: makeButton(siteName =>

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react'
+import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { useIdleTimer } from 'react-idle-timer'
 import { useDispatch } from 'react-redux'
-import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import IdleDialog from './components/IdleDialog'
 import Loading from './components/Loading'
 import LoggedInLayout from './components/LoggedInLayout'
@@ -21,13 +21,15 @@ const Devices = lazy(() => import('./pages/Devices/Status/DeviceList'))
 const DevicesWorkload = lazy(() => import('./pages/Devices/Workload'))
 const DeviceDetail = lazy(() => import('./pages/Devices/Detail/DeviceDetail'))
 const EditSite = lazy(() => import('./pages/Site/Detail/Edit'))
-const InventoryContainer = lazy(() => import('./oldPages/inventory/InventoryContainer'))
+const InventoryItemsList = lazy(() => import('./oldPages/inventory/list/InventoryItemsList'))
+const InventoryLog = lazy(() => import('./oldPages/inventory/log/InventoryLog'))
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
 const NotificationDetailHistory = lazy(() => import('./pages/Notification/NotificationHistoryPage'))
 const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
 const OperationalData = lazy(() => import('./oldPages/dashboard/operational/OperationalData'))
 const PersonList = lazy(() => import('./oldPages/person/list/PersonList'))
+const PkDashboard = lazy(() => import('./pages/PkDashboard'))
 const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
 const ReportIndex = lazy(() => import('./oldPages/report/page/ReportIndex'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
@@ -38,6 +40,42 @@ const SiteDetail = lazy(() => import('./pages/Site/Detail'))
 const SiteList = lazy(() => import('./pages/Site/List'))
 const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
 const Welcome = lazy(() => import('./pages/Welcome'))
+//
+
+const DeviceCoverage = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/DeviceCoveragePage'))
+const ErrorRate = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/ErrorRatePage'))
+const Utilization = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/UtilizationPage'))
+const InventoryOverview = lazy(() => import('./pages/PkDashboard/pages/InventorySection/InventoryOverviewPage'))
+const CovidGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/CovidPage'))
+const HivGraphPage = lazy(() => import('./pages/PkDashboard/pages/OtherSection/HivPage'))
+
+const CurrentDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentDiagnosisPage'))
+const CurrentRRTBDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentRRTBDiagnosisPage'))
+const TestDiagTrend = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/TestDiagTrendPage'))
+const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentTestingPage'))
+const NationalDiagnosisRif = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalDiagnosisPage'))
+const NationalRtbTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalRtbTrendsPage'))
+const NationalTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalTestingTrendsPage'))
+const ProvincialRIFTestingTrend = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbRifSection/ProvincialTestingTrendPage')
+)
+const ProvincialRIFDiagnosisTrend = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbRifSection/ProvincialDiagnosisTrendPage')
+)
+const ProvincialRIFTestingTrendRRTB = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbRifSection/ProvincialRRTBDiagnosisTrendPage')
+)
+
+const NationalGXTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalTestingTrendsPage'))
+const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
+const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
+const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
+const ProvincialXDRTestingTrend = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialTestingTrendPage')
+)
+const ProvincialXDRDiagnosisTrend = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialDiagnosisTrendPage')
+)
 
 const LogInApp = () => {
   const dispatch = useDispatch()
@@ -95,6 +133,8 @@ const LogInApp = () => {
 
   const a = r => isPermittedUser(userPermissions, { required: r })
 
+  const isPakistan = countryAbbreviation === 'XXX' // to ensure no one access it before completing the feature
+
   return (
     <LoggedInLayout>
       <Suspense fallback={<Loading centered />}>
@@ -102,7 +142,38 @@ const LogInApp = () => {
           {a(['dashboard:summary']) ? (
             <>
               <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
-              <Route path="/dashboard" element={<Status />} />
+              <Route path="/dashboard" element={isPakistan ? <PkDashboard /> : <Status />} />
+              {isPakistan ? (
+                <>
+                  <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
+                  <Route path="/dashboard/rif/national-diagnosis" element={<NationalDiagnosisRif />} />
+                  <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
+                  <Route path="/dashboard/rif/national-testing-trend" element={<NationalTestingTrends />} />
+                  <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
+                  <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
+                  <Route path="/dashboard/rif/test-diag-trend" element={<TestDiagTrend />} />
+                  <Route path="/dashboard/rif/provincial-testing-trend" element={<ProvincialRIFTestingTrend />} />
+                  <Route path="/dashboard/rif/provincial-diagnosis-trend" element={<ProvincialRIFDiagnosisTrend />} />
+                  <Route
+                    path="/dashboard/rif/provincial-rrtb-trend-comparison"
+                    element={<ProvincialRIFTestingTrendRRTB />}
+                  />
+
+                  <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
+                  <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
+                  <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
+                  <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
+                  <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
+                  <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
+
+                  <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
+                  <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
+                  <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />
+                  <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
+                  <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
+                  <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
+                </>
+              ) : null}
             </>
           ) : null}
           {a(['operationalData']) ? (
@@ -151,7 +222,12 @@ const LogInApp = () => {
           {a(['browse', 'person']) ? <Route path="/browse/person" element={<PersonList {...props} />} /> : null}
           {a(['browse', 'person:edit']) ? <Route path="/browse/person/:personId/*" element={<ContactPage />} /> : null}
 
-          {a(['browse', 'inventory']) ? <Route path="/browse/inventory/*" element={<InventoryContainer />} /> : null}
+          {a(['browse', 'inventory']) ? (
+            <>
+              <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
+              <Route path="/browse/inventory/log" element={<InventoryLog />} />
+            </>
+          ) : null}
           {a(['browse', 'notification']) ? (
             <>
               <Route path="/browse/notification" element={<NotificationList />} />
