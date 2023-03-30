@@ -284,6 +284,7 @@ async function lookupUsingCredentials(username, password) {
     return {
       authenticated: false,
       reason: 'invalid',
+      data: deviceApiKey,
     }
   }
   if (deviceApiKey.revoked) {
