@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
-import flowRight from 'lodash/flowRight'
 import isEmpty from 'lodash/isEmpty'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
@@ -14,26 +13,16 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
-import {
-  getFilters,
-  sanitizeFiltersStringBy,
-  reduceFiltersConfig,
-  setFiltersForLast30Days,
-} from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { useAuthState } from '../../../providers/AuthProvider'
+import { useFilterValues } from '../../../providers/FilterProvider'
 import { receiveList, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../../utils/selectors/searchParams'
+import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { getExportableFile, REPORTERS_LIST, REPORTERS_LIST_REVOKE_ONE } from '../ReporterQueries'
 import messages from './messages'
 import { ReporterDataTable, ReporterDataTableHead, ReporterDataTableRow } from './ReporterDataTable'
+import ReporterFilter from './ReporterFilter'
 import styles from './ReporterList.css'
 
 const cssClasses = classnames.bind(styles)
@@ -82,37 +71,7 @@ const getBaseColumns = formatMessage => {
     },
   ])
 }
-const FILTERS_CONFIG = [
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { date: true, requiredPermissions: [] },
-  { deviceName: true, requiredPermissions: [] },
-  { assayId: true, requiredPermissions: ['assay:view'] },
-]
 
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'siteName',
-    'totalResults',
-    'delivered',
-    'requiresTreatment',
-    'onTreatment',
-    'transferred',
-    'notPossible',
-    'notOnTreatment',
-  ],
-})
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-const filtersFromLocation = composeSanitizer(
-  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
-  searchSanitizer
-)
-const getCurrentFilters = locationSearch => {
-  const urlSearchParams = new URLSearchParams(locationSearch)
-  const { value: filtersParams } = filtersSanitizer(urlSearchParams.get('filters') || '')
-  return getFilters(filtersParams)
-}
 const getCurrentPagination = location => {
   const sortPage = makeSortPageSelector({
     sortCol: 'siteName',
@@ -134,23 +93,22 @@ export const ReporterListWithProps = ({
   pageAt,
   onExportClick,
   pageSize,
-  reducedFilters,
 }) => {
   const { formatMessage } = useI18n()
+
   return (
     <>
       <DetailHeader name={formatMessage(messages.reportersTitle)} disableBack />
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.reportersTitle)} />
+        <ReporterFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
-              <AspectExportListButton
-                onExport={onExportClick}
-                visible={!items.currentIdList.isEmpty()}
-                reportName="Reporters"
-              />
-            </BrowseFilters>
+            <AspectExportListButton
+              onExport={onExportClick}
+              visible={!items.currentIdList.isEmpty()}
+              reportName="Reporters"
+            />
           </div>
           <DataTableProgressBar disabled={!isLoading} />
 
@@ -194,8 +152,8 @@ export const ReporterListWithProps = ({
 const ReporterList = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { userPermissions } = useAuthState()
   const queryClient = useQueryClient()
+  const filters = useFilterValues(location.pathname)
 
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(
@@ -209,13 +167,11 @@ const ReporterList = () => {
     })
   )
   const [total, setTotal] = useState()
-  const [filters, setFilters] = useState(getCurrentFilters(location.search))
   const [pagination, setPagination] = useState(getCurrentPagination(location))
   const [columns, setColumns] = useState(Immutable.List([]))
   const { formatMessage } = useI18n()
 
   const { sortCol, sortDir, page, size } = pagination
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
 
   const { mutate: onRevokedItem, isLoading: isLoadingRevoke } = useMutation(
@@ -243,25 +199,7 @@ const ReporterList = () => {
   )
 
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
-
-    if (sanitized || filtersSanitized) {
-      searchParams.set('filters', filtersParams)
-      navigate(
-        {
-          ...location,
-          search: `?${searchParams.toString()}`,
-        },
-        { replace: true }
-      )
-      return
-    }
-
-    setFilters(getCurrentFilters(location.search))
     setPagination(getCurrentPagination(location))
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   useEffect(() => {
@@ -275,21 +213,8 @@ const ReporterList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams()
-    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
-
-    setFiltersForLast30Days(searchParams)
-
-    navigate({ ...location, search: `?${searchParams.toString()}` })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const onExportClick = formatType => {
-    const { sanitized, value: filtersParams } = filtersFromLocation(location)
-    if (!sanitized) {
-      return getExportableFile(filtersParams, formatType, sortCol, sortDir, 0, total, 'Reporters')
-    }
+    return getExportableFile(filters, formatType, sortCol, sortDir, 0, total, 'Reporters')
   }
 
   const baseProps = {
@@ -300,7 +225,6 @@ const ReporterList = () => {
     sortCol,
     sortDir,
     columns,
-    reducedFilters,
     onExportClick,
     onRevokedItem,
     table,
@@ -326,7 +250,6 @@ ReporterListWithProps.propTypes = {
   onExportClick: PropTypes.func.isRequired,
   columns: PropTypes.instanceOf(Immutable.List).isRequired,
   isLoading: PropTypes.bool.isRequired,
-  reducedFilters: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 
 export default ReporterList

@@ -77,11 +77,6 @@ import messages from './messages'
 //     ),
 //     patientOrCaseId: makeButton(patientOrCaseId => formatMessage(messages.patientOrCaseId, { patientOrCaseId })),
 //     sampleId: makeButton(sampleId => formatMessage(messages.sampleId, { sampleId })),
-//     deviceName: makeButton(deviceName =>
-//       formatMessage(messages.whereDeviceNameIncludes, {
-//         deviceName,
-//       })
-//     ),
 //     siteId: makeButton(siteId =>
 //       formatMessage(messages.whereSiteIdIncludes, {
 //         siteId,
@@ -359,6 +354,7 @@ const buttonMapping = {
   maxDate: ({ maxDate, remove }) => <MaxDate maxDate={maxDate} remove={remove} />,
   reportName: ({ reportName, remove }) => <ReportName reportName={reportName} remove={remove} />,
   externalId: ({ externalId, remove }) => <ExternalId externalId={externalId} remove={remove} />,
+  deviceName: ({ deviceName, remove }) => <DeviceName deviceName={deviceName} remove={remove} />,
   //
   assayOverride: () => null,
   singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
@@ -470,6 +466,14 @@ const ExternalId = ({ externalId, remove }) => {
 
   return (
     <Btn lbl={formatMessage(messages.whereExternalIdIncludes, { externalId })} del={() => remove(['externalId'])} />
+  )
+}
+
+const DeviceName = ({ deviceName, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn lbl={formatMessage(messages.whereDeviceNameIncludes, { deviceName })} del={() => remove(['deviceName'])} />
   )
 }
 

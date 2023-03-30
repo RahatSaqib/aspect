@@ -8,8 +8,8 @@ import { useAuthState } from '../AuthProvider'
 const FilterContext = createContext()
 
 const now = new Date()
-const minDate = startOfDay(subtractDays(now, 30)).toJSON()
-const maxDate = endOfDay(now).toJSON()
+const minDate = startOfDay(subtractDays(now, 30))
+const maxDate = endOfDay(now)
 
 const defaultFilter = {
   '/browse/device/list': {},
@@ -20,7 +20,7 @@ const defaultFilter = {
   '/browse/notification': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
-  '/browse/result': {},
+  '/browse/result': {}, // saved for last
   '/browse/site': {},
   '/reports': {},
 }
