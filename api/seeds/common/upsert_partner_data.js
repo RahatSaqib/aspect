@@ -20,6 +20,7 @@ module.exports = async (knex, partnerData) => {
     partnerTypeId: finalValues.partnerTypeId,
     daysLimitToNotifyResults: finalValues.daysLimitToNotifyResults,
     hoursNotificationsShouldWaitForCustomFields: finalValues.hoursNotificationsShouldWaitForCustomFields,
+    isDefault: true,
   }
 
   if (!dbPartner) {
