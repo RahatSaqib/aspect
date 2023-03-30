@@ -394,7 +394,7 @@ async function logResultWorkflow(
   let resultWorkflowStatusId = resultWorkflowStatuses.InProgress
   if (validityStatus === 'Error') {
     resultWorkflowStatusId = resultWorkflowStatuses.Error
-  } else if (['Aborted', 'User Stopped', 'Complete'].includes(resultStatus)) {
+  } else if (['Aborted', 'User Stopped', 'Complete', 'Completed'].includes(resultStatus)) {
     resultWorkflowStatusId = resultWorkflowStatuses.Processed
   }
   const resultWorkflowLog = {
