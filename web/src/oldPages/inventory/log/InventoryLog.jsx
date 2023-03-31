@@ -22,9 +22,9 @@ import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
-import styles from './InventoryLog.css'
 import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
 import messages from './messages'
+import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
