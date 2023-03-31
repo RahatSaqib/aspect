@@ -141,7 +141,14 @@ class TruenatResult extends SynchronousDataProcessor {
         const sampleTypeId = await getSampleTypeId(sampleTypeName)
         const sampleId = await getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, deviceDefaultReportableSiteId)
 
-        const resultCategory1 = await determineResultCategory1Id(finalResult, assay.externalId)
+        const resultCategory1 = await determineResultCategory1Id(
+          finalResult,
+          assay.externalId,
+          testName,
+          ctResult3,
+          validityStatus,
+          resultStatus
+        )
 
         const resultTime = parseDateOrDefault(`${date} ${time}`, {
           formatString: 'yyyy-MM-dd HH-mm-ss',
@@ -361,9 +368,16 @@ function generateResultExternalId(sampleExternalId, dateReceived) {
   return `${sampleExternalId}_${formatDateOrDefault(dateReceived, 'yyyyMMddhhmmss')}`
 }
 
-async function determineResultCategory1Id(finalResult, assayExternalId) {
+async function determineResultCategory1Id(
+  finalResult,
+  assayExternalId,
+  testName,
+  ctResult3,
+  validityStatus,
+  resultStatus
+) {
   const resultCategoryIds = await allResultCategoryToId()
-  const resultCategory1Id =
+  let resultCategory1Id =
     assayExternalId === 'assayTruenatUnknown'
       ? resultCategoryIds.Unknown
       : {
@@ -375,7 +389,24 @@ async function determineResultCategory1Id(finalResult, assayExternalId) {
           Indeterminate: resultCategoryIds.Indeterminate,
           Error: resultCategoryIds.Error,
         }[finalResult]
-  return resultCategory1Id || resultCategoryIds.Missing
+
+  resultCategory1Id = resultCategory1Id || resultCategoryIds.Missing
+
+  if (resultCategory1Id === resultCategoryIds.Missing) {
+    if (testName === 'MTB' || testName === 'MTB Plus') {
+      if (resultStatus === 'Completed' && finalResult === '') {
+        if (validityStatus === 'Valid') {
+          if (ctResult3 && ctResult3.indexOf('NOT DETECTED') !== -1) {
+            resultCategory1Id = resultCategoryIds.NotDetected
+          }
+        } else if (validityStatus === 'Invalid') {
+          resultCategory1Id = resultCategoryIds.Invalid
+        }
+      }
+    }
+  }
+
+  return resultCategory1Id
 }
 
 async function logResultWorkflow(
