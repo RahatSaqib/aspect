@@ -6,16 +6,24 @@ import { TextField, Box, ClickAwayListener, Grow, Paper, Popper, Typography } fr
 import { DesktopDatePicker } from '@mui/x-date-pickers'
 import useI18n from '../../hooks/useI18n'
 import messages from './messages'
-import { dayOptions, weekOptions, monthOptions, quarterOptions, yearOptions, customFormat } from './periodOptions'
+import {
+  dayOptions,
+  weekOptions,
+  monthOptions,
+  quarterOptions,
+  yearOptions,
+  customYearOptions,
+  customFormat,
+} from './periodOptions'
 
-function PeriodSelector({ minDate, maxDate, onChange, label }) {
+function PeriodSelector({ minDate, maxDate, onChange, label, noDay, noWeek, noMonth, noQuarter, customMaxYear }) {
   const intl = useI18n()
   const { formatMessage } = intl
   const day = dayOptions(intl)
   const week = weekOptions(intl)
   const month = monthOptions(intl)
   const quarter = quarterOptions(intl)
-  const year = yearOptions(intl)
+  const year = customMaxYear ? customYearOptions(intl, customMaxYear) : yearOptions(intl)
 
   const [open, setOpen] = useState(false)
   const [range, setRange] = useState({ minDate, maxDate })
@@ -28,9 +36,7 @@ function PeriodSelector({ minDate, maxDate, onChange, label }) {
   )
   const anchorRef = useRef(null)
 
-  const handleToggle = () => {
-    setOpen(prevOpen => !prevOpen)
-  }
+  const handleToggle = () => setOpen(prevOpen => !prevOpen)
 
   const handleClose = event => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -82,62 +88,70 @@ function PeriodSelector({ minDate, maxDate, onChange, label }) {
                   onKeyDown={handleListKeyDown}
                 >
                   <TreeItem label={<TreeLabel label={formatMessage(messages.any)} />} nodeId="1" />
-                  <TreeItem label={<TreeLabel label={formatMessage(messages.day)} />} nodeId="2">
-                    {day.map(option => (
-                      <TreeItem
-                        label={<TreeLabel label={option.label} />}
-                        nodeId={`${option.id}`}
-                        key={`${option.id}`}
-                        onClick={() => {
-                          setValueLabel(option.label)
-                          onChange(option.value)
-                          handleToggle()
-                        }}
-                      />
-                    ))}
-                  </TreeItem>
-                  <TreeItem label={<TreeLabel label={formatMessage(messages.week)} />} nodeId="3">
-                    {week.map(option => (
-                      <TreeItem
-                        label={<TreeLabel label={option.label} />}
-                        nodeId={`${option.id}`}
-                        key={`${option.id}`}
-                        onClick={() => {
-                          setValueLabel(option.label)
-                          onChange(option.value)
-                          handleToggle()
-                        }}
-                      />
-                    ))}
-                  </TreeItem>
-                  <TreeItem label={<TreeLabel label={formatMessage(messages.month)} />} nodeId="4">
-                    {month.map(option => (
-                      <TreeItem
-                        label={<TreeLabel label={option.label} />}
-                        nodeId={`${option.id}`}
-                        key={`${option.id}`}
-                        onClick={() => {
-                          setValueLabel(option.label)
-                          onChange(option.value)
-                          handleToggle()
-                        }}
-                      />
-                    ))}
-                  </TreeItem>
-                  <TreeItem label={<TreeLabel label={formatMessage(messages.quarter)} />} nodeId="5">
-                    {quarter.map(option => (
-                      <TreeItem
-                        label={<TreeLabel label={option.label} />}
-                        nodeId={`${option.id}`}
-                        key={`${option.id}`}
-                        onClick={() => {
-                          setValueLabel(option.label)
-                          onChange(option.value)
-                          handleToggle()
-                        }}
-                      />
-                    ))}
-                  </TreeItem>
+                  {noDay ? null : (
+                    <TreeItem label={<TreeLabel label={formatMessage(messages.day)} />} nodeId="2">
+                      {day.map(option => (
+                        <TreeItem
+                          label={<TreeLabel label={option.label} />}
+                          nodeId={`${option.id}`}
+                          key={`${option.id}`}
+                          onClick={() => {
+                            setValueLabel(option.label)
+                            onChange(option.value)
+                            handleToggle()
+                          }}
+                        />
+                      ))}
+                    </TreeItem>
+                  )}
+                  {noWeek ? null : (
+                    <TreeItem label={<TreeLabel label={formatMessage(messages.week)} />} nodeId="3">
+                      {week.map(option => (
+                        <TreeItem
+                          label={<TreeLabel label={option.label} />}
+                          nodeId={`${option.id}`}
+                          key={`${option.id}`}
+                          onClick={() => {
+                            setValueLabel(option.label)
+                            onChange(option.value)
+                            handleToggle()
+                          }}
+                        />
+                      ))}
+                    </TreeItem>
+                  )}
+                  {noMonth ? null : (
+                    <TreeItem label={<TreeLabel label={formatMessage(messages.month)} />} nodeId="4">
+                      {month.map(option => (
+                        <TreeItem
+                          label={<TreeLabel label={option.label} />}
+                          nodeId={`${option.id}`}
+                          key={`${option.id}`}
+                          onClick={() => {
+                            setValueLabel(option.label)
+                            onChange(option.value)
+                            handleToggle()
+                          }}
+                        />
+                      ))}
+                    </TreeItem>
+                  )}
+                  {noQuarter ? null : (
+                    <TreeItem label={<TreeLabel label={formatMessage(messages.quarter)} />} nodeId="5">
+                      {quarter.map(option => (
+                        <TreeItem
+                          label={<TreeLabel label={option.label} />}
+                          nodeId={`${option.id}`}
+                          key={`${option.id}`}
+                          onClick={() => {
+                            setValueLabel(option.label)
+                            onChange(option.value)
+                            handleToggle()
+                          }}
+                        />
+                      ))}
+                    </TreeItem>
+                  )}
                   <TreeItem label={<TreeLabel label={formatMessage(messages.year)} />} nodeId="6">
                     {year.map(option => (
                       <TreeItem

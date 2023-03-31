@@ -10,12 +10,13 @@ const now = new Date()
 const minDate = startOfDay(subtractDays(now, 30))
 const maxDate = endOfDay(now)
 
+// TODO: remove pagination from URL
 const defaultFilter = {
   '/browse/device/list': {},
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: '?' },
   '/browse/deviceApiKey': {},
   '/browse/inventory/supplies': { hasStock: true },
-  '/browse/inventory/log': { minDate, maxDate },
+  '/browse/inventory/log': { minDate, maxDate }, // done
   '/browse/notification': {}, // done... table?
   '/browse/person': { contactStatus: 0 }, // done, pending redux issue
   '/browse/reporter': { minDate, maxDate }, // done

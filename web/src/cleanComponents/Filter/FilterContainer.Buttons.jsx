@@ -56,16 +56,6 @@ import messages from './messages'
 //     diseaseId: makeButton((diseaseId, { diseaseItems }) =>
 //       diseaseItems.find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP).get('name')
 //     ),
-//     minExpirationDate: makeButton(date =>
-//       formatMessage(messages.expDateFrom, {
-//         date: format(new Date(date), dateFormat),
-//       })
-//     ),
-//     maxExpirationDate: makeButton(date =>
-//       formatMessage(messages.expDateTo, {
-//         date: format(new Date(date), dateFormat),
-//       })
-//     ),
 //     partnerId: makeButton((partnerId, { partnerItems }) =>
 //       formatMessage(messages.partnerId, {
 //         partnerName: partnerItems.find(it => it.get('id') === partnerId, EMPTY_CONTEXT, EMPTY_MAP).get('name'),
@@ -203,7 +193,6 @@ import messages from './messages'
 //     onlyDownloadedByReporter: makeButton(() => formatMessage(messages.onlyDownloadedByReporter)),
 //     onlyEverTransferred: makeButton(() => formatMessage(messages.onlyEverTransferred)),
 //     onlyTreatmentRequired: makeButton(() => formatMessage(messages.onlyTreatmentRequired)),
-//     onlyTransfers: makeButton(() => formatMessage(messages.onlyTransfers)),
 //     issueTypeId: makeButton(issueTypeId =>
 //       formatMessage(messages.deviceIssueType, {
 //         issueTypeId: startCase(issueTypeId),
@@ -211,11 +200,7 @@ import messages from './messages'
 //     ),
 //     daysStockLeft: makeButton(daysStockLeft => formatMessage(messages[daysStockLeft])),
 //     hasStock: makeButton(() => formatMessage(messages.hasStock)),
-//     lotNumber: makeButton(lotNumber =>
-//       formatMessage(messages.whereLotNumberIncludes, {
-//         lotNumber,
-//       })
-//     ),
+
 //     connectorStatus: makeButton(connectorStatus =>
 //       formatMessage(messages.withConnectorStatus, {
 //         connectorStatus: formatMessage(messages[connectorStatus]),
@@ -341,6 +326,12 @@ const buttonMapping = {
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
   minDate: ({ minDate, remove }) => <MinDate minDate={minDate} remove={remove} />,
   maxDate: ({ maxDate, remove }) => <MaxDate maxDate={maxDate} remove={remove} />,
+  minExpirationDate: ({ minExpirationDate, remove }) => (
+    <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} />
+  ),
+  maxExpirationDate: ({ maxExpirationDate, remove }) => (
+    <MaxExpirationDate maxExpirationDate={maxExpirationDate} remove={remove} />
+  ),
   reportName: ({ reportName, remove }) => <ReportName reportName={reportName} remove={remove} />,
   externalId: ({ externalId, remove }) => <ExternalId externalId={externalId} remove={remove} />,
   deviceName: ({ deviceName, remove }) => <DeviceName deviceName={deviceName} remove={remove} />,
@@ -351,6 +342,8 @@ const buttonMapping = {
   notificationName: ({ notificationName, remove }) => (
     <NotificationName notificationName={notificationName} remove={remove} />
   ),
+  onlyTransfers: ({ remove }) => <OnlyTranfers remove={remove} />,
+  lotNumber: ({ lotNumber, remove }) => <LotNumber lotNumber={lotNumber} remove={remove} />,
   //
   assayOverride: () => null,
   singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
@@ -449,6 +442,22 @@ const MaxDate = ({ maxDate, remove }) => {
   return <Btn lbl={formatMessage(messages.dateTo, { date })} del={() => remove(['maxDate'])} />
 }
 
+const MinExpirationDate = ({ minExpirationDate, remove }) => {
+  const { formatMessage, format } = useI18n()
+  const { dateFormat } = getAspectDisplayPreferences().toJS()
+  const date = format(new Date(minExpirationDate), dateFormat)
+
+  return <Btn lbl={formatMessage(messages.expDateFrom, { date })} del={() => remove(['minExpirationDate'])} />
+}
+
+const MaxExpirationDate = ({ maxExpirationDate, remove }) => {
+  const { formatMessage, format } = useI18n()
+  const { dateFormat } = getAspectDisplayPreferences().toJS()
+  const date = format(new Date(maxExpirationDate), dateFormat)
+
+  return <Btn lbl={formatMessage(messages.expDateTo, { date })} del={() => remove(['maxExpirationDate'])} />
+}
+
 const ReportName = ({ reportName, remove }) => {
   const { formatMessage } = useI18n()
 
@@ -505,6 +514,18 @@ const NotificationName = ({ notificationName, remove }) => {
       del={() => remove(['notificationName'])}
     />
   )
+}
+
+const OnlyTranfers = ({ remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.onlyTransfers)} del={() => remove(['onlyTransfers'])} />
+}
+
+const LotNumber = ({ lotNumber, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.whereLotNumberIncludes, { lotNumber })} del={() => remove(['lotNumber'])} />
 }
 
 //

@@ -123,6 +123,21 @@ const yearsOptions = formatDate => {
   return yearsBeforeLast
 }
 
+const customYearsOptions = (formatDate, year) => {
+  const yearsBeforeLast = []
+  for (let i = 0; i < 7; i++) {
+    const dayInYear = subtractYears(year, i)
+    const yearStart = startOfYear(dayInYear)
+    const yearEnd = endOfYear(dayInYear)
+    yearsBeforeLast.push({
+      id: 61 + i,
+      label: formatDate(yearStart, { year: 'numeric' }),
+      value: { minDate: yearStart, maxDate: yearEnd },
+    })
+  }
+  return yearsBeforeLast
+}
+
 export const dayOptions = intl => [
   {
     id: 21,
@@ -209,5 +224,7 @@ export const yearOptions = intl => [
   },
   ...yearsOptions(intl.formatDate),
 ]
+
+export const customYearOptions = (intl, year) => [...customYearsOptions(intl.formatDate, year)]
 
 export const customFormat = (start, end) => `${format(start, dayMonthFormat)} - ${format(end, dayMonthFormat)}`
