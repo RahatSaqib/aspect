@@ -650,6 +650,7 @@ async function mergeResultWithContext(context) {
   const {
     processedResult: plainResult,
     existingResult: plainPreviousResult,
+    shouldTriggerResultNotification,
     // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
   } = await mergeResult(knex, deviceId, transformedPayload, { now })
   context.addDeviceLogUpdate('resultId', plainResult.id)
@@ -660,20 +661,10 @@ async function mergeResultWithContext(context) {
   // const result = plainToDeepObjectResult(plainResult)
   // const previousResult = plainToDeepObjectResult(plainPreviousResult)
 
-  // Trigger notifications
-  context.messageContext.bindActionCreators({ resultReadyForNotification })
-  const notificationSubType = {
-    updated: true,
-    created: false,
-  }
-
-  if (plainPreviousResult) {
-    // If a previous result exist, then we need to evaluate the notifications triggered on result update
-    // Also the results without a creation notification are going to be re-evaluated
-    context.messageContext.resultReadyForNotification(plainResult.id, notificationSubType.updated)
-  } else {
-    // Else, only the creation-based notifications should be triggered
-    context.messageContext.resultReadyForNotification(plainResult.id, notificationSubType.created)
+  if (shouldTriggerResultNotification) {
+    context.messageContext.bindActionCreators({ resultReadyForNotification })
+    const isResultUpdated = !!plainPreviousResult
+    context.messageContext.resultReadyForNotification(plainResult.id, isResultUpdated)
   }
 
   return {
