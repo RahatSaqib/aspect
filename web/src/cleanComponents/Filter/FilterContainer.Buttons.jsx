@@ -183,11 +183,6 @@ import messages from './messages'
 //         ),
 //       })
 //     ),
-//     notificationName: makeButton(notificationName =>
-//       formatMessage(messages.whereNotificationNameIncludes, {
-//         notificationName,
-//       })
-//     ),
 //     revoked: makeButton(revoked =>
 //       formatMessage(messages.withRevoked, {
 //         revokedStatus: revokedOptions.find(it => it.id === revoked, EMPTY_CONTEXT, EMPTY_MAP).name,
@@ -353,6 +348,9 @@ const buttonMapping = {
   contactNameOrEmail: ({ contactNameOrEmail, remove }) => (
     <ContactNameOrEmail contactNameOrEmail={contactNameOrEmail} remove={remove} />
   ),
+  notificationName: ({ notificationName, remove }) => (
+    <NotificationName notificationName={notificationName} remove={remove} />
+  ),
   //
   assayOverride: () => null,
   singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
@@ -494,6 +492,17 @@ const ContactNameOrEmail = ({ contactNameOrEmail, remove }) => {
     <Btn
       lbl={formatMessage(messages.whoseNameOrEmailIncludes, { contactNameOrEmail })}
       del={() => remove(['deviceName'])}
+    />
+  )
+}
+
+const NotificationName = ({ notificationName, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereNotificationNameIncludes, { notificationName })}
+      del={() => remove(['notificationName'])}
     />
   )
 }

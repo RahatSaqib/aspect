@@ -16,8 +16,8 @@ const defaultFilter = {
   '/browse/deviceApiKey': {},
   '/browse/inventory/supplies': { hasStock: true },
   '/browse/inventory/log': { minDate, maxDate },
-  '/browse/notification': {},
-  '/browse/person': { contactStatus: 0 },
+  '/browse/notification': {}, // done... table?
+  '/browse/person': { contactStatus: 0 }, // done, pending redux issue
   '/browse/reporter': { minDate, maxDate }, // done
   '/browse/result': {}, // saved for last
   '/browse/site': {}, // done
