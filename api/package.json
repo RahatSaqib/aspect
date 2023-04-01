@@ -130,7 +130,7 @@
     "winston-sentry-log": "^1.0.26"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.12",
+    "@babel/core": "^7.21.4",
     "@babel/eslint-parser": "^7.19.1",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
