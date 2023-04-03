@@ -172,7 +172,6 @@ const getTransformedData = (data, setDelivered, followUps, comments) =>
 const getTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
   const transformedData = await Promise.all(
     _.map(data, async d => {
-      // console.log(JSON.stringify(data, null, 2))
       const resultItem = await getResultItemTransformedDataV2(d, setDelivered, followUps, comments)
       return resultItem
     })

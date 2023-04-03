@@ -340,14 +340,9 @@ const getCountV2 = resultQuery => resultQuery.clone().countDistinct('r.id as cou
 const getAwaitingTreatment = resultQuery =>
   resultQuery.clone().countDistinct('r.id as count').where('rts.id', 1).first()
 
-const getPatientDataBySchema = () => {
-  // console.log(wip)
-  return {}
-}
-
 // get rows v2
 const getItemsV2 = (resultQuery, query) => {
-  const outQuery = resultQuery
+  return resultQuery
     .clone()
     .groupBy('r.id')
     .modify(sortPageParams, query, 'r.updatedOn')
@@ -405,7 +400,6 @@ const getItemsV2 = (resultQuery, query) => {
       'r.resultCategory2',
       knex.raw('r.resultData->>"$.copies" as copies')
     )
-  return outQuery
 }
 
 // get follow ups for all results in the response for performance (filter later) v2
@@ -645,7 +639,6 @@ module.exports = {
   getItemsV2,
   getLastTreatmentStatusByResult,
   getLatestResultWorkflowLog,
-  getPatientDataBySchema,
   getResultFollowUps,
   getResultWorkflowStatusQuery,
   getTreatmentStatus,
