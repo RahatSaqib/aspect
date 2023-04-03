@@ -15,12 +15,12 @@ const defaultFilter = {
   '/browse/device/list': {},
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: '?' },
   '/browse/deviceApiKey': {},
-  '/browse/inventory/supplies': { hasStock: true },
+  '/browse/inventory/supplies': { hasStock: true }, // done
   '/browse/inventory/log': { minDate, maxDate }, // done
   '/browse/notification': {}, // done... table?
   '/browse/person': { contactStatus: 0 }, // done, pending redux issue
   '/browse/reporter': { minDate, maxDate }, // done
-  '/browse/result': {}, // saved for last
+  '/browse/result': {},
   '/browse/site': {}, // done
   '/reports': {}, // done
 }

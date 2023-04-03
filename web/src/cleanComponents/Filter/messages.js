@@ -255,6 +255,10 @@ export const messages = {
       id: 'pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
       defaultMessage: 'MTB Not Detected Drug Resistance Not Detected',
     },
+    breakOutByLot: {
+      id: 'pages.InventoryItemsList.breakOutByLot',
+      defaultMessage: 'Break Out by Lot',
+    },
   }),
 }
 

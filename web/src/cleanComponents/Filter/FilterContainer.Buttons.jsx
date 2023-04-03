@@ -239,6 +239,7 @@ const filtersOrdering = {
   assayId: 4,
   diseaseId: 3,
   countryId: 1,
+  breakOutByLot: 1,
   stateId: 2,
   lgaId: 3,
   minDate: 18,
@@ -343,7 +344,7 @@ const buttonMapping = {
   onlyTransfers: ({ remove }) => <OnlyTranfers remove={remove} />,
   lotNumber: ({ lotNumber, remove }) => <LotNumber lotNumber={lotNumber} remove={remove} />,
   hasStock: ({ remove }) => <HasStock remove={remove} />,
-
+  breakOutByLot: ({ remove }) => <BreakOutByLot remove={remove} />,
   //
   assayOverride: () => null,
   singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
@@ -532,6 +533,12 @@ const HasStock = ({ remove }) => {
   const { formatMessage } = useI18n()
 
   return <Btn lbl={formatMessage(messages.hasStock)} del={() => remove(['hasStock'])} />
+}
+
+const BreakOutByLot = ({ remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.breakOutByLot)} del={() => remove(['breakOutByLot'])} />
 }
 
 //
