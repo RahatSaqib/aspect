@@ -8,6 +8,7 @@ import { Helmet } from 'react-helmet'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useSelector, useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
+import InventoryItemsFilter from '../../../cleanComponents/Filter/InventoryItemsFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import ErrorBoundary from '../../../components/ErrorBoundary/index'
@@ -23,7 +24,6 @@ import AspectButton from '../../../oldComponents/shared/AspectButton'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import requirePermissions from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
 import {
@@ -57,11 +57,12 @@ const cssClasses = classnames.bind(styles)
 const EMPTY_MAP = Immutable.Map()
 
 const FILTERS_CONFIG = [
-  { consumable: true, requiredPermissions: [] },
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
+  { consumable: true, requiredPermissions: [] },
   { siteName: true, requiredPermissions: ['site:view'] },
+  // breakOutByLot
   { date: true, requiredPermissions: [], isEnabled: dependencies => dependencies.breakOutByLot },
   { lotNumber: true, requiredPermissions: [], isEnabled: dependencies => dependencies.breakOutByLot },
   { daysStockLeft: true, requiredPermissions: [], isEnabled: dependencies => !dependencies.breakOutByLot },
@@ -88,18 +89,12 @@ const availableSortCol = [
   },
 ]
 
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol,
-})
+const searchSanitizer = makeSearchParamsSanitizer({ availableSortCol })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
-
-const AddNewButton = requirePermissions({
-  permissions: ['inventory:edit'],
-})(AspectButton)
 
 export const InventoryItemsListWithProps = ({
   intl,
@@ -202,20 +197,14 @@ export const InventoryItemsListWithProps = ({
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
         <PermissionChecker permissions={['inventory:edit']}>
-          <AddNewButton
-            type="button"
-            color="primary"
-            variant="contained"
-            onClick={() => dispatch(showNewInventoryDialog())}
-            browseButton
-          >
+          <AspectButton variant="contained" onClick={() => dispatch(showNewInventoryDialog())} browseButton>
             {intl.formatMessage(messages.addInventory)}
-          </AddNewButton>
+          </AspectButton>
         </PermissionChecker>
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-
+        <InventoryItemsFilter />
         <DataTableCard className={cssClasses('DataTableCard--action')}>
           <FormGroup row>
             <FormControlLabel
@@ -232,19 +221,19 @@ export const InventoryItemsListWithProps = ({
               label={intl.formatMessage(messages.breakOutByLot)}
             />
             {breakOutByLot ? (
-              <FormControlLabel
-                sx={{ p: 2 }}
-                control={
-                  <ErrorBoundary>
-                    <PermissionChecker permissions={['inventory:edit']}>
+              <PermissionChecker permissions={['inventory:edit']}>
+                <FormControlLabel
+                  sx={{ p: 2 }}
+                  control={
+                    <ErrorBoundary>
                       <Switch
                         onChange={event => setEnableInventoryOnHandField(breakOutByLot && event.target.checked)}
                       />
-                    </PermissionChecker>
-                  </ErrorBoundary>
-                }
-                label={intl.formatMessage(messages.inventoryOnHand)}
-              />
+                    </ErrorBoundary>
+                  }
+                  label={intl.formatMessage(messages.inventoryOnHand)}
+                />
+              </PermissionChecker>
             ) : null}
           </FormGroup>
         </DataTableCard>

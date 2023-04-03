@@ -95,7 +95,6 @@ const InventoryLogFilter = () => {
               <Checkbox
                 checked={[true, 'true'].includes(state.onlyTransfers)}
                 onChange={e => setState({ ...state, onlyTransfers: e.target.checked || null })}
-                inputProps={{ 'aria-label': 'controlled' }}
               />
             }
             label={formatMessage(messages.onlyTransfers)}
