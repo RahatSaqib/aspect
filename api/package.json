@@ -148,7 +148,7 @@
     "forever": "^4.0.3",
     "fs-extra-cli": "^0.0.4",
     "jwt-decode": "^3.1.2",
-    "make-runnable": "^1.4.0",
+    "make-runnable": "^1.4.1",
     "mocha": "^10.2.0",
     "mocha-bamboo-reporter": "^1.1.2",
     "mocha-json-output-reporter": "^2.0.1",
