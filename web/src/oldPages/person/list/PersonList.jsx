@@ -256,8 +256,9 @@ export const PersonList = ({
         <Helmet title={formatMessage(messages.contactsTitle)} />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
-            <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+            <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
+              <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+            </BrowseFilters>
           </div>
           <DataTableProgressBar disabled={!table.loading} />
           {items.currentIdList.isEmpty() && <BrowseEmptyList navigate={navigate} location={location} />}

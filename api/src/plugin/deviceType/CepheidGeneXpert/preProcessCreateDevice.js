@@ -13,12 +13,14 @@ async function preProcessCreateDevice({ auth, payload }) {
     const hostId = _.get(payload, 'configuration.data.hostId', null)
     const countryCode = _.get(payload, 'configuration.data.country', null)
     const deviceSerialNumber = _.get(payload, 'configuration.data.deviceSerialNumber')
+    const macAddress = _.get(payload, 'configuration.data.macAddress')
     if (countryCode) {
       const { partnerId } = await knex('DeviceApiKey').where({ token: auth.credentials.token }).first('partnerId')
       const deviceDetails = {
         partnerId,
         hostId,
         deviceSerialNumber,
+        macAddress,
         countryCode,
       }
       const matchingDevices = await findDevices(deviceDetails, knex)

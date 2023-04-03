@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 import form from '../../../components/Form/messages'
 import { resultCategory, assay, report } from '../../../messages'
+import { messages as result } from '../../../oldComponents/filter/resource/ResultCategoryGroupSelectField'
 
 export default defineMessages({
   yes: {
@@ -168,8 +169,10 @@ export default defineMessages({
   },
   notificationTypeResultBasedMessage: {
     id: 'pages.Notification.type.notificationTypeResultBasedMessage',
-    defaultMessage:
-      'This notification will be triggered for results ended on within last 30 days period. For older results notification will not trigger.',
+    defaultMessage: `The result based notification can be sent on test creation or on test creation and update. Also, a test is only going to trigger a notification if it is less than {daysLimitToNotifyResults} days old, it was done before the last update of this notification, and if any of the next conditions are accomplished:\n
+      - All the custom fields referenced in the templates of the notification were filled in the test\n
+      - {hoursNotificationsShouldWaitForCustomFields} hours passed since the test was done
+      `,
   },
   notificationTypeDeviceOffline: {
     id: 'pages.Notification.type.notificationTypeDeviceOffline',
@@ -663,9 +666,178 @@ export default defineMessages({
     id: 'pages.Notifications.daysBeforeCalibrationDueDate',
     defaultMessage: 'Before Calibration Due Date',
   },
+  GxUnknown: {
+    id: 'pages.ResultList.GxUnknown',
+    defaultMessage: 'GeneXpert Unknown',
+  },
+  GxHcv: {
+    id: 'pages.ResultList.GxHcv',
+    defaultMessage: 'GeneXpert HCV',
+  },
+  GxMtbRif: {
+    id: 'pages.ResultList.GxMtbRif',
+    defaultMessage: 'GeneXpert MTB/Rif',
+  },
+  GxMtbRifUltra: {
+    id: 'pages.ResultList.GxMtbRifUltra',
+    defaultMessage: 'GeneXpert MTB/Rif Ultra',
+  },
+  GxHiv1Vl: {
+    id: 'pages.ResultList.GxHiv1Vl',
+    defaultMessage: 'GeneXpert HIV-1 VL',
+  },
+  GxHiv1Qual: {
+    id: 'pages.ResultList.GxHiv1Qual',
+    defaultMessage: 'GeneXpert HIV-1 Qual',
+  },
+  GxEbola: {
+    id: 'pages.ResultList.GxEbola',
+    defaultMessage: 'GeneXpert Ebola',
+  },
+  GxMtbXdr: {
+    id: 'pages.ResultList.GxMtbXdr',
+    defaultMessage: 'GeneXpert MTB/XDR',
+  },
+  mtb_detected_rr_detected: {
+    id: 'pages.ReportIndex.mtb_detected_rr_detected',
+    defaultMessage: 'MTB Detected RR Detected',
+  },
+  critical_errors_by_device: {
+    id: 'pages.ResultList.critical_errors_by_device',
+    defaultMessage: 'Critical Errors By Device',
+  },
+  rif_resistance_rate: {
+    id: 'pages.ReportIndex.rif_resistance_rate',
+    defaultMessage: 'RIF Resistance Rate (%positive results)',
+  },
+  results_hiv_not_suppressed: {
+    id: 'pages.ReportIndex.results_hiv_not_suppressed',
+    defaultMessage: 'Results with HIV Not Suppressed',
+  },
+  device_activity: {
+    id: 'pages.ReportIndex.device_activity',
+    defaultMessage: 'Device Activity',
+  },
+  device_activity_percent: {
+    id: 'pages.ReportIndex.device_activity_percent',
+    defaultMessage: 'Device Activity (Percent)',
+  },
+  module_swaps: {
+    id: 'pages.ReportIndex.module_swaps',
+    defaultMessage: 'Module Swaps',
+  },
+  device_utilization: {
+    id: 'pages.ReportIndex.device_utilization',
+    defaultMessage: 'Device Average Utilization per Month',
+  },
+  device_calibration_report: {
+    id: 'pages.ReportIndex.device_calibration_report',
+    defaultMessage: 'Device Calibration Report',
+  },
+  genexpert_issues: {
+    id: 'pages.ReportIndex.geneXpertIssues',
+    defaultMessage: 'GeneXpert Issues',
+  },
+  device_summary_report: {
+    id: 'pages.ReportIndex.device_summary_report',
+    defaultMessage: 'Device Summary Report',
+  },
+  device_utilization_per_day: {
+    id: 'pages.ReportIndex.deviceUtilizationPerDayReport',
+    defaultMessage: 'Device Utilization per Day',
+  },
+  report_custom_fields_completion: {
+    id: 'pages.ReportIndex.report_custom_fields_completion',
+    defaultMessage: 'Percent of custom fields completion for the MTB form',
+  },
+  inventory_log: {
+    id: 'pages.ReportIndex.inventory_log',
+    defaultMessage: 'Inventory Log',
+  },
+  tb_workload_summary: {
+    id: 'pages.ReportIndex.tb_workload_summary',
+    defaultMessage: 'Report of TB Workload Summary',
+  },
+  xdr_devices_summary: {
+    id: 'pages.ReportIndex.xdr_devices_summary',
+    defaultMessage: 'Summary table for XDR devices',
+  },
+  module_activity_report: {
+    id: 'pages.ReportIndex.module_activity_report',
+    defaultMessage: 'Module Activity Report',
+  },
+  do_not_use_modules_report: {
+    id: 'pages.ReportIndex.do_not_use_modules_report',
+    defaultMessage: '"Do Not Use" Modules',
+  },
+  usage_statistics_report: {
+    id: 'pages.ReportIndex.usage_statistics_report',
+    defaultMessage: 'Usage Statistics Report',
+  },
+  genxpert_tb_workload_report: {
+    id: 'pages.ReportIndex.genxpert_tb_workload_report',
+    defaultMessage: 'GeneXpert TB Workload',
+  },
+  devices_and_sites_overview: {
+    id: 'pages.ReportIndex.devices_and_sites_overview',
+    defaultMessage: 'Devices and Sites Overview',
+  },
+  result_notifications: {
+    id: 'pages.ReportIndex.result_notifications',
+    defaultMessage: 'Result Notifications Report',
+  },
+  abbottM2000DaanNCOVID19: {
+    id: 'filter.AssaySelectField.abbottM2000DaanNCOVID19',
+    defaultMessage: 'Abbott m2000 Daan N COVID-19',
+  },
+  abbottM2000DBSHivVL: {
+    id: 'filter.AssaySelectField.abbottM2000DBSHivVL',
+    defaultMessage: 'Abbott m2000 DBS HIV VL',
+  },
+  abbottM2000HIVEID: {
+    id: 'filter.AssaySelectField.abbottM2000HIVEID',
+    defaultMessage: 'Abbott m2000 HIV EID',
+  },
+  QHivVL: {
+    id: 'filter.AssaySelectField.QHivVL',
+    defaultMessage: 'Q HIV VL',
+  },
+  ReporterEID: {
+    id: 'filter.AssaySelectField.ReporterEID',
+    defaultMessage: 'Reporter EID',
+  },
+  ReporterHivVL: {
+    id: 'filter.AssaySelectField.ReporterHivVL',
+    defaultMessage: 'Reporter HIV VL',
+  },
+  senaiteSmearMicroscopy: {
+    id: 'filter.AssaySelectField.senaiteSmearMicroscopy',
+    defaultMessage: 'Senaite LIMS Smear Microscopy',
+  },
+  senaiteTbCulture: {
+    id: 'filter.AssaySelectField.senaiteTbCulture',
+    defaultMessage: 'Senaite LIMS TB Culture',
+  },
+  senaiteUnknown: {
+    id: 'filter.AssaySelectField.senaiteUnknown',
+    defaultMessage: 'Senaite LIMS Unknown',
+  },
+  module_status_report: {
+    id: 'pages.ReportIndex.module_status_report',
+    defaultMessage: 'Module Status Report',
+  },
+  results_10a_10b_covid: {
+    id: 'pages.ReportIndex.results_10a_10b_covid',
+    defaultMessage: 'Report on Xpert MTB/RIF and Covid',
+  },
+  results_10a_10b_covid_ntp_use: {
+    id: 'pages.ReportIndex.results_10a_10b_covid_ntp_use',
+    defaultMessage: 'Report on Xpert MTB/RIF and Covid - NTP Use',
+  },
 
   ...assay,
   ...resultCategory,
   ...report,
   ...form,
+  ...result,
 })

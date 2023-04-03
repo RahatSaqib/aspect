@@ -12,7 +12,7 @@ function getDeviceBaseExtendedQuery(
   dataConstraints,
   showUnapprovedDevices = false,
   showDecommissionedDevices = false,
-  excludeInternalDevices = false
+  excludeInternalDevices = true
 ) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')

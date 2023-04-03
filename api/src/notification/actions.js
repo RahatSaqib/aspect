@@ -2,6 +2,7 @@
 const types = {
   NOTIFICATION_CREATED: 'NOTIFICATION_CREATED',
   ISSUE_NOTIFICATION_TRIGGERED: 'ISSUE_NOTIFICATION_TRIGGERED',
+  RESULT_ANALYZE_TIMEOUT: 'RESULT_ANALYZE_TIMEOUT',
 }
 
 // ----------- Action Creators -------------------
@@ -30,8 +31,15 @@ function issueNotificationTriggered(issueId, issueTypeId) {
   }
 }
 
+function resultAnalyzeTimeout() {
+  return {
+    type: types.RESULT_ANALYZE_TIMEOUT,
+  }
+}
+
 module.exports = {
   types,
   notificationCreated,
   issueNotificationTriggered,
+  resultAnalyzeTimeout,
 }

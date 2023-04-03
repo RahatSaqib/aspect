@@ -132,11 +132,16 @@ describe('Truenat Result Upload Data Processor', () => {
           args.join(',') ===
           [
             'dak.deviceId',
+            'dak.username',
+            'dak.id as deviceApiKeyId',
             'd.partnerId',
             'd.siteId',
+            'd.deviceApprovalId',
+            'd.name as deviceName',
             's.geographyId',
             's.longitude',
             's.latitude',
+            's.name as siteName',
             'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
             's.externalId as siteExternalId',
             'dt.externalId as deviceTypeExternalId',

@@ -21,7 +21,8 @@ const Devices = lazy(() => import('./pages/Devices/Status/DeviceList'))
 const DevicesWorkload = lazy(() => import('./pages/Devices/Workload'))
 const DeviceDetail = lazy(() => import('./pages/Devices/Detail/DeviceDetail'))
 const EditSite = lazy(() => import('./pages/Site/Detail/Edit'))
-const InventoryContainer = lazy(() => import('./oldPages/inventory/InventoryContainer'))
+const InventoryItemsList = lazy(() => import('./oldPages/inventory/list/InventoryItemsList'))
+const InventoryLog = lazy(() => import('./oldPages/inventory/log/InventoryLog'))
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
 const NotificationDetailHistory = lazy(() => import('./pages/Notification/NotificationHistoryPage'))
@@ -221,7 +222,12 @@ const LogInApp = () => {
           {a(['browse', 'person']) ? <Route path="/browse/person" element={<PersonList {...props} />} /> : null}
           {a(['browse', 'person:edit']) ? <Route path="/browse/person/:personId/*" element={<ContactPage />} /> : null}
 
-          {a(['browse', 'inventory']) ? <Route path="/browse/inventory/*" element={<InventoryContainer />} /> : null}
+          {a(['browse', 'inventory']) ? (
+            <>
+              <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
+              <Route path="/browse/inventory/log" element={<InventoryLog />} />
+            </>
+          ) : null}
           {a(['browse', 'notification']) ? (
             <>
               <Route path="/browse/notification" element={<NotificationList />} />

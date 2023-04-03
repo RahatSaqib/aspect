@@ -24,7 +24,7 @@ function getResultsCountBase(knex, dataConstraints, query) {
       totalResults: knex.raw('DISTINCT r.id'),
     })
     .select({
-      lastUpload: knex.raw('MAX(r.endedOn)'),
+      lastUpload: knex.raw('MAX(r.updatedOn)'),
       senderOperator: 'r.senderOperator',
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')
