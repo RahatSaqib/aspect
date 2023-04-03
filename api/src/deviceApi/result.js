@@ -94,7 +94,7 @@ async function getResultErrors({ site, resultTypeId, resultCategory1, assays, ca
   if (!resultCategory1) {
     requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
   }
-  if (assays.length !== 1) {
+  if (assays?.length !== 1) {
     requestErrors.push(`assay with id ${_.get(payload, 'assay.id')}`)
   }
   return requestErrors
@@ -845,9 +845,9 @@ function getAllResultTags(country, result) {
       res = getTags(country.tagRegexNotes, result.notes)
       if (res) taggingResults = taggingResults.concat(res)
     }
-    const patientdata = JSON.parse(result.patientData)
-    if (patientdata && country.tagRegexPatientId && country.tagRegexPatientId !== '') {
-      res = getTags(country.tagRegexPatientId, patientdata.id)
+    const patientData = JSON.parse(result.patientData)
+    if (patientData && country.tagRegexPatientId && country.tagRegexPatientId !== '') {
+      res = getTags(country.tagRegexPatientId, patientData.id)
       if (res) taggingResults = taggingResults.concat(res)
     }
   }
