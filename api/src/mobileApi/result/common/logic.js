@@ -399,13 +399,13 @@ async function getResultNotesByResultId(resultId, getResultNotesByResultIdForRes
 
 // refactor transformPatientDataBySchema to use lodash map
 async function transformPatientDataBySchema(patientData, patientDataSchema) {
-  // console.log(JSON.stringify(patientDataSchema, null, 2))
-  const transformedData = {}
-  if (patientData && patientDataSchema) {
-    _.map(patientDataSchema, field => {
-      transformedData[field.label] = patientData[field.externalId]
-    })
-  }
+  const transformedData = _.map(patientDataSchema, (value, key) => {
+    return {
+      key,
+      value: patientData[key],
+      title: value.title,
+    }
+  })
   return transformedData
 }
 
