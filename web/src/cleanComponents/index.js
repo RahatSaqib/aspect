@@ -3,6 +3,7 @@ import AssayTypeSelect from './AssayTypeSelect'
 import ConsumableSelect from './ConsumableSelect'
 import ContactStatusSelect from './ContactStatusSelect'
 import CountrySelect from './CountrySelect'
+import DaysStockLeftSelect from './DaysStockLeftSelect'
 import DeviceTypeSelect from './DeviceTypeSelect'
 import DiseaseSelect from './DiseaseSelect'
 import InputPassword from './InputPassword'
@@ -24,6 +25,7 @@ export {
   ConsumableSelect,
   ContactStatusSelect,
   CountrySelect,
+  DaysStockLeftSelect,
   DeviceTypeSelect,
   DiseaseSelect,
   InputPassword,

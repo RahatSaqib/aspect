@@ -199,8 +199,6 @@ import messages from './messages'
 //       })
 //     ),
 //     daysStockLeft: makeButton(daysStockLeft => formatMessage(messages[daysStockLeft])),
-//     hasStock: makeButton(() => formatMessage(messages.hasStock)),
-
 //     connectorStatus: makeButton(connectorStatus =>
 //       formatMessage(messages.withConnectorStatus, {
 //         connectorStatus: formatMessage(messages[connectorStatus]),
@@ -344,6 +342,8 @@ const buttonMapping = {
   ),
   onlyTransfers: ({ remove }) => <OnlyTranfers remove={remove} />,
   lotNumber: ({ lotNumber, remove }) => <LotNumber lotNumber={lotNumber} remove={remove} />,
+  hasStock: ({ remove }) => <HasStock remove={remove} />,
+
   //
   assayOverride: () => null,
   singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
@@ -526,6 +526,12 @@ const LotNumber = ({ lotNumber, remove }) => {
   const { formatMessage } = useI18n()
 
   return <Btn lbl={formatMessage(messages.whereLotNumberIncludes, { lotNumber })} del={() => remove(['lotNumber'])} />
+}
+
+const HasStock = ({ remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.hasStock)} del={() => remove(['hasStock'])} />
 }
 
 //

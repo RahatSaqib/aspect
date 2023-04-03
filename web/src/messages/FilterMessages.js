@@ -317,6 +317,14 @@ const messages = {
       id: 'filter.popover.selectDisplayResult',
       defaultMessage: 'Select result scope...',
     },
+    breakOutByLot: {
+      id: 'pages.InventoryItemsList.breakOutByLot',
+      defaultMessage: 'Break out by lot',
+    },
+    expiresOn: {
+      id: 'pages.InventoryLog.expiresOn',
+      defaultMessage: 'Expires On',
+    },
     reportName: { id: 'filter.popover.reportName', defaultMessage: 'Report' },
     cancel: { id: 'filter.popover.cancel', defaultMessage: 'Cancel' },
     apply: { id: 'filter.popover.apply', defaultMessage: 'Apply Filters' },
