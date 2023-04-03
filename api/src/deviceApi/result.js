@@ -398,8 +398,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   const { categoryIds, resultCategory1, resultCategory2 } = await getResultCategories(payload, existingResult)
 
   //
-  const { assays, site } = getSiteAdAssays(knex, payload, existingResult, deviceId)
-
+  const { assays, site } = await getSiteAdAssays(knex, payload, existingResult, deviceId)
   // exit on any error
   const requestErrors = await getResultErrors({ site, resultTypeId, resultCategory1, assays, categoryIds, payload })
   if (!_.isEmpty(requestErrors)) {
