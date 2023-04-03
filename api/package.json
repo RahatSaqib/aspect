@@ -105,7 +105,7 @@
     "http-client": "^4.3.1",
     "isomorphic-fetch": "^3.0.0",
     "json2csv": "^5.0.7",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "knex": "^2.3.0",
     "lodash": "^4.17.21",
     "media-type": "^0.3.1",
@@ -130,7 +130,7 @@
     "winston-sentry-log": "^1.0.26"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.12",
+    "@babel/core": "^7.21.4",
     "@babel/eslint-parser": "^7.19.1",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
