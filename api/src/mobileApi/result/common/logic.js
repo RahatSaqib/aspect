@@ -403,9 +403,10 @@ async function transformPatientDataBySchema(patientData, patientDataSchema) {
       key,
       value: patientData[key],
       title: value.title,
+      order: value.order,
     }
   })
-  return transformedData
+  return _.orderBy(transformedData, ['order'], ['asc'])
 }
 
 // Trasnformed data v2 for result by Id
