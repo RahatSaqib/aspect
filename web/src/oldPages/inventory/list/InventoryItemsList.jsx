@@ -22,6 +22,7 @@ import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
+import { fetchConsumables } from '../../../store/ConsumableRedux'
 import {
   types,
   hideAdjustInventoryDialog,
@@ -387,6 +388,8 @@ export const InventoryItemsList = () => {
   useEffect(() => {
     if (data) dispatch(receiveInventoryItems(data))
   }, [data, dispatch])
+
+  useEffect(() => dispatch(fetchConsumables(false)), [dispatch])
 
   if (isError) throw new Error(error)
 

@@ -396,6 +396,19 @@ async function getResultNotesByResultId(resultId, getResultNotesByResultIdForRes
   return resultNotes
 }
 
+// refactor transformPatientDataBySchema to use lodash map
+function transformPatientDataBySchema(patientData, patientDataSchema) {
+  const transformedData = _.map(patientDataSchema, (value, key) => {
+    return {
+      key,
+      value: patientData[key],
+      title: value.title,
+      order: value.order,
+    }
+  })
+  return _.orderBy(transformedData, ['order'], ['asc'])
+}
+
 // Trasnformed data v2 for result by Id
 const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
@@ -408,6 +421,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
   const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
+  const patientDataSchema = data.patientDataSchema ? JSON.parse(data.patientDataSchema) : null
   const isRecorded = data.resultWorkflowStatusId === acknowledgedId
   const resultData = data.resultData
     ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
@@ -425,7 +439,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     deviceName: data.deviceName,
     resultCategory1ExternalId: data.resultCategory1ExternalId,
     resultCategory2ExternalId: data.resultCategory2ExternalId,
-    patientData,
+    patientData: transformPatientDataBySchema(patientData, patientDataSchema),
     testId: patientData ? patientData.id : data.sampleId,
     resultData,
     sample: {
