@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
@@ -6,7 +6,7 @@ import has from 'lodash/has'
 import identity from 'lodash/identity'
 import isNil from 'lodash/isNil'
 import { defineMessages } from 'react-intl'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
 } from '../../../oldComponents/filter/resource/ConsumableReasonSelectField'
@@ -15,6 +15,7 @@ import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectFi
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
+import { fetchConsumables } from '../../../store/ConsumableRedux'
 import { types } from '../../../store/InventoryRedux'
 import styles from './InventoryAdjustmentDialogForm.css'
 import messages from './messages'
@@ -141,6 +142,10 @@ export const InventoryAdjustmentDialogForm = ({
   onNotesChange,
   handleSubmit,
 }) => {
+  const dispatch = useDispatch()
+
+  useEffect(() => dispatch(fetchConsumables(false)), [dispatch])
+
   const showLot = (currInventoryItem && currInventoryItem.get('showLot')) || (consumable && consumable.get('showLot'))
   const showExpirationDate =
     (currInventoryItem && currInventoryItem.get('showExpirationDate')) ||
