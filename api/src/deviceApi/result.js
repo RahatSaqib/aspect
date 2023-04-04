@@ -438,18 +438,18 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}
   const resultData = payload.data ? deepMerge({ ...existingResultData }, payload.data) : existingResultData
 
-  let shouldTriggerResultNotification = true
-  let resultDataHash
-  if (existingResultDataString && existingResultDataHash && payload.data) {
-    /**
-     * get hash of new resultData and if it is the same as already saved `resultDataHash` then
-     * skip ResultUpdated notification because we already processed it
-     */
-    resultDataHash = getResultDataHash(resultData)
-    if (existingResultDataHash === resultDataHash) {
-      shouldTriggerResultNotification = false
-    }
-  }
+  /**
+   * get hash of new resultData and if it is the same as already saved `resultDataHash` then
+   * skip ResultUpdated notification because we already processed it
+   */
+  const resultDataHash = payload.data ? getResultDataHash(resultData) : null
+  const shouldTriggerResultNotification =
+    // send notification if Result.resultData is null
+    !existingResultDataString ||
+    // send notification if Result.resultDataHash is null
+    !existingResultDataHash ||
+    // send notification if Result.resultDataHash is NOT equal new resultDataHash from payload
+    (!!resultDataHash && existingResultDataHash !== resultDataHash)
 
   const existingResultPatientString = _.get(existingResult, 'patientData', null)
   const existingResultPatient = isJson(existingResultPatientString) ? JSON.parse(existingResultPatientString) : {}
@@ -572,6 +572,7 @@ async function getResult(knex, resultId) {
     .first(
       'r.externalId as resultExternalId',
       'r.resultData',
+      'r.resultDataHash',
       'r.formData',
       'r.patientData',
       'r.oemData',
