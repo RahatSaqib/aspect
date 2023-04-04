@@ -51,6 +51,7 @@ import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogFo
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
 import styles from './InventoryItemsList.css'
 import messages from './messages'
+import { fetchConsumables } from '../../../store/ConsumableRedux'
 
 const cssClasses = classnames.bind(styles)
 
@@ -454,6 +455,8 @@ export const InventoryItemsList = () => {
   useEffect(() => {
     if (data) dispatch(receiveInventoryItems(data))
   }, [data, dispatch])
+
+  useEffect(() => dispatch(fetchConsumables(false)), [dispatch])
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location, dependencies)

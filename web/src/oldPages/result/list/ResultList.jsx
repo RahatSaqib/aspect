@@ -11,6 +11,7 @@ import partial from 'lodash/partial'
 import without from 'lodash/without'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import DetailHeader from '../../../components/DetailHeader'
@@ -24,6 +25,7 @@ import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
+import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import {
@@ -278,6 +280,7 @@ const ResultList = () => {
   // >>>>>> hooks/ <<<<<<
   const intl = useI18n()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const location = useLocation()
   const {
     userPermissions,
@@ -333,6 +336,7 @@ const ResultList = () => {
     { enabled: !isEmpty(params) }
   )
 
+  useEffect(() => dispatch(fetchTreatmentStatuses()), [dispatch])
   useEffect(() => {
     setIsLoading(tableLoading)
   }, [tableLoading])
