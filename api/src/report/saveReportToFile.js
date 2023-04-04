@@ -30,7 +30,7 @@ async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = f
   // TODO: Replace /tmp for an environment variable.
   const fullPath = `/tmp/${fileName}`
 
-  const worker = new Worker('./src/report/generateReportWorker', {
+  const worker = new Worker('./src/report/generateReportWorker.js', {
     resourceLimits: {
       maxOldGenerationSizeMb: 8192,
     },
