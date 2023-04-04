@@ -228,7 +228,7 @@ function formatCellContent(cellContent) {
 // ----------------------------------------------------------------------------------------------
 function getContentType(fileExt, streamResponse) {
   if (streamResponse) {
-    return 'stream/octet-stream'
+    return 'application/octet-stream'
   }
 
   if (fileExt[0] === '.') {

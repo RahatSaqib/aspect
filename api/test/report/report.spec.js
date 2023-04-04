@@ -62,7 +62,7 @@ describe('Global reports', () => {
 
           // Content-Type should match Excel file with extension .xlsx
           assert.typeOf(res.headers['content-type'], 'string')
-          assert.equal(res.headers['content-type'], 'stream/octet-stream')
+          assert.equal(res.headers['content-type'], 'application/octet-stream')
         })
     })
 
