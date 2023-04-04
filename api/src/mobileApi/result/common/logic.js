@@ -397,7 +397,7 @@ async function getResultNotesByResultId(resultId, getResultNotesByResultIdForRes
 }
 
 // refactor transformPatientDataBySchema to use lodash map
-async function transformPatientDataBySchema(patientData, patientDataSchema) {
+function transformPatientDataBySchema(patientData, patientDataSchema) {
   const transformedData = _.map(patientDataSchema, (value, key) => {
     return {
       key,
@@ -439,7 +439,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     deviceName: data.deviceName,
     resultCategory1ExternalId: data.resultCategory1ExternalId,
     resultCategory2ExternalId: data.resultCategory2ExternalId,
-    patientData: await transformPatientDataBySchema(patientData, patientDataSchema),
+    patientData: transformPatientDataBySchema(patientData, patientDataSchema),
     testId: patientData ? patientData.id : data.sampleId,
     resultData,
     sample: {
