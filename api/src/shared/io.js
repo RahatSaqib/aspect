@@ -318,6 +318,10 @@ async function readTemplateFile(templateFolderPath, { lang, langDefault = LANG_D
   return readExcelFile(filePath)
 }
 
+function getContentDispositionFilename(fileNamePrefix, extension) {
+  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(/:/g, '-')
+}
+
 module.exports = {
   createDirectory,
   generateCsvFile,
@@ -332,4 +336,5 @@ module.exports = {
   readTemplateFile,
   writeDataToFile,
   readDataFromFile,
+  getContentDispositionFilename,
 }

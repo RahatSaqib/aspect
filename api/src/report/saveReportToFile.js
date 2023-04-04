@@ -1,6 +1,7 @@
+const { Worker } = require('worker_threads')
 const { getUserFromCredentials } = require('../auth/constraints')
-const { writeDataToFile } = require('../shared/io')
-const { generateReport } = require('./serviceReports')
+const { getContentDispositionFilename } = require('../shared/io')
+const { getReportDetails } = require('./service')
 
 /**
  * Execute a report and save it to disk.
@@ -8,16 +9,49 @@ const { generateReport } = require('./serviceReports')
  * @param {Object} query - query params
  * @param {string} externalId - externalId of the report
  */
-module.exports = async function saveReportToFile(auth, query, externalId) {
+async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = false) {
   const user = await getUserFromCredentials(auth.credentials)
+
+  const { fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId: user.personId })
+
+  // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
+  const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
+  const fileName = getContentDispositionFilename(fileNamePrefix, extension)
+
   // Reports needs a valid user. While sending notification we have a group of user,
   // so we keep userPlaceHolders empty to avoid show personal user data
-  const userPlaceHolders = {}
-  // ---------------------------------------------------------
-  const { dataBuffer, fileName } = await generateReport(externalId, query, auth, user, userPlaceHolders)
+  const userPlaceHolders = useUserPlaceHolders
+    ? {
+        email: user.email,
+        cell: user.cell,
+      }
+    : {}
 
   // TODO: Replace /tmp for an environment variable.
-  await writeDataToFile(`/tmp/${fileName}`, dataBuffer)
+  const fullPath = `/tmp/${fileName}`
 
-  return fileName
+  const worker = new Worker('./src/report/generateReportWorker', {
+    resourceLimits: {
+      maxOldGenerationSizeMb: 8192,
+    },
+    workerData: {
+      externalId,
+      query,
+      auth,
+      user,
+      userPlaceHolders,
+      fullPath,
+      extension,
+    },
+  })
+
+  const promise = new Promise(resolve => {
+    worker.on('message', () => resolve(fullPath))
+  })
+
+  return { fileName, extension, promise }
+}
+
+module.exports = {
+  saveReportToFile,
 }
