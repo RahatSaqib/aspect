@@ -14,6 +14,7 @@ import LgaSelect from './LgaSelect'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
 import ReportSelector from './ReportSelector'
+import RevokeSelect from './RevokeSelect'
 import SiteSelect from './SiteSelect'
 import StateSelect from './StateSelect'
 import TagSelect from './TagSelect'
@@ -36,6 +37,7 @@ export {
   PartnerSelect,
   PeriodSelector,
   ReportSelector,
+  RevokeSelect,
   SiteSelect,
   StateSelect,
   TagSelect,

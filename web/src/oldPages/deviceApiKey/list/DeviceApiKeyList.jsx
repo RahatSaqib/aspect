@@ -11,11 +11,11 @@ import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withState, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
+import DeviceApiKeyFilter from '../../../cleanComponents/Filter/DeviceApiKeyFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
 import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
@@ -352,7 +352,6 @@ export const DeviceApiKeyList = ({
   onSelectAllChange,
   onSelectedChange,
   onRevokedChange,
-  reducedFilters,
 }) => (
   <>
     <DetailHeader name={intl.formatMessage(messages.title)} disableBack>
@@ -372,6 +371,7 @@ export const DeviceApiKeyList = ({
     </DetailHeader>
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.title)} />
+      <DeviceApiKeyFilter />
       <div>
         <DeviceApiKeyGeneratorDialogForm
           isDialogOpen={isGeneratorDialogOpen}
@@ -393,19 +393,11 @@ export const DeviceApiKeyList = ({
       </div>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-          <BrowseFilters
-            navigate={navigate}
-            location={location}
-            intl={intl}
-            config={reducedFilters}
-            onClickExport={onExportClick}
-          >
-            <AspectExportListButton
-              onExport={onExportClick}
-              visible={!items.currentIdList.isEmpty()}
-              reportName="DeviceApiKey"
-            />
-          </BrowseFilters>
+          <AspectExportListButton
+            onExport={onExportClick}
+            visible={!items.currentIdList.isEmpty()}
+            reportName="DeviceApiKey"
+          />
         </div>
         <DataTableProgressBar disabled={!table.loading} />
 

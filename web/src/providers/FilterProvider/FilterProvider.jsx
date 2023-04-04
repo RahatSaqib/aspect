@@ -14,11 +14,11 @@ const maxDate = endOfDay(now)
 const defaultFilter = {
   '/browse/device/list': {},
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: '?' },
-  '/browse/deviceApiKey': {},
+  '/browse/deviceApiKey': {}, // half-done
   '/browse/inventory/supplies': { hasStock: true }, // done
   '/browse/inventory/log': { minDate, maxDate }, // done
-  '/browse/notification': {}, // done... table?
-  '/browse/person': { contactStatus: 0 }, // done, pending redux issue
+  '/browse/notification': {}, // half-done
+  '/browse/person': { contactStatus: 0 }, // half-done
   '/browse/reporter': { minDate, maxDate }, // done
   '/browse/result': {},
   '/browse/site': {}, // done
