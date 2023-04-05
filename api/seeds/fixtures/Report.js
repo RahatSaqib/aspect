@@ -642,11 +642,6 @@ const dataExtract = {
       query: {
         sortCol: 'updatedOn',
         sortDir: 'desc',
-        /**
-         * querying 500K of records should work well with
-         * new MySql settings for buffer pool size
-         */
-        maxNumberOfRecords: 500000,
         streamCSV: true,
       },
     },
