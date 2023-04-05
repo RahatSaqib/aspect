@@ -43,7 +43,7 @@ async function getConstraintsByDeviceAPIKey(apiKey) {
   return Promise.resolve()
 }
 
-async function getConstraints(credentials, { displayResult = 'actual' } = {}) {
+async function getConstraints(credentials) {
   const user = await getUserFromCredentials(credentials)
   if (!user) {
     return Promise.resolve()
@@ -61,17 +61,6 @@ async function getConstraints(credentials, { displayResult = 'actual' } = {}) {
     result: {
       modify: null,
     },
-  }
-
-  // TODO: Remove this when all countries are in version 1.5.0 or higher, using the new addConstraints way of filtering EQA results.
-  if (displayResult === 'actual' || displayResult === 'excluded') {
-    const { partnerId } = user
-    const { getPartnerPluginName } = require('../plugin/utils')
-    const partnerPluginName = await getPartnerPluginName({ partnerId })
-    if (partnerPluginName) {
-      const { loadPlugin } = require('../plugin/registration')
-      constraints.result.modify = await loadPlugin([partnerPluginName], 'modifyQueryToExcludeResult')
-    }
   }
 
   const jobContexts = await getContext(user)

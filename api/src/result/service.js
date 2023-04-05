@@ -133,10 +133,10 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     return Boom.badRequest()
   }
 
-  const displayResult = query.displayResult || 'actual'
+  const { displayResult } = query
 
   // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials, { displayResult })
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   // get total count for paging
@@ -230,10 +230,8 @@ async function getResultsForExport(auth, query) {
     return Boom.badRequest()
   }
 
-  const displayResult = query.displayResult || 'all'
-
   // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials, { displayResult })
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
   const getCount = resultQuery.clone().count('r.id as total').first()
