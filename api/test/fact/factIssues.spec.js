@@ -64,7 +64,7 @@ describe('Fact based issues', () => {
   })
   afterEach(context.afterEach)
 
-  it.only('should create issues when Device Offline and No Results > max days no results', () =>
+  it('should create issues when Device Offline and No Results > max days no results', () =>
     runTest(async knex => {
       const now = new Date()
       const { apiKey, deviceAuth, clientAuth } = context
