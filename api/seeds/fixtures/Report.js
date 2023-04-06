@@ -53,7 +53,7 @@ const allResults = {
   sortOrder: 0,
   availableForNotification: 1,
   exportCsv: true,
-  exportExcel: false,
+  exportExcel: true,
   sheets: [
     {
       sortOrder: 0,
@@ -63,7 +63,7 @@ const allResults = {
         sortCol: 'endedOn',
         sortDir: 'desc',
         // templateFolderPath: 'export/results',
-        maxNumberOfRecords: 50000,
+        maxNumberOfRecords: 1000000,
         streamCSV: true,
       },
     },
@@ -643,11 +643,6 @@ const dataExtract = {
       query: {
         sortCol: 'updatedOn',
         sortDir: 'desc',
-        /**
-         * querying 500K of records should work well with
-         * new MySql settings for buffer pool size
-         */
-        maxNumberOfRecords: 500000,
         streamCSV: true,
       },
     },

@@ -8,8 +8,6 @@ const { getConstraints } = require('../../auth/constraints')
 
 // ------------------------------------------------------
 async function getDataExtractReport(auth, query) {
-  query.page = 0
-  query.size = query.maxNumberOfRecords || 50000
   if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 180)
   /**
    *

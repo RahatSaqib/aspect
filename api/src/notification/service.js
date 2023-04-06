@@ -12,7 +12,7 @@ const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 const NotificationCache = require('./notificationCache')
-const saveReportToFile = require('../report/saveReportToFile')
+const { saveReportToFile } = require('../report/saveReportToFile')
 const config = require('../config')
 const { getDateRangeFilters } = require('./common/logic')
 const { CATEGORY } = require('./constants')
@@ -487,7 +487,10 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, notifi
             personId,
           },
         }
-        fileName = await saveReportToFile(auth, filters, externalId)
+        const { fileName: reportFileName, promise } = await saveReportToFile(auth, filters, externalId, false)
+        fileName = reportFileName
+        // wait until report end
+        await promise
       }
       // Generate JWT
       const reportToken = jwt.sign(
