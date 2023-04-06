@@ -133,8 +133,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     return Boom.badRequest()
   }
 
-  const { displayResult } = query
-
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
