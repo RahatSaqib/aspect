@@ -20,6 +20,7 @@ import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
+import DeviceListFilter from '../../../cleanComponents/Filter/DeviceListFilter'
 import ExportListButton from '../../../components/AspectExportListButton'
 import DetailHeader from '../../../components/DetailHeader'
 import PermissionChecker from '../../../components/PermissionChecker/index'
@@ -51,16 +52,18 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 const FILTERS_CONFIG = [
-  { assayId: true, requiredPermissions: [] },
   { geography: true, requiredPermissions: [] },
+
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  { siteName: true, requiredPermissions: ['site:view'] },
+  { assayId: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: ['device'] },
+  { siteName: true, requiredPermissions: ['site:view'] },
   { deviceStatus: true, requiredPermissions: [] },
   { deviceMaintenanceStatus: true, requiredPermissions: [] },
   { deviceType: true, requiredPermissions: [] },
   { deviceApproval: true, requiredPermissions: [] },
+
   { issueTypeId: true, requiredPermissions: [] },
   { connectorStatus: true, requiredPermissions: [] },
 ]
@@ -285,6 +288,7 @@ const DeviceList = () => {
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.devicesTitle)} />
+        <DeviceListFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />

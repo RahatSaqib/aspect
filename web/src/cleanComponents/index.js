@@ -1,9 +1,13 @@
 import AssaySelect from './AssaySelect'
 import AssayTypeSelect from './AssayTypeSelect'
+import ConnectorStatusSelect from './ConnectorStatusSelect'
 import ConsumableSelect from './ConsumableSelect'
 import ContactStatusSelect from './ContactStatusSelect'
 import CountrySelect from './CountrySelect'
 import DaysStockLeftSelect from './DaysStockLeftSelect'
+import DeviceApprovalSelect from './DeviceApprovalSelect'
+import DeviceMaintenanceStatusSelect from './DeviceMaintenanceStatusSelect'
+import DeviceStatusSelect from './DeviceStatusSelect'
 import DeviceTypeSelect from './DeviceTypeSelect'
 import DiseaseSelect from './DiseaseSelect'
 import InputPassword from './InputPassword'
@@ -23,10 +27,14 @@ import TimezoneSelect from './TimezoneSelect'
 export {
   AssaySelect,
   AssayTypeSelect,
+  ConnectorStatusSelect,
   ConsumableSelect,
   ContactStatusSelect,
   CountrySelect,
   DaysStockLeftSelect,
+  DeviceApprovalSelect,
+  DeviceMaintenanceStatusSelect,
+  DeviceStatusSelect,
   DeviceTypeSelect,
   DiseaseSelect,
   InputPassword,

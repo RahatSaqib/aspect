@@ -12,7 +12,7 @@ const maxDate = endOfDay(now)
 
 // TODO: remove pagination from URL
 const defaultFilter = {
-  '/browse/device/list': {},
+  '/browse/device/list': {}, // done
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: '?' },
   '/browse/deviceApiKey': {}, // half-done
   '/browse/inventory/supplies': { hasStock: true }, // done
@@ -53,7 +53,14 @@ function useFilterUpdate() {
 
   const removeFilter = (keys, pathname) => {
     const filterForLocation = filter[pathname]
-    keys.forEach(k => delete filterForLocation[k])
+    keys.forEach(k => {
+      if (k.includes('.')) {
+        const [key, value] = k.split('.')
+        filterForLocation[key] = filterForLocation[key].filter(v => v !== value)
+      } else {
+        delete filterForLocation[k]
+      }
+    })
 
     update(filterForLocation, pathname)
   }

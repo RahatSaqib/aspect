@@ -1,9 +1,12 @@
 import React from 'react'
 import { Button } from '@mui/material'
 import Immutable from 'immutable'
+import isArray from 'lodash/isArray'
 import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
 import useAssayList from '../../hooks/assay/useAssayList'
+import useDeviceApprovalType from '../../hooks/device/useDeviceApprovalType'
+import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useResultCategoryGroup from '../../hooks/device/useResultCategoryGroup'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
@@ -12,9 +15,6 @@ import useI18n from '../../hooks/useI18n'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
 import messages from './messages'
-
-// const EMPTY_CONTEXT = null
-// const EMPTY_MAP = Immutable.Map()
 
 // const revokedOptions = [
 //   { id: '0', name: 'false' },
@@ -129,41 +129,9 @@ import messages from './messages'
 //         ),
 //       })
 //     ),
-//     deviceApprovalId: makeButton((deviceApprovalId, { deviceApprovalItems }) =>
-//       formatMessage(messages.withDeviceApproval, {
-//         deviceApprovalName: formatMessage(
-//           messages[
-//             `deviceApproval${deviceApprovalItems
-//               .find(it => it.get('id') === deviceApprovalId, EMPTY_CONTEXT, EMPTY_MAP)
-//               .get('name')}`
-//           ]
-//         ),
-//       })
-//     ),
-//     deviceMaintenanceStatusId: (filterKey, props) => {
-//       const {
-//         filters: { deviceMaintenanceStatusId },
-//       } = props
-//       const deviceMaintenanceStatusIds = isArray(deviceMaintenanceStatusId)
-//         ? deviceMaintenanceStatusId
-//         : [deviceMaintenanceStatusId]
-
-//       return deviceMaintenanceStatusIds.map((deviceMaintenanceStatusId, index) =>
-//         makeButton(() =>
-//           formatMessage(messages.withDeviceMaintenanceStatus, {
-//             deviceMaintenanceStatusName: formatMessage(messages[deviceMaintenanceStatusId]),
-//           })
-//         )(filterKey, props, index)
-//       )
-//     },
 //     deviceTypeId: makeButton(deviceTypeId =>
 //       formatMessage(messages.withDeviceType, {
 //         deviceTypeName: deviceTypes?.find(it => it.id === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)?.name,
-//       })
-//     ),
-//     deviceType: makeButton(deviceType =>
-//       formatMessage(messages.withDeviceType, {
-//         deviceTypeName: deviceTypes?.find(it => it.externalId === deviceType, EMPTY_CONTEXT, EMPTY_MAP)?.name,
 //       })
 //     ),
 //     displayResult: makeButton(displayResult =>
@@ -199,11 +167,6 @@ import messages from './messages'
 //       })
 //     ),
 //     daysStockLeft: makeButton(daysStockLeft => formatMessage(messages[daysStockLeft])),
-//     connectorStatus: makeButton(connectorStatus =>
-//       formatMessage(messages.withConnectorStatus, {
-//         connectorStatus: formatMessage(messages[connectorStatus]),
-//       })
-//     ),
 //   }
 //   return (
 //     <div>
@@ -282,11 +245,16 @@ const filtersOrdering = {
   hasStock: 34,
 }
 
+const emptyFilter = filter => {
+  const keys = Object.keys(filter)
+  return keys.length === 0 || (keys.length === 1 && keys.includes('countryId'))
+}
+
 const FilterButtons = ({ filters, remove }) => {
   const { formatMessage } = useI18n()
   return (
     <span>
-      {Object.keys(filters).length === 0 ? (
+      {emptyFilter(filters) ? (
         <Btn lbl={formatMessage(messages.noFilters)} />
       ) : (
         Immutable.Map(filters)
@@ -305,7 +273,7 @@ const buttonMapping = {
   stateId: ({ countryId, stateId, remove }) => <StateId countryId={countryId} stateId={stateId} remove={remove} />,
   lgaId: ({ stateId, lgaId, remove }) => <LgaId stateId={stateId} lgaId={lgaId} remove={remove} />,
   siteName: ({ siteName, remove }) => <SiteName siteName={siteName} remove={remove} />,
-  assayId: ({ assayId }) => <AssayId assayId={assayId} />, // should receive an array of assayIds
+  assayId: ({ assayId, remove }) => <AssayId assayId={assayId} remove={remove} />, // should receive an array of assayIds
   resultCategoryId: ({ resultCategoryId, assayOverride, assayId, diseaseId, remove }) => (
     <ResultCategoryId
       resultCategoryId={resultCategoryId}
@@ -345,6 +313,16 @@ const buttonMapping = {
   lotNumber: ({ lotNumber, remove }) => <LotNumber lotNumber={lotNumber} remove={remove} />,
   hasStock: ({ remove }) => <HasStock remove={remove} />,
   breakOutByLot: ({ remove }) => <BreakOutByLot remove={remove} />,
+  deviceApprovalId: ({ deviceApprovalId, remove }) => (
+    <DeviceApprovalId deviceApprovalId={deviceApprovalId} remove={remove} />
+  ),
+  deviceMaintenanceStatusId: ({ deviceMaintenanceStatusId, remove }) => (
+    <DeviceMaintenanceStatusId deviceMaintenanceStatusId={deviceMaintenanceStatusId} remove={remove} />
+  ),
+  deviceType: ({ deviceType, remove }) => <DeviceType deviceType={deviceType} remove={remove} />,
+  connectorStatus: ({ connectorStatus, remove }) => (
+    <ConnectorStatus connectorStatus={connectorStatus} remove={remove} />
+  ),
   //
   assayOverride: () => null,
   singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
@@ -490,7 +468,7 @@ const ContactStatus = ({ contactStatus, remove }) => {
   return (
     <Btn
       lbl={formatMessage(messages.contactEnabledStatus, { contactStatus: status })}
-      del={() => remove(['deviceName'])}
+      del={() => remove(['contactStatus'])}
     />
   )
 }
@@ -501,7 +479,7 @@ const ContactNameOrEmail = ({ contactNameOrEmail, remove }) => {
   return (
     <Btn
       lbl={formatMessage(messages.whoseNameOrEmailIncludes, { contactNameOrEmail })}
-      del={() => remove(['deviceName'])}
+      del={() => remove(['contactNameOrEmail'])}
     />
   )
 }
@@ -539,6 +517,61 @@ const BreakOutByLot = ({ remove }) => {
   const { formatMessage } = useI18n()
 
   return <Btn lbl={formatMessage(messages.breakOutByLot)} del={() => remove(['breakOutByLot'])} />
+}
+
+const DeviceApprovalId = ({ deviceApprovalId, remove }) => {
+  const { formatMessage } = useI18n()
+  const { data } = useDeviceApprovalType()
+
+  if (data) {
+    const deviceApprovalName = formatMessage(
+      messages[`deviceApproval${data.find(it => it.id === deviceApprovalId).name}`]
+    )
+    return (
+      <Btn
+        lbl={formatMessage(messages.withDeviceApproval, { deviceApprovalName })}
+        del={() => remove(['deviceApprovalId'])}
+      />
+    )
+  }
+  return null
+}
+
+const DeviceType = ({ deviceType, remove }) => {
+  const { formatMessage } = useI18n()
+  const { data } = useDeviceTypeList()
+
+  if (data) {
+    const deviceTypeName = data.find(it => it.id === deviceType).name
+
+    return <Btn lbl={formatMessage(messages.withDeviceType, { deviceTypeName })} del={() => remove(['deviceType'])} />
+  }
+  return null
+}
+
+const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove }) => {
+  const { formatMessage } = useI18n()
+  const ids = isArray(deviceMaintenanceStatusId) ? deviceMaintenanceStatusId : [deviceMaintenanceStatusId]
+  return ids.map(id => (
+    <Btn
+      lbl={formatMessage(messages.withDeviceMaintenanceStatus, {
+        deviceMaintenanceStatusName: formatMessage(messages[deviceMaintenanceStatusId]),
+      })}
+      del={() => remove([`deviceMaintenanceStatusId.${id}`])}
+    />
+  ))
+}
+
+const ConnectorStatus = ({ connectorStatus, remove }) => {
+  const { formatMessage } = useI18n()
+  const status = formatMessage(messages[connectorStatus])
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.withConnectorStatus, { connectorStatus: status })}
+      del={() => remove(['connectorStatus'])}
+    />
+  )
 }
 
 //
