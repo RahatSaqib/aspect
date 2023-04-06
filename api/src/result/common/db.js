@@ -182,7 +182,7 @@ const getBaseQueryForResults = () =>
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
-  const displayResult = query.displayResult || 'all'
+  const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseQueryForResults()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
@@ -400,7 +400,7 @@ async function getResultNotesByResultId(resultId) {
 
 function getQueryForDataExtract(query, dataConstraints) {
   const { showUnapprovedDevices = false } = query
-  const displayResult = query.displayResult || 'all'
+  const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseResults()
     .leftJoin('Geography as go', 'so.geographyId', 'go.id')
