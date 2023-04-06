@@ -544,7 +544,7 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
       }
     })
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
-    .modify(addConstraints, constraints, aliasMapping, { showUnapprovedDevices: true, showDecommissionedDevices: true })
+    .modify(addConstraints, constraints, aliasMapping)
     .where({ 'i.id': issueId || resultId })
     .first('i.id')
 }
