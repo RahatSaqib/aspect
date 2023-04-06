@@ -15,7 +15,7 @@ async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = f
   const { fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId: user.personId })
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
-  const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
+  const extension = query.format === 'csv' || !exportExcel ? 'csv' : 'xlsx'
   const fileName = getContentDispositionFilename(fileNamePrefix, extension)
 
   // Reports needs a valid user. While sending notification we have a group of user,
