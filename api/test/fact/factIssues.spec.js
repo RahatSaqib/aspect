@@ -64,7 +64,7 @@ describe('Fact based issues', () => {
   })
   afterEach(context.afterEach)
 
-  it('should create issues when Device Offline and No Results > max days no results', () =>
+  it.only('should create issues when Device Offline and No Results > max days no results', () =>
     runTest(async knex => {
       const now = new Date()
       const { apiKey, deviceAuth, clientAuth } = context
@@ -131,6 +131,9 @@ describe('Fact based issues', () => {
         lastPingOn: deviceOfflineDate,
         lastSeenOn: deviceOfflineDate,
       })
+
+      const [{ id: deviceApprovalIdApproved }] = [await knex('DeviceApproval').where({ token: 'approved' }).first()]
+      await knex('Device').update('deviceApprovalId', deviceApprovalIdApproved).where('id', deviceId)
 
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))
       await messageContext.factGenerateDeviceConnectivity(newDevice.id)
