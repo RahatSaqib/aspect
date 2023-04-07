@@ -5,6 +5,7 @@ const { getResultByResultId } = require('./common/db')
 const { resultUpdated } = require('./actions')
 const { knex } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
+const { resultTypeToId } = require('../shared/dictionary')
 
 async function updateResult(request) {
   const {
@@ -27,6 +28,7 @@ async function updateResult(request) {
     resultSourceExternalId: 'rso.externalId',
     patientData: 'r.patientData',
     resultData: 'r.resultData',
+    resultTypeId: 'r.resultTypeId',
   })
   if (!result.ok) {
     return Boom.notFound('This result does not exist or you do not have access.')
@@ -38,6 +40,10 @@ async function updateResult(request) {
   const { customFields, deviceId } = result.data
 
   let fieldsToUpdate = {}
+  if (payload?.excluded === false) {
+    const activeResultTypeId = await resultTypeToId('Patient')
+    fieldsToUpdate.resultTypeId = activeResultTypeId
+  }
   for (const customField of customFields) {
     if (customField.source) {
       _.set(fieldsToUpdate, customField.source, _.get(payload, customField.source))
@@ -86,6 +92,10 @@ async function updateResult(request) {
     },
     {}
   )
+
+  if (payload.resultTypeId && payload.resultTypeId !== result.resultTypeId) {
+    fieldsToUpdate.resultTypeId = payload.resultTypeId
+  }
 
   await knex('Result')
     .where('id', resultId)

@@ -243,17 +243,20 @@ async function getListDevices(query, auth) {
       diseaseId: 'dis.id',
       assayId: 'a.id',
     })
-    .modify(addConstraints, dataConstraints, {
-      partner: 'p',
-      assay: 'a',
-      device: 'd',
-      deviceType: 'dt',
-      geography: 'g',
-      site: 's',
-      disease: 'dis',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        partner: 'p',
+        assay: 'a',
+        device: 'd',
+        deviceType: 'dt',
+        geography: 'g',
+        site: 's',
+        disease: 'dis',
+      },
+      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+    )
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
   const userTimeOffset = '+00:00' // TODO: get time offset from somewhere and put here, as there is no datetime parameter to use getOffsetFromIsoDateString(someIsoDateParam) here.
@@ -436,12 +439,15 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      deviceType: 'dt',
-      showUnapprovedDevices: true,
-      showDecommissionedDevices: true,
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        deviceType: 'dt',
+      },
+      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+    )
 
   if (!device) {
     return null
@@ -615,7 +621,7 @@ async function listDevicesForSelectList(request) {
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g', showUnapprovedDevices })
+    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' }, { showUnapprovedDevices })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'd.partnerId',
@@ -728,7 +734,7 @@ async function getDevicePerformance(request) {
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd', showUnapprovedDevices: true })
+    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' }, { showUnapprovedDevices: true })
     .where('r.deviceId', deviceId)
     .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
     .select([
@@ -974,14 +980,17 @@ function getDeviceByIdBaseQuery(
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, {
-      partner: 'p',
-      geography: 'g',
-      site: 's',
-      device: 'd',
-      showUnapprovedDevices,
-      showDecommissionedDevices,
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        partner: 'p',
+        geography: 'g',
+        site: 's',
+        device: 'd',
+      },
+      { showUnapprovedDevices, showDecommissionedDevices }
+    )
     .where('d.id', +deviceId)
     .first(fields)
 
@@ -1453,11 +1462,14 @@ async function deviceMaintenanceStatus(request) {
   const currentDeviceMaintenanceStatusLog =
     (await knex('Device as d')
       .join('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.Id')
-      .modify(addConstraints, dataConstraints, {
-        device: 'd',
-        showUnapprovedDevices: true,
-        showDecommissionedDevices: true,
-      })
+      .modify(
+        addConstraints,
+        dataConstraints,
+        {
+          device: 'd',
+        },
+        { showUnapprovedDevices: true, showDecommissionedDevices: true }
+      )
       .where('d.id', deviceId)
       .first('dmsl.*')) || {}
   if (currentDeviceMaintenanceStatusLog.data) {

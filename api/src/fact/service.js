@@ -224,8 +224,11 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
   return messageContext.transact(async knex => {
     const now = new Date()
 
-    // query for selecting data for the device
-    const query = knex('Result as r').where({ deviceId })
+    const query = knex('Result as r')
+      .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
+      .where({ deviceId })
+      .where('rt.excluded', false)
+
     query.modify(queryBuilder => {
       if (assayId) {
         queryBuilder.where({ assayId })
@@ -260,7 +263,11 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
     await Promise.each(daysToCalculate, async days => {
       const endedOn = startOfDayUtc(subDays(now, days))
       // query for selecting data for the device
-      const query = knex('Result as r').where('r.deviceId', deviceId).where('r.endedOn', '>', endedOn)
+      const query = knex('Result as r')
+        .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
+        .where('r.deviceId', deviceId)
+        .where('r.endedOn', '>', endedOn)
+        .where('rt.excluded', false)
       const factResultsDevice = {
         calculatedOn: now,
       }
@@ -874,9 +881,12 @@ async function onFactNewResultsAvailableCheck(action, { messageContext }) {
     const sites = await knex('Result as r')
       .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
       .innerJoin('Site as si', 'sa.originSiteId', 'si.id')
+      .innerJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
+
       .groupBy('si.id')
       .where('r.createdOn', '>', subDays(now, 1))
       .where('r.endedOn', '>', subDays(now, 30))
+      .where('rt.excluded', false)
       .select(
         knex.raw('si.id as siteId'),
         knex.raw('coalesce(r.partnerId, si.partnerId) as partnerId'),

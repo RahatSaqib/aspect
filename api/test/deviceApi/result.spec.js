@@ -3,7 +3,6 @@ const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const { addHours } = require('date-fns')
 const { knex } = require('../../src/db')
-
 const { resultWorkflowStatusToId } = require('../../src/shared/dictionary')
 const { resultReadyForNotification } = require('../../src/result/actions')
 
@@ -82,6 +81,7 @@ describe('Device Result API routes', () => {
       runTest(async knex => {
         const resultIds = []
         const { deviceId, clientAuth, deviceAuth, now } = context
+
         const clientSingleResultPath = `${apiResultPath}/`
         const clientPath = `${apiResultPath}?deviceId=${deviceId}&size=1000`
 
@@ -284,8 +284,10 @@ describe('Device Result API routes', () => {
         if (lastResultId && !resultIds.includes(lastResultId)) {
           resultIds.push(lastResultId)
         }
-
-        const getResultResponse3 = await server.get(clientPath).set('Authorization', clientAuth)
+        const getResultResponse3 = await server
+          .get(clientPath)
+          .query({ displayResult: 'all' })
+          .set('Authorization', clientAuth)
         assert.equal(getResultResponse3.status, 200)
         assert.typeOf(getResultResponse3.body, 'Object')
         assert.property(getResultResponse3.body, 'data')

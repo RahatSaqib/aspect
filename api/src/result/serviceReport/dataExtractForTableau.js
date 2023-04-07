@@ -13,8 +13,7 @@ async function getDataExtractReport(auth, query) {
    *
    */
   const selectFields = SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT
-  const displayResult = query.displayResult || 'all'
-  const dataConstraints = await getConstraints(auth.credentials, { displayResult })
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForDataExtract(query, dataConstraints)
   const getCount = resultQuery.clone().count('r.id as total').first()

@@ -58,10 +58,12 @@ async function getCustomFieldsSourcesFromTemplates(notificationTypeId) {
 
 async function shouldNotifyResult(resultId, notificationTypeId) {
   const result = await knex('Result as r')
+    .innerJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
     .where('r.id', resultId)
+    .where('rt.excluded', false)
     .select(['g.countryId', 'at.diseaseId', 'r.*'])
     .first()
 
@@ -196,6 +198,7 @@ function geographyFilters(queryBuilder, filterConditions, aliases) {
 
 function resultConditionsMet(queryBuilder, filterCondition, aliases) {
   const tblResultAlias = aliases.result ? aliases.result : 'r'
+
   resultCategoryFilters(queryBuilder, filterCondition, tblResultAlias)
   geographyFilters(queryBuilder, filterCondition, aliases)
 }
@@ -321,9 +324,6 @@ async function getNotificationPolicy(
     'nt.jobFunctionId',
     'nt.level',
     'nt.sendToContactsWithMatchingTags',
-    // 'g.countryId',
-    // 'g.stateId',
-    // 'g.lgaId',
     'mt.alertTemplateId',
     'mt.emailTemplateId',
     'mt.smsTemplateId',
@@ -530,8 +530,6 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
     site: 's',
     geography: 'g',
     partner: 'p',
-    showUnapprovedDevices: true,
-    showDecommissionedDevices: true,
   }
   // does person have job context that can see this issue/result?
   const constraints = await getJobConstraints(personId, jobFunctionId)

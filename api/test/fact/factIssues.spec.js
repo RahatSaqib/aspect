@@ -132,6 +132,9 @@ describe('Fact based issues', () => {
         lastSeenOn: deviceOfflineDate,
       })
 
+      const [{ id: deviceApprovalIdApproved }] = [await knex('DeviceApproval').where({ token: 'approved' }).first()]
+      await knex('Device').update('deviceApprovalId', deviceApprovalIdApproved).where('id', deviceId)
+
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))
       await messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForOffline
