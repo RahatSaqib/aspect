@@ -18,11 +18,11 @@ const messages = defineMessages({
 })
 const DisplayResultSelectField = props => {
   const handleChange = ({ target: { value } }) => {
-    props.onDisplayResultChange(value === 'all' ? undefined : value)
+    props.onDisplayResultChange(value === 'actual' ? undefined : value)
   }
 
   const { allItemText } = props
-  const value = props.value || 'all'
+  const value = props.value || 'actual'
   const restProps = omit(props, ['allItemText', 'value', 'onDisplayResultChange'])
 
   return (

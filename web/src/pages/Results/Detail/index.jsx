@@ -144,7 +144,11 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
             disabled: !toggleEdit,
             visible: toggleEdit,
           },
-          { label: intl.formatMessage(messages.button_Save), onClick: () => onSubmit(), disabled: !toggleEdit },
+          {
+            label: intl.formatMessage(messages.button_Save),
+            onClick: () => onSubmit(),
+            disabled: !toggleEdit || !formik.dirty || !formik.isValid,
+          },
         ].map(({ label, onClick, disabled = false, visible = true }) =>
           visible ? (
             <AspectButton

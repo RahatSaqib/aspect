@@ -101,7 +101,7 @@ const FILTERS_CONFIG = [
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },
-  { displayResult: true, requiredPermissions: [], isEnabled: dependencies => !!dependencies.showFilterDisplayResult },
+  { displayResult: true, requiredPermissions: [] },
   { onlyReportableResults: true, requiredPermissions: ['assay:view'] },
   { onlyDownloadedByReporter: true, requiredPermissions: [] },
   { onlyEverTransferred: true, requiredPermissions: [] },
@@ -264,6 +264,8 @@ const ResultList = () => {
 
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
+  const searchParams = new URLSearchParams()
+  searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
   const params = { ...pagination, ...filters }
@@ -304,18 +306,6 @@ const ResultList = () => {
     setFilters(getFilters(filtersParams))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams()
-    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
-    const filtersParams = new URLSearchParams(searchParams.get('filters'))
-    if (!filtersParams.has('displayResult')) {
-      filtersParams.set('displayResult', 'actual')
-      searchParams.set('filters', filtersParams)
-      navigate({ ...location, search: `?${searchParams.toString()}` })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {

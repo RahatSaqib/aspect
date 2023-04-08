@@ -26,6 +26,7 @@ import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgres
 import requirePermissions from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
+import { fetchConsumables } from '../../../store/ConsumableRedux'
 import {
   types,
   hideAdjustInventoryDialog,
@@ -51,7 +52,6 @@ import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogFo
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
 import styles from './InventoryItemsList.css'
 import messages from './messages'
-import { fetchConsumables } from '../../../store/ConsumableRedux'
 
 const cssClasses = classnames.bind(styles)
 
