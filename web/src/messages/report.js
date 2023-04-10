@@ -23,8 +23,7 @@ const messages = defineMessages({
   },
   all_results_description: {
     id: 'pages.ReportIndex.all_results_description',
-    defaultMessage:
-      'All test results in the system (up to 50.000 records). One row per result with all the fields needed.',
+    defaultMessage: 'All test results in the system. One row per result with all the fields needed.',
   },
   data_extract: {
     id: 'pages.ReportIndex.data_extract',

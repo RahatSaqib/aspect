@@ -165,10 +165,15 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
     .leftJoin('Result as r', 'il.resultId', 'r.id')
     .leftJoin('Site as refSite', 'il.referencedSiteId', 'refSite.id')
     .leftJoin('Sample as sam', 'r.sampleId', 'sam.id')
-    .modify(addConstraints, dataConstraints, {
-      site: 's',
-      geography: 'g',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        site: 's',
+        geography: 'g',
+      },
+      { displayResult: 'all' }
+    )
 async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
   if (_.isNil(query.maxDate)) {
     query.maxDate = new Date()

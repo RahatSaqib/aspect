@@ -3,8 +3,8 @@ const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const { addHours } = require('date-fns')
 const { knex } = require('../../src/db')
-
 const { resultWorkflowStatusToId } = require('../../src/shared/dictionary')
+const { resultReadyForNotification } = require('../../src/result/actions')
 
 const {
   createTestContext,
@@ -14,7 +14,7 @@ const {
   createSite,
 } = require('./utils')
 
-const { waitForIdle } = require('../utils/mqUtils')
+const { waitForIdle, waitForAction } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
 
@@ -81,6 +81,7 @@ describe('Device Result API routes', () => {
       runTest(async knex => {
         const resultIds = []
         const { deviceId, clientAuth, deviceAuth, now } = context
+
         const clientSingleResultPath = `${apiResultPath}/`
         const clientPath = `${apiResultPath}?deviceId=${deviceId}&size=1000`
 
@@ -283,8 +284,10 @@ describe('Device Result API routes', () => {
         if (lastResultId && !resultIds.includes(lastResultId)) {
           resultIds.push(lastResultId)
         }
-
-        const getResultResponse3 = await server.get(clientPath).set('Authorization', clientAuth)
+        const getResultResponse3 = await server
+          .get(clientPath)
+          .query({ displayResult: 'all' })
+          .set('Authorization', clientAuth)
         assert.equal(getResultResponse3.status, 200)
         assert.typeOf(getResultResponse3.body, 'Object')
         assert.property(getResultResponse3.body, 'data')
@@ -1381,6 +1384,92 @@ describe('Device Result API routes', () => {
             .where('r.id', resultId)
             .first('r.reportableSiteId')
           assert.equal(resultReportableSiteId, deviceWithDefaultReportableSiteId.defaultReportableSiteId)
+        }))
+    })
+
+    describe('do not send notification for duplicated result', () => {
+      const getResult = async (knex, resultId) => knex('Result as r').where({ id: resultId }).first()
+
+      const postResult = async resultPayload =>
+        server.post(devicePath).set('Authorization', context.deviceAuth).send({
+          name: 'Device Name',
+          result: resultPayload,
+        })
+
+      it('should trigger event resultReadyForNotification', () =>
+        runTest(async knex => {
+          const { now, deviceId } = context
+
+          const resultPayload = {
+            startedOn: now,
+            endedOn: addHours(now, 2),
+            id: 'test-external-id', // this is `Result.externalId`
+            data: { a: 'b', b: 'c' },
+            assay: { id: 'DaktariHivVl' },
+            deviceId,
+          }
+
+          /**
+           * insert new result
+           */
+          let response = await postResult(resultPayload)
+          assert.equal(response.status, 200)
+          assert.typeOf(response.body, 'Object')
+          /**
+           * get just insert result and check it's resultDataHash
+           */
+          let result = await getResult(knex, response.body.aspectResultId)
+          const { resultDataHash: prevResultDataHash, id: prevResultId } = result
+          assert.typeOf(prevResultDataHash, 'String')
+          assert.equal(prevResultDataHash.length, 32)
+          /**
+           * prepare MQ action to check it was triggered after updating
+           * same result with new data
+           */
+          let action = resultReadyForNotification(result.id)
+          let waitForResultReadyForNotification = waitForAction(action)
+          /**
+           * update result
+           */
+          // change data which then be saved in Result.resultData
+          resultPayload.data.b = 'd'
+          response = await postResult(resultPayload)
+          assert.equal(response.status, 200)
+          assert.typeOf(response.body, 'Object')
+          // should trigger action to send notification
+          await waitForResultReadyForNotification
+          await waitForIdle()
+          /**
+           * compare resultDataHash from previous and updated results
+           */
+          result = await getResult(knex, response.body.aspectResultId)
+          const { resultDataHash: currResultDataHash, id: currResultId } = result
+          assert.equal(currResultDataHash.length, 32)
+          assert.equal(currResultDataHash !== prevResultDataHash, true)
+          /**
+           * resultId's are the same because we are updating result with same
+           * resultPayload.id='test-external-id' (which is saved to Result.externalId)
+           */
+          assert.equal(currResultId, prevResultId)
+          /**
+           * Next - update result with same data - action `RESULT_READY_FOR_NOTIFICATION`
+           * should not trigger (awaiting for it will be timeout)
+           */
+          action = resultReadyForNotification(result.id, true) // isResultUpdated=true
+          waitForResultReadyForNotification = waitForAction(action)
+          response = await postResult(resultPayload)
+          assert.equal(response.status, 200)
+          assert.typeOf(response.body, 'Object')
+          waitForResultReadyForNotification.catch(ex => {
+            assert.equal(ex.message.includes('timeout'), true)
+            assert.equal(ex.message.includes(JSON.stringify(action)), true)
+          })
+          await waitForIdle()
+
+          result = await getResult(knex, response.body.aspectResultId)
+          assert.equal(result.resultDataHash.length, 32)
+          assert.equal(currResultDataHash, result.resultDataHash)
+          assert.equal(currResultId, result.id)
         }))
     })
 

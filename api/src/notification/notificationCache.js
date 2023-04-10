@@ -44,6 +44,7 @@ class NotificationCache {
     await this.getCacheValueIssueNotification()
     await this.getCacheValueResultNotification()
     await this.getCacheValueReportNotification()
+    return true
   }
 
   // set the cache key and value

@@ -61,15 +61,18 @@ function getDeviceBaseExtendedQuery(
       siteName: 's.name',
       assayId: 'a.id',
     })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      device: 'd',
-      deviceType: 'dt',
-      geography: 'g',
-      site: 's',
-      showDecommissionedDevices,
-      showUnapprovedDevices,
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        assay: 'a',
+        device: 'd',
+        deviceType: 'dt',
+        geography: 'g',
+        site: 's',
+      },
+      { showDecommissionedDevices, showUnapprovedDevices }
+    )
   return deviceQuery
 }
 
@@ -107,22 +110,30 @@ async function getTargetDevice(targetDeviceId) {
 /**
  * Builds a knex query object including all 'join' and 'where' for managing constraints.
  * @param {object} dataConstraints
- * @param {object} options An object representing the dataConstraints options, including the constraint-table-name definition, and also additional configurations like showUnapprovedDevices and showDecommissionedDevices. For example: { assay: 'a', showUnapprovedDevices: true, showDecommissionedDevices: true }
+ * @param {aliases} aliases An object representing the aliases for the tables used in the query.e.g. { assay: 'a'}
+ * @param {object} options An object representing the dataConstraints options, like showUnapprovedDevices
+ *  and showDecommissionedDevices.
+ *  For example: { showUnapprovedDevices: true, showDecommissionedDevices: true }
  * @returns The knex query object.
  */
-function getDeviceBaseQuery(dataConstraints, options) {
+function getDeviceBaseQuery(dataConstraints, aliases, options = {}) {
   return knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      deviceType: 'dt',
-      ...(options || {}),
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        deviceType: 'dt',
+        ...aliases,
+      },
+      options
+    )
 }
 
 const getNotDecommissionedDevices = dataConstraints =>
-  getDeviceBaseQuery(dataConstraints, { showUnapprovedDevices: true })
+  getDeviceBaseQuery(dataConstraints, {}, { showUnapprovedDevices: true })
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
   const {

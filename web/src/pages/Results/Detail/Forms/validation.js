@@ -30,6 +30,15 @@ const getValidationSchema = formatMessage =>
         message: formatMessage(messages.timeCannotBeGreaterThanNow),
         test: v => Date.parse(v) < new Date().getTime(),
       }),
+    resultTypeId: Yup.string().when('excluded', {
+      is: true,
+      then: Yup.string().test({
+        message: formatMessage(messages.resultTypeIdRequired),
+        test: v => {
+          return v !== '1' // `Patient` resultTypeId (id:1) is not allowed for excluded results.
+        },
+      }),
+    }),
     resultCategory1: Yup.mixed().required(formatMessage(messages.resultCategory1)),
     errorCode: Yup.mixed().test({
       message: formatMessage(messages.errorCode),

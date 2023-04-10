@@ -269,6 +269,22 @@ const messagesResult = defineMessages({
     id: 'pages.resultEdit.extra',
     defaultMessage: 'Extra-pulmonary',
   },
+  EQA: {
+    id: 'pages.resultEdit.EQA',
+    defaultMessage: 'EQA',
+  },
+  Training: {
+    id: 'pages.resultEdit.Training',
+    defaultMessage: 'Training',
+  },
+  Calibration: {
+    id: 'pages.resultEdit.Calibration',
+    defaultMessage: 'Calibration',
+  },
+  Study: {
+    id: 'pages.resultEdit.Study',
+    defaultMessage: 'Study/Research',
+  },
 })
 
 export default {

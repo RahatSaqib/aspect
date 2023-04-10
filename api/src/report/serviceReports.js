@@ -192,13 +192,10 @@ async function getAllSheetsData(auth, query, sheets) {
   return dataSet
 }
 
-async function generateReport(externalId, query, auth, user, userPlaceHolders) {
+async function generateReport(externalId, query, auth, user, userPlaceHolders, extension) {
   // query: {...filters}
   const { countryAbbreviation, culture, partnerId, userName, personId } = user
-  const { sheets, fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId })
-
-  // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
-  const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
+  const { sheets } = await getReportDetails(externalId, { personId })
 
   const data = await getAllSheetsData(auth, query, sheets)
   if (Boom.isBoom(data)) {
@@ -246,9 +243,8 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
     ...administrativeDivisionLabelPlaceHolders,
   ]
   /**
-   * generate actual file or stream and get back a data buffer
+   * generate stream or data buffer
    */
-  const fileName = getContentDispositionFilename(fileNamePrefix, extension)
   let dataBuffer
   let streamResponse = false
   if (extension === 'csv') {
@@ -295,11 +291,7 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
     }
   }
 
-  return { dataBuffer, streamResponse, fileName, extension }
-}
-
-function getContentDispositionFilename(fileNamePrefix, extension) {
-  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(/:/g, '-')
+  return { dataBuffer, streamResponse }
 }
 
 // ----------------------------------------------------------------------------------------------
