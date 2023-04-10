@@ -325,7 +325,7 @@ const buttonMapping = {
   ),
   //
   assayOverride: () => null,
-  singleAssayId: ({ assayId }) => <SingleAssayId assayId={assayId} />, // only one permanent
+  singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
 }
 
 const StateId = ({ countryId, stateId, remove }) => {
@@ -574,17 +574,9 @@ const ConnectorStatus = ({ connectorStatus, remove }) => {
   )
 }
 
-//
-const SingleAssayId = ({ assayId }) => {
-  const { formatMessage } = useI18n()
-  const { data } = useAssayList()
-
-  return data ? <Btn lbl={formatMessage(messages[data.find(a => a.id === assayId)].i18nKey)} /> : null
-}
-
 const Btn = ({ lbl, del }) => (
   <Button color="secondary" variant="contained" onClick={del} sx={{ m: '2px' }}>
-    {lbl}
+    {lbl.charAt(0).toUpperCase() + lbl.slice(1)}
     {del ? <MdClose style={{ marginLeft: '5px' }} /> : null}
   </Button>
 )

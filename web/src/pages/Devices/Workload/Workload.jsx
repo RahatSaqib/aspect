@@ -7,6 +7,7 @@ import subtractDays from 'date-fns/subDays'
 import { Helmet } from 'react-helmet'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
+import DeviceWorkloadFilter from '../../../cleanComponents/Filter/DeviceWorkloadFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import useI18n from '../../../hooks/useI18n'
@@ -15,13 +16,13 @@ import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
-import { reduceFiltersConfig, getFilters, sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
+import { getFilters, sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import colMessages from '../../../oldPages/result/list/messages'
 import { useAuthState } from '../../../providers/AuthProvider'
+import { useFilterUpdate, useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import styles from './styles.css'
@@ -59,11 +60,12 @@ const Workload = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { formatMessage } = useI18n()
+  const filter = useFilterValues(location.pathname)
+  const [addFilter] = useFilterUpdate()
   const user = useAuthState()
-  const [requestParams, setRequestParams] = useState()
+  const [, setRequestParams] = useState()
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.userPermissions, {})
-  const { isError, isLoading, data = false, error } = useWorkload(requestParams)
+  const { isError, isLoading, data = false, error } = useWorkload(filter)
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
   const mostResultsAssay = useSelector(
@@ -73,7 +75,7 @@ const Workload = () => {
         .filter(a => a.hasResults)
         .sort((a, b) => b.resultCount - a.resultCount)[0]
   )
-  useWorkloadDownload({ ...requestParams, ...download })
+  useWorkloadDownload({ ...filter, ...download })
 
   const onExcelClick = formatType => setDownload({ fileFormat: formatType, enabled: true })
 
@@ -82,6 +84,12 @@ const Workload = () => {
       setDownload({ fileFormat: '', enabled: false })
     }
   }, [download])
+
+  useEffect(() => {
+    if (filter.singleAssayId !== mostResultsAssay?.id) {
+      addFilter({ ...filter, singleAssayId: mostResultsAssay?.id }, location.pathname)
+    }
+  }, [addFilter, filter, location, mostResultsAssay])
 
   useEffect(() => {
     const { value: searchParams } = searchSanitizer(location, {})
@@ -138,15 +146,10 @@ const Workload = () => {
       <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack />
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.workloadTitle)} />
+        <DeviceWorkloadFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <BrowseFilters navigate={navigate} location={location} config={reducedFilters}>
-              <AspectExportListButton
-                onExport={onExcelClick}
-                visible={workloadList.length}
-                reportName="DeviceWorkload"
-              />
-            </BrowseFilters>
+            <AspectExportListButton onExport={onExcelClick} visible={workloadList.length} reportName="DeviceWorkload" />
           </div>
 
           <DataTableProgressBar disabled={!isLoading} />
