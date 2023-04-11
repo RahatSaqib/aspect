@@ -10,6 +10,7 @@ import DeviceMaintenanceStatusSelect from './DeviceMaintenanceStatusSelect'
 import DeviceStatusSelect from './DeviceStatusSelect'
 import DeviceTypeSelect from './DeviceTypeSelect'
 import DiseaseSelect from './DiseaseSelect'
+import DisplayResultSelect from './DisplayResultSelect'
 import InputPassword from './InputPassword'
 import JobSelect from './JobSelect'
 import LabeledSwitch from './LabeledSwitch'
@@ -18,6 +19,7 @@ import LgaSelect from './LgaSelect'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
 import ReportSelector from './ReportSelector'
+import ResultTreatmentStatusSelect from './ResultTreatmentStatusSelect'
 import ResultWorkflowStatusSelect from './ResultWorkflowStatusSelect'
 import RevokeSelect from './RevokeSelect'
 import SiteSelect from './SiteSelect'
@@ -38,6 +40,7 @@ export {
   DeviceStatusSelect,
   DeviceTypeSelect,
   DiseaseSelect,
+  DisplayResultSelect,
   InputPassword,
   JobSelect,
   LabeledSwitch,
@@ -46,6 +49,7 @@ export {
   PartnerSelect,
   PeriodSelector,
   ReportSelector,
+  ResultTreatmentStatusSelect,
   ResultWorkflowStatusSelect,
   RevokeSelect,
   SiteSelect,
