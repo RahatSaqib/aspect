@@ -219,7 +219,7 @@ const JobAssigment = ({ setStep, id }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button onClick={() => id === ACTION.ADD ? setStep(0) : navigate('/browse/person')}>
+                  <Button onClick={() => (id === ACTION.ADD ? setStep(0) : navigate('/browse/person'))}>
                     {formatMessage(messages[id === ACTION.ADD ? 'back' : 'backToTable'])}
                   </Button>
                   {dirty ? (
