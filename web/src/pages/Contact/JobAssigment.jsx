@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { object, string } from 'yup'
 import {
   AssaySelect,
@@ -30,7 +30,7 @@ const JobAssigment = ({ setStep, id }) => {
   const { countryAbbreviation, countryId } = useAuthState()
   const { formatMessage } = useI18n()
   const { personId } = useParams()
-
+  const navigate = useNavigate()
   const { isLoading, data: assignment } = usePersonAssignment(personId)
 
   const initialValues = {
@@ -219,7 +219,9 @@ const JobAssigment = ({ setStep, id }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button onClick={() => setStep(0)}>{formatMessage(messages.back)}</Button>
+                  <Button onClick={() => id === ACTION.ADD ? setStep(0) : navigate('/browse/person')}>
+                    {formatMessage(messages[id === ACTION.ADD ? 'back' : 'backToTable'])}
+                  </Button>
                   {dirty ? (
                     <Button type="submit" disabled={!isValid}>
                       {formatMessage(messages.addAssignment)}
