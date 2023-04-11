@@ -3261,7 +3261,7 @@ async function seed(knex) {
                     const siteData = {
                       partnerId: partnerOneId,
                       geographyId,
-                      externalId: `${state.name}_${siteNumber}`,
+                      externalId: `${state.name}_${siteNumber}_${Math.random().toString(36).substr(2, 4)}`,
                       name: city
                         ? `${city} ${labStrings[_.random(0, labStrings.length - 1)]}`
                         : `${lga.name} County ${siteNumber % 2 ? 'Lab' : 'Clinic'} ${siteNumber}`,
