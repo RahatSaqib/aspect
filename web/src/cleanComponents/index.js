@@ -18,6 +18,7 @@ import LgaSelect from './LgaSelect'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
 import ReportSelector from './ReportSelector'
+import ResultWorkflowStatusSelect from './ResultWorkflowStatusSelect'
 import RevokeSelect from './RevokeSelect'
 import SiteSelect from './SiteSelect'
 import StateSelect from './StateSelect'
@@ -45,6 +46,7 @@ export {
   PartnerSelect,
   PeriodSelector,
   ReportSelector,
+  ResultWorkflowStatusSelect,
   RevokeSelect,
   SiteSelect,
   StateSelect,

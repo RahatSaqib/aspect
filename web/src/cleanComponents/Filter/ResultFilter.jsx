@@ -1,0 +1,246 @@
+import React, { useState } from 'react'
+import { Grid, TextField } from '@mui/material'
+import { useLocation } from 'react-router'
+import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
+import useI18n from '../../hooks/useI18n'
+import { getCustomMessage } from '../../messages'
+import messages from '../../messages/FilterMessages'
+import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
+import { useAuthState } from '../../providers/AuthProvider'
+import { useFilterValues } from '../../providers/FilterProvider'
+import { StateSelect, LgaSelect, PeriodSelector, DeviceTypeSelect, ResultWorkflowStatusSelect } from '../index'
+import FilterContainer from './FilterContainer'
+
+const ResultFilter = () => {
+  const { formatMessage } = useI18n()
+  const user = useAuthState()
+  const location = useLocation()
+  const filter = useFilterValues(location.pathname)
+  const [state, setState] = useState({ ...filter, countryId: user.countryId })
+
+  const a = r => isPermittedUser(user.userPermissions, { required: r })
+
+  return (
+    <FilterContainer state={state} setState={setState}>
+      <Grid container spacing={2}>
+        <Grid item xs={3}>
+          <StateSelect
+            label={getCustomMessage(messages, 'state', user)}
+            value={state.stateId}
+            onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
+            countryId={state.countryId}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <LgaSelect
+            label={getCustomMessage(messages, 'lga', user)}
+            value={state.lgaId}
+            onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
+            stateId={state.stateId}
+          />
+        </Grid>
+        {a(['assay:view']) ? (
+          <>
+            {/* <Grid item xs={3}>
+              <AssaySelect
+                label={formatMessage(messages.assay)}
+                value={state.assayId}
+                onChange={e =>
+                  setState({ ...state, assayId: e.target.value, resultCategoryId: null, resultCategoryGroupId: null })
+                }
+                onlyResults
+              />
+            </Grid> */}
+            {/* <Grid item xs={3}>
+              <DiseaseSelect
+                label={formatMessage(messages.disease)}
+                value={state.diseaseId}
+                onChange={diseaseId => setState({ ...state, diseaseId })}
+                onlyWithResults
+              />
+            </Grid> */}
+            {/* <Grid item xs={3}>
+              {!assayResultCategory2Label && config.resultCategory && !config.onlyDisease && (
+                <div className={cssClasses('Control')}>
+                  <ResultCategorySelectField
+                    allItemText={formatMessage(messages.all)}
+                    disabled={!v.assayId}
+                    assayId={v.assayId}
+                    value={v.resultCategoryId}
+                    onResultCategoryChange={resultCategoryId => sV({ ...v, resultCategoryId })}
+                    floatingLabelFixed
+                    hintText={formatMessage(messages.selectResult)}
+                    floatingLabelText={formatMessage(messages.result)}
+                    style={{ verticalAlign: 'bottom' }}
+                  />
+                </div>
+              )} 
+            </Grid> 
+            <Grid item xs={3}>
+              {assayResultCategory2Label && config.resultCategoryGroup && !config.onlyDisease && (
+                <div className={cssClasses('Control', 'Control--wide')}>
+                  <ResultCategoryGroupSelectField
+                    allItemText={formatMessage(messages.all)}
+                    disabled={!v.assayId}
+                    assayId={v.assayId}
+                    value={v.resultCategoryGroupId}
+                    onResultCategoryGroupChange={resultCategoryGroupId => sV({ ...v, resultCategoryGroupId })}
+                    floatingLabelFixed
+                    hintText={formatMessage(messages.selectResult)}
+                    floatingLabelText={formatMessage(messages.resultGroup)}
+                    style={{ verticalAlign: 'bottom' }}
+                  />
+                </div>
+              )}
+            </Grid> */}
+          </>
+        ) : null}
+        <Grid item xs={3}>
+          <TextField
+            label={formatMessage(messages.errorCode)}
+            value={state.errorCode || ''}
+            onChange={e => setState({ ...state, errorCode: e.target.value })}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label={formatMessage(messages.patientOrResearchId)}
+            value={state.patientOrResearchId || ''}
+            onChange={e => setState({ ...state, patientOrResearchId: e.target.value })}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label={formatMessage(messages.sampleId)}
+            value={state.sampleId || ''}
+            onChange={e => setState({ ...state, sampleId: e.target.value })}
+          />
+        </Grid>
+        {a(['device']) ? (
+          <Grid item xs={3}>
+            <TextField
+              label={formatMessage(messages.deviceName)}
+              value={state.deviceName || ''}
+              onChange={e => setState({ ...state, deviceName: e.target.value })}
+            />
+          </Grid>
+        ) : null}
+        {a(['site:view']) ? (
+          <>
+            <Grid item xs={3}>
+              <SiteAutoCompleteField
+                name="siteName"
+                value={state.siteName || ''}
+                onChange={site => setState({ ...state, siteName: site.name })}
+                floatingLabelFixed
+                floatingLabelText={formatMessage(messages.site)}
+                stateId={state.stateId}
+                lgaId={state.lgaId}
+                width="100%"
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <SiteAutoCompleteField
+                name="reportableSiteName"
+                value={state.reportableSiteName || ''}
+                onChange={site => setState({ ...state, reportableSiteName: site.name, reportableSiteId: site.id })}
+                floatingLabelFixed
+                floatingLabelText={formatMessage(messages.reportableSite)}
+                stateId={state.stateId}
+                lgaId={state.lgaId}
+                width="100%"
+              />
+            </Grid>
+          </>
+        ) : null}
+        <Grid item xs={3}>
+          <SiteAutoCompleteField
+            name="sampleOriginSite"
+            value={state.sampleOriginSite || ''}
+            onChange={site => setState({ ...state, sampleOriginSite: site.name })}
+            floatingLabelFixed
+            floatingLabelText={formatMessage(messages.sampleOriginSite)}
+            stateId={state.stateId}
+            lgaId={state.lgaId}
+            width="100%"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <ResultWorkflowStatusSelect
+            label={formatMessage(messages.workflowStatus)}
+            value={state.workflowStatusId}
+            onChange={workflowStatusId => setState({ ...state, workflowStatusId })}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <DeviceTypeSelect
+            label={formatMessage(messages.deviceType)}
+            value={state.deviceType}
+            onChange={deviceType => setState({ ...state, deviceType })}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <PeriodSelector
+            label={formatMessage(messages.date)}
+            minDate={state.minDate || null}
+            maxDate={state.maxDate || null}
+            onChange={dateValues => setState({ ...state, ...dateValues })}
+          />
+        </Grid>
+        {/*
+        <Grid item xs={3}>
+          <ResultTreatmentStatusSelectField
+            allItemText={formatMessage(messages.all)}
+            value={v.treatmentStatus}
+            onTreatmentStatusChange={treatmentStatus => sV({ ...v, treatmentStatus })}
+            floatingLabelFixed
+            hintText={formatMessage(messages.selectTreatmentStatus)}
+            floatingLabelText={formatMessage(messages.treatmentStatus)}
+            style={{ verticalAlign: 'bottom' }}
+            autoWidth
+          />
+        </Grid>
+        {a(['site:view']) ? (
+          <Grid item xs={3}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={[true, 'true'].includes(state.onlyReportableResults)}
+                  onChange={e => setState({ ...state, onlyReportableResults: e.target.checked || null })}
+                />
+              }
+              label={formatMessage(messages.onlyReportableResults)}
+              sx={{ m: 2 }}
+            />
+          </Grid>
+        ) : null}
+        <Grid item xs={3}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={[true, 'true'].includes(state.onlyDownloadedByReporter)}
+                onChange={e => setState({ ...state, onlyDownloadedByReporter: e.target.checked || null })}
+              />
+            }
+            label={formatMessage(messages.onlyDownloadedByReporter)}
+            sx={{ m: 2 }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={[true, 'true'].includes(state.onlyTreatmentRequired)}
+                onChange={e => setState({ ...state, onlyTreatmentRequired: e.target.checked || null })}
+              />
+            }
+            label={formatMessage(messages.onlyTreatmentRequired)}
+            sx={{ m: 2 }}
+          />
+        </Grid> */}
+      </Grid>
+    </FilterContainer>
+  )
+}
+
+export default ResultFilter

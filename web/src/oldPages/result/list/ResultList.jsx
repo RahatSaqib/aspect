@@ -13,6 +13,7 @@ import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
+import ResultFilter from '../../../cleanComponents/Filter/ResultFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
@@ -85,27 +86,34 @@ const getBaseColumns = (extraColumns = [], formatMessage) => {
 }
 
 const FILTERS_CONFIG = [
-  { assayAndResultCategory: true, requiredPermissions: ['assay:view'] },
   { geography: true, requiredPermissions: [] },
+  //
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  { date: true, requiredPermissions: [] },
+  // { assayAndResultCategory: true, requiredPermissions: ['assay:view'] },
+  // result.assayId = true
+  // result.diseaseId = true
+  // result.resultCategory = true
+  // result.resultCategoryGroup = true
+  { errorCode: true, requiredPermissions: [] },
   { patientOrResearchId: true, requiredPermissions: [] },
   { sampleId: true, requiredPermissions: [] },
-  { errorCode: true, requiredPermissions: [] },
+  { deviceName: true, requiredPermissions: ['device'] },
   { siteName: true, requiredPermissions: ['site:view'] },
   { reportableSiteName: true, requiredPermissions: ['site:view'] },
-  { reportableSiteId: true, requiredPermissions: ['site:view'] },
-  { deviceName: true, requiredPermissions: ['device'] },
-  { deviceType: true, requiredPermissions: [] },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
+  { deviceType: true, requiredPermissions: [] },
+  { date: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },
-  { displayResult: true, requiredPermissions: [] },
   { onlyReportableResults: true, requiredPermissions: ['assay:view'] },
   { onlyDownloadedByReporter: true, requiredPermissions: [] },
-  { onlyEverTransferred: true, requiredPermissions: [] },
+
   { onlyTreatmentRequired: true, requiredPermissions: [] },
+  //
+  { reportableSiteId: true, requiredPermissions: ['site:view'] },
+  { displayResult: true, requiredPermissions: [] },
+  { onlyEverTransferred: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
@@ -166,6 +174,7 @@ export const ResultListWithProps = ({
     <DetailHeader name={intl.formatMessage(messages.resultsTitle)} disableBack />
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.resultsTitle)} />
+      <ResultFilter />
       <DataTableCard key={`DataTableCard--table-Result-list---${location.key}`}>
         <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
           <BrowseFilters
