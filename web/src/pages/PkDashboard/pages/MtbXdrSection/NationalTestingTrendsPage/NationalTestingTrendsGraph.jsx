@@ -6,7 +6,6 @@ import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/TrendInYearsAllTestsGraph/TrendInYearsAllTestsGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
-import AnnualGraph from '../../../components/AnnualGraph'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -43,10 +42,7 @@ const NationalTestingTrendsGraph = () => {
       }
     >
       <Grid container sx={{ mt: 2 }}>
-        <AnnualGraph showLabel={showLabel} />
-        <Grid item xs={12} md={8} lg={8} container>
-          <TrendInYearsAllTestsGraph assaysFromState={assays} showLabel={showLabel} filterSelection={filter} />
-        </Grid>
+        <TrendInYearsAllTestsGraph assaysFromState={assays} showLabel={showLabel} filterSelection={filter} />
       </Grid>
     </PkPage>
   )
