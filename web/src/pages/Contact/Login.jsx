@@ -1,10 +1,10 @@
-import React from 'react'
-import { Grid, Box, Button, TextField, FormControlLabel, Checkbox } from '@mui/material'
+import React, { useState } from 'react'
+import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isEmpty from 'lodash/isEmpty'
 import { useNavigate } from 'react-router-dom'
-import { string, object, ref } from 'yup'
-import { LabeledSwitch, InputPassword } from '../../cleanComponents'
+import { object, ref, string } from 'yup'
+import { InputPassword, LabeledSwitch } from '../../cleanComponents'
 import Loading from '../../components/Loading'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePersonLogin from '../../hooks/person/useUpdatePersonLogin'
@@ -18,10 +18,10 @@ const Login = ({ setStep, id }) => {
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
+  const [canLogin, setCanLogin] = useState(person?.canLogIn)
   const { userId: loggedInUserId } = useAuthState()
 
   const initialValues = {
-    canLogIn: person?.canLogIn,
     username: person?.username || '',
     newPassword: '',
     confirmNewPassword: '',
@@ -35,7 +35,6 @@ const Login = ({ setStep, id }) => {
     .matches(/\d/, formatMessage(messages.passwordConditionsShouldFulfilled))
 
   const validationSchema = object({
-    canLogIn: id === ACTION.SELF ? string().nullable() : string().required(formatMessage(messages.required)),
     username: string().required(formatMessage(messages.usernameRequired)),
     newPassword:
       id === ACTION.ADD ? pwdValidation.required(formatMessage(messages.confirmNewPasswordRequired)) : pwdValidation,
@@ -92,19 +91,18 @@ const Login = ({ setStep, id }) => {
                         <Checkbox
                           id="canLogIn"
                           name="canLogIn"
-                          checked={values.canLogIn === 1}
+                          checked={canLogin === 1}
                           onChange={e => {
                             const { checked } = e.target
-                            if (!checked)
+                            if (!checked) {
                               updateLogin({
                                 newUsername: values.username,
                                 newPassword: values.newPassword,
                                 userLockedOut: true,
                               })
-                            handleChange({ target: { name: 'canLogIn', value: checked ? 1 : 0 } })
+                            }
+                            setCanLogin(checked ? 1 : 0)
                           }}
-                          error={errors.canLogIn ? errors.canLogIn : undefined}
-                          helperText={errors.canLogIn}
                         />
                       }
                       label={`${formatMessage(messages.userCanAlsoLogIn)} *`}
@@ -114,7 +112,7 @@ const Login = ({ setStep, id }) => {
                     <TextField
                       id="username"
                       name="username"
-                      disabled={values.canLogIn !== 1}
+                      disabled={canLogin !== 1}
                       label={`${formatMessage(messages.username)} *`}
                       value={values.username}
                       onChange={handleChange}
@@ -127,7 +125,7 @@ const Login = ({ setStep, id }) => {
                       <LabeledSwitch
                         id="userLockedOut"
                         name="userLockedOut"
-                        disabled={values.canLogIn !== 1}
+                        disabled={canLogin !== 1}
                         label={`${formatMessage(messages.userLockedOut)} *`}
                         value={values.userLockedOut === 1}
                         onChange={e =>
@@ -144,7 +142,7 @@ const Login = ({ setStep, id }) => {
                     <InputPassword
                       id="newPassword"
                       name="newPassword"
-                      disabled={values.canLogIn !== 1}
+                      disabled={canLogin !== 1}
                       label={`${formatMessage(messages.newPassword)}`}
                       value={values.newPassword}
                       onChange={handleChange}
@@ -156,7 +154,7 @@ const Login = ({ setStep, id }) => {
                     <InputPassword
                       id="confirmNewPassword"
                       name="confirmNewPassword"
-                      disabled={values.canLogIn !== 1}
+                      disabled={canLogin !== 1}
                       label={`${formatMessage(messages.confirmNewPassword)}`}
                       value={values.confirmNewPassword}
                       onChange={handleChange}
@@ -171,12 +169,12 @@ const Login = ({ setStep, id }) => {
                   ) : null}
 
                   <Box sx={{ flex: '1 1 auto' }} />
-                  {dirty ? (
+                  {dirty && canLogin ? (
                     <Button type="submit" disabled={!isValid}>
-                      {formatMessage(messages.save)}
+                      {formatMessage(messages.save)} {isValid}
                     </Button>
                   ) : (
-                    <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.next)}</Button>
+                    <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
                   )}
                 </Box>
               </form>
