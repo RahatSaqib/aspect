@@ -1,5 +1,3 @@
-module.exports = require('../utils').seed(seed, __filename)
-
 const { adminName } = require('./fixtures/partnerData')
 const { upsertGxAlertDevice } = require('../common')
 
