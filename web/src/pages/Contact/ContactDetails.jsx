@@ -105,6 +105,7 @@ const ContactDetails = ({ setStep, id }) => {
               'userId',
               'username',
               'userLockedOut',
+              'canLogIn',
             ]
             values.tags = (values.tags || []).join(',')
             noField.map(f => delete values[f])

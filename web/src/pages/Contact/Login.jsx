@@ -18,7 +18,7 @@ const Login = ({ setStep, id }) => {
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
-  const [canLogin, setCanLogin] = useState(person?.canLogIn)
+  const [canLogIn, setCanLogin] = useState(person?.canLogIn)
   const { userId: loggedInUserId } = useAuthState()
 
   const initialValues = {
@@ -67,6 +67,7 @@ const Login = ({ setStep, id }) => {
           onSubmit={values => {
             updateLogin(
               {
+                canLogIn: !!canLogIn,
                 newUsername: values.username,
                 newPassword: values.newPassword,
                 userLockedOut: values.userLockedOut === 1,
@@ -91,7 +92,7 @@ const Login = ({ setStep, id }) => {
                         <Checkbox
                           id="canLogIn"
                           name="canLogIn"
-                          checked={canLogin === 1}
+                          checked={canLogIn === 1}
                           onChange={e => {
                             const { checked } = e.target
                             if (!checked) {
@@ -112,7 +113,7 @@ const Login = ({ setStep, id }) => {
                     <TextField
                       id="username"
                       name="username"
-                      disabled={canLogin !== 1}
+                      disabled={canLogIn !== 1}
                       label={`${formatMessage(messages.username)} *`}
                       value={values.username}
                       onChange={handleChange}
@@ -125,7 +126,7 @@ const Login = ({ setStep, id }) => {
                       <LabeledSwitch
                         id="userLockedOut"
                         name="userLockedOut"
-                        disabled={canLogin !== 1}
+                        disabled={canLogIn !== 1}
                         label={`${formatMessage(messages.userLockedOut)} *`}
                         value={values.userLockedOut === 1}
                         onChange={e =>
@@ -142,7 +143,7 @@ const Login = ({ setStep, id }) => {
                     <InputPassword
                       id="newPassword"
                       name="newPassword"
-                      disabled={canLogin !== 1}
+                      disabled={canLogIn !== 1}
                       label={`${formatMessage(messages.newPassword)}`}
                       value={values.newPassword}
                       onChange={handleChange}
@@ -154,7 +155,7 @@ const Login = ({ setStep, id }) => {
                     <InputPassword
                       id="confirmNewPassword"
                       name="confirmNewPassword"
-                      disabled={canLogin !== 1}
+                      disabled={canLogIn !== 1}
                       label={`${formatMessage(messages.confirmNewPassword)}`}
                       value={values.confirmNewPassword}
                       onChange={handleChange}
@@ -169,7 +170,7 @@ const Login = ({ setStep, id }) => {
                   ) : null}
 
                   <Box sx={{ flex: '1 1 auto' }} />
-                  {dirty && canLogin ? (
+                  {dirty ? (
                     <Button type="submit" disabled={!isValid}>
                       {formatMessage(messages.save)} {isValid}
                     </Button>
