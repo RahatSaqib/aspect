@@ -5,6 +5,10 @@ import { defineMessages } from 'react-intl'
 import useI18n from '../../hooks/useI18n'
 
 const messages = defineMessages({
+  optionAll: {
+    id: 'pages.displayResultSelectField.All',
+    defaultMessage: 'All',
+  },
   optionActual: {
     id: 'pages.displayResultSelectField.Actual',
     defaultMessage: 'Actual',
@@ -41,6 +45,7 @@ const DisplayResultSelect = ({ id, name, label, value, onChange, error, helperTe
         ),
       }}
     >
+      <MenuItem value="all">{formatMessage(messages.optionAll)}</MenuItem>
       <MenuItem value="actual">{formatMessage(messages.optionActual)}</MenuItem>
       <MenuItem value="excluded">{formatMessage(messages.optionExcluded)}</MenuItem>
     </TextField>

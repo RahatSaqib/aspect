@@ -20,7 +20,7 @@ const defaultFilter = {
   '/browse/notification': {}, // half-done
   '/browse/person': { contactStatus: 0 }, // half-done
   '/browse/reporter': { minDate, maxDate }, // done
-  '/browse/result': {},
+  '/browse/result': {}, // done
   '/browse/site': {}, // done
   '/reports': {}, // done
 }

@@ -7,242 +7,50 @@ import { MdClose } from 'react-icons/md'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceApprovalType from '../../hooks/device/useDeviceApprovalType'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
-import useResultCategoryGroup from '../../hooks/device/useResultCategoryGroup'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 import useConsumable from '../../hooks/inventory/useConsumable'
+import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
+import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
+import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
 import useI18n from '../../hooks/useI18n'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
 import messages from './messages'
 
-// const revokedOptions = [
-//   { id: '0', name: 'false' },
-//   { id: '1', name: 'true' },
-// ]
-// // see values for names in `./messages.js`
-// const displayResultOptions = [
-//   { id: 'all', name: 'displayAllResults' },
-//   { id: 'actual', name: 'displayActualResults' },
-//   { id: 'excluded', name: 'displayExcludedResults' },
-// ]
-
-// const getResultCategoryNameFromDisease = (assayItems, filterDiseaseId, resultCategoryId) => {
-//   const assayIds = isArray(filterDiseaseId) ? filterDiseaseId : [filterDiseaseId]
-//   const assaysMatchingDisease = assayItems.toJS().filter(i => assayIds.includes(i.diseaseId) && i.hasResults)
-//   const matchingCategory = assaysMatchingDisease.length
-//     ? assaysMatchingDisease[0].resultCategories.find(el => el.id === resultCategoryId)
-//     : { i18nKey: '' }
-//   return matchingCategory.i18nKey
-// }
-
-// const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
-//   //
-//   const assayIds = isArray(filterAssayId) ? filterAssayId : [filterAssayId]
-//   return assayItems
-//     .find(it => assayIds.includes(it.get('id')), EMPTY_CONTEXT, EMPTY_MAP)
-//     .get('resultCategories', EMPTY_MAP)
-//     .find(it => it.get('id') === resultCategoryId, EMPTY_CONTEXT, EMPTY_MAP)
-//     .get('i18nKey', '')
-// }
-
-// const FiltersBtnGroup = ({ children, ...restProps }) => {
-//   const { formatMessage, format } = useI18n()
-//   const { dateFormat } = getAspectDisplayPreferences().toJS()
-
-//   const { data: deviceTypes } = useDeviceTypeList()
-
-//   const buttonBy = {
-//     diseaseId: makeButton((diseaseId, { diseaseItems }) =>
-//       diseaseItems.find(it => it.get('id') === diseaseId, EMPTY_CONTEXT, EMPTY_MAP).get('name')
-//     ),
-//     partnerId: makeButton((partnerId, { partnerItems }) =>
-//       formatMessage(messages.partnerId, {
-//         partnerName: partnerItems.find(it => it.get('id') === partnerId, EMPTY_CONTEXT, EMPTY_MAP).get('name'),
-//       })
-//     ),
-//     patientOrResearchId: makeButton(patientOrResearchId =>
-//       formatMessage(messages.patientOrResearchId, { patientOrResearchId })
-//     ),
-//     patientOrCaseId: makeButton(patientOrCaseId => formatMessage(messages.patientOrCaseId, { patientOrCaseId })),
-//     sampleId: makeButton(sampleId => formatMessage(messages.sampleId, { sampleId })),
-//     siteId: makeButton(siteId =>
-//       formatMessage(messages.whereSiteIdIncludes, {
-//         siteId,
-//       })
-//     ),
-//     resultCategory2Id: makeButton((resultCategory2Id, { filters, assayItems }) =>
-//       formatMessage(messages.withResultCategory, {
-//         resultCategoryName: formatMessage(
-//           messages[getResultCategoryName(assayItems, filters.assayId, resultCategory2Id)]
-//         ),
-//       })
-//     ),
-//     errorCode: makeButton(errorCode => formatMessage(messages.errorCode, { errorCode })),
-//     reportableSiteName: makeButton((reportableSiteName, { filters }) => {
-//       const message = filters.reportableSiteId
-//         ? messages.whereReportableSiteName
-//         : messages.whereReportableSiteNameIncludes
-//       return formatMessage(message, { reportableSiteName })
-//     }),
-//     reportableSiteId: (filterKey, props) => {
-//       /**
-//        * if filters.reportableSiteName is defined then skip processing of filters.reportableSiteId
-//        * because this value will be used when showing button for filters.reportableSiteName
-//        */
-//       if (props.filters.reportableSiteName) {
-//         return null
-//       }
-//       /**
-//        * if filters.reportableSiteName is missing then treat filters.reportableSiteId
-//        * as separate (visible) filter button
-//        */
-//       return makeButton(reportableSiteId =>
-//         formatMessage(messages.whereReportableSiteIdIncludes, {
-//           reportableSiteId,
-//         })(filterKey, props)
-//       )
-//     },
-//     // eslint-disable-next-line no-empty-pattern
-//     sampleOriginSite: makeButton((sampleOriginSiteId, {}) =>
-//       formatMessage(messages.sampleOriginSite, {
-//         sampleOriginSiteName: sampleOriginSiteId,
-//       })
-//     ),
-//     workflowStatusId: makeButton((workflowStatusId, { workflowStatusItems }) =>
-//       formatMessage(messages.withWorkflowStatus, {
-//         workflowStatusName: formatMessage(
-//           messages[
-//             workflowStatusItems.find(it => it.get('id') === workflowStatusId, EMPTY_CONTEXT, EMPTY_MAP).get('i18nKey')
-//           ]
-//         ),
-//       })
-//     ),
-//     treatmentStatus: makeButton((treatmentStatus, { treatmentStatusItems }) =>
-//       formatMessage(messages.withTreatmentStatus, {
-//         treatmentStatusName: formatMessage(
-//           messages[
-//             treatmentStatusItems
-//               .find(it => it.get('externalId') === treatmentStatus, EMPTY_CONTEXT, EMPTY_MAP)
-//               .get('i18nKey')
-//           ]
-//         ),
-//       })
-//     ),
-//     deviceTypeId: makeButton(deviceTypeId =>
-//       formatMessage(messages.withDeviceType, {
-//         deviceTypeName: deviceTypes?.find(it => it.id === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)?.name,
-//       })
-//     ),
-//     displayResult: makeButton(displayResult =>
-//       formatMessage(messages.withDisplayResult, {
-//         displayResult: formatMessage(
-//           messages[displayResultOptions.find(it => it.id === displayResult, EMPTY_CONTEXT, EMPTY_MAP).name]
-//         ),
-//       })
-//     ),
-//     revoked: makeButton(revoked =>
-//       formatMessage(messages.withRevoked, {
-//         revokedStatus: revokedOptions.find(it => it.id === revoked, EMPTY_CONTEXT, EMPTY_MAP).name,
-//       })
-//     ),
-//     // Special keys
-//     deviceIds: makeButton(deviceIds =>
-//       formatMessage(messages.whereDeviceIdIsIn, {
-//         joinedIds: deviceIds,
-//       })
-//     ),
-//     siteIds: makeButton(siteIds =>
-//       formatMessage(messages.whereSiteIdIsIn, {
-//         joinedIds: siteIds,
-//       })
-//     ),
-//     onlyReportableResults: makeButton(() => formatMessage(messages.onlyReportableResults)),
-//     onlyDownloadedByReporter: makeButton(() => formatMessage(messages.onlyDownloadedByReporter)),
-//     onlyEverTransferred: makeButton(() => formatMessage(messages.onlyEverTransferred)),
-//     onlyTreatmentRequired: makeButton(() => formatMessage(messages.onlyTreatmentRequired)),
-//     issueTypeId: makeButton(issueTypeId =>
-//       formatMessage(messages.deviceIssueType, {
-//         issueTypeId: startCase(issueTypeId),
-//       })
-//     ),
-//     daysStockLeft: makeButton(daysStockLeft => formatMessage(messages[daysStockLeft])),
-//   }
-//   return (
-//     <div>
-//       {children}
-//       {Immutable.Map(restProps.filters)
-//         .keySeq()
-//         .sortBy(filterKey => filtersOrdering[filterKey])
-//         .map(filterKey => buttonBy[filterKey](filterKey, restProps))}
-//     </div>
-//   )
-// }
-
-// export const Viejo = connect(
-//   state => ({
-//     siteItemsById: state.site.selectList.items,
-//     countryItems: state.geography.countriesForLocationSelector.items,
-//     countries: state.geography.countriesForLocationSelector,
-//     consumableItems: state.consumable.consumables.items,
-//     assayItems: state.assay.items,
-//     resultCategoryGroupItems: state.resultCategoryGroup.items,
-//     partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
-//     workflowStatusItems: state.resultWorkflowStatus.items,
-//     treatmentStatusItems: state.resultTreatmentStatus.items,
-//     deviceApprovalItems: state.deviceApproval.items,
-//     deviceTypeItems: state.deviceType.selectList.items,
-//     diseaseItems: state.disease.diseases.items,
-//     deviceMaintenanceStatusItems: state.deviceMaintenanceStatus.items,
-//   }),
-//   null
-// )(FiltersBtnGroup)
-
 const filtersOrdering = {
-  assayId: 4,
-  diseaseId: 3,
-  countryId: 1,
   breakOutByLot: 1,
   stateId: 2,
   lgaId: 3,
-  minDate: 18,
-  maxDate: 19,
-  minExpirationDate: 40,
-  maxExpirationDate: 41,
-  partnerId: 8,
-  patientOrResearchId: 10,
-  sampleId: 9,
-  errorCode: 6,
-  deviceName: 11,
+  assayId: 4,
   resultCategoryId: 5,
-  resultCategory2Id: 6,
-  siteName: 12,
-  reportableSiteName: 33,
-  reportableSiteId: 33,
-  sampleOriginSite: 13,
-  contactNameOrEmail: 14,
-  contactStatus: 15,
+  errorCode: 6,
   consumableId: 7,
+  sampleId: 8,
+  patientOrResearchId: 9,
+  deviceName: 10,
+  siteName: 11,
+  sampleOriginSite: 12,
+  contactNameOrEmail: 13,
+  externalId: 14,
+  contactStatus: 15,
   workflowStatusId: 16,
   deviceApprovalId: 17,
-  externalId: 15,
+  minDate: 18,
+  maxDate: 19,
   notificationName: 20,
-  revoked: 21,
-  treatmentStatus: 22,
-  siteId: 23,
-  // -1: Special orderings
-  siteIds: -1,
-  patientOrCaseId: 23,
-  onlyReportableResults: 23,
-  onlyTreatmentRequired: 33,
-  onlyDownloadedByReporter: 35,
-  onlyTransfers: 36,
-  onlyEverTransferred: 34,
-  issueTypeId: 24,
-  daysStockLeft: 31,
-  reportName: 32,
-  lotNumber: 33,
-  hasStock: 34,
+  treatmentStatus: 21,
+  onlyReportableResults: 22,
+  reportName: 23,
+  onlyTreatmentRequired: 24,
+  reportableSiteId: 25,
+  reportableSiteName: 26,
+  lotNumber: 27,
+  hasStock: 28,
+  onlyDownloadedByReporter: 29,
+  onlyTransfers: 30,
+  minExpirationDate: 31,
+  maxExpirationDate: 32,
 }
 
 const emptyFilter = filter => {
@@ -283,9 +91,10 @@ const buttonMapping = {
       remove={remove}
     />
   ),
-  resultCategoryGroupId: ({ resultCategoryGroupId, assayOverride, remove }) => (
+  resultCategoryGroupId: ({ resultCategoryGroupId, assayId, assayOverride, remove }) => (
     <ResultCategoryGroupId
       resultCategoryGroupId={resultCategoryGroupId}
+      assayId={assayId}
       assayOverride={assayOverride}
       remove={remove}
     />
@@ -323,10 +132,41 @@ const buttonMapping = {
   connectorStatus: ({ connectorStatus, remove }) => (
     <ConnectorStatus connectorStatus={connectorStatus} remove={remove} />
   ),
-  //
+  errorCode: ({ errorCode, remove }) => <ErrorCode errorCode={errorCode} remove={remove} />,
+  patientOrResearchId: ({ patientOrResearchId, remove }) => (
+    <PatientOrResearchId patientOrResearchId={patientOrResearchId} remove={remove} />
+  ),
+  sampleId: ({ sampleId, remove }) => <SampleId sampleId={sampleId} remove={remove} />,
+  reportableSiteName: ({ reportableSiteName, reportableSiteId, remove }) => (
+    <ReportableSiteName reportableSiteName={reportableSiteName} reportableSiteId={reportableSiteId} remove={remove} />
+  ),
+  reportableSiteId: ({ reportableSiteName, reportableSiteId, remove }) => (
+    <ReportableSiteId reportableSiteName={reportableSiteName} reportableSiteId={reportableSiteId} remove={remove} />
+  ),
+  sampleOriginSite: ({ sampleOriginSite, remove }) => (
+    <SampleOriginSiteId sampleOriginSite={sampleOriginSite} remove={remove} />
+  ),
+  workflowStatusId: ({ workflowStatusId, remove }) => (
+    <WorkflowStatusId workflowStatusId={workflowStatusId} remove={remove} />
+  ),
+  treatmentStatus: ({ treatmentStatus, remove }) => (
+    <TreatmentStatus treatmentStatus={treatmentStatus} remove={remove} />
+  ),
+  displayResult: ({ displayResult, remove }) => <DisplayResult displayResult={displayResult} remove={remove} />,
+  onlyReportableResults: ({ remove }) => <OnlyReportableResults remove={remove} />,
+  onlyDownloadedByReporter: ({ remove }) => <OnlyDownloadedByReporter remove={remove} />,
+  onlyTreatmentRequired: ({ remove }) => <OnlyTreatmentRequired remove={remove} />,
+
   assayOverride: () => null,
   singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
 }
+
+const Btn = ({ lbl, del }) => (
+  <Button color="secondary" variant="contained" onClick={del} sx={{ m: '2px' }}>
+    {lbl.charAt(0).toUpperCase() + lbl.slice(1)}
+    {del ? <MdClose style={{ marginLeft: '5px' }} /> : null}
+  </Button>
+)
 
 const StateId = ({ countryId, stateId, remove }) => {
   const { data } = useStatesByCountry(countryId)
@@ -375,20 +215,20 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
   return null
 }
 
-const ResultCategoryGroupId = ({ resultCategoryGroupId, assayOverride, remove }) => {
+const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, remove }) => {
   const { formatMessage } = useI18n()
-  const { data: resultCategoryGroups } = useResultCategoryGroup()
+  const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
   if (resultCategoryGroupId && resultCategoryGroups) {
-    const message = messages[resultCategoryGroups.find(it => it.externalId === resultCategoryGroupId).i18nKey]
+    const msg = assayOverride
+      ? `"${startCase(assayOverride)}"`
+      : formatMessage(messages[resultCategoryGroups.find(it => it.externalId === resultCategoryGroupId).i18nKey])
 
-    const msg = assayOverride ? `"${startCase(assayOverride)}"` : message
-
-    return assayOverride && msg ? (
+    return (
       <Btn
         lbl={formatMessage(messages.withResultCategoryGroup, { resultCategoryGroupName: msg })}
         del={() => remove(['resultCategoryGroupId'])}
       />
-    ) : null
+    )
   }
   return null
 }
@@ -574,9 +414,123 @@ const ConnectorStatus = ({ connectorStatus, remove }) => {
   )
 }
 
-const Btn = ({ lbl, del }) => (
-  <Button color="secondary" variant="contained" onClick={del} sx={{ m: '2px' }}>
-    {lbl.charAt(0).toUpperCase() + lbl.slice(1)}
-    {del ? <MdClose style={{ marginLeft: '5px' }} /> : null}
-  </Button>
-)
+const ErrorCode = ({ errorCode, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.errorCode, { errorCode })} del={() => remove(['errorCode'])} />
+}
+
+const PatientOrResearchId = ({ patientOrResearchId, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.patientOrResearchId, { patientOrResearchId })}
+      del={() => remove(['patientOrResearchId'])}
+    />
+  )
+}
+
+const SampleId = ({ sampleId, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.sampleId, { sampleId })} del={() => remove(['sampleId'])} />
+}
+
+const ReportableSiteName = ({ reportableSiteName, reportableSiteId, remove }) => {
+  const { formatMessage } = useI18n()
+  const message = reportableSiteId ? messages.whereReportableSiteName : messages.whereReportableSiteNameIncludes
+  return (
+    <Btn
+      lbl={formatMessage(message, { reportableSiteName })}
+      del={() => remove(['reportableSiteName', 'reportableSiteId'])}
+    />
+  )
+}
+
+const ReportableSiteId = ({ reportableSiteName, reportableSiteId, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return !reportableSiteName ? (
+    <Btn
+      lbl={formatMessage(messages.whereReportableSiteIdIncludes, { reportableSiteId })}
+      del={() => remove(['reportableSiteId'])}
+    />
+  ) : null
+}
+
+const SampleOriginSiteId = ({ sampleOriginSite, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.sampleOriginSite, { sampleOriginSiteName: sampleOriginSite })}
+      del={() => remove(['sampleOriginSite'])}
+    />
+  )
+}
+
+const WorkflowStatusId = ({ workflowStatusId, remove }) => {
+  const { formatMessage } = useI18n()
+  const { data } = useWorkflowStatus()
+
+  if (data) {
+    const wfName = data.find(it => it.id === workflowStatusId).i18nKey
+
+    return (
+      <Btn
+        lbl={formatMessage(messages.withWorkflowStatus, { workflowStatusName: formatMessage(messages[wfName]) })}
+        del={() => remove(['workflowStatusId'])}
+      />
+    )
+  }
+  return null
+}
+
+const TreatmentStatus = ({ treatmentStatus, remove }) => {
+  const { formatMessage } = useI18n()
+  const { data } = useTreatmentStatus()
+
+  if (data) {
+    const treatment = data.find(it => it.externalId === treatmentStatus).i18nKey
+
+    return (
+      <Btn
+        lbl={formatMessage(messages.withTreatmentStatus, { treatmentStatusName: formatMessage(messages[treatment]) })}
+        del={() => remove(['treatmentStatus'])}
+      />
+    )
+  }
+  return null
+}
+
+const DisplayResult = ({ displayResult, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.withDisplayResult, {
+        displayResult: formatMessage(
+          messages[`display${displayResult.charAt(0).toUpperCase() + displayResult.slice(1)}Results`]
+        ),
+      })}
+      del={() => remove(['displayResult'])}
+    />
+  )
+}
+
+const OnlyReportableResults = ({ remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.onlyReportableResults)} del={() => remove(['onlyReportableResults'])} />
+}
+const OnlyDownloadedByReporter = ({ remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.onlyDownloadedByReporter)} del={() => remove(['onlyDownloadedByReporter'])} />
+}
+const OnlyTreatmentRequired = ({ remove }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={formatMessage(messages.onlyTreatmentRequired)} del={() => remove(['onlyTreatmentRequired'])} />
+}

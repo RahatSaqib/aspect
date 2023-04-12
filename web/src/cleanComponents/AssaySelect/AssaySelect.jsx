@@ -16,6 +16,7 @@ const AssaySelect = ({
   disabled,
   assayTypeId,
   deviceTypeId,
+  reportGroup,
   onlyResults = false,
 }) => {
   const { isLoading, data: assayList } = useAssayList()
@@ -43,7 +44,15 @@ const AssaySelect = ({
       helperText={helperText}
       select
       value={value}
-      onChange={onChange}
+      onChange={e => {
+        if (reportGroup) {
+          const assayId = e.target.value
+          const { resultCategory2Label } = data.find(e => e.id === assayId)
+          onChange({ target: { value: { id: assayId, resultCategory2Label } } })
+        } else {
+          onChange(e)
+        }
+      }}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{

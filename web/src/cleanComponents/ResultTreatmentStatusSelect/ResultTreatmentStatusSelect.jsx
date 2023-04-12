@@ -37,7 +37,7 @@ const ResultTreatmentStatusSelect = ({ id, name, label, value, onChange, error, 
         }}
       >
         {treatmentStatuses.map(c => (
-          <MenuItem key={c.value} value={c.value}>
+          <MenuItem key={c.externalId} value={c.externalId}>
             {formatMessage(resultTreatmentStatusMessages[c.i18nKey])}
           </MenuItem>
         ))}

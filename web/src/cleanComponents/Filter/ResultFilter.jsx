@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Grid, TextField } from '@mui/material'
+import { Grid, TextField, Checkbox, FormControlLabel } from '@mui/material'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useI18n from '../../hooks/useI18n'
@@ -8,7 +8,18 @@ import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
-import { StateSelect, LgaSelect, PeriodSelector, DeviceTypeSelect, ResultWorkflowStatusSelect } from '../index'
+import {
+  StateSelect,
+  LgaSelect,
+  AssaySelect,
+  PeriodSelector,
+  DeviceTypeSelect,
+  ResultWorkflowStatusSelect,
+  ResultTreatmentStatusSelect,
+  DisplayResultSelect,
+  ResultCategorySelect,
+  ResultCategoryGroupSelect,
+} from '../index'
 import FilterContainer from './FilterContainer'
 
 const ResultFilter = () => {
@@ -17,6 +28,7 @@ const ResultFilter = () => {
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
+  const [categoryDisplay, setCategoryDisplay] = useState(null)
 
   const a = r => isPermittedUser(user.userPermissions, { required: r })
 
@@ -41,58 +53,39 @@ const ResultFilter = () => {
         </Grid>
         {a(['assay:view']) ? (
           <>
-            {/* <Grid item xs={3}>
+            <Grid item xs={3}>
               <AssaySelect
                 label={formatMessage(messages.assay)}
                 value={state.assayId}
-                onChange={e =>
-                  setState({ ...state, assayId: e.target.value, resultCategoryId: null, resultCategoryGroupId: null })
-                }
+                onChange={e => {
+                  const val = e.target.value
+                  setCategoryDisplay(val.resultCategory2Label)
+                  setState({ ...state, assayId: val.id, resultCategoryId: null, resultCategoryGroupId: null })
+                }}
                 onlyResults
+                reportGroup
               />
-            </Grid> */}
-            {/* <Grid item xs={3}>
-              <DiseaseSelect
-                label={formatMessage(messages.disease)}
-                value={state.diseaseId}
-                onChange={diseaseId => setState({ ...state, diseaseId })}
-                onlyWithResults
-              />
-            </Grid> */}
-            {/* <Grid item xs={3}>
-              {!assayResultCategory2Label && config.resultCategory && !config.onlyDisease && (
-                <div className={cssClasses('Control')}>
-                  <ResultCategorySelectField
-                    allItemText={formatMessage(messages.all)}
-                    disabled={!v.assayId}
-                    assayId={v.assayId}
-                    value={v.resultCategoryId}
-                    onResultCategoryChange={resultCategoryId => sV({ ...v, resultCategoryId })}
-                    floatingLabelFixed
-                    hintText={formatMessage(messages.selectResult)}
-                    floatingLabelText={formatMessage(messages.result)}
-                    style={{ verticalAlign: 'bottom' }}
-                  />
-                </div>
-              )} 
-            </Grid> 
-            <Grid item xs={3}>
-              {assayResultCategory2Label && config.resultCategoryGroup && !config.onlyDisease && (
-                <div className={cssClasses('Control', 'Control--wide')}>
-                  <ResultCategoryGroupSelectField
-                    allItemText={formatMessage(messages.all)}
-                    disabled={!v.assayId}
-                    assayId={v.assayId}
-                    value={v.resultCategoryGroupId}
-                    onResultCategoryGroupChange={resultCategoryGroupId => sV({ ...v, resultCategoryGroupId })}
-                    floatingLabelFixed
-                    hintText={formatMessage(messages.selectResult)}
-                    floatingLabelText={formatMessage(messages.resultGroup)}
-                    style={{ verticalAlign: 'bottom' }}
-                  />
-                </div>
-              )}
-            </Grid> */}
+            </Grid>
+            {!categoryDisplay || state.resultCategoryId ? (
+              <Grid item xs={3}>
+                <ResultCategorySelect
+                  label={formatMessage(messages.result)}
+                  value={state.resultCategoryId}
+                  onChange={e => setState({ ...state, resultCategoryId: e.target.value })}
+                  assayId={state.assayId}
+                />
+              </Grid>
+            ) : null}
+            {categoryDisplay || state.resultCategoryGroupId ? (
+              <Grid item xs={3}>
+                <ResultCategoryGroupSelect
+                  label={formatMessage(messages.resultGroup)}
+                  value={state.resultCategoryGroupId}
+                  onChange={e => setState({ ...state, resultCategoryGroupId: e.target.value })}
+                  assayId={state.assayId}
+                />
+              </Grid>
+            ) : null}
           </>
         ) : null}
         <Grid item xs={3}>
@@ -169,7 +162,7 @@ const ResultFilter = () => {
           <ResultWorkflowStatusSelect
             label={formatMessage(messages.workflowStatus)}
             value={state.workflowStatusId}
-            onChange={workflowStatusId => setState({ ...state, workflowStatusId })}
+            onChange={e => setState({ ...state, workflowStatusId: e.target.value })}
           />
         </Grid>
         <Grid item xs={3}>
@@ -187,19 +180,21 @@ const ResultFilter = () => {
             onChange={dateValues => setState({ ...state, ...dateValues })}
           />
         </Grid>
-        {/*
         <Grid item xs={3}>
-          <ResultTreatmentStatusSelectField
-            allItemText={formatMessage(messages.all)}
-            value={v.treatmentStatus}
-            onTreatmentStatusChange={treatmentStatus => sV({ ...v, treatmentStatus })}
-            floatingLabelFixed
-            hintText={formatMessage(messages.selectTreatmentStatus)}
-            floatingLabelText={formatMessage(messages.treatmentStatus)}
-            style={{ verticalAlign: 'bottom' }}
-            autoWidth
+          <ResultTreatmentStatusSelect
+            label={formatMessage(messages.treatmentStatus)}
+            value={state.treatmentStatus}
+            onChange={e => setState({ ...state, treatmentStatus: e.target.value })}
           />
         </Grid>
+        <Grid item xs={3}>
+          <DisplayResultSelect
+            label={formatMessage(messages.displayResult)}
+            value={state.displayResult}
+            onChange={e => setState({ ...state, displayResult: e.target.value })}
+          />
+        </Grid>
+
         {a(['site:view']) ? (
           <Grid item xs={3}>
             <FormControlLabel
@@ -237,7 +232,7 @@ const ResultFilter = () => {
             label={formatMessage(messages.onlyTreatmentRequired)}
             sx={{ m: 2 }}
           />
-        </Grid> */}
+        </Grid>
       </Grid>
     </FilterContainer>
   )
