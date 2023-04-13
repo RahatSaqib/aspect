@@ -9,8 +9,7 @@ async function getEmailUse(dataConstraints, params) {
     .select(
       'nt.name as notification',
       'p.name as recipient',
-      'p.cell as mobilePhone',
-      'p.email',
+      'm.to as email',
       'm.subject',
       'm.body',
       'm.updatedOn as sentOn',
