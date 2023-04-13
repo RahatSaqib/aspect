@@ -47,11 +47,11 @@ const PersonTableRow = ({ person, personEditPermission, ...restProps }) => {
       onClick={evt => rowClickHandler(evt, restProps.onClick)}
       className={cssClasses(restProps.className)}
     >
-      <TableCell>{person.get('name')}</TableCell>
-      <TableCell>{person.get('level')}</TableCell>
-      <TableCell>{person.get('state')}</TableCell>
-      <TableCell>{person.get('lga')}</TableCell>
-      <TableCell>{formatTags(person.get('tags'))}</TableCell>
+      <TableCell>{person.name}</TableCell>
+      <TableCell>{person.level}</TableCell>
+      <TableCell>{person.state}</TableCell>
+      <TableCell>{person.lga}</TableCell>
+      <TableCell>{formatTags(person.tags)}</TableCell>
       {personEditPermission ? (
         <AccountEnableDisable type="icon" person={person} />
       ) : (

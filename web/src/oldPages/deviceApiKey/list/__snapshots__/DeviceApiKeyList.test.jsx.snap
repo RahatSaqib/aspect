@@ -34,6 +34,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       encodeSpecialCharacters={true}
       title="Device API Keys"
     />
+    <DeviceApiKeyFilter />
     <div>
       <injectIntl(pure(Connect(lifecycle(recomposeForm(DeviceApiKeyGeneratorDialogForm)))))
         intl={
@@ -96,35 +97,13 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           }
         }
       >
-        <BrowseFilters
-          intl={
-            Object {
-              "formatDate": [Function],
-              "formatHTMLMessage": [Function],
-              "formatMessage": [Function],
-              "formatNumber": [Function],
-              "formatPlural": [Function],
-              "formatRelative": [Function],
-              "formatTime": [Function],
-              "now": [Function],
-            }
-          }
-          location={
-            Object {
-              "search": "",
-            }
-          }
-          navigate={[Function]}
-          onClickExport={[Function]}
-        >
-          <AspectExportListButton
-            disableCSV={false}
-            disableExcel={false}
-            onExport={[Function]}
-            reportName="DeviceApiKey"
-            visible={false}
-          />
-        </BrowseFilters>
+        <AspectExportListButton
+          disableCSV={false}
+          disableExcel={false}
+          onExport={[Function]}
+          reportName="DeviceApiKey"
+          visible={false}
+        />
       </div>
       <DataTableProgressBar
         disabled={true}
@@ -263,6 +242,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       encodeSpecialCharacters={true}
       title="Device API Keys"
     />
+    <DeviceApiKeyFilter />
     <div>
       <injectIntl(pure(Connect(lifecycle(recomposeForm(DeviceApiKeyGeneratorDialogForm)))))
         intl={
@@ -325,35 +305,13 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           }
         }
       >
-        <BrowseFilters
-          intl={
-            Object {
-              "formatDate": [Function],
-              "formatHTMLMessage": [Function],
-              "formatMessage": [Function],
-              "formatNumber": [Function],
-              "formatPlural": [Function],
-              "formatRelative": [Function],
-              "formatTime": [Function],
-              "now": [Function],
-            }
-          }
-          location={
-            Object {
-              "search": "",
-            }
-          }
-          navigate={[Function]}
-          onClickExport={[Function]}
-        >
-          <AspectExportListButton
-            disableCSV={false}
-            disableExcel={false}
-            onExport={[Function]}
-            reportName="DeviceApiKey"
-            visible={true}
-          />
-        </BrowseFilters>
+        <AspectExportListButton
+          disableCSV={false}
+          disableExcel={false}
+          onExport={[Function]}
+          reportName="DeviceApiKey"
+          visible={true}
+        />
       </div>
       <DataTableProgressBar
         disabled={true}

@@ -57,7 +57,7 @@ const AccountEnableDisable = props => {
 
   function handleDisablePrompt() {
     const { type, formik, person } = props
-    const personData = type === 'button' ? formik?.initialValues : person?.toJS()
+    const personData = type === 'button' ? formik?.initialValues : person
     setConfirmationData({ ...personData, type })
     setShowConfirmation(true)
   }
@@ -96,7 +96,7 @@ const AccountEnableDisable = props => {
               paddingLeft: '25px',
             }}
           >
-            {person.get('disabled') === 0 ? (
+            {person.disabled === 0 ? (
               <IconContainer icon={Person} style={{ color: 'green' }} action={handleDisablePrompt} />
             ) : (
               <IconContainer icon={PersonOff} style={{ color: 'red' }} action={handleDisablePrompt} />

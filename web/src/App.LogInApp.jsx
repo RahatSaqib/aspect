@@ -28,7 +28,7 @@ const NotificationDetail = lazy(() => import('./pages/Notification/NotificationF
 const NotificationDetailHistory = lazy(() => import('./pages/Notification/NotificationHistoryPage'))
 const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
 const OperationalData = lazy(() => import('./oldPages/dashboard/operational/OperationalData'))
-const PersonList = lazy(() => import('./oldPages/person/list/PersonList'))
+const PersonList = lazy(() => import('./pages/Person/List/PersonList'))
 const PkDashboard = lazy(() => import('./pages/PkDashboard'))
 const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
 const ReportIndex = lazy(() => import('./oldPages/report/page/ReportIndex'))

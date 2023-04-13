@@ -18,7 +18,7 @@ const defaultFilter = {
   '/browse/inventory/supplies': { hasStock: true }, // done
   '/browse/inventory/log': { minDate, maxDate }, // done
   '/browse/notification': {}, // half-done
-  '/browse/person': { contactStatus: 0 }, // half-done
+  '/browse/person': { contactStatus: 0 }, // done
   '/browse/reporter': { minDate, maxDate }, // done
   '/browse/result': {}, // done
   '/browse/site': {}, // done

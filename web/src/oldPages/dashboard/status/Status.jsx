@@ -2,11 +2,9 @@ import React, { useEffect, useMemo } from 'react'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useSelector, useDispatch } from 'react-redux'
-import { useLocation } from 'react-router-dom'
 import ErrorBoundary from '../../../components/ErrorBoundary'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
-import BrowseSiteDropdown from '../../../oldComponents/BrowseSiteDropdown'
 import { fetchAssays } from '../../../store/AssayRedux'
 import CovidResultGraph from '../Graphs/CovidResultGraph/CovidResultGraph'
 import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
@@ -31,7 +29,6 @@ import SummaryStatus from './SummaryStatus'
 const cssClasses = classnames.bind(styles)
 
 const Status = () => {
-  const location = useLocation()
   const { formatMessage } = useI18n()
   const dispatch = useDispatch()
 
@@ -59,9 +56,6 @@ const Status = () => {
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={formatMessage(messages.statusTitle)} />
-      <div className={cssClasses('FiltersGroup')}>
-        <BrowseSiteDropdown location={location} />
-      </div>
       <ErrorBoundary>
         <PermissionChecker permissions={['dashboard']}>
           <SummaryStatus className={cssClasses('Section--summary')} dashboard="home" />
