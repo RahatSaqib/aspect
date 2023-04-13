@@ -17,14 +17,25 @@ async function seed(knex) {
     .join('Site as s', 'r.reportableSiteId', 's.id')
     .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
-    .leftJoin('JobContext as jc', 'jc.siteId', 's.id')
+    .leftJoin('JobContext as jc', qb => {
+      qb.on('s.id', 'jc.siteId').andOn('dt.id', 'jc.deviceTypeId')
+    })
     .leftJoin('Job as j', 'jc.jobId', 'j.id')
     .leftJoin('JobFunction as jf', qb => {
       qb.on('j.jobFunctionId', 'jf.id').andOn(knex.raw(`jf.externalId = 'clinician'`))
     })
     .where('dt.externalId', 'molbioTruenat')
     .andWhere(qb => qb.whereNull('jf.id'))
-    .select('s.id', 's.partnerId', 's.shortName', 's.geographyId', 'g.countryId', 'c.culture', 'c.timezone')
+    .select(
+      's.id',
+      'a.deviceTypeId',
+      's.partnerId',
+      's.shortName',
+      's.geographyId',
+      'g.countryId',
+      'c.culture',
+      'c.timezone'
+    )
     .distinct()
   if (!isEmpty(truenatResultSites)) {
     const { id: adminId } = await knex('User').where('name', adminName).first('id')
@@ -79,6 +90,7 @@ async function seed(knex) {
         await knex('JobContext').insert({
           jobId: job.id,
           siteId: truenatResultSite.id,
+          deviceTypeId: truenatResultSite.deviceTypeId,
         })
       }
     })
