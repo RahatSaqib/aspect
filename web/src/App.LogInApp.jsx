@@ -14,7 +14,6 @@ import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchDiseases } from './store/DiseaseRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
-const CaseList = lazy(() => import('./oldPages/case/list/CaseList'))
 const ContactPage = lazy(() => import('./pages/Contact'))
 const DeviceApiKeyList = lazy(() => import('./oldPages/deviceApiKey/list/DeviceApiKeyList'))
 
@@ -192,8 +191,6 @@ const LogInApp = () => {
                 <Route path="/browse/device/workload" element={<DevicesWorkload />} />
               </>
             ) : null}
-
-            {a(['browse', 'case']) ? <Route path="/browse/case" element={<CaseList {...props} />} /> : null}
 
             {a(['browse', 'deviceApiKey']) ? (
               <Route path="/browse/deviceApiKey" element={<DeviceApiKeyList {...props} />} />
