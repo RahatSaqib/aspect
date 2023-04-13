@@ -24,7 +24,7 @@ async function seed(knex) {
     })
     .where('dt.externalId', 'molbioTruenat')
     .andWhere(qb => qb.whereNull('jf.id'))
-    .select('s.id', 's.partnerId', 's.shortName', 'c.culture')
+    .select('s.id', 's.partnerId', 's.shortName', 's.geographyId', 'g.countryId', 'c.culture', 'c.timezone')
     .distinct()
   if (!isEmpty(truenatResultSites)) {
     const { id: adminId } = await knex('User').where('name', adminName).first('id')
@@ -54,7 +54,12 @@ async function seed(knex) {
         ;[truenatClinician.id] = await knex('Person').insert({
           userId: truenatClinician.userId,
           name: truenatClinicianName,
+          geographyId: truenatResultSite.geographyId,
+          lastCountryId: truenatResultSite.countryId,
+          lastPartnerId: truenatResultSite.partnerId,
+          timezone: truenatResultSite.timezone,
           culture: truenatResultSite.culture,
+          canLogin: true,
           ...auditFields,
         })
       }
