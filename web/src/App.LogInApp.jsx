@@ -193,7 +193,7 @@ const LogInApp = () => {
             ) : null}
 
             {a(['browse', 'deviceApiKey']) ? (
-              <Route path="/browse/deviceApiKey" element={<DeviceApiKeyList {...props} />} />
+              <Route path="/browse/deviceApiKey" element={<DeviceApiKeyList />} />
             ) : null}
 
             {a(['browse', 'reporter']) ? <Route path="/browse/reporter" element={<ReporterList />} /> : null}
@@ -211,7 +211,7 @@ const LogInApp = () => {
               </>
             ) : null}
 
-            {a(['browse', 'person']) ? <Route path="/browse/person" element={<PersonList {...props} />} /> : null}
+            {a(['browse', 'person']) ? <Route path="/browse/person" element={<PersonList />} /> : null}
             {a(['browse', 'person:edit']) ? (
               <Route path="/browse/person/:personId/*" element={<ContactPage />} />
             ) : null}

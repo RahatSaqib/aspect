@@ -2,6 +2,7 @@ import React from 'react'
 import { TableBody, LinearProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
+import { useLocation, useNavigate } from 'react-router'
 import PersonFilter from '../../../cleanComponents/Filter/PersonFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
@@ -24,7 +25,9 @@ import styles from './PersonList.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const PersonList = ({ navigate, location }) => {
+export const PersonList = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
   const { formatMessage } = useI18n()
   const { userPermissions, user } = useAuthState()
   const filters = useFilterValues(location.pathname)
