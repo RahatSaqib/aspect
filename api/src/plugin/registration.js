@@ -1,6 +1,5 @@
 const { get, merge } = require('lodash')
 const Boom = require('@hapi/boom')
-const strategies = require('../inventory/strategies')
 const { postProcessMergeResult } = require('../deviceApi/result')
 
 const DEFAULT_SETTINGS = {
@@ -52,7 +51,7 @@ const plugins = {
     issueEscalations: {},
     dataCategories: {},
     filtersOpenIssues: require('../issue/filterConditions'),
-    inventoryStrategy: strategies,
+    inventoryStrategy: require('../inventory/strategies'),
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -154,6 +153,7 @@ const plugins = {
   },
   pakistan: {
     settings: require('./partner/Pakistan/settings'),
+    inventoryStrategy: require('./partner/Pakistan/inventoryStrategy'),
   },
 }
 

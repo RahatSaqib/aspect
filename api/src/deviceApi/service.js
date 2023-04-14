@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 
 const crypto = require('crypto')
 const { knex, transact } = require('../db')
+const { getUser } = require('../auth/service')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const { deviceApprovalToId, deviceTypeToPlugin, deviceMaintenanceTypeToId } = require('../shared/dictionary')
@@ -633,6 +634,8 @@ async function mergeResultWithContext(context) {
     pluginNames: plugins,
     payload,
     now,
+    messageContext,
+    userId,
   } = context
 
   const pluginContext = {
@@ -642,6 +645,8 @@ async function mergeResultWithContext(context) {
     deviceType,
     payload,
     now,
+    messageContext,
+    userId,
   }
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
@@ -764,7 +769,11 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
     return { error: Boom.internal('Device not assigned to partner') }
   }
 
+  const { id: userId } = await getUser(auth.credentials.name)
+
   const context = new DeviceApiContext({
+    auth,
+    userId,
     now,
     device,
     payload: request.payload,

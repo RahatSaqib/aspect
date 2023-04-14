@@ -3,7 +3,6 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
-const { increaseInventory, decreaseInventory } = require('../../inventory/service')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
@@ -19,6 +18,8 @@ const {
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
 const { mapPayloadWithCustomFields } = require('./customFields')
+const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/utils')
+
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -206,10 +207,13 @@ async function transformMergeResultPayload({ deviceId, payload, knex }) {
   return Promise.resolve(payload)
 }
 
-async function postProcessAddDeviceOperation({ device, payload, now, messageContext }) {
+async function postProcessAddDeviceOperation({ device, payload, now, messageContext, userId }) {
   let inventoryItemIds = []
   const inventoryChanges = _.get(payload, 'data.inventoryChanges')
   if (!_.isEmpty(inventoryChanges)) {
+    const { partnerId, id: deviceId } = device
+    const inventoryStrategy = await getInventoryStrategy({ partnerId, deviceId })
+
     const sortedInventoryChanges = _.sortBy(inventoryChanges, inventoryChange =>
       parseDateOrDefault(inventoryChange.dateChanged)
     )
@@ -225,7 +229,6 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
             const absoluteQuantity = Math.abs(inventoryChange.quantity)
             const isDecrease =
               (matchingConsumableReason.reset && inventoryChange.quantity < 0) || matchingConsumableReason.decrease
-            const adjustInventory = isDecrease ? decreaseInventory : increaseInventory
             if (!device.siteId && device.id) {
               const deviceData = await getDevice(device.id)
               device.siteId = deviceData.siteId
@@ -233,21 +236,32 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
             if (!device.siteId) {
               throw Boom.notFound('Cannot determine which site this request came from')
             }
-            const changeParameters = {
-              siteId: device.siteId,
-              consumableId: matchingConsumable.id,
-              expiresOn: parseDateOrDefault(inventoryChange.expirationDate),
+
+            const { siteId } = device
+            const consumableId = matchingConsumable.id
+            const expiresOn = parseDateOrDefault(inventoryChange.expirationDate)
+
+            const operation = isDecrease ? 'remove' : 'add'
+
+            const inventoryItemId = await changeInventoryQuantity(inventoryStrategy, {
+              consumableId,
+              siteId,
+              expiresOn,
+              // lotNumber, // <--- lot is not set here
               quantity: absoluteQuantity,
-              quantityOnHand: inventoryChange.resultingQuantityOnHand,
-              reasonId: matchingConsumableReason.id,
-              dateAdjustedFrom: inventoryChange.dateChanged
-                ? setMilliseconds(parseDateOrDefault(inventoryChange.dateChanged), 0)
-                : null,
+              operation,
               now,
               messageContext,
-            }
-            changeParameters.operation = isDecrease ? 'remove from GxConnect' : 'add from GxConnect'
-            return adjustInventory(changeParameters)
+              userId,
+              logProps: {
+                consumableReasonId: matchingConsumableReason.id,
+                adjustedFrom: inventoryChange.dateChanged
+                  ? setMilliseconds(parseDateOrDefault(inventoryChange.dateChanged), 0)
+                  : null,
+                operation: `${operation} from GxConnect`,
+              },
+            })
+            return inventoryItemId
           }
         }
         return -1

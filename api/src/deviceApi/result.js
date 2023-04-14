@@ -13,7 +13,7 @@ const {
 const { convertStringToFloat } = require('../shared/string')
 
 const { getDevice } = require('../device/service')
-const inventory = require('../inventory/service')
+const inventoryUtils = require('../inventory/utils')
 
 // ----------------------------------------------------------
 async function getExistingResult(knex, payload, deviceId) {
@@ -747,25 +747,25 @@ async function getResult(knex, resultId) {
 }
 
 async function postProcessMergeResult(context, result, previousResult) {
-  const { knex, payload, now } = context
+  const { knex, payload, now, messageContext, userId } = context
 
   await addResultWorkflowLogIfChanged(knex, payload, result, previousResult, 'Device API Update', now)
 
   await resolveAutoTagging(knex, result)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
-  await consumeInventoryForResult(knex, payload, result)
+  await consumeInventoryForResult(knex, payload, result, messageContext, userId)
   return {}
 }
 
 /**
  * Consumes inventory for the new result
  */
-async function consumeInventoryForResult(knex, payload, result) {
+async function consumeInventoryForResult(knex, payload, result, messageContext, userId) {
   // TODO ASP-355 Move consumeInventory for Result to listener
   // Update Inventory Levels at Site
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
-  await inventory.consumeInventoryForResult(
+  await inventoryUtils.consumeInventoryForResult(
     result.id,
     result.assayId,
     result.siteId,
@@ -773,7 +773,9 @@ async function consumeInventoryForResult(knex, payload, result) {
     result.partnerId,
     result.startedOn,
     result.endedOn,
-    knex
+    knex,
+    messageContext,
+    userId
   )
 }
 
