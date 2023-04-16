@@ -1,9 +1,29 @@
+const subMonths = require('date-fns/subMonths')
+const formatISO = require('date-fns/formatISO')
 const { knex } = require('../../../../db')
-// const subMonths = require('date-fns/subMonths')
-// const formatISO = require('date-fns/formatISO')
 // const { addConstraints } = require('../../../../auth/constraints')
 
-const fetchEntriesByUpdatedOnQuery = () => {
+const fetchEntriesByUpdatedOnQuery = query => {
+  const minUpdatedOn = query?.minUpdatedOn ?? formatISO(subMonths(new Date(), 1))
+  const latestUpdatedOn = knex.raw(
+    `DATE_FORMAT(
+        GREATEST(
+            COALESCE(??, '1000-01-01 00:00:00'),
+            COALESCE(??, '1000-01-01 00:00:00'),
+            COALESCE(??, '1000-01-01 00:00:00'),
+            COALESCE(??, '1000-01-01 00:00:00'),
+            COALESCE(??, '1000-01-01 00:00:00')
+        ), '%Y-%m-%dT%H:%i:%s.%fZ'
+    ) as latestUpdatedOn`,
+    [
+      'result.updatedOn',
+      'result_status_log.createdOn',
+      'result_treatment_status_log.changedOn',
+      'result_workflow_log.changedOn',
+      'sample.collectedOn',
+    ]
+  )
+
   const knexQuery = knex('Result as result')
     .select(
       'result.id as id',
@@ -38,7 +58,8 @@ const fetchEntriesByUpdatedOnQuery = () => {
       'result_status_log.createdOn as transferredOn',
       'person_transferred.name as transferredBy',
       'result_workflow_log.resultWorkflowStatusId as resultWorkflowStatusId',
-      'result_workflow_log.changedOn as resultWorkflowStatusChangedOn'
+      'result_workflow_log.changedOn as resultWorkflowStatusChangedOn',
+      latestUpdatedOn
     )
     .innerJoin('Assay as assay', 'result.assayId', 'assay.id')
     .innerJoin('AssayType as assay_type', 'assay.assayTypeId', 'assay_type.id')
@@ -78,13 +99,7 @@ const fetchEntriesByUpdatedOnQuery = () => {
         'result_category_assay2.resultCategoryId'
       )
     })
-    .where('result.id', '=', 351)
-  // .where('result.updatedOn', '>=', query?.minUpdatedOn ?? formatISO(subMonths(new Date(), 1)))
-  // .where('result.id', '=', 451)
-  // .where('result.id', '=', 281)
-  // .where('result.id', '=', 292)
-  // .where('result.id', '=', 283)
-  // .limit(10)
+    .havingRaw('latestUpdatedOn >= ?', [minUpdatedOn])
   return knexQuery
 }
 
