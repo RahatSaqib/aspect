@@ -36,7 +36,7 @@ async function preProcessAddDeviceData(context) {
     const { macAddress, hostId, deviceSerialNumber, deviceName, deviceIdFromGxAlertSource } =
       getDeviceIdentifiersFromPayload(payload)
     throw Boom.badData(
-      `Cannot find or create device with the provided data - MAC Address: ${macAddress} | Host ID: ${hostId} | Serial Number: ${deviceSerialNumber} | Device Name: ${deviceName} | GxAlert Device ID: ${deviceIdFromGxAlertSource}`
+      `Unable to identify the device unequivocally - MAC Address: ${macAddress} | Host ID: ${hostId} | Serial Number: ${deviceSerialNumber} | Device Name: ${deviceName} | GxAlert Device ID: ${deviceIdFromGxAlertSource}`
     )
   }
   await genexpertPreProcessAddDeviceData(context)
