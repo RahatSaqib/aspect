@@ -1,6 +1,5 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const crypto = require('crypto')
 
 const { isJson, deepMerge } = require('../shared/json')
 const {
@@ -14,6 +13,7 @@ const { convertStringToFloat } = require('../shared/string')
 
 const { getDevice } = require('../device/service')
 const inventory = require('../inventory/service')
+const { getResultDataHash } = require('../result/common/logic')
 
 // ----------------------------------------------------------
 async function getExistingResult(knex, payload, deviceId) {
@@ -343,44 +343,6 @@ async function getSiteAdAssays(knex, payload, existingResult, deviceId) {
 
   const [assays, site] = await Promise.all([assayQ, siteQ])
   return { assays, site }
-}
-
-// ----------------------------------------------------------
-function sanitizeResultData(obj) {
-  const names = _.keys(obj)
-  // sort all props by name
-  names.sort()
-  const objSortedByPropNames = _.reduce(
-    names,
-    (acc, propName) => {
-      // remove all `date` props because they differ because of timezone shifts
-      if (['testEndedOn', 'testStartedOn', 'messageSentOn', 'cartridgeExpirationDate'].includes(propName)) {
-        return acc
-      }
-      let value = obj[propName]
-      if (_.isPlainObject(value)) {
-        value = sanitizeResultData(value)
-      } else if (_.isArray(value)) {
-        value = _.map(value, item => {
-          if (_.isPlainObject(item)) {
-            return sanitizeResultData(item)
-          }
-          return item
-        })
-      }
-      acc[propName] = value
-      return acc
-    },
-    {}
-  )
-  return objSortedByPropNames
-}
-
-// ----------------------------------------------------------
-function getResultDataHash(obj) {
-  const objSanitized = sanitizeResultData(obj)
-  const objHash = crypto.createHash('md5').update(JSON.stringify(objSanitized)).digest('hex')
-  return objHash
 }
 
 // ----------------------------------------------------------
