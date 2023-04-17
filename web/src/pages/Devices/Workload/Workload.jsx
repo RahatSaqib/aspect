@@ -1,29 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { TableBody, Table } from '@mui/material'
 import classnames from 'classnames/bind'
-import endOfDay from 'date-fns/endOfDay'
-import startOfDay from 'date-fns/startOfDay'
-import subtractDays from 'date-fns/subDays'
 import { Helmet } from 'react-helmet'
-import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import DeviceWorkloadFilter from '../../../cleanComponents/Filter/DeviceWorkloadFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
+import useAssayList from '../../../hooks/assay/useAssayList'
 import useI18n from '../../../hooks/useI18n'
 import useWorkload from '../../../hooks/workload/useWorkload'
 import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import { getFilters, sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import colMessages from '../../../oldPages/result/list/messages'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { useFilterUpdate, useFilterValues } from '../../../providers/FilterProvider'
-import { makeSortPageSelector, makeSearchParamsSanitizer } from '../../../utils/selectors/searchParams'
+import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import styles from './styles.css'
 import TableRow from './TableRow'
@@ -32,15 +28,6 @@ import TableRow from './TableRow'
 // BD MGIT columnas
 
 const cssClasses = classnames.bind(styles)
-
-const FILTERS_CONFIG = [
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { date: true, requiredPermissions: [] },
-  { singleAssayId: true, requiredPermissions: [] },
-  { deviceName: true, requiredPermissions: ['device'] },
-]
 
 const availableSortCol = [
   'name',
@@ -53,9 +40,6 @@ const availableSortCol = [
   'lgaName',
 ]
 
-const searchSanitizer = makeSearchParamsSanitizer({ availableSortCol })
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-
 const Workload = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -63,18 +47,14 @@ const Workload = () => {
   const filter = useFilterValues(location.pathname)
   const [addFilter] = useFilterUpdate()
   const user = useAuthState()
-  const [, setRequestParams] = useState()
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const { isError, isLoading, data = false, error } = useWorkload(filter)
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
-  const mostResultsAssay = useSelector(
-    ({ assay }) =>
-      assay.items
-        .toJS()
-        .filter(a => a.hasResults)
-        .sort((a, b) => b.resultCount - a.resultCount)[0]
-  )
+  const { isError, isLoading, data = false, error } = useWorkload(filter)
+  const { data: assays } = useAssayList()
+
+  if (isError) throw new Error(error)
+
   useWorkloadDownload({ ...filter, ...download })
 
   const onExcelClick = formatType => setDownload({ fileFormat: formatType, enabled: true })
@@ -86,39 +66,14 @@ const Workload = () => {
   }, [download])
 
   useEffect(() => {
-    if (filter.singleAssayId !== mostResultsAssay?.id) {
-      addFilter({ ...filter, singleAssayId: mostResultsAssay?.id }, location.pathname)
-    }
-  }, [addFilter, filter, location, mostResultsAssay])
+    if (assays?.length) {
+      const mostResultsAssay = assays.filter(a => a.hasResults).sort((a, b) => b.resultCount - a.resultCount)[0]
 
-  useEffect(() => {
-    const { value: searchParams } = searchSanitizer(location, {})
-    const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
-
-    if (!filtersParams.has('singleAssayId') && mostResultsAssay !== undefined) {
-      const now = new Date()
-      filtersParams.set('minDate', startOfDay(subtractDays(now, now.getDate() - 1)).toJSON())
-      filtersParams.set('maxDate', endOfDay(now).toJSON())
-      filtersParams.set('singleAssayId', mostResultsAssay?.id)
-      searchParams.set('filters', filtersParams)
-      if (searchParams.has('pageAt')) {
-        searchParams.delete('pageAt')
+      if (filter.singleAssayId !== mostResultsAssay?.id) {
+        addFilter({ ...filter, singleAssayId: mostResultsAssay?.id }, location.pathname)
       }
-      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
-  }, [location, mostResultsAssay, navigate])
-
-  useEffect(() => {
-    const { value: searchParams } = searchSanitizer(location, {})
-    const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', {})
-
-    const filters = getFilters(filtersParams)
-    if (filters.singleAssayId) {
-      setRequestParams({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
-    }
-  }, [location, pageAt, pageSize, sortCol, sortDir])
-
-  if (isError) throw new Error(error)
+  }, [addFilter, assays, filter, location.pathname])
 
   const { data: workloadList, total, extraColumns } = data || { data: [], total: 0, extraColumns: [] }
 
@@ -149,7 +104,11 @@ const Workload = () => {
         <DeviceWorkloadFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <AspectExportListButton onExport={onExcelClick} visible={workloadList.length} reportName="DeviceWorkload" />
+            <AspectExportListButton
+              onExport={onExcelClick}
+              visible={!!workloadList.length}
+              reportName="DeviceWorkload"
+            />
           </div>
 
           <DataTableProgressBar disabled={!isLoading} />

@@ -13,7 +13,7 @@ const maxDate = endOfDay(now)
 // TODO: remove pagination from URL
 const defaultFilter = {
   '/browse/device/list': {}, // done
-  '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: '1' }, // half-done
+  '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: -1 }, // done
   '/browse/deviceApiKey': {}, // done
   '/browse/inventory/supplies': { hasStock: true }, // done
   '/browse/inventory/log': { minDate, maxDate }, // done

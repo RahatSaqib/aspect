@@ -68,7 +68,10 @@ const FilterButtons = ({ filters, remove }) => {
         Immutable.Map(filters)
           .keySeq()
           .sortBy(filterKey => filtersOrdering[filterKey])
-          .map(filterKey => buttonMapping[filterKey]({ ...filters, remove }))
+          .map((filterKey, key) => {
+            const Comp = buttonMapping[filterKey]
+            return <Comp {...filters} remove={remove} key={key} />
+          })
       )}
     </span>
   )
@@ -190,7 +193,7 @@ const AssayId = ({ assayId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useAssayList()
 
-  return data ? (
+  return data && assayId !== -1 ? (
     <Btn lbl={formatMessage(messages[data.find(a => a.id === assayId).i18nKey])} del={() => remove(['assayId'])} />
   ) : null
 }
