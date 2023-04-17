@@ -3,7 +3,6 @@ import { reducer as formReducer } from 'redux-form/immutable'
 import { combineReducers } from 'redux-immutable'
 import appNotification from './AppNotificationRedux'
 import assay from './AssayRedux'
-import assayType from './AssayTypeRedux'
 import user, { types as authTypes } from './AuthRedux'
 import consumable from './ConsumableRedux'
 import deviceApiKey from './DeviceApiKeyRedux'
@@ -29,7 +28,6 @@ import task from './TaskRedux'
 const appReducer = combineReducers({
   appNotification,
   assay,
-  assayType,
   consumable,
   device,
   deviceApiKey,
@@ -55,15 +53,14 @@ const appReducer = combineReducers({
 })
 
 const App = Immutable.Record({
-  accountDetails: undefined,
+  // accountDetails: undefined,
   appNotification: undefined,
   assay: undefined,
-  assayType: undefined,
   consumable: undefined,
   device: undefined,
   deviceApiKey: undefined,
-  deviceOperation: undefined,
   deviceApproval: undefined,
+  deviceOperation: undefined,
   deviceType: undefined,
   disease: undefined,
   form: undefined,
@@ -80,8 +77,6 @@ const App = Immutable.Record({
   tag: undefined,
   task: undefined,
   user: undefined,
-  deviceMaintenanceStatus: undefined,
-  resultCategoryGroup: undefined,
 })
 
 const initialState = new App()
