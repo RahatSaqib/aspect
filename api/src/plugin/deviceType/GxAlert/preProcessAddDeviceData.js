@@ -8,6 +8,21 @@ const {
 const { createNewDevice } = require('../../../deviceApi/device')
 const { getDateOrDefault } = require('../../../shared/date')
 
+function getDeviceIdentifiersFromPayload(payload) {
+  const macAddress = _.get(payload, 'configuration.data.macAddress', null)
+  const hostId = _.get(payload, 'configuration.data.hostId', null)
+  const deviceSerialNumber = _.get(payload, 'configuration.data.deviceSerialNumber', null)
+  const deviceName = _.get(payload, 'name', null)
+  const deviceIdFromGxAlertSource = _.get(payload, 'configuration.data.gxAlertDeviceId', null)
+  return {
+    macAddress,
+    hostId,
+    deviceSerialNumber,
+    deviceName,
+    deviceIdFromGxAlertSource,
+  }
+}
+
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
   // Get or create source device
@@ -18,14 +33,18 @@ async function preProcessAddDeviceData(context) {
     geneXpertDevice.deviceTypePluginName = device.deviceTypePluginName
     context.device = geneXpertDevice
   } else {
-    throw Boom.badData(`Cannot find or create device with the provided data`)
+    const { macAddress, hostId, deviceSerialNumber, deviceName, deviceIdFromGxAlertSource } =
+      getDeviceIdentifiersFromPayload(payload)
+    throw Boom.badData(
+      `Unable to identify the device unequivocally - MAC Address: ${macAddress} | Host ID: ${hostId} | Serial Number: ${deviceSerialNumber} | Device Name: ${deviceName} | GxAlert Device ID: ${deviceIdFromGxAlertSource}`
+    )
   }
   await genexpertPreProcessAddDeviceData(context)
 }
 
 async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
   const { id: gxAlertDeviceId, partnerId } = gxAlertDevice
-  const deviceIdFromGxAlertSource = _.get(payload, 'configuration.data.gxAlertDeviceId', null)
+  const { macAddress, hostId, deviceSerialNumber, deviceIdFromGxAlertSource } = getDeviceIdentifiersFromPayload(payload)
   if (!deviceIdFromGxAlertSource) {
     throw Boom.badRequest('Must specify GxAlert device ID for data from GxAlert')
   }
@@ -34,9 +53,6 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
   if (!deviceTypeExternalId) {
     throw Boom.badRequest('Must specify device type for data from GxAlert')
   }
-  const macAddress = _.get(payload, 'configuration.data.macAddress', null)
-  const hostId = _.get(payload, 'configuration.data.hostId', null)
-  const deviceSerialNumber = _.get(payload, 'configuration.data.deviceSerialNumber', null)
   let countryCode = _.get(payload, 'configuration.data.country', null)
   if (!countryCode) {
     ;[countryCode] = await knex('Device as d')
