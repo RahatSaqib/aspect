@@ -10,6 +10,9 @@ import DeviceApiKeyFilter from '../../../cleanComponents/Filter/DeviceApiKeyFilt
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import useDeviceApiKey from '../../../hooks/deviceApiKey/useDeviceApiKey'
+import useDeviceApiKeyAssign from '../../../hooks/deviceApiKey/useDeviceApiKeyAssign'
+import useDeviceApiKeyGenerate from '../../../hooks/deviceApiKey/useDeviceApiKeyGenerate'
+import useDeviceApiKeyUpdate from '../../../hooks/deviceApiKey/useDeviceApiKeyUpdate'
 import useExportDeviceApiKey from '../../../hooks/deviceApiKey/useExportDeviceApiKey'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -36,6 +39,9 @@ export const DeviceApiKeyList = () => {
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
+  const { mutation: generate } = useDeviceApiKeyGenerate()
+  const { mutate: assign } = useDeviceApiKeyAssign()
+  const { mutate: update } = useDeviceApiKeyUpdate()
 
   useExportDeviceApiKey({ filters, sortCol, sortDir, page: pageAt, pageSize, ...download })
 
@@ -68,22 +74,20 @@ export const DeviceApiKeyList = () => {
   const onCloseAssignerDialog = () => onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false })
   const onGeneratorFormChange = generatorValues => onChangeDialogState({ ...dialogState, generatorValues })
   const onGenerate = generatorValues => {
-    // eslint-disable-next-line no-undef
-    dispatch(generateDeviceApiKeys(generatorValues)).then(() => {
-      onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false, generatorValues: DEFAULT_GENERATOR_VALUES })
-      // onInitialLoad()
+    generate(generatorValues, {
+      onSuccess: () => {
+        onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false, generatorValues: DEFAULT_GENERATOR_VALUES })
+      },
     })
   }
   const onAssign = assignerValues => {
-    // eslint-disable-next-line no-undef
-    dispatch(assignDeviceApiKeys(assignerValues)).then(() => {
-      onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false, assignerValues: DEFAULT_ASSIGNER_VALUES })
-      // onInitialLoad()
+    assign(assignerValues, {
+      onSuccess: () => {
+        onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false, assignerValues: DEFAULT_ASSIGNER_VALUES })
+      },
     })
   }
-  const onRevokedChange = e =>
-    // eslint-disable-next-line no-undef
-    dispatch(updateSingleDeviceApiKey(e.target.dataset.deviceApiKeyId, { revoked: e.target.checked }))
+  const onRevokedChange = e => update(e.target.dataset.deviceApiKeyId, { revoked: e.target.checked })
   const onAssignerFormChange = assignerValues => onChangeDialogState({ ...dialogState, assignerValues })
   const onSelectAllChange = isInputChecked => {
     const nextDeviceApiKeyIds = isInputChecked ? selectableIds : []

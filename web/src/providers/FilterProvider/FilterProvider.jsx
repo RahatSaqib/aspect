@@ -14,7 +14,7 @@ const maxDate = endOfDay(now)
 const defaultFilter = {
   '/browse/device/list': {}, // done
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: '1' }, // half-done
-  '/browse/deviceApiKey': {}, // half-done
+  '/browse/deviceApiKey': {}, // done
   '/browse/inventory/supplies': { hasStock: true }, // done
   '/browse/inventory/log': { minDate, maxDate }, // done
   '/browse/notification': {}, // half-done

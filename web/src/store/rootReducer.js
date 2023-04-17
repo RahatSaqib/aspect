@@ -5,7 +5,6 @@ import appNotification from './AppNotificationRedux'
 import assay from './AssayRedux'
 import user, { types as authTypes } from './AuthRedux'
 import consumable from './ConsumableRedux'
-import deviceApiKey from './DeviceApiKeyRedux'
 import deviceApproval from './DeviceApprovalRedux'
 import deviceOperation from './DeviceOperationRedux'
 import device from './DeviceRedux'
@@ -30,7 +29,6 @@ const appReducer = combineReducers({
   assay,
   consumable,
   device,
-  deviceApiKey,
   deviceApproval,
   deviceOperation,
   deviceType,
@@ -53,12 +51,10 @@ const appReducer = combineReducers({
 })
 
 const App = Immutable.Record({
-  // accountDetails: undefined,
   appNotification: undefined,
   assay: undefined,
   consumable: undefined,
   device: undefined,
-  deviceApiKey: undefined,
   deviceApproval: undefined,
   deviceOperation: undefined,
   deviceType: undefined,
