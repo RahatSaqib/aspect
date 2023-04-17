@@ -176,9 +176,8 @@ async function findInventoryItem(siteId, consumableId, expiresOn, lotNumber, inT
     })
   }
 
-  const matchingInventoryItems = await matchingInventoryItemsQuery.first(INVENTORY_ITEM_SELECT)
-
-  return matchingInventoryItems
+  const matchingInventoryItem = await matchingInventoryItemsQuery.first(INVENTORY_ITEM_SELECT)
+  return matchingInventoryItem
 }
 
 // ----------------------------------------------------------------------------------

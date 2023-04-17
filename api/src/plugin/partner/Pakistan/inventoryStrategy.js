@@ -61,9 +61,16 @@ async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
   return items
 }
 
+/**
+ * when inventory is being transferred - do it in one step in `transferInventory` func
+ * in the same transaction without calling `receiveInventory`
+ */
+const transferInPendingMode = false
+
 module.exports = {
   /**
    * below funcs overwrite default funcs exported from `/inventory/strategies/index.js`
    */
   getNewQuantityOnHand,
+  transferInPendingMode,
 }

@@ -36,6 +36,15 @@ async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
   return items
 }
 
+/**
+ * when inventory is being transferred - do it in 2 steps:
+ * - process `transferInventory` but do not update db and make sure `transfer sent` event fired
+ * which should call `receiveInventory`
+ * - process `receiveInventory` and update both `fromSite` and `toSite`
+ */
+const transferInPendingMode = true
+
 module.exports = {
   getNewQuantityOnHand,
+  transferInPendingMode,
 }
