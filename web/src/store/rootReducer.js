@@ -1,7 +1,6 @@
 import Immutable from 'immutable'
 import { reducer as formReducer } from 'redux-form/immutable'
 import { combineReducers } from 'redux-immutable'
-import accountDetails from './AccountRedux'
 import appNotification from './AppNotificationRedux'
 import assay from './AssayRedux'
 import assayType from './AssayTypeRedux'
@@ -9,7 +8,6 @@ import user, { types as authTypes } from './AuthRedux'
 import consumable from './ConsumableRedux'
 import deviceApiKey from './DeviceApiKeyRedux'
 import deviceApproval from './DeviceApprovalRedux'
-import deviceMaintenanceStatus from './DeviceMaintenanceStatusRedux'
 import deviceOperation from './DeviceOperationRedux'
 import device from './DeviceRedux'
 import deviceType from './DeviceTypeRedux'
@@ -29,7 +27,6 @@ import tag from './TagRedux'
 import task from './TaskRedux'
 
 const appReducer = combineReducers({
-  accountDetails,
   appNotification,
   assay,
   assayType,
@@ -37,7 +34,6 @@ const appReducer = combineReducers({
   device,
   deviceApiKey,
   deviceApproval,
-  deviceMaintenanceStatus,
   deviceOperation,
   deviceType,
   disease,

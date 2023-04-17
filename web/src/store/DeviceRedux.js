@@ -2,17 +2,12 @@ import { stringify } from 'querystring'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { getFilters, mergeToFiltersParams } from '../oldComponents/filter/utils'
+import { getFilters } from '../oldComponents/filter/utils'
 import { getDateObject } from '../oldComponents/shared/DateTimeInput/utils/date'
-import {
-  filterFieldsRejectedError,
-  errorNotFound,
-  errorPleaseTryAgainInAFewMinutes,
-  errorForbidden,
-} from '../utils/error/CommonErrorNotifications'
+import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { receiveItem, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
-import { aspectFetchFile, aspectFetch } from '../utils/utils/fetch'
+import { aspectFetch } from '../utils/utils/fetch'
 import { receivedExportResponse } from './GlobalsRedux'
 
 export const types = {
@@ -37,78 +32,6 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-function requestDevices(sortCol, sortDir, page, size, filters) {
-  return {
-    type: types.REQUEST_DEVICES,
-    sortCol,
-    sortDir,
-    page,
-    size,
-    filters,
-  }
-}
-
-function receiveDevices(json) {
-  return {
-    type: types.RECEIVE_DEVICES,
-    items: json.data,
-    total: json.total,
-  }
-}
-
-function rejectDevices() {
-  return {
-    type: types.REJECTED_DEVICES,
-  }
-}
-
-export function fetchDevices(rawFiltersParams, extraFilters = {}, sortCol, sortDir, page, pageSize) {
-  return dispatch => {
-    const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
-    const filters = getFilters(filtersParams)
-    dispatch(requestDevices(sortCol, sortDir, page, pageSize, filters))
-    return aspectFetch(
-      `/device?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        ...filters,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchDevices.GET.400.title',
-                defaultMessage: 'Searching Devices Failed',
-              },
-            })
-          ),
-          403: errorForbidden(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchDevices.GET.default.title',
-                defaultMessage: 'Loading Devices Failed',
-              },
-            })
-          ),
-        },
-      }
-    )
-      .then(json => dispatch(receiveDevices(json)))
-      .catch(() => dispatch(rejectDevices()))
-  }
-}
-
 function requestDevicesForSelectList() {
   return {
     type: types.REQUEST_DEVICES_FOR_SELECT_LIST,
@@ -151,54 +74,6 @@ export function fetchDevicesForSelectList(forceRefresh, filters) {
         ),
       },
     }).then(json => dispatch(receiveDevicesForSelectList(json.data)))
-  }
-}
-
-function requestSingleDevice(requestedAt, deviceId) {
-  return {
-    type: types.REQUEST_SINGLE_DEVICE,
-    requestedAt,
-    deviceId,
-  }
-}
-
-function receiveSingleDevice(requestedAt, item) {
-  return {
-    type: types.RECEIVE_SINGLE_DEVICE,
-    requestedAt,
-    item,
-  }
-}
-
-export function fetchSingleDevice(deviceId, rawFiltersParams) {
-  const filtersParams = new URLSearchParams()
-  if (rawFiltersParams.has('dateRange')) {
-    filtersParams.set('dateRange', rawFiltersParams.get('dateRange'))
-  }
-  return dispatch => {
-    const filters = getFilters(filtersParams)
-    const requestedAt = Date.now()
-    dispatch(requestSingleDevice(requestedAt, deviceId))
-    return aspectFetch(`/device/${deviceId}?${stringify(filters)}`, {
-      errorNotifications: {
-        404: errorNotFound(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleDevice.GET.404.title',
-              defaultMessage: 'Could Not Find Device Details',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleDevice.GET.default.title',
-              defaultMessage: 'Error Loading Device Details',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveSingleDevice(requestedAt, json.data)))
   }
 }
 
@@ -270,65 +145,6 @@ export function exportDeviceLogs(filtersParams, fileFormat, reportName) {
               title: {
                 id: 'errorResponseMessages.exportResults.GET.default.title',
                 defaultMessage: 'Exporting Device Log Failed',
-              },
-            })
-          ),
-        },
-      }
-    ).then(async elem => {
-      const file = await elem.blob
-      dispatch(receivedExportResponse(file, fileFormat, reportName))
-    })
-  }
-}
-export function exportDevices(
-  rawFiltersParams,
-  extraFilters = {},
-  format,
-  sortCol,
-  sortDir,
-  page,
-  pageSize,
-  fileFormat,
-  reportName
-) {
-  return dispatch => {
-    const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
-    const filters = getFilters(filtersParams)
-    return aspectFetchFile(
-      `/device/export?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        format: fileFormat,
-
-        ...filters,
-        hasResults: 1,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.exportDevices.GET.400.title',
-                defaultMessage: 'Exporting Devices Failed',
-              },
-            })
-          ),
-          403: errorForbidden(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchPersons.GET.403.title',
-                defaultMessage: 'Insufficient Permissions',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.exportDevices.GET.default.title',
-                defaultMessage: 'Exporting Devices Failed',
               },
             })
           ),
@@ -435,38 +251,6 @@ export function updateDeviceMaintenance({ externalId, device, values, requestedA
         dispatch(hideDialog())
         throw err
       })
-}
-
-export function fetchPerformanceReport(deviceId) {
-  return dispatch => {
-    dispatch(requestPerformanceReport(deviceId))
-
-    return aspectFetch(`/device/performance/${deviceId}`, {
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchPerformanceReport.GET.default.title',
-              defaultMessage: 'Error Loading Device profile performance report',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receivePerformanceReport(json)))
-  }
-}
-function requestPerformanceReport(deviceId) {
-  return {
-    type: types.REQUEST_DEVICES_FOR_PERFORMANCE_REPORT,
-    deviceId,
-  }
-}
-
-function receivePerformanceReport(data) {
-  return {
-    type: types.RECEIVE_DEVICES_FOR_PERFORMANCE_REPORT,
-    data,
-  }
 }
 
 /*
