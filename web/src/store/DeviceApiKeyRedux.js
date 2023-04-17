@@ -187,21 +187,6 @@ export function assignDeviceApiKeys(data) {
     })
 }
 
-function requestUpdatingSingleDeviceApiKey(deviceApiKeyId, data) {
-  return {
-    type: types.REQUEST_UPDATING_SINGLE_DEVICE_API_KEY,
-    deviceApiKeyId,
-    data,
-  }
-}
-
-function receiveUpdatedSingleDeviceApiKey(item) {
-  return {
-    type: types.RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY,
-    item,
-  }
-}
-
 export function updateSingleDeviceApiKey(deviceApiKeyId, data) {
   return dispatch => {
     dispatch(requestUpdatingSingleDeviceApiKey(deviceApiKeyId, data))
@@ -222,6 +207,22 @@ export function updateSingleDeviceApiKey(deviceApiKeyId, data) {
     }).then(json => dispatch(receiveUpdatedSingleDeviceApiKey(json.data)))
   }
 }
+
+function requestUpdatingSingleDeviceApiKey(deviceApiKeyId, data) {
+  return {
+    type: types.REQUEST_UPDATING_SINGLE_DEVICE_API_KEY,
+    deviceApiKeyId,
+    data,
+  }
+}
+
+function receiveUpdatedSingleDeviceApiKey(item) {
+  return {
+    type: types.RECEIVE_UPDATED_SINGLE_DEVICE_API_KEY,
+    item,
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */

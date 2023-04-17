@@ -35,10 +35,6 @@ function receiveInventoryItems(json, childrenPropertyPath) {
   }
 }
 
-function toggleGroupBySite(toggleOn) {
-  return { type: types.TOGGLE_GROUP_BY_SITE, toggleOn }
-}
-
 function showNewInventoryDialog() {
   return {
     type: types.SHOW_NEW_INVENTORY_DIALOG,
@@ -333,7 +329,6 @@ export default function inventoryItemsReducer(state = initialState, action) {
 
 export {
   receiveInventoryItems,
-  toggleGroupBySite,
   showNewInventoryDialog,
   showAddInventoryDialog,
   showRemoveInventoryDialog,

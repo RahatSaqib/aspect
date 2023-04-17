@@ -1,4 +1,3 @@
-import differenceInMinutes from 'date-fns/differenceInMinutes'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import { errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
@@ -16,90 +15,6 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-function createRequestTags(qryId, qryType) {
-  return {
-    type: types.REQUEST_TAGS,
-    qryId,
-    qryType,
-  }
-}
-
-function createReceiveTags(qryId, qryType, items) {
-  return {
-    type: types.RECEIVE_TAGS,
-    qryId,
-    qryType,
-    items,
-  }
-}
-
-export function fetchTags(qryId, qryType) {
-  return dispatch => {
-    dispatch(createRequestTags(qryId, qryType))
-    return aspectFetch(`/tag/${qryType}/${qryId}`, {
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchTags.GET.default.title',
-              defaultMessage: 'Loading Tags Failed',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(createReceiveTags(qryId, qryType, json.data)))
-  }
-}
-
-function createRequestPossibleTags(qryType) {
-  return {
-    type: types.REQUEST_POSSIBLE_TAGS,
-    qryType,
-  }
-}
-
-function createReceivePossibleTags(qryType, items) {
-  return {
-    type: types.RECEIVE_POSSIBLE_TAGS,
-    qryType,
-    items,
-    lastRefreshed: new Date(),
-  }
-}
-
-export function fetchPossibleTags(qryType, forceRefresh = false) {
-  return (dispatch, getState) => {
-    const { tag } = getState()
-    const tagItems = tag.getIn(['possibleTags', qryType])
-
-    if (tagItems && tagItems.loading) {
-      return
-    }
-    const shouldFetch =
-      forceRefresh ||
-      !tagItems ||
-      !tagItems.get('lastRefreshed') ||
-      differenceInMinutes(new Date(), tagItems.get('lastRefreshed')) > 5 // five minutes
-
-    if (!shouldFetch) {
-      return
-    }
-
-    dispatch(createRequestPossibleTags(qryType))
-    return aspectFetch(`/tag/${qryType}`, {
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchPossibleTags.GET.default.title',
-              defaultMessage: 'Loading Possible Tags Failed',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(createReceivePossibleTags(qryType, json.data)))
-  }
-}
 
 function createRequestUpdatingTag(qryId, qryType) {
   return {

@@ -6,7 +6,6 @@ import appNotification from './AppNotificationRedux'
 import assay from './AssayRedux'
 import assayType from './AssayTypeRedux'
 import user, { types as authTypes } from './AuthRedux'
-import _case from './CaseRedux'
 import consumable from './ConsumableRedux'
 import deviceApiKey from './DeviceApiKeyRedux'
 import deviceApproval from './DeviceApprovalRedux'
@@ -15,19 +14,16 @@ import deviceOperation from './DeviceOperationRedux'
 import device from './DeviceRedux'
 import deviceType from './DeviceTypeRedux'
 import disease from './DiseaseRedux'
-import filter from './FilterRedux'
 import geography from './GeographyRedux'
 import globals from './GlobalsRedux'
 import inventory from './InventoryRedux'
 import jobs from './JobRedux'
 import patient from './PatientRedux'
 import person from './PersonRedux'
-import report from './ReportRedux'
 import resultCategoryGroup from './ResultCategoryGroupSelectFieldRedux'
 import result from './ResultRedux'
 import resultTreatmentStatus from './ResultTreatmentStatusRedux'
 import resultWorkflowStatus from './ResultWorkflowStatusRedux'
-import router from './RouterRedux'
 import site from './SiteRedux'
 import tag from './TagRedux'
 import task from './TaskRedux'
@@ -37,17 +33,14 @@ const appReducer = combineReducers({
   appNotification,
   assay,
   assayType,
-  case: _case,
   consumable,
   device,
   deviceApiKey,
   deviceApproval,
   deviceMaintenanceStatus,
-  resultCategoryGroup,
   deviceOperation,
   deviceType,
   disease,
-  filter,
   form: formReducer,
   geography,
   globals,
@@ -55,11 +48,10 @@ const appReducer = combineReducers({
   jobs,
   patient,
   person,
-  report,
+  resultCategoryGroup,
   result,
   resultTreatmentStatus,
   resultWorkflowStatus,
-  router,
   site,
   tag,
   task,
@@ -71,7 +63,6 @@ const App = Immutable.Record({
   appNotification: undefined,
   assay: undefined,
   assayType: undefined,
-  case: undefined,
   consumable: undefined,
   device: undefined,
   deviceApiKey: undefined,
@@ -79,7 +70,6 @@ const App = Immutable.Record({
   deviceApproval: undefined,
   deviceType: undefined,
   disease: undefined,
-  filter: undefined,
   form: undefined,
   geography: undefined,
   globals: undefined,
@@ -87,11 +77,9 @@ const App = Immutable.Record({
   jobs: undefined,
   patient: undefined,
   person: undefined,
-  report: undefined,
   result: undefined,
   resultTreatmentStatus: undefined,
   resultWorkflowStatus: undefined,
-  router: undefined,
   site: undefined,
   tag: undefined,
   task: undefined,
