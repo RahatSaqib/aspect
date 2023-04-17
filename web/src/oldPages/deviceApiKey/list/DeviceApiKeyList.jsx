@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { TableBody } from '@mui/material'
+import { TableBody, Table } from '@mui/material'
 import classnames from 'classnames/bind'
 import intersectionWith from 'lodash/intersectionWith'
 import isEmpty from 'lodash/isEmpty'
@@ -20,12 +20,13 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
-import { DeviceApiKeyDataTable, DeviceApiKeyDataTableHead, DeviceApiKeyDataTableRow } from './DeviceApiKeyDataTable'
 import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
 import styles from './DeviceApiKeyList.css'
+import DeviceApiKeyTableRow from './DeviceApiKeyTableRow'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
@@ -169,8 +170,8 @@ export const DeviceApiKeyList = () => {
             <BrowseEmptyList navigate={navigate} location={location} />
           ) : (
             <>
-              <DeviceApiKeyDataTable className={cssClasses('DeviceApiKeyDataTable')}>
-                <DeviceApiKeyDataTableHead
+              <Table className={cssClasses('DeviceApiKeyDataTable')}>
+                <DataTableHead
                   navigate={navigate}
                   location={location}
                   sortColumnKey={sortCol}
@@ -198,7 +199,7 @@ export const DeviceApiKeyList = () => {
                 />
                 <TableBody>
                   {(data?.data || []).map(deviceApiKey => (
-                    <DeviceApiKeyDataTableRow
+                    <DeviceApiKeyTableRow
                       key={deviceApiKey.id}
                       intl={intl}
                       deviceApiKey={deviceApiKey}
@@ -209,7 +210,7 @@ export const DeviceApiKeyList = () => {
                     />
                   ))}
                 </TableBody>
-              </DeviceApiKeyDataTable>
+              </Table>
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}
