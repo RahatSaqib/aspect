@@ -10,14 +10,15 @@ export const DirtyStepsProvider = props => {
 
 export const DirtyListener = ({ step }) => {
   const { setDirtySteps } = useContext(DirtyStepsContext)
-  const { dirty, isSubmitting } = useFormikContext()
+  const { dirty } = useFormikContext()
+
   useEffect(
     () =>
       setDirtySteps(prv => ({
         ...prv,
-        [step]: isSubmitting ? false : dirty,
+        [step]: dirty,
       })),
-    [dirty, isSubmitting, setDirtySteps, step]
+    [dirty, setDirtySteps, step]
   )
   return null
 }
