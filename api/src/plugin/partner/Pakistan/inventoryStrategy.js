@@ -1,12 +1,22 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 
-const { knex } = require('../../../db')
-
-// const defaultInventoryStrategy = require('../../../inventory/strategies')
+const { logInventoryChange } = require('../../../inventory/common/db')
+const { allConsumableReasonToId } = require('../../../shared/dictionary')
 
 // ----------------------------------------------------------------------------------
-async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
+async function getNewQuantityOnHand(
+  /**
+   * param `knex` should be in transaction because in below func we may auto-transfer inventory
+   * from warehouse to current site
+   */
+  knex,
+  inventoryItem,
+  operation,
+  quantity,
+  { resultId, userId } = {}
+) {
+  const now = new Date()
   const { quantityOnHand = 0 } = inventoryItem || {}
   const items = [
     {
@@ -35,19 +45,26 @@ async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
       if (_.isEmpty(inventoryItem)) {
         return Boom.notFound('Can not deduct from non-existed inventory item')
       }
-      if (quantityOnHand < quantity) {
-        if (quantityOnHand > 0) {
-          /**
-           * decrease quantity to remove from warehouse smaller number
-           * and reset quantityOnHand for current site
-           */
-          quantity -= quantityOnHand
-          items[0].quantityOnHand = 0
-        }
-        const { consumableId, siteId, lotNumber, expiresOn } = inventoryItem
+      if (quantityOnHand < 0) {
+        return Boom.notFound(
+          `quantityOnHand is negative ${quantityOnHand} for current inventoryItemId=${inventoryItem.id}`
+        )
+      }
+      if (quantityOnHand >= quantity) {
         /**
-         * check if current site has parent one which is warehouse
+         * normal mode - deduct `quantity` from current site
          */
+        items[0].quantityOnHand -= quantity
+      } else {
+        // how many items we need to transfer from warehouse
+        quantity -= quantityOnHand
+        // reset quantityOnHand for current site
+        items[0].quantityOnHand = 0
+        /**
+         * transfer items from warehouse
+         */
+        const { consumableId, siteId, lotNumber, expiresOn } = inventoryItem
+        // check if current site has parent one which is warehouse
         const warehouseSite = await knex('Site as s')
           .join('Site as wh', 's.parentWarehouseId', 'wh.id')
           .where('s.id', siteId)
@@ -59,11 +76,10 @@ async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
            */
           .first('wh.*')
         if (!warehouseSite) {
+          await logMissingInventory(knex, inventoryItem, resultId, userId)
           return Boom.notFound('Warehouse does not exist to remove inventory items from it')
         }
-        /**
-         * get quantityOnHand from warehouse for same consumableId-lotNumber-expiresOn
-         */
+        // get quantityOnHand from warehouse for same consumableId-lotNumber-expiresOn
         const inventoryItemWarehouse = await knex('InventoryItem as ii')
           .where({
             siteId: warehouseSite.id,
@@ -74,12 +90,41 @@ async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
           })
           .first()
         if (!inventoryItemWarehouse) {
-          return Boom.notFound('Can not remove inventory items from warehouse - inventory item does not exist')
+          await logMissingInventory(knex, inventoryItem, resultId, userId)
+          return Boom.notFound(
+            `No inventory item found in warehouse siteId=${warehouseSite.id} to transfer to siteId=${siteId}`
+          )
         }
         const { quantityOnHand: quantityOnHandWH } = inventoryItemWarehouse
         if (quantityOnHandWH < quantity) {
-          return Boom.notFound('Not enough inventory items in warehouse to remove')
+          await logMissingInventory(knex, inventoryItemWarehouse, resultId, userId)
+          return Boom.notFound('Not enough inventory items in warehouse to transfer')
         }
+        /**
+         * auto transfer `quantity` items from warehouse to current site
+         * by inserting record in InventoryLog
+         */
+        const { 'Transfer Sent': transferSentReasonId } = await allConsumableReasonToId()
+        await logInventoryChange({
+          knex,
+          inventoryItemId: inventoryItemWarehouse.id,
+          consumableId,
+          siteId: inventoryItemWarehouse.siteId, // warehouse site
+          resultId,
+          lotNumber,
+          expiresOn,
+          createdOn: now,
+          createdBy: userId,
+          quantity,
+          operation: `transfer`,
+          referencedSiteId: siteId, // destination site (i.e. inventoryItem.siteId)
+          consumableReasonId: transferSentReasonId,
+          adjustedFrom: now,
+          adjustedTo: now,
+          notes: `auto transfer from warehouse siteId=${inventoryItemWarehouse.siteId} to siteId=${siteId}`,
+          // important to mark this log entry with this flag
+          isAutomatic: true,
+        })
         /**
          * warehouse mode - deduct `quantity` from warehouse `quantityOnHand`
          */
@@ -88,11 +133,18 @@ async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
           quantityOnHand: quantityOnHandWH,
         })
         items[1].quantityOnHand -= quantity
-      } else {
         /**
-         * normal mode - deduct `quantity` from current site
+         * after successfully transferred items from warehouse to the current site -
+         * remove previously created entry from MissingInventoryLots, if any exist
          */
-        items[0].quantityOnHand -= quantity
+        await knex('MissingInventoryLots')
+          .where({
+            // resultId, // <--- TODO: may be narrow scope for current resultId?
+            expirationDate: expiresOn,
+            lotNumber,
+            siteId,
+          })
+          .del()
       }
       break
     default: {
@@ -102,6 +154,25 @@ async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
   return items
 }
 
+// ----------------------------------------------------------------------------------
+async function logMissingInventory(knex, inventoryItem, resultId, userId) {
+  if (!resultId) {
+    // log missing lots only for results, and not for manual changes
+    return
+  }
+  const now = new Date()
+  const { siteId, lotNumber, expiresOn } = inventoryItem
+  await knex('MissingInventoryLots').insert({
+    resultId,
+    expirationDate: expiresOn,
+    lotNumber,
+    siteId,
+    createdOn: now,
+    createdBy: userId,
+  })
+}
+
+// ----------------------------------------------------------------------------------
 /**
  * when inventory is being transferred - do it in one shot in `transferInventory` func
  * without postponing receive commit and without setting inTransitFromSiteId field

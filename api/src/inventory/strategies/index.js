@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------------
-async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
+async function getNewQuantityOnHand(knex, inventoryItem, operation, quantity) {
   const { quantityOnHand = 0 } = inventoryItem || {}
   const items = [
     {
@@ -36,6 +36,15 @@ async function getNewQuantityOnHand(inventoryItem, operation, quantity) {
   return items
 }
 
+let currentUserId
+function setUserId(userId) {
+  currentUserId = userId
+}
+
+function getUserId() {
+  return currentUserId
+}
+
 /**
  * when inventory is being transferred - do it in 2 steps:
  * - process `transferInventory` but do not update db and make sure `transfer sent` event fired
@@ -47,4 +56,6 @@ const transferInPendingMode = true
 module.exports = {
   getNewQuantityOnHand,
   transferInPendingMode,
+  setUserId,
+  getUserId,
 }

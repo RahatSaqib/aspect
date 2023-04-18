@@ -1,5 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
+
 const { knex, pageParams, sortParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 const utils = require('./utils')
@@ -139,42 +141,33 @@ async function getDaysByLocation(request) {
 }
 
 // ----------------------------------------------------------------------------------
-async function addInventory(request) {
-  const affectedInventoryItem = await utils.addInventory(request)
+async function doChangeInventory(request, handler) {
+  const res = await handler(request)
+  if (Boom.isBoom(res)) return res
   return {
     ok: true,
-    data: affectedInventoryItem,
+    data: res, // see corresponding handler func for details about it's response
   }
+}
+
+// ----------------------------------------------------------------------------------
+async function addInventory(request) {
+  return doChangeInventory(request, utils.addInventory)
 }
 
 // ----------------------------------------------------------------------------------
 async function removeInventory(request) {
-  const affectedInventoryItem = await utils.removeInventory(request)
-  return {
-    ok: true,
-    data: affectedInventoryItem,
-  }
+  return doChangeInventory(request, utils.removeInventory)
 }
 
 // ----------------------------------------------------------------------------------
 async function transferInventory(request) {
-  const { existingInventoryItem, newInventoryItem } = await utils.transferInventory(request)
-  return {
-    ok: true,
-    data: {
-      existingInventoryItem,
-      newInventoryItem,
-    },
-  }
+  return doChangeInventory(request, utils.transferInventory)
 }
 
 // ----------------------------------------------------------------------------------
 async function receiveInventory(request) {
-  const affectedInventoryItem = await utils.receiveInventory(request)
-  return {
-    ok: true,
-    data: affectedInventoryItem,
-  }
+  return doChangeInventory(request, utils.receiveInventory)
 }
 
 // ----------------------------------------------------------------------------------

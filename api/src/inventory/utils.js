@@ -35,7 +35,7 @@ const MODE = {
  * by key consisted of `partnerId` and `deviceId`
  */
 const cachedInventoryStrategies = {}
-async function getInventoryStrategy({ partnerId, deviceId }) {
+async function getInventoryStrategy({ partnerId, deviceId, userId }) {
   const inventoryStrategyKey = `partnerId-${partnerId || 0}_deviceId-${deviceId || 0}`
   let inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
   if (!inventoryStrategy) {
@@ -55,6 +55,7 @@ async function getInventoryStrategy({ partnerId, deviceId }) {
       ...specificInventoryStrategy,
     }
     inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
+    inventoryStrategy.setUserId(userId)
   }
 
   return inventoryStrategy
@@ -62,8 +63,8 @@ async function getInventoryStrategy({ partnerId, deviceId }) {
 
 // ----------------------------------------------------------------------------------
 async function getInventoryStrategyByAuth(auth) {
-  const { partnerId } = await getUser(auth.credentials.name)
-  return getInventoryStrategy({ partnerId })
+  const { partnerId, userId } = await getUser(auth.credentials.name)
+  return getInventoryStrategy({ partnerId, userId })
 }
 
 // ----------------------------------------------------------------------------------
@@ -108,21 +109,26 @@ async function upsertInventoryItem({
 
 // ----------------------------------------------------------------------------------
 async function getActualInventoryItems(
+  knex,
   inventoryStrategy,
-  { siteId, consumableId, expiresOn, lotNumber, fromSiteId },
+  { siteId, consumableId, expiresOn, lotNumber, fromSiteId, resultId },
   operation,
   quantity
 ) {
   const currentInventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, fromSiteId)
   const actualInventoryItemProps = await inventoryStrategy.getNewQuantityOnHand(
+    knex,
     currentInventoryItem,
     operation,
-    quantity
+    quantity,
+    { resultId, userId: inventoryStrategy.getUserId() }
   )
   /**
    * we return array of such objects - { quantityOnHand, inventoryItem }
    * where item on index 0 is current inventory which is being changed,
-   * and on other indexes (possibly) - item(s) for parent warehouse
+   * and on index 1 (possibly) - item for parent warehouse which we also need to update
+   * because we might auto-transferred inventories from it in case if current site
+   * doesn't have enough inventories
    */
   return actualInventoryItemProps
 }
@@ -252,19 +258,24 @@ async function doChangeQuantity(
     now,
     userId,
     logProps,
+    resultId,
     // for getting messageContext
     plugins,
     messageContext,
   }
 ) {
-  const actualInventoryItemProps = await getActualInventoryItems(
-    inventoryStrategy,
-    { siteId, consumableId, expiresOn, lotNumber },
-    operation,
-    quantity
-  )
-  const affectedInventoryItemIds = await transact(async knex =>
-    doChangeQuantityInTransactBody(knex, actualInventoryItemProps, {
+  const affectedInventoryItemIds = await transact(async knex => {
+    const actualInventoryItemProps = await getActualInventoryItems(
+      knex,
+      inventoryStrategy,
+      { siteId, consumableId, expiresOn, lotNumber, resultId },
+      operation,
+      quantity
+    )
+    if (Boom.isBoom(actualInventoryItemProps)) {
+      return actualInventoryItemProps
+    }
+    return doChangeQuantityInTransactBody(knex, actualInventoryItemProps, {
       siteId,
       consumableId,
       lotNumber,
@@ -280,7 +291,7 @@ async function doChangeQuantity(
       plugins,
       messageContext,
     })
-  )
+  })
   return affectedInventoryItemIds
 }
 
@@ -289,7 +300,7 @@ async function addInventory({ auth, payload, plugins }) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategyByAuth(auth)
   const quantity = Math.abs(payload.quantity)
-  const { toSiteId, consumableId, expiresOn, lotNumber, reasonId, dateAdjusted, notes } = payload
+  const { toSiteId, consumableId, expiresOn, lotNumber, reasonId, dateAdjusted, notes, resultId } = payload
   const dataConstraints = await getConstraints(auth.credentials)
   const toSite = await getSite(toSiteId, dataConstraints)
   if (!toSite) {
@@ -300,7 +311,7 @@ async function addInventory({ auth, payload, plugins }) {
    * take 1st item from returning array of affected items
    */
   const [inventoryItemId] = await doChangeQuantity(inventoryStrategy, {
-    knex,
+    // knex,
     consumableId,
     siteId: toSite.id,
     lotNumber,
@@ -315,6 +326,7 @@ async function addInventory({ auth, payload, plugins }) {
       adjustedFrom: dateAdjusted,
       notes,
     },
+    resultId,
   })
   return getInventoryItem(inventoryItemId)
 }
@@ -334,6 +346,7 @@ async function removeInventory({ auth, payload, plugins }) {
     dateAdjustedFrom,
     dateAdjustedTo,
     notes,
+    resultId,
   } = payload
   const dataConstraints = await getConstraints(auth.credentials)
   const fromSite = await getSite(fromSiteId, dataConstraints)
@@ -345,7 +358,7 @@ async function removeInventory({ auth, payload, plugins }) {
    *
    */
   const [inventoryItemId] = await doChangeQuantity(inventoryStrategy, {
-    knex,
+    // knex,
     consumableId,
     siteId: fromSite.id,
     lotNumber,
@@ -361,25 +374,25 @@ async function removeInventory({ auth, payload, plugins }) {
       adjustedTo: dateAdjustedTo,
       notes,
     },
+    resultId,
   })
   return getInventoryItem(inventoryItemId)
 }
 
 // ----------------------------------------------------------------------------------
 async function receiveInventory({ auth, payload, plugins }) {
-  const { toInventoryItemId } = await transferOrReceiveInventory({ auth, payload, plugins }, MODE.RECEIVE)
-  return getInventoryItem(toInventoryItemId)
+  const res = await transferOrReceiveInventory({ auth, payload, plugins }, MODE.RECEIVE)
+  if (Boom.isBoom(res)) return res
+  return getInventoryItem(res.toInventoryItemId)
 }
 
 // ----------------------------------------------------------------------------------
 async function transferInventory({ auth, payload, plugins }) {
-  const { fromInventoryItemId, toInventoryItemId } = await transferOrReceiveInventory(
-    { auth, payload, plugins },
-    MODE.TRANSFER
-  )
+  const res = await transferOrReceiveInventory({ auth, payload, plugins }, MODE.TRANSFER)
+  if (Boom.isBoom(res)) return res
   return {
-    existingInventoryItem: await getInventoryItem(fromInventoryItemId),
-    newInventoryItem: await getInventoryItem(toInventoryItemId),
+    existingInventoryItem: await getInventoryItem(res.fromInventoryItemId),
+    newInventoryItem: await getInventoryItem(res.toInventoryItemId),
   }
 }
 
@@ -397,6 +410,7 @@ async function transferOrReceiveInventory({ auth, payload, plugins }, mode) {
     quantity,
     dateAdjusted,
     notes,
+    resultId,
   } = payload
   const inventoryStrategy = await getInventoryStrategyByAuth(auth)
   const { transferInPendingMode } = inventoryStrategy
@@ -410,7 +424,7 @@ async function transferOrReceiveInventory({ auth, payload, plugins }, mode) {
    */
   const dataConstraints = await getConstraints(auth.credentials)
   const { id: userId } = await getUser(auth.credentials.name)
-  const baseProps = { consumableId, expiresOn, lotNumber }
+  const baseProps = { consumableId, expiresOn, lotNumber, resultId }
   const transactionProps = {
     consumableId,
     lotNumber,
@@ -424,72 +438,85 @@ async function transferOrReceiveInventory({ auth, payload, plugins }, mode) {
     return { siteId, fromSiteId, ...baseProps }
   }
 
-  /** ***********************
-   * process `fromSiteId`
-   */
-  if (canProcessFrom) {
-    const fromSite = await getSite(fromSiteId, dataConstraints)
-    if (!fromSite) {
-      return Boom.forbidden('You are not permitted to transfer inventory from this site')
-    }
-    const { id: transferSentConsumableReasonId } = await findConsumableReason('Transfer Sent')
-    const from = {
-      siteId: fromSiteId,
-      logProps: {
-        quantity,
-        operation: 'transfer sent',
-        referencedSiteId: toSiteId,
-        consumableReasonId: transferSentConsumableReasonId,
-        notes,
-        adjustedFrom: dateAdjusted,
-      },
-    }
-    /**
-     * from source site we remove `quantity` - this may affect not only current site
-     * but also parent site of warehouse when current site doesn't have enough items,
-     * and because of that returning array of `from.props` consists of either 1 or 2 entries
+  return transact(async knex => {
+    let res
+    /** ***********************
+     * process `fromSiteId`
      */
-    from.props = await getActualInventoryItems(inventoryStrategy, getProps(fromSiteId), 'remove', quantity)
-    transactionProps.from = from
-  }
+    if (canProcessFrom) {
+      const fromSite = await getSite(fromSiteId, dataConstraints)
+      if (!fromSite) {
+        return Boom.forbidden('You are not permitted to transfer inventory from this site')
+      }
+      const { id: transferSentConsumableReasonId } = await findConsumableReason('Transfer Sent')
+      transactionProps.from = {
+        siteId: fromSiteId,
+        logProps: {
+          quantity,
+          operation: 'transfer sent',
+          referencedSiteId: toSiteId,
+          consumableReasonId: transferSentConsumableReasonId,
+          notes,
+          adjustedFrom: dateAdjusted,
+        },
+      }
+      /**
+       * from source site we remove `quantity` - this may affect not only current site
+       * but also parent site of warehouse when current site doesn't have enough items,
+       * and because of that returning array of `from.props` consists of either 1 or 2 entries
+       */
+      res = await getActualInventoryItems(knex, inventoryStrategy, getProps(fromSiteId), 'remove', quantity)
+      if (Boom.isBoom(res)) {
+        return res
+      }
+      transactionProps.from.props = res
+    }
 
-  /** ***********************
-   * process `toSiteId`
-   */
-  if (canProcessTo) {
-    const toSite = await getSite(toSiteId, dataConstraints)
-    if (!toSite) {
-      return Boom.forbidden('You are not permitted to add inventory to this site')
-    }
-    const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
-    /**
-     * When `isReceiveFinishing = true` then we don't need to change quantity in `to` site
-     * because it has already been changed due to `pending` mode on  processing `transfer`.
-     * In a such use case here we need only set `inTransitFromSiteId` to `null` and log.
+    /** ***********************
+     * process `toSiteId`
      */
-    const actualQuantity = isReceiveFinishing ? 0 : quantity
-    const to = {
-      siteId: toSiteId,
-      logProps: {
-        quantity: actualQuantity,
-        operation: isReceiveFinishing ? 'transfer committed' : 'transfer received',
-        referencedSiteId: fromSiteId,
-        consumableReasonId: transferReceivedConsumableReasonId,
-        notes,
-        adjustedFrom: dateAdjusted,
-      },
-      inTransitFromSiteId: isReceivePending ? fromSiteId : null,
+    if (canProcessTo) {
+      const toSite = await getSite(toSiteId, dataConstraints)
+      if (!toSite) {
+        return Boom.forbidden('You are not permitted to add inventory to this site')
+      }
+      const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
+      /**
+       * When `isReceiveFinishing = true` then we don't need to change quantity in `to` site
+       * because it has already been changed due to `pending` mode on  processing `transfer`.
+       * In a such use case here we need only set `inTransitFromSiteId` to `null` and log.
+       */
+      const actualQuantity = isReceiveFinishing ? 0 : quantity
+      transactionProps.to = {
+        siteId: toSiteId,
+        logProps: {
+          quantity: actualQuantity,
+          operation: isReceiveFinishing ? 'transfer committed' : 'transfer received',
+          referencedSiteId: fromSiteId,
+          consumableReasonId: transferReceivedConsumableReasonId,
+          notes,
+          adjustedFrom: dateAdjusted,
+        },
+        inTransitFromSiteId: isReceivePending ? fromSiteId : null,
+      }
+      /**
+       * we add `quantity` items to destination site - this affects only current site
+       * of `toSiteId` (not parent warehouse site), and because of that returning array
+       * of `to.props` consists of only 1 entry
+       */
+      res = await getActualInventoryItems(
+        knex,
+        inventoryStrategy,
+        getProps(toSiteId, fromSiteId),
+        'add',
+        actualQuantity
+      )
+      if (Boom.isBoom(res)) {
+        return res
+      }
+      transactionProps.to.props = res
     }
-    /**
-     * we add `quantity` items to destination site - this affects only current site
-     * of `toSiteId` (not parent warehouse site), and because of that returning array
-     * of `to.props` consists of only 1 entry
-     */
-    to.props = await getActualInventoryItems(inventoryStrategy, getProps(toSiteId, fromSiteId), 'add', actualQuantity)
-    transactionProps.to = to
-  }
 
-  const result = await transact(async knex => {
     const { fromInventoryItemIds, toInventoryItemIds } = await transactFromTo(knex, transactionProps)
     const [fromInventoryItemId] = fromInventoryItemIds || []
     const [toInventoryItemId] = toInventoryItemIds || []
@@ -503,8 +530,6 @@ async function transferOrReceiveInventory({ auth, payload, plugins }, mode) {
     }
     return result
   })
-
-  return result
 }
 
 // ----------------------------------------------------------------------------------
@@ -574,7 +599,7 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
       .first('id as reasonId')) || {}
 
   const inventoryItemId = await doChangeQuantity(inventoryStrategy, {
-    knex,
+    // knex,
     consumableId,
     siteId,
     lotNumber,
@@ -615,54 +640,63 @@ async function consumeInventoryForResult(
 
   const { id: testRunConsumableReasonId } = await findConsumableReason('Test Conducted')
 
-  const affectedInventoryItems = await Promise.all(
-    _.map(assayConsumables, async assayConsumable => {
-      const { consumableId, quantity } = assayConsumable
-      const existingInventoryLog = await knex('InventoryLog as il')
-        .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
-        .where({
-          'il.resultId': resultId,
-          'ii.consumableId': consumableId,
-        })
-        .first('ii.id', 'il.inventoryItemId')
+  let affectedInventoryItems = await Promise.map(assayConsumables, async assayConsumable => {
+    const { consumableId, quantity } = assayConsumable
+    const existingInventoryLog = await knex('InventoryLog as il')
+      .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
+      .where({
+        'il.resultId': resultId,
+        'ii.consumableId': consumableId,
+      })
+      .first('ii.id', 'il.inventoryItemId')
 
-      /**
-       * Don't double deduct inventory for the same result
-       */
-      if (_.isEmpty(existingInventoryLog)) {
-        const consumableStrategy = await getConsumableStrategy(consumableId)
+    /**
+     * Don't double deduct inventory for the same result
+     */
+    if (_.isEmpty(existingInventoryLog)) {
+      const consumableStrategy = await getConsumableStrategy(consumableId)
 
-        const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-        const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))
-          ? _.get(consumablesInResultData, '[0].lot')
-          : undefined
-        // assayConsumable.strategy.indexOf('withLot') >= 0 ? _.get(consumablesInResultData, '[0].lot') : undefined
+      const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
+      const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))
+        ? _.get(consumablesInResultData, '[0].lot')
+        : undefined
 
-        const inventoryItemId = await doChangeQuantity(inventoryStrategy, {
-          knex,
-          consumableId,
-          siteId,
-          lotNumber,
-          expiresOn,
-          quantity,
-          operation: 'remove',
-          now,
-          userId,
-          messageContext,
-          logProps: {
-            consumableReasonId: testRunConsumableReasonId,
-            adjustedFrom: testStartedOn,
-            adjustedTo: testEndedOn,
-            operation: 'result',
-            resultId,
-            // notes,
-          },
-        })
-        // inventoryItemIds.push(inventoryItemId)
-        return getInventoryItem(inventoryItemId)
+      const inventoryItemIds = await doChangeQuantity(inventoryStrategy, {
+        consumableId,
+        siteId,
+        lotNumber,
+        expiresOn,
+        quantity,
+        operation: 'remove',
+        now,
+        userId,
+        messageContext,
+        logProps: {
+          consumableReasonId: testRunConsumableReasonId,
+          adjustedFrom: testStartedOn,
+          adjustedTo: testEndedOn,
+          operation: 'result',
+          resultId,
+          // notes,
+        },
+        resultId,
+      })
+
+      if (Boom.isBoom(inventoryItemIds)) {
+        return inventoryItemIds
       }
-    })
-  )
+      return Promise.map(inventoryItemIds, async inventoryItemId => getInventoryItem(inventoryItemId))
+    }
+  })
+
+  const boomFirstError = affectedInventoryItems.find(x => Boom.isBoom(x))
+  if (boomFirstError) {
+    return boomFirstError
+  }
+  /**
+   * affectedInventoryItems is an array of arrays - flatten it 1 level deep to be an array
+   */
+  affectedInventoryItems = _.flatten(affectedInventoryItems)
 
   return _.without(affectedInventoryItems, undefined, null)
 }
