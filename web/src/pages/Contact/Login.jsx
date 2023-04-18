@@ -12,6 +12,7 @@ import useI18n from '../../hooks/useI18n'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
+import { DirtyListener } from './context'
 import messages from './messages'
 
 const Login = ({ setStep, id }) => {
@@ -22,6 +23,7 @@ const Login = ({ setStep, id }) => {
   const { userId: loggedInUserId } = useAuthState()
 
   const initialValues = {
+    canLogIn: id === ACTION.SELF ? 1 : person?.canLogIn,
     username: person?.username || '',
     newPassword: '',
     confirmNewPassword: '',
@@ -64,7 +66,7 @@ const Login = ({ setStep, id }) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={values => {
+          onSubmit={(values, { resetForm }) => {
             updateLogin(
               {
                 canLogIn: !!canLogIn,
@@ -74,6 +76,7 @@ const Login = ({ setStep, id }) => {
               },
               {
                 onSuccess: () => {
+                  resetForm({ values })
                   if (id === ACTION.ADD) {
                     setStep(2)
                   }
@@ -82,32 +85,36 @@ const Login = ({ setStep, id }) => {
             )
           }}
         >
-          {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
+          {({ handleSubmit, handleChange, setSubmitting, values, errors, isValid, dirty }) => (
             <>
+              <DirtyListener step={2} />
               <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          id="canLogIn"
-                          name="canLogIn"
-                          checked={canLogIn === 1}
-                          onChange={e => {
-                            const { checked } = e.target
-                            if (!checked) {
-                              updateLogin({
-                                newUsername: values.username,
-                                newPassword: values.newPassword,
-                                userLockedOut: true,
-                              })
-                            }
-                            setCanLogin(checked ? 1 : 0)
-                          }}
-                        />
-                      }
-                      label={`${formatMessage(messages.userCanAlsoLogIn)} *`}
-                    />
+                    {id !== ACTION.SELF ? (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            id="canLogIn"
+                            name="canLogIn"
+                            checked={canLogIn === 1}
+                            onChange={e => {
+                              const { checked } = e.target
+                              if (!checked) {
+                                updateLogin({
+                                  newUsername: values.username,
+                                  newPassword: values.newPassword,
+                                  userLockedOut: true,
+                                })
+                                setSubmitting(false)
+                              }
+                              setCanLogin(checked ? 1 : 0)
+                            }}
+                          />
+                        }
+                        label={`${formatMessage(messages.userCanAlsoLogIn)} *`}
+                      />
+                    ) : null}
                   </Grid>
                   <Grid item xs={6}>
                     <TextField
