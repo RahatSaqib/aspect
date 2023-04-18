@@ -25,6 +25,7 @@ import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import messages from './messages'
+import { DirtyListener } from './context'
 
 const ContactDetails = ({ setStep, id }) => {
   const navigate = useNavigate()
@@ -123,6 +124,7 @@ const ContactDetails = ({ setStep, id }) => {
         >
           {({ handleSubmit, handleChange, values, errors, isValid }) => (
             <form onSubmit={handleSubmit}>
+              <DirtyListener step={0} />
               <Grid container spacing={2}>
                 {/* row0 */}
 
