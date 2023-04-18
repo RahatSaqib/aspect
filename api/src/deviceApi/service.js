@@ -769,7 +769,10 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
     return { error: Boom.internal('Device not assigned to partner') }
   }
 
-  const { id: userId } = await getUser(auth.credentials.name)
+  let { id: userId } = (await getUser(auth.credentials.name)) || {}
+  if (!userId) {
+    ;({ createdBy: userId } = await knex('Device').where('id', device.id).first('createdBy'))
+  }
 
   const context = new DeviceApiContext({
     auth,
