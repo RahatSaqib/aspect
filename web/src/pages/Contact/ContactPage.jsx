@@ -1,19 +1,21 @@
-import * as React from 'react'
-import { useMemo } from 'react'
+import React, { useMemo, lazy, Suspense, useState } from 'react'
 import { Box, Card, CardContent } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useLocation, useParams } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
 import { useAuthState } from '../../providers/AuthProvider'
 import ACTION from './constants'
-import ContactDetails from './ContactDetails'
 import { DirtyStepsProvider } from './context'
-import JobAssigment from './JobAssigment'
-import Login from './Login'
 import messages from './messages'
 
+const ContactDetails = lazy(() => import('./ContactDetails'))
+const JobAssigment = lazy(() => import('./JobAssigment'))
+const Login = lazy(() => import('./Login'))
+
+const Step = ({ step, value, children }) => <div hidden={step !== value}>{children}</div>
+
 const ContactPage = () => {
-  const [step, setStep] = React.useState(0)
+  const [step, setStep] = useState(0)
   const { formatMessage } = useI18n()
   const { personId } = useParams()
   const { userId: loggedInUserId } = useAuthState()
@@ -37,9 +39,17 @@ const ContactPage = () => {
         <Card>
           <DirtyStepsProvider>
             <CardContent>
-              {step === 0 ? <ContactDetails setStep={setStep} id={id} /> : null}
-              {step === 1 ? <JobAssigment setStep={setStep} id={id} /> : null}
-              {step === 2 ? <Login setStep={setStep} id={id} /> : null}
+              <Suspense fallback={<></>}>
+                <Step step={step} value={0}>
+                  <ContactDetails setStep={setStep} id={id} />
+                </Step>
+                <Step step={step} value={1}>
+                  <JobAssigment setStep={setStep} id={id} />
+                </Step>
+                <Step step={step} value={2}>
+                  <Login setStep={setStep} id={id} />
+                </Step>
+              </Suspense>
             </CardContent>
           </DirtyStepsProvider>
         </Card>
