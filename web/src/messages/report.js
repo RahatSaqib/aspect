@@ -301,5 +301,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.deviceSummaryReport',
     defaultMessage: 'Device Summary Report',
   },
+  missing_cartridges_report: {
+    id: 'pages.ReportIndex.missing_cartridges_report',
+    defaultMessage: 'List of Missing Lots',
+  },
+  missing_cartridges_report_description: {
+    id: 'pages.ReportIndex.missing_cartridges_report_description',
+    defaultMessage:
+      "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
+  },
 })
 export default messages
