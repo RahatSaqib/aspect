@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isEmpty from 'lodash/isEmpty'
@@ -19,10 +19,10 @@ const Login = ({ setStep, id }) => {
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
-  const [canLogIn, setCanLogin] = useState(id === ACTION.SELF ? 1 : person?.canLogIn)
   const { userId: loggedInUserId } = useAuthState()
 
   const initialValues = {
+    canLogIn: id === ACTION.SELF ? 1 : person?.canLogIn,
     username: person?.username || '',
     newPassword: '',
     confirmNewPassword: '',
@@ -68,7 +68,7 @@ const Login = ({ setStep, id }) => {
           onSubmit={(values, { resetForm }) => {
             updateLogin(
               {
-                canLogIn: !!canLogIn,
+                canLogIn: !!values.canLogIn,
                 newUsername: values.username,
                 newPassword: values.newPassword,
                 userLockedOut: values.userLockedOut === 1,
@@ -84,7 +84,7 @@ const Login = ({ setStep, id }) => {
             )
           }}
         >
-          {({ handleSubmit, handleChange, setSubmitting, values, errors, isValid, dirty }) => (
+          {({ handleSubmit, handleChange, values: { canLogIn, ...values }, errors, isValid, dirty }) => (
             <>
               <DirtyListener step={2} />
               <form onSubmit={handleSubmit}>
@@ -99,15 +99,7 @@ const Login = ({ setStep, id }) => {
                             checked={canLogIn === 1}
                             onChange={e => {
                               const { checked } = e.target
-                              if (!checked) {
-                                updateLogin({
-                                  newUsername: values.username,
-                                  newPassword: values.newPassword,
-                                  userLockedOut: true,
-                                })
-                                setSubmitting(false)
-                              }
-                              setCanLogin(checked ? 1 : 0)
+                              handleChange({ target: { name: 'canLogIn', value: checked ? 1 : 0 } })
                             }}
                           />
                         }
