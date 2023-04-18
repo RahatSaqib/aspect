@@ -19,11 +19,10 @@ const Login = ({ setStep, id }) => {
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
-  const [canLogIn, setCanLogin] = useState(person?.canLogIn)
+  const [canLogIn, setCanLogin] = useState(id === ACTION.SELF ? 1 : person?.canLogIn)
   const { userId: loggedInUserId } = useAuthState()
 
   const initialValues = {
-    canLogIn: id === ACTION.SELF ? 1 : person?.canLogIn,
     username: person?.username || '',
     newPassword: '',
     confirmNewPassword: '',
