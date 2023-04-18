@@ -27,7 +27,9 @@ const ContactStepper = ({ step, full, isUpdate, onChange }) => {
             <Tab
               key={item.step}
               value={item.step}
-              label={`${formatMessage(messages[item.title])}${dirtySteps?.[item.step] ? ' (Pending changes)' : ''}`}
+              label={`${formatMessage(messages[item.title])}${
+                dirtySteps?.[item.step] ? ` (${formatMessage(messages.pendingChanges)})` : ''
+              }`}
             />
           ))}
         </Tabs>

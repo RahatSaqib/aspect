@@ -398,5 +398,9 @@ export default {
       id: 'page.contacts.person.addAssignment',
       defaultMessage: 'Add Assignment',
     },
+    pendingChanges: {
+      id: 'page.contacts.person.pendingChanges',
+      defaultMessage: 'Pending changes',
+    },
   }),
 }
