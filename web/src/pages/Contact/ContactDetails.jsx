@@ -24,8 +24,8 @@ import { getCustomMessage } from '../../messages/customMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
-import messages from './messages'
 import { DirtyListener } from './context'
+import messages from './messages'
 
 const ContactDetails = ({ setStep, id }) => {
   const navigate = useNavigate()
@@ -93,7 +93,7 @@ const ContactDetails = ({ setStep, id }) => {
             cell: person.cell?.length > 5 ? person.cell : null,
           }}
           validationSchema={validationSchema}
-          onSubmit={values => {
+          onSubmit={(values, { resetForm }) => {
             const noField = [
               'country',
               'stateName',
@@ -113,12 +113,13 @@ const ContactDetails = ({ setStep, id }) => {
                 onSuccess: ({ data }) => {
                   navigate(`/browse/person/${data.id}?add=true`)
                   setStep(1)
+                  resetForm({ values })
                 },
               })
             } else if (id === ACTION.SELF) {
-              updateSelf(values)
+              updateSelf(values, { onSuccess: () => resetForm({ values }) })
             } else {
-              updatePerson(values)
+              updatePerson(values, { onSuccess: () => resetForm({ values }) })
             }
           }}
         >
