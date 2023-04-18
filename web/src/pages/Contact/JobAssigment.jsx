@@ -24,6 +24,7 @@ import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
+import { DirtyListener } from './context'
 import messages from './messages'
 
 const JobAssigment = ({ setStep, id }) => {
@@ -79,6 +80,7 @@ const JobAssigment = ({ setStep, id }) => {
           {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
             <>
               <form onSubmit={handleSubmit}>
+                <DirtyListener step={1} />
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <Grid item xs={12}>
