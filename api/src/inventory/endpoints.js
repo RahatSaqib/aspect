@@ -94,16 +94,6 @@ const routes = [
           ...inventoryFilters,
           ...validateAllGeographyFilterParams(),
           ...validateDateRangeParams(),
-          // ...validateSortPageParams(
-          //   'createdOn',
-          //   'siteName',
-          //   'lotNumber',
-          //   'notes',
-          //   'movementReason',
-          //   'consumableName',
-          //   'expiresOn',
-          //   'quantity'
-          // ),
         },
       },
     },
