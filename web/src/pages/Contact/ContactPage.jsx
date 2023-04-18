@@ -7,6 +7,7 @@ import useI18n from '../../hooks/useI18n'
 import { useAuthState } from '../../providers/AuthProvider'
 import ACTION from './constants'
 import ContactDetails from './ContactDetails'
+import { DirtyStepsProvider } from './context'
 import JobAssigment from './JobAssigment'
 import Login from './Login'
 import messages from './messages'
@@ -34,11 +35,13 @@ const ContactPage = () => {
       <Helmet title={formatMessage(messages.title)} />
       <Box sx={{ p: 2, minWidth: '100%' }}>
         <Card>
-          <CardContent>
-            {step === 0 ? <ContactDetails setStep={setStep} id={id} /> : null}
-            {step === 1 ? <JobAssigment setStep={setStep} id={id} /> : null}
-            {step === 2 ? <Login setStep={setStep} id={id} /> : null}
-          </CardContent>
+          <DirtyStepsProvider>
+            <CardContent>
+              {step === 0 ? <ContactDetails setStep={setStep} id={id} /> : null}
+              {step === 1 ? <JobAssigment setStep={setStep} id={id} /> : null}
+              {step === 2 ? <Login setStep={setStep} id={id} /> : null}
+            </CardContent>
+          </DirtyStepsProvider>
         </Card>
       </Box>
     </>
