@@ -13,7 +13,7 @@ const { convertStringToFloat } = require('../shared/string')
 
 const { getDevice } = require('../device/service')
 const inventory = require('../inventory/service')
-const { getResultDataHash } = require('../result/common/logic')
+const { mergeResultWithPayload } = require('../result/common/logic')
 
 // ----------------------------------------------------------
 async function getExistingResult(knex, payload, deviceId) {
@@ -395,23 +395,10 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   ;({ sampleId } = existingSampleDetails)
 
   //
-  const existingResultDataString = _.get(existingResult, 'resultData', null)
-  const existingResultDataHash = _.get(existingResult, 'resultDataHash', null)
-  const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}
-  const resultData = payload.data ? deepMerge({ ...existingResultData }, payload.data) : existingResultData
-
-  /**
-   * get hash of new resultData and if it is the same as already saved `resultDataHash` then
-   * skip ResultUpdated notification because we already processed it
-   */
-  const resultDataHash = payload.data ? getResultDataHash(resultData) : null
-  const shouldTriggerResultNotification =
-    // send notification if Result.resultData is null
-    !existingResultDataString ||
-    // send notification if Result.resultDataHash is null
-    !existingResultDataHash ||
-    // send notification if Result.resultDataHash is NOT equal new resultDataHash from payload
-    (!!resultDataHash && existingResultDataHash !== resultDataHash)
+  const { resultData, resultDataHash, shouldTriggerResultNotification } = mergeResultWithPayload(
+    existingResult,
+    payload
+  )
 
   const existingResultPatientString = _.get(existingResult, 'patientData', null)
   const existingResultPatient = isJson(existingResultPatientString) ? JSON.parse(existingResultPatientString) : {}

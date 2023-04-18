@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const crypto = require('crypto')
+const { isJson, deepMerge } = require('../../shared/json')
 
 const plainToDeepObjectResult = result => {
   if (!result) return null
@@ -58,8 +59,30 @@ const getResultDataHash = obj => {
   return objHash
 }
 
+const mergeResultWithPayload = (existingResult, payload) => {
+  const existingResultDataString = _.get(existingResult, 'resultData', null)
+  const existingResultDataHash = _.get(existingResult, 'resultDataHash', null)
+  const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}
+  const resultData = payload.data ? deepMerge({ ...existingResultData }, payload.data) : existingResultData
+
+  /**
+   * get hash of new resultData and if it is the same as already saved `resultDataHash` then
+   * skip ResultUpdated notification because we already processed it
+   */
+  const resultDataHash = payload.data ? getResultDataHash(resultData) : null
+  const shouldTriggerResultNotification =
+    // send notification if Result.resultData is null
+    !existingResultDataString ||
+    // send notification if Result.resultDataHash is null
+    !existingResultDataHash ||
+    // send notification if Result.resultDataHash is NOT equal new resultDataHash from payload
+    (!!resultDataHash && existingResultDataHash !== resultDataHash)
+
+  return { resultData, resultDataHash, shouldTriggerResultNotification }
+}
+
 module.exports = {
   plainToDeepObjectResult,
   getMissingResultValues,
-  getResultDataHash,
+  mergeResultWithPayload,
 }
