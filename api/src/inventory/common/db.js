@@ -436,7 +436,7 @@ async function logInventoryChange({
   inventoryItemId,
   consumableId,
   siteId,
-  referencedSiteId = null,
+  referencedSiteId,
   consumableReasonId,
   resultId,
   lotNumber,
@@ -448,6 +448,7 @@ async function logInventoryChange({
   adjustedTo,
   createdOn,
   createdBy,
+  isAutomatic,
 }) {
   await knex('InventoryLog').insert({
     inventoryItemId,
@@ -465,6 +466,7 @@ async function logInventoryChange({
     adjustedTo,
     createdOn,
     createdBy,
+    isAutomatic,
   })
 }
 
