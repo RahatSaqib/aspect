@@ -216,11 +216,9 @@ async function doChangeQuantityInTransactBody(
 }
 
 // ----------------------------------------------------------------------------------
-async function doChangeQuantity(
-  inventoryStrategy,
-  {
-    knex, // <--- if defined then we are inside transaction and must use this `knex`
-    //
+async function doChangeQuantity(inventoryStrategy, params) {
+  const {
+    /* knex, // <--- if defined then we are inside transaction and must use this `knex` */
     consumableId,
     siteId,
     lotNumber,
@@ -238,8 +236,7 @@ async function doChangeQuantity(
      */
     plugins,
     messageContext,
-  }
-) {
+  } = params
   const getAffectedItes = async knex => {
     const actualInventoryItemProps = await getActualInventoryItems(
       knex,
@@ -268,8 +265,9 @@ async function doChangeQuantity(
   }
 
   let affectedInventoryItems
-  if (knex) {
-    affectedInventoryItems = await getAffectedItes(knex)
+  if (params.knex) {
+    // if `knex` is passed via `props` then we are inside transaction and must use it
+    affectedInventoryItems = await getAffectedItes(params.knex)
   } else {
     affectedInventoryItems = await transact(async knex => getAffectedItes(knex))
   }
@@ -282,7 +280,7 @@ async function doChangeQuantity(
    */
   await Promise.each(affectedInventoryItems, async ({ siteId, consumableId }) =>
     checkOpenedStockIssues({
-      knex,
+      knex: params.knex || knex,
       siteId,
       consumableId,
       now,
