@@ -381,7 +381,7 @@ async function receiveInventory({ auth, payload, plugins }) {
 // ----------------------------------------------------------------------------------
 async function transferInventory({ auth, payload, plugins }) {
   const res = await transferOrReceiveInventory({ auth, payload, plugins }, MODE.TRANSFER)
-  if (Boom.isBoom(res)) return res
+  // may be object { existingInventoryItem, newInventoryItem } or Boom
   return res
 }
 
