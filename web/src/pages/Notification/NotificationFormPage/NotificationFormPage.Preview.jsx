@@ -40,8 +40,8 @@ const NotificationFormPreview = ({ values }) => {
           <span style={rowStyle}>
             <h4 style={labelStyle}>{formatMessage(messages.whenResultIs)}:</h4>
             <span>
-              {values.result.map(p => (
-                <span style={{ ...labelStyle, display: 'block' }}>
+              {values.result.map((p, index) => (
+                <span style={{ ...labelStyle, display: 'block' }} key={index}>
                   {p.assayId ? formatMessage(messages[p.assayId]) : ''}{' '}
                   {(p.resultCategoryId || []).map(r => r.label).join(', ')}
                 </span>
@@ -190,12 +190,12 @@ const NotificationFormPreview = ({ values }) => {
         <h4 style={labelStyle}>{formatMessage(messages.personsSelectLabel)}:</h4>
         <span>
           {!isPersonListLoading
-            ? (values.persons || []).map(p => {
+            ? (values.persons || []).map((p, index) => {
                 const person = isString(p)
                   ? personList.find(pl => pl.id === p)
                   : personList.find(pl => pl.id === p.value)
                 return (
-                  <span style={{ ...labelStyle, display: 'block' }}>{`${person.name} ${
+                  <span style={{ ...labelStyle, display: 'block' }} key={index}>{`${person.name} ${
                     person.state ? `(${person.state})` : ''
                   }`}</span>
                 )
@@ -213,20 +213,18 @@ const NotificationFormPreview = ({ values }) => {
           <span>
             {values.jobFunctions
               .filter(jf => jf.checked)
-              .map(jf => {
+              .map((jf, index) => {
                 return (
-                  <>
-                    <span style={{ ...labelStyle, display: 'block' }}>
-                      {formatMessage(
-                        jobFunctionsMessages[jobFunctions.find(j => j.id === jf.jobFunctionId).externalId]
-                      )}{' '}
-                      {jf.tags.length
-                        ? `(${jf.tags.map(tag => (
-                            <span style={{ ...labelStyle, display: 'block' }}>{tag.label}</span>
-                          ))})`
-                        : null}
-                    </span>
-                  </>
+                  <span style={{ ...labelStyle, display: 'block' }} key={index}>
+                    {formatMessage(jobFunctionsMessages[jobFunctions.find(j => j.id === jf.jobFunctionId).externalId])}{' '}
+                    {jf.tags.length
+                      ? `(${jf.tags.map((tag, index2) => (
+                          <span style={{ ...labelStyle, display: 'block' }} key={index2}>
+                            {tag.label}
+                          </span>
+                        ))})`
+                      : null}
+                  </span>
                 )
               })}
           </span>
@@ -257,7 +255,11 @@ const replacePlaceholdersWithPascalCase = text => {
 }
 
 const ParsedString = ({ value }) => {
-  const generateParagraph = line => <p style={{ margin: 0 }}>{line}</p>
+  const generateParagraph = line => (
+    <p style={{ margin: 0 }} key={line}>
+      {line}
+    </p>
+  )
 
   const text = replacePlaceholdersWithPascalCase(value || '')
   const lines = text.split('\n')
