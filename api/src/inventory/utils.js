@@ -219,6 +219,8 @@ async function doChangeQuantityInTransactBody(
 async function doChangeQuantity(
   inventoryStrategy,
   {
+    knex, // <--- if defined then we are inside transaction and must use this `knex`
+    //
     consumableId,
     siteId,
     lotNumber,
@@ -238,7 +240,7 @@ async function doChangeQuantity(
     messageContext,
   }
 ) {
-  const affectedInventoryItems = await transact(async knex => {
+  const getAffectedItes = async knex => {
     const actualInventoryItemProps = await getActualInventoryItems(
       knex,
       inventoryStrategy,
@@ -263,7 +265,15 @@ async function doChangeQuantity(
         ...logProps,
       },
     })
-  })
+  }
+
+  let affectedInventoryItems
+  if (knex) {
+    affectedInventoryItems = await getAffectedItes(knex)
+  } else {
+    affectedInventoryItems = await transact(async knex => getAffectedItes(knex))
+  }
+
   /**
    * run needed MQ tasks after changing inventory quantity
    * Notice that we here run all MQ tasks AFTER changing inventory - to make
@@ -611,7 +621,7 @@ async function consumeInventoryForResult(
   partnerId,
   testStartedOn,
   testEndedOn,
-  knex,
+  knex, // <--- means we are inside transaction and should use this `knex`
   messageContext,
   userId
 ) {
@@ -644,6 +654,7 @@ async function consumeInventoryForResult(
         : undefined
 
       return doChangeQuantity(inventoryStrategy, {
+        knex,
         consumableId,
         siteId,
         lotNumber,
