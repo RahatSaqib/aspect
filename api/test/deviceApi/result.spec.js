@@ -4,6 +4,7 @@ const _ = require('lodash')
 const { addHours } = require('date-fns')
 const { knex } = require('../../src/db')
 const { resultWorkflowStatusToId } = require('../../src/shared/dictionary')
+const { resultTypeToId } = require('../../src/shared/dictionary')
 const { resultReadyForNotification } = require('../../src/result/actions')
 
 const {
@@ -825,6 +826,84 @@ describe('Device Result API routes', () => {
           .select('externalId')
         assert.equal(result4Category1.externalId, 'Detected')
         assert.equal(result4Category2.externalId, 'NotDetected')
+      }))
+    it('should set result as EQA if sample.id contains Exclude pattern', () =>
+      runTest(async knex => {
+        const excludeSampleId = 'ExcludeMeLalala'
+        const resultIds = []
+        const { deviceId, deviceAuth, now } = context
+        const EqaResultTypeId = await resultTypeToId('EQA')
+
+        const resultPayload = {
+          startedOn: now,
+          data: { a: 'b' },
+          assay: { id: 'DaktariHivVL' },
+          instrument: { serial: '1234567' },
+          patient: {
+            id: 'PAT-DFD-1234',
+            name: 'Bob',
+            surname: 'Hope',
+            gender: 'M',
+            age: 72,
+            dateOfBirth: '1903-05-29',
+            address: '123 Main Street',
+            phone: '856-7909',
+          },
+          sample: { id: excludeSampleId },
+        }
+        await server
+          .post(devicePostResultPath)
+          .set('Authorization', deviceAuth)
+          .send(resultPayload)
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+
+        resultIds.push(await getLastResultId(knex, deviceId))
+
+        const result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
+
+        assert.equal(result1.resultTypeId, EqaResultTypeId)
+        assert.isNotOk(result1.errorCode)
+      }))
+
+    it('should set result as EQA if sampleId contains Exclude pattern', () =>
+      runTest(async knex => {
+        const excludeSampleId = 'ExcludeMeLalala'
+        const resultIds = []
+        const { deviceId, deviceAuth, now } = context
+        const EqaResultTypeId = await resultTypeToId('EQA')
+
+        const resultPayload = {
+          startedOn: now,
+          data: { a: 'b', sampleId: excludeSampleId },
+          assay: { id: 'DaktariHivVL' },
+          instrument: { serial: '1234567' },
+          patient: {
+            name: 'Bob',
+            surname: 'Hope',
+            gender: 'M',
+            age: 72,
+            dateOfBirth: '1903-05-29',
+            address: '123 Main Street',
+            phone: '856-7909',
+          },
+          sample: { id: '76543789' },
+        }
+        await server
+          .post(devicePostResultPath)
+          .set('Authorization', deviceAuth)
+          .send(resultPayload)
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+
+        resultIds.push(await getLastResultId(knex, deviceId))
+
+        const result1 = await knex('Result as r').where({ id: resultIds[0] }).first()
+
+        assert.equal(result1.resultTypeId, EqaResultTypeId)
+        assert.isNotOk(result1.errorCode)
       }))
 
     it('should merge results with same id', () =>

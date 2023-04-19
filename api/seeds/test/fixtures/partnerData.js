@@ -16,4 +16,5 @@ module.exports = {
       },
     },
   ],
+  excludePattern: '^ExcludeMe.+$',
 }

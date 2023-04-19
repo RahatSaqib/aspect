@@ -633,6 +633,7 @@ async function mergeResultWithContext(context) {
     device: { id: deviceId, deviceType },
     pluginNames: plugins,
     payload,
+    partnerId,
     now,
     messageContext,
     userId,
@@ -644,12 +645,18 @@ async function mergeResultWithContext(context) {
     actions,
     deviceType,
     payload,
+    partnerId,
     now,
     messageContext,
     userId,
   }
+
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
+
+  const excludeResult = await loadPlugin(plugins, 'excludeResult')
+  await excludeResult(pluginContext)
+
   const transformPayload = await loadPlugin(plugins, 'transformMergeResultPayload')
   const transformedPayload = await transformPayload(pluginContext)
   const {
