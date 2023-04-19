@@ -11,20 +11,20 @@ const SimpleTableHeader = ({ columns, sortCol, setSortCol, sortDir, setSortDir }
   return (
     <TableHead>
       <TableRow>
-        {columns.map(headCell => (
+        {columns.map((col, i) => (
           <TableCell
-            key={headCell.id}
+            key={i}
             align="left"
             padding="normal"
-            sortDirection={sortCol === headCell.id ? sortDir : false}
-            style={{ width: `${headCell.width}%` }}
+            sortDirection={sortCol === col.id ? sortDir : false}
+            style={{ width: `${col.width}%` }}
           >
             <TableSortLabel
-              active={sortCol === headCell.id}
-              direction={sortCol === headCell.id ? sortDir : 'asc'}
-              onClick={createSortHandler(headCell.id)}
+              active={sortCol === col.id}
+              direction={sortCol === col.id ? sortDir : 'asc'}
+              onClick={createSortHandler(col.id)}
             >
-              {headCell.label}
+              {col.label}
             </TableSortLabel>
           </TableCell>
         ))}

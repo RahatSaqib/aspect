@@ -136,8 +136,8 @@ const NotificationList = () => {
                     setSortDir={setSortDir}
                   />
                   <TableBody>
-                    {(data.data || []).map(row => (
-                      <TableRow>
+                    {(data.data || []).map((row, i) => (
+                      <TableRow key={i}>
                         <TableCell>{row.name}</TableCell>
                         <TableCell>{formatMessage(messages[row.typeCategory])}</TableCell>
                         <TableCell>
