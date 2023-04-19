@@ -17,7 +17,6 @@ const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shar
 
 const {
   findInventoryItem,
-  getInventoryItem,
   //
   updateInventoryItem,
   insertInventoryItem,
@@ -376,17 +375,14 @@ async function removeInventory({ auth, payload, plugins }) {
 async function receiveInventory({ auth, payload, plugins }) {
   const res = await transferOrReceiveInventory({ auth, payload, plugins }, MODE.RECEIVE)
   if (Boom.isBoom(res)) return res
-  return getInventoryItem(res.toInventoryItemId)
+  return res.newInventoryItem
 }
 
 // ----------------------------------------------------------------------------------
 async function transferInventory({ auth, payload, plugins }) {
   const res = await transferOrReceiveInventory({ auth, payload, plugins }, MODE.TRANSFER)
   if (Boom.isBoom(res)) return res
-  return {
-    existingInventoryItem: await getInventoryItem(res.fromInventoryItemId),
-    newInventoryItem: await getInventoryItem(res.toInventoryItemId),
-  }
+  return res
 }
 
 // ----------------------------------------------------------------------------------
@@ -549,6 +545,7 @@ async function doFromTo(knex, { consumableId, lotNumber, expiresOn, now, userId,
       ...baseProps,
       siteId: to.siteId,
       logProps: to.logProps,
+      inTransitFromSiteId: to.inTransitFromSiteId,
     })
   }
 
