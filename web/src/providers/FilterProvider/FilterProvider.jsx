@@ -1,5 +1,6 @@
 import React, { useState, createContext, useContext } from 'react'
 import endOfDay from 'date-fns/endOfDay'
+import endOfMonth from 'date-fns/endOfMonth'
 import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import subtractDays from 'date-fns/subDays'
@@ -13,7 +14,7 @@ const maxDate = endOfDay(now)
 // TODO: remove pagination from URL
 const defaultFilter = {
   '/browse/device/list': {}, // done
-  '/browse/device/workload': { minDate: startOfMonth(now), maxDate, singleAssayId: -1 }, // done
+  '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 }, // done
   '/browse/deviceApiKey': {}, // done
   '/browse/inventory/supplies': { hasStock: true }, // done
   '/browse/inventory/log': { minDate, maxDate }, // done

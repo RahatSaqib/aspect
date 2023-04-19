@@ -74,7 +74,7 @@ const InventoryLogFilter = () => {
             label={formatMessage(messages.expirationDate)}
             minDate={state.minExpirationDate || null}
             maxDate={state.maxExpirationDate || null}
-            onChange={dateValues => setState({ ...state, ...dateValues })}
+            onChange={dv => setState({ ...state, minExpirationDate: dv.minDate, maxExpirationDate: dv.maxDate })}
             customMaxYear={addYears(new Date(), 3)}
             noDay
             noWeek

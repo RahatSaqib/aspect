@@ -8,6 +8,7 @@ const getDeviceApiKey = async params =>
     total: response.total,
   }))
 
-const useDeviceApiKey = (params, options) => useQuery([DEVICE_API_KEY_KEY], () => getDeviceApiKey(params), options)
+const useDeviceApiKey = (params, options) =>
+  useQuery([DEVICE_API_KEY_KEY, params], () => getDeviceApiKey(params), options)
 
 export default useDeviceApiKey

@@ -40,6 +40,15 @@ export const DeviceApiKeyList = () => {
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
+
+  const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'createdOn', sortDir: 'desc' })({
+    location,
+  })
+
+  const { isLoading, data } = useDeviceApiKey(
+    { sortCol, sortDir, page: pageAt, size: pageSize, ...filters },
+    { enabled: !!sortCol }
+  )
   const { mutation: generate } = useDeviceApiKeyGenerate()
   const { mutate: assign } = useDeviceApiKeyAssign()
   const { mutate: update } = useDeviceApiKeyUpdate()
@@ -52,14 +61,6 @@ export const DeviceApiKeyList = () => {
     isGeneratorDialogOpen: false,
     isAssignerDialogOpen: false,
   })
-  const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'createdOn', sortDir: 'desc' })({
-    location,
-  })
-
-  const { isLoading, data } = useDeviceApiKey(
-    { sortCol, sortDir, page: pageAt, size: pageSize, ...filters },
-    { enabled: !!sortCol }
-  )
 
   useEffect(() => {
     if (download.enabled) setDownload({ enabled: false })
@@ -198,7 +199,7 @@ export const DeviceApiKeyList = () => {
                   ]}
                 />
                 <TableBody>
-                  {(data?.data || []).map(deviceApiKey => (
+                  {data.data.map(deviceApiKey => (
                     <DeviceApiKeyTableRow
                       key={deviceApiKey.id}
                       intl={intl}

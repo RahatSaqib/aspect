@@ -69,7 +69,7 @@ const Workload = () => {
     if (assays?.length) {
       const mostResultsAssay = assays.filter(a => a.hasResults).sort((a, b) => b.resultCount - a.resultCount)[0]
 
-      if (filter.singleAssayId !== mostResultsAssay?.id) {
+      if (filter.singleAssayId === -1) {
         addFilter({ ...filter, singleAssayId: mostResultsAssay?.id }, location.pathname)
       }
     }

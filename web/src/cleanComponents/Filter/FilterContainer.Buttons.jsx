@@ -40,6 +40,7 @@ const filtersOrdering = {
   maxDate: 19,
   notificationName: 20,
   treatmentStatus: 21,
+  revoked: 21,
   onlyReportableResults: 22,
   reportName: 23,
   onlyTreatmentRequired: 24,
@@ -159,7 +160,7 @@ const buttonMapping = {
   onlyReportableResults: ({ remove }) => <OnlyReportableResults remove={remove} />,
   onlyDownloadedByReporter: ({ remove }) => <OnlyDownloadedByReporter remove={remove} />,
   onlyTreatmentRequired: ({ remove }) => <OnlyTreatmentRequired remove={remove} />,
-
+  revoked: ({ revoked, remove }) => <Revoked revoked={revoked} remove={remove} />,
   assayOverride: () => null,
   singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
 }
@@ -193,8 +194,10 @@ const AssayId = ({ assayId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useAssayList()
 
+  const del = { del: remove ? () => remove(['assayId']) : undefined } // singleAssayId has no delete option
+
   return data && assayId !== -1 ? (
-    <Btn lbl={formatMessage(messages[data.find(a => a.id === assayId).i18nKey])} del={() => remove(['assayId'])} />
+    <Btn lbl={formatMessage(messages[data.find(a => a.id === assayId).i18nKey])} {...del} />
   ) : null
 }
 
@@ -527,13 +530,26 @@ const OnlyReportableResults = ({ remove }) => {
 
   return <Btn lbl={formatMessage(messages.onlyReportableResults)} del={() => remove(['onlyReportableResults'])} />
 }
+
 const OnlyDownloadedByReporter = ({ remove }) => {
   const { formatMessage } = useI18n()
 
   return <Btn lbl={formatMessage(messages.onlyDownloadedByReporter)} del={() => remove(['onlyDownloadedByReporter'])} />
 }
+
 const OnlyTreatmentRequired = ({ remove }) => {
   const { formatMessage } = useI18n()
 
   return <Btn lbl={formatMessage(messages.onlyTreatmentRequired)} del={() => remove(['onlyTreatmentRequired'])} />
+}
+
+const Revoked = ({ revoked, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.withRevoked, { revokedStatus: revoked === '0' ? 'false' : 'true' })}
+      del={() => remove(['revoked'])}
+    />
+  )
 }

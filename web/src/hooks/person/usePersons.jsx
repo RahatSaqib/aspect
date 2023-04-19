@@ -8,6 +8,6 @@ const getPersons = async params =>
     total: response.total,
   }))
 
-const usePersons = params => useQuery([PERSON_KEY, 'all'], () => getPersons(params))
+const usePersons = params => useQuery([PERSON_KEY, 'all', params], () => getPersons(params))
 
 export default usePersons
