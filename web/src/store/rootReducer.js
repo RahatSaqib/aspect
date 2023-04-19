@@ -21,7 +21,6 @@ import result from './ResultRedux'
 import resultTreatmentStatus from './ResultTreatmentStatusRedux'
 import resultWorkflowStatus from './ResultWorkflowStatusRedux'
 import site from './SiteRedux'
-import tag from './TagRedux'
 import task from './TaskRedux'
 
 const appReducer = combineReducers({
@@ -45,7 +44,6 @@ const appReducer = combineReducers({
   resultTreatmentStatus,
   resultWorkflowStatus,
   site,
-  tag,
   task,
   user,
 })
@@ -70,7 +68,6 @@ const App = Immutable.Record({
   resultTreatmentStatus: undefined,
   resultWorkflowStatus: undefined,
   site: undefined,
-  tag: undefined,
   task: undefined,
   user: undefined,
 })

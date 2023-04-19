@@ -4,14 +4,14 @@ import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
+import DetailHeader from '../../../cleanComponents/DetailHeader'
+import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
 import NotificationFilter from '../../../cleanComponents/Filter/NotificationFilter'
-import MagicTableHeader from '../../../cleanComponents/MagicTable/MagicTableHeader'
-import MagicTablePagination from '../../../cleanComponents/MagicTable/MagicTablePagination'
+import SimpleTableHeader from '../../../cleanComponents/SimpleTable/SimpleTableHeader'
+import SimpleTablePagination from '../../../cleanComponents/SimpleTable/SimpleTablePagination'
 import { allowOnlyAPIKeys, removeNullFromCollection } from '../../../components/AspectTable/Helpers'
 import ContactsCell from '../../../components/AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../../components/AspectTable/TableCell/DateTimeCell'
-import DetailHeader from '../../../components/DetailHeader'
-import ErrorBoundary from '../../../components/ErrorBoundary'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { replaceRouteParams } from '../../../components/QueryFetch/Helpers'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
@@ -128,7 +128,7 @@ const NotificationList = () => {
             ) : (
               <ErrorBoundary>
                 <Table size="small">
-                  <MagicTableHeader
+                  <SimpleTableHeader
                     columns={columns}
                     sortCol={sortCol}
                     setSortCol={setSortCol}
@@ -165,7 +165,7 @@ const NotificationList = () => {
                     ))}
                   </TableBody>
                 </Table>
-                <MagicTablePagination
+                <SimpleTablePagination
                   paginatorStatus={messages.paginatorStatus}
                   onPageSizeChange={setSize}
                   onPageChange={setPage}

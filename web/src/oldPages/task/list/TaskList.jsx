@@ -11,10 +11,10 @@ import { compose, withProps, withHandlers, lifecycle, setPropTypes, defaultProps
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import { sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import StyledDropdown from '../../../oldComponents/shared/StyledDropdown'
+import { sanitizeFiltersStringBy } from '../../../oldComponents/utils'
 import { fetchTasks } from '../../../store/TaskRedux'
 import {
   makeSortPageSelector,

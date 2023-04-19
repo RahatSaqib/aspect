@@ -1,7 +1,7 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { getFilters } from '../oldComponents/filter/utils'
+import { getFilters } from '../oldComponents/utils'
 import screenSchema from '../oldPages/result/ResultScreenSchema.json'
 import {
   filterFieldsRejectedError,

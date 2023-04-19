@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Grid, Card, CardContent, Stack } from '@mui/material'
-import DetailHeader from '../../../components/DetailHeader'
+import DetailHeader from '../../../cleanComponents/DetailHeader'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 
 const baseStyle = { pb: 3, paddingLeft: '8px !important', paddingRight: '8px !important', overflow: 'auto' }

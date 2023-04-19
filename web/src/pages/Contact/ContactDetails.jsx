@@ -14,7 +14,7 @@ import {
   TagSelect,
   TimezoneSelect,
 } from '../../cleanComponents'
-import Loading from '../../components/Loading'
+import Loading from '../../cleanComponents/Loading'
 import useAddPerson from '../../hooks/person/useAddPerson'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePerson from '../../hooks/person/useUpdatePerson'

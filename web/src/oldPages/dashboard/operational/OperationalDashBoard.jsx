@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
-import ErrorBoundary from '../../../components/ErrorBoundary'
+import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'

@@ -7,10 +7,10 @@ import { Helmet } from 'react-helmet'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useSelector, useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
+import DetailHeader from '../../../cleanComponents/DetailHeader'
+import ErrorBoundary from '../../../cleanComponents/ErrorBoundary/index'
 import InventoryItemsFilter from '../../../cleanComponents/Filter/InventoryItemsFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
-import DetailHeader from '../../../components/DetailHeader'
-import ErrorBoundary from '../../../components/ErrorBoundary/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
@@ -293,7 +293,6 @@ export const InventoryItemsList = () => {
   // >>>>>> Structuring data <<<<<<
   const { table, items, inventoryAdjustment } = inventory
   const sortPage = makeSortPageSelector({ sortCol: 'siteName' })
-  // const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, dependencies)
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({
     location,
     availableSortCol,
