@@ -17,7 +17,7 @@ const defaultFilter = {
   '/browse/deviceApiKey': {}, // done
   '/browse/inventory/supplies': { hasStock: true }, // done
   '/browse/inventory/log': { minDate, maxDate }, // done
-  '/browse/notification': {}, // half-done
+  '/browse/notification': {}, // done
   '/browse/person': { contactStatus: 0 }, // done
   '/browse/reporter': { minDate, maxDate }, // done
   '/browse/result': {}, // done
