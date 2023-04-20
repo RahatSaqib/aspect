@@ -24,8 +24,6 @@ const InventoryOverviewPage = () => {
     { enabled: !!consumableExternalId }
   )
 
-  // const data = new Array(111).fill({}).map((i, idx) => createData(idx, `City ${idx}`, 159, 6, 24, 9, 5))
-
   const columns = [
     { name: 'Name', prop: 'name' },
     { name: 'Current Qty.', prop: 'quantity' },
@@ -45,8 +43,7 @@ const InventoryOverviewPage = () => {
         </>
       }
     >
-      <pre>{JSON.stringify(filter, null, 2)}</pre>
-      {/* {isLoading ? <LinearProgress /> : <NestedTable columns={columns} rows={data} hasDetail />} */}
+      {isLoading ? <LinearProgress /> : <NestedTable columns={columns} rows={data} />}
     </PkPage>
   )
 }

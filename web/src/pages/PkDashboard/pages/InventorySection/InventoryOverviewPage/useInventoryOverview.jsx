@@ -6,7 +6,7 @@ const getInventoryOverviewData = async ({ consumableExternalId, minDate, maxDate
   fetchWrapperForQueries({
     endpoint: INVENTORY_OVERVIEW_ENDPOINT,
     params: { consumableExternalId, minDate, maxDate },
-  }).then(response => response.data)
+  }).then(response => [response.data.country])
 
 const useInventoryOverview = ({ consumableExternalId, minDate, maxDate }, { enabled }) => {
   const params = { consumableExternalId, minDate, maxDate }
