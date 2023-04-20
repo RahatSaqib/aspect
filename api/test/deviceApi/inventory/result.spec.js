@@ -440,11 +440,12 @@ describe('admin result updates', () => {
       // Remove inventory item if it already exists
       await knex('InventoryItem').where({ consumableId: daktariHivVlCartridgeId, siteId }).del()
 
+      const expiresOn = future.toISOString().split('T')[0]
       const [inventoryItemId] = await knex('InventoryItem').insert({
         consumableId: daktariHivVlCartridgeId,
         siteId,
         lotNumber: 'HIV582',
-        expiresOn: future.toISOString().split('T')[0],
+        expiresOn,
         quantityOnHand: 50,
         createdBy: adminId,
         createdOn: past,
@@ -460,7 +461,7 @@ describe('admin result updates', () => {
 
       const resultDetails = {
         lotNumber: 'HIV582',
-        expirationDate: startOfDay(future).toISOString(),
+        expirationDate: expiresOn,
       }
 
       const inventoryItemsBefore = await getInventoryItemsAtSite(knex, siteId)
