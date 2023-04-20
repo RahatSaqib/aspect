@@ -92,7 +92,8 @@ const routes = [
       validate: {
         query: {
           consumableExternalId: Joi.string().allow('', null),
-          ...validateDateRangeParams(),
+          minDate: Joi.date().iso().allow(null).description('From Date'),
+          maxDate: Joi.date().iso().allow(null).description('To Date'),
         },
       },
     },
