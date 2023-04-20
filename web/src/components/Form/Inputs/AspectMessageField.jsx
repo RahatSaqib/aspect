@@ -10,8 +10,8 @@ const AspectMessageField = ({ controlType: { text, color, icon } }) => {
     <div className={cssClasses('messageField')} style={{ color }}>
       {icon && <IconProvider icon={icon} />}{' '}
       <div className={cssClasses('text')}>
-        {text.split('\n').map(t => (
-          <div>
+        {text.split('\n').map((t, index) => (
+          <div key={index}>
             {t}
             <br />
           </div>

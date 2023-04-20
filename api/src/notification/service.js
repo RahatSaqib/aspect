@@ -564,6 +564,7 @@ async function createNotificationIfNotCreatedAlready(
     reportId = null,
     notificationTypeCategoryExternalId: category,
     isResultUpdated,
+    filterCondition,
   } = notifProps
   const { personId = null, policy, reportToken = null, reportFileName = null, now = new Date() } = policyProps
   const { notify: notifyANonPerson = false, email: to, phone } = nonPersonToSend
@@ -596,7 +597,7 @@ async function createNotificationIfNotCreatedAlready(
     })
     .first()
   let allowCreate = !existingNotification
-  if (category === CATEGORY.RESULT_BASED && isResultUpdated) {
+  if (category === CATEGORY.RESULT_BASED && filterCondition.resultBasedScope !== 'created' && isResultUpdated) {
     allowCreate = true
   }
   if (allowCreate) {

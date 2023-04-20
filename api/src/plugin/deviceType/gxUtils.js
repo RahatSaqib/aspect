@@ -434,7 +434,7 @@ async function findDevices(availableDeviceDetails, knex) {
             .andWhere('d.serial', deviceSerialNumber)
             .select(fields)
           // There are multiple devices using this computer name
-          //  therefore the device serial number cannot be used as a device identifier
+          // therefore the device serial number cannot be used as a device identifier
           if (matchingDevices.length > 1) {
             matchingDevices = []
           }
