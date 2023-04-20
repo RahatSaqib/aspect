@@ -88,7 +88,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
                       </IconButton>
                     ) : (
                       <IconButton aria-label="expand row" size="small">
-                        <ClearIcon />
+                        <ClearIcon style={{ opacity: 0.4 }} />
                       </IconButton>
                     )}
                   </TableCell>

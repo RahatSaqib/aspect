@@ -58,27 +58,30 @@ function buildHierarchy(geo, sites) {
 function addAggregations(item) {
   switch (item.type) {
     case 'country':
-    case 'province':
+    case 'state':
     case 'lga':
       item.quantity = 0
       item.usedLastSixMonths = 0
       item.usedInDateRange = 0
       item.dailyConsumptionRate = 0
 
-      item.children.forEach(i => {
-        addAggregations(i)
-        item.quantity += i.quantity
-        if (i.usedLastSixMonths) {
-          item.usedLastSixMonths += i.usedLastSixMonths
+      item.children.forEach(child => {
+        addAggregations(child)
+        item.quantity += child.quantity
+        if (child.usedLastSixMonths) {
+          item.usedLastSixMonths = parseFloat((item.usedLastSixMonths + child.usedLastSixMonths).toFixed(2))
         }
-        if (i.usedInDateRange) {
-          item.usedInDateRange += i.usedInDateRange
+        if (child.usedInDateRange) {
+          item.usedInDateRange = parseFloat((item.usedInDateRange + child.usedInDateRange).toFixed(2))
         }
-        if (i.dailyConsumptionRate) {
-          item.dailyConsumptionRate += i.dailyConsumptionRate
+        if (child.dailyConsumptionRate) {
+          item.dailyConsumptionRate = parseFloat((item.dailyConsumptionRate + child.dailyConsumptionRate).toFixed(2))
         }
-        if (i.daysOfInventoryLeft) {
-          item.daysOfInventoryLeft = Math.min(item.daysOfInventoryLeft ?? i.daysOfInventoryLeft, i.daysOfInventoryLeft)
+        if (child.daysOfInventoryLeft) {
+          item.daysOfInventoryLeft = Math.min(
+            (item.daysOfInventoryLeft = parseFloat(item.daysOfInventoryLeft + child.daysOfInventoryLeft.toFixed(2))),
+            child.daysOfInventoryLeft
+          )
         }
       })
       if (!item.daysOfInventoryLeft) {
