@@ -91,8 +91,7 @@ const routes = [
       auth: { scope: ['inventory:view'] },
       validate: {
         query: {
-          ...inventoryFilters,
-          ...validateAllGeographyFilterParams(),
+          consumableExternalId: Joi.string().allow('', null),
           ...validateDateRangeParams(),
         },
       },

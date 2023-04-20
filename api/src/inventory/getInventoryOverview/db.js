@@ -31,7 +31,7 @@ module.exports = async function (query, constraints) {
       'r.endedOn'
     )
     .modify(addConstraints, constraints, { geography: 'g', site: 's' })
-    .where('c.id', query.consumableId)
+    .where('c.externalId', query.consumableExternalId)
     .orWhere('stype.externalId', 'warehouse')
     .groupBy('s.id', 'c.id')
     .select([
