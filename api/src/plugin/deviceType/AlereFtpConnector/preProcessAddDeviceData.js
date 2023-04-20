@@ -12,7 +12,10 @@ async function preProcessAddDeviceData(context) {
     alereDevice.deviceTypePluginName = device.deviceTypePluginName
     context.device = alereDevice
   } else {
-    throw Boom.badData(`Cannot find or create device with the provided data`)
+    const deviceSerialNumber = _.get(payload, 'result.instrument.serial', null)
+    throw Boom.badData(
+      `Cannot find or create device with the provided data - Device Serial Number: ${deviceSerialNumber}`
+    )
   }
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)

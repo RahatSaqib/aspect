@@ -123,8 +123,8 @@ const makeButton = labelFn => (filterKey, props, index) => {
 const getResultCategoryName = (assayItems, filterAssayId, resultCategoryId) => {
   const assayIds = isArray(filterAssayId) ? filterAssayId : [filterAssayId]
   return assayItems
-    .find(it => assayIds.includes(it.get('id')), EMPTY_CONTEXT, EMPTY_MAP)
-    .get('resultCategories', EMPTY_MAP)
+    .filter(it => assayIds.includes(it.get('id')), EMPTY_CONTEXT, EMPTY_MAP)
+    .reduce((prv, c) => prv.concat(...c.get('resultCategories')), [])
     .find(it => it.get('id') === resultCategoryId, EMPTY_CONTEXT, EMPTY_MAP)
     .get('i18nKey', '')
 }

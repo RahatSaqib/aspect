@@ -2,9 +2,10 @@ const { Boom } = require('@hapi/boom')
 const _ = require('lodash')
 const { getUser } = require('../auth/service')
 const { getResultByResultId } = require('./common/db')
-const { resultUpdated } = require('./actions')
+const { resultUpdated, resultReadyForNotification } = require('./actions')
 const { knex } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
+const { resultTypeToId } = require('../shared/dictionary')
 
 async function updateResult(request) {
   const {
@@ -27,6 +28,8 @@ async function updateResult(request) {
     resultSourceExternalId: 'rso.externalId',
     patientData: 'r.patientData',
     resultData: 'r.resultData',
+    resultTypeId: 'r.resultTypeId',
+    resultDataHash: 'r.resultDataHash',
   })
   if (!result.ok) {
     return Boom.notFound('This result does not exist or you do not have access.')
@@ -35,9 +38,13 @@ async function updateResult(request) {
   const user = await getUser(auth.credentials.name)
   const { id: userId } = user
   const now = new Date()
-  const { customFields, deviceId } = result.data
+  const { customFields, deviceId, resultDataHash } = result.data
 
   let fieldsToUpdate = {}
+  if (payload?.excluded === false) {
+    const activeResultTypeId = await resultTypeToId('Patient')
+    fieldsToUpdate.resultTypeId = activeResultTypeId
+  }
   for (const customField of customFields) {
     if (customField.source) {
       _.set(fieldsToUpdate, customField.source, _.get(payload, customField.source))
@@ -87,10 +94,26 @@ async function updateResult(request) {
     {}
   )
 
+  if (payload.resultTypeId && payload.resultTypeId !== result.resultTypeId) {
+    fieldsToUpdate.resultTypeId = payload.resultTypeId
+  }
+
+  const isResultUpdated = customFields.some(customField => {
+    if (customField.source) {
+      const data1 = _.get(result.data, customField.source)
+      const data2 = _.get(payload, customField.source)
+
+      if (_.isEmpty(data1) !== _.isEmpty(data2)) return true
+      if (data1 !== data2) return true
+    }
+    return false
+  })
+
   await knex('Result')
     .where('id', resultId)
     .update({
       ...fieldsToUpdate,
+      resultDataHash: !isResultUpdated ? resultDataHash : null,
       updatedBy: userId,
       updatedOn: now,
     })
@@ -110,6 +133,11 @@ async function updateResult(request) {
 
   messageContext.bindActionCreators({ resultUpdated })
   messageContext.resultUpdated(resultId, deviceLogId, userId)
+
+  if (isResultUpdated) {
+    messageContext.bindActionCreators({ resultReadyForNotification })
+    messageContext.resultReadyForNotification(resultId, true)
+  }
 
   return { ok: true, data: { id: result.data.id } }
 }

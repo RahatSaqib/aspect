@@ -12,7 +12,7 @@ const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 const NotificationCache = require('./notificationCache')
-const saveReportToFile = require('../report/saveReportToFile')
+const { saveReportToFile } = require('../report/saveReportToFile')
 const config = require('../config')
 const { getDateRangeFilters } = require('./common/logic')
 const { CATEGORY } = require('./constants')
@@ -58,10 +58,12 @@ async function getCustomFieldsSourcesFromTemplates(notificationTypeId) {
 
 async function shouldNotifyResult(resultId, notificationTypeId) {
   const result = await knex('Result as r')
+    .innerJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
     .where('r.id', resultId)
+    .where('rt.excluded', false)
     .select(['g.countryId', 'at.diseaseId', 'r.*'])
     .first()
 
@@ -196,6 +198,7 @@ function geographyFilters(queryBuilder, filterConditions, aliases) {
 
 function resultConditionsMet(queryBuilder, filterCondition, aliases) {
   const tblResultAlias = aliases.result ? aliases.result : 'r'
+
   resultCategoryFilters(queryBuilder, filterCondition, tblResultAlias)
   geographyFilters(queryBuilder, filterCondition, aliases)
 }
@@ -321,9 +324,6 @@ async function getNotificationPolicy(
     'nt.jobFunctionId',
     'nt.level',
     'nt.sendToContactsWithMatchingTags',
-    // 'g.countryId',
-    // 'g.stateId',
-    // 'g.lgaId',
     'mt.alertTemplateId',
     'mt.emailTemplateId',
     'mt.smsTemplateId',
@@ -487,7 +487,10 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, notifi
             personId,
           },
         }
-        fileName = await saveReportToFile(auth, filters, externalId)
+        const { fileName: reportFileName, promise } = await saveReportToFile(auth, filters, externalId, false)
+        fileName = reportFileName
+        // wait until report end
+        await promise
       }
       // Generate JWT
       const reportToken = jwt.sign(
@@ -527,8 +530,6 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
     site: 's',
     geography: 'g',
     partner: 'p',
-    showUnapprovedDevices: true,
-    showDecommissionedDevices: true,
   }
   // does person have job context that can see this issue/result?
   const constraints = await getJobConstraints(personId, jobFunctionId)
@@ -563,6 +564,7 @@ async function createNotificationIfNotCreatedAlready(
     reportId = null,
     notificationTypeCategoryExternalId: category,
     isResultUpdated,
+    filterCondition,
   } = notifProps
   const { personId = null, policy, reportToken = null, reportFileName = null, now = new Date() } = policyProps
   const { notify: notifyANonPerson = false, email: to, phone } = nonPersonToSend
@@ -595,7 +597,7 @@ async function createNotificationIfNotCreatedAlready(
     })
     .first()
   let allowCreate = !existingNotification
-  if (category === CATEGORY.RESULT_BASED && isResultUpdated) {
+  if (category === CATEGORY.RESULT_BASED && filterCondition.resultBasedScope !== 'created' && isResultUpdated) {
     allowCreate = true
   }
   if (allowCreate) {

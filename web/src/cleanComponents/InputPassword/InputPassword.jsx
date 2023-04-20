@@ -4,7 +4,7 @@ import { TextField, Stepper, Step, StepLabel } from '@mui/material'
 import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 
-const InputPassword = ({ id, name, label, value, onChange, error, helperText }) => {
+const InputPassword = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
   const { formatMessage } = useI18n()
   const rules = [
     { descriptionLabel: formatMessage(messages.eightCharsLong), validator: /^.{8,}$/ },
@@ -20,6 +20,8 @@ const InputPassword = ({ id, name, label, value, onChange, error, helperText }) 
         name={name}
         label={label}
         value={value}
+        disabled={disabled}
+        autoComplete="new-password"
         onChange={onChange}
         error={error}
         helperText={helperText}

@@ -78,6 +78,10 @@ const messages = {
     mtbXdrTesting: { id: 'p.PkDashboard.mtbXdrTesting', defaultMessage: 'Testing' },
     mtbXdrmtbDetection: { id: 'p.PkDashboard.mtbXdrmtbDetection', defaultMessage: 'MTB Detection' },
     mtbXdrFQResistance: { id: 'p.PkDashboard.mtbXdrFQResistance', defaultMessage: 'FQ Resistance' },
+    mtbXdrTestingDiagnosisTrends: {
+      id: 'p.PkDashboard.mtbXdrTestingDiagnosisTrends',
+      defaultMessage: 'Testing & Diagnosis Trends using MTB/XDR Assay',
+    },
     TCurrent: { id: 'p.PkDashboard.TCurrent', defaultMessage: 'Current Testing' },
     TNationalTrend: { id: 'p.PkDashboard.TNationalTrend', defaultMessage: 'National Testing Trends' },
     TProvincialComparison: {

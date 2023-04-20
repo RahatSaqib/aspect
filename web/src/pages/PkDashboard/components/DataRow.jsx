@@ -1,9 +1,9 @@
 import React from 'react'
 import { Stack, Typography, Divider } from '@mui/material'
 
-const DataRow = ({ label, value }) => {
+const DataRow = ({ label, value, ...props }) => {
   return (
-    <Stack direction="row" justifyContent="space-between" alignItems="center">
+    <Stack direction="row" justifyContent="space-between" alignItems="center" {...props}>
       <Typography sx={{ fontSize: 16, fontWeight: 500 }}>{label}</Typography>
       {value ? (
         <>
