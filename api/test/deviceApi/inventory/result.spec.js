@@ -934,12 +934,12 @@ describe('admin result updates', () => {
   })
 
   describe('inventory management with Expiration date strategy', () => {
-    before(async () => knex('Consumable').update({ strategy: 'withExpirationDateStrategy' }))
-    after(async () =>
-      knex('Consumable').update({
-        strategy: 'withLotAndExpirationDateStrategy',
-      })
-    )
+    // before(async () => knex('Consumable').update({ strategy: 'withExpirationDateStrategy' }))
+    // after(async () =>
+    //   knex('Consumable').update({
+    //     strategy: 'withLotAndExpirationDateStrategy',
+    //   })
+    // )
     it('should deduct inventory levels from the site', async () => {
       const { deviceId, deviceAuth, now } = context
       const results = [
