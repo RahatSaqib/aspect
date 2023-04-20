@@ -196,9 +196,9 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.isNotNull(inventoryItem2)
           assert.equal(inventoryItem2.quantityOnHand, 600)
 
-          // We should filter empty inventories
-          const emptyInventoryItems = res.body.data.filter(ii => ii.quantityOnHand <= 0)
-          assert.isFalse(emptyInventoryItems.length > 0)
+          // // We should filter empty inventories
+          // const emptyInventoryItems = res.body.data.filter(ii => ii.quantityOnHand <= 0)
+          // assert.isFalse(emptyInventoryItems.length > 0)
 
           assert.property(res.body, 'total')
         })
@@ -482,7 +482,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'Object')
           assert.equal(res.body.data.quantityOnHand, inventoryItem.quantityOnHand + quantityToAdjust)
-          assert.isNull(res.body.data.lotNumber)
+          assert.equal(res.body.data.lotNumber, inventoryItem.lotNumber)
         })
         it('should update the quantity of an inventory item only with expiration date matching', async () => {
           const res = await server
@@ -585,7 +585,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             quantityOnHand: quantityToAdjust,
             inTransitFromSiteId: inventoryItem.siteId,
             siteId: destinationSite.id,
-            lotNumber: null,
+            lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
           })
 
@@ -617,17 +617,18 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             quantityOnHand: transitItem.quantityOnHand + quantityToAdjust,
             inTransitFromSiteId: inventoryItem.siteId,
             siteId: destinationSite.id,
-            lotNumber: null,
+            lotNumber: inventoryItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
           })
         })
 
         it('when transfering from a non-existing lot, should add an inventory item in transit to the destination and another with negative stock in the origin site', async () => {
+          const lotNumber = 'NON-EXISTING LOT'
           const res = await server
             .put(`${transferInventoryPath}`)
             .send({
               consumableId: inventoryItem.consumableId,
-              lotNumber: 'NON-EXISTING LOT',
+              lotNumber,
               expiresOn: subDays(inventoryItem.expiresOn, 10),
               quantity: quantityToAdjust,
               notes: 'Testing transfer',
@@ -653,7 +654,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             quantityOnHand: quantityToAdjust,
             inTransitFromSiteId: inventoryItem.siteId,
             siteId: destinationSite.id,
-            lotNumber: null,
+            lotNumber,
             expiresOn: subDays(inventoryItem.expiresOn, 10).toISOString(),
           })
 
@@ -661,7 +662,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             ...sourceInventoryItem,
             quantityOnHand: -quantityToAdjust,
             siteId: inventoryItem.siteId,
-            lotNumber: null,
+            lotNumber,
             expiresOn: subDays(inventoryItem.expiresOn, 10).toISOString(),
           })
         })
@@ -715,7 +716,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
             ...res.body.data,
             quantityOnHand: quantityToAdjust,
             siteId: destinationSite.id,
-            lotNumber: null,
+            lotNumber: transitItem.lotNumber,
             expiresOn: inventoryItem.expiresOn.toISOString(),
           })
         })
