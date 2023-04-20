@@ -37,7 +37,7 @@ function buildHierarchy(geo, sites) {
 
   const states = geo.filter(g => g.stateId && !g.lgaId)
   states.forEach(g => {
-    g.type = 'province'
+    g.type = 'state'
     const stateSites = sites
       .filter(s => g.stateId === s.stateId && !s.lgaId)
       .sort((a, b) => ['warehouse', 'lab'].indexOf(a.type) > ['warehouse', 'lab'].indexOf(b.type))
