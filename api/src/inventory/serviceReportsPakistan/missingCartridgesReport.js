@@ -1,18 +1,8 @@
-const _ = require('lodash')
-const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
 const { knex } = require('../../db')
 const { filterParams, filterDateRangeParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
 async function getMissingCartridgesReport(dataConstraints, query) {
-  const now = new Date()
-  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
-  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
-  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
-  if (dateFrom >= dateTo) {
-    dateFrom = subMonths(dateTo, 1)
-  }
-
   const data = await knex('MissingInventoryLots as m')
     .innerJoin('Result as r', 'm.resultId', 'r.id')
     .innerJoin('Site as s', 'm.SiteId', 's.id')
@@ -25,7 +15,7 @@ async function getMissingCartridgesReport(dataConstraints, query) {
       result: 'r',
       geography: 'g',
     })
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+    .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -35,7 +25,7 @@ async function getMissingCartridgesReport(dataConstraints, query) {
       consumableId: 'ca.consumableId',
     })
     .select(
-      'r.endedOn',
+      'r.endedOn as testEndedOn',
       's.name as site',
       'st.name as province',
       'l.name as district',
@@ -43,6 +33,7 @@ async function getMissingCartridgesReport(dataConstraints, query) {
       'm.lotNumber',
       'pa.name as warehouse'
     )
+    .orderBy('r.endedOn')
 
   const dataset = {
     ok: true,
@@ -50,7 +41,7 @@ async function getMissingCartridgesReport(dataConstraints, query) {
     length: data.length,
     data,
     fixedColumns: [
-      { key: 'endedOn', header: 'Ended On' },
+      { key: 'testEndedOn', header: 'Test Ended On' },
       { key: 'site', header: 'Site' },
       { key: 'province', header: 'Province' },
       { key: 'district', header: 'District' },
