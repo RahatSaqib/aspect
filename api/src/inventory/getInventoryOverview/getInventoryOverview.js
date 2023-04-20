@@ -15,39 +15,94 @@ module.exports = async function (request) {
 
   const country = buildHierarchy(geographies, sites)
 
+  addAggregations(country)
+
   return { ok: true, length: sites.length, data: { country } }
 }
 
 /**
- * Fills children sites and geographies on each geography, arrange them in a hierarchy
- * @param {*} geo - List of geographies
- * @param {*} sites - List of sites
- * @returns Hierachical list of geographies, with country ➜ state ➜ lga, where each node's children property also contains sites.
+ * Fills children sites and geographies on each geography, arrange geographies in a hierarchy.
+ * @param {Array} geo - List of geographies.
+ * @param {Array} sites - List of sites.
+ * @returns Hierachical list of geographies, with country ➜ state ➜ lga, where each node's children property contains warehouses and labs.
  */
 function buildHierarchy(geo, sites) {
   const lgas = geo.filter(g => g.lgaId)
   lgas.forEach(g => {
     g.type = 'lga'
-    const lgaSites = sites.filter(s => s.lgaId === g.lgaId)
-    g.children = lgaSites
+    const lgaLabs = sites.filter(s => s.lgaId === g.lgaId && s.type === 'lab')
+    deleteAuxiliarProperties(lgaLabs)
+    g.children = lgaLabs
   })
 
   const states = geo.filter(g => g.stateId && !g.lgaId)
   states.forEach(g => {
     g.type = 'province'
-    const stateSites = sites.filter(s => g.stateId === s.stateId)
+    const stateSites = sites
+      .filter(s => g.stateId === s.stateId && !s.lgaId)
+      .sort((a, b) => ['warehouse', 'lab'].indexOf(a.type) > ['warehouse', 'lab'].indexOf(b.type))
     const stateLgas = lgas.filter(l => l.stateId === g.stateId)
+    deleteAuxiliarProperties([...stateSites, ...stateLgas])
     g.children = [...stateSites, ...stateLgas]
   })
 
   const country = geo.find(g => g.countryId && !g.stateId && !g.lgaId)
   country.type = 'country'
   const countrySites = sites.filter(s => country.countryId === s.countryId && !s.stateId && !s.lgaId)
+  deleteAuxiliarProperties([country, ...countrySites])
   country.children = [...countrySites, ...states]
 
   return country
 }
 
-console.log('\x1b[1;36m', '🚀 ➜ file: getInventoryOverview.js:37 ➜ TODO:', 'Check this TODO')
-// TODO: Need to show parent warehouse name in the Site Details page, open ticket.
-// TODO: I'm not using parent warehouse, ask about it!!!!
+function addAggregations(item) {
+  switch (item.type) {
+    case 'country':
+    case 'province':
+    case 'lga':
+      item.quantity = 0
+      item.usedLastSixMonths = 0
+      item.usedInDateRange = 0
+      item.dailyConsumptionRate = 0
+
+      item.children.forEach(i => {
+        addAggregations(i)
+        item.quantity += i.quantity
+        if (i.usedLastSixMonths) {
+          item.usedLastSixMonths += i.usedLastSixMonths
+        }
+        if (i.usedInDateRange) {
+          item.usedInDateRange += i.usedInDateRange
+        }
+        if (i.dailyConsumptionRate) {
+          item.dailyConsumptionRate += i.dailyConsumptionRate
+        }
+        if (i.daysOfInventoryLeft) {
+          item.daysOfInventoryLeft = Math.min(item.daysOfInventoryLeft ?? i.daysOfInventoryLeft, i.daysOfInventoryLeft)
+        }
+      })
+      if (!item.daysOfInventoryLeft) {
+        item.daysOfInventoryLeft = 0
+      }
+      break
+    case 'warehouse':
+      break
+    default:
+      break
+  }
+}
+
+function deleteAuxiliarProperties(items) {
+  items.forEach(s => {
+    delete s.consumableId
+    delete s.geographyId
+    delete s.stateId
+    delete s.countryId
+    delete s.lgaId
+    delete s.firstResultDateInLastSixMonths
+    if (s.type === 'warehouse') {
+      delete s.usedLastSixMonths
+      delete s.usedInDateRange
+    }
+  })
+}
