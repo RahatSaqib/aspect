@@ -34,4 +34,5 @@ module.exports = {
   daysLimitToNotifyResults: 30,
   serverUrl: 'https://pakistan.aspect.id',
   apiUrl: 'https://pakistan.aspect.id/api',
+  excludePattern: '^ExcludeMe.+$',
 }

@@ -150,6 +150,18 @@ async function getAssaysNamesString(query) {
   return items.map(x => x.name).join(', ')
 }
 
+async function getConsumablesNamesString(query) {
+  if (!query.consumableId) {
+    return 'all'
+  }
+  const items = await knex('Consumable as c')
+    .modify(filterParams, query, {
+      consumableId: 'c.id',
+    })
+    .select('c.name')
+  return items.map(x => x.name).join(', ')
+}
+
 async function getAllSheetsData(auth, query, sheets) {
   let boomError
   const dataSet = []
@@ -226,6 +238,10 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
     {
       placeholder: '<Assays>',
       value: await getAssaysNamesString(query),
+    },
+    {
+      placeholder: '<Consumables>',
+      value: await getConsumablesNamesString(query),
     },
     {
       placeholder: '<UserEmail>',
