@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -24,10 +24,11 @@ import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
-import { DirtyListener } from './context'
+import { DirtyListener, FormStatusContext } from './context'
 import messages from './messages'
 
-const JobAssigment = ({ setStep, id }) => {
+const JobAssigment = ({ setStep }) => {
+  const { id, isAdding } = useContext(FormStatusContext)
   const { countryAbbreviation, countryId } = useAuthState()
   const { formatMessage } = useI18n()
   const { personId } = useParams()
@@ -221,8 +222,8 @@ const JobAssigment = ({ setStep, id }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button onClick={() => (id === ACTION.ADD ? setStep(0) : navigate('/browse/person'))}>
-                    {formatMessage(messages[id === ACTION.ADD ? 'back' : 'backToTable'])}
+                  <Button onClick={() => (isAdding ? setStep(0) : navigate('/browse/person'))}>
+                    {formatMessage(messages[isAdding ? 'back' : 'backToTable'])}
                   </Button>
                   {dirty ? (
                     <Button type="submit" disabled={!isValid}>
@@ -230,9 +231,7 @@ const JobAssigment = ({ setStep, id }) => {
                     </Button>
                   ) : null}
                   <Box sx={{ flex: '1 1 auto' }} />
-                  {id === ACTION.ADD ? (
-                    <Button onClick={() => setStep(2)}>{formatMessage(messages.next)}</Button>
-                  ) : null}
+                  {isAdding ? <Button onClick={() => setStep(2)}>{formatMessage(messages.next)}</Button> : null}
                 </Box>
               </form>
             </>

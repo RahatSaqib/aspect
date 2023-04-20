@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Button, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isString from 'lodash/isString'
@@ -24,11 +24,13 @@ import { getCustomMessage } from '../../messages/customMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
-import { DirtyListener } from './context'
+import { DirtyListener, FormStatusContext } from './context'
 import messages from './messages'
 
-const ContactDetails = ({ setStep, id }) => {
+const ContactDetails = ({ setStep }) => {
   const navigate = useNavigate()
+
+  const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
   const { countryAbbreviation, countryId } = useAuthState()
   const { formatMessage } = useI18n()
@@ -120,11 +122,16 @@ const ContactDetails = ({ setStep, id }) => {
             } else if (id === ACTION.SELF) {
               updateSelf(values, { onSuccess: () => resetForm({ values }) })
             } else {
-              updatePerson(values, { onSuccess: () => resetForm({ values }) })
+              updatePerson(values, {
+                onSuccess: () => {
+                  resetForm({ values })
+                  if (isRecentlyAdd) setStep(1)
+                },
+              })
             }
           }}
         >
-          {({ handleSubmit, handleChange, values, errors, isValid }) => (
+          {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
             <form onSubmit={handleSubmit}>
               <DirtyListener step={0} />
               <Grid container spacing={2}>
@@ -325,9 +332,13 @@ const ContactDetails = ({ setStep, id }) => {
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                 <Button onClick={() => navigate(-1)}>{formatMessage(messages.backToTable)}</Button>
                 <Box sx={{ flex: '1 1 auto' }} />
-                <Button type="submit" disabled={!isValid}>
-                  {formatMessage(messages[id === ACTION.ADD ? 'saveAndNext' : 'save'])}
-                </Button>
+                {isRecentlyAdd && !dirty ? (
+                  <Button onClick={() => setStep(1)}>{formatMessage(messages.next)}</Button>
+                ) : dirty || isAdding ? (
+                  <Button disabled={!isValid} type="submit">
+                    {formatMessage(messages[isAdding ? 'saveAndNext' : 'save'])}
+                  </Button>
+                ) : null}
               </Box>
             </form>
           )}

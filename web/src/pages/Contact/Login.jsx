@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isEmpty from 'lodash/isEmpty'
@@ -12,10 +12,11 @@ import useI18n from '../../hooks/useI18n'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
-import { DirtyListener } from './context'
+import { DirtyListener, FormStatusContext } from './context'
 import messages from './messages'
 
-const Login = ({ setStep, id }) => {
+const Login = ({ setStep }) => {
+  const { id, isAdding } = useContext(FormStatusContext)
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
@@ -37,8 +38,7 @@ const Login = ({ setStep, id }) => {
 
   const validationSchema = object({
     username: string().required(formatMessage(messages.usernameRequired)),
-    newPassword:
-      id === ACTION.ADD ? pwdValidation.required(formatMessage(messages.confirmNewPasswordRequired)) : pwdValidation,
+    newPassword: isAdding ? pwdValidation.required(formatMessage(messages.confirmNewPasswordRequired)) : pwdValidation,
     confirmNewPassword: string().when('newPassword', {
       is: val => !isEmpty(val),
       then: pwdValidation
@@ -76,7 +76,7 @@ const Login = ({ setStep, id }) => {
               {
                 onSuccess: () => {
                   resetForm({ values })
-                  if (id === ACTION.ADD) {
+                  if (isAdding) {
                     setStep(2)
                   }
                 },
@@ -163,9 +163,7 @@ const Login = ({ setStep, id }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  {id === ACTION.ADD ? (
-                    <Button onClick={() => setStep(1)}>{formatMessage(messages.back)}</Button>
-                  ) : null}
+                  {isAdding ? <Button onClick={() => setStep(1)}>{formatMessage(messages.back)}</Button> : null}
 
                   <Box sx={{ flex: '1 1 auto' }} />
                   {dirty ? (
