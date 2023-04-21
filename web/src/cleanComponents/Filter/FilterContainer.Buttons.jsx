@@ -78,8 +78,6 @@ const FilterButtons = ({ filters, remove }) => {
   )
 }
 
-export default FilterButtons
-
 const buttonMapping = {
   countryId: () => null, // we hide intentionally the country
   stateId: ({ countryId, stateId, remove }) => <StateId countryId={countryId} stateId={stateId} remove={remove} />,
@@ -553,3 +551,5 @@ const Revoked = ({ revoked, remove }) => {
     />
   )
 }
+
+export default FilterButtons

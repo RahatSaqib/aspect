@@ -1,23 +1,8 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { TextField, IconButton, MenuItem } from '@mui/material'
-import { defineMessages } from 'react-intl'
 import useI18n from '../../hooks/useI18n'
-
-const messages = defineMessages({
-  optionAll: {
-    id: 'pages.displayResultSelectField.All',
-    defaultMessage: 'All',
-  },
-  optionActual: {
-    id: 'pages.displayResultSelectField.Actual',
-    defaultMessage: 'Actual',
-  },
-  optionExcluded: {
-    id: 'pages.displayResultSelectField.Excluded',
-    defaultMessage: 'Excluded',
-  },
-})
+import messages from './messages'
 
 const DisplayResultSelect = ({ id, name, label, value, onChange, error, helperText }) => {
   const { formatMessage } = useI18n()
