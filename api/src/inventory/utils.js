@@ -264,11 +264,11 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     })
 
     return actualInventoryItemProps.map(({ inventoryItem }, index) => {
-      const itemInventoryId = itemIds[index]
+      const inventoryItemId = itemIds[index]
       return {
         siteId: inventoryItem?.siteId ?? siteId,
         consumableId,
-        itemInventoryId,
+        inventoryItemId,
       }
     })
   }
