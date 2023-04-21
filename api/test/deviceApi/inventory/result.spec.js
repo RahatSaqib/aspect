@@ -1451,12 +1451,11 @@ describe('admin result updates', () => {
         .expect(200)
 
       let inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
+
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       let inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
-      assert.isNull(inventoryItemAfter.lotNumber)
-      inventoryItemAfter.lotNumber = resultDetails.lotNumber
-      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
       assert.equal(inventoryItemAfter.expiresOn.toISOString(), futureExpiresOn.toISOString())
       assert.equal(inventoryItemBefore.id, inventoryItemAfter.id, 'Inventory Item used is the one created by the test')
@@ -1507,13 +1506,10 @@ describe('admin result updates', () => {
         .expect(200)
 
       inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
-
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
-      assert.isNull(inventoryItemAfter.lotNumber)
-      inventoryItemAfter.lotNumber = resultDetails.lotNumber
-      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
 
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
 
@@ -1559,12 +1555,10 @@ describe('admin result updates', () => {
         .expect(200)
 
       inventoryItemsAfter = await getInventoryItemsAtSite(knex, siteId)
+      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       inventoryItemAfter = _.find(inventoryItemsAfter, {
         id: inventoryItemId,
       })
-      assert.isNull(inventoryItemAfter.lotNumber)
-      inventoryItemAfter.lotNumber = resultDetails.lotNumber
-      assert.deepEqual(_.map(inventoryItemsBefore, 'id'), _.map(inventoryItemsAfter, 'id'))
       assert.equal(inventoryItemAfter.lotNumber, resultDetails.lotNumber)
       assert.isOk(inventoryItemAfter.expiresOn)
       assert.equal(inventoryItemAfter.quantityOnHand, newQuantityOnHand)

@@ -1,9 +1,10 @@
+const _ = require('lodash')
+
 // ----------------------------------------------------------------------------------
-async function getNewQuantityOnHand(knex, inventoryItem, operation, quantity) {
-  const { quantityOnHand = 0 } = inventoryItem || {}
+async function getNewQuantityOnHand(knex, inventoryItem, operation, quantityOnHand, quantity) {
   const items = [
     {
-      quantityOnHand,
+      quantityOnHand: inventoryItem?.quantityOnHand || 0,
       /**
        * notice that we return same `inventoryItem` - in case if it `undefined` then
        * we insert new inventoryItem, if not - we update it.
@@ -14,16 +15,14 @@ async function getNewQuantityOnHand(knex, inventoryItem, operation, quantity) {
     },
   ]
   switch (operation) {
-    case 'add from GxConnect':
-    case 'remove from GxConnect':
-      items[0].quantityOnHand = quantity
-      break
     case 'add':
+    case 'add from GxConnect':
     case 'receive':
     case 'transfer received':
-      items[0].quantityOnHand += quantity
+      items[0].quantityOnHand = _.isUndefined(quantityOnHand) ? items[0].quantityOnHand + quantity : quantityOnHand
       break
     case 'remove':
+    case 'remove from GxConnect':
     case 'transfer':
     case 'transfer sent':
       /**
@@ -31,7 +30,7 @@ async function getNewQuantityOnHand(knex, inventoryItem, operation, quantity) {
        * see `api/src/plugin/partner/Pakistan/inventoryStrategy.js` for another implementation
        * which takes into account parent warehouse(s) and doesn't allow negative number
        */
-      items[0].quantityOnHand -= quantity
+      items[0].quantityOnHand = _.isUndefined(quantityOnHand) ? items[0].quantityOnHand - quantity : quantityOnHand
       break
     default: {
       // do not change quantityOnHand

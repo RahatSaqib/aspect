@@ -243,25 +243,15 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
             const consumableId = matchingConsumable.id
             const expiresOn = parseDateOrDefault(inventoryChange.expirationDate)
 
-            let quantity = absoluteQuantity
-            let operation = isDecrease ? 'remove' : 'add'
-            if (inventoryChange.resultingQuantityOnHand) {
-              quantity = inventoryChange.resultingQuantityOnHand
-              /**
-               * for such operations we are setting quantityOnHand with `=`, not
-               * adding `+=` or decreasing `-=`. See inventory strategy in
-               * `api/src/inventory/strategies/index.js` or
-               * `api/src/plugin/partner/Pakistan/inventoryStrategy.js`
-               */
-              operation = `${operation} from GxConnect`
-            }
+            const operation = `${isDecrease ? 'remove' : 'add'} from GxConnect`
 
-            const inventoryItems = await changeInventoryQuantity(inventoryStrategy, {
+            const inventoryItemIds = await changeInventoryQuantity(inventoryStrategy, {
               consumableId,
               siteId,
               expiresOn,
               // lotNumber, // <--- lot is not set here
-              quantity,
+              quantity: absoluteQuantity,
+              quantityOnHand: inventoryChange.resultingQuantityOnHand,
               operation,
               now,
               messageContext,
@@ -274,15 +264,13 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
                 operation,
               },
             })
-            return inventoryItems
+            return inventoryItemIds
           }
         }
         return null
       })
     )
-    inventoryItemIds = _.flatten(inventoryItemIds)
-      .filter(x => !isNil(x) && !Boom.isBoom(x))
-      .map(({ id }) => id)
+    inventoryItemIds = _.flatten(inventoryItemIds).filter(x => !isNil(x) && !Boom.isBoom(x))
   }
   return {
     inventoryItemIds,
