@@ -248,7 +248,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
     if (Boom.isBoom(actualInventoryItemProps)) {
       return actualInventoryItemProps
     }
-    return doChangeQuantityInTransactBody(knex, actualInventoryItemProps, {
+    const itemIds = await doChangeQuantityInTransactBody(knex, actualInventoryItemProps, {
       siteId,
       consumableId,
       lotNumber,
@@ -262,14 +262,23 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
         ...logProps,
       },
     })
+
+    return actualInventoryItemProps.map(({ inventoryItem }, index) => {
+      const itemInventoryId = itemIds[index]
+      return {
+        siteId: inventoryItem?.siteId ?? siteId,
+        consumableId,
+        itemInventoryId,
+      }
+    })
   }
 
-  let affectedInventoryItemIds
+  let affectedInventoryItemProps
   if (params.knex) {
-    // if `knex` is passed via `props` then we are inside transaction and must use it
-    affectedInventoryItemIds = await getAffectedItemIds(params.knex)
+    // if `knex` is passed via `params` then we are inside transaction and must use it
+    affectedInventoryItemProps = await getAffectedItemIds(params.knex)
   } else {
-    affectedInventoryItemIds = await transact(async knex => getAffectedItemIds(knex))
+    affectedInventoryItemProps = await transact(async knex => getAffectedItemIds(knex))
   }
 
   /**
@@ -278,8 +287,8 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
    * sure that MQ handler for sure is dealing with already committed
    * above transactions
    */
-  await Promise.each(affectedInventoryItemIds, async inventoryItemId => {
-    const { siteId, consumableId } = await getInventoryItem(inventoryItemId)
+
+  await Promise.each(affectedInventoryItemProps, async ({ siteId, consumableId }) => {
     await checkOpenedStockIssues({
       knex: params.knex || knex,
       siteId,
@@ -289,7 +298,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
       messageContext,
     })
   })
-  return affectedInventoryItemIds
+  return affectedInventoryItemProps.map(x => x.inventoryItemId)
 }
 
 // ----------------------------------------------------------------------------------
@@ -626,50 +635,48 @@ async function consumeInventoryForResult(
   const assayConsumables = await selectAssayConsumables(knex, { partner: { id: partnerId } }, assayId)
 
   const { id: testRunConsumableReasonId } = await findConsumableReason('Test Conducted')
-
-  await Promise.all(assayConsumables, async assayConsumable => {
-    const { consumableId, quantity } = assayConsumable
-    const existingInventoryLog = await knex('InventoryLog as il')
-      .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
-      .where({
-        'il.resultId': resultId,
-        'ii.consumableId': consumableId,
-      })
-      .first('ii.id', 'il.inventoryItemId')
-
-    /**
-     * Don't double deduct inventory for the same result
-     */
-    if (_.isEmpty(existingInventoryLog)) {
-      const consumableStrategy = await getConsumableStrategy(consumableId)
-
-      const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
-      const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))
-        ? _.get(consumablesInResultData, '[0].lot')
-        : undefined
-
-      return changeInventoryQuantity(inventoryStrategy, {
-        knex,
-        consumableId,
-        siteId,
-        lotNumber,
-        expiresOn,
-        quantity,
-        operation: 'remove',
-        now,
-        userId,
-        messageContext,
-        logProps: {
-          consumableReasonId: testRunConsumableReasonId,
-          adjustedFrom: testStartedOn,
-          adjustedTo: testEndedOn,
-          operation: 'result',
+  await Promise.all(
+    _.map(assayConsumables, async assayConsumable => {
+      const { consumableId, quantity } = assayConsumable
+      const existingInventoryLog = await knex('InventoryLog as il')
+        .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
+        .where({
+          'il.resultId': resultId,
+          'ii.consumableId': consumableId,
+        })
+        .first('ii.id', 'il.inventoryItemId')
+      /**
+       * Don't double deduct inventory for the same result
+       */
+      if (_.isEmpty(existingInventoryLog)) {
+        const consumableStrategy = await getConsumableStrategy(consumableId)
+        const expiresOn = _.get(consumablesInResultData, '[0].expirationDate')
+        const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))
+          ? _.get(consumablesInResultData, '[0].lot')
+          : undefined
+        return changeInventoryQuantity(inventoryStrategy, {
+          knex,
+          consumableId,
+          siteId,
+          lotNumber,
+          expiresOn,
+          quantity,
+          operation: 'remove',
+          now,
+          userId,
+          messageContext,
+          logProps: {
+            consumableReasonId: testRunConsumableReasonId,
+            adjustedFrom: testStartedOn,
+            adjustedTo: testEndedOn,
+            operation: 'result',
+            resultId,
+          },
           resultId,
-        },
-        resultId,
-      })
-    }
-  })
+        })
+      }
+    })
+  )
 }
 
 // ----------------------------------------------------------------------------------
