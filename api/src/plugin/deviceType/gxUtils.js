@@ -2,6 +2,8 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const setMilliseconds = require('date-fns/setMilliseconds')
+const { isNil } = require('lodash')
+
 const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
@@ -241,14 +243,25 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
             const consumableId = matchingConsumable.id
             const expiresOn = parseDateOrDefault(inventoryChange.expirationDate)
 
-            const operation = isDecrease ? 'remove' : 'add'
+            let quantity = absoluteQuantity
+            let operation = isDecrease ? 'remove' : 'add'
+            if (inventoryChange.resultingQuantityOnHand) {
+              quantity = inventoryChange.resultingQuantityOnHand
+              /**
+               * for such operations we are setting quantityOnHand with `=`, not
+               * adding `+=` or decreasing `-=`. See inventory strategy in
+               * `api/src/inventory/strategies/index.js` or
+               * `api/src/plugin/partner/Pakistan/inventoryStrategy.js`
+               */
+              operation = `${operation} from GxConnect`
+            }
 
-            const inventoryItemId = await changeInventoryQuantity(inventoryStrategy, {
+            const inventoryItems = await changeInventoryQuantity(inventoryStrategy, {
               consumableId,
               siteId,
               expiresOn,
               // lotNumber, // <--- lot is not set here
-              quantity: absoluteQuantity,
+              quantity,
               operation,
               now,
               messageContext,
@@ -258,18 +271,21 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
                 adjustedFrom: inventoryChange.dateChanged
                   ? setMilliseconds(parseDateOrDefault(inventoryChange.dateChanged), 0)
                   : null,
-                operation: `${operation} from GxConnect`,
+                operation,
               },
             })
-            return inventoryItemId
+            return inventoryItems
           }
         }
-        return -1
+        return null
       })
     )
+    inventoryItemIds = _.flatten(inventoryItemIds)
+      .filter(x => !isNil(x) && !Boom.isBoom(x))
+      .map(({ id }) => id)
   }
   return {
-    inventoryItemIds: _.filter(inventoryItemIds, id => id > 0),
+    inventoryItemIds,
   }
 }
 

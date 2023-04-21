@@ -2530,7 +2530,7 @@ describe('Device API routes for GxConnect Devices', () => {
             operation: 'add from GxConnect',
             lotNumber: null,
             expiresOn: new Date(expirationDate),
-            quantity,
+            quantity: initialQuantity + quantity,
             notes: null,
             adjustedFrom: setMilliseconds(startedOn, 0),
             adjustedTo: null,
@@ -2751,7 +2751,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 operation: 'add from GxConnect',
                 lotNumber: null,
                 expiresOn: new Date(inventoryChange.expirationDate),
-                quantity: Math.abs(inventoryChange.quantity),
+                quantity: Math.abs(inventoryChange.resultingQuantityOnHand),
                 notes: null,
                 adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
                 adjustedTo: null,
@@ -2782,6 +2782,7 @@ describe('Device API routes for GxConnect Devices', () => {
           const endedOn = subHours(now, 2)
           const consumableReason = 'Captured'
           const quantity = 13
+          const resultingQuantityOnHand = inventoryItemAtSiteBefore.quantityOnHand + quantity
 
           await server
             .post('/device')
@@ -2797,7 +2798,7 @@ describe('Device API routes for GxConnect Devices', () => {
                         consumableName: inventoryItemAtSiteBefore.consumableName,
                         consumableReasonName: consumableReason,
                         quantity,
-                        resultingQuantityOnHand: inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                        resultingQuantityOnHand,
                         dateChanged: startedOn,
                         expirationDate: inventoryItemAtSiteBefore.expiresOn,
                       },
@@ -2831,7 +2832,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 inTransitFromSiteId: null,
                 lotNumber: null,
                 expiresOn: inventoryItemAtSiteBefore.expiresOn,
-                quantityOnHand: _.max([0, inventoryItemAtSiteBefore.quantityOnHand + quantity]),
+                quantityOnHand: _.max([0, resultingQuantityOnHand]),
               },
             ]
           )
@@ -2863,7 +2864,7 @@ describe('Device API routes for GxConnect Devices', () => {
             operation: 'add from GxConnect',
             lotNumber: null,
             expiresOn: inventoryItemAtSiteBefore.expiresOn,
-            quantity,
+            quantity: resultingQuantityOnHand,
             notes: null,
             adjustedFrom: setMilliseconds(startedOn, 0),
             adjustedTo: null,
@@ -2891,6 +2892,7 @@ describe('Device API routes for GxConnect Devices', () => {
           const endedOn = subHours(now, 2)
           const consumableReason = 'Captured'
           const quantity = -3
+          const resultingQuantityOnHand = inventoryItemAtSiteBefore.quantityOnHand + quantity
 
           await server
             .post('/device')
@@ -2906,7 +2908,7 @@ describe('Device API routes for GxConnect Devices', () => {
                         consumableName: inventoryItemAtSiteBefore.consumableName,
                         consumableReasonName: consumableReason,
                         quantity,
-                        resultingQuantityOnHand: inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                        resultingQuantityOnHand,
                         dateChanged: startedOn,
                         expirationDate: inventoryItemAtSiteBefore.expiresOn,
                       },
@@ -2941,7 +2943,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 inTransitFromSiteId: null,
                 lotNumber: null,
                 expiresOn: inventoryItemAtSiteBefore.expiresOn,
-                quantityOnHand: _.max([0, inventoryItemAtSiteBefore.quantityOnHand + quantity]),
+                quantityOnHand: _.max([0, resultingQuantityOnHand]),
               },
             ]
           )
@@ -2973,7 +2975,7 @@ describe('Device API routes for GxConnect Devices', () => {
             operation: 'remove from GxConnect',
             lotNumber: null,
             expiresOn: inventoryItemAtSiteBefore.expiresOn,
-            quantity: Math.abs(quantity),
+            quantity: Math.abs(resultingQuantityOnHand),
             notes: null,
             adjustedFrom: setMilliseconds(startedOn, 0),
             adjustedTo: null,
@@ -3135,7 +3137,7 @@ describe('Device API routes for GxConnect Devices', () => {
               operation: inventoryChange.quantity >= 0 ? 'add from GxConnect' : 'remove from GxConnect',
               lotNumber: null,
               expiresOn: new Date(inventoryChange.expirationDate),
-              quantity: Math.abs(inventoryChange.quantity),
+              quantity: inventoryChange.resultingQuantityOnHand,
               notes: null,
               adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
               adjustedTo: null,
@@ -3447,7 +3449,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 operation: 'remove from GxConnect',
                 lotNumber: null,
                 expiresOn: new Date(lot1.expirationDate),
-                quantity: Math.abs(updateToLot1.quantity),
+                quantity: Math.abs(updateToLot1.resultingQuantityOnHand),
                 notes: null,
                 adjustedFrom: setMilliseconds(updateToLot1.dateChanged, 0),
                 adjustedTo: null,
@@ -3460,7 +3462,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 operation: 'add from GxConnect',
                 lotNumber: null,
                 expiresOn: new Date(lot2.expirationDate),
-                quantity: Math.abs(updateToLot2.quantity),
+                quantity: Math.abs(updateToLot2.resultingQuantityOnHand),
                 notes: null,
                 adjustedFrom: setMilliseconds(updateToLot2.dateChanged, 0),
                 adjustedTo: null,

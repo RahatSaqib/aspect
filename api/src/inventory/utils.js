@@ -216,14 +216,14 @@ async function doChangeQuantityInTransactBody(
 }
 
 // ----------------------------------------------------------------------------------
-async function doChangeQuantity(inventoryStrategy, params) {
+async function changeInventoryQuantity(inventoryStrategy, params) {
   const {
     /* knex, // <--- if defined then we are inside transaction and must use this `knex` */
     consumableId,
     siteId,
     lotNumber,
     expiresOn,
-    quantity,
+    quantity, // is positive and works with `operation` to add/remove/transfer/receive
     operation,
     inTransitFromSiteId,
     now,
@@ -306,7 +306,7 @@ async function addInventory({ auth, payload, plugins }) {
   /**
    * take 1st item from returning array of affected items
    */
-  const inventoryItems = await doChangeQuantity(inventoryStrategy, {
+  const inventoryItems = await changeInventoryQuantity(inventoryStrategy, {
     consumableId,
     siteId: toSite.id,
     lotNumber,
@@ -355,7 +355,7 @@ async function removeInventory({ auth, payload, plugins }) {
   /**
    *
    */
-  const inventoryItems = await doChangeQuantity(inventoryStrategy, {
+  const inventoryItems = await changeInventoryQuantity(inventoryStrategy, {
     consumableId,
     siteId: fromSite.id,
     lotNumber,
@@ -587,7 +587,7 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
       )
       .first('id as reasonId')) || {}
 
-  const inventoryItems = await doChangeQuantity(inventoryStrategy, {
+  const inventoryItems = await changeInventoryQuantity(inventoryStrategy, {
     consumableId,
     siteId,
     lotNumber,
@@ -651,7 +651,7 @@ async function consumeInventoryForResult(
         ? _.get(consumablesInResultData, '[0].lot')
         : undefined
 
-      return doChangeQuantity(inventoryStrategy, {
+      return changeInventoryQuantity(inventoryStrategy, {
         knex,
         consumableId,
         siteId,
@@ -815,7 +815,7 @@ module.exports = {
   transferInventory,
   modifyInventoryOnHand,
 
-  doChangeQuantity,
+  changeInventoryQuantity,
   consumeInventoryForResult,
   findOrCreateMatchingInventoryItem,
 }

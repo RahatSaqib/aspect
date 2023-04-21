@@ -14,6 +14,10 @@ async function getNewQuantityOnHand(knex, inventoryItem, operation, quantity) {
     },
   ]
   switch (operation) {
+    case 'add from GxConnect':
+    case 'remove from GxConnect':
+      items[0].quantityOnHand = quantity
+      break
     case 'add':
     case 'receive':
     case 'transfer received':
