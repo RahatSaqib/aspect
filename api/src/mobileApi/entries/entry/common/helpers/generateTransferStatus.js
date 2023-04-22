@@ -1,6 +1,12 @@
 const _ = require('lodash')
 const { TRANSFERRED } = require('../consts')
 
+/**
+ * Determines transfer status and other related data based on given data.
+ * @param {Object} data - The data object.
+ * @returns {Object} - An object containing transfer status and other related data.
+ */
+
 function generateTransferStatus(data) {
   let transferStatus
   const transferStatusLogData = JSON.parse(data.transferStatusLogData)

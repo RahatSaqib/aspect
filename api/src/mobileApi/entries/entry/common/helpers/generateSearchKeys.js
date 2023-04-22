@@ -2,6 +2,13 @@ const _ = require('lodash')
 const { transformPatientDataBySchema } = require('./transformPatientDataBySchema')
 const { extractFromDataById } = require('./extractFromDataById')
 
+/**
+ * Generates search keys using data and followUps array used for the search functionality in Aspect Mobile
+ * @param {object} data - The data object.
+ * @param {array} followUps - The array of followups.
+ * @returns {object} - Object containing the search keys extracted from the given data and followups.
+ */
+
 function generateSearchKeys(data, followUps) {
   const patientData = transformPatientDataBySchema(JSON.parse(data.patientData), JSON.parse(data.patientDataSchema))
   const followUpsData = extractFromDataById(followUps, 'resultId', data.id)
