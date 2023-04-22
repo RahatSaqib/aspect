@@ -17,7 +17,7 @@ function transformTestInformation(data) {
     'resultCategory2ValueI18nKey',
   ])
 
-  if (!_.isEmpty(testInfo1) && !_.isNil(testInfo1.resultCategory1Name)) {
+  if (!_.isEmpty(testInfo1) && !_.isNil(testInfo1.resultCategory1Name) && !_.isEmpty(testInfo1.resultCategory1Name)) {
     output.push({
       label: testInfo1.resultCategory1Label ?? null,
       labelI18nKey: testInfo1.resultCategory1i18nKey ?? null,
@@ -26,7 +26,7 @@ function transformTestInformation(data) {
       severity: testInfo1.resultCategory1Emphasize ? 'danger' : 'info',
     })
   }
-  if (!_.isEmpty(testInfo2) && !_.isNil(testInfo2.resultCategory2Name)) {
+  if (!_.isEmpty(testInfo2) && !_.isNil(testInfo2.resultCategory2Name) && !_.isEmpty(testInfo2.resultCategory2Name)) {
     output.push({
       label: testInfo2.resultCategory2Label ?? null,
       labelI18nKey: testInfo2.resultCategory2i18nKey ?? null,

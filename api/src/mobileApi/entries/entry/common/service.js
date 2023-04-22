@@ -6,16 +6,19 @@ const {
   getCommentsOfResultById,
   getFollowUpsOfResultById,
 } = require('./db')
-const { transformSampleData } = require('./helpers/transformSample')
-const { transformPatientDataBySchema } = require('./helpers/transformPatientDataBySchema')
-const { transformTestInformation } = require('./helpers/transformTestInformation')
-const { transformEntryType } = require('./helpers/transformEntryType')
-const { transformResultText } = require('./helpers/transformResultText')
-const { transformAssayAvatar } = require('./helpers/transformAssayAvatar')
+const { buildHistoryTimeline } = require('./helpers/buildHistoryTimeline')
 const { extractFromDataById } = require('./helpers/extractFromDataById')
+const { filterTrueUpdatedOnDate } = require('./helpers/filterTrueUpdatedOnDate')
+const { generateSearchKeys } = require('./helpers/generateSearchKeys')
 const { generateTransferStatus } = require('./helpers/generateTransferStatus')
-const { transformTreatmentStatus } = require('./helpers/transformTreatmentStatus')
+const { transformAssayAvatar } = require('./helpers/transformAssayAvatar')
 const { transformClinicalResponse } = require('./helpers/transformClinicalResponse')
+const { transformEntryType } = require('./helpers/transformEntryType')
+const { transformPatientDataBySchema } = require('./helpers/transformPatientDataBySchema')
+const { transformResultText } = require('./helpers/transformResultText')
+const { transformSampleData } = require('./helpers/transformSample')
+const { transformTestInformation } = require('./helpers/transformTestInformation')
+const { transformTreatmentStatus } = require('./helpers/transformTreatmentStatus')
 
 function transFormEntryResponse(data, followUps, comments, acknowledgedId) {
   return {
@@ -24,15 +27,19 @@ function transFormEntryResponse(data, followUps, comments, acknowledgedId) {
     clinicalResponse: transformClinicalResponse(data, followUps, acknowledgedId),
     comments: extractFromDataById(comments, 'resultId', data.id),
     followUps: extractFromDataById(followUps, 'resultId', data.id),
+    history: buildHistoryTimeline(data, followUps, comments),
     patientData: transformPatientDataBySchema(JSON.parse(data.patientData), JSON.parse(data.patientDataSchema)),
+    patientId: JSON.parse(data.patientData)?.id,
     resultData: transformResultText(data),
     sample: transformSampleData(data),
+    searchSchema: generateSearchKeys(data, followUps),
     testInformation: transformTestInformation(data),
     testType: transformEntryType(data),
     transferStatus: generateTransferStatus(data),
     treatmentStatus: transformTreatmentStatus(data, followUps),
-    updatedOn: data.updatedOn,
+    trueLatestUpdatedOn: filterTrueUpdatedOnDate(data, followUps, comments),
     latestUpdatedOn: data.latestUpdatedOn,
+    updatedOn: data.updatedOn,
   }
 }
 
