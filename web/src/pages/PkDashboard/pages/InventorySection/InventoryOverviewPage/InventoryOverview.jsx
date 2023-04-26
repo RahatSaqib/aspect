@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { LinearProgress } from '@mui/material'
+import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import useI18n from '../../../../../hooks/useI18n'
 import ConsumableSelector from '../../../../../oldPages/dashboard/Graphs/ConsumableSelector'
 import PeriodSelector from '../../../../../oldPages/dashboard/Graphs/PeriodSelector'
@@ -14,8 +15,8 @@ const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 const InventoryOverviewPage = () => {
   const { formatMessage } = useI18n()
   const [filter, setFilter] = useState({
-    minDate: '2023-03-21',
-    maxDate: '2023-04-20',
+    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
+    maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
   const [consumableExternalId, setConsumableExternalId] = useState()
 
