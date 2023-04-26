@@ -12,6 +12,7 @@ const {
 } = require('./service')
 const listInventory = require('./listInventory')
 const listInventoryLog = require('./listInventoryLog')
+const listInventoryTransfer = require('./listInventoryTransfer')
 const { exportSupplies } = require('./serviceReports')
 const {
   listSuppliesBaseConfig,
@@ -19,6 +20,7 @@ const {
   removeInventoryCommonPayloadFields,
   modifyInventoryCommonPayloadFields,
   inventoryFilters,
+  inventoryTransferFilters,
 } = require('./requestValidation')
 
 const routes = [
@@ -195,6 +197,24 @@ const routes = [
             dateAdjustedTo: Joi.date().iso().required(),
           }
         ),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/transfer',
+    handler: asyncHandler(listInventoryTransfer),
+    config: {
+      description: 'Transfer Inventory History',
+      notes: 'Pageable and sortable list of inventory transfers',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          ...inventoryTransferFilters,
+          ...validateDateRangeParams(),
+          ...validateAllGeographyFilterParams(),
+          ...validateSortPageParams('originSiteName', 'destinationSiteName', 'consumableName'),
+        },
       },
     },
   },
