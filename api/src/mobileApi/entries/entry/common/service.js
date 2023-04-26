@@ -21,7 +21,7 @@ async function fetchEntriesServiceHandler(request) {
   const transformedResults = transFormResultResponse(results, followUps, comments, acknowledgedId)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
 
-  const entries = _.orderBy(_.concat(transformedResults, transformedSamples), ['updatedOn'], ['desc'])
+  const entries = _.orderBy(_.uniqBy(_.concat(transformedResults, transformedSamples), 'id'), ['updatedOn'], ['desc'])
 
   return {
     ok: !!entries,
