@@ -12,10 +12,10 @@ function buildHistoryTimeline(data, followUps) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   output.push({
-    id: data.sampleId,
+    id: data.resultSampleId,
     event: 'sampleCollected',
-    name: data.sampleExternalId,
-    siteName: data.sampleOriginSiteName,
+    name: data.sampleTypeExternalId,
+    siteName: data.sampleSiteName,
     updatedOn: data.sampleCollectedOn,
   })
   _.map(resultFollowUps, followUp =>

@@ -1,17 +1,21 @@
-function transformSampleData(data) {
-  const output = {
-    id: data.sampleId,
-    externalId: data.sampleExternalId,
-    originSite: { id: data.sampleOriginSiteId, name: data.sampleOriginSiteName },
-    sampleType: data.sampleType,
-    status: {
-      color: null,
-      i18nKey: null,
-      title: null,
-    },
-    collectedOn: data.sampleCollectedOn,
-  }
+const _ = require('lodash')
+const { transformSampleStatus } = require('./transformSampleStatus')
 
+function transformSampleData(data) {
+  if (_.isNil(data)) return null
+  const output = {
+    id: data.id,
+    externalId: data.sampleExternalId,
+    originSite: { id: data?.sampleSiteId, name: data?.sampleSiteName, externalId: data?.sampleSiteExternalId },
+    sampleType: {
+      name: data?.sampleTypeName,
+      i18nKey: data?.sampleTypeI18nKey,
+      externalId: data?.sampleTypeExternalId,
+    },
+    status: transformSampleStatus(data.sampleStatus),
+    collectedOn: data.sampleCollectedOn,
+    updatedOn: data.sampleUpdatedOn,
+  }
   return output
 }
 

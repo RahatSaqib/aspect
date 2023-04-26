@@ -10,28 +10,31 @@ const { extractFromDataById } = require('./extractFromDataById')
  */
 
 function generateSearchKeys(data, followUps) {
-  const patientData = transformPatientDataBySchema(JSON.parse(data.patientData), JSON.parse(data.patientDataSchema))
-  const followUpsData = extractFromDataById(followUps, 'resultId', data.id)
-  const output = {
-    resultId: data.id,
-    sampleExternalId: data.sampleExternalId,
-    sampleIdFlat: _.toLower(data?.sampleExternalId?.replace(/[^a-zA-Z0-9]+/g, '')),
-    sampleSite: data.sampleOriginSiteName,
-    sampleSiteFlat: _.toLower(data?.sampleOriginSiteName?.replace(/[^a-zA-Z0-9]+/g, '')),
-    resultCategory1Label: _.toLower(data.resultCategory1Label),
-    resultCategory1Name: _.toLower(data.resultCategory1Name),
-    resultCategory2Label: _.toLower(data.resultCategory2Label),
-    resultCategory2Name: _.toLower(data.resultCategory2Name),
-    resultTreatmentStatusName: _.toLower(data.resultTreatmentStatusName),
-  }
-  _.map(patientData, value => {
-    if (!_.isNil(value?.value) || !_.isEmpty(value?.value)) {
-      _.set(output, `patient${_.upperFirst(value.key)}`, value?.value)
-      _.set(
-        output,
-        `patient${_.upperFirst(value.key)}Flat`,
-        _.isInteger(value?.value) ? _.toString(value?.value) : _.toLower(value?.value?.replace(/[^a-zA-Z0-9]+/g, ''))
-      )
+  // console.log(JSON.stringify({ data, followUps }, null, 2))
+  const output = {}
+  const patientDataRaw =
+    !_.isNil(data?.patientData) && !_.isNil(data?.patientDataSchema)
+      ? transformPatientDataBySchema(JSON.parse(data.patientData), JSON.parse(data.patientDataSchema))
+      : null
+  const followUpsData = extractFromDataById(followUps, 'resultId', data?.id)
+
+  _.set(output, 'id', String(data.id))
+  _.set(output, 'sampleExternalId', data?.sampleExternalId)
+  _.set(output, 'sampleTypeName', data?.sampleTypeName)
+  _.set(output, 'sampleSiteExternalId', data?.sampleSiteExternalId)
+  _.set(output, 'sampleSite', data?.sampleSiteName)
+  _.set(output, 'sampleExternalIdFlat', _.toLower(data?.sampleExternalId?.replace(/[^a-zA-Z0-9]+/g, '')))
+  _.set(output, 'sampleTypeNameFlat', _.toLower(data?.sampleTypeName?.replace(/[^a-zA-Z0-9]+/g, '')))
+  _.set(output, 'sampleSiteFlat', _.toLower(data?.sampleSiteName?.replace(/[^a-zA-Z0-9]+/g, '')))
+  _.set(output, 'resultCategory1Label', _.toLower(data?.resultCategory1Label))
+  _.set(output, 'resultCategory1Name', _.toLower(data?.resultCategory1Name))
+  _.set(output, 'resultCategory2Label', _.toLower(data?.resultCategory2Label))
+  _.set(output, 'resultCategory2Name', _.toLower(data?.resultCategory2Name))
+  _.set(output, 'resultTreatmentStatusName', _.toLower(data?.resultTreatmentStatusName))
+  _.map(patientDataRaw, ({ value, key }) => {
+    if (!_.isNil(value) || !_.isEmpty(value)) {
+      _.set(output, `patient${_.upperFirst(key)}`, String(value))
+      _.set(output, `patient${_.upperFirst(key)}Flat`, _.toLower(String(value).replace(/[^a-zA-Z0-9]+/g, '')))
     }
   })
   _.map(followUpsData, (value, index) => _.set(output, `followUpi18nKey${index}`, value.followUpi18nKey))

@@ -4,15 +4,19 @@ const { generateTransferStatus } = require('./generateTransferStatus')
 const { generateSeverity } = require('./generateSeverity')
 
 function transformTreatmentStatus(data, followUps) {
-  const isNotTransferred = _.isNil(generateTransferStatus(data))
+  if (_.isEmpty(data)) return {}
+  const isNotTransferred = _.isEmpty(generateTransferStatus(data))
+  const daysInCurrentStatus = differenceInDays(new Date(), new Date(data?.resultTreatmentStatusChangedOn ?? new Date()))
+  const changedOn = data.resultTreatmentStatusChangedOn
+  if (_.isNil(changedOn) && daysInCurrentStatus === 0) return {}
   return {
-    changedOn: data.resultTreatmentStatusChangedOn,
+    changedOn,
     name: data.resultTreatmentStatusName,
     externalId: data.resultTreatmentStatusExternalId,
     i18nKey: data.resultTreatmentStatusI18nKey,
     visible: isNotTransferred && data.resultRequiresTreatment === 1,
     severity: generateSeverity(data, followUps),
-    daysInCurrentStatus: differenceInDays(new Date(), new Date(data?.resultTreatmentStatusChangedOn ?? new Date())),
+    daysInCurrentStatus,
   }
 }
 
