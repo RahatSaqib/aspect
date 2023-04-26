@@ -526,14 +526,20 @@ describe('Inventory Routes', () => {
     })
 
     afterEach(async () => {
-      await knex('InventoryLog')
+      const inventoryLogsToRemove = await knex('InventoryLog')
         .whereIn('inventoryItemId', inventoryItemsToRemove)
         .orWhere(function () {
           if (transitItem != null) {
             this.where({ inventoryItemId: transitItem.id })
           }
         })
+        .pluck('id')
+      await knex('InventoryTransfer')
+        .whereIn('outcomeInventoryLogId', inventoryLogsToRemove)
+        .orWhereIn('incomeInventoryLogId', inventoryLogsToRemove)
+        .orWhereIn('tempInventoryItemId', inventoryItemsToRemove)
         .delete()
+      await knex('InventoryLog').whereIn('id', inventoryLogsToRemove).delete()
       await knex('InventoryItem')
         .whereIn('id', inventoryItemsToRemove)
         .orWhere(function () {
@@ -754,7 +760,15 @@ describe('Inventory Routes', () => {
         let receivedItem
         afterEach(async () =>
           run(async knex => {
-            await knex('InventoryLog').where({ inventoryItemId: receivedItem.id }).delete()
+            const inventoryLogsToRemove = await knex('InventoryLog')
+              .where({ inventoryItemId: receivedItem.id })
+              .pluck('id')
+            await knex('InventoryTransfer')
+              .whereIn('outcomeInventoryLogId', inventoryLogsToRemove)
+              .orWhereIn('incomeInventoryLogId', inventoryLogsToRemove)
+              .orWhere({ tempInventoryItemId: receivedItem.id })
+              .delete()
+            await knex('InventoryLog').whereIn('id', inventoryLogsToRemove).delete()
             await knex('InventoryItem').where({ id: receivedItem.id }).delete()
           })
         )
