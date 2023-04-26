@@ -171,7 +171,7 @@ const getFollowUps = data => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey'
+      'fut.i18nKey as followUpTypeI18nKey'
     )
 }
 
@@ -424,7 +424,7 @@ const getFollowUpsV2 = data => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey'
+      'fut.i18nKey as followUpTypeI18nKey'
     )
 }
 
@@ -469,7 +469,7 @@ const getFollowUpsOfResultById = data => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey'
+      'fut.i18nKey as followUpTypeI18nKey'
     )
 }
 // get comments for all results in the response for performance (filter later) v2

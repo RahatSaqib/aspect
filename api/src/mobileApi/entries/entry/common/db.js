@@ -5,6 +5,7 @@ const { knex } = require('../../../../db')
 
 const fetchEntriesByUpdatedOnQuery = query => {
   const minUpdatedOn = query?.minUpdatedOn ?? formatISO(subMonths(new Date(), 1))
+
   const latestUpdatedOn = knex.raw(
     `DATE_FORMAT(
         GREATEST(
@@ -12,63 +13,77 @@ const fetchEntriesByUpdatedOnQuery = query => {
             COALESCE(??, '1000-01-01 00:00:00'),
             COALESCE(??, '1000-01-01 00:00:00'),
             COALESCE(??, '1000-01-01 00:00:00'),
+            COALESCE(??, '1000-01-01 00:00:00'),
+            COALESCE(??, '1000-01-01 00:00:00'),
             COALESCE(??, '1000-01-01 00:00:00')
         ), '%Y-%m-%dT%H:%i:%s.%fZ'
-    ) as latestUpdatedOn`,
+    )`,
     [
       'result.updatedOn',
       'result_status_log.createdOn',
       'result_treatment_status_log.changedOn',
       'result_workflow_log.changedOn',
-      'sample.collectedOn',
+      'result_follow_up.date',
+      'result_follow_up.createdOn',
+      'result_follow_up.updatedOn',
     ]
   )
 
   const knexQuery = knex('Result as result')
     .select(
-      'result.id as id',
       'assay.patientDataSchema as patientDataSchema',
       'assay.resultCategory1Label as resultCategory1Label',
       'assay.resultCategory1i18nKey as resultCategory1i18nKey',
       'assay.resultCategory2Label as resultCategory2Label',
       'assay.resultCategory2i18nKey as resultCategory2i18nKey',
-      'assay_type.i18nKey as assayTypeI18nKey',
       'assay_type.abbreviation as assayTypeAbbreviation',
+      'assay_type.i18nKey as assayTypeI18nKey',
+      'person_transferred.name as transferredBy',
+      'result.id as id',
       'result.patientData as patientData',
       'result.resultData as resultData',
+      'result.sampleId as resultSampleId',
       'result.updatedOn as updatedOn',
       'result_category_1.i18nKey as resultCategory1ValueI18nKey',
       'result_category_1.name as resultCategory1Name',
       'result_category_2.name as resultCategory2Name',
-      'result_category_assay.requiresTreatment as resultRequiresTreatment',
       'result_category_assay.emphasize as resultCategory1Emphasize',
+      'result_category_assay.requiresTreatment as resultRequiresTreatment',
       'result_category_assay2.emphasize as resultCategory2Emphasize',
-      'sample.collectedOn as sampleCollectedOn',
+      'result_status_log.createdOn as transferredOn',
+      'result_status_log.data as transferStatusLogData',
+      'result_treatment_status.externalId as resultTreatmentStatusExternalId',
+      'result_treatment_status.i18nKey as resultTreatmentStatusI18nKey',
+      'result_treatment_status.name as resultTreatmentStatusName',
+      'result_treatment_status_log.changedOn as resultTreatmentStatusChangedOn',
+      'result_workflow_log.changedOn as resultWorkflowStatusChangedOn',
+      'result_workflow_log.resultWorkflowStatusId as resultWorkflowStatusId',
       'sample.externalId as sampleExternalId',
       'sample.id as sampleId',
-      'sample.originSiteId as sampleOriginSiteId',
-      'sample_type.externalId as sampleType',
+      'sample.sampleStatus as sampleStatus',
+      'sample.updatedOn as sampleUpdatedOn',
+      'sample.collectedOn as sampleCollectedOn',
+      'sample_site.externalId as sampleSiteExternalId',
+      'sample_site.id as sampleSiteId',
+      'sample_site.name as sampleSiteName',
+      'sample_type.externalId as sampleTypeExternalId',
+      'sample_type.i18nKey as sampleTypeI18nKey',
+      'sample_type.name as sampleTypeName',
       'site_result.id as reportableSiteId',
-      'site_sample.name as sampleOriginSiteName',
-      'result_treatment_status.name as resultTreatmentStatusName',
-      'result_treatment_status.i18nKey as resultTreatmentStatusI18nKey',
-      'result_treatment_status.externalId as resultTreatmentStatusExternalId',
-      'result_treatment_status_log.changedOn as resultTreatmentStatusChangedOn',
-      'result_status_log.data as transferStatusLogData',
-      'result_status_log.createdOn as transferredOn',
-      'person_transferred.name as transferredBy',
-      'result_workflow_log.resultWorkflowStatusId as resultWorkflowStatusId',
-      'result_workflow_log.changedOn as resultWorkflowStatusChangedOn',
-      latestUpdatedOn
+      'result_follow_up.resultId as resultFollowUpResultId',
+      'result_follow_up.date as resultFollowUpDate',
+      'result_follow_up.createdOn as resultFollowUpCreatedOn',
+      'result_follow_up.updatedOn as resultFollowUpUpdatedOn'
     )
     .innerJoin('Assay as assay', 'result.assayId', 'assay.id')
     .innerJoin('AssayType as assay_type', 'assay.assayTypeId', 'assay_type.id')
-    .innerJoin('Sample as sample', 'result.sampleId', 'sample.id')
-    .innerJoin('SampleType as sample_type', 'sample.sampleTypeId', 'sample_type.id')
+    .leftOuterJoin('ResultFollowUp as result_follow_up', 'result.id', 'result_follow_up.resultId')
     .leftJoin('ResultCategory as result_category_1', 'result.resultCategory1', 'result_category_1.id')
     .leftJoin('ResultCategory as result_category_2', 'result.resultCategory2', 'result_category_2.id')
     .leftJoin('Site as site_result', 'result.reportableSiteId', 'site_result.id')
-    .leftJoin('Site as site_sample', 'sample.originSiteId', 'site_sample.id')
+    .leftJoin('Sample as sample', 'result.sampleId', 'sample.id')
+    .leftJoin('SampleType as sample_type', 'sample.sampleTypeId', 'sample_type.id')
+    .leftJoin('Site as sample_site', 'sample.originSiteId', 'sample_site.id')
     .leftJoin('ResultWorkflowLog as result_workflow_log', 'result.resultWorkflowStatusLogId', 'result_workflow_log.id')
     .leftJoin(
       'ResultWorkflowStatus as result_workflow_status',
@@ -99,7 +114,7 @@ const fetchEntriesByUpdatedOnQuery = query => {
         'result_category_assay2.resultCategoryId'
       )
     })
-    .havingRaw('latestUpdatedOn >= ?', [minUpdatedOn])
+    .having(latestUpdatedOn, '>', minUpdatedOn)
   return knexQuery
 }
 
@@ -124,7 +139,7 @@ const getFollowUpsOfResultById = data => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey'
+      'fut.i18nKey as followUpTypeI18nKey'
     )
   return query
 }
