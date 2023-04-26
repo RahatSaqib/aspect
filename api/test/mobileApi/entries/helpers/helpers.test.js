@@ -1,5 +1,16 @@
 const { expect } = require('chai')
 const { subDays } = require('date-fns')
+const {
+  data22,
+  expected22,
+  data477,
+  expected477,
+  followUp477,
+  data5782,
+  expected5782,
+  data2997,
+  expected2997,
+} = require('./data')
 const { extractFromDataById } = require('../../../../src/mobileApi/entries/entry/common/helpers/extractFromDataById')
 const { buildHistoryTimeline } = require('../../../../src/mobileApi/entries/entry/common/helpers/buildHistoryTimeline')
 const { generateSeverity } = require('../../../../src/mobileApi/entries/entry/common/helpers/generateSeverity')
@@ -7,6 +18,14 @@ const { getFollowUpByType } = require('../../../../src/mobileApi/entries/entry/c
 const { transformAssayAvatar } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformAssayAvatar')
 const { transformEntryType } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformEntryType')
 const { transformResultText } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformResultText')
+const { generateSearchKeys } = require('../../../../src/mobileApi/entries/entry/common/helpers/generateSearchKeys')
+const { transformSampleData } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformSample')
+const {
+  transformTreatmentStatus,
+} = require('../../../../src/mobileApi/entries/entry/common/helpers/transformTreatmentStatus')
+const {
+  transFormResultResponse,
+} = require('../../../../src/mobileApi/entries/entry/common/helpers/transFormResultResponse')
 const {
   transformTestInformation,
 } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformTestInformation')
@@ -20,10 +39,10 @@ const {
   generateTransferStatus,
 } = require('../../../../src/mobileApi/entries/entry/common/helpers/generateTransferStatus')
 const {
-  filterTrueUpdatedOnDate,
-} = require('../../../../src/mobileApi/entries/entry/common/helpers/filterTrueUpdatedOnDate')
+  getResultUpdatedOnDate,
+} = require('../../../../src/mobileApi/entries/entry/common/helpers/getTrueUpdatedOnDates')
 
-describe.only('Entries helpers', () => {
+describe('Entries helpers', () => {
   describe('extractFromDataById', () => {
     const data = [
       { id: 1, resultId: 100, updatedOn: '2023-01-01' },
@@ -36,12 +55,11 @@ describe.only('Entries helpers', () => {
       const key = 'resultId'
       const id = 100
       const expectedOutput = [
-        { id: 3, updatedOn: '2023-01-03' },
-        { id: 1, updatedOn: '2023-01-01' },
+        { id: 3, resultId: 100, updatedOn: '2023-01-03' },
+        { id: 1, resultId: 100, updatedOn: '2023-01-01' },
       ]
 
       const output = extractFromDataById(data, key, id)
-
       expect(output).to.deep.eq(expectedOutput)
     })
   })
@@ -49,9 +67,9 @@ describe.only('Entries helpers', () => {
   describe('buildHistoryTimeline', () => {
     it('should return the correct output', () => {
       const data = {
-        sampleId: 1,
-        sampleExternalId: 'sample123',
-        sampleOriginSiteName: 'Site A',
+        resultSampleId: 1,
+        sampleTypeExternalId: 'sample123',
+        sampleSiteName: 'Site A',
         sampleCollectedOn: '2023-01-01T00:00:00Z',
       }
 
@@ -89,7 +107,7 @@ describe.only('Entries helpers', () => {
     })
   })
 
-  describe('filterTrueUpdatedOnDate', () => {
+  describe('getResultUpdatedOnDate', () => {
     const data = {
       updatedOn: '2022-01-01',
       sampleCollectedOn: '2022-01-05',
@@ -99,13 +117,13 @@ describe.only('Entries helpers', () => {
     const comments = [{ updatedOn: '2022-01-07' }, { updatedOn: '2022-01-09' }]
 
     it('returns correct date for the provided input data', () => {
-      const result = filterTrueUpdatedOnDate(data, followUps, comments)
+      const result = getResultUpdatedOnDate(data, followUps, comments)
       expect(result).to.eq('2022-01-10')
     })
 
     it('returns correct date if no followUps are provided', () => {
       const followUps = []
-      const result = filterTrueUpdatedOnDate(data, followUps, comments)
+      const result = getResultUpdatedOnDate(data, followUps, comments)
       expect(result).to.eq('2022-01-10')
     })
   })
@@ -397,9 +415,86 @@ describe.only('Entries helpers', () => {
     })
   })
 
-  describe('transformTreatmentStatus', () => {
-    it('should still be tested', () => {
-      expect({ id: null }).to.deep.eq({ id: 1 })
+  describe('transformTreatmentStatus', function () {
+    it('returns an object with expected properties when given valid input', function () {
+      const changedOn = subDays(new Date(), 8).toISOString()
+      const data = {
+        resultTreatmentStatusChangedOn: changedOn,
+        resultTreatmentStatusName: 'On Treatment',
+        resultTreatmentStatusExternalId: '12345',
+        resultTreatmentStatusI18nKey: 'OnTreatment',
+        resultRequiresTreatment: 1,
+        transferStatusLogData: JSON.stringify(null),
+      }
+      const followUps = [{ id: 1, followUpTypeExternalId: 'treatment', updatedOn: '2022-01-04' }]
+      const result = transformTreatmentStatus(data, followUps)
+      expect(result).to.deep.eq({
+        changedOn,
+        name: 'On Treatment',
+        externalId: '12345',
+        i18nKey: 'OnTreatment',
+        visible: true,
+        severity: 'success',
+        daysInCurrentStatus: 8,
+      })
+    })
+  })
+
+  describe('generateSearchKeys', () => {
+    it('correctly transform results', async () => {
+      const result = generateSearchKeys(data2997, [])
+      expect(result).to.deep.eq(expected2997)
+    })
+  })
+
+  describe('transformSampleData', function () {
+    it('returns a transformed sample data object when given valid input', function () {
+      const data = {
+        id: 1,
+        sampleExternalId: 'SAMPLE01',
+        sampleSiteId: 2,
+        sampleSiteName: 'Sample Site',
+        sampleSiteExternalId: 'sample_site',
+        sampleTypeName: 'Sputum',
+        sampleTypeI18nKey: 'sampleTypeSputum',
+        sampleTypeExternalId: 'Sputum',
+        sampleStatus: 'SAMPLE_RECEIVED_AT_LAB',
+        sampleCollectedOn: '2023-04-21T07:34:00.000Z',
+        sampleUpdatedOn: null,
+      }
+      const expectedOutput = {
+        id: 1,
+        externalId: 'SAMPLE01',
+        originSite: { id: 2, name: 'Sample Site', externalId: 'sample_site' },
+        sampleType: { name: 'Sputum', i18nKey: 'sampleTypeSputum', externalId: 'Sputum' },
+        status: {
+          id: 'SAMPLE_RECEIVED_AT_LAB',
+          backgroundColor: 'info',
+          label: 'Received',
+          i18nKey: 'received_at_lab',
+        },
+        collectedOn: '2023-04-21T07:34:00.000Z',
+        updatedOn: null,
+      }
+      const result = transformSampleData(data)
+      expect(result).to.deep.eq(expectedOutput)
+    })
+
+    it('returns null when given null input', function () {
+      const data = null
+      const result = transformSampleData(data)
+      expect(result).to.eq(null)
+    })
+  })
+
+  describe('transFormResultResponse', () => {
+    it('correctly transform results', async () => {
+      const entry22 = transFormResultResponse([data22], [], [], 9)
+      const entry477 = transFormResultResponse([data477], followUp477, [], 9)
+      const entry5782 = transFormResultResponse([data5782], [], [], 9)
+      expect(entry22).to.deep.eq(expected22)
+      expect(entry477).to.deep.eq(expected477)
+      expect(entry5782).to.deep.eq(expected5782)
     })
   })
 })
