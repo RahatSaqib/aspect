@@ -229,23 +229,23 @@ async function upsertDemoUsersPerJobFunction(
   const insertUsers = jobFunctions.map(async jf => {
     const { id: jobFunctionId, name: jobFunctionName } = jf
     const userName = jobFunctionName.toLowerCase().replace(' ', '-')
-    const [userId] = await knex('User').insert({
-      name: userName,
-      ...commonUserFields,
-    })
-    const [personId] = await knex('Person').insert({
-      name: userName,
-      userId,
-      ...commonPersonFields,
-    })
-    const [jobId] = await knex('Job').insert({
-      personId,
-      jobFunctionId,
-    })
-    await knex('JobContext').insert({
-      jobId,
-      geographyId,
-    })
+
+    const { id: userId } = await utils.upsertSingle(
+      knex,
+      'User',
+      { name: userName },
+      { name: userName, ...commonUserFields }
+    )
+    const { id: personId } = await utils.upsertSingle(
+      knex,
+      'Person',
+      { userId },
+      { name: userName, userId, ...commonPersonFields }
+    )
+    const job = { personId, jobFunctionId }
+    const { id: jobId } = await utils.upsertSingle(knex, 'Job', job, job)
+    const jobContext = { jobId, geographyId }
+    await utils.upsertSingle(knex, 'JobContext', jobContext, jobContext)
   })
   await Promise.all(insertUsers)
 }

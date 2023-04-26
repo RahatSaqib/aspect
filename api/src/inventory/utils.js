@@ -280,16 +280,17 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
   } else {
     affectedInventoryItemProps = await transact(async knex => getAffectedItemIds(knex))
   }
-
+  if (Boom.isBoom(affectedInventoryItemProps)) {
+    return affectedInventoryItemProps
+  }
   /**
    * run needed MQ tasks after changing inventory quantity
    * Notice that we here run all MQ tasks AFTER changing inventory - to make
    * sure that MQ handler for sure is dealing with already committed
    * above transactions
    */
-
-  await Promise.each(affectedInventoryItemProps, async ({ siteId, consumableId }) => {
-    await checkOpenedStockIssues({
+  await Promise.each(affectedInventoryItemProps, async ({ siteId, consumableId }) =>
+    checkOpenedStockIssues({
       knex: params.knex || knex,
       siteId,
       consumableId,
@@ -297,7 +298,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
       plugins,
       messageContext,
     })
-  })
+  )
   return affectedInventoryItemProps.map(x => x.inventoryItemId)
 }
 
@@ -444,7 +445,7 @@ async function transferOrReceiveInventory({ auth, payload, plugins }, mode) {
   const getProps = (siteId, fromSiteId) => {
     return { siteId, fromSiteId, ...baseProps }
   }
-  const { fromInventoryItemIds, toInventoryItemIds } = await transact(async knex => {
+  const resultOfTransaction = await transact(async knex => {
     let res
     /** ***********************
      * process `fromSiteId`
@@ -521,6 +522,11 @@ async function transferOrReceiveInventory({ auth, payload, plugins }, mode) {
     return doFromTo(knex, transactionProps)
   })
 
+  if (Boom.isBoom(resultOfTransaction)) {
+    return resultOfTransaction
+  }
+
+  const { fromInventoryItemIds, toInventoryItemIds } = resultOfTransaction
   const resp = {}
   if (fromInventoryItemIds) {
     resp.existingInventoryItem = await getInventoryItem(fromInventoryItemIds[0])
