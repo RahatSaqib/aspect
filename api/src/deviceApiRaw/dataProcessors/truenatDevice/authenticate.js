@@ -83,11 +83,18 @@ class TruenatLogin extends SynchronousDataProcessor {
       if (!device) {
         site = await knex('Site').where('name', payload.Username).orWhere('shortName', payload.Username).first()
         if (!site) {
+          const { id: countryId } = await knex('Country').orderBy('id').first('id')
+          const { id: geographyId } = await knex('Geography')
+            .where('countryId', countryId)
+            .where('stateId', null)
+            .where('lgaId', null)
+            .first('id')
           site = {
             name: payload.Username,
             shortName: payload.Username,
             partnerId: defaultPartner.id,
             externalId: payload.Username,
+            geographyId,
             notes: 'Created automatically by new Truelab device',
             createdOn: now,
             updatedOn: now,
