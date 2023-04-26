@@ -8,7 +8,7 @@ const _ = require('lodash')
  * @returns The maximum value of all extracted and concatenated dates.
  */
 
-function filterTrueUpdatedOnDate(data, followUps, comments) {
+function getResultUpdatedOnDate(data, followUps, comments) {
   const otherDates = _.pick(data, ['updatedOn', 'sampleCollectedOn', 'resultWorkflowStatusChangedOn'])
   const resultDates = _.map(otherDates, value => value)
   const followUpUpdatedOn = _.map(followUps, 'updatedOn')
@@ -17,4 +17,10 @@ function filterTrueUpdatedOnDate(data, followUps, comments) {
   return _.max(allUpdatedOn)
 }
 
-module.exports = { filterTrueUpdatedOnDate }
+function getSampleUpdatedOnDate(data) {
+  const otherDates = _.pick(data, ['updatedOn', 'collectedOn'])
+  const resultDates = _.map(otherDates, value => value)
+  return _.max(resultDates)
+}
+
+module.exports = { getResultUpdatedOnDate, getSampleUpdatedOnDate }
