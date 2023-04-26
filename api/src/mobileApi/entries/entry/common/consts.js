@@ -22,34 +22,13 @@ const fieldNameToFollowUpTypeIdMappings = {
 }
 
 const assayAvatarColorsIcon = {
-  tb: {
-    backgroundColor: 'purple',
-    foregroundColor: 'secondary',
-  },
-  hcv: {
-    backgroundColor: 'secondary',
-    foregroundColor: 'primary',
-  },
-  hiv: {
-    backgroundColor: 'orange',
-    foregroundColor: 'secondary',
-  },
-  ebola: {
-    backgroundColor: 'secondary',
-    foregroundColor: 'primary',
-  },
-  covid: {
-    backgroundColor: 'purple',
-    foregroundColor: 'secondary',
-  },
-  hbv: {
-    backgroundColor: 'secondary',
-    foregroundColor: 'primary',
-  },
-  default: {
-    backgroundColor: 'orange',
-    foregroundColor: 'secondary',
-  },
+  tb: { backgroundColor: 'purple', foregroundColor: 'secondary' },
+  hcv: { backgroundColor: 'secondary', foregroundColor: 'primary' },
+  hiv: { backgroundColor: 'orange', foregroundColor: 'secondary' },
+  ebola: { backgroundColor: 'secondary', foregroundColor: 'primary' },
+  covid: { backgroundColor: 'purple', foregroundColor: 'secondary' },
+  hbv: { backgroundColor: 'secondary', foregroundColor: 'primary' },
+  default: { backgroundColor: 'orange', foregroundColor: 'secondary' },
 }
 
 const sampleStatusState = [
