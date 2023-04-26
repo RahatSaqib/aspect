@@ -10,7 +10,6 @@ const { extractFromDataById } = require('./extractFromDataById')
  */
 
 function generateSearchKeys(data, followUps) {
-  // console.log(JSON.stringify({ data, followUps }, null, 2))
   const output = {}
   const patientDataRaw =
     !_.isNil(data?.patientData) && !_.isNil(data?.patientDataSchema)
