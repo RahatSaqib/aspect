@@ -209,10 +209,12 @@ const insertResultWorkflowLogQuery = (resultId, resultWorkflowStatusId, now, use
   })
 }
 
-const updateResultWorkflowLogQuery = (resultId, resultWorkflowStatusLogId) => {
+const updateResultWorkflowLogQuery = (resultId, currentUserId, now, resultWorkflowStatusLogId) => {
   return knex('Result')
     .where({
       id: resultId,
+      updatedBy: currentUserId,
+      updatedOn: now,
     })
     .update({ resultWorkflowStatusLogId })
 }
