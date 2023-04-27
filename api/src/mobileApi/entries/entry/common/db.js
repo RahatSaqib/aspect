@@ -14,7 +14,7 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
     .leftJoin('ResultCategory as resultCategory1', 'result.resultCategory1', 'resultCategory1.id')
     .leftJoin('ResultCategory as resultCategory2', 'result.resultCategory2', 'resultCategory2.id')
     .leftJoin('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
-    .leftJoin('Geography as reportableSiteGeography', 'siteResult.geographyId', 'reportableSiteGeography.id')
+    .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .leftJoin('Sample as sample', 'result.sampleId', 'sample.id')
     .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
     .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
@@ -38,7 +38,7 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
     .leftJoin('Person as personTransferred', 'resultStatusLog.createdBy', 'personTransferred.userId')
     .leftJoin('ResultCategoryAssay as resultCategoryAssay1', queryBuilder =>
       queryBuilder
-        .on('result.assayId', 'resultCategoryAssay.assayId')
+        .on('result.assayId', 'resultCategoryAssay1.assayId')
         .andOn('result.resultCategory1', 'resultCategoryAssay1.resultCategoryId')
     )
     .leftJoin('ResultCategoryAssay as resultCategoryAssay2', queryBuilder =>
@@ -167,7 +167,7 @@ const countAllAwaitingTreatment = dataConstraints =>
     .join('Assay as assay', 'result.assayId', 'assay.id')
     .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
     .leftJoin('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
-    .leftJoin('Geography as reportableSiteGeography', 'siteResult.geographyId', 'reportableSiteGeography.id')
+    .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .where('resultTreatmentStatus.externalId', 'AwaitingTreatment')
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
