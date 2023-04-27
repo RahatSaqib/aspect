@@ -90,7 +90,10 @@ const ContactDetails = ({ setStep }) => {
         <Formik
           initialValues={{
             ...person,
-            email: person.email || '',
+            email: person?.email || '',
+            title: person?.title || '',
+            email2: person?.email2 || '',
+            zip: person?.zip || '',
             phone: person.phone?.length > 5 ? person.phone : null,
             cell: person.cell?.length > 5 ? person.cell : null,
           }}
