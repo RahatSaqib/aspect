@@ -551,13 +551,13 @@ const getTreatmentStatus = resultTreatmentStatusId => {
 }
 
 // feature: clinical response
-const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, changedOn, userId) => {
+const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, changedOn, userId, now) => {
   return knex('ResultTreatmentStatusLog').insert({
     resultId,
     resultTreatmentStatusId: treatmentStatusId,
     method,
     data,
-    createdOn: new Date(),
+    createdOn: now,
     changedOn,
     createdBy: userId,
   })
@@ -578,11 +578,11 @@ const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, up
 }
 
 // feature: clinical response
-const updateResult = (resultId, treatmentStatusLogId, userId) => {
+const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
   return knex('Result').where('id', resultId).update({
     treatmentStatusLogId,
     updatedBy: userId,
-    updatedOn: new Date(),
+    updatedOn: now,
   })
 }
 
