@@ -105,7 +105,7 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
 }
 
 const getFollowUpsOfResultById = data => {
-  const query = knex('ResultFollowUp as rfu')
+  const knexQuery = knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .whereIn(
@@ -127,11 +127,11 @@ const getFollowUpsOfResultById = data => {
       'fut.externalId as followUpTypeExternalId',
       'fut.i18nKey as followUpTypeI18nKey'
     )
-  return query
+  return knexQuery
 }
 
 const getCommentsOfResultById = data => {
-  return knex('ResultNote as rn')
+  const knexQuery = knex('ResultNote as rn')
     .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
     .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
     .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
@@ -149,10 +149,11 @@ const getCommentsOfResultById = data => {
       'uU.name as changedBy',
       'rnt.name as noteType'
     )
+  return knexQuery
 }
 
-const countAllAwaitingTreatment = dataConstraints =>
-  knex('Result as result')
+const countAllAwaitingTreatment = dataConstraints => {
+  const knexQuery = knex('Result as result')
     .join(
       'ResultTreatmentStatusLog as resultTreatmentStatusLog',
       'result.treatmentStatusLogId',
@@ -178,6 +179,8 @@ const countAllAwaitingTreatment = dataConstraints =>
     })
     .countDistinct('result.id as count')
     .first()
+  return knexQuery
+}
 
 module.exports = {
   countAllAwaitingTreatment,
