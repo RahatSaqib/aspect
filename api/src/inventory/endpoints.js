@@ -11,6 +11,7 @@ const {
   modifyInventoryOnHand,
 } = require('./service')
 const listInventory = require('./listInventory')
+const getInventoryOverview = require('./getInventoryOverview')
 const listInventoryLog = require('./listInventoryLog')
 const { exportSupplies } = require('./serviceReports')
 const {
@@ -76,6 +77,23 @@ const routes = [
             'expiresOn',
             'quantity'
           ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/overview',
+    handler: asyncHandler(getInventoryOverview),
+    config: {
+      description: 'Hierarchical view of inventory',
+      notes: 'Hierarchical view of inventory',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          consumableExternalId: Joi.string().allow('', null),
+          minDate: Joi.date().iso().allow(null).description('From Date'),
+          maxDate: Joi.date().iso().allow(null).description('To Date'),
         },
       },
     },

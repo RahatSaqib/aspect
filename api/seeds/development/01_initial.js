@@ -3255,13 +3255,14 @@ async function seed(knex) {
 
               // up to 5 of sites at each LGA
               if (!preventRandomSitesForCountries.includes(countryData.abbreviation)) {
+                let incremental = 1
                 await Promise.all(
                   _.map(_.range(1, 6 - (lgaData.id % 5)), async siteNumber => {
                     const city = lga.cities && lga.cities[siteNumber - 1] ? lga.cities[siteNumber - 1] : null
                     const siteData = {
                       partnerId: partnerOneId,
                       geographyId,
-                      externalId: `${state.name}_${siteNumber}`,
+                      externalId: `${state.name}_${siteNumber}_${(incremental += 1)}`,
                       name: city
                         ? `${city} ${labStrings[_.random(0, labStrings.length - 1)]}`
                         : `${lga.name} County ${siteNumber % 2 ? 'Lab' : 'Clinic'} ${siteNumber}`,
