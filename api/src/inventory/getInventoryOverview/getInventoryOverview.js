@@ -31,7 +31,7 @@ function buildHierarchy(geo, sites) {
   lgas.forEach(g => {
     g.type = 'lga'
     const lgaLabs = sites.filter(s => s.lgaId === g.lgaId && s.type === 'lab')
-    g.children = lgaLabs.reduceAuxiliarProperties()
+    g.children = reduceAuxiliarProperties(lgaLabs)
   })
 
   const states = geo.filter(g => g.stateId && !g.lgaId)
@@ -42,14 +42,14 @@ function buildHierarchy(geo, sites) {
       .sort((a, b) => ['warehouse', 'lab'].indexOf(a.type) > ['warehouse', 'lab'].indexOf(b.type))
     const stateLgas = lgas.filter(l => l.stateId === g.stateId)
 
-    g.children = [...stateSites, ...stateLgas].reduceAuxiliarProperties()
+    g.children = reduceAuxiliarProperties([...stateSites, ...stateLgas])
   })
 
   const country = geo.find(g => g.countryId && !g.stateId && !g.lgaId)
   country.type = 'country'
   const countrySites = sites.filter(s => country.countryId === s.countryId && !s.stateId && !s.lgaId)
 
-  country.children = [...countrySites, ...states].reduceAuxiliarProperties()
+  country.children = reduceAuxiliarProperties([...countrySites, ...states])
 
   return reduceItemAuxiliarProperties(country)
 }
@@ -94,9 +94,8 @@ function addAggregations(item) {
   }
 }
 
-// eslint-disable-next-line no-extend-native
-Array.prototype.reduceAuxiliarProperties = function () {
-  return this.map(item => reduceItemAuxiliarProperties(item))
+function reduceAuxiliarProperties(array) {
+  return array.map(item => reduceItemAuxiliarProperties(item))
 }
 
 function reduceItemAuxiliarProperties(item) {
