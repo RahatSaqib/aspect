@@ -31,8 +31,7 @@ function buildHierarchy(geo, sites) {
   lgas.forEach(g => {
     g.type = 'lga'
     const lgaLabs = sites.filter(s => s.lgaId === g.lgaId && s.type === 'lab')
-    deleteAuxiliarProperties(lgaLabs)
-    g.children = lgaLabs
+    g.children = lgaLabs.reduceAuxiliarProperties()
   })
 
   const states = geo.filter(g => g.stateId && !g.lgaId)
@@ -42,17 +41,17 @@ function buildHierarchy(geo, sites) {
       .filter(s => g.stateId === s.stateId && !s.lgaId)
       .sort((a, b) => ['warehouse', 'lab'].indexOf(a.type) > ['warehouse', 'lab'].indexOf(b.type))
     const stateLgas = lgas.filter(l => l.stateId === g.stateId)
-    deleteAuxiliarProperties([...stateSites, ...stateLgas])
-    g.children = [...stateSites, ...stateLgas]
+
+    g.children = [...stateSites, ...stateLgas].reduceAuxiliarProperties()
   })
 
   const country = geo.find(g => g.countryId && !g.stateId && !g.lgaId)
   country.type = 'country'
   const countrySites = sites.filter(s => country.countryId === s.countryId && !s.stateId && !s.lgaId)
-  deleteAuxiliarProperties([country, ...countrySites])
-  country.children = [...countrySites, ...states]
 
-  return country
+  country.children = [...countrySites, ...states].reduceAuxiliarProperties()
+
+  return reduceItemAuxiliarProperties(country)
 }
 
 function addAggregations(item) {
@@ -95,17 +94,22 @@ function addAggregations(item) {
   }
 }
 
-function deleteAuxiliarProperties(items) {
-  items.forEach(s => {
-    delete s.consumableId
-    delete s.geographyId
-    delete s.stateId
-    delete s.countryId
-    delete s.lgaId
-    delete s.firstResultDateInLastSixMonths
-    if (s.type === 'warehouse') {
-      delete s.usedLastSixMonths
-      delete s.usedInDateRange
-    }
-  })
+// eslint-disable-next-line no-extend-native
+Array.prototype.reduceAuxiliarProperties = function () {
+  return this.map(item => reduceItemAuxiliarProperties(item))
+}
+
+function reduceItemAuxiliarProperties(item) {
+  const reduced = { ...item }
+  delete reduced.consumableId
+  delete reduced.geographyId
+  delete reduced.stateId
+  delete reduced.countryId
+  delete reduced.lgaId
+  delete reduced.firstResultDateInLastSixMonths
+  if (reduced.type === 'warehouse') {
+    delete reduced.usedLastSixMonths
+    delete reduced.usedInDateRange
+  }
+  return reduced
 }

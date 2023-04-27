@@ -4,60 +4,60 @@ const { knex, filterDateRangeParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
 module.exports = async function (query, constraints) {
-  const sixMonthsdaysBeforeToday = startOfDay(subDays(new Date(), 180))
+  const sixMonthsBeforeToday = startOfDay(subDays(new Date(), 180))
   const now = new Date()
   if (!query?.maxDate) {
     query.maxDate = new Date()
   }
   if (!query?.minDate) {
-    query.minDate = sixMonthsdaysBeforeToday
+    query.minDate = sixMonthsBeforeToday
   }
 
-  const sitesQuery = knex
-    .from('Site as s')
-    .leftJoin('SiteType as stype', 's.siteTypeId', 'stype.id')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('Country as co', 'g.countryId', 'co.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftJoin('Result as r', 'r.siteId', 's.id')
-    .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
-    .leftJoin('Assay as a', 'a.id', 'ca.assayId')
-    .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
-    .leftJoin('Unit as u', 'c.unit', 'u.id')
-    .modify(
-      filterDateRangeParams,
-      { minDate: min(sixMonthsdaysBeforeToday, query.minDate), maxDate: query.maxDate },
-      'r.endedOn'
-    )
-    .modify(addConstraints, constraints, { geography: 'g', site: 's' })
-    .where('c.externalId', query.consumableExternalId)
-    .orWhere('stype.externalId', 'warehouse')
-    .groupBy('s.id', 'c.id')
-    .select([
-      's.id as id',
-      'c.id as consumableId',
-      's.name as lab',
-      'stype.externalId as type',
-      knex.raw(
-        'IFNULL(SUM(CASE WHEN r.endedOn >= ? AND r.endedOn <= ? THEN ca.quantity ELSE 0 END),0) as usedLastSixMonths',
-        [sixMonthsdaysBeforeToday.toISOString(), now.toISOString()]
-      ),
-      knex.raw(
-        'IFNULL(SUM(CASE WHEN r.endedOn >= ? AND r.endedOn <= ? THEN ca.quantity ELSE 0 END),0) as usedInDateRange',
-        [query.minDate.toISOString(), query.maxDate.toISOString()]
-      ),
-      // auxiliar fields
-      'g.id as geographyId',
-      'g.countryId',
-      'g.stateId',
-      'g.lgaId',
-      knex.raw('min(r.endedOn) as firstResultDateInLastSixMonths'),
-    ])
-    .as('site')
-
   const overviewQuery = knex
-    .from(sitesQuery)
+    .from(
+      knex
+        .from('Site as s')
+        .leftJoin('SiteType as stype', 's.siteTypeId', 'stype.id')
+        .leftJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftJoin('Country as co', 'g.countryId', 'co.id')
+        .leftJoin('State as st', 'g.stateId', 'st.id')
+        .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+        .leftJoin('Result as r', 'r.siteId', 's.id')
+        .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+        .leftJoin('Assay as a', 'a.id', 'ca.assayId')
+        .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
+        .leftJoin('Unit as u', 'c.unit', 'u.id')
+        .modify(
+          filterDateRangeParams,
+          { minDate: min(sixMonthsBeforeToday, query.minDate), maxDate: query.maxDate },
+          'r.endedOn'
+        )
+        .modify(addConstraints, constraints, { geography: 'g', site: 's' })
+        .where('c.externalId', query.consumableExternalId)
+        .orWhere('stype.externalId', 'warehouse')
+        .groupBy('s.id', 'c.id')
+        .select([
+          's.id as id',
+          'c.id as consumableId',
+          's.name as lab',
+          'stype.externalId as type',
+          knex.raw(
+            'IFNULL(SUM(CASE WHEN r.endedOn >= ? AND r.endedOn <= ? THEN ca.quantity ELSE 0 END),0) as usedLastSixMonths',
+            [sixMonthsBeforeToday.toISOString(), now.toISOString()]
+          ),
+          knex.raw(
+            'IFNULL(SUM(CASE WHEN r.endedOn >= ? AND r.endedOn <= ? THEN ca.quantity ELSE 0 END),0) as usedInDateRange',
+            [query.minDate.toISOString(), query.maxDate.toISOString()]
+          ),
+          // auxiliar fields
+          'g.id as geographyId',
+          'g.countryId',
+          'g.stateId',
+          'g.lgaId',
+          knex.raw('min(r.endedOn) as firstResultDateInLastSixMonths'),
+        ])
+        .as('site')
+    )
     .leftJoin('InventoryItem as ii', builder => {
       builder
         .on('site.id', 'ii.siteId')
