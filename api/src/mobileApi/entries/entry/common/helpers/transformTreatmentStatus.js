@@ -14,7 +14,8 @@ function transformTreatmentStatus(data, followUps) {
     name: data.resultTreatmentStatusName,
     externalId: data.resultTreatmentStatusExternalId,
     i18nKey: data.resultTreatmentStatusI18nKey,
-    visible: isNotTransferred && data.resultRequiresTreatment === 1,
+    visible:
+      isNotTransferred && (data.resultCategoryAssay1RequiresTreatment || data.resultCategoryAssay2RequiresTreatment),
     severity: generateSeverity(data, followUps),
     daysInCurrentStatus,
   }

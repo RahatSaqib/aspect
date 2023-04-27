@@ -1,7 +1,9 @@
+const subDays = require('date-fns/subDays')
 const { knex } = require('../../../../db')
+const { addConstraints } = require('../../../../auth/constraints')
+const { DAYS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
 
-const getBaseAllSamplesRegistered = () => {
-  // TODO: add constraints
+const getBaseAllSamplesRegistered = dataConstraints => {
   const knexQuery = knex('Sample as sample')
     .select(
       'sample.collectedOn as collectedOn',
@@ -12,25 +14,31 @@ const getBaseAllSamplesRegistered = () => {
       'sample.sampleStatus as sampleStatus',
       'sample.updatedOn as sampleUpdatedOn',
       'sample.collectedOn as sampleCollectedOn',
-      'sample_site.externalId as sampleSiteExternalId',
-      'sample_site.id as sampleSiteId',
-      'sample_site.name as sampleSiteName',
-      'sample_type.externalId as sampleTypeExternalId',
-      'sample_type.i18nKey as sampleTypeI18nKey',
-      'sample_type.name as sampleTypeName'
+      'sampleOriginSite.externalId as sampleSiteExternalId',
+      'sampleOriginSite.id as sampleSiteId',
+      'sampleOriginSite.name as sampleSiteName',
+      'sampleType.externalId as sampleTypeExternalId',
+      'sampleType.i18nKey as sampleTypeI18nKey',
+      'sampleType.name as sampleTypeName'
     )
-    .leftJoin('SampleType as sample_type', 'sample.sampleTypeId', 'sample_type.id')
-    .leftJoin('Site as sample_site', 'sample.originSiteId', 'sample_site.id')
+    .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
+    .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
+    .leftJoin('Geography as geography', 'sampleOriginSite.geographyId', 'geography.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 'sampleOriginSite',
+      sample: 'sample',
+      geography: 'geography',
+    })
   return knexQuery
 }
-const getAllSamplesRegistered = query => {
-  // TODO: add constraints
-  const knexQuery = getBaseAllSamplesRegistered().where('sample.collectedOn', '>=', query?.minUpdatedOn || new Date())
+const getAllSamplesRegistered = (query, dataConstraints) => {
+  const minUpdatedOn = query?.minUpdatedOn ?? subDays(new Date(), DAYS_HISTORY_TO_LOOK_UP)
+  const knexQuery = getBaseAllSamplesRegistered(dataConstraints).where('sample.collectedOn', '>=', minUpdatedOn)
   return knexQuery
 }
 
-const getSamplesRegisteredById = sampleId => {
-  const knexQuery = getBaseAllSamplesRegistered().where({ 'sample.id': sampleId })
+const getSamplesRegisteredById = (sampleId, dataConstraints) => {
+  const knexQuery = getBaseAllSamplesRegistered(dataConstraints).where({ 'sample.id': sampleId })
   return knexQuery
 }
 

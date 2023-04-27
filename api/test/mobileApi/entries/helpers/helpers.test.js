@@ -423,7 +423,7 @@ describe('Entries helpers', () => {
         resultTreatmentStatusName: 'On Treatment',
         resultTreatmentStatusExternalId: '12345',
         resultTreatmentStatusI18nKey: 'OnTreatment',
-        resultRequiresTreatment: 1,
+        resultCategoryAssay1RequiresTreatment: 1,
         transferStatusLogData: JSON.stringify(null),
       }
       const followUps = [{ id: 1, followUpTypeExternalId: 'treatment', updatedOn: '2022-01-04' }]

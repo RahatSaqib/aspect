@@ -9,15 +9,19 @@ const {
 const { getAllSamplesRegistered } = require('../../sample/common/db')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transFormResultResponse } = require('./helpers/transFormResultResponse')
+const { getConstraints } = require('../../../../auth/constraints')
 
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
-  const samples = await getAllSamplesRegistered(query, auth)
-  const results = await fetchEntriesByUpdatedOnQuery(query, auth)
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const samples = await getAllSamplesRegistered(query, dataConstraints)
+  const results = await fetchEntriesByUpdatedOnQuery(query, dataConstraints)
   const followUps = await getFollowUpsOfResultById(results)
   const comments = await getCommentsOfResultById(results)
-  const awaitingTreatment = await countAllAwaitingTreatment(auth)
+  const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
   const acknowledgedId = await resultWorkflowStatusToId('Acknowledged')
+
   const transformedResults = transFormResultResponse(results, followUps, comments, acknowledgedId)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
 
