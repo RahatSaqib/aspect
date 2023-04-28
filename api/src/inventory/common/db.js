@@ -11,11 +11,13 @@ const {
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
   INVENTORY_LOG_LIST,
   INVENTORY_LOG_SORT_FIELDS,
+  INVENTORY_TRANSFER,
   INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
   CONCATENATED_ID,
   INVENTORY_ITEM_SORT_FIELDS,
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
+const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 
 async function getConsumableStrategy(consumableId) {
   const { strategy } = await knex('Consumable').where({ id: consumableId }).first('strategy')
@@ -211,6 +213,46 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
   return { data, total }
 }
 
+async function getInventoryTransfer(query, dataConstraints) {
+  const { minDate = subDays(new Date(query.maxDate), 30), maxDate = new Date() } = query
+  const offset = getOffsetFromIsoDateString(maxDate)
+
+  const inventoryTransferQuery = knex('InventoryTransfer as it')
+    .innerJoin('InventoryLog as oil', 'it.outcomeInventoryLogId', 'oil.id')
+    .leftJoin('InventoryLog as iil', 'it.incomeInventoryLogId', 'iil.id')
+    .innerJoin('Consumable as c', 'oil.consumableId', 'c.id')
+    .innerJoin('Site as originSite', 'oil.siteId', 'originSite.id')
+    .leftJoin('Site as destinationSite', 'iil.siteId', 'destinationSite.id')
+    .innerJoin('Geography as g', 'originSite.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 'originSite',
+      geography: 'g',
+    })
+    .modify(filterDateRangeParams, { minDate, maxDate }, 'oil.createdOn')
+    .modify(filterParams, query, {
+      originSiteName: 'originSite.name',
+      destinationSiteName: 'destinationSite.name',
+      consumableName: 'c.name',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+    })
+
+  const { total } = await inventoryTransferQuery.clone().count('it.id as total').first()
+
+  const querySelector = {
+    ...INVENTORY_TRANSFER,
+    sentOn: getDateTimeProjectionInUserTimeZone(knex, 'oil.createdOn', offset),
+    receivedOn: getDateTimeProjectionInUserTimeZone(knex, 'iil.createdOn', offset),
+    expirationDate: getDateTimeProjectionInUserTimeZone(knex, 'oil.expiresOn', offset),
+  }
+
+  const data = await inventoryTransferQuery
+    .select(querySelector)
+    .modify(sortPageParams, query, 'it.createdOn', INVENTORY_TRANSFER)
+  return { data, total }
+}
+
 function getInventoryLots(request, dataConstraints) {
   const inventoryItemsQuery = query('Search Inventory Lots')
     .from('Site as s')
@@ -312,4 +354,5 @@ module.exports = {
   getInventoryByLot,
   getInventoryBySitesAndConsumable,
   getGeneXpertInventoryBySitesAndConsumableQuery,
+  getInventoryTransfer,
 }
