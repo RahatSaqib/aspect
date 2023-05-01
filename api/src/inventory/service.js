@@ -162,12 +162,12 @@ async function removeInventory(request) {
 
 // ----------------------------------------------------------------------------------
 async function transferInventory(request) {
-  return doChangeInventory(request, utils.transferInventory)
+  return doChangeInventory(request, utils.transferInventoryWithAuth)
 }
 
 // ----------------------------------------------------------------------------------
 async function receiveInventory(request) {
-  return doChangeInventory(request, utils.receiveInventory)
+  return doChangeInventory(request, utils.receiveInventoryWithAuth)
 }
 
 // ----------------------------------------------------------------------------------

@@ -391,29 +391,30 @@ async function removeInventory({ auth, payload, plugins }) {
 }
 
 // ----------------------------------------------------------------------------------
-async function receiveInventory({ auth, payload, plugins }, opts = {}) {
-  const res = await transferOrReceiveInventory({ auth, payload, plugins }, opts, MODE.RECEIVE)
+async function receiveInventoryWithAuth({ auth, payload, plugins }) {
+  const res = await transferOrReceiveInventoryWithAuth({ auth, payload, plugins }, MODE.RECEIVE)
   if (Boom.isBoom(res)) return res
   return res.newInventoryItem
 }
 
 // ----------------------------------------------------------------------------------
-async function transferInventory({ auth, payload, plugins }, opts = {}) {
-  const res = await transferOrReceiveInventory({ auth, payload, plugins }, opts, MODE.TRANSFER)
+async function transferInventoryWithAuth({ auth, payload, plugins }) {
+  const res = await transferOrReceiveInventoryWithAuth({ auth, payload, plugins }, MODE.TRANSFER)
   // may be object { existingInventoryItem, newInventoryItem } or Boom
   return res
 }
 
 // ----------------------------------------------------------------------------------
+async function transferOrReceiveInventoryWithAuth({ auth, payload, plugins }, mode) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const { partnerId, userId } = await getUser(auth.credentials.name)
+  return transferOrReceiveInventory({ payload, plugins, dataConstraints, partnerId, userId }, mode)
+}
+
+// ----------------------------------------------------------------------------------
 async function transferOrReceiveInventory(
-  // destructure original `request` object
-  { auth, payload, plugins },
-  /**
-   * additional props with { userId, dataConstraints, partnerId } to possibility to skip `auth` prop in 1st param.
-   * When `auth` is skipped then `dataConstraints` and `partnerId` must be specified in `opts`,
-   * otherwise exception is raised
-   */
-  opts = {},
+  // `payload` and `plugins` come from original `request` object
+  { payload, plugins, dataConstraints, partnerId, userId },
   // MODE.TRANSFER or MODE.RECEIVE
   mode
 ) {
@@ -431,23 +432,7 @@ async function transferOrReceiveInventory(
     notes,
     resultId,
   } = payload
-  let { userId, dataConstraints } = opts
-  const { partnerId } = opts
-  if (!auth && !dataConstraints) {
-    return Boom.expectationFailed('At least one `auth` or `dataConstraints` parameter should be defined')
-  }
-  if (!auth && !partnerId) {
-    return Boom.expectationFailed('At least one `auth` or `partnerId` parameter should be defined')
-  }
-  /**
-   * get inventory strategy for current partnerId (either directly or via `auth`)
-   */
-  let inventoryStrategy
-  if (auth) {
-    inventoryStrategy = await getInventoryStrategyByAuth(auth)
-  } else {
-    inventoryStrategy = await getInventoryStrategy({ partnerId, userId })
-  }
+  const inventoryStrategy = await getInventoryStrategy({ partnerId, userId })
   const { transferInPendingMode } = inventoryStrategy
   /**
    * few boolean variables
@@ -460,12 +445,6 @@ async function transferOrReceiveInventory(
   /**
    * common props for both `transfer` and `receive` modes
    */
-  if (!dataConstraints) {
-    dataConstraints = await getConstraints(auth.credentials)
-  }
-  if (!userId && auth) {
-    ;({ id: userId } = await getUser(auth.credentials.name))
-  }
   const baseProps = { consumableId, expiresOn, lotNumber, resultId }
   const transactionProps = {
     consumableId,
@@ -844,8 +823,9 @@ module.exports = {
   //
   addInventory,
   removeInventory,
-  receiveInventory,
-  transferInventory,
+  receiveInventoryWithAuth,
+  transferInventoryWithAuth,
+  transferOrReceiveInventory,
   modifyInventoryOnHand,
 
   changeInventoryQuantity,
