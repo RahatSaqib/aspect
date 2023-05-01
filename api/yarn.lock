@@ -5337,10 +5337,10 @@ hapi-sentry@^3.2.0:
     "@sentry/node" "^6.2.2"
     joi "^17.2.1"
 
-hapi-swagger@^15.0.0:
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/hapi-swagger/-/hapi-swagger-15.0.0.tgz#80824d0f146f5816f2226097967179eda70f243d"
-  integrity sha512-AsFI6KlUz1sRnzWbXl8rEcmzbIX/OTqWZnf21ILmeAUKw9EJ7ndEUKYLXzByehmD/JsfYdYjQ6hTQu6PaBw5+A==
+hapi-swagger@^16.0.1:
+  version "16.0.1"
+  resolved "https://registry.yarnpkg.com/hapi-swagger/-/hapi-swagger-16.0.1.tgz#72e557aed9a9ce30774e27eda898751f7b671984"
+  integrity sha512-G07CZ7t6ytZt7Om0sTvpwxvuoLb260dlBdHjxwilsX7WboBAItdm4xXTkfJoe/KpjXatyqVVT5uVckBrhvFY6g==
   dependencies:
     "@hapi/boom" "^10.0.0"
     "@hapi/hoek" "^10.0.1"
