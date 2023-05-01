@@ -495,6 +495,7 @@ async function logInventoryChange({
   createdOn,
   createdBy,
   isAutomatic,
+  effectiveDate,
 }) {
   const [id] = await knex('InventoryLog').insert({
     inventoryItemId,
@@ -513,6 +514,7 @@ async function logInventoryChange({
     createdOn,
     createdBy,
     isAutomatic,
+    effectiveDate,
   })
 
   return id

@@ -686,6 +686,7 @@ async function consumeInventoryForResult(
             adjustedTo: testEndedOn,
             operation: 'result',
             resultId,
+            effectiveDate: testEndedOn,
           },
           resultId,
         })
