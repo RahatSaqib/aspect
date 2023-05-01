@@ -93,9 +93,12 @@ const ContactDetails = ({ setStep }) => {
             email: person?.email || '',
             title: person?.title || '',
             email2: person?.email2 || '',
+            stateId: person?.stateId || '',
+            lgaId: person?.lgaId || '',
+            notes: person?.notes || '',
             zip: person?.zip || '',
-            phone: person.phone?.length > 5 ? person.phone : null,
-            cell: person.cell?.length > 5 ? person.cell : null,
+            phone: person?.phone?.length > 5 ? person.phone : null,
+            cell: person?.cell?.length > 5 ? person.cell : null,
           }}
           validationSchema={validationSchema}
           onSubmit={(values, { resetForm }) => {
@@ -333,7 +336,7 @@ const ContactDetails = ({ setStep }) => {
                 ) : null}
               </Grid>
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button onClick={() => navigate(-1)}>{formatMessage(messages.backToTable)}</Button>
+                <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
                 <Box sx={{ flex: '1 1 auto' }} />
                 {isRecentlyAdd && !dirty ? (
                   <Button onClick={() => setStep(1)}>{formatMessage(messages.next)}</Button>

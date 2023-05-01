@@ -625,7 +625,7 @@ async function transferInventory(request) {
       userId: currentlyLoggedInUser.id,
     })
 
-    await logInventoryChange({
+    const outcomeInventoryLogId = await logInventoryChange({
       knex,
       inventoryItemId: sourceInventoryItemId,
       consumableId,
@@ -641,6 +641,8 @@ async function transferInventory(request) {
       createdOn: now,
       createdBy: currentlyLoggedInUser.id,
     })
+
+    await createInventoryTransfer(knex, outcomeInventoryLogId, destinationInventoryItemId)
 
     // check both sites for Stockout/StockExpiring issues
     const props = {
@@ -699,7 +701,7 @@ async function receiveInventory(request) {
 
     const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
 
-    await logInventoryChange({
+    const incomeInventoryLogId = await logInventoryChange({
       knex,
       inventoryItemId: destinationInventoryItemId,
       consumableId,
@@ -715,6 +717,7 @@ async function receiveInventory(request) {
       createdOn: now,
       createdBy: currentlyLoggedInUser.id,
     })
+    await updateInventoryTransfer(knex, sourceInventoryItem.id, incomeInventoryLogId)
 
     await knex('InventoryItem').where('id', sourceInventoryItem.id).delete()
   })
@@ -908,7 +911,7 @@ async function logInventoryChange({
   createdOn,
   createdBy,
 }) {
-  await knex('InventoryLog').insert({
+  const [id] = await knex('InventoryLog').insert({
     inventoryItemId,
     consumableId,
     siteId,
@@ -925,6 +928,28 @@ async function logInventoryChange({
     createdOn,
     createdBy,
   })
+  return id
+}
+
+async function createInventoryTransfer(knex, outcomeInventoryLogId, tempInventoryItemId) {
+  const now = new Date()
+  await knex('InventoryTransfer').insert({
+    outcomeInventoryLogId,
+    tempInventoryItemId,
+    createdOn: now,
+    updatedOn: now,
+  })
+}
+
+async function updateInventoryTransfer(knex, tempInventoryItemId, incomeInventoryLogId) {
+  const now = new Date()
+  await knex('InventoryTransfer')
+    .update({
+      tempInventoryItemId: null,
+      incomeInventoryLogId,
+      updatedOn: now,
+    })
+    .where({ tempInventoryItemId })
 }
 
 async function upsertInventoryItem({
