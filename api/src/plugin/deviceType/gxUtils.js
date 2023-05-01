@@ -661,6 +661,7 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
         .where({
           's.partnerId': device.partnerId,
           'c.abbreviation': countryCode,
+          's.disabled': 0,
         })
         .andWhere(function () {
           if (deviceName) {
