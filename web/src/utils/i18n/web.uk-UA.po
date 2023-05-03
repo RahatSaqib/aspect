@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -243,8 +243,8 @@ msgid ""
 "A list of all GeneXpert device modules marked as 'do not use'. Includes "
 "device name, module serial."
 msgstr ""
-"Список усіх модулів пристрою GeneXpert, позначених як \"не "
-"використовувати\". Включає назву пристрою, серійний номер модуля."
+"Список усіх модулів пристрою GeneXpert, позначених як \"не використовувати"
+"\". Включає назву пристрою, серійний номер модуля."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -8612,8 +8612,8 @@ msgid ""
 "results that didn't result in \"Error\", \"No Result\", or \"Invalid\"."
 msgstr ""
 "Відсоток дійсних результатів, повідомлених цього місяця. Дійсні результати "
-"включають усі результати, які не призвели до \"Помилка\", \"Немає "
-"результату\" або \"Недійсний\"."
+"включають усі результати, які не призвели до \"Помилка\", \"Немає результату"
+"\" або \"Недійсний\"."
 
 #. [p.PkDashboard.coverageperformance]
 #. defaultMessage is:
@@ -12334,20 +12334,23 @@ msgid ""
 "Tests detected for following expiration dates where inventory is not tracked "
 "at the device's location or the warehouse that serves that location."
 msgstr ""
+"Тести, виявлені для наступних термінів придатності, коли запаси не "
+"відстежуються в місці розташування пристрою або на складі, який обслуговує "
+"це місце."
 
 #. [p.PkDashboard.molecularAssay]
 #. defaultMessage is:
 #. Tests for TB using MTB/Rif assay in current year
 #: extracted_strings.json
 msgid "Tests for TB using MTB/Rif assay in current year"
-msgstr ""
+msgstr "Тести на туберкульоз методом MTB/Rif у поточному році"
 
 #. [p.PkDashboard.testPerDay]
 #. defaultMessage is:
 #. Tests performed in last 24 hours
 #: extracted_strings.json
 msgid "Tests performed in last 24 hours"
-msgstr ""
+msgstr "Тести, проведені за останні 24 години"
 
 #. [p.PkDashboard.testPerYear]
 #. defaultMessage is:
@@ -12699,10 +12702,10 @@ msgid ""
 "would equate 100 \"device-days\". If one device was down half of the month, "
 "this number would be 10%"
 msgstr ""
-"Відсоток \"днів-пристроїв\", які були визначені як \"недоступні для "
-"ремонту\", за винятком вихідних. Наприклад, 20 робочих днів у місяці та 5 "
-"пристроїв дорівнювали б 100 \"пристроям-дням\". Якби на одному пристрої було "
-"менше половини місяця, це число становило б 10%"
+"Відсоток \"днів-пристроїв\", які були визначені як \"недоступні для ремонту"
+"\", за винятком вихідних. Наприклад, 20 робочих днів у місяці та 5 пристроїв "
+"дорівнювали б 100 \"пристроям-дням\". Якби на одному пристрої було менше "
+"половини місяця, це число становило б 10%"
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
@@ -12788,6 +12791,13 @@ msgid ""
 "{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
 "was done"
 msgstr ""
+"Сповіщення на основі результатів можна надіслати під час створення тесту або "
+"під час створення та оновлення тесту. Крім того, тест ініціюватиме "
+"сповіщення, лише якщо воно минуло менше ніж {daysLimitToNotifyResults} дн., "
+"його було виконано до останнього оновлення цього сповіщення та якщо виконано "
+"будь-яку з наступних умов: - Усі спеціальні поля, на які посилається в "
+"шаблони сповіщень були заповнені в тесті - з моменту виконання тесту пройшло "
+"{hoursNotificationsShouldWaitForCustomFields} годин"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -13082,6 +13092,10 @@ msgid ""
 "activity, utilization, days offline, and average delay to upload tests. "
 "Scoped only to Cepheid GeneXpert devices."
 msgstr ""
+"Цей звіт показує показники продуктивності за пристроєм і аналізом, зокрема: "
+"помилки, активність, використання, дні в автономному режимі та середню "
+"затримку для завантаження тестів. Застосовується лише до пристроїв Cepheid "
+"GeneXpert."
 
 #. [pages.ReportIndex.device_activity_description]
 #. defaultMessage is:
@@ -13373,7 +13387,7 @@ msgstr "Виявлено слід"
 #. Training
 #: extracted_strings.json
 msgid "Training"
-msgstr ""
+msgstr "Навчання"
 
 #. [pages.InventoryLog.ConsumableReason_TransferReceived]
 #. defaultMessage is:
@@ -14114,7 +14128,7 @@ msgstr "Касета для вірусного навантаження Xpert HI
 #. Xpert Implementation Site (XIS) Performance Report.
 #: extracted_strings.json
 msgid "Xpert Implementation Site (XIS) Performance Report."
-msgstr ""
+msgstr "Звіт про продуктивність Xpert Implementation Site (XIS)."
 
 #. [p.PkDashboard.coverageTitle]
 #. defaultMessage is:
@@ -14130,7 +14144,7 @@ msgstr "Картридж GeneXpert MTB/XDR"
 #. Xpert MTB/RIF and Covid - NTP Use
 #: extracted_strings.json
 msgid "Xpert MTB/RIF and Covid - NTP Use"
-msgstr ""
+msgstr "Xpert MTB/RIF і Covid - використання NTP"
 
 #. [pages.ReportIndex.xpertPatientsReport]
 #. defaultMessage is:
@@ -15144,8 +15158,8 @@ msgstr ""
 #~ msgstr "Посібник стилю"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for "
-#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for repair"
+#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."
