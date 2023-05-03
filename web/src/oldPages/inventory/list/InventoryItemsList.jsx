@@ -26,6 +26,7 @@ import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgres
 import requirePermissions from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
+import { fetchConsumables } from '../../../store/ConsumableRedux'
 import {
   types,
   hideAdjustInventoryDialog,
@@ -454,6 +455,8 @@ export const InventoryItemsList = () => {
   useEffect(() => {
     if (data) dispatch(receiveInventoryItems(data))
   }, [data, dispatch])
+
+  useEffect(() => dispatch(fetchConsumables(false)), [dispatch])
 
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location, dependencies)

@@ -3,27 +3,32 @@
     {
       "name": "Patient",
       "externalId": "Patient",
-      "i18nKey": "resultTypePatient"
+      "i18nKey": "resultTypePatient",
+      "excluded": false
     },
     {
       "name": "EQA",
       "externalId": "EQA",
-      "i18nKey": "resultTypeEqa"
+      "i18nKey": "resultTypeEqa",
+      "excluded": true
     },
     {
       "name": "Training",
       "externalId": "Training",
-      "i18nKey": "resultTypeTraining"
+      "i18nKey": "resultTypeTraining",
+      "excluded": true
     },
     {
       "name": "Calibration",
       "externalId": "Calibration",
-      "i18nKey": "resultTypeCalibration"
+      "i18nKey": "resultTypeCalibration",
+      "excluded": true
     },
     {
       "name": "Study/Research",
       "externalId": "Study",
-      "i18nKey": "resultTypeStudy"
+      "i18nKey": "resultTypeStudy",
+      "excluded": true
     }
   ]
 }

@@ -5,6 +5,7 @@ const { formatDateOrDefault, parseDateOrDefault } = require('../../../shared/dat
 const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
 const { postPayloadFromDevice } = require('../../../device/service')
+const { deviceApprovalToId } = require('../../../shared/dictionary')
 const { deviceSeen } = require('../../../device/actions')
 const { transact } = require('../../../db')
 const {
@@ -42,17 +43,23 @@ class TruenatResult extends SynchronousDataProcessor {
 
     try {
       await transact(async knex => {
+        const deviceDetails = await getDeviceDetailsFromApiKey(knex, auth.credentials.token)
         const {
           deviceId,
+          username,
+          deviceApiKeyId,
           partnerId,
-          siteId,
+          deviceApprovalId,
+          deviceName,
           geographyId,
           longitude,
           latitude,
+          siteName,
           deviceDefaultReportableSiteId,
           siteExternalId,
           deviceTypeExternalId,
-        } = await getDeviceDetailsFromApiKey(knex, auth.credentials.token)
+        } = deviceDetails
+        let { siteId } = deviceDetails
 
         if (!deviceId) {
           throw Boom.badRequest('Invalid device API key: Cannot determine which device this came from')
@@ -86,6 +93,42 @@ class TruenatResult extends SynchronousDataProcessor {
           time,
         } = getDetailsFromRequest(request)
 
+        const assigned = await deviceApprovalToId('assigned')
+        if (deviceApprovalId === assigned && labName && deviceName === username && siteName === username) {
+          const site = await knex('Site').where('name', labName).where('partnerId', partnerId).first()
+          if (site) {
+            await knex('Device').where('id', deviceId).update({ siteId: site.id })
+            await knex('DeviceApiKey').where('id', deviceApiKeyId).update({ siteId: site.id })
+            // attempt to delete automatically created site if there are no related records
+            const devicesCount = await knex('Device').where('siteId', siteId).count('id')
+            const resultsCount = await knex('Result').where('siteId', siteId).count('id')
+            const inventoryItemsCount = await knex('InventoryItem').where('siteId', siteId).count('id')
+            const inventoryLogsCount = await knex('InventoryLog').where('siteId', siteId).count('id')
+            const jobContextsCount = await knex('JobContext').where('siteId', siteId).count('id')
+            if (
+              devicesCount === 0 &&
+              resultsCount === 0 &&
+              inventoryItemsCount === 0 &&
+              inventoryLogsCount === 0 &&
+              jobContextsCount === 0
+            ) {
+              await knex('AlertMessage').where('siteId', siteId).update({ siteId: null })
+              await knex('EmailMessage').where('siteId', siteId).update({ siteId: null })
+              await knex('SmsMessage').where('siteId', siteId).update({ siteId: null })
+              await knex('WebhookMessage').where('siteId', siteId).update({ siteId: null })
+              await knex('DeviceApiKey').where('siteId', siteId).update({ siteId: null })
+              await knex('Issue').where('siteId', siteId).update({ siteId: null })
+              await knex('DeviceSiteHistory').where('id', siteId).delete()
+              await knex('FactInventoryConsumptionRate').where('id', siteId).delete()
+              await knex('Site').where('id', siteId).delete()
+            }
+            siteId = site.id
+          } else {
+            await knex('Site').where('id', siteId).update({ name: labName })
+          }
+          await knex('Device').where('id', deviceId).update({ name: labName })
+        }
+
         const assay = await getAssay(knex, testName)
 
         const sampleExternalId = generateSampleExternalId(
@@ -98,7 +141,14 @@ class TruenatResult extends SynchronousDataProcessor {
         const sampleTypeId = await getSampleTypeId(sampleTypeName)
         const sampleId = await getOrCreateSampleId(knex, sampleExternalId, sampleTypeId, deviceDefaultReportableSiteId)
 
-        const resultCategory1 = await determineResultCategory1Id(finalResult, assay.externalId)
+        const resultCategory1 = await determineResultCategory1Id(
+          finalResult,
+          assay.externalId,
+          testName,
+          ctResult3,
+          validityStatus,
+          resultStatus
+        )
 
         const resultTime = parseDateOrDefault(`${date} ${time}`, {
           formatString: 'yyyy-MM-dd HH-mm-ss',
@@ -222,11 +272,16 @@ async function getDeviceDetailsFromApiKey(knex, deviceApiToken) {
     .where('dak.token', deviceApiToken)
     .first(
       'dak.deviceId',
+      'dak.username',
+      'dak.id as deviceApiKeyId',
       'd.partnerId',
       'd.siteId',
+      'd.deviceApprovalId',
+      'd.name as deviceName',
       's.geographyId',
       's.longitude',
       's.latitude',
+      's.name as siteName',
       'd.defaultReportableSiteId as deviceDefaultReportableSiteId',
       's.externalId as siteExternalId',
       'dt.externalId as deviceTypeExternalId'
@@ -239,6 +294,13 @@ function getDetailsFromRequest(request) {
     payload,
     plugins: { rawPayload },
   } = request
+
+  let finalResult = _.get(payload, 'FinalResult') ?? ''
+  finalResult = finalResult.trim()
+  if (finalResult === '' || finalResult === 'null') {
+    finalResult = null
+  }
+
   return {
     rawMessage: JSON.stringify(rawPayload),
     patientName: _.get(payload, 'PatientName'),
@@ -248,7 +310,7 @@ function getDetailsFromRequest(request) {
     patientAge: _.get(payload, 'Age'),
     patientGender: _.get(payload, 'Gender'),
     resultStatus: _.get(payload, 'Status'),
-    finalResult: _.get(payload, 'FinalResult'),
+    finalResult,
     validityStatus: _.get(payload, 'ValidityStatus'),
     senderOperator: _.get(payload, 'User'),
     labName: _.get(payload, 'LabName'),
@@ -313,9 +375,16 @@ function generateResultExternalId(sampleExternalId, dateReceived) {
   return `${sampleExternalId}_${formatDateOrDefault(dateReceived, 'yyyyMMddhhmmss')}`
 }
 
-async function determineResultCategory1Id(finalResult, assayExternalId) {
+async function determineResultCategory1Id(
+  finalResult,
+  assayExternalId,
+  testName,
+  ctResult3,
+  validityStatus,
+  resultStatus
+) {
   const resultCategoryIds = await allResultCategoryToId()
-  const resultCategory1Id =
+  let resultCategory1Id =
     assayExternalId === 'assayTruenatUnknown'
       ? resultCategoryIds.Unknown
       : {
@@ -327,7 +396,24 @@ async function determineResultCategory1Id(finalResult, assayExternalId) {
           Indeterminate: resultCategoryIds.Indeterminate,
           Error: resultCategoryIds.Error,
         }[finalResult]
-  return resultCategory1Id || resultCategoryIds.Missing
+
+  resultCategory1Id = resultCategory1Id || resultCategoryIds.Missing
+
+  if (resultCategory1Id === resultCategoryIds.Missing) {
+    if (testName === 'MTB' || testName === 'MTB Plus') {
+      if (resultStatus === 'Completed' && finalResult === null) {
+        if (validityStatus === 'Valid') {
+          if (ctResult3 && ctResult3.indexOf('NOT DETECTED') !== -1) {
+            resultCategory1Id = resultCategoryIds.NotDetected
+          }
+        } else if (validityStatus === 'Invalid') {
+          resultCategory1Id = resultCategoryIds.Invalid
+        }
+      }
+    }
+  }
+
+  return resultCategory1Id
 }
 
 async function logResultWorkflow(
@@ -346,7 +432,7 @@ async function logResultWorkflow(
   let resultWorkflowStatusId = resultWorkflowStatuses.InProgress
   if (validityStatus === 'Error') {
     resultWorkflowStatusId = resultWorkflowStatuses.Error
-  } else if (['Aborted', 'User Stopped', 'Complete'].includes(resultStatus)) {
+  } else if (['Aborted', 'User Stopped', 'Complete', 'Completed'].includes(resultStatus)) {
     resultWorkflowStatusId = resultWorkflowStatuses.Processed
   }
   const resultWorkflowLog = {

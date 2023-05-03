@@ -142,11 +142,12 @@ describe('Truenat Authenticate Data Processor', () => {
       })
     })
 
-    describe('when credentials do not match a device API key', () => {
+    describe('when password does not match device API key credentials', () => {
       it('will respond with 401', async () => {
         const TruenatLogin = mockTruenatLoginDataProcessor({
           authenticated: false,
           reason: 'invalid',
+          data: {},
         })
         const truenatLoginInstance = new TruenatLogin(request, messageContext)
         try {
@@ -170,6 +171,7 @@ describe('Truenat Authenticate Data Processor', () => {
         const TruenatLogin = mockTruenatLoginDataProcessor({
           authenticated: false,
           reason: 'invalid',
+          data: {},
         })
         const truenatLoginInstance = new TruenatLogin(request, messageContext)
         await expect(truenatLoginInstance.processRequest()).to.be.rejectedWith(
@@ -182,6 +184,7 @@ describe('Truenat Authenticate Data Processor', () => {
         const TruenatLogin = mockTruenatLoginDataProcessor({
           authenticated: false,
           reason: 'invalid',
+          data: {},
         })
         const truenatLoginInstance = new TruenatLogin(request, messageContext)
         await expect(truenatLoginInstance.processRequest()).to.be.rejectedWith(

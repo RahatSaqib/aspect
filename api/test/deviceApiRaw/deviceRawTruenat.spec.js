@@ -3,6 +3,7 @@ const uuid = require('node-uuid')
 const subSeconds = require('date-fns/subSeconds')
 const { knex } = require('../../src/db')
 const server = require('../utils/testUtils')
+const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 const { assert } = chai
 
@@ -156,6 +157,185 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
           PatientID: newIdValue,
         })
         assert.equal(status, 401)
+      })
+    })
+
+    describe('when unapproved device sends result with a lab name', () => {
+      const unapprovedDevice = {
+        username: 'tempUnapprovedTruenatDevice',
+        password: 'Password_123',
+      }
+      const fullLabName = 'Unapproved Device Full Lab Name'
+      let authHeaderValue
+      let site
+      before(async () => {
+        const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
+        site = {
+          name: fullLabName,
+          shortName: 'short name',
+          partnerId: defaultPartner.id,
+          externalId: 'externalId',
+          notes: '',
+          createdOn: new Date(),
+          updatedOn: new Date(),
+        }
+        const [siteId] = await knex('Site').insert(site)
+        site.id = siteId
+        const { body } = await authenticateWithTruelabApi(unapprovedDevice.username, unapprovedDevice.password)
+        authHeaderValue = body.token
+      })
+
+      it('should bind the device to a site with the same lab name if such exists', async () => {
+        const payload = {
+          Age: '55',
+          Ct1: '19.0',
+          Ct2: '10.39',
+          Ct3: 'ND',
+          CtLabel1: 'Control',
+          CtLabel2: 'E gene',
+          CtLabel3: 'Orf1A',
+          CtResult1: 'DETECTED High',
+          CtResult2: 'DETECTED High',
+          CtResult3: 'NOT DETECTED',
+          Date: '2020-09-27',
+          DoctorName: 'Dr Alban Aloha',
+          FinalResult: 'Positive',
+          Gender: 'Male',
+          LabName: fullLabName,
+          Notes: 'The test ran and the result was interpreted',
+          PatientID: '23894723890472349',
+          PatientName: 'James Teether',
+          SampleType: 'Sputum',
+          Status: 'Stopped',
+          TestName: 'MTB Plus',
+          Time: '22-40-58',
+          User: 'InitTesti',
+          ValidityStatus: 'Valid',
+        }
+
+        const response = await sendResult(authHeaderValue, {
+          ...payload,
+          PatientID: uuid.v4(),
+        })
+        const {
+          body: { success },
+        } = response
+        assert.isTrue(success)
+
+        const { deviceId, siteId } = await knex('DeviceApiKey as dak')
+          .where('dak.username', unapprovedDevice.username)
+          .first('dak.deviceId', 'dak.siteId')
+        assert.equal(siteId, site.id, 'device.siteId should point to existing site')
+        const { name: deviceName } = await knex('Device').where('id', deviceId).first('name')
+        assert.equal(deviceName, payload.LabName, 'device name should be set to lab name from result payload')
+      })
+
+      after(async () => {
+        const {
+          id: unapprovedDeviceApiKeyId,
+          deviceId: unapprovedDeviceId,
+          siteId: unapprovedDeviceSiteId,
+        } = await knex('DeviceApiKey as dak')
+          .where('dak.username', unapprovedDevice.username)
+          .first('dak.id', 'dak.deviceId', 'dak.siteId')
+        await knex('Result').where('deviceId', unapprovedDeviceId).delete()
+        await knex('DeviceApiKey').where('id', unapprovedDeviceApiKeyId).delete()
+        await knex('DeviceLog').where('deviceId', unapprovedDeviceId).delete()
+        await knex('Device').where('id', unapprovedDeviceId).delete()
+        await knex('Site').where('id', unapprovedDeviceSiteId).delete()
+      })
+    })
+
+    describe('when approved device sends result with a lab name', () => {
+      const approvedDevice = {
+        username: 'tempApprovedTruenatDevice',
+        password: 'Password_123',
+      }
+      const fullLabName = 'Approved Device Full Lab Name'
+      let authHeaderValue
+      let site
+      before(async () => {
+        const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
+        site = {
+          name: fullLabName,
+          shortName: 'short name',
+          partnerId: defaultPartner.id,
+          externalId: 'externalId',
+          notes: '',
+          createdOn: new Date(),
+          updatedOn: new Date(),
+        }
+        const [siteId] = await knex('Site').insert(site)
+        site.id = siteId
+        const { body } = await authenticateWithTruelabApi(approvedDevice.username, approvedDevice.password)
+        const { deviceId } = await knex('DeviceApiKey').where('username', approvedDevice.username).first('deviceId')
+        const approvedDeviceApprovalId = await deviceApprovalToId('approved')
+        await knex('Device').where('id', deviceId).update({ deviceApprovalId: approvedDeviceApprovalId })
+        authHeaderValue = body.token
+      })
+
+      it('should process result without modifying site or device', async () => {
+        const payload = {
+          Age: '55',
+          Ct1: '19.0',
+          Ct2: '10.39',
+          Ct3: 'ND',
+          CtLabel1: 'Control',
+          CtLabel2: 'E gene',
+          CtLabel3: 'Orf1A',
+          CtResult1: 'DETECTED High',
+          CtResult2: 'DETECTED High',
+          CtResult3: 'NOT DETECTED',
+          Date: '2020-09-27',
+          DoctorName: 'Dr Alban Aloha',
+          FinalResult: 'Positive',
+          Gender: 'Male',
+          LabName: fullLabName,
+          Notes: 'The test ran and the result was interpreted',
+          PatientID: '23894723890472349',
+          PatientName: 'James Teether',
+          SampleType: 'Sputum',
+          Status: 'Stopped',
+          TestName: 'MTB Plus',
+          Time: '22-40-58',
+          User: 'InitTesti',
+          ValidityStatus: 'Valid',
+        }
+
+        const response = await sendResult(authHeaderValue, {
+          ...payload,
+          PatientID: uuid.v4(),
+        })
+        const {
+          body: { success },
+        } = response
+        assert.isTrue(success)
+
+        const { deviceId, siteId } = await knex('DeviceApiKey as dak')
+          .where('dak.username', approvedDevice.username)
+          .first('dak.deviceId', 'dak.siteId')
+        assert.notEqual(siteId, site.id, 'device.siteId should not point to site with full lab name')
+        const { name: deviceName } = await knex('Device').where('id', deviceId).first('name')
+        assert.equal(
+          deviceName,
+          approvedDevice.username,
+          'device name should remain unchanged and equal to device username'
+        )
+      })
+
+      after(async () => {
+        const {
+          id: approvedDeviceApiKeyId,
+          deviceId: approvedDeviceId,
+          siteId: approvedDeviceSiteId,
+        } = await knex('DeviceApiKey as dak')
+          .where('dak.username', approvedDevice.username)
+          .first('dak.id', 'dak.deviceId', 'dak.siteId')
+        await knex('Result').where('deviceId', approvedDeviceId).delete()
+        await knex('DeviceApiKey').where('id', approvedDeviceApiKeyId).delete()
+        await knex('DeviceLog').where('deviceId', approvedDeviceId).delete()
+        await knex('Device').where('id', approvedDeviceId).delete()
+        await knex('Site').where('id', approvedDeviceSiteId).delete()
       })
     })
   })

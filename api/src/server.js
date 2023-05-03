@@ -207,7 +207,7 @@ const start = async () => {
    * to be able to get them in sync mode by `getDictionarySync`.
    * As an example - this is needed to use some dictionaries in plugins
    * which are called from plain function within `addConstraints()`.
-   * For more details see calling of plugin `modifyQueryToExcludeResult`
+   * For more details see calling of plugin `modifyQueryToExcludeResult` (2023-04-13 Now deleted)
    * in `api/src/auth/constraints.js`
    */
   server.ext('onRequest', async function (request, h) {

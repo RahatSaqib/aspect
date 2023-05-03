@@ -20,7 +20,7 @@ const GXTestingAndDiagnosisGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.DTestingDiagnosis)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.mtbXdrTestingDiagnosisTrends)}
       filters={
         <>
           <FormControlLabel

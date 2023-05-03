@@ -23,8 +23,7 @@ const messages = defineMessages({
   },
   all_results_description: {
     id: 'pages.ReportIndex.all_results_description',
-    defaultMessage:
-      'All test results in the system (up to 50.000 records). One row per result with all the fields needed.',
+    defaultMessage: 'All test results in the system. One row per result with all the fields needed.',
   },
   data_extract: {
     id: 'pages.ReportIndex.data_extract',
@@ -301,6 +300,15 @@ const messages = defineMessages({
   deviceSummaryReport: {
     id: 'pages.ReportIndex.deviceSummaryReport',
     defaultMessage: 'Device Summary Report',
+  },
+  missing_cartridges_report: {
+    id: 'pages.ReportIndex.missing_cartridges_report',
+    defaultMessage: 'List of Missing Lots',
+  },
+  missing_cartridges_report_description: {
+    id: 'pages.ReportIndex.missing_cartridges_report_description',
+    defaultMessage:
+      "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
   },
 })
 export default messages

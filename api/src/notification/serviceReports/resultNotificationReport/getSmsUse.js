@@ -10,7 +10,6 @@ async function getSmsUse(dataConstraints, params) {
       'nt.name as notification',
       'p.name as recipient',
       'm.phoneNumber as mobilePhone',
-      'p.email',
       'm.message',
       'm.updatedOn as sentOn',
       'd.name as device',

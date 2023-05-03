@@ -8,15 +8,12 @@ const { getConstraints } = require('../../auth/constraints')
 
 // ------------------------------------------------------
 async function getDataExtractReport(auth, query) {
-  query.page = 0
-  query.size = query.maxNumberOfRecords || 50000
   if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 180)
   /**
    *
    */
   const selectFields = SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT
-  const displayResult = query.displayResult || 'all'
-  const dataConstraints = await getConstraints(auth.credentials, { displayResult })
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForDataExtract(query, dataConstraints)
   const getCount = resultQuery.clone().count('r.id as total').first()

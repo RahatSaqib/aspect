@@ -1,6 +1,8 @@
-const { getUser } = require('../auth/service')
-const { respondFile } = require('../shared/excel')
-const { generateReport } = require('./serviceReports')
+const Stream = require('stream')
+const fs = require('fs')
+const Path = require('path')
+const { respondFile } = require('../shared/response')
+const { saveReportToFile } = require('./saveReportToFile')
 
 /**
  * This method execute a report and return the result over a hapi reply object.
@@ -11,24 +13,20 @@ const { generateReport } = require('./serviceReports')
 module.exports = async function downloadReport(request, reply) {
   const { auth, query, params } = request
   const { externalId } = params
-  const user = await getUser(auth.credentials.name)
-  const userPlaceHolders = {
-    email: user.email,
-    cell: user.cell,
-  }
 
-  const { dataBuffer, streamResponse, fileName, extension } = await generateReport(
-    externalId,
-    query,
-    auth,
-    user,
-    userPlaceHolders
-  )
+  const dataBuffer = new Stream.PassThrough()
+  const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true)
+  promise.then(fullPath => {
+    const path = Path.join(fullPath)
+    const stream = fs.createReadStream(path)
+    stream.pipe(dataBuffer)
+  })
+
   return respondFile({
     dataBuffer,
     extension,
     fileName,
     reply,
-    streamResponse,
+    streamResponse: true,
   })
 }

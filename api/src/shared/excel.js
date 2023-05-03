@@ -3,10 +3,11 @@ const _ = require('lodash')
 const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const Range = require('exceljs/lib/doc/range')
-const { getContentType, readExcelFile, readTemplateFile } = require('./io')
+const { readExcelFile, readTemplateFile } = require('./io')
 const { getDisplayPreferences, getUser } = require('../auth/service')
 const logger = require('./logger')
 const { RELABEL_EXCEL } = require('./constants')
+const { respondFile } = require('./response')
 
 const LANG_DEFAULT = 'en'
 
@@ -157,16 +158,6 @@ function getHeaderRows(sheet, cellTableToken) {
     headerRows.push(sheet.getRow(cellTableToken.row + j))
   }
   return headerRows
-}
-
-// ----------------------------------------------------------------------------------------------
-
-async function respondFile({ reply, dataBuffer, extension = 'xlsx', fileName, streamResponse = false }) {
-  return reply
-    .response(dataBuffer)
-    .encoding('binary')
-    .type(getContentType(extension, streamResponse))
-    .header('content-disposition', `attachment; filename=${fileName};`)
 }
 
 // ----------------------------------------------------------------------------------------------
@@ -1179,7 +1170,6 @@ module.exports = {
   renderExcelTemplateToCsv,
   replacePlaceholders,
   streamExcelTemplate,
-  respondFile,
   RELABEL_EXCEL,
   setCellStyle,
 }

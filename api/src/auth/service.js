@@ -637,56 +637,62 @@ async function updateUsernameAndPasswordForPerson(request) {
   const { params, payload } = request
 
   // TODO: check access level permissions for currently logged in user
-
-  const userLinkedToPerson = await getUserByPersonId(params.personId)
-
-  if (payload.newUsername) {
-    const usernameNotAvailable = await isUsernameAlreadyInUseBySomebodyElse(
-      userLinkedToPerson ? userLinkedToPerson.id : 0,
-      payload.newUsername
-    )
-    if (usernameNotAvailable) {
-      return usernameNotAvailable
-    }
-  }
-
   const responseData = {
     personId: params.personId,
-    userLockedOut: payload.userLockedOut,
+    canLogIn: payload.canLogIn,
   }
-  let linkedUserId
-  if (userLinkedToPerson) {
-    const changedFields = await getChangedFields(payload, userLinkedToPerson)
-    linkedUserId = userLinkedToPerson.id
+  const userLinkedToPerson = await getUserByPersonId(params.personId)
+  // Doesn't matter if the user can login or not, the user ID should be kept so we don't end having orphan users with user names that cannot be reused
+  let linkedUserId = userLinkedToPerson?.id || null
 
-    if (!_.isEmpty(changedFields)) {
-      await updateUser(userLinkedToPerson.id, changedFields)
+  // If the use can login, then it is worth to analyze the user credential changes
+  if (payload.canLogIn) {
+    if (payload.newUsername) {
+      const usernameNotAvailable = await isUsernameAlreadyInUseBySomebodyElse(
+        userLinkedToPerson ? userLinkedToPerson.id : 0,
+        payload.newUsername
+      )
+      if (usernameNotAvailable) {
+        return usernameNotAvailable
+      }
     }
 
-    responseData.changedFields = Object.keys(_.omit(changedFields, ['lastPasswordChange']))
-    responseData.username = userLinkedToPerson.name
-    responseData.userId = userLinkedToPerson.userId
-  } else {
-    const [insertedUserId] = await query('Insert new user details')
-      .from('User')
-      .insert({
-        name: payload.newUsername,
-        password: await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
-        approved: 1,
-        createdOn: new Date(),
-        lockedOut: payload.userLockedOut || 0,
-        failedPasswordAttempts: 0,
-        legacyPassword: 0,
-      })
-    linkedUserId = insertedUserId
-    responseData.changedFields = ['name', 'password', 'lockedOut']
-    responseData.username = payload.newUsername
-    responseData.userId = insertedUserId
+    responseData.userLockedOut = payload.userLockedOut
+
+    if (userLinkedToPerson) {
+      const changedFields = await getChangedFields(payload, userLinkedToPerson)
+
+      if (!_.isEmpty(changedFields)) {
+        await updateUser(userLinkedToPerson.id, changedFields)
+      }
+
+      responseData.changedFields = Object.keys(_.omit(changedFields, ['lastPasswordChange']))
+      responseData.username = userLinkedToPerson.name
+      responseData.userId = userLinkedToPerson.userId
+    } else {
+      const [insertedUserId] = await query('Insert new user details')
+        .from('User')
+        .insert({
+          name: payload.newUsername,
+          password: await bcryptHash(payload.newPassword, parseInt(config.passwordSaltRounds, 10)),
+          approved: 1,
+          createdOn: new Date(),
+          lockedOut: payload.userLockedOut || 0,
+          failedPasswordAttempts: 0,
+          legacyPassword: 0,
+        })
+      linkedUserId = insertedUserId
+      responseData.changedFields = ['name', 'password', 'lockedOut']
+      responseData.username = payload.newUsername
+      responseData.userId = insertedUserId
+    }
   }
+
   await query('update person for details').from('Person').where('id', params.personId).update({
     userId: linkedUserId,
-    canLogIn: true,
+    canLogIn: payload.canLogIn,
   })
+
   return {
     ok: true,
     data: responseData,
