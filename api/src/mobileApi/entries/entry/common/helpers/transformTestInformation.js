@@ -19,6 +19,7 @@ function transformTestInformation(data) {
 
   if (!_.isEmpty(testInfo1) && !_.isNil(testInfo1.resultCategory1Name) && !_.isEmpty(testInfo1.resultCategory1Name)) {
     output.push({
+      resultId: data.id,
       label: testInfo1.resultCategory1Label ?? null,
       labelI18nKey: testInfo1.resultCategory1i18nKey ?? null,
       value: testInfo1.resultCategory1Name ?? null,
@@ -28,6 +29,7 @@ function transformTestInformation(data) {
   }
   if (!_.isEmpty(testInfo2) && !_.isNil(testInfo2.resultCategory2Name) && !_.isEmpty(testInfo2.resultCategory2Name)) {
     output.push({
+      resultId: data.id,
       label: testInfo2.resultCategory2Label ?? null,
       labelI18nKey: testInfo2.resultCategory2i18nKey ?? null,
       value: testInfo2.resultCategory2Name ?? null,

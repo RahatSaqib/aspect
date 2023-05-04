@@ -4,6 +4,7 @@ const { assayAvatarColorsIcon } = require('../consts')
 function transformAssayAvatar(data) {
   const assayConst = assayAvatarColorsIcon[_.toLower(data.assayTypeAbbreviation)] ?? assayAvatarColorsIcon.default
   return {
+    resultId: data.id,
     contentI18nKey: data.assayTypeI18nKey ?? null,
     contentText: data.assayTypeAbbreviation ?? null,
     backgroundColor: assayConst.backgroundColor,

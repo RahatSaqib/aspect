@@ -96,11 +96,14 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
       'sampleType.i18nKey as sampleTypeI18nKey',
       'sampleType.name as sampleTypeName',
       'reportableSite.id as reportableSiteId',
+      'reportableSite.name as reportableSiteName',
       'resultFollowUp.resultId as resultFollowUpResultId',
       'resultFollowUp.date as resultFollowUpDate',
       'resultFollowUp.createdOn as resultFollowUpCreatedOn',
       'resultFollowUp.updatedOn as resultFollowUpUpdatedOn'
     )
+  // .where('result.id', '=', 342)
+  // .where('result.id', '=', 6092)
   return knexQuery
 }
 
