@@ -48,7 +48,7 @@ async function seed(knex) {
     .where('activity', 'edit')
     .first('id')
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('name', 'Admin').first('id')
+  const { id: jobFunctionIdAdmin } = await knex('JobFunction').where('externalId', 'admin').first('id')
 
   if (
     !(await knex('JobFunctionPermission')
