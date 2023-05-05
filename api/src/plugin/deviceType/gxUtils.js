@@ -245,7 +245,10 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
 
             const operation = `${isDecrease ? 'remove' : 'add'} from GxConnect`
 
-            const inventoryItemIds = await changeInventoryQuantity(inventoryStrategy, {
+            /**
+             * return object { inventoryItemId, inventoryLogId }
+             */
+            return changeInventoryQuantity(inventoryStrategy, {
               consumableId,
               siteId,
               expiresOn,
@@ -264,13 +267,12 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
                 operation,
               },
             })
-            return inventoryItemIds
           }
         }
         return null
       })
     )
-    inventoryItemIds = _.flatten(inventoryItemIds).filter(x => !isNil(x) && !Boom.isBoom(x))
+    inventoryItemIds = inventoryItemIds.filter(x => !isNil(x) && !Boom.isBoom(x)).map(x => x.inventoryItemId)
   }
   return {
     inventoryItemIds,
