@@ -1,9 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 
-// const { logInventoryChange } = require('../../../inventory/common/db')
-// const { allConsumableReasonToId } = require('../../../shared/dictionary')
-
 // ----------------------------------------------------------------------------------
 async function getNewQuantityOnHand(
   /**
@@ -17,30 +14,20 @@ async function getNewQuantityOnHand(
   quantity,
   { resultId, userId } = {}
 ) {
-  // const now = new Date()
-  const items = [
-    {
-      quantityOnHand: inventoryItem?.quantityOnHand || 0,
-      /**
-       * notice that we return same `inventoryItem` - in case if is `undefined` then
-       * we insert new inventoryItem, if not - we update it.
-       * i.e. see func `changeInventoryQuantity` in `api/src/inventory/utils.js`
-       * where we call func `upsertInventoryItem`
-       */
-      inventoryItem,
-    },
-  ]
+  let newQuantityOnHand = inventoryItem?.quantityOnHand || 0
   switch (operation) {
     case 'add':
     case 'add from GxConnect':
     case 'receive':
+    case 'receive to':
     case 'transfer received':
-      items[0].quantityOnHand += quantity
+      newQuantityOnHand += quantity
       break
     case 'remove':
     case 'remove from GxConnect':
     case 'transfer':
     case 'transfer sent':
+    case 'transfer from':
       /**
        * see ASP-5543 with rules for below code
        */
@@ -57,7 +44,7 @@ async function getNewQuantityOnHand(
         /**
          * normal mode - deduct `quantity` from current site
          */
-        items[0].quantityOnHand -= quantity
+        newQuantityOnHand -= quantity
       } else {
         await logMissingInventory(knex, inventoryItem, resultId, userId)
         return Boom.notFound(
@@ -69,7 +56,7 @@ async function getNewQuantityOnHand(
       // do not change quantityOnHand
     }
   }
-  return items
+  return newQuantityOnHand
 }
 
 // ----------------------------------------------------------------------------------
@@ -93,7 +80,7 @@ async function logMissingInventory(knex, inventoryItem, resultId, userId) {
 // ----------------------------------------------------------------------------------
 /**
  * when inventory is being transferred - do it in one shot in `transferInventory` func
- * without postponing receive commit and without setting inTransitFromSiteId field
+ * without calling receiveInventory and without setting inTransitFromSiteId field
  */
 const transferInPendingMode = false
 

@@ -2,41 +2,34 @@ const _ = require('lodash')
 
 // ----------------------------------------------------------------------------------
 async function getNewQuantityOnHand(knex, inventoryItem, operation, quantityOnHand, quantity) {
-  const items = [
-    {
-      quantityOnHand: inventoryItem?.quantityOnHand || 0,
-      /**
-       * notice that we return same `inventoryItem` - in case if it `undefined` then
-       * we insert new inventoryItem, if not - we update it.
-       * i.e. see func `changeInventoryQuantity` in `api/src/inventory/utils.js`
-       * where we call func `upsertInventoryItem`
-       */
-      inventoryItem,
-    },
-  ]
+  let newQuantityOnHand = inventoryItem?.quantityOnHand || 0
+
   switch (operation) {
     case 'add':
     case 'add from GxConnect':
     case 'receive':
+    case 'receive to':
     case 'transfer received':
-      items[0].quantityOnHand = _.isUndefined(quantityOnHand) ? items[0].quantityOnHand + quantity : quantityOnHand
+      newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand + quantity : quantityOnHand
       break
     case 'remove':
     case 'remove from GxConnect':
     case 'transfer':
     case 'transfer sent':
+    case 'transfer from':
       /**
        * this allows negative numbers for `quantityOnHand` -
        * see `api/src/plugin/partner/Pakistan/inventoryStrategy.js` for another implementation
        * which takes into account parent warehouse(s) and doesn't allow negative number
        */
-      items[0].quantityOnHand = _.isUndefined(quantityOnHand) ? items[0].quantityOnHand - quantity : quantityOnHand
+      newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
       break
     default: {
       // do not change quantityOnHand
     }
   }
-  return items
+  // return items
+  return newQuantityOnHand
 }
 
 let currentUserId
@@ -50,9 +43,8 @@ function getUserId() {
 
 /**
  * when inventory is being transferred - do it in 2 steps:
- * - process `transferInventory` but do not update db and make sure `transfer sent` event fired
- * which should call `receiveInventory`
- * - process `receiveInventory` and update both `fromSite` and `toSite`
+ * - process `transferInventory` and set `inTransitFromSiteId` for inventory for `toSiteId`
+ * - process `receiveInventory` and update both `fromSite` and `toSite` and release `inTransitFromSiteId`
  */
 const transferInPendingMode = true
 
