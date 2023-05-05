@@ -166,6 +166,7 @@ const routes = [
           personId: Joi.string().description('Person ID').required(),
         },
         payload: {
+          canLogIn: Joi.boolean(),
           newUsername: Joi.string().max(255).allow('', null),
           newPassword: Joi.string().max(100).allow('', null),
           userLockedOut: Joi.boolean().allow(null),

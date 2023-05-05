@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-02-23T20:58:03.352Z\n"
+"POT-Creation-Date: 2023-05-03T16:15:31.910Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,19 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. [pages.ReportIndex.doNotUseModulesReport]
+#. defaultMessage is:
+#. "Do Not Use" Modules
+#. [pages.ReportIndex.do_not_use_modules_report]
+#. defaultMessage is:
+#. "Do Not Use" Modules
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Devices with Unused Modules"
+msgid "\"Do Not Use\" Modules"
+msgstr "Thiết bị có mô-đun không sử dụng"
 
 #. [pages.ReportIndex.no_stock]
 #. defaultMessage is:
@@ -222,6 +234,17 @@ msgstr "> = 40 cp / mL"
 msgid ">= 550 cp/mL"
 msgstr "> = 550 cp / mL"
 
+#. [pages.ReportIndex.doNotUseModulesReport_Description]
+#. defaultMessage is:
+#. A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.
+#: extracted_strings.json
+msgid ""
+"A list of all GeneXpert device modules marked as 'do not use'. Includes "
+"device name, module serial."
+msgstr ""
+"Danh sách tất cả các mô-đun thiết bị GeneXpert được đánh dấu là 'không sử "
+"dụng'. Bao gồm tên thiết bị, mô-đun nối tiếp."
+
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
 #. A username is required
@@ -256,6 +279,9 @@ msgstr "tháng Tám"
 #. [legends.Unknown.assayAbbottM2000DBSHivVL]
 #. defaultMessage is:
 #. Abbott m2000 DBS HIV VL
+#. [filter.AssaySelectField.abbottM2000DBSHivVL]
+#. defaultMessage is:
+#. Abbott m2000 DBS HIV VL
 #: extracted_strings.json
 msgid "Abbott m2000 DBS HIV VL"
 msgstr "Abbott m2000 DBS VL HIV"
@@ -266,6 +292,9 @@ msgstr "Abbott m2000 DBS VL HIV"
 #. [legends.Unknown.assayAbbottM2000DaanNCOVID19]
 #. defaultMessage is:
 #. Abbott m2000 Daan N COVID-19
+#. [filter.AssaySelectField.abbottM2000DaanNCOVID19]
+#. defaultMessage is:
+#. Abbott m2000 Daan N COVID-19
 #: extracted_strings.json
 msgid "Abbott m2000 Daan N COVID-19"
 msgstr "Abbott m2000 Daan N COVID-19"
@@ -274,6 +303,9 @@ msgstr "Abbott m2000 Daan N COVID-19"
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
 #. [legends.Unknown.assayAbbottM2000HIVEID]
+#. defaultMessage is:
+#. Abbott m2000 HIV EID
+#. [filter.AssaySelectField.abbottM2000HIVEID]
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
 #: extracted_strings.json
@@ -680,11 +712,15 @@ msgstr "Tất cả các trạng thái"
 
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
-#. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
+#. All test results in the system. One row per result with all the fields needed.
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "All test results in the system (up to 50.000 records). One row per result "
+#| "with all the fields needed."
 msgid ""
-"All test results in the system (up to 50.000 records). One row per result "
-"with all the fields needed."
+"All test results in the system. One row per result with all the fields "
+"needed."
 msgstr ""
 "Tất cả các kết quả kiểm tra trong hệ thống (lên đến 50.000 bản ghi). Một "
 "hàng cho mỗi kết quả với tất cả các trường cần thiết."
@@ -855,6 +891,15 @@ msgstr ""
 "Bạn có chắc chắn muốn xóa trang web này không? Hành động này chỉ dành cho "
 "các trang web thử nghiệm, tất cả dữ liệu trang web sẽ bị mất."
 
+#. [p.PkDashboard.aspectDashboard]
+#. defaultMessage is:
+#. Aspect Dashboard
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Dashboard"
+msgid "Aspect Dashboard"
+msgstr "Bảng điều khiển"
+
 #. [errorResponseMessages.generic.title]
 #. defaultMessage is:
 #. Aspect has Encountered a Problem.
@@ -903,13 +948,6 @@ msgstr "Loại thử nghiệm"
 #: extracted_strings.json
 msgid "Assay Type:"
 msgstr "Loại thử nghiệm:"
-
-#. [pages.Result.assayRequired]
-#. defaultMessage is:
-#. Assay is required
-#: extracted_strings.json
-msgid "Assay is required"
-msgstr "Thử nghiệm là bắt buộc"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -1064,12 +1102,26 @@ msgstr "Tỷ lệ phát hiện lao trung bình hàng tháng"
 msgid "Average Monthly Tests Performed"
 msgstr "Các xét nghiệm trung bình hàng tháng"
 
+#. [p.PkDashboard.RRPerMonth]
+#. defaultMessage is:
+#. Average RR cases diagnosed per month
+#: extracted_strings.json
+msgid "Average RR cases diagnosed per month"
+msgstr "Các trường hợp RR trung bình được chẩn đoán mỗi tháng"
+
 #. [component.Widget.averageRecipientsOfSms]
 #. defaultMessage is:
 #. Average SMS recipients per positive result
 #: extracted_strings.json
 msgid "Average SMS recipients per positive result"
 msgstr "Người nhận SMS trung bình trên mỗi kết quả dương tính"
+
+#. [p.PkDashboard.xdrAverageMoth]
+#. defaultMessage is:
+#. Average TB cases diagnosed per month
+#: extracted_strings.json
+msgid "Average TB cases diagnosed per month"
+msgstr "Số ca lao trung bình được chẩn đoán mỗi tháng"
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
@@ -1109,6 +1161,15 @@ msgid "Average number of tests per weekday conducted this month."
 msgstr ""
 "Số lượng bài kiểm tra trung bình mỗi ngày trong tuần được thực hiện trong "
 "tháng này."
+
+#. [p.PkDashboard.testPerMonth]
+#. defaultMessage is:
+#. Average tests performed per month
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Average Monthly Tests Performed"
+msgid "Average tests performed per month"
+msgstr "Các xét nghiệm trung bình hàng tháng"
 
 #. [component.Widget.averageTimeToModuleReplacementTitle]
 #. defaultMessage is:
@@ -1247,6 +1308,15 @@ msgstr "Bứt phá theo lô"
 #: extracted_strings.json
 msgid "Browse"
 msgstr "Tìm kiếm"
+
+#. [pages.NotificationDetail.New.buildNotification]
+#. defaultMessage is:
+#. Build Notification
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Edit Notification"
+msgid "Build Notification"
+msgstr "Chỉnh sửa thông báo"
 
 #. [results.categoryTypeCAPResistanceI18nKey]
 #. defaultMessage is:
@@ -1477,6 +1547,9 @@ msgstr "Hiệu chỉnh khi đến hạn"
 #. [pages.RouterDetail.detailCalibration]
 #. defaultMessage is:
 #. Calibration
+#. [pages.resultEdit.Calibration]
+#. defaultMessage is:
+#. Calibration
 #. [pages.DeviceDetailProfile.calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1641,6 +1714,15 @@ msgstr "Hạng mục 2"
 #: extracted_strings.json
 msgid "Category I"
 msgstr "loại tôi"
+
+#. [pages.resultEdit.PatientPhoneNumberi18nkey]
+#. defaultMessage is:
+#. Cellphone Number
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Mobile Number"
+msgid "Cellphone Number"
+msgstr "Số di động"
 
 #. [pages.NotificationDetail.actionChange]
 #. defaultMessage is:
@@ -1820,13 +1902,6 @@ msgstr "Đã thu thập vào"
 #: extracted_strings.json
 msgid "Collected On:"
 msgstr "Đã thu thập vào:"
-
-#. [pages.Result.collectedOnRequired]
-#. defaultMessage is:
-#. CollectedOn date is required
-#: extracted_strings.json
-msgid "CollectedOn date is required"
-msgstr "Ngày thu thập là bắt buộc"
 
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
@@ -2258,6 +2333,18 @@ msgstr ""
 msgid "County"
 msgstr "Quận"
 
+#. [p.PkDashboard.titlecoverage]
+#. defaultMessage is:
+#. Coverage
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Country Average"
+msgid "Coverage"
+msgstr "Trung bình quốc gia"
+
+#. [p.PkDashboard.covid]
+#. defaultMessage is:
+#. Covid
 #. [pages.ResultList.resultCategoryCovid19]
 #. defaultMessage is:
 #. Covid
@@ -2321,6 +2408,9 @@ msgid "Critical Error"
 msgstr "Lỗi nghiêm trọng"
 
 #. [pages.ReportIndex.Critical_Errors_By_Device]
+#. defaultMessage is:
+#. Critical Errors By Device
+#. [pages.ResultList.critical_errors_by_device]
 #. defaultMessage is:
 #. Critical Errors By Device
 #: extracted_strings.json
@@ -2420,6 +2510,40 @@ msgstr "Văn hóa Kết quả Không xác định"
 msgid "Current Active Devices"
 msgstr "Các thiết bị hoạt động hiện tại"
 
+#. [p.PkDashboard.xdrCurrentDiagnosisTitle]
+#. defaultMessage is:
+#. Current Diagnosis
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Current Password"
+msgid "Current Diagnosis"
+msgstr "Mật khẩu hiện tại"
+
+#. [p.PkDashboard.FQCurrent]
+#. defaultMessage is:
+#. Current FQ Trends
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Current Password"
+msgid "Current FQ Trends"
+msgstr "Mật khẩu hiện tại"
+
+#. [p.PkDashboard.xdrCurrentTitle]
+#. defaultMessage is:
+#. Current GX-10CX Testing performed in
+#: extracted_strings.json
+msgid "Current GX-10CX Testing performed in"
+msgstr "Thử nghiệm GX-10CX hiện tại được thực hiện trong"
+
+#. [p.PkDashboard.DCurrent]
+#. defaultMessage is:
+#. Current MTB Detection
+#: extracted_strings.json
+#, fuzzy
+#| msgid "MTB Detected"
+msgid "Current MTB Detection"
+msgstr "MTB được phát hiện"
+
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
 #. Current Network Status
@@ -2433,6 +2557,50 @@ msgstr "Trạng thái mạng hiện tại"
 #: extracted_strings.json
 msgid "Current Password"
 msgstr "Mật khẩu hiện tại"
+
+#. [p.PkDashboard.RRCurrent]
+#. defaultMessage is:
+#. Current RRTB Diagnosis
+#: extracted_strings.json
+msgid "Current RRTB Diagnosis"
+msgstr "Chẩn đoán RRTB hiện tại"
+
+#. [p.PkDashboard.rifCurrentRRTBDiagnosisTitle]
+#. defaultMessage is:
+#. Current Rifampicin Resistance Diagnosis Trends
+#: extracted_strings.json
+msgid "Current Rifampicin Resistance Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán kháng Rifampicin hiện tại"
+
+#. [p.PkDashboard.TbDCurrent]
+#. defaultMessage is:
+#. Current TB Diagnosis
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Current Password"
+msgid "Current TB Diagnosis"
+msgstr "Mật khẩu hiện tại"
+
+#. [p.PkDashboard.TbCurrent]
+#. defaultMessage is:
+#. Current TB Testing Trends
+#: extracted_strings.json
+msgid "Current TB Testing Trends"
+msgstr "Xu hướng xét nghiệm lao hiện tại"
+
+#. [p.PkDashboard.TCurrent]
+#. defaultMessage is:
+#. Current Testing
+#: extracted_strings.json
+msgid "Current Testing"
+msgstr "Thử nghiệm hiện tại"
+
+#. [p.PkDashboard.rifCurrentTitle]
+#. defaultMessage is:
+#. Current Testing of MTB/RIF performed in
+#: extracted_strings.json
+msgid "Current Testing of MTB/RIF performed in"
+msgstr "Thử nghiệm hiện tại của MTB/RIF được thực hiện trong"
 
 #. [pages.Notifications.optionPersonRoleNotSet]
 #. defaultMessage is:
@@ -2448,6 +2616,9 @@ msgstr "Hiện không thể chọn - thiếu vai trò"
 msgid "Custom"
 msgstr "Tùy chỉnh"
 
+#. [placeholder.result.placeholderCustomFields]
+#. defaultMessage is:
+#. Custom Fields
 #. [pages.resultEdit.customFields]
 #. defaultMessage is:
 #. Custom Fields
@@ -2482,6 +2653,28 @@ msgstr "tháng 12"
 #: extracted_strings.json
 msgid "DELETE"
 msgstr "XÓA"
+
+#. [pages.ReportIndex.reportDrTb10a10bCovidDescription]
+#. defaultMessage is:
+#. DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results
+#: extracted_strings.json
+msgid ""
+"DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert "
+"Results"
+msgstr ""
+"DR-TB 10A-10B và định dạng báo cáo Covid cho báo cáo Hàng tháng về Kết quả "
+"Xpert"
+
+#. [pages.ReportIndex.reportDrTb10a10bCovidNtpUse_description]
+#. defaultMessage is:
+#. DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results- NTP Use.
+#: extracted_strings.json
+msgid ""
+"DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert "
+"Results- NTP Use."
+msgstr ""
+"DR-TB 10A-10B và định dạng báo cáo Covid cho Báo cáo hàng tháng về Kết quả "
+"Xpert- Sử dụng NTP."
 
 #. [pages.ResultList.assayGenericDst]
 #. defaultMessage is:
@@ -2912,11 +3105,17 @@ msgstr "Trình tạo khóa API thiết bị"
 #. [pages.ReportIndex.deviceActivityReport]
 #. defaultMessage is:
 #. Device Activity
+#. [pages.ReportIndex.device_activity]
+#. defaultMessage is:
+#. Device Activity
 #: extracted_strings.json
 msgid "Device Activity"
 msgstr "Hoạt động thiết bị"
 
 #. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#. [pages.ReportIndex.device_activity_percent]
 #. defaultMessage is:
 #. Device Activity (Percent)
 #: extracted_strings.json
@@ -2933,6 +3132,9 @@ msgstr "Mức khu vực thiết bị"
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
 #. Device Average Utilization per Month
+#. [pages.ReportIndex.device_utilization]
+#. defaultMessage is:
+#. Device Average Utilization per Month
 #: extracted_strings.json
 msgid "Device Average Utilization per Month"
 msgstr "Mức độ sử dụng thiết bị trung bình hàng tháng"
@@ -2945,6 +3147,9 @@ msgid "Device Calibration"
 msgstr "Hiệu chuẩn thiết bị"
 
 #. [pages.ReportIndex.Device_Calibration_Report]
+#. defaultMessage is:
+#. Device Calibration Report
+#. [pages.ReportIndex.device_calibration_report]
 #. defaultMessage is:
 #. Device Calibration Report
 #: extracted_strings.json
@@ -2999,6 +3204,15 @@ msgstr "Demo thiết bị"
 msgid "Device Name"
 msgstr "Tên thiết bị"
 
+#. [pages.ReportIndex.devicePerformance]
+#. defaultMessage is:
+#. Device Performance
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Performance"
+msgid "Device Performance"
+msgstr "Hiệu suất"
+
 #. [forms.formItem.deviceSerial]
 #. defaultMessage is:
 #. Device Serial
@@ -3015,6 +3229,18 @@ msgstr "Serial thiết bị"
 #: extracted_strings.json
 msgid "Device Status"
 msgstr "Tình trạng thiết bị"
+
+#. [pages.ReportIndex.deviceSummaryReport]
+#. defaultMessage is:
+#. Device Summary Report
+#. [pages.ReportIndex.device_summary_report]
+#. defaultMessage is:
+#. Device Summary Report
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Device Calibration Report"
+msgid "Device Summary Report"
+msgstr "Báo cáo hiệu chuẩn thiết bị"
 
 #. [forms.formItem.deviceType]
 #. defaultMessage is:
@@ -3059,13 +3285,6 @@ msgstr "Khối lượng công việc của thiết bị"
 #: extracted_strings.json
 msgid "Device from State"
 msgstr "Từ thiết bị này"
-
-#. [pages.Result.deviceRequired]
-#. defaultMessage is:
-#. Device is required
-#: extracted_strings.json
-msgid "Device is required"
-msgstr "Thiết bị là bắt buộc"
 
 #. [pages.DeviceDetailProfile.deviceLogs]
 #. defaultMessage is:
@@ -3128,6 +3347,9 @@ msgid "Devices With Service Interruption"
 msgstr "Thiết bị bị gián đoạn dịch vụ"
 
 #. [pages.ReportIndex.devicesAndSitesOverview]
+#. defaultMessage is:
+#. Devices and Sites Overview
+#. [pages.ReportIndex.devices_and_sites_overview]
 #. defaultMessage is:
 #. Devices and Sites Overview
 #: extracted_strings.json
@@ -3357,6 +3579,13 @@ msgstr "Do sớm"
 msgid "EID"
 msgstr "EID"
 
+#. [pages.resultEdit.EQA]
+#. defaultMessage is:
+#. EQA
+#: extracted_strings.json
+msgid "EQA"
+msgstr "cân bằng"
+
 #. [results.categoryTypeETHResistanceI18nKey]
 #. defaultMessage is:
 #. ETH Resistance
@@ -3399,6 +3628,9 @@ msgstr "Ebola"
 msgid "Edit"
 msgstr "Sửa"
 
+#. [pages.NotificationDetail.New.editNotification]
+#. defaultMessage is:
+#. Edit Notification
 #. [pages.NotificationDetail.Edit.title]
 #. defaultMessage is:
 #. Edit Notification
@@ -3533,20 +3765,6 @@ msgstr "Đã bật"
 #: extracted_strings.json
 msgid "End Date"
 msgstr "Ngày kết thúc"
-
-#. [pages.Result.endedOnRequired]
-#. defaultMessage is:
-#. End date is required
-#: extracted_strings.json
-msgid "End date is required"
-msgstr "Ngày kết thúc là bắt buộc"
-
-#. [pages.Result.endedOnCannotBeBeforeStartedOn]
-#. defaultMessage is:
-#. End time cannot be before Start time
-#: extracted_strings.json
-msgid "End time cannot be before Start time"
-msgstr "Thời gian kết thúc không được trước Thời gian bắt đầu"
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
 #. defaultMessage is:
@@ -3722,13 +3940,6 @@ msgstr "Lỗi"
 msgid "Error Code"
 msgstr "Mã lỗi"
 
-#. [pages.Result.errorCode]
-#. defaultMessage is:
-#. Error Code must be a positive integer with max 5 digits
-#: extracted_strings.json
-msgid "Error Code must be a positive integer with max 5 digits"
-msgstr "Mã lỗi phải là một số nguyên dương với tối đa 5 chữ số"
-
 #. [queryFetch.errorResponseMessages.GET.default.title]
 #. defaultMessage is:
 #. Error Fetching Endpoint
@@ -3813,7 +4024,13 @@ msgstr "Lỗi khi tải chi tiết đơn vị"
 msgid "Error Loading States for {countryName}"
 msgstr "Lỗi khi tải các tiểu bang cho {countryName}"
 
+#. [pages.ReportIndex.error_rate]
+#. defaultMessage is:
+#. Error Rate
 #. [component.Widget.errorRateTitle]
+#. defaultMessage is:
+#. Error Rate
+#. [p.PkDashboard.errorRate]
 #. defaultMessage is:
 #. Error Rate
 #. [pages.DeviceDetailProfile.errorRate]
@@ -3872,12 +4089,33 @@ msgstr "Hàng tuần, ngày"
 msgid "Excel"
 msgstr "Excel"
 
+#. [pages.Result.resultTypeId]
+#. defaultMessage is:
+#. Exclude reason is required
+#: extracted_strings.json
+#, fuzzy
+#| msgid "End date is required"
+msgid "Exclude reason is required"
+msgstr "Ngày kết thúc là bắt buộc"
+
+#. [forms.formItem.excluded]
+#. defaultMessage is:
+#. Excluded
 #. [pages.displayResultSelectField.Excluded]
 #. defaultMessage is:
 #. Excluded
 #: extracted_strings.json
 msgid "Excluded"
 msgstr "Không bao gồm"
+
+#. [forms.formItem.excludeReason]
+#. defaultMessage is:
+#. Excluded Reason
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Excluded Results"
+msgid "Excluded Reason"
+msgstr "Kết quả bị loại trừ"
 
 #. [filter.btnGroup.displayExcludedResults]
 #. defaultMessage is:
@@ -4098,6 +4336,15 @@ msgstr "tháng hai"
 msgid "FLQ Resistance"
 msgstr "Kháng FLQ"
 
+#. [p.PkDashboard.mtbXdrFQResistance]
+#. defaultMessage is:
+#. FQ Resistance
+#: extracted_strings.json
+#, fuzzy
+#| msgid "FLQ Resistance"
+msgid "FQ Resistance"
+msgstr "Kháng FLQ"
+
 #. [legends.Unknown.FQRPercent]
 #. defaultMessage is:
 #. FQ-R %
@@ -4176,13 +4423,6 @@ msgstr "Trường không được chứa ít hơn {total} ký tự"
 #: extracted_strings.json
 msgid "Field cannot contain more than {total} characters"
 msgstr "Trường không được chứa nhiều hơn {total} ký tự"
-
-#. [pages.Result.resultCategory1]
-#. defaultMessage is:
-#. Field is required
-#: extracted_strings.json
-msgid "Field is required"
-msgstr "Trường bắt buộc nhập"
 
 #. [pages.ResultList.resultCategoryFinalResult]
 #. defaultMessage is:
@@ -4400,6 +4640,13 @@ msgstr "GP không được phát hiện - NP được phát hiện"
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP không được phát hiện - NP không được phát hiện"
 
+#. [p.PkDashboard.DTestingDiagnosis]
+#. defaultMessage is:
+#. GX-10C Testing & Diagnosis
+#: extracted_strings.json
+msgid "GX-10C Testing & Diagnosis"
+msgstr "Kiểm tra & Chẩn đoán GX-10C"
+
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
 #. Gastric Lavage
@@ -4407,6 +4654,9 @@ msgstr "GP không được phát hiện - NP không được phát hiện"
 msgid "Gastric Lavage"
 msgstr "Rửa dạ dày"
 
+#. [pages.resultEdit.Genderi18nKey]
+#. defaultMessage is:
+#. Gender
 #. [pages.resultEdit.Genderi18nCaptionKey]
 #. defaultMessage is:
 #. Gender
@@ -4434,6 +4684,15 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "Hộp mực GeneXpert COVID-19"
 
+#. [p.PkDashboard.genExpert]
+#. defaultMessage is:
+#. GeneXpert Device Coverage
+#: extracted_strings.json
+#, fuzzy
+#| msgid "GeneXpert Devices"
+msgid "GeneXpert Device Coverage"
+msgstr "Thiết bị GeneXpert"
+
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
 #. GeneXpert Devices
@@ -4448,6 +4707,9 @@ msgstr "Thiết bị GeneXpert"
 #. defaultMessage is:
 #. GeneXpert Ebola
 #. [pages.ResultList.assayGeneXpertEbola]
+#. defaultMessage is:
+#. GeneXpert Ebola
+#. [pages.ResultList.GxEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
 #: extracted_strings.json
@@ -4470,6 +4732,9 @@ msgstr "Hộp mực GeneXpert Ebola"
 #. [pages.ResultList.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
+#. [pages.ResultList.GxHcv]
+#. defaultMessage is:
+#. GeneXpert HCV
 #: extracted_strings.json
 msgid "GeneXpert HCV"
 msgstr "GeneXpert HCV"
@@ -4481,6 +4746,9 @@ msgstr "GeneXpert HCV"
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
 #. [pages.ResultList.assayGeneXpertHiv1Qual]
+#. defaultMessage is:
+#. GeneXpert HIV-1 Qual
+#. [pages.ResultList.GxHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
 #: extracted_strings.json
@@ -4496,6 +4764,9 @@ msgstr "GeneXpert HIV-1 Qual"
 #. [pages.ResultList.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
+#. [pages.ResultList.GxHiv1Vl]
+#. defaultMessage is:
+#. GeneXpert HIV-1 VL
 #: extracted_strings.json
 msgid "GeneXpert HIV-1 VL"
 msgstr "GeneXpert HIV-1 VL"
@@ -4507,6 +4778,15 @@ msgstr "GeneXpert HIV-1 VL"
 msgid "GeneXpert Issues"
 msgstr "Sự cố về GeneXpert"
 
+#. [p.PkDashboard.utilizationTitle]
+#. defaultMessage is:
+#. GeneXpert MTB-RIF/Ultra Device Utilization
+#: extracted_strings.json
+#, fuzzy
+#| msgid "GeneXpert TB Ultra Cartridge"
+msgid "GeneXpert MTB-RIF/Ultra Device Utilization"
+msgstr "Hộp mực siêu cao cấp GeneXpert TB"
+
 #. [filter.AssaySelectField.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
@@ -4514,6 +4794,9 @@ msgstr "Sự cố về GeneXpert"
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
 #. [pages.ResultList.assayGeneXpertMtbRif]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif
+#. [pages.ResultList.GxMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
 #: extracted_strings.json
@@ -4529,6 +4812,9 @@ msgstr "GeneXpert MTB / Rif"
 #. [pages.ResultList.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
+#. [pages.ResultList.GxMtbRifUltra]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif Ultra
 #: extracted_strings.json
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB / Rif Ultra"
@@ -4540,6 +4826,9 @@ msgstr "GeneXpert MTB / Rif Ultra"
 #. defaultMessage is:
 #. GeneXpert MTB/XDR
 #. [pages.ResultList.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [pages.ResultList.GxMtbXdr]
 #. defaultMessage is:
 #. GeneXpert MTB/XDR
 #: extracted_strings.json
@@ -4570,6 +4859,9 @@ msgstr "Hộp mực siêu cao cấp GeneXpert TB"
 #. [pages.ReportIndex.geneXpertTbWorkloadReport]
 #. defaultMessage is:
 #. GeneXpert TB Workload
+#. [pages.ReportIndex.genxpert_tb_workload_report]
+#. defaultMessage is:
+#. GeneXpert TB Workload
 #: extracted_strings.json
 msgid "GeneXpert TB Workload"
 msgstr "Khối lượng công việc GeneXpert TB"
@@ -4581,6 +4873,9 @@ msgstr "Khối lượng công việc GeneXpert TB"
 #. defaultMessage is:
 #. GeneXpert Unknown
 #. [pages.ResultList.assayGeneXpertUnknown]
+#. defaultMessage is:
+#. GeneXpert Unknown
+#. [pages.ResultList.GxUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
 #: extracted_strings.json
@@ -4724,20 +5019,6 @@ msgstr "Chuyển đến trạng thái hàng ngày"
 #: extracted_strings.json
 msgid "Go To Dashboard"
 msgstr "Quay lại bảng điều khiển"
-
-#. [pages.InventoryDashboard.inventoryLogNav]
-#. defaultMessage is:
-#. Go To Inventory Log
-#: extracted_strings.json
-msgid "Go To Inventory Log"
-msgstr "Chuyển đến Nhật ký hàng tồn kho"
-
-#. [pages.InventoryDashboard.suppliesNav]
-#. defaultMessage is:
-#. Go To Supplies
-#: extracted_strings.json
-msgid "Go To Supplies"
-msgstr "Chuyển đến nguồn cung cấp"
 
 #. [pages.TableHeader.groupByColumn]
 #. defaultMessage is:
@@ -5166,6 +5447,13 @@ msgstr "Ẩn cột"
 msgid "History"
 msgstr "Lịch sử"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. Hiv
+#: extracted_strings.json
+msgid "Hiv"
+msgstr "HIV"
+
 #. [header.link.home.title]
 #. defaultMessage is:
 #. Home
@@ -5515,6 +5803,9 @@ msgstr "Url webhook không hợp lệ"
 #. [pages.Status.summaryWidgetGroup.inventory]
 #. defaultMessage is:
 #. Inventory
+#. [p.PkDashboard.titleinventory]
+#. defaultMessage is:
+#. Inventory
 #: extracted_strings.json
 msgid "Inventory"
 msgstr "Hàng tồn kho"
@@ -5536,12 +5827,27 @@ msgstr "Mục hàng tồn kho"
 #. [pages.ReportIndex.inventoryLog]
 #. defaultMessage is:
 #. Inventory Log
+#. [browsePage.browseDropdown.inventoryLog]
+#. defaultMessage is:
+#. Inventory Log
 #. [pages.InventoryLog.inventoryLogTitle]
+#. defaultMessage is:
+#. Inventory Log
+#. [pages.ReportIndex.inventory_log]
 #. defaultMessage is:
 #. Inventory Log
 #: extracted_strings.json
 msgid "Inventory Log"
 msgstr "Nhật ký hàng tồn kho"
+
+#. [p.PkDashboard.overview]
+#. defaultMessage is:
+#. Inventory Overview
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Inventory Item"
+msgid "Inventory Overview"
+msgstr "Mục hàng tồn kho"
 
 #. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
 #. defaultMessage is:
@@ -5553,6 +5859,9 @@ msgstr "Nhật ký hàng tồn kho"
 msgid "Inventory levels have been adjusted successfully"
 msgstr "Mức khoảng không quảng cáo đã được điều chỉnh thành công"
 
+#. [browsePage.browseDropdown.inventoryItems]
+#. defaultMessage is:
+#. Inventory on Hand
 #. [pages.InventoryItemsList.inventoryItemsTitle]
 #. defaultMessage is:
 #. Inventory on Hand
@@ -5782,6 +6091,19 @@ msgstr "Ngôn ngữ & Múi giờ"
 msgid "Last"
 msgstr "Cuối cùng"
 
+#. [p.PkDashboard.molecularAssay24]
+#. defaultMessage is:
+#. Last 24 hours
+#. [p.PkDashboard.TB24]
+#. defaultMessage is:
+#. Last 24 hours
+#. [p.PkDashboard.RTTB24]
+#. defaultMessage is:
+#. Last 24 hours
+#: extracted_strings.json
+msgid "Last 24 hours"
+msgstr "24 giờ qua"
+
 #. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
@@ -5970,6 +6292,13 @@ msgstr "Liên quan đến điều trị"
 #: extracted_strings.json
 msgid "Lipid Panel"
 msgstr "Bảng lipid"
+
+#. [pages.ReportIndex.missing_cartridges_report]
+#. defaultMessage is:
+#. List of Missing Lots
+#: extracted_strings.json
+msgid "List of Missing Lots"
+msgstr "Danh sách các lô bị thiếu"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -6469,6 +6798,9 @@ msgstr "RIF được phát hiện MTB Không được phát hiện"
 #. [pages.ReportIndex.MTB_Detected_RR_Detected]
 #. defaultMessage is:
 #. MTB Detected RR Detected
+#. [pages.ReportIndex.mtb_detected_rr_detected]
+#. defaultMessage is:
+#. MTB Detected RR Detected
 #: extracted_strings.json
 msgid "MTB Detected RR Detected"
 msgstr "Đã phát hiện RR MTB"
@@ -6517,6 +6849,15 @@ msgstr "MTB Phát hiện XDR Không xác định"
 msgid "MTB Detected XDR Not Detected"
 msgstr "MTB đã phát hiện XDR không được phát hiện"
 
+#. [p.PkDashboard.mtbXdrmtbDetection]
+#. defaultMessage is:
+#. MTB Detection
+#: extracted_strings.json
+#, fuzzy
+#| msgid "MTB Detected"
+msgid "MTB Detection"
+msgstr "MTB được phát hiện"
+
 #. [resultCategoryGroup.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -6546,6 +6887,15 @@ msgstr "MTB đã phát hiện XDR không được phát hiện"
 #. MTB Error
 #: extracted_strings.json
 msgid "MTB Error"
+msgstr "Lỗi MTB"
+
+#. [pages.filters.GxMtbRifMTBErrorRifError]
+#. defaultMessage is:
+#. MTB Error Rif Error
+#: extracted_strings.json
+#, fuzzy
+#| msgid "MTB Error"
+msgid "MTB Error Rif Error"
 msgstr "Lỗi MTB"
 
 #. [resultCategoryGroup.gxMtbRifMtbInvalid]
@@ -6654,6 +7004,15 @@ msgstr "MTB Không có kết quả"
 msgid "MTB Not Detected"
 msgstr "MTB không được phát hiện"
 
+#. [pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected Drug Resistance Not Detected
+#: extracted_strings.json
+#, fuzzy
+#| msgid "MTB Detected - Rif Not Detected"
+msgid "MTB Not Detected Drug Resistance Not Detected"
+msgstr "MTB được phát hiện - Rif không được phát hiện"
+
 #. [assayGenericDstresultCategoryPositiveMOTT]
 #. defaultMessage is:
 #. MTB Positive MOTT
@@ -6729,6 +7088,24 @@ msgstr "MTB Thành công Kháng chiến Nhạy cảm"
 msgid "MTB Trace Detected"
 msgstr "Đã phát hiện theo dõi MTB"
 
+#. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
+#. defaultMessage is:
+#. MTB Trace Detected Rif Indeterminate
+#: extracted_strings.json
+#, fuzzy
+#| msgid "MTB Detected - Rif Indeterminate"
+msgid "MTB Trace Detected Rif Indeterminate"
+msgstr "MTB được phát hiện - Rif không xác định"
+
+#. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult]
+#. defaultMessage is:
+#. MTB Trace Detected Rif No Result
+#: extracted_strings.json
+#, fuzzy
+#| msgid "MTB Trace Detected"
+msgid "MTB Trace Detected Rif No Result"
+msgstr "Đã phát hiện theo dõi MTB"
+
 #. [assayGenericDstresultCategoryUnknown]
 #. defaultMessage is:
 #. MTB Unknown
@@ -6760,6 +7137,15 @@ msgstr "MTB +"
 msgid "MTB+ Trends In Year"
 msgstr "MTB + Xu hướng trong năm"
 
+#. [p.PkDashboard.titlemtbRif]
+#. defaultMessage is:
+#. MTB/RIF
+#: extracted_strings.json
+#, fuzzy
+#| msgid "MTB/Rif"
+msgid "MTB/RIF"
+msgstr "MTB / Rif"
+
 #. [filter.AssayTypeSelectField.assayTypeMtbRif]
 #. defaultMessage is:
 #. MTB/Rif
@@ -6768,6 +7154,9 @@ msgid "MTB/Rif"
 msgstr "MTB / Rif"
 
 #. [filter.AssayTypeSelectField.assayTypeMtbXdr]
+#. defaultMessage is:
+#. MTB/XDR
+#. [p.PkDashboard.titlemtbXdr]
 #. defaultMessage is:
 #. MTB/XDR
 #: extracted_strings.json
@@ -6914,6 +7303,9 @@ msgstr "Chức năng"
 #. [pages.ReportIndex.moduleActivityReport]
 #. defaultMessage is:
 #. Module Activity Report
+#. [pages.ReportIndex.module_activity_report]
+#. defaultMessage is:
+#. Module Activity Report
 #: extracted_strings.json
 msgid "Module Activity Report"
 msgstr "Báo cáo hoạt động mô-đun"
@@ -6957,6 +7349,9 @@ msgstr "Mô-đun nối tiếp"
 #. [pages.ReportIndex.moduleStatusReport]
 #. defaultMessage is:
 #. Module Status Report
+#. [pages.ReportIndex.module_status_report]
+#. defaultMessage is:
+#. Module Status Report
 #: extracted_strings.json
 msgid "Module Status Report"
 msgstr "Báo cáo trạng thái mô-đun"
@@ -6965,6 +7360,9 @@ msgstr "Báo cáo trạng thái mô-đun"
 #. defaultMessage is:
 #. Module Swaps
 #. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps
+#. [pages.ReportIndex.module_swaps]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
@@ -7102,6 +7500,9 @@ msgstr "NTP"
 #. [placeholder.name]
 #. defaultMessage is:
 #. Name
+#. [pages.resultEdit.NameFieldi18nKey]
+#. defaultMessage is:
+#. Name
 #. [pages.PersonList.personName]
 #. defaultMessage is:
 #. Name
@@ -7147,6 +7548,55 @@ msgstr "Quốc gia"
 #: extracted_strings.json
 msgid "National Contacts"
 msgstr "Liên hệ quốc gia"
+
+#. [p.PkDashboard.FQNationalTrend]
+#. defaultMessage is:
+#. National FQ Trend
+#: extracted_strings.json
+#, fuzzy
+#| msgid "National"
+msgid "National FQ Trend"
+msgstr "Quốc gia"
+
+#. [p.PkDashboard.GXTbNationalTrend]
+#. defaultMessage is:
+#. National GX-10C Testing Trends
+#: extracted_strings.json
+msgid "National GX-10C Testing Trends"
+msgstr "Xu hướng thử nghiệm GX-10C quốc gia"
+
+#. [p.PkDashboard.RRNationalTrend]
+#. defaultMessage is:
+#. National RRTB Trends
+#: extracted_strings.json
+msgid "National RRTB Trends"
+msgstr "Xu hướng RRTB quốc gia"
+
+#. [p.PkDashboard.TbDNationalTrend]
+#. defaultMessage is:
+#. National TB Diagnosis Trends
+#. [p.PkDashboard.DNationalTrend]
+#. defaultMessage is:
+#. National TB Diagnosis Trends
+#: extracted_strings.json
+msgid "National TB Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán lao quốc gia"
+
+#. [p.PkDashboard.TbNationalTrend]
+#. defaultMessage is:
+#. National TB Testing Trends
+#: extracted_strings.json
+msgid "National TB Testing Trends"
+msgstr "Xu hướng xét nghiệm lao quốc gia"
+
+#. [p.PkDashboard.TNationalTrend]
+#. defaultMessage is:
+#. National Testing Trends
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Testing Trends In Year"
+msgid "National Testing Trends"
+msgstr "Xu hướng thử nghiệm trong năm"
 
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
@@ -7256,6 +7706,9 @@ msgstr "Mới nhất"
 msgid "Next"
 msgstr "Tiếp"
 
+#. [pages.NotificationDetail.New.no]
+#. defaultMessage is:
+#. No
 #. [pages.Notifications.table.createButton.group.no]
 #. defaultMessage is:
 #. No
@@ -7869,6 +8322,9 @@ msgstr "Đã đặt hàng"
 #. [filter.sampleType.sampleTypeOther]
 #. defaultMessage is:
 #. Other
+#. [p.PkDashboard.titleother]
+#. defaultMessage is:
+#. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Khác"
@@ -8085,6 +8541,15 @@ msgstr "ID bệnh nhân / trường hợp"
 msgid "Pending"
 msgstr "Đang chờ xử lý"
 
+#. [page.contacts.person.pendingChanges]
+#. defaultMessage is:
+#. Pending changes
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Pending"
+msgid "Pending changes"
+msgstr "Đang chờ xử lý"
+
 #. [pages.TaskDetail.peopleAlerted]
 #. defaultMessage is:
 #. People alerted
@@ -8107,6 +8572,9 @@ msgid "Percent Reported"
 msgstr "Phần trăm được báo cáo"
 
 #. [pages.ReportIndex.reportCustomFieldsCompletion]
+#. defaultMessage is:
+#. Percent of custom fields completion for the MTB form
+#. [pages.ReportIndex.report_custom_fields_completion]
 #. defaultMessage is:
 #. Percent of custom fields completion for the MTB form
 #: extracted_strings.json
@@ -8139,6 +8607,9 @@ msgstr ""
 "gồm tất cả các kết quả không dẫn đến \"Lỗi\", \"Không có kết quả\" hoặc "
 "\"Không hợp lệ\"."
 
+#. [p.PkDashboard.coverageperformance]
+#. defaultMessage is:
+#. Performance
 #. [pages.DeviceDetailProfile.performanceTitle]
 #. defaultMessage is:
 #. Performance
@@ -8600,6 +9071,15 @@ msgstr "nghi lao"
 msgid "Preview"
 msgstr "Xem trước"
 
+#. [pages.NotificationDetail.New.previewNotification]
+#. defaultMessage is:
+#. Preview Notification
+#: extracted_strings.json
+#, fuzzy
+#| msgid "New Notification"
+msgid "Preview Notification"
+msgstr "Thông báo mới"
+
 #. [pages.TablePaginator.previous]
 #. defaultMessage is:
 #. Previous
@@ -8724,6 +9204,44 @@ msgstr "Tỉnh"
 msgid "Province/Region"
 msgstr "Tỉnh / Vùng"
 
+#. [p.PkDashboard.FQProvincialComparison]
+#. defaultMessage is:
+#. Provincial FQ trends Comparison
+#: extracted_strings.json
+msgid "Provincial FQ trends Comparison"
+msgstr "Xu hướng FQ cấp tỉnh So sánh"
+
+#. [p.PkDashboard.RRProvincialComparison]
+#. defaultMessage is:
+#. Provincial RRTB Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "Provincial RRTB Diagnosis Trends Comparison"
+msgstr "So sánh xu hướng chẩn đoán RRTB cấp tỉnh"
+
+#. [p.PkDashboard.TbDProvincialComparison]
+#. defaultMessage is:
+#. Provincial TB Diagnosis Trends Comparison
+#. [p.PkDashboard.DProvincialComparison]
+#. defaultMessage is:
+#. Provincial TB Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "Provincial TB Diagnosis Trends Comparison"
+msgstr "So sánh xu hướng chẩn đoán bệnh lao cấp tỉnh"
+
+#. [p.PkDashboard.TbProvincialComparison]
+#. defaultMessage is:
+#. Provincial TB Testing Trend comparison
+#: extracted_strings.json
+msgid "Provincial TB Testing Trend comparison"
+msgstr "Xét nghiệm lao cấp tỉnh So sánh xu hướng"
+
+#. [p.PkDashboard.TProvincialComparison]
+#. defaultMessage is:
+#. Provincial Trend Comparison
+#: extracted_strings.json
+msgid "Provincial Trend Comparison"
+msgstr "So sánh xu hướng tỉnh"
+
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
 #. Provisioned
@@ -8763,6 +9281,9 @@ msgstr "Hộp mực phát hiện Alere Q HIV-1/2"
 #. defaultMessage is:
 #. Q HIV VL
 #. [legends.Unknown.QHivVL]
+#. defaultMessage is:
+#. Q HIV VL
+#. [filter.AssaySelectField.QHivVL]
 #. defaultMessage is:
 #. Q HIV VL
 #: extracted_strings.json
@@ -8858,9 +9379,26 @@ msgstr "RIF kháng"
 #. [pages.ReportIndex.RIF_Resistance_Rate]
 #. defaultMessage is:
 #. RIF Resistance Rate (%positive results)
+#. [pages.ReportIndex.rif_resistance_rate]
+#. defaultMessage is:
+#. RIF Resistance Rate (%positive results)
 #: extracted_strings.json
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Tỷ lệ kháng Rif (% kết quả dương tính)"
+
+#. [p.PkDashboard.RRPerDay]
+#. defaultMessage is:
+#. RR cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "RR cases diagnosed in last 24 hours"
+msgstr "Các trường hợp RR được chẩn đoán trong 24 giờ qua"
+
+#. [p.PkDashboard.RRPerYear]
+#. defaultMessage is:
+#. RR cases diagnosed this year
+#: extracted_strings.json
+msgid "RR cases diagnosed this year"
+msgstr "Các trường hợp RR được chẩn đoán trong năm nay"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -8889,6 +9427,20 @@ msgstr "RRD #"
 #: extracted_strings.json
 msgid "RRD%"
 msgstr "RRD%"
+
+#. [p.PkDashboard.RTTB]
+#. defaultMessage is:
+#. RRTB Cases Diagnosed in current year
+#: extracted_strings.json
+msgid "RRTB Cases Diagnosed in current year"
+msgstr "Các trường hợp RRTB được chẩn đoán trong năm hiện tại"
+
+#. [p.PkDashboard.mtbRifRrtbDiagnosis]
+#. defaultMessage is:
+#. RRTB Diagnosis
+#: extracted_strings.json
+msgid "RRTB Diagnosis"
+msgstr "Chẩn đoán RRTB"
 
 #. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
@@ -8977,6 +9529,13 @@ msgstr "Các trường hợp đã phục hồi"
 #: extracted_strings.json
 msgid "Recovery Rates by Gender"
 msgstr "Tỷ lệ thu hồi theo giới tính"
+
+#. [pages.resultEdit.ReferringClinicianI18nkey]
+#. defaultMessage is:
+#. Referring Clinician or Facility Phone Number (if known)
+#: extracted_strings.json
+msgid "Referring Clinician or Facility Phone Number (if known)"
+msgstr "Số điện thoại của bác sĩ hoặc cơ sở giới thiệu (nếu biết)"
 
 #. [pages.resultEdit.ReferringFacilityI18nkey]
 #. defaultMessage is:
@@ -9095,12 +9654,41 @@ msgstr "Báo cáo"
 msgid "Report Based"
 msgstr "Dựa trên báo cáo"
 
+#. [pages.ReportIndex.error_rate_description]
+#. defaultMessage is:
+#. Report error rates per quarter, break them down by devices, modules and users
+#: extracted_strings.json
+msgid ""
+"Report error rates per quarter, break them down by devices, modules and users"
+msgstr ""
+"Báo cáo tỷ lệ lỗi mỗi quý, chia nhỏ chúng theo thiết bị, mô-đun và người dùng"
+
 #. [pages.ReportIndex.reportTBWorkloadSummary]
+#. defaultMessage is:
+#. Report of TB Workload Summary
+#. [pages.ReportIndex.tb_workload_summary]
 #. defaultMessage is:
 #. Report of TB Workload Summary
 #: extracted_strings.json
 msgid "Report of TB Workload Summary"
 msgstr "Báo cáo tổng hợp khối lượng công việc TB"
+
+#. [pages.ReportIndex.reportDrTb10a10bCovid]
+#. defaultMessage is:
+#. Report on Xpert MTB/RIF and Covid
+#. [pages.ReportIndex.results_10a_10b_covid]
+#. defaultMessage is:
+#. Report on Xpert MTB/RIF and Covid
+#: extracted_strings.json
+msgid "Report on Xpert MTB/RIF and Covid"
+msgstr "Báo cáo về Xpert MTB/RIF và Covid"
+
+#. [pages.ReportIndex.results_10a_10b_covid_ntp_use]
+#. defaultMessage is:
+#. Report on Xpert MTB/RIF and Covid - NTP Use
+#: extracted_strings.json
+msgid "Report on Xpert MTB/RIF and Covid - NTP Use"
+msgstr "Báo cáo về việc sử dụng Xpert MTB/RIF và Covid - NTP"
 
 #. [forms.formItem.reportableSite]
 #. defaultMessage is:
@@ -9125,6 +9713,9 @@ msgstr "Đã báo cáo hoạt động"
 #. [legends.Unknown.ReporterEID]
 #. defaultMessage is:
 #. Reporter EID
+#. [filter.AssaySelectField.ReporterEID]
+#. defaultMessage is:
+#. Reporter EID
 #: extracted_strings.json
 msgid "Reporter EID"
 msgstr "Người báo cáo EID"
@@ -9133,6 +9724,9 @@ msgstr "Người báo cáo EID"
 #. defaultMessage is:
 #. Reporter HIV VL
 #. [legends.Unknown.ReporterHivVL]
+#. defaultMessage is:
+#. Reporter HIV VL
+#. [filter.AssaySelectField.ReporterHivVL]
 #. defaultMessage is:
 #. Reporter HIV VL
 #: extracted_strings.json
@@ -9418,6 +10012,15 @@ msgstr "Kết quả được phát hiện"
 msgid "Result Error"
 msgstr "Lỗi kết quả"
 
+#. [filter.popover.resultGroup]
+#. defaultMessage is:
+#. Result Group
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Result Error"
+msgid "Result Group"
+msgstr "Lỗi kết quả"
+
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryMissing]
 #. defaultMessage is:
 #. Result Missing
@@ -9455,6 +10058,9 @@ msgid "Result Not Detected"
 msgstr "Kết quả không được phát hiện"
 
 #. [pages.ReportIndex.result_notifications_report]
+#. defaultMessage is:
+#. Result Notifications Report
+#. [pages.ReportIndex.result_notifications]
 #. defaultMessage is:
 #. Result Notifications Report
 #: extracted_strings.json
@@ -9663,6 +10269,9 @@ msgstr "Kết quả được truyền đi"
 #. [pages.ReportIndex.Results_HIV_Not_Suppressed]
 #. defaultMessage is:
 #. Results with HIV Not Suppressed
+#. [pages.ReportIndex.results_hiv_not_suppressed]
+#. defaultMessage is:
+#. Results with HIV Not Suppressed
 #: extracted_strings.json
 msgid "Results with HIV Not Suppressed"
 msgstr "Kết quả với HIV không bị ức chế"
@@ -9804,6 +10413,15 @@ msgstr "Đã gửi SMS"
 #: extracted_strings.json
 msgid "SMS Sent MTD"
 msgstr "SMS đã gửi MTD"
+
+#. [pages.ReportIndex.szSmsStats]
+#. defaultMessage is:
+#. SMS Stats
+#: extracted_strings.json
+#, fuzzy
+#| msgid "SMS Sent"
+msgid "SMS Stats"
+msgstr "Đã gửi SMS"
 
 #. [pages.Notifications.table.smsSentTo]
 #. defaultMessage is:
@@ -10406,6 +11024,9 @@ msgstr "Có thể lựa chọn"
 #. [pages.ResultList.assaySenaiteLIMSSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
+#. [filter.AssaySelectField.senaiteSmearMicroscopy]
+#. defaultMessage is:
+#. Senaite LIMS Smear Microscopy
 #: extracted_strings.json
 msgid "Senaite LIMS Smear Microscopy"
 msgstr "Kính hiển vi Smear Senaite LIMS"
@@ -10419,6 +11040,9 @@ msgstr "Kính hiển vi Smear Senaite LIMS"
 #. [pages.ResultList.assaySenaiteLIMSTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
+#. [filter.AssaySelectField.senaiteTbCulture]
+#. defaultMessage is:
+#. Senaite LIMS TB Culture
 #: extracted_strings.json
 msgid "Senaite LIMS TB Culture"
 msgstr "Senaite LIMS TB Văn hóa"
@@ -10430,6 +11054,9 @@ msgstr "Senaite LIMS TB Văn hóa"
 #. defaultMessage is:
 #. Senaite LIMS Unknown
 #. [pages.ResultList.assaySenaiteLIMSUnknown]
+#. defaultMessage is:
+#. Senaite LIMS Unknown
+#. [filter.AssaySelectField.senaiteUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
 #: extracted_strings.json
@@ -10981,13 +11608,6 @@ msgstr "Giờ làm việc của trang web"
 msgid "Site contact"
 msgstr "Địa chỉ liên hệ"
 
-#. [pages.Result.siteRequired]
-#. defaultMessage is:
-#. Site is required
-#: extracted_strings.json
-msgid "Site is required"
-msgstr "Đơn vị là bắt buộc"
-
 #. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
 #. defaultMessage is:
 #. Site name is already in use
@@ -11126,20 +11746,6 @@ msgstr "Đờm"
 msgid "Start Date"
 msgstr "Ngày bắt đầu"
 
-#. [pages.Result.startedOnRequired]
-#. defaultMessage is:
-#. Start date is required
-#: extracted_strings.json
-msgid "Start date is required"
-msgstr "Ngày bắt đầu được yêu cầu"
-
-#. [pages.Result.startedOnCannotBeAfterEndedOn]
-#. defaultMessage is:
-#. Start time cannot be after End time
-#: extracted_strings.json
-msgid "Start time cannot be after End time"
-msgstr "Thời gian bắt đầu không được sau Thời gian kết thúc"
-
 #. [pages.Notifications.startingDayOfTheWeekTitle]
 #. defaultMessage is:
 #. Starting Day of the Week
@@ -11179,6 +11785,15 @@ msgstr "Liên hệ trạng thái"
 #: extracted_strings.json
 msgid "State/Region"
 msgstr "Khu vực nhà nước"
+
+#. [pages.ReportIndex.szSmsStatsDescription]
+#. defaultMessage is:
+#. Stats about SMS notifications sent.
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Result Notifications Report"
+msgid "Stats about SMS notifications sent."
+msgstr "Báo cáo thông báo kết quả"
 
 #. [pages.CasesList.status]
 #. defaultMessage is:
@@ -11246,6 +11861,20 @@ msgstr "Ăn cắp"
 msgid "Strong"
 msgstr "Mạnh"
 
+#. [pages.resultEdit.Study]
+#. defaultMessage is:
+#. Study/Research
+#: extracted_strings.json
+msgid "Study/Research"
+msgstr "Học tập/Nghiên cứu"
+
+#. [p.PkDashboard.TbSubprovincialTrend]
+#. defaultMessage is:
+#. Sub-Provincial TB Testing Trends
+#: extracted_strings.json
+msgid "Sub-Provincial TB Testing Trends"
+msgstr "Xu hướng xét nghiệm lao cấp tỉnh"
+
 #. [button_Submit]
 #. defaultMessage is:
 #. Submit
@@ -11297,6 +11926,9 @@ msgstr ""
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
 #. Summary table for XDR devices
+#. [pages.ReportIndex.xdr_devices_summary]
+#. defaultMessage is:
+#. Summary table for XDR devices
 #: extracted_strings.json
 msgid "Summary table for XDR devices"
 msgstr "Bảng tóm tắt cho các thiết bị XDR"
@@ -11325,6 +11957,15 @@ msgstr "Vật tư"
 msgid "Supply in Stock"
 msgstr "Sinh phẩm trong kho"
 
+#. [pages.resultEdit.SurenameFieldi18nKey]
+#. defaultMessage is:
+#. Surname
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Username"
+msgid "Surname"
+msgstr "Tên đăng nhập"
+
 #. [legends.Unknown.resultCategorySusceptible]
 #. defaultMessage is:
 #. Susceptible
@@ -11335,12 +11976,26 @@ msgstr "Sinh phẩm trong kho"
 msgid "Susceptible"
 msgstr "Nhạy cảm"
 
+#. [p.PkDashboard.RRTestingDiagnosis]
+#. defaultMessage is:
+#. TB & RRTB Diagnosis
+#: extracted_strings.json
+msgid "TB & RRTB Diagnosis"
+msgstr "Chẩn đoán TB & RRTB"
+
 #. [filter.AssayTypeSelectField.assayTypeTbAst]
 #. defaultMessage is:
 #. TB AST
 #: extracted_strings.json
 msgid "TB AST"
 msgstr "TB AST"
+
+#. [p.PkDashboard.TB]
+#. defaultMessage is:
+#. TB Cases Diagnosed in current year
+#: extracted_strings.json
+msgid "TB Cases Diagnosed in current year"
+msgstr "Các ca bệnh lao được chẩn đoán trong năm hiện tại"
 
 #. [filter.AssaySelectField.assayGenericDst]
 #. defaultMessage is:
@@ -11351,6 +12006,13 @@ msgstr "TB AST"
 #: extracted_strings.json
 msgid "TB DST"
 msgstr "TB DST"
+
+#. [p.PkDashboard.mtbRifTbDiagnosis]
+#. defaultMessage is:
+#. TB Diagnosis
+#: extracted_strings.json
+msgid "TB Diagnosis"
+msgstr "chẩn đoán bệnh lao"
 
 #. [filter.AssayTypeSelectField.assayTypeTbGnd]
 #. defaultMessage is:
@@ -11404,12 +12066,33 @@ msgstr "Kết quả lao"
 msgid "TB Rif Resistance"
 msgstr "Lao kháng Rif"
 
+#. [p.PkDashboard.mtbRifTbTesting]
+#. defaultMessage is:
+#. TB Testing
+#: extracted_strings.json
+msgid "TB Testing"
+msgstr "xét nghiệm bệnh lao"
+
+#. [p.PkDashboard.TbDTestingDiagnosis]
+#. defaultMessage is:
+#. TB Testing & Diagnosis Trends
+#: extracted_strings.json
+msgid "TB Testing & Diagnosis Trends"
+msgstr "Xu hướng Xét nghiệm & Chẩn đoán Lao"
+
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
 #. TB XDR Drug Resistances
 #: extracted_strings.json
 msgid "TB XDR Drug Resistances"
 msgstr "Lao XDR kháng thuốc"
+
+#. [p.PkDashboard.rifCurrentDiagnosisTitle]
+#. defaultMessage is:
+#. TB cases diagnosed in
+#: extracted_strings.json
+msgid "TB cases diagnosed in"
+msgstr "Các trường hợp lao được chẩn đoán trong"
 
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
@@ -11474,6 +12157,20 @@ msgstr "Danh sách công việc"
 #: extracted_strings.json
 msgid "Tasks"
 msgstr "Nhiệm vụ"
+
+#. [p.PkDashboard.xdrLastDay]
+#. defaultMessage is:
+#. Tb cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "Tb cases diagnosed in last 24 hours"
+msgstr "Ca bệnh lao được chẩn đoán trong 24 giờ qua"
+
+#. [p.PkDashboard.xdrCasesPerYear]
+#. defaultMessage is:
+#. Tb cases diagnosed this year
+#: extracted_strings.json
+msgid "Tb cases diagnosed this year"
+msgstr "Các ca bệnh lao được chẩn đoán trong năm nay"
 
 #. [forms.formItem.technicalDetails]
 #. defaultMessage is:
@@ -11565,6 +12262,22 @@ msgstr "Xét nghiệm thất bại"
 msgid "Test history"
 msgstr "Lịch sử kiểm tra"
 
+#. [p.PkDashboard.mtbXdrTesting]
+#. defaultMessage is:
+#. Testing
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tests"
+msgid "Testing"
+msgstr "Bài kiểm tra"
+
+#. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
+#. defaultMessage is:
+#. Testing & Diagnosis Trends using MTB/XDR Assay
+#: extracted_strings.json
+msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
+msgstr "Xu hướng Xét nghiệm & Chẩn đoán bằng Xét nghiệm MTB/XDR"
+
 #. [pages.Status.TB.testingTrendsInYear.title]
 #. defaultMessage is:
 #. Testing Trends In Year
@@ -11608,6 +12321,40 @@ msgstr "Các xét nghiệm đã thực hiện"
 #: extracted_strings.json
 msgid "Tests Run Between"
 msgstr "Kiểm tra chạy giữa"
+
+#. [pages.ReportIndex.missing_cartridges_report_description]
+#. defaultMessage is:
+#. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
+#: extracted_strings.json
+msgid ""
+"Tests detected for following expiration dates where inventory is not tracked "
+"at the device's location or the warehouse that serves that location."
+msgstr ""
+"Các thử nghiệm được phát hiện cho các ngày hết hạn sau khi hàng tồn kho "
+"không được theo dõi tại vị trí của thiết bị hoặc nhà kho phục vụ vị trí đó."
+
+#. [p.PkDashboard.molecularAssay]
+#. defaultMessage is:
+#. Tests for TB using MTB/Rif assay in current year
+#: extracted_strings.json
+msgid "Tests for TB using MTB/Rif assay in current year"
+msgstr "Xét nghiệm bệnh lao bằng xét nghiệm MTB/Rif trong năm hiện tại"
+
+#. [p.PkDashboard.testPerDay]
+#. defaultMessage is:
+#. Tests performed in last 24 hours
+#: extracted_strings.json
+msgid "Tests performed in last 24 hours"
+msgstr "Các thử nghiệm được thực hiện trong 24 giờ qua"
+
+#. [p.PkDashboard.testPerYear]
+#. defaultMessage is:
+#. Tests performed this year
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Tests Performed"
+msgid "Tests performed this year"
+msgstr "Các xét nghiệm đã thực hiện"
 
 #. [component.Widget.bangladeshAverageCompletionDescription]
 #. defaultMessage is:
@@ -12017,6 +12764,29 @@ msgstr ""
 "Chất thải dự trữ trong kho dự kiến, giả sử rằng các hộp mực sẽ được tiêu thụ "
 "luôn là những hộp gần hết hạn sử dụng"
 
+#. [pages.Notification.type.notificationTypeResultBasedMessage]
+#. defaultMessage is:
+#. The result based notification can be sent on test creation or on test creation and update. Also, a test is only going to trigger a notification if it is less than {daysLimitToNotifyResults} days old, it was done before the last update of this notification, and if any of the next conditions are accomplished: - All the custom fields referenced in the templates of the notification were filled in the test - {hoursNotificationsShouldWaitForCustomFields} hours passed since the test was done
+#: extracted_strings.json
+msgid ""
+"The result based notification can be sent on test creation or on test "
+"creation and update. Also, a test is only going to trigger a notification if "
+"it is less than {daysLimitToNotifyResults} days old, it was done before the "
+"last update of this notification, and if any of the next conditions are "
+"accomplished: - All the custom fields referenced in the templates of the "
+"notification were filled in the test - "
+"{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
+"was done"
+msgstr ""
+"Thông báo dựa trên kết quả có thể được gửi khi tạo thử nghiệm hoặc khi tạo "
+"và cập nhật thử nghiệm. Ngoài ra, một thử nghiệm sẽ chỉ kích hoạt thông báo "
+"nếu nó chưa đến {daysLimitToNotifyResults} ngày, nó đã được thực hiện trước "
+"lần cập nhật cuối cùng của thông báo này và nếu bất kỳ điều kiện nào tiếp "
+"theo được thực hiện: - Tất cả các trường tùy chỉnh được tham chiếu trong các "
+"mẫu thông báo đã được điền trong bài kiểm tra - "
+"{hoursNotificationsShouldWaitForCustomFields} giờ đã trôi qua kể từ khi bài "
+"kiểm tra được thực hiện"
+
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
 #. The server rejected the values specified in these filter fields. Our technical team has been notified and will attend to the problem as soon as possible.
@@ -12251,17 +13021,6 @@ msgstr ""
 "gửi nếu bạn đặt trọng số hoàn thành trường tùy chỉnh ở quốc gia của mình. "
 "Vui lòng kiểm tra với quản trị viên của bạn trước khi sử dụng nó."
 
-#. [pages.Notification.type.notificationTypeResultBasedMessage]
-#. defaultMessage is:
-#. This notification will be triggered for results ended on within last 30 days period. For older results notification will not trigger.
-#: extracted_strings.json
-msgid ""
-"This notification will be triggered for results ended on within last 30 days "
-"period. For older results notification will not trigger."
-msgstr ""
-"Thông báo này sẽ được kích hoạt cho các kết quả kết thúc trong khoảng thời "
-"gian 30 ngày qua. Đối với thông báo kết quả cũ hơn sẽ không kích hoạt."
-
 #. [pages.Notification.type.notificationTypeDeviceOffline]
 #. defaultMessage is:
 #. This notification will trigger once a device connector, for example GxConnect, remains offline for 7 days.
@@ -12309,6 +13068,19 @@ msgid ""
 msgstr ""
 "Báo cáo này hiển thị tất cả các hoán đổi mô-đun trong các thiết bị. Theo mặc "
 "định, báo cáo sẽ hiển thị cho bạn 12 tháng qua"
+
+#. [pages.ReportIndex.devicePerformance_description]
+#. defaultMessage is:
+#. This report shows performance rates by device and assay, including: errors, activity, utilization, days offline, and average delay to upload tests. Scoped only to Cepheid GeneXpert devices.
+#: extracted_strings.json
+msgid ""
+"This report shows performance rates by device and assay, including: errors, "
+"activity, utilization, days offline, and average delay to upload tests. "
+"Scoped only to Cepheid GeneXpert devices."
+msgstr ""
+"Báo cáo này hiển thị tỷ lệ hiệu suất theo thiết bị và xét nghiệm, bao gồm: "
+"lỗi, hoạt động, sử dụng, số ngày ngoại tuyến và độ trễ trung bình để tải lên "
+"các xét nghiệm. Chỉ áp dụng cho các thiết bị Cepheid GeneXpert."
 
 #. [pages.ReportIndex.device_activity_description]
 #. defaultMessage is:
@@ -12442,13 +13214,6 @@ msgstr "Thời gian"
 #: extracted_strings.json
 msgid "Time Zone"
 msgstr "Múi giờ"
-
-#. [pages.Result.timeCannotBeGreaterThanNow]
-#. defaultMessage is:
-#. Time cannot be greater than current time
-#: extracted_strings.json
-msgid "Time cannot be greater than current time"
-msgstr "Thời gian không được lớn hơn thời gian hiện tại"
 
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
@@ -12603,6 +13368,13 @@ msgstr "Tổng số kích hoạt"
 #: extracted_strings.json
 msgid "Trace Detected"
 msgstr "Đã phát hiện dấu vết"
+
+#. [pages.resultEdit.Training]
+#. defaultMessage is:
+#. Training
+#: extracted_strings.json
+msgid "Training"
+msgstr "Đào tạo"
 
 #. [pages.InventoryLog.ConsumableReason_TransferReceived]
 #. defaultMessage is:
@@ -12949,6 +13721,9 @@ msgstr "Kết hợp chữ hoa và chữ thường"
 #. [pages.ReportIndex.usageStatistics]
 #. defaultMessage is:
 #. Usage Statistics Report
+#. [pages.ReportIndex.usage_statistics_report]
+#. defaultMessage is:
+#. Usage Statistics Report
 #: extracted_strings.json
 msgid "Usage Statistics Report"
 msgstr "Báo cáo thống kê sử dụng"
@@ -12983,6 +13758,15 @@ msgstr "Tùy chọn người dùng đã thay đổi thành công"
 #: extracted_strings.json
 msgid "Username"
 msgstr "Tên đăng nhập"
+
+#. [p.PkDashboard.utilization]
+#. defaultMessage is:
+#. Utilization
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Utilization Rate"
+msgid "Utilization"
+msgstr "Tỷ lệ sử dụng"
 
 #. [component.Widget.utilizationRateTitle]
 #. defaultMessage is:
@@ -13328,11 +14112,43 @@ msgstr "Hộp mực Xpert HIV-1 Qual"
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Hộp mực nạp virut Xpert HIV-1"
 
+#. [pages.ReportIndex.xpert_site_detailed_report_description]
+#. defaultMessage is:
+#. Xpert Implementation Site (XIS) Performance Report.
+#: extracted_strings.json
+msgid "Xpert Implementation Site (XIS) Performance Report."
+msgstr "Báo cáo Hiệu suất Trang web Triển khai Xpert (XIS)."
+
+#. [p.PkDashboard.coverageTitle]
+#. defaultMessage is:
+#. Xpert MTB/RIF Coverage
+#: extracted_strings.json
+#, fuzzy
+#| msgid "GeneXpert MTB/XDR Cartridge"
+msgid "Xpert MTB/RIF Coverage"
+msgstr "Hộp mực GeneXpert MTB / XDR"
+
+#. [pages.ReportIndex.reportDrTb10a10bCovidNtpUse]
+#. defaultMessage is:
+#. Xpert MTB/RIF and Covid - NTP Use
+#: extracted_strings.json
+msgid "Xpert MTB/RIF and Covid - NTP Use"
+msgstr "Xpert MTB/RIF và Covid - NTP Sử dụng"
+
 #. [pages.ReportIndex.xpertPatientsReport]
 #. defaultMessage is:
 #. Xpert Patients Report
 #: extracted_strings.json
 msgid "Xpert Patients Report"
+msgstr "Báo cáo bệnh nhân Xpert"
+
+#. [pages.ReportIndex.xpert_site_detailed_report]
+#. defaultMessage is:
+#. Xpert Site Detailed Report
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Xpert Patients Report"
+msgid "Xpert Site Detailed Report"
 msgstr "Báo cáo bệnh nhân Xpert"
 
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
@@ -13353,6 +14169,9 @@ msgid "Year"
 msgstr "Năm"
 
 #. [pages.PersonList.confirm]
+#. defaultMessage is:
+#. Yes
+#. [pages.NotificationDetail.New.yes]
 #. defaultMessage is:
 #. Yes
 #. [pages.Notifications.table.createButton.group.yes]
@@ -14195,6 +15014,50 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, số nhiều, một {# kết quả} khác {# kết quả}})"
+
+#~ msgid "Assay is required"
+#~ msgstr "Thử nghiệm là bắt buộc"
+
+#~ msgid "CollectedOn date is required"
+#~ msgstr "Ngày thu thập là bắt buộc"
+
+#~ msgid "Device is required"
+#~ msgstr "Thiết bị là bắt buộc"
+
+#~ msgid "End time cannot be before Start time"
+#~ msgstr "Thời gian kết thúc không được trước Thời gian bắt đầu"
+
+#~ msgid "Error Code must be a positive integer with max 5 digits"
+#~ msgstr "Mã lỗi phải là một số nguyên dương với tối đa 5 chữ số"
+
+#~ msgid "Field is required"
+#~ msgstr "Trường bắt buộc nhập"
+
+#~ msgid "Go To Inventory Log"
+#~ msgstr "Chuyển đến Nhật ký hàng tồn kho"
+
+#~ msgid "Go To Supplies"
+#~ msgstr "Chuyển đến nguồn cung cấp"
+
+#~ msgid "Site is required"
+#~ msgstr "Đơn vị là bắt buộc"
+
+#~ msgid "Start date is required"
+#~ msgstr "Ngày bắt đầu được yêu cầu"
+
+#~ msgid "Start time cannot be after End time"
+#~ msgstr "Thời gian bắt đầu không được sau Thời gian kết thúc"
+
+#~ msgid ""
+#~ "This notification will be triggered for results ended on within last 30 "
+#~ "days period. For older results notification will not trigger."
+#~ msgstr ""
+#~ "Thông báo này sẽ được kích hoạt cho các kết quả kết thúc trong khoảng "
+#~ "thời gian 30 ngày qua. Đối với thông báo kết quả cũ hơn sẽ không kích "
+#~ "hoạt."
+
+#~ msgid "Time cannot be greater than current time"
+#~ msgstr "Thời gian không được lớn hơn thời gian hiện tại"
 
 #~ msgid "A person with the same email exists. Please use a different email."
 #~ msgstr "Một người có cùng email tồn tại. Vui lòng sử dụng một email khác."

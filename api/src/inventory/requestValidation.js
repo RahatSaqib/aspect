@@ -17,6 +17,12 @@ const inventoryFilters = {
   maxExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('To Date'),
 }
 
+const inventoryTransferFilters = {
+  originSiteName: Joi.string().allow('', null),
+  destinationSiteName: Joi.string().allow('', null),
+  consumableName: Joi.string().allow('', null),
+}
+
 const adjustInventoryCommonPayloadFields = {
   consumableId: Joi.number().positive().required(),
   lotNumber: Joi.string().max(255).allow('', null),
@@ -73,4 +79,5 @@ module.exports = {
   removeInventoryCommonPayloadFields,
   adjustInventoryCommonPayloadFields,
   inventoryFilters,
+  inventoryTransferFilters,
 }
