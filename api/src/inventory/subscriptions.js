@@ -1,9 +1,9 @@
-const { missingLotsResolver } = require('./missingLotsResolver')
+const { missingInventoryLotsResolver } = require('./missingInventoryLotsResolver')
 
 const subscriptions = [
   {
     actions: {
-      INVENTORY_MISSING_LOTS_RESOLVER: missingLotsResolver,
+      INVENTORY_MISSING_LOTS_RESOLVER: missingInventoryLotsResolver,
     },
   },
 ]

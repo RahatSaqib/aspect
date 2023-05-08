@@ -66,7 +66,7 @@ function inventoryReagentHealth(deviceId, consumableId) {
   }
 }
 
-function missingLotsResolver() {
+function missingInventoryLotsResolver() {
   return {
     type: types.INVENTORY_MISSING_LOTS_RESOLVER,
   }
@@ -77,5 +77,5 @@ module.exports = {
   inventoryStockout,
   inventoryStockExpiring,
   inventoryReagentHealth,
-  missingLotsResolver,
+  missingInventoryLotsResolver,
 }

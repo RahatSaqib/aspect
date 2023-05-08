@@ -64,7 +64,7 @@ const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate) =>
         .as('payload'),
     ])
 
-const missingLotsResolver = async (_, plugins) => {
+const missingInventoryLotsResolver = async (_, plugins) => {
   const missingInventoryGroups = await getMissingInventoryGroups
 
   /* eslint-disable no-await-in-loop */
@@ -141,5 +141,5 @@ const missingLotsResolver = async (_, plugins) => {
 }
 
 module.exports = {
-  missingLotsResolver,
+  missingInventoryLotsResolver,
 }
