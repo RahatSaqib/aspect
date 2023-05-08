@@ -2,18 +2,18 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
-const { getUser } = require('../auth/service')
-const { getPartnerPluginName, getDeviceTypePluginName } = require('../plugin/utils')
-const defaultInventoryStrategy = require('./strategies')
+const { getUser } = require('../../auth/service')
+const { getPartnerPluginName, getDeviceTypePluginName } = require('../../plugin/utils')
+const defaultInventoryStrategy = require('../strategies')
 
-const { knex, transact } = require('../db')
-const { getSite } = require('../site/service')
-const { getConstraints } = require('../auth/constraints')
-const { selectAssayConsumables } = require('../consumable/assayConsumableService')
-const { findConsumableReason } = require('../consumable/consumableService')
-const { resolveIssues, escalateIssues } = require('../issue/actions')
-const { inventoryStockout, inventoryStockExpiring } = require('./actions')
-const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
+const { knex, transact } = require('../../db')
+const { getSite } = require('../../site/service')
+const { getConstraints } = require('../../auth/constraints')
+const { selectAssayConsumables } = require('../../consumable/assayConsumableService')
+const { findConsumableReason } = require('../../consumable/consumableService')
+const { resolveIssues, escalateIssues } = require('../../issue/actions')
+const { inventoryStockout, inventoryStockExpiring } = require('../actions')
+const { auditInventoryStockout, auditInventoryStockExpiring } = require('../../shared/utilsInventory')
 
 const {
   findInventoryItem,
@@ -25,7 +25,7 @@ const {
   getConsumableStrategy,
   createInventoryTransfer,
   updateInventoryTransfer,
-} = require('./common/db')
+} = require('./db')
 
 /**
  * use singleton for inventory strategy instance - cache it in a single instance
@@ -38,7 +38,7 @@ async function getInventoryStrategy({ partnerId, deviceId, userId }) {
   if (!inventoryStrategy) {
     const partnerPluginName = await getPartnerPluginName({ partnerId })
     const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
-    const { loadPlugin } = require('../plugin/registration')
+    const { loadPlugin } = require('../../plugin/registration')
     const specificInventoryStrategy = await loadPlugin([partnerPluginName, deviceTypePluginName], 'inventoryStrategy')
     cachedInventoryStrategies[inventoryStrategyKey] = {
       /**

@@ -1,7 +1,7 @@
 const { get } = require('lodash')
 const { startOfDay } = require('date-fns')
 const { knex, transact } = require('../db')
-const { consumeInventoryForResult, transferInventory } = require('./utils')
+const { consumeInventoryForResult, transferInventory } = require('./common/logic')
 
 const getInventoryBaseQuery = () =>
   knex('InventoryItem')
