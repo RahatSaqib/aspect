@@ -18,7 +18,7 @@ const DeviceApiKeyFilter = () => {
   const filter = useFilterValues(location.pathname)
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
 
-  const a = r => isPermittedUser(user.userPermissions, { required: r })
+  const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
     <FilterContainer state={state} setState={setState}>
@@ -38,7 +38,7 @@ const DeviceApiKeyFilter = () => {
             onChange={e => setState({ ...state, deviceName: e.target.value })}
           />
         </Grid>
-        {a(['site:view']) ? (
+        {allowed(['site:view']) ? (
           <Grid item xs={3}>
             <SiteAutoCompleteField
               name="siteName"

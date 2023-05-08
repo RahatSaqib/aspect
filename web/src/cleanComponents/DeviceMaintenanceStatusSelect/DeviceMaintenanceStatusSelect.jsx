@@ -23,37 +23,35 @@ const DeviceMaintenanceStatusSelect = ({
   return isLoading ? (
     <LinearProgress />
   ) : (
-    <>
-      <TextField
-        id={id}
-        name={name}
-        label={label}
-        error={error}
-        helperText={helperText}
-        select
-        value={value || []}
-        onChange={onChange}
-        disabled={disabled}
-        SelectProps={{ IconComponent: () => null, multiple }}
-        InputProps={{
-          endAdornment: (
-            <IconButton
-              sx={{ visibility: value.length ? 'visible' : 'hidden' }}
-              onClick={() => onChange({ target: { name, value: '' } })}
-              disabled={disabled}
-            >
-              <ClearIcon />
-            </IconButton>
-          ),
-        }}
-      >
-        {maintenanceStatuses.map(c => (
-          <MenuItem key={c.externalId} value={c.externalId}>
-            {formatMessage(deviceStatusMessages[c.i18nKey])}
-          </MenuItem>
-        ))}
-      </TextField>
-    </>
+    <TextField
+      id={id}
+      name={name}
+      label={label}
+      error={error}
+      helperText={helperText}
+      select
+      value={value || []}
+      onChange={onChange}
+      disabled={disabled}
+      SelectProps={{ IconComponent: () => null, multiple }}
+      InputProps={{
+        endAdornment: (
+          <IconButton
+            sx={{ visibility: value.length ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: '' } })}
+            disabled={disabled}
+          >
+            <ClearIcon />
+          </IconButton>
+        ),
+      }}
+    >
+      {maintenanceStatuses.map(c => (
+        <MenuItem key={c.externalId} value={c.externalId}>
+          {formatMessage(deviceStatusMessages[c.i18nKey])}
+        </MenuItem>
+      ))}
+    </TextField>
   )
 }
 

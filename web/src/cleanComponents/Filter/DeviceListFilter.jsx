@@ -27,7 +27,7 @@ const DeviceListFilter = () => {
   const filter = useFilterValues(location.pathname)
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
 
-  const a = r => isPermittedUser(user.userPermissions, { required: r })
+  const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
     <FilterContainer state={state} setState={setState}>
@@ -58,7 +58,7 @@ const DeviceListFilter = () => {
             onlyResults
           />
         </Grid>
-        {a(['device']) ? (
+        {allowed(['device']) ? (
           <Grid item xs={3}>
             <TextField
               label={formatMessage(messages.deviceName)}
@@ -67,7 +67,7 @@ const DeviceListFilter = () => {
             />
           </Grid>
         ) : null}
-        {a(['site:view']) ? (
+        {allowed(['site:view']) ? (
           <Grid item xs={3}>
             <SiteAutoCompleteField
               name="siteName"

@@ -30,7 +30,7 @@ const ResultFilter = () => {
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
   const [categoryDisplay, setCategoryDisplay] = useState(null)
 
-  const a = r => isPermittedUser(user.userPermissions, { required: r })
+  const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
     <FilterContainer state={state} setState={setState}>
@@ -51,7 +51,7 @@ const ResultFilter = () => {
             stateId={state.stateId}
           />
         </Grid>
-        {a(['assay:view']) ? (
+        {allowed(['assay:view']) ? (
           <>
             <Grid item xs={3}>
               <AssaySelect
@@ -109,7 +109,7 @@ const ResultFilter = () => {
             onChange={e => setState({ ...state, sampleId: e.target.value })}
           />
         </Grid>
-        {a(['device']) ? (
+        {allowed(['device']) ? (
           <Grid item xs={3}>
             <TextField
               label={formatMessage(messages.deviceName)}
@@ -118,7 +118,7 @@ const ResultFilter = () => {
             />
           </Grid>
         ) : null}
-        {a(['site:view']) ? (
+        {allowed(['site:view']) ? (
           <>
             <Grid item xs={3}>
               <SiteAutoCompleteField
@@ -195,7 +195,7 @@ const ResultFilter = () => {
           />
         </Grid>
 
-        {a(['site:view']) ? (
+        {allowed(['site:view']) ? (
           <Grid item xs={3}>
             <FormControlLabel
               control={

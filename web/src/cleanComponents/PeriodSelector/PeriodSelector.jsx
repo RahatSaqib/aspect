@@ -187,7 +187,7 @@ function PeriodSelector({ minDate, maxDate, onChange, label, noDay, noWeek, noMo
                           />
                         </div>
                       }
-                      nodeId="71"
+                      nodeId="custom-start"
                     />
                     <TreeItem
                       label={
@@ -210,7 +210,7 @@ function PeriodSelector({ minDate, maxDate, onChange, label, noDay, noWeek, noMo
                           />
                         </div>
                       }
-                      nodeId="72"
+                      nodeId="custom-end"
                     />
                   </TreeItem>
                 </TreeView>

@@ -17,7 +17,7 @@ const ReporterFilter = () => {
   const filter = useFilterValues(location.pathname)
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
 
-  const a = r => isPermittedUser(user.userPermissions, { required: r })
+  const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
     <FilterContainer state={state} setState={setState}>
@@ -38,7 +38,7 @@ const ReporterFilter = () => {
             stateId={state.stateId}
           />
         </Grid>
-        {a(['assay:view']) ? (
+        {allowed(['assay:view']) ? (
           <Grid item xs={3}>
             <AssaySelect
               label={formatMessage(messages.assay)}
