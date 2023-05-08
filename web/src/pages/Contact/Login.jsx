@@ -38,7 +38,10 @@ const Login = ({ setStep }) => {
 
   const validationSchema = object({
     username: string().required(formatMessage(messages.usernameRequired)),
-    newPassword: isAdding ? pwdValidation.required(formatMessage(messages.confirmNewPasswordRequired)) : pwdValidation,
+    newPassword:
+      isAdding || !person?.username
+        ? pwdValidation.required(formatMessage(messages.confirmNewPasswordRequired))
+        : pwdValidation,
     confirmNewPassword: string().when('newPassword', {
       is: val => !isEmpty(val),
       then: pwdValidation

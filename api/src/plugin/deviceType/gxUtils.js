@@ -661,6 +661,7 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
         .where({
           's.partnerId': device.partnerId,
           'c.abbreviation': countryCode,
+          's.disabled': 0,
         })
         .andWhere(function () {
           if (deviceName) {
@@ -679,7 +680,9 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
         sites = matchingSites.splice(0, 1)
       } else if (matchingSites.length > 1) {
         throw Boom.conflict(
-          `Cannot uniquely determine which site this request came from using ${deviceName} in ${countryCode})`
+          `Cannot uniquely determine which site this request came from comparing the device name with the site name or site external id, or the device short name with the site external ID. More than one site were found for the device name ${deviceName} and the device short name ${deviceShortName}. The sites IDs are: ${matchingSites.join(
+            ', '
+          )}.`
         )
       }
       if (_.isEmpty(sites)) {
