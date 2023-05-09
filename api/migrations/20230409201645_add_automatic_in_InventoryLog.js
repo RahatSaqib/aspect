@@ -3,9 +3,8 @@
  * @returns { Promise<void> }
  */
 exports.up = async function (knex) {
-  await knex.schema.alterTable('InventoryLog', t => {
-    t.boolean('isAutomatic', 255).nullable()
-    t.dropForeign('resultId')
+  await knex.schema.alterTable('InventoryLog', tbl => {
+    tbl.boolean('isAutomatic', 255).nullable()
   })
 
   await knex.schema.createTable('MissingInventoryLots', t => {
@@ -20,9 +19,8 @@ exports.up = async function (knex) {
 }
 
 exports.down = async function (knex) {
-  await knex.schema.alterTable('InventoryLog', t => {
-    t.dropColumn('isAutomatic')
-    t.integer('resultId').unsigned().references('id').inTable('Result')
+  await knex.schema.alterTable('InventoryLog', tbl => {
+    tbl.dropColumn('isAutomatic')
   })
 
   await knex.schema.dropTableIfExists('MissingInventoryLots')
