@@ -10,14 +10,15 @@ import { useDispatch } from 'react-redux'
 import AspectVertMenu from '../../../components/AspectVertMenu'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
+import { usePakistan } from '../../../hooks/usePakistan'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
 import {
+  modifyInventoryOnHand,
   showAddInventoryDialog,
+  showReceiveInventoryDialog,
   showRemoveInventoryDialog,
   showTransferInventoryDialog,
-  showReceiveInventoryDialog,
-  modifyInventoryOnHand,
 } from '../../../store/InventoryRedux'
 import messages from './messages'
 
@@ -26,7 +27,9 @@ const cssClasses = classnames.bind(styles)
 const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refetch }) => {
   const { formatMessage, formatNumber } = useI18n()
 
+  const { isPakistan } = usePakistan()
   const [newQtyOnHand, setNewQtyOnHand] = useState('')
+  const [newQtyOnHandError, setNewQtyOnHandError] = useState(false)
   const [showCheck, setShowCheck] = useState(false)
   const [showError, setShowError] = useState(false)
   const [resultQtyOnHand, setResultQtyOnHand] = useState('')
@@ -34,12 +37,17 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
   const dispatch = useDispatch()
 
   const getActions = isInTransit => [
-    {
-      icon: 'FaCheck',
-      text: formatMessage(messages.receiveInventory),
-      disabled: !isInTransit,
-      action: ({ inventoryItemId }) => dispatch(showReceiveInventoryDialog(inventoryItemId)),
-    },
+    ...(!isPakistan
+      ? [
+          {
+            icon: 'FaCheck',
+            text: formatMessage(messages.receiveInventory),
+            disabled: !isInTransit,
+            action: ({ inventoryItemId }) => dispatch(showReceiveInventoryDialog(inventoryItemId)),
+          },
+        ]
+      : []),
+
     {
       icon: 'FaPlus',
       text: formatMessage(messages.addInventory),
@@ -83,7 +91,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
     }
   )
   const updateInventoryOnBlur = async () => {
-    if (inventoryOnHand) {
+    if (inventoryOnHand && !newQtyOnHandError) {
       const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
       const newQty = parseInt(newQtyOnHand, 10)
       const movementQty = parseInt(resultQtyOnHand, 10)
@@ -101,7 +109,11 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
   const hasQtyOnHand = qty => (isNull(qty) ? formatMessage(messages.notRecorded) : formatNumber(qty))
   const hasDailyConsumption = qty => (isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(round(qty, 2)))
   const newQtyHandler = evt => {
-    if (!evt.target.value) {
+    const { value } = evt.target
+
+    setNewQtyOnHandError(Number(value) < 0)
+
+    if (!value) {
       return setNewQtyOnHand('')
     }
     const qty = parseInt(inventoryItem.get('quantityOnHand'), 10)
@@ -188,6 +200,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
               type="number"
               name="newQuantityOnHand"
               value={newQtyOnHand}
+              error={newQtyOnHandError}
               disabled={isNull(inventoryItem.get('quantityOnHand'))}
               onChange={newQtyHandler}
               margin="normal"
