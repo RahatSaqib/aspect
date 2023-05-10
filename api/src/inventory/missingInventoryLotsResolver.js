@@ -5,9 +5,14 @@ const { consumeInventoryForResult, transferInventory } = require('./common/logic
 
 const getInventoryBaseQuery = () =>
   knex('InventoryItem')
-    .whereNotNull('inTransitFromSiteId')
-    .groupBy(['siteId', 'consumableId', 'expiresOn'])
-    .select(['siteId', 'consumableId', 'expiresOn', knex.raw('IFNULL(SUM(quantityOnHand), 0) as total')])
+    .whereNull('inTransitFromSiteId')
+    .groupBy(['siteId', 'consumableId', knex.raw('DATE(expiresOn)')])
+    .select([
+      'siteId',
+      'consumableId',
+      knex.raw('DATE(expiresOn) as expiresOn'),
+      knex.raw('IFNULL(SUM(quantityOnHand), 0) as total'),
+    ])
     .clone()
 
 const getMissingInventoryBaseQuery = () =>
@@ -16,32 +21,34 @@ const getMissingInventoryBaseQuery = () =>
     .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
     .clone()
 
-const getMissingInventoryGroups = getMissingInventoryBaseQuery()
-  .innerJoin('Site as s', 'm.siteId', 's.id')
-  .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
-  .leftJoin(getInventoryBaseQuery().as('siteInventory'), qb =>
-    qb
-      .on('siteInventory.siteId', 's.id')
-      .andOn('siteInventory.consumableId', 'ca.consumableId')
-      .andOn(knex.raw('siteInventory.expiresOn <=> m.expirationDate'))
-  )
-  .leftJoin(getInventoryBaseQuery().as('warehouseInventory'), qb =>
-    qb
-      .on('warehouseInventory.siteId', 's.id')
-      .andOn('warehouseInventory.consumableId', 'ca.consumableId')
-      .andOn(knex.raw('warehouseInventory.expiresOn <=> m.expirationDate'))
-  )
-  .groupBy(['siteId', 'consumableId', 'expirationDate'])
-  .select([
-    'r.partnerId',
-    'm.siteId',
-    's.parentWarehouseId',
-    'ca.consumableId',
-    'm.expirationDate',
-    knex.raw('COUNT(m.id) as totalRequiredInventory'),
-    knex.raw('IFNULL(siteInventory.total, 0) as availableQuantityInSiteInventory'),
-    knex.raw('IFNULL(warehouseInventory.total, 0) as availableQuantityInWarehouseInventory'),
-  ])
+const getMissingInventoryGroups = () =>
+  getMissingInventoryBaseQuery()
+    .innerJoin('Site as s', 'm.siteId', 's.id')
+    .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
+    .leftJoin(getInventoryBaseQuery().as('siteInventory'), qb =>
+      qb
+        .on('siteInventory.siteId', 's.id')
+        .andOn('siteInventory.consumableId', 'ca.consumableId')
+        .andOn(knex.raw('DATE(siteInventory.expiresOn) <=> DATE(m.expirationDate)'))
+    )
+    .leftJoin(getInventoryBaseQuery().as('warehouseInventory'), qb =>
+      qb
+        .on('warehouseInventory.siteId', 's.parentWarehouseId')
+        .andOn('warehouseInventory.consumableId', 'ca.consumableId')
+        .andOn(knex.raw('DATE(warehouseInventory.expiresOn) <=> DATE(m.expirationDate)'))
+    )
+    .groupBy(['siteId', 'consumableId', knex.raw('DATE(expirationDate)')])
+    .select([
+      'r.partnerId',
+      'm.siteId',
+      's.parentWarehouseId',
+      'ca.consumableId',
+      knex.raw('DATE(m.expirationDate) as expirationDate'),
+      knex.raw('COUNT(m.id) as totalRequiredInventory'),
+      knex.raw('IFNULL(siteInventory.total, 0) as availableQuantityInSiteInventory'),
+      knex.raw('IFNULL(warehouseInventory.total, 0) as availableQuantityInWarehouseInventory'),
+    ])
+    .clone()
 
 const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate) =>
   getMissingInventoryBaseQuery()
@@ -49,7 +56,7 @@ const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate) =>
       qb
         .where('m.siteId', siteId)
         .andWhere('ca.consumableId', consumableId)
-        .andWhere(knex.raw('m.expirationDate <=> :expirationDate', { expirationDate }))
+        .andWhere(knex.raw('DATE(m.expirationDate) <=> DATE(:expirationDate)', { expirationDate }))
     )
     .select([
       'm.id as missingInventoryLotId',
@@ -64,9 +71,8 @@ const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate) =>
         .as('payload'),
     ])
 
-const missingInventoryLotsResolver = async (_, plugins) => {
-  const missingInventoryGroups = await getMissingInventoryGroups
-
+const missingInventoryLotsResolver = async (_, { messageContext }) => {
+  const missingInventoryGroups = await getMissingInventoryGroups()
   /* eslint-disable no-await-in-loop */
   for (const missingInventoryGroup of missingInventoryGroups) {
     const {
@@ -81,12 +87,15 @@ const missingInventoryLotsResolver = async (_, plugins) => {
     } = missingInventoryGroup
 
     // Calculate, if necessary, how many consumables should/can be transfered from the warehouse (consumablesToTransfer)
-    const remainingRequiredQuantity = totalRequiredInventory - availableQuantityInSiteInventory
+    const remainingRequiredQuantity = Math.max(totalRequiredInventory - availableQuantityInSiteInventory, 0)
     const quantityToTransfer =
       remainingRequiredQuantity > 0 && availableQuantityInWarehouseInventory > 0
         ? Math.min(remainingRequiredQuantity, availableQuantityInWarehouseInventory)
         : 0
-    const quantityToReconcile = Math.min(totalRequiredInventory, availableQuantityInSiteInventory) + quantityToTransfer
+    const quantityToReconcile = Math.max(
+      Math.min(totalRequiredInventory, availableQuantityInSiteInventory) + quantityToTransfer,
+      0
+    )
 
     // We should get all the InventoryMissingLots limited by the quantityToReconcile and ordered by result.endedOn
     const missingInventoryToReconcile = await getMissingInventoryToReconcile(siteId, consumableId, expirationDate)
@@ -109,9 +118,9 @@ const missingInventoryLotsResolver = async (_, plugins) => {
           effectiveDate,
           isAutomatic: true,
         },
+        force: true,
       }
-
-      await transferInventory({ payload, plugins, dataConstraints: {}, partnerId, userId: null })
+      await transferInventory({ payload, messageContext, partnerId })
     }
 
     // Substract each consumable from the site (the InventoryLog should have an effectiveDate = result.endedOn)
@@ -130,7 +139,7 @@ const missingInventoryLotsResolver = async (_, plugins) => {
           startedOn,
           endedOn,
           knex,
-          plugins.messageContext,
+          messageContext,
           null
         )
         // Delete missingInventoryLots entry
