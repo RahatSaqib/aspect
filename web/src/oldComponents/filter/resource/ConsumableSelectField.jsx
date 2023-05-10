@@ -19,12 +19,14 @@ export class ConsumableSelectField extends PureComponent {
     onConsumableChange: PropTypes.func.isRequired,
     value: PropTypes.string,
     intl: PropTypeOf.intl.isRequired,
+    returnItem: PropTypes.bool,
   }
 
   static defaultProps = {
     allItemText: '',
     consumableItems: null,
     value: '',
+    returnItem: null,
   }
 
   componentDidMount() {
@@ -33,7 +35,9 @@ export class ConsumableSelectField extends PureComponent {
   }
 
   handleChange = ({ target: { value } }) => {
-    this.props.onConsumableChange(value === 'all' ? undefined : value)
+    const { returnItem, consumableItems } = this.props
+    const id = value === 'all' ? undefined : value
+    this.props.onConsumableChange(id, returnItem ? consumableItems?.toJS().find(i => i.id === id) : undefined)
   }
 
   render() {
