@@ -1,12 +1,12 @@
-import React, { useEffect, useCallback, useState, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormControlLabel, FormGroup, Switch, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import flowRight from 'lodash/flowRight'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { useSelector, useDispatch } from 'react-redux'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
@@ -15,10 +15,11 @@ import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useI18n from '../../../hooks/useI18n'
+import { usePakistan } from '../../../hooks/usePakistan'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
+import { getFilters, reduceFiltersConfig, sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -28,24 +29,25 @@ import { useAuthState } from '../../../providers/AuthProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
 import { fetchConsumables } from '../../../store/ConsumableRedux'
 import {
-  types,
-  hideAdjustInventoryDialog,
   addInventory,
-  removeInventory,
-  transferInventory,
-  receiveInventory,
   exportSupplies,
+  hideAdjustInventoryDialog,
+  receiveInventory,
   receiveInventoryItems,
+  removeInventory,
   showNewInventoryDialog,
+  transferInventory,
+  types,
 } from '../../../store/InventoryRedux'
 import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
   composeSanitizer,
+  makeSearchParamsSanitizer,
+  makeSortPageSelector,
 } from '../../../utils/selectors/searchParams'
 import AddInventoryDialogForm from '../adjustment/AddInventoryDialogForm'
 import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
 import NewInventoryDialogForm from '../adjustment/NewInventoryDialogForm'
+import PakistanInventoryAdjustmentDialog from '../adjustment/PakistanInventoryAdjustmentDialog'
 import ReceiveInventoryDialogForm from '../adjustment/ReceiveInventoryDialogForm'
 import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
 import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
@@ -131,6 +133,8 @@ export const InventoryItemsListWithProps = ({
     setEnableInventoryOnHandField(false)
   }, [breakOutByLot, setEnableInventoryOnHandField, setBreakOutByLot])
 
+  const { isPakistan } = usePakistan()
+
   const columns = [
     {
       key: 'siteName',
@@ -198,6 +202,21 @@ export const InventoryItemsListWithProps = ({
       key: 'action',
     },
   ]
+
+  const handleSubmit = values => {
+    switch (inventoryAdjustment.get('actionType')) {
+      case types.SHOW_REMOVE_INVENTORY_DIALOG:
+        onRemoveInventorySubmit(values)
+        break
+      case types.SHOW_TRANSFER_INVENTORY_DIALOG:
+        onTransferInventorySubmit(values)
+        break
+
+      default: {
+        onAddInventorySubmit(values)
+      }
+    }
+  }
 
   return (
     <>
@@ -302,41 +321,53 @@ export const InventoryItemsListWithProps = ({
             </>
           )}
         </DataTableCard>
-        <NewInventoryDialogForm
-          intl={intl}
-          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_NEW_INVENTORY_DIALOG}
-          onCancel={() => dispatch(hideAdjustInventoryDialog())}
-          onSubmit={onAddInventorySubmit}
-        />
-        <AddInventoryDialogForm
-          intl={intl}
-          inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_ADD_INVENTORY_DIALOG}
-          onCancel={() => dispatch(hideAdjustInventoryDialog())}
-          onSubmit={onAddInventorySubmit}
-        />
-        <RemoveInventoryDialogForm
-          intl={intl}
-          inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_REMOVE_INVENTORY_DIALOG}
-          onCancel={() => dispatch(hideAdjustInventoryDialog())}
-          onSubmit={onRemoveInventorySubmit}
-        />
-        <TransferInventoryDialogForm
-          intl={intl}
-          inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_TRANSFER_INVENTORY_DIALOG}
-          onCancel={() => dispatch(hideAdjustInventoryDialog())}
-          onSubmit={onTransferInventorySubmit}
-        />
-        <ReceiveInventoryDialogForm
-          intl={intl}
-          items={items}
-          inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-          isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_RECEIVE_INVENTORY_DIALOG}
-          onCancel={() => dispatch(hideAdjustInventoryDialog())}
-          onSubmit={onReceiveInventorySubmit}
-        />
+
+        {isPakistan ? (
+          <PakistanInventoryAdjustmentDialog
+            actionType={inventoryAdjustment.get('actionType')}
+            inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], undefined)}
+            onCancel={() => dispatch(hideAdjustInventoryDialog())}
+            onSubmit={handleSubmit}
+          />
+        ) : (
+          <>
+            <NewInventoryDialogForm
+              intl={intl}
+              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_NEW_INVENTORY_DIALOG}
+              onCancel={() => dispatch(hideAdjustInventoryDialog())}
+              onSubmit={onAddInventorySubmit}
+            />
+            <AddInventoryDialogForm
+              intl={intl}
+              inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
+              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_ADD_INVENTORY_DIALOG}
+              onCancel={() => dispatch(hideAdjustInventoryDialog())}
+              onSubmit={onAddInventorySubmit}
+            />
+            <RemoveInventoryDialogForm
+              intl={intl}
+              inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
+              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_REMOVE_INVENTORY_DIALOG}
+              onCancel={() => dispatch(hideAdjustInventoryDialog())}
+              onSubmit={onRemoveInventorySubmit}
+            />
+            <TransferInventoryDialogForm
+              intl={intl}
+              inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
+              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_TRANSFER_INVENTORY_DIALOG}
+              onCancel={() => dispatch(hideAdjustInventoryDialog())}
+              onSubmit={onTransferInventorySubmit}
+            />
+            <ReceiveInventoryDialogForm
+              intl={intl}
+              items={items}
+              inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
+              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_RECEIVE_INVENTORY_DIALOG}
+              onCancel={() => dispatch(hideAdjustInventoryDialog())}
+              onSubmit={onReceiveInventorySubmit}
+            />
+          </>
+        )}
       </div>
     </>
   )
@@ -416,6 +447,7 @@ export const InventoryItemsList = () => {
     queryClient.invalidateQueries(INVENTORY_LIST.KEY)
     onAdjustInventorySucceeded()
   }
+
   // Remove
   const { mutate: onRemoveInventorySubmit } = useMutation(
     values => {
