@@ -359,15 +359,14 @@ async function removeInventory({ auth, payload, plugins }) {
 }
 
 // ----------------------------------------------------------------------------------
-async function transferInventory(request) {
-  const {
-    auth,
-    payload: { fromSiteId, toSiteId, consumableId, expiresOn, lotNumber, quantity, dateAdjusted, notes },
-  } = request
+async function transferInventory({ payload, messageContext, partnerId, userId }) {
+  const { fromSiteId, toSiteId, consumableId, expiresOn, lotNumber, quantity, dateAdjusted, notes, logProps, force } =
+    payload
+
   /**
    * get MQ context and bind few action creators
    */
-  const messageContext = request.plugins.messageContext.bindActionCreators({
+  messageContext = messageContext.bindActionCreators({
     inventoryStockout,
     inventoryStockExpiring,
     resolveIssues,
@@ -375,22 +374,10 @@ async function transferInventory(request) {
   })
 
   /**
-   * get from/to sites and return error if lack of permissions
-   */
-  const dataConstraints = await getConstraints(auth.credentials)
-  const toSite = await getSite(toSiteId, dataConstraints)
-  if (!toSite) {
-    return Boom.forbidden('You are not permitted to transfer inventory to this site')
-  }
-  const fromSite = await getSite(fromSiteId, dataConstraints)
-  if (!fromSite) {
-    return Boom.forbidden('You are not permitted to transfer inventory from this site')
-  }
-  /**
    * using inventory strategy get quantityOnHand for source and destination sites
    */
-  const { partnerId, userId } = await getUser(auth.credentials.name)
   const inventoryStrategy = await getInventoryStrategy({ partnerId, userId })
+  const transferInPendingMode = inventoryStrategy.transferInPendingMode && force !== true
   const source = await getActualQuantityOnHand(
     knex,
     inventoryStrategy,
@@ -412,7 +399,6 @@ async function transferInventory(request) {
     return destination
   }
 
-  const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
 
   let destinationInventoryItemId = -1
@@ -427,8 +413,8 @@ async function transferInventory(request) {
       expiresOn,
       quantityOnHand: destination.quantityOnHand,
       now,
-      userId: currentlyLoggedInUser.id,
-      inTransitFromSiteId: inventoryStrategy.transferInPendingMode ? fromSiteId : null,
+      userId,
+      inTransitFromSiteId: transferInPendingMode ? fromSiteId : null,
     })
 
     const { id: transferSentConsumableReasonId } = await findConsumableReason('Transfer Sent')
@@ -442,7 +428,7 @@ async function transferInventory(request) {
       expiresOn,
       quantityOnHand: source.quantityOnHand,
       now,
-      userId: currentlyLoggedInUser.id,
+      userId,
     })
 
     const outcomeInventoryLogId = await logInventoryChange({
@@ -459,11 +445,12 @@ async function transferInventory(request) {
       notes,
       adjustedFrom: dateAdjusted,
       createdOn: now,
-      createdBy: currentlyLoggedInUser.id,
+      createdBy: userId,
+      ...logProps,
     })
 
     await createInventoryTransfer(knex, outcomeInventoryLogId, destinationInventoryItemId)
-    if (!inventoryStrategy.transferInPendingMode) {
+    if (!transferInPendingMode) {
       const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
       const incomeInventoryLogId = await logInventoryChange({
         knex,
@@ -479,7 +466,7 @@ async function transferInventory(request) {
         notes,
         adjustedFrom: dateAdjusted,
         createdOn: now,
-        createdBy: currentlyLoggedInUser.id,
+        createdBy: userId,
       })
       await updateInventoryTransfer(knex, destinationInventoryItemId, incomeInventoryLogId)
     }
