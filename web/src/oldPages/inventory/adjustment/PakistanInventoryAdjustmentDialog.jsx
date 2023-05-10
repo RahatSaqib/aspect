@@ -1,109 +1,39 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Button, DialogActions, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Formik } from 'formik'
 import useI18n from '../../../hooks/useI18n'
-import ConsumableSelectField from '../../../oldComponents/resource/ConsumableSelectField'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
-} from '../../../oldComponents/resource/ConsumableReasonSelectField'
-import SiteSelectField from '../../../oldComponents/resource/SiteSelectField'
+} from '../../../oldComponents/filter/resource/ConsumableReasonSelectField'
+import ConsumableSelectField from '../../../oldComponents/filter/resource/ConsumableSelectField'
+import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { types } from '../../../store/InventoryRedux'
+import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, transformValues } from './helpers'
 import styles from './InventoryAdjustmentDialogForm.css'
-import messages, { newInventoryMessages, removeInventoryMessages, transformInventoryMessages } from './messages'
-import { useDispatch } from 'react-redux'
-import { fetchConsumableReasons, fetchConsumables } from '../../../store/ConsumableRedux'
-
-function transformValues(values) {
-  const { consumable, ...rest } = values
-  return {
-    ...rest,
-    consumableId: consumable.id,
-  }
-}
-
-function getQuantityOnHand(actionType, inventory, values) {
-  let nextQuantity
-  switch (actionType) {
-    case types.SHOW_REMOVE_INVENTORY_DIALOG:
-    case types.SHOW_TRANSFER_INVENTORY_DIALOG:
-      nextQuantity = inventory.quantityOnHand - Number(values?.quantity ?? 0)
-      break
-    default:
-      nextQuantity = inventory.quantityOnHand + Number(values?.quantity ?? 0)
-  }
-  return {
-    nextQuantity,
-    unitShortName: values?.consumable?.unitShortName,
-  }
-}
-
-function transformInitialValue(inventory) {
-  let value = { dateAdjusted: new Date() }
-
-  if (inventory) {
-    value = {
-      ...value,
-      toSiteId: inventory.siteId,
-      consumable: {
-        id: inventory.consumableId,
-        name: inventory.consumableName,
-        showExpirationDate: inventory.showExpirationDate,
-        showLot: inventory.showLot,
-        unitShortName: inventory.unitShortName,
-      },
-    }
-  }
-
-  return value
-}
-
-function transformLabels(actionType) {
-  switch (actionType) {
-    case types.SHOW_REMOVE_INVENTORY_DIALOG:
-      return {
-        dialogTitle: removeInventoryMessages.dialogTitle,
-        quantity: removeInventoryMessages.quantity,
-        dateAdjusted: removeInventoryMessages.dateAdjusted,
-      }
-    case types.SHOW_TRANSFER_INVENTORY_DIALOG:
-      return {
-        dialogTitle: transformInventoryMessages.dialogTitle,
-        quantity: transformInventoryMessages.quantity,
-        dateAdjusted: transformInventoryMessages.dateAdjusted,
-      }
-    default:
-      return {
-        dialogTitle: newInventoryMessages.dialogTitle,
-        quantity: newInventoryMessages.quantity,
-        dateAdjusted: newInventoryMessages.dateAdjusted,
-      }
-  }
-}
+import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
 export { testConductedReasonI18nKey }
 
-export function Dialog(props) {
+export default function PakistanInventoryAdjustmentDialog(props) {
   const { onCancel, onSubmit, inventoryItem, actionType } = props
-  const { formatMessage } = useI18n()
+  const { formatMessage, ...intl } = useI18n()
   const inventory = inventoryItem?.toJS?.() ?? undefined
-  const labels = transformLabels(actionType)
-  const dispatch = useDispatch()
-  useEffect(() => dispatch(fetchConsumables(false)), [dispatch])
-  useEffect(() => dispatch(fetchConsumableReasons(false)), [dispatch])
+  const labels = getLabels(actionType)
 
   return (
     <Formik
       enableReinitialize
-      initialValues={transformInitialValue(inventory)}
+      validationSchema={getValidations(formatMessage, actionType)}
+      initialValues={transformInitialValue(inventory, actionType)}
       onSubmit={values => onSubmit(transformValues(values))}
     >
-      {({ values, isValid, handleBlur, handleSubmit, errors, touched, handleChange, setFieldValue, isSubmitting }) => {
+      {({ values, initialValues, handleBlur, handleSubmit, errors, handleChange, setFieldValue, isSubmitting }) => {
         return (
           <AspectDialog
             maxWidth="sm"
@@ -121,13 +51,15 @@ export function Dialog(props) {
                     returnItem
                     floatingLabelText={formatMessage(messages.consumable)}
                     floatingLabelFixed
+                    errorText={errors?.consumable}
                     value={values.consumable?.id}
                     onConsumableChange={(_, consumable) => setFieldValue('consumable', consumable)}
                     fullWidth
                   />
                 ) : null}
 
-                {values?.consumable?.showLot ? (
+                {(actionType === types.SHOW_NEW_INVENTORY_DIALOG && values?.consumable?.showLot) ||
+                inventory?.lotNumber ? (
                   <TextField
                     fullWidth
                     type="text"
@@ -135,6 +67,7 @@ export function Dialog(props) {
                     label={formatMessage(messages.lotNumber)}
                     value={values.lotNumber}
                     onChange={handleChange}
+                    disabled={!!initialValues?.lotNumber}
                     onBlur={handleBlur}
                     margin="normal"
                     FormHelperTextProps={{
@@ -144,12 +77,14 @@ export function Dialog(props) {
                   />
                 ) : null}
 
-                {values?.consumable?.showExpirationDate && (
+                {(actionType === types.SHOW_NEW_INVENTORY_DIALOG && values?.consumable?.showExpirationDate) ||
+                inventory?.expiresOn ? (
                   <FormGroup label={formatMessage(messages.expiryDate)}>
                     <DateTimeInput
                       fullWidth
                       margin="normal"
                       dateFormat="yyyy-MM-dd"
+                      disabled={!!initialValues?.expiresOn}
                       RootProps={{
                         name: 'expiresOn',
                       }}
@@ -157,22 +92,44 @@ export function Dialog(props) {
                       value={values.expiresOn}
                     />
                   </FormGroup>
-                )}
+                ) : null}
 
-                <SiteSelectField
-                  name="toSiteId"
-                  floatingLabelText={formatMessage(messages.toSiteName)}
-                  value={values.toSiteId}
-                  onSiteChange={site => setFieldValue('toSiteId', site)}
-                  errorStyle={{
-                    float: 'left',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'visible',
-                  }}
-                  fullWidth
-                  tabIndex="0"
-                  aria-haspopup
-                />
+                {initialValues?.fromSiteId ? (
+                  <SiteSelectField
+                    name="fromSiteId"
+                    floatingLabelText={formatMessage(messages.fromSiteName)}
+                    disabled
+                    value={values.fromSiteId}
+                    onSiteChange={site => setFieldValue('fromSiteId', site)}
+                    errorStyle={{
+                      float: 'left',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'visible',
+                    }}
+                    fullWidth
+                    tabIndex="0"
+                    aria-haspopup
+                  />
+                ) : null}
+
+                {actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG ? (
+                  <SiteSelectField
+                    name="toSiteId"
+                    disabled={actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG}
+                    errorText={errors?.toSiteId}
+                    floatingLabelText={formatMessage(messages.toSiteName)}
+                    value={values.toSiteId}
+                    onSiteChange={site => setFieldValue('toSiteId', site)}
+                    errorStyle={{
+                      float: 'left',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'visible',
+                    }}
+                    fullWidth
+                    tabIndex="0"
+                    aria-haspopup
+                  />
+                ) : null}
 
                 <TextField
                   fullWidth
@@ -182,6 +139,8 @@ export function Dialog(props) {
                   value={values.quantity}
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  error={!!errors.quantity}
+                  helperText={errors.quantity}
                   margin="normal"
                   FormHelperTextProps={{
                     margin: 'dense',
@@ -200,17 +159,52 @@ export function Dialog(props) {
 
                 {actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ? (
                   <ConsumableReasonSelectField
+                    intl={{ formatMessage, ...intl }}
                     name="reasonId"
+                    returnItem
+                    errorText={errors?.reason}
                     floatingLabelText={formatMessage(messages.reason)}
-                    value={values.reasonId}
-                    onConsumableReasonIdChange={id => setFieldValue('reasonId', id)}
+                    value={values.reason?.id}
+                    onConsumableReasonIdChange={(_, reason) => setFieldValue('reason', reason)}
                     margin="normal"
                   />
+                ) : null}
+
+                {values?.reason?.i18nKey === testConductedReasonI18nKey ? (
+                  <>
+                    <FormGroup label={formatMessage(messages.testsRunBetween)}>
+                      <DateTimeInput
+                        fullWidth
+                        margin="normal"
+                        intl={{ formatMessage, ...intl }}
+                        dateFormat="yyyy-MM-dd"
+                        RootProps={{
+                          name: 'dateAdjustedFrom',
+                        }}
+                        value={values.dateAdjustedFrom}
+                        onChange={(_, date) => setFieldValue('dateAdjustedFrom', date)}
+                      />
+                    </FormGroup>
+                    <FormGroup label={formatMessage(messages.and)}>
+                      <DateTimeInput
+                        fullWidth
+                        margin="normal"
+                        dateFormat="yyyy-MM-dd"
+                        intl={{ formatMessage, ...intl }}
+                        RootProps={{
+                          name: 'dateAdjustedTo',
+                        }}
+                        value={values.dateAdjustedTo}
+                        onChange={(_, date) => setFieldValue('dateAdjustedTo', date)}
+                      />
+                    </FormGroup>
+                  </>
                 ) : null}
 
                 <FormGroup label={formatMessage(labels.dateAdjusted)}>
                   <DateTimeInput
                     fullWidth
+                    intl={{ formatMessage, ...intl }}
                     margin="normal"
                     dateFormat="yyyy-MM-dd"
                     RootProps={{
@@ -240,12 +234,7 @@ export function Dialog(props) {
                   <Button color="primary" onClick={onCancel}>
                     {formatMessage(messages.cancel)}
                   </Button>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    disabled={!isValid || isSubmitting}
-                    onClick={handleSubmit}
-                  >
+                  <Button color="primary" variant="contained" disabled={isSubmitting} onClick={handleSubmit}>
                     {formatMessage(messages.submit)}
                   </Button>
                 </DialogActions>
