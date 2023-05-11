@@ -1111,6 +1111,11 @@ export default defineMessages({
     defaultMessage: 'Report on Xpert MTB/RIF and Covid - NTP Use',
   },
 
+  pk_xpert_site_detailed_report: {
+    id: 'pages.ReportIndex.xpert_site_detailed_report',
+    defaultMessage: 'Xpert Site Detailed Report',
+  },
+
   ...assay,
   ...resultCategory,
   ...report,

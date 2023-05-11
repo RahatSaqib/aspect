@@ -793,7 +793,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const endedOn = subHours(now, 2)
         const consumableReason = 'Captured'
         const quantity = -3
-
+        const resultingQuantityOnHand = inventoryItemAtSiteBefore.quantityOnHand + quantity
         await server
           .post('/device')
           .set('Authorization', deviceAuth)
@@ -808,7 +808,7 @@ describe('Device API routes for GxConnect Devices', () => {
                       consumableName: inventoryItemAtSiteBefore.consumableName,
                       consumableReasonName: consumableReason,
                       quantity,
-                      resultingQuantityOnHand: inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                      resultingQuantityOnHand,
                       dateChanged: startedOn,
                       expirationDate: inventoryItemAtSiteBefore.expiresOn,
                     },
