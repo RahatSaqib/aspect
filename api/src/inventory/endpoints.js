@@ -232,7 +232,18 @@ const routes = [
           ...inventoryTransferFilters,
           ...validateDateRangeParams(),
           ...validateAllGeographyFilterParams(),
-          ...validateSortPageParams('originSiteName', 'destinationSiteName', 'consumableName'),
+          ...validateSortPageParams(
+            'sentQuantity',
+            'sentOn',
+            'receivedQuantity',
+            'receivedOn',
+            'lotNumber',
+            'expirationDate',
+            'originSiteName',
+            'destinationSiteName',
+            'consumableName',
+            'consumableNameI18nKey'
+          ),
         },
       },
     },
@@ -246,6 +257,7 @@ const routes = [
       auth: { scope: ['inventory:view'] },
       validate: {
         query: {
+          format: Joi.string().allow('').description('File format for exporting data'),
           ...inventoryTransferFilters,
           ...validateDateRangeParams(),
           ...validateAllGeographyFilterParams(),

@@ -23,6 +23,7 @@ const DeviceDetail = lazy(() => import('./pages/Devices/Detail/DeviceDetail'))
 const EditSite = lazy(() => import('./pages/Site/Detail/Edit'))
 const InventoryItemsList = lazy(() => import('./oldPages/inventory/list/InventoryItemsList'))
 const InventoryLog = lazy(() => import('./oldPages/inventory/log/InventoryLog'))
+const InventoryTransfers = lazy(() => import('./pages/Inventory/Transfers'))
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
 const NotificationDetailHistory = lazy(() => import('./pages/Notification/NotificationHistoryPage'))
@@ -220,6 +221,7 @@ const LogInApp = () => {
               <>
                 <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
                 <Route path="/browse/inventory/log" element={<InventoryLog />} />
+                <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
               </>
             ) : null}
             {a(['browse', 'notification']) ? (

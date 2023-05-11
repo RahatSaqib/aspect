@@ -10,7 +10,7 @@ import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-const submenuSelected = (href, location) => location.pathname.startsWith(href)
+const submenuSelected = (href, location) => location.pathname.startsWith(`${href}/`)
 const itemSelected = (href, location) => location.pathname === href
 
 const MainLink = ({ link }) => {
@@ -89,36 +89,31 @@ const getRawLinks = f => [
   { href: '/operational-data', label: f(messages.operationDataTitle), perm: ['operationalData'] },
   { href: '/clinical-indicators', label: f(messages.clinicalIndicatorsTitle), perm: ['clinicalIndicators'] },
   {
-    href: '/browse',
-    label: f(messages.browseTitle),
-    perm: ['browse'],
+    href: '/browse/device',
+    label: f(messages.devices),
+    perm: ['browse', 'device'],
     submenu: [
-      {
-        href: '/browse/device',
-        label: f(messages.devices),
-        perm: ['device'],
-        submenu: [
-          { href: '/browse/device/list', label: f(messages.devicesList), perm: ['device'] },
-          { href: '/browse/device/workload', label: f(messages.devicesWorkload), perm: ['device'] },
-        ],
-      },
-      { href: '/browse/result', label: f(messages.results), perm: ['result'] },
-      { href: '/browse/person', label: f(messages.contacts), perm: ['person'] },
-      { href: '/browse/site', label: f(messages.sites), perm: ['site'] },
-      {
-        href: '/browse/inventory',
-        label: f(messages.supplies),
-        perm: ['inventory'],
-        submenu: [
-          { href: '/browse/inventory/supplies', label: f(messages.inventoryItems), perm: ['inventory'] },
-          { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },
-        ],
-      },
-      { href: '/browse/reporter', label: f(messages.reporters), perm: ['reporter'] },
-      { href: '/browse/notification', label: f(messages.notifications), perm: ['notification'] },
-      { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['deviceApiKey'] },
+      { href: '/browse/device/list', label: f(messages.devicesList), perm: ['device'] },
+      { href: '/browse/device/workload', label: f(messages.devicesWorkload), perm: ['device'] },
     ],
   },
+  { href: '/browse/result', label: f(messages.results), perm: ['browse', 'result'] },
+  { href: '/browse/person', label: f(messages.contacts), perm: ['browse', 'person'] },
+  { href: '/browse/site', label: f(messages.sites), perm: ['browse', 'site'] },
+  {
+    href: '/browse/inventory',
+    label: f(messages.supplies),
+    perm: ['browse', 'inventory'],
+    submenu: [
+      { href: '/browse/inventory/supplies', label: f(messages.inventoryItems), perm: ['inventory'] },
+      { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },
+      { href: '/browse/inventory/transfers', label: f(messages.inventoryTransfers), perm: ['inventory'] },
+    ],
+  },
+  { href: '/browse/router', label: f(messages.routers), perm: ['browse', 'router'] },
+  { href: '/browse/reporter', label: f(messages.reporters), perm: ['browse', 'reporter'] },
+  { href: '/browse/notification', label: f(messages.notifications), perm: ['browse', 'notification'] },
+  { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', 'deviceApiKey'] },
   { href: '/reports', label: f(messages.reportsTitle), perm: ['report'] },
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },
 ]
