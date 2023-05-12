@@ -15,19 +15,15 @@ import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
 const endPointParams = [
+  { assay: 'GxMtbRif' },
+  { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
-  {
-    flags: [
-      'GET_TOTAL_RESULTS_IN_CURRENT_YEAR',
-      'GET_TOTAL_RESULTS_IN_PERIOD',
-      'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR',
-      'GET_TOTAL_RESULTS_IN_LAST_24_HOURS',
-    ],
-  },
-  { assay: ['GxMtbRif', 'GxMtbRifUltra'] },
+  { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
+  { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
+  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
 const RifCurrentGraphPage = () => {
@@ -41,8 +37,8 @@ const RifCurrentGraphPage = () => {
 
   useEffect(() => {
     if (assays) {
-      const tbAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
-      const defaultFilter = tbAssays.length > 0 ? tbAssays : assays
+      const seriesAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
+      const defaultFilter = seriesAssays.length > 0 ? seriesAssays : assays
       setFilter(defaultFilter)
     }
   }, [assays])

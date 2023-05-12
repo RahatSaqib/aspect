@@ -15,10 +15,14 @@ import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
 const endPointParams = [
+  { assay: 'GxMtbXdr' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
+  { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
+  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
 const CurrentXDRDiagnosisPage = () => {
@@ -32,7 +36,7 @@ const CurrentXDRDiagnosisPage = () => {
 
   useEffect(() => {
     if (assays) {
-      const tbAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
+      const tbAssays = assays.filter(a => a.assayTypeAbbreviation === 'XDR')
       const defaultFilter = tbAssays.length > 0 ? tbAssays : assays
       setFilter(defaultFilter)
     }
@@ -41,7 +45,7 @@ const CurrentXDRDiagnosisPage = () => {
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/current-testing-aggregations', params: endPointParams })
   )
 
   return (
@@ -80,9 +84,9 @@ const CurrentXDRDiagnosisPage = () => {
           />
           <TripleCardSide
             data={[
-              { label: formatMessage(messages.xdrCasesPerYear), value: 123 },
-              { label: formatMessage(messages.xdrAverageMoth), value: 456 },
-              { label: formatMessage(messages.xdrLastDay), value: 799 },
+              { label: formatMessage(messages.xdrCasesPerYear), value: `${data.totalResultsCurrentYear}` },
+              { label: formatMessage(messages.xdrAverageMoth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              { label: formatMessage(messages.xdrLastDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
         </Grid>

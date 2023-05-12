@@ -1765,14 +1765,6 @@ async function clinicalIndicatorAggregations(request) {
 }
 
 // ---------------------------------------------------------------
-function normalizeQueryParam(queryParam) {
-  if (queryParam && _.isString(queryParam) && queryParam.includes(',')) {
-    queryParam = queryParam.split(',')
-  }
-  return queryParam
-}
-
-// ---------------------------------------------------------------
 async function currentTestingAggregations(request) {
   const { auth, query } = request
 
@@ -1782,10 +1774,6 @@ async function currentTestingAggregations(request) {
 
   const now = new Date()
   const currentYear = now.getFullYear()
-  query.assay = normalizeQueryParam(query.assay)
-  query.stateId = normalizeQueryParam(query.stateId)
-  query.lgaId = normalizeQueryParam(query.lgaId)
-  query.flags = normalizeQueryParam(query.flags)
 
   // optional flags
   const { flags = [] } = query
