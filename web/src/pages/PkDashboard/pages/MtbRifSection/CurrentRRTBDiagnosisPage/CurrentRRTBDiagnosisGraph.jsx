@@ -13,7 +13,6 @@ import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
-import TestsOverTimeGraphHalf from './CurrentDiagnosisGraph.Half'
 
 const endPointParams = [
   { groupBy: 'month' },
@@ -85,20 +84,6 @@ const CurrentDiagnosisGraphPage = () => {
               { label: formatMessage(messages.RRPerMonth), value: 456 },
               { label: formatMessage(messages.RRPerDay), value: 799 },
             ]}
-          />
-          <TestsOverTimeGraphHalf
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
-          />
-          <TestsOverTimeGraphHalf
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
           />
         </Grid>
       )}
