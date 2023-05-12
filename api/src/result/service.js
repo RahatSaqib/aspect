@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { format, subMonths, eachMonthOfInterval } = require('date-fns')
+const { format, subMonths, subHours, eachMonthOfInterval } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString } = require('../shared/date')
 const {
@@ -1765,6 +1765,109 @@ async function clinicalIndicatorAggregations(request) {
 }
 
 // ---------------------------------------------------------------
+function normalizeQueryParam(queryParam) {
+  if (queryParam && _.isString(queryParam) && queryParam.includes(',')) {
+    queryParam = queryParam.split(',')
+  }
+  return queryParam
+}
+
+// ---------------------------------------------------------------
+async function currentTestingAggregations(request) {
+  const { auth, query } = request
+
+  if (!canViewResults(auth)) {
+    throw Boom.forbidden('You do not have access to results')
+  }
+
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  query.assay = normalizeQueryParam(query.assay)
+  query.stateId = normalizeQueryParam(query.stateId)
+  query.lgaId = normalizeQueryParam(query.lgaId)
+  query.flags = normalizeQueryParam(query.flags)
+
+  // optional flags
+  const { flags = [] } = query
+
+  // if no group is specified, use result category
+  const groupBy = getGroupBy(query)
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  // if grouping only by month and assay, resultCategory1, resultCategory2 (the most common case),
+  // we can query the fact tables for much better performance
+  const factTableDataGroups = ['month', 'assay', 'resultCategory1', 'resultCategory2']
+
+  const resp = {}
+  let dateColumn
+  let baseQuery
+  if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
+    baseQuery = getClinicalIndicatorQueryForFactTable(dataConstraints, null, groupBy, query)
+    dateColumn = 'r.startedOn'
+  } else {
+    baseQuery = getClinicalIndicatorQueryForResultsTable(dataConstraints, null, groupBy, query)
+  }
+  /**
+   * Total tests in specified period
+   */
+  if (_.intersection(flags, [GRAPH_FLAGS.GET_TOTAL_RESULTS, GRAPH_FLAGS.GET_TOTAL_RESULTS_IN_PERIOD]).length > 0) {
+    const [{ cnt }] = await baseQuery.clone()
+    resp.totalResults = cnt
+  }
+
+  /**
+   * List of the number of tests in date range groupped by xxx
+   */
+  resp.data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+
+  /**
+   * Total tests of the current year
+   */
+  if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS_IN_CURRENT_YEAR)) {
+    resp.totalResultsCurrentYear = _.reduce(
+      resp.data.filter(x => _.startsWith(x.month, `${currentYear}-`)),
+      (acc, { cnt }) => {
+        acc += cnt
+        return acc
+      },
+      0
+    )
+  }
+  /**
+   * Average tests per month during the current year
+   */
+  if (flags.includes(GRAPH_FLAGS.GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR)) {
+    let cntTests = 0
+    const months = new Set()
+    _.each(
+      resp.data.filter(x => _.startsWith(x.month, `${currentYear}-`)),
+      x => {
+        months.add(x.month)
+        cntTests += x.cnt
+      }
+    )
+    resp.averageTestsPerMonthCurrentYear = months.size === 0 ? 0 : cntTests / months.size
+  }
+  /**
+   * Total tests in the last 24 hours
+   */
+  if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS_IN_LAST_24_HOURS)) {
+    const queryParams = {
+      ...query,
+      minDate: dateFormat(subHours(now, 24), 'yyyy-MM-dd HH:mm:ss'),
+      maxDate: dateFormat(now, 'yyyy-MM-dd HH:mm:ss'),
+    }
+    const q = getClinicalIndicatorQueryForResultsTable(dataConstraints, null, groupBy, queryParams)
+    const [{ cnt }] = await q.clone()
+    resp.totalResultsInLast24Hours = cnt
+  }
+
+  return resp
+}
+
+// ---------------------------------------------------------------
 function getQuarterByMonth(monthNumber) {
   if (monthNumber >= 1 && monthNumber <= 3) return 1
   if (monthNumber >= 4 && monthNumber <= 6) return 2
@@ -1950,9 +2053,11 @@ function getClinicalIndicatorQueryForFactTable(dataConstraints, assay, groupBy, 
       geography: 'g',
     })
     .modify(filterParams, query, {
+      assay: 'a.externalId',
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
       stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
@@ -1964,7 +2069,7 @@ function getClinicalIndicatorQueryForFactTable(dataConstraints, assay, groupBy, 
       if (query.maxDate) {
         qb.where('r.startedOn', '<=', query.maxDate)
       }
-      if (assay) {
+      if (!query.assay && assay) {
         qb.whereIn('a.externalId', assay)
       }
       if (query.assayType) {
@@ -2011,9 +2116,11 @@ function getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupB
       result: 'r',
     })
     .modify(filterParams, query, {
+      assay: 'a.externalId',
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
       stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
@@ -2025,7 +2132,7 @@ function getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupB
       if (query.maxDate) {
         qb.where('r.startedOn', '<=', query.maxDate)
       }
-      if (assay) {
+      if (!query.assay && assay) {
         qb.whereIn('a.externalId', assay)
       }
       if (query.assayType) {
@@ -2691,6 +2798,7 @@ module.exports = {
   transferResult,
   clinicalIndicatorAggregations,
   // clinicalIndicatorAggregationsInQuarters,
+  currentTestingAggregations,
   followUpAggregations,
   queryResultFollowUpLastItems,
   getListResults,

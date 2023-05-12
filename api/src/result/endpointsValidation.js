@@ -3,6 +3,7 @@ const { validateDateRangeParams, validateSortPageParams } = require('../routes')
 
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
+const asPositiveInteger = Joi.number().integer().positive()
 const getResultAggregationsValidate = validGroups => ({
   ...validateDateRangeParams(),
   assayType: Joi.string().allow(null, '').description('Filter for assay type'),
@@ -11,7 +12,14 @@ const getResultAggregationsValidate = validGroups => ({
   resultCategory2: Joi.string().allow(null, '').description('Filter for result category 2'),
   siteName: Joi.string().allow(null, '').description('Filter for site'),
   deviceName: Joi.string().allow(null, '').description('Filter for device'),
-  stateId: Joi.number().integer().positive().allow(null).description('Filter for state'),
+  stateId: Joi.alternatives()
+    .try(Joi.array().items(asPositiveInteger), asPositiveInteger)
+    .allow(null)
+    .description('Filter for state(s)'),
+  lgaId: Joi.alternatives()
+    .try(Joi.array().items(asPositiveInteger), asPositiveInteger)
+    .allow(null)
+    .description('Filter for lga(s)'),
   groupBy: Joi.alternatives()
     .allow(null, '')
     .try(Joi.array().items(Joi.string().valid(...validGroups)), Joi.string().valid(...validGroups))
@@ -33,6 +41,7 @@ const resultAggregationsValidGroups = [
 ]
 
 const clinicalIndicatorsValidGroups = [...resultAggregationsValidGroups, 'assay']
+const currentTestingValidGroups = [...resultAggregationsValidGroups, 'assay', 'lgaId']
 
 const followUpAggregationsValidGroups = [...resultAggregationsValidGroups, 'followUp']
 
@@ -65,9 +74,13 @@ const resultAggregationsResponseItem = {
   age: Joi.number().optional().allow(null).description('The age that the count is grouped by'),
   state: Joi.string().optional().allow(null, '').description('The state that the count is grouped by'),
 }
+// const currentTestingAggregationsResponseItem = {
+//   ...resultAggregationsResponseItem,
+//   lga: Joi.string().optional().allow(null, '').description('The LGA that the count is grouped by'),
+// }
 
 const optionalId = description => {
-  return Joi.number().integer().positive().allow(null, '').description(description)
+  return asPositiveInteger.allow(null, '').description(description)
 }
 const resultUpdatePayload = {
   startedOn: Joi.date().iso().required().description('When the result was started'),
@@ -184,16 +197,16 @@ function validateResultDetailResponse() {
       .description(
         'When the result was last updated in the Aspect database. This can be converted to the user time zone.'
       ),
-    deviceId: Joi.number().integer().positive().required().description('Device id in aspect'),
-    deviceTypeId: Joi.number().integer().positive().allow(null).description('The id of the deviceType'),
+    deviceId: asPositiveInteger.required().description('Device id in aspect'),
+    deviceTypeId: asPositiveInteger.allow(null).description('The id of the deviceType'),
     deviceSerial: Joi.string().allow(null, '').description('The device serial number'),
     countryName: Joi.string().description("The device's country name"),
-    stateId: Joi.number().integer().positive().allow(null).description('The id of the state'),
+    stateId: asPositiveInteger.allow(null).description('The id of the state'),
     stateName: Joi.string().allow(null, '').description("The device's state name"),
     lgaName: Joi.string().allow(null, '').description("The device's lga name"),
     resultWorkflowChangedOn: Joi.date().allow(null).description('The date when status was changed'),
-    resultCategory1: Joi.number().integer().positive().allow(null).description('Value of ResultCategory1'),
-    resultCategory2: Joi.number().integer().positive().allow(null).description('Value of ResultCategory1'),
+    resultCategory1: asPositiveInteger.allow(null).description('Value of ResultCategory1'),
+    resultCategory2: asPositiveInteger.allow(null).description('Value of ResultCategory1'),
     resultCategory1Name: Joi.string().allow(null, '').description("The result's category 1 name"),
     resultCategory2Name: Joi.string().allow(null, '').description("The result's category 2 name"),
     resultWorkflowStatusId: Joi.number().integer().description("The result's workflow status id"),
@@ -202,7 +215,7 @@ function validateResultDetailResponse() {
     resultData: Joi.object().description('The result data'),
     files: Joi.array().description('Result Files'),
     formData: Joi.object().allow(null).description('The form data'),
-    siteId: Joi.number().integer().positive().description('The id of the site'),
+    siteId: asPositiveInteger.description('The id of the site'),
     resultTreatmentStatusCreatedBy: Joi.string()
       .allow(null, '')
       .description('The name of the user that created the note'),
@@ -231,7 +244,7 @@ function validateResultDetailResponse() {
     sampleCollectedOn: Joi.date().allow(null).description('The date when the sample has been collected'),
     sampleOriginSiteName: Joi.string().allow(null, '').description('Sample original site name'),
     sampleTypeName: Joi.string().allow(null, '').description('Sample type name'),
-    sampleTypeId: Joi.number().integer().positive().allow(null).description('Sample type Id'),
+    sampleTypeId: asPositiveInteger.allow(null).description('Sample type Id'),
     patientId: Joi.string().allow(null, '').description('The patient Id'),
     patientData: Joi.object().allow(null).description('The patient data'),
     formSchema: Joi.object().allow(null).description('The form data object'),
@@ -325,7 +338,7 @@ function listResultsBaseConfig() {
           .try(Joi.array().items(Joi.number()), Joi.number())
           .allow(null, '')
           .description('Filter for assay ID(s)'),
-        diseaseId: Joi.number().integer().positive().optional().description('The disease ID'),
+        diseaseId: asPositiveInteger.optional().description('The disease ID'),
         resultCategoryId: Joi.number().allow(null, '').description('Result-1 Category ID'),
         resultCategory2Id: Joi.number().allow(null, '').description('Result-2 Category ID'),
         resultCategoryGroupId: Joi.string()
@@ -418,15 +431,15 @@ function treatmentTrackingValidationQuery() {
       ...validateAllGeographyFilterParams(),
       ...validateDateRangeParams(),
       assay: Joi.string().allow(null, '').description('Assay Name'),
-      assayId: Joi.number().integer().positive().description('Filter for assay ID'),
-      assayTypeId: Joi.number().integer().positive(),
-      deviceId: Joi.number().integer().positive().description('Filter for device ID'),
+      assayId: asPositiveInteger.description('Filter for assay ID'),
+      assayTypeId: asPositiveInteger,
+      deviceId: asPositiveInteger.description('Filter for device ID'),
       deviceName: Joi.string().allow(null, '').description('Filter for device name'),
       deviceType: Joi.string().allow(null, '').description('Filter for device type ExternalId'),
-      diseaseId: Joi.number().integer().positive().description('The disease ID'),
-      resultCategoryId: Joi.number().integer().positive(),
+      diseaseId: asPositiveInteger.description('The disease ID'),
+      resultCategoryId: asPositiveInteger,
       siteName: Joi.string().allow(null, '').description('Filter for site name'),
-      siteId: Joi.number().integer().positive().description('Filter for site Id'),
+      siteId: asPositiveInteger.description('Filter for site Id'),
     },
   }
 }
@@ -442,4 +455,5 @@ module.exports = {
   validateResultDetailResponse,
   resultCreatePayload,
   treatmentTrackingValidationQuery,
+  currentTestingValidGroups,
 }

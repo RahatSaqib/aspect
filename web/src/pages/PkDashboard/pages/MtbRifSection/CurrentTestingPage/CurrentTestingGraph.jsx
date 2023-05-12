@@ -19,6 +19,15 @@ const endPointParams = [
   { groupBy: 'assay' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  {
+    flags: [
+      'GET_TOTAL_RESULTS_IN_CURRENT_YEAR',
+      'GET_TOTAL_RESULTS_IN_PERIOD',
+      'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR',
+      'GET_TOTAL_RESULTS_IN_LAST_24_HOURS',
+    ],
+  },
+  { assay: ['GxMtbRif', 'GxMtbRifUltra'] },
 ]
 
 const RifCurrentGraphPage = () => {
@@ -41,7 +50,7 @@ const RifCurrentGraphPage = () => {
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/current-testing-aggregations', params: endPointParams })
   )
 
   return (
@@ -80,9 +89,9 @@ const RifCurrentGraphPage = () => {
           />
           <TripleCardSide
             data={[
-              { label: formatMessage(messages.testPerYear), value: 123 },
-              { label: formatMessage(messages.testPerMonth), value: 456 },
-              { label: formatMessage(messages.testPerDay), value: 799 },
+              { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
+              { label: formatMessage(messages.testPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
         </Grid>
