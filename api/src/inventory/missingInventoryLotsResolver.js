@@ -70,6 +70,7 @@ const getMissingInventoryToReconcile = (siteId, consumableId, expirationDate) =>
         .limit(1)
         .as('payload'),
     ])
+    .clone()
 
 const missingInventoryLotsResolver = async (_, { messageContext }) => {
   const missingInventoryGroups = await getMissingInventoryGroups()
