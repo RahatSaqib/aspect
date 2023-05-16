@@ -1,10 +1,3 @@
-// const Boom = require('@hapi/boom')
-// const { notificationTypeCreated } = require('../notificationType/actions')
-// const { getNotificationStatusInfo } = require('./common/db')
-// const ReportBasedNotificationCacheSingleton = require('./reportBased/reportBasedNotificationCache')
-// const logger = require('../shared/logger')
-// const { knex } = require('../db')
-// const { getCustomFields } = require('../forms/service.js')
 const { getCustomFieldPlaceholdersForNotifications } = require('../forms/service')
 const { getConstraints } = require('../auth/constraints')
 
@@ -12,6 +5,20 @@ module.exports = async function (request) {
   const { auth } = request
   const { credentials } = auth
 
+  const allDeviceNotifications = [
+    'DeviceNoResults',
+    'DeviceOffline',
+    'CalibrationDueDate',
+    'ModuleReplaced',
+    'ModuleDisabled',
+    'UnusedModules',
+    'InstrumentReplaced',
+  ]
+
+  /**
+   * Make sure all strings in `notificationTypeWhitelist` match option.values in
+   * `Notification/NotificationFormPage/Forms/notificationTypeSection.js`
+   */
   const placeholders = [
     {
       notificationTypeWhitelist: ['reportBased'],
@@ -27,11 +34,12 @@ module.exports = async function (request) {
     },
     {
       notificationTypeWhitelist: [
-        'reportBased',
+        // 'reportBased',
         'resultBased',
-        'inventoryStockout',
-        'siteWithLowFieldCompletionRate',
+        'InventoryStockout',
+        'SiteWithLowFieldCompletionRate',
         'InventoryStockExpiring',
+        ...allDeviceNotifications,
       ],
       labelI18nKey: 'placeholderSite',
       label: 'Site',
@@ -60,15 +68,9 @@ module.exports = async function (request) {
     },
     {
       notificationTypeWhitelist: [
-        'reportBased',
+        // 'reportBased',
         'resultBased',
-        'DeviceNoResults',
-        'DeviceOffline',
-        'CalibrationDueDate',
-        'ModuleReplaced',
-        'ModuleDisabled',
-        'UnusedModules',
-        'InstrumentReplaced',
+        ...allDeviceNotifications,
       ],
       labelI18nKey: 'placeholderDevice',
       label: 'Device',
@@ -173,12 +175,14 @@ module.exports = async function (request) {
   const dataConstraints = await getConstraints(credentials)
   const customFieldsPlaceholders = await getCustomFieldPlaceholdersForNotifications(dataConstraints.partner.id)
 
-  placeholders.push({
-    notificationTypeWhitelist: ['resultBased'],
-    labelI18nKey: 'placeholderCustomFields',
-    label: 'Result Custom Fields',
-    options: customFieldsPlaceholders,
-  })
+  if (customFieldsPlaceholders?.length > 0) {
+    placeholders.push({
+      notificationTypeWhitelist: ['resultBased'],
+      labelI18nKey: 'placeholderCustomFields',
+      label: 'Result Custom Fields',
+      options: customFieldsPlaceholders,
+    })
+  }
 
   return { ok: true, data: placeholders }
 }

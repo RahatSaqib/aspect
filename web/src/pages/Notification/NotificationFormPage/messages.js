@@ -835,6 +835,15 @@ export default defineMessages({
     defaultMessage: 'Report on Xpert MTB/RIF and Covid - NTP Use',
   },
 
+  pk_xpert_site_detailed_report: {
+    id: 'pages.ReportIndex.xpert_site_detailed_report',
+    defaultMessage: 'Xpert Site Detailed Report',
+  },
+  pk_missing_cartridges_report: {
+    id: 'pages.ReportIndex.pk_missing_cartridges_report',
+    defaultMessage: 'List of Missing Lots',
+  },
+
   ...assay,
   ...resultCategory,
   ...report,

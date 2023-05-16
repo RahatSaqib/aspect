@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { IconButton, Menu, MenuItem } from '@mui/material'
 import classnames from 'classnames/bind'
+import isEmpty from 'lodash/isEmpty'
 import usePlaceholder from '../../hooks/notification/usePlaceholder'
 import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
@@ -60,7 +61,9 @@ const PlaceholderSelector = ({ onSelect, onClose, filter }) => {
                   {formatMessage(messages[p.labelI18nKey])}
                 </MenuItem>
                 {(p.labelI18nKey === 'placeholderCustomFields'
-                  ? p.options.filter(o => (filter.assay ? o.assayWhitelist.includes(filter.assay) : o))
+                  ? p.options.filter(o =>
+                      filter.assay && !isEmpty(o.assayWhitelist) ? o.assayWhitelist.includes(filter.assay) : o
+                    )
                   : p.options
                 ).map(({ id, nameI18nKey, name }) => {
                   const title = `Insert placeholder {{${id}}}`
