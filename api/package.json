@@ -122,7 +122,7 @@
     "raven": "^2.6.4",
     "shx": "^0.3.4",
     "timezone-support": "^3.1.0",
-    "twilio": "^4.7.2",
+    "twilio": "^4.10.0",
     "vision": "^5.4.4",
     "windows-iana": "^5.1.0",
     "winston": "^3.8.2",
