@@ -8,8 +8,8 @@ import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages } from '../../../../../messages'
 import HivResultsGraphMain from '../../../../../oldPages/dashboard/Graphs/HivResultsGraph/HivResultsGraph.Main'
-import HivResultsGraphSide from '../../../../../oldPages/dashboard/Graphs/HivResultsGraph/HivResultsGraph.Side'
 import PkPage from '../../../components/PkPage'
+import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
 const endPointParams = [
@@ -53,11 +53,12 @@ const HivGraphPage = () => {
             assaysFromState={assays}
             showLabel={showLabel}
           />
-          <HivResultsGraphSide
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
+          <TripleCardSide
+            data={[
+              { label: formatMessage(messages.testPerYear), value: 123 },
+              { label: formatMessage(messages.testPerMonth), value: 456 },
+              { label: formatMessage(messages.testPerDay), value: 799 },
+            ]}
           />
         </Grid>
       )}

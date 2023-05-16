@@ -30,7 +30,7 @@ describe('Fact tables initial data', () => {
       .then(res => {
         assert.equal(res.status, 200)
       })
-    await waitForIdle()
+    await waitForIdle(1000)
   })
   afterEach(context.afterEach)
 

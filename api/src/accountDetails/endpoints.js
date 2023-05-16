@@ -64,6 +64,7 @@ const routes = [
           culture: Joi.string().max(255).allow('', null),
           lastPartnerId: Joi.number().integer().positive().allow('', null),
           tags: Joi.string().allow('', null),
+          notes: Joi.string().allow('', null).description('Any notes to add to the account'),
         },
       },
     },
