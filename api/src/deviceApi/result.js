@@ -12,7 +12,7 @@ const {
 const { convertStringToFloat } = require('../shared/string')
 
 const { getDevice } = require('../device/service')
-const inventoryUtils = require('../inventory/utils')
+const inventoryUtils = require('../inventory/common/logic')
 const { mergeResultWithPayload } = require('../result/common/logic')
 
 // ----------------------------------------------------------

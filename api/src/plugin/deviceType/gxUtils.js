@@ -20,7 +20,7 @@ const {
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
 const { mapPayloadWithCustomFields } = require('./customFields')
-const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/utils')
+const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
 
 /*
 The purpose of this plugin is to ensure that results are captured

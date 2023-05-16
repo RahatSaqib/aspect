@@ -1,18 +1,14 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
-const Boom = require('@hapi/boom')
 
 const { knex, pageParams, sortParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
-const utils = require('./utils')
 
 const { splitCsvWithTrim } = require('../shared/string')
-const { getInventorySitesQuery, filteredInventoryItemsBase } = require('./common/db')
+const { filteredInventoryItemsBase } = require('./common/db')
 const {
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_SELECT_LIST_FIELDS,
   INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
-  SUPPLY_IN_STOCK_FIELDS,
 } = require('./common/querySelectors')
 
 const siteFields = ['siteId', 'siteName', 'countryId', 'stateId', 'lgaId', 'countryName', 'stateName', 'lgaName']
@@ -33,7 +29,7 @@ const inventoryItemFields = [
 ]
 
 // ----------------------------------------------------------------------------------
-async function listInventoryGroupedBySite(request) {
+module.exports = async function (request) {
   const { auth } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
@@ -107,90 +103,4 @@ async function listInventoryGroupedBySite(request) {
     length: sitesWithConsumables.length,
     data: sitesWithConsumables,
   }
-}
-
-// ----------------------------------------------------------------------------------
-async function getDaysByLocation(request) {
-  const { auth } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  /*
-  // --------
-  // old query
-  // --------
-  const baseWithCalculatedFields =
-    getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(
-      request,
-      dataConstraints
-    )
-  */
-  const baseWithCalculatedFields = getInventorySitesQuery(dataConstraints, request)
-
-  // -----------------
-  // group by location fields and consumableId, and return different counts
-  const result = await knex
-    .from(baseWithCalculatedFields.as('t2'))
-    .groupBy('consumableId')
-    .select(SUPPLY_IN_STOCK_FIELDS)
-
-  return {
-    ok: true,
-    total: result.length,
-    data: result,
-  }
-}
-
-// ----------------------------------------------------------------------------------
-async function doChangeInventory(request, handler) {
-  const res = await handler(request)
-  if (Boom.isBoom(res)) return res
-  return {
-    ok: true,
-    data: res, // see corresponding handler func for details about it's response
-  }
-}
-
-// ----------------------------------------------------------------------------------
-async function addInventory(request) {
-  return doChangeInventory(request, utils.addInventory)
-}
-
-// ----------------------------------------------------------------------------------
-async function removeInventory(request) {
-  return doChangeInventory(request, utils.removeInventory)
-}
-
-// ----------------------------------------------------------------------------------
-async function transferInventory(request) {
-  return doChangeInventory(request, utils.transferInventory)
-}
-
-// ----------------------------------------------------------------------------------
-async function receiveInventory(request) {
-  return doChangeInventory(request, utils.receiveInventory)
-}
-
-// ----------------------------------------------------------------------------------
-async function selectInventoryStockAtSite(siteId, consumableId) {
-  return knex('InventoryItem as ii')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .where({ consumableId, siteId })
-    .first(knex.raw('coalesce(sum(ii.quantityOnHand),0) as totalInStock'))
-}
-
-// ----------------------------------------------------------------------------------
-async function modifyInventoryOnHand(request) {
-  return utils.modifyInventoryOnHand(request)
-}
-
-module.exports = {
-  listInventoryGroupedBySite,
-  addInventory,
-  removeInventory,
-  transferInventory,
-  receiveInventory,
-  selectInventoryStockAtSite,
-  getDaysByLocation,
-  modifyInventoryOnHand,
 }

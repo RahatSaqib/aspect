@@ -1115,6 +1115,10 @@ export default defineMessages({
     id: 'pages.ReportIndex.xpert_site_detailed_report',
     defaultMessage: 'Xpert Site Detailed Report',
   },
+  pk_missing_cartridges_report: {
+    id: 'pages.ReportIndex.pk_missing_cartridges_report',
+    defaultMessage: 'List of Missing Lots',
+  },
 
   ...assay,
   ...resultCategory,
