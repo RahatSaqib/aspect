@@ -1,19 +1,17 @@
 import React, { useState } from 'react'
-import AddIcon from '@mui/icons-material/Add'
-import ClearIcon from '@mui/icons-material/Clear'
-import RemoveIcon from '@mui/icons-material/Remove'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
 import {
   Box,
   Collapse,
   Table,
   TableBody,
   TableCell,
-  TableHead,
-  TableRow,
   TableFooter,
+  TableHead,
   TablePagination,
+  TableRow,
   TableSortLabel,
-  IconButton,
 } from '@mui/material'
 
 function getComparator(order, orderBy) {
@@ -42,30 +40,30 @@ const NestedTable = ({ columns, rows, isDetail }) => {
     setPage(0)
   }
 
-  const containChildren = rows && rows.some(r => (r.children || []).length)
   return rows ? (
     <Table>
-      <TableHead>
-        <TableRow>
-          {containChildren ? <TableCell /> : null}
-          {columns.map((c, idx) => (
-            <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined}>
-              <TableSortLabel
-                active={orderBy === c.prop}
-                direction={orderBy === c.prop ? order : 'asc'}
-                onClick={() => {
-                  const isAsc = orderBy === c.prop && order === 'asc'
-                  setOrder(isAsc ? 'desc' : 'asc')
-                  setOrderBy(c.prop)
-                  setPage(0)
-                }}
-              >
-                {c.name}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
+      {!isDetail ? (
+        <TableHead>
+          <TableRow>
+            {columns.map((c, idx) => (
+              <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined}>
+                <TableSortLabel
+                  active={orderBy === c.prop}
+                  direction={orderBy === c.prop ? order : 'asc'}
+                  onClick={() => {
+                    const isAsc = orderBy === c.prop && order === 'asc'
+                    setOrder(isAsc ? 'desc' : 'asc')
+                    setOrderBy(c.prop)
+                    setPage(0)
+                  }}
+                >
+                  {c.name}
+                </TableSortLabel>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+      ) : null}
       <TableBody>
         {(rowsPerPage > 0
           ? rows.sort(getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -75,27 +73,24 @@ const NestedTable = ({ columns, rows, isDetail }) => {
           const totalCols = hasChildren ? columns.length + 1 : columns.length
           return (
             <>
-              <TableRow sx={{ backgroundColor: colors[i % 2] }}>
-                {containChildren ? (
-                  <TableCell>
-                    {hasChildren ? (
-                      <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(open === row.id ? -1 : row.id)}
-                      >
-                        {open === row.id ? <RemoveIcon /> : <AddIcon />}
-                      </IconButton>
-                    ) : (
-                      <IconButton aria-label="expand row" size="small">
-                        <ClearIcon style={{ opacity: 0.4 }} />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                ) : null}
+              <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
                 {columns.map((c, i) => (
-                  <TableCell scope="row" key={c.prop} align={i !== 0 ? 'right' : undefined}>
-                    {i === 0 ? row[row.type] : row[c.prop]}
+                  <TableCell
+                    width="10%"
+                    scope={i === 0 ? 'row' : undefined}
+                    key={c.prop}
+                    align={i !== 0 ? 'right' : undefined}
+                  >
+                    {i === 0 ? (
+                      <Box display="flex">
+                        <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
+                          {open === row.id ? <ExpandLess /> : <ExpandMore />}
+                        </Box>
+                        <span>{row[row.type]}</span>
+                      </Box>
+                    ) : (
+                      row[c.prop]
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
@@ -104,7 +99,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
                   <TableCell sx={{ pl: 0.5, pr: 0, pt: 0, pb: 0 }} colSpan={totalCols}>
                     <Collapse in={open === row.id} timeout="auto" unmountOnExit>
                       <Box sx={{ ml: 0.5, mr: 0.5, backgroundColor: colors[i % 2] }}>
-                        <NestedTable columns={columns} rows={row.children} />
+                        <NestedTable columns={columns} isDetail rows={row.children} />
                       </Box>
                     </Collapse>
                   </TableCell>
