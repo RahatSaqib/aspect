@@ -32,7 +32,7 @@ const CovidGraphPage = () => {
   const { data, isLoading } = useQuery(
     ['covidByCategory1Monthly', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/current-testing-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
 
   return (

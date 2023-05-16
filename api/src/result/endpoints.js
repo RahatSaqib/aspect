@@ -44,7 +44,7 @@ const {
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
   xdrAssayGraphAggregations,
-  currentTestingAggregations,
+  currentResultAggregations,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
@@ -1033,8 +1033,8 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/result/current-testing-aggregations',
-    handler: asyncHandler(currentTestingAggregations),
+    path: '/result/current-result-aggregations',
+    handler: asyncHandler(currentResultAggregations),
     config: {
       description: 'Current Testing Dashboard',
       notes: 'Data for most of the graphs on the Current Testing page',

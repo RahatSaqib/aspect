@@ -74,10 +74,6 @@ const resultAggregationsResponseItem = {
   age: Joi.number().optional().allow(null).description('The age that the count is grouped by'),
   state: Joi.string().optional().allow(null, '').description('The state that the count is grouped by'),
 }
-// const currentTestingAggregationsResponseItem = {
-//   ...resultAggregationsResponseItem,
-//   lga: Joi.string().optional().allow(null, '').description('The LGA that the count is grouped by'),
-// }
 
 const optionalId = description => {
   return asPositiveInteger.allow(null, '').description(description)

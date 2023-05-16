@@ -31,7 +31,7 @@ const HivGraphPage = () => {
   const { data, isLoading } = useQuery(
     ['hivByCategory1Monthly', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/current-testing-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
 
   return (

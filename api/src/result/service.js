@@ -1765,7 +1765,7 @@ async function clinicalIndicatorAggregations(request) {
 }
 
 // ---------------------------------------------------------------
-async function currentTestingAggregations(request) {
+async function currentResultAggregations(request) {
   const { auth, query } = request
 
   if (!canViewResults(auth)) {
@@ -1836,7 +1836,7 @@ async function currentTestingAggregations(request) {
         cntTests += x.cnt
       }
     )
-    resp.averageTestsPerMonthCurrentYear = months.size === 0 ? 0 : cntTests / months.size
+    resp.averageTestsPerMonthCurrentYear = months.size === 0 ? cntTests : Math.floor(cntTests / months.size)
   }
   /**
    * Total tests in the last 24 hours
@@ -2785,8 +2785,7 @@ module.exports = {
   allResultNotes,
   transferResult,
   clinicalIndicatorAggregations,
-  // clinicalIndicatorAggregationsInQuarters,
-  currentTestingAggregations,
+  currentResultAggregations,
   followUpAggregations,
   queryResultFollowUpLastItems,
   getListResults,
