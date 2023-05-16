@@ -1,6 +1,6 @@
 const TRANSFERRED = {
-  AWAY: 'away',
-  HERE: 'here',
+  AWAY: 'awayTransfer',
+  HERE: 'hereTransfer',
 }
 
 const TEST_TYPE = {

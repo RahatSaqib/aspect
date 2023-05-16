@@ -18,6 +18,7 @@ function transFormResultResponse(data, followUps, comments, acknowledgedId) {
   if (_.isEmpty(data)) return
   _.map(data, result => {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
+    const patientData = JSON.parse(result?.patientData)
     output.push({
       id: result.id,
       assayAvatar: transformAssayAvatar(result),
@@ -25,11 +26,11 @@ function transFormResultResponse(data, followUps, comments, acknowledgedId) {
       comments: extractFromDataById(comments, 'resultId', result.id),
       followUps: resultFollowUps,
       history: buildHistoryTimeline(result, resultFollowUps, comments),
-      patientData: transformPatientDataBySchema(JSON.parse(result.patientData), JSON.parse(result.patientDataSchema)),
-      patientId: JSON.parse(result.patientData)?.id,
+      patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
+      patientId: patientData?.id,
       resultData: transformResultText(result),
       sample: transformSampleData(result),
-      searchSchema: generateSearchKeys(result, resultFollowUps),
+      searchSchema: generateSearchKeys(result, resultFollowUps, patientData?.id),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),
       transferStatus: generateTransferStatus(result),

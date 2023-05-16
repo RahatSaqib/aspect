@@ -18,16 +18,19 @@ function transFormSampleResponse(sample) {
 async function registerNewSample(request) {
   const { payload } = request
   const currentlyLoggedInUser = await getUser(request.auth.credentials.name)
-  const sampleExtraData = {}
-  _.set(sampleExtraData, 'userId', currentlyLoggedInUser.id)
-  _.set(sampleExtraData, 'partnerId', currentlyLoggedInUser.partnerId)
-  _.set(sampleExtraData, 'countryId', currentlyLoggedInUser.countryId)
-  _.set(sampleExtraData, 'clientType', payload?.clientType || 'reporter_app')
-  _.mapKeys(sampleExtraData, (value, key) => (_.isNil(value) ? _.set(payload, `${key}`, null) : value))
-  _.set(payload, 'sampleExtraData', JSON.stringify(sampleExtraData))
+  const sampleData = {}
+  _.set(sampleData, 'userId', currentlyLoggedInUser.id)
+  _.set(sampleData, 'partnerId', currentlyLoggedInUser.partnerId)
+  _.set(sampleData, 'countryId', currentlyLoggedInUser.countryId)
+  _.set(sampleData, 'clientType', payload?.clientType || 'reporter_app')
+  _.mapKeys(sampleData, (value, key) => (_.isNil(value) ? _.set(payload, `${key}`, null) : value))
+  _.set(payload, 'sampleData', JSON.stringify(sampleData))
+  _.set(payload, 'collectedBy', payload.clinicianName)
+  _.set(payload, 'collectedOn', payload?.collectedOn || new Date())
+  _.set(payload, 'patientId', payload?.patientId || null)
   _.set(payload, 'sampleStatus', 'SAMPLE_REGISTERED')
   _.set(payload, 'sampleTypeId', 4) // SampleType.sampleTypeSputum
-  _.set(payload, 'collectedOn', payload?.collectedOn || new Date())
+  _.set(payload, 'updatedBy', currentlyLoggedInUser.id)
   _.set(payload, 'updatedOn', new Date())
 
   const newSample = await insertNewSample(payload)

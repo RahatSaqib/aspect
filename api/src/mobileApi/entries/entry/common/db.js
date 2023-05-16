@@ -55,6 +55,7 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
     })
     .where('result.updatedOn', '>', minUpdatedOn)
     .select(
+      'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
       'assay.resultCategory1Label as resultCategory1Label',
       'assay.resultCategory1i18nKey as resultCategory1i18nKey',
@@ -102,8 +103,6 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
       'resultFollowUp.createdOn as resultFollowUpCreatedOn',
       'resultFollowUp.updatedOn as resultFollowUpUpdatedOn'
     )
-  // .where('result.id', '=', 342)
-  // .where('result.id', '=', 6092)
   return knexQuery
 }
 
