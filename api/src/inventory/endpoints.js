@@ -1,15 +1,13 @@
 const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
-const {
-  listInventoryGroupedBySite,
-  addInventory,
-  removeInventory,
-  transferInventory,
-  receiveInventory,
-  getDaysByLocation,
-  modifyInventoryOnHand,
-} = require('./service')
+const listInventoryGroupedBySite = require('./listInventoryGroupedBySite')
+const getDaysByLocation = require('./getDaysByLocation')
+const modifyInventoryOnHand = require('./modifyInventoryOnHand')
+const addInventory = require('./addInventory')
+const removeInventory = require('./removeInventory')
+const transferInventory = require('./transferInventory')
+const receiveInventory = require('./receiveInventory')
 const listInventory = require('./listInventory')
 const getInventoryOverview = require('./getInventoryOverview')
 const listInventoryLog = require('./listInventoryLog')
@@ -232,7 +230,18 @@ const routes = [
           ...inventoryTransferFilters,
           ...validateDateRangeParams(),
           ...validateAllGeographyFilterParams(),
-          ...validateSortPageParams('originSiteName', 'destinationSiteName', 'consumableName'),
+          ...validateSortPageParams(
+            'sentQuantity',
+            'sentOn',
+            'receivedQuantity',
+            'receivedOn',
+            'lotNumber',
+            'expirationDate',
+            'originSiteName',
+            'destinationSiteName',
+            'consumableName',
+            'consumableNameI18nKey'
+          ),
         },
       },
     },
@@ -246,6 +255,7 @@ const routes = [
       auth: { scope: ['inventory:view'] },
       validate: {
         query: {
+          format: Joi.string().allow('').description('File format for exporting data'),
           ...inventoryTransferFilters,
           ...validateDateRangeParams(),
           ...validateAllGeographyFilterParams(),
