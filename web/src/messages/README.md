@@ -2,7 +2,7 @@
 
 ## i18n
 
-If you are going to work with translations, request your manager the licence for PoEdit.
+If you are going to work with translations, request your manager the licence for PoEdit. (although you can translate by hand with the free version)
 
 ### Merging with develop
 
