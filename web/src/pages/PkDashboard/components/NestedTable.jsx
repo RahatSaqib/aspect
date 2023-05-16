@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
 import {
   Box,
   Collapse,
   Table,
   TableBody,
   TableCell,
-  TableHead,
-  TableRow,
   TableFooter,
+  TableHead,
   TablePagination,
+  TableRow,
   TableSortLabel,
 } from '@mui/material'
 
@@ -20,7 +22,7 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
+const NestedTable = ({ columns, rows, isDetail }) => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [order, setOrder] = useState('asc')
@@ -38,55 +40,74 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
     setPage(0)
   }
 
-  return (
+  return rows ? (
     <Table>
-      <TableHead>
-        <TableRow>
-          {columns.map((c, idx) => (
-            <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined}>
-              <TableSortLabel
-                active={orderBy === c.prop}
-                direction={orderBy === c.prop ? order : 'asc'}
-                onClick={() => {
-                  const isAsc = orderBy === c.prop && order === 'asc'
-                  setOrder(isAsc ? 'desc' : 'asc')
-                  setOrderBy(c.prop)
-                  setPage(0)
-                }}
-              >
-                {c.name}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
+      {!isDetail ? (
+        <TableHead>
+          <TableRow>
+            {columns.map((c, idx) => (
+              <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined}>
+                <TableSortLabel
+                  active={orderBy === c.prop}
+                  direction={orderBy === c.prop ? order : 'asc'}
+                  onClick={() => {
+                    const isAsc = orderBy === c.prop && order === 'asc'
+                    setOrder(isAsc ? 'desc' : 'asc')
+                    setOrderBy(c.prop)
+                    setPage(0)
+                  }}
+                >
+                  {c.name}
+                </TableSortLabel>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+      ) : null}
       <TableBody>
         {(rowsPerPage > 0
           ? rows.sort(getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
           : rows
-        ).map((row, i) => (
-          <>
-            <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
-              <TableCell scope="row">{row.name}</TableCell>
-              <TableCell align="right">{row.quantity}</TableCell>
-              <TableCell align="right">{row.lastSixMonths}</TableCell>
-              <TableCell align="right">{row.used}</TableCell>
-              <TableCell align="right">{row.rate}</TableCell>
-              <TableCell align="right">{row.left}</TableCell>
-            </TableRow>
-            {hasDetail ? (
-              <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                <TableCell sx={{ p: 0 }} colSpan={7}>
-                  <Collapse in={open === row.id} timeout="auto" unmountOnExit>
-                    <Box sx={{ ml: 0.5, mr: 0.5, backgroundColor: colors[i % 2] }}>
-                      <NestedTable columns={columns} rows={row.detail} isDetail />
-                    </Box>
-                  </Collapse>
-                </TableCell>
+        ).map((row, i) => {
+          const hasChildren = row?.children?.length > 0 ?? false
+          const totalCols = hasChildren ? columns.length + 1 : columns.length
+          return (
+            <>
+              <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
+                {columns.map((c, i) => (
+                  <TableCell
+                    width="10%"
+                    scope={i === 0 ? 'row' : undefined}
+                    key={c.prop}
+                    align={i !== 0 ? 'right' : undefined}
+                  >
+                    {i === 0 ? (
+                      <Box display="flex">
+                        <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
+                          {open === row.id ? <ExpandLess /> : <ExpandMore />}
+                        </Box>
+                        <span>{row[row.type]}</span>
+                      </Box>
+                    ) : (
+                      row[c.prop]
+                    )}
+                  </TableCell>
+                ))}
               </TableRow>
-            ) : null}
-          </>
-        ))}
+              {hasChildren ? (
+                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                  <TableCell sx={{ pl: 0.5, pr: 0, pt: 0, pb: 0 }} colSpan={totalCols}>
+                    <Collapse in={open === row.id} timeout="auto" unmountOnExit>
+                      <Box sx={{ ml: 0.5, mr: 0.5, backgroundColor: colors[i % 2] }}>
+                        <NestedTable columns={columns} isDetail rows={row.children} />
+                      </Box>
+                    </Collapse>
+                  </TableCell>
+                </TableRow>
+              ) : null}
+            </>
+          )
+        })}
 
         {emptyRows > 0 && (
           <TableRow style={{ height: 44.5 * emptyRows }}>
@@ -94,7 +115,7 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
           </TableRow>
         )}
       </TableBody>
-      {!isDetail ? (
+      {rows.length > rowsPerPage ? (
         <TableFooter>
           <TableRow>
             <TablePagination
@@ -103,7 +124,6 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}
-              SelectProps={{ native: true }}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
@@ -111,7 +131,7 @@ const NestedTable = ({ columns, rows, hasDetail, isDetail }) => {
         </TableFooter>
       ) : null}
     </Table>
-  )
+  ) : null
 }
 
 export default NestedTable

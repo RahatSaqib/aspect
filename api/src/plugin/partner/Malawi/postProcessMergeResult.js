@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { addResultWorkflowLogIfChanged } = require('../../../deviceApi/result')
+const { addResultWorkflowLogIfChanged, consumeInventoryForResult } = require('../../../deviceApi/result')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const VALIDATED_EXTERNALID = 'Validated'
@@ -10,7 +10,7 @@ const DEVICE_TYPE_EXTERNAL_ID = 'CHAILIMS'
 const RESULT_TEXT_LDL = '< LDL'
 
 async function postProcessMergeResult(context, result, previousResult) {
-  const { knex, payload, now } = context
+  const { knex, payload, now, messageContext, userId } = context
   const { deviceId } = result
   await addResultWorkflowLogIfChanged(knex, payload, result, previousResult, 'Device API Update', now)
 
@@ -26,8 +26,7 @@ async function postProcessMergeResult(context, result, previousResult) {
     await addResultCategory(context, result)
   }
 
-  // TODO do we want to consume in inventory in malawi plugin? (we don't use it)
-  // await consumeInventoryForResult(knex, payload, result)
+  await consumeInventoryForResult(knex, payload, result, messageContext, userId)
 
   return {}
 }
