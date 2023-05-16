@@ -229,23 +229,36 @@ async function upsertDemoUsersPerJobFunction(
   const insertUsers = jobFunctions.map(async jf => {
     const { id: jobFunctionId, name: jobFunctionName } = jf
     const userName = jobFunctionName.toLowerCase().replace(' ', '-')
-    const [userId] = await knex('User').insert({
-      name: userName,
-      ...commonUserFields,
-    })
-    const [personId] = await knex('Person').insert({
-      name: userName,
-      userId,
-      ...commonPersonFields,
-    })
-    const [jobId] = await knex('Job').insert({
-      personId,
-      jobFunctionId,
-    })
-    await knex('JobContext').insert({
-      jobId,
-      geographyId,
-    })
+    const user = await knex('User').where({ name: userName }).first()
+    let userId = user?.id
+    if (!userId) {
+      ;[userId] = await knex('User').insert({
+        name: userName,
+        ...commonUserFields,
+      })
+    }
+    const person = await knex('Person').where({ userId }).first()
+    let personId = person?.id
+    if (!personId) {
+      ;[personId] = await knex('Person').insert({
+        name: userName,
+        userId,
+        ...commonPersonFields,
+      })
+    }
+    const job = await knex('Job').where({ personId, jobFunctionId }).first()
+    let jobId = job?.id
+    if (!jobId) {
+      ;[jobId] = await knex('Job').insert({ personId, jobFunctionId })
+    }
+    const jonContext = await knex('JobContext').where({ jobId, geographyId }).first()
+    const jonContextId = jonContext?.id
+    if (!jonContextId) {
+      await knex('JobContext').insert({
+        jobId,
+        geographyId,
+      })
+    }
   })
   await Promise.all(insertUsers)
 }
