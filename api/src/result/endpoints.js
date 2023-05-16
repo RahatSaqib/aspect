@@ -47,6 +47,7 @@ const {
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
 const { updateResult } = require('./updateResult')
+const { getResultsOverview } = require('./dashboard/getResultsOverview')
 
 const configs = {
   trendInQuarters: {
@@ -1027,6 +1028,16 @@ const routes = [
           i18nKeys: Joi.object().required().description('Intl keys for axis X'),
         }),
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/overview',
+    handler: asyncHandler(getResultsOverview),
+    config: {
+      description: 'Count of all results',
+      notes: 'Count of all results',
+      auth: { scope: ['dashboard', 'result'] },
     },
   },
 ]
