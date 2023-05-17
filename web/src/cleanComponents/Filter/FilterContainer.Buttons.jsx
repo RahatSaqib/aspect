@@ -123,6 +123,7 @@ const buttonMapping = {
   onlyTransfers: ({ remove }) => <OnlyTranfers remove={remove} />,
   lotNumber: ({ lotNumber, remove }) => <LotNumber lotNumber={lotNumber} remove={remove} />,
   hasStock: ({ remove }) => <HasStock remove={remove} />,
+  daysStockLeft: ({ remove, daysStockLeft }) => <DaysStockLeft remove={remove} daysStockLeft={daysStockLeft} />,
   breakOutByLot: ({ remove }) => <BreakOutByLot remove={remove} />,
   deviceApprovalId: ({ deviceApprovalId, remove }) => (
     <DeviceApprovalId deviceApprovalId={deviceApprovalId} remove={remove} />
@@ -165,7 +166,7 @@ const buttonMapping = {
 
 const Btn = ({ lbl, del }) => (
   <Button color="secondary" variant="contained" onClick={del} sx={{ m: '2px' }}>
-    {lbl.charAt(0).toUpperCase() + lbl.slice(1)}
+    {lbl?.charAt(0).toUpperCase() + lbl?.slice(1)}
     {del ? <MdClose style={{ marginLeft: '5px' }} /> : null}
   </Button>
 )
@@ -173,13 +174,13 @@ const Btn = ({ lbl, del }) => (
 const StateId = ({ countryId, stateId, remove }) => {
   const { data } = useStatesByCountry(countryId)
 
-  return data && stateId ? <Btn lbl={data.find(s => s.id === stateId).name} del={() => remove(['stateId'])} /> : null
+  return data && stateId ? <Btn lbl={data.find(s => s.id === stateId)?.name} del={() => remove(['stateId'])} /> : null
 }
 
 const LgaId = ({ stateId, lgaId, remove }) => {
   const { data } = useLgaByState(stateId)
 
-  return data && lgaId ? <Btn lbl={data.find(s => s.id === lgaId).name} del={() => remove(['lgaId'])} /> : null
+  return data && lgaId ? <Btn lbl={data.find(s => s.id === lgaId)?.name} del={() => remove(['lgaId'])} /> : null
 }
 
 const SiteName = ({ siteName, remove }) => {
@@ -260,6 +261,7 @@ const MinDate = ({ minDate, remove }) => {
 const MaxDate = ({ maxDate, remove }) => {
   const { formatMessage, format } = useI18n()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
+  if (!maxDate) return null
   const date = format(new Date(maxDate), dateFormat)
 
   return <Btn lbl={formatMessage(messages.dateTo, { date })} del={() => remove(['maxDate'])} />
@@ -357,7 +359,13 @@ const HasStock = ({ remove }) => {
   return <Btn lbl={formatMessage(messages.hasStock)} del={() => remove(['hasStock'])} />
 }
 
-const BreakOutByLot = ({ remove }) => {
+const DaysStockLeft = ({ remove, daysStockLeft }) => {
+  const { formatMessage } = useI18n()
+
+  return <Btn lbl={`${formatMessage(messages[daysStockLeft])}`} del={() => remove(['daysStockLeft'])} />
+}
+
+const BreakOutByLot = ({ remove, daysStockLeft }) => {
   const { formatMessage } = useI18n()
 
   return <Btn lbl={formatMessage(messages.breakOutByLot)} del={() => remove(['breakOutByLot'])} />
@@ -369,7 +377,7 @@ const DeviceApprovalId = ({ deviceApprovalId, remove }) => {
 
   if (data && deviceApprovalId) {
     const deviceApprovalName = formatMessage(
-      messages[`deviceApproval${data.find(it => it.id === deviceApprovalId).name}`]
+      messages[`deviceApproval${data.find(it => it.id === deviceApprovalId)?.name}`]
     )
     return (
       <Btn
@@ -386,7 +394,7 @@ const DeviceType = ({ deviceType, remove }) => {
   const { data } = useDeviceTypeList()
 
   if (data && deviceType) {
-    const deviceTypeName = data.find(it => it.id === deviceType).name
+    const deviceTypeName = data.find(it => it.id === deviceType)?.name
 
     return <Btn lbl={formatMessage(messages.withDeviceType, { deviceTypeName })} del={() => remove(['deviceType'])} />
   }
@@ -515,7 +523,7 @@ const DisplayResult = ({ displayResult, remove }) => {
     <Btn
       lbl={formatMessage(messages.withDisplayResult, {
         displayResult: formatMessage(
-          messages[`display${displayResult.charAt(0).toUpperCase() + displayResult.slice(1)}Results`]
+          messages[`display${displayResult?.charAt(0).toUpperCase() + displayResult?.slice(1)}Results`]
         ),
       })}
       del={() => remove(['displayResult'])}
