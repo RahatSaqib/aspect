@@ -59,6 +59,9 @@ const routes = [
                 dailyCapacity: Joi.number()
                   .required()
                   .description('The number of tests that the configuration can perform'),
+                modules: Joi.number().allow(null).description('Number of DeviceCapacity modules'),
+                externalId: Joi.string().allow(null, '').description('Field externalId of DeviceCapacity'),
+                i18nKey: Joi.string().allow(null, '').description('Intl key of DeviceCapacity modules'),
               })
             ),
         }),
