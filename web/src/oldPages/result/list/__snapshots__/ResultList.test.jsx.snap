@@ -36,14 +36,7 @@ exports[`Result List component should shallow render correctly when filter for a
           visible={false}
         />
       </div>
-      <pure(withHandlers(EmptyList))
-        location={
-          Object {
-            "search": "",
-          }
-        }
-        navigate={[MockFunction]}
-      />
+      <BrowseEmptyList />
     </DataTableCard>
   </div>
 </Fragment>
